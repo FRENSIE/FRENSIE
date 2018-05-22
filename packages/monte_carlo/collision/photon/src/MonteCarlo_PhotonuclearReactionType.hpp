@@ -9,8 +9,11 @@
 #ifndef MONTE_CARLO_PHOTONUCLEAR_REACTION_TYPE_HPP
 #define MONTE_CARLO_PHOTONUCLEAR_REACTION_TYPE_HPP
 
-// Std Lib Includes
-#include <string>
+
+// FRENSIE Includes
+#include "Utility_ToStringTraits.hpp"
+#include "Utility_SerializationHelpers.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -29,6 +32,7 @@ enum PhotonuclearReactionType{
   GAMMA__3N_REACTION = 17,
   GAMMA__TOTAL_FISSION_REACTION = 18,
   GAMMA__N_ALPHA_REACTION = 22,
+  GAMMA__N_3ALPHA_REACTION = 23,
   GAMMA__2N_ALPHA_REACTION = 24,
   GAMMA__3N_ALPHA_REACTION = 25,
   GAMMA__N_P_REACTION = 28,
@@ -428,24 +432,67 @@ enum PhotonuclearReactionType{
   GAMMA__2N_CONTINUUM_REACTION = 891
 };
 
-//! Convert an unsigned int to a PhotonuclearReactionType
-PhotonuclearReactionType convertUnsignedToPhotonuclearReactionType(
+//! Convert a raw MT number to a PhotonuclearReactionType
+PhotonuclearReactionType convertMTNumberToPhotonuclearReactionType(
 						     const unsigned reaction );
 
-//! Convert a PhotonuclearReactionType to a string
-std::string convertPhotonuclearReactionTypeToString(
-				     const PhotonuclearReactionType reaction );
+} // end MonteCarlo namespace
 
+namespace Utility{
+
+/*! \brief Specialization of Utility::ToStringTraits for
+ * MonteCarlo::PhotonuclearReactionType
+ * \ingroup to_string_traits
+ */
+template<>
+struct ToStringTraits<MonteCarlo::PhotonuclearReactionType>
+{
+  //! Convert the MonteCarlo::PhotonuclearReactionType to a string
+  static std::string toString( const MonteCarlo::PhotonuclearReactionType type );
+
+  //! Place the MonteCarlo::PhotonuclearReactionType in a stream
+  static void toStream( std::ostream& os, const MonteCarlo::PhotonuclearReactionType type );
+};
+  
+} // end Utility namespace
+
+namespace std{
 
 //! Stream operator for printing PhotonuclearReactionType enums
 inline std::ostream& operator<<( std::ostream& os,
-				 const PhotonuclearReactionType reaction )
+				 const MonteCarlo::PhotonuclearReactionType reaction )
 {
-  os << convertPhotonuclearReactionTypeToString( reaction );
+  os << Utility::toString( reaction );
   return os;
 }
 
-} // end MonteCarlo namespace
+} // end std namespace
+
+namespace boost{
+
+namespace serialization{
+
+//! Serialize the MonteCarlo::PhotonuclearReactionType enums
+template<typename Archive>
+void serialize( Archive& archive,
+                MonteCarlo::PhotonuclearReactionType& type,
+                const unsigned version )
+{
+  if( Archive::is_saving::value )
+    archive & (unsigned)type;
+  else
+  {
+    unsigned raw_type;
+    
+    archive & raw_type;
+
+    type = MonteCarlo::convertMTNumberToPhotonuclearReactionType( raw_type );
+  }
+}
+  
+} // end serialization namespace
+  
+} // end boost namespace
 
 #endif // end MONTE_CARLO_PHOTONUCLEAR_REACTION_TYPE_HPP
 

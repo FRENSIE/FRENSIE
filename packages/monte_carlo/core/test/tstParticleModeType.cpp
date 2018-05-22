@@ -141,7 +141,7 @@ FRENSIE_UNIT_TEST( ParticleModeType, stream_operator )
 }
 
 //---------------------------------------------------------------------------//
-// Check that an elastic electron distribution type can be archived
+// Check that a particle mode type can be archived
 FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleModeType,
                                    archive,
                                    TestArchives )

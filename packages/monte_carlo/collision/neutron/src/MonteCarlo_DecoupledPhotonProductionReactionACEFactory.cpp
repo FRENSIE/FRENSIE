@@ -234,7 +234,7 @@ void DecoupledPhotonProductionReactionACEFactory::parseSIGP(
                                 sigp_block( cs_index + 3u, cs_array_size ) ) );
 
       base_reaction_type_map[reaction->first] =
-	         convertUnsignedToNuclearReactionType( reaction->first/1000u );
+        MonteCarlo::convertMTNumberToNuclearReactionType( reaction->first/1000u );
     }
     else if ( static_cast<unsigned>( sigp_block[cs_index] ) == 12u  ||
               static_cast<unsigned>( sigp_block[cs_index] ) == 16u )
@@ -254,7 +254,7 @@ void DecoupledPhotonProductionReactionACEFactory::parseSIGP(
         sigp_block( cs_index + 4u + energy_array_size, energy_array_size );
 
       base_reaction_type_map[reaction->first] =
-        convertUnsignedToNuclearReactionType( reaction->first/1000u );
+        MonteCarlo::convertMTNumberToNuclearReactionType( reaction->first/1000u );
     }
     else
     {

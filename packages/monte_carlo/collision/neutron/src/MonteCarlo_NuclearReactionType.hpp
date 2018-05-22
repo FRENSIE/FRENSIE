@@ -9,6 +9,11 @@
 #ifndef MONTE_CARLO_NUCLEAR_REACTION_TYPE_HPP
 #define MONTE_CARLO_NUCLEAR_REACTION_TYPE_HPP
 
+// FRENSIE Includes
+#include "Utility_ToStringTraits.hpp"
+#include "Utility_SerializationHelpers.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
+
 namespace MonteCarlo{
 
 /*! The nuclear reaction type enum.
@@ -161,7 +166,7 @@ enum NuclearReactionType{
   N__TOTAL_HE3_PRODUCTION = 206,
   N__TOTAL_ALPHA_PRODUCTION = 207,
   N__AVERAGE_HEATING = 301,
-  N__DPA = 444,
+  N__DAMAGE = 444,
   N__P_EXCITED_STATE_0_REACTION = 600,
   N__P_EXCITED_STATE_1_REACTION = 601,
   N__P_EXCITED_STATE_2_REACTION = 602,
@@ -431,11 +436,67 @@ enum NuclearReactionType{
   N__2N_CONTINUUM_REACTION = 891
 };
 
-//! Convert an unsigned int to a NuclearReactionType
-NuclearReactionType convertUnsignedToNuclearReactionType(
+//! Convert a raw MT number to a NuclearReactionType
+NuclearReactionType convertMTNumberToNuclearReactionType(
 						     const unsigned reaction );
 
 } // end MonteCarlo namespace
+
+namespace Utility{
+
+/*! \brief Specialization of Utility::ToStringTraits for
+ * MonteCarlo::NuclearReactionType
+ * \ingroup to_string_traits
+ */
+template<>
+struct ToStringTraits<MonteCarlo::NuclearReactionType>
+{
+  //! Convert the MonteCarlo::NuclearReactionType to a string
+  static std::string toString( const MonteCarlo::NuclearReactionType type );
+
+  //! Place the MonteCarlo::NuclearReactionType in a stream
+  static void toStream( std::ostream& os, const MonteCarlo::NuclearReactionType type );
+};
+  
+} // end Utility namespace
+
+namespace std{
+
+//! Stream operator for printing NuclearReactionType enums
+inline std::ostream& operator<<( std::ostream& os,
+				 const MonteCarlo::NuclearReactionType reaction )
+{
+  os << Utility::toString( reaction );
+  return os;
+}
+
+} // end std namespace
+
+namespace boost{
+
+namespace serialization{
+
+//! Serialize the MonteCarlo::NuclearReactionType enums
+template<typename Archive>
+void serialize( Archive& archive,
+                MonteCarlo::NuclearReactionType& type,
+                const unsigned version )
+{
+  if( Archive::is_saving::value )
+    archive & (unsigned)type;
+  else
+  {
+    unsigned raw_type;
+    
+    archive & raw_type;
+    
+    type = MonteCarlo::convertMTNumberToNuclearReactionType( raw_type );
+  }
+}
+  
+} // end serialization namespace
+  
+} // end boost namespace
 
 #endif // end MONTE_CARLO_NUCLEAR_REACTION_TYPE_HPP
 
