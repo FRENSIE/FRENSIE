@@ -6,8 +6,20 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Boost Includes
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_FullPhaseSpaceParticleResponseFunction.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -43,7 +55,7 @@ EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::FullPhaseSpaceParticleRes
   
 } // end MonteCarlo namespace
 
-BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( FullPhaseSpaceParticleResponseFunction, MonteCarlo ):
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( FullPhaseSpaceParticleResponseFunction, MonteCarlo );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_FullPhaseSpaceParticleResponseFunction.cpp

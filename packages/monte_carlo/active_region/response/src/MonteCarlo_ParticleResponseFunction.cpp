@@ -48,6 +48,11 @@ class ScalarParticleResponseFunction : public ParticleResponseFunction
 
 public:
 
+  //! Default constructor
+  ScalarParticleResponseFunction()
+    : d_scalar_value( 0.0 )
+  { /* ... */ }
+
   //! Constructor
   ScalarParticleResponseFunction( const double scalar_value )
     : d_scalar_value( scalar_value )
@@ -91,7 +96,7 @@ private:
 
 //! The combined particle response function
 template<typename ArithmeticOperationFunctor>
-class CombinedParticleResponseFunction
+class CombinedParticleResponseFunction : public ParticleResponseFunction
 {
 
 public:
@@ -229,7 +234,7 @@ class SubtractionParticleResponseFunction : public CombinedParticleResponseFunct
 public:
 
   //! Constructors
-  using CombinedParticleResponseFunction<std::plus<double> >::CombinedParticleResponseFunction;
+  using CombinedParticleResponseFunction<std::minus<double> >::CombinedParticleResponseFunction;
 
   //! Destructor
   ~SubtractionParticleResponseFunction()
@@ -331,7 +336,7 @@ private:
 } // end MonteCarlo namespace
 
 BOOST_SERIALIZATION_CLASS_VERSION( ScalarParticleResponseFunction, MonteCarlo, 0 );
-BOOST_SERIALIZATION_CLASS1_VERSION( CombinedParticleResponseFunction, MonteCarlo, Version );
+BOOST_SERIALIZATION_CLASS1_VERSION( CombinedParticleResponseFunction, MonteCarlo, 0 );
 BOOST_SERIALIZATION_CLASS_VERSION( AdditionParticleResponseFunction, MonteCarlo, 0 );
 BOOST_SERIALIZATION_CLASS_VERSION( SubtractionParticleResponseFunction, MonteCarlo, 0 );
 BOOST_SERIALIZATION_CLASS_VERSION( MultiplicationParticleResponseFunction, MonteCarlo, 0 );
@@ -346,7 +351,7 @@ BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( DivisionParticleResponseFunction,
 
 BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( ScalarParticleResponseFunction, MonteCarlo );
 BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( AdditionParticleResponseFunction, MonteCarlo );
-BOOST_SERIALIZATION_CLASS_EXPORT_IMPEMENT( SubtractionParticleResponseFunction, MonteCarlo );
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( SubtractionParticleResponseFunction, MonteCarlo );
 BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( MultiplicationParticleResponseFunction, MonteCarlo );
 BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( DivisionParticleResponseFunction, MonteCarlo );
 

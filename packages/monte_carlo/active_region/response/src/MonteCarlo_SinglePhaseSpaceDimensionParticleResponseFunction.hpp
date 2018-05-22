@@ -13,6 +13,7 @@
 #include <memory>
 
 // FRENSIE Includes
+#include "MonteCarlo_ParticleResponseFunction.hpp"
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
 #include "Utility_UnivariateDistribution.hpp"
 
@@ -25,15 +26,10 @@ class SinglePhaseSpaceDimensionParticleResponseFunction : public ParticleRespons
 
 public:
 
-  //! Distribution constructor
+  //! Constructor
   SinglePhaseSpaceDimensionParticleResponseFunction(
                   const std::shared_ptr<const Utility::UnivariateDistribution>&
                   dimension_distribution );
-
-  //! Raw distribution constructor
-  SinglePhaseSpaceDimensionParticleResponseFunction(
-                                   const std::vector<double> dimension_grid,
-                                   const std::vector<double> response_values );
 
   //! Destructor
   ~SinglePhaseSpaceDimensionParticleResponseFunction()

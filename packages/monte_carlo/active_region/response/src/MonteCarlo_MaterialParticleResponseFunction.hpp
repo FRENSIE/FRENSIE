@@ -43,6 +43,10 @@ public:
 
 protected:
 
+  //! Default Constructor
+  MaterialParticleResponseFunction()
+  { /* ... */ }
+
   //! Constructor (do not check reaction type)
   MaterialParticleResponseFunction(
                        const std::shared_ptr<const FilledGeometryModel>& model,
@@ -58,10 +62,6 @@ protected:
   std::string createDescription( const ReactionEnumType reaction ) const;
   
 private:
-
-  // Default Constructor
-  MaterialParticleResponseFunction()
-  { /* ... */ }
 
   // Set the material
   void setMaterial();

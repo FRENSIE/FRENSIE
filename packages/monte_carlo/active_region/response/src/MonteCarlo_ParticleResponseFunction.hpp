@@ -49,10 +49,10 @@ public:
   //! Get a description of the response function
   virtual std::string description() const = 0;
 
-protected:
-
   //! Check if the description requires parentheses
   virtual bool doesDescriptionRequireParentheses() const;
+
+protected:
 
   //! Constructor
   ParticleResponseFunction()

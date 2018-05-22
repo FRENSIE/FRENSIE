@@ -43,10 +43,13 @@ public:
 
 private:
 
+  //! Default constructor
+  FullPhaseSpaceParticleResponseFunction()
+  { /* ... */ }
+
   // Serialize the response function data
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version );
-  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType ); }
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;

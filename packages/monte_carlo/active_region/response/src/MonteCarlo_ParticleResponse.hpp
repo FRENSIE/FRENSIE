@@ -21,6 +21,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_UniqueIdManager.hpp"
+#include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
@@ -52,6 +53,11 @@ public:
 
 protected:
 
+  //! Default constructor
+  ParticleResponse()
+    : d_id( 0 )
+  { /* ... */ }
+
   //! Basic Constructor
   ParticleResponse( const size_t id );
 
@@ -59,10 +65,6 @@ protected:
   ParticleResponse( const size_t id, const std::string& name );
 
 private:
-
-  //! Default constructor
-  ParticleResponse()
-  { /* ... */ }
 
   // Serialize the particle response
   template<typename Archive>
