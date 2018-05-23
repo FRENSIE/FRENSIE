@@ -27,9 +27,11 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<DataGen::FreeGasElasticSAlphaBetaFunction> sab_function;
-std::vector<double> plot_energies{1e-7};
+std::vector<double> plot_energies{2e-11};
 int  beta_num = 100;
 int alpha_num = 100;
+double beta_spread = 1;
+double tol = 1e-6;
 
 //---------------------------------------------------------------------------//
 // Testing Functions
@@ -84,7 +86,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticSAlphaBetaFunction,
     double beta_min = Utility::calculateBetaMin( plot_energies[i], 
         sab_function->getTemperature());
 
-    double beta_max    = -2*beta_min;
+    double beta_max    = -beta_spread*beta_min;
     double beta_spread = (beta_max - beta_min)/(beta_num - 1.0);
 
     double beta_vals[beta_num];
@@ -100,6 +102,11 @@ TEUCHOS_UNIT_TEST( FreeGasElasticSAlphaBetaFunction,
     for(int j = 0; j < beta_num; j++)
     {
         double beta_val = beta_vals[j];
+
+            if ( beta_val > -1.0*tol && beta_val < 1.0*tol )
+            {
+              beta_val = tol;
+            }
 
         double alpha_min = Utility::calculateAlphaMin(  plot_energies[i],
                                                         beta_val,
@@ -138,7 +145,9 @@ TEUCHOS_UNIT_TEST( FreeGasElasticSAlphaBetaFunction,
                                         plot_energies[i]  );
 
             double E_out = plot_energies[i] + (2.53010e-8)*beta_val;
-            double mu    = (plot_energies[i] + E_out - 0.999167*(2.53010e-8)*alpha_val)/( 2.0*sqrt( plot_energies[i]*E_out ) );
+            
+            // double mu    = (plot_energies[i] + E_out - 0.999167*(2.53010e-8)*alpha_val)/( 2.0*sqrt( plot_energies[i]*E_out ) );
+            double mu = (2.0/99)*k - 1;
 
             std::cout << plot_energies[i]  << " " << beta_val << " " << alpha_val << " " << value << " " << analytic_value << " " << E_out << " " << mu << std::endl;
         }

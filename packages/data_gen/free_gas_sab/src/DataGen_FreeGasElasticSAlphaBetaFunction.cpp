@@ -192,7 +192,6 @@ double FreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
 
   double alpha_min = Utility::calculateAlphaMin(E,beta,d_A,d_kT);
   double alpha_max = Utility::calculateAlphaMax(E,beta,d_A,d_kT);
-   
   double value;
   
   // Test for special condition (alpha = 0.0)
@@ -217,7 +216,8 @@ double FreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
       
       this->findLimits( alpha, beta, E, lower_limit, upper_limit );
       
-      try{
+      try
+      {
 	d_gkq_set.integrateAdaptively<15>( integrand,
 					  lower_limit,
 					  upper_limit,
@@ -226,25 +226,31 @@ double FreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
       }
       catch( Utility::IntegratorException& integration_exception )
       {
-	std::cerr << "Warning: difficulty computing S("
-		  << alpha << "," << beta << "," << E
-		  << ") using approximate form." << std::endl;
+        std::cerr << "Warning: difficulty computing S("
+            << alpha << "," << beta << "," << E
+            << ") using approximate form." << std::endl;
 	
-	// Approximate S(alpha,beta) function
-	value = d_average_zero_temp_elastic_cross_section/
-	  ((d_A+1)*(d_A+1)*sqrt(alpha))*
-	  exp( -(alpha + beta)*(alpha + beta)/(4*alpha) );
+        // Approximate S(alpha,beta) function
+        value = d_average_zero_temp_elastic_cross_section/
+          ((d_A+1)*(d_A+1)*sqrt(alpha))*
+          exp( -(alpha + beta)*(alpha + beta)/(4*alpha) );
 
-	if( value > std::numeric_limits<double>::max() )
-	  value = std::numeric_limits<double>::max();
+        if( value > std::numeric_limits<double>::max() )
+        {
+          value = std::numeric_limits<double>::max();
+        }
       }
     }
     else // alpha == 0.0
+    {
       value = std::numeric_limits<double>::infinity();
+    }
   }
   else
+  {
     value = 0.0;
-
+  }
+    
   // Make sure the value is valid
   testPostcondition( value == value );
   
@@ -301,14 +307,13 @@ void FreeGasElasticSAlphaBetaFunction::findLimits(
   
   double estimated_peak_mu_cm = (arg1 - arg2)/(arg1 + arg2);
 
-  
   double estimated_peak_exp_arg = calculateExpArgConst( alpha, beta, E ) +
     calculateExpArgMult( alpha )/(1.0 - estimated_peak_mu_cm) +
     calculateBesselArgMult( alpha, beta, E )*
     sqrt((1.0+estimated_peak_mu_cm)/(1.0-estimated_peak_mu_cm));
   
   // Check if the integrand can be expected to return non-zero values
-  if( estimated_peak_exp_arg > min_exp_arg )
+  if( true ) // estimated_peak_exp_arg > min_exp_arg )
   {
     search_grid.push_back( std::max( estimated_peak_mu_cm - 1e-6,
 				     -1.0 ) );

@@ -250,9 +250,11 @@ TEUCHOS_UNIT_TEST( FreeGasElasticSAlphaBetaFunction,
 TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 		   getIntegratedValue_alpha_beta_range )
 {
+
   // Calculate the integral value at energy 1e-6 MeV
   double beta_min = Utility::calculateBetaMin( 1e-6, 
 					       sab_function->getTemperature());
+
   double alpha_min = Utility::calculateAlphaMin( 
 					  1e-6,
 					  beta_min,
@@ -266,7 +268,6 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 					  sab_function->getTemperature() );
   
   double sab_value = (*sab_function)( alpha_min, beta_min, 1e-6 );
-  std::cout << sab_value << std::endl;
   
   double value = integratedCrossSectionValue( 0.999167,
 					      2.53010e-8,
@@ -286,8 +287,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( alpha_max, beta_min, 1e-6 );
-  std::cout << sab_value << std::endl;
-  
+
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
 				       alpha_max,
@@ -316,7 +316,6 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 					  sab_function->getTemperature() );
 
   sab_value = (*sab_function)( alpha_min, -15.0, 1e-6 );
-  std::cout << sab_value << std::endl;
   
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
@@ -336,7 +335,6 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( alpha_max, -15.0, 1e-6 );
-  std::cout << sab_value << std::endl;
   
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
@@ -353,7 +351,6 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( 15.0, -15.0, 1e-6 );
-  std::cout << sab_value << std::endl;
   
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
@@ -373,7 +370,6 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( 1e-9, 0.0, 1e-6 );
-  std::cout << sab_value << std::endl;
   
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
@@ -393,7 +389,6 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( 1e-12, 0.0, 1e-6 );
-  std::cout << sab_value << std::endl;
   
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
@@ -413,7 +408,6 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( 0.0, 0.0, 1e-6 );
-  std::cout << sab_value << std::endl;
   
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
@@ -433,7 +427,6 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( 450, 700, 1e-6 );
-  std::cout << sab_value << std::endl;
   
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
@@ -454,7 +447,6 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( 1000, 700, 1e-6 );
 
-  std::cout << value << std::endl;
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
 				       1000,

@@ -95,7 +95,7 @@ TEUCHOS_UNIT_TEST( KinematicHelpers, calculateBetaMin )
 
   double beta_min = Utility::calculateBetaMin( E, kT );
   
-  TEST_FLOATING_EQUALITY( beta_min, -E/kT, 1e-12 );
+  TEST_FLOATING_EQUALITY( beta_min, (1e-11-E)/kT, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

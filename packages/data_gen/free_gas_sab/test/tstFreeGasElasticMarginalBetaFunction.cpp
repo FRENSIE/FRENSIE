@@ -31,49 +31,39 @@ Teuchos::RCP<DataGen::FreeGasElasticMarginalBetaFunction> beta_function;
 // Check that the beta min bound can be returned
 TEUCHOS_UNIT_TEST( FreeGasElasticMarginalBetaFunction, getBetaMin )
 {
-  //beta_function->setIndependentVariables( 1e-6 );
+  beta_function->setIndependentVariables( 1e-7 );
 
-  // TEST_FLOATING_EQUALITY( beta_function->getBetaMin(),
-  // 			  -39.524129481048,
-  // 			  1e-12 );
+  TEST_FLOATING_EQUALITY( beta_function->getBetaMin(),
+  			  -3.95201770681001,
+     		  1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated
 TEUCHOS_UNIT_TEST( FreeGasElasticMarginalBetaFunction, evaluatePDF )
 {
-  //beta_function->setIndependentVariables( 1e-6 );
-  std::cout << "norm: " << beta_function->getNormalizationConstant()
-	    << std::endl;
+  
+  beta_function->setIndependentVariables( 1e-7 );
   double pdf_value = (*beta_function)( beta_function->getBetaMin() );
   
   TEST_EQUALITY_CONST( pdf_value, 0.0 );
   
   pdf_value = (*beta_function)( 0.0 );
-  //std::cout << pdf_value << std::endl;
   TEST_ASSERT( pdf_value > 0.0 );
 
-  pdf_value = (*beta_function)( 401.30 );
-  std::cout << pdf_value << std::endl;
+  pdf_value = (*beta_function)( -1*(beta_function->getBetaMin()) );
   TEST_ASSERT( pdf_value > 0.0 );
 
-  pdf_value = (*beta_function)( -beta_function->getBetaMin() );
-  //std::cout << pdf_value << std::endl;
-  TEST_ASSERT( pdf_value > 0.0 );
+  beta_function->setIndependentVariables( 1e-5 );
 
-  // beta_function->setIndependentVariables( 1e-3 );
-
-  // pdf_value = (*beta_function)( beta_function->getBetaMin() );
-  // //std::cout << beta_function->getNormalizationConstant() << std::endl;
-  // TEST_EQUALITY_CONST( pdf_value, 0.0 );
+  pdf_value = (*beta_function)( beta_function->getBetaMin() );
+  TEST_EQUALITY_CONST( pdf_value, 0.0 );
   
-  // pdf_value = (*beta_function)( 0.0 );
-  // //std::cout << pdf_value << std::endl;
-  // TEST_ASSERT( pdf_value > 0.0 );
+  pdf_value = (*beta_function)( 0.0 );
+  TEST_ASSERT( pdf_value > 0.0 );
 
-  // pdf_value = (*beta_function)( -beta_function->getBetaMin() );
-  // //std::cout << pdf_value << std::endl;
-  // TEST_ASSERT( pdf_value > 0.0 );
+  pdf_value = (*beta_function)( -1*(beta_function->getBetaMin()) );
+  TEST_ASSERT( pdf_value > 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -99,7 +89,7 @@ int main( int argc, char** argv )
 			  new Utility::UniformDistribution( 0.0, 20.0, 1.0 ) );
 
   // Initialize the scattering probability distribution
-  Teuchos::RCP<Utility::OneDDistribution> isotropic_distribution(
+  Teuchos::RCP<Utility::TabularOneDDistribution> isotropic_distribution(
 			  new Utility::UniformDistribution( -1.0, 1.0, 0.5 ) );
 
   // Initialize the scattering distribution
@@ -123,7 +113,7 @@ int main( int argc, char** argv )
 						    scattering_distribution,
 						    0.999167,
 						    2.53010e-8,
-						    1.0e-03 ) );
+						    1.0e-07 ) );
 
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );

@@ -81,7 +81,14 @@ double FreeGasElasticMarginalBetaFunction::operator()( const double beta )
   // Make sure the beta value is valid
   testPrecondition( beta >= d_beta_min );
 
-  return integratedSAlphaBetaFunction( beta )/d_norm_constant;
+  if (beta <= d_beta_min)
+  {
+    return 0.0;
+  }
+  else
+  {
+    return integratedSAlphaBetaFunction( beta )/d_norm_constant;
+  }
 }
 
 // Evaluate the marginal CDF
@@ -123,7 +130,7 @@ double FreeGasElasticMarginalBetaFunction::evaluateCDF( const double beta )
 void FreeGasElasticMarginalBetaFunction::updateCachedValues()
 {
   d_beta_min = Utility::calculateBetaMin( d_E, d_kT );
-  std::cout << "beta min: " << d_beta_min << std::endl;
+  //std::cout << "beta min: " << d_beta_min << std::endl;
   // Calculate the norm constant
   double norm_constant_error;
 
@@ -198,7 +205,7 @@ double FreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction(
 					    function_value_error );
   }
 
-  std::cout << beta << " " << function_value << std::endl;
+  // std::cout << beta << " " << function_value << std::endl;
 
   // Make sure the return value is valid
   testPostcondition(!Teuchos::ScalarTraits<double>::isnaninf(function_value));
