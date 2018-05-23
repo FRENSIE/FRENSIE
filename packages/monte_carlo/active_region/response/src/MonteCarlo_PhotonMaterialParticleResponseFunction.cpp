@@ -72,6 +72,17 @@ double PhotonMaterialParticleResponseFunction::evaluate(
   return d_evaluation_method( particle );
 }
 
+// Evaluate the photonuclear reaction cross section
+double PhotonMaterialParticleResponseFunction::evaluatePhotonuclearReactionCrossSection( const ParticleState& particle ) const
+{
+  // Make sure that the particle type is valid
+  testPrecondition( particle.getParticleType() == PHOTON );
+
+  return this->getMaterial().getMacroscopicReactionCrossSection(
+                                                     particle.getEnergy(),
+                                                     d_photonuclear_reaction );
+}
+
 // Get a description of the response function
 std::string PhotonMaterialParticleResponseFunction::description() const
 {
@@ -87,13 +98,13 @@ void PhotonMaterialParticleResponseFunction::setEvaluationMethod()
   if( d_use_photonuclear_reaction_type )
   {
     d_evaluation_method =
-      std::bind<double>( &PhotonMaterialParticleResponseFunction::evaluate,
+      std::bind<double>( &PhotonMaterialParticleResponseFunction::evaluatePhotonuclearReactionCrossSection,
                          std::cref( *this ),
                          std::placeholders::_1 );
   }
   else
   {
-    d_evaluation_method = std::bind<double>( &BaseType::evaluate,
+    d_evaluation_method = std::bind<double>( &PhotonMaterialParticleResponseFunction::evaluateImpl,
                                              std::cref( *this ),
                                              std::placeholders::_1 );
   }

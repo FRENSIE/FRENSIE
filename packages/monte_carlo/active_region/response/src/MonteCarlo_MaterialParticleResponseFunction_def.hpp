@@ -64,6 +64,16 @@ MaterialParticleResponseFunction<Material>::MaterialParticleResponseFunction(
 template<typename Material>
 double MaterialParticleResponseFunction<Material>::evaluate( const ParticleState& particle ) const
 {
+  return this->evaluateImpl( particle );
+}
+
+// Evaluate the response function at the desired phase space point
+template<typename Material>
+inline double MaterialParticleResponseFunction<Material>::evaluateImpl( const ParticleState& particle ) const
+{
+  // Make sure that the particle type is valid
+  testPrecondition( particle.getParticleType() == Material::ParticleStateType::type );
+  
   return d_material->getMacroscopicReactionCrossSection( particle.getEnergy(),
                                                          d_reaction );
 }

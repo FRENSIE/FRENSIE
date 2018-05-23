@@ -25,23 +25,48 @@
 #include "Utility_HDF5IArchive.hpp"
 #include "Utility_HDF5OArchive.hpp"
 #include "Utility_ToStringTraits.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
-// Initialize the default response function
-const std::shared_ptr<const ParticleResponse>
-ParticleResponse::s_default_response( new ParticleResponse( std::numeric_limits<size_t>::max(), "default" ) );
-
-// Basic Constructor
-ParticleResponse::ParticleResponse( const size_t id )
-  : ParticleResponse( id, std::string( "particle response " ) + Utility::toString( id ) )
-{ /* ... */ }
+//! The default particle response
+class DefaultParticleResponse : public ParticleResponse
+{
   
+public:
+
+  //! Constructor
+  DefaultParticleResponse()
+    : ParticleResponse( "f(particle) = 1" )
+  { /* ... */ }
+
+  //! Destructor
+  ~DefaultParticleResponse()
+  { /* ... */ }
+
+  //! Evaluate the response at the desired phase space point
+  double evaluate( const ParticleState& ) const final override
+  { return 1.0; }
+
+  //! Check if the response is spatially uniform
+  bool isSpatiallyUniform() const final override
+  { return true; }
+
+private:
+
+  // Serialize the particle response
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleResponse ); }
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+};
+
 // Constructor
-ParticleResponse::ParticleResponse( const size_t id, const std::string& name )
-  : d_id( id ),
-    d_name( name )
+ParticleResponse::ParticleResponse( const std::string& name )
+  : d_name( name )
 { 
   // Make sure that the name is valid
   testPrecondition( name.size() > 0 );
@@ -50,11 +75,12 @@ ParticleResponse::ParticleResponse( const size_t id, const std::string& name )
 // Destructor
 ParticleResponse::~ParticleResponse()
 { /* ... */ }
-  
-// Return the id
-size_t ParticleResponse::getId() const
+
+// Default response function (always evaluates to 1.0)
+std::shared_ptr<const ParticleResponse>
+ParticleResponse::getDefault()
 {
-  return d_id;
+  return std::make_shared<DefaultParticleResponse>();
 }
 
 // Return the name of the response function
@@ -74,13 +100,15 @@ bool ParticleResponse::isSpatiallyUniform() const
 {
   return true;
 }
-
-EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( ParticleResponse );
   
 } // end MonteCarlo namespace
 
-BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( ParticleResponse, MonteCarlo );
+BOOST_SERIALIZATION_CLASS_VERSION( DefaultParticleResponse, MonteCarlo, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( DefaultParticleResponse, MonteCarlo );
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( DefaultParticleResponse, MonteCarlo );
 
+EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleResponse );
+EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::DefaultParticleResponse );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleResponse.cpp

@@ -20,9 +20,9 @@
 #include <boost/serialization/shared_ptr.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_UniqueIdManager.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_TypeNameTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
@@ -33,36 +33,29 @@ class ParticleResponse
 
 public:
 
+  //! Constructor
+  ParticleResponse( const std::string& name );
+
   //! Destructor
   virtual ~ParticleResponse();
 
-  //! Default response function (always evaluates to 1.0)
-  static const std::shared_ptr<const ParticleResponse> getDefault();
-
-  //! Return the id
-  size_t getId() const;
+  //! Get the default response (always evaluates to 1.0)
+  static std::shared_ptr<const ParticleResponse> getDefault();
 
   //! Return the name of the response function
   const std::string& getName() const;
 
-  //! Evaluate the response function at the desired phase space point
-  virtual double evaluate( const ParticleState& particle ) const;
+  //! Evaluate the response at the desired phase space point
+  virtual double evaluate( const ParticleState& particle ) const = 0;
 
-  //! Check if the response function is spatially uniform
-  virtual bool isSpatiallyUniform() const;
+  //! Check if the response is spatially uniform
+  virtual bool isSpatiallyUniform() const = 0;
 
 protected:
 
   //! Default constructor
   ParticleResponse()
-    : d_id( 0 )
   { /* ... */ }
-
-  //! Basic Constructor
-  ParticleResponse( const size_t id );
-
-  //! Constructor
-  ParticleResponse( const size_t id, const std::string& name );
 
 private:
 
@@ -73,12 +66,6 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
-  // The default response
-  static const std::shared_ptr<const ParticleResponse> s_default_response;
-
-  // The response id
-  UniqueIdManager<ParticleResponse,size_t> d_id;
-
   // The response name
   std::string d_name;
 };
@@ -87,15 +74,30 @@ private:
 template<typename Archive>
 void ParticleResponse::serialize( Archive& ar, const unsigned version )
 {
-  ar & BOOST_SERIALIZATION_NVP( d_id );
   ar & BOOST_SERIALIZATION_NVP( d_name );
 }
   
 } // end MonteCarlo namespace
 
 BOOST_SERIALIZATION_CLASS_VERSION( ParticleResponse, MonteCarlo, 0 );
-BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ParticleResponse, MonteCarlo );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleResponse );
 EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleResponse );
+
+namespace Utility{
+
+//! Specialization of Utility::TypeNameTraits for MonteCarlo::ParticleResponse
+template<>
+struct TypeNameTraits<MonteCarlo::ParticleResponse>
+{
+  //! Check if the type has a specialization
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  { return "ParticleResponse"; }
+};
+  
+} // end Utility namespace
 
 #endif // end MONTE_CARLO_PARTICLE_RESPONSE_HPP
 
