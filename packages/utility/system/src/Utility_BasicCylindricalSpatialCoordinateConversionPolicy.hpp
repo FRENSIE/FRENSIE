@@ -53,21 +53,21 @@ public:
                                double& tertiary_spatial_coord ) const override;
 
 private:
-  
+
   // Save the policy to an archive
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  { 
+  {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( CylindricalSpatialCoordinateConversionPolicy );
   }
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 };
-  
+
 } // end Utility namespace
 
-BOOST_CLASS_VERSION( Utility::BasicCylindricalSpatialCoordinateConversionPolicy, 0 );
+BOOST_SERIALIZATION_CLASS_VERSION( BasicCylindricalSpatialCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( BasicCylindricalSpatialCoordinateConversionPolicy, Utility );
 EXTERN_EXPLICIT_SYSTEM_CLASS_SERIALIZE_INST( Utility::BasicCylindricalSpatialCoordinateConversionPolicy );
 

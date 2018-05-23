@@ -45,7 +45,7 @@ public:
 
   //! Convert the cartesian coordinates to the spatial coordinate system
   using SphericalSpatialCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates;
-  
+
   //! Convert the cartesian coordinates to the spatial coordinate system
   void convertFromCartesianSpatialCoordinates(
                                const double x_spatial_coord,
@@ -113,10 +113,10 @@ void GeneralSphericalSpatialCoordinateConversionPolicy::load( Archive& ar, const
   ar & boost::serialization::make_nvp( "d_origin", boost::serialization::make_array( d_origin, 3 ) );
   ar & boost::serialization::make_nvp( "d_axis", boost::serialization::make_array( d_axis, 3 ) );
 }
-  
+
 } // end Utility namespace
 
-BOOST_CLASS_VERSION( Utility::GeneralSphericalSpatialCoordinateConversionPolicy, 0 );
+BOOST_SERIALIZATION_CLASS_VERSION( GeneralSphericalSpatialCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( GeneralSphericalSpatialCoordinateConversionPolicy, Utility );
 EXTERN_EXPLICIT_SYSTEM_CLASS_SAVE_LOAD_INST( Utility::GeneralSphericalSpatialCoordinateConversionPolicy );
 

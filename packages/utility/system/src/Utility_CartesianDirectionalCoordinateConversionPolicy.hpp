@@ -52,7 +52,7 @@ public:
                                            double& output_x_direction,
                                            double& outout_y_direction,
                                            double& output_z_direction );
-                                          
+
 
   //! Constructor
   CartesianDirectionalCoordinateConversionPolicy()
@@ -85,7 +85,7 @@ private:
   // Save the policy to an archive
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  { 
+  {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( DirectionalCoordinateConversionPolicy );
   }
 
@@ -213,11 +213,11 @@ inline void CartesianDirectionalCoordinateConversionPolicy::normalizeLocalDirect
                    secondary_directional_coord,
                    tertiary_directional_coord );
 }
-  
+
 } // end Utility namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( Utility::CartesianDirectionalCoordinateConversionPolicy );
-BOOST_CLASS_VERSION( Utility::CartesianDirectionalCoordinateConversionPolicy, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( CartesianDirectionalCoordinateConversionPolicy, Utility );
+BOOST_SERIALIZATION_CLASS_VERSION( CartesianDirectionalCoordinateConversionPolicy, Utility, 0 );
 EXTERN_EXPLICIT_SYSTEM_CLASS_SERIALIZE_INST( Utility::CartesianDirectionalCoordinateConversionPolicy );
 
 #endif // end UTILITY_CARTESIAN_DIRECTIONAL_COORDINATE_CONVERSION_POLICY_HPP

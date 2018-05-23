@@ -106,10 +106,10 @@ void TranslationCylindricalSpatialCoordinateConversionPolicy::load( Archive& ar,
   // Load the local data
   ar & boost::serialization::make_nvp( "d_origin", boost::serialization::make_array( d_origin, 3 ) );
 }
-  
+
 } // end Utility namespace
 
-BOOST_CLASS_VERSION( Utility::TranslationCylindricalSpatialCoordinateConversionPolicy, 0 );
+BOOST_SERIALIZATION_CLASS_VERSION( TranslationCylindricalSpatialCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( TranslationCylindricalSpatialCoordinateConversionPolicy, Utility );
 EXTERN_EXPLICIT_SYSTEM_CLASS_SAVE_LOAD_INST( Utility::TranslationCylindricalSpatialCoordinateConversionPolicy );
 

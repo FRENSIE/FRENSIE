@@ -134,10 +134,10 @@ void RotationCartesianCoordinateConversionPolicy::load( Archive& ar, const unsig
   // Load the local data
   ar & boost::serialization::make_nvp( "d_axis", boost::serialization::make_array( d_axis, 3 ) );
 }
-  
+
 } // end Utility namespace
 
-BOOST_CLASS_VERSION( Utility::RotationCartesianCoordinateConversionPolicy, 0 );
+BOOST_SERIALIZATION_CLASS_VERSION( RotationCartesianCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( RotationCartesianCoordinateConversionPolicy, Utility );
 EXTERN_EXPLICIT_SYSTEM_CLASS_SAVE_LOAD_INST( Utility::RotationCartesianCoordinateConversionPolicy );
 

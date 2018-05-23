@@ -113,10 +113,10 @@ void GeneralCartesianSpatialCoordinateConversionPolicy::load( Archive& ar, const
   ar & boost::serialization::make_nvp( "d_origin", boost::serialization::make_array( d_origin, 3 ) );
   ar & boost::serialization::make_nvp( "d_axis", boost::serialization::make_array( d_axis, 3 ) );
 }
-  
+
 } // end Utility namespace
 
-BOOST_CLASS_VERSION( Utility::GeneralCartesianSpatialCoordinateConversionPolicy, 0 );
+BOOST_SERIALIZATION_CLASS_VERSION( GeneralCartesianSpatialCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( GeneralCartesianSpatialCoordinateConversionPolicy, Utility );
 EXTERN_EXPLICIT_SYSTEM_CLASS_SAVE_LOAD_INST( Utility::GeneralCartesianSpatialCoordinateConversionPolicy );
 

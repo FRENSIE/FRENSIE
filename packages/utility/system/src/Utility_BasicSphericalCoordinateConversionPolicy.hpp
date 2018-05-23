@@ -83,7 +83,7 @@ private:
   // Save the policy to an archive
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  { 
+  {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( SphericalSpatialCoordinateConversionPolicy );
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( SphericalDirectionalCoordinateConversionPolicy );
   }
@@ -91,10 +91,10 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 };
-  
+
 } // end Utility namespace
 
-BOOST_CLASS_VERSION( Utility::BasicSphericalCoordinateConversionPolicy, 0 );
+BOOST_SERIALIZATION_CLASS_VERSION( BasicSphericalCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( BasicSphericalCoordinateConversionPolicy, Utility );
 EXTERN_EXPLICIT_SYSTEM_CLASS_SERIALIZE_INST( Utility::BasicSphericalCoordinateConversionPolicy );
 

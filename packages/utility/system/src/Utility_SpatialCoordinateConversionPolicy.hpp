@@ -90,7 +90,7 @@ protected:
                           double& local_x_position,
                           double& local_y_position,
                           double& local_z_position );
-  
+
   //! Translate a local Cartesian position to a global Cartesian position
   static void translateLocalCartesianPositionToGlobalCartesianPosition(
                           const double local_x_position,
@@ -161,7 +161,7 @@ inline void SpatialCoordinateConversionPolicy::translateGlobalCartesianPositionT
   local_z_position =
     global_z_position - local_origin_wrt_global_coord_system[2];
 }
-  
+
 // Translate a local Cartesian position to a global Cartesian position
 inline void SpatialCoordinateConversionPolicy::translateLocalCartesianPositionToGlobalCartesianPosition(
                           const double local_x_position,
@@ -181,11 +181,11 @@ inline void SpatialCoordinateConversionPolicy::translateLocalCartesianPositionTo
   global_z_position =
     local_z_position + local_origin_wrt_global_coord_system[2];
 }
-  
+
 } // end Utility namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( Utility::SpatialCoordinateConversionPolicy );
-BOOST_CLASS_VERSION( Utility::SpatialCoordinateConversionPolicy, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( SpatialCoordinateConversionPolicy, Utility )
+BOOST_SERIALIZATION_CLASS_VERSION( SpatialCoordinateConversionPolicy, Utility, 0 );
 EXTERN_EXPLICIT_SYSTEM_CLASS_SERIALIZE_INST( Utility::SpatialCoordinateConversionPolicy );
 
 #endif // end UTILITY_SPATIAL_COORDINATE_CONVERSION_POLICY_HPP

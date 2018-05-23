@@ -75,7 +75,7 @@ private:
   // Save the policy to an archive
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  { 
+  {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( SpatialCoordinateConversionPolicy );
   }
 
@@ -183,8 +183,8 @@ inline bool CartesianSpatialCoordinateConversionPolicy::isTertiarySpatialCoordin
 
 } // end Utility namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( Utility::CartesianSpatialCoordinateConversionPolicy );
-BOOST_CLASS_VERSION( Utility::CartesianSpatialCoordinateConversionPolicy, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( CartesianSpatialCoordinateConversionPolicy, Utility );
+BOOST_SERIALIZATION_CLASS_VERSION( CartesianSpatialCoordinateConversionPolicy, Utility, 0 );
 EXTERN_EXPLICIT_SYSTEM_CLASS_SERIALIZE_INST( Utility::CartesianSpatialCoordinateConversionPolicy );
 
 #endif // end UTILITY_CARTESIAN_SPATIAL_COORDINATE_CONVERSION_POLICY_HPP

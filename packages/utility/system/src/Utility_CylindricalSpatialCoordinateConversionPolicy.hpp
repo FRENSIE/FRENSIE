@@ -79,7 +79,7 @@ private:
   // Save the policy to an archive
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  { 
+  {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( SpatialCoordinateConversionPolicy );
   }
 
@@ -240,8 +240,8 @@ inline bool CylindricalSpatialCoordinateConversionPolicy::isTertiarySpatialCoord
 
 } // end Utility namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( Utility::CylindricalSpatialCoordinateConversionPolicy );
-BOOST_CLASS_VERSION( Utility::CylindricalSpatialCoordinateConversionPolicy, 0 );
+BOOST_SERIALIZATION_CLASS_VERSION( CylindricalSpatialCoordinateConversionPolicy, Utility, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( CylindricalSpatialCoordinateConversionPolicy, Utility );
 EXTERN_EXPLICIT_SYSTEM_CLASS_SERIALIZE_INST( Utility::CylindricalSpatialCoordinateConversionPolicy );
 
 #endif // end UTILITY_CYLINDRICAL_SPATIAL_COORDINATE_CONVERSION_POLICY_HPP

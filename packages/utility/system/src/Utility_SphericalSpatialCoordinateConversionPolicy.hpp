@@ -30,7 +30,7 @@ protected:
   typedef SpatialCoordinateSystemTraits<SPHERICAL_SPATIAL_COORDINATE_SYSTEM> LocalCSTraits;
 
 public:
-  
+
   //! Convert the Cartesian coordinates to spherical coordinates
   static void convertFromCartesianPosition( const double cartesian_coords[3],
                                             double spherical_coords[3] );
@@ -80,7 +80,7 @@ private:
   // Save the policy to an archive
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  { 
+  {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( SpatialCoordinateConversionPolicy );
   }
 
@@ -93,7 +93,7 @@ private:
 //---------------------------------------------------------------------------//
 
 // Convert the Cartesian coordinates to spherical coordinates
-/*! \details The spherical coordinates are (r,theta,mu) where theta is 
+/*! \details The spherical coordinates are (r,theta,mu) where theta is
  * the azimuthal angle and mu is the polar angle cosine.
  */
 inline void SphericalSpatialCoordinateConversionPolicy::convertFromCartesianPosition(
@@ -135,7 +135,7 @@ inline void SphericalSpatialCoordinateConversionPolicy::convertFromCartesianPosi
                     z_spatial_coord );
   testPrecondition( GlobalCSTraits::tertiarySpatialDimensionUpperBound() >=
                     z_spatial_coord );
-                    
+
   // Compute the radius
   r_spatial_coord = sqrt( x_spatial_coord*x_spatial_coord +
                           y_spatial_coord*y_spatial_coord +
@@ -147,7 +147,7 @@ inline void SphericalSpatialCoordinateConversionPolicy::convertFromCartesianPosi
   // Shift the azimuthal angle to the range [0.0, 2*Pi]
   if( theta_spatial_coord < 0.0 )
     theta_spatial_coord += 2*Utility::PhysicalConstants::pi;
-  
+
   // Compute the polar angle cosine
   if( r_spatial_coord > 0.0 )
     mu_spatial_coord = z_spatial_coord/r_spatial_coord;
@@ -170,7 +170,7 @@ inline void SphericalSpatialCoordinateConversionPolicy::convertFromCartesianPosi
 }
 
 // Convert the spherical coordinates to Cartesian coordinates
-/*! \details The spherical coordinates are (r,theta,mu) where theta is 
+/*! \details The spherical coordinates are (r,theta,mu) where theta is
  * the azimuthal angle and mu is the polar angle cosine.
  */
 inline void SphericalSpatialCoordinateConversionPolicy::convertToCartesianPosition(
@@ -203,10 +203,10 @@ inline void SphericalSpatialCoordinateConversionPolicy::convertToCartesianPositi
   // Make sure that the polar angle cosine is valid
   testPrecondition( mu_spatial_coord >= LocalCSTraits::tertiarySpatialDimensionLowerBound() );
   testPrecondition( mu_spatial_coord <= LocalCSTraits::tertiarySpatialDimensionUpperBound() );
-  
+
   const double polar_angle_sine =
     sqrt( std::max(0.0, 1.0-mu_spatial_coord*mu_spatial_coord) );
-  
+
   // Compute the x coordinate
   x_spatial_coord = r_spatial_coord*cos(theta_spatial_coord)*polar_angle_sine;
 
@@ -262,11 +262,11 @@ inline bool SphericalSpatialCoordinateConversionPolicy::isTertiarySpatialCoordin
   return coordinate >= LocalCSTraits::tertiarySpatialDimensionLowerBound() &&
     coordinate <= LocalCSTraits::tertiarySpatialDimensionUpperBound();
 }
-  
+
 } // end Utility namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( Utility::SphericalSpatialCoordinateConversionPolicy );
-BOOST_CLASS_VERSION( Utility::SphericalSpatialCoordinateConversionPolicy, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( SphericalSpatialCoordinateConversionPolicy, Utility );
+BOOST_SERIALIZATION_CLASS_VERSION( SphericalSpatialCoordinateConversionPolicy, Utility, 0 );
 EXTERN_EXPLICIT_SYSTEM_CLASS_SERIALIZE_INST( Utility::SphericalSpatialCoordinateConversionPolicy );
 
 #endif // end UTILITY_SPHERICAL_SPATIAL_COORDINATE_CONVERSION_POLICY_HPP

@@ -83,7 +83,7 @@ private:
   // Save the policy to an archive
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  { 
+  {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( CartesianSpatialCoordinateConversionPolicy );
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( CartesianDirectionalCoordinateConversionPolicy );
   }
@@ -94,7 +94,7 @@ private:
 
 } // end Utility namespace
 
-BOOST_CLASS_VERSION( Utility::BasicCartesianCoordinateConversionPolicy, 0 );
+BOOST_SERIALIZATION_CLASS_VERSION( BasicCartesianCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( BasicCartesianCoordinateConversionPolicy, Utility );
 EXTERN_EXPLICIT_SYSTEM_CLASS_SERIALIZE_INST( Utility::BasicCartesianCoordinateConversionPolicy );
 
