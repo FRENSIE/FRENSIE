@@ -14,15 +14,15 @@ namespace MonteCarlo{
 
 // Constructor
 ParticleLeavingCellEventLocalDispatcher::ParticleLeavingCellEventLocalDispatcher(
-		     const Geometry::ModuleTraits::InternalCellHandle cell_id )
-  : ParticleEventLocalDispatcher<Geometry::ModuleTraits::InternalCellHandle,
+		     const Geometry::Model::InternalCellHandle cell_id )
+  : ParticleEventLocalDispatcher<Geometry::Model::InternalCellHandle,
                                  ParticleLeavingCellEventObserver>( cell_id )
 { /* ... */ }
 
 // Dispatch the new event to the observers
 void ParticleLeavingCellEventLocalDispatcher::dispatchParticleLeavingCellEvent(
 	        const ParticleState& particle,
-	        const Geometry::ModuleTraits::InternalCellHandle cell_leaving )
+	        const Geometry::Model::InternalCellHandle cell_leaving )
 {
   // Make sure the cell being entered is valid
   testPrecondition( cell_leaving == this->getId() );

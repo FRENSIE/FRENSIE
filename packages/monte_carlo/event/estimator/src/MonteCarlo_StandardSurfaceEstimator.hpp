@@ -15,25 +15,25 @@
 // FRENSIE Includes
 #include "MonteCarlo_StandardEntityEstimator.hpp"
 #include "MonteCarlo_ParticleCrossingSurfaceEventObserver.hpp"
-#include "Geometry_ModuleTraits.hpp"
+#include "Geometry_Model.hpp"
 
 namespace MonteCarlo{
 
 //! The standard surface estimator base class
-class StandardSurfaceEstimator : public StandardEntityEstimator<Geometry::ModuleTraits::InternalSurfaceHandle>,
+class StandardSurfaceEstimator : public StandardEntityEstimator<Geometry::Model::InternalSurfaceHandle>,
 				 public ParticleCrossingSurfaceEventObserver
 {
 
 private:
 
   // Typedef for the base estimator type
-  typedef StandardEntityEstimator<Geometry::ModuleTraits::InternalSurfaceHandle>
+  typedef StandardEntityEstimator<Geometry::Model::InternalSurfaceHandle>
   BaseEstimatorType;
 
 public:
 
   //! Typedef for the surface id type
-  typedef Geometry::ModuleTraits::InternalSurfaceHandle surfaceIdType;
+  typedef Geometry::Model::InternalSurfaceHandle surfaceIdType;
 
   //! Typedef for event tags used for quick dispatcher registering
   typedef boost::mpl::vector<ParticleCrossingSurfaceEventObserver::EventTag>
@@ -58,10 +58,6 @@ public:
   //! Destructor
   virtual ~StandardSurfaceEstimator()
   { /* ... */ }
-
-  //! Export the estimator data
-  void exportData( const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
-		   const bool process_data ) const override;
 
 protected:
 

@@ -19,13 +19,13 @@
 #include <boost/unordered_set.hpp>
 
 // Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ParameterList.hpp>
+// #include <Teuchos_ParameterList.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleTracker.hpp"
 #include "MonteCarlo_EventHandler.hpp"
 #include "MonteCarlo_ResponseFunction.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 

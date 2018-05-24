@@ -17,9 +17,6 @@
 // Boost Includes
 #include <boost/unordered_map.hpp>
 
-// Trilinos Includes
-#include <Teuchos_ParameterList.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_EventHandler.hpp"
 #include "MonteCarlo_ResponseFunction.hpp"

@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "MonteCarlo_ParticleState.hpp"
-#include "Geometry_ModuleTraits.hpp"
+#include "Geometry_Model.hpp"
 #include "Utility_Vector.hpp"
 
 /*! \defgroup particle_entering_cell_event Particle Entering Cell Event
@@ -49,7 +49,7 @@ public:
   //! Update the observer
   virtual void updateFromParticleEnteringCellEvent(
 	  const ParticleState& particle,
-	  const Geometry::ModuleTraits::InternalCellHandle cell_entering ) = 0;
+	  const Geometry::Model::InternalCellHandle cell_entering ) = 0;
 };
 
 } // end MonteCarlo namespace

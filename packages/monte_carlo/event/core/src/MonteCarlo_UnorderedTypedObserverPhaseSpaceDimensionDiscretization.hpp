@@ -67,10 +67,6 @@ public:
   //! Print the dimension discretization
   void print( std::ostream& os ) const override;
 
-  //! Export the dimension discretization
-  void exportData( const ParticleHistoryObserver::idType estimator_id,
-                   EstimatorHDF5FileHandler& hdf5_file ) const override;
-
 protected:
 
   //! Check if the value is contained in the discretization

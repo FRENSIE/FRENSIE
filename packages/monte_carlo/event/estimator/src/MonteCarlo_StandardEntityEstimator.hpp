@@ -82,11 +82,6 @@ public:
 	    const std::shared_ptr<const Utility::Communicator<unsigned long long> >& comm,
 	    const int root_process ) override;
 
-  //! Export the estimator data
-  virtual void exportData(
-                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
-                    const bool process_data ) const override;
-
 protected:
 
   //! Constructor with no entities (for mesh estimators)

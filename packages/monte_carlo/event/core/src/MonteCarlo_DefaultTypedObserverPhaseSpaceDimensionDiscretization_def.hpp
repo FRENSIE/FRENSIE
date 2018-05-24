@@ -94,16 +94,6 @@ void GeneralEstimatorDimensionDiscretization<dimension>::calculateBinIndicesOfRa
   this->calculateBinIndicesOfRange( range_start, range_end, bin_indices_and_weights );
 }
 
-// Export the bin boundaries
-template<PhaseSpaceDimension dimension>
-void GeneralEstimatorDimensionDiscretization<dimension>::exportData(
-                                    const unsigned estimator_id,
-                                    EstimatorHDF5FileHandler& hdf5_file ) const
-{
-  hdf5_file.setEstimatorBinBoundaries<dimension>( estimator_id,
-						  this->getBinBoundaries() );
-}
-
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_DEF_HPP

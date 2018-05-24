@@ -75,10 +75,6 @@ public:
 						 const double start_point[3],
 						 const double end_point[3] );
 
-  //! Export the estimator data
-  void exportData( const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
-                   const bool process_data ) const;
-
   //! Print the estimator data
   void printSummary( std::ostream& os ) const;
 

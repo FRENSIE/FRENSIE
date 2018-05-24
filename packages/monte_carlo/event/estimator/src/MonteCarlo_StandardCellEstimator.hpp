@@ -11,24 +11,24 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardEntityEstimator.hpp"
-#include "Geometry_ModuleTraits.hpp"
+#include "Geometry_Model.hpp"
 
 namespace MonteCarlo{
 
 //! The standard cell estimator base class
-class StandardCellEstimator : public StandardEntityEstimator<Geometry::ModuleTraits::InternalCellHandle>
+class StandardCellEstimator : public StandardEntityEstimator<Geometry::Model::InternalCellHandle>
 {
 
 private:
 
   // Typedef for the base estimator type
-  typedef StandardEntityEstimator<Geometry::ModuleTraits::InternalCellHandle>
+  typedef StandardEntityEstimator<Geometry::Model::InternalCellHandle>
   BaseEstimatorType;
 
 public:
 
   //! Typedef for the cell id type
-  typedef Geometry::ModuleTraits::InternalCellHandle cellIdType;
+  typedef Geometry::Model::InternalCellHandle cellIdType;
 
   //! Constructor
   template<template<typename,typename...> class STLCompliantArrayA,
@@ -41,10 +41,6 @@ public:
   //! Destructor
   virtual ~StandardCellEstimator()
   { /* ... */ }
-
-  //! Export the estimator data
-  void exportData( const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
-		   const bool process_data ) const override;
 
 protected:
 

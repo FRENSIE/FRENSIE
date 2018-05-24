@@ -26,7 +26,7 @@
 #include "MonteCarlo_ParticleSubtrackEndingGlobalEventHandler.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ModuleTraits.hpp"
-#include "Geometry_ModuleTraits.hpp"
+#include "Geometry_Model.hpp"
 #include "Utility_HDF5FileHandler.hpp"
 #include "Utility_Vector.hpp"
 

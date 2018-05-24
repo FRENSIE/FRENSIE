@@ -13,21 +13,6 @@
 
 namespace MonteCarlo{
 
-// Export the estimator data
-void StandardCellEstimator::exportData(
-                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
-                    const bool process_data ) const
-{
-  // Export the lower level data first
-  BaseEstimatorType::exportData( hdf5_file, process_data );
-
-  // Open the estimator hdf5 file
-  EstimatorHDF5FileHandler estimator_hdf5_file( hdf5_file );
-
-  // Set the estimator as a cell estimator
-  estimator_hdf5_file.setCellEstimator( this->getId() );
-}
-
 // Assign discretization to an estimator dimension
 /*! \details The MonteCarlo::OBSERVER_COSINE_DIMENSION cannot be discretized in
  * standard cell estimators.

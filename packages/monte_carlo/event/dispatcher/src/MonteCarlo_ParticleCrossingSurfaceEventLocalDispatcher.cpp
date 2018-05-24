@@ -14,8 +14,8 @@ namespace MonteCarlo{
 
 // Constructor
 ParticleCrossingSurfaceEventLocalDispatcher::ParticleCrossingSurfaceEventLocalDispatcher(
-	       const Geometry::ModuleTraits::InternalSurfaceHandle surface_id )
-  : ParticleEventLocalDispatcher<Geometry::ModuleTraits::InternalSurfaceHandle,
+	       const Geometry::Model::InternalSurfaceHandle surface_id )
+  : ParticleEventLocalDispatcher<Geometry::Model::InternalSurfaceHandle,
                                  ParticleCrossingSurfaceEventObserver>( surface_id )
 { /* ... */ }
 
@@ -23,7 +23,7 @@ ParticleCrossingSurfaceEventLocalDispatcher::ParticleCrossingSurfaceEventLocalDi
 void
 ParticleCrossingSurfaceEventLocalDispatcher::dispatchParticleCrossingSurfaceEvent(
 	  const ParticleState& particle,
-	  const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,
+	  const Geometry::Model::InternalSurfaceHandle surface_crossing,
 	  const double angle_cosine )
 {
   // Make sure the surface being crossed is valid

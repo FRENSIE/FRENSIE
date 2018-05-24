@@ -42,7 +42,7 @@ public:
   //! Add current history estimator contribution
   void updateFromParticleCrossingSurfaceEvent(
 	  const ParticleState& particle,
-	  const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,
+	  const Geometry::Model::InternalSurfaceHandle surface_crossing,
 	  const double angle_cosine ) override;
 
   //! Print the estimator data summary

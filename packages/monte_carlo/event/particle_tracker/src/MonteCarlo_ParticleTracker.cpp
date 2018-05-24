@@ -271,25 +271,6 @@ void ParticleTracker::resetParticleTrackData()
   d_particle_reset[thread_id] = true;
 }
 
-void ParticleTracker::exportData(  const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
-                                   const bool process_data ) const
-{
-  // Make sure only the root process calls this function
-  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
-
-  ParticleTrackerHDF5FileHandler ptrac_hdf5_file( hdf5_file );
-
-  ptrac_hdf5_file.setParticleTrackerData( d_history_number_map );
-}
-
-void ParticleTracker::enableThreadSupport( const unsigned num_threads )
-{
-  for( unsigned i = 1u; i < num_threads; ++i )
-  {
-    this->initialize( i );
-  }
-}
-
 // Get the x position data
 void ParticleTracker::getXPositionData( std::vector< double >& array )
 {
@@ -417,7 +398,7 @@ void ParticleTracker::unpackDataFromString(
 
 // Reduce data
 void ParticleTracker::reduceData(
-	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+	    const std::shared_ptr<const Utility::Communicator<unsigned long long> >& comm,
 	    const int root_process )
 {
   // Make sure only the root process calls this function
@@ -438,7 +419,7 @@ void ParticleTracker::reduceData(
 
       while( nodes_reporting < comm->getSize() )
       {
-        Teuchos::RCP<Teuchos::CommStatus<unsigned long long> > status;
+        std::shared_ptr<Utility::Communicator::Status<unsigned long long> > status;
 
         // Probe for incoming sends to determine message size
         try{
@@ -465,10 +446,10 @@ void ParticleTracker::reduceData(
 
         // Get the message
         try{
-          Teuchos::receive( *comm,
-                            status->getSourceRank(),
-                            (unsigned long long)packaged_data.size(),
-                            &packaged_data[0] );
+          Utility::Communicator::Status::receive( *comm,
+                                                  status->getSourceRank(),
+                                                  (unsigned long long)packaged_data.size(),
+                                                  &packaged_data[0] );
         }
         EXCEPTION_CATCH_RETHROW( std::runtime_error,
                                  "Error: Root process (" << root_process <<
@@ -487,10 +468,10 @@ void ParticleTracker::reduceData(
       std::string packaged_data = this->packDataInString();
 
       try{
-        Teuchos::send( *comm,
-                       (unsigned long long)packaged_data.size(),
-                       &packaged_data[0],
-                       root_process );
+        Utility::Communicator::Request::isend( *comm,
+                                               root_process,
+                                               (unsigned long long)packaged_data.size(),
+                                               &packaged_data[0]);
       }
       EXCEPTION_CATCH_RETHROW( std::runtime_error,
                                "Error: Process " << comm->getRank() <<

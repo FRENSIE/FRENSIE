@@ -17,21 +17,21 @@
 #include "MonteCarlo_ParticleCrossingSurfaceEventObserver.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ModuleTraits.hpp"
-#include "Geometry_ModuleTraits.hpp"
+#include "Geometry_Model.hpp"
 
 namespace MonteCarlo{
 
 /*! The particle crossing surface event dispatcher class
  * \ingroup particle_crossing_surface_event
  */
-class ParticleCrossingSurfaceEventLocalDispatcher : public ParticleEventLocalDispatcher<Geometry::ModuleTraits::InternalSurfaceHandle,ParticleCrossingSurfaceEventObserver>
+class ParticleCrossingSurfaceEventLocalDispatcher : public ParticleEventLocalDispatcher<Geometry::Model::InternalSurfaceHandle,ParticleCrossingSurfaceEventObserver>
 {
 
 public:
 
   //! Constructor
   ParticleCrossingSurfaceEventLocalDispatcher(
-	      const Geometry::ModuleTraits::InternalSurfaceHandle surface_id );
+	      const Geometry::Model::InternalSurfaceHandle surface_id );
 
   //! Destructor
   ~ParticleCrossingSurfaceEventLocalDispatcher()
@@ -40,7 +40,7 @@ public:
   //! Dispatch the new event to the observers
   void dispatchParticleCrossingSurfaceEvent(
 	  const ParticleState& particle,
-	  const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,
+	  const Geometry::Model::InternalSurfaceHandle surface_crossing,
 	  const double angle_cosine );
 };
 

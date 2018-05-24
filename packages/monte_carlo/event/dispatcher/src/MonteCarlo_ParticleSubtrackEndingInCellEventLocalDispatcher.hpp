@@ -17,21 +17,21 @@
 #include "MonteCarlo_ParticleSubtrackEndingInCellEventObserver.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ModuleTraits.hpp"
-#include "Geometry_ModuleTraits.hpp"
+#include "Geometry_Model.hpp"
 
 namespace MonteCarlo{
 
 /*! The particle subtrack ending in cell event dispatcher class
  * \ingroup particle_subtrack_ending_in_cell_event
  */
-class ParticleSubtrackEndingInCellEventLocalDispatcher : public ParticleEventLocalDispatcher<Geometry::ModuleTraits::InternalCellHandle,ParticleSubtrackEndingInCellEventObserver>
+class ParticleSubtrackEndingInCellEventLocalDispatcher : public ParticleEventLocalDispatcher<Geometry::Model::InternalCellHandle,ParticleSubtrackEndingInCellEventObserver>
 {
 
 public:
 
   //! Constructor
   ParticleSubtrackEndingInCellEventLocalDispatcher(
-		    const Geometry::ModuleTraits::InternalCellHandle cell_id );
+		    const Geometry::Model::InternalCellHandle cell_id );
 
   //! Destructor
   ~ParticleSubtrackEndingInCellEventLocalDispatcher()
@@ -40,7 +40,7 @@ public:
   //! Dispatch the new event to the observers
   void dispatchParticleSubtrackEndingInCellEvent(
 	     const ParticleState& particle,
-	     const Geometry::ModuleTraits::InternalCellHandle cell_of_subtrack,
+	     const Geometry::Model::InternalCellHandle cell_of_subtrack,
 	     const double track_length );
 };
 

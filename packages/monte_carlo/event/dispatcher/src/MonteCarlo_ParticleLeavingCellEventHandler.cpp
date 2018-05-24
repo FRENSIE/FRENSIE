@@ -33,7 +33,7 @@ ParticleLeavingCellEventHandler::getParticleLeavingCellEventDispatcher() const
 // Update the observers from a particle leaving cell event
 void ParticleLeavingCellEventHandler::updateObserversFromParticleLeavingCellEvent(
                const ParticleState& particle,
-               const Geometry::ModuleTraits::InternalCellHandle cell_leaving )
+               const Geometry::Model::InternalCellHandle cell_leaving )
 {
   d_particle_leaving_cell_event_dispatcher.dispatchParticleLeavingCellEvent(
                                                                 particle,

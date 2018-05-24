@@ -50,40 +50,6 @@ void Estimator::enableThreadSupport( const unsigned num_threads )
   d_has_uncommitted_history_contribution.resize( num_threads, false );
 }
 
-// Export the estimator data
-void Estimator::exportData(
-                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
-                    const bool process_data ) const
-{
-  // Make sure only the master thread calls this function
-  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
-  // Make sure this estimator has not been exported yet
-  remember( EstimatorHDF5FileHandler test_estimator_hdf5_file( hdf5_file ) );
-  testPrecondition(
-               !test_estimator_hdf5_file.doesEstimatorExist( this->getId() ) );
-
-  // Open the estimator hdf5 file
-  EstimatorHDF5FileHandler estimator_hdf5_file( hdf5_file );
-  
-  // Export the estimator multiplier
-  estimator_hdf5_file.setEstimatorMultiplier( this->getId(), d_multiplier );
-
-  // Export the response function ordering
-  {
-    std::vector<size_t> response_function_ordering(
-						 d_response_functions.size() );
-    for( size_t i = 0; i < d_response_functions.size(); ++i )
-      response_function_ordering[i] = d_response_functions[i]->getId();
-
-    estimator_hdf5_file.setEstimatorResponseFunctionOrdering(
-						  this->getId(),
-						  response_function_ordering );
-  }
-
-  // Export the dimension discretization
-  d_dimension_discretization.export( this->getId(), estimator_hdf5_file );
-}
-
 // Log a summary of the data
 void Estimator::logSummary() const
 {

@@ -39,10 +39,6 @@ public:
   //! Print the dimension discretization
   void print( std::ostream& os ) const override;
 
-  //! Export the bin boundaries
-  void exportData( const ParticleHistoryObserver::idType estimator_id,
-                   EstimatorHDF5FileHandler& hdf5_file ) const override;
-
 protected:
 
   //! Return the boundaries array

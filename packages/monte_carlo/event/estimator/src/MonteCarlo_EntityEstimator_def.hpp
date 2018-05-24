@@ -18,7 +18,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
-#include "Geometry_ModuleTraits.hpp"
+#include "Geometry_Model.hpp"
 #include "Utility_CommHelpers.hpp"
 #include "Utility_OpenMPProperties.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -29,7 +29,7 @@
 namespace MonteCarlo{
 
 // Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( EntityEstimator<Geometry::ModuleTraits::InternalCellHandle> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( EntityEstimator<Geometry::Model::InternalCellHandle> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( EntityEstimator<moab::EntityHandle> );
 
 // Constructor (for flux estimators)
@@ -197,96 +197,6 @@ void EntityEstimator<EntityId>::reduceData(
                            "unable to perform mpi reduction in entity "
                            "estimator " << this->getId() << " for total bin "
                            "data!" );
-}
-
-// Export the estimator data
-template<typename EntityId>
-void EntityEstimator<EntityId>::exportData(
-                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
-                    const bool process_data ) const
-{
-  // Export the low level estimator data
-  Estimator::exportData( hdf5_file, process_data );
-
-  // Open the estimator hdf5 file
-  EstimatorHDF5FileHandler estimator_hdf5_file( hdf5_file );
-
-  // Export the Entity norm constants
-  estimator_hdf5_file.setEstimatorEntities( this->getId(),
-                                            d_entity_norm_constants_map );
-
-  // Export the total norm constant
-  estimator_hdf5_file.setEstimatorTotalNormConstant( this->getId(),
-                                                     d_total_norm_constant );
-
-  // Export all of the estimator data
-  {
-    typename EntityEstimatorMomentsCollectionMap::const_iterator entity_data;
-    unsigned i;
-
-    for( i = 0u, entity_data = d_entity_estimator_moments_map.begin();
-	 entity_data != d_entity_estimator_moments_map.end();
-	 ++entity_data, ++i )
-    {
-      const double norm_constant =
-	d_entity_norm_constants_map.find( entity_data->first )->second;
-
-      // Export the entity norm constant
-      estimator_hdf5_file.setEntityNormConstant( this->getId(),
-                                                 entity_data->first,
-                                                 norm_constant );
-
-      // Export the raw entity moment data
-      estimator_hdf5_file.setRawEstimatorEntityBinData( this->getId(),
-                                                        entity_data->first,
-                                                        entity_data->second );
-
-      if( process_data )
-      {
-        std::vector<Utility::Pair<double,double> > processed_data(
-						  entity_data->second.size() );
-
-	for( unsigned j = 0; j < entity_data->second.size(); ++j )
-	{
-
-	  this->processMoments( entity_data->second,
-                                j,
-				norm_constant,
-				Utility::get<0>( processed_data[j] ),
-				Utility::get<1>( processed_data[j] ) );
-	}
-
-	estimator_hdf5_file.setProcessedEstimatorEntityBinData(
-                                                            this->getId(),
-                                                            entity_data->first,
-                                                            processed_data );
-      }
-    }
-  }
-
-  // Export the total bin data
-  estimator_hdf5_file.setRawEstimatorTotalBinData( this->getId(),
-                                                   d_estimator_total_bin_data );
-
-  // Export the processed total bin data
-  if( process_data )
-  {
-    std::vector<Utility::Pair<double,double> > processed_data(
-					   d_estimator_total_bin_data.size() );
-
-    for( unsigned i = 0; i < processed_data.size(); ++i )
-    {
-      this->processMoments( d_estimator_total_bin_data,
-                            i,
-			    d_total_norm_constant,
-			    Utility::get<0>( processed_data[i] ),
-			    Utility::get<1>( processed_data[i] ) );
-    }
-
-
-    estimator_hdf5_file.setProcessedEstimatorTotalBinData( this->getId(),
-                                                           processed_data );
-  }
 }
 
 // Assign entities

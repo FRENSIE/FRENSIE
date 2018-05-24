@@ -37,16 +37,6 @@ void OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::print( st
     os << d_dimension_bin_boundaries[i] << " ";
 }
 
-// Export the bin boundaries
-template<ObserverPhaseSpaceDimension dimension>
-void OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::exportData(
-                            const ParticleHistoryObserver::idType estimator_id,
-                            EstimatorHDF5FileHandler& hdf5_file ) const
-{
-  hdf5_file.setEstimatorBinBoundaries<dimension>( estimator_id,
-                                                  this->getBinBoundaries() );
-}
-
 // Return the boundaries array
 template<ObserverPhaseSpaceDimension dimension>
 auto OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::getBinBoundaries() const -> const BinBoundaryArray&

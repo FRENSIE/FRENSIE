@@ -40,14 +40,14 @@ public:
   //! Dispatch the particle entering cell event to the observers
   void dispatchParticleEnteringCellEvent(
 	      const ParticleState& particle,
-	      const Geometry::ModuleTraits::InternalCellHandle cell_entering );
+	      const Geometry::Model::InternalCellHandle cell_entering );
 };
 
 // Dispatch the particle entering cell event to the observers
 inline void
 ParticleEnteringCellEventDispatcher::dispatchParticleEnteringCellEvent(
 	       const ParticleState& particle,
-	       const Geometry::ModuleTraits::InternalCellHandle cell_entering )
+	       const Geometry::Model::InternalCellHandle cell_entering )
 {
   DispatcherMap::iterator it = this->dispatcher_map().find( cell_entering );
 

@@ -14,9 +14,6 @@
 #include <sstream>
 #include <memory>
 
-// Trilinos Includes
-// #include <Teuchos_RCP.hpp> Not sure which to use yet. Try shared pointer
-
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "Utility_HDF5FileHandler.hpp"
@@ -69,11 +66,6 @@ public:
   virtual void reduceData(
             const std::shared_ptr<const Utility::Communicator<unsigned long long> >& comm,
             const int root_process ) = 0;
-
-  //! Export the estimator data
-  virtual void exportData(
-                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
-                    const bool process_data ) const = 0;
 
   //! Print a summary of the data
   virtual void printSummary( std::ostream& os ) const = 0;

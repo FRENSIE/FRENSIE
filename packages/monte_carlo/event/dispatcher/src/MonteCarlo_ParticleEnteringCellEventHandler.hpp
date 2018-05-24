@@ -48,7 +48,7 @@ public:
   //! Update the observers from a particle entering cell event
   void updateObserversFromParticleEnteringCellEvent(
               const ParticleState& particle,
-              const Geometry::ModuleTraits::InternalCellHandle cell_entering );
+              const Geometry::Model::InternalCellHandle cell_entering );
 
 protected:
 

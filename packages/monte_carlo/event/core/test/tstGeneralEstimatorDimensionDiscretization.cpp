@@ -9,11 +9,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <sstream>
-
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_GeneralEstimatorDimensionDiscretization.hpp"
@@ -22,6 +18,8 @@
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "MonteCarlo_EventUnitTestHarnessExtensions.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_UnitTestHarness.hpp"
 
 //---------------------------------------------------------------------------//
 // Instantiation Macros.
@@ -40,13 +38,13 @@
 //---------------------------------------------------------------------------//
 // Initialize an estimator dimension discretization pointer
 template<MonteCarlo::PhaseSpaceDimension dimension>
-void initialize( Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization>&
+void initialize( std::shared_ptr<MonteCarlo::EstimatorDimensionDiscretization>&
 		 dimension_discretization,
 		 const bool add_discrete_lines )
 {
   typedef MonteCarlo::PhaseSpaceDimensionTraits<dimension> EPSDT;
 
-  Teuchos::Array<typename EPSDT::dimensionType> discretization( 4 );
+  std::vector<typename EPSDT::dimensionType> discretization( 4 );
 
   if( add_discrete_lines )
     discretization.resize( 9 );
@@ -73,13 +71,13 @@ void initialize( Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization>&
 // Initialize an estimator dimension discretization point
 template<>
 void initialize<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
-			Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization>&
+			std::shared_ptr<MonteCarlo::EstimatorDimensionDiscretization>&
 			dimension_discretization,
 			const bool )
 {
   typedef MonteCarlo::PhaseSpaceDimensionTraits<MonteCarlo::COLLISION_NUMBER_DIMENSION> EPSDT;
 
-  Teuchos::Array<typename EPSDT::dimensionType> discretization( 3 );
+  std::vector<typename EPSDT::dimensionType> discretization( 3 );
 
   discretization[0] = 0;
   discretization[1] = 1;
@@ -96,7 +94,7 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
 				   getDimension,
 				   dimension )
 {
-  Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization> discretized_dimension;
+  std::shared_ptr<MonteCarlo::EstimatorDimensionDiscretization> discretized_dimension;
 
   initialize<dimension>( discretized_dimension, false );
 
@@ -113,7 +111,7 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
 				   getNumberOfBins,
 				   dimension )
 {
-  Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization> discretized_dimension;
+  std::shared_ptr<MonteCarlo::EstimatorDimensionDiscretization> discretized_dimension;
 
   initialize<dimension>( discretized_dimension, false );
 
@@ -129,7 +127,7 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
 				   isValueInDiscretization,
 				   dimension )
 {
-  Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization> discretized_dimension;
+  std::shared_ptr<MonteCarlo::EstimatorDimensionDiscretization> discretized_dimension;
 
   initialize<dimension>( discretized_dimension, false );
 
@@ -144,13 +142,13 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
     value_3 = 1e-3;
     value_4 = 1e-2;
     TEST_ASSERT( !discretized_dimension->isValueInDiscretization(
-						   Teuchos::any( value_1 ) ) );
+						   boost::any( value_1 ) ) );
     TEST_ASSERT( discretized_dimension->isValueInDiscretization(
-						   Teuchos::any( value_2 ) ) );
+						   boost::any( value_2 ) ) );
     TEST_ASSERT( discretized_dimension->isValueInDiscretization(
-						   Teuchos::any( value_3 ) ) );
+						   boost::any( value_3 ) ) );
     TEST_ASSERT( !discretized_dimension->isValueInDiscretization(
-						   Teuchos::any( value_4 ) ) );
+						   boost::any( value_4 ) ) );
   }
   else
   {
@@ -159,13 +157,13 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
     value_3 = 2;
     value_3 = -1; // max value
     TEST_ASSERT( discretized_dimension->isValueInDiscretization(
-						   Teuchos::any( value_1 ) ) );
+						   boost::any( value_1 ) ) );
     TEST_ASSERT( discretized_dimension->isValueInDiscretization(
-						   Teuchos::any( value_2 ) ) );
+						   boost::any( value_2 ) ) );
     TEST_ASSERT( discretized_dimension->isValueInDiscretization(
-						   Teuchos::any( value_3 ) ) );
+						   boost::any( value_3 ) ) );
     TEST_ASSERT( discretized_dimension->isValueInDiscretization(
-						   Teuchos::any( value_4 ) ) );
+						   boost::any( value_4 ) ) );
   }
  }
 
@@ -178,7 +176,7 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
 				   calculateBinIndex_any,
 				   dimension )
 {
-  Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization> discretized_dimension;
+  std::shared_ptr<MonteCarlo::EstimatorDimensionDiscretization> discretized_dimension;
 
   initialize<dimension>( discretized_dimension, true );
 
@@ -209,39 +207,39 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
     value_17 = 1.0;
 
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
-					       Teuchos::any( value_1 ) ), 0u );
+					       boost::any( value_1 ) ), 0u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
-					       Teuchos::any( value_2 ) ), 0u );
+					       boost::any( value_2 ) ), 0u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
-					       Teuchos::any( value_3 ) ), 0u );
+					       boost::any( value_3 ) ), 0u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
-					       Teuchos::any( value_4 ) ), 1u );
+					       boost::any( value_4 ) ), 1u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
-					       Teuchos::any( value_5 ) ), 1u );
+					       boost::any( value_5 ) ), 1u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
-					       Teuchos::any( value_6 ) ), 2u );
+					       boost::any( value_6 ) ), 2u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
-					       Teuchos::any( value_7 ) ), 2u );
+					       boost::any( value_7 ) ), 2u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
-					       Teuchos::any( value_8 ) ), 3u );
+					       boost::any( value_8 ) ), 3u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
-					       Teuchos::any( value_9 ) ), 4u );
+					       boost::any( value_9 ) ), 4u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
-					      Teuchos::any( value_10 ) ), 4u );
+					      boost::any( value_10 ) ), 4u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
-					      Teuchos::any( value_11 ) ), 4u );
+					      boost::any( value_11 ) ), 4u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
-					      Teuchos::any( value_12 ) ), 5u );
+					      boost::any( value_12 ) ), 5u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
-					      Teuchos::any( value_13 ) ), 5u );
+					      boost::any( value_13 ) ), 5u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
-					      Teuchos::any( value_14 ) ), 6u );
+					      boost::any( value_14 ) ), 6u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
-					      Teuchos::any( value_15 ) ), 7u );
+					      boost::any( value_15 ) ), 7u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
-					      Teuchos::any( value_16 ) ), 7u );
+					      boost::any( value_16 ) ), 7u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
-					      Teuchos::any( value_17 ) ), 7u );
+					      boost::any( value_17 ) ), 7u );
   }
   else
   {
@@ -251,13 +249,13 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
     value_4 = -1; // max value
 
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
-					       Teuchos::any( value_1 ) ), 0u );
+					       boost::any( value_1 ) ), 0u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
-					       Teuchos::any( value_2 ) ), 1u );
+					       boost::any( value_2 ) ), 1u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
-					       Teuchos::any( value_3 ) ), 2u );
+					       boost::any( value_3 ) ), 2u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
-					       Teuchos::any( value_4 ) ), 2u );
+					       boost::any( value_4 ) ), 2u );
   }
 
   discretized_dimension->print( std::cout );
@@ -272,7 +270,7 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
 				   calculateBinIndex_particle_state_wrapper,
 				   dimension )
 {
-  Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization> discretized_dimension;
+  std::shared_ptr<MonteCarlo::EstimatorDimensionDiscretization> discretized_dimension;
 
   initialize<dimension>( discretized_dimension, true );
 
@@ -481,7 +479,7 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
   // Set up the discretization
   typedef MonteCarlo::PhaseSpaceDimensionTraits<dimension> EPSDT;
 
-  Teuchos::Array<typename EPSDT::dimensionType> discretization;
+  std::vector<typename EPSDT::dimensionType> discretization;
 
   if( dimension != MonteCarlo::COLLISION_NUMBER_DIMENSION )
   {
@@ -507,7 +505,7 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
     discretization[3] = std::numeric_limits<unsigned>::max();
   }
 
-  Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization>
+  std::shared_ptr<MonteCarlo::EstimatorDimensionDiscretization>
     discretized_dimension(
             new MonteCarlo::GeneralEstimatorDimensionDiscretization<dimension>(
 							    discretization ) );
@@ -522,7 +520,7 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
   discretized_dimension->exportData( 10u, hdf5_file_handler );
 
   // Make sure the data was written to the correct estimators
-  Teuchos::Array<typename EPSDT::dimensionType> discretization_copy;
+  std::vector<typename EPSDT::dimensionType> discretization_copy;
 
   hdf5_file_handler.getEstimatorBinBoundaries<dimension>( 0u,
 							  discretization_copy);

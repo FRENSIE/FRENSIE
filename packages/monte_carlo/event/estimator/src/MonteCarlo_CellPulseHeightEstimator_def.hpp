@@ -223,7 +223,7 @@ void
 CellPulseHeightEstimator<ContributionMultiplierPolicy>::enableThreadSupport(
 						   const unsigned num_threads )
 {
-  EntityEstimator<Geometry::ModuleTraits::InternalCellHandle>::enableThreadSupport( num_threads );
+  EntityEstimator<Geometry::Model::InternalCellHandle>::enableThreadSupport( num_threads );
 
   // Add thread support to update tracker
   d_update_tracker.resize( num_threads );
@@ -248,23 +248,6 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::resetData()
 
     this->unsetHasUncommittedHistoryContribution( i );
   }
-}
-
-// Export the estimator data
-template<typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<ContributionMultiplierPolicy>::exportData(
-                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
-                    const bool process_data ) const
-{
-  // Export the lower level data
-  EntityEstimator<Geometry::ModuleTraits::InternalCellHandle>::exportData(
-								hdf5_file,
-								process_data );
-
-  EstimatorHDF5FileHandler estimator_hdf5_file( hdf5_file );
-
-  // Set the estimator as a cell estimator
-  estimator_hdf5_file.setCellEstimator( this->getId() );
 }
 
 // Assign bin boundaries to an estimator dimension

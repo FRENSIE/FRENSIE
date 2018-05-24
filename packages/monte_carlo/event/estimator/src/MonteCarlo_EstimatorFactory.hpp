@@ -107,51 +107,51 @@ protected:
 
   //! Get the cells assigned to the estimator - required if cell estimator
   void getEstimatorCells(
-                    std::vector<Geometry::ModuleTraits::InternalCellHandle>&
+                    std::vector<Geometry::Model::InternalCellHandle>&
                     assigned_cells,
                     const unsigned estimator_id,
                     const Teuchos::ParameterList& estimator_rep ) const;
 
   //! Verify the existence of cells
   virtual void verifyExistenceOfCells(
-        const boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>&
+        const boost::unordered_set<Geometry::Model::InternalCellHandle>&
         cells,
         const unsigned estimator_id ) const = 0;
 
   //! Get the cached cells (add to set)
   virtual void getCachedCells(
-       boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>& cells,
+       boost::unordered_set<Geometry::Model::InternalCellHandle>& cells,
        const unsigned estimator_id ) const = 0;
 
   //! Get the cell volumes
   virtual void getCellVolumes(
               std::vector<double>& cell_volumes,
-              const std::vector<Geometry::ModuleTraits::InternalCellHandle>&
+              const std::vector<Geometry::Model::InternalCellHandle>&
               cells ) = 0;
 
   //! Get the surfaces assigned to the estimator - required if surface est.
   void getEstimatorSurfaces(
-                 std::vector<Geometry::ModuleTraits::InternalSurfaceHandle>&
+                 std::vector<Geometry::Model::InternalSurfaceHandle>&
                  assigned_surfaces,
                  const unsigned estimator_id,
                  const Teuchos::ParameterList& estimator_rep ) const;
 
   //! Verify the existence of surfaces
   virtual void verifyExistenceOfSurfaces(
-     const boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>&
+     const boost::unordered_set<Geometry::Model::InternalSurfaceHandle>&
      surfaces,
      const unsigned estimator_id ) const = 0;
 
   //! Get the cached surfaces (add to set)
   virtual void getCachedSurfaces(
-     boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>&
+     boost::unordered_set<Geometry::Model::InternalSurfaceHandle>&
      surfaces,
      const unsigned estimator_id ) const = 0;
 
   //! Get the surface areas
   virtual void getSurfaceAreas(
            std::vector<double>& surface_areas,
-           const std::vector<Geometry::ModuleTraits::InternalSurfaceHandle>&
+           const std::vector<Geometry::Model::InternalSurfaceHandle>&
            surfaces ) = 0;
 
   //! Create and register a cell estimator
@@ -161,7 +161,7 @@ protected:
       const double multiplier,
       const std::vector<ParticleType> particle_types,
       const std::vector<std::shared_ptr<ResponseFunction> >& response_funcs,
-      const std::vector<Geometry::ModuleTraits::InternalCellHandle>& cells,
+      const std::vector<Geometry::Model::InternalCellHandle>& cells,
       const bool energy_multiplication = false,
       const Teuchos::ParameterList* bins = NULL );
 
@@ -172,7 +172,7 @@ protected:
       const double multiplier,
       const std::vector<ParticleType> particle_types,
       const std::vector<std::shared_ptr<ResponseFunction> >& response_funcs,
-      const std::vector<Geometry::ModuleTraits::InternalSurfaceHandle>&
+      const std::vector<Geometry::Model::InternalSurfaceHandle>&
       surfaces,
       const bool energy_multiplication = false,
       const Teuchos::ParameterList* bins = NULL );
@@ -247,7 +247,7 @@ private:
       const double multiplier,
       const std::vector<ParticleType> particle_types,
       const std::vector<std::shared_ptr<ResponseFunction> >& response_funcs,
-      const std::vector<Geometry::ModuleTraits::InternalCellHandle>& cells,
+      const std::vector<Geometry::Model::InternalCellHandle>& cells,
       const bool energy_multiplication = false,
       const Teuchos::ParameterList* bins = NULL ) const;
 
@@ -257,7 +257,7 @@ private:
       const double multiplier,
       const std::vector<ParticleType> particle_types,
       const std::vector<std::shared_ptr<ResponseFunction> >& response_funcs,
-      const std::vector<Geometry::ModuleTraits::InternalCellHandle>& cells,
+      const std::vector<Geometry::Model::InternalCellHandle>& cells,
       const bool energy_multiplication = false,
       const Teuchos::ParameterList* bins = NULL );
 
@@ -267,7 +267,7 @@ private:
       const double multiplier,
       const std::vector<ParticleType> particle_types,
       const std::vector<std::shared_ptr<ResponseFunction> >& response_funcs,
-      const std::vector<Geometry::ModuleTraits::InternalCellHandle>& cells,
+      const std::vector<Geometry::Model::InternalCellHandle>& cells,
       const bool energy_multiplication = false,
       const Teuchos::ParameterList* bins = NULL );
 
@@ -277,7 +277,7 @@ private:
       const double multiplier,
       const std::vector<ParticleType> particle_types,
       const std::vector<std::shared_ptr<ResponseFunction> >& response_funcs,
-      const std::vector<Geometry::ModuleTraits::InternalSurfaceHandle>&
+      const std::vector<Geometry::Model::InternalSurfaceHandle>&
       surfaces,
       const bool energy_multiplication = false,
       const Teuchos::ParameterList* bins = NULL );
@@ -288,7 +288,7 @@ private:
       const double multiplier,
       const std::vector<ParticleType> particle_types,
       const std::vector<std::shared_ptr<ResponseFunction> >& response_funcs,
-      const std::vector<Geometry::ModuleTraits::InternalSurfaceHandle>&
+      const std::vector<Geometry::Model::InternalSurfaceHandle>&
       surfaces,
       const bool energy_multiplication = false,
       const Teuchos::ParameterList* bins = NULL ) const;

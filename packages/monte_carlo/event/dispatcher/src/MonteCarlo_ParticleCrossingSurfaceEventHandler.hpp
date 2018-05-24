@@ -48,7 +48,7 @@ public:
   //! Update the observers from a surface intersection event
   void updateObserversFromParticleCrossingSurfaceEvent(
 	  const ParticleState& particle,
-          const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,
+          const Geometry::Model::InternalSurfaceHandle surface_crossing,
 	  const double surface_normal[3] );
 
 protected:

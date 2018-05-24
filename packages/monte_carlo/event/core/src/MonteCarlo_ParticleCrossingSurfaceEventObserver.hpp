@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "MonteCarlo_ParticleState.hpp"
-#include "Geometry_ModuleTraits.hpp"
+#include "Geometry_Model.hpp"
 #include "Utility_Vector.hpp"
 
 /*! \defgroup particle_crossing_surface_event Particle Crossing Surface Event
@@ -49,7 +49,7 @@ public:
   //! Update the observer
   virtual void updateFromParticleCrossingSurfaceEvent(
 	  const ParticleState& particle,
-	  const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,
+	  const Geometry::Model::InternalSurfaceHandle surface_crossing,
 	  const double angle_cosine ) = 0;
 };
 

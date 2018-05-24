@@ -96,48 +96,7 @@ void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename 
   }
 }
 
-// Export the dimension discretization
-/*! \details The array of sets will be converted to a Teuchos::TwoDArray. 
- * Every row of the TwoDArray must have the same number of columns so a
- * padding will be applied (values of -1).
- */
-template<ObserverPhaseSpaceDimension dimension>
-void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename boost::enable_if<boost::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType> >::type>::exportData(
-                            const ParticleHistoryObserver::idType estimator_id,
-                            EstimatorHDF5FileHandler& hdf5_file ) const
-{
-  size_t num_columns = 0;
-  
-  // Calculate the columns
-  for( size_t i = 0; i < d_dimension_bins.size(); ++i )
-  {
-    if( d_dimension_bins[i].size() > num_columns )
-      num_columns = d_dimension_bins[i].size();
-  }
-  
-  // Convert the bin sets to a TwoDArray
-  Teuchos::TwoDArray<long long>
-    padded_two_d_array_copy( d_dimension_bins.size(), num_columns, -1ll );
 
-  for( size_t i = 0; i < d_dimension_bins.size(); ++i )
-  {
-    BinSet::const_iterator bin_it = d_dimension_bins[i].begin();
-    BinSet::const_iterator bin_end = d_dimension_bins[i].end();
-
-    size_t j = 0;
-
-    while( bin_it != bin_end )
-    {
-      padded_two_d_array_copy( i, j ) = *bin_it;
-
-      ++bin_it;
-      ++j;
-    }
-  }
-
-  hdf5_file.setEstimatorBinBoundaries<dimension>( estimator_id,
-                                                  padded_two_d_array_copy );
-}
 
 // Check if the value is contained in the discretization
 template<ObserverPhaseSpaceDimension dimension>

@@ -17,7 +17,7 @@
 #include "MonteCarlo_ParticleCollidingInCellEventObserver.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ModuleTraits.hpp"
-#include "Geometry_ModuleTraits.hpp"
+#include "Geometry_Model.hpp"
 
 namespace MonteCarlo{
 
@@ -25,7 +25,7 @@ namespace MonteCarlo{
  * \ingroup particle_colliding_in_cell_event
  */
 class ParticleCollidingInCellEventLocalDispatcher :
-    public ParticleEventLocalDispatcher<Geometry::ModuleTraits::InternalCellHandle,
+    public ParticleEventLocalDispatcher<Geometry::Model::InternalCellHandle,
                                         ParticleCollidingInCellEventObserver>
 {
 
@@ -33,7 +33,7 @@ public:
 
   //! Constructor
   ParticleCollidingInCellEventLocalDispatcher(
-		    const Geometry::ModuleTraits::InternalCellHandle cell_id );
+		    const Geometry::Model::InternalCellHandle cell_id );
 
   //! Destructor
   ~ParticleCollidingInCellEventLocalDispatcher()
@@ -42,7 +42,7 @@ public:
   //! Dispatch the new event to the observers
   void dispatchParticleCollidingInCellEvent(
 	    const ParticleState& particle,
-	    const Geometry::ModuleTraits::InternalCellHandle cell_of_collision,
+	    const Geometry::Model::InternalCellHandle cell_of_collision,
 	    const double inverse_total_cross_section );
 };
 

@@ -95,10 +95,7 @@ public:
 
   //! Print the dimension discretization
   virtual void print( std::ostream& os ) const = 0;
-
-  //! Export the bin boundaries
-  virtual void exportData( const ParticleHistoryObserver::idType estimator_id,
-			   EstimatorHDF5FileHandler& hdf5_file ) const = 0;
+  
 };
 
 } // end MonteCarlo namespace

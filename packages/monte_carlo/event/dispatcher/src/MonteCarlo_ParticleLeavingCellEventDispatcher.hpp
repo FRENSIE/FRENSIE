@@ -37,14 +37,14 @@ public:
   //! Dispatch the particle leaving cell event to the observers
   void dispatchParticleLeavingCellEvent(
 	       const ParticleState& particle,
-	       const Geometry::ModuleTraits::InternalCellHandle cell_leaving );
+	       const Geometry::Model::InternalCellHandle cell_leaving );
 };
 
 // Dispatch the particle leaving cell event to the observers
 inline void
 ParticleLeavingCellEventDispatcher::dispatchParticleLeavingCellEvent(
 	        const ParticleState& particle,
-	        const Geometry::ModuleTraits::InternalCellHandle cell_leaving )
+	        const Geometry::Model::InternalCellHandle cell_leaving )
 {
   DispatcherMap::iterator it = this->dispatcher_map().find( cell_leaving );
 

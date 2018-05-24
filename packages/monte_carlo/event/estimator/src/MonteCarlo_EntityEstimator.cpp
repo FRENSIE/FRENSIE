@@ -11,7 +11,7 @@
 
 namespace MonteCarlo{
 
-EXPLICIT_TEMPLATE_CLASS_INST( EntityEstimator<Geometry::ModuleTraits::InternalCellHandle> );
+EXPLICIT_TEMPLATE_CLASS_INST( EntityEstimator<Geometry::Model::InternalCellHandle> );
 EXPLICIT_TEMPLATE_CLASS_INST( EntityEstimator<moab::EntityHandle> );
   
 } // end MonteCarlo namespace

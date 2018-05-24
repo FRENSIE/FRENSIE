@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "MonteCarlo_ParticleState.hpp"
-#include "Geometry_ModuleTraits.hpp"
+#include "Geometry_Model.hpp"
 #include "Utility_Vector.hpp"
 
 /*! \defgroup particle_colliding_in_cell_event Particle Colliding In Cell Event
@@ -49,7 +49,7 @@ public:
   //! Update the observer
   virtual void updateFromParticleCollidingInCellEvent(
 	    const ParticleState& particle,
-	    const Geometry::ModuleTraits::InternalCellHandle cell_of_collision,
+	    const Geometry::Model::InternalCellHandle cell_of_collision,
 	    const double inverse_total_cross_section ) = 0;
 };
 

@@ -90,8 +90,8 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_ENERGY_DIMENSION>
   static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getSourceEnergy(); }
 
-  static inline dimensionType getDimensionValue( const Teuchos::any& any_value )
-  { return Teuchos::any_cast<dimensionType>( any_value ); }
+  static inline dimensionType getDimensionValue( const boost::any& any_value )
+  { return boost::any_cast<dimensionType>( any_value ); }
 
   static inline void getDimensionRange( const EstimatorParticleStateWrapper& particle_wrapper,
                                         dimensionType& range_start,
@@ -133,8 +133,8 @@ struct PhaseSpaceDimensionTraits<ENERGY_DIMENSION>
   static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getEnergy(); }
 
-  static inline dimensionType getDimensionValue( const Teuchos::any& any_value )
-  { return Teuchos::any_cast<dimensionType>( any_value ); }
+  static inline dimensionType getDimensionValue( const boost::any& any_value )
+  { return boost::any_cast<dimensionType>( any_value ); }
 
   static inline void getDimensionRange( const EstimatorParticleStateWrapper& particle_wrapper,
                                         dimensionType& range_start,
@@ -175,8 +175,8 @@ struct ObserverPhaseSpaceDimensionTraits<SOURCE_TIME_DIMENSION>
   static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getSourceTime(); }
 
-  static inline dimensionType getDimensionValue( const Teuchos::any& any_value )
-  { return Teuchos::any_cast<dimensionType>( any_value ); }
+  static inline dimensionType getDimensionValue( const boost::any& any_value )
+  { return boost::any_cast<dimensionType>( any_value ); }
 
   static inline void getDimensionRange( const EstimatorParticleStateWrapper& particle_wrapper,
                                         dimensionType& range_start,
@@ -218,8 +218,8 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_TIME_DIMENSION>
   static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getTime(); }
 
-  static inline dimensionType getDimensionValue( const Teuchos::any& any_value )
-  { return Teuchos::any_cast<dimensionType>( any_value ); }
+  static inline dimensionType getDimensionValue( const boost::any& any_value )
+  { return boost::any_cast<dimensionType>( any_value ); }
 
   static inline void getDimensionRange( const EstimatorParticleStateWrapper& particle_wrapper,
                                         dimensionType& range_start,
@@ -261,8 +261,8 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_COLLISION_NUMBER_DIMENSION>
   static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getCollisionNumber(); }
 
-  static inline dimensionType getDimensionValue( const Teuchos::any& any_value )
-  { return Teuchos::any_cast<dimensionType>( any_value ); }
+  static inline dimensionType getDimensionValue( const boost::any& any_value )
+  { return boost::any_cast<dimensionType>( any_value ); }
 
   static inline void getDimensionRange( const EstimatorParticleStateWrapper& particle_wrapper,
                                         dimensionType& range_start,
@@ -282,7 +282,7 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_ID_DIMENSION>
 {
   typedef MonteCarlo::ModuleTraits::InternalROIHandle dimensionType;
 
-  typedef Teuchos::Array<dimensionType> dimensionBinType;
+  typedef std::vector<dimensionType> dimensionBinType;
 
   typedef boost::mpl::bool_<false> isOrdered;
 
@@ -304,8 +304,8 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_ID_DIMENSION>
   static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getSourceId(); }
 
-  static inline dimensionType getDimensionValue( const Teuchos::any& any_value )
-  { return Teuchos::any_cast<dimensionType>( any_value ); }
+  static inline dimensionType getDimensionValue( const boost::any& any_value )
+  { return boost::any_cast<dimensionType>( any_value ); }
 
   static inline void getDimensionRange( const EstimatorParticleStateWrapper& particle_wrapper,
                                         dimensionType& range_start,

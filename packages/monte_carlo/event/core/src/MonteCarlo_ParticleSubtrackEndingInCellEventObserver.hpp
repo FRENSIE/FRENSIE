@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "MonteCarlo_ParticleState.hpp"
-#include "Geometry_ModuleTraits.hpp"
+#include "Geometry_Model.hpp"
 #include "Utility_Vector.hpp"
 
 /*! \defgroup particle_subtrack_ending_in_cell_event Particle Subtrack Ending In Cell Event
@@ -49,7 +49,7 @@ public:
   //! Update the observer
   virtual void updateFromParticleSubtrackEndingInCellEvent(
 	     const ParticleState& particle,
-	     const Geometry::ModuleTraits::InternalCellHandle cell_of_subtrack,
+	     const Geometry::Model::InternalCellHandle cell_of_subtrack,
 	     const double track_length ) = 0;
 };
 

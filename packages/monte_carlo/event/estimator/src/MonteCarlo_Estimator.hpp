@@ -110,12 +110,7 @@ public:
 
   //! Enable support for multiple threads
   virtual void enableThreadSupport( const unsigned num_threads );
-
-  //! Export the estimator data
-  virtual void exportData(
-                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
-                    const bool process_data ) const;
-
+  
   //! Log a summary of the data
   void logSummary() const;
 

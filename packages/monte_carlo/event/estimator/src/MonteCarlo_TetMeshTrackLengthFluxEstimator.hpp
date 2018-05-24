@@ -28,7 +28,7 @@
 #include "MonteCarlo_StandardEntityEstimator.hpp"
 #include "MonteCarlo_ParticleSubtrackEndingGlobalEventObserver.hpp"
 #include "MonteCarlo_EstimatorContributionMultiplierPolicy.hpp"
-#include "Geometry_ModuleTraits.hpp"
+#include "Geometry_Model.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 
 namespace MonteCarlo{
@@ -47,7 +47,7 @@ class TetMeshTrackLengthFluxEstimator : public StandardEntityEstimator<moab::Ent
 public:
 
   //! Typedef for the cell id type
-  typedef Geometry::ModuleTraits::InternalCellHandle cellIdType;
+  typedef Geometry::Model::InternalCellHandle cellIdType;
 
   //! Typedef for event tags used for quick dispatcher registering
   typedef boost::mpl::vector<ParticleSubtrackEndingGlobalEventObserver::EventTag>
@@ -78,10 +78,6 @@ public:
 						 const ParticleState& particle,
 						 const double start_point[3],
 						 const double end_point[3] );
-
-  //! Export the estimator data
-  void exportData( const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
-		   const bool process_data ) const;
 
   //! Print a summary of the estimator data
   void printSummary( std::ostream& os ) const;

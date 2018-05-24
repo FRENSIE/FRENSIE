@@ -15,15 +15,13 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/serialization/unordered_map.hpp>
 #include <boost/serialization/vector.hpp>
+#include <boost/any.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSubtrackEndingGlobalEventObserver.hpp"
 #include "MonteCarlo_ParticleHistoryObserver.hpp"
 #include "MonteCarlo_ParticleTrackerHDF5FileHandler.hpp"
-
-// Trilinos Includes
-#include <Teuchos_Tuple.hpp>
-#include <Teuchos_any.hpp>
+#include "Utility_Tuple.hpp"
 
 namespace MonteCarlo{
 
@@ -107,12 +105,8 @@ public:
 
   //! Reduce estimator data in multiple nodes
   void reduceData(
-	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+	    const std::shared_ptr<const Utility::Communicator<unsigned long long> >& comm,
 	    const int root_process );
-
-  //! Export the particle tracker data via hdf5
-  void exportData( const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
-                   const bool process_data ) const;
 
   //! Print a summary of the data
   void printSummary( std::ostream& os ) const;

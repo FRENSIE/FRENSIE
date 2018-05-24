@@ -20,7 +20,7 @@
 namespace MonteCarlo{
 
 // Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardEntityEstimator<Geometry::ModuleTraits::InternalCellHandle> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardEntityEstimator<Geometry::Model::InternalCellHandle> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardEntityEstimator<moab::EntityHandle> ); 
 
 // Constructor (for flux estimators)
@@ -260,86 +260,6 @@ void StandardEntityEstimator<EntityId>::reduceData(
                              "unable to perform mpi reduction in "
                              "standard entity estimator " << this->getId() <<
                              " for total " << entity_data->first << "!" );
-  }
-}
-
-
-// Export the estimator data
-template<typename EntityId>
-void StandardEntityEstimator<EntityId>::exportData(
-                   const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
-                   const bool process_data ) const
-{
-  // Make sure only the root thread calls this
-  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
-
-  // Export the lower level data first
-  EntityEstimator<EntityId>::exportData( hdf5_file, process_data );
-
-  // Open the estimator hdf5 file
-  EstimatorHDF5FileHandler estimator_hdf5_file( hdf5_file );
-
-  // Export the raw total data for each entity
-  {
-    typename EntityEstimatorMomentsCollectionMap::const_iterator entity_data =
-      d_entity_total_estimator_moments_map.begin();
-
-    while( entity_data != d_entity_total_estimator_moments_map.end() )
-    {
-      estimator_hdf5_file.setRawEstimatorEntityTotalData( this->getId(),
-                                                          entity_data->first,
-                                                          entity_data->second);
-
-      if( process_data )
-      {
-	std::vector<Utility::Quad<double,double,double,double> >
-	  processed_data( entity_data->second.size() );
-
-	for( unsigned i = 0; i < processed_data.size(); ++i )
-	{
-	  this->processMoments(
-                             entity_data->second,
-                             i,
-			     this->getEntityNormConstant( entity_data->first ),
-			     Utility::get<0>( processed_data[i] ),
-			     Utility::get<1>( processed_data[i] ),
-			     Utility::get<2>( processed_data[i] ),
-			     Utility::get<3>( processed_data[i] ) );
-	}
-
-	estimator_hdf5_file.setProcessedEstimatorEntityTotalData(
-                                                            this->getId(),
-                                                            entity_data->first,
-                                                            processed_data );
-      }
-
-      ++entity_data;
-    }
-  }
-
-  // Export the raw total data over all entities
-  estimator_hdf5_file.setRawEstimatorTotalData( this->getId(),
-                                                d_total_estimator_moments );
-
-  // Export the processed total data over all entities
-  if( process_data )
-  {
-    std::vector<Utility::Quad<double,double,double,double> > processed_data(
-					    d_total_estimator_moments.size() );
-
-    for( unsigned i = 0; i < d_total_estimator_moments.size(); ++i )
-    {
-      this->processMoments( d_total_estimator_moments,
-                            i,
-			    this->getTotalNormConstant(),
-			    Utility::get<0>( processed_data[i] ),
-                            Utility::get<1>( processed_data[i] ),
-                            Utility::get<2>( processed_data[i] ),
-                            Utility::get<3>( processed_data[i] ) );
-    }
-
-    estimator_hdf5_file.setProcessedEstimatorTotalData( this->getId(),
-                                                        processed_data );
   }
 }
 

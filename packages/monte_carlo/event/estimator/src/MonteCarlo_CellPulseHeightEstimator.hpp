@@ -22,7 +22,7 @@
 #include "MonteCarlo_EstimatorContributionMultiplierPolicy.hpp"
 #include "MonteCarlo_ParticleEnteringCellEventObserver.hpp"
 #include "MonteCarlo_ParticleLeavingCellEventObserver.hpp"
-#include "Geometry_ModuleTraits.hpp"
+#include "Geometry_Model.hpp"
 
 namespace MonteCarlo{
 
@@ -37,7 +37,7 @@ namespace MonteCarlo{
  * a single thread.
  */
 template<typename ContributionMultiplierPolicy = WeightMultiplier>
-class CellPulseHeightEstimator : public EntityEstimator<Geometry::ModuleTraits::InternalCellHandle>,
+class CellPulseHeightEstimator : public EntityEstimator<Geometry::Model::InternalCellHandle>,
 				 public ParticleEnteringCellEventObserver,
 				 public ParticleLeavingCellEventObserver
 {
@@ -45,7 +45,7 @@ class CellPulseHeightEstimator : public EntityEstimator<Geometry::ModuleTraits::
 private:
 
   // Typedef for the serial update tracker
-  typedef std::unordered_map<Geometry::ModuleTraits::InternalCellHandle,double>
+  typedef std::unordered_map<Geometry::Model::InternalCellHandle,double>
   SerialUpdateTracker;
 
   // Typedef for the parallel update tracker
@@ -54,7 +54,7 @@ private:
 public:
 
   //! Typedef for the cell id type
-  typedef Geometry::ModuleTraits::InternalCellHandle cellIdType;
+  typedef Geometry::Model::InternalCellHandle cellIdType;
 
   //! Typedef for event tags used for quick dispatcher registering
   typedef boost::mpl::vector<ParticleEnteringCellEventObserver::EventTag,
@@ -92,10 +92,6 @@ public:
 
   //! Reset the estimator data
   void resetData() override;
-
-  //! Export the estimator data
-  void exportData( const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
-		   const bool process_data ) const override;
 
 private:
 
