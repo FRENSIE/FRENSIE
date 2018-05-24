@@ -26,10 +26,9 @@ namespace MonteCarlo{
 
 // Constructor
 StandardParticleResponse::StandardParticleResponse(
-    const size_t id,
     const std::string& name,
     const std::shared_ptr<const ParticleResponseFunction>& response_function )
-  : ParticleResponse( id, name ),
+  : ParticleResponse( name ),
     d_response_function( response_function )
 {
   // Make sure that the response function pointer is valid
@@ -38,10 +37,8 @@ StandardParticleResponse::StandardParticleResponse(
 
 // Constructor
 StandardParticleResponse::StandardParticleResponse(
-     const size_t id,
      const std::shared_ptr<const ParticleResponseFunction>& response_function )
-  : StandardParticleResponse( id,
-                              response_function->description(),
+  : StandardParticleResponse( response_function->description(),
                               response_function )
 { /* ... */ }
 

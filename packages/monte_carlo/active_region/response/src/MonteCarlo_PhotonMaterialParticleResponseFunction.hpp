@@ -49,6 +49,9 @@ private:
   PhotonMaterialParticleResponseFunction()
   { /* ... */ }
 
+  // Evaluate the photonuclear reaction cross section
+  double evaluatePhotonuclearReactionCrossSection( const ParticleState& particle ) const;
+
   // Set the evaluation method
   void setEvaluationMethod();
 

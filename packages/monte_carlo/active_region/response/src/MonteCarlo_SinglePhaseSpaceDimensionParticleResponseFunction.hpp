@@ -62,32 +62,32 @@ private:
   d_dimension_response_distribution;
 };
 
-//! The X dimension particle response function
-typedef SinglePhaseSpaceDimensionParticleResponseFunction<PRIMARY_SPATIAL_DIMENSION> XDimensionParticleResponseFunction;
+//! The X position particle response function
+typedef SinglePhaseSpaceDimensionParticleResponseFunction<PRIMARY_SPATIAL_DIMENSION> XPositionParticleResponseFunction;
 
-//! The Y dimension particle response function
-typedef SinglePhaseSpaceDimensionParticleResponseFunction<SECONDARY_SPATIAL_DIMENSION> YDimensionParticleResponseFunction;
+//! The Y position particle response function
+typedef SinglePhaseSpaceDimensionParticleResponseFunction<SECONDARY_SPATIAL_DIMENSION> YPositionParticleResponseFunction;
 
-//! The Z dimension particle response function
-typedef SinglePhaseSpaceDimensionParticleResponseFunction<TERTIARY_SPATIAL_DIMENSION> ZDimensionParticleResponseFunction;
+//! The Z position particle response function
+typedef SinglePhaseSpaceDimensionParticleResponseFunction<TERTIARY_SPATIAL_DIMENSION> ZPositionParticleResponseFunction;
 
-//! The U dimension particle response function
-typedef SinglePhaseSpaceDimensionParticleResponseFunction<PRIMARY_DIRECTIONAL_DIMENSION> UDimensionParticleResponseFunction;
+//! The X direction particle response function
+typedef SinglePhaseSpaceDimensionParticleResponseFunction<PRIMARY_DIRECTIONAL_DIMENSION> XDirectionParticleResponseFunction;
 
-//! The V dimension particle response function
-typedef SinglePhaseSpaceDimensionParticleResponseFunction<SECONDARY_DIRECTIONAL_DIMENSION> VDimensionParticleResponseFunction;
+//! The Y direction particle response function
+typedef SinglePhaseSpaceDimensionParticleResponseFunction<SECONDARY_DIRECTIONAL_DIMENSION> YDirectionParticleResponseFunction;
 
-//! The W dimension particle response function
-typedef SinglePhaseSpaceDimensionParticleResponseFunction<TERTIARY_DIRECTIONAL_DIMENSION> WDimensionParticleResponseFunction;
+//! The Z direction particle response function
+typedef SinglePhaseSpaceDimensionParticleResponseFunction<TERTIARY_DIRECTIONAL_DIMENSION> ZDirectionParticleResponseFunction;
 
 //! The energy dimension particle response function
-typedef SinglePhaseSpaceDimensionParticleResponseFunction<ENERGY_DIMENSION> EnergyDimensionParticleResponseFunction;
+typedef SinglePhaseSpaceDimensionParticleResponseFunction<ENERGY_DIMENSION> EnergyParticleResponseFunction;
 
 //! The time dimension particle response function
-typedef SinglePhaseSpaceDimensionParticleResponseFunction<TIME_DIMENSION> TimeDimensionParticleResponseFunction;
+typedef SinglePhaseSpaceDimensionParticleResponseFunction<TIME_DIMENSION> TimeParticleResponseFunction;
 
 //! The weight dimension particle response function
-typedef SinglePhaseSpaceDimensionParticleResponseFunction<WEIGHT_DIMENSION> WeightDimensionParticleResponseFunction;
+typedef SinglePhaseSpaceDimensionParticleResponseFunction<WEIGHT_DIMENSION> WeightParticleResponseFunction;
   
 } // end MonteCarlo namespace
 
