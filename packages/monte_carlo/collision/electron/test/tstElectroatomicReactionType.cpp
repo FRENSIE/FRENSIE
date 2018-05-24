@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstElectroatomicReactionTypeHelpers.cpp
+//! \file   tstElectroatomicReactionType.cpp
 //! \author Luke Kersting
 //! \brief  Electro-atomic reaction type helper function unit tests
 //!
@@ -13,6 +13,18 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+typedef std::tuple<
+  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
+  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
+  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
+  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>
+  > TestArchives;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -844,5 +856,253 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionType, ostream_operator )
 }
 
 //---------------------------------------------------------------------------//
-// end tstElectroatomicReactionTypeHelpers.cpp
+// Check that a electroatomic reaction type can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ElectroatomicReactionType,
+                                   archive,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_electroatomic_reaction_type" );
+  std::ostringstream archive_ostream;
+
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    MonteCarlo::ElectroatomicReactionType type_1 = MonteCarlo::TOTAL_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_2 = MonteCarlo::TOTAL_ABSORPTION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_3 = MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_4 = MonteCarlo::POSITRON_ANNIHILATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_5 = MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_6 = MonteCarlo::HYBRID_ELASTIC_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_7 = MonteCarlo::DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_8 = MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_9 = MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_10 = MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_11 = MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_12 = MonteCarlo::TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_13 = MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_14 = MonteCarlo::L1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_15 = MonteCarlo::L2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_16 = MonteCarlo::L3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_17 = MonteCarlo::M1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_18 = MonteCarlo::M2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_19 = MonteCarlo::M3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_20 = MonteCarlo::M4_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_21 = MonteCarlo::M5_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_22 = MonteCarlo::N1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_23 = MonteCarlo::N2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_24 = MonteCarlo::N3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_25 = MonteCarlo::N4_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_26 = MonteCarlo::N5_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_27 = MonteCarlo::N6_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_28 = MonteCarlo::N7_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_29 = MonteCarlo::O1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_30 = MonteCarlo::O2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_31 = MonteCarlo::O3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_32 = MonteCarlo::O4_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_33 = MonteCarlo::O5_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_34 = MonteCarlo::O6_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_35 = MonteCarlo::O7_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_36 = MonteCarlo::O8_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_37 = MonteCarlo::O9_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_38 = MonteCarlo::P1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_39 = MonteCarlo::P2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_40 = MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_41 = MonteCarlo::P4_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_42 = MonteCarlo::P5_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_43 = MonteCarlo::P6_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_44 = MonteCarlo::P7_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_45 = MonteCarlo::P8_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_46 = MonteCarlo::P9_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_47 = MonteCarlo::P10_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_48 = MonteCarlo::P11_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_49 = MonteCarlo::Q1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_50 = MonteCarlo::Q2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+    MonteCarlo::ElectroatomicReactionType type_51 = MonteCarlo::Q3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_1 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_2 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_3 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_4 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_5 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_6 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_7 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_8 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_9 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_10 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_11 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_12 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_13 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_14 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_15 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_16 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_17 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_18 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_19 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_20 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_21 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_22 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_23 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_24 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_25 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_26 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_27 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_28 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_29 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_30 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_31 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_32 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_33 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_34 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_35 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_36 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_37 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_38 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_39 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_40 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_41 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_42 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_43 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_44 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_45 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_46 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_47 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_48 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_49 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_50 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_51 ) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  MonteCarlo::ElectroatomicReactionType type_1, type_2, type_3, type_4, type_5,
+    type_6, type_7, type_8, type_9, type_10, type_11, type_12, type_13,
+    type_14, type_15, type_16, type_17, type_18, type_19, type_20, type_21,
+    type_22, type_23, type_24, type_25, type_26, type_27, type_28, type_29,
+    type_30, type_31, type_32, type_33, type_34, type_35, type_36, type_37,
+    type_38, type_39, type_40, type_41, type_42, type_43, type_44, type_45,
+    type_46, type_47, type_48, type_49, type_50, type_51;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_1 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_2 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_3 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_4 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_5 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_6 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_7 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_8 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_9 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_10 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_11 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_12 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_13 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_14 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_15 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_16 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_17 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_18 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_19 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_20 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_21 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_22 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_23 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_24 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_25 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_26 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_27 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_28 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_29 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_30 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_31 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_32 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_33 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_34 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_35 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_36 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_37 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_38 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_39 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_40 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_41 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_42 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_43 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_44 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_45 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_46 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_47 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_48 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_49 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_50 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_51 ) );
+
+  iarchive.reset();
+
+  FRENSIE_CHECK_EQUAL( type_1, MonteCarlo::TOTAL_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_2, MonteCarlo::TOTAL_ABSORPTION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_3, MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_4, MonteCarlo::POSITRON_ANNIHILATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_5, MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_6, MonteCarlo::HYBRID_ELASTIC_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_7, MonteCarlo::DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_8, MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_9, MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_10, MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_11, MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_12, MonteCarlo::TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_13, MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_14, MonteCarlo::L1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_15, MonteCarlo::L2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_16, MonteCarlo::L3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_17, MonteCarlo::M1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_18, MonteCarlo::M2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_19, MonteCarlo::M3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_20, MonteCarlo::M4_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_21, MonteCarlo::M5_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_22, MonteCarlo::N1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_23, MonteCarlo::N2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_24, MonteCarlo::N3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_25, MonteCarlo::N4_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_26, MonteCarlo::N5_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_27, MonteCarlo::N6_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_28, MonteCarlo::N7_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_29, MonteCarlo::O1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_30, MonteCarlo::O2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_31, MonteCarlo::O3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_32, MonteCarlo::O4_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_33, MonteCarlo::O5_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_34, MonteCarlo::O6_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_35, MonteCarlo::O7_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_36, MonteCarlo::O8_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_37, MonteCarlo::O9_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_38, MonteCarlo::P1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_39, MonteCarlo::P2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_40, MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_41, MonteCarlo::P4_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_42, MonteCarlo::P5_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_43, MonteCarlo::P6_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_44, MonteCarlo::P7_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_45, MonteCarlo::P8_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_46, MonteCarlo::P9_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_47, MonteCarlo::P10_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_48, MonteCarlo::P11_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_49, MonteCarlo::Q1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_50, MonteCarlo::Q2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_EQUAL( type_51, MonteCarlo::Q3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+}
+
+//---------------------------------------------------------------------------//
+// end tstElectroatomicReactionType.cpp
 //---------------------------------------------------------------------------//

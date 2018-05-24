@@ -119,7 +119,6 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.PHOTON_MODE )
 
-
         filled_model = Collision.FilledGeometryModel(
                                         self.data_directory,
                                         self.scattering_center_definition_database,

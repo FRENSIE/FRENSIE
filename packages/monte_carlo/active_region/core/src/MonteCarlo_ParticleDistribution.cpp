@@ -23,10 +23,16 @@
 #include "MonteCarlo_ParticleDistribution.hpp"
 #include "Utility_HDF5IArchive.hpp"
 #include "Utility_HDF5OArchive.hpp"
+#include "Utility_ToStringTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
+// Basic constructor
+ParticleDistribution::ParticleDistribution( const size_t id )
+  : ParticleDistribution( id, std::string( "particle dist " ) + Utility::toString( id ) )
+{ /* ... */ }
+  
 // Constructor
 ParticleDistribution::ParticleDistribution( const size_t id,
                                             const std::string& name )

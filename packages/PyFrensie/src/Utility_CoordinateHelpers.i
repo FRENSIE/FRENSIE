@@ -39,12 +39,60 @@
   $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
 }
 
+// Add typemaps for converting double[3] to and from Python array
+%typemap(in) const double coordinates[3] (std::vector<double> temp){
+  temp = PyFrensie::convertFromPython<std::vector<double> >( $input );
+
+  // Make sure the sequence has 3 elements
+  if( temp.size() != 3 )
+  {
+    PyErr_SetString( PyExc_TypeError, "The input must have 3 elements." );
+    SWIG_fail;
+  }
+
+  $1 = temp.data();
+}
+
+// Add typemaps for converting double cartesian_coordinates[3 to a Python array
+%typemap(in,numinputs=0) double cartesian_coordinates[3] (std::vector<double> temp)
+{
+  temp.resize( 3 );
+  $1 = temp.data();
+}
+
+%typemap(argout) double cartesian_coordinates[3] {
+  std::vector<double> temp(3);
+
+  temp[0] = $1[0];
+  temp[1] = $1[1];
+  temp[2] = $1[2];
+
+  $result = PyFrensie::convertToPython( temp );
+}
+
+// Add typemaps for converting double cartesian_coordinates[3 to a Python array
+%typemap(in,numinputs=0) double coordinates[3] (std::vector<double> temp)
+{
+  temp.resize( 3 );
+  $1 = temp.data();
+}
+
+%typemap(argout) double coordinates[3] {
+  std::vector<double> temp(3);
+
+  temp[0] = $1[0];
+  temp[1] = $1[1];
+  temp[2] = $1[2];
+
+  $result = PyFrensie::convertToPython( temp );
+}
+
 //---------------------------------------------------------------------------//
 // Helper macro for setting up a basic SpatialCoordinateConversionPolicy class python interface
 //---------------------------------------------------------------------------//
 %define %basic_spatial_coordinate_interface_setup_helper( SYSTEM )
 
-%feature("docstring") Utility::SYSTEM
+%feature("docstring") Utility::SYSTEM::SYSTEM
 "The SYSTEM proxy class. This class can convert spatial coordinates."
 
 %feature("autodoc",
@@ -72,8 +120,6 @@ the returned tuple is the y_spatial_coord. The first element of
 the returned tuple is the z_spatial_coord. ")
 Utility::SYSTEM::convertToCartesianSpatialCoordinates;
 
-%ignore Utility::SYSTEM::convertToCartesianSpatialCoordinates( double[3], double[3] );
-
 %feature("autodoc",
 "convertFromCartesianSpatialCoordinates(SYSTEM self, double x_spatial_coord, double y_spatial_coord, double z_spatial_coord ) -> double, double, double
 
@@ -82,8 +128,6 @@ the returned tuple is the primary_spatial_coord. The first element of
 the returned tuple is the secondary_spatial_coord. The first element of
 the returned tuple is the tertiary_spatial_coord. ")
 Utility::SYSTEM::convertFromCartesianSpatialCoordinates;
-
-%ignore Utility::SYSTEM::convertFromCartesianSpatialCoordinates( double[3], double[3] );
 
 %enddef
 
@@ -174,8 +218,6 @@ the returned tuple is the y_directional_coord. The first element of
 the returned tuple is the z_directional_coord. ")
 SYSTEM::convertToCartesianDirectionalCoordinates;
 
-%ignore Utility::SYSTEM::convertToCartesianDirectionalCoordinates( double[3], double[3] );
-
 %feature("autodoc",
 "convertFromCartesianDirectionalCoordinates(SYSTEM self, double x_directional_coord, double y_directional_coord, double z_directional_coord ) -> double, double, double
 
@@ -184,8 +226,6 @@ the returned tuple is the primary_directional_coord. The first element of
 the returned tuple is the secondary_directional_coord. The first element of
 the returned tuple is the tertiary_directional_coord. ")
 Utility::SYSTEM::convertFromCartesianDirectionalCoordinates;
-
-%ignore Utility::SYSTEM::convertFromCartesianDirectionalCoordinates( double[3], double[3] );
 
 %enddef
 

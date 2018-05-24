@@ -12,8 +12,18 @@
 // Std Lib Includes
 #include <memory>
 
+// Boost Includes
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/assume_abstract.hpp>
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
-#include "Utility_Set.hpp"
+#include "MonteCarlo_UniqueIdManager.hpp"
+#include "MonteCarlo_ParticleState.hpp"
+#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
 
@@ -43,29 +53,49 @@ public:
 
 protected:
 
+  //! Default constructor
+  ParticleResponse()
+    : d_id( 0 )
+  { /* ... */ }
+
+  //! Basic Constructor
+  ParticleResponse( const size_t id );
+
   //! Constructor
   ParticleResponse( const size_t id, const std::string& name );
 
 private:
 
-  //! Default constructor
-  ParticleResponse()
-  { /* ... */ }
+  // Serialize the particle response
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version );
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
   // The default response
-  static const std::shared_ptr<const ResponseFunction> s_default_response;
-
-  // The response id set
-  static std::set<size_t> s_id_set;
+  static const std::shared_ptr<const ParticleResponse> s_default_response;
 
   // The response id
-  size_t d_id;
+  UniqueIdManager<ParticleResponse,size_t> d_id;
 
   // The response name
   std::string d_name;
 };
+
+// Serialize the particle response
+template<typename Archive>
+void ParticleResponse::serialize( Archive& ar, const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_NVP( d_id );
+  ar & BOOST_SERIALIZATION_NVP( d_name );
+}
   
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS_VERSION( ParticleResponse, MonteCarlo, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ParticleResponse, MonteCarlo );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleResponse );
 
 #endif // end MONTE_CARLO_PARTICLE_RESPONSE_HPP
 

@@ -27,6 +27,11 @@ public:
     const std::string& name,
     const std::shared_ptr<const ParticleResponseFunction>& response_function );
 
+  //! Constructor
+  StandardParticleResponse(
+    const size_t id,
+    const std::shared_ptr<const ParticleResponseFunction>& response_function );
+
   //! Destructor
   ~StandardParticleResponse()
   { /* ... */ }
@@ -39,12 +44,37 @@ public:
 
 private:
 
+  //! Default constructor
+  StandardParticleResponse()
+  { /* ... */ }
+
+  // Serialize the particle response
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version );
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // The response function
   std::shared_ptr<const ParticleResponseFunction> d_response_function;
 };
 
+// Serialize the particle response
+template<typename Archive>
+void StandardParticleResponse::serialize( Archive& ar, const unsigned version )
+{
+  // Serialize the base class member data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleResponse );
+
+  // Serialize the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_response_function );
+}
   
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS_VERSION( StandardParticleResponse, MonteCarlo, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardParticleResponse, MonteCarlo );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::StandardParticleResponse );
 
 #endif // end MONTE_CARLO_STANDARD_PARTICLE_RESPONSE_HPP
 

@@ -43,12 +43,6 @@ public:
   { /* ... */ }
 
   //! Get the total forward macroscopic cross section of a material
-  using BaseType::getMacroscopicTotalForwardCrossSection;
-
-  //! Get the total forward macroscopic cross section of a material
-  using BaseType::getMacroscopicTotalForwardCrossSectionQuick;
-
-  //! Get the total forward macroscopic cross section of a material
   double getMacroscopicTotalForwardCrossSection(
                                 const Geometry::Model::InternalCellHandle cell,
                                 const double energy ) const final override;
@@ -57,6 +51,12 @@ public:
   double getMacroscopicTotalForwardCrossSectionQuick(
                                 const Geometry::Model::InternalCellHandle cell,
                                 const double energy ) const final override;
+
+  //! Get the total forward macroscopic cross section of a material
+  using BaseType::getMacroscopicTotalForwardCrossSection;
+
+  //! Get the total forward macroscopic cross section of a material
+  using BaseType::getMacroscopicTotalForwardCrossSectionQuick;
 
   //! Get the adjoint weight factor
   double getAdjointWeightFactor( const ParticleStateType& particle ) const;

@@ -23,6 +23,9 @@ conversion policies that can be used in FRENSIE and PyFrensie.
 %{
 // FRENSIE Includes
 #include "PyFrensie_PythonTypeTraits.hpp"
+#include "Utility_SerializationHelpers.hpp"
+#include "Utility_ExplicitSystemTemplateInstantiationMacros.hpp"
+#include "Utility_ContractException.hpp"
 
 #include "Utility_SpatialCoordinateSystemType.hpp"
 #include "Utility_SpatialCoordinateSystemTraitsDecl.hpp"
@@ -45,24 +48,22 @@ using namespace Utility;
 %feature("autodoc", "1");
 
 // C++ STL support
-%include "stl.i"
-%include "std_except.i"
+%include <stl.i>
+%include <std_set.i>
+%include <std_shared_ptr.i>
+%include <std_except.i>
 
-// General ignore directives
-%ignore *::operator<<;
+// Include typemaps support
+%include <typemaps.i>
+
+// Include the serialization helpers for handling macros
+%include "Utility_SerializationHelpers.hpp"
+
+// Include the explicit template instantiation helpers
+%include "Utility_ExplicitSystemTemplateInstantiationMacros.hpp"
 
 // Include the coordinate helpers
 %include "Utility_CoordinateHelpers.i"
-
-// Include the spatial coordinate system type and traits
-%include "Utility_SpatialCoordinateSystemType.hpp"
-%include "Utility_SpatialCoordinateSystemTraitsDecl.hpp"
-%include "Utility_SpatialCoordinateSystemTraits.hpp"
-
-// Include the directional coordinate system type and traits
-%include "Utility_DirectionalCoordinateSystemType.hpp"
-%include "Utility_DirectionalCoordinateSystemTraitsDecl.hpp"
-%include "Utility_DirectionalCoordinateSystemTraits.hpp"
 
 // General exception handling
 %exception
@@ -86,21 +87,42 @@ using namespace Utility;
   }
 }
 
+// General ignore directives
+%ignore *::operator<<;
+
+// Include the spatial coordinate system type and traits
+%include "Utility_SpatialCoordinateSystemType.hpp"
+%include "Utility_SpatialCoordinateSystemTraitsDecl.hpp"
+%include "Utility_SpatialCoordinateSystemTraits.hpp"
+
+// Include the directional coordinate system type and traits
+%include "Utility_DirectionalCoordinateSystemType.hpp"
+%include "Utility_DirectionalCoordinateSystemTraitsDecl.hpp"
+%include "Utility_DirectionalCoordinateSystemTraits.hpp"
+
 //---------------------------------------------------------------------------//
 // Add support for the SpatialCoordinateSystemPolicy
 //---------------------------------------------------------------------------//
-// Import the SpatialCoordinateSystemPolicy
-%include "Utility_SpatialCoordinateConversionPolicy.hpp"
 
 %basic_spatial_coordinate_interface_setup( SpatialCoordinateConversionPolicy )
+
+// Allow shared pointers of SpatialCoordinateConversionPolicy objects
+%shared_ptr( Utility::SpatialCoordinateConversionPolicy );
+
+// Import the SpatialCoordinateSystemPolicy
+%include "Utility_SpatialCoordinateConversionPolicy.hpp"
 
 //---------------------------------------------------------------------------//
 // Add support for the DirectionalCoordinateSystemPolicy
 //---------------------------------------------------------------------------//
-// Import the DirectionalCoordinateSystemPolicy
-%include "Utility_DirectionalCoordinateConversionPolicy.hpp"
 
 %basic_directional_coordinate_interface_setup( DirectionalCoordinateConversionPolicy )
+
+// Allow shared pointers of DirectionalCoordinateConversionPolicy objects
+%shared_ptr( Utility::DirectionalCoordinateConversionPolicy );
+
+// Import the DirectionalCoordinateSystemPolicy
+%include "Utility_DirectionalCoordinateConversionPolicy.hpp"
 
 
 // Support for specific coordinate types

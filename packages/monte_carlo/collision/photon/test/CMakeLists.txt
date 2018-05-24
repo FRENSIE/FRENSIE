@@ -4,11 +4,14 @@ FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_collision_photon)
 ## Support class tests
 ##---------------------------------------------------------------------------##
 
-FRENSIE_ADD_TEST_EXECUTABLE(PhotoatomicReactionTypeHelpers DEPENDS tstPhotoatomicReactionTypeHelpers.cpp)
-FRENSIE_ADD_TEST(PhotoatomicReactionTypeHelpers)
+FRENSIE_ADD_TEST_EXECUTABLE(PhotoatomicReactionType DEPENDS tstPhotoatomicReactionType.cpp)
+FRENSIE_ADD_TEST(PhotoatomicReactionType)
 
-FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotoatomicReactionTypeHelpers DEPENDS tstAdjointPhotoatomicReactionTypeHelpers.cpp)
-FRENSIE_ADD_TEST(AdjointPhotoatomicReactionTypeHelpers)
+FRENSIE_ADD_TEST_EXECUTABLE(PhotonuclearReactionType DEPENDS tstPhotonuclearReactionType.cpp)
+FRENSIE_ADD_TEST(PhotonuclearReactionType)
+
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotoatomicReactionType DEPENDS tstAdjointPhotoatomicReactionType.cpp)
+FRENSIE_ADD_TEST(AdjointPhotoatomicReactionType)
 
 FRENSIE_ADD_TEST_EXECUTABLE(PhotonKinematicsHelpers DEPENDS tstPhotonKinematicsHelpers.cpp)
 FRENSIE_ADD_TEST(PhotonKinematicsHelpers)

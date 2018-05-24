@@ -223,7 +223,7 @@ void NeutronNuclearReactionACEFactory::createReactionOrderingMap(
 
   for( unsigned i = 0; i < mtr_block.size(); ++i )
   {
-    reaction = convertUnsignedToNuclearReactionType(
+    reaction = MonteCarlo::convertMTNumberToNuclearReactionType(
 				       static_cast<unsigned>( mtr_block[i] ) );
 
     reaction_ordering[reaction] = i;

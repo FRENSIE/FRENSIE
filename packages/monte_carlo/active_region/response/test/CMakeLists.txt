@@ -1,18 +1,18 @@
 FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_active_region_response)
 
-ADD_EXECUTABLE(tstResponseFunction
-  tstResponseFunction.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstResponseFunction monte_carlo_source_native)
-ADD_TEST(ResponseFunction_test tstResponseFunction)
-SET_PROPERTY(TEST ResponseFunction_test PROPERTY LABELS monte_carlo_source_native)
+# ADD_EXECUTABLE(tstResponseFunction
+#   tstResponseFunction.cpp
+#   ${FRENSIE_STD_UNIT_TEST_MAIN})
+# TARGET_LINK_LIBRARIES(tstResponseFunction monte_carlo_source_native)
+# ADD_TEST(ResponseFunction_test tstResponseFunction)
+# SET_PROPERTY(TEST ResponseFunction_test PROPERTY LABELS monte_carlo_source_native)
 
-ADD_EXECUTABLE(tstStandardResponseFunction
-  tstStandardResponseFunction.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstStandardResponseFunction monte_carlo_source_native)
-ADD_TEST(StandardResponseFunction_test tstStandardResponseFunction)
-SET_PROPERTY(TEST StandardResponseFunction_test PROPERTY LABELS monte_carlo_source_native)
+# ADD_EXECUTABLE(tstStandardResponseFunction
+#   tstStandardResponseFunction.cpp
+#   ${FRENSIE_STD_UNIT_TEST_MAIN})
+# TARGET_LINK_LIBRARIES(tstStandardResponseFunction monte_carlo_source_native)
+# ADD_TEST(StandardResponseFunction_test tstStandardResponseFunction)
+# SET_PROPERTY(TEST StandardResponseFunction_test PROPERTY LABELS monte_carlo_source_native)
 
 # ADD_EXECUTABLE(tstResponseFunctionFactory
 #   tstResponseFunctionFactory.cpp)

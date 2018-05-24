@@ -29,9 +29,6 @@ public:
   { /* ... */ }
 
   //! Convert the spatial coordinates to cartesian coordinates
-  using CylindricalSpatialCoordinateConversionPolicy::convertToCartesianSpatialCoordinates;
-
-  //! Convert the spatial coordinates to cartesian coordinates
   void convertToCartesianSpatialCoordinates(
                                       const double primary_spatial_coord,
                                       const double secondary_spatial_coord,
@@ -41,9 +38,6 @@ public:
                                       double& z_spatial_coord ) const override;
 
   //! Convert the cartesian coordinates to the spatial coordinate system
-  using CylindricalSpatialCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates;
-
-  //! Convert the cartesian coordinates to the spatial coordinate system
   void convertFromCartesianSpatialCoordinates(
                                const double x_spatial_coord,
                                const double y_spatial_coord,
@@ -51,6 +45,12 @@ public:
                                double& primary_spatial_coord,
                                double& secondary_spatial_coord,
                                double& tertiary_spatial_coord ) const override;
+
+  //! Convert the spatial coordinates to cartesian coordinates
+  using CylindricalSpatialCoordinateConversionPolicy::convertToCartesianSpatialCoordinates;
+
+  //! Convert the cartesian coordinates to the spatial coordinate system
+  using CylindricalSpatialCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates;
 
 private:
 

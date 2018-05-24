@@ -140,13 +140,13 @@ FRENSIE_UNIT_TEST( NeutronMaterial_hydrogen,
 
   cross_section = material->getMacroscopicReactionCrossSection(
 					                      1.0e-11,
-					                      MonteCarlo::N__DPA );
+					                      MonteCarlo::N__DAMAGE );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0, 1e-15 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
 					                      2.0e1,
-					                      MonteCarlo::N__DPA );
+					                      MonteCarlo::N__DAMAGE );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.833066682067e-4, 1e-13 );
 
@@ -191,7 +191,7 @@ FRENSIE_UNIT_TEST( NeutronMaterial_hydrogen, getMiscReactionTypes )
 
   FRENSIE_CHECK_EQUAL( reaction_types.size(), 2 );
   FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__TOTAL_D_PRODUCTION ) );
-  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__DPA ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__DAMAGE ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -208,7 +208,7 @@ FRENSIE_UNIT_TEST( NeutronMaterial_hydrogen, getReactionTypes )
   FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__GAMMA_REACTION ) );
   FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__N_ELASTIC_REACTION ) );
   FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__TOTAL_D_PRODUCTION ) );
-  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__DPA ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__DAMAGE ) );
 }
 
 //---------------------------------------------------------------------------//

@@ -13,8 +13,17 @@
 #include <string>
 #include <memory>
 
+// Boost Includes
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/assume_abstract.hpp>
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
+#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
 
@@ -37,60 +46,74 @@ public:
   //! Check if the response function is spatially uniform
   virtual bool isSpatiallyUniform() const = 0;
 
+  //! Get a description of the response function
+  virtual std::string description() const = 0;
+
+  //! Check if the description requires parentheses
+  virtual bool doesDescriptionRequireParentheses() const;
+
 protected:
 
   //! Constructor
   ParticleResponseFunction()
   { /* ... */ }
+
+private:
+
+  // Serialize the particle response function
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  { /* ... */ }
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 };
 
-// Evaluate the response function at the desired phase space point
-inline double operator()( const ParticleState& particle ) const
-{
-  return this->evaluate( particle );
-}
+} // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::ParticleResponseFunction, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleResponseFunction );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleResponseFunction );
 
 //! Create a new response function from the addition of two response functions
-std::shared_ptr<const ParticleResponseFunction> operator+(
-                  const std::shared_ptr<const ParticleResponseFunction>& lhs,
-                  const std::shared_ptr<const ParticleResponseFunction>& rhs );
+std::shared_ptr<const MonteCarlo::ParticleResponseFunction> operator+(
+      const std::shared_ptr<const MonteCarlo::ParticleResponseFunction>& lhs,
+      const std::shared_ptr<const MonteCarlo::ParticleResponseFunction>& rhs );
 
 //! Create a new response function from the subtraction of two response functions
-std::shared_ptr<const ParticleResponseFunction> operator-(
-                  const std::shared_ptr<const ParticleResponseFunction>& lhs,
-                  const std::shared_ptr<const ParticleResponseFunction>& rhs );
+std::shared_ptr<const MonteCarlo::ParticleResponseFunction> operator-(
+      const std::shared_ptr<const MonteCarlo::ParticleResponseFunction>& lhs,
+      const std::shared_ptr<const MonteCarlo::ParticleResponseFunction>& rhs );
 
 //! Create a new response function from the multiplication of two response functions
-std::shared_ptr<const ParticleResponseFunction> operator*(
-                  const std::shared_ptr<const ParticleResponseFunction>& lhs,
-                  const std::shared_ptr<const ParticleResponseFunction>& rhs );
+std::shared_ptr<const MonteCarlo::ParticleResponseFunction> operator*(
+      const std::shared_ptr<const MonteCarlo::ParticleResponseFunction>& lhs,
+      const std::shared_ptr<const MonteCarlo::ParticleResponseFunction>& rhs );
 
 //! Create a new response function from the multiplication of a scalar and a response function
-std::shared_ptr<const ParticleResponseFunction> operator*(
-                  const double lhs,
-                  const std::shared_ptr<const ParticleResponseFunction>& rhs );
+std::shared_ptr<const MonteCarlo::ParticleResponseFunction> operator*(
+      const double lhs,
+      const std::shared_ptr<const MonteCarlo::ParticleResponseFunction>& rhs );
 
 //! Create a new response function from the multiplication of a response function and a scalar
-std::shared_ptr<const ParticleResponseFunction> operator*(
-                    const std::shared_ptr<const ParticleResponseFunction>& lhs,
-                    const double rhs );
+std::shared_ptr<const MonteCarlo::ParticleResponseFunction> operator*(
+        const std::shared_ptr<const MonteCarlo::ParticleResponseFunction>& lhs,
+        const double rhs );
 
 //! Create a new response function from the division of two response functions
-std::shared_ptr<const ParticleResponseFunction> operator/(
-                  const std::shared_ptr<const ParticleResponseFunction>& lhs,
-                  const std::shared_ptr<const ParticleResponseFunction>& rhs );
+std::shared_ptr<const MonteCarlo::ParticleResponseFunction> operator/(
+      const std::shared_ptr<const MonteCarlo::ParticleResponseFunction>& lhs,
+      const std::shared_ptr<const MonteCarlo::ParticleResponseFunction>& rhs );
 
 //! Create a new response function from the division of a scalar and a response function
-std::shared_ptr<const ParticleResponseFunction> operator/(
-                  const double lhs,
-                  const std::shared_ptr<const ParticleResponseFunction>& rhs );
+std::shared_ptr<const MonteCarlo::ParticleResponseFunction> operator/(
+      const double lhs,
+      const std::shared_ptr<const MonteCarlo::ParticleResponseFunction>& rhs );
 
 //! Create a new response function from the division of a response function and a scalar
-std::shared_ptr<const ParticleResponseFunction> operator/(
-                  const std::shared_ptr<const ParticleResponseFunction>& lhs,
-                  const double rhs );
-
-} // end MonteCarlo namespace
+std::shared_ptr<const MonteCarlo::ParticleResponseFunction> operator/(
+        const std::shared_ptr<const MonteCarlo::ParticleResponseFunction>& lhs,
+        const double rhs );
 
 #endif // end MONTE_CARLO_PARTICLE_RESPONSE_FUNCTION_HPP
 

@@ -1,6 +1,13 @@
 FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_collision_neutron)
 
 ##---------------------------------------------------------------------------##
+## Support class tests
+##---------------------------------------------------------------------------##
+
+FRENSIE_ADD_TEST_EXECUTABLE(NuclearReactionType DEPENDS tstNuclearReactionType.cpp)
+FRENSIE_ADD_TEST(NuclearReactionType)
+
+##---------------------------------------------------------------------------##
 ## Scattering distribution tests
 ##---------------------------------------------------------------------------##
 

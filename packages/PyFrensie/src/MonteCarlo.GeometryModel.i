@@ -65,7 +65,7 @@ using namespace MonteCarlo;
 // %import(module="PyFrensie.MonteCarlo") MonteCarlo.Collision.i
 
 // Material definitions handling
-// %import MonteCarlo.Material.i
+%import MonteCarlo.Material.i
 
 // Geometry properties handling
 %import Geometry.Geometry__init__.i
@@ -105,12 +105,6 @@ using namespace MonteCarlo;
 // Add StandardFilledParticleGeometryModel support
 // ---------------------------------------------------------------------------//
 
-/* NOTE: Swig seems unable to wrap a the following functions properly when they
- * are declared in the derived class StandardFilledAdjointParticleGeometryModel
- * with the 'using' declaration. It has problems properly defining the
- * ParticleStateType under the derived class' namespace. As a workaround these
- * functions have been %ignored and %extend methods are used instead.
- */
 %ignore MonteCarlo::StandardFilledParticleGeometryModel::getMacroscopicTotalForwardCrossSectionQuick;
 %ignore MonteCarlo::StandardFilledParticleGeometryModel::getMacroscopicTotalForwardCrossSection;
 
@@ -121,25 +115,25 @@ using namespace MonteCarlo;
 
 // Add a more detailed docstring
 %feature("docstring")
-MonteCarlo::StandardFilledParticleGeometryModel<MonteCarlo::PARTICLE ## Material>
+MonteCarlo::StandardFilledParticleGeometryModel<PARTICLE ## Material>
 "The StandardFilledParticleGeometryModel is templated on the particle material
  type. It is used as a base class for the Filled Geometry Model classes."
 
 // Allow shared pointers of StandardFilledParticleGeometryModel objects
-%shared_ptr( MonteCarlo::StandardFilledParticleGeometryModel<MonteCarlo::PARTICLE ## Material> );
+%shared_ptr( MonteCarlo::StandardFilledParticleGeometryModel<PARTICLE ## Material> );
 
-%template(StandardFilledParticleGeometryModel_ ## PARTICLE ) MonteCarlo::StandardFilledParticleGeometryModel<MonteCarlo::PARTICLE ## Material>;
+%template(StandardFilledParticleGeometryModel_ ## PARTICLE ) MonteCarlo::StandardFilledParticleGeometryModel<PARTICLE ## Material>;
 
-%extend MonteCarlo::StandardFilledParticleGeometryModel<MonteCarlo::PARTICLE ## Material>
+%extend MonteCarlo::StandardFilledParticleGeometryModel<PARTICLE ## Material>
 {
-  double MonteCarlo::StandardFilledParticleGeometryModel<MonteCarlo::PARTICLE ## Material>::get ## PARTICLE ## MacroscopicTotalForwardCrossSection(
+  double MonteCarlo::StandardFilledParticleGeometryModel<PARTICLE ## Material>::get ## PARTICLE ## MacroscopicTotalForwardCrossSection(
       const Geometry::Model::InternalCellHandle cell,
       const double energy ) const
   {
     return $self->getMacroscopicTotalForwardCrossSection( cell, energy );
   }
 
-  double MonteCarlo::StandardFilledParticleGeometryModel<MonteCarlo::PARTICLE ## Material>::get ## PARTICLE ## MacroscopicTotalForwardCrossSectionQuick(
+  double MonteCarlo::StandardFilledParticleGeometryModel<PARTICLE ## Material>::get ## PARTICLE ## MacroscopicTotalForwardCrossSectionQuick(
       const Geometry::Model::InternalCellHandle cell,
       const double energy ) const
   {
@@ -162,20 +156,20 @@ MonteCarlo::StandardFilledParticleGeometryModel<MonteCarlo::PARTICLE ## Material
 
 %import "MonteCarlo_StandardFilledAdjointParticleGeometryModel.hpp"
 
-// Helper macro for templating the StandardFilledParticleGeometryModel
+// Helper macro for templating the StandardFilledAdjointParticleGeometryModel
 %define %standard_filled_adjoint_particle_geometry_model_interface_setup( PARTICLE )
 
 // Add a more detailed docstring
 %feature("docstring")
-MonteCarlo::StandardFilledAdjointParticleGeometryModel<MonteCarlo::PARTICLE ## Material>
+MonteCarlo::StandardFilledAdjointParticleGeometryModel<PARTICLE ## Material>
 "The StandardFilledAdjointParticleGeometryModel is templated on the adjoint
 particle material type.
 It is used as a base class for the Filled Geometry Model classes."
 
 // Allow shared pointers of StandardFilledAdjointParticleGeometryModel objects
-%shared_ptr( MonteCarlo::StandardFilledAdjointParticleGeometryModel<MonteCarlo::PARTICLE ## Material> );
+%shared_ptr( MonteCarlo::StandardFilledAdjointParticleGeometryModel<PARTICLE ## Material> );
 
-%template(StandardFilledAdjointParticleGeometryModel_ ## PARTICLE ) MonteCarlo::StandardFilledAdjointParticleGeometryModel<MonteCarlo::PARTICLE ## Material>;
+%template(StandardFilledAdjointParticleGeometryModel_ ## PARTICLE ) MonteCarlo::StandardFilledAdjointParticleGeometryModel<PARTICLE ## Material>;
 
 %enddef
 
@@ -239,7 +233,6 @@ It is used as a base class for the Filled Geometry Model classes."
 // ---------------------------------------------------------------------------//
 // Add FilledGeometryModel support
 // ---------------------------------------------------------------------------//
-
 
 %ignore *::operator const Geometry::Model&() const;
 %ignore *::operator std::shared_ptr<const Geometry::Model>() const;

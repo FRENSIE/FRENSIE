@@ -21,13 +21,6 @@ definitions in the monte_carlo/collision subpackage.
 // FRENSIE Includes
 #include "PyFrensie_PythonTypeTraits.hpp"
 #include "MonteCarlo_MaterialDefinitionDatabase.hpp"
-#include "MonteCarlo_PhotonuclearReactionType.hpp"
-#include "MonteCarlo_NeutronMaterial.hpp"
-#include "MonteCarlo_PhotonMaterial.hpp"
-#include "MonteCarlo_AdjointPhotonMaterial.hpp"
-#include "MonteCarlo_ElectronMaterial.hpp"
-#include "MonteCarlo_AdjointElectronMaterial.hpp"
-#include "MonteCarlo_PositronMaterial.hpp"
 #include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_ContractException.hpp"
@@ -94,29 +87,6 @@ using namespace MonteCarlo;
 %ignore *::MaterialDefinitionIterator;
 %ignore *::begin;
 %ignore *::end;
-
-// ---------------------------------------------------------------------------//
-// Add support for the different particle materials
-// ---------------------------------------------------------------------------//
-
-// Import the NeutronMaterial class
-%import "MonteCarlo_NeutronMaterial.hpp"
-
-%import "MonteCarlo_PhotonuclearReactionType.hpp"
-// Import the PhotonMaterial class
-%import "MonteCarlo_PhotonMaterial.hpp"
-
-// Import the AdjointPhotonMaterial class
-%import "MonteCarlo_AdjointPhotonMaterial.hpp"
-
-// Import the ElectronMaterial class
-%import "MonteCarlo_ElectronMaterial.hpp"
-
-// Import the AdjointElectronMaterial class
-%import "MonteCarlo_AdjointElectronMaterial.hpp"
-
-// Import the PositronMaterial class
-%import "MonteCarlo_PositronMaterial.hpp"
 
 //---------------------------------------------------------------------------//
 // Add MonteCarlo_MaterialDefinitionDatabase support

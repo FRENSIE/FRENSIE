@@ -277,7 +277,7 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_photon_mode 
     // Sample the pair production reaction
     std::vector<double> fake_stream( 5 );
     fake_stream[0] = 0.99; // select the only photoatom
-    fake_stream[1] = 0.95; // select pair production
+    fake_stream[1] = 0.05; // select pair production
     fake_stream[2] = 0.0;
     fake_stream[3] = 0.5;
     fake_stream[4] = 0.0;
@@ -310,7 +310,7 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_photon_mode 
 
     // Sample the triplet production reaction
     fake_stream[0] = 0.99; // select the only photoatom
-    fake_stream[1] = 0.96;
+    fake_stream[1] = 0.04;
     fake_stream[2] = 0.0;
     fake_stream[3] = 0.5;
     fake_stream[4] = 0.0;
@@ -371,7 +371,7 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_photon_mode 
     // Sample the pair production reaction
     std::vector<double> fake_stream( 5 );
     fake_stream[0] = 0.99; // select the only photoatom
-    fake_stream[1] = 0.95; // select pair production
+    fake_stream[1] = 0.05; // select pair production
     fake_stream[2] = 0.0;
     fake_stream[3] = 0.5;
     fake_stream[4] = 0.0;
@@ -404,7 +404,7 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_photon_mode 
 
     // Sample the triplet production reaction
     fake_stream[0] = 0.99; // select the only photoatom
-    fake_stream[1] = 0.96;
+    fake_stream[1] = 0.04;
     fake_stream[2] = 0.0;
     fake_stream[3] = 0.5;
     fake_stream[4] = 0.0;

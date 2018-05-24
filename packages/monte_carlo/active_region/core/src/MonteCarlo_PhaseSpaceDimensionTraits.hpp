@@ -32,6 +32,10 @@ struct PhaseSpaceDimensionTraits<PRIMARY_SPATIAL_DIMENSION>
   { return SPATIAL_DIMENSION_CLASS; }
 
   //! Get the coordinate value
+  static inline DimensionValueType getCoordinate( const ParticleState& point )
+  { return point.getXPosition(); }
+
+  //! Get the coordinate value
   static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
   { return point.getPrimarySpatialCoordinate(); }
 
@@ -65,6 +69,10 @@ struct PhaseSpaceDimensionTraits<SECONDARY_SPATIAL_DIMENSION>
   //! Get the dimension class type
   static inline PhaseSpaceDimensionClass getClass()
   { return SPATIAL_DIMENSION_CLASS; }
+
+  //! Get the coordinate value
+  static inline DimensionValueType getCoordinate( const ParticleState& point )
+  { return point.getYPosition(); }
 
   //! Get the coordinate value
   static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
@@ -102,6 +110,10 @@ struct PhaseSpaceDimensionTraits<TERTIARY_SPATIAL_DIMENSION>
   { return SPATIAL_DIMENSION_CLASS; }
 
   //! Get the coordinate value
+  static inline DimensionValueType getCoordinate( const ParticleState& point )
+  { return point.getZPosition(); }
+
+  //! Get the coordinate value
   static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
   { return point.getTertiarySpatialCoordinate(); }
 
@@ -135,6 +147,10 @@ struct PhaseSpaceDimensionTraits<PRIMARY_DIRECTIONAL_DIMENSION>
   //! Get the dimension class type
   static inline PhaseSpaceDimensionClass getClass()
   { return DIRECTIONAL_DIMENSION_CLASS; }
+
+  //! Get the coordinate value
+  static inline DimensionValueType getCoordinate( const ParticleState& point )
+  { return point.getXDirection(); }
 
   //! Get the coordinate value
   static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
@@ -172,6 +188,10 @@ struct PhaseSpaceDimensionTraits<SECONDARY_DIRECTIONAL_DIMENSION>
   { return DIRECTIONAL_DIMENSION_CLASS; }
 
   //! Get the coordinate value
+  static inline DimensionValueType getCoordinate( const ParticleState& point )
+  { return point.getYDirection(); }
+
+  //! Get the coordinate value
   static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
   { return point.getSecondaryDirectionalCoordinate(); }
 
@@ -205,6 +225,10 @@ struct PhaseSpaceDimensionTraits<TERTIARY_DIRECTIONAL_DIMENSION>
   //! Get the dimension class type
   static inline PhaseSpaceDimensionClass getClass()
   { return DIRECTIONAL_DIMENSION_CLASS; }
+
+  //! Get the coordinate value
+  static inline DimensionValueType getCoordinate( const ParticleState& point )
+  { return point.getZDirection(); }
 
   //! Get the coordinate value
   static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
@@ -242,6 +266,10 @@ struct PhaseSpaceDimensionTraits<ENERGY_DIMENSION>
   { return ENERGY_DIMENSION_CLASS; }
 
   //! Get the coordinate value
+  static inline DimensionValueType getCoordinate( const ParticleState& point )
+  { return point.getEnergy(); }
+
+  //! Get the coordinate value
   static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
   { return point.getEnergyCoordinate(); }
 
@@ -275,6 +303,10 @@ struct PhaseSpaceDimensionTraits<TIME_DIMENSION>
   //! Get the dimension class type
   static inline PhaseSpaceDimensionClass getClass()
   { return TIME_DIMENSION_CLASS; }
+
+  //! Get the coordinate value
+  static inline DimensionValueType getCoordinate( const ParticleState& point )
+  { return point.getTime(); }
 
   //! Get the coordinate value
   static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
@@ -315,6 +347,10 @@ struct PhaseSpaceDimensionTraits<WEIGHT_DIMENSION>
   //! Get the dimension class type
   static inline PhaseSpaceDimensionClass getClass()
   { return WEIGHT_DIMENSION_CLASS; }
+
+  //! Get the coordinate value
+  static inline DimensionValueType getCoordinate( const ParticleState& point )
+  { return point.getWeight(); }
 
   //! Get the coordinate value
   static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )

@@ -10,6 +10,7 @@
 #define MONTE_CARLO_PHASE_SPACE_DIMENSION_TRAITS_DECL_HPP
 
 // FRENSIE Includes
+#include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_PhaseSpacePoint.hpp"
 #include "MonteCarlo_PhaseSpaceDimensionClass.hpp"
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
@@ -64,6 +65,13 @@ struct PhaseSpaceDimensionTraits
   }
 
   //! Get the coordinate value
+  static inline DimensionValueType getCoordinate( const ParticleState& point )
+  {
+    UndefinedPhaseSpaceDimensionTraits<DimensionValueType,dimension>::notDefined();
+    return 0;
+  }
+
+  //! Get the coordinate value
   static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
   {
     UndefinedPhaseSpaceDimensionTraits<DimensionValueType,dimension>::notDefined();
@@ -91,6 +99,16 @@ struct PhaseSpaceDimensionTraits
     UndefinedPhaseSpaceDimensionTraits<DimensionWeightType,dimension>::notDefined();
   }
 };
+
+/*! This function gives access to the getCoordinate MonteCarlo::PhaseSpaceDimensionTraits method
+ * \ingroup phase_space_dimension_traits
+ */
+template<PhaseSpaceDimension dimension>
+inline typename PhaseSpaceDimensionTraits<dimension>::DimensionValueType
+getCoordinate( const ParticleState& point )
+{
+  return PhaseSpaceDimensionTraits<dimension>::getCoordinate( point );
+}
 
 /*! This function gives access to the getCoordinate MonteCarlo::PhaseSpaceDimensionTraits method
  * \ingroup phase_space_dimension_traits

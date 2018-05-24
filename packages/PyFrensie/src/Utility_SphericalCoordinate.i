@@ -33,50 +33,74 @@ using namespace Utility;
 //---------------------------------------------------------------------------//
 // Add support for the SphericalSpatialCoordinateConversionPolicy
 //---------------------------------------------------------------------------//
-// Import the SphericalSpatialCoordinateConversionPolicy
-%include "Utility_SphericalSpatialCoordinateConversionPolicy.hpp"
 
 %basic_spatial_coordinate_interface_setup( SphericalSpatialCoordinateConversionPolicy )
+
+// Allow shared pointers of SphericalSpatialCoordinateConversionPolicy objects
+%shared_ptr( Utility::SphericalSpatialCoordinateConversionPolicy );
+
+// Import the SphericalSpatialCoordinateConversionPolicy
+%include "Utility_SphericalSpatialCoordinateConversionPolicy.hpp"
 
 //---------------------------------------------------------------------------//
 // Add support for the SphericalDirectionalCoordinateConversionPolicy
 //---------------------------------------------------------------------------//
-// Import the SphericalDirectionalCoordinateConversionPolicy
-%include "Utility_SphericalDirectionalCoordinateConversionPolicy.hpp"
 
 %basic_directional_coordinate_interface_setup( SphericalDirectionalCoordinateConversionPolicy )
+
+// Allow shared pointers of SphericalDirectionalCoordinateConversionPolicy objects
+%shared_ptr( Utility::SphericalDirectionalCoordinateConversionPolicy );
+
+// Import the SphericalDirectionalCoordinateConversionPolicy
+%include "Utility_SphericalDirectionalCoordinateConversionPolicy.hpp"
 
 //---------------------------------------------------------------------------//
 // Add support for the TranslationSphericalSpatialCoordinateConversionPolicy
 //---------------------------------------------------------------------------//
-// Import the TranslationSphericalSpatialCoordinateConversionPolicy
-%include "Utility_TranslationSphericalSpatialCoordinateConversionPolicy.hpp"
 
 %translation_spatial_coordinate_interface_setup( TranslationSphericalSpatialCoordinateConversionPolicy )
+
+// Allow shared pointers of TranslationSphericalSpatialCoordinateConversionPolicy objects
+%shared_ptr( Utility::TranslationSphericalSpatialCoordinateConversionPolicy );
+
+// Import the TranslationSphericalSpatialCoordinateConversionPolicy
+%include "Utility_TranslationSphericalSpatialCoordinateConversionPolicy.hpp"
 
 //---------------------------------------------------------------------------//
 // Add support for the GeneralSphericalSpatialCoordinateConversionPolicy
 //---------------------------------------------------------------------------//
-// Import the GeneralSphericalSpatialCoordinateConversionPolicy
-%include "Utility_GeneralSphericalSpatialCoordinateConversionPolicy.hpp"
 
 %general_spatial_coordinate_interface_setup( GeneralSphericalSpatialCoordinateConversionPolicy )
 
+// Allow shared pointers of GeneralSphericalSpatialCoordinateConversionPolicy objects
+%shared_ptr( Utility::GeneralSphericalSpatialCoordinateConversionPolicy );
+
+// Import the GeneralSphericalSpatialCoordinateConversionPolicy
+%include "Utility_GeneralSphericalSpatialCoordinateConversionPolicy.hpp"
+
 // ---------------------------------------------------------------------------//
-// Add support for the RotationSphericalSpatialCoordinateConversionPolicy
+// Add support for the RotationSphericalCoordinateConversionPolicy
 // ---------------------------------------------------------------------------//
-// Import the RotationSphericalSpatialCoordinateConversionPolicy
-%include "Utility_RotationSphericalCoordinateConversionPolicy.hpp"
 
 %rotation_coordinate_interface_setup( RotationSphericalCoordinateConversionPolicy )
 
+// Allow shared pointers of RotationSphericalCoordinateConversionPolicy objects
+%shared_ptr( Utility::RotationSphericalCoordinateConversionPolicy );
+
+// Import the RotationSphericalCoordinateConversionPolicy
+%include "Utility_RotationSphericalCoordinateConversionPolicy.hpp"
+
 // ---------------------------------------------------------------------------//
-// Add support for the BasicSphericalSpatialCoordinateConversionPolicy
+// Add support for the BasicSphericalCoordinateConversionPolicy
 // ---------------------------------------------------------------------------//
-// Import the BasicSphericalSpatialCoordinateConversionPolicy
-%include "Utility_BasicSphericalCoordinateConversionPolicy.hpp"
 
 %basic_coordinate_interface_setup( BasicSphericalCoordinateConversionPolicy )
+
+// Allow shared pointers of BasicSphericalCoordinateConversionPolicy objects
+%shared_ptr( Utility::BasicSphericalCoordinateConversionPolicy );
+
+// Import the BasicSphericalCoordinateConversionPolicy
+%include "Utility_BasicSphericalCoordinateConversionPolicy.hpp"
 
 //---------------------------------------------------------------------------//
 // end Utility_SphericalCoordinate.i
