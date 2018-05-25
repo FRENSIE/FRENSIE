@@ -91,6 +91,19 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, getCore )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the critical line energies can be returned
+FRENSIE_UNIT_TEST( AdjointPhotoatom, getCriticalLineEnergies )
+{
+  const std::vector<double>& critical_line_energies =
+    adjoint_photoatom->getCriticalLineEnergies();
+
+  FRENSIE_REQUIRE_EQUAL( critical_line_energies.size(), 2 );
+  FRENSIE_CHECK_EQUAL( critical_line_energies[0],
+                       Utility::PhysicalConstants::electron_rest_mass_energy );
+  FRENSIE_CHECK_EQUAL( critical_line_energies[1], 20.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check if the energy corresponds to a line energy reaction
 FRENSIE_UNIT_TEST( AdjointPhotoatom, doesEnergyHaveLineEnergyReaction )
 {

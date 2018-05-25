@@ -1737,9 +1737,9 @@ namespace Details{
 /*! Determine the number of values that each process will send
  * \ingroup mpi
  */
-void gathervGetSizes( const Communicator& comm,
-                      const int local_size,
-                      std::vector<int>& sizes )
+inline void gathervGetSizes( const Communicator& comm,
+                             const int local_size,
+                             std::vector<int>& sizes )
 {
   try{
     Utility::allGather( comm, local_size, sizes );

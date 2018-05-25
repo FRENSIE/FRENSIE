@@ -52,6 +52,9 @@ public:
   typedef typename AtomCore::ConstLineEnergyReactionMap
   ConstLineEnergyReactionMap;
 
+  //! Return the critical line energies
+  const std::vector<double>& getCriticalLineEnergies() const;
+
   //! Check if the energy corresponds to a line energy reaction
   virtual bool doesEnergyHaveLineEnergyReaction( const double energy ) const;
 

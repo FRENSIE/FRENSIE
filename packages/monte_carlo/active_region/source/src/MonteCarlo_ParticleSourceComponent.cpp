@@ -13,6 +13,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSourceComponent.hpp"
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_OpenMPProperties.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
@@ -126,7 +127,7 @@ void ParticleSourceComponent::reduceData( const Utility::Communicator& comm,
   testPrecondition( root_process < comm.size() );
 
   // Only do the reduction if there is more than one process
-  if( comm->size() > 1 )
+  if( comm.size() > 1 )
   {
     // Reduce the starting cell sets
     try{
@@ -167,7 +168,7 @@ void ParticleSourceComponent::reduceData( const Utility::Communicator& comm,
  * been called, this method is thread-safe.
  */
 void ParticleSourceComponent::sampleParticleState(
-                                             ParticleBanke& bank,
+                                             ParticleBank& bank,
                                              const unsigned long long history )
 {
   // Make sure thread support has been set up correctly
@@ -184,7 +185,7 @@ void ParticleSourceComponent::sampleParticleState(
   // Cache some data for this thread in case they need to be
   // accessed multiple times
   const Geometry::Navigator& navigator =
-    d_navigator[Utility::OpenMPProperties::getThreadId()];
+    *d_navigator[Utility::OpenMPProperties::getThreadId()];
   
   Counter& trial_counter =
     d_number_of_trials[Utility::OpenMPProperties::getThreadId()];
@@ -240,10 +241,10 @@ void ParticleSourceComponent::sampleParticleState(
       Geometry::Model::InternalCellHandle start_cell_id;
 
       try{
-        start_cell_id = navigator.findCellContainingRay(
-                                                      particle->getPosition(),
-                                                      particle->getDirection(),
-                                                      start_cell_cache );
+        start_cell_id =
+          navigator.findCellContainingRay( Utility::reinterpretAsQuantity<Geometry::Navigator::Length>( particle->getPosition() ),
+                                           particle->getDirection(),
+                                           start_cell_cache );
       }
       EXCEPTION_CATCH_RETHROW( std::runtime_error,
                                "Unable to embed the sampled particle "
@@ -290,7 +291,7 @@ double ParticleSourceComponent::getSelectionWeight() const
 }
 
 // Get the id of this source
-size_t gParticleSourceComponent::getId() const
+size_t ParticleSourceComponent::getId() const
 {
   return d_id;
 }
@@ -344,7 +345,7 @@ void ParticleSourceComponent::logSummary() const
 
   this->printSummary( oss );
 
-  FRENSIE_LOG_NOTIFICATION( oss );
+  FRENSIE_LOG_NOTIFICATION( oss.str() );
 }
 
 // Print a standard summary of the source data
@@ -356,7 +357,7 @@ void ParticleSourceComponent::printStandardSummary(
                                       std::ostream& os ) const
 {
   os << "Source Component " << d_id << " Summary..." << "\n"
-     << "\tType: " << source_type << "\n"
+     << "\tType: " << source_component_type << "\n"
      << "\tSelection weight: " << d_selection_weight << "\n"
      << "\tNumber of (position) trials: " << trials << "\n"
      << "\tNumber of samples: " << samples << "\n"
@@ -370,8 +371,8 @@ void ParticleSourceComponent::printStandardStartingCellSummary(
 {
   os << "\tSource Component " << d_id << " Starting Cells: ";
 
-  for( auto starting_cell : starting_cels )
-    os << *cell_it << " ";
+  for( auto starting_cell : starting_cells )
+    os << starting_cell << " ";
 
   os << std::endl;
 }
@@ -398,7 +399,7 @@ void ParticleSourceComponent::mergeStartingCells(
                                              const int root_process )
 {
   CellIdSet start_cell_cache;
-  this->mergeLocalStartCellCaches( starting_cells );
+  this->mergeLocalStartCellCaches( start_cell_cache );
   
   std::vector<CellIdSet> gathered_start_cell_caches;
 
@@ -455,7 +456,7 @@ void ParticleSourceComponent::reduceTrialCounters(
 
 // Reduce the counters on the root process
 void ParticleSourceComponent::reduceCounters( std::vector<Counter>& counters,
-                                              Utility::Communicator& comm,
+                                              const Utility::Communicator& comm,
                                               const int root_process )
 {
   try{
@@ -495,9 +496,9 @@ bool ParticleSourceComponent::isSampledParticlePositionValid(
     for( auto rejection_cell : d_rejection_cells )
     {
       Geometry::PointLocation location =
-        navigator.getPointLocation( particle.getPosition(),
+        navigator.getPointLocation( Utility::reinterpretAsQuantity<Geometry::Navigator::Length>( particle.getPosition() ),
                                     particle.getDirection(),
-                                    *rejection_cell_it );
+                                    rejection_cell );
 
       if( location == Geometry::POINT_INSIDE_CELL )
         return true;

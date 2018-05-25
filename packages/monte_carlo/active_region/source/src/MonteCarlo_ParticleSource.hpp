@@ -15,8 +15,6 @@
 // MonteCarlo Includes
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
-#include "MonteCarlo_ModuleTraits.hpp"
-#include "MonteCarlo_SourceHDF5FileHandler.hpp"
 #include "Utility_Communicator.hpp"
 #include "Utility_DistributionTraits.hpp"
 

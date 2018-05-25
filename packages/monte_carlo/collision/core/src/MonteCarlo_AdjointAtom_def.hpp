@@ -14,6 +14,13 @@
 
 namespace MonteCarlo{
 
+// Return the critical line energies
+template<typename AtomCore>
+const std::vector<double>& AdjointAtom<AtomCore>::getCriticalLineEnergies() const
+{
+  return this->getCore().getCriticalLineEnergies();
+}
+
 // Check if the energy corresponds to a line energy reaction
 template<typename AtomCore>
 bool AdjointAtom<AtomCore>::doesEnergyHaveLineEnergyReaction(

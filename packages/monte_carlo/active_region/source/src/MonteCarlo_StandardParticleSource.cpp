@@ -12,10 +12,6 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardParticleSource.hpp"
-#include "MonteCarlo_PhaseSpacePoint.hpp"
-#include "MonteCarlo_SourceHDF5FileHandler.hpp"
-#include "MonteCarlo_ParticleStateFactory.hpp"
-#include "Utility_CommHelpers.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -23,8 +19,8 @@ namespace MonteCarlo{
 
 // Constructor
 StandardParticleSource::StandardParticleSource(
-            const std::vector<std::shared_ptr<const ParticleSourceComponent> >&
-            source_components )
+                  const std::vector<std::shared_ptr<ParticleSourceComponent> >&
+                  source_components )
   : ParticleSource(),
     d_components( source_components ),
     d_component_sampling_dist()
@@ -55,7 +51,7 @@ StandardParticleSource::StandardParticleSource(
 void StandardParticleSource::enableThreadSupport( const size_t threads )
 {
   for( size_t i = 0; i < d_components.size(); ++i )
-    d_components[i]->enableThreadSupport( threads )
+    d_components[i]->enableThreadSupport( threads );
 }
 
 // Reset the source data

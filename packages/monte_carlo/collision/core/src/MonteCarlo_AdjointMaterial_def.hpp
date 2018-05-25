@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_ADJOINT_MATERIAL_DEF_HPP
 #define MONTE_CARLO_ADJOINT_MATERIAL_DEF_HPP
 
+// Std Lib Includes
+#include <algorithm>
+
 namespace MonteCarlo{
 
 // Initialize static member data
@@ -42,8 +45,34 @@ AdjointMaterial<ScatteringCenter>::AdjointMaterial(
     d_macroscopic_total_line_energy_cs_evaluation_functor(
        std::bind<double>( &ThisType::getMacroscopicTotalLineEnergyCrossSection,
                           std::cref(*this),
-                          std::placeholders::_1 ) )
-{ /* ... */ }
+                          std::placeholders::_1 ) ),
+    d_critical_line_energies()
+{
+  // Get the critical line energies used by all scattering centers
+  std::set<double> critical_line_energies;
+
+  for( size_t i = 0; i < this->getNumberOfScatteringCenters(); ++i )
+  {
+    const std::vector<double>& scattering_center_critical_line_energies =
+      this->getScatteringCenter( i ).getCriticalLineEnergies();
+
+    critical_line_energies.insert( scattering_center_critical_line_energies.begin(),
+                                   scattering_center_critical_line_energies.end() );
+  }
+
+  d_critical_line_energies.assign( critical_line_energies.begin(),
+                                   critical_line_energies.end() );
+
+  std::sort( d_critical_line_energies.begin(),
+             d_critical_line_energies.end() );
+}
+
+// Return the critical line energies
+template<typename ScatteringCenter>
+const std::vector<double>& AdjointMaterial<ScatteringCenter>::getCriticalLineEnergies() const
+{
+  return d_critical_line_energies;
+}
 
 // Check if the energy corresponds to a line energy reaction
 template<typename ScatteringCenter>

@@ -39,8 +39,8 @@ class StandardParticleSource : public ParticleSource
 {
   //! Constructor
   StandardParticleSource(
-            const std::vector<std::shared_ptr<const ParticleSourceComponent> >&
-            source_components );
+                  const std::vector<std::shared_ptr<ParticleSourceComponent> >&
+                  source_components );
 
   //! Destructor
   ~StandardParticleSource()
@@ -124,7 +124,7 @@ class StandardParticleSource : public ParticleSource
 private:
   
   // The source components
-  std::vector<std::shared_ptr<const ParticleDistribution> > d_components;
+  std::vector<std::shared_ptr<ParticleSourceComponent> > d_components;
 
   // The source component sampling distribution
   std::unique_ptr<const Utility::DiscreteDistribution> d_component_sampling_dist;

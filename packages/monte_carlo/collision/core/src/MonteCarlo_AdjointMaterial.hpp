@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_Material.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -47,6 +48,9 @@ public:
   //! Destructor
   virtual ~AdjointMaterial()
   { /* ... */ }
+
+  //! Return the critical line energies
+  const std::vector<double>& getCriticalLineEnergies() const;
 
   //! Check if the energy corresponds to a line energy reaction
   bool doesEnergyHaveLineEnergyReaction( const double energy ) const;
@@ -96,6 +100,9 @@ private:
   // The getMacroscopicTotalLineEnergyCrossSection function wrapper
   typename BaseType::MacroscopicCrossSectionEvaluationFunctor
   d_macroscopic_total_line_energy_cs_evaluation_functor;
+
+  // The critical line energies
+  std::vector<double> d_critical_line_energies;
 };
   
 } // end MonteCarlo namespace

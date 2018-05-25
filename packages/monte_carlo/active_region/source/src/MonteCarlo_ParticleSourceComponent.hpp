@@ -62,7 +62,7 @@ public:
                    const int root_process );
 
   //! Sample a particle state
-  void sampleParticleState( ParticleBanke& bank,
+  void sampleParticleState( ParticleBank& bank,
                             const unsigned long long history );
 
   //! Return the starting cells that have been cached
@@ -175,7 +175,7 @@ private:
 
   // Reduce the counters on the root process
   static void reduceCounters( std::vector<Counter>& counters,
-                              Utility::Communicator& comm,
+                              const Utility::Communicator& comm,
                               const int root_process );
 
   // Reduce the local samples counters
@@ -186,7 +186,7 @@ private:
 
   // Check if the sampled particle position is valid
   bool isSampledParticlePositionValid( const ParticleState& particle,
-                                       const Navigator& navigator ) const;
+                                       const Geometry::Navigator& navigator ) const;
 
   // The component id
   UniqueIdManager<ParticleSourceComponent,size_t> d_id;
