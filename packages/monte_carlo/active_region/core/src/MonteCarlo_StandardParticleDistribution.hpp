@@ -46,14 +46,10 @@ public:
   typedef ParticleDistribution::DimensionCounterMap DimensionCounterMap;
 
   //! Basic Constructor
-  StandardParticleDistribution( const size_t id );
-
-  //! Basic Constructor
-  StandardParticleDistribution( const size_t id, const std::string& name );
+  StandardParticleDistribution( const std::string& name );
 
   //! Constructor
   StandardParticleDistribution(
-   const size_t id,
    const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
    spatial_coord_conversion_policy,
    const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
@@ -61,7 +57,6 @@ public:
   
   //! Constructor
   StandardParticleDistribution(
-   const size_t id,
    const std::string& name,
    const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
    spatial_coord_conversion_policy,
@@ -121,8 +116,7 @@ public:
 protected:
 
   //! Default Constructor
-  StandardParticleDistribution()
-  { /* ... */ }
+  StandardParticleDistribution();
   
 private:
 

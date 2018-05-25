@@ -11,18 +11,13 @@
 
 // Std Lib Includes
 #include <memory>
-#include <set>
-#include <functional>
-
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayRCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSource.hpp"
-#include "MonteCarlo_ParticleDistribution.hpp"
+#include "MonteCarlo_ParticleSourceComponent.hpp"
+#include "Utility_DiscreteDistribution.hpp"
 #include "Utility_OpenMPProperties.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -42,161 +37,97 @@ namespace MonteCarlo{
  */ 
 class StandardParticleSource : public ParticleSource
 {
-
-private:
-
-  // Typedef for scalar traits
-  typedef Teuchos::ScalarTraits<double> ST;
-
-  // Typedef for the dimension trial counter map
-  typedef ParticleDistribution::DimensionCounterMap DimensionCounterMap;
-
-  // Typedef for the particle state sampling function
-  typedef std::function<void(ParticleState&,DimensionCounterMap&)>
-  ParticleStateSamplingFunction;
-
-public:
-
   //! Constructor
   StandardParticleSource(
-      const std::shared_ptr<const ParticleDistribution>& particle_distribution,
-      const ParticleType particle_type );
+            const std::vector<std::shared_ptr<const ParticleSourceComponent> >&
+            source_components );
 
   //! Destructor
   ~StandardParticleSource()
   { /* ... */ }
 
-  //! Get the source id
-  ModuleTraits::InternalROIHandle getId() const override;
+  //! Enable thread support
+  void enableThreadSupport( const size_t threads ) final override;
 
-  //! Get the particle type
-  ParticleType getParticleType() const;
+  //! Reset the source data
+  void resetData() final override;
 
-  //! Set the critical line energies
-  void setCriticalLineEnergies(
-               const Teuchos::ArrayRCP<const double>& critical_line_energies );
+  //! Reduce the source data
+  void reduceData( const Utility::Communicator& comm,
+                           const int root_process ) final override;
 
   //! Print a summary of the source data
-  void printSummary( std::ostream& os ) const override;
+  void printSummary( std::ostream& os ) const final override;
 
-  //! Return the number of trials in the phase space dimension
-  ModuleTraits::InternalCounter getNumberOfDimensionTrials(
-                          const PhaseSpaceDimension dimension ) const override;
+  //! Log a summary of the sampling statistics
+  void logSummary() const;
+
+  //! Sample a particle state from the source
+  void sampleParticleState( ParticleBank& bank,
+                            const unsigned long long history ) final override;
+
+  //! Get the number of components
+  size_t getNumberOfComponents() const final override;
+
+  //! Return the number of sampling trials
+  Counter getNumberOfTrials() const final override;
+
+  //! Return the number of samples that have been generated
+  Counter getNumberOfSamples() const final override;
+
+  //! Return the sampling efficiency from the source
+  double getSamplingEfficiency() const final override;
+
+  //! Return the number of sampling trials in the phase space dimension
+  Counter getNumberOfDimensionTrials(
+                    const PhaseSpaceDimension dimension ) const final override;
 
   //! Return the number of samples in the phase space dimension
-  ModuleTraits::InternalCounter getNumberOfDimensionSamples(
-                          const PhaseSpaceDimension dimension ) const override;
+  Counter getNumberOfDimensionSamples(
+                    const PhaseSpaceDimension dimension ) const final override;
 
   //! Return the sampling efficiency in the phase space dimension
   double getDimensionSamplingEfficiency(
-                          const PhaseSpaceDimension dimension ) const override;
+                    const PhaseSpaceDimension dimension ) const final override;
 
-protected:
+  //! Return the number of sampling trials
+  Counter getNumberOfTrials( const size_t component ) const final override;
 
-  //! Enable thread support
-  void enableThreadSupportImpl( const size_t threads ) override;
+  //! Return the number of samples that have been generated
+  Counter getNumberOfSamples( const size_t component ) const final override;
 
-  //! Reset the source data
-  void resetDataImpl() override;
+  //! Return the sampling efficiency from the source
+  double getSamplingEfficiency( const size_t component ) const final override;
 
-  //! Reduce the source data
-  void reduceDataImpl(
-            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
-            const int root_process ) override;
+  //! Return the number of sampling trials in the phase space dimension for a component
+  Counter getNumberOfDimensionTrials(
+                    const size_t component,
+                    const PhaseSpaceDimension dimension ) const final override;
 
-  //! Export the source data
-  void exportDataImpl( SourceHDF5FileHandler& hdf5_file ) const override;
-  
-  /*! \brief Return the number of particle states that will be sampled for the 
-   * given history number
-   */
-  unsigned long long getNumberOfParticleStateSamples(
-                             const unsigned long long history ) const override;
+  //! Return the number of samples in the phase space dimension for a component
+  Counter getNumberOfDimensionSamples(
+                    const size_t component,
+                    const PhaseSpaceDimension dimension ) const final override;
 
-  //! Initialize a particle state
-  std::shared_ptr<ParticleState> initializeParticleState(
-                          const unsigned long long history,
-                          const unsigned long long history_state_id ) override;
+  //! Return the sampling efficiency in the phase space dimension for a component
+  double getDimensionSamplingEfficiency(
+                    const size_t component,
+                    const PhaseSpaceDimension dimension ) const final override;
 
-  //! Sample a particle state from the source
-  bool sampleParticleStateImpl(
-                          const std::shared_ptr<ParticleState>& particle,
-                          const unsigned long long history_state_id ) override;
+  //! Return the starting cells that have been cached
+  void getStartingCells( CellIdSet& starting_cells ) const final override;
+
+  //! Return the starting cells that have been cached for a component
+  void getStartingCells( const size_t component,
+                         CellIdSet& starting_cells ) const final override;
 
 private:
-
-  // Reduce the dimension sample counters on the comm
-  void reduceDimensionSampleCounters(
-            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
-            const int root_process );
-
-  // Reduce the dimension trial counters on the comm
-  void reduceDimensionTrialCounters(
-            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
-            const int root_process );
-
-  // Reduce the dimension counters on the comm
-  static void reduceDimensionCounters(
-            Teuchos::Array<DimensionCounterMap>& dimension_counters,
-            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
-            const int root_process );
-
-  // Reduce all of the local dimension samples counters
-  void reduceAllLocalDimensionSampleCounters(
-                        DimensionCounterMap& dimension_sample_counters ) const;
-
-  // Reduce all of the local dimension trials counters
-  void reduceAllLocalDimensionTrialCounters(
-                         DimensionCounterMap& dimension_trial_counters ) const;
-
-  // Reduce the dimension counters
-  static void reduceAllDimensionCounters(
-           DimensionCounterMap& dimension_counters,
-           const Teuchos::Array<DimensionCounterMap>& all_dimension_counters );
-
-  // Reduce the local dimension sample counters
-  ModuleTraits::InternalCounter reduceLocalDimensionSampleCounters(
-                                   const PhaseSpaceDimension dimension ) const;
-
-  // Reduce the local dimension trial counters
-  ModuleTraits::InternalCounter reduceLocalDimensionTrialCounters(
-                                   const PhaseSpaceDimension dimension ) const;
-
-  // Reduce the dimension counter
-  static ModuleTraits::InternalCounter reduceDimensionCounters(
-               const PhaseSpaceDimension dimension,
-               const Teuchos::Array<DimensionCounterMap>& dimension_counters );
-
-  // Initialize the dimension sample counters
-  void initializeDimensionSampleCounters();
-
-  // Initialize the dimension trial counters
-  void initializeDimensionTrialCounters();
-
-  // Initialize the dimension counters
-  void initializeDimensionCounters(
-                     Teuchos::Array<DimensionCounterMap>& dimension_counters );
-
-  // Increment the dimension counters
-  static void incrementDimensionCounters(
-                                  DimensionCounterMap& dimension_counters,
-                                  const bool ignore_energy_dimension = false );
   
-  // The particle distribution
-  std::shared_ptr<const ParticleDistribution> d_particle_distribution;
+  // The source components
+  std::vector<std::shared_ptr<const ParticleDistribution> > d_components;
 
-  // Ther particle type that will be generated by this source
-  ParticleType d_particle_type;
-
-  // The dimension trial counters
-  Teuchos::Array<DimensionCounterMap> d_dimension_trial_counters;
-
-  // The dimension samples counters
-  Teuchos::Array<DimensionCounterMap> d_dimension_sample_counters;
-
-  // The particle state critical line energy sampling functions
-  Teuchos::Array<Utility::Pair<double,ParticleStateSamplingFunction> >
-  d_particle_state_critical_line_energy_sampling_functions;
+  // The source component sampling distribution
+  std::unique_ptr<const Utility::DiscreteDistribution> d_component_sampling_dist;
 };
 
 } // end MonteCarlo namespace

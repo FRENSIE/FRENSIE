@@ -32,16 +32,15 @@
 
 namespace MonteCarlo{
 
-// Basic Constructor
-StandardParticleDistribution::StandardParticleDistribution( const size_t id )
-  : StandardParticleDistribution( id, std::string( "standard particle dist " ) + Utility::toString( id ) )
+// Default Constructor
+StandardParticleDistribution::StandardParticleDistribution()
+  : StandardParticleDistribution( "standard particle distribution" )
 { /* ... */ }
   
 // Basic Constructor
 StandardParticleDistribution::StandardParticleDistribution(
-                                                      const size_t id,
                                                       const std::string& name )
-  : ParticleDistribution( id, name ),
+  : ParticleDistribution( name ),
     d_spatial_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy ),
     d_directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy ),
     d_independent_dimensions(),
@@ -54,26 +53,23 @@ StandardParticleDistribution::StandardParticleDistribution(
 
 // Constructor
 StandardParticleDistribution::StandardParticleDistribution(
-   const size_t id,
    const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
    spatial_coord_conversion_policy,
    const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
    directional_coord_conversion_policy )
-  : StandardParticleDistribution( id,
-                                  std::string( "standard particle dist " ) + Utility::toString( id ),
+  : StandardParticleDistribution( "standard particle distribution",
                                   spatial_coord_conversion_policy,
                                   directional_coord_conversion_policy )
 { /* ... */ }
 
 // Constructor
 StandardParticleDistribution::StandardParticleDistribution(
-   const size_t id,
    const std::string& name,
    const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
    spatial_coord_conversion_policy,
    const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
    directional_coord_conversion_policy )
-  : ParticleDistribution( id, name ),
+  : ParticleDistribution( name ),
     d_spatial_coord_conversion_policy( spatial_coord_conversion_policy ),
     d_directional_coord_conversion_policy( directional_coord_conversion_policy ),
     d_independent_dimensions(),

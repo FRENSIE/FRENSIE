@@ -191,7 +191,6 @@ createCartesianSpatialCartesianDirectionalDist()
   
   std::shared_ptr<MonteCarlo::StandardParticleDistribution>
     particle_distribution( new MonteCarlo::StandardParticleDistribution(
-                                       0,
                                        "test dist",
                                        spatial_coord_conversion_policy,
                                        directional_coord_conversion_policy ) );
@@ -217,7 +216,6 @@ createCartesianSpatialSphericalDirectionalDist()
   
   std::shared_ptr<MonteCarlo::StandardParticleDistribution>
     particle_distribution( new MonteCarlo::StandardParticleDistribution(
-                                       0,
                                        "test dist",
                                        spatial_coord_conversion_policy,
                                        directional_coord_conversion_policy ) );
@@ -242,7 +240,6 @@ createCylindricalSpatialCartesianDirectionalDist()
   
   std::shared_ptr<MonteCarlo::StandardParticleDistribution>
     particle_distribution( new MonteCarlo::StandardParticleDistribution(
-                                       0,
                                        "test dist",
                                        spatial_coord_conversion_policy,
                                        directional_coord_conversion_policy ) );
@@ -268,7 +265,6 @@ createCylindricalSpatialSphericalDirectionalDist()
   
   std::shared_ptr<MonteCarlo::StandardParticleDistribution>
     particle_distribution( new MonteCarlo::StandardParticleDistribution(
-                                       0,
                                        "test dist",
                                        spatial_coord_conversion_policy,
                                        directional_coord_conversion_policy ) );
@@ -293,7 +289,6 @@ createSphericalSpatialCartesianDirectionalDist()
   
   std::shared_ptr<MonteCarlo::StandardParticleDistribution>
     particle_distribution( new MonteCarlo::StandardParticleDistribution(
-                                       0,
                                        "test dist",
                                        spatial_coord_conversion_policy,
                                        directional_coord_conversion_policy ) );
@@ -319,7 +314,6 @@ createSphericalSpatialSphericalDirectionalDist()
   
   std::shared_ptr<MonteCarlo::StandardParticleDistribution>
     particle_distribution( new MonteCarlo::StandardParticleDistribution(
-                                       0,
                                        "test dist",
                                        spatial_coord_conversion_policy,
                                        directional_coord_conversion_policy ) );
@@ -336,21 +330,11 @@ createSphericalSpatialSphericalDirectionalDist()
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
-// Check that the distribution id can be returned
-FRENSIE_UNIT_TEST( StandardParticleDistribution, getId )
-{
-  MonteCarlo::StandardParticleDistribution
-    particle_distribution( 2, "test dist" );
-
-  FRENSIE_CHECK_EQUAL( particle_distribution.getId(), 2 );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the distribution name can be returned
 FRENSIE_UNIT_TEST( StandardParticleDistribution, getName )
 {
   MonteCarlo::StandardParticleDistribution
-    particle_distribution( 2, "test dist" );
+    particle_distribution( "test dist" );
 
   FRENSIE_CHECK_EQUAL( particle_distribution.getName(), "test dist" );
 }
@@ -361,7 +345,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
                    getDimensionDistributionTypeName )
 {
   MonteCarlo::StandardParticleDistribution
-    particle_distribution( 2, "test dist" );
+    particle_distribution( "test dist" );
 
   std::shared_ptr<const Utility::UnivariateDistribution> raw_dist(
                            new Utility::UniformDistribution( 0.5, 1.5, 0.5 ) );
@@ -381,7 +365,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
                    isSpatiallyUniform_cartesian )
 {
   MonteCarlo::StandardParticleDistribution
-    particle_distribution( 0, "test dist" );
+    particle_distribution( "test dist" );
 
   std::shared_ptr<const Utility::UnivariateDistribution> raw_uniform_dist(
                            new Utility::UniformDistribution( 0.5, 1.5, 0.5 ) );
@@ -511,8 +495,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
     directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
   
   MonteCarlo::StandardParticleDistribution
-    particle_distribution( 0,
-                           "test dist",
+    particle_distribution( "test dist",
                            spatial_coord_conversion_policy,
                            directional_coord_conversion_policy );
 
@@ -629,8 +612,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
     directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
   
   MonteCarlo::StandardParticleDistribution
-    particle_distribution( 0,
-                           "test dist",
+    particle_distribution( "test dist",
                            spatial_coord_conversion_policy,
                            directional_coord_conversion_policy );
 
@@ -765,8 +747,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
     directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
   
   MonteCarlo::StandardParticleDistribution
-    particle_distribution( 0,
-                           "test dist",
+    particle_distribution( "test dist",
                            spatial_coord_conversion_policy,
                            directional_coord_conversion_policy );
 
@@ -853,7 +834,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
                    isDirectionallyUniform_spherical )
 {
   MonteCarlo::StandardParticleDistribution
-    particle_distribution( 0, "test dist" );
+    particle_distribution( "test dist" );
 
   std::shared_ptr<const Utility::UnivariateDistribution> raw_delta_dist(
                                        new Utility::DeltaDistribution( 1.0 ) );
@@ -2573,8 +2554,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
     directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
   
   MonteCarlo::StandardParticleDistribution
-    particle_distribution( 0,
-                           "test dist",
+    particle_distribution( "test dist",
                            spatial_coord_conversion_policy,
                            directional_coord_conversion_policy );
 
@@ -2606,7 +2586,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
                    default_dists_cartesian_spatial_spherical_directional )
 {
   MonteCarlo::StandardParticleDistribution
-    particle_distribution( 0, "test dist" );
+    particle_distribution( "test dist" );
 
   FRENSIE_CHECK_EQUAL( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ),
                        "Delta Distribution" );
@@ -2642,8 +2622,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
     directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
   
   MonteCarlo::StandardParticleDistribution
-    particle_distribution( 0,
-                           "test dist",
+    particle_distribution( "test dist",
                            spatial_coord_conversion_policy,
                            directional_coord_conversion_policy );
 
@@ -2681,8 +2660,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
     directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
   
   MonteCarlo::StandardParticleDistribution
-    particle_distribution( 0,
-                           "test dist",
+    particle_distribution( "test dist",
                            spatial_coord_conversion_policy,
                            directional_coord_conversion_policy );
 
@@ -2720,8 +2698,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
     directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
   
   MonteCarlo::StandardParticleDistribution
-    particle_distribution( 0,
-                           "test dist",
+    particle_distribution( "test dist",
                            spatial_coord_conversion_policy,
                            directional_coord_conversion_policy );
 
@@ -2759,8 +2736,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
     directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
   
   MonteCarlo::StandardParticleDistribution
-    particle_distribution( 0,
-                           "test dist",
+    particle_distribution( "test dist",
                            spatial_coord_conversion_policy,
                            directional_coord_conversion_policy );
 
