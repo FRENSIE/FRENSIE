@@ -28,27 +28,17 @@
 
 namespace MonteCarlo{
 
-// Basic constructor
-ParticleDistribution::ParticleDistribution( const size_t id )
-  : ParticleDistribution( id, std::string( "particle dist " ) + Utility::toString( id ) )
+// Default constructor
+ParticleDistribution::ParticleDistribution()
+  : ParticleDistribution( "particle distribution" )
 { /* ... */ }
   
 // Constructor
-ParticleDistribution::ParticleDistribution( const size_t id,
-                                            const std::string& name )
-  : d_id( id ),
-    d_name( name )
+ParticleDistribution::ParticleDistribution( const std::string& name )
+  : d_name( name )
 {
-  // Make sure that the id is valid
-  testPrecondition( id != std::numeric_limits<size_t>::max() );
   // Make sure that the name is valid
   testPrecondition( name.size() > 0 );
-}
-
-// Return the id
-size_t ParticleDistribution::getId() const
-{
-  return d_id;
 }
 
 // Return the name of the region of interest
