@@ -11,10 +11,17 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardParticleSourceComponent.hpp"
+#include "Utility_OpenMPProperties.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
+
+// Default Constructor
+template<typename ParticleStateType>
+StandardParticleSourceComponent<ParticleStateType>::StandardParticleSourceComponent()
+  : ParticleSourceComponent()
+{ /* ... */ }
 
 // Constructor
 template<typename ParticleStateType>
@@ -23,11 +30,11 @@ StandardParticleSourceComponent<ParticleStateType>::StandardParticleSourceCompon
      const double selection_weight,
      const std::shared_ptr<const Geometry::Model>& model,
      const std::shared_ptr<const ParticleDistribution>& particle_distribution )
-  : StandardParticleComponent( id,
-                               selection_weight,
-                               CellIdSet(),
-                               model,
-                               particle_distribution )
+  : StandardParticleSourceComponent( id,
+                                     selection_weight,
+                                     CellIdSet(),
+                                     model,
+                                     particle_distribution )
 { /* ... */ }
 
 // Constructor (with rejection cells )
@@ -38,7 +45,7 @@ StandardParticleSourceComponent<ParticleStateType>::StandardParticleSourceCompon
      const CellIdSet& rejection_cells,
      const std::shared_ptr<const Geometry::Model>& model,
      const std::shared_ptr<const ParticleDistribution>& particle_distribution )
-  : ParticleComponent( id, selection_weight, rejection_cells, model ),
+  : ParticleSourceComponent( id, selection_weight, rejection_cells, model ),
     d_particle_distribution( particle_distribution ),
     d_dimension_trial_counters( 1 ),
     d_dimension_sample_counters( 1 )
@@ -177,8 +184,6 @@ void StandardParticleSourceComponent<ParticleStateType>::resetDataImpl()
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
-  // Make sure the root process is valid
-  testPrecondition( root_process < comm->getSize() );
 
   this->initializeDimensionSampleCounters();
   this->initializeDimensionTrialCounters();
@@ -195,7 +200,7 @@ void StandardParticleSourceComponent<ParticleStateType>::reduceDataImpl(
   // Make sure only the root process calls this function
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
   // Make sure the root process is valid
-  testPrecondition( root_process < comm->getSize() );
+  testPrecondition( root_process < comm.size() );
 
   // Only do the reduction if there is more than one process
   if( comm.size() > 1 )
@@ -274,9 +279,9 @@ void StandardParticleSourceComponent<ParticleStateType>::reduceDimensionSampleCo
                                              const int root_process )
 {
   StandardParticleSourceComponent<ParticleStateType>::reduceDimensionCounters(
-                                                       d_sample_trial_counters,
-                                                       comm,
-                                                       root_process );
+                                                   d_dimension_sample_counters,
+                                                   comm,
+                                                   root_process );
 }
 
 // Reduce the dimension trial counters on the comm
@@ -298,7 +303,7 @@ void StandardParticleSourceComponent<ParticleStateType>::reduceDimensionCounters
             const Utility::Communicator& comm,
             const int root_process )
 {
-  for( size_t i = 0; i < dimension_counter.size(); ++i )
+  for( size_t i = 0; i < dimension_counters.size(); ++i )
   {
     if( comm.rank() != root_process )
     {
@@ -435,14 +440,14 @@ void StandardParticleSourceComponent<ParticleStateType>::initializeDimensionCoun
 
 // Get the dimension trial counters
 template<typename ParticleStateType>
-DimensionCounterMap& StandardParticleSourceComponent<ParticleStateType>::getDimensionTrialCounterMap()
+auto StandardParticleSourceComponent<ParticleStateType>::getDimensionTrialCounterMap() -> DimensionCounterMap&
 {
   return d_dimension_trial_counters[Utility::OpenMPProperties::getThreadId()];
 }
 
 // Get the dimension sample counters
 template<typename ParticleStateType>
-DimensionCounterMap& StandardParticleSourceComponent<ParticleStateType>::getDimensionSampleCounterMap()
+auto StandardParticleSourceComponent<ParticleStateType>::getDimensionSampleCounterMap() -> DimensionCounterMap&
 {
   return d_dimension_sample_counters[Utility::OpenMPProperties::getThreadId()];
 }
@@ -473,8 +478,72 @@ void StandardParticleSourceComponent<ParticleStateType>::incrementDimensionCount
     ++dimension_counter_it;
   }
 }
+
+// Save the data to an archive
+template<typename ParticleStateType>
+template<typename Archive>
+void StandardParticleSourceComponent<ParticleStateType>::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleSourceComponent );
+
+  // Save the local data
+  ar & BOOST_SERIALIZATION_NVP( d_particle_distribution );
+
+  DimensionCounterMap dimension_trial_counters;
+  this->reduceAllLocalDimensionTrialCounters( dimension_trial_counters );
+  
+  ar & BOOST_SERIALIZATION_NVP( dimension_trial_counters );
+
+  DimensionCounterMap dimension_sample_counters;
+  this->reduceAllLocalDimensionSampleCounters( dimension_sample_counters );
+
+  ar & BOOST_SERIALIZATION_NVP( dimension_sample_counters );
+}
+
+// Load the data from an archive
+template<typename ParticleStateType>
+template<typename Archive>
+void StandardParticleSourceComponent<ParticleStateType>::load( Archive& ar, const unsigned version )
+{
+  // Load the base class data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleSourceComponent );
+
+  // Load the local data
+  ar & BOOST_SERIALIZATION_NVP( d_particle_distribution );
+
+  DimensionCounterMap dimension_trial_counters;
+  
+  ar & BOOST_SERIALIZATION_NVP( dimension_trial_counters );
+
+  d_dimension_trial_counters.resize( 1 );
+  d_dimension_trial_counters.front() = dimension_trial_counters;
+
+  DimensionCounterMap dimension_sample_counters;
+  
+  ar & BOOST_SERIALIZATION_NVP( dimension_sample_counters );
+
+  d_dimension_sample_counters.resize( 1 );
+  d_dimension_sample_counters.front() = dimension_sample_counters;
+}
   
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardNeutronSourceComponent, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::NeutronState> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::NeutronState> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardPhotonSourceComponent, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::PhotonState> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::PhotonState> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardElectronSourceComponent, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::ElectronState> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::ElectronState> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardPositronSourceComponent, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::PositronState> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::PositronState> );
 
 #endif // end MONTE_CARLO_STANDARD_PARTICLE_SOURCE_COMPONENT_DEF_HPP
 

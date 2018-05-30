@@ -34,6 +34,12 @@ class StandardParticleSourceComponent : public ParticleSourceComponent
 
 public:
 
+  //! The trial counter type
+  typedef ParticleSourceComponent::Counter Counter;
+
+  //! The cell id set
+  typedef ParticleSourceComponent::CellIdSet CellIdSet;
+
   //! Constructor
   StandardParticleSourceComponent(
     const size_t id,
@@ -72,6 +78,9 @@ protected:
 
   //! Typedef for the dimension trial counter map
   typedef ParticleDistribution::DimensionCounterMap DimensionCounterMap;
+
+  //! Default Constructor
+  StandardParticleSourceComponent();
 
   //! Enable thread support
   void enableThreadSupportImpl( const size_t threads ) final override;
@@ -165,6 +174,19 @@ private:
   void initializeDimensionCounters(
                      std::vector<DimensionCounterMap>& dimension_counters );
 
+  // Save the data to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the data from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // The particle distribution
   std::shared_ptr<const ParticleDistribution> d_particle_distribution;
 
@@ -188,6 +210,8 @@ typedef StandardParticleSourceComponent<ElectronState> StandardElectronSourceCom
 typedef StandardParticleSourceComponent<PositronState> StandardPositronSourceComponent;
   
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS1_VERSION( StandardParticleSourceComponent, MonteCarlo, 0 );  
 
 //---------------------------------------------------------------------------//
 // Template Includes

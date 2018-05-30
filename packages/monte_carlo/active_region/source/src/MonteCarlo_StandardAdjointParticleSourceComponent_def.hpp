@@ -11,6 +11,12 @@
 
 namespace MonteCarlo{
 
+// Default Constructor
+template<typename ParticleStateType,typename ProbeParticleStateType>
+StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::StandardAdjointParticleSourceComponent()
+  : BaseType()
+{ /* ... */ }
+
 // Constructor
 template<typename ParticleStateType,typename ProbeParticleStateType>
 StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::StandardAdjointParticleSourceComponent(
@@ -34,7 +40,7 @@ StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>
      const std::shared_ptr<const FilledGeometryModel>& model,
      const std::shared_ptr<const ParticleDistribution>& particle_distribution )
   : BaseType( id,
-              selectrion_weight,
+              selection_weight,
               rejection_cells,
               *model,
               particle_distribution ),
@@ -45,7 +51,7 @@ StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>
   testPrecondition( model.get() );
 
   // Set the critical line energy sampling functions
-  const FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType&
+  const typename Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType&
     upcast_model = *model;
 
   d_critical_line_energies = upcast_model.getCriticalLineEnergies();
@@ -63,7 +69,7 @@ void StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleState
                                              d_critical_line_energies.size() );
 
     // Create the sampling function for each critical line energy
-    for( size_t i = 0; i < critical_line_energies.size(); ++i )
+    for( size_t i = 0; i < d_critical_line_energies.size(); ++i )
     {
       Utility::get<0>(d_particle_state_critical_line_energy_sampling_functions[i]) =
         d_critical_line_energies[i];
@@ -127,16 +133,50 @@ bool StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleState
   else
   {
     // Sample a probe particle
-    Utility::get<1>(d_particle_state_critical_line_energy_sampling_functions[history_state_id-1])( *particle, this->getDimensionTrialCounters() );
+    Utility::get<1>(d_particle_state_critical_line_energy_sampling_functions[history_state_id-1])( *particle, this->getDimensionTrialCounterMap() );
 
     // Increment the dimension sample counters
-    this->incrementDimensionCounters( this->getDimensionSampleCounters(), true );
+    this->incrementDimensionCounters( this->getDimensionSampleCounterMap(), true );
     
     return true;
   }
 }
+
+// Save the data to an archive
+template<typename ParticleStateType,typename ProbeParticleStateType>
+template<typename Archive>
+void StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Save the local data
+  ar & BOOST_SERIALIZATION_NVP( d_critical_line_energies );
+}
+
+// Load the data from an archive
+template<typename ParticleStateType,typename ProbeParticleStateType>
+template<typename Archive>
+void StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::load( Archive& ar, const unsigned version )
+{
+  // Load the base class data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Load the local data
+  ar & BOOST_SERIALIZATION_NVP( d_critical_line_energies );
+
+  this->setCriticalLineEnergySamplingFunctions();
+}
   
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardAdjointPhotonSourceComponent, MonteCarlo )
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::StandardAdjointParticleSourceComponent<MonteCarlo::AdjointPhotonState,MonteCarlo::AdjointPhotonProbeState> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardAdjointParticleSourceComponent<MonteCarlo::AdjointPhotonState,MonteCarlo::AdjointPhotonProbeState> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardAdjointElectronSourceComponent, MonteCarlo )
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::StandardAdjointParticleSourceComponent<MonteCarlo::AdjointElectronState,MonteCarlo::AdjointElectronProbeState> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardAdjointParticleSourceComponent<MonteCarlo::AdjointElectronState,MonteCarlo::AdjointElectronProbeState> );
 
 #endif // end MONTE_CARLO_STANDARD_ADJOINT_PARTICLE_SOURCE_COMPONENT_DEF_HPP
 

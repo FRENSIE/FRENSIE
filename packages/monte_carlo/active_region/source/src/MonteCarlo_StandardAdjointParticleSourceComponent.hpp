@@ -13,7 +13,9 @@
 #include "MonteCarlo_StandardParticleSourceComponent.hpp"
 #include "MonteCarlo_FilledGeometryModel.hpp"
 #include "MonteCarlo_AdjointPhotonState.hpp"
+#include "MonteCarlo_AdjointPhotonProbeState.hpp"
 #include "MonteCarlo_AdjointElectronState.hpp"
+#include "MonteCarlo_AdjointElectronProbeState.hpp"
 
 namespace MonteCarlo{
 
@@ -29,6 +31,12 @@ class StandardAdjointParticleSourceComponent : public StandardParticleSourceComp
   typedef StandardParticleSourceComponent<ParticleStateType> BaseType;
 
 public:
+
+  //! The trial counter type
+  typedef typename BaseType::Counter Counter;
+
+  //! The cell id set
+  typedef typename BaseType::CellIdSet CellIdSet;
 
   //! Constructor
   StandardAdjointParticleSourceComponent(
@@ -69,16 +77,30 @@ protected:
 
 private:
 
+  // Default Constructor
+  StandardAdjointParticleSourceComponent();
+
   // Set the critical line energy sampling functions
   void setCriticalLineEnergySamplingFunctions();
 
-  // Typedef for the dimension trial counter map
-  typedef BaseType::DimensionCounterMap DimensionCounterMap;
+  // Save the data to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the data from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
   // The critical line energies
   std::vector<double> d_critical_line_energies;
 
   // The particle state critical line energy sampling functions
+  typedef typename BaseType::DimensionCounterMap DimensionCounterMap;
   typedef std::function<void(ParticleState&,DimensionCounterMap&)>
   ParticleStateSamplingFunction;
   
