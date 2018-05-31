@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_MassiveParticleState.hpp"
+#include "Utility_TypeNameTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -81,6 +82,7 @@ private:
 BOOST_CLASS_VERSION( MonteCarlo::PositronState, 0 );
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::PositronState, "PositronState" );
 EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::PositronState );
+TYPE_NAME_TRAITS_QUICK_DECL2( PositronState, MonteCarlo );
 
 #endif // end MonteCarlo_POSITRON_STATE_HPP
 

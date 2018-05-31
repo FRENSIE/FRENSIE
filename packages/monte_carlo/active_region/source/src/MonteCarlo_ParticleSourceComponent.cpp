@@ -10,6 +10,7 @@
 #include <sstream>
 #include <functional>
 #include <numeric>
+#include <limits>
 
 // Boost Includes
 #include <boost/archive/text_oarchive.hpp>
@@ -35,7 +36,7 @@ namespace MonteCarlo{
 
 // Default constructor
 ParticleSourceComponent::ParticleSourceComponent()
-  : d_id( 0 )
+  : d_id( std::numeric_limits<size_t>::max() )
 { /* ... */ }
 
 // Constructor
@@ -80,7 +81,7 @@ ParticleSourceComponent::ParticleSourceComponent(
   // Make sure that the rejection cells exist
   for( auto rejection_cell : rejection_cells )
   {
-    TEST_FOR_EXCEPTION( model->doesCellExist( rejection_cell ),
+    TEST_FOR_EXCEPTION( !model->doesCellExist( rejection_cell ),
                         std::runtime_error,
                         "Rejection cell " << rejection_cell << " does "
                         "not exist!" );
@@ -374,11 +375,11 @@ void ParticleSourceComponent::printStandardSummary(
                                       std::ostream& os ) const
 {
   os << "Source Component " << d_id << " Summary..." << "\n"
-     << "\tType: " << source_component_type << "\n"
-     << "\tSelection weight: " << d_selection_weight << "\n"
-     << "\tNumber of (position) trials: " << trials << "\n"
-     << "\tNumber of samples: " << samples << "\n"
-     << "\tSampling efficiency: " << efficiency << std::endl;
+     << "  Type: " << source_component_type << "\n"
+     << "  Selection weight: " << d_selection_weight << "\n"
+     << "  Number of (position) trials: " << trials << "\n"
+     << "  Number of samples: " << samples << "\n"
+     << "  Sampling efficiency: " << efficiency << std::endl;
 }
 
 // Print a standard summary of the source starting cells
@@ -386,7 +387,7 @@ void ParticleSourceComponent::printStandardStartingCellSummary(
                                                const CellIdSet& starting_cells,
                                                std::ostream& os ) const
 {
-  os << "\tSource Component " << d_id << " Starting Cells: ";
+  os << "  Starting Cells: ";
 
   for( auto starting_cell : starting_cells )
     os << starting_cell << " ";
@@ -403,11 +404,11 @@ void ParticleSourceComponent::printStandardDimensionSummary(
                                 const double efficiency,
                                 std::ostream& os ) const
 {
-  os << "\t" << dimension << " Sampling Summary: \n"
-     << "\t\tDistribution Type: " << dimension_distribution_type << "\n"
-     << "\t\tNumber of trials: " << trials << "\n"
-     << "\t\tNumber of samples: " << samples << "\n"
-     << "\t\tSampling efficiency: " << efficiency << std::endl;
+  os << "  " << dimension << " Sampling Summary: \n"
+     << "    Distribution Type: " << dimension_distribution_type << "\n"
+     << "    Number of trials: " << trials << "\n"
+     << "    Number of samples: " << samples << "\n"
+     << "    Sampling efficiency: " << efficiency << std::endl;
 }
 
 // Merge the starting cells on the root process
@@ -498,7 +499,7 @@ auto ParticleSourceComponent::reduceLocalSampleCounters() const -> Counter
 auto ParticleSourceComponent::reduceLocalTrialCounters() const -> Counter
 {
   return std::accumulate( d_number_of_trials.begin(),
-                          d_number_of_samples.end(),
+                          d_number_of_trials.end(),
                           0ull );
 }
 
