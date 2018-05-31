@@ -3,6 +3,13 @@ FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_active_region_source)
 FRENSIE_ADD_TEST_EXECUTABLE(StandardParticleSourceComponent DEPENDS tstStandardParticleSourceComponent.cpp)
 FRENSIE_ADD_TEST(StandardParticleSourceComponent)
 
+FRENSIE_ADD_TEST_EXECUTABLE(StandardAdjointParticleSourceComponent
+  DEPENDS tstStandardAdjointParticleSourceComponent.cpp
+  TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+FRENSIE_ADD_TEST(StandardAdjointParticleSourceComponent
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
+
 # ADD_EXECUTABLE(tstStandardParticleSource
 #   tstStandardParticleSource.cpp
 #   ${FRENSIE_STD_UNIT_TEST_MAIN})

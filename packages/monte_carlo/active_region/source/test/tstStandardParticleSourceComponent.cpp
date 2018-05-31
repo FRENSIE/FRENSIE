@@ -60,7 +60,7 @@ std::shared_ptr<const MonteCarlo::ParticleDistribution> particle_distribution;
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
-// Check that the id can be returned
+// Check that the source component can be constructed
 FRENSIE_UNIT_TEST_TEMPLATE( StandardParticleSourceComponent,
                             constructor,
                             TestParticleStateTypes )
@@ -81,7 +81,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( StandardParticleSourceComponent,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the id can be returned
+// Check that the source component can be constructed
 FRENSIE_UNIT_TEST_TEMPLATE( StandardParticleSourceComponent,
                             constructor_rejection_cells,
                             TestParticleStateTypes )
