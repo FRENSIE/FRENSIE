@@ -163,6 +163,10 @@ protected:
        const SimulationProperties& properties,
        const bool verbose,                  
        ScatteringCenterNameMap& scattering_center_name_map ) const = 0;
+  
+  //! Process the loaded scattering centers
+  virtual void processLoadedScatteringCenters(
+                   const ScatteringCenterNameMap& scattering_centers );
 
 private:
 
@@ -174,11 +178,19 @@ private:
   // The unfilled model
   std::shared_ptr<const Geometry::Model> d_unfilled_model;
 
+  // The scattering center name map
+  ScatteringCenterNameMap d_scattering_center_name_map;
+
+  // The material name map
+  typedef std::unordered_map<std::string,std::shared_ptr<const MaterialType> >
+  MaterialNameMap;
+  
+  MaterialNameMap d_material_name_map;
+
   // The cell id material map
   typedef std::unordered_map<Geometry::Model::InternalCellHandle,std::shared_ptr<const MaterialType> >
   CellIdMaterialMap;
 
-  // The cell id material map
   CellIdMaterialMap d_cell_id_material_map;  
 };
   

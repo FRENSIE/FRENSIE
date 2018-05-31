@@ -23,13 +23,11 @@ public:
 
   //! Constructor
   StandardParticleResponse(
-    const size_t id,
     const std::string& name,
     const std::shared_ptr<const ParticleResponseFunction>& response_function );
 
   //! Constructor
   StandardParticleResponse(
-    const size_t id,
     const std::shared_ptr<const ParticleResponseFunction>& response_function );
 
   //! Destructor

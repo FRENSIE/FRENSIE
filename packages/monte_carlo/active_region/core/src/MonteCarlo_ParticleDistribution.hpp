@@ -23,7 +23,6 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhaseSpaceDimensionDistribution.hpp"
 #include "MonteCarlo_ParticleState.hpp"
-#include "MonteCarlo_UniqueIdManager.hpp"
 #include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_TypeNameTraits.hpp"
@@ -44,18 +43,12 @@ public:
   typedef PhaseSpaceDimensionDistribution::DimensionCounterMap
   DimensionCounterMap;
 
-  //! Basic constructor
-  ParticleDistribution( const size_t id );
-
   //! Constructor
-  ParticleDistribution( const size_t id, const std::string& name );
+  ParticleDistribution( const std::string& name );
 
   //! Destructor
   virtual ~ParticleDistribution()
   { /* ... */ }
-
-  //! Return the id
-  size_t getId() const;
 
   //! Return the name of the region of interest
   const std::string& getName() const;
@@ -98,10 +91,8 @@ public:
 
 protected:
 
-  //! Constructor
-  ParticleDistribution()
-    : d_id( std::numeric_limits<size_t>::max() ), d_name()
-  { /* ... */ }
+  //! Default constructor
+  ParticleDistribution();
   
 private:
 
@@ -118,9 +109,6 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
-  // The distribution id
-  UniqueIdManager<ParticleDistribution,size_t> d_id;
-
   // The distribution name
   std::string d_name;
 };
@@ -129,7 +117,6 @@ private:
 template<typename Archive>
 void ParticleDistribution::save( Archive& ar, const unsigned version ) const
 {
-  ar & BOOST_SERIALIZATION_NVP( d_id );
   ar & BOOST_SERIALIZATION_NVP( d_name );
 }
 
@@ -137,7 +124,6 @@ void ParticleDistribution::save( Archive& ar, const unsigned version ) const
 template<typename Archive>
 void ParticleDistribution::load( Archive& ar, const unsigned version )
 {
-  ar & BOOST_SERIALIZATION_NVP( d_id );
   ar & BOOST_SERIALIZATION_NVP( d_name );
 }
   

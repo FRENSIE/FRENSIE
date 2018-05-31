@@ -57,6 +57,9 @@ protected:
   //! Return the material
   const Material& getMaterial() const;
 
+  //! Evaluate the response function at the desired phase space point (impl.)
+  double evaluateImpl( const ParticleState& particle ) const;
+
   //! Create a description of the response function
   template<typename ReactionEnumType>
   std::string createDescription( const ReactionEnumType reaction ) const;

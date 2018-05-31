@@ -123,7 +123,7 @@ template<typename ParticleStateType>
 bool FilledGeometryModel::isCellVoid(
                          const Geometry::Model::InternalCellHandle cell ) const
 {
-  Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::isCellVoid( cell );
+  return Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::isCellVoid( cell );
 }
 
 // Get the total macroscopic cross section of a material for the given particle type
@@ -132,7 +132,7 @@ double FilledGeometryModel::getMacroscopicTotalCrossSection(
                                 const Geometry::Model::InternalCellHandle cell,
                                 const double energy ) const
 {
-  Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getMacroscopicTotalCrossSection( cell, energy );
+  return Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getMacroscopicTotalCrossSection( cell, energy );
 }
 
 // Get the total macroscopic cross section of a material for the given particle type
@@ -141,7 +141,7 @@ double FilledGeometryModel::getMacroscopicTotalCrossSectionQuick(
                                 const Geometry::Model::InternalCellHandle cell,
                                 const double energy ) const
 {
-  Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getMacroscopicTotalCrossSectionQuick( cell, energy );
+  return Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getMacroscopicTotalCrossSectionQuick( cell, energy );
 }
 
 // Get the total forward macroscopic cross section of a material for the given particle type
@@ -150,7 +150,7 @@ double FilledGeometryModel::getMacroscopicTotalForwardCrossSection(
                                 const Geometry::Model::InternalCellHandle cell,
                                 const double energy ) const
 {
-  Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getMacroscopicTotalForwardCrossSection( cell, energy );
+  return Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getMacroscopicTotalForwardCrossSection( cell, energy );
 }
 
 // Get the total macroscopic cross section of a material for the given particle type
@@ -159,7 +159,7 @@ double FilledGeometryModel::getMacroscopicTotalForwardCrossSectionQuick(
                                 const Geometry::Model::InternalCellHandle cell,
                                 const double energy ) const
 {
-  Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getMacroscopicTotalForwardCrossSectionQuick( cell, energy );
+  return Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getMacroscopicTotalForwardCrossSectionQuick( cell, energy );
 }
 
 // Get the adjoint weight factor of a material for the given particle type
@@ -168,7 +168,7 @@ double FilledGeometryModel::getAdjointWeightFactor(
                                 const Geometry::Model::InternalCellHandle cell,
                                 const double energy ) const
 {
-  Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getAdjointWeightFactor( cell, energy );
+  return Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getAdjointWeightFactor( cell, energy );
 }
 
 // Get the adjoint weight factor of a material for the given particle type
@@ -177,7 +177,14 @@ double FilledGeometryModel::getAdjointWeightFactorQuick(
                                 const Geometry::Model::InternalCellHandle cell,
                                 const double energy ) const
 {
-  Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getAdjointWeightFactorQuick( cell, energy );
+  return Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getAdjointWeightFactorQuick( cell, energy );
+}
+
+// Get the critical line energies
+template<typename ParticleStateType>
+const std::vector<double>& FilledGeometryModel::getCriticalLineEnergies() const
+{
+  return Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getCriticalLineEnergies();
 }
 
 // Save the object to an archive

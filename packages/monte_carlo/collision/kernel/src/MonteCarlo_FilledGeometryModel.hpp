@@ -195,6 +195,10 @@ public:
   //! Get the adjoint weight factor for adjoint electrons
   using FilledAdjointElectronGeometryModel::getAdjointWeightFactorQuick;
 
+  //! Get the critical line energies
+  template<typename ParticleStateType>
+  const std::vector<double>& getCriticalLineEnergies() const;
+
   //! Get the unfilled geometry model
   const Geometry::Model& getUnfilledModel() const;
 
