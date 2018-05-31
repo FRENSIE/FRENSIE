@@ -10,16 +10,13 @@
 #include <iostream>
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_CellCollisionFluxEstimator.hpp"
 #include "MonteCarlo_ParticleCollidingInCellEventLocalDispatcher.hpp"
 #include "MonteCarlo_PhotonState.hpp"
-#include "Geometry_ModuleTraits.hpp"
+#include "Geometry_Model.hpp"
+#include "Utility_UnitTestHarness.hpp"
+#include "Utility_Vector.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -43,12 +40,12 @@ void initializeCellCollisionFluxEstimator(
 			  std::shared_ptr<CellCollisionFluxEstimator>& estimator )
 {
   // Set the entity ids
-  Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>
+  std::vector<Geometry::ModuleTraits::InternalCellHandle>
     cell_ids( 2 );
   cell_ids[0] = 0;
   cell_ids[1] = 1;
 
-  Teuchos::Array<double> cell_volumes( 2 );
+  std::vector<double> cell_volumes( 2 );
   cell_volumes[0] = 1.0;
   cell_volumes[1] = 2.0;
 
@@ -60,7 +57,7 @@ void initializeCellCollisionFluxEstimator(
 						   cell_ids,
 						   cell_volumes ) );
 
-  Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
+  std::vector<MonteCarlo::ParticleType> particle_types( 1 );
   particle_types[0] = MonteCarlo::PHOTON;
 
   estimator->setParticleTypes( particle_types );

@@ -21,3 +21,7 @@ Particle_Tracker:
 2) Removed all references to Teuchos except for ParameterLists.
 
 TEST FILES
+
+Core:
+
+All references to Teuchos removed

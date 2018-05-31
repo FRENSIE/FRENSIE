@@ -11,7 +11,6 @@
 #include <memory>
 
 // Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_ParameterList.hpp>
 #include <Teuchos_XMLParameterListCoreHelpers.hpp>
 #include <Teuchos_VerboseObject.hpp>
@@ -23,11 +22,12 @@
 #include "Geometry_RootInstanceFactory.hpp"
 #include "Geometry_ModuleInterface_Root.hpp"
 #include "Utility_OneDDistributionEntryConverterDB.hpp"
+#include "Utility_UnitTestHarness.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-Teuchos::RCP<Teuchos::ParameterList> observer_reps;
+std::shared_ptr<Teuchos::ParameterList> observer_reps;
 
 boost::unordered_map<unsigned,std::shared_ptr<MonteCarlo::ResponseFunction> >
   response_function_id_map;
@@ -73,7 +73,7 @@ int main( int argc, char** argv )
 		 &test_observer_xml_file_name,
 		 "Test estimator xml file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
+  const std::shared_ptr<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
   Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
@@ -85,7 +85,7 @@ int main( int argc, char** argv )
   }
 
   // Initialize Root
-  Teuchos::RCP<Teuchos::ParameterList> geom_rep =
+  std::shared_ptr<Teuchos::ParameterList> geom_rep =
     Teuchos::getParametersFromXmlFile( test_geom_xml_file_name );
 
   Geometry::RootInstanceFactory::initializeRoot( *geom_rep );
@@ -98,7 +98,7 @@ int main( int argc, char** argv )
 
   // Load the response functions
   {
-    Teuchos::RCP<Teuchos::ParameterList> response_reps =
+    std::shared_ptr<Teuchos::ParameterList> response_reps =
       Teuchos::getParametersFromXmlFile( test_resp_func_xml_file_name );
 
     MonteCarlo::ResponseFunctionFactory::createResponseFunctions(

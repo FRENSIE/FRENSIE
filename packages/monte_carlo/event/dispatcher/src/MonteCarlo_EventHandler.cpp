@@ -130,49 +130,6 @@ void EventHandler::reduceObserverData(
   }
 }
 
-// Export the observer data
-void EventHandler::exportObserverData(
-		    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
-                    const unsigned long long last_history_number,
-                    const unsigned long long histories_completed,
-                    const double start_time,
-                    const double end_time,
-                    const bool process_data )
-{
-  // Make sure only the master thread calls this function
-  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
-
-  // Create a particle history observer HDF5 file handler
-  {
-    ParticleHistoryObserverHDF5FileHandler pho_hdf5_file_handler( hdf5_file );
-
-    // Set the simulation time
-    pho_hdf5_file_handler.setSimulationTime( end_time - start_time );
-
-    ParticleHistoryObserver::setStartTime( start_time );
-    ParticleHistoryObserver::setEndTime( end_time );
-
-    // Set the last history simulated
-    pho_hdf5_file_handler.setLastHistorySimulated( last_history_number );
-
-    // Set the number of histories simulated
-    pho_hdf5_file_handler.setNumberOfHistoriesSimulated( histories_completed );
-
-    ParticleHistoryObserver::setNumberOfHistories( histories_completed );
-  }
-
-  // Export the data in each estimator
-  ParticleHistoryObservers::iterator it =
-    d_particle_history_observers.begin();
-
-  while( it != d_particle_history_observers.end() )
-  {
-    it->second->exportData( hdf5_file, process_data );
-
-    ++it;
-  }
-}
-
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

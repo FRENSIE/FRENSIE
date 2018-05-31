@@ -11,8 +11,6 @@
 #include <memory>
 
 // Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
 #include <Teuchos_ParameterList.hpp>
 #include <Teuchos_XMLParameterListCoreHelpers.hpp>
 #include <Teuchos_VerboseObject.hpp>
@@ -21,7 +19,8 @@
 #include "MonteCarlo_TetMeshTrackLengthFluxEstimator.hpp"
 #include "MonteCarlo_ParticleSubtrackEndingGlobalEventDispatcher.hpp"
 #include "MonteCarlo_PhotonState.hpp"
-#include "Geometry_ModuleTraits.hpp"
+#include "Geometry_Model.hpp"
+#include "Utility_UnitTestHarness.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -119,7 +118,7 @@ int main( int argc, char** argv )
 		 &test_input_mesh_file_name,
 		 "Test input mesh file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
+  const std::shared_ptr<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
   Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
@@ -140,7 +139,7 @@ int main( int argc, char** argv )
                          "unit_cube_output.vtk" ) );
 
     // Assign energy bins
-    Teuchos::Array<double> energy_bin_boundaries( 2 );
+    std::vector<double> energy_bin_boundaries( 2 );
     energy_bin_boundaries[0] = 0.0;
     energy_bin_boundaries[1] = 1.0;
 
@@ -148,7 +147,7 @@ int main( int argc, char** argv )
                                                        energy_bin_boundaries );
 
     // Set the particle types
-    Teuchos::Array<MonteCarlo::ParticleType> particle_types ( 1 );
+    std::vector<MonteCarlo::ParticleType> particle_types ( 1 );
     particle_types[0] = MonteCarlo::PHOTON;
 
     estimator->setParticleTypes( particle_types );

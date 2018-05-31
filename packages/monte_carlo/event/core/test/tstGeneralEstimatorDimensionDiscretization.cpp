@@ -26,12 +26,12 @@
 //---------------------------------------------------------------------------//
 #define UNIT_TEST_INSTANTIATION( type, name )				\
   using namespace MonteCarlo;						\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, SOURCE_ENERGY_DIMENSION ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, ENERGY_DIMENSION )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, COSINE_DIMENSION )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, SOURCE_TIME_DIMENSION ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, TIME_DIMENSION )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, COLLISION_NUMBER_DIMENSION ) \
+  FRENSIE_DATA_UNIT_TEST_INST( type, name, SOURCE_ENERGY_DIMENSION ) \
+  FRENSIE_DATA_UNIT_TEST_INST( type, name, ENERGY_DIMENSION )	\
+  FRENSIE_DATA_UNIT_TEST_INST( type, name, COSINE_DIMENSION )	\
+  FRENSIE_DATA_UNIT_TEST_INST( type, name, SOURCE_TIME_DIMENSION ) \
+  FRENSIE_DATA_UNIT_TEST_INST( type, name, TIME_DIMENSION )	\
+  FRENSIE_DATA_UNIT_TEST_INST( type, name, COLLISION_NUMBER_DIMENSION ) \
 
 //---------------------------------------------------------------------------//
 // Testing Functions.

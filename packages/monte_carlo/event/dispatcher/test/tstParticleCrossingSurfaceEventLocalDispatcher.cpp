@@ -10,17 +10,14 @@
 #include <iostream>
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_SurfaceCurrentEstimator.hpp"
 #include "MonteCarlo_SurfaceFluxEstimator.hpp"
 #include "MonteCarlo_ParticleCrossingSurfaceEventLocalDispatcher.hpp"
 #include "MonteCarlo_PhotonState.hpp"
-#include "Geometry_ModuleTraits.hpp"
+#include "Geometry_Model.hpp"
+#include "Utility_UnitTestHarness.hpp"
+#include "Utility_Vector.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -43,12 +40,12 @@ void initializeSurfaceFluxEstimator( const unsigned estimator_id,
 				 std::shared_ptr<SurfaceEstimator>& estimator )
 {
   // Set the entity ids
-  Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>
+  std::vector<Geometry::ModuleTraits::InternalSurfaceHandle>
     surface_ids( 2 );
   surface_ids[0] = 0;
   surface_ids[1] = 1;
 
-  Teuchos::Array<double> surface_areas( 2 );
+  std::vector<double> surface_areas( 2 );
   surface_areas[0] = 1.0;
   surface_areas[1] = 2.0;
 
@@ -60,7 +57,7 @@ void initializeSurfaceFluxEstimator( const unsigned estimator_id,
 					 surface_ids,
 					 surface_areas ) );
 
-  Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
+  std::vector<MonteCarlo::ParticleType> particle_types( 1 );
   particle_types[0] = MonteCarlo::PHOTON;
 
   estimator->setParticleTypes( particle_types );
@@ -72,12 +69,12 @@ void initializeSurfaceCurrentEstimator( const unsigned estimator_id,
 				 std::shared_ptr<SurfaceEstimator>& estimator )
 {
   // Set the entity ids
-  Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>
+  std::vector<Geometry::ModuleTraits::InternalSurfaceHandle>
     surface_ids( 2 );
   surface_ids[0] = 0;
   surface_ids[1] = 1;
 
-  Teuchos::Array<double> surface_areas( 2 );
+  std::vector<double> surface_areas( 2 );
   surface_areas[0] = 1.0;
   surface_areas[1] = 2.0;
 
@@ -88,7 +85,7 @@ void initializeSurfaceCurrentEstimator( const unsigned estimator_id,
 					 estimator_multiplier,
 					 surface_ids ) );
 
-  Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
+  std::vector<MonteCarlo::ParticleType> particle_types( 1 );
   particle_types[0] = MonteCarlo::PHOTON;
 
   estimator->setParticleTypes( particle_types );

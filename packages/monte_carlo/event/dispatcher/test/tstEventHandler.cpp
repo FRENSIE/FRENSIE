@@ -11,9 +11,6 @@
 #include <memory>
 
 // Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
@@ -26,8 +23,9 @@
 #include "MonteCarlo_SurfaceFluxEstimator.hpp"
 #include "MonteCarlo_TetMeshTrackLengthFluxEstimator.hpp"
 #include "MonteCarlo_PhotonState.hpp"
-#include "Geometry_ModuleTraits.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Geometry_Model.hpp"
+#include "Utility_UnitTestHarness.hpp"
+#include "Utility_Vector.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -67,8 +65,8 @@ mesh_estimator;
 
 std::shared_ptr<MonteCarlo::EventHandler> event_handler;
 
-Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> cell_ids;
-Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle> surface_ids;
+std::vector<Geometry::ModuleTraits::InternalCellHandle> cell_ids;
+std::vector<Geometry::ModuleTraits::InternalSurfaceHandle> surface_ids;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -77,20 +75,20 @@ Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle> surface_ids;
 template<typename CellEstimator>
 void initializeCellEstimator(
     const unsigned estimator_id,
-    const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& ids,
+    const std::vector<Geometry::ModuleTraits::InternalCellHandle>& ids,
     std::shared_ptr<CellEstimator>& estimator )
 {
   // Set the estimator multiplier
   double estimator_multiplier = 10.0;
 
-  Teuchos::Array<double> cell_volumes( ids.size(), 1.0 );
+  std::vector<double> cell_volumes( ids.size(), 1.0 );
 
   estimator.reset( new CellEstimator( estimator_id,
 				      estimator_multiplier,
 				      ids,
 				      cell_volumes ) );
 
-  Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
+  std::vector<MonteCarlo::ParticleType> particle_types( 1 );
   particle_types[0] = MonteCarlo::PHOTON;
 
   estimator->setParticleTypes( particle_types );
@@ -100,7 +98,7 @@ void initializeCellEstimator(
 template<typename CellPulseHeightEstimator>
 void initializeCellPulseHeightEstimator(
     const unsigned estimator_id,
-    const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& ids,
+    const std::vector<Geometry::ModuleTraits::InternalCellHandle>& ids,
     std::shared_ptr<CellPulseHeightEstimator>& estimator )
 {
   // Set the estimator multiplier
@@ -110,7 +108,7 @@ void initializeCellPulseHeightEstimator(
 						 estimator_multiplier,
 						 ids ) );
 
-  Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
+  std::vector<MonteCarlo::ParticleType> particle_types( 1 );
   particle_types[0] = MonteCarlo::PHOTON;
 
   estimator->setParticleTypes( particle_types );
@@ -120,11 +118,11 @@ void initializeCellPulseHeightEstimator(
 template<typename SurfaceEstimator>
 void initializeSurfaceFluxEstimator(
 	   const unsigned estimator_id,
-           const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
+           const std::vector<Geometry::ModuleTraits::InternalSurfaceHandle>&
 	   ids,
 	   std::shared_ptr<SurfaceEstimator>& estimator )
 {
-  Teuchos::Array<double> surface_areas( ids.size(), 1.0 );
+  std::vector<double> surface_areas( ids.size(), 1.0 );
 
   // Set the estimator multiplier
   double estimator_multiplier = 10.0;
@@ -134,7 +132,7 @@ void initializeSurfaceFluxEstimator(
 					 ids,
 					 surface_areas ) );
 
-  Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
+  std::vector<MonteCarlo::ParticleType> particle_types( 1 );
   particle_types[0] = MonteCarlo::PHOTON;
 
   estimator->setParticleTypes( particle_types );
@@ -144,7 +142,7 @@ void initializeSurfaceFluxEstimator(
 template<typename SurfaceEstimator>
 void initializeSurfaceCurrentEstimator(
 	   const unsigned estimator_id,
-           const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
+           const std::vector<Geometry::ModuleTraits::InternalSurfaceHandle>&
 	   ids,
 	   std::shared_ptr<SurfaceEstimator>& estimator )
 {
@@ -155,7 +153,7 @@ void initializeSurfaceCurrentEstimator(
 					 estimator_multiplier,
 					 ids ) );
 
-  Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
+  std::vector<MonteCarlo::ParticleType> particle_types( 1 );
   particle_types[0] = MonteCarlo::PHOTON;
 
   estimator->setParticleTypes( particle_types );
@@ -173,7 +171,7 @@ void initializeMeshEstimator( const unsigned estimator_id,
 				      "unit_cube_output.vtk" ) );
 
   // Set the particle types
-  Teuchos::Array<MonteCarlo::ParticleType> particle_types ( 1 );
+  std::vector<MonteCarlo::ParticleType> particle_types ( 1 );
   particle_types[0] = MonteCarlo::PHOTON;
 
   estimator->setParticleTypes( particle_types );
@@ -446,7 +444,7 @@ TEUCHOS_UNIT_TEST( EventHandler,
   particle.setDirection( 1.0, 0.0, 0.0 );
   particle.setCell( 1 );
 
-  Teuchos::Array<double> surface_normal( 3 );
+  std::vector<double> surface_normal( 3 );
   surface_normal[0] = 1.0;
   surface_normal[1] = 0.0;
   surface_normal[2] = 0.0;
@@ -593,7 +591,7 @@ TEUCHOS_UNIT_TEST( EventHandler, commitObserverHistoryContributions )
   TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
 
-  Teuchos::Array<double> surface_normal( 3 );
+  std::vector<double> surface_normal( 3 );
   surface_normal[0] = 1.0;
   surface_normal[1] = 0.0;
   surface_normal[2] = 0.0;
@@ -683,7 +681,7 @@ TEUCHOS_UNIT_TEST( EventHandler, commitObserverHistoryContributions )
   typedef MonteCarlo::StandardSurfaceEstimator::surfaceIdType surfaceIdType;
 
   // Check the bin data
-  Teuchos::Array<Utility::Pair<double,double> >
+  std::vector<Utility::Pair<double,double> >
     raw_bin_data_used( 1, Utility::Pair<double,double>( 1.0, 1.0 ) ),
     raw_bin_data_unused( 1, Utility::Pair<double,double>( 0.0, 0.0 ) ),
     raw_bin_data_copy;
@@ -937,7 +935,7 @@ TEUCHOS_UNIT_TEST( EventHandler,
     event_handler->updateObserversFromParticleEnteringCellEvent( particle, 1 );
     event_handler->updateObserversFromParticleEnteringCellEvent( particle, 2 );
 
-    Teuchos::Array<double> surface_normal( 3 );
+    std::vector<double> surface_normal( 3 );
     surface_normal[0] = 1.0;
     surface_normal[1] = 0.0;
     surface_normal[2] = 0.0;
@@ -1019,7 +1017,7 @@ TEUCHOS_UNIT_TEST( EventHandler,
   typedef MonteCarlo::StandardSurfaceEstimator::surfaceIdType surfaceIdType;
 
   // Check the bin data
-  Teuchos::Array<Utility::Pair<double,double> >
+  std::vector<Utility::Pair<double,double> >
     raw_bin_data( 1, Utility::Pair<double,double>( threads, threads ) ),
     raw_bin_data_copy;
 
@@ -1244,7 +1242,7 @@ int main( int argc, char** argv )
 		 &threads,
 		 "Number of threads to use" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
+  const std::shared_ptr<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
   Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
