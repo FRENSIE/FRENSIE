@@ -53,12 +53,12 @@ FRENSIE_UNIT_TEST( ACEFileHandler, constructor_get_neutron )
 
   Utility::ArrayView<const Data::ZAID> zaids =
     ace_file_handler->getTableZAIDs();
-    
+
   FRENSIE_CHECK_EQUAL( zaids.size(), 0 );
 
   Utility::ArrayView<const double> awrs =
     ace_file_handler->getTableAtomicWeightRatios();
-  
+
   FRENSIE_CHECK_EQUAL( awrs.size(), 0 );
 
   Utility::ArrayView<const int> nxs = ace_file_handler->getTableNXSArray();
@@ -67,7 +67,7 @@ FRENSIE_UNIT_TEST( ACEFileHandler, constructor_get_neutron )
   ref_nxs[4] = 0;    ref_nxs[5] = 1;    ref_nxs[6] = 1;   ref_nxs[7] = 0;
   ref_nxs[8] = 0;    ref_nxs[9] = 0;    ref_nxs[10] = 0;  ref_nxs[11] = 0;
   ref_nxs[12] = 0;   ref_nxs[13] = 0;   ref_nxs[14] = 0;  ref_nxs[15] = 0;
-  
+
   FRENSIE_CHECK_EQUAL( nxs, Utility::arrayViewOfConst(ref_nxs) );
 
   Utility::ArrayView<const int> jxs = ace_file_handler->getTableJXSArray();
@@ -80,12 +80,12 @@ FRENSIE_UNIT_TEST( ACEFileHandler, constructor_get_neutron )
   ref_jxs[20] = 0;    ref_jxs[21] = 6930; ref_jxs[22] = 0;   ref_jxs[23] = 0;
   ref_jxs[24] = 0;    ref_jxs[25] = 0;    ref_jxs[26] = 0;   ref_jxs[27] = 0;
   ref_jxs[28] = 0;    ref_jxs[29] = 6931; ref_jxs[30] =6932; ref_jxs[31] =6933;
-  
+
   FRENSIE_CHECK_EQUAL( jxs, Utility::arrayViewOfConst(ref_jxs) );
 
   std::shared_ptr<const std::vector<double> > xss =
     ace_file_handler->getTableXSSArray();
-  
+
   FRENSIE_CHECK_EQUAL( xss->size(), nxs[0] );
   FRENSIE_CHECK_EQUAL( xss->front(), 1e-11 );
   FRENSIE_CHECK_EQUAL( xss->back(), 102 );
@@ -120,16 +120,16 @@ FRENSIE_UNIT_TEST( ACEFileHandler, constructor_get_sab )
 
   Utility::ArrayView<const Data::ZAID> zaids =
     ace_file_handler->getTableZAIDs();
-  
+
   std::vector<Data::ZAID> ref_zaids( 1, Data::ZAID(1001) );
-  
+
   FRENSIE_CHECK_EQUAL( zaids, Utility::arrayViewOfConst(ref_zaids) );
 
   Utility::ArrayView<const double> awrs =
     ace_file_handler->getTableAtomicWeightRatios();
-  
+
   std::vector<double> ref_awrs( 1, 0.0 );
-  
+
   FRENSIE_CHECK_EQUAL( awrs, Utility::arrayViewOfConst(ref_awrs) );
 
   Utility::ArrayView<const int> nxs = ace_file_handler->getTableNXSArray();
@@ -138,7 +138,7 @@ FRENSIE_UNIT_TEST( ACEFileHandler, constructor_get_sab )
   ref_nxs[4] = 0;    ref_nxs[5] = 0;    ref_nxs[6] = 1;   ref_nxs[7] = 0;
   ref_nxs[8] = 0;    ref_nxs[9] = 0;    ref_nxs[10] = 0;  ref_nxs[11] = 0;
   ref_nxs[12] = 0;   ref_nxs[13] = 0;   ref_nxs[14] = 0;  ref_nxs[15] = 0;
-  
+
   FRENSIE_CHECK_EQUAL( nxs, Utility::arrayViewOfConst(ref_nxs) );
 
   Utility::ArrayView<const int> jxs = ace_file_handler->getTableJXSArray();
@@ -151,12 +151,12 @@ FRENSIE_UNIT_TEST( ACEFileHandler, constructor_get_sab )
   ref_jxs[20] = 0; ref_jxs[21] = 0;  ref_jxs[22] =0;   ref_jxs[23] =0;
   ref_jxs[24] = 0; ref_jxs[25] = 0;  ref_jxs[26] =0;   ref_jxs[27] =0;
   ref_jxs[28] = 0; ref_jxs[29] = 0;  ref_jxs[30] =0;   ref_jxs[31] =0;
-  
+
   FRENSIE_CHECK_EQUAL( jxs, Utility::arrayViewOfConst(ref_jxs) );
 
   std::shared_ptr<const std::vector<double> > xss =
     ace_file_handler->getTableXSSArray();
-  
+
   FRENSIE_CHECK_EQUAL( xss->size(), nxs[0] );
   FRENSIE_CHECK_EQUAL( xss->front(), 116 );
   FRENSIE_CHECK_EQUAL( xss->back(), 9.98829728076e-01 );

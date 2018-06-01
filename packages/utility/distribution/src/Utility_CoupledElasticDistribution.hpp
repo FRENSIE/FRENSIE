@@ -129,7 +129,7 @@ public:
   IndepQuantity sampleAndRecordBinIndex( size_t& sampled_bin_index ) const override;
 
   //! Return a random sample from the distribution at the given CDF value
-  IndepQuantity sampleWithRandomNumber( const double random_number ) const override; 
+  IndepQuantity sampleWithRandomNumber( const double random_number ) const override;
 
   //! Return a random sample from the distribution in a subrange
   IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const override;

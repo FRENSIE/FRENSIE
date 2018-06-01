@@ -123,13 +123,13 @@ protected:
   //! Test if the dependent variable can be zero within the indep bounds
   virtual bool canDepVarBeZeroInIndepBounds() const = 0;
 
-  //! Test if interpolation can ever be used 
+  //! Test if interpolation can ever be used
   virtual bool canInterpolationBeUsed() const;
 
   //! Test if the independent variable is compatible with Lin processing
   virtual bool isIndepVarCompatibleWithProcessingType(
                                         const LinIndepVarProcessingTag ) const;
-  
+
   //! Test if the independent variable is compatible with Log processing
   virtual bool isIndepVarCompatibleWithProcessingType(
                                         const LogIndepVarProcessingTag ) const;
@@ -157,7 +157,7 @@ protected:
   //! Add distribution data (including the dist limits) to the stream
   template<typename... Types>
   void toStreamWithLimitsDistImpl( std::ostream& os, const Types&... data ) const;
-  
+
 private:
 
   // Save the distribution to an archive
@@ -195,9 +195,9 @@ public:
   ~BadUnivariateDistributionParameter() throw()
   { /* ... */ }
 };
-  
+
 } // end Utility namespace
-  
+
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION2( UnitAwareUnivariateDistribution );
 BOOST_SERIALIZATION_DISTRIBUTION2_VERSION( UnitAwareUnivariateDistribution, 0 );
 

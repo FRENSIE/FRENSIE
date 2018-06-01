@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Data_ScatteringenterProperties.hpp
+//! \file   Data_ScatteringCenterPropertiesDatabase.hpp
 //! \author Alex Robinson
 //! \brief  The scattering center properties database linker helper decl.
 //!

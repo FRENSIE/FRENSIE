@@ -42,7 +42,7 @@ public:
 
   //! Set the face tolerance for the model
   void setFacetTolerance( const double facet_tol );
-  
+
   //! Get the facet tolerance for the model
   double getFacetTolerance() const;
 
@@ -162,7 +162,7 @@ public:
 
   //! Set the adjoint electron name
   void setAdjointElectronName( const std::string& name );
-  
+
   //! Get the adjoint electron name
   const std::string& getAdjointElectronName() const;
 
@@ -247,7 +247,7 @@ private:
   // The adjoint electron name
   std::string d_adjoint_electron_name;
 };
-  
+
 } // end Geometry namespace
 
 BOOST_SERIALIZATION_CLASS_VERSION( DagMCModelProperties, Geometry, 0 );

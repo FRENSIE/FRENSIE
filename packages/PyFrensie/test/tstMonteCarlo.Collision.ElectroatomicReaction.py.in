@@ -7,10 +7,10 @@
 #-----------------------------------------------------------------------------#
 
 # System imports
-import numpy
 import sys
 import unittest
 from optparse import *
+import numpy
 
 # Parse the command-line arguments
 parser = OptionParser()
@@ -351,7 +351,7 @@ if __name__ == "__main__":
 
     # Exit
     sys.exit(errs_plus_fails)
-    
+
 #-----------------------------------------------------------------------------#
 # end tstMonteCarlo.Collision.PhotonKinematics.py
 #-----------------------------------------------------------------------------#

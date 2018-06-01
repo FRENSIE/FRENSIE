@@ -32,7 +32,7 @@ Material<ScatteringCenter>::s_absorption_cs_evaluation_functor(
                                 std::bind<double>( static_cast<double(ScatteringCenter::*)(const double) const>(&ScatteringCenter::getAbsorptionCrossSection),
                                                    std::placeholders::_1,
                                                    std::placeholders::_2 ) );
-  
+
 // Constructor (without photonuclear data)
 template<typename ScatteringCenter>
 Material<ScatteringCenter>::Material(
@@ -184,7 +184,7 @@ double Material<ScatteringCenter>::getMacroscopicReactionCrossSection(
   // Note: We must cast the getReactionCrossSection method to the exact
   // function signature to avoid unresolved overloaded type errors due to the
   // ScatteringCenterType having a getReactionCrossSection overload
-  
+
   return this->getMacroscopicCrossSection(
                               energy,
                               std::bind<double>( static_cast<double (ScatteringCenter::*)(const double, const typename ScatteringCenter::ReactionEnumType) const>(&ScatteringCenter::getReactionCrossSection),
@@ -264,7 +264,7 @@ void Material<ScatteringCenter>::getScatteringReactionTypes( ReactionEnumTypeSet
   }
 }
 
-// Get the miscellanseous reaction types
+// Get the miscellaneous reaction types
 template<typename ScatteringCenter>
 void Material<ScatteringCenter>::getMiscReactionTypes( ReactionEnumTypeSet& reaction_types ) const
 {
@@ -393,7 +393,7 @@ size_t Material<ScatteringCenter>::sampleCollisionScatteringCenter( const double
                                      d_macroscopic_total_cs_evaluation_functor,
                                      s_total_cs_evaluation_functor );
 }
-  
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_MATERIAL_DEF_HPP

@@ -35,7 +35,7 @@ FRENSIE_UNIT_TEST( RootModelProperties, default_properties )
 {
   const Geometry::RootModelProperties default_properties( "dummy.c" );
 
-  FRENSIE_CHECK_EQUAL( default_properties.getMaterialPropertyName(), "mat" );
+  FRENSIE_CHECK_EQUAL( default_properties.getMaterialPropertyName(), "material" );
   FRENSIE_CHECK_EQUAL( default_properties.getVoidMaterialName(), "void" );
   FRENSIE_CHECK_EQUAL( default_properties.getTerminalMaterialName(), "graveyard" );
 }
@@ -101,7 +101,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( RootModelProperties,
     createOArchive( archive_base_name, archive_ostream, oarchive );
 
     Geometry::RootModelProperties properties( "dummy.root" );
-    
+
     properties.setMaterialPropertyName( "fill" );
     properties.setVoidMaterialName( "empty" );
     properties.setTerminalMaterialName( "graveyard" );
@@ -120,7 +120,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( RootModelProperties,
   Geometry::RootModelProperties properties( "?.root" );
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( properties ) );
-  
+
   FRENSIE_CHECK_EQUAL( properties.getModelFileName(), "dummy.root" );
   FRENSIE_CHECK_EQUAL( properties.getVoidMaterialName(), "empty" );
   FRENSIE_CHECK_EQUAL( properties.getTerminalMaterialName(), "graveyard" );

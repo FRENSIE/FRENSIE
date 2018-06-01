@@ -15,6 +15,9 @@
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
+// FRENSIE Includes
+#include "Utility_TypeTraits.hpp"
+
 namespace MonteCarlo{
 
 /*! The photonuclear reaction type enum.
@@ -493,6 +496,26 @@ void serialize( Archive& archive,
 } // end serialization namespace
   
 } // end boost namespace
+
+namespace Utility{
+
+/*! Specialization of Utility::IsHashable for MonteCarlo::PhotonuclearReactionType
+ * \ingroup type_traits
+ */
+template<>
+struct IsHashable<MonteCarlo::PhotonuclearReactionType> : public std::true_type
+{ /* ... */ };
+
+} // end Utility namespace
+
+namespace std{
+
+//! Specialization of std::hash for MonteCarlo::PhotonuclearReactionType
+template<>
+struct hash<MonteCarlo::PhotonuclearReactionType> : public hash<unsigned>
+{ /* ... */ };
+
+} // end std namespace
 
 #endif // end MONTE_CARLO_PHOTONUCLEAR_REACTION_TYPE_HPP
 

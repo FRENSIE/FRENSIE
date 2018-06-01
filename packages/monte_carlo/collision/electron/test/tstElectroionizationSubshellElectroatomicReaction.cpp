@@ -227,37 +227,37 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
                    getDifferentialCrossSection_native )
 {
   // First subshell
-  // double diff_cross_section =
-  //   native_first_subshell_reaction->getDifferentialCrossSection(
-  //       1.70425200079801E-03,
-  //       8.52126000399011E-04 );
+  double diff_cross_section =
+    native_first_subshell_reaction->getDifferentialCrossSection(
+        1.70425200079801E-03,
+        8.52126000399011E-04 );
 
-  // FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section, 1.0422076549158518e+08, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section, 1.0422076549158518e+08, 1e-12 );
 
-  // diff_cross_section =
-  //   native_first_subshell_reaction->getDifferentialCrossSection(
-  //       1.70425200079802E-03,
-  //       8.52126000399011E-04 );
+  diff_cross_section =
+    native_first_subshell_reaction->getDifferentialCrossSection(
+        1.70425200079802E-03,
+        8.52126000399011E-04 );
 
-  // FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section, 1.0422076549158294e+08, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section, 1.0422076549158294e+08, 1e-12 );
 
-  // diff_cross_section =
-  //   native_first_subshell_reaction->getDifferentialCrossSection(
-  //       1.98284583249127E-03,
-  //       8.52126000399011E-04 );
+  diff_cross_section =
+    native_first_subshell_reaction->getDifferentialCrossSection(
+        1.98284583249127E-03,
+        8.52126000399011E-04 );
 
-  // FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section, 6.3604864772376753e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section, 6.3604864772376753e+07, 1e-12 );
 
-  // diff_cross_section =
-  //   native_first_subshell_reaction->getDifferentialCrossSection(
-  //       2.00191878322064E-03,
-  //       8.52126000399011E-04 );
+  diff_cross_section =
+    native_first_subshell_reaction->getDifferentialCrossSection(
+        2.00191878322064E-03,
+        8.52126000399011E-04 );
 
-  // FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section, 5.9982050362880379e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section, 5.9982050362880379e+07, 1e-12 );
 
 
   // Last subshell
-  double diff_cross_section =
+  diff_cross_section =
     native_last_subshell_reaction->getDifferentialCrossSection(
         0.0025118800000459599528,
         0.0012514500000459765489 );
@@ -540,7 +540,9 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
   // Extract the subshell information
   std::set<unsigned> subshells = data_container->getSubshells();
 
-  std::set<unsigned>::iterator shell = data_container->getSubshells().begin();
+  // Create the reaction for the first subshell
+  {
+    std::set<unsigned>::iterator shell = data_container->getSubshells().begin();
 
     // Convert subshell number to enum
     Data::SubshellType subshell_type =
@@ -577,24 +579,30 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
                 grid_searcher,
                 subshell_type,
                 electroionization_subshell_distribution ) );
+  }
 
+  // Create the reaction for the last subshell
+  {
     // For the last subshell
-    shell = data_container->getSubshells().end();
+    std::set<unsigned>::iterator shell = data_container->getSubshells().end();
     --shell;
 
     // Convert subshell number to enum
-    subshell_type =
+    Data::SubshellType subshell_type =
       Data::convertENDFDesignatorToSubshellEnum( *shell );
 
     // Electroionization cross section
-    subshell_cross_section->assign(
-        data_container->getElectroionizationCrossSection( *shell ).begin(),
-        data_container->getElectroionizationCrossSection( *shell ).end() );
+    std::shared_ptr<std::vector<double> > subshell_cross_section(
+       new std::vector<double>( data_container->getElectroionizationCrossSection( *shell ) ) );
 
     // Electroionization cross section threshold energy bin index
-    threshold_energy_index =
+    size_t threshold_energy_index =
         data_container->getElectroionizationCrossSectionThresholdEnergyIndex(
         *shell );
+
+    // The electroionization subshell distribution
+    std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
+        electroionization_subshell_distribution;
 
     // Create the electroionization subshell distribution
     MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
@@ -614,6 +622,7 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
                 grid_searcher,
                 subshell_type,
                 electroionization_subshell_distribution ) );
+  }
 
   }
   // Initialize the random number generator

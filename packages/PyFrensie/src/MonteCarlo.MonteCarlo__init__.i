@@ -1,20 +1,21 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility.__init__.i
+//! \file   MonteCarlo.MonteCarlo__init__.i
 //! \author Alex Robinson
-//! \brief  The utility module swig interface file
+//! \brief  The monte carlo module swig interface file
 //!
 //---------------------------------------------------------------------------//
 
-%define %utility_docstring
+%define %monte_carlo_docstring
 "
-PyFrensie.Utility is the python interface to the FRENSIE utilities package.
+PyFrensie.MonteCarlo.MonteCarlo__init__ will be imported directly into the
+PyFrensie.MonteCarlo module (see PyFrensie.MonteCarlo.__init__.py)
 "
 %enddef
 
-%module(package   = "PyFrensie.Utility",
+%module(package   = "PyFrensie.MonteCarlo",
         autodoc   = "1",
-        docstring = %utility_docstring) __init__
+        docstring = %monte_carlo_docstring) MonteCarlo__init__
 
 %pythonbegin
 %{
@@ -23,49 +24,23 @@ PyFrensie.Utility is the python interface to the FRENSIE utilities package.
   # option of the %module macro does not seem to work with this version
   # of swig either. To get the import code working we have to manually add
   # the current directory to the system path temporarily.
-  
+
   import os.path
   import sys
   current_dir,file_name = os.path.split(__file__)
   sys.path.insert(0, current_dir)
 %}
 
-// Set the special python variables
 %pythoncode
 %{
 # Remove the local current directory from the sys path (added to help
 # import code - see comment above)
 sys.path.pop(0)
-
-__all__ = ['Distribution',
-           'Prng',
-           'Interpolation'
-           ]
 %}
 
-%{
-#define NO_IMPORT_ARRAY
-#include "numpy_include.h"
-#include "Utility_RandomNumberGenerator.hpp"
-%}
-
-// Add the shortcut for initializing the random number generator
-%feature("autodoc")
-initFrensiePrng
-"
-This method can be used to initialize the Utility.Prng.RandomNumberGenerator
-instead of calling 'Utility.Prng.RandomNumberGenerator.createStreams()'.
-"
-
-%inline %{
-//! Initialize the random number generator
-void initFrensiePrng()
-{
-  // Initilize the random number generator
-  Utility::RandomNumberGenerator::createStreams();
-}
-%}
+// Add support for the simulation properties classes
+%include "MonteCarlo_SimulationProperties.i"
 
 //---------------------------------------------------------------------------//
-// end Utility.__init__.i
+// end MonteCarlo.__init__.i
 //---------------------------------------------------------------------------//

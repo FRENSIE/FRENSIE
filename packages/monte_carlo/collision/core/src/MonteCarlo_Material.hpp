@@ -92,7 +92,7 @@ public:
   //! Get the scattering reaction types
   void getScatteringReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
 
-  //! Get the miscellanseous reaction types
+  //! Get the miscellaneous reaction types
   void getMiscReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
 
   //! Get the reaction types
@@ -126,7 +126,7 @@ protected:
                                 const double energy,
                                 const MicroscopicCrossSectionEvaluationFunctor&
                                 cs_evaluation_functor ) const;
-  
+
   //! Sample the collision atom
   size_t sampleCollisionScatteringCenterImpl(
                            const double energy,
@@ -140,7 +140,7 @@ protected:
 
   //! Return the scattering center at the desired index
   const ScatteringCenter& getScatteringCenter( const size_t index ) const;
-  
+
 private:
 
   // Get the atomic weight from an atom pointer
@@ -171,7 +171,7 @@ private:
   MacroscopicCrossSectionEvaluationFunctor
   d_macroscopic_total_cs_evaluation_functor;
 };
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

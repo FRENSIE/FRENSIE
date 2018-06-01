@@ -84,7 +84,7 @@ convertSubshellEnumToIncoherentAdjointPhotoatomicReactionEnum(
 
 namespace Utility{
 
-/*! \brief Specialization of Utility::ToStringTraits for 
+/*! \brief Specialization of Utility::ToStringTraits for
  * MonteCarlo::AdjointPhotoatomicReactionType
  * \ingroup to_string_traits
  */
@@ -97,7 +97,14 @@ struct ToStringTraits<MonteCarlo::AdjointPhotoatomicReactionType>
   //! Place the MonteCarlo::AdjointElectroatomicReactionType in a stream
   static void toStream( std::ostream& os, const MonteCarlo::AdjointPhotoatomicReactionType type );
 };
-  
+
+/*! Specialization of Utility::IsHashable for MonteCarlo::AdjointPhotoatomicReactionType
+ * \ingroup type_traits
+ */
+template<>
+struct IsHashable<MonteCarlo::AdjointPhotoatomicReactionType> : public std::true_type
+{ /* ... */ };
+
 } // end Utility namespace
 
 namespace std{
@@ -109,6 +116,11 @@ inline std::ostream& operator<<( std::ostream& os,
   os << Utility::toString( reaction );
   return os;
 }
+
+//! Specialization of std::hash for MonteCarlo::AdjointPhotoatomicReactionType
+template<>
+struct hash<MonteCarlo::AdjointPhotoatomicReactionType> : public hash<unsigned>
+{ /* ... */ };
 
 } // end std namespace
 

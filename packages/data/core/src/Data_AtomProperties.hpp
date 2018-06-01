@@ -220,7 +220,7 @@ private:
   // Load the properties from an archive
   template<typename Archive>
   void load( Archive& ar, const unsigned version );
-  
+
   BOOST_SERIALIZATION_SPLIT_MEMBER();
 
   // Declare the boost serialization access object as a friend
@@ -251,7 +251,7 @@ void AtomProperties::save( Archive& ar, const unsigned version ) const
 {
   // Save the local member data
   Data::ZAID zaid( d_atom );
-  
+
   ar & BOOST_SERIALIZATION_NVP( zaid );
   ar & BOOST_SERIALIZATION_NVP( d_atomic_weight_ratio );
   ar & BOOST_SERIALIZATION_NVP( d_photoatomic_data_properties );
@@ -269,14 +269,14 @@ void AtomProperties::load( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_NVP( zaid );
 
   d_atom = zaid.atom();
-  
+
   ar & BOOST_SERIALIZATION_NVP( d_atomic_weight_ratio );
   ar & BOOST_SERIALIZATION_NVP( d_photoatomic_data_properties );
   ar & BOOST_SERIALIZATION_NVP( d_adjoint_photoatomic_data_properties );
   ar & BOOST_SERIALIZATION_NVP( d_electroatomic_data_properties );
   ar & BOOST_SERIALIZATION_NVP( d_adjoint_electroatomic_data_properties );
 }
-  
+
 } // end Data namespace
 
 BOOST_SERIALIZATION_CLASS_VERSION( AtomProperties, Data, 0 );

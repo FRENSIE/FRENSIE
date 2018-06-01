@@ -23,14 +23,14 @@
 namespace MonteCarlo{
 
 // Initialize the static member data
-boost::unordered_set<NuclearReactionType> Nuclide::absorption_reaction_types =
+std::unordered_set<NuclearReactionType> Nuclide::absorption_reaction_types =
   Nuclide::setDefaultAbsorptionReactionTypes();
 
 // Set the default absorption reaction types
-boost::unordered_set<NuclearReactionType>
+std::unordered_set<NuclearReactionType>
 Nuclide::setDefaultAbsorptionReactionTypes()
 {
-  boost::unordered_set<NuclearReactionType> absorption_reaction_type;
+  std::unordered_set<NuclearReactionType> absorption_reaction_type;
   absorption_reaction_type.insert( N__CAPTURE_REACTION );
   absorption_reaction_type.insert( N__GAMMA_REACTION ); // start capture
   absorption_reaction_type.insert( N__P_REACTION );
@@ -310,7 +310,7 @@ void Nuclide::getScatteringReactionTypes( ReactionEnumTypeSet& reaction_types ) 
   }
 }
 
-// Return the miscellanseous reaction types
+// Return the miscellaneous reaction types
 void Nuclide::getMiscReactionTypes( ReactionEnumTypeSet& reaction_types ) const
 {
   ConstReactionMap::const_iterator reaction_it =

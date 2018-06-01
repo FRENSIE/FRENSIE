@@ -79,20 +79,20 @@ NeutronNuclearReactionACEFactory::NeutronNuclearReactionACEFactory(
     raw_nuclide_data.extractDNEDBlock();
 
   // Create a map of the reaction types and their table ordering
-  boost::unordered_map<NuclearReactionType,unsigned> reaction_ordering;
+  std::unordered_map<NuclearReactionType,unsigned> reaction_ordering;
   NeutronNuclearReactionACEFactory::createReactionOrderingMap( mtr_block,
 							reaction_ordering );
 
   // Create a map of the reaction types and the corresponding Q-value
-  boost::unordered_map<NuclearReactionType,double> reaction_q_value;
+  std::unordered_map<NuclearReactionType,double> reaction_q_value;
   NeutronNuclearReactionACEFactory::createReactionQValueMap( lqr_block,
 						      reaction_ordering,
 						      reaction_q_value );
 
   // Create a map of the reaction types and the corresponding multiplicity
-  boost::unordered_map<NuclearReactionType,unsigned>
+  std::unordered_map<NuclearReactionType,unsigned>
     reaction_multiplicity;
-  boost::unordered_map<NuclearReactionType,Utility::ArrayView<const double> >
+  std::unordered_map<NuclearReactionType,Utility::ArrayView<const double> >
     reaction_energy_dependent_multiplicity;
   NeutronNuclearReactionACEFactory::createReactionMultiplicityMap(
 				      table_name,
@@ -103,7 +103,7 @@ NeutronNuclearReactionACEFactory::NeutronNuclearReactionACEFactory(
 				      reaction_energy_dependent_multiplicity );
 
   // Create a map of the reaction types and the corresponding threshold index
-  boost::unordered_map<NuclearReactionType,unsigned> reaction_threshold_index;
+  std::unordered_map<NuclearReactionType,unsigned> reaction_threshold_index;
   NeutronNuclearReactionACEFactory::createReactionThresholdMap(
 						    lsig_block,
 						    sig_block,
@@ -111,7 +111,7 @@ NeutronNuclearReactionACEFactory::NeutronNuclearReactionACEFactory(
 						    reaction_threshold_index );
 
   // Create a map of the reaction types and the corresponding cross section
-  boost::unordered_map<NuclearReactionType,std::shared_ptr<std::vector<double> > >
+  std::unordered_map<NuclearReactionType,std::shared_ptr<std::vector<double> > >
     reaction_cross_section;
   NeutronNuclearReactionACEFactory::createReactionCrossSectionMap(
 						      lsig_block,
@@ -188,7 +188,7 @@ NeutronNuclearReactionACEFactory::NeutronNuclearReactionACEFactory(
 
 // Create the scattering reactions
 void NeutronNuclearReactionACEFactory::createScatteringReactions(
-      boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >&
+      std::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >&
       scattering_reactions ) const
 {
   scattering_reactions.insert( d_scattering_reactions.begin(),
@@ -197,7 +197,7 @@ void NeutronNuclearReactionACEFactory::createScatteringReactions(
 
 // Create the absorption reactions
 void NeutronNuclearReactionACEFactory::createAbsorptionReactions(
-      boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >&
+      std::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >&
       absorption_reactions ) const
 {
   absorption_reactions.insert( d_absorption_reactions.begin(),
@@ -206,7 +206,7 @@ void NeutronNuclearReactionACEFactory::createAbsorptionReactions(
 
 // Create the fission reactions
 void NeutronNuclearReactionACEFactory::createFissionReactions(
-      boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >&
+      std::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >&
       fission_reactions ) const
 {
   fission_reactions.insert( d_fission_reactions.begin(),
@@ -216,7 +216,7 @@ void NeutronNuclearReactionACEFactory::createFissionReactions(
 // Create the reaction type ordering map
 void NeutronNuclearReactionACEFactory::createReactionOrderingMap(
         const Utility::ArrayView<const double>& mtr_block,
-        boost::unordered_map<NuclearReactionType,unsigned>& reaction_ordering )
+        std::unordered_map<NuclearReactionType,unsigned>& reaction_ordering )
 
 {
   NuclearReactionType reaction;
@@ -237,10 +237,10 @@ void NeutronNuclearReactionACEFactory::createReactionOrderingMap(
 // Create the reaction type Q-value map
 void NeutronNuclearReactionACEFactory::createReactionQValueMap(
    const Utility::ArrayView<const double>& lqr_block,
-   const boost::unordered_map<NuclearReactionType,unsigned>& reaction_ordering,
-   boost::unordered_map<NuclearReactionType,double>& reaction_q_value )
+   const std::unordered_map<NuclearReactionType,unsigned>& reaction_ordering,
+   std::unordered_map<NuclearReactionType,double>& reaction_q_value )
 {
-  boost::unordered_map<NuclearReactionType,unsigned>::const_iterator
+  std::unordered_map<NuclearReactionType,unsigned>::const_iterator
     reaction, end_reaction;
   reaction = reaction_ordering.begin();
   end_reaction = reaction_ordering.end();
@@ -269,12 +269,12 @@ void NeutronNuclearReactionACEFactory::createReactionMultiplicityMap(
    const std::string& table_name,
    const Utility::ArrayView<const double>& tyr_block,
    const Utility::ArrayView<const double>& dlw_block,
-   const boost::unordered_map<NuclearReactionType,unsigned>& reaction_ordering,
-   boost::unordered_map<NuclearReactionType,unsigned>& reaction_multiplicity,
-   boost::unordered_map<NuclearReactionType,Utility::ArrayView<const double> >&
+   const std::unordered_map<NuclearReactionType,unsigned>& reaction_ordering,
+   std::unordered_map<NuclearReactionType,unsigned>& reaction_multiplicity,
+   std::unordered_map<NuclearReactionType,Utility::ArrayView<const double> >&
    reaction_energy_dependent_multiplicity )
 {
-  boost::unordered_map<NuclearReactionType,unsigned>::const_iterator
+  std::unordered_map<NuclearReactionType,unsigned>::const_iterator
     reaction, end_reaction;
   reaction = reaction_ordering.begin();
   end_reaction = reaction_ordering.end();
@@ -328,11 +328,11 @@ void NeutronNuclearReactionACEFactory::createReactionMultiplicityMap(
 void NeutronNuclearReactionACEFactory::createReactionThresholdMap(
    const Utility::ArrayView<const double>& lsig_block,
    const Utility::ArrayView<const double>& sig_block,
-   const boost::unordered_map<NuclearReactionType,unsigned>& reaction_ordering,
-   boost::unordered_map<NuclearReactionType,unsigned>&
+   const std::unordered_map<NuclearReactionType,unsigned>& reaction_ordering,
+   std::unordered_map<NuclearReactionType,unsigned>&
    reaction_threshold_index )
 {
-  boost::unordered_map<NuclearReactionType,unsigned>::const_iterator
+  std::unordered_map<NuclearReactionType,unsigned>::const_iterator
     reaction, end_reaction;
   reaction = reaction_ordering.begin();
   end_reaction = reaction_ordering.end();
@@ -367,11 +367,11 @@ void NeutronNuclearReactionACEFactory::createReactionCrossSectionMap(
    const Utility::ArrayView<const double>& lsig_block,
    const Utility::ArrayView<const double>& sig_block,
    const Utility::ArrayView<const double>& elastic_cross_section,
-   const boost::unordered_map<NuclearReactionType,unsigned>& reaction_ordering,
-   boost::unordered_map<NuclearReactionType,std::shared_ptr<std::vector<double> > >&
+   const std::unordered_map<NuclearReactionType,unsigned>& reaction_ordering,
+   std::unordered_map<NuclearReactionType,std::shared_ptr<std::vector<double> > >&
    reaction_cross_section )
 {
-  boost::unordered_map<NuclearReactionType,unsigned>::const_iterator
+  std::unordered_map<NuclearReactionType,unsigned>::const_iterator
     reaction, end_reaction;
   reaction = reaction_ordering.begin();
   end_reaction = reaction_ordering.end();
@@ -440,14 +440,14 @@ void NeutronNuclearReactionACEFactory::initializeScatteringReactions(
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
     grid_searcher,
     const SimulationProperties& properties,
-    const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
-    const boost::unordered_map<NuclearReactionType,unsigned>&
+    const std::unordered_map<NuclearReactionType,double>& reaction_q_value,
+    const std::unordered_map<NuclearReactionType,unsigned>&
     reaction_multiplicity,
-    const boost::unordered_map<NuclearReactionType,Utility::ArrayView<const double> >&
+    const std::unordered_map<NuclearReactionType,Utility::ArrayView<const double> >&
     reaction_energy_dependent_multiplicity,
-    const boost::unordered_map<NuclearReactionType,unsigned>&
+    const std::unordered_map<NuclearReactionType,unsigned>&
     reaction_threshold_index,
-    const boost::unordered_map<NuclearReactionType,std::shared_ptr<std::vector<double> > >&
+    const std::unordered_map<NuclearReactionType,std::shared_ptr<std::vector<double> > >&
     reaction_cross_section,
     const NeutronNuclearScatteringDistributionACEFactory& scattering_dist_factory )
 
@@ -457,7 +457,7 @@ void NeutronNuclearReactionACEFactory::initializeScatteringReactions(
   testPrecondition(reaction_q_value.size() == reaction_threshold_index.size());
   testPrecondition( reaction_q_value.size() == reaction_cross_section.size() );
 
-  boost::unordered_map<NuclearReactionType,unsigned>::const_iterator
+  std::unordered_map<NuclearReactionType,unsigned>::const_iterator
     reaction_type_multiplicity, end_reaction_type_multiplicity;
 
   reaction_type_multiplicity = reaction_multiplicity.begin();
@@ -538,14 +538,14 @@ void NeutronNuclearReactionACEFactory::initializeAbsorptionReactions(
     const std::shared_ptr<const std::vector<double> >& energy_grid,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
     grid_searcher,
-    const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
-    const boost::unordered_map<NuclearReactionType,unsigned>&
+    const std::unordered_map<NuclearReactionType,double>& reaction_q_value,
+    const std::unordered_map<NuclearReactionType,unsigned>&
     reaction_multiplicity,
-    const boost::unordered_map<NuclearReactionType,Utility::ArrayView<const double> >&
+    const std::unordered_map<NuclearReactionType,Utility::ArrayView<const double> >&
     reaction_energy_dependent_multiplicity,
-    const boost::unordered_map<NuclearReactionType,unsigned>&
+    const std::unordered_map<NuclearReactionType,unsigned>&
     reaction_threshold_index,
-    const boost::unordered_map<NuclearReactionType,std::shared_ptr<std::vector<double> > >&
+    const std::unordered_map<NuclearReactionType,std::shared_ptr<std::vector<double> > >&
     reaction_cross_section )
 {
   // Make sure the maps have the correct number of elements
@@ -553,7 +553,7 @@ void NeutronNuclearReactionACEFactory::initializeAbsorptionReactions(
   testPrecondition(reaction_q_value.size() == reaction_threshold_index.size());
   testPrecondition( reaction_q_value.size() == reaction_cross_section.size() );
 
-  boost::unordered_map<NuclearReactionType,unsigned>::const_iterator
+  std::unordered_map<NuclearReactionType,unsigned>::const_iterator
     reaction_type_multiplicity, end_reaction_type_multiplicity;
 
   reaction_type_multiplicity = reaction_multiplicity.begin();
@@ -591,12 +591,12 @@ void NeutronNuclearReactionACEFactory::initializeFissionReactions(
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
     grid_searcher,
     const SimulationProperties& properties,
-    const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
-    const boost::unordered_map<NuclearReactionType,unsigned>&
+    const std::unordered_map<NuclearReactionType,double>& reaction_q_value,
+    const std::unordered_map<NuclearReactionType,unsigned>&
     reaction_multiplicity,
-    const boost::unordered_map<NuclearReactionType,unsigned>&
+    const std::unordered_map<NuclearReactionType,unsigned>&
     reaction_threshold_index,
-    const boost::unordered_map<NuclearReactionType,std::shared_ptr<std::vector<double> > >&
+    const std::unordered_map<NuclearReactionType,std::shared_ptr<std::vector<double> > >&
     reaction_cross_section,
     const NeutronNuclearScatteringDistributionACEFactory& scattering_dist_factory,
     const std::shared_ptr<const FissionNeutronMultiplicityDistribution>&
@@ -609,7 +609,7 @@ void NeutronNuclearReactionACEFactory::initializeFissionReactions(
   testPrecondition(reaction_q_value.size() == reaction_threshold_index.size());
   testPrecondition( reaction_q_value.size() == reaction_cross_section.size() );
 
-  boost::unordered_map<NuclearReactionType,unsigned>::const_iterator
+  std::unordered_map<NuclearReactionType,unsigned>::const_iterator
     reaction_type_multiplicity, end_reaction_type_multiplicity;
 
   reaction_type_multiplicity = reaction_multiplicity.begin();

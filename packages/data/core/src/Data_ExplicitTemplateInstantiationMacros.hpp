@@ -12,6 +12,8 @@
 // FRENSIE Includes
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
+#if !defined SWIG
+
 #define EXTERN_EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ... )    \
 namespace boost{                                              \
 namespace archive{                           \
@@ -69,6 +71,13 @@ namespace Data{                        \
   EXPLICIT_TEMPLATE_FUNCTION_INST( void __VA_ARGS__::load<Utility::HDF5IArchive>( Utility::HDF5IArchive& ar, const unsigned version ) ); \
   EXPLICIT_TEMPLATE_FUNCTION_INST( void __VA_ARGS__::load<boost::mpi::packed_iarchive>(boost::mpi::packed_iarchive& ar, const unsigned version ) ); \
   EXPLICIT_TEMPLATE_FUNCTION_INST( void __VA_ARGS__::load<boost::mpi::packed_skeleton_iarchive>(boost::mpi::packed_skeleton_iarchive& ar, const unsigned version ) )
+
+#else // !defined SWIG
+
+#define EXTERN_EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ... )
+#define EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ... )
+
+#endif // end !defined SWIG
 
 #endif // end DATA_EXPLICIT_TEMPLATE_INSTANTIATION_MACROS_HPP
 

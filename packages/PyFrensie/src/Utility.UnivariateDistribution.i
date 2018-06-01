@@ -1,17 +1,63 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_OneDDistribution.i
-//! \author Alex Robinson
-//! \brief  The OneDDistribution class interface file
+//! \file   Utility.UnivariateDistribution.i
+//! \author Alex Robinson, Luke Kersting
+//! \brief  The UnivariateDistribution class interface file
 //!
 //---------------------------------------------------------------------------//
 
+%define %utility_univariate_dist_docstring
+"
+PyFrensie.Utility.UnivariateDistribution is the python interface to
+the Univariate distributions in the FRENSIE utility/distribution subpackage.
+
+The purpose of UnivariateDistribution is to provide a variety of 1-D
+distributions that can be used for both evaluation and sampling. This sub-module
+will only be accessed under the Utility.Distribution sub-module.
+"
+%enddef
+
+%module(package   = "PyFrensie.Utility",
+        autodoc   = "1",
+        docstring = %utility_univariate_dist_docstring) UnivariateDistribution
+
+// Standard exception handling
+%include "exception.i"
+
+// Global swig features
+%feature("autodoc", "1");
+
+// General exception handling
+%exception
+{
+  try{
+    $action;
+    if( PyErr_Occurred() )
+      SWIG_fail;
+  }
+  catch( Utility::ContractException& e )
+  {
+    SWIG_exception( SWIG_ValueError, e.what() );
+  }
+  catch( Utility::BadUnivariateDistributionParameter& e )
+  {
+    SWIG_exception( SWIG_RuntimeError, e.what() );
+  }
+  catch( ... )
+  {
+    SWIG_exception( SWIG_UnknownError, "Unknown C++ exception" );
+  }
+}
+
 %{
+#define NO_IMPORT_ARRAY
+#include "numpy_include.h"
+
 // FRENSIE Includes
 #include "PyFrensie_PythonTypeTraits.hpp"
 #include "Utility_DistributionTraits.hpp"
-#include "Utility_OneDDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_EquiprobableBinDistribution.hpp"
@@ -33,40 +79,34 @@
 using namespace Utility;
 %}
 
-// Include std::string support
-%include <std_string.i>
-
 // Include typemaps support
 %include <typemaps.i>
 
-// Import the explicit template instantiation helpers
-%import "Utility_ExplicitTemplateInstantiationMacros.hpp"
+// General std library handling
+%include <std_string.i>
+%include <std_vector.i>
+%include <std_shared_ptr.i>
+
+// Include macros to find initialized numpy
+%include "numpy.i"
+
+// Import the base distribution interface
+%import "Utility.Distribution.i"
 
 // Import the distribution traits class
 %import "Utility_DistributionTraits.hpp"
 
-// Include the 1D distribution helpers
-%include "Utility_OneDDistributionHelpers.i"
+// Include the univariate distribution helpers
+%include "Utility_UnivariateDistributionHelpers.i"
+
+// Add a few general templates
+%template(DoubleVector) std::vector<double>;
+%template(VectorPtrTabUni) std::vector<std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<void,void> > >;
 
 // Add a few general typemaps
+typedef unsigned int size_t;
 %apply Utility::DistributionTraits::Counter& INOUT { Utility::DistributionTraits::Counter& trials };
 %apply unsigned& OUTPUT { unsigned& sampled_bin_index };
-
-%typemap(in) const Teuchos::Array<double>& (Teuchos::Array<double> temp)
-{
-  temp = PyFrensie::convertFromPython<Teuchos::Array<double> >( $input );
-
-  $1 = &temp;
-}
-
-// The typecheck precedence, which is used by SWIG to determine which
-// overloaded method should be called, should be set to
-// SWIG_TYPECHECK_DOUBLE_ARRAY (1050) for the Teuchos::Array<double>&. You will
-// get a Python error when calling the overloaded method in Python without this
-// typecheck
-%typemap(typecheck, precedence=1050) (const Teuchos::Array<double>&) {
-  $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
-}
 
 // General ignore directives
 %ignore *::IndepUnit;
@@ -82,22 +122,40 @@ using namespace Utility;
 %ignore *::fromUnitlessDistribution;
 
 //---------------------------------------------------------------------------//
-// Add support for the OneDDistribution
+// Add support for the UnivariateDistribution
 //---------------------------------------------------------------------------//
-// Import the OneDDistribution
-%import "Utility_OneDDistribution.hpp"
+// Import the UnivariateDistribution
+%import "Utility_UnivariateDistribution.hpp"
 
 // Basic distribution interface setup
-%basic_distribution_interface_setup( OneDDistribution )
+%basic_distribution_interface_setup( UnivariateDistribution )
+
+// // Add functionality to Upcast to the UnivariateDistribution from derived classes
+// %inline %{
+// std::shared_ptr<const Utility::UnitAwareUnivariateDistribution<void,void> > upcastToUnivariateDistribution(
+//   std::shared_ptr<const Utility::UnitAwareUnivariateDistribution<void,void> >& dist )
+// {
+//   return dist;
+// }
+// %}
 
 //---------------------------------------------------------------------------//
-// Add support for the TabularOneDDistribution
+// Add support for the TabularUnivariateDistribution
 //---------------------------------------------------------------------------//
-// Import the TabularOneDDistribution
-%import "Utility_TabularOneDDistribution.hpp"
+// Import the TabularUnivariateDistribution
+%import "Utility_TabularUnivariateDistribution.hpp"
 
 // Basic tabular distribution interface setup
-%basic_tab_distribution_interface_setup( TabularOneDDistribution )
+%basic_tab_distribution_interface_setup( TabularUnivariateDistribution )
+
+// // Add functionality to Upcast to the TabularUnivariateDistribution from derived classes
+// %inline %{
+// std::shared_ptr<const Utility::UnitAwareTabularUnivariateDistribution<void,void> > upcastToTabularUnivariateDistribution(
+//   std::shared_ptr<const Utility::UnitAwareTabularUnivariateDistribution<void,void> >& tab_dist )
+// {
+//   return tab_dist;
+// }
+// %}
 
 //---------------------------------------------------------------------------//
 // Add support for the DeltaDistribution
@@ -111,7 +169,7 @@ Utility::UnitAwareDeltaDistribution<void,void>::UnitAwareDeltaDistribution
 "The dependent value (multiplier) can be ignored (default value = 1.0)"
 
 // Instantiate the template constructor for double values
-%extend Utility::UnitAwareDeltaDistribution<void,void>
+%extend Utility::UnitAwareDeltaDistribution
 {
   %template(DeltaDistribution) Utility::UnitAwareDeltaDistribution::UnitAwareDeltaDistribution<double,double>;
 };
@@ -167,11 +225,11 @@ input parameter are the following:
 
   incident_energy = 1.0 (MeV)
   nuclear_temperature = 1.0 (MeV)
-  restruction_energy = 0.0 (MeV)
+  restriction_energy = 0.0 (MeV)
   constant_multiplier = 1.0."
 
 // Instantiate the template constructor for double values
-%extend Utility::UnitAwareEvaporationDistribution<void,void>
+%extend Utility::UnitAwareEvaporationDistribution
 {
   // Instantiate the desired version of the template constructor
   %template(EvaporationDistribution) Utility::UnitAwareEvaporationDistribution::UnitAwareEvaporationDistribution<double,double,double>;
@@ -196,7 +254,7 @@ input parameter are the following:
 and inf)"
 
 // Instantiate the template constructor for double values
-%extend Utility::UnitAwareExponentialDistribution<void,void>
+%extend Utility::UnitAwareExponentialDistribution
 {
   // Instantiate the desired version of the template constructor
   %template(ExponentialDistribution) Utility::UnitAwareExponentialDistribution::UnitAwareExponentialDistribution<double,double,double>;
@@ -238,11 +296,11 @@ input parameter are the following:
 
   incident_energy = 1.0 (MeV)
   nuclear_temperature = 1.0 (MeV)
-  restruction_energy = 0.0 (MeV)
+  restriction_energy = 0.0 (MeV)
   constant_multiplier = 1.0."
 
 // Instantiate the template constructor for double values
-%extend Utility::UnitAwareMaxwellFissionDistribution<void,void>
+%extend Utility::UnitAwareMaxwellFissionDistribution
 {
   // Instantiate the desired version of the template constructor
   %template(MaxwellFissionDistribution) Utility::UnitAwareMaxwellFissionDistribution::UnitAwareMaxwellFissionDistribution<double,double,double>;
@@ -273,7 +331,7 @@ input parameter are the following:
   max_independent_value = inf."
 
 // Instantiate the template constructor for double values
-%extend Utility::UnitAwareNormalDistribution<void,void>
+%extend Utility::UnitAwareNormalDistribution
 {
   // Instantiate the desired version of the template constructor
   %template(NormalDistribution) Utility::UnitAwareNormalDistribution::UnitAwareNormalDistribution<double,double,double,double>;
@@ -294,7 +352,7 @@ Utility::UnitAwarePolynomialDistribution<void,void>::UnitAwarePolynomialDistribu
 "The coefficients should be stored in a NumPy array."
 
 // Instantiate the template constructor for double values
-%extend Utility::UnitAwarePolynomialDistribution<void,void>
+%extend Utility::UnitAwarePolynomialDistribution
 {
   // Instantiate the desired version of the template constructor
   %template(PolynomialDistribution) Utility::UnitAwarePolynomialDistribution::UnitAwarePolynomialDistribution<double>;
@@ -367,11 +425,15 @@ Utility::UnitAwarePowerDistribution<POWER,void,void>::UnitAwarePowerDistribution
 //---------------------------------------------------------------------------//
 // Add support for the TabularDistribution
 //---------------------------------------------------------------------------//
+
 // Import the Tabular Distribution
 %import "Utility_TabularDistribution.hpp"
 
 // There are many tabular distributions - use this macro to set up each
 %define %tabular_distribution_interface_setup( INTERP )
+
+// Ignore the static methods
+%ignore Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>::typeName( const bool verbose_name, const bool use_template_params = false, const std::string& delim = std::string() );
 
 // Add a more detailed docstring for the constructor
 %feature("docstring")
@@ -396,6 +458,9 @@ Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>::UnitAwareTabul
 
 // There are many tabular cdf distributions - use this macro to set up each
 %define %tabular_cdf_distribution_interface_setup( INTERP )
+
+// Ignore the static methods
+%ignore Utility::UnitAwareTabularCDFDistribution<Utility::INTERP,void,void>::typeName( const bool verbose_name, const bool use_template_params = false, const std::string& delim = std::string() );
 
 // Add a more detailed docstring for the constructor
 %feature("docstring")
@@ -428,7 +493,7 @@ Utility::UnitAwareTabularCDFDistribution<Utility::INTERP,void,void>::UnitAwareTa
 "The dependent value (dependent_value) can be ignored (default value = 1.0)"
 
 // Instantiate the template constructor for double values
-%extend Utility::UnitAwareUniformDistribution<void,void>
+%extend Utility::UnitAwareUniformDistribution
 {
   // Instantiate the desired version of the template constructor
   %template(UniformDistribution) Utility::UnitAwareUniformDistribution::UnitAwareUniformDistribution<double,double>;
@@ -461,11 +526,11 @@ input parameter are the following:
   incident_energy = 1.0 (MeV)
   a_parameter = 1.0 (MeV)
   b_parameter = 1.0 (MeV^-1)
-  restruction_energy = 0.0 (MeV)
+  restriction_energy = 0.0 (MeV)
   constant_multiplier = 1.0."
 
 // Instantiate the template constructor for double values
-%extend Utility::UnitAwareWattDistribution<void,void>
+%extend Utility::UnitAwareWattDistribution
 {
   // Instantiate the desired version of the template constructor
   %template(WattDistribution) Utility::UnitAwareWattDistribution::UnitAwareWattDistribution<double,double,double,double>;
@@ -477,7 +542,7 @@ input parameter are the following:
 //---------------------------------------------------------------------------//
 // Add support for the CoupledElasticDistribution
 //---------------------------------------------------------------------------//
-// Import the Coupled Elastic OneDDistribution
+// Import the Coupled Elastic UnivariateDistribution
 %import "Utility_CoupledElasticDistribution.hpp"
 
 // There are many Coupled Elastic One D distributions - use this macro to set up each
@@ -495,7 +560,7 @@ Utility::UnitAwareCoupledElasticDistribution<Utility::INTERP,void,void>::UnitAwa
 
 %coupled_elastic_distribution_interface_setup( LinLin )
 %coupled_elastic_distribution_interface_setup( LinLog )
-//---------------------------------------------------------------------------//
-// end Utility_OneDDistribution.i
-//---------------------------------------------------------------------------//
 
+//---------------------------------------------------------------------------//
+// end Utility.UnivariateDistribution.i
+//---------------------------------------------------------------------------//

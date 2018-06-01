@@ -47,5 +47,5 @@ private:
 #endif // end MONTE_CARLO_COMPTON_PROFILE_SUBSHELL_CONVERTER_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ComptonProfileSubshellCOnverterFactory.hpp
+// end MonteCarlo_ComptonProfileSubshellConverterFactory.hpp
 //---------------------------------------------------------------------------//

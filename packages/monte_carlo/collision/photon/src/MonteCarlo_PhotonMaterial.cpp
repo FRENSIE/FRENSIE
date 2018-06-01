@@ -54,7 +54,7 @@ void PhotonMaterial::getScatteringReactionTypes(
     this->getScatteringCenter( i ).getScatteringReactionTypes(reaction_types);
 }
 
-// Get the photonuclear miscellanseous reaction types
+// Get the photonuclear miscellaneous reaction types
 void PhotonMaterial::getMiscReactionTypes(
                         PhotonuclearReactionEnumTypeSet& reaction_types ) const
 {

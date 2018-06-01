@@ -556,7 +556,9 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
   // Extract the subshell information
   std::set<unsigned> subshells = data_container->getSubshells();
 
-  std::set<unsigned>::iterator shell = data_container->getSubshells().begin();
+  // Create the distribution for the first subshell
+  {
+    std::set<unsigned>::iterator shell = data_container->getSubshells().begin();
 
     // Convert subshell number to enum
     Data::SubshellType subshell_type =
@@ -596,24 +598,30 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
                 grid_searcher,
                 subshell_type,
                 electroionization_subshell_distribution ) );
+  }
 
-    // For the last subshell
-    shell = data_container->getSubshells().end();
+  // Create the distribution for the last subshell
+  {
+    // Last subshell
+    std::set<unsigned>::iterator shell = data_container->getSubshells().end();
     --shell;
 
     // Convert subshell number to enum
-    subshell_type =
+    Data::SubshellType subshell_type =
       Data::convertENDFDesignatorToSubshellEnum( *shell );
 
     // Positronionization cross section
-    subshell_cross_section->assign(
-        data_container->getElectroionizationCrossSection( *shell ).begin(),
-        data_container->getElectroionizationCrossSection( *shell ).end() );
+    std::shared_ptr<std::vector<double> > subshell_cross_section(
+       new std::vector<double>( data_container->getElectroionizationCrossSection( *shell ) ) );
 
     // Positronionization cross section threshold energy bin index
-    threshold_energy_index =
+    size_t threshold_energy_index =
         data_container->getElectroionizationCrossSectionThresholdEnergyIndex(
         *shell );
+
+    // The electroionization subshell distribution
+    std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
+        electroionization_subshell_distribution;
 
     native_last_binding_energy =
       data_container->getSubshellBindingEnergy( *shell );
@@ -636,9 +644,9 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
                 grid_searcher,
                 subshell_type,
                 electroionization_subshell_distribution ) );
-
   }
-  
+  }
+
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 }

@@ -117,9 +117,13 @@ void SimulationAdjointPhotonProperties::serialize( Archive& ar,
 
 } // end MonteCarlo namespace
 
+#if !defined SWIG
+
 BOOST_CLASS_VERSION( MonteCarlo::SimulationAdjointPhotonProperties, 0 );
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::SimulationAdjointPhotonProperties, "SimulationAdjointPhotonProperties" );
 EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SimulationAdjointPhotonProperties );
+
+#endif // end !defined SWIG
 
 #endif // end MONTE_CARLO_SIMULATION_ADJOINT_PHOTON_PROPERTIES_HPP
 

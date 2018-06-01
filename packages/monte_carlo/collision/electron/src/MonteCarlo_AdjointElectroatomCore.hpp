@@ -12,9 +12,6 @@
 // Std Lib Includes
 #include <memory>
 
-// Boost Includes
-#include <boost/unordered_map.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatomicReactionType.hpp"
 #include "MonteCarlo_AdjointElectroatomicReaction.hpp"

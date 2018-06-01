@@ -12,6 +12,8 @@
 // FRENSIE Includes
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
+#if !defined SWIG
+
 #define __EXTERN_EXPLICIT_MONTE_CARLO_FORWARD_DECLARES__()      \
 namespace boost{                                              \
 namespace archive{                                           \
@@ -29,7 +31,7 @@ namespace archive{                                           \
 namespace Utility{                          \
   class HDF5OArchive;                       \
   class HDF5IArchive;                       \
-}                                           
+}
 
 #define EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( ... ) \
   __EXTERN_EXPLICIT_MONTE_CARLO_FORWARD_DECLARES__();           \
@@ -88,6 +90,16 @@ namespace MonteCarlo{                        \
   EXPLICIT_TEMPLATE_FUNCTION_INST( void __VA_ARGS__::load<boost::archive::binary_iarchive>( boost::archive::binary_iarchive& ar, const unsigned version ) ); \
   EXPLICIT_TEMPLATE_FUNCTION_INST( void __VA_ARGS__::load<boost::archive::polymorphic_iarchive>( boost::archive::polymorphic_iarchive& ar, const unsigned version ) ); \
   EXPLICIT_TEMPLATE_FUNCTION_INST( void __VA_ARGS__::load<Utility::HDF5IArchive>( Utility::HDF5IArchive& ar, const unsigned version ) )
+
+#else // !defined SWIG
+
+#define __EXTERN_EXPLICIT_MONTE_CARLO_FORWARD_DECLARES__()
+#define EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( ... )
+#define EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( ... )
+#define EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( ... )
+#define EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( ... )
+
+#endif // end !defined SWIG
 
 #endif // end MONTE_CARLO_EXPLICIT_TEMPLATE_INSTANTIATION_MACROS_HPP
 

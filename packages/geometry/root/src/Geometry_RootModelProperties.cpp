@@ -33,7 +33,7 @@ RootModelProperties::RootModelProperties()
 // Constructor
 RootModelProperties::RootModelProperties( const std::string& filename )
   : d_file_name( filename ),
-    d_material_property_name( "mat" ),
+    d_material_property_name( "material" ),
     d_void_material_name( "void" ),
     d_terminal_material_name( "graveyard" )
 {
@@ -75,7 +75,7 @@ void RootModelProperties::setVoidMaterialName(
 {
   // Make sure that the void material name is valid
   testPrecondition( void_material_name.size() > 0 );
-  
+
   d_void_material_name = void_material_name;
 }
 
@@ -91,7 +91,7 @@ void RootModelProperties::setTerminalMaterialName(
 {
   // Make sure that the terminal material name is valid
   testPrecondition( terminal_material_name.size() > 0 );
-  
+
   d_terminal_material_name = terminal_material_name;
 }
 
@@ -116,7 +116,7 @@ void RootModelProperties::load( Archive& ar, const unsigned version )
 }
 
 EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( RootModelProperties );
-  
+
 } // end Geometry namespace
 
 BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( RootModelProperties, Geometry );

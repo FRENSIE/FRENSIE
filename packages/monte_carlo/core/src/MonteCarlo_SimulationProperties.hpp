@@ -27,7 +27,7 @@ namespace MonteCarlo{
 
 /*! The simulation properties class
  *
- * This class has been designed as a mix-in class. It can be used as the 
+ * This class has been designed as a mix-in class. It can be used as the
  * control point for all runtime configuration options used in a Monte Carlo
  * simulation.
  */
@@ -62,7 +62,7 @@ public:
 
   //! Set atomic relaxation mode to on
   void setAtomicRelaxationModeOn( const ParticleType particle );
-  
+
   //! Return if atomic relaxation mode is on
   bool isAtomicRelaxationModeOn( const ParticleType particle ) const;
 
@@ -75,12 +75,16 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 };
-  
+
 } // end MonteCarlo namespace
+
+#if !defined SWIG
 
 BOOST_CLASS_VERSION( MonteCarlo::SimulationProperties, 0 );
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::SimulationProperties, "SimulationProperties" );
 EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SimulationProperties );
+
+#endif // end !defined SWIG
 
 //---------------------------------------------------------------------------//
 // Template Includes.

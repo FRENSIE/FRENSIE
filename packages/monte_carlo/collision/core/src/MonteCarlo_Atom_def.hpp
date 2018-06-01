@@ -426,7 +426,7 @@ void Atom<AtomCore>::getScatteringReactionTypes( ReactionEnumTypeSet& reaction_t
   d_core.getScatteringReactionTypes( reaction_types );
 }
 
-// Get the miscellanseous reaction types
+// Get the miscellaneous reaction types
 template<typename AtomCore>
 void Atom<AtomCore>::getMiscReactionTypes( ReactionEnumTypeSet& reaction_types ) const
 {

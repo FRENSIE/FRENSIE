@@ -121,7 +121,7 @@ double SimulationElectronProperties::getElectronEvaluationTolerance() const
 
 // Set the electron 2D interpolation policy (LogLogLog by default)
 void SimulationElectronProperties::setElectronTwoDInterpPolicy(
-    TwoDInterpolationType interp_type )
+    const TwoDInterpolationType interp_type )
 {
   d_electron_interpolation_type = interp_type;
 }
@@ -135,7 +135,7 @@ SimulationElectronProperties::getElectronTwoDInterpPolicy() const
 
 // Set the electron 2D sampling policy (LogLogLog by default)
 void SimulationElectronProperties::setElectronTwoDSamplingPolicy(
-    TwoDSamplingType sampling_type )
+    const TwoDSamplingType sampling_type )
 {
   d_electron_sampling_type = sampling_type;
 }
@@ -201,7 +201,7 @@ bool SimulationElectronProperties::isElasticModeOn() const
 
 // Set the elastic distribution mode ( Decoupled by default )
 void SimulationElectronProperties::setElasticElectronDistributionMode(
-    ElasticElectronDistributionType distribution_mode )
+    const ElasticElectronDistributionType distribution_mode )
 {
   d_elastic_distribution_mode = distribution_mode;
 }
@@ -215,7 +215,7 @@ SimulationElectronProperties::getElasticElectronDistributionMode() const
 
 // Set the coupled elastic sampling mode ( Simplified Union by default )
 void SimulationElectronProperties::setCoupledElasticSamplingMode(
-    CoupledElasticSamplingMethod sampling_method )
+    const CoupledElasticSamplingMethod sampling_method )
 {
   d_coupled_elastic_sampling_method = sampling_method;
 }

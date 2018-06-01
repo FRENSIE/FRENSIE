@@ -32,7 +32,7 @@ XSSEPRDataExtractor::XSSEPRDataExtractor(
 {
   // Make sure that the xss array exists
   testPrecondition( xss.get() );
-  
+
   // Make sure the arrays have the correct size
   TEST_FOR_EXCEPTION( nxs.size() != 16,
                       std::runtime_error,
@@ -341,6 +341,15 @@ XSSEPRDataExtractor::extractElasticTotalCrossSection() const
     return d_esze2_block( d_nxs[7], d_nxs[7] );
   else
     return Utility::ArrayView<const double>();
+}
+
+// Extract the electron elastic total cross section
+auto XSSEPRDataExtractor::extractElasticTotalCrossSectionInBarns() const
+  -> Utility::ArrayView<const Area>
+{
+  return Utility::ArrayView<const Area>(
+        Utility::reinterpretAsQuantity<Area>( d_esze2_block.data()+d_nxs[7] ),
+        Utility::ArrayView<const Area>::size_type(d_nxs[7]) );
 }
 
 // Extract the electron elastic cutoff cross section ( mu = -1 to 0.999999 )

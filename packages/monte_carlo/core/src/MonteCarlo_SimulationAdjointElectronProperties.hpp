@@ -110,14 +110,14 @@ public:
 
   //! Set the adjoint elastic distribution mode ( Decoupled by default )
   void setAdjointElasticElectronDistributionMode(
-                        ElasticElectronDistributionType distribution_mode );
+                        const ElasticElectronDistributionType distribution_mode );
 
   //! Return the elastic distribution mode
   ElasticElectronDistributionType getAdjointElasticElectronDistributionMode() const;
 
   //! Set the adjoint coupled elastic sampling mode ( Simplified Union by default )
   void setAdjointCoupledElasticSamplingMode(
-                        CoupledElasticSamplingMethod sampling_method );
+                        const CoupledElasticSamplingMethod sampling_method );
 
   //! Return the adjoint coupled elastic sampling mode
   CoupledElasticSamplingMethod getAdjointCoupledElasticSamplingMode() const;
@@ -202,9 +202,13 @@ void SimulationAdjointElectronProperties::serialize( Archive& ar,
 
 } // end MonteCarlo namespace
 
+#if !defined SWIG
+
 BOOST_CLASS_VERSION( MonteCarlo::SimulationAdjointElectronProperties, 0 );
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::SimulationAdjointElectronProperties, "SimulationAdjointElectronProperties" );
 EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SimulationAdjointElectronProperties );
+
+#endif // end !defined SWIG
 
 #endif // end MONTE_CARLO_SIMULATION_ADJOINT_ELECTRON_PROPERTIES_HPP
 

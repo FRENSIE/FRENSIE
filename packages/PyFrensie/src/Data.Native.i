@@ -21,19 +21,24 @@ FRENSIE formate data file.
         docstring = %data_native_docstring) Native
 
 %{
-// Std Lib Includes
-#include <sstream>
-
-// PyTrilinos Includes
-#define NO_IMPORT_ARRAY
-#include "numpy_include.hpp"
-
 // FRENSIE Includes
-#include "PyFrensie_ArrayConversionHelpers.hpp"
+#include "PyFrensie_PythonTypeTraits.hpp"
+#include "Data_NativeEPRPhotoatomicDataProperties.hpp"
+#include "Data_NativeEPRElectroatomicDataProperties.hpp"
+#include "Data_NativeMomentPreservingElectroatomicDataProperties.hpp"
+#include "Data_NativeEPRAdjointPhotoatomicDataProperties.hpp"
+#include "Data_NativeEPRAdjointElectroatomicDataProperties.hpp"
+
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_ArchivableObject.hpp"
+
+#include "Data_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_SerializationHelpers.hpp"
 #include "Utility_ContractException.hpp"
+
+// Add the Data namespace to the global lookup scope
+using namespace Data;
 %}
 
 // C++ STL support
@@ -47,8 +52,17 @@ FRENSIE formate data file.
 // Include typemaps support
 %include <typemaps.i>
 
-// Include the Teuchos::ArrayRCP support
-%include "PyFrensie_Array.i"
+// AtomProperties handling
+%import(module="PyFrensie.Data") Data_AtomProperties.i
+
+// Include the data property helpers
+%include "Data_PropertyHelpers.i"
+
+// Include the serialization helpers for macros
+%include "Utility_SerializationHelpers.hpp"
+
+// Import the explicit template instantiation helpers
+%include "Data_ExplicitTemplateInstantiationMacros.hpp"
 
 // Standard exception handling
 %include "exception.i"
@@ -78,40 +92,65 @@ FRENSIE formate data file.
   }
 }
 
-// Add a few general typemaps
-%typemap(out) const std::vector<std::vector<double> >&
-{
-  for( size_t i = 0; i < $1->size(); ++i )
-  {
-    PyObject* sub_array = PyFrensie::copyVectorToNumPy( $1->data()[i] );
-    
-    $result = SWIG_Python_AppendOutput($result, sub_array);
-  }
-}
+// Add some general templates
+%template(DoubleVector) std::vector<double>;
+%template(UnsignedPair) std::pair<unsigned,unsigned>;
+%template(UnsignedPairVector) std::vector<std::pair<unsigned,unsigned> >;
+%template(DoubleVectorMap) std::map<double,std::vector<double> >;
+%template(DoubleVectorVector) std::vector<std::vector<double> >;
 
 //---------------------------------------------------------------------------//
-// Add support for the ArchivableObject::ArchiveType enum
+// Add support for the NativeEPRPhotoatomicDataProperties
 //---------------------------------------------------------------------------//
-%import "Utility_ArchivableObject.hpp"
+
+%atomic_properties_interface_setup( NativeEPRPhotoatomicDataProperties );
+
+// Import the NativeEPRPhotoatomicDataProperties
+%include "Data_NativeEPRPhotoatomicDataProperties.hpp"
+
+//---------------------------------------------------------------------------//
+// Add support for the NativeEPRElectroatomicDataProperties
+//---------------------------------------------------------------------------//
+
+%atomic_properties_interface_setup( NativeEPRElectroatomicDataProperties );
+
+// Import the NativeEPRElectroatomicDataProperties
+%include "Data_NativeEPRElectroatomicDataProperties.hpp"
+
+//---------------------------------------------------------------------------//
+// Add support for the NativeMomentPreservingElectroatomicDataProperties
+//---------------------------------------------------------------------------//
+
+%atomic_properties_interface_setup( NativeMomentPreservingElectroatomicDataProperties );
+
+// Import the NativeMomentPreservingElectroatomicDataProperties
+%include "Data_NativeMomentPreservingElectroatomicDataProperties.hpp"
+
+//---------------------------------------------------------------------------//
+// Add support for the NativeEPRAdjointPhotoatomicDataProperties
+//---------------------------------------------------------------------------//
+
+%atomic_properties_interface_setup( NativeEPRAdjointPhotoatomicDataProperties );
+
+// Import the NativeEPRAdjointPhotoatomicDataProperties
+%include "Data_NativeEPRAdjointPhotoatomicDataProperties.hpp"
+
+//---------------------------------------------------------------------------//
+// Add support for the NativeEPRAdjointElectroatomicDataProperties
+//---------------------------------------------------------------------------//
+
+%atomic_properties_interface_setup( NativeEPRAdjointElectroatomicDataProperties );
+
+// Import the NativeEPRAdjointElectroatomicDataProperties
+%include "Data_NativeEPRAdjointElectroatomicDataProperties.hpp"
 
 //---------------------------------------------------------------------------//
 // Use this general setup macro with all native tables
 //---------------------------------------------------------------------------//
-%define %standard_native_data_container_setup( NATIVE_DATA_CONTAINER_TYPE, SHORT_NAME )
+%define %standard_native_data_container_setup( NATIVE_DATA_CONTAINER, SHORT_NAME )
 
-// Keep the Utility::ArchivableObject hidden and instead add static constants
-// to the ElectronPhotonRelaxationDataContainer that can be used to read in
-// data tables with the different archive formats. Also add some useful
-// methods.
 %extend Data::NATIVE_DATA_CONTAINER
 {
-  static const Utility::ArchivableObject::ArchiveType ASCII =
-    Utility::ArchivableObject::ASCII_ARCHIVE;
-  static const Utility::ArchivableObject::ArchiveType BINARY =
-    Utility::ArchivableObject::BINARY_ARCHIVE;
-  static const Utility::ArchivableObject::ArchiveType XML =
-    Utility::ArchivableObject::XML_ARCHIVE;
-
   // String conversion method
   PyObject* __str__() const
   {
@@ -134,15 +173,15 @@ FRENSIE formate data file.
 
 %enddef
 
-//---------------------------------------------------------------------------//
-// Create aliases for common type found in native data tables
-//---------------------------------------------------------------------------//
+// //---------------------------------------------------------------------------//
+// // Create aliases for common type found in native data tables
+// //---------------------------------------------------------------------------//
 
-// Allow std::set<unsigned> output type
-%template(SubshellSet) std::set<unsigned>;
+// // Allow std::set<unsigned> output type
+// %template(SubshellSet) std::set<unsigned>;
 
-// Allow std::vector<std::pair<unsigned,unsigned> > output type
-%template(RelaxationVacancyArray) std::vector<std::pair<unsigned,unsigned> >;
+// // Allow std::vector<std::pair<unsigned,unsigned> > output type
+// %template(RelaxationVacancyArray) std::vector<std::pair<unsigned,unsigned> >;
 
 //---------------------------------------------------------------------------//
 // Add support for the ElectronPhotonRelaxationDataContainer
@@ -155,16 +194,9 @@ The ElectronPhotonRelaxationDataContainer can be used to read in a Native
 format EPR data file and extract the data contained in it. A brief usage
 tutorial for this class is shown below:
 
-  import PyFrensie.Data.Native, PyTrilinos.Teuchos, numpy, matplotlib.pyplot
+  import PyFrensie.Data.Native, numpy, matplotlib.pyplot
 
-  source = PyTrilinos.Teuchos.FileInputSource( 'datadir/cross_sections.xml' )
-  xml_obj = source.getObject()
-  cs_list = PyTrilinos.Teuchos.XMLParameterListReader().toParameterList( xml_obj )
-
-  h_data_list = cs_list.get( 'H-Native' )
-  h_native_file_name = 'datadir' + h_data_list.get( 'photoatomic_file_path' )
-
-  h_native_data = PyFrensie.Data.Native.ElectronPhotonRelaxationDataContainer( h_native_file_name )
+  h_native_data = PyFrensie.Data.Native.ElectronPhotonRelaxationDataContainer( 'h_native_file_name' )
 
   matplotlib.pyplot.loglog( h_native_data.getPhotonEnergyGrid(), h_native_data.getWallerHartreeIncoherentCrossSection() )
   matplotlib.pyplot.loglog( h_native_data.getPhotonEnergyGrid(), h_native_data.getImpulseApproxIncoherentCrossSection() )
@@ -187,17 +219,9 @@ The AdjointElectronPhotonRelaxationDataContainer can be used to read in a Native
 format AEPR data file and extract the data contained in it. A brief usage
 tutorial for this class is shown below:
 
-  import PyFrensie.Data.Native, PyTrilinos.Teuchos, numpy, matplotlib.pyplot
+  import PyFrensie.Data.Native, numpy, matplotlib.pyplot
 
-  source = PyTrilinos.Teuchos.FileInputSource( 'datadir/cross_sections.xml' )
-  xml_obj = source.getObject()
-  cs_list = PyTrilinos.Teuchos.XMLParameterListReader().toParameterList( xml_obj )
-
-  h_data_list = cs_list.get( 'H-Native' )
-
-  h_adj_native_file_name = 'datadir' + h_data_list.get( 'adjoint_photoatomic_file_path' )
-
-  h_adj_native_data = PyFrensie.Data.Native.AdjointElectronPhotonRelaxationDataContainer( h_adj_native_file_name )
+  h_adj_native_data = PyFrensie.Data.Native.AdjointElectronPhotonRelaxationDataContainer( 'h_adj_native_file_name' )
 
   matplotlib.pyplot.loglog( h_adj_native_data.getAdjointPhotonEnergyGrid(), h_adj_native_data.getAdjointWallerHartreeIncoherentCrossSection()[0] )
   matplotlib.pyplot.loglog( h_adj_native_data.getAdjointPhotonEnergyGrid(), h_adj_native_data.getImpulseApproxIncoherentCrossSection()[0] )
@@ -205,11 +229,6 @@ tutorial for this class is shown below:
 "
 
 %standard_native_data_container_setup( AdjointElectronPhotonRelaxationDataContainer, AEPR )
-
-// Note: at this time the getAdjointBremsstrahlungEvaluationTolerance has
-//       not been implemented. We will therefore ignore it until it has
-//       been implemented and tested.
-%ignore Data::AdjointElectronPhotonRelaxationDataContainer::getAdjointBremsstrahlungEvaluationTolerance;
 
 // Include the ElectronPhotonRelaxationDataContainer
 %include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"

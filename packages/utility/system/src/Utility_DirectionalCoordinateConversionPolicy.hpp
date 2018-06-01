@@ -16,6 +16,7 @@
 #include "Utility_DirectionalCoordinateSystemType.hpp"
 #include "Utility_DirectionalCoordinateSystemTraits.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
+#include "Utility_SerializationHelpers.hpp"
 #include "Utility_ExplicitSystemTemplateInstantiationMacros.hpp"
 
 namespace Utility{
@@ -68,7 +69,7 @@ public:
 
   //! Normalize the Cartesian directional coordinates
   void normalizeCartesianDirectionalCoordinates( double coordinates[3] ) const;
-                                         
+
   //! Convert the directional coordinates to Cartesian coordinates
   virtual void convertToCartesianDirectionalCoordinates(
                                       const double primary_directional_coord,
@@ -140,7 +141,7 @@ inline void DirectionalCoordinateConversionPolicy::normalizeCartesianDirectional
                                                   coordinates[1],
                                                   coordinates[2] );
 }
-  
+
 // Convert the directional coordinates to cartesian coordinates
 inline void DirectionalCoordinateConversionPolicy::convertToCartesianDirectionalCoordinates(
                                         const double coordinates[3],
@@ -166,11 +167,11 @@ inline void DirectionalCoordinateConversionPolicy::convertFromCartesianDirection
                                                     coordinates[1],
                                                     coordinates[2] );
 }
-  
+
 } // end Utility namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( Utility::DirectionalCoordinateConversionPolicy );
-BOOST_CLASS_VERSION( Utility::DirectionalCoordinateConversionPolicy, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( DirectionalCoordinateConversionPolicy, Utility );
+BOOST_SERIALIZATION_CLASS_VERSION( DirectionalCoordinateConversionPolicy, Utility, 0 );
 EXTERN_EXPLICIT_SYSTEM_CLASS_SERIALIZE_INST( Utility::DirectionalCoordinateConversionPolicy );
 
 #endif // end UTILITY_DIRECTIONAL_COORDINATE_CONVERSION_POLICY_HPP

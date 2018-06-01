@@ -1,0 +1,131 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Data.NativeEPRPhotoatomicDataProperties class unit tests
+#  \file   tstData.Native.NativeEPRPhotoatomicDataProperties.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the Data.Native.NativeEPRPhotoatomicDataProperties class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Data = importPyFrensieModuleFromBuildDir('Data')
+Native = importPyFrensieModuleFromBuildDir('Data.Native')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the NativeEPRPhotoatomicDataProperties class
+class NativeEPRPhotoatomicDataPropertiesTestCase(unittest.TestCase):
+    "TestCase class for Data.Native.NativeEPRPhotoatomicDataProperties class"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.properties = Native.NativeEPRPhotoatomicDataProperties(
+                                              1.0,
+                                              "photoatomic_data/h_data.txt",
+                                              10,
+                                              Data.H_ATOM )
+
+    def testConstructor(self):
+        "*Test Data.NativeEPRPhotoatomicDataProperties constructor"
+        with self.assertRaises(ValueError):
+            Native.NativeEPRPhotoatomicDataProperties( -1.0,
+                                                "photoatomic_data/h_data.txt",
+                                                10,
+                                                Data.H_ATOM )
+
+    def testAtom(self):
+        "*Test Data.NativeEPRPhotoatomicDataProperties atom"
+        self.assertEqual( self.properties.atom(), Data.H_ATOM )
+
+    def testFileType(self):
+        "*Test Data.NativeEPRPhotoatomicDataProperties fileType"
+        self.assertEqual( self.properties.fileType(),
+                          Data.PhotoatomicDataProperties.Native_EPR_FILE )
+
+        local_properties = Native.NativeEPRPhotoatomicDataProperties(
+                                              1.0,
+                                              "photoatomic_data/h_data.txt",
+                                              10,
+                                              Data.H_ATOM )
+
+        self.assertEqual( local_properties.fileType(),
+                          Data.PhotoatomicDataProperties.Native_EPR_FILE )
+
+    def testAtomicWeight(self):
+        "*Test Data.NativeEPRPhotoatomicDataProperties atomicWeight"
+        self.assertEqual( self.properties.atomicWeight(), 1.0 )
+
+    def testFilePath(self):
+        "*Test Data.NativeEPRPhotoatomicDataProperties filePath"
+        self.assertEqual( self.properties.filePath(),
+                          "photoatomic_data/h_data.txt" )
+
+    def testFileStartLine(self):
+        "*Test Data.NativeEPRPhotoatomicDataProperties fileStartLine"
+        self.assertEqual( self.properties.fileStartLine(), 0 )
+
+    def testFileVersion(self):
+        "*Test Data.NativeEPRPhotoatomicDataProperties fileVersion"
+        self.assertEqual( self.properties.fileVersion(), 10 )
+
+    def testTableName(self):
+        "*Test Data.NativeEPRPhotoatomicDataProperties tableName"
+        self.assertEqual( self.properties.tableName(), "" )
+
+    def testClone(self):
+        "*Test Data.NativeEPRPhotoatomicDataProperties constructor"
+        properties_clone = self.properties.clone()
+
+        self.assertTrue( properties_clone )
+        self.assertEqual( properties_clone.atomicWeight(), 1.0 )
+        self.assertEqual( properties_clone.filePath(),
+                          "photoatomic_data/h_data.txt" )
+        self.assertEqual( properties_clone.fileStartLine(), 0 )
+        self.assertEqual( properties_clone.fileVersion(), 10 )
+        self.assertEqual( properties_clone.tableName(), "" )
+
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test Suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(NativeEPRPhotoatomicDataPropertiesTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing Data.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstData.Native.NativeEPRPhotoatomicDataProperties.py
+#-----------------------------------------------------------------------------#

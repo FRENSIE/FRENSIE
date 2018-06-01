@@ -9,6 +9,8 @@
 #ifndef MONTE_CARLO_REACTION_HPP
 #define MONTE_CARLO_REACTION_HPP
 
+#include <cstddef>
+
 namespace MonteCarlo{
 
 //! The reaction base class
@@ -55,7 +57,7 @@ inline bool Reaction::isEnergyGridShared( const Reaction& other_reaction ) const
 {
   return this->getEnergyGridHead() == other_reaction.getEnergyGridHead();
 }
-  
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_REACTION_HPP

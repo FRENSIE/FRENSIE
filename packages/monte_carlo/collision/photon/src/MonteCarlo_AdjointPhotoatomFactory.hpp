@@ -41,7 +41,7 @@ public:
   //! Constructor
   AdjointPhotoatomFactory(
        const boost::filesystem::path& data_directory,
-       const ScatteringCenterNameSet& adjoint_aphotoatom_names,
+       const ScatteringCenterNameSet& adjoint_photoatom_names,
        const ScatteringCenterDefinitionDatabase& adjoint_photoatom_definitions,
        const SimulationAdjointPhotonProperties& properties,
        const bool verbose = false );

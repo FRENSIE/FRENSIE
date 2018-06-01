@@ -28,7 +28,7 @@ protected:
 
   //! The local coordinate system traits
   typedef DirectionalCoordinateSystemTraits<SPHERICAL_DIRECTIONAL_COORDINATE_SYSTEM> LocalCSTraits;
-  
+
 public:
 
   //! Convert the Cartesian direction to spherical coords (on unit sphere)
@@ -88,7 +88,7 @@ private:
   // Save the policy to an archive
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  { 
+  {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( DirectionalCoordinateConversionPolicy );
   }
 
@@ -101,7 +101,7 @@ private:
 //---------------------------------------------------------------------------//
 
 // Convert the Cartesian direction to spherical coords (on unit sphere)
-/*! \details The spherical coordinates are (r,theta,mu) where theta is 
+/*! \details The spherical coordinates are (r,theta,mu) where theta is
  * the azimuthal angle and mu is the polar angle cosine.
  */
 inline void SphericalDirectionalCoordinateConversionPolicy::convertFromCartesianDirection(
@@ -119,11 +119,11 @@ inline void SphericalDirectionalCoordinateConversionPolicy::convertFromCartesian
                                                         spherical_coords[1],
                                                         spherical_coords[2] );
 
-  
+
 }
 
 // Convert the Cartesian direction to spherical coords (on unit sphere)
-/*! \details The spherical coordinates are (1.0,theta,mu) where theta is 
+/*! \details The spherical coordinates are (1.0,theta,mu) where theta is
  * the azimuthal angle and mu is the polar angle cosine.
  */
 inline void SphericalDirectionalCoordinateConversionPolicy::convertFromCartesianDirection(
@@ -158,15 +158,15 @@ inline void SphericalDirectionalCoordinateConversionPolicy::convertFromCartesian
   // Make sure that the azimuthal angle is valid
   testPostcondition( theta_directional_coord >= LocalCSTraits::secondaryDirectionalDimensionLowerBound() );
   testPostcondition( theta_directional_coord <= LocalCSTraits::secondaryDirectionalDimensionUpperBound() );
-  
+
   // Make sure that the polar angle cosine is valid
   testPostcondition( mu_directional_coord >= LocalCSTraits::tertiaryDirectionalDimensionLowerBound() );
   testPostcondition( mu_directional_coord <= LocalCSTraits::tertiaryDirectionalDimensionUpperBound() );
 }
 
 // Convert the spherical coords (on unit sphere) to a Cartesian direction
-/*! \details The spherical coordinates are (1.0,theta,mu) where theta is 
- * the azimuthal angle and mu is the polar angle cosine. The radial component 
+/*! \details The spherical coordinates are (1.0,theta,mu) where theta is
+ * the azimuthal angle and mu is the polar angle cosine. The radial component
  * (spherical_coords[0]) will be ignored.
  */
 inline void SphericalDirectionalCoordinateConversionPolicy::convertToCartesianDirection(
@@ -183,8 +183,8 @@ inline void SphericalDirectionalCoordinateConversionPolicy::convertToCartesianDi
 }
 
 // Convert the spherical coords (on unit sphere) to a Cartesian direction
-/*! \details The spherical coordinates are (1.0,theta,mu) where theta is 
- * the azimuthal angle and mu is the polar angle cosine. The radial component 
+/*! \details The spherical coordinates are (1.0,theta,mu) where theta is
+ * the azimuthal angle and mu is the polar angle cosine. The radial component
  * will be ignored since it must always be 1.0.
  */
 inline void SphericalDirectionalCoordinateConversionPolicy::convertToCartesianDirection(
@@ -213,7 +213,7 @@ inline void SphericalDirectionalCoordinateConversionPolicy::convertToCartesianDi
 
   // Normalize the Cartesian direction to eliminate rounding errors
   normalizeVector( x_direction, y_direction, z_direction );
-  
+
   // Make sure that the direction is a unit vector
   testPostcondition( isUnitVector( x_direction, y_direction, z_direction ) );
 }
@@ -256,11 +256,11 @@ inline void SphericalDirectionalCoordinateConversionPolicy::normalizeLocalDirect
 {
   primary_directional_coord = 1.0;
 }
-  
+
 } // end Utility namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( Utility::SphericalDirectionalCoordinateConversionPolicy );
-BOOST_CLASS_VERSION( Utility::SphericalDirectionalCoordinateConversionPolicy, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( SphericalDirectionalCoordinateConversionPolicy, Utility );
+BOOST_SERIALIZATION_CLASS_VERSION( SphericalDirectionalCoordinateConversionPolicy, Utility, 0 );
 EXTERN_EXPLICIT_SYSTEM_CLASS_SERIALIZE_INST( Utility::SphericalDirectionalCoordinateConversionPolicy );
 
 #endif // end UTILITY_SPHERICAL_DIRECTIONAL_COORDINATE_CONVERSION_POLICY_HPP

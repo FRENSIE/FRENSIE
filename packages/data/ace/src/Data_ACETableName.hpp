@@ -105,7 +105,7 @@ private:
   // The table name type key
   char d_table_name_type_key;
 };
-  
+
 } // end Data namespace
 
 namespace Utility{
@@ -122,7 +122,7 @@ struct ToStringTraits<Data::ACETableName>
   //! Place the Data::ACETableName in a stream
   static void toStream( std::ostream& os, const Data::ACETableName obj );
 };
-  
+
 } // end Utility namespace
 
 namespace std{
@@ -131,7 +131,7 @@ namespace std{
 inline std::ostream& operator<<( std::ostream& os, const Data::ACETableName obj )
 {
   Utility::toStream( os, obj );
-  
+
   return os;
 }
 
