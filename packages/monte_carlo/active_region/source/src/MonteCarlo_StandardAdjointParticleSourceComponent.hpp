@@ -42,6 +42,40 @@ public:
   StandardAdjointParticleSourceComponent(
     const size_t id,
     const double selection_weight,
+    const std::shared_ptr<const Geometry::Model>& model,
+    const std::shared_ptr<const ParticleDistribution>& particle_distribution,
+    const std::vector<double>& critical_line_energies );
+
+  //! Constructor (with rejection cells )
+  StandardAdjointParticleSourceComponent(
+    const size_t id,
+    const double selection_weight,
+    const std::vector<Geometry::Model::InternalCellHandle>& rejection_cells,
+    const std::shared_ptr<const Geometry::Model>& model,
+    const std::shared_ptr<const ParticleDistribution>& particle_distribution,
+    const std::vector<double>& critical_line_energies );
+
+  //! Constructor (with rejection cells )
+  StandardAdjointParticleSourceComponent(
+    const size_t id,
+    const double selection_weight,
+    const CellIdSet& rejection_cells,
+    const std::shared_ptr<const Geometry::Model>& model,
+    const std::shared_ptr<const ParticleDistribution>& particle_distribution,
+    const std::vector<double>& critical_line_energies );
+
+  //! Constructor
+  StandardAdjointParticleSourceComponent(
+    const size_t id,
+    const double selection_weight,
+    const std::shared_ptr<const FilledGeometryModel>& model,
+    const std::shared_ptr<const ParticleDistribution>& particle_distribution );
+
+  //! Constructor (with rejection cells )
+  StandardAdjointParticleSourceComponent(
+    const size_t id,
+    const double selection_weight,
+    const std::vector<Geometry::Model::InternalCellHandle>& rejection_cells,
     const std::shared_ptr<const FilledGeometryModel>& model,
     const std::shared_ptr<const ParticleDistribution>& particle_distribution );
 

@@ -1,0 +1,22 @@
+##---------------------------------------------------------------------------##
+##!
+##! \file   __init__.py
+##! \author Alex Robinson
+##! \brief  The PyFrensie.MonteCarlo init file
+##!
+##---------------------------------------------------------------------------##
+
+"""
+
+PyFrensie.MonteCarlo ${MONTE_CARLO_MODULE_DOCSTRING}
+"""
+
+# Import the special init submodule
+${MONTE_CARLO_MODULE_INIT}
+
+# Set the __all__ special variable
+${MONTE_CARLO_MODULE_ALL}
+
+##---------------------------------------------------------------------------##
+## end __init__.py
+##---------------------------------------------------------------------------##

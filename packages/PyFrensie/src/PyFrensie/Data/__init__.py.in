@@ -1,0 +1,22 @@
+##---------------------------------------------------------------------------##
+##!
+##! \file   __init__.py
+##! \author Alex Robinson
+##! \brief  The PyFrensie.Data init file
+##!
+##---------------------------------------------------------------------------##
+
+"""
+
+PyFrensie.Data ${DATA_MODULE_DOCSTRING}
+"""
+
+# Import the special init submodule
+${DATA_MODULE_INIT}
+
+# Set the __all__ special variable
+${DATA_MODULE_ALL}
+
+##---------------------------------------------------------------------------##
+## end __init__.py
+##---------------------------------------------------------------------------##

@@ -65,6 +65,13 @@ public:
   //! Return the number density (atom/b-cm)
   double getNumberDensity() const;
 
+  //! Return the scattering center at the desired index
+  const std::shared_ptr<const ScatteringCenter>&
+  getScatteringCenter( const std::string& name ) const;
+
+  //! Return the scattering center number density
+  double getScatteringCenterNumberDensity( const std::string& name ) const;
+
   //! Return the macroscopic total cross section (1/cm)
   double getMacroscopicTotalCrossSection( const double energy ) const;
 
@@ -85,7 +92,7 @@ public:
   //! Get the scattering reaction types
   void getScatteringReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
 
-  //! Get the miscellanseous reaction types
+  //! Get the miscellaneous reaction types
   void getMiscReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
 
   //! Get the reaction types
@@ -119,7 +126,7 @@ protected:
                                 const double energy,
                                 const MicroscopicCrossSectionEvaluationFunctor&
                                 cs_evaluation_functor ) const;
-  
+
   //! Sample the collision atom
   size_t sampleCollisionScatteringCenterImpl(
                            const double energy,
@@ -133,7 +140,7 @@ protected:
 
   //! Return the scattering center at the desired index
   const ScatteringCenter& getScatteringCenter( const size_t index ) const;
-  
+
 private:
 
   // Get the atomic weight from an atom pointer
@@ -154,14 +161,17 @@ private:
   // The number density of the atoms of the material
   double d_number_density;
 
-  // The atoms that make up the material
+  // The scattering centers that make up the material
   std::vector<std::pair<double,std::shared_ptr<const ScatteringCenter> > > d_scattering_centers;
+
+  // The scattering center names that make up the material
+  std::map<std::string,size_t> d_scattering_center_names;
 
   // The getMacroscopicTotalCrossSection function wrapper
   MacroscopicCrossSectionEvaluationFunctor
   d_macroscopic_total_cs_evaluation_functor;
 };
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

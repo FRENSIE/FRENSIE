@@ -31,9 +31,6 @@ public:
   { /* ... */ }
 
   //! Convert the spatial coordinates to cartesian coordinates
-  using SphericalSpatialCoordinateConversionPolicy::convertToCartesianSpatialCoordinates;
-
-  //! Convert the spatial coordinates to cartesian coordinates
   void convertToCartesianSpatialCoordinates(
                                       const double primary_spatial_coord,
                                       const double secondary_spatial_coord,
@@ -41,9 +38,6 @@ public:
                                       double& x_spatial_coord,
                                       double& y_spatial_coord,
                                       double& z_spatial_coord ) const override;
-
-  //! Convert the cartesian coordinates to the spatial coordinate system
-  using SphericalSpatialCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates;
 
   //! Convert the cartesian coordinates to the spatial coordinate system
   void convertFromCartesianSpatialCoordinates(
@@ -55,9 +49,6 @@ public:
                                double& tertiary_spatial_coord ) const override;
 
   //! Convert the directional coordinates to cartesian coordinates
-  using SphericalDirectionalCoordinateConversionPolicy::convertToCartesianDirectionalCoordinates;
-
-  //! Convert the directional coordinates to cartesian coordinates
   void convertToCartesianDirectionalCoordinates(
                                   const double primary_directional_coord,
                                   const double secondary_directional_coord,
@@ -65,9 +56,6 @@ public:
                                   double& x_directional_coord,
                                   double& y_directional_coord,
                                   double& z_directional_coord ) const override;
-
-  //! Convert the cartesian coordinates to the directional coordinate system
-  using SphericalDirectionalCoordinateConversionPolicy::convertFromCartesianDirectionalCoordinates;
 
   //! Convert the cartesian coordinates to the directional coordinate system
   void convertFromCartesianDirectionalCoordinates(
@@ -78,12 +66,24 @@ public:
                            double& secondary_directional_coord,
                            double& tertiary_directional_coord ) const override;
 
+  //! Convert the spatial coordinates to cartesian coordinates
+  using SphericalSpatialCoordinateConversionPolicy::convertToCartesianSpatialCoordinates;
+
+  //! Convert the cartesian coordinates to the spatial coordinate system
+  using SphericalSpatialCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates;
+
+  //! Convert the directional coordinates to cartesian coordinates
+  using SphericalDirectionalCoordinateConversionPolicy::convertToCartesianDirectionalCoordinates;
+
+  //! Convert the cartesian coordinates to the directional coordinate system
+  using SphericalDirectionalCoordinateConversionPolicy::convertFromCartesianDirectionalCoordinates;
+
 private:
 
   // Save the policy to an archive
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  { 
+  {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( SphericalSpatialCoordinateConversionPolicy );
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( SphericalDirectionalCoordinateConversionPolicy );
   }
@@ -91,10 +91,10 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 };
-  
+
 } // end Utility namespace
 
-BOOST_CLASS_VERSION( Utility::BasicSphericalCoordinateConversionPolicy, 0 );
+BOOST_SERIALIZATION_CLASS_VERSION( BasicSphericalCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( BasicSphericalCoordinateConversionPolicy, Utility );
 EXTERN_EXPLICIT_SYSTEM_CLASS_SERIALIZE_INST( Utility::BasicSphericalCoordinateConversionPolicy );
 

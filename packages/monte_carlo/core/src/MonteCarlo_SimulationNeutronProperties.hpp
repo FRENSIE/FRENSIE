@@ -73,7 +73,7 @@ public:
 
   //! Return if unresolved resonance probability table mode is on
   bool isUnresolvedResonanceProbabilityTableModeOn() const;
-  
+
 private:
 
   // Save/load the state to an archive
@@ -121,9 +121,13 @@ void SimulationNeutronProperties::serialize( Archive& ar,
 
 } // end MonteCarlo namespace
 
+#if !defined SWIG
+
 BOOST_CLASS_VERSION( MonteCarlo::SimulationNeutronProperties, 0 );
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::SimulationNeutronProperties, "SimulationNeutronProperties" );
 EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SimulationNeutronProperties );
+
+#endif // end !defined SWIG
 
 #endif // end MONTE_CARLO_SIMULATION_NEUTRON_PROPERTIES_HPP
 

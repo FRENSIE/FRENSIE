@@ -1,0 +1,149 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.SimulationGeneralProperties class unit tests
+#  \file   tstMonteCarlo.SimulationGeneralProperties.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.SimulationGeneralProperties class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the SimulationGeneralProperties class
+class SimulationGeneralPropertiesTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.SimulationGeneralProperties class"
+
+    def testDefaults(self):
+        "*Test MonteCarlo.SimulationGeneralProperties defaults"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        self.assertEqual( properties.getParticleMode(), MonteCarlo.NEUTRON_MODE )
+        self.assertEqual( properties.getNumberOfHistories(), 0 )
+        self.assertEqual( properties.getSurfaceFluxEstimatorAngleCosineCutoff(), 0.001 )
+        self.assertTrue( properties.displayWarnings() )
+        self.assertFalse( properties.isImplicitCaptureModeOn() )
+
+    def testSetParticleMode(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setParticleMode"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        properties.setParticleMode( MonteCarlo.NEUTRON_MODE )
+        self.assertEqual( properties.getParticleMode(),
+                          MonteCarlo.NEUTRON_MODE )
+
+        properties.setParticleMode( MonteCarlo.PHOTON_MODE )
+        self.assertEqual( properties.getParticleMode(), MonteCarlo.PHOTON_MODE )
+
+        properties.setParticleMode( MonteCarlo.ELECTRON_MODE )
+        self.assertEqual( properties.getParticleMode(),
+                          MonteCarlo.ELECTRON_MODE )
+
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_MODE )
+        self.assertEqual( properties.getParticleMode(),
+                          MonteCarlo.NEUTRON_PHOTON_MODE )
+
+        properties.setParticleMode( MonteCarlo.PHOTON_ELECTRON_MODE )
+        self.assertEqual( properties.getParticleMode(),
+                          MonteCarlo.PHOTON_ELECTRON_MODE )
+
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE )
+        self.assertEqual( properties.getParticleMode(),
+                          MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE )
+
+        properties.setParticleMode( MonteCarlo.ADJOINT_PHOTON_MODE )
+        self.assertEqual( properties.getParticleMode(),
+                          MonteCarlo.ADJOINT_PHOTON_MODE )
+
+        properties.setParticleMode( MonteCarlo.ADJOINT_ELECTRON_MODE )
+        self.assertEqual( properties.getParticleMode(),
+                          MonteCarlo.ADJOINT_ELECTRON_MODE )
+
+    def testSetNumberOfHistories(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setNumberOfHistories"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        properties.setNumberOfHistories( 1000000000 )
+        self.assertEqual( properties.getNumberOfHistories(), 1000000000 )
+
+    def testSetSurfaceFluxEstimatorAngleCosineCutoff(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setSurfaceFluxEstimatorAngleCosineCutoff"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        properties.setSurfaceFluxEstimatorAngleCosineCutoff( 0.1 )
+        self.assertEqual( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
+                          0.1 )
+
+    def testSetWarningsOnOff(self):
+        "*Test MonteCarlo.SimulationGeneralProperties displayWarnings"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        properties.setWarningsOff()
+        self.assertFalse( properties.displayWarnings() )
+
+        properties.setWarningsOn()
+        self.assertTrue( properties.displayWarnings() )
+
+    def testSetImplicitCaptureModeOnOff(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setImplicitCaptureModeOnOff"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        properties.setImplicitCaptureModeOn()
+        self.assertTrue( properties.isImplicitCaptureModeOn() )
+
+        properties.setAnalogueCaptureModeOn()
+        self.assertFalse( properties.isImplicitCaptureModeOn() )
+
+    def testSetNumberOfBatchesPerProcessor(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setNumberOfBatchesPerProcessor"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        properties.setNumberOfBatchesPerProcessor( 25 )
+        self.assertEqual( properties.getNumberOfBatchesPerProcessor(), 25 )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(SimulationGeneralPropertiesTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.SimulationGeneralProperties.py
+#-----------------------------------------------------------------------------#

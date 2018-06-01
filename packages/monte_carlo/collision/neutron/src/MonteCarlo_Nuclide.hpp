@@ -11,10 +11,8 @@
 
 // Std Lib Includes
 #include <memory>
-
-// Boost Includes
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
+#include <unordered_map>
+#include <unordered_set>
 
 // FRENSIE Includes
 #include "MonteCarlo_NeutronNuclearReaction.hpp"
@@ -46,10 +44,10 @@ public:
   typedef NeutronState ParticleStateType;
 
   //! Typedef for the reaction map
-  typedef boost::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> > ReactionMap;
+  typedef std::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> > ReactionMap;
 
   //! Typedef for the const reaction map
-  typedef boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >
+  typedef std::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >
   ConstReactionMap;
 
   //! Set the nuclear reaction types that will be considered as absorption
@@ -124,7 +122,7 @@ public:
   //! Return the scattering reaction types
   void getScatteringReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
 
-  //! Return the miscellanseous reaction types
+  //! Return the miscellaneous reaction types
   void getMiscReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
 
   //! Return the reaction types
@@ -139,7 +137,7 @@ public:
 private:
 
   // Set the default absorption reaction types
-  static boost::unordered_set<NuclearReactionType>
+  static std::unordered_set<NuclearReactionType>
   setDefaultAbsorptionReactionTypes();
 
   // Calculate the total absorption cross section
@@ -165,7 +163,7 @@ private:
 				 ParticleBank& bank ) const;
 
   // Reactions that should be treated as absorption
-  static boost::unordered_set<NuclearReactionType> absorption_reaction_types;
+  static std::unordered_set<NuclearReactionType> absorption_reaction_types;
 
   // The nuclide name
   std::string d_name;

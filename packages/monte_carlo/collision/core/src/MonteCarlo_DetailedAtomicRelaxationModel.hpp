@@ -11,9 +11,7 @@
 
 // Std Lib Includes
 #include <memory>
-
-// Boost Includes
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 
 // FRENSIE Includes
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
@@ -54,7 +52,7 @@ public:
 private:
 
   // The map of subshells and their relaxation data
-  boost::unordered_map<Data::SubshellType,std::shared_ptr<const SubshellRelaxationModel> >
+  std::unordered_map<Data::SubshellType,std::shared_ptr<const SubshellRelaxationModel> >
   d_subshell_relaxation_models;
 
   // The min photon energy

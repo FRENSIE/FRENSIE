@@ -9,9 +9,9 @@
 #ifndef MONTE_CARLO_DECOUPLED_PHOTON_PRODUCTION_NUCLIDE_HPP
 #define MONTE_CARLO_DECOUPLED_PHOTON_PRODUCTION_NUCLIDE_HPP
 
-// Boost Includes
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
+// Std Includes
+#include <unordered_map>
+#include <unordered_set>
 
 // FRENSIE Includes
 #include "MonteCarlo_DecoupledPhotonProductionReaction.hpp"
@@ -30,10 +30,10 @@ class DecoupledPhotonProductionNuclide : public Nuclide
 public:
 
   //! Typedef for the reaction map
-  typedef boost::unordered_map<unsigned,std::shared_ptr<DecoupledPhotonProductionReaction> > PhotonProductionReactionMap;
+  typedef std::unordered_map<unsigned,std::shared_ptr<DecoupledPhotonProductionReaction> > PhotonProductionReactionMap;
 
   //! Typedef for the reaction map
-  typedef boost::unordered_map<unsigned,std::shared_ptr<const DecoupledPhotonProductionReaction> > ConstPhotonProductionReactionMap;
+  typedef std::unordered_map<unsigned,std::shared_ptr<const DecoupledPhotonProductionReaction> > ConstPhotonProductionReactionMap;
 
   //! Constructor
   DecoupledPhotonProductionNuclide(

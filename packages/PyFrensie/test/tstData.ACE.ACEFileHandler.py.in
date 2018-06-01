@@ -62,22 +62,22 @@ class ACEFileHandlerTestCase(unittest.TestCase):
     def testGetTableComment(self):
         "*Test Data.ACE.ACEFileHandler getTableComment method"
         self.assertEqual(self.ace_file.getTableComment(), \
-                         " 1-H -  1 at 293.6K from endf/b-vii.0 njoy99.248                      ")
+                         "1-H -  1 at 293.6K from endf/b-vii.0 njoy99.248")
 
     def testGetTableMatId(self):
         "*Test Data.ACE.ACEFileHandler getTableMatId method"
-        self.assertEqual(self.ace_file.getTableMatId(), "   mat 125")
+        self.assertEqual(self.ace_file.getTableMatId(), "mat 125")
 
     def testGetTableZAIDs(self):
         "*Test Data.ACE.ACEFileHandler getTableZAIDs method"
         zaids = self.ace_file.getTableZAIDs()
-        self.assertEqual(len(zaids), 16)
+        self.assertEqual(len(zaids), 0)
         self.assertEqual(sum(zaids), 0)
 
     def testGetTableAtomicWeightRatios(self):
         "*Test Data.ACE.ACEFileHandler getTableAtomicWeightRatios method"
         awrs = self.ace_file.getTableAtomicWeightRatios()
-        self.assertEqual(len(awrs), 16)
+        self.assertEqual(len(awrs), 0)
         self.assertEqual(sum(awrs), 0)
 
     def testGetTableNXSArray(self):

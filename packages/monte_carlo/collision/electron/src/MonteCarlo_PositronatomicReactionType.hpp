@@ -102,6 +102,13 @@ struct ToStringTraits<MonteCarlo::PositronatomicReactionType>
   static void toStream( std::ostream& os, const MonteCarlo::PositronatomicReactionType type );
 };
 
+/*! Specialization of Utility::IsHashable for MonteCarlo::PositronatomicReactionType
+ * \ingroup type_traits
+ */
+template<>
+struct IsHashable<MonteCarlo::PositronatomicReactionType> : public std::true_type
+{ /* ... */ };
+
 } // end Utility namespace
 
 namespace std{
@@ -113,7 +120,12 @@ inline std::ostream& operator<<( std::ostream& os,
   os << Utility::toString( reaction );
   return os;
 }
-  
+
+//! Specialization of std::hash for MonteCarlo::PositronatomicReactionType
+template<>
+struct hash<MonteCarlo::PositronatomicReactionType> : public hash<unsigned>
+{ /* ... */ };
+
 } // end std namespace
 
 namespace boost{

@@ -89,7 +89,7 @@ convertSubshellEnumToElectroionizationAdjointElectroatomicReactionEnum(
 
 namespace Utility{
 
-/*! \brief Specialization of Utility::ToStringTraits for 
+/*! \brief Specialization of Utility::ToStringTraits for
  * MonteCarlo::AdjointElectroatomicReactionType
  * \ingroup to_string_traits
  */
@@ -102,7 +102,14 @@ struct ToStringTraits<MonteCarlo::AdjointElectroatomicReactionType>
   //! Place the MonteCarlo::AdjointElectroatomicReactionType in a stream
   static void toStream( std::ostream& os, const MonteCarlo::AdjointElectroatomicReactionType type );
 };
-  
+
+/*! Specialization of Utility::IsHashable for MonteCarlo::AdjointElectroatomicReactionType
+ * \ingroup type_traits
+ */
+template<>
+struct IsHashable<MonteCarlo::AdjointElectroatomicReactionType> : public std::true_type
+{ /* ... */ };
+
 } // end Utility namespace
 
 namespace std{
@@ -114,6 +121,11 @@ inline std::ostream& operator<<( std::ostream& os,
   os << Utility::toString( reaction );
   return os;
 }
+
+//! Specialization of std::hash for MonteCarlo::AdjointElectroatomicReactionType
+template<>
+struct hash<MonteCarlo::AdjointElectroatomicReactionType> : public hash<unsigned>
+{ /* ... */ };
 
 } // end std namespace
 

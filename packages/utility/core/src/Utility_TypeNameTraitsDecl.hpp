@@ -58,7 +58,26 @@ typename std::enable_if<(sizeof...(Types)>1),std::string>::type typeName();
                                                         \
     static inline std::string name()                    \
     { return #Type; }                                   \
-  }      
+  }
+
+/*! Helper macro for quickly defining the type name traits for a type
+ *
+ * Use this macro when the type is not in the Utility namespace. This macro
+ * must be called from the global namespace.
+ * \ingroup type_name_traits
+ */
+#define TYPE_NAME_TRAITS_QUICK_DECL2( Type, Namespace ) \
+  namespace Utility{                                    \
+  template<>                                            \
+  struct TypeNameTraits<Namespace::Type>                \
+  {                                                     \
+    typedef std::true_type IsSpecialized;                 \
+                                                          \
+    static inline std::string name()                      \
+    { return #Type; }                                     \
+  };                                                      \
+  }
+
 
 #endif // end UTILITY_TYPE_NAME_TRAITS_DECL_HPP
 

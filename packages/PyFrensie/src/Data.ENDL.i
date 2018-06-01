@@ -21,33 +21,40 @@ FRENSIE format data file.
         docstring = %data_endl_docstring) ENDL
 
 %{
-// Std Lib Includes
-#include <sstream>
-
-// PyTrilinos Includes
-#define NO_IMPORT_ARRAY
-#include "numpy_include.hpp"
-
 // FRENSIE Includes
-#include "PyFrensie_ArrayConversionHelpers.hpp"
+#include "PyFrensie_PythonTypeTraits.hpp"
+#include "Data_ENDLPhotoatomicDataProperties.hpp"
+#include "Data_ENDLElectroatomicDataProperties.hpp"
 #include "Data_ENDLDataContainer.hpp"
-#include "Utility_ArchivableObject.hpp"
+#include "Data_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_SerializationHelpers.hpp"
 #include "Utility_ContractException.hpp"
+
+// Add the Data namespace to the global lookup scope
+using namespace Data;
 %}
 
 // C++ STL support
 %include <stl.i>
-%include <std_string.i>
-%include <std_except.i>
 %include <std_set.i>
-%include <std_pair.i>
+%include <std_map.i>
 %include <std_vector.i>
+%include <std_except.i>
 
 // Include typemaps support
 %include <typemaps.i>
 
-// Include the Teuchos::ArrayRCP support
-%include "PyFrensie_Array.i"
+// AtomProperties handling
+%import(module="PyFrensie.Data") Data_AtomProperties.i
+
+// Include the data property helpers
+%include "Data_PropertyHelpers.i"
+
+// Include the serialization helpers for macros
+%include "Utility_SerializationHelpers.hpp"
+
+// Import the explicit template instantiation helpers
+%include "Data_ExplicitTemplateInstantiationMacros.hpp"
 
 // Standard exception handling
 %include "exception.i"
@@ -77,70 +84,23 @@ FRENSIE format data file.
   }
 }
 
-// Add a few general typemaps
-%typemap(out) const std::vector<std::vector<double> >&
-{
-  for( size_t i = 0; i < $1->size(); ++i )
-  {
-    PyObject* sub_array = PyFrensie::copyVectorToNumPy( $1->data()[i] );
-    
-    $result = SWIG_Python_AppendOutput($result, sub_array);
-  }
-}
-
 //---------------------------------------------------------------------------//
-// Add support for the ArchivableObject::ArchiveType enum
-//---------------------------------------------------------------------------//
-%import "Utility_ArchivableObject.hpp"
-
-//---------------------------------------------------------------------------//
-// Use this general setup macro with all native tables
-//---------------------------------------------------------------------------//
-%define %standard_endl_data_container_setup( ENDL_DATA_CONTAINER_TYPE, SHORT_NAME )
-
-// Keep the Utility::ArchivableObject hidden and instead add static constants
-// to the ENDLDataContainer that can be used to read in data tables with the
-// different archive formats. Also add some useful methods.
-%extend Data::ENDL_DATA_CONTAINER
-{
-  static const Utility::ArchivableObject::ArchiveType ASCII =
-    Utility::ArchivableObject::ASCII_ARCHIVE;
-  static const Utility::ArchivableObject::ArchiveType BINARY =
-    Utility::ArchivableObject::BINARY_ARCHIVE;
-  static const Utility::ArchivableObject::ArchiveType XML =
-    Utility::ArchivableObject::XML_ARCHIVE;
-
-  // String conversion method
-  PyObject* __str__() const
-  {
-    std::ostringstream oss;
-    oss << "SHORT_NAME for Z=" << $self->getAtomicNumber();
-
-    return PyString_FromString( oss.str().c_str() );
-  }
-
-  // String representation method
-  PyObject* __repr__() const
-  {
-    std::ostringstream oss;
-    oss << "ENDL_DATA_CONTAINER(SHORT_NAME for Z="
-        << $self->getAtomicNumber() << ")";
-
-    return PyString_FromString( oss.str().c_str() );
-  }
-}
-
-%enddef
-
-//---------------------------------------------------------------------------//
-// Create aliases for common type found in native data tables
+// Add support for the ENDLPhotoatomicDataProperties
 //---------------------------------------------------------------------------//
 
-// Allow std::set<unsigned> output type
-%template(SubshellSet) std::set<unsigned>;
+%atomic_properties_interface_setup( ENDLPhotoatomicDataProperties );
 
-// Allow std::vector<std::pair<unsigned,unsigned> > output type
-%template(RelaxationVacancyArray) std::vector<std::pair<unsigned,unsigned> >;
+// Import the ENDLPhotoatomicDataProperties
+%include "Data_ENDLPhotoatomicDataProperties.hpp"
+
+//---------------------------------------------------------------------------//
+// Add support for the ENDLElectroatomicDataProperties
+//---------------------------------------------------------------------------//
+
+%atomic_properties_interface_setup( ENDLElectroatomicDataProperties );
+
+// Import the ENDLElectroatomicDataProperties
+%include "Data_ENDLElectroatomicDataProperties.hpp"
 
 //---------------------------------------------------------------------------//
 // Add support for the ENDLDataContainer
@@ -153,23 +113,45 @@ The ENDLDataContainer can be used to read in a ENDL
 format EPR data file and extract the data contained in it. A brief usage
 tutorial for this class is shown below:
 
-  import PyFrensie.Data.ENDL, PyTrilinos.Teuchos, numpy, matplotlib.pyplot
+  import PyFrensie.Data.ENDL, numpy, matplotlib.pyplot
 
-  source = PyTrilinos.Teuchos.FileInputSource( 'datadir/cross_sections.xml' )
-  xml_obj = source.getObject()
-  cs_list = PyTrilinos.Teuchos.XMLParameterListReader().toParameterList( xml_obj )
-
-  h_data_list = cs_list.get( 'H-ENDL' )
-  h_endl_file_name = 'datadir' + h_data_list.get( 'electroatomic_file_path' )
-
-  h_native_data = PyFrensie.Data.ENDL.ENDLDataContainer( h_endl_file_name )
+  h_native_data = PyFrensie.Data.ENDL.ENDLDataContainer( 'h_endl_file_name' )
 
   matplotlib.pyplot.loglog( h_native_data.getElasticEnergyGrid(), h_native_data.getCutoffElasticCrossSection() )
   matplotlib.pyplot.loglog( h_native_data.getElasticEnergyGrid(), h_native_data.getElasticTransportCrossSection() )
   matplotlib.pyplot.show()
 "
 
-%standard_endl_data_container_setup( ENDLDataContainer, EPR )
+// Allow std::vector<double> output type
+%template(DoubleVector) std::vector<double>;
+
+// Allow std::vector<std::pair<unsigned,unsigned> > output type
+%template(RelaxationVacancyArray) std::vector<std::pair<unsigned,unsigned> >;
+
+// Allow std::map<double,std::vector<double> > output type
+%template(DoubleVectorMap) std::map<double,std::vector<double> >;
+
+%extend Data::ENDLDataContainer
+{
+  // String conversion method
+  PyObject* __str__() const
+  {
+    std::ostringstream oss;
+    oss << "EPR for Z=" << $self->getAtomicNumber();
+
+    return PyString_FromString( oss.str().c_str() );
+  }
+
+  // String representation method
+  PyObject* __repr__() const
+  {
+    std::ostringstream oss;
+    oss << "ENDLDataContainer(EPR for Z="
+        << $self->getAtomicNumber() << ")";
+
+    return PyString_FromString( oss.str().c_str() );
+  }
+}
 
 // Include the ENDLDataContainer
 %include "Data_ENDLDataContainer.hpp"

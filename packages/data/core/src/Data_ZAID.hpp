@@ -35,7 +35,7 @@ public:
 
   //! C-string constructor
   ZAID( const char* zaid_string );
-  
+
   //! Raw ZAID constructor
   ZAID( const unsigned raw_zaid );
 
@@ -68,7 +68,7 @@ public:
 
   //! Return the AtomType
   AtomType atom() const;
-  
+
   //! Return the atomic number
   unsigned atomicNumber() const;
 
@@ -111,7 +111,7 @@ private:
   // The isomer number
   unsigned d_isomer_number;
 };
-  
+
 } // end Data namespace
 
 namespace Utility{
@@ -135,7 +135,7 @@ struct ToStringTraits<Data::ZAID>
 template<>
 struct IsHashable<Data::ZAID> : public std::true_type
 { /* ... */ };
-  
+
 } // end Utility namespace
 
 namespace std{
@@ -144,7 +144,7 @@ namespace std{
 inline std::ostream& operator<<( std::ostream& os, const Data::ZAID obj )
 {
   Utility::toStream( os, obj );
-  
+
   return os;
 }
 

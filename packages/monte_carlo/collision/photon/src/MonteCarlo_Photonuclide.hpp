@@ -122,10 +122,10 @@ public:
   //! Get the photonuclear scattering reaction types
   void getScatteringReactionTypes( PhotonuclearReactionEnumTypeSet& reaction_types ) const final override;
 
-  //! Get the miscellanseous reaction types
+  //! Get the miscellaneous reaction types
   using Photoatom::getMiscReactionTypes;
 
-  //! Get the photonuclear miscellanseous reaction types
+  //! Get the photonuclear miscellaneous reaction types
   void getMiscReactionTypes( PhotonuclearReactionEnumTypeSet& reaction_types ) const final override;
 
   //! Get the reaction types

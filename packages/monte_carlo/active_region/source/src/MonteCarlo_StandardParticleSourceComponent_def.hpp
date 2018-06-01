@@ -42,6 +42,22 @@ template<typename ParticleStateType>
 StandardParticleSourceComponent<ParticleStateType>::StandardParticleSourceComponent(
      const size_t id,
      const double selection_weight,
+     const std::vector<Geometry::Model::InternalCellHandle>& rejection_cells,
+     const std::shared_ptr<const Geometry::Model>& model,
+     const std::shared_ptr<const ParticleDistribution>& particle_distribution )
+  : StandardParticleSourceComponent( id,
+                                     selection_weight,
+                                     CellIdSet( rejection_cells.begin(),
+                                                rejection_cells.end() ),
+                                     model,
+                                     particle_distribution )
+{ /* ... */ }
+  
+// Constructor (with rejection cells )
+template<typename ParticleStateType>
+StandardParticleSourceComponent<ParticleStateType>::StandardParticleSourceComponent(
+     const size_t id,
+     const double selection_weight,
      const CellIdSet& rejection_cells,
      const std::shared_ptr<const Geometry::Model>& model,
      const std::shared_ptr<const ParticleDistribution>& particle_distribution )
@@ -477,6 +493,13 @@ void StandardParticleSourceComponent<ParticleStateType>::incrementDimensionCount
 
     ++dimension_counter_it;
   }
+}
+
+// Get the particle distribution
+template<typename ParticleStateType>
+const ParticleDistribution& StandardParticleSourceComponent<ParticleStateType>::getParticleDistribution() const
+{
+  return *d_particle_distribution;
 }
 
 // Save the data to an archive

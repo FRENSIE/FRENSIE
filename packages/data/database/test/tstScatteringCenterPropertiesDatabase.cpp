@@ -18,7 +18,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ScatteringCenterPropertiesDatabase,
                              archive_constructor )
 {
   FETCH_FROM_TABLE( std::string, name );
-  
+
   {
     Data::ScatteringCenterPropertiesDatabase database;
 
@@ -26,7 +26,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ScatteringCenterPropertiesDatabase,
     database.initializeNuclideProperties( 1001, 1.0 );
     database.initializeAtomProperties( Data::He_ATOM, 4.0 );
     database.initializeNuclideProperties( 2004, 4.0 );
-    
+
     database.saveToFile( name, true );
   }
 
@@ -52,7 +52,7 @@ FRENSIE_DATA_UNIT_TEST_INST( ScatteringCenterPropertiesDatabase,
   NEW_ROW( "xml" )  << "test_scattering_center_database.xml";
   NEW_ROW( "txt" )  << "test_scattering_center_database.txt";
   NEW_ROW( "bin" )  << "test_scattering_center_database.bin";
-  NEW_ROW( "h5fa" ) << "test_scattering_center_database.bin";
+  NEW_ROW( "h5fa" ) << "test_scattering_center_database.h5fa";
 }
 
 //---------------------------------------------------------------------------//

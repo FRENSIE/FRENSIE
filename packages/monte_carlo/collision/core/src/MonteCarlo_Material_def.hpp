@@ -32,7 +32,7 @@ Material<ScatteringCenter>::s_absorption_cs_evaluation_functor(
                                 std::bind<double>( static_cast<double(ScatteringCenter::*)(const double) const>(&ScatteringCenter::getAbsorptionCrossSection),
                                                    std::placeholders::_1,
                                                    std::placeholders::_2 ) );
-  
+
 // Constructor (without photonuclear data)
 template<typename ScatteringCenter>
 Material<ScatteringCenter>::Material(
@@ -44,6 +44,7 @@ Material<ScatteringCenter>::Material(
   : d_id( id ),
     d_number_density( density ),
     d_scattering_centers( scattering_center_fractions.size() ),
+    d_scattering_center_names(),
     d_macroscopic_total_cs_evaluation_functor(
                  std::bind<double>( &ThisType::getMacroscopicTotalCrossSection,
                                     std::cref(*this),
@@ -69,11 +70,18 @@ Material<ScatteringCenter>::Material(
       scattering_center_name_map.find( scattering_center_names[i] );
 
     TEST_FOR_EXCEPTION( scattering_center == scattering_center_name_map.end(),
-			std::logic_error,
+			std::runtime_error,
 			"scattering center " << scattering_center_names[i] <<
 			" has not been loaded!" );
 
     Utility::get<1>( d_scattering_centers[i] ) = scattering_center->second;
+
+    TEST_FOR_EXCEPTION( d_scattering_center_names.find( scattering_center_names[i] ),
+                        std::runtime_error,
+                        "scattering center " << scattering_center_names[i] <<
+                        " is already used by the material!" );
+    
+    d_scattering_center_names[scattering_center_names[i]] = i;
   }
 
   // Convert weight fractions to atom fractions
@@ -133,6 +141,21 @@ double Material<ScatteringCenter>::getNumberDensity() const
   return d_number_density;
 }
 
+// Return the scattering center at the desired index
+template<typename ScatteringCenter>
+const std::shared_ptr<const ScatteringCenter>&
+Material<ScatteringCenter>::getScatteringCenter( const std::string& name ) const
+{
+  return std::shared_ptr<const ScatteringCenter>();
+}
+
+// Return the scattering center number density
+template<typename ScatteringCenter>
+double Material<ScatteringCenter>::getScatteringCenterNumberDensity( const std::string& name ) const
+{
+  return 1.0;
+}
+
 // Return the macroscopic total cross section (1/cm)
 template<typename ScatteringCenter>
 double Material<ScatteringCenter>::getMacroscopicTotalCrossSection(
@@ -161,7 +184,7 @@ double Material<ScatteringCenter>::getMacroscopicReactionCrossSection(
   // Note: We must cast the getReactionCrossSection method to the exact
   // function signature to avoid unresolved overloaded type errors due to the
   // ScatteringCenterType having a getReactionCrossSection overload
-  
+
   return this->getMacroscopicCrossSection(
                               energy,
                               std::bind<double>( static_cast<double (ScatteringCenter::*)(const double, const typename ScatteringCenter::ReactionEnumType) const>(&ScatteringCenter::getReactionCrossSection),
@@ -241,7 +264,7 @@ void Material<ScatteringCenter>::getScatteringReactionTypes( ReactionEnumTypeSet
   }
 }
 
-// Get the miscellanseous reaction types
+// Get the miscellaneous reaction types
 template<typename ScatteringCenter>
 void Material<ScatteringCenter>::getMiscReactionTypes( ReactionEnumTypeSet& reaction_types ) const
 {
@@ -370,7 +393,7 @@ size_t Material<ScatteringCenter>::sampleCollisionScatteringCenter( const double
                                      d_macroscopic_total_cs_evaluation_functor,
                                      s_total_cs_evaluation_functor );
 }
-  
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_MATERIAL_DEF_HPP

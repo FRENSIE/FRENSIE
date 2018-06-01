@@ -32,9 +32,6 @@ public:
   { /* ... */ }
 
   //! Convert the spatial coordinates to cartesian coordinates
-  using SphericalSpatialCoordinateConversionPolicy::convertToCartesianSpatialCoordinates;
-
-  //! Convert the spatial coordinates to cartesian coordinates
   void convertToCartesianSpatialCoordinates(
                                       const double primary_spatial_coord,
                                       const double secondary_spatial_coord,
@@ -44,9 +41,6 @@ public:
                                       double& z_spatial_coord ) const override;
 
   //! Convert the cartesian coordinates to the spatial coordinate system
-  using SphericalSpatialCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates;
-  
-  //! Convert the cartesian coordinates to the spatial coordinate system
   void convertFromCartesianSpatialCoordinates(
                                const double x_spatial_coord,
                                const double y_spatial_coord,
@@ -54,6 +48,12 @@ public:
                                double& primary_spatial_coord,
                                double& secondary_spatial_coord,
                                double& tertiary_spatial_coord ) const override;
+
+  //! Convert the spatial coordinates to cartesian coordinates
+  using SphericalSpatialCoordinateConversionPolicy::convertToCartesianSpatialCoordinates;
+
+  //! Convert the cartesian coordinates to the spatial coordinate system
+  using SphericalSpatialCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates;
 
 private:
 
@@ -106,10 +106,10 @@ void TranslationSphericalSpatialCoordinateConversionPolicy::load( Archive& ar, c
   // Load the local data
   ar & boost::serialization::make_nvp( "d_origin", boost::serialization::make_array( d_origin, 3 ) );
 }
-  
+
 } // end Utility namespace
 
-BOOST_CLASS_VERSION( Utility::TranslationSphericalSpatialCoordinateConversionPolicy, 0 );
+BOOST_SERIALIZATION_CLASS_VERSION( TranslationSphericalSpatialCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( TranslationSphericalSpatialCoordinateConversionPolicy, Utility );
 EXTERN_EXPLICIT_SYSTEM_CLASS_SAVE_LOAD_INST( Utility::TranslationSphericalSpatialCoordinateConversionPolicy );
 

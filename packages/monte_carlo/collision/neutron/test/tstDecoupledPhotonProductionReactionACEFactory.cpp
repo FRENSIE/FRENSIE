@@ -37,7 +37,7 @@ FRENSIE_UNIT_TEST( DecoupledPhotonProductionReactionACEFactory, constructor )
 {
   std::shared_ptr<MonteCarlo::DecoupledPhotonProductionReactionACEFactory>
     factory;
-  
+
   FRENSIE_CHECK_NO_THROW( factory.reset(
                    new MonteCarlo::DecoupledPhotonProductionReactionACEFactory(
                            "o16_test_table",
@@ -64,7 +64,7 @@ FRENSIE_UNIT_TEST( NuclearReactionACEFactory_hydrogen,
                            *properties,
                            *o16_xss_data_extractor ) );
 
-  boost::unordered_map<unsigned,std::shared_ptr<const MonteCarlo::DecoupledPhotonProductionReaction> > reactions;
+  std::unordered_map<unsigned,std::shared_ptr<const MonteCarlo::DecoupledPhotonProductionReaction> > reactions;
 
   factory->createPhotonProductionReactions( reactions );
 

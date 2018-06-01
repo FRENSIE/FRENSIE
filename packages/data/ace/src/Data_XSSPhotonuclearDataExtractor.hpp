@@ -18,7 +18,7 @@
 #include "Utility_Array.hpp"
 #include "Utility_ArrayView.hpp"
 
-/*! \defgroup photonulcear_table Photonuclear Table
+/*! \defgroup photonuclear_table Photonuclear Table
  * \ingroup ace_table
  * \todo Ensure SIG and ISX block are correct.
  *
@@ -40,7 +40,7 @@ public:
 
   /*! The outgoing particle types that may have data
    *
-   * Casting the type enum to an integer gives the value used in the 
+   * Casting the type enum to an integer gives the value used in the
    * XSS array.
    */
   enum OutgoingParticleType

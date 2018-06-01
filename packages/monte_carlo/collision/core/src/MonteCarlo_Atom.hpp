@@ -107,7 +107,7 @@ public:
   //! Return the scattering reaction types
   void getScatteringReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
 
-  //! Return the miscellanseous reaction types
+  //! Return the miscellaneous reaction types
   void getMiscReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
 
   //! Return the reaction types

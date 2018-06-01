@@ -125,7 +125,7 @@ convertSubshellEnumToIncoherentPhotoatomicReactionEnum(
 
 namespace Utility{
 
-/*! \brief Specialization of Utility::ToStringTraits for 
+/*! \brief Specialization of Utility::ToStringTraits for
  * MonteCarlo::PhotoatomicReactionType
  * \ingroup to_string_traits
  */
@@ -139,6 +139,13 @@ struct ToStringTraits<MonteCarlo::PhotoatomicReactionType>
   static void toStream( std::ostream& os, const MonteCarlo::PhotoatomicReactionType type );
 };
 
+/*! Specialization of Utility::IsHashable for MonteCarlo::PhotoatomicReactionType
+ * \ingroup type_traits
+ */
+template<>
+struct IsHashable<MonteCarlo::PhotoatomicReactionType> : public std::true_type
+{ /* ... */ };
+
 } // end Utility namespace
 
 namespace std{
@@ -150,7 +157,12 @@ inline std::ostream& operator<<( std::ostream& os,
   os << Utility::toString( reaction );
   return os;
 }
-  
+
+//! Specialization of std::hash for MonteCarlo::PhotoatomicReactionType
+template<>
+struct hash<MonteCarlo::PhotoatomicReactionType> : public hash<unsigned>
+{ /* ... */ };
+
 } // end std namespace
 
 namespace boost{
@@ -268,7 +280,7 @@ void serialize( Archive& archive,
     }
   }
 }
-  
+
 } // end serialization namespace
 
 } // end boost namespace

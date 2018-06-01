@@ -163,9 +163,13 @@ void SimulationPhotonProperties::serialize( Archive& ar,
 
 } // end MonteCarlo namespace
 
+#if !defined SWIG
+
 BOOST_CLASS_VERSION( MonteCarlo::SimulationPhotonProperties, 0 );
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::SimulationPhotonProperties, "SimulationPhotonProperties" );
 EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SimulationPhotonProperties );
+
+#endif // end !defined SWIG
 
 #endif // end MONTE_CARLO_SIMULATION_PHOTON_PROPERTIES_HPP
 

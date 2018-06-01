@@ -213,7 +213,7 @@ double SimulationAdjointElectronProperties::getAdjointElasticCutoffAngleCosine()
 
 // Set the elastic distribution mode ( Decoupled by default )
 void SimulationAdjointElectronProperties::setAdjointElasticElectronDistributionMode(
-    ElasticElectronDistributionType distribution_mode )
+    const ElasticElectronDistributionType distribution_mode )
 {
   d_adjoint_elastic_distribution_mode = distribution_mode;
 }
@@ -227,7 +227,7 @@ SimulationAdjointElectronProperties::getAdjointElasticElectronDistributionMode()
 
 // Set the coupled elastic sampling mode ( Simplified Union by default )
 void SimulationAdjointElectronProperties::setAdjointCoupledElasticSamplingMode(
-    CoupledElasticSamplingMethod sampling_method )
+    const CoupledElasticSamplingMethod sampling_method )
 {
   d_coupled_elastic_sampling_method = sampling_method;
 }
@@ -256,7 +256,7 @@ unsigned SimulationAdjointElectronProperties::getNumberOfAdjointElectronHashGrid
 }
 
 EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( SimulationAdjointElectronProperties );
-  
+
 } // end MonteCarlo namespace
 
 BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::SimulationAdjointElectronProperties );

@@ -47,7 +47,7 @@ FRENSIE_UNIT_TEST( RootModel, iarchive )
 
   // Get all cells
   Geometry::Model::CellIdSet cells;
-  
+
   model->getCells( cells, true, true );
 
   FRENSIE_REQUIRE_EQUAL( cells.size(), 3 );

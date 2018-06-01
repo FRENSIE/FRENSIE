@@ -1,0 +1,22 @@
+##---------------------------------------------------------------------------##
+##!
+##! \file   __init__.py
+##! \author Alex Robinson
+##! \brief  The PyFrensie.Utility init file
+##!
+##---------------------------------------------------------------------------##
+
+"""
+
+PyFrensie.Utility ${UTILITY_MODULE_DOCSTRING}
+"""
+
+# Import the special init submodule
+${UTILITY_MODULE_INIT}
+
+# Set the __all__ special variable
+${UTILITY_MODULE_ALL}
+
+##---------------------------------------------------------------------------##
+## end __init__.py
+##---------------------------------------------------------------------------##

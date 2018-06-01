@@ -29,9 +29,6 @@ public:
   { /* ... */ }
 
   //! Convert the spatial coordinates to cartesian coordinates
-  using CylindricalSpatialCoordinateConversionPolicy::convertToCartesianSpatialCoordinates;
-
-  //! Convert the spatial coordinates to cartesian coordinates
   void convertToCartesianSpatialCoordinates(
                                       const double primary_spatial_coord,
                                       const double secondary_spatial_coord,
@@ -39,9 +36,6 @@ public:
                                       double& x_spatial_coord,
                                       double& y_spatial_coord,
                                       double& z_spatial_coord ) const override;
-
-  //! Convert the cartesian coordinates to the spatial coordinate system
-  using CylindricalSpatialCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates;
 
   //! Convert the cartesian coordinates to the spatial coordinate system
   void convertFromCartesianSpatialCoordinates(
@@ -52,22 +46,28 @@ public:
                                double& secondary_spatial_coord,
                                double& tertiary_spatial_coord ) const override;
 
+  //! Convert the spatial coordinates to cartesian coordinates
+  using CylindricalSpatialCoordinateConversionPolicy::convertToCartesianSpatialCoordinates;
+
+  //! Convert the cartesian coordinates to the spatial coordinate system
+  using CylindricalSpatialCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates;
+
 private:
-  
+
   // Save the policy to an archive
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  { 
+  {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( CylindricalSpatialCoordinateConversionPolicy );
   }
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 };
-  
+
 } // end Utility namespace
 
-BOOST_CLASS_VERSION( Utility::BasicCylindricalSpatialCoordinateConversionPolicy, 0 );
+BOOST_SERIALIZATION_CLASS_VERSION( BasicCylindricalSpatialCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( BasicCylindricalSpatialCoordinateConversionPolicy, Utility );
 EXTERN_EXPLICIT_SYSTEM_CLASS_SERIALIZE_INST( Utility::BasicCylindricalSpatialCoordinateConversionPolicy );
 

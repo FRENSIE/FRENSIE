@@ -95,7 +95,7 @@ bool initializeDataLibraries()
 }
 
 static bool __data_libraries_initialized__ = initializeDataLibraries();
-  
+
 } // end Data namespace
 
 BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( ScatteringCenterPropertiesDatabase, Data );

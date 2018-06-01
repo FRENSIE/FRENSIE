@@ -20,7 +20,7 @@ class StandardFilledAdjointParticleGeometryModel : public StandardFilledParticle
 {
   // Typedef for the base type
   typedef StandardFilledParticleGeometryModel<Material> BaseType;
-  
+
   // Typedef for this type
   typedef StandardFilledParticleGeometryModel<Material> ThisType;
 
@@ -43,12 +43,6 @@ public:
   { /* ... */ }
 
   //! Get the total forward macroscopic cross section of a material
-  using BaseType::getMacroscopicTotalForwardCrossSection;
-
-  //! Get the total forward macroscopic cross section of a material
-  using BaseType::getMacroscopicTotalForwardCrossSectionQuick;
-
-  //! Get the total forward macroscopic cross section of a material
   double getMacroscopicTotalForwardCrossSection(
                                 const Geometry::Model::InternalCellHandle cell,
                                 const double energy ) const final override;
@@ -57,6 +51,12 @@ public:
   double getMacroscopicTotalForwardCrossSectionQuick(
                                 const Geometry::Model::InternalCellHandle cell,
                                 const double energy ) const final override;
+
+  //! Get the total forward macroscopic cross section of a material
+  using BaseType::getMacroscopicTotalForwardCrossSection;
+
+  //! Get the total forward macroscopic cross section of a material
+  using BaseType::getMacroscopicTotalForwardCrossSectionQuick;
 
   //! Get the adjoint weight factor
   double getAdjointWeightFactor( const ParticleStateType& particle ) const;
@@ -90,7 +90,7 @@ private:
   // The critical line energies
   std::vector<double> d_critical_line_energies;
 };
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

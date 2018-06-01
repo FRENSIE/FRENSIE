@@ -177,7 +177,7 @@ public:
   ~BadBivariateDistributionParameter() throw()
   { /* ... */ }
 };
-  
+
 } // end Utility namespace
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION3( UnitAwareBasicBivariateDistribution );

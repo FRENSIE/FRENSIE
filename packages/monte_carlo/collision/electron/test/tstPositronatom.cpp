@@ -1060,7 +1060,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
                                                         b_energy_grid,
                                                         secondary_dists ) );
-    
+
     std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
         b_scattering_distribution(
             new MonteCarlo::BremsstrahlungElectronScatteringDistribution(

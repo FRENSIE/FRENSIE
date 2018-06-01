@@ -27,7 +27,7 @@ public:
                                   const boost::filesystem::path& file_path,
                                   const size_t file_start_line,
                                   const ACETableName& file_table_name );
-  
+
   //! Destructor
   ~ACEElectroatomicDataProperties()
   { /* ... */ }
@@ -92,7 +92,7 @@ private:
   // The file table name
   ACETableName d_file_table_name;
 };
-  
+
 } // end Data namespace
 
 BOOST_SERIALIZATION_CLASS_VERSION( ACEElectroatomicDataProperties, Data, 0 );

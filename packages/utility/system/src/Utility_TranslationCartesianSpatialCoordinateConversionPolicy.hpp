@@ -32,9 +32,6 @@ public:
   { /* ... */ }
 
   //! Convert the spatial coordinates to cartesian coordinates
-  using CartesianSpatialCoordinateConversionPolicy::convertToCartesianSpatialCoordinates;
-
-  //! Convert the spatial coordinates to cartesian coordinates
   void convertToCartesianSpatialCoordinates(
                                       const double primary_spatial_coord,
                                       const double secondary_spatial_coord,
@@ -44,9 +41,6 @@ public:
                                       double& z_spatial_coord ) const override;
 
   //! Convert the cartesian coordinates to the spatial coordinate system
-  using CartesianSpatialCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates;
-  
-  //! Convert the cartesian coordinates to the spatial coordinate system
   void convertFromCartesianSpatialCoordinates(
                                const double x_spatial_coord,
                                const double y_spatial_coord,
@@ -54,6 +48,12 @@ public:
                                double& primary_spatial_coord,
                                double& secondary_spatial_coord,
                                double& tertiary_spatial_coord ) const override;
+
+  //! Convert the spatial coordinates to cartesian coordinates
+  using CartesianSpatialCoordinateConversionPolicy::convertToCartesianSpatialCoordinates;
+
+  //! Convert the cartesian coordinates to the spatial coordinate system
+  using CartesianSpatialCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates;
 
 private:
 
@@ -109,7 +109,7 @@ void TranslationCartesianSpatialCoordinateConversionPolicy::load( Archive& ar, c
 
 } // end Utility namespace
 
-BOOST_CLASS_VERSION( Utility::TranslationCartesianSpatialCoordinateConversionPolicy, 0 );
+BOOST_SERIALIZATION_CLASS_VERSION( TranslationCartesianSpatialCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( TranslationCartesianSpatialCoordinateConversionPolicy, Utility );
 EXTERN_EXPLICIT_SYSTEM_CLASS_SAVE_LOAD_INST( Utility::TranslationCartesianSpatialCoordinateConversionPolicy );
 

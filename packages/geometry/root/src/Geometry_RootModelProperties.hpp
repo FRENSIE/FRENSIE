@@ -85,7 +85,7 @@ private:
   // The terminal material name
   std::string d_terminal_material_name;
 };
-  
+
 } // end Geometry namespace
 
 BOOST_SERIALIZATION_CLASS_VERSION( RootModelProperties, Geometry, 0 );

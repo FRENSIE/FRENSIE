@@ -32,7 +32,7 @@ class MaterialDefinitionDatabase : public Utility::OStreamableObject
 {
   // The material definition array
   typedef std::vector<std::pair<std::string,double> > MaterialDefinitionArrayPrivate;
-  
+
   // The material id definition map type
   typedef std::map<size_t,MaterialDefinitionArrayPrivate> MaterialIdDefinitionMap;
 
@@ -46,7 +46,7 @@ public:
 
   //! The material id set
   typedef std::set<size_t> MaterialIdSet;
-  
+
   //! The scattering center name set
   typedef std::set<std::string> ScatteringCenterNameSet;
 
@@ -124,19 +124,24 @@ public:
   void getUniqueScatteringCenterNames(
                       ScatteringCenterNameSet& scattering_center_names ) const;
 
+  //! Get the unique scattering center names
+  ScatteringCenterNameSet getUniqueScatteringCenterNames() const;
+
+  // SWIG has trouble parsing complex templates and throws a syntax error.
+  #if !defined SWIG
   //! Get the unique scattering center names from the materials of interest
   template<template<typename,typename...> class Set, typename MaterialIdType>
   void getUniqueScatteringCenterNames(
                       const Set<MaterialIdType>& material_ids,
                       ScatteringCenterNameSet& scattering_center_names ) const;
 
-  //! Get the unique scattering center names
-  ScatteringCenterNameSet getUniqueScatteringCenterNames() const;
 
   //! Get the unique scattering center names
   template<template<typename,typename...> class Set, typename MaterialIdType>
   ScatteringCenterNameSet getUniqueScatteringCenterNames(
                                const Set<MaterialIdType>& material_ids ) const;
+
+  #endif // end !defined SWIG
 
   //! Place the material properties in a stream
   void toStream( std::ostream& os ) const final override;
@@ -179,6 +184,9 @@ void MaterialDefinitionDatabase::load( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_NVP( d_material_id_name_map );
 }
 
+// SWIG has trouble parsing complex templates and throws a syntax error.
+#if !defined SWIG
+
 // Get the unique scattering center names from the materials of interest
 template<template<typename,typename...> class Set, typename MaterialIdType>
 void MaterialDefinitionDatabase::getUniqueScatteringCenterNames(
@@ -218,7 +226,9 @@ auto MaterialDefinitionDatabase::getUniqueScatteringCenterNames(
 
   return scattering_center_names;
 }
-  
+
+#endif // end !defined SWIG
+
 } // end MonteCarlo namespace
 
 BOOST_SERIALIZATION_CLASS_VERSION( MaterialDefinitionDatabase, MonteCarlo, 0 );
