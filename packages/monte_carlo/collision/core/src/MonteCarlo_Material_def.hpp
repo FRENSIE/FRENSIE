@@ -76,10 +76,10 @@ Material<ScatteringCenter>::Material(
 
     Utility::get<1>( d_scattering_centers[i] ) = scattering_center->second;
 
-    TEST_FOR_EXCEPTION( d_scattering_center_names.find( scattering_center_names[i] ),
+    TEST_FOR_EXCEPTION( d_scattering_center_names.find( scattering_center_names[i] ) != d_scattering_center_names.end(),
                         std::runtime_error,
                         "scattering center " << scattering_center_names[i] <<
-                        " is already used by the material!" );
+                        " is already used by the material" << id << "!" );
     
     d_scattering_center_names[scattering_center_names[i]] = i;
   }
@@ -146,14 +146,34 @@ template<typename ScatteringCenter>
 const std::shared_ptr<const ScatteringCenter>&
 Material<ScatteringCenter>::getScatteringCenter( const std::string& name ) const
 {
-  return std::shared_ptr<const ScatteringCenter>();
+  std::map<std::string,size_t>::const_iterator scattering_center_name_it =
+    d_scattering_center_names.find( name );
+    
+  TEST_FOR_EXCEPTION( scattering_center_name_it == d_scattering_center_names.end(),
+                      std::runtime_error,
+                      "Material " << d_id << " does not have a scattering "
+                      "center with the name " << name << "!" );
+
+  const size_t index = scattering_center_name_it->second;
+
+  return Utility::get<1>( d_scattering_centers[index] );
 }
 
 // Return the scattering center number density
 template<typename ScatteringCenter>
 double Material<ScatteringCenter>::getScatteringCenterNumberDensity( const std::string& name ) const
 {
-  return 1.0;
+  std::map<std::string,size_t>::const_iterator scattering_center_name_it =
+    d_scattering_center_names.find( name );
+    
+  TEST_FOR_EXCEPTION( scattering_center_name_it == d_scattering_center_names.end(),
+                      std::runtime_error,
+                      "Material " << d_id << " does not have a scattering "
+                      "center with the name " << name << "!" );
+
+  const size_t index = scattering_center_name_it->second;
+
+  return Utility::get<0>( d_scattering_centers[index] );
 }
 
 // Return the macroscopic total cross section (1/cm)

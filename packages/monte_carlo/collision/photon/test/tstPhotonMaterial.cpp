@@ -36,8 +36,33 @@ FRENSIE_UNIT_TEST( PhotonMaterial, getId )
 FRENSIE_UNIT_TEST( PhotonMaterial, getNumberDensity )
 {
   FRENSIE_CHECK_FLOATING_EQUALITY( material->getNumberDensity(),
-			  2.9064395906311e-3,
-			  1e-12 );
+                                   2.9064395906311e-3,
+                                   1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the scattering centers can be returned
+FRENSIE_UNIT_TEST( PhotonMaterial, getScatteringCenter )
+{
+  std::shared_ptr<const MonteCarlo::Photoatom> photoatom =
+    material->getScatteringCenter( "Pb" );
+
+  FRENSIE_CHECK( photoatom.get() != NULL );
+
+  FRENSIE_CHECK_THROW( material->getScatteringCenter( "pb" ),
+                       std::runtime_error );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the scattering center number density can be returned
+FRENSIE_UNIT_TEST( PhotonMaterial, getScatteringCenterNumberDensity )
+{
+  FRENSIE_CHECK_FLOATING_EQUALITY( material->getScatteringCenterNumberDensity( "Pb" ),
+                                   2.9064395906311e-3,
+                                   1e-12 );
+
+  FRENSIE_CHECK_THROW( material->getScatteringCenterNumberDensity( "pb" ),
+                       std::runtime_error );
 }
 
 //---------------------------------------------------------------------------//
