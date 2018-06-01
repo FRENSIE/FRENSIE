@@ -19,7 +19,7 @@ FreeGasElasticCrossSectionGenerator::FreeGasElasticCrossSectionGenerator(
      int beta_num,
      int alpha_num,
      double beta_max_multiplier,
-     double zero_tolerance)
+     double zero_tolerance )
   : d_kT( kT ),
     d_E( E ),
     d_A( A ),
@@ -34,7 +34,6 @@ FreeGasElasticCrossSectionGenerator::FreeGasElasticCrossSectionGenerator(
 
   setBaseCrossSection();
   setBaseAngularDistribution();
-
   d_sab_function.reset( new FreeGasElasticSAlphaBetaFunction(
 						                    d_cross_section, 
 						                    d_angular_distribution,
@@ -109,9 +108,9 @@ double FreeGasElasticCrossSectionGenerator::crossSectionValue(
 //  Constructruct full double differential cross section at a given energy
 void FreeGasElasticCrossSectionGenerator::doubleDifferentialCrossSectionValue( 
         double E,
-        double beta_min,
         DoubleDifferentialCrossSection& double_differential_sigma )
 {
+  double beta_min = Utility::calculateBetaMin( E, d_kT );
   double beta_max = d_beta_max_multiplier*beta_min;
   double beta_spread = (beta_max - beta_min)/(d_beta_num - 1.0);
 
@@ -125,22 +124,26 @@ void FreeGasElasticCrossSectionGenerator::doubleDifferentialCrossSectionValue(
     {
       beta = d_zero_tolerance;
     }
+    else if (beta <= beta_min)
+    {
+      beta = beta_min - beta_min*1e-3;
+    }
 
     double alpha_min = Utility::calculateAlphaMin( E, 
-                                                    beta, 
-                                                    d_A, 
-                                                    d_kT);
+                                                   beta, 
+                                                   d_A, 
+                                                   d_kT);
 
     double alpha_max = Utility::calculateAlphaMax( E, 
-                                                    beta, 
-                                                    d_A, 
-                                                    d_kT);
+                                                   beta, 
+                                                   d_A, 
+                                                   d_kT);
 
     double alpha_spread = (alpha_max - alpha_min)/(d_alpha_num - 1.0);
 
     for (int k = 0; k < d_alpha_num; ++k )
     {
-      double alpha = alpha_min + j*alpha_spread;
+      double alpha = alpha_min + k*alpha_spread;
 
       double sab = (*d_sab_function)( alpha, beta, E );
 
@@ -163,11 +166,59 @@ void FreeGasElasticCrossSectionGenerator::doubleDifferentialCrossSectionValue(
 
 // Integrate over energy and angle for a total cross section value at a given energy
 double FreeGasElasticCrossSectionGenerator::totalCrossSectionValue( 
-        std::vector<double>& beta_vec,
-        std::vector<double>& alpha_vec,
-        DoubleDifferentialCrossSection& double_differential_sigma )
+           double E,
+           DoubleDifferentialCrossSection& double_differential_sigma )
 {
-  return 0.0;
+  double beta_min = Utility::calculateBetaMin( E, d_kT );
+  double beta_max = d_beta_max_multiplier*beta_min;
+  double beta_spacing = (beta_max - beta_min)/(d_beta_num - 1.0);
+
+  std::vector<double> beta_contour;
+
+  // Loop over beta
+  for (int i = 0; i < d_beta_num; ++i)
+  {
+    double beta = beta_min + i*beta_spacing;
+
+    double alpha_min = Utility::calculateAlphaMin( E, beta, d_A, d_kT );
+    double alpha_max = Utility::calculateAlphaMax( E, beta, d_A, d_kT);
+    double alpha_spacing = (alpha_max - alpha_min)/(d_alpha_num - 1.0);
+
+    std::vector<double> alpha_contour;
+    double alpha_cum_sum = 0;
+
+    // Loop over alpha
+    for (int j = 0; j < d_alpha_num; ++j)
+    {
+      double alpha = alpha_min + j*alpha_spacing;
+      std::pair<double, double> beta_alpha( beta, alpha );
+      alpha_contour.push_back( double_differential_sigma[beta_alpha] );
+    }
+    // Loop over alpha
+    for (int j = 0; j < d_alpha_num - 1; ++j)
+    {
+      alpha_cum_sum += alpha_spacing*(0.5)*( alpha_contour[j] + alpha_contour[j+1] );
+    }
+
+    beta_contour.push_back(alpha_cum_sum);
+  }
+
+  double beta_cum_sum = 0;
+
+  // Loop over beta
+  for (int i = 0; i < d_beta_num - 1; ++i)
+  {
+    beta_cum_sum += beta_spacing*(0.5)*( beta_contour[i] + beta_contour[i+1] );
+  }
+
+  return beta_cum_sum;
+}
+
+// Get total cross section
+void FreeGasElasticCrossSectionGenerator::getTotalCrossSection( 
+    boost::unordered_map< double, double >& total_cross_section )
+{
+  total_cross_section = d_total_cross_section;
 }
 
 // Calculate cross sections for all energies
@@ -177,13 +228,13 @@ void FreeGasElasticCrossSectionGenerator::calculateEnergyCrossSectionValue()
   for ( int i = 0; i < d_E.size(); ++i) 
   {
     double E = d_E[i];
-
-    double beta_min = Utility::calculateBetaMin( E, d_kT );
     DoubleDifferentialCrossSection doubleDifferentialXS;
 
-    doubleDifferentialCrossSectionValue( E, beta_min, doubleDifferentialXS );
+    doubleDifferentialCrossSectionValue( E, doubleDifferentialXS );
 
     d_double_differential_cross_section_map[E] = doubleDifferentialXS;
+
+    d_total_cross_section[E] = totalCrossSectionValue( E, d_double_differential_cross_section_map[E] );
   }
 }
 

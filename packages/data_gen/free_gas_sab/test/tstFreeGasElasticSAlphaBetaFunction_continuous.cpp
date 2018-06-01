@@ -27,10 +27,10 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<DataGen::FreeGasElasticSAlphaBetaFunction> sab_function;
-std::vector<double> plot_energies{2e-11};
-int  beta_num = 100;
-int alpha_num = 100;
-double beta_spread = 1;
+std::vector<double> plot_energies{1e-9};
+int  beta_num = 300;
+int alpha_num = 300;
+double beta_spread = 2;
 double tol = 1e-6;
 
 //---------------------------------------------------------------------------//
@@ -106,6 +106,10 @@ TEUCHOS_UNIT_TEST( FreeGasElasticSAlphaBetaFunction,
             if ( beta_val > -1.0*tol && beta_val < 1.0*tol )
             {
               beta_val = tol;
+            }
+            else if (beta_val <= beta_min)
+            {
+              beta_val = beta_val - beta_min*1e-3;
             }
 
         double alpha_min = Utility::calculateAlphaMin(  plot_energies[i],

@@ -72,13 +72,11 @@ public:
   //! Construct full double differential cross section
   void doubleDifferentialCrossSectionValue( 
        double E,
-       double beta_min,
        DoubleDifferentialCrossSection& double_differential_sigma );
 
   //! Integrate over energy and angle for a total cross section 
-  double totalCrossSectionValue( 
-       std::vector<double>& beta_vec,
-       std::vector<double>& alpha_vec,
+  double totalCrossSectionValue(
+       double E,
        DoubleDifferentialCrossSection& double_differential_sigma );
 
   //! Calculate cross sections for all energies 
@@ -90,6 +88,9 @@ public:
   //! Get base angular distribution
   void getBaseAngularDistribution();
 
+  //! Get total cross section
+  void getTotalCrossSection( boost::unordered_map< double, double >& total_cross_section );
+
 private: 
 
   //! Set base cross section
@@ -97,12 +98,6 @@ private:
 
   //! Set base angular distribution
   void setBaseAngularDistribution();
-
-  //! Set beta vec 
-  void setBetaVector();
-
-  //! Set alpha vec
-  void setAlphaVector();
 
   // Temperature
   double d_kT;
