@@ -136,13 +136,22 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
 {
   FETCH_TEMPLATE_PARAM( 0, ParticleStateType );
   FETCH_TEMPLATE_PARAM( 1, ProbeParticleStateType );
-  
-  // Construct a source component
-  std::unique_ptr<MonteCarlo::ParticleSourceComponent>
-    source_component( new MonteCarlo::StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>( 0, 1.0, ModelHelper<ParticleStateType>::model(), particle_distribution ) );
 
   constexpr const MonteCarlo::ParticleType particle_type =
     ParticleStateType::type;
+  
+  // Construct a source component
+  std::unique_ptr<MonteCarlo::ParticleSourceComponent>
+    source_component;
+
+  if( particle_type == MonteCarlo::ADJOINT_PHOTON )
+  {
+    source_component.reset( new MonteCarlo::StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>( 0, 1.0, ModelHelper<ParticleStateType>::model(), particle_distribution ) );
+  }
+  else
+  {
+    source_component.reset( new MonteCarlo::StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>( 0, 1.0, static_cast<std::shared_ptr<const Geometry::Model> >(*ModelHelper<ParticleStateType>::model()), particle_distribution, std::vector<double>( {Utility::PhysicalConstants::electron_rest_mass_energy, 10.0} ) ) );
+  }
 
   MonteCarlo::ParticleBank bank;
 
@@ -174,14 +183,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
 
   source_component->sampleParticleState( bank, 0ull );
 
-  if( particle_type == MonteCarlo::ADJOINT_PHOTON )
-  {
-    FRENSIE_REQUIRE_EQUAL( bank.size(), 3 );
-  }
-  else
-  {
-    FRENSIE_REQUIRE_EQUAL( bank.size(), 1 );
-  }
+  FRENSIE_REQUIRE_EQUAL( bank.size(), 3 );
   
   FRENSIE_CHECK_EQUAL( bank.top().getHistoryNumber(), 0ull );
   FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), particle_type );
@@ -203,51 +205,47 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
 
   bank.pop();
 
-  if( particle_type == MonteCarlo::ADJOINT_PHOTON )
-  {
-    FRENSIE_CHECK_EQUAL( bank.top().getHistoryNumber(), 0ull );
-    FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), particle_type );
-    FRENSIE_CHECK( dynamic_cast<const MonteCarlo::AdjointPhotonProbeState&>( bank.top() ).isProbe() );
-    FRENSIE_CHECK_EQUAL( bank.top().getXPosition(), 0.0 );
-    FRENSIE_CHECK_EQUAL( bank.top().getYPosition(), 0.0 );
-    FRENSIE_CHECK_EQUAL( bank.top().getZPosition(), 0.0 );
-    FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getXDirection(), -1.0, 1e-12 );
-    FRENSIE_CHECK_SMALL( bank.top().getYDirection(), 1e-12 );
-    FRENSIE_CHECK_SMALL( bank.top().getZDirection(), 1e-12 );
-    FRENSIE_CHECK_EQUAL( bank.top().getSourceEnergy(),
-                         Utility::PhysicalConstants::electron_rest_mass_energy );
-    FRENSIE_CHECK_EQUAL( bank.top().getEnergy(),
-                         Utility::PhysicalConstants::electron_rest_mass_energy );
-    FRENSIE_CHECK_EQUAL( bank.top().getSourceTime(), 0.5 );
-    FRENSIE_CHECK_EQUAL( bank.top().getTime(), 0.5 );
-    FRENSIE_CHECK_EQUAL( bank.top().getSourceId(), 0 );
-    FRENSIE_CHECK_EQUAL( bank.top().getSourceCell(), 1 );
-    FRENSIE_CHECK_EQUAL( bank.top().getCell(), 1 );
-    FRENSIE_CHECK_EQUAL( bank.top().getSourceWeight(), 0.05 );
-    FRENSIE_CHECK_EQUAL( bank.top().getWeight(), 0.05 );
-    
-    bank.pop();
-
-    FRENSIE_CHECK_EQUAL( bank.top().getHistoryNumber(), 0ull );
-    FRENSIE_CHECK_EQUAL( bank.top().getParticleType(),
-                         MonteCarlo::ADJOINT_PHOTON );
-    FRENSIE_CHECK( dynamic_cast<const MonteCarlo::AdjointPhotonProbeState&>( bank.top() ).isProbe() );
-    FRENSIE_CHECK_EQUAL( bank.top().getXPosition(), -1.0 );
-    FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getYPosition(), 1.0, 1e-12 );
-    FRENSIE_CHECK_EQUAL( bank.top().getZPosition(), -1.0 );
-    FRENSIE_CHECK_SMALL( bank.top().getXDirection(), 1e-7 );
-    FRENSIE_CHECK_SMALL( bank.top().getYDirection(), 1e-12 );
-    FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(), 1.0, 1e-12 );
-    FRENSIE_CHECK_EQUAL( bank.top().getSourceEnergy(), 10.0 );
-    FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 10.0 );
-    FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getSourceTime(), 1.0, 1e-12 );
-    FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getTime(), 1.0, 1e-12 );
-    FRENSIE_CHECK_EQUAL( bank.top().getSourceId(), 0 );
-    FRENSIE_CHECK_EQUAL( bank.top().getSourceCell(), 1 );
-    FRENSIE_CHECK_EQUAL( bank.top().getCell(), 1 );
-    FRENSIE_CHECK_EQUAL( bank.top().getSourceWeight(), 0.1 );
-    FRENSIE_CHECK_EQUAL( bank.top().getWeight(), 0.1 );
-  }
+  FRENSIE_CHECK_EQUAL( bank.top().getHistoryNumber(), 0ull );
+  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), particle_type );
+  FRENSIE_CHECK( dynamic_cast<const ProbeParticleStateType&>( bank.top() ).isProbe() );
+  FRENSIE_CHECK_EQUAL( bank.top().getXPosition(), 0.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getYPosition(), 0.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getZPosition(), 0.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getXDirection(), -1.0, 1e-12 );
+  FRENSIE_CHECK_SMALL( bank.top().getYDirection(), 1e-12 );
+  FRENSIE_CHECK_SMALL( bank.top().getZDirection(), 1e-12 );
+  FRENSIE_CHECK_EQUAL( bank.top().getSourceEnergy(),
+                       Utility::PhysicalConstants::electron_rest_mass_energy );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(),
+                       Utility::PhysicalConstants::electron_rest_mass_energy );
+  FRENSIE_CHECK_EQUAL( bank.top().getSourceTime(), 0.5 );
+  FRENSIE_CHECK_EQUAL( bank.top().getTime(), 0.5 );
+  FRENSIE_CHECK_EQUAL( bank.top().getSourceId(), 0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getSourceCell(), 1 );
+  FRENSIE_CHECK_EQUAL( bank.top().getCell(), 1 );
+  FRENSIE_CHECK_EQUAL( bank.top().getSourceWeight(), 0.05 );
+  FRENSIE_CHECK_EQUAL( bank.top().getWeight(), 0.05 );
+  
+  bank.pop();
+  
+  FRENSIE_CHECK_EQUAL( bank.top().getHistoryNumber(), 0ull );
+  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), particle_type );
+  FRENSIE_CHECK( dynamic_cast<const ProbeParticleStateType&>( bank.top() ).isProbe() );
+  FRENSIE_CHECK_EQUAL( bank.top().getXPosition(), -1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getYPosition(), 1.0, 1e-12 );
+  FRENSIE_CHECK_EQUAL( bank.top().getZPosition(), -1.0 );
+  FRENSIE_CHECK_SMALL( bank.top().getXDirection(), 1e-7 );
+  FRENSIE_CHECK_SMALL( bank.top().getYDirection(), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(), 1.0, 1e-12 );
+  FRENSIE_CHECK_EQUAL( bank.top().getSourceEnergy(), 10.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 10.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getSourceTime(), 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getTime(), 1.0, 1e-12 );
+  FRENSIE_CHECK_EQUAL( bank.top().getSourceId(), 0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getSourceCell(), 1 );
+  FRENSIE_CHECK_EQUAL( bank.top().getCell(), 1 );
+  FRENSIE_CHECK_EQUAL( bank.top().getSourceWeight(), 0.1 );
+  FRENSIE_CHECK_EQUAL( bank.top().getWeight(), 0.1 );
   
   Utility::RandomNumberGenerator::unsetFakeStream();
 }

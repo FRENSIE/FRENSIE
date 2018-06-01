@@ -20,6 +20,63 @@ StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>
 // Constructor
 template<typename ParticleStateType,typename ProbeParticleStateType>
 StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::StandardAdjointParticleSourceComponent(
+    const size_t id,
+    const double selection_weight,
+    const std::shared_ptr<const Geometry::Model>& model,
+    const std::shared_ptr<const ParticleDistribution>& particle_distribution,
+    const std::vector<double>& critical_line_energies )
+  : StandardAdjointParticleSourceComponent( id,
+                                            selection_weight,
+                                            CellIdSet(),
+                                            model,
+                                            particle_distribution,
+                                            critical_line_energies )
+{ /* ... */ }
+
+// Constructor (with rejection cells )
+template<typename ParticleStateType,typename ProbeParticleStateType>
+StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::StandardAdjointParticleSourceComponent(
+    const size_t id,
+    const double selection_weight,
+    const std::vector<Geometry::Model::InternalCellHandle>& rejection_cells,
+    const std::shared_ptr<const Geometry::Model>& model,
+    const std::shared_ptr<const ParticleDistribution>& particle_distribution,
+    const std::vector<double>& critical_line_energies )
+  : StandardAdjointParticleSourceComponent(
+                   id,
+                   selection_weight,
+                   CellIdSet( rejection_cells.begin(), rejection_cells.end() ),
+                   model,
+                   particle_distribution,
+                   critical_line_energies )
+{ /* ... */ }
+
+// Constructor (with rejection cells )
+template<typename ParticleStateType,typename ProbeParticleStateType>
+StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::StandardAdjointParticleSourceComponent(
+    const size_t id,
+    const double selection_weight,
+    const CellIdSet& rejection_cells,
+    const std::shared_ptr<const Geometry::Model>& model,
+    const std::shared_ptr<const ParticleDistribution>& particle_distribution,
+    const std::vector<double>& critical_line_energies )
+  : BaseType( id,
+              selection_weight,
+              rejection_cells,
+              model,
+              particle_distribution ),
+    d_critical_line_energies( critical_line_energies ),
+    d_particle_state_critical_line_energy_sampling_functions()
+{
+  this->setCriticalLineEnergySamplingFunctions();
+}
+
+// Constructor
+/*! \details The critical line energies will be extracted from the 
+ * filled geometry model.
+ */
+template<typename ParticleStateType,typename ProbeParticleStateType>
+StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::StandardAdjointParticleSourceComponent(
      const size_t id,
      const double selection_weight,
      const std::shared_ptr<const FilledGeometryModel>& model,
@@ -32,6 +89,9 @@ StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>
 { /* ... */ }
 
 // Constructor (with rejection cells )
+/*! \details The critical line energies will be extracted from the 
+ * filled geometry model.
+ */
 template<typename ParticleStateType,typename ProbeParticleStateType>
 StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::StandardAdjointParticleSourceComponent(
      const size_t id,
@@ -39,27 +99,21 @@ StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>
      const CellIdSet& rejection_cells,
      const std::shared_ptr<const FilledGeometryModel>& model,
      const std::shared_ptr<const ParticleDistribution>& particle_distribution )
-  : BaseType( id,
-              selection_weight,
-              rejection_cells,
-              *model,
-              particle_distribution ),
-    d_critical_line_energies(),
-    d_particle_state_critical_line_energy_sampling_functions()
+  : StandardAdjointParticleSourceComponent( id,
+                                            selection_weight,
+                                            rejection_cells,
+                                            *model,
+                                            particle_distribution,
+                                            dynamic_cast<const typename Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType&>( *model ).getCriticalLineEnergies() )
 {
   // Make sure that the model pointer is valid
   testPrecondition( model.get() );
-
-  // Set the critical line energy sampling functions
-  const typename Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType&
-    upcast_model = *model;
-
-  d_critical_line_energies = upcast_model.getCriticalLineEnergies();
-
-  this->setCriticalLineEnergySamplingFunctions();
 }
 
 // Set the critical line energies
+/*! \details The critical line energies will be extracted from the 
+ * filled geometry model.
+ */
 template<typename ParticleStateType,typename ProbeParticleStateType>
 void StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::setCriticalLineEnergySamplingFunctions()
 {

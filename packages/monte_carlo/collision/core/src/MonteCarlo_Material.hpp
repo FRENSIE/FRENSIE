@@ -65,6 +65,13 @@ public:
   //! Return the number density (atom/b-cm)
   double getNumberDensity() const;
 
+  //! Return the scattering center at the desired index
+  const std::shared_ptr<const ScatteringCenter>&
+  getScatteringCenter( const std::string& name ) const;
+
+  //! Return the scattering center number density
+  double getScatteringCenterNumberDensity( const std::string& name ) const;
+
   //! Return the macroscopic total cross section (1/cm)
   double getMacroscopicTotalCrossSection( const double energy ) const;
 
@@ -154,8 +161,11 @@ private:
   // The number density of the atoms of the material
   double d_number_density;
 
-  // The atoms that make up the material
+  // The scattering centers that make up the material
   std::vector<std::pair<double,std::shared_ptr<const ScatteringCenter> > > d_scattering_centers;
+
+  // The scattering center names that make up the material
+  std::map<std::string,size_t> d_scattering_center_names;
 
   // The getMacroscopicTotalCrossSection function wrapper
   MacroscopicCrossSectionEvaluationFunctor
