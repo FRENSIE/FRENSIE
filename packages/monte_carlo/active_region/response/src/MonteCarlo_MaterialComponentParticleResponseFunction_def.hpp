@@ -133,7 +133,8 @@ template<typename ReactionEnumType>
 std::string MaterialComponentParticleResponseFunction<Material>::createDescription( const ReactionEnumType reaction ) const
 {
   return std::string("f_cell_") + Utility::toString( d_cell ) +
-    "_mat_component" + "\"" + Utility::toString( reaction ) + "\"(E)";
+    "_mat_component_" + "\"" + d_material_component_name + "\"_\"" +
+    Utility::toString( reaction ) + "\"(E)";
 }
 
 // Get the material
