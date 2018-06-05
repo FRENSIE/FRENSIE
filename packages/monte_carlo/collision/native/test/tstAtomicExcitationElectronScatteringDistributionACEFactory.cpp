@@ -53,7 +53,6 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistributionACEFactory,
 
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.04998928662, 1e-12 );
   TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
-std::cout << std::setprecision(16) << std::scientific << "outgoing_energy = \t" << outgoing_energy << std::endl;
 
   // sample epr14_distribution
   incoming_energy = 1e-3;
@@ -71,7 +70,6 @@ std::cout << std::setprecision(16) << std::scientific << "outgoing_energy = \t" 
 
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0499892862612037, 1e-12 );
   TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
-std::cout << std::setprecision(16) << std::scientific << "outgoing_energy = \t" << outgoing_energy << std::endl;
 }
 
 //---------------------------------------------------------------------------//

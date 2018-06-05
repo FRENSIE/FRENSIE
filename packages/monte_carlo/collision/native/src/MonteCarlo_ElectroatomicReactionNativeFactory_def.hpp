@@ -105,12 +105,12 @@ void ElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
   unsigned threshold_energy_index =
     raw_electroatom_data.getTotalElasticCrossSectionThresholdEnergyIndex();
 
-  // Calculate sampling ratios
-  Teuchos::ArrayRCP<double> sampling_ratios( total_cross_section.size() );
-  for( unsigned i = 0; i < sampling_ratios.size(); ++i )
-  {
-    sampling_ratios[i] = cutoff_cross_section[i]/total_cross_section[i];
-  }
+  // // Calculate sampling ratios
+  // Teuchos::ArrayRCP<double> sampling_ratios( total_cross_section.size() );
+  // for( unsigned i = 0; i < sampling_ratios.size(); ++i )
+  // {
+  //   sampling_ratios[i] = cutoff_cross_section[i]/total_cross_section[i];
+  // }
 
   // Create the tabular cutoff elastic scattering distribution
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution> tabular_distribution;
@@ -130,7 +130,7 @@ void ElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
     new DecoupledElasticElectroatomicReaction<Utility::LogLog>(
                                         energy_grid,
                                         total_cross_section,
-                                        sampling_ratios,
+                                        cutoff_cross_section,
                                         threshold_energy_index,
                                         grid_searcher,
                                         tabular_distribution,
