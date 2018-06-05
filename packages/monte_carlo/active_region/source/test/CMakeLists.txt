@@ -1,5 +1,10 @@
 FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_active_region_source)
 
+SET(ROOT_GEOM_TEST_TARGET monte_carlo_active_region_source_test_root_geom)
+
+ADD_SUBDIRECTORY(test_files)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+
 FRENSIE_ADD_TEST_EXECUTABLE(StandardParticleSourceComponent DEPENDS tstStandardParticleSourceComponent.cpp)
 FRENSIE_ADD_TEST(StandardParticleSourceComponent)
 
@@ -10,12 +15,24 @@ FRENSIE_ADD_TEST(StandardAdjointParticleSourceComponent
   EXTRA_ARGS
   --test_database=${COLLISION_DATABASE_XML_FILE})
 
-# ADD_EXECUTABLE(tstStandardParticleSource
-#   tstStandardParticleSource.cpp
-#   ${FRENSIE_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstStandardParticleSource monte_carlo_source_native)
-# ADD_TEST(StandardParticleSource_test tstStandardParticleSource)
-# SET_PROPERTY(TEST StandardParticleSource_test PROPERTY LABELS monte_carlo_source_native)
+IF(FRENSIE_ENABLE_DAGMC)
+  FRENSIE_ADD_TEST_EXECUTABLE(StandardParticleSourceComponentDagMCRejection
+    DEPENDS tstStandardParticleSourceComponentDagMCRejection.cpp
+    LIB_DEPENDS geometry_dagmc)
+  FRENSIE_ADD_TEST(StandardParticleSourceComponentDagMCRejection
+    EXTRA_ARGS
+    --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat)
+ENDIF()
+
+IF(FRENSIE_ENABLE_ROOT)
+  FRENSIE_ADD_TEST_EXECUTABLE(StandardParticleSourceComponentRootRejection
+    DEPENDS tstStandardParticleSourceComponentRootRejection.cpp
+    TARGET_DEPENDS ${ROOT_GEOM_TEST_TARGET}
+    LIB_DEPENDS geometry_root)
+  FRENSIE_ADD_TEST(StandardParticleSourceComponentRootRejection
+    EXTRA_ARGS
+    --test_root_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_source_geom.root)
+ENDIF()
 
 # IF(FRENSIE_ENABLE_DAGMC OR FRENSIE_ENABLE_ROOT)
 #   ADD_EXECUTABLE(tstEmbeddedStandardParticleSource
