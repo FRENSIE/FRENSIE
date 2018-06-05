@@ -21,7 +21,7 @@ IF(FRENSIE_ENABLE_DAGMC)
     LIB_DEPENDS geometry_dagmc)
   FRENSIE_ADD_TEST(StandardParticleSourceComponentDagMCRejection
     EXTRA_ARGS
-    --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat)
+    --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_source_geom.sat)
 ENDIF()
 
 IF(FRENSIE_ENABLE_ROOT)
@@ -31,18 +31,18 @@ IF(FRENSIE_ENABLE_ROOT)
     LIB_DEPENDS geometry_root)
   FRENSIE_ADD_TEST(StandardParticleSourceComponentRootRejection
     EXTRA_ARGS
-    --test_root_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_source_geom.root)
+    --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_geom.root)
 ENDIF()
 
 IF(${FRENSIE_ENABLE_OPENMP} OR ${FRENSIE_ENABLE_MPI})
   FRENSIE_ADD_TEST_EXECUTABLE(ParallelStandardParticleSourceComponent DEPENDS tstParallelStandardParticleSourceComponent.cpp)
 
   IF(${FRENSIE_ENABLE_OPENMP})
-    FRENSIE_ADD_TEST(SharedParallelStandardParticleSourceComponent
+    FRENSIE_ADD_TEST(SharedParallelStandardParticleSourceComponent_2
       TEST_EXEC_NAME_ROOT ParallelStandardParticleSourceComponent
       EXTRA_ARGS --threads=2
       OPENMP_TEST)
-    FRENSIE_ADD_TEST(SharedParallelStandardParticleSourceComponent
+    FRENSIE_ADD_TEST(SharedParallelStandardParticleSourceComponent_4
       TEST_EXEC_NAME_ROOT ParallelStandardParticleSourceComponent
       EXTRA_ARGS --threads=4
       OPENMP_TEST)
@@ -61,7 +61,7 @@ IF(${FRENSIE_ENABLE_OPENMP} OR ${FRENSIE_ENABLE_MPI})
   ENDIF()
 
   IF(${FRENSIE_ENABLE_OPENMP} AND ${FRENSIE_ENABLE_MPI})
-    FRENSIE_ADD_TEST(HybridParallelStandardParticleSourceComponent
+    FRENSIE_ADD_TEST(HybridParallelStandardParticleSourceComponent_2
       TEST_EXEC_NAME_ROOT ParallelStandardParticleSourceComponent
       MPI_PROCS 2
       EXTRA_ARGS --threads=2
