@@ -96,7 +96,12 @@ void StandardParticleSource::reduceData( const Utility::Communicator& comm,
 void StandardParticleSource::printSummary( std::ostream& os ) const
 {
   for( size_t i = 0; i < d_components.size(); ++i )
+  {
     d_components[i]->printSummary( os );
+    os << "\n";
+  }
+
+  os << std::flush;
 }
 
 // Log a summary of the sampling statistics

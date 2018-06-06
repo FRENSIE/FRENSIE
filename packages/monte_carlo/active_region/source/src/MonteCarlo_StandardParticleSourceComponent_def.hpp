@@ -141,8 +141,11 @@ void StandardParticleSourceComponent<ParticleStateType>::printSummary( std::ostr
   // Make sure only the root process calls this function
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
+  constexpr const ParticleType particle_type = ParticleStateType::type;
+
   // Print the source sampling statistics
   this->printStandardSummary( "Standard Source Component",
+                              Utility::toString( particle_type ),
                               this->getNumberOfTrials(),
                               this->getNumberOfSamples(),
                               this->getSamplingEfficiency(),
@@ -184,12 +187,26 @@ void StandardParticleSourceComponent<ParticleStateType>::enableThreadSupportImpl
   // Make sure a valid number of threads has been requested
   testPrecondition( threads > 0 );
 
-  d_dimension_trial_counters.resize( threads );
-  d_dimension_sample_counters.resize( threads );
+  // Determine the number of new thread to support
+  int number_of_threads = d_dimension_trial_counters.size();
+  int number_of_new_threads = threads - number_of_threads;
 
-  // Initialize the dimension counters
-  this->initializeDimensionTrialCounters();
-  this->initializeDimensionSampleCounters();
+  if( number_of_new_threads > 0 )
+  {
+    d_dimension_trial_counters.resize( threads );
+    d_dimension_sample_counters.resize( threads );
+
+    // Initialize the dimension counters
+    this->initializeDimensionCounters(
+            Utility::ArrayView<DimensionCounterMap>(
+                           d_dimension_trial_counters.data()+number_of_threads,
+                           number_of_new_threads ) );
+
+    this->initializeDimensionCounters(
+            Utility::ArrayView<DimensionCounterMap>(
+                          d_dimension_sample_counters.data()+number_of_threads,
+                          number_of_new_threads ) );
+  }
 }
 
 // Reset the sampling statistics
@@ -433,22 +450,28 @@ auto StandardParticleSourceComponent<ParticleStateType>::reduceDimensionCounters
 template<typename ParticleStateType>
 void StandardParticleSourceComponent<ParticleStateType>::initializeDimensionSampleCounters()
 {
-  StandardParticleSourceComponent<ParticleStateType>::initializeDimensionCounters(
-                                                 d_dimension_sample_counters );
+  this->initializeDimensionCounters( d_dimension_sample_counters );
 }
 
 // Initialize the dimension trial counters
 template<typename ParticleStateType>
 void StandardParticleSourceComponent<ParticleStateType>::initializeDimensionTrialCounters()
 {
-  StandardParticleSourceComponent<ParticleStateType>::initializeDimensionCounters(
-                                                  d_dimension_trial_counters );
+  this->initializeDimensionCounters( d_dimension_trial_counters );
+}
+
+// Initialize the dimension counters
+template<typename ParticleStateType>
+inline void StandardParticleSourceComponent<ParticleStateType>::initializeDimensionCounters(
+                         std::vector<DimensionCounterMap>& dimension_counters )
+{
+  this->initializeDimensionCounters( Utility::arrayView(dimension_counters) );
 }
 
 // Initialize the dimension counters
 template<typename ParticleStateType>
 void StandardParticleSourceComponent<ParticleStateType>::initializeDimensionCounters(
-                         std::vector<DimensionCounterMap>& dimension_counters )
+            const Utility::ArrayView<DimensionCounterMap>& dimension_counters )
 {
   for( size_t i = 0; i < dimension_counters.size(); ++i )
     d_particle_distribution->initializeDimensionCounters( dimension_counters[i] );

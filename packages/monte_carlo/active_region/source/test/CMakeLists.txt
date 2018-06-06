@@ -69,4 +69,144 @@ IF(${FRENSIE_ENABLE_OPENMP} OR ${FRENSIE_ENABLE_MPI})
   ENDIF()
 ENDIF()
 
+IF(FRENSIE_ENABLE_DAGMC)
+  IF(${FRENSIE_ENABLE_OPENMP} OR ${FRENSIE_ENABLE_MPI})
+    FRENSIE_ADD_TEST_EXECUTABLE(ParallelStandardParticleSourceComponentDagMC
+      DEPENDS tstParallelStandardParticleSourceComponentDagMC.cpp
+      LIB_DEPENDS geometry_dagmc)
+
+    IF(${FRENSIE_ENABLE_OPENMP})
+      FRENSIE_ADD_TEST(SharedParallelStandardParticleSourceComponentDagMC_2
+        TEST_EXEC_NAME_ROOT ParallelStandardParticleSourceComponentDagMC
+        EXTRA_ARGS
+        --threads=2
+        --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_source_geom.sat
+        OPENMP_TEST)
+      FRENSIE_ADD_TEST(SharedParallelStandardParticleSourceComponentDagMC_4
+        TEST_EXEC_NAME_ROOT ParallelStandardParticleSourceComponentDagMC
+        EXTRA_ARGS
+        --threads=4
+        --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_source_geom.sat
+        OPENMP_TEST)
+    ENDIF()
+    
+    IF(${FRENSIE_ENABLE_MPI})
+      FRENSIE_ADD_TEST(DistributedParallelStandardParticleSourceComponentDagMC
+        TEST_EXEC_NAME_ROOT ParallelStandardParticleSourceComponentDagMC
+        EXTRA_ARGS
+        --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_source_geom.sat
+        MPI_PROCS 1)
+      FRENSIE_ADD_TEST(DistributedParallelStandardParticleSourceComponentDagMC
+        TEST_EXEC_NAME_ROOT ParallelStandardParticleSourceComponentDagMC
+        EXTRA_ARGS
+        --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_source_geom.sat
+        MPI_PROCS 2)
+      FRENSIE_ADD_TEST(DistributedParallelStandardParticleSourceComponentDagMC
+        TEST_EXEC_NAME_ROOT ParallelStandardParticleSourceComponentDagMC
+        EXTRA_ARGS
+        --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_source_geom.sat
+        MPI_PROCS 4)
+    ENDIF()
+    
+    IF(${FRENSIE_ENABLE_OPENMP} AND ${FRENSIE_ENABLE_MPI})
+      FRENSIE_ADD_TEST(HybridParallelStandardParticleSourceComponentDagMC_2
+        TEST_EXEC_NAME_ROOT ParallelStandardParticleSourceComponentDagMC
+        EXTRA_ARGS
+        --threads=2
+        --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_source_geom.sat
+        MPI_PROCS 2
+        OPENMP_TEST)
+    ENDIF()
+  ENDIF()
+ENDIF()
+
+IF(FRENSIE_ENABLE_ROOT)
+  IF(${FRENSIE_ENABLE_OPENMP} OR ${FRENSIE_ENABLE_MPI})
+    FRENSIE_ADD_TEST_EXECUTABLE(ParallelStandardParticleSourceComponentRoot
+      DEPENDS tstParallelStandardParticleSourceComponentRoot.cpp
+      LIB_DEPENDS geometry_root)
+    
+    IF(${FRENSIE_ENABLE_OPENMP})
+      FRENSIE_ADD_TEST(SharedParallelStandardParticleSourceComponentRoot_2
+        TEST_EXEC_NAME_ROOT ParallelStandardParticleSourceComponentRoot
+        EXTRA_ARGS
+        --threads=2
+        --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_geom.root
+        OPENMP_TEST)
+      FRENSIE_ADD_TEST(SharedParallelStandardParticleSourceComponentRoot_4
+        TEST_EXEC_NAME_ROOT ParallelStandardParticleSourceComponentRoot
+        EXTRA_ARGS
+        --threads=4
+        --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_geom.root
+        OPENMP_TEST)
+    ENDIF()
+    
+    IF(${FRENSIE_ENABLE_MPI})
+      FRENSIE_ADD_TEST(DistributedParallelStandardParticleSourceComponentRoot
+        TEST_EXEC_NAME_ROOT ParallelStandardParticleSourceComponentRoot
+        EXTRA_ARGS
+        --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_geom.root
+        MPI_PROCS 1)
+      FRENSIE_ADD_TEST(DistributedParallelStandardParticleSourceComponentRoot
+        TEST_EXEC_NAME_ROOT ParallelStandardParticleSourceComponentRoot
+        EXTRA_ARGS
+        --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_geom.root
+        MPI_PROCS 2)
+      FRENSIE_ADD_TEST(DistributedParallelStandardParticleSourceComponentRoot
+        TEST_EXEC_NAME_ROOT ParallelStandardParticleSourceComponentRoot
+        EXTRA_ARGS
+        --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_geom.root
+        MPI_PROCS 4)
+    ENDIF()
+    
+    IF(${FRENSIE_ENABLE_OPENMP} AND ${FRENSIE_ENABLE_MPI})
+      FRENSIE_ADD_TEST(HybridParallelStandardParticleSourceComponentRoot_2
+        TEST_EXEC_NAME_ROOT ParallelStandardParticleSourceComponentRoot
+        MPI_PROCS 2
+        EXTRA_ARGS
+        --threads=2
+        --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_geom.root
+        OPENMP_TEST)
+    ENDIF()
+  ENDIF()
+ENDIF()
+
+FRENSIE_ADD_TEST_EXECUTABLE(StandardParticleSource DEPENDS tstStandardParticleSource.cpp)
+FRENSIE_ADD_TEST(StandardParticleSource)
+
+IF(${FRENSIE_ENABLE_OPENMP} OR ${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST_EXECUTABLE(ParallelStandardParticleSource DEPENDS tstParallelStandardParticleSource.cpp)
+
+  IF(${FRENSIE_ENABLE_OPENMP})
+    FRENSIE_ADD_TEST(SharedParallelStandardParticleSource_2
+      TEST_EXEC_NAME_ROOT ParallelStandardParticleSource
+      EXTRA_ARGS --threads=2
+      OPENMP_TEST)
+    FRENSIE_ADD_TEST(SharedParallelStandardParticleSource_4
+      TEST_EXEC_NAME_ROOT ParallelStandardParticleSource
+      EXTRA_ARGS --threads=4
+      OPENMP_TEST)
+  ENDIF()
+
+  IF(${FRENSIE_ENABLE_MPI})
+    FRENSIE_ADD_TEST(DistributedParallelStandardParticleSource
+      TEST_EXEC_NAME_ROOT ParallelStandardParticleSource
+      MPI_PROCS 1)
+    FRENSIE_ADD_TEST(DistributedParallelStandardParticleSource
+      TEST_EXEC_NAME_ROOT ParallelStandardParticleSource
+      MPI_PROCS 2)
+    FRENSIE_ADD_TEST(DistributedParallelStandardParticleSource
+      TEST_EXEC_NAME_ROOT ParallelStandardParticleSource
+      MPI_PROCS 4)
+  ENDIF()
+
+  IF(${FRENSIE_ENABLE_OPENMP} AND ${FRENSIE_ENABLE_MPI})
+    FRENSIE_ADD_TEST(HybridParallelStandardParticleSource_2
+      TEST_EXEC_NAME_ROOT ParallelStandardParticleSource
+      MPI_PROCS 2
+      EXTRA_ARGS --threads=2
+      OPENMP_TEST)
+  ENDIF()
+ENDIF()
+  
 FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_active_region_source)

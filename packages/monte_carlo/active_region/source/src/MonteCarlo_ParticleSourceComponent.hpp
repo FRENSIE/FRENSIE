@@ -150,6 +150,7 @@ protected:
 
   //! Print a standard summary of the source data
   void printStandardSummary( const std::string& source_component_type,
+                             const std::string& particle_type_generated,
                              const Counter trials,
                              const Counter samples,
                              const double efficiency,

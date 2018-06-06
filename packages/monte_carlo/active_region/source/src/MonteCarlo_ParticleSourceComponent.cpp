@@ -368,14 +368,16 @@ void ParticleSourceComponent::logSummary() const
 
 // Print a standard summary of the source data
 void ParticleSourceComponent::printStandardSummary(
-                                      const std::string& source_component_type,
-                                      const Counter trials,
-                                      const Counter samples,
-                                      const double efficiency,
-                                      std::ostream& os ) const
+                                    const std::string& source_component_type,
+                                    const std::string& particle_type_generated,
+                                    const Counter trials,
+                                    const Counter samples,
+                                    const double efficiency,
+                                    std::ostream& os ) const
 {
   os << "Source Component " << d_id << " Summary..." << "\n"
      << "  Type: " << source_component_type << "\n"
+     << "  Particle type generated: " << particle_type_generated << "\n"
      << "  Selection weight: " << d_selection_weight << "\n"
      << "  Number of (position) trials: " << trials << "\n"
      << "  Number of samples: " << samples << "\n"

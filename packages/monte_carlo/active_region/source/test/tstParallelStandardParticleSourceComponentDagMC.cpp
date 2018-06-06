@@ -1,9 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstParallelStandardParticleSourceComponent.cpp
+//! \file   tstParallelStandardParticleSourceComponentDagMC.cpp
 //! \author Alex Robinson
-//! \brief  Standard particle source shared and distribution parallel unit
-//!         tests.
+//! \brief  The standard particle source component parallel unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -16,7 +15,7 @@
 #include "MonteCarlo_StandardParticleDistribution.hpp"
 #include "MonteCarlo_IndependentPhaseSpaceDimensionDistribution.hpp"
 #include "MonteCarlo_DependentPhaseSpaceDimensionDistribution.hpp"
-#include "Geometry_InfiniteMediumModel.hpp"
+#include "Geometry_DagMCModel.hpp"
 #include "Utility_BasicCartesianCoordinateConversionPolicy.hpp"
 #include "Utility_BasicSphericalCoordinateConversionPolicy.hpp"
 #include "Utility_BasicCylindricalSpatialCoordinateConversionPolicy.hpp"
@@ -32,7 +31,6 @@
 #include "Utility_OpenMPProperties.hpp"
 #include "Utility_Communicator.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
-#include "ArchiveTestHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Types
@@ -46,17 +44,11 @@ typedef std::tuple<MonteCarlo::NeutronState,
                    MonteCarlo::PositronState
                   > TestParticleStateTypes;
 
-typedef std::tuple<
-  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
-  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
-  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
-  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>
-  > TestArchives;
-
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
+std::shared_ptr<const Geometry::Model> model;
 std::shared_ptr<const MonteCarlo::ParticleDistribution> particle_distribution;
 
 //---------------------------------------------------------------------------//
@@ -75,15 +67,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( StandardParticleSourceComponent,
   
   // Construct a source component
   std::unique_ptr<MonteCarlo::ParticleSourceComponent>
-    source_component;
-
-  // Create a dummy geometry model for each source
-  {
-    std::shared_ptr<const Geometry::Model> model(
-                           new Geometry::InfiniteMediumModel( comm->rank() ) );
-    
-    source_component.reset( new MonteCarlo::StandardParticleSourceComponent<ParticleStateType>( 0, 1.0, model, particle_distribution ) );
-  }
+    source_component( new MonteCarlo::StandardParticleSourceComponent<ParticleStateType>( 0, 1.0, model, particle_distribution ) );
 
   // Enable thread support
   source_component->enableThreadSupport( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
@@ -117,12 +101,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( StandardParticleSourceComponent,
   MonteCarlo::ParticleSourceComponent::CellIdSet starting_cells;
   source_component->getStartingCells( starting_cells );
   
-  FRENSIE_CHECK_EQUAL( starting_cells.size(), comm->size() );
-
-  for( size_t i = 0; i < comm->size(); ++i )
-  {
-    FRENSIE_CHECK( starting_cells.count( i ) );
-  }
+  FRENSIE_CHECK( starting_cells.size() > 0 );
 
   if( comm->rank() == 0 )
   {
@@ -211,145 +190,18 @@ FRENSIE_UNIT_TEST_TEMPLATE( StandardParticleSourceComponent,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be archived
-FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardParticleSourceComponent,
-                                   archive,
-                                   TestArchives )
-{
-  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
-  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
-
-  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
-  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
-
-  std::string archive_base_name( "test_parallel_standard_particle_source_component" );
-  std::ostringstream archive_ostream;
-
-  // Get the default communicator
-  std::shared_ptr<const Utility::Communicator> comm =
-    Utility::Communicator::getDefault();
-
-  {
-    std::unique_ptr<OArchive> oarchive;
-
-    createOArchive( archive_base_name, archive_ostream, oarchive );
-  
-    // Construct a source component
-    std::shared_ptr<MonteCarlo::ParticleSourceComponent>
-      source_component;
-
-    // Create a dummy geometry model for each source
-    {
-      std::shared_ptr<const Geometry::Model> model(
-                                      new Geometry::InfiniteMediumModel( 0 ) );
-    
-      source_component.reset( new MonteCarlo::StandardNeutronSourceComponent( 0, 1.0, model, particle_distribution ) );
-    }
-
-    // Enable thread support
-    source_component->enableThreadSupport( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
-
-    // Generate samples in each distibuted particle source component using the
-    // number of requested threads
-    std::vector<MonteCarlo::ParticleBank> banks( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
-
-    #pragma omp parallel for num_threads( Utility::OpenMPProperties::getRequestedNumberOfThreads() )
-    for( unsigned long long history = 1000*comm->rank();
-         history < 1000*(comm->rank()+1);
-         ++history )
-    {
-      source_component->sampleParticleState( banks[Utility::OpenMPProperties::getThreadId()], history );
-    }
-
-    // Reduce the distributed source component data
-    comm->barrier();
-
-    source_component->reduceData( *comm, 0 );
-
-    if( comm->rank() == 0 )
-    {
-      FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(source_component) );
-    }
-  }
-
-  // Copy the archive ostream to an istream
-  std::istringstream archive_istream( archive_ostream.str() );
-
-  // Load the archived distributions
-  std::unique_ptr<IArchive> iarchive;
-
-  createIArchive( archive_istream, iarchive );
-
-  std::shared_ptr<MonteCarlo::ParticleSourceComponent> source_component;
-
-  if( comm->rank() == 0 )
-  {
-    FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(source_component) );
-  }
-
-  iarchive.reset();
-
-  FRENSIE_REQUIRE_NO_THROW( Utility::broadcast( *comm, source_component, 0 ) );
-
-  // Enabling thread support should not destroy the current data
-  source_component->enableThreadSupport( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
-
-  MonteCarlo::ParticleSourceComponent::CellIdSet starting_cells;
-  source_component->getStartingCells( starting_cells );
-  
-  FRENSIE_CHECK_EQUAL( starting_cells.size(), 1 );
-  FRENSIE_CHECK( starting_cells.count( 0 ) );
-  
-  FRENSIE_CHECK_EQUAL( source_component->getNumberOfTrials(), 1000*comm->size() );
-  FRENSIE_CHECK_EQUAL( source_component->getNumberOfSamples(), 1000*comm->size() );
-  FRENSIE_CHECK_EQUAL( source_component->getSamplingEfficiency(), 1.0 );
-  
-  FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 1000*comm->size() );
-  FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 1000*comm->size() );
-  FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 1.0 );
-  
-  FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 1000*comm->size() );
-  FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 1000*comm->size() );
-  FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 1.0 );
-  
-  FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 1000*comm->size() );
-  FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 1000*comm->size() );
-  FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 1.0 );
-  
-  FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 1000*comm->size() );
-  FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 1000*comm->size() );
-  FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 1.0 );
-  
-  FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 1000*comm->size() );
-  FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 1000*comm->size() );
-  FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 1.0 );
-  
-  FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 1000*comm->size() );
-  FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 1000*comm->size() );
-  FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 1.0 );
-  
-  FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::ENERGY_DIMENSION ), 1000*comm->size() );
-  FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::ENERGY_DIMENSION ), 1000*comm->size() );
-  FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::ENERGY_DIMENSION ), 1.0 );
-  
-  FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::TIME_DIMENSION ), 1000*comm->size() );
-  FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::TIME_DIMENSION ), 1000*comm->size() );
-  FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::TIME_DIMENSION ), 1.0 );
-  
-  FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::WEIGHT_DIMENSION ), 1000*comm->size() );
-  FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::WEIGHT_DIMENSION ), 1000*comm->size() );
-  FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::WEIGHT_DIMENSION ), 1.0 );
-}
-
-//---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
+std::string test_dagmc_geom_file_name;
 int threads = 1;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_cad_file",
+                                        test_dagmc_geom_file_name, "",
+                                        "Test CAD file name" );
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "threads",
                                         threads, 1,
                                         "Number of threads to use" );
@@ -357,6 +209,19 @@ FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
+  // Initialize the geometry model
+  Geometry::DagMCModelProperties local_properties( test_dagmc_geom_file_name );
+
+  local_properties.setFacetTolerance( 1e-3 );
+  local_properties.setTerminationCellPropertyName( "graveyard" );
+
+  std::shared_ptr<Geometry::DagMCModel> tmp_model =
+    Geometry::DagMCModel::getInstance();
+
+  tmp_model->initialize( local_properties );
+
+  model = tmp_model;
+  
   // Create the particle distribution
   std::shared_ptr<MonteCarlo::StandardParticleDistribution>
     tmp_particle_distribution;
@@ -434,6 +299,5 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstParallelStandardParticleSourceComponent.cpp
+// end tstParallelStandardParticleSourceComponentDagMC.cpp
 //---------------------------------------------------------------------------//
-
