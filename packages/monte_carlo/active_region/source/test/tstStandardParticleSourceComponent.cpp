@@ -324,8 +324,6 @@ FRENSIE_UNIT_TEST_TEMPLATE( StandardParticleSourceComponent,
   for( int i = 0; i < 1000; ++i )
     source_component->sampleParticleState( bank, i );
 
-  std::ostringstream oss;
-
   FRENSIE_CHECK_NO_THROW( source_component->logSummary() );
 }
 

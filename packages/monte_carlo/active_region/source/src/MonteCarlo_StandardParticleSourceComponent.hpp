@@ -182,6 +182,10 @@ private:
   void initializeDimensionCounters(
                      std::vector<DimensionCounterMap>& dimension_counters );
 
+  // Initialize the dimension counters
+  void initializeDimensionCounters(
+           const Utility::ArrayView<DimensionCounterMap>& dimension_counters );
+
   // Save the data to an archive
   template<typename Archive>
   void save( Archive& ar, const unsigned version ) const;

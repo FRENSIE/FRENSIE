@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+#ifndef MONTE_CARLO_MATERIAL_PARTICLE_RESPONSE_FUNCTION_DEF_HPP
+#define MONTE_CARLO_MATERIAL_PARTICLE_RESPONSE_FUNCTION_DEF_HPP
+
 // FRENSIE Includes
 #include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -170,6 +173,8 @@ EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::MaterialParticleRe
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( AdjointElectronMaterialParticleResponseFunction, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::AdjointElectronMaterial> );
 EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::AdjointElectronMaterial> );
+
+#endif // end MONTE_CARLO_MATERIAL_PARTICLE_RESPONSE_FUNCTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_MaterialParticleResponseFunction_def.hpp

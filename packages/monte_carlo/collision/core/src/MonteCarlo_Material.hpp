@@ -65,7 +65,7 @@ public:
   //! Return the number density (atom/b-cm)
   double getNumberDensity() const;
 
-  //! Return the scattering center at the desired index
+  //! Return the scattering center
   const std::shared_ptr<const ScatteringCenter>&
   getScatteringCenter( const std::string& name ) const;
 
