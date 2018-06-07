@@ -176,7 +176,7 @@ void Estimator::reduceCollectionAndReturnReducedMoments(
     Utility::allReduce( *comm,
                         Utility::getCurrentScores<N>( collection ),
                         reduced_first_moments.data(),
-                        Utility::REDUCE_SUM);
+                        std::plus<double>());
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
                            "unable to perform mpi reduction over moments of "

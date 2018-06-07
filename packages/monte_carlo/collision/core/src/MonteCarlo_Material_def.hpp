@@ -76,7 +76,7 @@ Material<ScatteringCenter>::Material(
 
     Utility::get<1>( d_scattering_centers[i] ) = scattering_center->second;
 
-    TEST_FOR_EXCEPTION( d_scattering_center_names.find( scattering_center_names[i] ),
+    TEST_FOR_EXCEPTION( d_scattering_center_names.find( scattering_center_names[i] ) != d_scattering_center_names.end(),
                         std::runtime_error,
                         "scattering center " << scattering_center_names[i] <<
                         " is already used by the material!" );
