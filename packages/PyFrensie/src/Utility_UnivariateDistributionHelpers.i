@@ -79,31 +79,10 @@ DIST_NAME( DISTRIBUTION, PARAMS )::getUpperBoundOfIndepVar;
 "getLowerBoundOfIndepVar(RENAMED_DISTRIBUTION self) -> double" )
 DIST_NAME( DISTRIBUTION, PARAMS )::getLowerBoundOfIndepVar;
 
-// SWIG will not parse typedefs. Create some typemaps that map the
-// typedefs to their true type (double)
-%typemap(in) DIST_NAME( DISTRIBUTION, PARAMS )::IndepQuantity
-{
-  $1 = PyFloat_AsDouble($input);
-}
-
-%typemap(typecheck, precedence=90) (DIST_NAME( DISTRIBUTION, PARAMS )::IndepQuantity) {
-  $1 = (PyFloat_Check($input) || PyInt_Check($input) || PyLong_Check($input)) ? 1 : 0;
-}
-
-%typemap(out) DIST_NAME( DISTRIBUTION, PARAMS )::IndepQuantity
-{
-  $result = PyFloat_FromDouble($1);
-}
-
-%typemap(out) DIST_NAME( DISTRIBUTION, PARAMS )::DepQuantity
-{
-  $result = PyFloat_FromDouble($1);
-}
-
-%typemap(out) DIST_NAME( DISTRIBUTION, PARAMS )::InverseIndepQuantity
-{
-  $result = PyFloat_FromDouble($1);
-}
+// Apply typemaps for various class typedefs
+%apply double {DIST_NAME( DISTRIBUTION, PARAMS )::DepQuantity}
+%apply double {DIST_NAME( DISTRIBUTION, PARAMS )::IndepQuantity}
+%apply double {DIST_NAME( DISTRIBUTION, PARAMS )::InverseIndepQuantity}
 
 %template(RENAMED_DISTRIBUTION) DIST_NAME( DISTRIBUTION, PARAMS );
 

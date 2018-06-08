@@ -55,6 +55,7 @@ will only be accessed under the Utility.Distribution sub-module.
 
 // FRENSIE Includes
 #include "PyFrensie_PythonTypeTraits.hpp"
+#include "Utility_UnivariateDistributionType.hpp"
 #include "Utility_DistributionTraits.hpp"
 #include "Utility_UnivariateDistribution.hpp"
 #include "Utility_TabularUnivariateDistribution.hpp"
@@ -120,6 +121,12 @@ typedef unsigned int size_t;
 %ignore *::toStream;
 %ignore *::fromStream;
 %ignore *::fromUnitlessDistribution;
+
+//---------------------------------------------------------------------------//
+// Add support for the UnivariateDistributionType
+//---------------------------------------------------------------------------//
+
+%include "Utility_UnivariateDistributionType.hpp"
 
 //---------------------------------------------------------------------------//
 // Add support for the UnivariateDistribution

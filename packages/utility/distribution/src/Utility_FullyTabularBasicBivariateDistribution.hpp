@@ -77,10 +77,6 @@ public:
   virtual ~UnitAwareFullyTabularBasicBivariateDistribution()
   { /* ... */ }
 
-  using BaseType::evaluate;
-  using BaseType::evaluateSecondaryConditionalPDF;
-  using BaseType::sampleSecondaryConditional;
-
   //! Evaluate the distribution
   virtual DepQuantity evaluate(
             const PrimaryIndepQuantity primary_indep_var_value,
@@ -120,6 +116,10 @@ public:
               min_secondary_indep_var_functor,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
               max_secondary_indep_var_functor ) const;
+
+  using BaseType::evaluate;
+  using BaseType::evaluateSecondaryConditionalPDF;
+  using BaseType::sampleSecondaryConditional;
 
   //! Return a random sample from the secondary conditional PDF and the index
   virtual SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
