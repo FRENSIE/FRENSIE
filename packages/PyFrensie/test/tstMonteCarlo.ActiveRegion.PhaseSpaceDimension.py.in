@@ -1,0 +1,2255 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.ActiveRegion.PhaseSpaceDimension class unit tests
+#  \file   tstMonteCarlo.ActiveRegion.PhaseSpaceDimension.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.ActiveRegion.PhaseSpaceDimension class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import os
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Utility = importPyFrensieModuleFromBuildDir('Utility')
+Prng = importPyFrensieModuleFromBuildDir('Utility.Prng')
+Distribution = importPyFrensieModuleFromBuildDir('Utility.Distribution')
+Coordinate = importPyFrensieModuleFromBuildDir('Utility.Coordinate')
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+PhaseSpaceDimension = importPyFrensieModuleFromBuildDir('MonteCarlo.ActiveRegion')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the ImportanceSampledIndependentPhaseSpaceDimensionDistribution class
+class ImportanceSampledIndependentPhaseSpaceDimensionDistributionTestCase_Primary_Spatial(unittest.TestCase):
+    "TestCase class for MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution class"
+
+    def setUp(self):
+        self.spatial_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+        self.directional_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+
+    def testGetDimension(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution getDimension"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimarySpatialDimensionDistribution( distribution, importance_distribution )
+        self.assertEqual( dimension_distribution.getDimension(), PhaseSpaceDimension.PRIMARY_SPATIAL_DIMENSION )
+
+    def testGetDimensionClass(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution getDimensionClass"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimarySpatialDimensionDistribution( distribution, importance_distribution )
+
+        self.assertEqual( dimension_distribution.getDimensionClass(),
+                                PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getClass() )
+
+
+    def testGetDistributionTypeName(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution getDistributionTypeName"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimarySpatialDimensionDistribution( distribution, importance_distribution )
+
+        self.assertEqual( dimension_distribution.getDistributionTypeName(), "Exponential Distribution" )
+
+
+    def testIsIndependent(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isIndependent"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimarySpatialDimensionDistribution( distribution, importance_distribution )
+
+        self.assertTrue( dimension_distribution.isIndependent() )
+
+    def testIsDependentOnDimension(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isDependentOnDimension"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimarySpatialDimensionDistribution( distribution, importance_distribution )
+
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.PRIMARY_SPATIAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.SECONDARY_SPATIAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.TERTIARY_SPATIAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.PRIMARY_DIRECTIONAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.SECONDARY_DIRECTIONAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.TERTIARY_DIRECTIONAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.ENERGY_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.TIME_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.WEIGHT_DIMENSION ) )
+
+    def testIsContinuous(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isContinuous"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimarySpatialDimensionDistribution( distribution, importance_distribution )
+
+        self.assertTrue( dimension_distribution.isContinuous() )
+
+    def testIsTabular(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isTabular"
+
+        distribution_a = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        distribution_b = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimarySpatialDimensionDistribution( distribution_a, distribution_b )
+
+        self.assertFalse( dimension_distribution.isTabular() )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimarySpatialDimensionDistribution( distribution_b, distribution_a )
+
+        self.assertTrue( dimension_distribution.isTabular() )
+
+    def testIsUniform(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isUniform"
+
+        distribution_a = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        distribution_b = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimarySpatialDimensionDistribution( distribution_a, distribution_b )
+
+        self.assertFalse( dimension_distribution.isUniform() )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimarySpatialDimensionDistribution( distribution_b, distribution_a )
+
+        self.assertTrue( dimension_distribution.isUniform() )
+
+    def testHasForm(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution hasForm"
+
+        distribution_a = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        distribution_b = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimarySpatialDimensionDistribution( distribution_a, distribution_b )
+
+        self.assertFalse( dimension_distribution.hasForm( Distribution.UNIFORM_DISTRIBUTION ) )
+        self.assertTrue( dimension_distribution.hasForm( Distribution.EXPONENTIAL_DISTRIBUTION ) )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimarySpatialDimensionDistribution( distribution_b, distribution_a )
+
+        self.assertTrue( dimension_distribution.hasForm( Distribution.UNIFORM_DISTRIBUTION ) )
+        self.assertFalse( dimension_distribution.hasForm( Distribution.EXPONENTIAL_DISTRIBUTION ) )
+
+    def testEvaluateWithoutCascade(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution evaluateWithoutCascade"
+
+        distribution = Distribution.UniformDistribution( 0.5, 0.9, 0.5 )
+        importance_distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 0.9 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimarySpatialDimensionDistribution( distribution, importance_distribution )
+
+        point = PhaseSpaceDimension.PhaseSpacePoint( self.spatial_coord_conversion_policy, self.directional_coord_conversion_policy )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.1 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.0 )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.5 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.5 )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.7 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.5 )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.9 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.5 )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 1.0 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.0 )
+
+    def testSampleWithoutCascade(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution sampleWithoutCascade"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.1, 0.9 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.1, 0.9, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimarySpatialDimensionDistribution( distribution, importance_distribution )
+
+        point = PhaseSpaceDimension.PhaseSpacePoint( self.spatial_coord_conversion_policy, self.directional_coord_conversion_policy )
+
+        fake_stream = [ 0.0, 0.5, 1.0 - 1e-15 ]
+        Prng.RandomNumberGenerator.setFakeStream(fake_stream )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.1 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                                1.4527729767328754,
+                                delta=1e-12*1.4527729767328754 )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.5 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                                0.9738228486429138,
+                                delta=1e-12*0.9738228486429138 )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.9, delta=1e-15*0.9 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                                0.6527729767328754,
+                                delta=1e-12*0.6527729767328754 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSampleAndRecordTrialsWithoutCascade(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution sampleAndRecordTrialsWithoutCascade"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.1, 0.9 )
+        importance_distribution = Distribution.UniformDistribution( 0.1, 0.9, 0.5 )
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimarySpatialDimensionDistribution( distribution, importance_distribution )
+
+        point = PhaseSpaceDimension.PhaseSpacePoint( self.spatial_coord_conversion_policy, self.directional_coord_conversion_policy )
+
+        trials = 0
+
+        fake_stream = [ 0.0, 0.5, 1.0 - 1e-15 ]
+        Prng.RandomNumberGenerator.setFakeStream(fake_stream )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.1 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                                1.4527729767328754,
+                                delta=1e-12*1.4527729767328754 )
+        self.assertEqual( trials, 1 )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.5 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                                0.9738228486429138,
+                                delta=1e-12*0.9738228486429138 )
+        self.assertEqual( trials, 2 )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.9, delta=11e-15*0.9 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                                0.6527729767328754,
+                                delta=1e-12*0.6527729767328754 )
+        self.assertEqual( trials, 3 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSetDimensionValueAndApplyWeight(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution setDimensionValueAndApplyWeight"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.1, 0.9 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.1, 0.9, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimarySpatialDimensionDistribution( distribution, importance_distribution )
+
+        point = PhaseSpaceDimension.PhaseSpacePoint( self.spatial_coord_conversion_policy, self.directional_coord_conversion_policy )
+
+        dimension_distribution.setDimensionValueAndApplyWeight( point, 0.1 )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.1 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                                1.8159662209160943,
+                                delta=1e-12*1.8159662209160943 )
+
+        dimension_distribution.setDimensionValueAndApplyWeight( point, 0.5 )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.5 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                                1.2172785608036423,
+                                delta=1e-12*1.2172785608036423 )
+
+        dimension_distribution.setDimensionValueAndApplyWeight( point, 0.9 )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.9 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                                0.8159662209160943,
+                                delta=1e-12*0.8159662209160943 )
+
+
+#-----------------------------------------------------------------------------#
+# Test the ImportanceSampledIndependentPhaseSpaceDimensionDistribution class
+class ImportanceSampledIndependentPhaseSpaceDimensionDistributionTestCase_Primary_Directional(unittest.TestCase):
+    "TestCase class for MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution class"
+
+    def setUp(self):
+        self.spatial_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+        self.directional_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+
+    def testGetDimension(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution getDimension"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimaryDirectionalDimensionDistribution( distribution, importance_distribution )
+        self.assertEqual( dimension_distribution.getDimension(), PhaseSpaceDimension.PRIMARY_DIRECTIONAL_DIMENSION )
+
+    def testGetDimensionClass(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution getDimensionClass"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimaryDirectionalDimensionDistribution( distribution, importance_distribution )
+
+        self.assertEqual( dimension_distribution.getDimensionClass(),
+                          PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.getClass() )
+
+
+    def testGetDistributionTypeName(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution getDistributionTypeName"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimaryDirectionalDimensionDistribution( distribution, importance_distribution )
+
+        self.assertEqual( dimension_distribution.getDistributionTypeName(), "Exponential Distribution" )
+
+
+    def testIsIndependent(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isIndependent"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimaryDirectionalDimensionDistribution( distribution, importance_distribution )
+
+        self.assertTrue( dimension_distribution.isIndependent() )
+
+    def testIsDependentOnDimension(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isDependentOnDimension"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimaryDirectionalDimensionDistribution( distribution, importance_distribution )
+
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.PRIMARY_SPATIAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.SECONDARY_SPATIAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.TERTIARY_SPATIAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.PRIMARY_DIRECTIONAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.SECONDARY_DIRECTIONAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.TERTIARY_DIRECTIONAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.ENERGY_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.TIME_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.WEIGHT_DIMENSION ) )
+
+    def testIsContinuous(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isContinuous"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimaryDirectionalDimensionDistribution( distribution, importance_distribution )
+
+        self.assertTrue( dimension_distribution.isContinuous() )
+
+    def testIsTabular(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isTabular"
+
+        distribution_a = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        distribution_b = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimaryDirectionalDimensionDistribution( distribution_a, distribution_b )
+
+        self.assertFalse( dimension_distribution.isTabular() )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimaryDirectionalDimensionDistribution( distribution_b, distribution_a )
+
+        self.assertTrue( dimension_distribution.isTabular() )
+
+    def testIsUniform(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isUniform"
+
+        distribution_a = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        distribution_b = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimaryDirectionalDimensionDistribution( distribution_a, distribution_b )
+
+        self.assertFalse( dimension_distribution.isUniform() )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimaryDirectionalDimensionDistribution( distribution_b, distribution_a )
+
+        self.assertTrue( dimension_distribution.isUniform() )
+
+    def testHasForm(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution hasForm"
+
+        distribution_a = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        distribution_b = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimaryDirectionalDimensionDistribution( distribution_a, distribution_b )
+
+        self.assertFalse( dimension_distribution.hasForm( Distribution.UNIFORM_DISTRIBUTION ) )
+        self.assertTrue( dimension_distribution.hasForm( Distribution.EXPONENTIAL_DISTRIBUTION ) )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimaryDirectionalDimensionDistribution( distribution_b, distribution_a )
+
+        self.assertTrue( dimension_distribution.hasForm( Distribution.UNIFORM_DISTRIBUTION ) )
+        self.assertFalse( dimension_distribution.hasForm( Distribution.EXPONENTIAL_DISTRIBUTION ) )
+
+    def testEvaluateWithoutCascade(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution evaluateWithoutCascade"
+
+        distribution = Distribution.UniformDistribution( 0.5, 0.9, 0.5 )
+        importance_distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 0.9 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimaryDirectionalDimensionDistribution( distribution, importance_distribution )
+
+        point = PhaseSpaceDimension.PhaseSpacePoint( self.spatial_coord_conversion_policy, self.directional_coord_conversion_policy )
+
+        PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.setCoordinate( point, 0.1 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.0 )
+
+        PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.setCoordinate( point, 0.5 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.5 )
+
+        PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.setCoordinate( point, 0.7 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.5 )
+
+        PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.setCoordinate( point, 0.9 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.5 )
+
+        PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.setCoordinate( point, 1.0 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.0 )
+
+    def testSampleWithoutCascade(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution sampleWithoutCascade"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.1, 0.9 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.1, 0.9, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimaryDirectionalDimensionDistribution( distribution, importance_distribution )
+
+        point = PhaseSpaceDimension.PhaseSpacePoint( self.spatial_coord_conversion_policy, self.directional_coord_conversion_policy )
+
+        fake_stream = [ 0.0, 0.5, 1.0 - 1e-15 ]
+        Prng.RandomNumberGenerator.setFakeStream(fake_stream )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.getCoordinate( point ), 0.1 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.getCoordinateWeight( point ),
+                                1.4527729767328754,
+                                delta=1e-12*1.4527729767328754 )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.getCoordinate( point ), 0.5 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.getCoordinateWeight( point ),
+                                0.9738228486429138,
+                                delta=1e-12*0.9738228486429138 )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.getCoordinate( point ), 0.9, delta=1e-15*0.9 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.getCoordinateWeight( point ),
+                                0.6527729767328754,
+                                delta=1e-12*0.6527729767328754 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSampleAndRecordTrialsWithoutCascade(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution sampleAndRecordTrialsWithoutCascade"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.1, 0.9 )
+        importance_distribution = Distribution.UniformDistribution( 0.1, 0.9, 0.5 )
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimaryDirectionalDimensionDistribution( distribution, importance_distribution )
+
+        point = PhaseSpaceDimension.PhaseSpacePoint( self.spatial_coord_conversion_policy, self.directional_coord_conversion_policy )
+
+        trials = 0
+
+        fake_stream = [ 0.0, 0.5, 1.0 - 1e-15 ]
+        Prng.RandomNumberGenerator.setFakeStream(fake_stream )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.getCoordinate( point ), 0.1 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.getCoordinateWeight( point ),
+                                1.4527729767328754,
+                                delta=1e-12*1.4527729767328754 )
+        self.assertEqual( trials, 1 )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.getCoordinate( point ), 0.5 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.getCoordinateWeight( point ),
+                                0.9738228486429138,
+                                delta=1e-12*0.9738228486429138 )
+        self.assertEqual( trials, 2 )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.getCoordinate( point ), 0.9, delta=11e-15*0.9 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.getCoordinateWeight( point ),
+                                0.6527729767328754,
+                                delta=1e-12*0.6527729767328754 )
+        self.assertEqual( trials, 3 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSetDimensionValueAndApplyWeight(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution setDimensionValueAndApplyWeight"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.1, 0.9 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.1, 0.9, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentPrimaryDirectionalDimensionDistribution( distribution, importance_distribution )
+
+        point = PhaseSpaceDimension.PhaseSpacePoint( self.spatial_coord_conversion_policy, self.directional_coord_conversion_policy )
+
+        dimension_distribution.setDimensionValueAndApplyWeight( point, 0.1 )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.getCoordinate( point ), 0.1 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.getCoordinateWeight( point ),
+                                1.8159662209160943,
+                                delta=1e-12*1.8159662209160943 )
+
+        dimension_distribution.setDimensionValueAndApplyWeight( point, 0.5 )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.getCoordinate( point ), 0.5 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.getCoordinateWeight( point ),
+                                1.2172785608036423,
+                                delta=1e-12*1.2172785608036423 )
+
+        dimension_distribution.setDimensionValueAndApplyWeight( point, 0.9 )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.getCoordinate( point ), 0.9 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimaryDirectionalDimensionTraits.getCoordinateWeight( point ),
+                                0.8159662209160943,
+                                delta=1e-12*0.8159662209160943 )
+
+#-----------------------------------------------------------------------------#
+# Test the ImportanceSampledIndependentPhaseSpaceDimensionDistribution class
+class ImportanceSampledIndependentPhaseSpaceDimensionDistributionTestCase_Energy(unittest.TestCase):
+    "TestCase class for MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution class"
+
+    def setUp(self):
+        self.spatial_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+        self.directional_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+
+    def testGetDimension(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution getDimension"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentEnergyDimensionDistribution( distribution, importance_distribution )
+        self.assertEqual( dimension_distribution.getDimension(), PhaseSpaceDimension.ENERGY_DIMENSION )
+
+    def testGetDimensionClass(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution getDimensionClass"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentEnergyDimensionDistribution( distribution, importance_distribution )
+
+        self.assertEqual( dimension_distribution.getDimensionClass(),
+                          PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.getClass() )
+
+
+    def testGetDistributionTypeName(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution getDistributionTypeName"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentEnergyDimensionDistribution( distribution, importance_distribution )
+
+        self.assertEqual( dimension_distribution.getDistributionTypeName(), "Exponential Distribution" )
+
+
+    def testIsIndependent(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isIndependent"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentEnergyDimensionDistribution( distribution, importance_distribution )
+
+        self.assertTrue( dimension_distribution.isIndependent() )
+
+    def testIsDependentOnDimension(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isDependentOnDimension"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentEnergyDimensionDistribution( distribution, importance_distribution )
+
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.PRIMARY_SPATIAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.SECONDARY_SPATIAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.TERTIARY_SPATIAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.PRIMARY_DIRECTIONAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.SECONDARY_DIRECTIONAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.TERTIARY_DIRECTIONAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.ENERGY_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.TIME_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.WEIGHT_DIMENSION ) )
+
+    def testIsContinuous(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isContinuous"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentEnergyDimensionDistribution( distribution, importance_distribution )
+
+        self.assertTrue( dimension_distribution.isContinuous() )
+
+    def testIsTabular(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isTabular"
+
+        distribution_a = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        distribution_b = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentEnergyDimensionDistribution( distribution_a, distribution_b )
+
+        self.assertFalse( dimension_distribution.isTabular() )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentEnergyDimensionDistribution( distribution_b, distribution_a )
+
+        self.assertTrue( dimension_distribution.isTabular() )
+
+    def testIsUniform(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isUniform"
+
+        distribution_a = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        distribution_b = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentEnergyDimensionDistribution( distribution_a, distribution_b )
+
+        self.assertFalse( dimension_distribution.isUniform() )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentEnergyDimensionDistribution( distribution_b, distribution_a )
+
+        self.assertTrue( dimension_distribution.isUniform() )
+
+    def testHasForm(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution hasForm"
+
+        distribution_a = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        distribution_b = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentEnergyDimensionDistribution( distribution_a, distribution_b )
+
+        self.assertFalse( dimension_distribution.hasForm( Distribution.UNIFORM_DISTRIBUTION ) )
+        self.assertTrue( dimension_distribution.hasForm( Distribution.EXPONENTIAL_DISTRIBUTION ) )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentEnergyDimensionDistribution( distribution_b, distribution_a )
+
+        self.assertTrue( dimension_distribution.hasForm( Distribution.UNIFORM_DISTRIBUTION ) )
+        self.assertFalse( dimension_distribution.hasForm( Distribution.EXPONENTIAL_DISTRIBUTION ) )
+
+    def testEvaluateWithoutCascade(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution evaluateWithoutCascade"
+
+        distribution = Distribution.UniformDistribution( 0.5, 0.9, 0.5 )
+        importance_distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 0.9 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentEnergyDimensionDistribution( distribution, importance_distribution )
+
+        point = PhaseSpaceDimension.PhaseSpacePoint( self.spatial_coord_conversion_policy, self.directional_coord_conversion_policy )
+
+        PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.setCoordinate( point, 0.1 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.0 )
+
+        PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.setCoordinate( point, 0.5 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.5 )
+
+        PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.setCoordinate( point, 0.7 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.5 )
+
+        PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.setCoordinate( point, 0.9 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.5 )
+
+        PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.setCoordinate( point, 1.0 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.0 )
+
+    def testSampleWithoutCascade(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution sampleWithoutCascade"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.1, 0.9 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.1, 0.9, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentEnergyDimensionDistribution( distribution, importance_distribution )
+
+        point = PhaseSpaceDimension.PhaseSpacePoint( self.spatial_coord_conversion_policy, self.directional_coord_conversion_policy )
+
+        fake_stream = [ 0.0, 0.5, 1.0 - 1e-15 ]
+        Prng.RandomNumberGenerator.setFakeStream(fake_stream )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.getCoordinate( point ), 0.1 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.getCoordinateWeight( point ),
+                                1.4527729767328754,
+                                delta=1e-12*1.4527729767328754 )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.getCoordinate( point ), 0.5 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.getCoordinateWeight( point ),
+                                0.9738228486429138,
+                                delta=1e-12*0.9738228486429138 )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.getCoordinate( point ), 0.9, delta=1e-15*0.9 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.getCoordinateWeight( point ),
+                                0.6527729767328754,
+                                delta=1e-12*0.6527729767328754 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSampleAndRecordTrialsWithoutCascade(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution sampleAndRecordTrialsWithoutCascade"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.1, 0.9 )
+        importance_distribution = Distribution.UniformDistribution( 0.1, 0.9, 0.5 )
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentEnergyDimensionDistribution( distribution, importance_distribution )
+
+        point = PhaseSpaceDimension.PhaseSpacePoint( self.spatial_coord_conversion_policy, self.directional_coord_conversion_policy )
+
+        trials = 0
+
+        fake_stream = [ 0.0, 0.5, 1.0 - 1e-15 ]
+        Prng.RandomNumberGenerator.setFakeStream(fake_stream )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.getCoordinate( point ), 0.1 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.getCoordinateWeight( point ),
+                                1.4527729767328754,
+                                delta=1e-12*1.4527729767328754 )
+        self.assertEqual( trials, 1 )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.getCoordinate( point ), 0.5 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.getCoordinateWeight( point ),
+                                0.9738228486429138,
+                                delta=1e-12*0.9738228486429138 )
+        self.assertEqual( trials, 2 )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.getCoordinate( point ), 0.9, delta=11e-15*0.9 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.getCoordinateWeight( point ),
+                                0.6527729767328754,
+                                delta=1e-12*0.6527729767328754 )
+        self.assertEqual( trials, 3 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSetDimensionValueAndApplyWeight(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution setDimensionValueAndApplyWeight"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.1, 0.9 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.1, 0.9, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentEnergyDimensionDistribution( distribution, importance_distribution )
+
+        point = PhaseSpaceDimension.PhaseSpacePoint( self.spatial_coord_conversion_policy, self.directional_coord_conversion_policy )
+
+        dimension_distribution.setDimensionValueAndApplyWeight( point, 0.1 )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.getCoordinate( point ), 0.1 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.getCoordinateWeight( point ),
+                                1.8159662209160943,
+                                delta=1e-12*1.8159662209160943 )
+
+        dimension_distribution.setDimensionValueAndApplyWeight( point, 0.5 )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.getCoordinate( point ), 0.5 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.getCoordinateWeight( point ),
+                                1.2172785608036423,
+                                delta=1e-12*1.2172785608036423 )
+
+        dimension_distribution.setDimensionValueAndApplyWeight( point, 0.9 )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.getCoordinate( point ), 0.9 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpaceEnergyDimensionTraits.getCoordinateWeight( point ),
+                                0.8159662209160943,
+                                delta=1e-12*0.8159662209160943 )
+
+#-----------------------------------------------------------------------------#
+# Test the ImportanceSampledIndependentPhaseSpaceDimensionDistribution class
+class ImportanceSampledIndependentPhaseSpaceDimensionDistributionTestCase_Time(unittest.TestCase):
+    "TestCase class for MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution class"
+
+    def setUp(self):
+        self.spatial_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+        self.directional_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+
+    def testGetDimension(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution getDimension"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentTimeDimensionDistribution( distribution, importance_distribution )
+        self.assertEqual( dimension_distribution.getDimension(), PhaseSpaceDimension.TIME_DIMENSION )
+
+    def testGetDimensionClass(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution getDimensionClass"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentTimeDimensionDistribution( distribution, importance_distribution )
+
+        self.assertEqual( dimension_distribution.getDimensionClass(),
+                          PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.getClass() )
+
+
+    def testGetDistributionTypeName(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution getDistributionTypeName"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentTimeDimensionDistribution( distribution, importance_distribution )
+
+        self.assertEqual( dimension_distribution.getDistributionTypeName(), "Exponential Distribution" )
+
+
+    def testIsIndependent(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isIndependent"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentTimeDimensionDistribution( distribution, importance_distribution )
+
+        self.assertTrue( dimension_distribution.isIndependent() )
+
+    def testIsDependentOnDimension(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isDependentOnDimension"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentTimeDimensionDistribution( distribution, importance_distribution )
+
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.PRIMARY_SPATIAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.SECONDARY_SPATIAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.TERTIARY_SPATIAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.PRIMARY_DIRECTIONAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.SECONDARY_DIRECTIONAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.TERTIARY_DIRECTIONAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.ENERGY_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.TIME_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.WEIGHT_DIMENSION ) )
+
+    def testIsContinuous(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isContinuous"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentTimeDimensionDistribution( distribution, importance_distribution )
+
+        self.assertTrue( dimension_distribution.isContinuous() )
+
+    def testIsTabular(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isTabular"
+
+        distribution_a = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        distribution_b = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentTimeDimensionDistribution( distribution_a, distribution_b )
+
+        self.assertFalse( dimension_distribution.isTabular() )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentTimeDimensionDistribution( distribution_b, distribution_a )
+
+        self.assertTrue( dimension_distribution.isTabular() )
+
+    def testIsUniform(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isUniform"
+
+        distribution_a = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        distribution_b = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentTimeDimensionDistribution( distribution_a, distribution_b )
+
+        self.assertFalse( dimension_distribution.isUniform() )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentTimeDimensionDistribution( distribution_b, distribution_a )
+
+        self.assertTrue( dimension_distribution.isUniform() )
+
+    def testHasForm(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution hasForm"
+
+        distribution_a = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        distribution_b = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentTimeDimensionDistribution( distribution_a, distribution_b )
+
+        self.assertFalse( dimension_distribution.hasForm( Distribution.UNIFORM_DISTRIBUTION ) )
+        self.assertTrue( dimension_distribution.hasForm( Distribution.EXPONENTIAL_DISTRIBUTION ) )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentTimeDimensionDistribution( distribution_b, distribution_a )
+
+        self.assertTrue( dimension_distribution.hasForm( Distribution.UNIFORM_DISTRIBUTION ) )
+        self.assertFalse( dimension_distribution.hasForm( Distribution.EXPONENTIAL_DISTRIBUTION ) )
+
+    def testEvaluateWithoutCascade(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution evaluateWithoutCascade"
+
+        distribution = Distribution.UniformDistribution( 0.5, 0.9, 0.5 )
+        importance_distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 0.9 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentTimeDimensionDistribution( distribution, importance_distribution )
+
+        point = PhaseSpaceDimension.PhaseSpacePoint( self.spatial_coord_conversion_policy, self.directional_coord_conversion_policy )
+
+        PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.setCoordinate( point, 0.1 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.0 )
+
+        PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.setCoordinate( point, 0.5 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.5 )
+
+        PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.setCoordinate( point, 0.7 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.5 )
+
+        PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.setCoordinate( point, 0.9 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.5 )
+
+        PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.setCoordinate( point, 1.0 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.0 )
+
+    def testSampleWithoutCascade(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution sampleWithoutCascade"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.1, 0.9 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.1, 0.9, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentTimeDimensionDistribution( distribution, importance_distribution )
+
+        point = PhaseSpaceDimension.PhaseSpacePoint( self.spatial_coord_conversion_policy, self.directional_coord_conversion_policy )
+
+        fake_stream = [ 0.0, 0.5, 1.0 - 1e-15 ]
+        Prng.RandomNumberGenerator.setFakeStream(fake_stream )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.getCoordinate( point ), 0.1 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.getCoordinateWeight( point ),
+                                1.4527729767328754,
+                                delta=1e-12*1.4527729767328754 )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.getCoordinate( point ), 0.5 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.getCoordinateWeight( point ),
+                                0.9738228486429138,
+                                delta=1e-12*0.9738228486429138 )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.getCoordinate( point ), 0.9, delta=1e-15*0.9 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.getCoordinateWeight( point ),
+                                0.6527729767328754,
+                                delta=1e-12*0.6527729767328754 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSampleAndRecordTrialsWithoutCascade(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution sampleAndRecordTrialsWithoutCascade"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.1, 0.9 )
+        importance_distribution = Distribution.UniformDistribution( 0.1, 0.9, 0.5 )
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentTimeDimensionDistribution( distribution, importance_distribution )
+
+        point = PhaseSpaceDimension.PhaseSpacePoint( self.spatial_coord_conversion_policy, self.directional_coord_conversion_policy )
+
+        trials = 0
+
+        fake_stream = [ 0.0, 0.5, 1.0 - 1e-15 ]
+        Prng.RandomNumberGenerator.setFakeStream(fake_stream )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.getCoordinate( point ), 0.1 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.getCoordinateWeight( point ),
+                                1.4527729767328754,
+                                delta=1e-12*1.4527729767328754 )
+        self.assertEqual( trials, 1 )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.getCoordinate( point ), 0.5 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.getCoordinateWeight( point ),
+                                0.9738228486429138,
+                                delta=1e-12*0.9738228486429138 )
+        self.assertEqual( trials, 2 )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.getCoordinate( point ), 0.9, delta=11e-15*0.9 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.getCoordinateWeight( point ),
+                                0.6527729767328754,
+                                delta=1e-12*0.6527729767328754 )
+        self.assertEqual( trials, 3 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSetDimensionValueAndApplyWeight(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution setDimensionValueAndApplyWeight"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.1, 0.9 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.1, 0.9, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentTimeDimensionDistribution( distribution, importance_distribution )
+
+        point = PhaseSpaceDimension.PhaseSpacePoint( self.spatial_coord_conversion_policy, self.directional_coord_conversion_policy )
+
+        dimension_distribution.setDimensionValueAndApplyWeight( point, 0.1 )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.getCoordinate( point ), 0.1 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.getCoordinateWeight( point ),
+                                1.8159662209160943,
+                                delta=1e-12*1.8159662209160943 )
+
+        dimension_distribution.setDimensionValueAndApplyWeight( point, 0.5 )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.getCoordinate( point ), 0.5 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.getCoordinateWeight( point ),
+                                1.2172785608036423,
+                                delta=1e-12*1.2172785608036423 )
+
+        dimension_distribution.setDimensionValueAndApplyWeight( point, 0.9 )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.getCoordinate( point ), 0.9 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpaceTimeDimensionTraits.getCoordinateWeight( point ),
+                                0.8159662209160943,
+                                delta=1e-12*0.8159662209160943 )
+
+#-----------------------------------------------------------------------------#
+# Test the ImportanceSampledIndependentPhaseSpaceDimensionDistribution class
+class ImportanceSampledIndependentPhaseSpaceDimensionDistributionTestCase_Weight(unittest.TestCase):
+    "TestCase class for MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution class"
+
+    def setUp(self):
+        self.spatial_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+        self.directional_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+
+    def testGetDimension(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution getDimension"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentWeightDimensionDistribution( distribution, importance_distribution )
+        self.assertEqual( dimension_distribution.getDimension(), PhaseSpaceDimension.WEIGHT_DIMENSION )
+
+    def testGetDimensionClass(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution getDimensionClass"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentWeightDimensionDistribution( distribution, importance_distribution )
+
+        self.assertEqual( dimension_distribution.getDimensionClass(),
+                          PhaseSpaceDimension.PhaseSpaceWeightDimensionTraits.getClass() )
+
+
+    def testGetDistributionTypeName(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution getDistributionTypeName"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentWeightDimensionDistribution( distribution, importance_distribution )
+
+        self.assertEqual( dimension_distribution.getDistributionTypeName(), "Exponential Distribution" )
+
+
+    def testIsIndependent(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isIndependent"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentWeightDimensionDistribution( distribution, importance_distribution )
+
+        self.assertTrue( dimension_distribution.isIndependent() )
+
+    def testIsDependentOnDimension(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isDependentOnDimension"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentWeightDimensionDistribution( distribution, importance_distribution )
+
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.PRIMARY_SPATIAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.SECONDARY_SPATIAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.TERTIARY_SPATIAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.PRIMARY_DIRECTIONAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.SECONDARY_DIRECTIONAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.TERTIARY_DIRECTIONAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.ENERGY_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.TIME_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.WEIGHT_DIMENSION ) )
+
+    def testIsContinuous(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isContinuous"
+
+        distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        importance_distribution = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentWeightDimensionDistribution( distribution, importance_distribution )
+
+        self.assertTrue( dimension_distribution.isContinuous() )
+
+    def testIsTabular(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isTabular"
+
+        distribution_a = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        distribution_b = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentWeightDimensionDistribution( distribution_a, distribution_b )
+
+        self.assertFalse( dimension_distribution.isTabular() )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentWeightDimensionDistribution( distribution_b, distribution_a )
+
+        self.assertTrue( dimension_distribution.isTabular() )
+
+    def testIsUniform(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution isUniform"
+
+        distribution_a = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        distribution_b = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentWeightDimensionDistribution( distribution_a, distribution_b )
+
+        self.assertFalse( dimension_distribution.isUniform() )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentWeightDimensionDistribution( distribution_b, distribution_a )
+
+        self.assertTrue( dimension_distribution.isUniform() )
+
+    def testHasForm(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution hasForm"
+
+        distribution_a = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 1.5 )
+        distribution_b = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentWeightDimensionDistribution( distribution_a, distribution_b )
+
+        self.assertFalse( dimension_distribution.hasForm( Distribution.UNIFORM_DISTRIBUTION ) )
+        self.assertTrue( dimension_distribution.hasForm( Distribution.EXPONENTIAL_DISTRIBUTION ) )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentWeightDimensionDistribution( distribution_b, distribution_a )
+
+        self.assertTrue( dimension_distribution.hasForm( Distribution.UNIFORM_DISTRIBUTION ) )
+        self.assertFalse( dimension_distribution.hasForm( Distribution.EXPONENTIAL_DISTRIBUTION ) )
+
+    def testEvaluateWithoutCascade(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledIndependentPhaseSpaceDimensionDistribution evaluateWithoutCascade"
+
+        distribution = Distribution.UniformDistribution( 0.5, 0.9, 0.5 )
+        importance_distribution = Distribution.ExponentialDistribution( 1.0, 1.0, 0.5, 0.9 )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledIndependentWeightDimensionDistribution( distribution, importance_distribution )
+
+        point = PhaseSpaceDimension.PhaseSpacePoint( self.spatial_coord_conversion_policy, self.directional_coord_conversion_policy )
+
+        PhaseSpaceDimension.PhaseSpaceWeightDimensionTraits.setCoordinate( point, 0.1 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.0 )
+
+        PhaseSpaceDimension.PhaseSpaceWeightDimensionTraits.setCoordinate( point, 0.5 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.5 )
+
+        PhaseSpaceDimension.PhaseSpaceWeightDimensionTraits.setCoordinate( point, 0.7 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.5 )
+
+        PhaseSpaceDimension.PhaseSpaceWeightDimensionTraits.setCoordinate( point, 0.9 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.5 )
+
+        PhaseSpaceDimension.PhaseSpaceWeightDimensionTraits.setCoordinate( point, 1.0 )
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ), 0.0 )
+
+#-----------------------------------------------------------------------------#
+# Test the ImportanceSampledDependentPhaseSpaceDimensionDistribution class
+class ImportanceSampledDependentPhaseSpaceDimensionDistributionTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.ActiveRegion.ImportanceSampledDependentPhaseSpaceDimensionDistribution class"
+
+    def setUp(self):
+        self.spatial_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+        self.directional_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+
+        tab_dist1 = Distribution.TabularDistribution_LinLin( [1.0, 2.0], [0.5, 0.5] )
+        dist = Distribution.HistogramFullyTabularBasicBivariateDistribution( [0.0,1.0], [tab_dist1, tab_dist1] )
+
+        # Create the distribution
+        primary_grid = ( 0.1, 0.5, 0.9 )
+
+        # Create the secondary distribution in the first bin
+        secondary_dist_0 = Distribution.UniformDistribution( 0.5, 0.9, 0.5 )
+
+        # Create the secondary distribution in the second bin
+        secondary_dist_1 = Distribution.ExponentialDistribution( 1.0, 1.0, 0.6, 0.8 )
+
+        secondary_dists = [secondary_dist_0, secondary_dist_1, secondary_dist_1]
+
+        local_raw_distribution = Distribution.HistogramPartiallyTabularBasicBivariateDistribution( primary_grid, secondary_dists )
+
+        local_raw_distribution.limitToPrimaryIndepLimits()
+
+        self.raw_distribution = local_raw_distribution
+
+        # Create the fully tabular importance distribution
+        primary_grid = ( 0.1, 0.5, 0.9 )
+
+        # Create the secondary distribution in the first bin
+        secondary_dist_0 = Distribution.UniformDistribution( 0.5, 0.9, 0.5 )
+
+        # Create the secondary distribution in the second bin
+        secondary_dist_1 = Distribution.UniformDistribution( 0.6, 0.8, 0.4 )
+
+        secondary_dists = [secondary_dist_0, secondary_dist_1, secondary_dist_1]
+
+        local_raw_importance_distribution = Distribution.HistogramFullyTabularBasicBivariateDistribution( primary_grid, secondary_dists )
+
+        local_raw_importance_distribution.limitToPrimaryIndepLimits()
+
+        self.raw_importance_distribution = local_raw_importance_distribution
+
+    def testConstructor(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledDependentPhaseSpaceDimensionDistribution constructor"
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentPrimarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTertiarySpatialDependentPrimarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledPrimaryDirectionalDependentPrimarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondaryDirectionalDependentPrimarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTertiaryDirectionalDependentPrimarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledEnergyDependentPrimarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTimeDependentPrimarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledWeightDependentPrimarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledPrimarySpatialDependentSecondarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTertiarySpatialDependentSecondarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledPrimaryDirectionalDependentSecondarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondaryDirectionalDependentSecondarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTertiaryDirectionalDependentSecondarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledEnergyDependentSecondarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTimeDependentSecondarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledWeightDependentSecondarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledPrimarySpatialDependentTertiarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentTertiarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledPrimaryDirectionalDependentTertiarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondaryDirectionalDependentTertiarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTertiaryDirectionalDependentTertiarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledEnergyDependentTertiarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTimeDependentTertiarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledWeightDependentTertiarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledPrimarySpatialDependentPrimaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentPrimaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTertiarySpatialDependentPrimaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondaryDirectionalDependentPrimaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTertiaryDirectionalDependentPrimaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledEnergyDependentPrimaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTimeDependentPrimaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledWeightDependentPrimaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledPrimarySpatialDependentSecondaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentSecondaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTertiarySpatialDependentSecondaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledPrimaryDirectionalDependentSecondaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTertiaryDirectionalDependentSecondaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledEnergyDependentSecondaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTimeDependentSecondaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledWeightDependentSecondaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledPrimarySpatialDependentTertiaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentTertiaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTertiarySpatialDependentTertiaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledPrimaryDirectionalDependentTertiaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondaryDirectionalDependentTertiaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledEnergyDependentTertiaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTimeDependentTertiaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledWeightDependentTertiaryDirectionalDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledPrimarySpatialDependentEnergyDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentEnergyDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTertiarySpatialDependentEnergyDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledPrimaryDirectionalDependentEnergyDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondaryDirectionalDependentEnergyDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTertiaryDirectionalDependentEnergyDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTimeDependentEnergyDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledWeightDependentEnergyDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledPrimarySpatialDependentTimeDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentTimeDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTertiarySpatialDependentTimeDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledPrimaryDirectionalDependentTimeDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondaryDirectionalDependentTimeDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTertiaryDirectionalDependentTimeDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledEnergyDependentTimeDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledWeightDependentTimeDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledPrimarySpatialDependentWeightDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentWeightDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTertiarySpatialDependentWeightDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledPrimaryDirectionalDependentWeightDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondaryDirectionalDependentWeightDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTertiaryDirectionalDependentWeightDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledEnergyDependentWeightDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledTimeDependentWeightDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+    def testGetDimension(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledDependentPhaseSpaceDimensionDistribution getDimension"
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentPrimarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        self.assertEqual( dimension_distribution.getDimension(),
+                          PhaseSpaceDimension.PRIMARY_SPATIAL_DIMENSION )
+
+    def testGetDimensionClass(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledDependentPhaseSpaceDimensionDistribution getDimensionClass"
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentPrimarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        self.assertEqual( dimension_distribution.getDimensionClass(),
+                          PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getClass() )
+
+    def testGetParentDimension(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledDependentPhaseSpaceDimensionDistribution getParentDimension"
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentPrimarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        self.assertEqual( dimension_distribution.getParentDimension(),
+                          PhaseSpaceDimension.SECONDARY_SPATIAL_DIMENSION )
+
+    def testGetParentDimensionClass(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledDependentPhaseSpaceDimensionDistribution getParentDimensionClass"
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentPrimarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        self.assertEqual( dimension_distribution.getParentDimensionClass(),
+                          PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getClass() )
+
+    def testGetDistributionTypeName(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledDependentPhaseSpaceDimensionDistribution getDistributionTypeName"
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentPrimarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        self.assertEqual( dimension_distribution.getDistributionTypeName(),
+                          "BasicBivariateDistribution" )
+
+    def testIsIndependent(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledDependentPhaseSpaceDimensionDistribution isIndependent"
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentPrimarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        self.assertFalse( dimension_distribution.isIndependent() )
+
+    def testIsDependentOnDimension(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledDependentPhaseSpaceDimensionDistribution isDependentOnDimension"
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentPrimarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        self.assertTrue( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.SECONDARY_SPATIAL_DIMENSION ) )
+        self.assertFalse( dimension_distribution.isDependentOnDimension( PhaseSpaceDimension.PRIMARY_SPATIAL_DIMENSION ) )
+
+    def testIsContinuous(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledDependentPhaseSpaceDimensionDistribution isContinuous"
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentPrimarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        self.assertTrue( dimension_distribution.isContinuous() )
+
+    def testIsTabular(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledDependentPhaseSpaceDimensionDistribution isTabular"
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentPrimarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        self.assertTrue( dimension_distribution.isTabular() )
+
+    def testIsUniform(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledDependentPhaseSpaceDimensionDistribution isUniform"
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentPrimarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        self.assertFalse( dimension_distribution.isUniform() )
+
+    def testHasForm(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledDependentPhaseSpaceDimensionDistribution hasForm"
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentPrimarySpatialDimensionDistribution(
+                                        self.raw_distribution,
+                                        self.raw_importance_distribution )
+
+        self.assertFalse( dimension_distribution.hasForm( Distribution.DELTA_DISTRIBUTION) )
+        self.assertFalse( dimension_distribution.hasForm( Distribution.UNIFORM_DISTRIBUTION ) )
+
+    def testEvaluateWithoutCascade(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledDependentPhaseSpaceDimensionDistribution evaluateWithoutCascade"
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentPrimarySpatialDimensionDistribution(
+                                               self.raw_distribution,
+                                               self.raw_importance_distribution )
+
+        point = PhaseSpaceDimension.PhaseSpacePoint( self.spatial_coord_conversion_policy,
+                                     self.directional_coord_conversion_policy )
+
+        # Parent dimension value outside of distribution bounds
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 0.05 )
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.1 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                       0.0 )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.5 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                       0.0 )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.9 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                       0.0 )
+
+        # Parent dimension value on first bin
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 0.1 )
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.1 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                       0.0 )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.5 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                       0.5 )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.9 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                       0.5 )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 1.0 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                       0.0 )
+
+        # Parent dimension value inside of first bin
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 0.3 )
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.1 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                       0.0 )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.5 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                       0.5 )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.9 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                       0.5 )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 1.0 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                       0.0 )
+
+        # Parent dimension value on second bin
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 0.5 )
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.1 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                       0.0 )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.6 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                         numpy.exp(-0.6) )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.8 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                          numpy.exp(-0.8) )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 1.0 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                          0.0 )
+
+        # Parent dimension value in second bin
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 0.7 )
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.1 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                          0.0 )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.6 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                          numpy.exp(-0.6) )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.8 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                          numpy.exp(-0.8) )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 1.0 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                          0.0 )
+
+        # Parent dimension value on distribution upper bound
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 0.9 )
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.1 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                          0.0 )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.6 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                          numpy.exp(-0.6) )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.8 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                          numpy.exp(-0.8) )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 1.0 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                          0.0 )
+
+        # Parent dimension outside of distribution bounds
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 1.0 )
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.1 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                          0.0 )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.5 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                          0.0 )
+
+        PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.setCoordinate( point, 0.9 )
+
+        self.assertEqual( dimension_distribution.evaluateWithoutCascade( point ),
+                          0.0 )
+
+    def testSampleWithoutCascade(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledDependentPhaseSpaceDimensionDistribution sampleWithoutCascade"
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentPrimarySpatialDimensionDistribution(
+                                               self.raw_distribution,
+                                               self.raw_importance_distribution )
+
+        point = PhaseSpaceDimension.PhaseSpacePoint( self.spatial_coord_conversion_policy,
+                                     self.directional_coord_conversion_policy )
+
+
+        # Parent dimension value outside of distribution bounds
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 0.05 )
+
+        with self.assertRaises(RuntimeError):
+            dimension_distribution.sampleWithoutCascade( point )
+
+        # Parent dimension value on first bin
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 0.1 )
+
+        fake_stream = [ 0.0, 0.5, 1.0 - 1e-15 ]
+        Prng.RandomNumberGenerator.setFakeStream(fake_stream )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.5 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          1.0,
+                          delta=1e-15 )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.7 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          1.0,
+                          delta=1e-15 )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.9, delta=1e-15*0.9 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          1.0,
+                          delta=1e-15 )
+
+        # Parent dimension value in first bin
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 0.3 )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.5 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          1.0,
+                          delta=1e-15 )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.7 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          1.0,
+                          delta=1e-15 )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.9, delta=1e-15*0.9 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          1.0,
+                          delta=1e-15 )
+
+        # Parent dimension value on second bin
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 0.5 )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.6 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          1.1033311132253991,
+                          delta=1e-12*1.1033311132253991 )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.7 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          0.9983352757296112,
+                          delta=1e-12*0.9983352757296112 )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.8, delta=1e-15*0.8 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          0.903331113225399,
+                          delta=1e-12*0.903331113225399 )
+
+        # Parent dimension value in second bin
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 0.7 )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.6 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          1.1033311132253991,
+                          delta=1e-12*1.1033311132253991 )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.7 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          0.9983352757296112,
+                          delta=1e-12*0.9983352757296112 )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.8, delta=1e-15*0.8 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          0.903331113225399,
+                          delta=1e-12*0.903331113225399 )
+
+        # Parent dimension value on distribution upper bound
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 0.9 )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.6 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          1.1033311132253991,
+                          delta=1e-12*1.1033311132253991 )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.7 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          0.9983352757296112,
+                          delta=1e-12*0.9983352757296112 )
+
+        dimension_distribution.sampleWithoutCascade( point )
+
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.8, delta=1e-15*0.8 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          0.903331113225399,
+                          delta=1e-12*0.903331113225399 )
+
+        # Parent dimension value outside of distribution bounds
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 1.0 )
+
+        with self.assertRaises(RuntimeError):
+            dimension_distribution.sampleWithoutCascade( point )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+
+    def testSampleAndRecordTrialsWithoutCascade(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledDependentPhaseSpaceDimensionDistribution sampleAndRecordTrialsWithoutCascade"
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentPrimarySpatialDimensionDistribution(
+                                               self.raw_distribution,
+                                               self.raw_importance_distribution )
+
+        point = PhaseSpaceDimension.PhaseSpacePoint( self.spatial_coord_conversion_policy,
+                                     self.directional_coord_conversion_policy )
+
+        trials = 0
+
+        # Parent dimension value outside of distribution bounds
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 0.05 )
+
+        with self.assertRaises(RuntimeError):
+            dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        trials = 0
+
+        # Parent dimension value on first bin
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 0.1 )
+
+        fake_stream = [ 0.0, 0.5, 1.0 - 1e-15 ]
+        Prng.RandomNumberGenerator.setFakeStream(fake_stream )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.5 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          1.0,
+                          delta=1e-15 )
+        self.assertEqual( trials, 1 )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.7 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          1.0,
+                          delta=1e-15 )
+        self.assertEqual( trials, 2 )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.9, delta=1e-15*0.9 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          1.0,
+                          delta=1e-15 )
+        self.assertEqual( trials, 3 )
+
+        # Parent dimension value in first bin
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 0.3 )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.5 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          1.0,
+                          delta=1e-15 )
+        self.assertEqual( trials, 4 )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.7 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          1.0,
+                          delta=1e-15 )
+        self.assertEqual( trials, 5 )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.9, delta=1e-15*0.9 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          1.0,
+                          delta=1e-15 )
+        self.assertEqual( trials, 6 )
+
+        # Parent dimension value on second bin
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 0.5 )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.6 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          1.1033311132253991,
+                          delta=1e-12*1.1033311132253991 )
+        self.assertEqual( trials, 7 )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.7 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          0.9983352757296112,
+                          delta=1e-12*0.9983352757296112 )
+        self.assertEqual( trials, 8 )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.8, delta=1e-15*0.8 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          0.903331113225399,
+                          delta=1e-12*0.903331113225399 )
+        self.assertEqual( trials, 9 )
+
+        # Parent dimension value in second bin
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 0.7 )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.6 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          1.1033311132253991,
+                          delta=1e-12*1.1033311132253991 )
+        self.assertEqual( trials, 10 )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.7 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          0.9983352757296112,
+                          delta=1e-12*0.9983352757296112 )
+        self.assertEqual( trials, 11 )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.8, delta=1e-15*0.8 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          0.903331113225399,
+                          delta=1e-12*0.903331113225399 )
+        self.assertEqual( trials, 12 )
+
+        # Parent dimension value on distribution upper bound
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 0.9 )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.6 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          1.1033311132253991,
+                          delta=1e-12*1.1033311132253991 )
+        self.assertEqual( trials, 13 )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.7 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          0.9983352757296112,
+                          delta=1e-12*0.9983352757296112 )
+        self.assertEqual( trials, 14 )
+
+        trials = dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.8, delta=1e-15 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          0.903331113225399,
+                          delta=1e-12*0.903331113225399 )
+        self.assertEqual( trials, 15 )
+
+        # Parent dimension value outside of distribution bounds
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 1.0 )
+
+        with self.assertRaises(RuntimeError):
+            dimension_distribution.sampleAndRecordTrialsWithoutCascade( point, trials )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSetDimensionValueAndApplyWeight(self):
+        "*Test MonteCarlo.ActiveRegion.ImportanceSampledDependentPhaseSpaceDimensionDistribution setDimensionValueAndApplyWeight"
+
+        dimension_distribution = PhaseSpaceDimension.ImportanceSampledSecondarySpatialDependentPrimarySpatialDimensionDistribution(
+                                               self.raw_distribution,
+                                               self.raw_importance_distribution )
+
+        point = PhaseSpaceDimension.PhaseSpacePoint( self.spatial_coord_conversion_policy,
+                                     self.directional_coord_conversion_policy )
+
+        # Parent dimension value outside of distribution bounds
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 0.05 )
+
+        with self.assertRaises(RuntimeError):
+            dimension_distribution.setDimensionValueAndApplyWeight( point, 0.1 )
+
+        # Parent dimension value on first bin
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 0.1 )
+
+        dimension_distribution.setDimensionValueAndApplyWeight( point, 0.5 )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.5 )
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ), 2.5 )
+
+        dimension_distribution.setDimensionValueAndApplyWeight( point, 0.7 )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.7 )
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ), 2.5 )
+
+        dimension_distribution.setDimensionValueAndApplyWeight( point, 0.9 )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.9 )
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ), 2.5 )
+
+        # Parent dimension value on second bin
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 0.5 )
+
+        dimension_distribution.setDimensionValueAndApplyWeight( point, 0.6 )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.6 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          5.516655566126995,
+                          delta=1e-12*5.516655566126995 )
+
+        dimension_distribution.setDimensionValueAndApplyWeight( point, 0.7 )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.7 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          4.991676378648056,
+                          delta=1e-12*4.991676378648056 )
+
+        dimension_distribution.setDimensionValueAndApplyWeight( point, 0.8 )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.8 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          4.516655566126995,
+                          delta=1e-12*4.516655566126995 )
+
+        # Parent dimension value on distribution upper bound
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 0.9 )
+
+        dimension_distribution.setDimensionValueAndApplyWeight( point, 0.6 )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.6 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          5.516655566126995,
+                          delta=1e-12*5.516655566126995 )
+
+        dimension_distribution.setDimensionValueAndApplyWeight( point, 0.7 )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.7 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          4.991676378648056,
+                          delta=1e-12*4.991676378648056 )
+
+        dimension_distribution.setDimensionValueAndApplyWeight( point, 0.8 )
+
+        self.assertEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinate( point ), 0.8 )
+        self.assertAlmostEqual( PhaseSpaceDimension.PhaseSpacePrimarySpatialDimensionTraits.getCoordinateWeight( point ),
+                          4.516655566126995,
+                          delta=1e-12*4.516655566126995 )
+
+        # Parent dimension value outside of distribution bounds
+        PhaseSpaceDimension.PhaseSpaceSecondarySpatialDimensionTraits.setCoordinate( point, 1.0 )
+
+        with self.assertRaises(RuntimeError):
+            dimension_distribution.setDimensionValueAndApplyWeight( point, 0.1 )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Initialize the FRENSIE random number generator
+    Utility.initFrensiePrng()
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(ImportanceSampledIndependentPhaseSpaceDimensionDistributionTestCase_Primary_Spatial))
+    suite.addTest(unittest.makeSuite(ImportanceSampledIndependentPhaseSpaceDimensionDistributionTestCase_Primary_Directional))
+    suite.addTest(unittest.makeSuite(ImportanceSampledIndependentPhaseSpaceDimensionDistributionTestCase_Energy))
+    suite.addTest(unittest.makeSuite(ImportanceSampledIndependentPhaseSpaceDimensionDistributionTestCase_Time))
+    suite.addTest(unittest.makeSuite(ImportanceSampledIndependentPhaseSpaceDimensionDistributionTestCase_Weight))
+
+    suite.addTest(unittest.makeSuite(ImportanceSampledDependentPhaseSpaceDimensionDistributionTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.ActiveRegion.PhaseSpaceDimension.py
+#-----------------------------------------------------------------------------#
