@@ -7,24 +7,22 @@
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes
-#include <limits>
-#include <numeric>
 #include <sstream>
 
 // Boost Includes
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
-#include <boost/serialization/set.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSource.hpp"
-#include "MonteCarlo_SourceHDF5FileHandler.hpp"
-#include "Geometry_InfiniteMediumModel.hpp"
-#include "Utility_CommHelpers.hpp"
-#include "Utility_OpenMPProperties.hpp"
-#include "Utility_LoggingMacros.hpp"
-#include "Utility_ExceptionCatchMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 
 namespace MonteCarlo{
 
@@ -35,8 +33,10 @@ void ParticleSource::logSummary() const
 
   this->printSummary( oss );
 
-  FRENSIE_LOG_NOTIFICATION( oss );
+  FRENSIE_LOG_NOTIFICATION( oss.str() );
 }
+
+EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( ParticleSource );
   
 } // end MonteCarlo namespace
 

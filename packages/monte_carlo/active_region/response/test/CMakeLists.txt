@@ -13,6 +13,13 @@ FRENSIE_ADD_TEST(MaterialParticleResponseFunction
   EXTRA_ARGS
   --test_database=${COLLISION_DATABASE_XML_FILE})
 
+FRENSIE_ADD_TEST_EXECUTABLE(MaterialComponentParticleResponseFunction
+  DEPENDS tstMaterialComponentParticleResponseFunction
+  TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+FRENSIE_ADD_TEST(MaterialComponentParticleResponseFunction
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
+
 FRENSIE_ADD_TEST_EXECUTABLE(ParticleResponseFunctionArithmeticOperators DEPENDS tstParticleResponseFunctionArithmeticOperators.cpp)
 FRENSIE_ADD_TEST(ParticleResponseFunctionArithmeticOperators)
 

@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_STANDARD_FILLED_ADJOINT_PARTICLE_GEOMETRY_MODEL_DEF_HPP
 #define MONTE_CARLO_STANDARD_FILLED_ADJOINT_PARTICLE_GEOMETRY_MODEL_DEF_HPP
 
+// Std Lib Includes
+#include <algorithm>
+
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
 
@@ -86,6 +89,37 @@ double StandardFilledAdjointParticleGeometryModel<Material>::getAdjointWeightFac
   testPrecondition( !this->isCellVoid( cell ) );
 
   return this->getMaterial( cell )->getAdjointWeightFactor( energy );
+}
+
+// Process loaded scattering centers
+template<typename Material>
+void StandardFilledAdjointParticleGeometryModel<Material>::processLoadedScatteringCenters(
+                            const ScatteringCenterNameMap& scattering_centers )
+{
+  // Get the critical line energies used by all scattering centers
+  std::set<double> critical_line_energies;
+
+  for( auto scattering_center : scattering_centers )
+  {
+    const std::vector<double>& scattering_center_critical_line_energies =
+      scattering_center.second->getCriticalLineEnergies();
+
+    critical_line_energies.insert( scattering_center_critical_line_energies.begin(),
+                                   scattering_center_critical_line_energies.end() );
+  }
+
+  d_critical_line_energies.assign( critical_line_energies.begin(),
+                                   critical_line_energies.end() );
+
+  std::sort( d_critical_line_energies.begin(),
+             d_critical_line_energies.end() );
+}
+
+// Get the critical line energies
+template<typename Material>
+const std::vector<double>& StandardFilledAdjointParticleGeometryModel<Material>::getCriticalLineEnergies() const
+{
+  return d_critical_line_energies;
 }
 
 } // end MonteCarlo namespace

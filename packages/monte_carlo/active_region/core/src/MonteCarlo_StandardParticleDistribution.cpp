@@ -107,6 +107,133 @@ void StandardParticleDistribution::setDimensionDistribution(
     d_ready = false;
 }
 
+// Set the position of the distribution
+/*! \details This method can be used to quickly set up a point distribution 
+ * (in the spatial dimensions). The position specified must be in global
+ * coordinates. This will destroy the current dependency
+ * tree. You will not be able to evaluate or sample from the particle 
+ * distribution until the dependency tree has been constructed again.
+ */
+void StandardParticleDistribution::setPosition( const double x_position,
+                                                const double y_position,
+                                                const double z_position )
+{
+  double primary_spatial_coord,
+    secondary_spatial_coord,
+    tertiary_spatial_coord;
+
+  d_spatial_coord_conversion_policy->convertFromCartesianSpatialCoordinates(
+      x_position, y_position, z_position,
+      primary_spatial_coord, secondary_spatial_coord, tertiary_spatial_coord );
+  
+  std::shared_ptr<const Utility::UnivariateDistribution>
+    raw_spatial_distribution(
+                     new Utility::DeltaDistribution( primary_spatial_coord ) );
+  
+  d_dimension_distributions[PRIMARY_SPATIAL_DIMENSION].reset(
+     new IndependentPhaseSpaceDimensionDistribution<PRIMARY_SPATIAL_DIMENSION>(
+                                                  raw_spatial_distribution ) );
+
+  raw_spatial_distribution.reset(
+                   new Utility::DeltaDistribution( secondary_spatial_coord ) );
+  
+  d_dimension_distributions[SECONDARY_SPATIAL_DIMENSION].reset(
+   new IndependentPhaseSpaceDimensionDistribution<SECONDARY_SPATIAL_DIMENSION>(
+                                                  raw_spatial_distribution ) );
+
+  raw_spatial_distribution.reset(
+                    new Utility::DeltaDistribution( tertiary_spatial_coord ) );
+  
+  d_dimension_distributions[TERTIARY_SPATIAL_DIMENSION].reset(
+    new IndependentPhaseSpaceDimensionDistribution<TERTIARY_SPATIAL_DIMENSION>(
+                                                  raw_spatial_distribution ) );
+
+  // The dependency tree must still be created
+  d_ready = false;
+}
+
+// Set the position of the distribution
+/*! \details This method can be used to quickly set up a point distribution 
+ * (in the spatial dimensions). The position specified must be in global
+ * coordinates. This will destroy the current dependency
+ * tree. You will not be able to evaluate or sample from the particle 
+ * distribution until the dependency tree has been constructed again. 
+ */
+void StandardParticleDistribution::setPosition( const double position[3] )
+{
+  this->setPosition( position[0], position[1], position[2] );
+}
+
+// Set the direction of the distribution
+/*! \details This method can be used to quickly set up a mono-directional
+ * distribution (in the directional dimensions). The direction must be in
+ * cartesian coordinates. This will destroy the current 
+ * dependency tree. You will not be able to evaluate or sample from the 
+ * particle distribution until the dependency tree has been constructed again. 
+ */
+void StandardParticleDistribution::setDirection( const double x_direction,
+                                                 const double y_direction,
+                                                 const double z_direction )
+{
+  // Normalize the direction
+  double normalized_x_direction = x_direction,
+    normalized_y_direction = y_direction,
+    normalized_z_direction = z_direction;
+
+  Utility::normalizeVector( normalized_x_direction,
+                            normalized_y_direction,
+                            normalized_z_direction );
+  
+  double primary_directional_coord,
+    secondary_directional_coord,
+    tertiary_directional_coord;
+
+  d_directional_coord_conversion_policy->convertFromCartesianDirectionalCoordinates(
+                                        normalized_x_direction,
+                                        normalized_y_direction,
+                                        normalized_z_direction,
+                                        primary_directional_coord,
+                                        secondary_directional_coord,
+                                        tertiary_directional_coord );
+  
+  std::shared_ptr<const Utility::UnivariateDistribution>
+    raw_directional_distribution(
+                 new Utility::DeltaDistribution( primary_directional_coord ) );
+  
+  d_dimension_distributions[PRIMARY_DIRECTIONAL_DIMENSION].reset(
+     new IndependentPhaseSpaceDimensionDistribution<PRIMARY_DIRECTIONAL_DIMENSION>(
+                                              raw_directional_distribution ) );
+
+  raw_directional_distribution.reset(
+               new Utility::DeltaDistribution( secondary_directional_coord ) );
+  
+  d_dimension_distributions[SECONDARY_DIRECTIONAL_DIMENSION].reset(
+   new IndependentPhaseSpaceDimensionDistribution<SECONDARY_DIRECTIONAL_DIMENSION>(
+                                              raw_directional_distribution ) );
+
+  raw_directional_distribution.reset(
+                new Utility::DeltaDistribution( tertiary_directional_coord ) );
+  
+  d_dimension_distributions[TERTIARY_DIRECTIONAL_DIMENSION].reset(
+    new IndependentPhaseSpaceDimensionDistribution<TERTIARY_DIRECTIONAL_DIMENSION>(
+                                              raw_directional_distribution ) );
+
+  // The dependency tree must still be created
+  d_ready = false;
+}
+
+// Set the direction of the distribution
+/*! \details This method can be used to quickly set up a mono-directional
+ * distribution (in the directional dimensions). The direction must be in 
+ * cartesian coordinates. This will destroy the current 
+ * dependency tree. You will not be able to evaluate or sample from the 
+ * particle distribution until the dependency tree has been constructed again. 
+ */
+void StandardParticleDistribution::setDirection( const double direction[3] )
+{
+  this->setDirection( direction[0], direction[1], direction[2] );
+}
+
 // Construct the dimension distribution dependency tree
 /*! \details This method assigns dependent dimension distributions to the
  * required parent dimension distribution, which forms a tree. This tree is 

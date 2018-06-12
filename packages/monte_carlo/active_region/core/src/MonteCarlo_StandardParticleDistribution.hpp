@@ -72,6 +72,22 @@ public:
                         const std::shared_ptr<PhaseSpaceDimensionDistribution>&
                         dimension_distribution );
 
+  //! Set the position that will be sampled by the distribution
+  void setPosition( const double x_position,
+                    const double y_position,
+                    const double z_position );
+
+  //! Set the position that will be sampled by the distribution
+  void setPosition( const double position[3] );
+
+  //! Set the direction that will be sampled by the distribution
+  void setDirection( const double x_direction,
+                     const double y_direction,
+                     const double z_direction );
+
+  //! Set the direction that will be sampled by the distribution
+  void setDirection( const double direction[3] );
+
   //! Construct the dimension distribution dependency tree
   void constructDimensionDistributionDependencyTree();
 

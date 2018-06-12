@@ -2642,6 +2642,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_adjoint_photon_mode )
 
   std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
   properties->setParticleMode( MonteCarlo::ADJOINT_PHOTON_MODE );
+  properties->setMaxAdjointPhotonEnergy( 20.0 );
 
   MonteCarlo::FilledGeometryModel filled_model( data_directory,
                                                 scattering_center_definition_database,
@@ -2897,6 +2898,14 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_adjoint_photon_mode )
                         adjoint_photon.getCell(), adjoint_photon.getEnergy() ),
       2.453757949071393996e-01,
       1e-15 );
+
+    const std::vector<double>& critical_line_energies =
+      filled_model.getCriticalLineEnergies<MonteCarlo::AdjointPhotonState>();
+
+    FRENSIE_REQUIRE_EQUAL( critical_line_energies.size(), 2 );
+    FRENSIE_CHECK_EQUAL( critical_line_energies[0],
+                         Utility::PhysicalConstants::electron_rest_mass_energy );
+    FRENSIE_CHECK_EQUAL( critical_line_energies[1], 20.0 );
   }
 
   // Check the adjoint electron cross sections
@@ -3234,6 +3243,11 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_adjoint_electron_mode 
                     adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
       9.998738696962278238e-01,
       1e-15 );
+
+    const std::vector<double>& critical_line_energies =
+      filled_model.getCriticalLineEnergies<MonteCarlo::AdjointElectronState>();
+
+    FRENSIE_REQUIRE_EQUAL( critical_line_energies.size(), 0 );
   }
 }
 

@@ -21,26 +21,16 @@
 
 namespace MonteCarlo{
 
-/*! The standard particle source class
- * \details The standard particle source class simply wraps the
- * MonteCarlo::ParticleDistribution class and provides some additional 
- * capabilities for calculating sampling efficiencies, for generating
- * probe particles (commonly needed in adjoint simulations) and for 
- * adding geometry based rejection functions. Since the 
- * MonteCarlo::ParticleDistribution class is geometry agnostic and 
- * because it is sometimes necessary to limit where a particle's spatial 
- * coordinates are sampled, this class allows the user to specify rejection 
- * cells in the model of interest. Any sampled particle states with spatial 
- * coordinates that do not fall within one of the rejection cells will be 
- * discarded and a new state will be sampled. If no rejection cells are 
- * specified all sampled particle states will be used.
- */ 
+//! The standard particle source class
 class StandardParticleSource : public ParticleSource
 {
+
+public:
+  
   //! Constructor
   StandardParticleSource(
-            const std::vector<std::shared_ptr<const ParticleSourceComponent> >&
-            source_components );
+                  const std::vector<std::shared_ptr<ParticleSourceComponent> >&
+                  source_components );
 
   //! Destructor
   ~StandardParticleSource()
@@ -122,15 +112,59 @@ class StandardParticleSource : public ParticleSource
                          CellIdSet& starting_cells ) const final override;
 
 private:
+
+  // Default Constructor
+  StandardParticleSource();
+
+  // Save the data to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the data from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
   
   // The source components
-  std::vector<std::shared_ptr<const ParticleDistribution> > d_components;
+  std::vector<std::shared_ptr<ParticleSourceComponent> > d_components;
 
   // The source component sampling distribution
   std::unique_ptr<const Utility::DiscreteDistribution> d_component_sampling_dist;
 };
 
+// Save the data to an archive
+template<typename Archive>
+void StandardParticleSource::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleSource );
+
+  // Save the local data
+  ar & BOOST_SERIALIZATION_NVP( d_components );
+  ar & BOOST_SERIALIZATION_NVP( d_component_sampling_dist );
+}
+
+// Load the data from an archive
+template<typename Archive>
+void StandardParticleSource::load( Archive& ar, const unsigned version )
+{
+  // Load the base class data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleSource );
+
+  // Load the local data
+  ar & BOOST_SERIALIZATION_NVP( d_components );
+  ar & BOOST_SERIALIZATION_NVP( d_component_sampling_dist );
+}
+
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS_VERSION( StandardParticleSource, MonteCarlo, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardParticleSource, MonteCarlo );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardParticleSource );
 
 #endif // end MONTE_CARLO_STANDARD_PARTICLE_SOURCE_HPP
 

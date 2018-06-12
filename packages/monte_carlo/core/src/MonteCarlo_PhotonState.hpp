@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_MasslessParticleState.hpp"
+#include "Utility_TypeNameTraitsDecl.hpp"
 
 namespace MonteCarlo{
 
@@ -78,6 +79,7 @@ private:
 BOOST_CLASS_VERSION( MonteCarlo::PhotonState, 0 );
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::PhotonState, "PhotonState" );
 EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::PhotonState );
+TYPE_NAME_TRAITS_QUICK_DECL2( PhotonState, MonteCarlo );
 
 #endif // end MONTE_CARLO_PHOTON_STATE_HPP
 

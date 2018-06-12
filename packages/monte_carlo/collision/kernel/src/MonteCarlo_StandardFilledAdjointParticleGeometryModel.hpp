@@ -74,10 +74,21 @@ public:
                                 const Geometry::Model::InternalCellHandle cell,
                                 const double energy ) const;
 
+  //! Get the critical line energies
+  const std::vector<double>& getCriticalLineEnergies() const;
+  
 protected:
 
   //! Constructor
   using StandardFilledParticleGeometryModel<Material>::StandardFilledParticleGeometryModel;
+
+  //! Process the loaded scattering centers
+  void processLoadedScatteringCenters( const ScatteringCenterNameMap& scattering_centers ) final override;
+
+private:
+
+  // The critical line energies
+  std::vector<double> d_critical_line_energies;
 };
 
 } // end MonteCarlo namespace

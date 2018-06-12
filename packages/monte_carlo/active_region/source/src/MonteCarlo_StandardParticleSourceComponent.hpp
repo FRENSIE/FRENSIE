@@ -15,44 +15,52 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSourceComponent.hpp"
 #include "MonteCarlo_ParticleDistribution.hpp"
-#include "MonteCarlo_FilledGeometryModel.hpp"
-#include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
+#include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_ElectronState.hpp"
+#include "MonteCarlo_PositronState.hpp"
 
 namespace MonteCarlo{
 
-/*! The standard particle source class
- * \details The standard particle source class simply wraps the
+/*! The standard particle source component class
+ * 
+ * The standard particle source class simply wraps the
  * MonteCarlo::ParticleDistribution class and provides some additional 
- * capabilities for calculating sampling efficiencies and for generating
- * probe particles (commonly needed in adjoint simulations). 
+ * capabilities for calculating sampling efficiencies. 
  */
-template<typename ParticleStateType,
-         typename ProbeParticleStateType = ParticleStateType>
+template<typename ParticleStateType>
 class StandardParticleSourceComponent : public ParticleSourceComponent
 {
-  // Typedef for the dimension trial counter map
-  typedef ParticleDistribution::DimensionCounterMap DimensionCounterMap;
-
-  // Typedef for the particle state sampling function
-  typedef std::function<void(ParticleState&,DimensionCounterMap&)>
-  ParticleStateSamplingFunction;
 
 public:
+
+  //! The trial counter type
+  typedef ParticleSourceComponent::Counter Counter;
+
+  //! The cell id set
+  typedef ParticleSourceComponent::CellIdSet CellIdSet;
 
   //! Constructor
   StandardParticleSourceComponent(
     const size_t id,
     const double selection_weight,
-    const std::shared_ptr<const FilledGeometryModel>& model,
+    const std::shared_ptr<const Geometry::Model>& model,
     const std::shared_ptr<const ParticleDistribution>& particle_distribution );
 
   //! Constructor (with rejection cells )
   StandardParticleSourceComponent(
     const size_t id,
     const double selection_weight,
+    const std::vector<Geometry::Model::InternalCellHandle>& rejection_cells,
+    const std::shared_ptr<const Geometry::Model>& model,
+    const std::shared_ptr<const ParticleDistribution>& particle_distribution );
+  
+  //! Constructor (with rejection cells )
+  StandardParticleSourceComponent(
+    const size_t id,
+    const double selection_weight,
     const CellIdSet& rejection_cells,
-    const std::shared_ptr<const FilledGeometryModel>& model,
+    const std::shared_ptr<const Geometry::Model>& model,
     const std::shared_ptr<const ParticleDistribution>& particle_distribution );
 
   //! Destructor
@@ -76,6 +84,12 @@ public:
 
 protected:
 
+  //! Typedef for the dimension trial counter map
+  typedef ParticleDistribution::DimensionCounterMap DimensionCounterMap;
+
+  //! Default Constructor
+  StandardParticleSourceComponent();
+
   //! Enable thread support
   void enableThreadSupportImpl( const size_t threads ) final override;
 
@@ -89,30 +103,34 @@ protected:
   /*! \brief Return the number of particle states that will be sampled for the 
    * given history number
    */
-  unsigned long long getNumberOfParticleStateSamples(
-                       const unsigned long long history ) const final override;
+  virtual unsigned long long getNumberOfParticleStateSamples(
+                             const unsigned long long history ) const override;
 
   //! Initialize a particle state
-  std::shared_ptr<ParticleState> initializeParticleState(
-                    const unsigned long long history,
-                    const unsigned long long history_state_id ) final override;
+  virtual std::shared_ptr<ParticleState> initializeParticleState(
+                          const unsigned long long history,
+                          const unsigned long long history_state_id ) override;
 
-  /*! Sample a particle state from the source
-   *
-   * All geometry model considerations can (and should) be ignored in the
-   * implementation of this method. These will be handled by the 
-   * MonteCarlo::ParticleSourceComponent::sampleParticleState method. True 
-   * should be returned if another sample can be made for this history state 
-   * id.
-   */
-  bool sampleParticleStateImpl(
+  //! Sample a particle state from the source
+  virtual bool sampleParticleStateImpl(
                     const std::shared_ptr<ParticleState>& particle,
-                    const unsigned long long history_state_id ) final override;
+                    const unsigned long long history_state_id ) override;
 
+  //! Get the particle distribution
+  const ParticleDistribution& getParticleDistribution() const;
+
+  //! Get the dimension trial counters
+  DimensionCounterMap& getDimensionTrialCounterMap();
+
+  //! Get the dimension sample counters
+  DimensionCounterMap& getDimensionSampleCounterMap();
+
+  //! Increment the dimension counters
+  static void incrementDimensionCounters(
+                                  DimensionCounterMap& dimension_counters,
+                                  const bool ignore_energy_dimension = false );
+  
 private:
-
-  // Set the critical line energy sampling functions
-  void setCriticalLineEnergySamplingFunctions();
 
   // Reduce the dimension sample counters on the comm
   void reduceDimensionSampleCounters( const Utility::Communicator& comm,
@@ -164,29 +182,31 @@ private:
   void initializeDimensionCounters(
                      std::vector<DimensionCounterMap>& dimension_counters );
 
-  // Increment the dimension counters
-  static void incrementDimensionCounters(
-                                  DimensionCounterMap& dimension_counters,
-                                  const bool ignore_energy_dimension = false );
+  // Initialize the dimension counters
+  void initializeDimensionCounters(
+           const Utility::ArrayView<DimensionCounterMap>& dimension_counters );
+
+  // Save the data to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the data from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
   // The particle distribution
   std::shared_ptr<const ParticleDistribution> d_particle_distribution;
-
-  // The particle type
-  ParticleType d_particle_type;
-
-  // The critical line energies
-  std::vector<double> d_critical_line_energies;
 
   // The dimension trial counters
   std::vector<DimensionCounterMap> d_dimension_trial_counters;
 
   // The dimension samples counters
   std::vector<DimensionCounterMap> d_dimension_sample_counters;
-
-  // The particle state critical line energy sampling functions
-  std::vector<std::pair<double,ParticleStateSamplingFunction> >
-  d_particle_state_critical_line_energy_sampling_functions;
 };
 
 //! The standard neutron source component
@@ -200,14 +220,10 @@ typedef StandardParticleSourceComponent<ElectronState> StandardElectronSourceCom
 
 //! The standard positron source component
 typedef StandardParticleSourceComponent<PositronState> StandardPositronSourceComponent;
-
-//! The standard adjoint photon source component
-typedef StandardParticleSourceComponent<AdjointPhotonState,AdjointPhotonProbeState> StandardAdjointPhotonSourceComponent;
-
-//! The standard adjoint electron source component
-typedef StandardParticleSourceComponent<AdjointElectronState,AdjointElectronProbeState> StandardAdjointElectronSourceComponent;
   
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS1_VERSION( StandardParticleSourceComponent, MonteCarlo, 0 );  
 
 //---------------------------------------------------------------------------//
 // Template Includes

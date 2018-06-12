@@ -27,6 +27,8 @@ template<typename Material>
 StandardFilledParticleGeometryModel<Material>::StandardFilledParticleGeometryModel(
                  const std::shared_ptr<const Geometry::Model>& unfilled_model )
   : d_unfilled_model( unfilled_model ),
+    d_scattering_center_name_map(),
+    d_material_name_map(),
     d_cell_id_material_map()
 {
   // Make sure that the unfilled model is valid
@@ -59,9 +61,6 @@ void StandardFilledParticleGeometryModel<Material>::loadMaterialsAndFillModel(
        const Geometry::Model::CellIdMatIdMap& cell_id_mat_id_map,
        const Geometry::Model::CellIdDensityMap& cell_id_density_map )
 {
-  // Load the scattering centers
-  ScatteringCenterNameMap scattering_center_name_map;
-
   try{
     this->loadScatteringCenters( database_path,
                                  unique_scattering_center_names,
@@ -69,16 +68,16 @@ void StandardFilledParticleGeometryModel<Material>::loadMaterialsAndFillModel(
                                  atomic_relaxation_model_factory,
                                  properties,
                                  verbose_material_construction,
-                                 scattering_center_name_map );
+                                 d_scattering_center_name_map );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
                            "Could not load the requested scattering "
                            "centers!" );
 
-  // Create each material
-  std::unordered_map<std::string,std::shared_ptr<const MaterialType> >
-    material_name_map;
+  // Process the loaded scattering centers
+  this->processLoadedScatteringCenters( d_scattering_center_name_map );
 
+  // Create each material
   std::unordered_map<std::string,std::vector<Geometry::Model::InternalCellHandle> > material_name_cell_ids_map;
   
   Geometry::Model::CellIdMatIdMap::const_iterator
@@ -101,11 +100,11 @@ void StandardFilledParticleGeometryModel<Material>::loadMaterialsAndFillModel(
 
     material_name += Utility::toString( density );
 
-    if( material_name_map.find( material_name ) ==
-        material_name_map.end() )
+    if( d_material_name_map.find( material_name ) ==
+        d_material_name_map.end() )
     {
       std::shared_ptr<const MaterialType>& new_material =
-        material_name_map[material_name];
+        d_material_name_map[material_name];
 
       const MaterialDefinitionDatabase::MaterialDefinitionArray&
         material_definition = material_definitions.getDefinition( material_id );
@@ -124,7 +123,7 @@ void StandardFilledParticleGeometryModel<Material>::loadMaterialsAndFillModel(
 
       new_material.reset( new MaterialType( material_id,
                                             density,
-                                            scattering_center_name_map,
+                                            d_scattering_center_name_map,
                                             scattering_center_fractions,
                                             scattering_center_names ) );
     }
@@ -136,9 +135,9 @@ void StandardFilledParticleGeometryModel<Material>::loadMaterialsAndFillModel(
 
   // Fill the geometry
   typename std::unordered_map<std::string,std::shared_ptr<const MaterialType> >::const_iterator
-    material_name_it = material_name_map.begin();
+    material_name_it = d_material_name_map.begin();
   
-  while( material_name_it != material_name_map.end() )
+  while( material_name_it != d_material_name_map.end() )
   {
     this->addMaterial( material_name_it->second,
                        material_name_cell_ids_map.find( material_name_it->first )->second );
@@ -187,6 +186,12 @@ auto StandardFilledParticleGeometryModel<Material>::getMaterial(
   
   return d_cell_id_material_map.find( cell )->second;
 }
+
+// Process loaded scattering centers
+template<typename Material>
+void StandardFilledParticleGeometryModel<Material>::processLoadedScatteringCenters(
+                                               const ScatteringCenterNameMap& )
+{ /* ... */ }
 
 // Check if the entire model is void
 template<typename Material>
@@ -376,7 +381,7 @@ const Geometry::Model& StandardFilledParticleGeometryModel<Material>::getUnfille
 {
   return *d_unfilled_model;
 }
-  
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_STANDARD_FILLED_PARTICLE_GEOMETRY_MODEL_DEF_HPP

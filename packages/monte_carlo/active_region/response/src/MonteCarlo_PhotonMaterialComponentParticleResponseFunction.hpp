@@ -1,40 +1,42 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_PhotonMaterialParticleResponseFunction.hpp
+//! \file   MonteCarlo_PhotonMaterialComponentParticleResponseFunction.hpp
 //! \author Alex Robinson
 //! \brief  Photon material particle response function class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_PHOTON_MATERIAL_PARTICLE_RESPONSE_FUNCTION_HPP
-#define MONTE_CARLO_PHOTON_MATERIAL_PARTICLE_RESPONSE_FUNCTION_HPP
+#ifndef MONTE_CARLO_PHOTON_MATERIAL_COMPONENT_PARTICLE_RESPONSE_FUNCTION_HPP
+#define MONTE_CARLO_PHOTON_MATERIAL_COMPONENT_PARTICLE_RESPONSE_FUNCTION_HPP
 
 // Std Lib Includes
 #include <functional>
 
 // FRENSIE Includes
-#include "MonteCarlo_MaterialParticleResponseFunction.hpp"
+#include "MonteCarlo_MaterialComponentParticleResponseFunction.hpp"
 
 namespace MonteCarlo{
 
-//! The photon material particle response function
-class PhotonMaterialParticleResponseFunction : public MaterialParticleResponseFunction<PhotonMaterial>
+//! The photon material component particle response function
+class PhotonMaterialComponentParticleResponseFunction : public MaterialComponentParticleResponseFunction<PhotonMaterial>
 {
   // Typedef for the base type
-  typedef MaterialParticleResponseFunction<PhotonMaterial> BaseType;
-
+  typedef MaterialComponentParticleResponseFunction<PhotonMaterial> BaseType;
+  
 public:
 
   //! Constructor (photoatomic reaction)
-  PhotonMaterialParticleResponseFunction(
+  PhotonMaterialComponentParticleResponseFunction(
                        const std::shared_ptr<const FilledGeometryModel>& model,
                        const Geometry::Model::InternalCellHandle cell,
+                       const std::string& component_name,
                        const PhotoatomicReactionType reaction );
 
   //! Constructor (photonuclear reaction)
-  PhotonMaterialParticleResponseFunction(
+  PhotonMaterialComponentParticleResponseFunction(
                        const std::shared_ptr<const FilledGeometryModel>& model,
                        const Geometry::Model::InternalCellHandle cell,
+                       const std::string& component_name,
                        const PhotonuclearReactionType reaction );
 
   //! Evaluate the response function at the desired phase space point
@@ -44,9 +46,9 @@ public:
   std::string description() const override;
 
 private:
-
-  // Default Constructor 
-  PhotonMaterialParticleResponseFunction()
+ 
+  // Default Constructor
+  PhotonMaterialComponentParticleResponseFunction()
   { /* ... */ }
 
   // Evaluate the photonuclear reaction cross section
@@ -80,7 +82,7 @@ private:
 
 // Save the data to an archive
 template<typename Archive>
-void PhotonMaterialParticleResponseFunction::save( Archive& ar, const unsigned version ) const
+void PhotonMaterialComponentParticleResponseFunction::save( Archive& ar, const unsigned version ) const
 {
   // Save the base class data
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
@@ -92,7 +94,7 @@ void PhotonMaterialParticleResponseFunction::save( Archive& ar, const unsigned v
 
 // Load the data from an archive
 template<typename Archive>
-void PhotonMaterialParticleResponseFunction::load( Archive& ar, const unsigned version )
+void PhotonMaterialComponentParticleResponseFunction::load( Archive& ar, const unsigned version )
 {
   // Load the base class data
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
@@ -107,12 +109,12 @@ void PhotonMaterialParticleResponseFunction::load( Archive& ar, const unsigned v
   
 } // end MonteCarlo namespace
 
-BOOST_SERIALIZATION_CLASS_VERSION( PhotonMaterialParticleResponseFunction, MonteCarlo, 0 );
-BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( PhotonMaterialParticleResponseFunction, MonteCarlo );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::PhotonMaterialParticleResponseFunction );
+BOOST_SERIALIZATION_CLASS_VERSION( PhotonMaterialComponentParticleResponseFunction, MonteCarlo, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( PhotonMaterialComponentParticleResponseFunction, MonteCarlo );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::PhotonMaterialComponentParticleResponseFunction );
 
-#endif // end MONTE_CARLO_PHOTON_MATERIAL_PARTICLE_RESPONSE_FUNCTION_HPP
+#endif // end MONTE_CARLO_PHOTON_MATERIAL_COMPONENT_PARTICLE_RESPONSE_FUNCTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_PhotonMaterialParticleResponseFunction.hpp
+// end MonteCarlo_PhotonMaterialComponentParticleResponseFunction.hpp
 //---------------------------------------------------------------------------//

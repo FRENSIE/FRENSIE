@@ -12,6 +12,13 @@
 // Std Lib Includes
 #include <iostream>
 
+// Boost Includes
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/assume_abstract.hpp>
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
@@ -21,6 +28,8 @@
 #include "Utility_Communicator.hpp"
 #include "Utility_DistributionTraits.hpp"
 #include "Utility_TypeNameTraits.hpp"
+#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
 
@@ -62,7 +71,7 @@ public:
                    const int root_process );
 
   //! Sample a particle state
-  void sampleParticleState( ParticleBanke& bank,
+  void sampleParticleState( ParticleBank& bank,
                             const unsigned long long history );
 
   //! Return the starting cells that have been cached
@@ -103,6 +112,9 @@ public:
 
 protected:
 
+  //! Default constructor
+  ParticleSourceComponent();
+
   //! Enable thread support
   virtual void enableThreadSupportImpl( const size_t threads ) = 0;
 
@@ -138,6 +150,7 @@ protected:
 
   //! Print a standard summary of the source data
   void printStandardSummary( const std::string& source_component_type,
+                             const std::string& particle_type_generated,
                              const Counter trials,
                              const Counter samples,
                              const double efficiency,
@@ -175,7 +188,7 @@ private:
 
   // Reduce the counters on the root process
   static void reduceCounters( std::vector<Counter>& counters,
-                              Utility::Communicator& comm,
+                              const Utility::Communicator& comm,
                               const int root_process );
 
   // Reduce the local samples counters
@@ -186,7 +199,20 @@ private:
 
   // Check if the sampled particle position is valid
   bool isSampledParticlePositionValid( const ParticleState& particle,
-                                       const Navigator& navigator ) const;
+                                       const Geometry::Navigator& navigator ) const;
+
+  // Save the data to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the data from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
   // The component id
   UniqueIdManager<ParticleSourceComponent,size_t> d_id;
@@ -212,8 +238,69 @@ private:
   // The number of valid samples
   std::vector<Counter> d_number_of_samples;
 };
+
+// Save the data to an archive
+template<typename Archive>
+void ParticleSourceComponent::save( Archive& ar, const unsigned version ) const
+{
+  ar & BOOST_SERIALIZATION_NVP( d_id );
+  ar & BOOST_SERIALIZATION_NVP( d_selection_weight );
+  ar & BOOST_SERIALIZATION_NVP( d_rejection_cells );
+  ar & BOOST_SERIALIZATION_NVP( d_model );
+
+  CellIdSet start_cell_cache;
+  this->mergeLocalStartCellCaches( start_cell_cache );
+  
+  ar & BOOST_SERIALIZATION_NVP( start_cell_cache );
+  
+  Counter number_of_trials = this->reduceLocalTrialCounters();
+
+  ar & BOOST_SERIALIZATION_NVP( number_of_trials );
+
+  Counter number_of_samples = this->reduceLocalSampleCounters();
+  
+  ar & BOOST_SERIALIZATION_NVP( number_of_samples );
+}
+
+// Load the data from an archive
+template<typename Archive>
+void ParticleSourceComponent::load( Archive& ar, const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_NVP( d_id );
+  ar & BOOST_SERIALIZATION_NVP( d_selection_weight );
+  ar & BOOST_SERIALIZATION_NVP( d_rejection_cells );
+  ar & BOOST_SERIALIZATION_NVP( d_model );
+
+  // The navigators will have to be re-initialized by each thread just-in-time
+  d_navigator.resize( 1 );
+  d_navigator.front().reset();
+
+  CellIdSet start_cell_cache;
+  ar & BOOST_SERIALIZATION_NVP( start_cell_cache );
+
+  d_start_cell_cache.resize( 1 );
+  d_start_cell_cache.front() = start_cell_cache;
+
+  Counter number_of_trials = 0u;
+
+  ar & BOOST_SERIALIZATION_NVP( number_of_trials );
+
+  d_number_of_trials.resize( 1 );
+  d_number_of_trials.front() = number_of_trials;
+
+  Counter number_of_samples = 0u;
+  
+  ar & BOOST_SERIALIZATION_NVP( number_of_samples );
+
+  d_number_of_samples.resize( 1 );
+  d_number_of_samples.front() = number_of_samples;
+}
   
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::ParticleSourceComponent, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleSourceComponent );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::ParticleSourceComponent );
 
 namespace Utility{
 

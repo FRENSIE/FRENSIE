@@ -12,11 +12,16 @@
 // Std Lib Includes
 #include <iostream>
 
+// Boost Includes
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/assume_abstract.hpp>
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+
 // MonteCarlo Includes
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
-#include "MonteCarlo_ModuleTraits.hpp"
-#include "MonteCarlo_SourceHDF5FileHandler.hpp"
 #include "Utility_Communicator.hpp"
 #include "Utility_DistributionTraits.hpp"
 
@@ -119,9 +124,20 @@ public:
 
 private:
 
+  // Serialize the data
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  { /* ... */ }
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 };
 
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::ParticleSource, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleSource );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleSource );
 
 #endif // end MONTE_CARLO_PARTICLE_SOURCE_HPP
 
