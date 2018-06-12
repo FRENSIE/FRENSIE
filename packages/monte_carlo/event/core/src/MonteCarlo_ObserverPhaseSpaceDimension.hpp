@@ -13,16 +13,10 @@
 #include <iostream>
 #include <string>
 
-// Boost Includes
-#include <boost/unordered_map.hpp>
-
-// HDF5 Includes
-#include <H5Cpp.h>
-
 // FRENSIE Includes
-#include "Utility_HDF5TypeTraits.hpp"
-#include "Utility_ContractException.hpp"
-#include "Utility_Vector.hpp"
+#include "Utility_ToStringTraits.hpp"
+#include "Utility_SerializationHelpers.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -34,7 +28,7 @@ namespace MonteCarlo{
  */
 enum ObserverPhaseSpaceDimension{
   OBSERVER_PHASE_SPACE_DIMENSION_start = 0,
-  OBSERVER_COSINE_DIMENSION = DIMENSION_start,
+  OBSERVER_COSINE_DIMENSION = OBSERVER_PHASE_SPACE_DIMENSION_start,
   OBSERVER_SOURCE_ENERGY_DIMENSION,
   OBSERVER_ENERGY_DIMENSION,
   OBSERVER_SOURCE_TIME_DIMENSION,
@@ -44,83 +38,81 @@ enum ObserverPhaseSpaceDimension{
   OBSERVER_PHASE_SPACE_DIMENSION_end
 };
 
-//! Convert the ObserverPhaseSpaceDimension to a string
-std::string convertObserverPhaseSpaceDimensionToString(
-                                 const ObserverPhaseSpaceDimension dimension );
-
-//! Convert the ObserverPhaseSpaceDimension to a string (basic)
-std::string convertObserverPhaseSpaceDimensionToStringBasic(
-                                 const ObserverPhaseSpaceDimension dimension );
-
-//! Convert an unsigned to an ObserverPhaseSpaceDimension
-PhaseSpaceDimension convertUnsignedToPhaseSpaceDimensionEnum(
-                                                    const unsigned dimension );
-
-//! Stream operator for printing ObserverPhaseSpaceDimension enums
-inline std::ostream& operator<<( std::ostream& os,
-				 const ObserverPhaseSpaceDimension dimension )
-{
-  os << convertObserverPhaseSpaceDimensionToString( dimension );
-
-  return os;
-}
-
 } // end MonteCarlo namespace
 
 namespace Utility{
 
-/*! The specialization of the Utility::HDF5TypeTraits for the
- * MonteCarlo::ObserverPhaseSpaceDimension enum
- * \ingroup hdf5_type_traits
+/*! \brief Specialization of Utility::ToStringTraits for 
+ * MonteCarlo::ObserverPhaseSpaceDimension
+ * \ingroup to_string_traits
  */
 template<>
-struct HDF5TypeTraits<MonteCarlo::ObserverPhaseSpaceDimension>
+struct ToStringTraits<MonteCarlo::ObserverPhaseSpaceDimension>
 {
-  //! Return the HDF5 data type
-  static inline H5::EnumType dataType()
-  {
-    H5::EnumType hdf5_phase_space_dimension_type(
-			   sizeof( MonteCarlo::ObserverPhaseSpaceDimension ) );
+  //! Convert a MonteCarlo::ObserverPhaseSpaceDimension to a string
+  static std::string toString( const MonteCarlo::ObserverPhaseSpaceDimension dimension );
 
-    MonteCarlo::ObserverPhaseSpaceDimension value;
-    std::string value_name;
-
-    for( unsigned i = MonteCarlo::OBSERVER_PHASE_SPACE_DIMENSION_start;
-         i < MonteCarlo::OBSERVER_PHASE_SPACE_DIMENSION_end;
-         ++i )
-    {
-      value =
-        MonteCarlo::convertUnsignedToObserverPhaseSpaceDimensionEnum( i );
-
-      value_name =
-        MonteCarlo::convertObserverPhaseSpaceDimensionToStringBasic( value );
-
-      hdf5_phase_space_dimension_type.insert( value_name.c_str(), &value );
-    }
-
-    return hdf5_phase_space_dimension_type;
-  }
-
-  //! Return the name of the type
-  static inline std::string name()
-  {
-    return "ObserverPhaseSpaceDimension";
-  }
-
-  //! Returns the zero value for this type
-  static inline MonteCarlo::ObserverPhaseSpaceDimension zero()
-  {
-    return MonteCarlo::OBSERVER_PHASE_SPACE_DIMENSION_start;
-  }
-
-  //! Returns the unity value for this type
-  static inline MonteCarlo::ObserverPhaseSpaceDimension one()
-  {
-    return MonteCarlo::OBSERVER_PHASE_SPACE_DIMENSION_start;
-  }
+  //! Place the MonteCarlo::ObserverPhaseSpaceDimension in a stream
+  static void toStream( std::ostream& os, const MonteCarlo::ObserverPhaseSpaceDimension dimension );
 };
 
 } // end Utility namespace
+
+namespace std{
+
+//! Stream operator for printing MonteCarlo::ObserverPhaseSpaceDimension enums
+inline std::ostream& operator<<( std::ostream& os,
+                                 const MonteCarlo::ObserverPhaseSpaceDimension dimension )
+{
+  os << Utility::toString( dimension );
+
+  return os;
+}
+
+} // end std namespace
+
+namespace boost{
+
+namespace serialization{
+
+//! Serialize the MonteCarlo::ObserverPhaseSpaceDimension enum
+template<typename Archive>
+void serialize( Archive& archive,
+                MonteCarlo::ObserverPhaseSpaceDimension& type,
+                const unsigned version )
+{
+  if( Archive::is_saving::value )
+    archive & (int)type;
+  else
+  {
+    int raw_type;
+
+    archive & raw_type;
+
+    switch( raw_type )
+    {
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::OBSERVER_COSINE_DIMENSION, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::OBSERVER_ENERGY_DIMENSION, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::OBSERVER_TIME_DIMENSION, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION, int, type );
+
+      default:
+      {
+        THROW_EXCEPTION( std::logic_error,
+                         "Cannot conver the deserialized raw observer phase "
+                         "space dimension type to its corresponding enum "
+                         "value!" );
+      }
+    }
+  }
+}
+
+} // end serialization namespace
+
+} // end boost namespace
 
 #endif // end MONTE_CARLO_PHASE_SPACE_DIMENSION_HPP
 

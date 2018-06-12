@@ -17,7 +17,7 @@
 #include <boost/any.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_EstimatorParticleStateWrapper.hpp"
+#include "MonteCarlo_ObserverParticleStateWrapper.hpp"
 #include "MonteCarlo_ObserverPhaseSpaceDimension.hpp"
 #include "Utility_Tuple.hpp"
 
@@ -81,26 +81,28 @@ struct ObserverPhaseSpaceDimensionTraits
   }
 
   //! Extract a value from an estimator particle state wrapper
-  static inline const dimensionType& getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
+  static inline const dimensionType& getDimensionValue(
+                        const ObserverParticleStateWrapper& particle_wrapper )
   {
     (void)UndefinedObserverPhaseSpaceDimensionTraits<dimensionType,dimension>::notDefined();
     return 0;
   }
 
   //! Extract a value from an boost::any container
-  static inline const dimensionType& getDimensionValue( const boost::any& any_value )
+  static inline const dimensionType& getDimensionValue(
+                                                  const boost::any& any_value )
   {
     (void)UndefinedObserverPhaseSpaceDimensionTraits<dimensionType,dimension>::notDefined();
     return 0;
   }
 
   //! Extract a value range from an estimator particle state wrapper
-  static inline void getDimensionRange( const EstimatorParticleStateWrapper& particle_wrapper,
-                                        dimensionType& range_start,
-                                        dimensionType& range_end )
+  static inline void getDimensionRange(
+                         const ObserverParticleStateWrapper& particle_wrapper,
+                         dimensionType& range_start,
+                         dimensionType& range_end )
   {
     (void)UndefinedObserverPhaseSpaceDimensionTraits<dimensionType,dimension>::notDefined();
-    return 0;
   }
 };
 
@@ -110,7 +112,7 @@ struct ObserverPhaseSpaceDimensionTraits
  */
 template<ObserverPhaseSpaceDimension dimension>
 inline typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType
-getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
+getDimensionValue( const ObserverParticleStateWrapper& particle_wrapper )
 {
   return ObserverPhaseSpaceDimensionTraits<dimension>::getDimensionValue(
                                                             particle_wrapper );
@@ -132,12 +134,12 @@ getDimensionValue( const boost::any& any_value )
  * \ingroup observer_phase_space_dim_traits
  */
 template<ObserverPhaseSpaceDimension dimension>
-inline typename void getDimensionRange(
-      const EstimatorParticleStateWrapper& particle_wrapper,
-      ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType& range_start,
-      ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType& range_end )
+inline void getDimensionRange(
+      const ObserverParticleStateWrapper& particle_wrapper,
+      typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType& range_start,
+      typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType& range_end )
 {
-  return ObserverPhaseSpaceDimensionTraits<dimension>::getDimensionRange(
+  ObserverPhaseSpaceDimensionTraits<dimension>::getDimensionRange(
                                                               particle_wrapper,
                                                               range_start,
                                                               range_end );

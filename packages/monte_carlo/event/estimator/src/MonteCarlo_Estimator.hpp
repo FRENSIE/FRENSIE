@@ -73,6 +73,9 @@ public:
   virtual ~Estimator()
   { /* ... */ }
 
+  //! Return the estimator id
+  size_t getId() const;
+
   //! Return the estimator constant multiplier
   double getMultiplier() const;
 

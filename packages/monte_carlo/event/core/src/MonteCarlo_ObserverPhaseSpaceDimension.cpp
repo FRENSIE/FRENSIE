@@ -14,96 +14,47 @@
 #include "MonteCarlo_ObserverPhaseSpaceDimensionTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
-//! Convert the ObserverPhaseSpaceDimension enum to a string
-#define OBSERVER_PHASE_SPACE_DIMENSION_STRING( dim ) #dim
+namespace Utility{
 
-namespace MonteCarlo{
-
-// Convert the ObserverPhaseSpaceDimension to a string (basic)
-std::string convertObserverPhaseSpaceDimensionToStringBasic(
-				  const ObserverPhaseSpaceDimension dimension )
+// Convert a MonteCarlo::ObserverPhaseSpaceDimension to a string
+std::string ToStringTraits<MonteCarlo::ObserverPhaseSpaceDimension>::toString(
+                      const MonteCarlo::ObserverPhaseSpaceDimension dimension )
 {
   switch( dimension )
   {
-  case OBSERVER_COSINE_DIMENSION:
-    return OBSERVER_PHASE_SPACE_DIMENSION_STRING( OBSERVER_COSINE_DIMENSION );
-  case OBSERVER_SOURCE_ENERGY_ODIMENSION:
-    return OBSERVER_PHASE_SPACE_DIMENSION_STRING( OBSERVER_SOURCE_ENERGY_DIMENSION );
-  case OBSERVER_ENERGY_DIMENSION:
-    return OBSERVER_PHASE_SPACE_DIMENSION_STRING( OBSERVER_ENERGY_DIMENSION );
-  case OBSERVER_SOURCE_TIME_DIMENSION:
-    return OBSERVER_PHASE_SPACE_DIMENSION_STRING( OBSERVER_SOURCE_TIME_DIMENSION );
-  case OBSERVER_TIME_DIMENSION:
-    return OBSERVER_PHASE_SPACE_DIMENSION_STRING( OBSERVER_TIME_DIMENSION );
-  case OBSERVER_COLLISION_NUMBER_DIMENSION:
-    return OBSERVER_PHASE_SPACE_DIMENSION_STRING( OBSERVER_COLLISION_NUMBER_DIMENSION );
-  case OBSERVER_SOURCE_ID_DIMENSION:
-    return OBSERVER_PHASE_SPACE_DIMENSION_STRING( OBSERVER_SOURCE_ID_DIMENSION );
-  default:
-    THROW_EXCEPTION( std::logic_error,
-		     "Error: ObserverPhaseSpaceDimension "
-                     << (unsigned)dimension <<
-		     " cannot be converted to a string!" );
+    case MonteCarlo::OBSERVER_COSINE_DIMENSION:
+      return MonteCarlo::ObserverPhaseSpaceDimensionTraits<MonteCarlo::OBSERVER_COSINE_DIMENSION>::name();
+    case MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION:
+      return MonteCarlo::ObserverPhaseSpaceDimensionTraits<MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION>::name();
+    case MonteCarlo::OBSERVER_ENERGY_DIMENSION:
+      return MonteCarlo::ObserverPhaseSpaceDimensionTraits<MonteCarlo::OBSERVER_ENERGY_DIMENSION>::name();
+    case MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION:
+      return MonteCarlo::ObserverPhaseSpaceDimensionTraits<MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION>::name();
+    case MonteCarlo::OBSERVER_TIME_DIMENSION:
+      return MonteCarlo::ObserverPhaseSpaceDimensionTraits<MonteCarlo::OBSERVER_TIME_DIMENSION>::name();
+    case MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION:
+      return MonteCarlo::ObserverPhaseSpaceDimensionTraits<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>::name();
+    case MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION:
+      return MonteCarlo::ObserverPhaseSpaceDimensionTraits<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION>::name();
+    default:
+    {
+      THROW_EXCEPTION( std::logic_error,
+                       "ObserverPhaseSpaceDimension "
+                       << (unsigned)dimension <<
+                       " cannot be converted to a string!" );
+    }
   }
 }
 
-// Convert the ObserverPhaseSpaceDimension to a string
-std::string convertObserverPhaseSpaceDimensionToString(
-				  const ObserverPhaseSpaceDimension dimension )
+// Place the MonteCarlo::ObserverPhaseSpaceDimension in a stream
+void ToStringTraits<MonteCarlo::ObserverPhaseSpaceDimension>::toStream(
+                      std::ostream& os,
+                      const MonteCarlo::ObserverPhaseSpaceDimension dimension )
 {
-  switch( dimension )
-  {
-  case OBSERVER_COSINE_DIMENSION:
-    return ObserverPhaseSpaceDimensionTraits<OBSERVER_COSINE_DIMENSION>::name();
-  case OBSERVER_SOURCE_ENERGY_DIMENSION:
-    return ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_ENERGY_DIMENSION>::name();
-  case OBSERVER_ENERGY_DIMENSION:
-    return ObserverPhaseSpaceDimensionTraits<OBSERVER_ENERGY_DIMENSION>::name();
-  case OBSERVER_SOURCE_TIME_DIMENSION:
-    return ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_TIME_DIMENSION>::name();
-  case OBSERVER_TIME_DIMENSION:
-    return ObserverPhaseSpaceDimensionTraits<OBSERVER_TIME_DIMENSION>::name();
-  case OBSERVER_COLLISION_NUMBER_DIMENSION:
-    return ObserverPhaseSpaceDimensionTraits<OBSERVER_COLLISION_NUMBER_DIMENSION>::name();
-  case OBSERVER_SOURCE_ID_DIMENSION:
-    return ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_ID_DIMENSION>::name();
-  default:
-    THROW_EXCEPTION( std::logic_error,
-		     "Error: ObserverPhaseSpaceDimension "
-                     << (unsigned)dimension <<
-		     " cannot be converted to a string!" );
-  }
+  os << ToStringTraits<MonteCarlo::ObserverPhaseSpaceDimension>::toString( dimension );
 }
 
-// Convert an unsigned to an ObserverPhaseSpaceDimension
-ObserverPhaseSpaceDimension convertUnsignedToObserverPhaseSpaceDimensionEnum(
-                                                     const unsigned dimension )
-{
-  switch( dimension )
-  {
-  case (unsigned)OBSERVER_COSINE_DIMENSION:
-    return OBSERVER_COSINE_DIMENSION;
-  case (unsigned)OBSERVER_SOURCE_ENERGY_DIMENSION:
-    return OBSERVER_SOURCE_ENERGY_DIMENSION;
-  case (unsigned)OBSERVER_ENERGY_DIMENSION:
-    return OBSERVER_ENERGY_DIMENSION;
-  case (unsigned)OBSERVER_SOURCE_TIME_DIMENSION:
-    return OBSERVER_SOURCE_TIME_DIMENSION;
-  case (unsigned)OBSERVER_TIME_DIMENSION:
-    return OBSERVER_TIME_DIMENSION;
-  case (unsigned)OBSERVER_COLLISION_NUMBER_DIMENSION:
-    return OBSERVER_COLLISION_NUMBER_DIMENSION;
-  case (unsigned)OBSERVER_SOURCE_ID_DIMENSION:
-    return OBSERVER_SOURCE_ID_DIMENSION;
-  default:
-    THROW_EXCEPTION( std::logic_error,
-                     "Error: the raw dimension value " << dimension <<
-                     " cannot be converted to an ObserverPhaseSpaceDimension "
-                     "enum!" );
-  }
-}
-
-} // end MonteCarlo namespace
+} // end Utility namespace
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_PhaseSpaceDimension.cpp

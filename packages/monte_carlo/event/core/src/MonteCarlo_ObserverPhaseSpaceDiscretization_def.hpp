@@ -39,7 +39,7 @@ struct RangeDimensionHelper
     else
       return RangeDimensionHelper<MPLSetNextIt,MPLSetEndIt>::isRangeDimension( dimension );
   }
-}
+};
 
 // The range dimension helper class (start == end)
 template<typename MPLSetEndIt>
@@ -52,31 +52,16 @@ struct RangeDimensionHelper<MPLSetEndIt,MPLSetEndIt>
   {
     return false;
   }
-}
+};
   
 } // end Details namespace
-
-// Return the dimensions that have been discretized
-template<template<typename,typename...> class STLCompliantContainer>
-void ObserverPhaseSpaceDiscretization::getDiscretizedDimensions(
-                            STLCompliantContainer<ObserverPhaseSpaceDimension>&
-                            discretized_dimensions ) const
-{
-  // Construct a new container so that this method can take both sets and
-  // arrays
-  discretized_dimensions =
-    STLCompliantContainer<ObserverPhaseSpaceDimension>(
-                                                  d_dimension_ordering.begin(),
-                                                  d_dimension_ordering.end() );
-                                                                               
-}
 
 // Check if the range intersects the phase space discretization
 template<ObserverPhaseSpaceDimension... RangeDimensions>
 bool ObserverPhaseSpaceDiscretization::doesRangeIntersectDiscretization(
-            const EstimatorParticleStateWrapper& particle_state_wrapper ) const
+            const ObserverParticleStateWrapper& particle_state_wrapper ) const
 {
-  typedef boost::mpl::set_c<ObserverPhaseSpaceDimension,RangeDimensions>
+  typedef boost::mpl::set_c<ObserverPhaseSpaceDimension,RangeDimensions...>
     RangeDimensionsSet;
 
   bool range_in_discretization = true;
@@ -86,7 +71,7 @@ bool ObserverPhaseSpaceDiscretization::doesRangeIntersectDiscretization(
     const ObserverPhaseSpaceDimension dimension = d_dimension_ordering[i];
 
     // Check if this is a dimension with a range
-    if( this->isRangeDimension<RangeDimensions>( dimension ) )
+    if( this->isRangeDimension<RangeDimensions...>( dimension ) )
     {
       if( !this->doesRangeIntersectDimensionDiscretization( dimension, particle_state_wrapper ) )
       {
@@ -107,13 +92,13 @@ bool ObserverPhaseSpaceDiscretization::doesRangeIntersectDiscretization(
     }
   }
 
-  return point_in_discretization;
+  return range_in_discretization;
 }
 
 // Calculate the bin indices and weights of a range
 template<ObserverPhaseSpaceDimension... RangeDimensions>
 void ObserverPhaseSpaceDiscretization::calculateBinIndicesAndWeightsOfRange(
-                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   const ObserverParticleStateWrapper& particle_state_wrapper,
                    BinIndexWeightPairArray& bin_indices_and_weights ) const
 {
   // Clear the bin indices array
@@ -130,7 +115,7 @@ void ObserverPhaseSpaceDiscretization::calculateBinIndicesAndWeightsOfRange(
     
     if( i != 0 )
     {      
-      this->calculateLocalBinIndicesAndWeightsOfRange<RangeDimensions>(
+      this->calculateLocalBinIndicesAndWeightsOfRange<RangeDimensions...>(
                                                dimension,
                                                particle_state_wrapper,
                                                local_bin_indices_and_weights );
@@ -146,18 +131,18 @@ void ObserverPhaseSpaceDiscretization::calculateBinIndicesAndWeightsOfRange(
                                       local_bin_indices_and_weights.size() );
 
       // Calculate the bin indices that have been intersected
-      for( size_t i = 0; i < previous_bin_indices.size(); ++i )
+      for( size_t i = 0; i < previous_bin_indices_and_weights.size(); ++i )
       {
-        for( size_t j = 0; j < local_bin_indices.size(); ++j )
+        for( size_t j = 0; j < local_bin_indices_and_weights.size(); ++j )
         {
           BinIndexWeightPairArray::value_type& bin_index_and_weight =
-            bin_indices_and_weights[i*local_bin_indices.size()+j];
+            bin_indices_and_weights[i*local_bin_indices_and_weights.size()+j];
           
           bin_index_and_weight.first =
             previous_bin_indices_and_weights[i].first +
             local_bin_indices_and_weights[j].first*dimension_index_step_size;
 
-          bin_indices_and_weights.second =
+          bin_index_and_weight.second =
             previous_bin_indices_and_weights[i].second*
             local_bin_indices_and_weights[j].second;
         }
@@ -166,7 +151,7 @@ void ObserverPhaseSpaceDiscretization::calculateBinIndicesAndWeightsOfRange(
     // Initialize the bin indices and weights array
     else
     {
-      this->calculateLocalBinIndicesAndWeightsOfRange<RangeDimensions>(
+      this->calculateLocalBinIndicesAndWeightsOfRange<RangeDimensions...>(
                                                      dimension,
                                                      particle_state_wrapper,
                                                      bin_indices_and_weights );
@@ -255,15 +240,15 @@ inline void ObserverPhaseSpaceDiscretization::calculateBinIndicesOfPointImpl(
 template<typename Array>
 void ObserverPhaseSpaceDiscretization::calculateLocalBinIndicesOfValue(
                    const ObserverPhaseSpaceDimension dimension,
-                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   const ObserverParticleStateWrapper& particle_state_wrapper,
                    Array& local_bin_indices ) const
 {
   // Clear the local bin indices
   local_bin_indices.clear();
 
   // Get the discretization for the dimension
-  const DimensionDiscretizationPointer& dimension_discretization =
-      d_dimension_discretization_map.find( dimension )->second;
+  const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>&
+    dimension_discretization = d_dimension_discretization_map.find( dimension )->second;
 
   // Calculate the local bin indices
   dimension_discretization->calculateBinIndicesOfValue(
@@ -274,21 +259,20 @@ void ObserverPhaseSpaceDiscretization::calculateLocalBinIndicesOfValue(
 template<ObserverPhaseSpaceDimension... RangeDimensions>
 void ObserverPhaseSpaceDiscretization::calculateLocalBinIndicesAndWeightsOfRange(
                  const ObserverPhaseSpaceDimension dimension,
-                 const EstimatorParticleStateWrapper& particle_state_wrapper,
+                 const ObserverParticleStateWrapper& particle_state_wrapper,
                  BinIndexWeightPairArray& local_bin_indices_and_weights ) const
 {
   // Check if this is a dimension with a range
-  if( this->isRangeDimension<RangeDimensions>( dimension ) )
+  if( this->isRangeDimension<RangeDimensions...>( dimension ) )
   {
     // Clear the local bin indices and weights
     local_bin_indices_and_weights.clear();
     
     // Get the discretization for the dimension
-    const DimensionDiscretizationPointer& dimension_discretization =
-      d_dimension_discretization_map.find( dimension )->second;
+    const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& dimension_discretization = d_dimension_discretization_map.find( dimension )->second;
 
     // Calculate the local bin indices and weights
-    dimension_discretization->calculateBinIndicesAndWeightsOfRange(
+    dimension_discretization->calculateBinIndicesOfRange(
                                                particle_state_wrapper,
                                                local_bin_indices_and_weights );
   }
@@ -306,10 +290,10 @@ template<ObserverPhaseSpaceDimension... RangeDimensions>
 inline bool ObserverPhaseSpaceDiscretization::isRangeDimension(
                                   const ObserverPhaseSpaceDimension dimension )
 {
-  typedef boost::mpl::set_c<ObserverPhaseSpaceDimension,RangeDimensions>
+  typedef boost::mpl::set_c<ObserverPhaseSpaceDimension,RangeDimensions...>
     RangeDimensionsSet;
   
-  return Details::RangeDimensionHelper<boost::mpl::begin<RangeDimensionsSet>,boost::mpl::end<RangeDimensionSet> >::isRangeDimension( dimension );
+  return Details::RangeDimensionHelper<boost::mpl::begin<RangeDimensionsSet>,boost::mpl::end<RangeDimensionsSet> >::isRangeDimension( dimension );
 }
   
 } // end MonteCarlo namespace

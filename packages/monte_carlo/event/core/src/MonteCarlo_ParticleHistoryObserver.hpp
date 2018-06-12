@@ -11,13 +11,9 @@
 
 // Std Lib Includes
 #include <iostream>
-#include <sstream>
 #include <memory>
 
 // FRENSIE Includes
-#include "MonteCarlo_ModuleTraits.hpp"
-#include "Utility_HDF5FileHandler.hpp"
-#include "Utility_LoggingMacros.hpp"
 #include "Utility_Communicator.hpp"
 
 namespace MonteCarlo{
@@ -28,27 +24,19 @@ class ParticleHistoryObserver
 
 public:
 
-  //! Typedef for observer id
-  typedef ModuleTraits::InternalEventObserverHandle idType;
-
-  //! Set the number of particle histories observed
-  static void setNumberOfHistories( const unsigned long long num_histories );
-
-  //! Set the start time (for analysis of observer data)
-  static void setStartTime( const double start_time );
-
-  //! Set the end time (for analysis of observer data)
-  static void setEndTime( const double end_time );
-
   //! Constructor
-  ParticleHistoryObserver( const idType id );
+  ParticleHistoryObserver()
+  { /* ... */ }
 
   //! Destructor
   virtual ~ParticleHistoryObserver()
   { /* ... */ }
 
-  //! Return the observer id
-  idType getId() const;
+  //! Set the number of particle histories observed
+  static void setNumberOfHistories( const unsigned long long num_histories );
+
+  //! Set the elapsed time (for analysis of observer data)
+  static void setElapsedTime( const double elapsed_time );
 
   //! Enable support for multiple threads
   virtual void enableThreadSupport( const unsigned num_threads ) = 0;
@@ -63,9 +51,8 @@ public:
   virtual void resetData() = 0;
 
   //! Reduce the object data on all processes in comm and collect on root
-  virtual void reduceData(
-            const std::shared_ptr<const Utility::Communicator<unsigned long long> >& comm,
-            const int root_process ) = 0;
+  virtual void reduceData( const Utility::Communicator& comm,
+                           const int root_process ) = 0;
 
   //! Print a summary of the data
   virtual void printSummary( std::ostream& os ) const = 0;
@@ -84,33 +71,15 @@ protected:
 private:
 
   // The number of particle histories that will be run
-  static unsigned long long num_histories;
+  static unsigned long long s_num_histories;
 
-  // The start time used for the figure of merit calculation
-  static double start_time;
-
-  // The end time used for the figure of merit calculation
-  static double end_time;
-
-  // The observer id
-  idType d_id;
+  // The elapsed time (used for the figure of merit calculation)
+  static double s_elapsed_time;
 };
 
-// Return the estimator id
-inline ParticleHistoryObserver::idType ParticleHistoryObserver::getId() const
-{
-  return d_id;
-}
+} // end MonteCarlo namespace
 
-// Log a summary of the data
-inline void ParticleHistoryObserver::logSummary() const
-{
-  std::ostringstream oss;
-
-  this->printSummary( oss );
-  
-  FRENSIE_LOG_NOTIFICATION( oss.str() );
-}
+namespace std{
 
 //! Stream operator for printing summaries of particle history observers
 inline std::ostream& operator<<(
@@ -121,8 +90,8 @@ inline std::ostream& operator<<(
 
   return os;
 }
-
-} // end MonteCarlo namespace
+  
+} // end std namespace
 
 #endif // end MONTE_CARLO_PARTICLE_HISTORY_OBSERVER_HPP
 

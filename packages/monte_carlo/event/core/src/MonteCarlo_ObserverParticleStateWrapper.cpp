@@ -1,19 +1,19 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_EstimatorParticleStateWrapper.cpp
+//! \file   MonteCarlo_ObserverParticleStateWrapper.cpp
 //! \author Alex Robinson
 //! \brief  The estimator particle state wrapper class
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_EstimatorParticleStateWrapper.hpp"
+#include "MonteCarlo_ObserverParticleStateWrapper.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
-EstimatorParticleStateWrapper::EstimatorParticleStateWrapper()
+ObserverParticleStateWrapper::ObserverParticleStateWrapper()
   : d_particle( NULL ),
     d_angle_cosine( 0.0 ),
     d_state_start_time( 0.0 ),
@@ -21,7 +21,7 @@ EstimatorParticleStateWrapper::EstimatorParticleStateWrapper()
 { /* ... */ }
 
 // Particle state constructor
-EstimatorParticleStateWrapper::EstimatorParticleStateWrapper(
+ObserverParticleStateWrapper::ObserverParticleStateWrapper(
                                                 const ParticleState& particle )
   : d_particle( &particle ),
     d_angle_cosine( 0.0 ),
@@ -30,7 +30,7 @@ EstimatorParticleStateWrapper::EstimatorParticleStateWrapper(
 { /* ... */ }
 
 // Return the particle state
-const ParticleState& EstimatorParticleStateWrapper::getParticleState() const
+const ParticleState& ObserverParticleStateWrapper::getParticleState() const
 {
   // Make sure the particle state is valid
   testPrecondition( d_particle );
@@ -39,7 +39,7 @@ const ParticleState& EstimatorParticleStateWrapper::getParticleState() const
 }
 
 // Set the angle cosine
-void EstimatorParticleStateWrapper::setAngleCosine( const double angle_cosine )
+void ObserverParticleStateWrapper::setAngleCosine( const double angle_cosine )
 {
   // Make sure the angle cosine is valid
   testPrecondition( angle_cosine >= -1.0 );
@@ -49,13 +49,13 @@ void EstimatorParticleStateWrapper::setAngleCosine( const double angle_cosine )
 }
 
 // Return the angle cosine
-double EstimatorParticleStateWrapper::getAngleCosine() const
+double ObserverParticleStateWrapper::getAngleCosine() const
 {
   return d_angle_cosine;
 }
 
 // Calculate the state times using particle time as track start time
-void EstimatorParticleStateWrapper::calculateStateTimesUsingParticleTimeAsStartTime(
+void ObserverParticleStateWrapper::calculateStateTimesUsingParticleTimeAsStartTime(
                                                     const double track_length )
 {
   // Make sure that the track length is valid
@@ -66,7 +66,7 @@ void EstimatorParticleStateWrapper::calculateStateTimesUsingParticleTimeAsStartT
 }
 
 // Calculate the state times using particle time as track end time
-void EstimatorParticleStateWrapper::calculateStateTimesUsingParticleTimeAsEndTime(
+void ObserverParticleStateWrapper::calculateStateTimesUsingParticleTimeAsEndTime(
                                                     const double track_length )
 {
   // Make sure that the track length is valid
@@ -77,19 +77,19 @@ void EstimatorParticleStateWrapper::calculateStateTimesUsingParticleTimeAsEndTim
 }
 
 // Get the state start time
-double EstimatorParticleStateWrapper::getStartTime() const
+double ObserverParticleStateWrapper::getStartTime() const
 {
   return d_state_start_time;
 }
 
 // Get the state end time
-double EstimatorParticleStateWrapper::getEndTime() const
+double ObserverParticleStateWrapper::getEndTime() const
 {
   return d_state_end_time;
 }
 
 // Get the state time duration
-double EstimatorParticleStateWrapper::getTimeDuration() const
+double ObserverParticleStateWrapper::getTimeDuration() const
 {
   return d_state_start_time - d_state_end_time;
 }
@@ -97,5 +97,5 @@ double EstimatorParticleStateWrapper::getTimeDuration() const
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_EstimatorParticleStateWrapper.cpp
+// end MonteCarlo_ObserverParticleStateWrapper.cpp
 //---------------------------------------------------------------------------//

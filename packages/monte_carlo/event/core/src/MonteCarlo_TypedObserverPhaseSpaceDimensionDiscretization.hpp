@@ -18,7 +18,7 @@ namespace MonteCarlo{
 
 //! The typed estimator dimension discretization base class
 template<ObserverPhaseSpaceDimension dimension>
-class TypedObserverPhaseSpaceDimensionDiscretization
+class TypedObserverPhaseSpaceDimensionDiscretization : public ObserverPhaseSpaceDimensionDiscretization
 {
 
 protected:

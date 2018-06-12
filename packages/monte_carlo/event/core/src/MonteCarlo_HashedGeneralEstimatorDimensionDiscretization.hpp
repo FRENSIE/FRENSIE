@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_HASHED_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
 #define MONTE_CARLO_HASHED_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
 
-// Boost Includes
-#include <boost/scoped_ptr.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_GeneralEstimatorDimensionDiscretization.hpp"
 #include "Utility_HashBasedGridSearcher.hpp"
@@ -41,7 +38,7 @@ public:
 private:
 
   // The hash-based grid searcher
-  boost::scoped_ptr<Utility::HashBasedGridSearcher> d_grid_searcher;
+  std::unique_ptr<Utility::HashBasedGridSearcher> d_grid_searcher;
 };
 
 } // end MonteCarlo namespace

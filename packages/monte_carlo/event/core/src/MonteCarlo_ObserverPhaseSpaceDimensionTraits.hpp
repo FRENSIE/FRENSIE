@@ -45,13 +45,13 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_COSINE_DIMENSION>
   static inline dimensionType upperBound()
   { return 1.0; }
 
-  static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
+  static inline dimensionType getDimensionValue( const ObserverParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getAngleCosine(); }
 
   static inline dimensionType getDimensionValue( const boost::any& any_value )
   { return boost::any_cast<dimensionType>( any_value ); }
 
-  static inline void getDimensionRange( const EstimatorParticleStateWrapper& particle_wrapper,
+  static inline void getDimensionRange( const ObserverParticleStateWrapper& particle_wrapper,
                                         dimensionType& range_start,
                                         dimensionType& range_end )
   {
@@ -87,13 +87,13 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_ENERGY_DIMENSION>
   static inline bool isContinuous()
   { return true; }
 
-  static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
+  static inline dimensionType getDimensionValue( const ObserverParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getSourceEnergy(); }
 
   static inline dimensionType getDimensionValue( const boost::any& any_value )
   { return boost::any_cast<dimensionType>( any_value ); }
 
-  static inline void getDimensionRange( const EstimatorParticleStateWrapper& particle_wrapper,
+  static inline void getDimensionRange( const ObserverParticleStateWrapper& particle_wrapper,
                                         dimensionType& range_start,
                                         dimensionType& range_end )
   {
@@ -107,7 +107,7 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_ENERGY_DIMENSION>
  * \ingroup observer_phase_space_dim_traits
  */
 template<>
-struct PhaseSpaceDimensionTraits<ENERGY_DIMENSION>
+struct ObserverPhaseSpaceDimensionTraits<OBSERVER_ENERGY_DIMENSION>
 {
   typedef ParticleState::energyType dimensionType;
 
@@ -130,13 +130,13 @@ struct PhaseSpaceDimensionTraits<ENERGY_DIMENSION>
   static inline bool isContinuous()
   { return true; }
 
-  static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
+  static inline dimensionType getDimensionValue( const ObserverParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getEnergy(); }
 
   static inline dimensionType getDimensionValue( const boost::any& any_value )
   { return boost::any_cast<dimensionType>( any_value ); }
 
-  static inline void getDimensionRange( const EstimatorParticleStateWrapper& particle_wrapper,
+  static inline void getDimensionRange( const ObserverParticleStateWrapper& particle_wrapper,
                                         dimensionType& range_start,
                                         dimensionType& range_end )
   {
@@ -149,7 +149,7 @@ struct PhaseSpaceDimensionTraits<ENERGY_DIMENSION>
  * \ingroup observer_phase_space_dim_traits
  */
 template<>
-struct ObserverPhaseSpaceDimensionTraits<SOURCE_TIME_DIMENSION>
+struct ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_TIME_DIMENSION>
 {
   typedef ParticleState::timeType dimensionType;
 
@@ -172,13 +172,13 @@ struct ObserverPhaseSpaceDimensionTraits<SOURCE_TIME_DIMENSION>
   static inline bool isContinuous()
   { return true; }
 
-  static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
+  static inline dimensionType getDimensionValue( const ObserverParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getSourceTime(); }
 
   static inline dimensionType getDimensionValue( const boost::any& any_value )
   { return boost::any_cast<dimensionType>( any_value ); }
 
-  static inline void getDimensionRange( const EstimatorParticleStateWrapper& particle_wrapper,
+  static inline void getDimensionRange( const ObserverParticleStateWrapper& particle_wrapper,
                                         dimensionType& range_start,
                                         dimensionType& range_end )
   {
@@ -215,13 +215,13 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_TIME_DIMENSION>
   static inline bool isContinuous()
   { return true; }
 
-  static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
+  static inline dimensionType getDimensionValue( const ObserverParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getTime(); }
 
   static inline dimensionType getDimensionValue( const boost::any& any_value )
   { return boost::any_cast<dimensionType>( any_value ); }
 
-  static inline void getDimensionRange( const EstimatorParticleStateWrapper& particle_wrapper,
+  static inline void getDimensionRange( const ObserverParticleStateWrapper& particle_wrapper,
                                         dimensionType& range_start,
                                         dimensionType& range_end )
   {
@@ -258,13 +258,13 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_COLLISION_NUMBER_DIMENSION>
   static inline bool isContinuous()
   { return false; }
 
-  static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
+  static inline dimensionType getDimensionValue( const ObserverParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getCollisionNumber(); }
 
   static inline dimensionType getDimensionValue( const boost::any& any_value )
   { return boost::any_cast<dimensionType>( any_value ); }
 
-  static inline void getDimensionRange( const EstimatorParticleStateWrapper& particle_wrapper,
+  static inline void getDimensionRange( const ObserverParticleStateWrapper& particle_wrapper,
                                         dimensionType& range_start,
                                         dimensionType& range_end )
   {
@@ -280,7 +280,7 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_COLLISION_NUMBER_DIMENSION>
 template<>
 struct ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_ID_DIMENSION>
 {
-  typedef MonteCarlo::ModuleTraits::InternalROIHandle dimensionType;
+  typedef size_t dimensionType;
 
   typedef std::vector<dimensionType> dimensionBinType;
 
@@ -301,13 +301,13 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_ID_DIMENSION>
   static inline bool isContinuous()
   { return false; }
 
-  static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
+  static inline dimensionType getDimensionValue( const ObserverParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getSourceId(); }
 
   static inline dimensionType getDimensionValue( const boost::any& any_value )
   { return boost::any_cast<dimensionType>( any_value ); }
 
-  static inline void getDimensionRange( const EstimatorParticleStateWrapper& particle_wrapper,
+  static inline void getDimensionRange( const ObserverParticleStateWrapper& particle_wrapper,
                                         dimensionType& range_start,
                                         dimensionType& range_end )
   {

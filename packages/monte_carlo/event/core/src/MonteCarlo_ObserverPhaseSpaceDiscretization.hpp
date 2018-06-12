@@ -12,10 +12,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <memory>
-#include <map>
-#include <unordered_map>
 #include <string>
-#include <vector>
 
 // Boost Includes
 #include <boost/any.hpp>
@@ -23,9 +20,10 @@
 // FRENSIE Includes
 #include "MonteCarlo_ObserverPhaseSpaceDimension.hpp"
 #include "MonteCarlo_ObserverPhaseSpaceDimensionDiscretization.hpp"
-#include "MonteCarlo_EstimatorParticleStateWrapper.hpp"
-#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
-#include "MonteCarlo_ParticleHistoryObserver.hpp"
+#include "MonteCarlo_ObserverParticleStateWrapper.hpp"
+#include "Utility_Map.hpp"
+#include "Utility_Set.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -37,10 +35,6 @@ public:
 
   //! Typedef for the dimension value map type
   typedef std::map<ObserverPhaseSpaceDimension,boost::any> DimensionValueMap;
-
-  //! Typedef for the dimension discretization pointer type
-  typedef std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>
-  DimensionDiscretizationPointer;
 
   //! Typedef for the bin index array
   typedef ObserverPhaseSpaceDimensionDiscretization::BinIndexArray
@@ -59,17 +53,20 @@ public:
 
   //! Assign a discretization to a dimension
   void assignDiscretizationToDimension(
-                        const DimensionDiscretizationPointer& discretization );
+        const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>&
+        discretization );
 
   //! Check if a dimension has a discretization
-  void doesDimensionHaveDiscretization(
+  bool doesDimensionHaveDiscretization(
                            const ObserverPhaseSpaceDimension dimension ) const;
 
   //! Return the dimensions that have been discretized
-  template<template<typename,typename...> class STLCompliantContainer>
   void getDiscretizedDimensions(
-                            STLCompliantContainer<ObserverPhaseSpaceDimension>&
-                            discretized_dimensions ) const;
+         std::set<ObserverPhaseSpaceDimension>& discretized_dimensions ) const;
+
+  //! Return the dimensions that have been discretized
+  void getDiscretizedDimensions(
+      std::vector<ObserverPhaseSpaceDimension>& discretized_dimensions ) const;
 
   //! Return the total number of bins in the discretization
   size_t getNumberOfBins() const;
@@ -92,13 +89,9 @@ public:
               const ObserverPhaseSpaceDimension dimension,
               const size_t index ) const;
   
-  //! Export the discretization
-  void export( const ParticleHistoryObserver::idType owner_observer_id,
-               const EstimatorHDF5FileHandler& hdf5_file ) const;
-  
   //! Check if the point is in the phase space discretization
   bool isPointInDiscretization(
-           const EstimatorParticleStateWrapper& particle_state_wrapper ) const;
+           const ObserverParticleStateWrapper& particle_state_wrapper ) const;
 
   //! Check if the point is in the phase space discretization
   bool isPointInDiscretization(
@@ -107,11 +100,11 @@ public:
   //! Check if the range intersects the phase space discretization
   template<ObserverPhaseSpaceDimension... RangeDimensions>
   bool doesRangeIntersectDiscretization(
-           const EstimatorParticleStateWrapper& particle_state_wrapper ) const;
+           const ObserverParticleStateWrapper& particle_state_wrapper ) const;
   
   //! Calculate the bin indices of a point
   void calculateBinIndicesOfPoint(
-                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   const ObserverParticleStateWrapper& particle_state_wrapper,
                    BinIndexArray& bin_indices ) const;
 
   //! Calculate the bin indices of a point
@@ -121,7 +114,7 @@ public:
   //! Calculate the bin indices and weights of a range
   template<ObserverPhaseSpaceDimension... RangeDimensions>
   void calculateBinIndicesAndWeightsOfRange(
-                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   const ObserverParticleStateWrapper& particle_state_wrapper,
                    BinIndexWeightPairArray& bin_indices_and_weights ) const;
 
 private:
@@ -145,7 +138,7 @@ private:
   // Check if the value is in the dimension discretization
   bool isValueInDimensionDiscretization(
            const ObserverPhaseSpaceDimension dimension,
-           const EstimatorParticleStateWrapper& particle_state_wrapper ) const;
+           const ObserverParticleStateWrapper& particle_state_wrapper ) const;
 
   // Check if the value is in the dimension discretization
   bool isValueInDimensionDiscretization(
@@ -155,7 +148,7 @@ private:
   // Check if the range intersects the dimension discretization
   bool doesRangeIntersectDimensionDiscretization(
            const ObserverPhaseSpaceDimension dimension,
-           const EstimatorParticleStateWrapper& particle_state_wrapper ) const;
+           const ObserverParticleStateWrapper& particle_state_wrapper ) const;
 
   // Calculate the local bin indices of the point (implementation)
   template<typename DimensionValueContainer>
@@ -167,7 +160,7 @@ private:
   template<typename Array>
   void calculateLocalBinIndicesOfValue(
                    const ObserverPhaseSpaceDimension dimension,
-                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   const ObserverParticleStateWrapper& particle_state_wrapper,
                    Array& local_bin_indices ) const;
 
   // Calculate the local bin indices of the value
@@ -180,7 +173,7 @@ private:
   template<ObserverPhaseSpaceDimension... RangeDimensions>
   void calculateLocalBinIndicesAndWeightsOfRange(
                 const ObserverPhaseSpaceDimension dimension,
-                const EstimatorParticleStateWrapper& particle_state_wrapper,
+                const ObserverParticleStateWrapper& particle_state_wrapper,
                 BinIndexWeightPairArray& local_bin_indices_and_weights ) const;
 
   // Check if the dimension is a range dimension
@@ -188,7 +181,7 @@ private:
   static bool isRangeDimension( const ObserverPhaseSpaceDimension dimension );
 
   // The observer phase space dimension discretizations
-  std::map<ObserverPhaseSpaceDimension,DimensionDiscretizationPointer>
+  std::map<ObserverPhaseSpaceDimension,std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization> >
   d_dimension_discretization_map;
 
   // The observer phase space dimension index step size map

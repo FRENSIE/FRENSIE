@@ -17,8 +17,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ObserverPhaseSpaceDimension.hpp"
-#include "MonteCarlo_EstimatorParticleStateWrapper.hpp"
-#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
+#include "MonteCarlo_ObserverParticleStateWrapper.hpp"
 #include "MonteCarlo_ParticleHistoryObserver.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_Vector.hpp"
@@ -32,10 +31,10 @@ class ObserverPhaseSpaceDimensionDiscretization
 public:
 
   //! Typedef for bin index array
-  typedef std::vector<size_t> BinIndexArray
+  typedef std::vector<size_t> BinIndexArray;
 
   //! Typedef for bin index and weight pair
-  typedef Utility::Pair<size_t,double> BinIndexWeightPair;
+  typedef std::pair<size_t,double> BinIndexWeightPair;
   
   //! Typedef for bin index and weight pair array
   typedef std::vector<BinIndexWeightPair> BinIndexWeightPairArray;
@@ -59,7 +58,7 @@ public:
 
   //! Check if the value is contained in the discretization
   virtual bool isValueInDiscretization(
-       const EstimatorParticleStateWrapper& particle_state_wrapper ) const = 0;
+       const ObserverParticleStateWrapper& particle_state_wrapper ) const = 0;
 
   //! Check if the value is contained in the discretization
   virtual bool isValueInDiscretization(
@@ -67,16 +66,16 @@ public:
 
   //! Check if the range intersects the discretization
   virtual bool doesRangeIntersectDiscretization(
-       const EstimatorParticleStateWrapper& particle_state_wrapper ) const = 0;
+       const ObserverParticleStateWrapper& particle_state_wrapper ) const = 0;
 
   //! Calculate the index of bins that the value falls in
   virtual void calculateBinIndicesOfValue(
-                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   const ObserverParticleStateWrapper& particle_state_wrapper,
                    BinIndexArray& bin_indices ) const = 0;
 
   //! Calculate the index of bins that the value falls in
   virtual void calculateBinIndicesOfValue(
-                  const EstimatorParticleStateWrapper& particle_state_wrapper,
+                  const ObserverParticleStateWrapper& particle_state_wrapper,
                   BinIndexWeightPairArray& bin_indices_and_weights ) const = 0;
 
   //! Calculate the index of bins that the value falls in
@@ -86,7 +85,7 @@ public:
 
   //! Calculate the index of bins that the value range falls in
   virtual void calculateBinIndicesOfRange(
-                  const EstimatorParticleStateWrapper& particle_state_wrapper,
+                  const ObserverParticleStateWrapper& particle_state_wrapper,
                   BinIndexWeightPairArray& bin_indices_and_weights ) const = 0;
 
   //! Print the boundaries of a bin
@@ -95,7 +94,6 @@ public:
 
   //! Print the dimension discretization
   virtual void print( std::ostream& os ) const = 0;
-  
 };
 
 } // end MonteCarlo namespace

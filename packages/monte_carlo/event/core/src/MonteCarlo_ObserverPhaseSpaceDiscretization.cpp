@@ -6,9 +6,6 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_OBSERVER_PHASE_SPACE_DISCRETIZATION_HPP
-#define MONTE_CARLO_OBSERVER_PHASE_SPACE_DISCRETIZATION_HPP
-
 // Std Lib Includes
 #include <sstream>
 
@@ -23,6 +20,14 @@ namespace MonteCarlo{
 ObserverPhaseSpaceDiscretization::ObserverPhaseSpaceDiscretization()
 { /* ... */ }
 
+// Check if a dimension has a discretization
+bool ObserverPhaseSpaceDiscretization::doesDimensionHaveDiscretization(
+                            const ObserverPhaseSpaceDimension dimension ) const
+{
+  return d_dimension_discretization_map.find( dimension ) !=
+    d_dimension_discretization_map.end();
+}
+
 // Assign a discretization to a dimension
 /*! \details The order that discretizations are added will be recorded.
  * The first dimension that is added will have it's discretization evaluated
@@ -30,7 +35,8 @@ ObserverPhaseSpaceDiscretization::ObserverPhaseSpaceDiscretization()
  * discretization will run the fastest.
  */
 void ObserverPhaseSpaceDiscretization::assignDiscretizationToDimension(
-                         const DimensionDiscretizationPointer& discretization )
+        const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>&
+        discretization )
 {
   // Make sure that the discretization is valid
   testPrecondition( discretization.get() );
@@ -47,14 +53,11 @@ void ObserverPhaseSpaceDiscretization::assignDiscretizationToDimension(
     // Add the dimension discretization
     d_dimension_discretization_map[dimension] = discretization;
 
-    // Calculate the index setp size for the new dimension
+    // Calculate the index step size for the new dimension
     size_t dimension_index_step_size = 1;
 
-    for( size_t i = 0; i < d_dimension_ordering.size(); ++i )
-    {
-      dimension_index_step_size *=
-        d_dimension_index_step_size_map[d_dimension_ordering[i]]->getNumberOfBins();
-    }
+    for( auto dimension : d_dimension_discretization_map )
+      dimension_index_step_size *= dimension.second->getNumberOfBins();
 
     d_dimension_index_step_size_map[dimension] = dimension_index_step_size;
 
@@ -69,17 +72,19 @@ void ObserverPhaseSpaceDiscretization::assignDiscretizationToDimension(
                                 "discretization will be ignored!" );
   }
 }
+  
+// Return the dimensions that have been discretized
+void ObserverPhaseSpaceDiscretization::getDiscretizedDimensions(
+          std::set<ObserverPhaseSpaceDimension>& discretized_dimensions ) const
+{
+  discretized_dimensions.insert( d_dimension_ordering.begin(),
+                                 d_dimension_ordering.end() );
+}
 
 // Return the dimensions that have been discretized
-template<template<typename,...> class STLCompliantContainer>
 void ObserverPhaseSpaceDiscretization::getDiscretizedDimensions(
-                            STLCompliantContainer<ObserverPhaseSpaceDimension>&
-                            discretized_dimensions ) const
+       std::vector<ObserverPhaseSpaceDimension>& discretized_dimensions ) const
 {
-  // Clear the container
-  discretized_dimensions.clear();
-
-  // Assign the dimensions with discretizations to the container
   discretized_dimensions.assign( d_dimension_ordering.begin(),
                                  d_dimension_ordering.end() );
 }
@@ -123,7 +128,7 @@ std::string ObserverPhaseSpaceDiscretization::getBinName(
 
     size_t dim_bin_index = (bin_index/total_bins) % dim_bins;
 
-    d_dimension_discretization_map.find(d_dimension_ordering[i])->second->printBoudnariesOfBin( oss, dim_bin_index );
+    d_dimension_discretization_map.find(d_dimension_ordering[i])->second->printBoundariesOfBin( oss, dim_bin_index );
 
     oss << ", ";
     total_bins *= dim_bins;
@@ -163,30 +168,12 @@ void ObserverPhaseSpaceDiscretization::print(
   // Make sure that the dimension is valid
   testPrecondition( this->doesDimensionHaveDiscretization( dimension ) );
   
-  d_dimension_discretization_map.find( dimension )->second->printBoudnariesOfBin( os, dim_bin_index );
-}
-
-// Export the discretization
-void ObserverPhaseSpaceDiscretization::export(
-                       const ParticleHistoryObserver::idType owner_observer_id,
-                       const EstimatorHDF5FileHandler& hdf5_file ) const
-{
-  if( d_dimension_ordering.size() > 0 )
-  {
-    hdf5_file.setEstimatorDimensionOrdering( this->getId(),
-                                             d_dimension_ordering );
-  }
-
-  // Export the bin boundaries
-  for( size_t i = 0; i < d_dimension_ordering.size(); ++i )
-  {
-    d_dimension_discretization_map.find( d_dimension_ordering[i] )->second->exportData( owner_observer_id, hdf5_file );
-  }
+  d_dimension_discretization_map.find( dimension )->second->printBoundariesOfBin( os, index );
 }
   
 // Check if the point is in the phase space discretization
 bool ObserverPhaseSpaceDiscretization::isPointInDiscretization(
-            const EstimatorParticleStateWrapper& particle_state_wrapper ) const
+            const ObserverParticleStateWrapper& particle_state_wrapper ) const
 {
   return this->isPointInDiscretizationImpl( particle_state_wrapper );
 }
@@ -203,7 +190,7 @@ bool ObserverPhaseSpaceDiscretization::isPointInDiscretization(
 
 // Calculate the bin indices of a point
 void ObserverPhaseSpaceDiscretization::calculateBinIndicesOfPoint(
-                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   const ObserverParticleStateWrapper& particle_state_wrapper,
                    BinIndexArray& bin_indices ) const
 {
   this->calculateBinIndicesOfPointImpl( particle_state_wrapper, bin_indices );
@@ -262,9 +249,9 @@ bool ObserverPhaseSpaceDiscretization::isBinIndexArrayValid(
 // Check if the value is in the dimension discretization
 bool ObserverPhaseSpaceDiscretization::isValueInDimensionDiscretization(
             const ObserverPhaseSpaceDimension dimension,
-            const EstimatorParticleStateWrapper& particle_state_wrapper ) const
+            const ObserverParticleStateWrapper& particle_state_wrapper ) const
 {
-  const DimensionDiscretizationPointer& dimension_discretization =
+  const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& dimension_discretization =
     d_dimension_discretization_map.find( dimension )->second;
 
   if( dimension_discretization->isValueInDiscretization( particle_state_wrapper ) )
@@ -278,7 +265,7 @@ bool ObserverPhaseSpaceDiscretization::isValueInDimensionDiscretization(
                               const ObserverPhaseSpaceDimension dimension,
                               const DimensionValueMap& dimension_values ) const
 {
-  const DimensionDiscretizationPointer& dimension_discretization =
+  const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& dimension_discretization =
     d_dimension_discretization_map.find( dimension )->second;
 
   const DimensionValueMap::mapped_type& dimension_value =
@@ -293,9 +280,9 @@ bool ObserverPhaseSpaceDiscretization::isValueInDimensionDiscretization(
 // Check if the range intersects the dimension discretization
 bool ObserverPhaseSpaceDiscretization::doesRangeIntersectDimensionDiscretization(
             const ObserverPhaseSpaceDimension dimension,
-            const EstimatorParticleStateWrapper& particle_state_wrapper ) const
+            const ObserverParticleStateWrapper& particle_state_wrapper ) const
 {
-  const DimensionDiscretizationPointer& dimension_discretization =
+  const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& dimension_discretization =
     d_dimension_discretization_map.find( dimension )->second;
 
   if( dimension_discretization->doesRangeIntersectDiscretization( particle_state_wrapper ) )
@@ -314,7 +301,7 @@ void ObserverPhaseSpaceDiscretization::calculateLocalBinIndicesOfValue(
   local_bin_indices.clear();
 
   // Get the discretization for the dimension
-  const DimensionDiscretizationPointer& dimension_discretization =
+  const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& dimension_discretization =
       d_dimension_discretization_map.find( dimension )->second;
 
   // Get the dimension value
@@ -327,8 +314,6 @@ void ObserverPhaseSpaceDiscretization::calculateLocalBinIndicesOfValue(
 }
   
 } // end MonteCarlo namespace
-
-#endif // end MONTE_CARLO_OBSERVER_PHASE_SPACE_DISCRETIZATION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ObserverPhaseSpaceDiscretization.cpp
