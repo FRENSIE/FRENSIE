@@ -1,0 +1,14 @@
+FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_event_core)
+
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+
+FRENSIE_ADD_TEST_EXECUTABLE(ObserverParticleStateWrapper DEPENDS tstObserverParticleStateWrapper.cpp)
+FRENSIE_ADD_TEST(ObserverParticleStateWrapper)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ObserverPhaseSpaceDimension DEPENDS tstObserverPhaseSpaceDimension.cpp)
+FRENSIE_ADD_TEST(ObserverPhaseSpaceDimension)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ObserverPhaseSpaceDimensionTraits DEPENDS tstObserverPhaseSpaceDimensionTraits.cpp)
+FRENSIE_ADD_TEST(ObserverPhaseSpaceDimensionTraits)
+
+FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_event_core)

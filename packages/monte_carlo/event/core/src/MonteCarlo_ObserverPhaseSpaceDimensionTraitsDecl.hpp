@@ -11,9 +11,9 @@
 
 // Std Lib Includes
 #include <string>
+#include <type_traits>
 
 // Boost Includes
-#include <boost/mpl/bool.hpp>
 #include <boost/any.hpp>
 
 // FRENSIE Includes
@@ -49,8 +49,11 @@ struct ObserverPhaseSpaceDimensionTraits
   //! The value associated with a bin of the dimension
   typedef double dimensionBinType;
 
-  //! Indicates if the dimension is ordered (ranges must be sorted)
-  typedef boost::mpl::bool_<true> isOrdered;
+  //! Indicates that the dimension is ordered if true (ranges must be sorted)
+  typedef std::true_type isOrdered;
+
+  //! Indicates that the dimension is continuous if true
+  typedef std::true_type isContinuous;
 
   //! The name of the dimension
   static inline std::string name()

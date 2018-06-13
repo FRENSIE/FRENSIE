@@ -91,7 +91,7 @@ double ObserverParticleStateWrapper::getEndTime() const
 // Get the state time duration
 double ObserverParticleStateWrapper::getTimeDuration() const
 {
-  return d_state_start_time - d_state_end_time;
+  return d_state_end_time - d_state_start_time;
 }
 
 } // end MonteCarlo namespace

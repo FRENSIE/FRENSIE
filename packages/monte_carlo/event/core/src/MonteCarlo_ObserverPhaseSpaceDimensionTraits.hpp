@@ -31,7 +31,9 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_COSINE_DIMENSION>
 
   typedef dimensionType dimensionBinType;
 
-  typedef boost::mpl::bool_<true> isOrdered;
+  typedef std::true_type isOrdered;
+
+  typedef std::true_type isContinuous;
 
   static inline std::string name()
   { return "Cosine"; }
@@ -70,7 +72,9 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_ENERGY_DIMENSION>
 
   typedef dimensionType dimensionBinType;
 
-  typedef boost::mpl::bool_<true> isOrdered;
+  typedef std::true_type isOrdered;
+
+  typedef std::true_type isContinuous;
 
   static inline std::string name()
   { return "Source Energy"; }
@@ -83,9 +87,6 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_ENERGY_DIMENSION>
 
   static inline dimensionType upperBound()
   { return std::numeric_limits<dimensionType>::infinity(); }
-
-  static inline bool isContinuous()
-  { return true; }
 
   static inline dimensionType getDimensionValue( const ObserverParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getSourceEnergy(); }
@@ -113,7 +114,9 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_ENERGY_DIMENSION>
 
   typedef dimensionType dimensionBinType;
 
-  typedef boost::mpl::bool_<true> isOrdered;
+  typedef std::true_type isOrdered;
+
+  typedef std::true_type isContinuous;
 
   static inline std::string name()
   { return "Energy"; }
@@ -126,9 +129,6 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_ENERGY_DIMENSION>
 
   static inline dimensionType upperBound()
   { return std::numeric_limits<dimensionType>::infinity(); }
-
-  static inline bool isContinuous()
-  { return true; }
 
   static inline dimensionType getDimensionValue( const ObserverParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getEnergy(); }
@@ -155,7 +155,9 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_TIME_DIMENSION>
 
   typedef dimensionType dimensionBinType;
 
-  typedef boost::mpl::bool_<true> isOrdered;
+  typedef std::true_type isOrdered;
+
+  typedef std::true_type isContinuous;
 
   static inline std::string name()
   { return "Source Time"; }
@@ -168,9 +170,6 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_TIME_DIMENSION>
 
   static inline dimensionType upperBound()
   { return std::numeric_limits<dimensionType>::infinity(); }
-
-  static inline bool isContinuous()
-  { return true; }
 
   static inline dimensionType getDimensionValue( const ObserverParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getSourceTime(); }
@@ -198,7 +197,9 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_TIME_DIMENSION>
 
   typedef dimensionType dimensionBinType;
 
-  typedef boost::mpl::bool_<true> isOrdered;
+  typedef std::true_type isOrdered;
+
+  typedef std::true_type isContinuous;
 
   static inline std::string name()
   { return "Time"; }
@@ -211,9 +212,6 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_TIME_DIMENSION>
 
   static inline dimensionType upperBound()
   { return std::numeric_limits<dimensionType>::infinity(); }
-
-  static inline bool isContinuous()
-  { return true; }
 
   static inline dimensionType getDimensionValue( const ObserverParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getTime(); }
@@ -241,7 +239,9 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_COLLISION_NUMBER_DIMENSION>
 
   typedef dimensionType dimensionBinType;
 
-  typedef boost::mpl::bool_<true> isOrdered;
+  typedef std::true_type isOrdered;
+
+  typedef std::false_type isContinuous;
 
   static inline std::string name()
   { return "Collision Number"; }
@@ -254,9 +254,6 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_COLLISION_NUMBER_DIMENSION>
 
   static inline dimensionType upperBound()
   { return std::numeric_limits<dimensionType>::max(); }
-
-  static inline bool isContinuous()
-  { return false; }
 
   static inline dimensionType getDimensionValue( const ObserverParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getCollisionNumber(); }
@@ -284,7 +281,9 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_ID_DIMENSION>
 
   typedef std::vector<dimensionType> dimensionBinType;
 
-  typedef boost::mpl::bool_<false> isOrdered;
+  typedef std::false_type isOrdered;
+
+  typedef std::false_type isContinuous;
 
   static inline std::string name()
   { return "Source Id"; }
@@ -297,9 +296,6 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_ID_DIMENSION>
 
   static inline dimensionType upperBound()
   { return std::numeric_limits<dimensionType>::max(); }
-
-  static inline bool isContinuous()
-  { return false; }
 
   static inline dimensionType getDimensionValue( const ObserverParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getSourceId(); }
