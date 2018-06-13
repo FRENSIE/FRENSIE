@@ -329,6 +329,48 @@ StandardHashBasedGridSearcher<STLCompliantArray,processed_grid>::findLowerBinInd
     return --index;
 }
 
+// Return the index of the lower bin boundary that a value falls in
+template<typename STLCompliantArray,bool processed_grid>
+inline size_t
+StandardHashBasedGridSearcher<STLCompliantArray,processed_grid>::findLowerBinIndexIncludingUpperBound(
+						  const ValueType value ) const
+{
+  // Make sure the value is valid
+  testPrecondition( this->isValueWithinGridBounds( value ) );
+
+  typedef typename QuantityTraits<ValueType>::RawType RawValueType;
+
+  ValueType processed_value = Details::StandardHashBasedGridSearcherHelper<ValueType,processed_grid>::processValue( value );
+
+  // Hash the processed value
+  size_t hash_grid_index =
+    std::floor( (d_hash_grid_size-1)*Utility::getRawQuantity((processed_value - d_hash_grid_min)/d_hash_grid_length) );
+
+  typename STLCompliantArray::const_iterator upper_bin_boundary;
+
+  if( hash_grid_index < d_hash_grid_size-1 )
+  {
+    upper_bin_boundary =
+      Search::binaryUpperBound( d_hash_grid[hash_grid_index],
+				d_hash_grid[hash_grid_index+1]+2,
+				processed_value );
+  }
+  else
+  {
+    upper_bin_boundary =
+      Search::binaryUpperBound( d_hash_grid[hash_grid_index-1],
+				d_hash_grid[hash_grid_index]+2,
+				processed_value );
+  }
+
+  size_t index = std::distance( d_grid->begin(), upper_bin_boundary );
+
+  if( index != 0u )
+    return index - 1;
+  else
+    return index;
+}
+
 // Test if a value falls within the bounds of the grid
 template<typename STLCompliantArray,bool processed_grid>
 void StandardHashBasedGridSearcher<STLCompliantArray,processed_grid>::initializeHashGrid()

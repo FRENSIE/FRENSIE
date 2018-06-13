@@ -16,6 +16,12 @@
 
 // Boost Includes
 #include <boost/any.hpp>
+// Boost Includes
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/assume_abstract.hpp>
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ObserverPhaseSpaceDimension.hpp"
@@ -180,6 +186,19 @@ private:
   template<ObserverPhaseSpaceDimension... RangeDimensions>
   static bool isRangeDimension( const ObserverPhaseSpaceDimension dimension );
 
+  // Save the data to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the data from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // The observer phase space dimension discretizations
   std::map<ObserverPhaseSpaceDimension,std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization> >
   d_dimension_discretization_map;
@@ -191,8 +210,29 @@ private:
   // The observer phase space dimension ordering
   std::vector<ObserverPhaseSpaceDimension> d_dimension_ordering;
 };
+
+// Save the data to an archive
+template<typename Archive>
+void ObserverPhaseSpaceDiscretization::save( Archive& ar, const unsigned version ) const
+{
+  ar & BOOST_SERIALIZATION_NVP( d_dimension_discretization_map );
+  ar & BOOST_SERIALIZATION_NVP( d_dimension_index_step_size_map );
+  ar & BOOST_SERIALIZATION_NVP( d_dimension_ordering );
+}
+
+// Load the data from an archive
+template<typename Archive>
+void ObserverPhaseSpaceDiscretization::load( Archive& ar, const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_NVP( d_dimension_discretization_map );
+  ar & BOOST_SERIALIZATION_NVP( d_dimension_index_step_size_map );
+  ar & BOOST_SERIALIZATION_NVP( d_dimension_ordering );
+}
   
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::ObserverPhaseSpaceDiscretization, 0 );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::ObserverPhaseSpaceDiscretization );
 
 //---------------------------------------------------------------------------//
 // Template Includes.

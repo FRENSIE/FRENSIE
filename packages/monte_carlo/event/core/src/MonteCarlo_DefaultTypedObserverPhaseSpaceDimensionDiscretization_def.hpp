@@ -1,103 +1,44 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_GeneralEstimatorDimensionDiscretization.hpp
+//! \file   MonteCarlo_DefaultTypedObserverPhaseSpaceDimensionDiscretization_def.hpp
 //! \author Alex Robinson
-//! \brief  General estimator dimension discretization class declaration
+//! \brief  Default observer dimension discretization class definitions
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_DEF_HPP
-#define MONTE_CARLO_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_DEF_HPP
+#ifndef MONTE_CARLO_DEFAULT_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_DEF_HPP
+#define MONTE_CARLO_DEFAULT_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_DEF_HPP
 
-// FRENSIE Includes
-#include "Utility_ContractException.hpp"
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ObserverCosineDimensionDiscretization, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::DefaultTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::DefaultTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION> );
 
-namespace MonteCarlo{
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ObserverSourceEnergyDimensionDiscretization, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::DefaultTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::DefaultTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION> );
 
-// Constructor
-template<PhaseSpaceDimension dimension>
-GeneralEstimatorDimensionDiscretization<dimension>::GeneralEstimatorDimensionDiscretization( const InputArray& dimension_bin_boundaries )
-  : BaseEstimatorDimensionDiscretization( dimension, dimension_bin_boundaries )
-{
-  // Make sure the bins bounds are valid
-  testPrecondition( GeneralEstimatorDimensionDiscretizationHelper<dimension>::areInputArrayBoundsValid( dimension_bin_boundaries ) );
-}
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ObserverEnergyDimensionDiscretization, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::DefaultTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::DefaultTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION> );
 
-// Return the dimension name that has been discretized
-template<PhaseSpaceDimension dimension>
-inline std::string GeneralEstimatorDimensionDiscretization<dimension>::getDimensionName() const
-{
-  return DT::name();
-}
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ObserverSourceTimeDimensionDiscretization, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::DefaultTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::DefaultTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION> );
 
-// Check if the value is contained in the dimension discretization
-template<PhaseSpaceDimension dimension>
-inline bool GeneralEstimatorDimensionDiscretization<dimension>::isValueInDiscretization(
-            const EstimatorParticleStateWrapper& particle_state_wrapper ) const
-{
-  return this->isValueInDiscretization(
-                      getDimensionValue<dimension>( particle_state_wrapper ) );
-}
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ObserverTimeDimensionDiscretization, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::DefaultTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::DefaultTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION> );
 
-// Check if the value is contained in the dimension discretization
-template<PhaseSpaceDimension dimension>
-inline bool GeneralEstimatorDimensionDiscretization<dimension>::isValueInDiscretization(
-                                          const boost::any& any_value ) const
-{
-  return this->isValueInDiscretization(
-                                   getDimensionValue<dimension>( any_value ) );
-}W
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ObserverCollisionNumberDimensionDiscretization, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::DefaultTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::DefaultTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION> );
 
-// Calculate the index of bins that the value falls in
-template<PhaseSpaceDimension dimension>
-void GeneralEstimatorDimensionDiscretization<dimension>::calculatecalculateBinIndicesOfValue(
-                   const EstimatorParticleStateWrapper& particle_state_wrapper,
-                   BinIndexArray& bin_indices ) const
-{
-  // Make sure the value is in the dimension discretization
-  testPrecondition( this->isValueInDiscretization( particle_state_wrapper ) );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ObserverSourceIdDimensionDiscretization, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::DefaultTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::DefaultTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION> );
 
-  return this->calculateBinIndicesOfValue(
-                        getDimensionValue<dimension>( particle_state_wrapper ),
-                        bin_indices );
-}
-
-// Calculate the index of the bin that the value falls in
-template<PhaseSpaceDimension dimension>
-void GeneralEstimatorDimensionDiscretization<dimension>::calculateBinIndicesOfValue(
-                                             const boost::any& any_value,
-                                             BinIndexArray& bin_indices ) const
-{
-  // Make sure that the value is in the dimension discretization
-  testPrecondition( this->isValueInDiscretization( any_value ) );
-
-  return this->calculateBinIndicesOfValue(
-                                     getDimensionValue<dimension>( any_value ),
-                                     bin_indices );
-}
-
-// Calculate the index of bins that the value range falls in
-template<PhaseSpaceDimension dimension>
-void GeneralEstimatorDimensionDiscretization<dimension>::calculateBinIndicesOfRange(
-                   const EstimatorParticleStateWrapper& particle_state_wrapper,
-                   BinIndexWeightPairArray& bin_indices_and_weights ) const
-{
-  // Make sure that the value is in the dimension discretization
-  testPrecondition( this->doesRangeIntersectDiscretization( particle_state_wrapper ) );
-
-  typename DT::dimensionType range_start, range_end;
-
-  getDimensionRange<dimension>( particle_state_wrapper,
-                                range_start,
-                                range_end );
-
-  this->calculateBinIndicesOfRange( range_start, range_end, bin_indices_and_weights );
-}
-
-} // end MonteCarlo namespace
-
-#endif // end MONTE_CARLO_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_DEF_HPP
+#endif // end MONTE_CARLO_DEFAULT_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_GeneralEstimatorDimensionDiscretization_def.hpp
+// end MonteCarlo_DefaultTypedObserverPhaseSpaceDimensionDiscretization_def.hpp
 //---------------------------------------------------------------------------//

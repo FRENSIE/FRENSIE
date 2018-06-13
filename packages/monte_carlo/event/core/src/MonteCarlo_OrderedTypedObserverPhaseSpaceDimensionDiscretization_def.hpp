@@ -15,6 +15,11 @@
 
 namespace MonteCarlo{
 
+// Default constructor
+template<ObserverPhaseSpaceDimension dimension>
+OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::OrderedTypedObserverPhaseSpaceDimensionDiscretization()
+{ /* ... */ }
+  
 // Constructor
 template<ObserverPhaseSpaceDimension dimension>
 OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::OrderedTypedObserverPhaseSpaceDimensionDiscretization(
@@ -110,30 +115,60 @@ void OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculate
     end_bin_index = this->getNumberOfBins()-1;
 
   // Resize the bin indices and weights array
-  bin_indices_and_weights_array.resize( end_bin_index - start_bin_index + 1 );
+  bin_indices_and_weights.resize( end_bin_index - start_bin_index + 1 );
 
   // Calculate the size of the range
   double range_size = this->calculateRangeSize( range_start, range_end );
 
   // Set the bin indices and weights array
-  for( size_t i = 0; i < bin_indices_and_weigts_array.size(); ++i )
+  for( size_t i = 0; i < bin_indices_and_weights.size(); ++i )
   {
     // Set the bin index
     size_t bin_index = start_bin_index + i;
 
-    bin_indices_and_weights_array[i].first = bin_index;
+    bin_indices_and_weights[i].first = bin_index;
 
     // Set the weight associated with the bin index (fraction of range that
     // intersects the bin)
     const double bin_intersection_size =
       this->calculateBinIntersectionSize( bin_index, range_start, range_end );
 
-    bin_indices_and_weights_array[i].second =
+    bin_indices_and_weights[i].second =
       bin_intersection_size/range_size;
   }
 }
 
+// Serialize the discretization
+template<ObserverPhaseSpaceDimension dimension>
+template<typename Archive>
+void OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::serialize( Archive& ar, const unsigned version )
+{
+  // Serialize the base class data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Serialize the local data
+  ar & BOOST_SERIALIZATION_NVP( d_dimension_bin_boundaries );
+}
+
 } // end MonteCarlo namespace
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::OrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::OrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::OrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::OrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::OrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::OrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::OrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::OrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::OrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::OrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::OrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::OrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION> );
 
 #endif // end MONTE_CARLO_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_DEF_HPP
 

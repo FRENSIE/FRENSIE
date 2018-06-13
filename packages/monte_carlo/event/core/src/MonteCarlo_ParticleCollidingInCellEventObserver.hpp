@@ -9,11 +9,19 @@
 #ifndef MONTE_CARLO_PARTICLE_COLLIDING_IN_CELL_EVENT_OBSERVER_HPP
 #define MONTE_CARLO_PARTICLE_COLLIDING_IN_CELL_EVENT_OBSERVER_HPP
 
+// Boost Includes
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/assume_abstract.hpp>
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
-#include "MonteCarlo_ModuleTraits.hpp"
 #include "MonteCarlo_ParticleState.hpp"
+#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Model.hpp"
 #include "Utility_Vector.hpp"
+#include "Utility_SerializationHelpers.hpp"
 
 /*! \defgroup particle_colliding_in_cell_event Particle Colliding In Cell Event
  * \ingroup entity_events
@@ -51,9 +59,23 @@ public:
 	    const ParticleState& particle,
 	    const Geometry::Model::InternalCellHandle cell_of_collision,
 	    const double inverse_total_cross_section ) = 0;
+
+private:
+
+  // Serialize the observer
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  { /* ... */ }
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 };
 
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::ParticleCollidingInCellEventObserver, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleCollidingInCellEventObserver );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleCollidingInCellEventObserver );
 
 #endif // end MONTE_CARLO_PARTICLE_COLLIDING_IN_CELL_EVENT_OBSERVER_HPP
 

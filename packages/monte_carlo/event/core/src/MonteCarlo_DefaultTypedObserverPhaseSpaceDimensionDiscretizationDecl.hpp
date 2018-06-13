@@ -28,20 +28,20 @@ template<ObserverPhaseSpaceDimension dimension, typename Enabled = void>
 class DefaultTypedObserverPhaseSpaceDimensionDiscretization
 { 
 
-public:
+  //public:
 
   //! Typedef for the dimension value type
-  typedef void DimensionValueType;
+  //typedef void DimensionValueType;
 
   //! Typedef for the input data type
-  typedef void InputDataType;
+  //typedef void InputDataType;
 
   //! Constructor
-  DefaultTypedObserverPhaseSpaceDimensionDiscretization(
-                                    const InputDataType& discretization_data );
+  //DefaultTypedObserverPhaseSpaceDimensionDiscretization(
+  //                                  const InputDataType& discretization_data );
 
   //! Destructor
-  ~DefaultTypedObserverPhaseSpaceDimensionDiscretization();
+  //~DefaultTypedObserverPhaseSpaceDimensionDiscretization();
 };
   
 } // end MonteCarlo namespace

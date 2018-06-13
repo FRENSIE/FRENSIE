@@ -17,13 +17,26 @@ namespace MonteCarlo{
 
 //! The ordered estimator dimension discretization class
 template<ObserverPhaseSpaceDimension dimension>
-class OrderedTypedObserverPhaseSpaceDimensionDiscretization : public TypedObserverPhaseSpaceDimensionDiscretization
+class OrderedTypedObserverPhaseSpaceDimensionDiscretization : public TypedObserverPhaseSpaceDimensionDiscretization<dimension>
 {
+  // Typedef for the base type
+  typedef TypedObserverPhaseSpaceDimensionDiscretization<dimension> BaseType;
 
-public:
+protected:
 
   //! Typedef for the dimension value type
   typedef typename TypedObserverPhaseSpaceDimensionDiscretization<dimension>::DimensionValueType DimensionValueType;
+
+public:
+
+  //! Typedef for bin index array
+  typedef typename BaseType::BinIndexArray BinIndexArray;
+
+  //! Typedef for bin index and weight pair
+  typedef typename BaseType::BinIndexWeightPair BinIndexWeightPair;
+  
+  //! Typedef for bin index and weight pair array
+  typedef typename BaseType::BinIndexWeightPairArray BinIndexWeightPairArray;
 
   //! Typedef for the bin boundaires array
   typedef std::vector<DimensionValueType> BinBoundaryArray;
@@ -40,6 +53,9 @@ public:
   void print( std::ostream& os ) const override;
 
 protected:
+
+  //! Default constructor
+  OrderedTypedObserverPhaseSpaceDimensionDiscretization();
 
   //! Return the boundaries array
   const BinBoundaryArray& getBinBoundaries() const;
@@ -79,11 +95,27 @@ protected:
 
 private:
 
+  // Serialize the discretization
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version );
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // The sorted dimension bin boundaries
   BinBoundaryArray d_dimension_bin_boundaries;
 };
 
 } // end MonteCarlo namespace
+
+#define BOOST_SERIALIZATION_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_VERSION( version ) \
+  BOOST_SERIALIZATION_TEMPLATE_CLASS_VERSION_IMPL(                      \
+      OrderedTypedObserverPhaseSpaceDimensionDiscretization, MonteCarlo, version, \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( MonteCarlo::ObserverPhaseSpaceDimension Dim ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( Dim ) )
+
+BOOST_SERIALIZATION_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_VERSION( 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::OrderedTypedObserverPhaseSpaceDimensionDiscretization );
 
 //---------------------------------------------------------------------------//
 // Template Includes

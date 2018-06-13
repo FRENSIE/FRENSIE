@@ -10,10 +10,11 @@
 #define MONTE_CARLO_PARTICLE_CROSSING_SURFACE_EVENT_OBSERVER_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_ModuleTraits.hpp"
 #include "MonteCarlo_ParticleState.hpp"
+#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Model.hpp"
 #include "Utility_Vector.hpp"
+#include "Utility_SerializationHelpers.hpp"
 
 /*! \defgroup particle_crossing_surface_event Particle Crossing Surface Event
  * \ingroup entity_events
@@ -51,9 +52,23 @@ public:
 	  const ParticleState& particle,
 	  const Geometry::Model::InternalSurfaceHandle surface_crossing,
 	  const double angle_cosine ) = 0;
+
+private:
+
+  // Serialize the observer
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  { /* ... */ }
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 };
 
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::ParticleCrossingSurfaceEventObserver, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleCrossingSurfaceEventObserver );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleCrossingSurfaceEventObserver );
 
 #endif // end MONTE_CARLO_PARTICLE_CROSSING_SURFACE_EVENT_OBSERVER_HPP
 

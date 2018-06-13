@@ -27,9 +27,18 @@ protected:
   typedef ObserverPhaseSpaceDimensionTraits<dimension> DT;
 
   //! Typedef for the dimension value type
-  typedef DT::dimensionType DimensionValueType;
+  typedef typename DT::dimensionType DimensionValueType;
 
 public:
+
+  //! Typedef for bin index array
+  typedef ObserverPhaseSpaceDimensionDiscretization::BinIndexArray BinIndexArray;
+
+  //! Typedef for bin index and weight pair
+  typedef ObserverPhaseSpaceDimensionDiscretization::BinIndexWeightPair BinIndexWeightPair;
+  
+  //! Typedef for bin index and weight pair array
+  typedef ObserverPhaseSpaceDimensionDiscretization::BinIndexWeightPairArray BinIndexWeightPairArray;
 
   //! Constructor
   TypedObserverPhaseSpaceDimensionDiscretization()
@@ -47,23 +56,23 @@ public:
 
   //! Check if the value is in the discretization
   bool isValueInDiscretization(
-   const EstimatorParticleStateWrapper& particle_state_wrapper ) const override;
+   const ObserverParticleStateWrapper& particle_state_wrapper ) const override;
 
   //! Check if the value is contained in the discretization
   bool isValueInDiscretization( const boost::any& any_value ) const override;
 
   //! Check if the range intersects the discretization
   bool doesRangeIntersectDiscretization(
-   const EstimatorParticleStateWrapper& particle_state_wrapper ) const override;
+   const ObserverParticleStateWrapper& particle_state_wrapper ) const override;
 
   //! Calculate the index of bins that the value falls in
   void calculateBinIndicesOfValue(
-                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   const ObserverParticleStateWrapper& particle_state_wrapper,
                    BinIndexArray& bin_indices ) const override;
 
   //! Calculate the index of bins that the value falls in
   void calculateBinIndicesOfValue(
-             const EstimatorParticleStateWrapper& particle_state_wrapper,
+             const ObserverParticleStateWrapper& particle_state_wrapper,
              BinIndexWeightPairArray& bin_indices_and_weights ) const override;
 
   //! Calculate the index of bins that the value falls in
@@ -72,7 +81,7 @@ public:
 
   //! Calculate the index of bins that the value range falls in
   void calculateBinIndicesOfRange(
-             const EstimatorParticleStateWrapper& particle_state_wrapper,
+             const ObserverParticleStateWrapper& particle_state_wrapper,
              BinIndexWeightPairArray& bin_indices_and_weights ) const override;
 
 protected:
@@ -101,15 +110,33 @@ protected:
                   const DimensionValueType range_start,
                   const DimensionValueType range_end,
                   BinIndexWeightPairArray& bin_indices_and_weights ) const = 0;
+
+private:
+
+  // Serialize the discretization
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version );
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 };
   
 } // end MonteCarlo namespace
+
+#define BOOST_SERIALIZATION_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_VERSION( version ) \
+  BOOST_SERIALIZATION_TEMPLATE_CLASS_VERSION_IMPL(                      \
+      TypedObserverPhaseSpaceDimensionDiscretization, MonteCarlo, version, \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( MonteCarlo::ObserverPhaseSpaceDimension Dim ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( Dim ) )
+
+BOOST_SERIALIZATION_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_VERSION( 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization );
 
 //---------------------------------------------------------------------------//
 // Template Includes.
 //---------------------------------------------------------------------------//
 
-#include "MonteCarlo_TypeObserverPhaseSpaceDimensionDiscretization_def.hpp"
+#include "MonteCarlo_TypedObserverPhaseSpaceDimensionDiscretization_def.hpp"
 
 //---------------------------------------------------------------------------//
 

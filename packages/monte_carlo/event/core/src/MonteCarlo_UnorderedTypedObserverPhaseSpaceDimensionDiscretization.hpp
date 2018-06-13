@@ -10,16 +10,11 @@
 #define MONTE_CARLO_UNORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_HPP
 
 // Std Lib Includes
-#include <set>
-#include <unordered_set>
-#include <vector>
-
-// Boost Includes
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits/is_integral.hpp>
+#include <type_traits>
 
 // FRENSIE Includes
 #include "MonteCarlo_TypedObserverPhaseSpaceDimensionDiscretization.hpp"
+#include "Utility_Set.hpp"
 #include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
@@ -30,28 +25,37 @@ namespace MonteCarlo{
  * value type associated with a dimension is not an integral type.
  */
 template<ObserverPhaseSpaceDimension dimension, typename Enabled = void>
-class UnorderedTypeObserverPhaseSpaceDimensionDiscretization
+class UnorderedTypedObserverPhaseSpaceDimensionDiscretization
 { /* ... */ };
 
 //! The unordered typed observer phase space dimension discretization class
 template<ObserverPhaseSpaceDimension dimension>
-class UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename boost::enable_if<boost::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType> >::type> : public TypedObserverPhaseSpaceDimensionDiscretization<dimension>
+class UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type> : public TypedObserverPhaseSpaceDimensionDiscretization<dimension>
 {
+  // Typedef for the base type
+  typedef TypedObserverPhaseSpaceDimensionDiscretization<dimension> BaseType;
 
-public:
+protected:
 
   //! Typedef for the dimension value type
   typedef typename TypedObserverPhaseSpaceDimensionDiscretization<dimension>::DimensionValueType DimensionValueType;
+
+public:
+
+  //! Typedef for bin index array
+  typedef typename BaseType::BinIndexArray BinIndexArray;
+
+  //! Typedef for bin index and weight pair
+  typedef typename BaseType::BinIndexWeightPair BinIndexWeightPair;
+  
+  //! Typedef for bin index and weight pair array
+  typedef typename BaseType::BinIndexWeightPairArray BinIndexWeightPairArray;
 
   //! Typedef for the bin set
   typedef std::set<DimensionValueType> BinSet;
   
   //! Typedef for the bin set array
   typedef std::vector<BinSet> BinSetArray;
-
-  //! Constructor
-  UnorderedTypedObserverPhaseSpaceDimensionDiscretization(
-                                           const BinSetArray& dimension_bins );
 
   //! Destructor
   virtual ~UnorderedTypedObserverPhaseSpaceDimensionDiscretization()
@@ -68,6 +72,13 @@ public:
   void print( std::ostream& os ) const override;
 
 protected:
+  
+  //! Default constructor
+  UnorderedTypedObserverPhaseSpaceDimensionDiscretization();
+
+  //! Constructor
+  UnorderedTypedObserverPhaseSpaceDimensionDiscretization(
+                                           const BinSetArray& dimension_bins );
 
   //! Check if the value is contained in the discretization
   bool isValueInDiscretization( const DimensionValueType value ) const override;
@@ -94,7 +105,14 @@ protected:
 
 private:
 
-  //! Calculate the set of bin indices that the value falls in
+  // Serialize the discretization
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version );
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
+  // Calculate the set of bin indices that the value falls in
   void calculateSetOfBinIndicesOfValue(const DimensionValueType value,
                                        std::set<size_t>& bin_index_set ) const;
 
@@ -106,6 +124,14 @@ private:
 };
   
 } // end MonteCarlo namespace
+
+#define BOOST_SERIALIZATION_UNORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_VERSION( version ) \
+  BOOST_SERIALIZATION_TEMPLATE_CLASS_VERSION_IMPL(                      \
+      UnorderedTypedObserverPhaseSpaceDimensionDiscretization, MonteCarlo, version, \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( MonteCarlo::ObserverPhaseSpaceDimension Dim ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( Dim ) )
+
+BOOST_SERIALIZATION_UNORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_VERSION( 0 );
 
 //---------------------------------------------------------------------------//
 // Template Includes

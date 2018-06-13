@@ -10,12 +10,11 @@
 #ifndef MONTE_CARLO_INTEGRAL_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_HPP
 #define MONTE_CARLO_INTEGRAL_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_HPP
 
-// Boost Includes
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits/is_integral.hpp>
+// Std Lib Includes
+#include <type_traits>
 
 // FRENSIE Includes
-#include "MonteCarlo_OrderedTypeObserverPhaseSpaceDimensionDiscretization.hpp"
+#include "MonteCarlo_OrderedTypedObserverPhaseSpaceDimensionDiscretization.hpp"
 
 namespace MonteCarlo{
 
@@ -37,20 +36,29 @@ class IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization
  * that does not meet this requirement a compilation error will occur.
  */
 template<ObserverPhaseSpaceDimension dimension>
-class IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename boost::enable_if<boost::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType> >::type> : public OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>
+class IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type> : public OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>
 {
+  // Typedef for the base type
+  typedef OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension> BaseType;
 
-public:
+protected:
 
   //! Typedef for the dimension value type
-  typedef typename OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::DimensionValueType DimensionValueType;
+  typedef typename BaseType::DimensionValueType DimensionValueType;
+  
+public:
+
+  //! Typedef for bin index array
+  typedef typename BaseType::BinIndexArray BinIndexArray;
+
+  //! Typedef for bin index and weight pair
+  typedef typename BaseType::BinIndexWeightPair BinIndexWeightPair;
+  
+  //! Typedef for bin index and weight pair array
+  typedef typename BaseType::BinIndexWeightPairArray BinIndexWeightPairArray;
 
   //! Typedef for the bin boundaries array
-  typedef typename OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::BinBoundariesArray BinBoundariesArray;
-
-  //! Constructor
-  IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization(
-                            const BinBoundaryArray& dimension_bin_boundaries );
+  typedef typename BaseType::BinBoundaryArray BinBoundaryArray;
 
   //! Destructor
   virtual ~IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization()
@@ -64,6 +72,13 @@ public:
                              const size_t bin_index ) const override;
 
 protected:
+
+  //! Default constructor
+  IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization();
+  
+  //! Constructor
+  IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization(
+                            const BinBoundaryArray& dimension_bin_boundaries );
 
   //! Check if the value is contained in the discretization
   bool isValueInDiscretization( const DimensionValueType value ) const override;
@@ -90,9 +105,26 @@ protected:
   double calculateRangeSize(
                            const DimensionValueType range_start,
                            const DimensionValueType range_end ) const override;
+
+private:
+
+  // Serialize the discretization
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version );
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 };
 
 } // end MonteCarlo namespace
+
+#define BOOST_SERIALIZATION_INTEGRAL_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_VERSION( version ) \
+  BOOST_SERIALIZATION_TEMPLATE_CLASS_VERSION_IMPL(                      \
+      IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization, MonteCarlo, version, \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( MonteCarlo::ObserverPhaseSpaceDimension Dim ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( Dim ) )
+
+BOOST_SERIALIZATION_INTEGRAL_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_VERSION( 0 );
 
 //---------------------------------------------------------------------------//
 // Template Includes.

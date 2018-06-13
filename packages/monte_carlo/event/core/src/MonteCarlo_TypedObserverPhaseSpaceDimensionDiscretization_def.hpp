@@ -34,10 +34,10 @@ TypedObserverPhaseSpaceDimensionDiscretization<dimension>::getDimensionName() co
 // Check if the value is in the discretization
 template<ObserverPhaseSpaceDimension dimension>
 bool TypedObserverPhaseSpaceDimensionDiscretization<dimension>::isValueInDiscretization(
-            const EstimatorParticleStateWrapper& particle_state_wrapper ) const
+            const ObserverParticleStateWrapper& particle_state_wrapper ) const
 {
   return this->isValueInDiscretization(
-                      getDimensionValue<dimension>( particle_state_wrapper ) );
+          MonteCarlo::getDimensionValue<dimension>( particle_state_wrapper ) );
 }
 
 // Check if the value is contained in the discretization
@@ -46,19 +46,19 @@ bool TypedObserverPhaseSpaceDimensionDiscretization<dimension>::isValueInDiscret
                                           const boost::any& any_value ) const
 {
   return this->isValueInDiscretization(
-                                   getDimensionValue<dimension>( any_value ) );
+                       MonteCarlo::getDimensionValue<dimension>( any_value ) );
 }
 
 // Check if the range intersects the discretization
 template<ObserverPhaseSpaceDimension dimension>
 bool TypedObserverPhaseSpaceDimensionDiscretization<dimension>::doesRangeIntersectDiscretization(
-            const EstimatorParticleStateWrapper& particle_state_wrapper ) const
+            const ObserverParticleStateWrapper& particle_state_wrapper ) const
 {
   DimensionValueType range_start, range_end;
 
-  getDimensionRange<dimension>( particle_state_wrapper,
-                                range_start,
-                                range_end );
+  MonteCarlo::getDimensionRange<dimension>( particle_state_wrapper,
+                                            range_start,
+                                            range_end );
 
   return this->doesRangeIntersectDiscretization( range_start, range_end );
 }
@@ -66,29 +66,29 @@ bool TypedObserverPhaseSpaceDimensionDiscretization<dimension>::doesRangeInterse
 // Calculate the index of bins that the value falls in
 template<ObserverPhaseSpaceDimension dimension>
 void TypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateBinIndicesOfValue(
-                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   const ObserverParticleStateWrapper& particle_state_wrapper,
                    BinIndexArray& bin_indices ) const
 {
   // Make sure that the value is in the discretization
   testPrecondition( this->isValueInDiscretization( particle_state_wrapper ) );
   
   this->calculateBinIndicesOfValue(
-                        getDimensionValue<dimension>( particle_state_wrapper ),
-                        bin_indices );
+            MonteCarlo::getDimensionValue<dimension>( particle_state_wrapper ),
+            bin_indices );
 }
 
 // Calculate the index of bins that the value falls in
 template<ObserverPhaseSpaceDimension dimension>
 void TypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateBinIndicesOfValue(
-                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   const ObserverParticleStateWrapper& particle_state_wrapper,
                    BinIndexWeightPairArray& bin_indices_and_weights ) const
 {
   // Make sure that the value is in the discretization
   testPrecondition( this->isValueInDiscretization( particle_state_wrapper ) );
   
   this->calculateBinIndicesOfValue(
-                        getDimensionValue<dimension>( particle_state_wrapper ),
-                        bin_indices_and_weighs );
+            MonteCarlo::getDimensionValue<dimension>( particle_state_wrapper ),
+            bin_indices_and_weights );
 }
 
 // Calculate the index of bins that the value falls in
@@ -100,14 +100,15 @@ void TypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateBinIndi
   // Make sure that the value is in the discretization
   testPrecondition( this->isValueInDiscretization( any_value ) );
   
-  this->calculateBinIndicesOfValue( getDimensionValue<dimension>( any_value ),
-                                    bin_indices );
+  this->calculateBinIndicesOfValue(
+                         MonteCarlo::getDimensionValue<dimension>( any_value ),
+                         bin_indices );
 }
 
 // Calculate the index of bins that the value range falls in
 template<ObserverPhaseSpaceDimension dimension>
 void TypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateBinIndicesOfRange(
-                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   const ObserverParticleStateWrapper& particle_state_wrapper,
                    BinIndexWeightPairArray& bin_indices_and_weights ) const
 {
   // Make sure that the range intersects the discretization
@@ -115,16 +116,46 @@ void TypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateBinIndi
   
   DimensionValueType range_start, range_end;
 
-  getDimensionRange<dimension>( particle_state_wrapper,
-                                range_start,
-                                range_end );
+  MonteCarlo::getDimensionRange<dimension>( particle_state_wrapper,
+                                            range_start,
+                                            range_end );
 
   this->calculateBinIndicesOfRange( range_start,
                                     range_end,
                                     bin_indices_and_weights );
 }
 
+// Serialize the discretization
+template<ObserverPhaseSpaceDimension dimension>
+template<typename Archive>
+void TypedObserverPhaseSpaceDimensionDiscretization<dimension>::serialize( Archive& ar, const unsigned version )
+{
+  // Serialize the base class data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ObserverPhaseSpaceDimensionDiscretization );
+}
+
 } // end MonteCarlo namespace
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION> );
 
 #endif // end MONTE_CARLO_TYPED_ESTIMATOR_DIMENSION_DISCRETIZATION_DEF_HPP
 
