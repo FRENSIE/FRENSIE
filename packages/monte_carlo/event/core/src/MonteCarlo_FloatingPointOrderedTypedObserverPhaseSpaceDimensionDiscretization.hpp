@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization.hpp
+//! MonteCarlo_FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization.hpp
 //! \author Alex Robinson
 //! \brief  Floating point ordered typed observer phase space dimension
 //!         discretization declaration
@@ -81,11 +81,6 @@ protected:
   FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization(
                             const BinBoundaryArray& dimension_bin_boundaries );
 
-  //! Constructor (with number of hash grid bins specified)
-  FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization(
-                              const BinBoundaryArray& dimension_bin_boundaries,
-                              const unsigned hash_grid_bins );
-
   //! Check if the value is contained in the discretization
   bool isValueInDiscretization( const DimensionValueType value ) const override;
 
@@ -120,10 +115,6 @@ private:
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
-
-  // The hash-based grid searcher
-  std::unique_ptr<Utility::HashBasedGridSearcher<DimensionValueType> >
-  d_grid_searcher;
 };
   
 } // end MonteCarlo namespace

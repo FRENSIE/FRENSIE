@@ -10,6 +10,7 @@
 #define MONTE_CARLO_UNORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_DEF_HPP
 
 // FRENSIE Includes
+#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -26,7 +27,9 @@ UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::
   : d_dimension_bins( dimension_bins )
 {
   // Make sure that there is at least one bin
-  testPrecondition( dimension_bins.size() > 0 );
+  TEST_FOR_EXCEPTION( dimension_bins.empty(),
+                      std::runtime_error,
+                      "At least one bin must be specified!" );
 
   // Create the set of values in all bins (for fast lookup)
   for( size_t i = 0; i < d_dimension_bins.size(); ++i )

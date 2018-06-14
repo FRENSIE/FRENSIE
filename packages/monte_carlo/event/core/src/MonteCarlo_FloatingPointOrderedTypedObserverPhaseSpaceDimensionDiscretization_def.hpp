@@ -27,22 +27,8 @@ FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typ
 template<ObserverPhaseSpaceDimension dimension>
 FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization(
                              const BinBoundaryArray& dimension_bin_boundaries )
-  : FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization(
-                                        dimension_bin_boundaries,
-                                        dimension_bin_boundaries.size()/10+1 )
+  : BaseType( dimension_bin_boundaries )
 { /* ... */ }
-  
-// Constructor (with number of hash grid bins specified)
-template<ObserverPhaseSpaceDimension dimension>
-FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization(
-                              const BinBoundaryArray& dimension_bin_boundaries,
-                              const unsigned hash_grid_bins )
-  : BaseType( dimension_bin_boundaries ),
-    d_grid_searcher( new Utility::StandardHashBasedGridSearcher<BinBoundaryArray,false>( dimension_bin_boundaries, hash_grid_bins ) )
-{ 
-  // Make sure that there is at least one bin
-  testPrecondition( dimension_bin_boundaries.size() >= 2 );
-}
 
 // Return the number of bins in the discretization
 template<ObserverPhaseSpaceDimension dimension>
@@ -67,8 +53,8 @@ void FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimensio
   else
     os << " Bin: (";
 
-  os << this->getBinBoundaries()[bin_index] << ","
-     << this->getBinBoundaries()[bin_index+1] << "]";
+  os << Utility::toString(this->getBinBoundaries()[bin_index]) << ","
+     << Utility::toString(this->getBinBoundaries()[bin_index+1]) << "]";
 }
 
 // Check if the value is contained in the discretization
@@ -87,7 +73,7 @@ bool FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimensio
                                      const DimensionValueType range_end ) const
 {
   // Make sure that the range is valid
-  testPrecondition( range_start < range_end );
+  testPrecondition( range_start <= range_end );
   
   return (range_start <= this->getBinBoundaries().front() &&
           range_end > this->getBinBoundaries().front()) ||
@@ -105,7 +91,15 @@ size_t FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimens
   // Make sure the value is in the discretization
   testPrecondition( this->isValueInDiscretization( value ) );
 
-  return d_grid_searcher->findLowerBinIndexIncludingUpperBound( value );
+  size_t bin =
+    Utility::Search::binaryUpperBoundIndex( this->getBinBoundaries().begin(),
+                                            this->getBinBoundaries().end(),
+                                            value );
+
+  if( bin != 0 )
+    return bin - 1;
+  else
+    return bin;
 }
 
 // Calculate the size of a bin
@@ -144,7 +138,8 @@ double FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimens
   else
     intersection_end_value = range_end;
 
-  return this->calculateRangeSize( range_start, range_end );
+  return this->calculateRangeSize( intersection_start_value,
+                                   intersection_end_value );
 }
 
 // Calculate the size of a range
@@ -163,9 +158,6 @@ void FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimensio
 {
   // Serialize the base class data
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
-
-  // Serialize the local data
-  ar & BOOST_SERIALIZATION_NVP( d_grid_searcher );
 }
   
 } // end MonteCarlo namespace

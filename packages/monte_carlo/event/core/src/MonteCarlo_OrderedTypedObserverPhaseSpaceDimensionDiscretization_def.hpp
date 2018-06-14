@@ -10,8 +10,9 @@
 #define MONTE_CARLO_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_SortAlgorithms.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
@@ -26,10 +27,34 @@ OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::OrderedTypedOb
                              const BinBoundaryArray& dimension_bin_boundaries )
   : d_dimension_bin_boundaries( dimension_bin_boundaries )
 {
+  // Make sure that there is at least one bin
+  TEST_FOR_EXCEPTION( dimension_bin_boundaries.size() <= 1,
+                      std::runtime_error,
+                      "At least one bin (two boundaries) must be specified!" );
+  
   // Make sure that the bins are sorted
-  testPrecondition( Utility::Sort::isSortedAscending(
+  TEST_FOR_EXCEPTION( !Utility::Sort::isSortedAscending(
                                             dimension_bin_boundaries.begin(),
-                                            dimension_bin_boundaries.end() ) );
+                                            dimension_bin_boundaries.end() ),
+                      std::runtime_error,
+                      Utility::toString(dimension) << " dimension bin "
+                      "boundaries must be sorted!" );
+
+  // Make sure that the bins have a valid range
+  TEST_FOR_EXCEPTION( dimension_bin_boundaries.front() < ObserverPhaseSpaceDimensionTraits<dimension>::lowerBound(),
+                      std::runtime_error,
+                      Utility::toString(dimension) << " dimension bin "
+                      "boundaries cannot have a value lower than "
+                      << Utility::toString(ObserverPhaseSpaceDimensionTraits<dimension>::lowerBound()) <<
+                      "!" );
+
+  TEST_FOR_EXCEPTION( dimension_bin_boundaries.back() > ObserverPhaseSpaceDimensionTraits<dimension>::upperBound(),
+                      std::runtime_error,
+                      Utility::toString(dimension) << " dimension bin "
+                      "boundaries cannot have a value greater than "
+                      << ObserverPhaseSpaceDimensionTraits<dimension>::upperBound() <<
+                      "!" );
+    
 }
 
 // Print the dimension discretization
@@ -38,8 +63,8 @@ void OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::print( st
 {
   os << this->getDimensionName() << " Bin Boundaries: ";
 
-  for( unsigned i = 0; i < d_dimension_bin_boundaries.size(); ++i )
-    os << d_dimension_bin_boundaries[i] << " ";
+  for( size_t i = 0; i < d_dimension_bin_boundaries.size(); ++i )
+    os << Utility::toString(d_dimension_bin_boundaries[i]) << " ";
 }
 
 // Return the boundaries array
@@ -104,37 +129,48 @@ void OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculate
     start_bin_index = this->calculateBinIndexOfValue( range_start );
   else
     start_bin_index = 0;
-
-  // Find the bin index that the upper boundary of the range falls in (or is
-  // closest to)
-  size_t end_bin_index;
-
-  if( this->isValueInDiscretization( range_end ) )
-    end_bin_index = this->calculateBinIndexOfValue( range_end );
-  else
-    end_bin_index = this->getNumberOfBins()-1;
-
-  // Resize the bin indices and weights array
-  bin_indices_and_weights.resize( end_bin_index - start_bin_index + 1 );
-
-  // Calculate the size of the range
-  double range_size = this->calculateRangeSize( range_start, range_end );
-
-  // Set the bin indices and weights array
-  for( size_t i = 0; i < bin_indices_and_weights.size(); ++i )
+  
+  if( range_start != range_end )
   {
-    // Set the bin index
-    size_t bin_index = start_bin_index + i;
+    // Find the bin index that the upper boundary of the range falls in (or is
+    // closest to)
+    size_t end_bin_index;
 
-    bin_indices_and_weights[i].first = bin_index;
+    if( this->isValueInDiscretization( range_end ) )
+      end_bin_index = this->calculateBinIndexOfValue( range_end );
+    else
+      end_bin_index = this->getNumberOfBins()-1;
 
-    // Set the weight associated with the bin index (fraction of range that
-    // intersects the bin)
-    const double bin_intersection_size =
-      this->calculateBinIntersectionSize( bin_index, range_start, range_end );
+    // Resize the bin indices and weights array
+    bin_indices_and_weights.resize( end_bin_index - start_bin_index + 1 );
 
-    bin_indices_and_weights[i].second =
-      bin_intersection_size/range_size;
+    // Calculate the size of the range
+    double range_size = this->calculateRangeSize( range_start, range_end );
+    
+    // Set the bin indices and weights array
+    for( size_t i = 0; i < bin_indices_and_weights.size(); ++i )
+    {
+      // Set the bin index
+      size_t bin_index = start_bin_index + i;
+      
+      bin_indices_and_weights[i].first = bin_index;
+      
+      // Set the weight associated with the bin index (fraction of range that
+      // intersects the bin)
+      const double bin_intersection_size =
+        this->calculateBinIntersectionSize( bin_index, range_start, range_end );
+      
+      bin_indices_and_weights[i].second =
+        bin_intersection_size/range_size;
+    }
+  }
+  // Handle the special case of range_start == range_end
+  else
+  {
+    bin_indices_and_weights.resize( 1 );
+    
+    bin_indices_and_weights.front().first = start_bin_index;
+    bin_indices_and_weights.front().second = 1.0;
   }
 }
 

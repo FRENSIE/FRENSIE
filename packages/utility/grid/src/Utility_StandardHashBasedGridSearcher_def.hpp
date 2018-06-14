@@ -174,11 +174,11 @@ public:
   {
     StandardHashBasedGridSearcherHelperBase<T>::verifyGridPreconditionsImpl( grid, min_grid_value, max_grid_value, hash_grid_bins );
 
-    // Make sure the grid is valid
-    testPrecondition( std::find_if( grid->begin(),
-                                    grid->end(),
-                                    ThisType::isElementLEZero ) ==
-                      grid->end() );
+    // // Make sure the grid is valid
+    // testPrecondition( std::find_if( grid->begin(),
+    //                                 grid->end(),
+    //                                 ThisType::isElementLEZero ) ==
+    //                   grid->end() );
   }
 
   //! Check if the grid is valid
@@ -191,12 +191,12 @@ public:
   {
     StandardHashBasedGridSearcherHelperBase<T>::verifyValidGridImpl( grid, min_grid_value, max_grid_value, hash_grid_bins, false );
 
-    TEST_FOR_EXCEPTION( std::find_if( grid->begin(),grid->end(), ThisType::isElementLEZero ) != grid->end(),
-                        std::runtime_error,
-                        "Cannot construct a standard hash-based grid "
-                        "searcher because the grid has zero or negative "
-                        "element values (the hashing function used "
-                        "prohibits this)!" );
+    // TEST_FOR_EXCEPTION( std::find_if( grid->begin(),grid->end(), ThisType::isElementLEZero ) != grid->end(),
+    //                     std::runtime_error,
+    //                     "Cannot construct a standard hash-based grid "
+    //                     "searcher because the grid has zero or negative "
+    //                     "element values (the hashing function used "
+    //                     "prohibits this)!" );
   }
 
   //! Check if the value is within the grid bounds

@@ -15,6 +15,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_DefaultTypedObserverPhaseSpaceDimensionDiscretizationDecl.hpp"
 #include "MonteCarlo_FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization.hpp"
+#include "MonteCarlo_HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization.hpp"
 #include "MonteCarlo_IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization.hpp"
 #include "MonteCarlo_UnorderedTypedObserverPhaseSpaceDimensionDiscretization.hpp"
 #include "MonteCarlo_ObserverPhaseSpaceDimensionTraits.hpp"
@@ -25,7 +26,56 @@ namespace MonteCarlo{
  * class specialization for floating point ordered dimensions.
  */
 template<ObserverPhaseSpaceDimension dimension>
-class DefaultTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value && ObserverPhaseSpaceDimensionTraits<dimension>::isOrdered::value>::type> : public FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>
+class DefaultTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value && ObserverPhaseSpaceDimensionTraits<dimension>::isOrdered::value && dimension != MonteCarlo::OBSERVER_COSINE_DIMENSION>::type> : public HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>
+{ 
+  // Typedef for the base type
+  typedef HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension> BaseType;
+
+protected:
+
+  //! Typedef for the dimension value type
+  typedef typename BaseType::DimensionValueType DimensionValueType;
+  
+public:
+
+  //! Typedef for the input data type
+  typedef typename BaseType::BinBoundaryArray InputDataType;
+
+  //! Constructor
+  DefaultTypedObserverPhaseSpaceDimensionDiscretization(
+                                     const InputDataType& discretization_data )
+    : BaseType( discretization_data )
+  { /* ... */ }
+
+  //! Constructor (with number of hash grid bins specified)
+  DefaultTypedObserverPhaseSpaceDimensionDiscretization(
+                                      const InputDataType& discretization_data,
+                                      const unsigned hash_grid_bins );
+
+  //! Destructor
+  ~DefaultTypedObserverPhaseSpaceDimensionDiscretization()
+  { /* ... */ }
+
+private:
+
+  // Default constructor
+  DefaultTypedObserverPhaseSpaceDimensionDiscretization()
+  { /* ... */ }
+
+  // Serialize the discretization
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType ); }
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+};
+
+/*! \brief The default typed observer phase space dimension discretization
+ * class specialization for floating point ordered dimensions.
+ */
+template<ObserverPhaseSpaceDimension dimension>
+class DefaultTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value && ObserverPhaseSpaceDimensionTraits<dimension>::isOrdered::value && dimension == MonteCarlo::OBSERVER_COSINE_DIMENSION>::type> : public FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>
 { 
   // Typedef for the base type
   typedef FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension> BaseType;
