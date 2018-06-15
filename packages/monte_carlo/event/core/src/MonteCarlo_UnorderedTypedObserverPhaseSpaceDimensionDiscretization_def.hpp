@@ -71,6 +71,8 @@ void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename 
     if( bin_values_it != bin_values_end )
       os << ",";
   }
+
+  os << "}";
 }
 
 // Print the dimension discretization

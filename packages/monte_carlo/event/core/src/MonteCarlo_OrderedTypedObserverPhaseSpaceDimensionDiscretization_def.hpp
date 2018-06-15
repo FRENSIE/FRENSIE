@@ -145,7 +145,8 @@ void OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculate
     bin_indices_and_weights.resize( end_bin_index - start_bin_index + 1 );
 
     // Calculate the size of the range
-    double range_size = this->calculateRangeSize( range_start, range_end );
+    const double range_size =
+      this->calculateRangeSize( range_start, range_end );
     
     // Set the bin indices and weights array
     for( size_t i = 0; i < bin_indices_and_weights.size(); ++i )
@@ -159,7 +160,6 @@ void OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculate
       // intersects the bin)
       const double bin_intersection_size =
         this->calculateBinIntersectionSize( bin_index, range_start, range_end );
-      
       bin_indices_and_weights[i].second =
         bin_intersection_size/range_size;
     }

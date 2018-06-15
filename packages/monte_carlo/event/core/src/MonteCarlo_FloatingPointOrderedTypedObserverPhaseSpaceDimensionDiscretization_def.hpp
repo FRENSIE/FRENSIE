@@ -74,13 +74,18 @@ bool FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimensio
 {
   // Make sure that the range is valid
   testPrecondition( range_start <= range_end );
-  
-  return (range_start <= this->getBinBoundaries().front() &&
-          range_end > this->getBinBoundaries().front()) ||
-    (range_start < this->getBinBoundaries().back() &&
-     range_end >= this->getBinBoundaries().back()) ||
-    (range_start >= this->getBinBoundaries().front() &&
-     range_start <= this->getBinBoundaries().back());
+
+  if( range_start >= this->getBinBoundaries().front() &&
+      range_end <= this->getBinBoundaries().back() )
+    return true;
+  else if( range_start <= this->getBinBoundaries().front() &&
+           range_end > this->getBinBoundaries().front() )
+    return true;
+  else if( range_start < this->getBinBoundaries().back() &&
+           range_end >= this->getBinBoundaries().back() )
+    return true;
+  else
+    return false;
 }
 
 // Calculate the index of the bin  that the value falls in
