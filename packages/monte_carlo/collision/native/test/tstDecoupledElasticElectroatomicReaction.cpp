@@ -71,7 +71,7 @@ TEUCHOS_UNIT_TEST( DecoupledElasticElectroatomicReaction, getNumberOfEmittedPhot
 }
 
 //---------------------------------------------------------------------------//
-// Check that the joint cross section can be returned
+// Check that the total cross section can be returned
 TEUCHOS_UNIT_TEST( DecoupledElasticElectroatomicReaction,
                    getCrossSection )
 {
@@ -84,6 +84,28 @@ TEUCHOS_UNIT_TEST( DecoupledElasticElectroatomicReaction,
 
   cross_section = decoupled_elastic_reaction->getCrossSection( 1.0E+05 );
   TEST_FLOATING_EQUALITY( cross_section, 1.29871E+04, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the sampling ratio can be returned
+TEUCHOS_UNIT_TEST( DecoupledElasticElectroatomicReaction,
+                   getSamplingRatio )
+{
+
+  double ratio = decoupled_elastic_reaction->getSamplingRatio( 1.0E-05 );
+  TEST_FLOATING_EQUALITY( ratio, 1.0, 1e-12 );
+
+  ratio = decoupled_elastic_reaction->getSamplingRatio( 1.0E-03 );
+  TEST_FLOATING_EQUALITY( ratio, 1.0, 1e-12 );
+
+  ratio = decoupled_elastic_reaction->getSamplingRatio( 1.0 );
+  TEST_FLOATING_EQUALITY( ratio, 7.7548919965521235e-01, 1e-12 );
+
+  ratio = decoupled_elastic_reaction->getSamplingRatio( 1.0 );
+  TEST_FLOATING_EQUALITY( ratio, 7.7548919965521235e-01, 1e-12 );
+
+  ratio = decoupled_elastic_reaction->getSamplingRatio( 1.0E+05 );
+  TEST_FLOATING_EQUALITY( ratio, 1.0100484326755011e-09, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -106,19 +128,22 @@ TEUCHOS_UNIT_TEST( DecoupledElasticElectroatomicReaction, react )
   TEST_ASSERT( bank.isEmpty() );
   TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 
+  // Get the sampling ratio
+  double sampling_ratio =
+    decoupled_elastic_reaction->getSamplingRatio( electron.getEnergy() );
 
   // Set fake stream
   std::vector<double> fake_stream( 11 );
-  fake_stream[0] = 0.0; // sample tabuar Cutoff distribution
+  fake_stream[0] = sampling_ratio - 1e-6; // sample tabuar Cutoff distribution
   fake_stream[1] = 0.0; // sample mu = -1
   fake_stream[2] = 0.0; // sample the azimuthal angle
-  fake_stream[3] = 0.0; // sample tabuar Cutoff distribution
+  fake_stream[3] = sampling_ratio - 1e-6; // sample tabuar Cutoff distribution
   fake_stream[4] = 1.0-1e-15; // sample mu = 0.999999
   fake_stream[5] = 0.0; // sample the azimuthal angle
-  fake_stream[6] = 1.0-1e-15; // sample analytical screened Rutherford distribution
+  fake_stream[6] = sampling_ratio; // sample analytical screened Rutherford distribution
   fake_stream[7] = 0.0; // sample mu = 0.999999
   fake_stream[8] = 0.0; // sample the azimuthal angle
-  fake_stream[9] = 1.0-1e-15; // sample analytical screened Rutherford distribution
+  fake_stream[9] = sampling_ratio; // sample analytical screened Rutherford distribution
   fake_stream[10] = 1.0-1e-15; // sample mu = 1
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -207,13 +232,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         data_container.getTotalElasticCrossSection().begin(),
         data_container.getTotalElasticCrossSection().end() );
 
-    // Calculate the sampling ratios
-    Teuchos::ArrayRCP<double> sampling_ratios( total_cross_section.size() );
-    for ( unsigned i = 0; i < sampling_ratios.size(); ++i )
-    {
-      sampling_ratios[i] = cutoff_cross_section[i]/total_cross_section[i];
-    }
-
     // Create cutoff distribution
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_elastic_distribution;
@@ -235,7 +253,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
       new MonteCarlo::DecoupledElasticElectroatomicReaction<Utility::LinLin>(
             energy_grid,
             total_cross_section,
-            sampling_ratios,
+            cutoff_cross_section,
             data_container.getTotalElasticCrossSectionThresholdEnergyIndex(),
             cutoff_elastic_distribution,
             sr_elastic_distribution ) );
