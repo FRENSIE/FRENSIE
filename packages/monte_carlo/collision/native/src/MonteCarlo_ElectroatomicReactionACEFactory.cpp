@@ -72,8 +72,8 @@ void ElectroatomicReactionACEFactory::createDecoupledElasticReaction(
 
   Teuchos::ArrayRCP<double> cutoff_elastic_cross_sections;
   cutoff_elastic_cross_sections.assign(
-      raw_electroatom_data.extractElasticTotalCrossSection().begin(),
-      raw_electroatom_data.extractElasticTotalCrossSection().end() );
+      raw_electroatom_data.extractElasticCutoffCrossSection().begin(),
+      raw_electroatom_data.extractElasticCutoffCrossSection().end() );
 
   elastic_reaction.reset(
     new DecoupledElasticElectroatomicReaction<Utility::LogLog>(

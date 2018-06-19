@@ -105,13 +105,6 @@ void ElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
   unsigned threshold_energy_index =
     raw_electroatom_data.getTotalElasticCrossSectionThresholdEnergyIndex();
 
-  // // Calculate sampling ratios
-  // Teuchos::ArrayRCP<double> sampling_ratios( total_cross_section.size() );
-  // for( unsigned i = 0; i < sampling_ratios.size(); ++i )
-  // {
-  //   sampling_ratios[i] = cutoff_cross_section[i]/total_cross_section[i];
-  // }
-
   // Create the tabular cutoff elastic scattering distribution
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution> tabular_distribution;
   ElasticFactory::createCutoffElasticDistribution<TwoDGridPolicy>(
