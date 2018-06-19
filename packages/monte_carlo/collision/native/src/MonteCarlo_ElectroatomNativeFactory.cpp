@@ -144,7 +144,7 @@ void ElectroatomNativeFactory::createElectroatom(
     }
     else
     {
-      THROW_EXCEPTION( std::runtime_error, "Error: the 2D sampling policy "
+      THROW_EXCEPTION( std::runtime_error, "Error: the 2D grid policy "
                        << electron_sampling << " is not currently supported!" );
     }
   }

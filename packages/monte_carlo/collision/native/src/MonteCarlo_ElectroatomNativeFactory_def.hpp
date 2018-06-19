@@ -57,7 +57,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
   // Create the elastic scattering reaction
   if ( properties.isElasticModeOn() )
   {
-    if( TwoDGridPolicy::name() == "Unit-base" )
+    if( TwoDGridPolicy::name() == "Unit-base" || TwoDGridPolicy::name() == "Direct" )
     {
       if( TwoDGridPolicy::TwoDInterpPolicy::name() == "LogLogLog" )
       {
@@ -78,7 +78,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
                                                 scattering_reactions );
       }
     }
-    else if( TwoDGridPolicy::name() == "Unit-base Correlated" )
+    else if( TwoDGridPolicy::name() == "Unit-base Correlated" || TwoDGridPolicy::name() == "Correlated" )
     {
       if( TwoDGridPolicy::TwoDInterpPolicy::name() == "LogLogLog" )
       {
@@ -99,47 +99,10 @@ void ElectroatomNativeFactory::createElectroatomCore(
                                                 scattering_reactions );
       }
     }
-    else if( TwoDGridPolicy::name() == "Correlated" )
+    else
     {
-      if( TwoDGridPolicy::TwoDInterpPolicy::name() == "LogLogLog" )
-      {
-        ThisType::createElasticElectroatomCore<Utility::Correlated<Utility::LogLogCosLog> >(
-                                                raw_electroatom_data,
-                                                energy_grid,
-                                                grid_searcher,
-                                                properties,
-                                                scattering_reactions );
-      }
-      else
-      {
-        ThisType::createElasticElectroatomCore<Utility::Correlated<typename TwoDGridPolicy::TwoDInterpPolicy> >(
-                                                raw_electroatom_data,
-                                                energy_grid,
-                                                grid_searcher,
-                                                properties,
-                                                scattering_reactions );
-      }
-    }
-    else if( TwoDGridPolicy::name() == "Direct" )
-    {
-      if( TwoDGridPolicy::TwoDInterpPolicy::name() == "LogLogLog" )
-      {
-        ThisType::createElasticElectroatomCore<Utility::Direct<Utility::LogLogCosLog> >(
-                                                raw_electroatom_data,
-                                                energy_grid,
-                                                grid_searcher,
-                                                properties,
-                                                scattering_reactions );
-      }
-      else
-      {
-        ThisType::createElasticElectroatomCore<Utility::Direct<typename TwoDGridPolicy::TwoDInterpPolicy> >(
-                                                raw_electroatom_data,
-                                                energy_grid,
-                                                grid_searcher,
-                                                properties,
-                                                scattering_reactions );
-      }
+      THROW_EXCEPTION( std::runtime_error, "Error: the 2D grid policy "
+                       << TwoDGridPolicy::name() << " is not currently supported!" );
     }
   }
 
