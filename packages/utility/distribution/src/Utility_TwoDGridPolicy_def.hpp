@@ -1096,7 +1096,7 @@ YZIterator UnitBase<_TwoDInterpPolicy>::sampleBinBoundary(
 template<typename _TwoDInterpPolicy>
 inline const std::string UnitBase<_TwoDInterpPolicy>::name()
 {
-  return "Unit-Base";
+  return "Unit-base";
 }
 
 // Calculate the Y independent lower bound between bin boundaries

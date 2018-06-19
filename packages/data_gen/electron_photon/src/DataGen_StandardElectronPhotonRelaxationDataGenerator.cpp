@@ -287,14 +287,14 @@ MonteCarlo::TwoDInterpolationType StandardElectronPhotonRelaxationDataGenerator:
   return d_two_d_interp;
 }
 
-// Set the electron TwoDGridPolicy (Unit-Base Correlated by default)
+// Set the electron TwoDGridPolicy (Unit-base Correlated by default)
 void StandardElectronPhotonRelaxationDataGenerator::setElectronTwoDGridPolicy(
     MonteCarlo::TwoDGridType two_d_grid )
 {
   d_two_d_grid = two_d_grid;
 }
 
-// Return the electron TwoDGridPolicy (Unit-Base Correlated by default)
+// Return the electron TwoDGridPolicy (Unit-base Correlated by default)
 MonteCarlo::TwoDGridType StandardElectronPhotonRelaxationDataGenerator::getElectronTwoDGridPolicy() const
 {
   return d_two_d_grid;

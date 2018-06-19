@@ -74,7 +74,7 @@ Utility::UnitAwareFullyTabularTwoDDistribution<MegaElectronVolt,cgs::length,Barn
 TEUCHOS_UNIT_TEST( UnitBase, name )
 {
   std::string name = Utility::UnitBase<Utility::LinLinLin>::name();
-  TEST_ASSERT( name == "Unit-Base" );
+  TEST_ASSERT( name == "Unit-base" );
 
   name = Utility::UnitBase<Utility::LinLinLin>::TwoDInterpPolicy::name();
   TEST_ASSERT( name == "LinLinLin" );
