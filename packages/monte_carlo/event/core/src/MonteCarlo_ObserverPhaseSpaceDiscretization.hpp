@@ -16,7 +16,6 @@
 
 // Boost Includes
 #include <boost/any.hpp>
-// Boost Includes
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/assume_abstract.hpp>
@@ -24,12 +23,7 @@
 #include <boost/serialization/shared_ptr.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ObserverPhaseSpaceDimension.hpp"
-#include "MonteCarlo_ObserverPhaseSpaceDimensionDiscretization.hpp"
-#include "MonteCarlo_ObserverParticleStateWrapper.hpp"
-#include "Utility_Map.hpp"
-#include "Utility_Set.hpp"
-#include "Utility_Vector.hpp"
+#include "MonteCarlo_ObserverPhaseSpaceDiscretizationImpl.hpp"
 
 namespace MonteCarlo{
 
@@ -39,16 +33,14 @@ class ObserverPhaseSpaceDiscretization
 
 public:
 
-  //! Typedef for the dimension value map type
-  typedef std::map<ObserverPhaseSpaceDimension,boost::any> DimensionValueMap;
+  //! Typedef for the dimension value map
+  typedef ObserverPhaseSpaceDiscretizationImpl::DimensionValueMap DimensionValueMap;
 
   //! Typedef for the bin index array
-  typedef ObserverPhaseSpaceDimensionDiscretization::BinIndexArray
-  BinIndexArray;
+  typedef ObserverPhaseSpaceDiscretizationImpl::BinIndexArray BinIndexArray;
 
   //! Typedef for the bin index and weight array
-  typedef ObserverPhaseSpaceDimensionDiscretization::BinIndexWeightPairArray
-  BinIndexWeightPairArray;
+  typedef ObserverPhaseSpaceDiscretizationImpl::BinIndexWeightPairArray BinIndexWeightPairArray;
 
   //! Constructor
   ObserverPhaseSpaceDiscretization();
@@ -60,7 +52,8 @@ public:
   //! Assign a discretization to a dimension
   void assignDiscretizationToDimension(
         const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>&
-        discretization );
+        discretization,
+        const bool range_dimension = false );
 
   //! Check if a dimension has a discretization
   bool doesDimensionHaveDiscretization(
@@ -94,153 +87,51 @@ public:
   void print( std::ostream& os,
               const ObserverPhaseSpaceDimension dimension,
               const size_t index ) const;
+
+  //! Check if the point is in the phase space discretization
+  bool isPointInDiscretization(
+                             const DimensionValueMap& dimension_values ) const;
   
   //! Check if the point is in the phase space discretization
   bool isPointInDiscretization(
            const ObserverParticleStateWrapper& particle_state_wrapper ) const;
 
-  //! Check if the point is in the phase space discretization
-  bool isPointInDiscretization(
-                             const DimensionValueMap& dimension_values ) const;
-
   //! Check if the range intersects the phase space discretization
-  template<ObserverPhaseSpaceDimension... RangeDimensions>
   bool doesRangeIntersectDiscretization(
            const ObserverParticleStateWrapper& particle_state_wrapper ) const;
+
+  //! Calculate the bin indices of a point
+  void calculateBinIndicesOfPoint( const DimensionValueMap& dimension_values,
+                                   BinIndexArray& bin_indices ) const;
   
   //! Calculate the bin indices of a point
   void calculateBinIndicesOfPoint(
                    const ObserverParticleStateWrapper& particle_state_wrapper,
                    BinIndexArray& bin_indices ) const;
 
-  //! Calculate the bin indices of a point
-  void calculateBinIndicesOfPoint( const DimensionValueMap& dimension_values,
-                                   BinIndexArray& bin_indices ) const;
-
   //! Calculate the bin indices and weights of a range
-  template<ObserverPhaseSpaceDimension... RangeDimensions>
   void calculateBinIndicesAndWeightsOfRange(
                    const ObserverParticleStateWrapper& particle_state_wrapper,
                    BinIndexWeightPairArray& bin_indices_and_weights ) const;
 
 private:
 
-  // Check if the dimension value map is valid
-  bool isDimensionValueMapValid(
-                             const DimensionValueMap& dimension_values ) const;
-
-  // Check if the bin index array is valid
-  bool isBinIndexArrayValid( const BinIndexArray& bin_indices ) const;
-
-  // Check if the bin index weight pair array is valid
-  bool isBinIndexWeightPairArrayValid(
-                const BinIndexWeightPairArray& bin_indices_and_weights ) const;
-
-  // Check if the point is in the discretization (implementation)
-  template<typename DimensionValueContainer>
-  bool isPointInDiscretizationImpl(
-              const DimensionValueContainer& dimension_value_container ) const;
-
-  // Check if the value is in the dimension discretization
-  bool isValueInDimensionDiscretization(
-           const ObserverPhaseSpaceDimension dimension,
-           const ObserverParticleStateWrapper& particle_state_wrapper ) const;
-
-  // Check if the value is in the dimension discretization
-  bool isValueInDimensionDiscretization(
-                             const ObserverPhaseSpaceDimension dimension,
-                             const DimensionValueMap& dimension_values ) const;
-
-  // Check if the range intersects the dimension discretization
-  bool doesRangeIntersectDimensionDiscretization(
-           const ObserverPhaseSpaceDimension dimension,
-           const ObserverParticleStateWrapper& particle_state_wrapper ) const;
-
-  // Calculate the local bin indices of the point (implementation)
-  template<typename DimensionValueContainer>
-  void calculateBinIndicesOfPointImpl(
-                      const DimensionValueContainer& dimension_value_container,
-                      BinIndexArray& bin_indices ) const;
-
-  // Calculate the local bin indices of the value
-  template<typename Array>
-  void calculateLocalBinIndicesOfValue(
-                   const ObserverPhaseSpaceDimension dimension,
-                   const ObserverParticleStateWrapper& particle_state_wrapper,
-                   Array& local_bin_indices ) const;
-
-  // Calculate the local bin indices of the value
-  void calculateLocalBinIndicesOfValue(
-                                  const ObserverPhaseSpaceDimension dimension,
-                                  const DimensionValueMap& dimension_values,
-                                  BinIndexArray& local_bin_indices ) const;
-
-  // Calculate the local bin indices and weights of the range
-  template<ObserverPhaseSpaceDimension... RangeDimensions>
-  void calculateLocalBinIndicesAndWeightsOfRange(
-                const ObserverPhaseSpaceDimension dimension,
-                const ObserverParticleStateWrapper& particle_state_wrapper,
-                BinIndexWeightPairArray& local_bin_indices_and_weights ) const;
-
-  // Check if the dimension is a range dimension
-  template<ObserverPhaseSpaceDimension... RangeDimensions>
-  static bool isRangeDimension( const ObserverPhaseSpaceDimension dimension );
-
-  // Save the data to an archive
+  // Serialize the data
   template<typename Archive>
-  void save( Archive& ar, const unsigned version ) const;
-
-  // Load the data from an archive
-  template<typename Archive>
-  void load( Archive& ar, const unsigned version );
-
-  BOOST_SERIALIZATION_SPLIT_MEMBER();
+  void serialize( Archive& ar, const unsigned version )
+  { ar & BOOST_SERIALIZATION_NVP( d_impl ); }
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
-  // The observer phase space dimension discretizations
-  std::map<ObserverPhaseSpaceDimension,std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization> >
-  d_dimension_discretization_map;
-
-  // The observer phase space dimension index step size map
-  std::map<ObserverPhaseSpaceDimension,size_t>
-  d_dimension_index_step_size_map;
-
-  // The observer phase space dimension ordering
-  std::vector<ObserverPhaseSpaceDimension> d_dimension_ordering;
+  // The observer phase space dimension implementation
+  std::unique_ptr<ObserverPhaseSpaceDiscretizationImpl> d_impl;
 };
 
-// Save the data to an archive
-template<typename Archive>
-void ObserverPhaseSpaceDiscretization::save( Archive& ar, const unsigned version ) const
-{
-  ar & BOOST_SERIALIZATION_NVP( d_dimension_discretization_map );
-  ar & BOOST_SERIALIZATION_NVP( d_dimension_index_step_size_map );
-  ar & BOOST_SERIALIZATION_NVP( d_dimension_ordering );
-}
-
-// Load the data from an archive
-template<typename Archive>
-void ObserverPhaseSpaceDiscretization::load( Archive& ar, const unsigned version )
-{
-  ar & BOOST_SERIALIZATION_NVP( d_dimension_discretization_map );
-  ar & BOOST_SERIALIZATION_NVP( d_dimension_index_step_size_map );
-  ar & BOOST_SERIALIZATION_NVP( d_dimension_ordering );
-}
-  
 } // end MonteCarlo namespace
 
 BOOST_CLASS_VERSION( MonteCarlo::ObserverPhaseSpaceDiscretization, 0 );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::ObserverPhaseSpaceDiscretization );
-
-//---------------------------------------------------------------------------//
-// Template Includes.
-//---------------------------------------------------------------------------//
-
-#include "MonteCarlo_ObserverPhaseSpaceDiscretization_def.hpp"
-
-//---------------------------------------------------------------------------//
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ObserverPhaseSpaceDiscretization );
 
 #endif // end MONTE_CARLO_OBSERVER_PHASE_SPACE_DISCRETIZATION_HPP
 

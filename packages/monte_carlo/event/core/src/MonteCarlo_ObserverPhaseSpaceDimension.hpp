@@ -20,22 +20,15 @@
 
 namespace MonteCarlo{
 
-/*! The observer phase space dimension enumeration
- *
- * Make sure that the OBSERVER_PHASE_SPACE_DIMENSION_end value is always the
- * last value if more dimension names are added. The start and end enum names 
- * are used for iterating through the list of dimensions.
- */
+//! The observer phase space dimension enumeration
 enum ObserverPhaseSpaceDimension{
-  OBSERVER_PHASE_SPACE_DIMENSION_start = 0,
-  OBSERVER_COSINE_DIMENSION = OBSERVER_PHASE_SPACE_DIMENSION_start,
+  OBSERVER_COSINE_DIMENSION = 0,
   OBSERVER_SOURCE_ENERGY_DIMENSION,
   OBSERVER_ENERGY_DIMENSION,
   OBSERVER_SOURCE_TIME_DIMENSION,
   OBSERVER_TIME_DIMENSION,
   OBSERVER_COLLISION_NUMBER_DIMENSION,
   OBSERVER_SOURCE_ID_DIMENSION,
-  OBSERVER_PHASE_SPACE_DIMENSION_end
 };
 
 } // end MonteCarlo namespace

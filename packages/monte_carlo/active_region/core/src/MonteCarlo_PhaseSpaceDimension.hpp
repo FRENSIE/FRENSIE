@@ -24,8 +24,7 @@ namespace MonteCarlo{
 //! The phase space dimension type enumeration
 enum PhaseSpaceDimension
 {
-  PHASE_SPACE_DIMENSION_start = 0,
-  PRIMARY_SPATIAL_DIMENSION = PHASE_SPACE_DIMENSION_start,
+  PRIMARY_SPATIAL_DIMENSION = 0,
   SECONDARY_SPATIAL_DIMENSION,
   TERTIARY_SPATIAL_DIMENSION,
   PRIMARY_DIRECTIONAL_DIMENSION,
@@ -34,7 +33,6 @@ enum PhaseSpaceDimension
   ENERGY_DIMENSION,
   TIME_DIMENSION,
   WEIGHT_DIMENSION,
-  PHASE_SPACE_DIMENSION_end
 };
 
 //! Convert the spatial dimension to the equivalent phase space dimension
