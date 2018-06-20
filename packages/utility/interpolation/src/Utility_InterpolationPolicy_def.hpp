@@ -313,15 +313,15 @@ inline T InterpolationHelper<ParentInterpolationType>::calculateFuzzyUpperBound(
 }
 
 // Convert the cosine variable
-/*! \details This function converts from cosine (mu) to delta cosine (1 - mu) or
- *  from delta cosine (1 - mu) back to cosine (mu).
+/*! \details This function converts from cosine (mu) to delta cosine (1 - mu + delta) or
+ *  from delta cosine (1 - mu + delta) back to cosine (mu).
  */
 template<typename ParentInterpolationType>
 template<typename T>
 inline T InterpolationHelper<ParentInterpolationType>::convertCosineVar(
           const T cosine_var )
 {
-  return QuantityTraits<T>::one()*2 - cosine_var;
+  return QuantityTraits<T>::one()*(1.0+1e-10) - cosine_var;
 }
 
 // Get the interpolation type
