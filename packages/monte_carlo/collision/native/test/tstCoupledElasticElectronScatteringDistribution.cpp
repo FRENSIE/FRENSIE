@@ -2472,7 +2472,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                 scattering_function,
                 cross_section_ratios,
                 traits,
-                sampling_method ) );
+                MonteCarlo::TWO_D_UNION ) );
 
     // Create the test distribution
     test_log_distribution.reset(
@@ -2480,7 +2480,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                 scattering_function,
                 cross_section_ratios,
                 traits,
-                sampling_method ) );
+                MonteCarlo::TWO_D_UNION ) );
     }
 
     // Create the distributions using LinLinLog interpolation

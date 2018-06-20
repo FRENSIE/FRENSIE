@@ -20,6 +20,7 @@
 #include "MonteCarlo_CoupledElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -30,6 +31,7 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<MonteCarlo::CoupledElasticElectroatomicReaction<Utility::LinLin> > coupled_elastic_reaction;
+std::shared_ptr<MonteCarlo::ElectroatomicReaction> au_coupled_elastic_reaction;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -134,6 +136,65 @@ TEUCHOS_UNIT_TEST( CoupledElasticElectroatomicReaction, react )
                           1e-15 );
   TEST_ASSERT( bank.isEmpty() );
   TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the elastic reaction can be simulated
+TEUCHOS_UNIT_TEST( CoupledElasticElectroatomicReaction, react_au )
+{
+  MonteCarlo::ElectronState electron( 0 );
+  electron.setEnergy( 5.4683967761380459e-01 );
+  electron.setDirection( 0.0, 0.0, 1.0 );
+
+  MonteCarlo::ParticleBank bank;
+
+  Data::SubshellType shell_of_interaction;
+
+  au_coupled_elastic_reaction->react( electron, bank, shell_of_interaction );
+
+  TEST_EQUALITY_CONST( electron.getEnergy(), 5.4683967761380459e-01 );
+
+  TEST_ASSERT( electron.getZDirection() < 2.0 );
+  TEST_ASSERT( electron.getZDirection() > 0.0 );
+  TEST_ASSERT( bank.isEmpty() );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
+
+// random_number = 9.9703998285635631e-01	cutoff_ratio = 1.0000000000000000e+00	incoming_energy = 5.4683967761380459e-01	raw_angle_cosine = 9.9999949654236431e-01	max_angle_cosine = 9.9999943051300622e-01
+
+  // Set fake stream
+  std::vector<double> fake_stream( 6 );
+  fake_stream[0] = 9.9703998285635631e-01; // sample mu
+  fake_stream[1] = 0.0; // sample lower bin
+  fake_stream[2] = 0.0; // sample lower bin (for max angle)
+  fake_stream[3] = 9.9703998285635631e-01; // sample the upper bin
+  fake_stream[4] = 1.0-1e-15; // sample upper bin
+  fake_stream[5] = 1.0-1e-15; // sample upper bin (for max angle)
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  electron.setDirection( 0.0, 0.0, 1.0 );
+  au_coupled_elastic_reaction->react( electron, bank, shell_of_interaction );
+
+  TEST_EQUALITY_CONST( electron.getEnergy(), 5.4683967761380459e-01 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(),
+                          -1.0,
+                          1e-15 );
+  TEST_ASSERT( bank.isEmpty() );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
+
+  electron.setDirection( 0.0, 0.0, 1.0 );
+  au_coupled_elastic_reaction->react( electron, bank, shell_of_interaction );
+
+  TEST_EQUALITY_CONST( electron.getEnergy(), 5.4683967761380459e-01 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(),
+                          1.0,
+                          1e-15 );
+  TEST_ASSERT( bank.isEmpty() );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
@@ -141,13 +202,16 @@ TEUCHOS_UNIT_TEST( CoupledElasticElectroatomicReaction, react )
 //---------------------------------------------------------------------------//
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_native_file_name;
+std::string test_native_file_name, au_test_file_name;
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
   clp().setOption( "test_native_file",
                    &test_native_file_name,
                    "Test Native file name" );
+  clp().setOption( "au_test_file",
+                   &au_test_file_name,
+                   "Au Native file name" );
 }
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
@@ -199,6 +263,37 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                 total_cross_section,
                 data_container.getTotalElasticCrossSectionThresholdEnergyIndex(),
                 coupled_elastic_distribution ) );
+  }
+
+  // Create reaction
+  {
+    // Get native data container
+    Data::ElectronPhotonRelaxationDataContainer data_container =
+        Data::ElectronPhotonRelaxationDataContainer( au_test_file_name );
+
+    MonteCarlo::CoupledElasticSamplingMethod sampling_method =
+        MonteCarlo::TWO_D_UNION;
+    double evaluation_tol = 1e-7;
+
+    // Get electron energy grid
+    Teuchos::ArrayRCP<double> energy_grid;
+    energy_grid.assign(
+        data_container.getElectronEnergyGrid().begin(),
+        data_container.getElectronEnergyGrid().end() );
+
+    // Construct the hash-based grid searcher for this atom
+    Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
+                              energy_grid,
+                              100 ) );
+
+    MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::Correlated<Utility::LogLogCosLog> >(
+                        data_container,
+                        energy_grid,
+                        grid_searcher,
+                        au_coupled_elastic_reaction,
+                        sampling_method,
+                        evaluation_tol );
   }
 
   // Initialize the random number generator

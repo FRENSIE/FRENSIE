@@ -321,7 +321,7 @@ template<typename T>
 inline T InterpolationHelper<ParentInterpolationType>::convertCosineVar(
           const T cosine_var )
 {
-  return QuantityTraits<T>::one() - cosine_var;
+  return QuantityTraits<T>::one()*2 - cosine_var;
 }
 
 // Get the interpolation type

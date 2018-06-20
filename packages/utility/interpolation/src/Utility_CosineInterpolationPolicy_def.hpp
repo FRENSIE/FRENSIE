@@ -57,38 +57,15 @@ inline CosineType LogCosLog::interpolate( const IndepType indep_var_0,
   // Make sure the dependent variables are valid
   testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_dep_var_0 ) );
   testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_dep_var_1 ) );
+  testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_0 ) );
+  testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_1 ) );
 
+  CosineType dep_var_0 = convertCosineVar(raw_dep_var_0);
+  CosineType dep_var_1 = convertCosineVar(raw_dep_var_1);
 
-  if( raw_dep_var_0 != QuantityTraits<CosineType>::one() &&
-      raw_dep_var_1 != QuantityTraits<CosineType>::one() )
-  {
-    testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_0 ) );
-    testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_1 ) );
-
-    CosineType dep_var_0 = convertCosineVar(raw_dep_var_0);
-    CosineType dep_var_1 = convertCosineVar(raw_dep_var_1);
-
-    return convertCosineVar( dep_var_0*
-              pow((dep_var_1/dep_var_0),
-              log(indep_var/indep_var_0)/log(indep_var_1/indep_var_0)) );
-  }
-  else // Special edge case for cosine of one
-  {
-    testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_0 ) ||
-                      raw_dep_var_0 == QuantityTraits<CosineType>::one() );
-    testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_1 ) ||
-                      raw_dep_var_1 == QuantityTraits<CosineType>::one() );
-
-    // Get a nudge value for the edge case
-    CosineType nudge_value = QuantityTraits<CosineType>::initializeQuantity(1e-7);
-
-    CosineType dep_var_0 = convertCosineVar(raw_dep_var_0) + nudge_value;
-    CosineType dep_var_1 = convertCosineVar(raw_dep_var_1) + nudge_value;
-
-    return nudge_value + convertCosineVar( dep_var_0*
-              pow((dep_var_1/dep_var_0),
-              log(indep_var/indep_var_0)/log(indep_var_1/indep_var_0)) );
-  }
+  return convertCosineVar( dep_var_0*
+            pow((dep_var_1/dep_var_0),
+            log(indep_var/indep_var_0)/log(indep_var_1/indep_var_0)) );
 }
 
 // Interpolate between two points using the indep variable ratio (beta)
@@ -110,34 +87,13 @@ inline CosineType LogCosLog::interpolate( const T beta,
   // Make sure the dependent variables are valid
   testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_dep_var_0 ) );
   testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_dep_var_1 ) );
+  testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_0 ) );
+  testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_1 ) );
 
-  if( raw_dep_var_0 != QuantityTraits<CosineType>::one() &&
-      raw_dep_var_1 != QuantityTraits<CosineType>::one() )
-  {
-    testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_0 ) );
-    testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_1 ) );
+  CosineType dep_var_0 = convertCosineVar(raw_dep_var_0);
+  CosineType dep_var_1 = convertCosineVar(raw_dep_var_1);
 
-    CosineType dep_var_0 = convertCosineVar(raw_dep_var_0);
-    CosineType dep_var_1 = convertCosineVar(raw_dep_var_1);
-
-    return convertCosineVar( dep_var_0*pow((dep_var_1/dep_var_0),beta) );
-  }
-  else // Special edge case for cosine of one
-  {
-    testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_0 ) ||
-                      raw_dep_var_0 == QuantityTraits<CosineType>::one() );
-    testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_1 ) ||
-                      raw_dep_var_1 == QuantityTraits<CosineType>::one() );
-
-    // Get a nudge value for the edge case
-    CosineType nudge_value = QuantityTraits<CosineType>::initializeQuantity(1e-7);
-
-    CosineType dep_var_0 = convertCosineVar(raw_dep_var_0) + nudge_value;
-    CosineType dep_var_1 = convertCosineVar(raw_dep_var_1) + nudge_value;
-
-    return nudge_value +
-           convertCosineVar( dep_var_0*pow((dep_var_1/dep_var_0),beta) );
-  }
+  return convertCosineVar( dep_var_0*pow((dep_var_1/dep_var_0),beta) );
 }
 
 // Interpolate between two points and return the processed value
@@ -226,7 +182,7 @@ inline bool LogCosLog::isDepVarInValidRange( const T dep_var )
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
 
   return dep_var >= QuantityTraits<T>::initializeQuantity(-1.0) &&
-         dep_var < QuantityTraits<T>::one();
+         dep_var <= QuantityTraits<T>::one();
 }
 
 // The name of the policy
@@ -680,7 +636,7 @@ inline bool LogCosLin::isDepVarInValidRange( const T dep_var )
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
 
   return dep_var >= QuantityTraits<T>::initializeQuantity(-1.0) &&
-         dep_var < QuantityTraits<T>::one();
+         dep_var <= QuantityTraits<T>::one();
 }
 
 // The name of the policy
@@ -947,7 +903,7 @@ template<typename T>
 inline bool LinLogCos::isIndepVarInValidRange( const T indep_var )
 {
   return indep_var >= QuantityTraits<T>::initializeQuantity(-1.0) &&
-         indep_var < QuantityTraits<T>::one();
+         indep_var <= QuantityTraits<T>::one();
 }
 
 // Test if the dependent value is in a valid range (doesn't check nan/inf)

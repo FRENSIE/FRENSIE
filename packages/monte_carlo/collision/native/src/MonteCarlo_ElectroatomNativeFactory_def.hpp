@@ -61,12 +61,23 @@ void ElectroatomNativeFactory::createElectroatomCore(
     {
       if( TwoDGridPolicy::TwoDInterpPolicy::name() == "LogLogLog" )
       {
-        ThisType::createElasticElectroatomCore<Utility::Direct<Utility::LogLogCosLog> >(
+        if( properties.getElasticElectronDistributionMode() == COUPLED_DISTRIBUTION &&
+            properties.getCoupledElasticSamplingMode() == TWO_D_UNION )
+        {
+          THROW_EXCEPTION( std::runtime_error, "Error: the 2D grid policy "
+                       << TwoDGridPolicy::name() << " is not currently supported "
+                       << "with a " << properties.getCoupledElasticSamplingMode()
+                       << " coupled elastic sampling mode!" );
+        }
+        else
+        {
+          ThisType::createElasticElectroatomCore<Utility::Direct<Utility::LogLogCosLog> >(
                                                 raw_electroatom_data,
                                                 energy_grid,
                                                 grid_searcher,
                                                 properties,
                                                 scattering_reactions );
+        }
       }
       else
       {

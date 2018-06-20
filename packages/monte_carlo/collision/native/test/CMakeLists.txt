@@ -859,7 +859,7 @@ ADD_EXECUTABLE(tstCoupledElasticElectroatomicReaction
   tstCoupledElasticElectroatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstCoupledElasticElectroatomicReaction monte_carlo_collision_native)
-ADD_TEST(CoupledElasticElectroatomicReaction_test tstCoupledElasticElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml")
+ADD_TEST(CoupledElasticElectroatomicReaction_test tstCoupledElasticElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml" --au_test_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_79_native.xml")
 SET_PROPERTY(TEST CoupledElasticElectroatomicReaction_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstCoupledElasticPositronatomicReaction

@@ -22,7 +22,7 @@ struct LogCosIndepVarProcessingTag{};
 //! The log dependent variable processing tag
 struct LogCosDepVarProcessingTag{};
 
-/*! \brief Policy struct for interpolating data tables that require logcos-log 
+/*! \brief Policy struct for interpolating data tables that require logcos-log
  * interpolation between evaluated points.
  * \details The dependent variable is always assumed to be an angle cosine.
  * Since the angle cosine goes below zero a direct log interpolation
@@ -277,7 +277,7 @@ struct LogCosLin : public InterpolationHelper<LogCosLin>
  * interpolation cannot be performed on it. Instead a log interpolation will be
  * performed on the change in the angle cosine (eg: 1 - mu) instead of the
  * cosine ( mu ). The interpolated value will always be cast into the cosine
- * before retuned. When a processed cosine grid is used, it is assumed that the
+ * before returned. When a processed cosine grid is used, it is assumed that the
  * independent and dependent grids are inverted to maintain an ascending order.
  * \ingroup policies
  */

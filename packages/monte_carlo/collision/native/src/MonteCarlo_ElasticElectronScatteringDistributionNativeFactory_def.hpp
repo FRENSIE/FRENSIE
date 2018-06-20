@@ -362,7 +362,9 @@ void ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservi
 // Create the coupled elastic distribution ( combined Cutoff and Screened Rutherford )
 /*! \details This function has been overloaded so it can be called without using
  *  the native data container. This functionality is necessary for generating
- *  native moment preserving data without first creating native data files.
+ *  native moment preserving data without first creating native data files. The
+ *  Direct TwoDGridPolicy currently does not support a coupled 2D Union sampling
+ *  method.
  */
 template<typename TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution(
@@ -403,6 +405,12 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
   // Make sure the evaluation tolerance is valid
   testPrecondition( evaluation_tol > 0.0 );
   testPrecondition( evaluation_tol < 1.0 );
+  // Make sure the TwoDGridPolicy is valid
+  testPrecondition( TwoDGridPolicy::name() == "Direct" ||
+                    TwoDGridPolicy::name() == "Correlated" );
+  // Make sure the TwoDGridPolicy and Sampling Method are compatible
+  testPrecondition( TwoDGridPolicy::name() != "Direct" ||
+                    sampling_method != TWO_D_UNION );
 
   // Get the distribution data
   std::vector<double> cutoff_ratios( angular_energy_grid.size() );

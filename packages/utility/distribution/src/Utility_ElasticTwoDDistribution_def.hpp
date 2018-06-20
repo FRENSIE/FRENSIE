@@ -479,7 +479,7 @@ auto UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,Seco
 {
   // Dummy variable
   SecondaryIndepQuantity dummy_raw_sample;
-  
+
   // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
     sampling_functor = std::bind<SecondaryIndepQuantity>(
@@ -535,7 +535,7 @@ auto UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,Seco
   // Make sure the random number is valid
   testPrecondition( random_number >= 0.0 );
   testPrecondition( random_number <= 1.0 );
-  
+
   // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
     sampling_functor = std::bind<SecondaryIndepQuantity>(
