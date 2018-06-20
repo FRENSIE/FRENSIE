@@ -9,19 +9,20 @@
 #ifndef MONTE_CARLO_PARTICLE_CROSSING_SURFACE_EVENT_OBSERVER_HPP
 #define MONTE_CARLO_PARTICLE_CROSSING_SURFACE_EVENT_OBSERVER_HPP
 
+// Boost Includes
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/assume_abstract.hpp>
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
+#include "MonteCarlo_ParticleEventTags.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Model.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_SerializationHelpers.hpp"
-
-/*! \defgroup particle_crossing_surface_event Particle Crossing Surface Event
- * \ingroup entity_events
- *
- * Infrastructure used to acquire information from particle crossing surface
- * events.
- */
 
 namespace MonteCarlo{
 
@@ -32,9 +33,6 @@ class ParticleCrossingSurfaceEventObserver
 {
 
 public:
-
-  //! The event tag type
-  struct ParticleCrossingSurfaceEvent{};
 
   //! Typedef for the observer event tag
   typedef ParticleCrossingSurfaceEvent EventTag;

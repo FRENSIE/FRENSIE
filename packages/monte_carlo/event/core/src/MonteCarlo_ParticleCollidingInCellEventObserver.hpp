@@ -17,18 +17,12 @@
 #include <boost/serialization/shared_ptr.hpp>
 
 // FRENSIE Includes
+#include "MonteCarlo_ParticleEventTags.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Model.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_SerializationHelpers.hpp"
-
-/*! \defgroup particle_colliding_in_cell_event Particle Colliding In Cell Event
- * \ingroup entity_events
- *
- * Infrastructure used to acquire information from particle colliding
- * in cell events.
- */
 
 namespace MonteCarlo{
 
@@ -40,8 +34,6 @@ class ParticleCollidingInCellEventObserver
 
 public:
 
-  //! The event tag type
-  struct ParticleCollidingInCellEvent{};
 
   //! Typedef for the observer event tag
   typedef ParticleCollidingInCellEvent EventTag;

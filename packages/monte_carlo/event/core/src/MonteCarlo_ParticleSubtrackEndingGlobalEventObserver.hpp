@@ -17,16 +17,10 @@
 #include <boost/serialization/shared_ptr.hpp>
 
 // FRENSIE Includes
+#include "MonteCarlo_ParticleEventTags.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
-
-/*! \defgroup particle_subtrack_ending_global_event Particle Subtrack Ending Global Event
- * \ingroup global_events
- *
- * Infrastructure used to acquire information from particle subtrack ending
- * global events.
- */
 
 namespace MonteCarlo{
 
@@ -37,9 +31,6 @@ class ParticleSubtrackEndingGlobalEventObserver
 {
 
 public:
-
-  //! The event tag type
-  struct ParticleSubtrackEndingGlobalEvent{};
 
   //! Typedef for the observer event tag
   typedef ParticleSubtrackEndingGlobalEvent EventTag;

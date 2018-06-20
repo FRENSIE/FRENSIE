@@ -65,7 +65,7 @@ public:
   template<template<typename,typename...> class STLCompliantArray>
   CellPulseHeightEstimator( const Estimator::idType id,
 			    const double multiplier,
-			    const STLCOmpliantArray<cellIdType>& entity_ids );
+			    const STLCompliantArray<cellIdType>& entity_ids );
 
   //! Destructor
   ~CellPulseHeightEstimator()

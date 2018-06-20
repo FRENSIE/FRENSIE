@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ParticleEnteringCellEventObserver.hpp
+//! \file   MonteCarlo_ParticleEnteringCellEventActor.hpp
 //! \author Alex Robinson
-//! \brief  Particle entering cell event observer base class declaration.
+//! \brief  Particle entering cell event actor base class declaration.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_PARTICLE_ENTERING_CELL_EVENT_OBSERVER_HPP
-#define MONTE_CARLO_PARTICLE_ENTERING_CELL_EVENT_OBSERVER_HPP
+#ifndef MONTE_CARLO_PARTICLE_ENTERING_CELL_EVENT_ACTOR_HPP
+#define MONTE_CARLO_PARTICLE_ENTERING_CELL_EVENT_ACTOR_HPP
 
 // Boost Includes
 #include <boost/serialization/split_member.hpp>
@@ -19,6 +19,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleEventTags.hpp"
 #include "MonteCarlo_ParticleState.hpp"
+#include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Model.hpp"
 #include "Utility_Vector.hpp"
@@ -26,29 +27,36 @@
 
 namespace MonteCarlo{
 
-/*! The particle entering cell event observer base class
+/*! The particle entering cell event actor base class
  * \ingroup particle_entering_cell_event
  */
-class ParticleEnteringCellEventObserver
+class ParticleEnteringCellEventActor
 {
 
 public:
 
-  //! Typedef for the observer event tag
+  //! Typedef for the actor event tag
   typedef ParticleEnteringCellEvent EventTag;
 
+  //! The callback that will be executed after the update
+  typedef std::function<void(ParticleState&,ParticleBank&,const double)>
+  Callback;
+
   //! Constructor
-  ParticleEnteringCellEventObserver()
+  ParticleEnteringCellEventActor()
   { /* ... */ }
 
   //! Destructor
-  virtual ~ParticleEnteringCellEventObserver()
+  virtual ~ParticleEnteringCellEventActor()
   { /* ... */ }
 
-  //! Update the observer
+  //! Update the particle state and bank
   virtual void updateFromParticleEnteringCellEvent(
-	  const ParticleState& particle,
-	  const Geometry::Model::InternalCellHandle cell_entering ) = 0;
+                       const Geometry::Model::InternalCellHandle cell_entering,
+                       const double optical_path_to_next_cell,
+                       const Callback& callback,
+                       ParticleState& particle,
+                       ParticleBank& bank ) const = 0;
 
 private:
 
@@ -60,16 +68,15 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 };
-
+  
 } // end MonteCarlo namespace
 
-BOOST_CLASS_VERSION( MonteCarlo::ParticleEnteringCellEventObserver, 0 );
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleEnteringCellEventObserver );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleEnteringCellEventObserver );
+BOOST_CLASS_VERSION( MonteCarlo::ParticleEnteringCellEventActor, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleEnteringCellEventActor );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleEnteringCellEventActor );
 
-#endif // end MONTE_CARLO_PARTICLE_ENTERING_CELL_EVENT_OBSERVER_HPP
+#endif // end MONTE_CARLO_PARTICLE_ENTERING_CELL_EVENT_ACTOR_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ParticleEnteringCellEventObserver.hpp
+// end MonteCarlo_ParticleEnteringCellEventActor.hpp
 //---------------------------------------------------------------------------//
-

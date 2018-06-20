@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ParticleLeavingCellEventObserver.hpp
+//! \file   MonteCarlo_ParticleCollidingGlobalEventActor.hpp
 //! \author Alex Robinson
-//! \brief  Particle leaving cell event observer base class declaration.
+//! \brief  Particle colliding global event actor base class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_PARTICLE_LEAVING_CELL_EVENT_OBSERVER_HPP
-#define MONTE_CARLO_PARTICLE_LEAVING_CELL_EVENT_OBSERVER_HPP
+#ifndef MONTE_CARLO_PARTICLE_COLLIDING_GLOBAL_EVENT_ACTOR_HPP
+#define MONTE_CARLO_PARTICLE_COLLISING_GLOBAL_EVENT_ACTOR_HPP
 
 // Boost Includes
 #include <boost/serialization/split_member.hpp>
@@ -19,6 +19,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleEventTags.hpp"
 #include "MonteCarlo_ParticleState.hpp"
+#include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Model.hpp"
 #include "Utility_Vector.hpp"
@@ -26,28 +27,29 @@
 
 namespace MonteCarlo{
 
-/*! The particle leaving cell event observer base class
- * \ingroup particle_leaving_cell_event
+/*! The particle colliding global event actor base class
+ * \ingroup particle_colliding_global_event
  */
-class ParticleLeavingCellEventObserver{
+class ParticleCollidingGlobalEventActor
+{
 
 public:
 
-  //! Typedef for the observer event
-  typedef ParticleLeavingCellEvent EventTag;
+  //! Typedef for the actor event tag
+  typedef ParticleCollidingGlobalEvent EventTag;
 
   //! Constructor
-  ParticleLeavingCellEventObserver()
+  ParticleCollidingGlobalEventActor()
   { /* ... */ }
 
   //! Destructor
-  virtual ~ParticleLeavingCellEventObserver()
+  virtual ~ParticleCollidingGlobalEventActor()
   { /* ... */ }
 
-  //! Update the observer
-  virtual void updateFromParticleLeavingCellEvent(
-	   const ParticleState& particle,
-	   const Geometry::Model::InternalCellHandle cell_leaving ) = 0;
+  //! Update the particle state and bank
+  virtual void updateFromGlobalParticleCollidingEvent(
+                                                ParticleState& particle,
+                                                ParticleBank& bank ) const = 0;
 
 private:
 
@@ -59,15 +61,15 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 };
-
+  
 } // end MonteCarlo namespace
 
-BOOST_CLASS_VERSION( MonteCarlo::ParticleLeavingCellEventObserver, 0 );
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleLeavingCellEventObserver );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleLeavingCellEventObserver );
+BOOST_CLASS_VERSION( MonteCarlo::ParticleCollidingGlobalEventActor, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleCollidingGlobalEventActor );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleCollidingGlobalEventActor );
 
-#endif // end MONTE_CARLO_PARTICLE_LEAVING_CELL_EVENT_OBSERVER_HPP
+#endif // end MONTE_CARLO_PARTICLE_COLLISING_GLOBAL_EVENT_ACTOR_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ParticleLeavingCellEventObserver.hpp
+// end MonteCarlo_ParticleCollidingGlobalEventActor.hpp
 //---------------------------------------------------------------------------//

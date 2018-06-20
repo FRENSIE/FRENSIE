@@ -17,18 +17,12 @@
 #include <boost/serialization/shared_ptr.hpp>
 
 // FRENSIE Includes
+#include "MonteCarlo_ParticleEventTags.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Model.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_SerializationHelpers.hpp"
-
-/*! \defgroup particle_subtrack_ending_in_cell_event Particle Subtrack Ending In Cell Event
- * \ingroup entity_events
- *
- * Infrastructure used to acquire information from particle subtrack ending
- * in cell events.
- */
 
 namespace MonteCarlo{
 
@@ -39,9 +33,6 @@ class ParticleSubtrackEndingInCellEventObserver
 {
 
 public:
-
-  //! The event tag type
-  struct ParticleSubtrackEndingInCellEvent{};
 
   //! Typedef for the observer event tag
   typedef ParticleSubtrackEndingInCellEvent EventTag;
