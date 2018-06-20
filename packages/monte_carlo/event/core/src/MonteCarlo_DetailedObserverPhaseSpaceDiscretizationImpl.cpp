@@ -169,7 +169,9 @@ std::string DetailedObserverPhaseSpaceDiscretizationImpl::getBinName(
 
     d_dimension_discretization_map.find(d_dimension_ordering[i])->second->printBoundariesOfBin( oss, dim_bin_index );
 
-    oss << ", ";
+    if( i < d_dimension_ordering.size() - 1 )
+      oss << ", ";
+    
     total_bins *= dim_bins;
   }
 

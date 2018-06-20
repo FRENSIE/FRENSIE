@@ -76,7 +76,7 @@ std::string EmptyObserverPhaseSpaceDiscretizationImpl::getBinName(
                                                  const size_t bin_index ) const
 {
   // Make sure that the bin index is valid
-  testPrecondition( bin_index > 0 );
+  testPrecondition( bin_index >= 0 );
 
   return "";
 }

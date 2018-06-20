@@ -2449,21 +2449,199 @@ FRENSIE_UNIT_TEST( ObserverPhaseSpaceDiscretization,
 // Check that the name of a bin can be returned
 FRENSIE_UNIT_TEST( ObserverPhaseSpaceDiscretization, getBinName )
 {
+  MonteCarlo::ObserverPhaseSpaceDiscretization phase_space_discretization;
 
+  FRENSIE_CHECK_EQUAL( phase_space_discretization.getBinName( 0 ), "" );
+
+  phase_space_discretization.assignDiscretizationToDimension( source_energy_dimension_discretization );
+
+  std::string bin_name = phase_space_discretization.getBinName( 0 );
+  
+  FRENSIE_CHECK( bin_name.find( "Source Energy Bin:" ) < bin_name.size() );
+  FRENSIE_CHECK( bin_name.find( "[" ) < bin_name.size() );
+  FRENSIE_CHECK( bin_name.find( "," ) < bin_name.size() );
+  FRENSIE_CHECK( bin_name.find( "]" ) < bin_name.size() );
+
+  bin_name = phase_space_discretization.getBinName( 1 );
+
+  FRENSIE_CHECK( bin_name.find( "Source Energy Bin:" ) < bin_name.size() );
+  FRENSIE_CHECK( bin_name.find( "(" ) < bin_name.size() );
+  FRENSIE_CHECK( bin_name.find( "," ) < bin_name.size() );
+  FRENSIE_CHECK( bin_name.find( "]" ) < bin_name.size() );
+
+  bin_name = phase_space_discretization.getBinName( 2 );
+
+  FRENSIE_CHECK( bin_name.find( "Source Energy Bin:" ) < bin_name.size() );
+  FRENSIE_CHECK( bin_name.find( "(" ) < bin_name.size() );
+  FRENSIE_CHECK( bin_name.find( "," ) < bin_name.size() );
+  FRENSIE_CHECK( bin_name.find( "]" ) < bin_name.size() );
+
+  phase_space_discretization.assignDiscretizationToDimension( energy_dimension_discretization );
+
+  bin_name = phase_space_discretization.getBinName( 0 );
+
+  FRENSIE_CHECK( bin_name.find( "Source Energy Bin:" ) < bin_name.size() );
+  FRENSIE_CHECK( bin_name.find( "Energy Bin:" ) < bin_name.size() );
+  
+  bin_name = phase_space_discretization.getBinName( 8 );
+
+  FRENSIE_CHECK( bin_name.find( "Source Energy Bin:" ) < bin_name.size() );
+  FRENSIE_CHECK( bin_name.find( "Energy Bin:" ) < bin_name.size() );
+
+  phase_space_discretization.assignDiscretizationToDimension( collision_number_dimension_discretization );
+
+  bin_name = phase_space_discretization.getBinName( 0 );
+
+  FRENSIE_CHECK( bin_name.find( "Source Energy Bin:" ) < bin_name.size() );
+  FRENSIE_CHECK( bin_name.find( "Energy Bin:" ) < bin_name.size() );
+  FRENSIE_CHECK( bin_name.find( "Collision Number Bin:" ) < bin_name.size() );
+  FRENSIE_CHECK( bin_name.find( "[0,1]" ) < bin_name.size() );
+
+  bin_name = phase_space_discretization.getBinName( 35 );
+
+  FRENSIE_CHECK( bin_name.find( "Source Energy Bin:" ) < bin_name.size() );
+  FRENSIE_CHECK( bin_name.find( "Energy Bin:" ) < bin_name.size() );
+  FRENSIE_CHECK( bin_name.find( "Collision Number Bin:" ) < bin_name.size() );
+  FRENSIE_CHECK( bin_name.find( "[4,5]" ) < bin_name.size() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a single bin can be printed
+FRENSIE_UNIT_TEST( ObserverPhaseSpaceDiscretization, print_bin )
+{
+  MonteCarlo::ObserverPhaseSpaceDiscretization phase_space_discretization;
+
+  phase_space_discretization.assignDiscretizationToDimension( source_energy_dimension_discretization );
+  
+  std::ostringstream oss;
+
+  phase_space_discretization.print( oss, MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION, 0 );
+
+  FRENSIE_CHECK( oss.str().find( "Source Energy Bin:" ) < oss.str().size() );
+  FRENSIE_CHECK( oss.str().find( "[" ) < oss.str().size() );
+  FRENSIE_CHECK( oss.str().find( "," ) < oss.str().size() );
+  FRENSIE_CHECK( oss.str().find( "]" ) < oss.str().size() );
+
+  phase_space_discretization.print( oss, MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION, 1 );
+
+  FRENSIE_CHECK( oss.str().find( "Source Energy Bin:" ) < oss.str().size() );
+  FRENSIE_CHECK( oss.str().find( "(" ) < oss.str().size() );
+  FRENSIE_CHECK( oss.str().find( "," ) < oss.str().size() );
+  FRENSIE_CHECK( oss.str().find( "]" ) < oss.str().size() );
+
+  phase_space_discretization.print( oss, MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION, 2 );
+
+  FRENSIE_CHECK( oss.str().find( "Source Energy Bin:" ) < oss.str().size() );
+  FRENSIE_CHECK( oss.str().find( "(" ) < oss.str().size() );
+  FRENSIE_CHECK( oss.str().find( "," ) < oss.str().size() );
+  FRENSIE_CHECK( oss.str().find( "]" ) < oss.str().size() );
+  
+  phase_space_discretization.assignDiscretizationToDimension( energy_dimension_discretization );
+
+  phase_space_discretization.print( oss, MonteCarlo::OBSERVER_ENERGY_DIMENSION, 0 );
+  
+  FRENSIE_CHECK( oss.str().find( "Energy Bin:" ) < oss.str().size() );
+
+  phase_space_discretization.print( oss, MonteCarlo::OBSERVER_ENERGY_DIMENSION, 2 );
+  
+  FRENSIE_CHECK( oss.str().find( "Energy Bin:" ) < oss.str().size() );
+
+  phase_space_discretization.assignDiscretizationToDimension( collision_number_dimension_discretization );
+
+  phase_space_discretization.print( oss, MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION, 0 );
+
+  FRENSIE_CHECK( oss.str().find( "Collision Number Bin:" ) < oss.str().size() );
+  FRENSIE_CHECK( oss.str().find( "[0,1]" ) < oss.str().size() );
+
+  phase_space_discretization.print( oss, MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION, 3 );
+
+  FRENSIE_CHECK( oss.str().find( "Collision Number Bin:" ) < oss.str().size() );
+  FRENSIE_CHECK( oss.str().find( "[4,5]" ) < oss.str().size() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a dimension discretization can be printed
 FRENSIE_UNIT_TEST( ObserverPhaseSpaceDiscretization, print_dimension )
 {
+  MonteCarlo::ObserverPhaseSpaceDiscretization phase_space_discretization;
 
+  phase_space_discretization.assignDiscretizationToDimension( source_energy_dimension_discretization );
+
+  std::ostringstream oss;
+
+  phase_space_discretization.print( oss, MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION );
+
+  FRENSIE_CHECK( oss.str().find( "Source Energy Bin Boundaries:" ) <
+                 oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  phase_space_discretization.assignDiscretizationToDimension( energy_dimension_discretization );
+
+  phase_space_discretization.print( oss, MonteCarlo::OBSERVER_ENERGY_DIMENSION );
+
+  FRENSIE_CHECK( oss.str().find( "Energy Bin Boundaries:" ) <
+                 oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  phase_space_discretization.assignDiscretizationToDimension( source_time_dimension_discretization );
+
+  phase_space_discretization.print( oss, MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION );
+
+  FRENSIE_CHECK( oss.str().find( "Source Time Bin Boundaries:" ) <
+                 oss.str().size() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the phase space discretization can be printed
 FRENSIE_UNIT_TEST( ObserverPhaseSpaceDiscretization, print )
 {
+  MonteCarlo::ObserverPhaseSpaceDiscretization phase_space_discretization;
 
+  std::ostringstream oss;
+
+  phase_space_discretization.print( oss );
+
+  FRENSIE_CHECK_EQUAL( oss.str(), "" );
+
+  oss.str( "" );
+  oss.clear();
+
+  phase_space_discretization.assignDiscretizationToDimension( source_energy_dimension_discretization );
+
+  phase_space_discretization.print( oss );
+  
+  FRENSIE_CHECK( oss.str().find( "Source Energy Bin Boundaries:" ) <
+                 oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  phase_space_discretization.assignDiscretizationToDimension( energy_dimension_discretization );
+
+  phase_space_discretization.print( oss );
+  
+  FRENSIE_CHECK( oss.str().find( "Source Energy Bin Boundaries:" ) <
+                 oss.str().size() );
+  FRENSIE_CHECK( oss.str().find( "Energy Bin Boundaries:" ) <
+                 oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  phase_space_discretization.assignDiscretizationToDimension( collision_number_dimension_discretization );
+
+  phase_space_discretization.print( oss );
+  
+  FRENSIE_CHECK( oss.str().find( "Source Energy Bin Boundaries:" ) <
+                 oss.str().size() );
+  FRENSIE_CHECK( oss.str().find( "Energy Bin Boundaries:" ) <
+                 oss.str().size() );
+  FRENSIE_CHECK( oss.str().find( "Collision Number Bin Boundaries:" ) <
+                 oss.str().size() );
 }
 
 //---------------------------------------------------------------------------//
@@ -2472,7 +2650,298 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ObserverPhaseSpaceDiscretization,
                                    archive,
                                    TestArchives )
 {
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
 
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_observer_phase_space_discretization" );
+  std::ostringstream archive_ostream;
+
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    std::shared_ptr<MonteCarlo::ObserverPhaseSpaceDiscretization>
+      empty_discretization( new MonteCarlo::ObserverPhaseSpaceDiscretization );
+
+    std::shared_ptr<MonteCarlo::ObserverPhaseSpaceDiscretization>
+      single_discretization( new MonteCarlo::ObserverPhaseSpaceDiscretization );
+    single_discretization->assignDiscretizationToDimension( cosine_dimension_discretization );
+
+    std::shared_ptr<MonteCarlo::ObserverPhaseSpaceDiscretization>
+      ranged_single_discretization( new MonteCarlo::ObserverPhaseSpaceDiscretization );
+
+    ranged_single_discretization->assignDiscretizationToDimension( time_dimension_discretization, true );
+
+    std::shared_ptr<MonteCarlo::ObserverPhaseSpaceDiscretization>
+      detailed_discretization( new MonteCarlo::ObserverPhaseSpaceDiscretization );
+
+    detailed_discretization->assignDiscretizationToDimension( time_dimension_discretization, true );
+    detailed_discretization->assignDiscretizationToDimension( source_id_dimension_discretization );
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(empty_discretization) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(single_discretization) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(ranged_single_discretization) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(detailed_discretization) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  std::shared_ptr<MonteCarlo::ObserverPhaseSpaceDiscretization>
+    empty_discretization, single_discretization, ranged_single_discretization,
+    detailed_discretization;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(empty_discretization) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(single_discretization) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(ranged_single_discretization) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(detailed_discretization) );
+
+  iarchive.reset();
+
+  {
+    MonteCarlo::PhotonState photon( 0 );
+    MonteCarlo::ObserverParticleStateWrapper photon_wrapper( photon );
+
+    MonteCarlo::ObserverPhaseSpaceDiscretization::BinIndexArray bin_indices;
+
+    empty_discretization->calculateBinIndicesOfPoint( photon_wrapper, bin_indices );
+
+    FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
+    FRENSIE_CHECK_EQUAL( bin_indices[0], 0 );
+
+    photon.setSourceEnergy( 1.0 );
+    photon.setEnergy( 1e-2 );
+    photon.setSourceTime( 0.0 );
+    photon.setTime( 1e-6 );
+    photon.setSourceId( 10 );
+    photon.incrementCollisionNumber();
+    photon_wrapper.setAngleCosine( -1.0 );
+
+    empty_discretization->calculateBinIndicesOfPoint( photon_wrapper, bin_indices );
+
+    FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
+    FRENSIE_CHECK_EQUAL( bin_indices[0], 0 );
+  }
+
+  {
+    MonteCarlo::PhotonState photon( 0 );
+    MonteCarlo::ObserverParticleStateWrapper photon_wrapper( photon );
+    photon_wrapper.setAngleCosine( -1.0 );
+
+    MonteCarlo::ObserverPhaseSpaceDiscretization::BinIndexArray bin_indices;
+
+    single_discretization->calculateBinIndicesOfPoint( photon_wrapper, bin_indices );
+
+    FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
+    FRENSIE_CHECK_EQUAL( bin_indices[0], 0 );
+
+    photon_wrapper.setAngleCosine( -1.0/3 );
+
+    single_discretization->calculateBinIndicesOfPoint( photon_wrapper, bin_indices );
+
+    FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
+    FRENSIE_CHECK_EQUAL( bin_indices[0], 0 );
+
+    photon_wrapper.setAngleCosine( 0.0 );
+
+    single_discretization->calculateBinIndicesOfPoint( photon_wrapper, bin_indices );
+
+    FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
+    FRENSIE_CHECK_EQUAL( bin_indices[0], 1 );
+
+    photon_wrapper.setAngleCosine( 1.0/3 );
+
+    single_discretization->calculateBinIndicesOfPoint( photon_wrapper, bin_indices );
+
+    FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
+    FRENSIE_CHECK_EQUAL( bin_indices[0], 1 );
+
+    photon_wrapper.setAngleCosine( 2.0/3 );
+
+    single_discretization->calculateBinIndicesOfPoint( photon_wrapper, bin_indices );
+
+    FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
+    FRENSIE_CHECK_EQUAL( bin_indices[0], 2 );
+
+    photon_wrapper.setAngleCosine( 1.0 );
+
+    single_discretization->calculateBinIndicesOfPoint( photon_wrapper, bin_indices );
+
+    FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
+    FRENSIE_CHECK_EQUAL( bin_indices[0], 2 );
+  }
+
+  {
+    // The lowest bin boundary intersects the range
+    MonteCarlo::PhotonState photon( 0 );
+    photon.setTime( 0.0 );
+    
+    MonteCarlo::ObserverParticleStateWrapper photon_wrapper( photon );
+    photon_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 149896.22900000002 );
+
+    MonteCarlo::ObserverPhaseSpaceDiscretization::BinIndexWeightPairArray bin_indices_and_weights;
+
+    ranged_single_discretization->calculateBinIndicesAndWeightsOfRange( photon_wrapper, bin_indices_and_weights );
+
+    FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 1 );
+    FRENSIE_CHECK_EQUAL( bin_indices_and_weights[0].first, 0 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( bin_indices_and_weights.front().second,
+                                     0.8,
+                                     1e-15 );
+
+    // The second bin boundary intersects the range
+    photon.setTime( 2e-6 );
+    photon_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 539626.4244 );
+
+    ranged_single_discretization->calculateBinIndicesAndWeightsOfRange( photon_wrapper, bin_indices_and_weights );
+
+    FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 2 );
+    FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().first, 0 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( bin_indices_and_weights.front().second,
+                                     0.44444444444444453,
+                                     1e-15 );
+    FRENSIE_CHECK_EQUAL( bin_indices_and_weights.back().first, 1 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( bin_indices_and_weights.back().second,
+                                     0.5555555555555556,
+                                     1e-15 );
+
+    // The highest bin boundary intersects the range
+    photon.setTime( 5e-4 );
+    photon_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 134906606.10000002 );
+
+    ranged_single_discretization->calculateBinIndicesAndWeightsOfRange( photon_wrapper, bin_indices_and_weights );
+
+    FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 1 );
+    FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().first, 2 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( bin_indices_and_weights.front().second,
+                                     0.1111111111111111,
+                                     1e-15 );
+
+    // The range extends below lowest bin boundary and above highest bin boundary
+    photon.setTime( 0.0 );
+    photon_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 149896229.0 );
+
+    ranged_single_discretization->calculateBinIndicesAndWeightsOfRange( photon_wrapper, bin_indices_and_weights );
+
+    FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 3 );
+    FRENSIE_CHECK_EQUAL( bin_indices_and_weights[0].first, 0 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( bin_indices_and_weights[0].second,
+                                     0.0018,
+                                     1e-15 );
+    FRENSIE_CHECK_EQUAL( bin_indices_and_weights[1].first, 1 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( bin_indices_and_weights[1].second,
+                                     0.018,
+                                     1e-15 );
+    FRENSIE_CHECK_EQUAL( bin_indices_and_weights[2].first, 2 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( bin_indices_and_weights[2].second,
+                                     0.18,
+                                     1e-15 );
+  }
+
+  {
+    // The lowest bin boundary intersects the range
+    MonteCarlo::PhotonState photon( 0 );
+    photon.setTime( 0.0 );
+    photon.setSourceId( 0 );
+    
+    MonteCarlo::ObserverParticleStateWrapper photon_wrapper( photon );
+    photon_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 149896.22900000002 );
+
+    MonteCarlo::ObserverPhaseSpaceDiscretization::BinIndexWeightPairArray bin_indices_and_weights;
+
+    detailed_discretization->calculateBinIndicesAndWeightsOfRange( photon_wrapper, bin_indices_and_weights );
+
+    FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 2 );
+    FRENSIE_CHECK_EQUAL( bin_indices_and_weights[0].first, 0 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( bin_indices_and_weights[0].second,
+                                     0.8,
+                                     1e-15 );
+    FRENSIE_CHECK_EQUAL( bin_indices_and_weights[1].first, 3 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( bin_indices_and_weights[1].second,
+                                     0.8,
+                                     1e-15 );
+
+    // The second bin boundary intersects the range
+    photon.setTime( 2e-6 );
+    photon_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 539626.4244 );
+
+    detailed_discretization->calculateBinIndicesAndWeightsOfRange( photon_wrapper, bin_indices_and_weights );
+
+    FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 4 );
+    FRENSIE_CHECK_EQUAL( bin_indices_and_weights[0].first, 0 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( bin_indices_and_weights[0].second,
+                                     0.44444444444444453,
+                                     1e-15 );
+    FRENSIE_CHECK_EQUAL( bin_indices_and_weights[1].first, 1 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( bin_indices_and_weights[1].second,
+                                     0.5555555555555556,
+                                     1e-15 );
+    FRENSIE_CHECK_EQUAL( bin_indices_and_weights[2].first, 3 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( bin_indices_and_weights[2].second,
+                                     0.44444444444444453,
+                                     1e-15 );
+    FRENSIE_CHECK_EQUAL( bin_indices_and_weights[3].first, 4 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( bin_indices_and_weights[3].second,
+                                     0.5555555555555556,
+                                     1e-15 );
+
+    // The highest bin boundary intersects the range
+    photon.setTime( 5e-4 );
+    photon_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 134906606.10000002 );
+
+    detailed_discretization->calculateBinIndicesAndWeightsOfRange( photon_wrapper, bin_indices_and_weights );
+
+    FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 2 );
+    FRENSIE_CHECK_EQUAL( bin_indices_and_weights[0].first, 2 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( bin_indices_and_weights[0].second,
+                                     0.1111111111111111,
+                                     1e-15 );
+    FRENSIE_CHECK_EQUAL( bin_indices_and_weights[1].first, 5 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( bin_indices_and_weights[1].second,
+                                     0.1111111111111111,
+                                     1e-15 );
+
+    // The range extends below lowest bin boundary and above highest bin boundary
+    photon.setTime( 0.0 );
+    photon_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 149896229.0 );
+
+    detailed_discretization->calculateBinIndicesAndWeightsOfRange( photon_wrapper, bin_indices_and_weights );
+
+    FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 6 );
+    FRENSIE_CHECK_EQUAL( bin_indices_and_weights[0].first, 0 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( bin_indices_and_weights[0].second,
+                                     0.0018,
+                                     1e-15 );
+    FRENSIE_CHECK_EQUAL( bin_indices_and_weights[1].first, 1 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( bin_indices_and_weights[1].second,
+                                     0.018,
+                                     1e-15 );
+    FRENSIE_CHECK_EQUAL( bin_indices_and_weights[2].first, 2 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( bin_indices_and_weights[2].second,
+                                     0.18,
+                                     1e-15 );
+    FRENSIE_CHECK_EQUAL( bin_indices_and_weights[3].first, 3 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( bin_indices_and_weights[0].second,
+                                     0.0018,
+                                     1e-15 );
+    FRENSIE_CHECK_EQUAL( bin_indices_and_weights[4].first, 4 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( bin_indices_and_weights[1].second,
+                                     0.018,
+                                     1e-15 );
+    FRENSIE_CHECK_EQUAL( bin_indices_and_weights[5].first, 5 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( bin_indices_and_weights[2].second,
+                                     0.18,
+                                     1e-15 );
+  }
 }
 
 //---------------------------------------------------------------------------//
