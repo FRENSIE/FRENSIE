@@ -21,6 +21,11 @@
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
+// Test Variables
+//---------------------------------------------------------------------------//
+double delta = 1e-10;
+
+//---------------------------------------------------------------------------//
 // Instantiation macros.
 //---------------------------------------------------------------------------//
 #define TUPLE_TYPEDEFS()                                        \
@@ -159,7 +164,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
                                                          z_1_grid.begin(),
                                                          z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 2.0090406061865305, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.8895869164792762, 1e-12 );
 
   x = 0.1;
 
@@ -176,7 +181,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
                                                            z_1_grid.begin(),
                                                            z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 7.2861435031241650e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.4678033444505051e-01, 1e-12 );
 
   x = 1.0;
 
@@ -193,7 +198,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
                                                            z_1_grid.begin(),
                                                            z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 6.1055422013271645, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 3.1080617677478831e+01, 1e-12 );
 }
 
 UNIT_TEST_INSTANTIATION_2_TUPLE( LogLogCosLog, interpolate_separate_tuple_grids );
@@ -238,7 +243,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
                                                         grid_1.begin(),
                                                         grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 2.0090406061865305, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.8895869164792762, 1e-12 );
 
   x = 0.1;
 
@@ -251,7 +256,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
                                                            grid_1.begin(),
                                                            grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 7.2861435031241650e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.4678033444505051e-01, 1e-12 );
 
   x = 1.0;
 
@@ -264,7 +269,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
                                                            grid_1.begin(),
                                                            grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 6.1055422013271645, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 3.1080617677478831e+01, 1e-12 );
 }
 
 UNIT_TEST_INSTANTIATION_2_MEMBER_1_TUPLE( LogLogCosLog,
@@ -311,7 +316,7 @@ TEUCHOS_UNIT_TEST( LogLogCosLog, interpolate_no_tuple_grids )
                                                  z_1_grid.begin(),
                                                  z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 2.0090406061865305, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.8895869164792762, 1e-12 );
 
   x = 0.1;
 
@@ -328,7 +333,7 @@ TEUCHOS_UNIT_TEST( LogLogCosLog, interpolate_no_tuple_grids )
                                           z_1_grid.begin(),
                                           z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 7.2861435031241650e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.4678033444505051e-01, 1e-12 );
 
   x = 1.0;
 
@@ -345,7 +350,7 @@ TEUCHOS_UNIT_TEST( LogLogCosLog, interpolate_no_tuple_grids )
                                           z_1_grid.begin(),
                                           z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 6.1055422013271645, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 3.1080617677478831e+01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -449,7 +454,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
                                                               z_1_grid.begin(),
                                                               z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 7.7039009809195480e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.5334275379752840e-02, 1e-12 );
 
   y = -1.0; // min possible y at x = 0.3
 
@@ -504,7 +509,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
                                                               z_1_grid.begin(),
                                                               z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 7.2861435031241636e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.4678033444505061e-02, 1e-12 );
 
   y = -1.0;
 
@@ -559,7 +564,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
                                                               z_1_grid.begin(),
                                                               z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 8.1892808781391241e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.6087196373909353e-02, 1e-12 );
 
   y = -1.0;
 
@@ -641,7 +646,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
                                                               grid_1.begin(),
                                                               grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 7.7039009809195480e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.5334275379752840e-02, 1e-12 );
 
   y = -1.0; // min possible y at x = 0.3
 
@@ -684,7 +689,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
                                                               grid_1.begin(),
                                                               grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 7.2861435031241636e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.4678033444505061e-02, 1e-12 );
 
   y = -1.0;
 
@@ -727,7 +732,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
                                                               grid_1.begin(),
                                                               grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 8.1892808781391241e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.6087196373909353e-02, 1e-12 );
 
   y = -1.0;
 
@@ -804,7 +809,7 @@ TEUCHOS_UNIT_TEST( LogLogCosLog, interpolateUnitBase_no_tuple_grids )
                                                          z_1_grid.begin(),
                                                          z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 7.7039009809195480e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.5334275379752840e-02, 1e-12 );
 
   y = -1.0; // min possible y at x = 0.3
 
@@ -856,7 +861,7 @@ TEUCHOS_UNIT_TEST( LogLogCosLog, interpolateUnitBase_no_tuple_grids )
                                                   z_1_grid.begin(),
                                                   z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 7.2861435031241636e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.4678033444505061e-02, 1e-12 );
 
   y = -1.0;
 
@@ -908,7 +913,7 @@ TEUCHOS_UNIT_TEST( LogLogCosLog, interpolateUnitBase_no_tuple_grids )
                                                z_1_grid.begin(),
                                                z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 8.1892808781391241e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.6087196373909353e-02, 1e-12 );
 
   y = -1.0;
 
@@ -973,10 +978,10 @@ TEUCHOS_UNIT_TEST( LogLogCosLog, recoverProcessedDepVar )
 // Check that the second independent variable can be processed
 TEUCHOS_UNIT_TEST( LogLogCosLog, processSecondIndepVar )
 {
-  TEST_FLOATING_EQUALITY( log(3.0),
+  TEST_FLOATING_EQUALITY( log(2.0 + delta),
                           Utility::LogLogCosLog::processSecondIndepVar(-1.0),
                           1e-15 );
-  TEST_FLOATING_EQUALITY( log(1.0),
+  TEST_FLOATING_EQUALITY( log(delta),
                           Utility::LogLogCosLog::processSecondIndepVar(1.0),
                           1e-15 );
 }
@@ -987,11 +992,11 @@ TEUCHOS_UNIT_TEST( LogLogCosLog, recoverProcessedSecondIndepVar )
 {
   TEST_FLOATING_EQUALITY(
                   -1.0,
-                  Utility::LogLogCosLog::recoverProcessedSecondIndepVar(log(3.0)),
+                  Utility::LogLogCosLog::recoverProcessedSecondIndepVar(log(2.0+delta)),
                   1e-15 );
   TEST_FLOATING_EQUALITY(
                   1.0,
-                  Utility::LogLogCosLog::recoverProcessedSecondIndepVar(log(1.0)),
+                  Utility::LogLogCosLog::recoverProcessedSecondIndepVar(log(delta)),
                   1e-15 );
 }
 
@@ -1088,7 +1093,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
                                                         z_1_grid.begin(),
                                                         z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 2.0090406061865305, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.8895869164792762, 1e-12 );
 
   x = Utility::LogLogCosLog::processFirstIndepVar(0.1);
 
@@ -1106,7 +1111,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
                                                         z_1_grid.begin(),
                                                         z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 7.2861435031241650e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.4678033444505051e-01, 1e-12 );
 
   x = Utility::LogLogCosLog::processFirstIndepVar(1.0);
 
@@ -1123,7 +1128,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
                                                         z_1_grid.begin(),
                                                         z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 6.1055422013271645, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 3.1080617677478831e+01, 1e-12 );
 }
 
 UNIT_TEST_INSTANTIATION_2_TUPLE( LogLogCosLog,
@@ -1186,7 +1191,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
                                                         grid_1.begin(),
                                                         grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 2.0090406061865305, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.8895869164792762, 1e-12 );
 
   x = Utility::LogLogCosLog::processFirstIndepVar(0.1);
 
@@ -1200,7 +1205,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
                                                         grid_1.begin(),
                                                         grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 7.2861435031241650e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.4678033444505051e-01, 1e-12 );
 
   x = Utility::LogLogCosLog::processFirstIndepVar(1.0);
 
@@ -1214,7 +1219,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
                                                         grid_1.begin(),
                                                         grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 6.1055422013271645, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 3.1080617677478831e+01, 1e-12 );
 }
 
 UNIT_TEST_INSTANTIATION_2_MEMBER_1_TUPLE(
@@ -1266,7 +1271,7 @@ TEUCHOS_UNIT_TEST( LogLogCosLog, interpolateProcessed_no_tuple_grids )
                                                           z_1_grid.begin(),
                                                           z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 2.0090406061865305, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.8895869164792762, 1e-12 );
 
   x = Utility::LogLogCosLog::processFirstIndepVar(0.1);
 
@@ -1283,7 +1288,7 @@ TEUCHOS_UNIT_TEST( LogLogCosLog, interpolateProcessed_no_tuple_grids )
                                                    z_1_grid.begin(),
                                                    z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 7.2861435031241650e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.4678033444505051e-01, 1e-12 );
 
   x = Utility::LogLogCosLog::processFirstIndepVar(1.0);
 
@@ -1300,7 +1305,7 @@ TEUCHOS_UNIT_TEST( LogLogCosLog, interpolateProcessed_no_tuple_grids )
                                                    z_1_grid.begin(),
                                                    z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 6.1055422013271645, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 3.1080617677478831e+01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1435,7 +1440,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
                                                               z_1_grid.begin(),
                                                               z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 7.7039009809195480e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.5334275379752840e-02, 1e-12 );
 
   // max possible processed y at x = 0.3
   y = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
@@ -1511,7 +1516,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
                                                               z_1_grid.begin(),
                                                               z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 7.2861435031241636e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.4678033444505061e-02, 1e-12 );
 
   y = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
 
@@ -1566,7 +1571,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
                                                               z_1_grid.begin(),
                                                               z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 8.1892808781391241e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.6087196373909353e-02, 1e-12 );
 
   y = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
 
@@ -1666,7 +1671,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
                                                               grid_1.begin(),
                                                               grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 7.7039009809195480e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.5334275379752840e-02, 1e-12 );
 
   // min possible y at x = 0.3
   y = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
@@ -1711,7 +1716,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
                                                               grid_1.begin(),
                                                               grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 7.2861435031241636e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.4678033444505061e-02, 1e-12 );
 
   y = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
 
@@ -1754,7 +1759,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
                                                               grid_1.begin(),
                                                               grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 8.1892808781391241e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.6087196373909353e-02, 1e-12 );
 
   y = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
 
@@ -1835,7 +1840,7 @@ TEUCHOS_UNIT_TEST( LogLogCosLog, interpolateProcessedUnitBase_no_tuple_grids )
                                                       z_1_grid.begin(),
                                                       z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 7.7039009809195480e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.5334275379752840e-02, 1e-12 );
 
   // min possible y at x = 0.3
   y = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
@@ -1889,7 +1894,7 @@ TEUCHOS_UNIT_TEST( LogLogCosLog, interpolateProcessedUnitBase_no_tuple_grids )
                                                            z_1_grid.begin(),
                                                            z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 7.2861435031241636e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.4678033444505061e-02, 1e-12 );
 
   y = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
 
@@ -1941,7 +1946,7 @@ TEUCHOS_UNIT_TEST( LogLogCosLog, interpolateProcessedUnitBase_no_tuple_grids )
                                                            z_1_grid.begin(),
                                                            z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 8.1892808781391241e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( z, 1.6087196373909353e-02, 1e-12 );
 
   y = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
 

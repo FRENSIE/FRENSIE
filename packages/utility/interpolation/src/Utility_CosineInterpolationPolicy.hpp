@@ -27,8 +27,9 @@ struct LogCosDepVarProcessingTag{};
  * \details The dependent variable is always assumed to be an angle cosine.
  * Since the angle cosine goes below zero a direct log interpolation
  * cannot be performed on it. Instead a log interpolation will be performed
- * on the change in the angle cosine (eg: 1 - mu) instead of the cosine ( mu ).
- * The interpolated value will always be cast into the cosine before retuned.
+ * on the change in the angle cosine (eg: 1 - mu + nudge ) instead of the cosine
+ * ( mu ). The interpolated value will always be cast into the cosine before
+ * returned.
  * \ingroup policies
  */
 struct LogCosLog : public InterpolationHelper<LogCosLog>
@@ -49,30 +50,31 @@ struct LogCosLog : public InterpolationHelper<LogCosLog>
   using InterpolationHelper<LogCosLog>::calculateUnitBaseIndepVarProcessed;
   using InterpolationHelper<LogCosLog>::calculateIndepVar;
   using InterpolationHelper<LogCosLog>::calculateProcessedIndepVar;
-  using InterpolationHelper<LogCosLog>::convertCosineVar;
+  using InterpolationHelper<LogCosLog>::convertFromCosineVar;
+  using InterpolationHelper<LogCosLog>::convertToCosineVar;
 
   //! Interpolate between two points
-  template<typename IndepType, typename DepType>
-  static DepType interpolate( const IndepType indep_var_0,
+  template<typename IndepType, typename DepCosineType>
+  static DepCosineType interpolate( const IndepType indep_var_0,
                               const IndepType indep_var_1,
                               const IndepType indep_var,
-                              const DepType dep_var_0,
-                              const DepType dep_var_1 );
+                              const DepCosineType dep_var_0,
+                              const DepCosineType dep_var_1 );
 
   //! Interpolate between two points using the indep variable ratio (beta)
-  template<typename T, typename DepType>
-  static DepType interpolate( const T beta,
-                              const DepType dep_var_0,
-                              const DepType dep_var_1 );
+  template<typename T, typename DepCosineType>
+  static DepCosineType interpolate( const T beta,
+                              const DepCosineType dep_var_0,
+                              const DepCosineType dep_var_1 );
 
   //! Interpolate between two points and return the processed value
-  template<typename IndepType, typename DepType>
-  static typename QuantityTraits<DepType>::RawType
+  template<typename IndepType, typename DepCosineType>
+  static typename QuantityTraits<DepCosineType>::RawType
   interpolateAndProcess( const IndepType indep_var_0,
                          const IndepType indep_var_1,
                          const IndepType indep_var,
-                         const DepType dep_var_0,
-                         const DepType dep_var_1 );
+                         const DepCosineType dep_var_0,
+                         const DepCosineType dep_var_1 );
 
   //! Process the independent value
   template<typename T>
@@ -109,10 +111,10 @@ struct LogCosLog : public InterpolationHelper<LogCosLog>
  * \details The unprocessedindependent variable is always assumed to be an angle
  * cosine. Since the angle cosine goes below zero a direct log interpolation
  * cannot be performed on it. Instead a log interpolation will be performed
- * on the change in the angle cosine (eg: 1 - mu) instead of the cosine ( mu ).
- * The interpolated value will always be cast into the cosine before retuned.
- * When a processed cosine grid is used, it is assumed that the independent and
- * dependent grids are inverted to maintain an ascending order.
+ * on the change in the angle cosine (eg: 1 - mu + nudge ) instead of the cosine
+ * ( mu ). The interpolated value will always be cast into the cosine before
+ * returned. When a processed cosine grid is used, it is assumed that the
+ * independent and dependent grids are inverted to maintain an ascending order.
  * \ingroup policies
  */
 struct LogLogCos : public InterpolationHelper<LogLogCos>
@@ -133,13 +135,14 @@ struct LogLogCos : public InterpolationHelper<LogLogCos>
   using InterpolationHelper<LogLogCos>::calculateUnitBaseIndepVarProcessed;
   using InterpolationHelper<LogLogCos>::calculateIndepVar;
   using InterpolationHelper<LogLogCos>::calculateProcessedIndepVar;
-  using InterpolationHelper<LogLogCos>::convertCosineVar;
+  using InterpolationHelper<LogLogCos>::convertFromCosineVar;
+  using InterpolationHelper<LogLogCos>::convertToCosineVar;
 
   //! Interpolate between two points
-  template<typename IndepType, typename DepType>
-  static DepType interpolate( const IndepType indep_var_0,
-                              const IndepType indep_var_1,
-                              const IndepType indep_var,
+  template<typename IndepCosineType, typename DepType>
+  static DepType interpolate( const IndepCosineType indep_var_0,
+                              const IndepCosineType indep_var_1,
+                              const IndepCosineType indep_var,
                               const DepType dep_var_0,
                               const DepType dep_var_1 );
 
@@ -150,11 +153,11 @@ struct LogLogCos : public InterpolationHelper<LogLogCos>
                               const DepType dep_var_1 );
 
   //! Interpolate between two points and return the processed value
-  template<typename IndepType, typename DepType>
+  template<typename IndepCosineType, typename DepType>
   static typename QuantityTraits<DepType>::RawType
-  interpolateAndProcess( const IndepType indep_var_0,
-                         const IndepType indep_var_1,
-                         const IndepType indep_var,
+  interpolateAndProcess( const IndepCosineType indep_var_0,
+                         const IndepCosineType indep_var_1,
+                         const IndepCosineType indep_var,
                          const DepType dep_var_0,
                          const DepType dep_var_1 );
 
@@ -193,8 +196,9 @@ struct LogLogCos : public InterpolationHelper<LogLogCos>
  * \details The dependent variable is always assumed to be an angle cosine.
  * Since the angle cosine goes below zero a direct log interpolation
  * cannot be performed on it. Instead a log interpolation will be performed
- * on the change in the angle cosine (eg: 1 - mu) instead of the cosine ( mu ).
- * The interpolated value will always be cast into the cosine before retuned.
+ * on the change in the angle cosine (eg: 1 - mu + nudge ) instead of the cosine
+ * ( mu ). The interpolated value will always be cast into the cosine before
+ * returned.
  * \ingroup policies
  */
 struct LogCosLin : public InterpolationHelper<LogCosLin>
@@ -215,30 +219,31 @@ struct LogCosLin : public InterpolationHelper<LogCosLin>
   using InterpolationHelper<LogCosLin>::calculateUnitBaseIndepVarProcessed;
   using InterpolationHelper<LogCosLin>::calculateIndepVar;
   using InterpolationHelper<LogCosLin>::calculateProcessedIndepVar;
-  using InterpolationHelper<LogCosLin>::convertCosineVar;
+  using InterpolationHelper<LogCosLin>::convertFromCosineVar;
+  using InterpolationHelper<LogCosLin>::convertToCosineVar;
 
   //! Interpolate between two points
-  template<typename IndepType, typename DepType>
-  static DepType interpolate( const IndepType indep_var_0,
+  template<typename IndepType, typename DepCosineType>
+  static DepCosineType interpolate( const IndepType indep_var_0,
                               const IndepType indep_var_1,
                               const IndepType indep_var,
-                              const DepType dep_var_0,
-                              const DepType dep_var_1 );
+                              const DepCosineType dep_var_0,
+                              const DepCosineType dep_var_1 );
 
   //! Interpolate between two points using the indep variable ratio (beta)
-  template<typename T, typename DepType>
-  static DepType interpolate( const T beta,
-                              const DepType dep_var_0,
-                              const DepType dep_var_1 );
+  template<typename T, typename DepCosineType>
+  static DepCosineType interpolate( const T beta,
+                              const DepCosineType dep_var_0,
+                              const DepCosineType dep_var_1 );
 
   //! Interpolate between two points and return the processed value
-  template<typename IndepType, typename DepType>
-  static typename QuantityTraits<DepType>::RawType
+  template<typename IndepType, typename DepCosineType>
+  static typename QuantityTraits<DepCosineType>::RawType
   interpolateAndProcess( const IndepType indep_var_0,
                          const IndepType indep_var_1,
                          const IndepType indep_var,
-                         const DepType dep_var_0,
-                         const DepType dep_var_1 );
+                         const DepCosineType dep_var_0,
+                         const DepCosineType dep_var_1 );
 
   //! Process the independent value
   template<typename T>
@@ -275,8 +280,8 @@ struct LogCosLin : public InterpolationHelper<LogCosLin>
  * \details The unprocessed independent variable is always assumed to be an
  * angle cosine. Since the angle cosine goes below zero a direct log
  * interpolation cannot be performed on it. Instead a log interpolation will be
- * performed on the change in the angle cosine (eg: 1 - mu) instead of the
- * cosine ( mu ). The interpolated value will always be cast into the cosine
+ * performed on the change in the angle cosine (eg: 1 - mu + nudge ) instead of
+ * the cosine ( mu ). The interpolated value will always be cast into the cosine
  * before returned. When a processed cosine grid is used, it is assumed that the
  * independent and dependent grids are inverted to maintain an ascending order.
  * \ingroup policies
@@ -299,13 +304,14 @@ struct LinLogCos : public InterpolationHelper<LinLogCos>
   using InterpolationHelper<LinLogCos>::calculateUnitBaseIndepVarProcessed;
   using InterpolationHelper<LinLogCos>::calculateIndepVar;
   using InterpolationHelper<LinLogCos>::calculateProcessedIndepVar;
-  using InterpolationHelper<LinLogCos>::convertCosineVar;
+  using InterpolationHelper<LinLogCos>::convertFromCosineVar;
+  using InterpolationHelper<LinLogCos>::convertToCosineVar;
 
   //! Interpolate between two points
-  template<typename IndepType, typename DepType>
-  static DepType interpolate( const IndepType indep_var_0,
-                              const IndepType indep_var_1,
-                              const IndepType indep_var,
+  template<typename IndepCosineType, typename DepType>
+  static DepType interpolate( const IndepCosineType indep_var_0,
+                              const IndepCosineType indep_var_1,
+                              const IndepCosineType indep_var,
                               const DepType dep_var_0,
                               const DepType dep_var_1 );
 
@@ -316,11 +322,11 @@ struct LinLogCos : public InterpolationHelper<LinLogCos>
                               const DepType dep_var_1 );
 
   //! Interpolate between two points and return the processed value
-  template<typename IndepType, typename DepType>
+  template<typename IndepCosineType, typename DepType>
   static typename QuantityTraits<DepType>::RawType
-  interpolateAndProcess( const IndepType indep_var_0,
-                         const IndepType indep_var_1,
-                         const IndepType indep_var,
+  interpolateAndProcess( const IndepCosineType indep_var_0,
+                         const IndepCosineType indep_var_1,
+                         const IndepCosineType indep_var,
                          const DepType dep_var_0,
                          const DepType dep_var_1 );
 

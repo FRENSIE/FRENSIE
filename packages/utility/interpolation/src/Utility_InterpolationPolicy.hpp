@@ -33,14 +33,14 @@ struct LinDepVarProcessingTag{};
 template<typename ParentInterpolationType>
 class InterpolationHelper
 {
-  
+
 private:
 
   // Typedef for this type
   typedef InterpolationHelper<ParentInterpolationType> ThisType;
 
 public:
-  
+
   //! Interpolate between two processed points
   template<typename T>
   static T interpolate( const T processed_indep_var_0,
@@ -105,12 +105,16 @@ public:
   template<typename T>
   static T calculateFuzzyUpperBound( const T value, const double tol = 1e-3 );
 
-  //! Convert the cosine variable
+  //! Convert from the cosine variable to a shifted cosine variable
   template<typename T>
-  static T convertCosineVar( const T cosine_var );
+  static T convertFromCosineVar( const T cosine_var );
+
+  //! Convert to the cosine variable from a shifted cosine variable
+  template<typename T>
+  static T convertToCosineVar( const T shifted_cosine );
 };
 
-/*! \brief Policy struct for interpolating data tables that require log-log 
+/*! \brief Policy struct for interpolating data tables that require log-log
  * interpolation between evaluated points.
  * \ingroup policies
  */
@@ -377,7 +381,7 @@ struct LinLin : public InterpolationHelper<LinLin>
 
   //! Interpolate between two points and return the processed value
   template<typename IndepType, typename DepType>
-  static typename QuantityTraits<DepType>::RawType 
+  static typename QuantityTraits<DepType>::RawType
   interpolateAndProcess( const IndepType indep_var_0,
                          const IndepType indep_var_1,
                          const IndepType indep_var,

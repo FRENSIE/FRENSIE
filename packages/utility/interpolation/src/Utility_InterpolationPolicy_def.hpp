@@ -108,8 +108,8 @@ InterpolationHelper<ParentInterpolationType>::calculateUnitBaseGridLength(
  * the processed upper independent value and the processed lower
  * independent value. This is why any units associated with the independent
  * grid limits are stripped away. Due to conversion of the independent
- * values from a cosine (mu) to a delta cosine ( 1 - mu ) for LogLogCos and
- * LinLogCos, it is assumed the processed grids are inverted to ensure they
+ * values from a cosine (mu) to a delta cosine ( 1 - mu ) + nudge for LogLogCos
+ * and LinLogCos, it is assumed the processed grids are inverted to ensure they
  * are in ascending order.
  */
 template<typename ParentInterpolationType>
@@ -258,8 +258,9 @@ InterpolationHelper<ParentInterpolationType>::calculateIndepVar(
 // Calculate the processed independent variable (from eta)
 /*! \details A tolerance is not required with this method because no variable
  * processing is done. Due to conversion of the independent values from a cosine
- * (mu) to a delta cosine ( 1 - mu ) for LogLogCos and LinLogCos, it is assumed
- * the processed grids are inverted to ensure they are in ascending order.
+ * (mu) to a delta cosine ( 1 - mu ) + nudge for LogLogCos and LinLogCos, it is
+ * assumed the processed grids are inverted to ensure they are in ascending
+ * order.
  */
 template<typename ParentInterpolationType>
 template<typename T>
@@ -312,16 +313,28 @@ inline T InterpolationHelper<ParentInterpolationType>::calculateFuzzyUpperBound(
     return value*(1-tol);
 }
 
-// Convert the cosine variable
-/*! \details This function converts from cosine (mu) to delta cosine (1 - mu + delta) or
- *  from delta cosine (1 - mu + delta) back to cosine (mu).
+// Convert from cosine variable
+/*! \details This function converts from cosine (mu) to the delta cosine
+ * (1 - mu) + nudge.
  */
 template<typename ParentInterpolationType>
 template<typename T>
-inline T InterpolationHelper<ParentInterpolationType>::convertCosineVar(
+inline T InterpolationHelper<ParentInterpolationType>::convertFromCosineVar(
           const T cosine_var )
 {
-  return QuantityTraits<T>::one()*(1.0+1e-10) - cosine_var;
+  return (QuantityTraits<T>::one() - cosine_var) + QuantityTraits<T>::one()*1e-10;
+}
+
+// Convert to cosine variable
+/*! \details This function converts from the delta cosine (1 - mu) + nudge
+ *  back to cosine (mu).
+ */
+template<typename ParentInterpolationType>
+template<typename T>
+inline T InterpolationHelper<ParentInterpolationType>::convertToCosineVar(
+          const T delta_cosine )
+{
+  return (QuantityTraits<T>::one()*1e-10 - delta_cosine) + QuantityTraits<T>::one();
 }
 
 // Get the interpolation type

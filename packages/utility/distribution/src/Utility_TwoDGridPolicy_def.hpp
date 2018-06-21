@@ -1448,29 +1448,12 @@ struct CorrelatedEvaluatePDFCosHelperLogCosBase
                                      const ReturnType upper_eval,
                                      const T beta )
   {
-    /* NOTE: The special edge case of cosine of 1 (i.e. y = 1 ) will give a
-     * ln(1) for LogCosLog interpolation unless treated specifically. At the
-     * limits -1 and 1, the y values are the same (i.e. y_0 = y_1 = y ) and
-     * the LogCosLog equation reduces to the LinLin equation.
-     */
-    if( lower_y_value == upper_y_value && lower_y_value == y_indep_value )
-    {
-      return CorrelatedEvaluatePDFCosHelperLinBase::evaluate( y_indep_value,
-                                                              lower_y_value,
-                                                              lower_eval,
-                                                              upper_y_value,
-                                                              upper_eval,
-                                                              beta );
-    }
-    else
-    {
-      auto lower_product = lower_eval*Utility::LinLin::convertCosineVar(lower_y_value);
-      auto upper_product = upper_eval*Utility::LinLin::convertCosineVar(upper_y_value);
+    auto lower_product = lower_eval*Utility::LinLin::convertFromCosineVar(lower_y_value);
+    auto upper_product = upper_eval*Utility::LinLin::convertFromCosineVar(upper_y_value);
 
-      return (lower_product*upper_product)/
-        (Utility::LinLin::interpolate( beta, upper_product, lower_product )*
-         Utility::LinLin::convertCosineVar(y_indep_value) );
-    }
+    return (lower_product*upper_product)/
+      (Utility::LinLin::interpolate( beta, upper_product, lower_product )*
+        Utility::LinLin::convertFromCosineVar(y_indep_value) );
   }
 };
 

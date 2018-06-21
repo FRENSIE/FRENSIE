@@ -30,20 +30,16 @@ inline InterpolationType LogCosLog::getInterpolationType()
 }
 
 // Interpolate between two points
-/*! \details In the rare case that one or both of the dependent values are at
- * exactly a cosine of one, The values will be shifted an additional 1e-7 to
- * avoid asymptote at ln(0).
- */
-template<typename IndepType, typename CosineType>
-inline CosineType LogCosLog::interpolate( const IndepType indep_var_0,
+template<typename IndepType, typename DepCosineType>
+inline DepCosineType LogCosLog::interpolate( const IndepType indep_var_0,
                                           const IndepType indep_var_1,
                                           const IndepType indep_var,
-                                          const CosineType raw_dep_var_0,
-                                          const CosineType raw_dep_var_1 )
+                                          const DepCosineType raw_dep_var_0,
+                                          const DepCosineType raw_dep_var_1 )
 {
   // The IndepType must be a floating point type
   testStaticPrecondition( (QuantityTraits<IndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<CosineType>::is_floating_point::value) );
+  testStaticPrecondition( (QuantityTraits<DepCosineType>::is_floating_point::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
@@ -55,59 +51,55 @@ inline CosineType LogCosLog::interpolate( const IndepType indep_var_0,
   testPrecondition( indep_var >= indep_var_0 );
   testPrecondition( indep_var <= indep_var_1 );
   // Make sure the dependent variables are valid
-  testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_dep_var_0 ) );
-  testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_dep_var_1 ) );
+  testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_0 ) );
+  testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_1 ) );
   testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_0 ) );
   testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_1 ) );
 
-  CosineType dep_var_0 = convertCosineVar(raw_dep_var_0);
-  CosineType dep_var_1 = convertCosineVar(raw_dep_var_1);
+  DepCosineType dep_var_0 = convertFromCosineVar(raw_dep_var_0);
+  DepCosineType dep_var_1 = convertFromCosineVar(raw_dep_var_1);
 
-  return convertCosineVar( dep_var_0*
+  return convertToCosineVar( dep_var_0*
             pow((dep_var_1/dep_var_0),
             log(indep_var/indep_var_0)/log(indep_var_1/indep_var_0)) );
 }
 
 // Interpolate between two points using the indep variable ratio (beta)
-/*! \details In the rare case that one or both of the dependent values are at
- * exactly a cosine of one, The values will be shifted an additional 1e-7 to
- * avoid asymptote at ln(0).
- */
-template<typename T, typename CosineType>
-inline CosineType LogCosLog::interpolate( const T beta,
-                                          const CosineType raw_dep_var_0,
-                                          const CosineType raw_dep_var_1 )
+template<typename T, typename DepCosineType>
+inline DepCosineType LogCosLog::interpolate( const T beta,
+                                          const DepCosineType raw_dep_var_0,
+                                          const DepCosineType raw_dep_var_1 )
 {
   // The IndepType must be a floating point type
   testStaticPrecondition( (QuantityTraits<T>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<CosineType>::is_floating_point::value) );
+  testStaticPrecondition( (QuantityTraits<DepCosineType>::is_floating_point::value) );
   // Make sure the independent variables are valid
   testPrecondition( beta >= QuantityTraits<T>::zero() );
   testPrecondition( beta <= QuantityTraits<T>::one() );
   // Make sure the dependent variables are valid
-  testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_dep_var_0 ) );
-  testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_dep_var_1 ) );
+  testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_0 ) );
+  testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_1 ) );
   testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_0 ) );
   testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_1 ) );
 
-  CosineType dep_var_0 = convertCosineVar(raw_dep_var_0);
-  CosineType dep_var_1 = convertCosineVar(raw_dep_var_1);
+  DepCosineType dep_var_0 = convertFromCosineVar(raw_dep_var_0);
+  DepCosineType dep_var_1 = convertFromCosineVar(raw_dep_var_1);
 
-  return convertCosineVar( dep_var_0*pow((dep_var_1/dep_var_0),beta) );
+  return convertToCosineVar( dep_var_0*pow((dep_var_1/dep_var_0),beta) );
 }
 
 // Interpolate between two points and return the processed value
-template<typename IndepType, typename CosineType>
-inline typename QuantityTraits<CosineType>::RawType
+template<typename IndepType, typename DepCosineType>
+inline typename QuantityTraits<DepCosineType>::RawType
 LogCosLog::interpolateAndProcess( const IndepType indep_var_0,
                                   const IndepType indep_var_1,
                                   const IndepType indep_var,
-                                  const CosineType raw_dep_var_0,
-                                  const CosineType raw_dep_var_1 )
+                                  const DepCosineType raw_dep_var_0,
+                                  const DepCosineType raw_dep_var_1 )
 {
   // T must be a floating point type
   testStaticPrecondition( (QuantityTraits<IndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<CosineType>::is_floating_point::value) );
+  testStaticPrecondition( (QuantityTraits<DepCosineType>::is_floating_point::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
@@ -119,13 +111,13 @@ LogCosLog::interpolateAndProcess( const IndepType indep_var_0,
   testPrecondition( indep_var >= indep_var_0 );
   testPrecondition( indep_var <= indep_var_1 );
   // Make sure the dependent variables are valid
-  testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_dep_var_0 ) );
-  testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_dep_var_1 ) );
+  testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_0 ) );
+  testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_1 ) );
   testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_0 ) );
   testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_1 ) );
 
-  CosineType dep_var_0 = convertCosineVar(raw_dep_var_0);
-  CosineType dep_var_1 = convertCosineVar(raw_dep_var_1);
+  DepCosineType dep_var_0 = convertFromCosineVar(raw_dep_var_0);
+  DepCosineType dep_var_1 = convertFromCosineVar(raw_dep_var_1);
 
   return log( getRawQuantity(dep_var_0) ) + log ( dep_var_1/dep_var_0 )*
          log( indep_var/indep_var_0 )/log( indep_var_1/indep_var_0 );
@@ -150,7 +142,7 @@ LogCosLog::processDepVar( const T dep_var )
   // Make sure the indep var value is valid
   testPrecondition( LogCosLog::isDepVarInValidRange( dep_var ) );
 
-  return log( convertCosineVar( getRawQuantity(dep_var) ) );
+  return log( convertFromCosineVar( getRawQuantity(dep_var) ) );
 }
 
 // Recover the processed independent value
@@ -164,7 +156,7 @@ inline T LogCosLog::recoverProcessedIndepVar( const T processed_indep_var )
 template<typename T>
 inline T LogCosLog::recoverProcessedDepVar( const T processed_dep_var )
 {
-  return convertCosineVar( exp( processed_dep_var ) );
+  return convertToCosineVar( exp( processed_dep_var ) );
 }
 
 // Test if the independent value is in a valid range (doesn't check nan/inf)
@@ -201,10 +193,11 @@ inline InterpolationType LogLogCos::getInterpolationType()
 /*! \details For LinLogCos and LogLogCos interpolation types the grid length
  * that is calculated is not a traditional length. It is the negative of the
  * distance between the processed upper independent value and the processed
- *lower independent value. This is why any units associated with the independent
- * grid limits are stripped away. Due to conversion of the independent
- * values from a cosine (mu) to a delta cosine ( 1 - mu ) for LogLogCos and
- * LinLogCos, the negative of the grid length is used to ensure a positive value.
+ * lower independent value. This is why any units associated with the
+ * independent grid limits are stripped away. Due to conversion of the
+ * independent values from a cosine (mu) to a delta cosine ( 1 - mu ) + nudge
+ * for LogLogCos and LinLogCos, the negative of the grid length is used to
+ * ensure a positive value.
  */
 template<>
 template<typename IndepType>
@@ -226,8 +219,8 @@ InterpolationHelper<LogLogCos>::calculateUnitBaseGridLength(
 /*! \details The independent grid length is calculated using the
  * processed independent grid limits. It has been found that a tolerance of
  * 1e-3 works best for most applications. Due to conversion of the independent
- * values from a cosine (mu) to a delta cosine ( 1 - mu ) for LogLogCos and
- * LinLogCos, the negative of eta is used to ensure a positive value.
+ * values from a cosine (mu) to a delta cosine ( 1 - mu ) + nudge for LogLogCos
+ * and LinLogCos, the negative of eta is used to ensure a positive value.
  */
 template<>
 template<typename IndepType>
@@ -266,8 +259,8 @@ InterpolationHelper<LogLogCos>::calculateUnitBaseIndepVar(
 // Calculate the independent variable (from eta)
 /*! \details It has been found that a tolerance of 1e-3 works best for most
  * applications. Due to conversion of the independent values from a cosine (mu)
- * to a delta cosine ( 1 - mu ) for LogLogCos and LinLogCos, the negative of eta
- * is used to ensure a positive value.
+ * to a delta cosine ( 1 - mu ) + nudge for LogLogCos and LinLogCos, the
+ * negative of eta is used to ensure a positive value.
  */
 template<>
 template<typename IndepType>
@@ -305,20 +298,20 @@ InterpolationHelper<LogLogCos>::calculateIndepVar(
 }
 
 // Interpolate between two points
-template<typename CosineType, typename DepType>
-inline DepType LogLogCos::interpolate( const CosineType raw_indep_var_0,
-                                       const CosineType raw_indep_var_1,
-                                       const CosineType raw_indep_var,
+template<typename IndepCosineType, typename DepType>
+inline DepType LogLogCos::interpolate( const IndepCosineType raw_indep_var_0,
+                                       const IndepCosineType raw_indep_var_1,
+                                       const IndepCosineType raw_indep_var,
                                        const DepType dep_var_0,
                                        const DepType dep_var_1 )
 {
-  // The CosineType must be a floating point type
-  testStaticPrecondition( (QuantityTraits<CosineType>::is_floating_point::value) );
+  // The IndepCosineType must be a floating point type
+  testStaticPrecondition( (QuantityTraits<IndepCosineType>::is_floating_point::value) );
   testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
   // Make sure the independent variables are valid
-  testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_indep_var_0 ) );
-  testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_indep_var_1 ) );
-  testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_indep_var ) );
+  testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var_0 ) );
+  testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var_1 ) );
+  testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var ) );
   testPrecondition( LogLogCos::isIndepVarInValidRange( raw_indep_var_0 ) );
   testPrecondition( LogLogCos::isIndepVarInValidRange( raw_indep_var_1 ) );
   testPrecondition( LogLogCos::isIndepVarInValidRange( raw_indep_var ) );
@@ -331,9 +324,9 @@ inline DepType LogLogCos::interpolate( const CosineType raw_indep_var_0,
   testPrecondition( LogLogCos::isDepVarInValidRange( dep_var_0 ) );
   testPrecondition( LogLogCos::isDepVarInValidRange( dep_var_1 ) );
 
-  CosineType indep_var_0 = convertCosineVar(raw_indep_var_0);
-  CosineType indep_var_1 = convertCosineVar(raw_indep_var_1);
-  CosineType indep_var = convertCosineVar(raw_indep_var);
+  IndepCosineType indep_var_0 = convertFromCosineVar(raw_indep_var_0);
+  IndepCosineType indep_var_1 = convertFromCosineVar(raw_indep_var_1);
+  IndepCosineType indep_var = convertFromCosineVar(raw_indep_var);
 
   return dep_var_0*
          pow((dep_var_1/dep_var_0),
@@ -342,8 +335,8 @@ inline DepType LogLogCos::interpolate( const CosineType raw_indep_var_0,
 
 // Interpolate between two processed points
 /*! \details Due to conversion of the independent values from a cosine (mu)
- * to a delta cosine ( 1 - mu ), the absolute value of the difference between
- * the processed_indep_var and processed_indep_var_0 is used for
+ * to a delta cosine ( 1 - mu ) + nudge , the absolute value of the difference
+ * between the processed_indep_var and processed_indep_var_0 is used for
  * LinLogCos and LogLogCos.
  */
 template<>
@@ -375,7 +368,7 @@ inline DepType LogLogCos::interpolate( const T beta,
                                        const DepType dep_var_0,
                                        const DepType dep_var_1 )
 {
-  // The CosineType must be a floating point type
+  // T must be a floating point type
   testStaticPrecondition( (QuantityTraits<T>::is_floating_point::value) );
   testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
   // Make sure the independent variables are valid
@@ -391,21 +384,21 @@ inline DepType LogLogCos::interpolate( const T beta,
 }
 
 // Interpolate between two points and return the processed value
-template<typename CosineType, typename DepType>
+template<typename IndepCosineType, typename DepType>
 inline typename QuantityTraits<DepType>::RawType
-LogLogCos::interpolateAndProcess( const CosineType raw_indep_var_0,
-                                  const CosineType raw_indep_var_1,
-                                  const CosineType raw_indep_var,
+LogLogCos::interpolateAndProcess( const IndepCosineType raw_indep_var_0,
+                                  const IndepCosineType raw_indep_var_1,
+                                  const IndepCosineType raw_indep_var,
                                   const DepType dep_var_0,
                                   const DepType dep_var_1 )
 {
   // T must be a floating point type
-  testStaticPrecondition( (QuantityTraits<CosineType>::is_floating_point::value) );
+  testStaticPrecondition( (QuantityTraits<IndepCosineType>::is_floating_point::value) );
   testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
   // Make sure the independent variables are valid
-  testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_indep_var_0 ) );
-  testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_indep_var_1 ) );
-  testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_indep_var ) );
+  testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var_0 ) );
+  testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var_1 ) );
+  testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var ) );
   testPrecondition( LogLogCos::isIndepVarInValidRange( raw_indep_var_0 ) );
   testPrecondition( LogLogCos::isIndepVarInValidRange( raw_indep_var_1 ) );
   testPrecondition( LogLogCos::isIndepVarInValidRange( raw_indep_var ) );
@@ -418,9 +411,9 @@ LogLogCos::interpolateAndProcess( const CosineType raw_indep_var_0,
   testPrecondition( LogLogCos::isDepVarInValidRange( dep_var_0 ) );
   testPrecondition( LogLogCos::isDepVarInValidRange( dep_var_1 ) );
 
-  CosineType indep_var_0 = convertCosineVar(raw_indep_var_0);
-  CosineType indep_var_1 = convertCosineVar(raw_indep_var_1);
-  CosineType indep_var = convertCosineVar(raw_indep_var);
+  IndepCosineType indep_var_0 = convertFromCosineVar(raw_indep_var_0);
+  IndepCosineType indep_var_1 = convertFromCosineVar(raw_indep_var_1);
+  IndepCosineType indep_var = convertFromCosineVar(raw_indep_var);
 
   return log( getRawQuantity(dep_var_0) ) + log ( dep_var_1/dep_var_0 )*
          log( indep_var_0/indep_var )/log( indep_var_0/indep_var_1 );
@@ -434,7 +427,7 @@ LogLogCos::processIndepVar( const T indep_var )
   // Make sure the indep var value is valid
   testPrecondition( LogLogCos::isIndepVarInValidRange( indep_var ) );
 
-  return log( convertCosineVar( getRawQuantity(indep_var) ) );
+  return log( convertFromCosineVar( getRawQuantity(indep_var) ) );
 }
 
 // Process the dependent value
@@ -452,7 +445,7 @@ LogLogCos::processDepVar( const T dep_var )
 template<typename T>
 inline T LogLogCos::recoverProcessedIndepVar( const T processed_indep_var )
 {
-  return convertCosineVar( exp( processed_indep_var ) );
+  return convertToCosineVar( exp( processed_indep_var ) );
 }
 
 // Recover the processed dependent value
@@ -493,16 +486,16 @@ inline InterpolationType LogCosLin::getInterpolationType()
 }
 
 // Interpolate between two points
-template<typename IndepType, typename CosineType>
-inline CosineType LogCosLin::interpolate( const IndepType indep_var_0,
+template<typename IndepType, typename DepCosineType>
+inline DepCosineType LogCosLin::interpolate( const IndepType indep_var_0,
                                           const IndepType indep_var_1,
                                           const IndepType indep_var,
-                                          const CosineType raw_dep_var_0,
-                                          const CosineType raw_dep_var_1 )
+                                          const DepCosineType raw_dep_var_0,
+                                          const DepCosineType raw_dep_var_1 )
 {
   // T must be a floating point type
   testStaticPrecondition( (QuantityTraits<IndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<CosineType>::is_floating_point::value) );
+  testStaticPrecondition( (QuantityTraits<DepCosineType>::is_floating_point::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
@@ -514,54 +507,54 @@ inline CosineType LogCosLin::interpolate( const IndepType indep_var_0,
   testPrecondition( indep_var >= indep_var_0 );
   testPrecondition( indep_var <= indep_var_1 );
   // Make sure the dependent variables are valid
-  testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_dep_var_0 ) );
-  testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_dep_var_1 ) );
+  testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_0 ) );
+  testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_1 ) );
   testPrecondition( LogCosLin::isDepVarInValidRange( raw_dep_var_0 ) );
   testPrecondition( LogCosLin::isDepVarInValidRange( raw_dep_var_1 ) );
 
-  CosineType dep_var_0 = convertCosineVar(raw_dep_var_0);
-  CosineType dep_var_1 = convertCosineVar(raw_dep_var_1);
+  DepCosineType dep_var_0 = convertFromCosineVar(raw_dep_var_0);
+  DepCosineType dep_var_1 = convertFromCosineVar(raw_dep_var_1);
 
-  return convertCosineVar( dep_var_0*pow((dep_var_1/dep_var_0),
+  return convertToCosineVar( dep_var_0*pow((dep_var_1/dep_var_0),
             (indep_var-indep_var_0)/(indep_var_1-indep_var_0)) );
 }
 
 // Interpolate between two points using the indep variable ratio (beta)
-template<typename T, typename CosineType>
-inline CosineType LogCosLin::interpolate( const T beta,
-                                          const CosineType raw_dep_var_0,
-                                          const CosineType raw_dep_var_1 )
+template<typename T, typename DepCosineType>
+inline DepCosineType LogCosLin::interpolate( const T beta,
+                                          const DepCosineType raw_dep_var_0,
+                                          const DepCosineType raw_dep_var_1 )
 {
   // The IndepType must be a floating point type
   testStaticPrecondition( (QuantityTraits<T>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<CosineType>::is_floating_point::value) );
+  testStaticPrecondition( (QuantityTraits<DepCosineType>::is_floating_point::value) );
   // Make sure the independent variables are valid
   testPrecondition( beta >= QuantityTraits<T>::zero() );
   testPrecondition( beta <= QuantityTraits<T>::one() );
   // Make sure the dependent variables are valid
-  testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_dep_var_0 ) );
-  testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_dep_var_1 ) );
+  testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_0 ) );
+  testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_1 ) );
   testPrecondition( LogCosLin::isDepVarInValidRange( raw_dep_var_0 ) );
   testPrecondition( LogCosLin::isDepVarInValidRange( raw_dep_var_1 ) );
 
-  CosineType dep_var_0 = convertCosineVar(raw_dep_var_0);
-  CosineType dep_var_1 = convertCosineVar(raw_dep_var_1);
+  DepCosineType dep_var_0 = convertFromCosineVar(raw_dep_var_0);
+  DepCosineType dep_var_1 = convertFromCosineVar(raw_dep_var_1);
 
-  return convertCosineVar( dep_var_0*pow((dep_var_1/dep_var_0),beta) );
+  return convertToCosineVar( dep_var_0*pow((dep_var_1/dep_var_0),beta) );
 }
 
 // Interpolate between two points and return the processed value
-template<typename IndepType, typename CosineType>
-inline typename QuantityTraits<CosineType>::RawType
+template<typename IndepType, typename DepCosineType>
+inline typename QuantityTraits<DepCosineType>::RawType
 LogCosLin::interpolateAndProcess( const IndepType indep_var_0,
                                   const IndepType indep_var_1,
                                   const IndepType indep_var,
-                                  const CosineType raw_dep_var_0,
-                                  const CosineType raw_dep_var_1 )
+                                  const DepCosineType raw_dep_var_0,
+                                  const DepCosineType raw_dep_var_1 )
 {
   // T must be a floating point type
   testStaticPrecondition( (QuantityTraits<IndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<CosineType>::is_floating_point::value) );
+  testStaticPrecondition( (QuantityTraits<DepCosineType>::is_floating_point::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
@@ -573,13 +566,13 @@ LogCosLin::interpolateAndProcess( const IndepType indep_var_0,
   testPrecondition( indep_var >= indep_var_0 );
   testPrecondition( indep_var <= indep_var_1 );
   // Make sure the dependent variables are valid
-  testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_dep_var_0 ) );
-  testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_dep_var_1 ) );
+  testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_0 ) );
+  testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_1 ) );
   testPrecondition( LogCosLin::isDepVarInValidRange( raw_dep_var_0 ) );
   testPrecondition( LogCosLin::isDepVarInValidRange( raw_dep_var_1 ) );
 
-  CosineType dep_var_0 = convertCosineVar(raw_dep_var_0);
-  CosineType dep_var_1 = convertCosineVar(raw_dep_var_1);
+  DepCosineType dep_var_0 = convertFromCosineVar(raw_dep_var_0);
+  DepCosineType dep_var_1 = convertFromCosineVar(raw_dep_var_1);
 
   return log( getRawQuantity(dep_var_0) ) + log( dep_var_1/dep_var_0 )*
          (indep_var-indep_var_0)/(indep_var_1-indep_var_0);
@@ -604,7 +597,7 @@ LogCosLin::processDepVar( const T dep_var )
   // Make sure the indep var value is valid
   testPrecondition( LogCosLin::isDepVarInValidRange( dep_var ) );
 
-  return log( convertCosineVar( getRawQuantity(dep_var) ) );
+  return log( convertFromCosineVar( getRawQuantity(dep_var) ) );
 }
 
 // Recover the processed independent value
@@ -618,7 +611,7 @@ inline T LogCosLin::recoverProcessedIndepVar( const T processed_indep_var )
 template<typename T>
 inline T LogCosLin::recoverProcessedDepVar( const T processed_dep_var )
 {
-  return convertCosineVar( exp( processed_dep_var ) );
+  return convertToCosineVar( exp( processed_dep_var ) );
 }
 
 // Test if the independent value is in a valid range (doesn't check nan/inf)
@@ -655,10 +648,11 @@ inline InterpolationType LinLogCos::getInterpolationType()
 /*! \details For LinLogCos and LogLogCos interpolation types the grid length
  * that is calculated is not a traditional length. It is the negative of the
  * distance between the processed upper independent value and the processed
- *lower independent value. This is why any units associated with the independent
- * grid limits are stripped away. Due to conversion of the independent
- * values from a cosine (mu) to a delta cosine ( 1 - mu ) for LogLogCos and
- * LinLogCos, the negative of the grid length is used to ensure a positive value.
+ * lower independent value. This is why any units associated with the
+ * independent grid limits are stripped away. Due to conversion of the
+ * independent values from a cosine (mu) to a delta cosine ( 1 - mu ) +nudge for
+ * LogLogCos and LinLogCos, the negative of the grid length is used to ensure a
+ * positive value.
  */
 template<>
 template<typename IndepType>
@@ -680,8 +674,8 @@ InterpolationHelper<LinLogCos>::calculateUnitBaseGridLength(
 /*! \details The independent grid length is calculated using the
  * processed independent grid limits. It has been found that a tolerance of
  * 1e-3 works best for most applications. Due to conversion of the independent
- * values from a cosine (mu) to a delta cosine ( 1 - mu ) for LogLogCos and
- * LinLogCos, the negative of eta is used to ensure a positive value.
+ * values from a cosine (mu) to a delta cosine ( 1 - mu ) +nudge for LogLogCos
+ * and LinLogCos, the negative of eta is used to ensure a positive value.
  */
 template<>
 template<typename IndepType>
@@ -720,8 +714,8 @@ InterpolationHelper<LinLogCos>::calculateUnitBaseIndepVar(
 // Calculate the independent variable (from eta)
 /*! \details It has been found that a tolerance of 1e-3 works best for most
  * applications. Due to conversion of the independent values from a cosine (mu)
- * to a delta cosine ( 1 - mu ) for LogLogCos and LinLogCos, the negative of eta
- * is used to ensure a positive value.
+ * to a delta cosine ( 1 - mu ) +nudge for LogLogCos and LinLogCos, the negative
+ * of eta is used to ensure a positive value.
  */
 template<>
 template<typename IndepType>
@@ -759,20 +753,20 @@ InterpolationHelper<LinLogCos>::calculateIndepVar(
 }
 
 // Interpolate between two points
-template<typename CosineType, typename DepType>
-inline DepType LinLogCos::interpolate( const CosineType raw_indep_var_0,
-                                       const CosineType raw_indep_var_1,
-                                       const CosineType raw_indep_var,
+template<typename IndepCosineType, typename DepType>
+inline DepType LinLogCos::interpolate( const IndepCosineType raw_indep_var_0,
+                                       const IndepCosineType raw_indep_var_1,
+                                       const IndepCosineType raw_indep_var,
                                        const DepType dep_var_0,
                                        const DepType dep_var_1 )
 {
   // T must be a floating point type
-  testStaticPrecondition( (QuantityTraits<CosineType>::is_floating_point::value) );
+  testStaticPrecondition( (QuantityTraits<IndepCosineType>::is_floating_point::value) );
   testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
   // Make sure the independent variables are valid
-  testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_indep_var_0 ) );
-  testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_indep_var_1 ) );
-  testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_indep_var ) );
+  testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var_0 ) );
+  testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var_1 ) );
+  testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var ) );
   testPrecondition( LinLogCos::isIndepVarInValidRange( raw_indep_var_0 ) );
   testPrecondition( LinLogCos::isIndepVarInValidRange( raw_indep_var_1 ) );
   testPrecondition( LinLogCos::isIndepVarInValidRange( raw_indep_var ) );
@@ -786,9 +780,9 @@ inline DepType LinLogCos::interpolate( const CosineType raw_indep_var_0,
   testPrecondition( LinLogCos::isDepVarInValidRange( dep_var_1 ) );
 
   // Convert cosine variables
-  CosineType indep_var_0 = convertCosineVar(raw_indep_var_0);
-  CosineType indep_var_1 = convertCosineVar(raw_indep_var_1);
-  CosineType indep_var = convertCosineVar(raw_indep_var);
+  IndepCosineType indep_var_0 = convertFromCosineVar(raw_indep_var_0);
+  IndepCosineType indep_var_1 = convertFromCosineVar(raw_indep_var_1);
+  IndepCosineType indep_var = convertFromCosineVar(raw_indep_var);
 
   DepType term_2( (dep_var_1 - dep_var_0)*log(indep_var/indep_var_0)/
                   log(indep_var_1/indep_var_0) );
@@ -798,8 +792,8 @@ inline DepType LinLogCos::interpolate( const CosineType raw_indep_var_0,
 
 // Interpolate between two processed points
 /*! \details Due to conversion of the independent values from a cosine (mu)
- * to a delta cosine ( 1 - mu ), the absolute value of the difference between
- * the processed_indep_var and processed_indep_var_0 is used for
+ * to a delta cosine ( 1 - mu ) + nudge , the absolute value of the difference
+ * between the processed_indep_var and processed_indep_var_0 is used for
  * LinLogCos and LogLogCos.
  */
 template<>
@@ -831,7 +825,7 @@ inline DepType LinLogCos::interpolate( const T beta,
                                        const DepType dep_var_0,
                                        const DepType dep_var_1 )
 {
-  // The CosineType must be a floating point type
+  // T must be a floating point type
   testStaticPrecondition( (QuantityTraits<T>::is_floating_point::value) );
   testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
   // Make sure the independent variables are valid
@@ -847,11 +841,11 @@ inline DepType LinLogCos::interpolate( const T beta,
 }
 
 // Interpolate between two points and return the processed value
-template<typename CosineType, typename DepType>
+template<typename IndepCosineType, typename DepType>
 inline typename QuantityTraits<DepType>::RawType
-LinLogCos::interpolateAndProcess( const CosineType raw_indep_var_0,
-                                  const CosineType raw_indep_var_1,
-                                  const CosineType raw_indep_var,
+LinLogCos::interpolateAndProcess( const IndepCosineType raw_indep_var_0,
+                                  const IndepCosineType raw_indep_var_1,
+                                  const IndepCosineType raw_indep_var,
                                   const DepType dep_var_0,
                                   const DepType dep_var_1 )
 {
@@ -870,7 +864,7 @@ LinLogCos::processIndepVar( const T indep_var )
   // Make sure the indep var value is valid
   testPrecondition( LinLogCos::isIndepVarInValidRange( indep_var ) );
 
-  return log( convertCosineVar( getRawQuantity(indep_var) ) );
+  return log( convertFromCosineVar( getRawQuantity(indep_var) ) );
 }
 
 // Process the dependent value
@@ -888,7 +882,7 @@ LinLogCos::processDepVar( const T dep_var )
 template<typename T>
 inline T LinLogCos::recoverProcessedIndepVar( const T processed_indep_var )
 {
-  return convertCosineVar( exp( processed_indep_var ) );
+  return convertToCosineVar( exp( processed_indep_var ) );
 }
 
 // Recover the processed dependent value
