@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_DefaultTypedObserverPhaseSpaceDimensionDiscretization.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -29,61 +30,12 @@ void Estimator::setDiscretization( const InputDataType& bin_data )
   // Make sure the DimensionType matches the type associated with the dimension
   testStaticPrecondition((boost::is_same<typename DefaultTypedObserverPhaseSpaceDimensionDiscretization<dimension>::InputDataType,InputDataType>::value));
 
-  std::shared_ptr<ObserverPhaseSpaceDimensionDiscretization>
-    dimension_bin_boundaries(
+  std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>
+    dimension_discretization(
           new DefaultTypedObserverPhaseSpaceDimensionDiscretization<dimension>(
                                                                   bin_data ) );
 
-  this->assignBins( dimension_bins );
-}
-
-// Set the response functions
-/*! \details Before the response functions are assigned, the object will check
- * if each response function is compatible with the estimator type (e.g. cell
- * track-length flux estimators are only compatible with spatially uniform
- * response functions).
- */
-template<template<typename,typename...> class STLCompliantContainer>
-void Estimator::setResponseFunctions(
-     const STLCompliantContainer<ResponseFunctionPointer>& response_functions )
-{
-  // Make sure that there is at least one response function
-  testPrecondition( response_functions.size() > 0 );
-
-  // Assign each response function individually
-  STLCompliantContainer<ResponseFunctionPointer>::const_iterator
-    response_function_it = response_functions.begin();
-
-  while( response_function_it != response_functions.end() )
-  {
-    this->assignResponseFunction( *response_function_it );
-    
-    ++response_function_it;
-  }
-}
-
-// Set the particle types that can contribute to the estimator
-/*! \details Before each particle type is assigned the object will check
- * if the particle type is compatible with the estimator type (e.g. cell
- * pulse height estimators are not compatible with neutrons).
- */
-template<template<typename,typename...> class STLCompliantContainer>
-void Estimator::setParticleTypes(
-                    const STLCompliantContainer<ParticleType>& particle_types )
-{
-  // Make sure that there is at least one particle type
-  testPrecondition( particle_types.size() > 0 );
-
-  // Assign each particle type individually
-  STLCompliantContainer<ParticleType>::const_iterator
-    particle_type_it = particle_types.begin();
-
-  while( particle_type_it != particle_types.end() )
-  {
-    this->assignParticleType( *particle_type_it );
-
-    ++particle_type_it;
-  }
+  this->setDiscretization( dimension_discretization );
 }
 
 // Check if the point is in the estimator phase space
@@ -96,14 +48,6 @@ inline bool Estimator::isPointInEstimatorPhaseSpace(
 {
   return d_phase_space_discretization.doesRangeIntersectDiscretization(
                                                            phase_space_point );
-}
-
-// Check if the range intersects the estimator phase space
-template<ObserverPhaseSpaceDimensions... RangeDimensions>
-inline bool Estimator::doesRangeIntersectEstimatorPhaseSpace(
-            const EstimatorParticleStateWrapper& particle_state_wrapper ) const
-{
-  return d_phase_space_discretization.doesRangeIntersectDiscretization<RangeDimensions...>( particle_state_wrapper );
 }
 
 // Calculate the bin index for the desired response function
@@ -129,58 +73,50 @@ void Estimator::calculateBinIndices(
     bin_indices[i] += response_function_index*this->getNumberOfBins();
 }
 
-// Calculate the bin indices for the desired response function
-template<ObserverPhaseSpaceDimension... RangeDimensions>
-inline void Estimator::calculateBinIndicesAndWeightsOfRange(
-            const EstimatorParticleStateWrapper& particle_state_wrapper,
-            const size_t response_function_index,
-            ObserverPhaseSpaceDimensionDiscretization::BinIndexWeightPairArray&
-            bin_indices_and_weights ) const
-{
-  // Make sure the response function is valid
-  testPrecondition( response_function_index <
-                    this->getNumberOfResponseFunctions() );
-
-  d_phase_space_discretization.calculateBinIndicesAndWeightsOfRange<RangeDimensions...>(
-                                                     particle_state_wrapper,
-                                                     bin_indices_and_weights );
-
-  // Add the response function index to each phase space bin index
-  for( size_t i = 0; i < bin_indices_and_weights.size(); ++i )
-  {
-    bin_indices_and_weights[i] +=
-      response_function_index*this->getNumberOfBins();
-  }
-}
-
 // Reduce a single collection and return the reduced moments
-template<size_t N,
-         typename Collection,
-         template<typename,typename...> class STLCompliantArray>
+template<size_t N, typename Collection>
 void Estimator::reduceCollectionAndReturnReducedMoments(
-            const std::shared_ptr<const Utility::Communicator<unsigned long long> >& comm,
-            const int root_process,
-            const Collection& collection,
-            STLCompliantArray<double>& reduced_moments ) const
+                             const Utility::Communicator& comm,
+                             const int root_process,
+                             const Collection& collection,
+                             std::vector<double>& reduced_moments ) const
 {
-  // Make sure the comm is valid
-  testPrecondition( !comm.is_null() );
   // Make sure the root process is valid
-  testPrecondition( root_process < comm->getSize() );
+  testPrecondition( root_process < comm.size() );
 
   // Resize the reduced moments array
   reduced_moments.resize( collection.size() );
 
   try{
-  //NEED TO REDO. NOT SURE HOW TO IMPLEMENT YET
-    Utility::allReduce( *comm,
-                        Utility::getCurrentScores<N>( collection ),
-                        reduced_first_moments.data(),
-                        std::plus<double>());
+    if( comm.rank() == root_process )
+    {
+      Utility::reduce( *comm,
+                       Utility::ArrayView<const double>( Utility::getCurrentScores<N>( collection ), collection.size() ),
+                       Utility::arrayView( reduced_moments ),
+                       std::plus<double>() );
+    }
+    else
+    {
+      Utility::reduce( *comm,
+                       Utility::ArrayView<const double>( Utility::getCurrentScores<N>( collection ), collection.size() ),
+                       std::plus<double>() );
+    }
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                           "unable to perform mpi reduction over moments of "
-                           "order " << N << "!" );
+                           "Unable to perform mpi reduction over moments of "
+                           "order " << N << " for estimator " << d_id << "!" );
+}
+
+// Serialize the estimator
+template<typename Archive>
+void Estimator::serialize( Archive& ar, const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_NVP( d_id );
+  ar & BOOST_SERIALIZATION_NVP( d_multiplier );
+  ar & BOOST_SERIALIZATION_NVP( d_has_uncommitted_history_contribution );
+  ar & BOOST_SERIALIZATION_NVP( d_particle_types );
+  ar & BOOST_SERIALIZATION_NVP( d_response_functions );
+  ar & BOOST_SERIALIZATION_NVP( d_phase_space_discretization );
 }
 
 } // end MonteCarlo namespace

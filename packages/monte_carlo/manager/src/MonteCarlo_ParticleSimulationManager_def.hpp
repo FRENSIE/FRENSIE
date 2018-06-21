@@ -230,26 +230,34 @@ void ParticleSimulationManager<mode>::simulateParticle(
   
   // Resolve the particle state
   State& particle = dynamic_cast<State&>( unresolved_particle );
-
-  // Check if the particle energy is below the cutoff
-  if( particle.getEnergy() < d_properties->getMinParticleEnergy<State>() )
-    particle.setAsGone();
   
   // Simulate a particle subtrack of random optical path length starting from a
   // source point
   if( source_particle )
   {
-    
-    this->simulateParticleTrack( particle,
-                                 bank,
-                                 CMI::sampleOpticalPathLength(),
-                                 true );
+    // Check if the particle energy is below the cutoff
+    if( particle.getEnergy() < d_properties->getMinParticleEnergy<State>() )
+      particle.setAsGone();
+    else
+    {
+      this->simulateParticleTrack( particle,
+                                   bank,
+                                   CMI::sampleOpticalPathLength(),
+                                   true );
+    }
   }
 
   // Simulate a particle subtrack of random optical path length until the
   // particle is gone
   while( particle )
   {
+    // Check if the particle energy is below the cutoff
+    if( particle.getEnergy() < d_properties->getMinParticleEnergy<State>() )
+    {
+      particle.setAsGone();
+      break;
+    }
+  
     this->simulateParticleTrack( particle,
                                  bank,
                                  CMI::sampleOpticalPathLength(),
@@ -270,6 +278,16 @@ void ParticleSimulateManager<mode>::simulateUnresolvedParticleTrack(
                                bank,
                                optical_path,
                                starting_from_source );
+}
+
+// Simulate a particle collision
+template<ParticleModeType mode> 
+template<typename State>
+void ParticleSimulateManager<mode>::simulateUnresolvedParticleCollision(
+                                            ParticleState& unresolved_particle,
+                                            ParticleBank& bank ) const
+{
+  CMI::collideWithCellMaterial( dynamic_cast<State&>( unresolved_particle ), bank );
 }
 
 // Simulate an individual particle track of the desired optical path length
@@ -388,33 +406,12 @@ void ParticleSimulateManager<mode>::simulateParticleTrack(
                                             track_start_point );
 
       // Update the particle state before the collision (e.g. roulette/split
-      // using weight window mesh).
-      ParticleBank local_bank;
-      
-      EMI::updateParticleStateBeforeCollision( particle, local_bank );
+      // using weight window mesh)
+      EMI::updateParticleStateBeforeCollision( particle, local_bank, d_simulate_unresolved_particle_collision_function_map.find( State::type )->second );
 
       // Undergo a collision with the material in the cell
       if( particle )
-      {
         CMI::collideWithCellMaterial( particle, bank );
-      
-        // Make sure that the energy is above the cutoff
-        if( particle.getEnergy() < d_properties->getMinParticleEnergy<State>() )
-          particle.setAsGone();
-      }
-
-      // For each additional particle that was created locally, undergo a
-      // collision with the material in the cell
-      for( size_t i = 0; i < local_bank.size(); ++i )
-      {
-        CMI::collideWithCellMaterial( local_bank.top(), bank );
-      
-        // Make sure that the energy is above the cutoff
-        if( local_bank.top().getEnergy() < d_properties->getMinParticleEnergy<State>() )
-          local_bank.pop();
-
-        bank.splice( local_bank );
-      }
       
       // This track is finished
       break;
@@ -522,7 +519,13 @@ void ParticleSimulateManager<mode>::addSimulateParticleFunction()
                        std::placeholders::_1,
                        std::placeholders::_2,
                        std::placeholders::_3,
-                       false ) );
+                       false );
+
+  d_simulate_unresolved_particle_collision_function_map[State::type] =
+    boost::bind<void>( &ParticleSimulateManager<mode>::simulateUnresolvedParticleCollision,
+                       std::cref(*this),
+                       std::placeholders::_1,
+                       std::placeholders::_2 );
 }
 
 // Return the number of histories

@@ -35,16 +35,16 @@ protected:
 public:
 
   //! Constructor (for flux estimators)
-  template<template<typename,typename...> class STLCompliantArrayA,
-           template<typename,typename...> class STLCompliantArrayB>
-  EntityEstimator( const Estimator::idType id,
+  template<template<typename...> class STLCompliantArrayA,
+           template<typename...> class STLCompliantArrayB>
+  EntityEstimator( const size_t id,
 		   const double multiplier,
 		   const STLCompliantArrayA<EntityId>& entity_ids,
 		   const STLCompliantArrayB<double>& entity_norm_constants );
 
   //! Constructor (for non-flux estimators)
-  template<typename<typename,typename...> class STLCompliantArray>
-  EntityEstimator( const Estimator::idType id,
+  template<typename<typename...> class STLCompliantArray>
+  EntityEstimator( const size_t id,
 		   const double multiplier,
 		   const STLCompliantArray<EntityId>& entity_ids );
 
@@ -53,27 +53,28 @@ public:
   { /* ... */ }
 
   //! Return the entity ids associated with this estimator
-  template<template<typename,typename...> class STLCompliantSet>
-  void getEntityIds( STLCompliantSet<EntityId>& entity_ids ) const;
+  void getEntityIds( std::set<size_t>& entity_ids ) const final override;
 
   //! Check if the entity is assigned to this estimator
-  bool isEntityAssigned( const EntityId& entity_id ) const;
+  bool isEntityAssigned( const size_t entity_id ) const final override;
 
   //! Return the normalization constant for an entity
-  double getEntityNormConstant( const EntityId& entity_id ) const;
+  double getEntityNormConstant( const size_t entity_id ) const final override;
 
   //! Return the total normalization constant
-  double getTotalNormConstant() const;
+  double getTotalNormConstant() const override;
 
   //! Reset estimator data
-  virtual void resetData() override;
+  void resetData() override;
 
   //! Reduce estimator data on all processes and collect on the root process
-  virtual void reduceData(
-	    const std::shared_ptr<const Utility::Communicator<unsigned long long> >& comm,
-	    const int root_process ) override;
+  void reduceData( const Utility::Communicator& comm,
+                   const int root_process ) override;
 
 protected:
+
+  //! Default constructor
+  EntityEstimator();
 
   //! Constructor with no entities (for mesh estimators)
   EntityEstimator( const Estimator::idType id, const double multiplier );
@@ -82,12 +83,11 @@ protected:
   virtual void assignEntities( const EntityNormConstMap& entity_norm_data );
 
   //! Assign discretization to an estimator dimension
-  virtual void assignDiscretization(
-    const Estimator::DimensionDiscretizationPointer& bin_boundaries ) override;
+  void assignDiscretization( const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins,
+                             const bool range_dimension ) override;
 
   //! Assign response function to the estimator
-  virtual void assignResponseFunction(
-        const Estimator::ResponseFunctionPointer& response_function ) override;
+  void assignResponseFunction( const std::shared_ptr<const Response>& response_function ) override;
 
   //! Commit history contribution to a bin of an entity
   void commitHistoryContributionToBinOfEntity( const EntityId& entity_id,
@@ -103,27 +103,26 @@ protected:
 				    const std::string& entity_type ) const;
 
   //! Get the total estimator bin data
-  const Estimator::TwoEstimatorMomentsCollection& getTotalBinData() const;
+  const Estimator::TwoEstimatorMomentsCollection& getTotalBinData() const final override;
 
   //! Get the bin data for an entity
-  const Estimator::TwoEstimatorMomentsCollection& getEntityBinData(
-					      const EntityId entity_id ) const;
+  const Estimator::TwoEstimatorMomentsCollection& getEntityBinData( const size_t entity_id ) const final override;
 
 private:
 
   // Initialize entity estimator moments map
-  template<template<typename,typename...> class STLCompliantArray>
+  template<template<typename...> class STLCompliantArray>
   void initializeEntityEstimatorMomentsMap(
                                const STLCompliantArray<EntityId>& entity_ids );
 
   // Initialize entity norm constants map
-  template<template<typename,typename...> class STLCompliantArray>
+  template<template<typename...> class STLCompliantArray>
   void initializeEntityNormConstantsMap(
                                const STLCompliantArray<EntityId>& entity_ids );
 
   // Initialize entity norm constants map
-  template<template<typename,typename...> class STLCompliantArrayA,
-           template<typename,typename...> class STLCompliantArrayB>
+  template<template<typename...> class STLCompliantArrayA,
+           template<typename...> class STLCompliantArrayB>
   void initializeEntityNormConstantsMap(
                      const STLCompliantArrayA<EntityId>& entity_ids,
                      const STLCompliantArrayB<double>& entity_norm_constants );
@@ -144,6 +143,13 @@ private:
   // Print the entity norm constants
   void printEntityNormConstants( std::ostream& os,
 				 const std::string& entity_type ) const;
+
+  // Serialize the entity estimator
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version );
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
   // The total normalization constant (sum of all norm constants)
   double d_total_norm_constant;

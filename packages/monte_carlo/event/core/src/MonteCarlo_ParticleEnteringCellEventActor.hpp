@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_PARTICLE_ENTERING_CELL_EVENT_ACTOR_HPP
 #define MONTE_CARLO_PARTICLE_ENTERING_CELL_EVENT_ACTOR_HPP
 
+// Std Lib Includes
+#include <functional>
+
 // Boost Includes
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/version.hpp>

@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_PARTICLE_COLLIDING_GLOBAL_EVENT_ACTOR_HPP
 #define MONTE_CARLO_PARTICLE_COLLISING_GLOBAL_EVENT_ACTOR_HPP
 
+// Std Lib Includes
+#include <functional>
+
 // Boost Includes
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/version.hpp>
@@ -38,6 +41,9 @@ public:
   //! Typedef for the actor event tag
   typedef ParticleCollidingGlobalEvent EventTag;
 
+  //! This method can be used to simulate the collision of a generated particle
+  typedef std::function<void(ParticleState&,ParticleBank&)> SimulateParticleCollision;
+
   //! Constructor
   ParticleCollidingGlobalEventActor()
   { /* ... */ }
@@ -48,8 +54,9 @@ public:
 
   //! Update the particle state and bank
   virtual void updateFromGlobalParticleCollidingEvent(
-                                                ParticleState& particle,
-                                                ParticleBank& bank ) const = 0;
+                  const SimulateParticleCollision& simulate_particle_collision,
+                  ParticleState& particle,
+                  ParticleBank& bank ) const = 0;
 
 private:
 

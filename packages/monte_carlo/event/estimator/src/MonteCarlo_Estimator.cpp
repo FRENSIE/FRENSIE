@@ -11,15 +11,20 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_Estimator.hpp"
-#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
+#include "Utility_OpenMPProperties.hpp"
 #include "Utility_LoggingMacros.hpp"
 
 namespace MonteCarlo{
 
+// Default constructor
+Estimator::Estimator()
+  : d_id( std::numeric_limits<size_t>::max() )
+{ /* ... */ }
+  
 // Constructor
 Estimator::Estimator( const ParticleHistoryObserver::idType id,
                       const double multiplier )
-  : ParticleHistoryObserver( id ),
+  : d_id( id ),
     d_multiplier( multiplier ),
     d_has_uncommitted_history_contribution( 1, false ),
     d_response_functions( 1 )
@@ -31,6 +36,117 @@ Estimator::Estimator( const ParticleHistoryObserver::idType id,
   d_response_functions[0] = ResponseFunction::default_response_function;
 }
 
+// Return the estimator id
+size_t Estimator::getId() const
+{
+  return d_id;
+}
+
+// Return the estimator constant multiplier
+double Estimator::getMultiplier() const
+{
+  return d_multiplier;
+}
+
+// Set the discretization for a dimension of the phase space
+void Estimator::setDiscretization( const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins )
+{
+  this->assignDiscretization( bins, false );
+}
+
+// Return the number of bins for a dimension of the phase space
+size_t Estimator::getNumberOfBins(
+                            const ObserverPhaseSpaceDimension dimension ) const
+{
+  return d_phase_space_discretization.getNumberOfBins( dimension );
+}
+
+// Return the total number of bins
+size_t Estimator::getNumberOfBins() const
+{
+  return d_phase_space_discretization.getNumberOfBins();
+}
+
+// Set a response function
+/*! \details Before the response function is assigned, the object will check
+ * if it is compatible with the estimator type (e.g. cell
+ * track-length flux estimators are only compatible with spatially uniform
+ * response functions).
+ */
+void Estimator::setResponseFunction(
+                     const std::shared_ptr<const Response>& response_function )
+{
+  // Make sure that the response function pointer is valid
+  testPrecondition( response_function.get() );
+
+  this->assignResponseFunction( response_function );
+}
+
+// Set the response functions
+/*! \details Before the response functions are assigned, the object will check
+ * if each response function is compatible with the estimator type (e.g. cell
+ * track-length flux estimators are only compatible with spatially uniform
+ * response functions).
+ */
+void Estimator::setResponseFunctions(
+     const std::vector<std::shared_ptr<const Response> >& response_functions );
+{
+  // Make sure that there is at least one response function
+  testPrecondition( response_functions.size() > 0 );
+
+  // Assign each response function individually
+  STLCompliantContainer<ResponseFunctionPointer>::const_iterator
+    response_function_it = response_functions.begin();
+
+  for( auto response_function_ptr : response_functions )
+    this->setResponseFunction( response_function_ptr );
+}
+
+// Return the number of response functions
+size_t Estimator::getNumberOfResponseFunctions() const
+{
+  return d_response_functions.size();
+}
+
+// Set the particle types that can contribute to the estimator
+/*! \details Before each particle type is assigned the object will check
+ * if the particle type is compatible with the estimator type (e.g. cell
+ * pulse height estimators are not compatible with neutrons).
+ */
+void Estimator::setParticleTypes( const std::vector<ParticleType>& particle_types )
+{
+  this->setParticleTypes( std::set<ParticleType>( particle_types.begin(),
+                                                  particle_types.end() ) );
+}
+
+// Set the particle types that can contribute to the estimator
+/*! \details Before each particle type is assigned the object will check
+ * if the particle type is compatible with the estimator type (e.g. cell
+ * pulse height estimators are not compatible with neutrons).
+ */
+void Estimator::setParticleTypes( const std::set<ParticleType>& particle_types )
+{
+  // Make sure that there is at least one particle type
+  testPrecondition( particle_types.size() > 0 );
+
+  // Assign each particle type individually
+  for( auto particle_type : particle_types )
+    this->assignParticleType( *particle_type_it );
+}
+
+// Get the particle types that can contribute to the estimator
+const std::set<ParticleType>& Estimator::getParticleTypes() const
+{
+  return d_particle_types;
+}
+
+// Check if the particle type is assigned to the estimator
+bool Estimator::isParticleTypeAssigned( const ParticleType particle_type) const
+{
+  return d_particle_types.find( particle_type ) !=
+    d_particle_types.end();
+}
+
 // Check if the estimator has uncommitted history contributions
 bool Estimator::hasUncommittedHistoryContribution(
 					       const unsigned thread_id ) const
@@ -39,6 +155,13 @@ bool Estimator::hasUncommittedHistoryContribution(
   testPrecondition( thread_id < d_has_uncommitted_history_contribution.size());
 
   return d_has_uncommitted_history_contribution[thread_id];
+}
+
+// Check if the estimator has uncommitted history contributions
+bool Estimator::hasUncommittedHistoryContribution() const
+{
+  return this->hasUncommittedHistoryContribution(
+				    Utility::OpenMPProperties::getThreadId() );
 }
 
 // Enable support for multiple threads
@@ -60,14 +183,154 @@ void Estimator::logSummary() const
   FRENSIE_LOG_NOTIFICATION( oss.str() );
 }
 
+// Get the total estimator bin mean and relative error
+void Estimator::getTotalBinProcessedData(
+                                   std::vector<double>& mean,
+                                   std::vector<double>& relative_error,
+                                   std::vector<double>& figure_of_merit ) const
+{
+  Utility::ArrayView<const double> first_moments =
+    this->getTotalBinDataFirstMoments();
+
+  Utility::ArrayView<const double> second_moments =
+    this->getTotalBinDataSecondMoments();
+
+  // Resize the output arrays
+  mean.resize( first_moments.size() );
+  relative_error.resize( first_moments.size() );
+  figure_of_merit.resize( first_moments.size() );
+
+  for( size_t i = 0; i < first_moments.size(); ++i )
+  {
+    this->processMoments( first_moments[i],
+                          second_moments[i],
+                          this->getTotalNormConstant(),
+                          mean[i],
+                          relative_error[i],
+                          figure_of_merit[i] );
+  }
+}
+
+// Get the bin data mean and relative error for an entity
+void Estimator::getEntityBinProcessedData(
+                                   const size_t entity_id,
+                                   std::vector<double>& mean,
+                                   std::vector<double>& relative_error,
+                                   std::vector<double>& figure_of_merit ) const
+{
+  // Make sure that the entity id is valid
+  testPrecondition( this->isEntityAssigned( entity_id ) );
+  
+  Utility::ArrayView<const double> first_moments =
+    this->getEntityBinDataFirstMoments( entity_id );
+
+  Utility::ArrayView<const double> second_moments =
+    this->getEntityBinDataSecondMoments( entity_id );
+
+  // Resize the output arrays
+  mean.resize( first_moments.size() );
+  relative_error.resize( first_moments.size() );
+  figure_of_merit.resize( first_moments.size() );
+
+  for( size_t i = 0; i < first_moments.size(); ++i )
+  {
+    this->processMoments( first_moments[i],
+                          second_moments[i],
+                          this->getEntityNormConstant( entity_id ),
+                          mean[i],
+                          relative_error[i],
+                          figure_of_merit[i] );
+  }
+}
+
+// Get the total data mean, relative error, vov and fom
+void Estimator::getTotalProcessedData(
+                                   std::vector<double>& mean,
+                                   std::vector<double>& relative_error,
+                                   std::vector<double>& variance_of_variance,
+                                   std::vector<double>& figure_of_merit ) const
+{
+  Utility::ArrayView<const double> first_moments =
+    this->getTotalDataFirstMoments();
+
+  Utility::ArrayView<const double> second_moments =
+    this->getTotalDataSecondMoments();
+
+  Utility::ArrayView<const double> third_moments =
+    this->getTotalDataThirdMoments();
+
+  Utility::ArrayView<const double> fourth_moments =
+    this->getTotalDataFourthMoments();
+
+  // Resize the output arrays
+  mean.resize( first_moments.size() );
+  relative_error.resize( first_moments.size() );
+  variance_of_variance.resize( first_moments.size() );
+  figure_of_merit.resize( first_moments.size() );
+
+  for( size_t i = 0; i < first_moments.size(); ++i )
+  {
+    this->processMoments( first_moments[i],
+                          second_moments[i],
+                          third_moments[i],
+                          fourth_moments[i],
+                          this->getTotalNormConstant(),
+                          mean[i],
+                          relative_error[i],
+                          variance_of_variance[i],
+                          figure_of_merit[i] );
+  }
+}
+
+// Get the total data mean, relative error, vov and fom for an entity
+void Estimator::getEntityTotalProcessedData(
+                                   const size_t entity_id,
+                                   std::vector<double>& mean,
+                                   std::vector<double>& relative_error,
+                                   std::vector<double>& variance_of_variance,
+                                   std::vector<double>& figure_of_merit ) const
+{
+  Utility::ArrayView<const double> first_moments =
+    this->getEntityTotalDataFirstMoments( entity_id );
+
+  Utility::ArrayView<const double> second_moments =
+    this->getEntityTotalDataSecondMoments( entity_id );
+
+  Utility::ArrayView<const double> third_moments =
+    this->getEntityTotalDataThirdMoments( entity_id );
+
+  Utility::ArrayView<const double> fourth_moments =
+    this->getEntityTotalDataFourthMoments( entity_id );
+
+  // Resize the output arrays
+  mean.resize( first_moments.size() );
+  relative_error.resize( first_moments.size() );
+  variance_of_variance.resize( first_moments.size() );
+  figure_of_merit.resize( first_moments.size() );
+
+  for( size_t i = 0; i < first_moments.size(); ++i )
+  {
+    this->processMoments( first_moments[i],
+                          second_moments[i],
+                          third_moments[i],
+                          fourth_moments[i],
+                          this->getEntityNormConstant( entity_id ),
+                          mean[i],
+                          relative_error[i],
+                          variance_of_variance[i],
+                          figure_of_merit[i] );
+  }
+}
+
 // Assign discretization to an estimator dimension
 void Estimator::assignDiscretization(
-                           const DimensionDiscretizationPoint& discretization )
+  const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins,
+  const bool range_dimension )
 {
   // Make sure only the master thread calls this function
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
-  d_phase_space_discretization.assignDiscretizationToDimension( discretization );
+  d_phase_space_discretization.assignDiscretizationToDimension( discretization, range_dimension );
 }
 
 // Assign response function to the estimator
@@ -75,7 +338,7 @@ void Estimator::assignDiscretization(
  * properties need to be checked before the assignment takes place.
  */
 void Estimator::assignResponseFunction(
-                             const ResponseFunctionPointer& response_function )
+                     const std::shared_ptr<const Response>& response_function )
 {
   // Make sure only the master thread calls this function
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
@@ -131,14 +394,12 @@ void Estimator::unsetHasUncommittedHistoryContribution(
 
 // Reduce a single collection
 void Estimator::reduceCollection(
-            const std::shared_ptr<const Utility::Communicator<unsigned long long> >& comm,
-            const int root_process,
-            TwoEstimatorMomentsCollection& collection ) const
+                              const Utility::Communicator& comm,
+                              const int root_process,
+                              TwoEstimatorMomentsCollection& collection ) const
 {
-  // Make sure the comm is valid
-  testPrecondition( !comm.is_null() );
   // Make sure the root process is valid
-  testPrecondition( root_process < comm->getSize() );
+  testPrecondition( root_process < comm.size() );
 
   // Reduce the first moments
   std::vector<double> reduced_first_moments;
@@ -147,7 +408,7 @@ void Estimator::reduceCollection(
                                                     root_process,
                                                     collection,
                                                     reduced_first_moments );
-  comm->barrier();
+  comm.barrier();
   
   // Reduce the second moments
   std::vector<double> reduced_second_moments;
@@ -160,7 +421,7 @@ void Estimator::reduceCollection(
   // The root process will store the reduced moments
   if( comm->getRank() == root_process )
   {
-    for( size_t i = 0; i < entity_data->second.size(); ++i )
+    for( size_t i = 0; i < collection.size(); ++i )
     {
       Utility::getCurrentScore<1>( collection, i ) = reduced_first_moments[i];
       
@@ -170,19 +431,17 @@ void Estimator::reduceCollection(
   else
     collection.reset();
 
-  comm->barrier();
+  comm.barrier();
 }
 
 // Reduce a single collection
 void Estimator::reduceCollection(
-            const std::shared_ptr<const Utility::Communicator<unsigned long long> >& comm,
-            const int root_process,
-            FourEstimatorMomentsCollection& collection ) const
+                             const Utility::Communicator& comm,
+                             const int root_process,
+                             FourEstimatorMomentsCollection& collection ) const
 {
-  // Make sure the comm is valid
-  testPrecondition( !comm.is_null() );
   // Make sure the root process is valid
-  testPrecondition( root_process < comm->getSize() );
+  testPrecondition( root_process < comm.size() );
 
   // Reduce the first moments
   std::vector<double> reduced_first_moments;
@@ -191,7 +450,7 @@ void Estimator::reduceCollection(
                                                     root_process,
                                                     collection,
                                                     reduced_first_moments );
-  comm->barrier();
+  comm.barrier();
   
   // Reduce the second moments
   std::vector<double> reduced_second_moments;
@@ -201,7 +460,7 @@ void Estimator::reduceCollection(
                                                     collection,
                                                     reduced_second_moments );
 
-  comm->barrier();
+  comm.barrier();
 
   // Reduce the third moments
   std::vector<double> reduced_third_moments;
@@ -211,7 +470,7 @@ void Estimator::reduceCollection(
                                                     collection,
                                                     reduced_third_moments );
 
-  comm->barrier();
+  comm.barrier();
 
   // Reduce the fourth moments
   std::vector<double> reduced_fourth_moments;
@@ -222,9 +481,9 @@ void Estimator::reduceCollection(
                                                     reduced_fourth_moments );
 
   // The root process will store the reduced moments
-  if( comm->getRank() == root_process )
+  if( comm.getRank() == root_process )
   {
-    for( size_t i = 0; i < entity_data->second.size(); ++i )
+    for( size_t i = 0; i < collection.size(); ++i )
     {
       Utility::getCurrentScore<1>( collection, i ) = reduced_first_moments[i];
       Utility::getCurrentScore<2>( collection, i ) = reduced_second_moments[i];
@@ -235,19 +494,39 @@ void Estimator::reduceCollection(
   else
     collection.reset();
 
-  comm->barrier();
+  comm.barrier();
+}
+
+// Return the response function name
+const std::string& Estimator::getResponseFunctionName(
+				   const size_t response_function_index ) const
+{
+  // Make sure the response function index is valid
+  testPrecondition( response_function_index <
+                    this->getNumberOfResponseFunctions() );
+
+  return d_response_functions[response_function_index]->getName();
 }
 
 // Return the bin name
 std::string Estimator::getBinName( const size_t bin_index ) const
 {
   // Make sure the bin index is valid
-  testPrecondition( bin_index <
-		    getNumberOfBins()*getNumberOfResponseFunctions() );
+  testPrecondition( bin_index < this->getNumberOfBins()*this->getNumberOfResponseFunctions() );
 
-  return d_phase_space_discretization.getBinName( bin_index ) +
-    this->getResponseFunctionName(
-                           this->calculateResponseFunctionIndex( bin_index ) );
+  return d_phase_space_discretization.getBinName( bin_index % this->getNumberOfBins() ) +
+    this->getResponseFunctionName( this->calculateResponseFunctionIndex( bin_index ) );
+}
+
+// Evaluate the desired response function
+double Estimator::evaluateResponseFunction(
+				   const ParticleState& particle,
+                                   const size_t response_function_index ) const
+{
+  // Make sure the response function index is valid
+  testPrecondition( response_function_index < this->getNumberOfResponseFunctions() );
+
+  return d_response_functions[response_function_index]->evaluate( particle );
 }
 
 // Calculate the response function index given a bin index
@@ -255,11 +534,39 @@ size_t Estimator::calculateResponseFunctionIndex(
 					       const size_t bin_index ) const
 {
   // Make sure the bin index is valid
-  testPrecondition( bin_index <
-		    getNumberOfBins()*getNumberOfResponseFunctions() );
-  testPrecondition( bin_index < std::numeric_limits<size_t>::max() );
+  testPrecondition( bin_index < this->getNumberOfBins()*this->getNumberOfResponseFunctions() );
 
-  return bin_index/getNumberOfBins();
+  return bin_index/this->getNumberOfBins();
+}
+
+// Check if the range intersects the estimator phase space
+bool Estimator::doesRangeIntersectEstimatorPhaseSpace(
+            const EstimatorParticleStateWrapper& particle_state_wrapper ) const
+{
+  return d_phase_space_discretization.doesRangeIntersectDiscretization( particle_state_wrapper );
+}
+
+// Calculate the bin indices for the desired response function
+void Estimator::calculateBinIndicesAndWeightsOfRange(
+            const EstimatorParticleStateWrapper& particle_state_wrapper,
+            const size_t response_function_index,
+            ObserverPhaseSpaceDimensionDiscretization::BinIndexWeightPairArray&
+            bin_indices_and_weights ) const
+{
+  // Make sure the response function is valid
+  testPrecondition( response_function_index <
+                    this->getNumberOfResponseFunctions() );
+
+  d_phase_space_discretization.calculateBinIndicesAndWeightsOfRange(
+                                                     particle_state_wrapper,
+                                                     bin_indices_and_weights );
+
+  // Add the response function index to each phase space bin index
+  for( size_t i = 0; i < bin_indices_and_weights.size(); ++i )
+  {
+    bin_indices_and_weights[i] +=
+      response_function_index*this->getNumberOfBins();
+  }
 }
 
 // Convert first and second moments to mean and relative error
@@ -267,21 +574,46 @@ void Estimator::processMoments( const TwoEstimatorMomentsCollection& moments,
                                 const size_t index,
 				const double norm_constant,
 				double& mean,
-				double& relative_error ) const
+				double& relative_error,
+                                double& figure_of_merit ) const
 {
   // Make sure that the index is valid
   testPrecondition( index < moments.size() );
   // Make sure that the norm constant is valid
   testPrecondition( norm_constant > 0.0 );
 
-  mean = Utility::calculateMean( Utility::getMoment<1>( moments, index ),
-                                 this->getNumberOfHistories() );
+  this->processMoments( Utility::getMoment<1>( moments, index ),
+                        Utility::getMoment<2>( moments, index ),
+                        norm_constant,
+                        mean,
+                        relative_error );
+}
+
+// Convert first and second moments to mean and relative error
+void Estimator::processMoments( const double first_moment,
+                                const double second_moment,
+                                const double norm_constant,
+                                double& mean,
+                                double& relative_error,
+                                double& figure_of_merit ) const
+{
+  // Make sure that the norm constant is valid
+  testPrecondition( norm_constant > 0.0 );
+
+  // Calculate the mean
+  mean = Utility::calculateMean( first_moment, this->getNumberOfHistories() );
   mean *= d_multiplier/norm_constant;
 
+  // Calculate the relative error
   relative_error =
-    Utility::calculateRelativeError( Utility::getMoment<1>( moments, index ),
-                                     Utility::getMoment<2>( moments, index ),
+    Utility::calculateRelativeError( first_moment,
+                                     second_moment,
                                      this->getNumberOfHistories() );
+
+  
+  // Calculate the figure of merit
+  figure_of_merit =
+    Utility::calculateFOM( relative_error, this->getElapsedTime() );
 }
 
 // Convert first, second, third, fourth moments to mean, rel. er., vov, fom
@@ -300,20 +632,48 @@ void Estimator::processMoments( const FourEstimatorMomentsCollection& moments,
   // Make sure the problem time is valid
   testPrecondition( this->getElapsedTime() > 0.0 );
 
+  this->processMoments( Utility::getMoment<1>( moments, index ),
+                        Utility::getMoment<2>( moments, index ),
+                        Utility::getMoment<3>( moments, index ),
+                        Utility::getMoment<4>( moments, index ),
+                        norm_constant,
+                        mean,
+                        relative_error,
+                        variance_of_variance,
+                        figure_of_merit );
+}
+
+// Convert first, second, third, fourth moments to mean, rel. er., vov, fom
+void Estimator::processMoments( const double first_moment,
+                                const double second_moment,
+                                const double third_moment,
+                                const double fourth_moment,
+                                const double norm_constant,
+                                double& mean,
+                                double& relative_error,
+                                double& variance_of_variance,
+                                double& figure_of_merit ) const
+{
+  // Make sure the norm contant is valid
+  testPrecondition( norm_constant > 0.0 );
+  // Make sure the problem time is valid
+  testPrecondition( this->getElapsedTime() > 0.0 );
+
   // Calculate the mean and relative error
-  this->processMoments( moments, index, norm_constant, mean, relative_error );
+  this->processMoments( first_moment,
+                        second_moment,
+                        norm_constant,
+                        mean,
+                        relative_error,
+                        figure_of_merit );
 
   // Calculate the relative variance of the variance
   variance_of_variance =
-    Utility::calculateRelativeVOV( Utility::getMoment<1>( moments, index ),
-                                   Utility::getMoment<2>( moments, index ),
-                                   Utility::getMoment<3>( moments, index ),
-                                   Utility::getMoment<4>( moments, index ),
+    Utility::calculateRelativeVOV( first_moment,
+                                   second_moment,
+                                   third_moment,
+                                   fourth_moment,
                                    this->getNumberOfHistories() );
-
-  // Calculate the figure of merit
-  figure_of_merit =
-    Utility::calculateFOM( relative_error, this->getElapsedTime() );
 }
 
 // Print the estimator response function names
@@ -451,6 +811,8 @@ void Estimator::printEstimatorTotalData(
 }
   
 } // end MonteCarlo namespace
+
+EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::Estimator );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_Estimator.cpp

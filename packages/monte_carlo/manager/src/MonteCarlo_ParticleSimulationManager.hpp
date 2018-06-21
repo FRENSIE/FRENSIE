@@ -124,6 +124,11 @@ private:
                                         const double optical_path,
                                         const bool starting_from_source ) const;
 
+  // Simulate a particle collision
+  template<typename State>
+  void simulateUnresolvedParticleCollision( ParticleState& particle,
+                                            ParticleBank& bank ) const;
+
   // Advance a particle to the cell boundary
   template<typename State>
   void advanceParticleToCellBoundary( State& particle,
@@ -182,12 +187,20 @@ private:
   SimulateParticleFunctionMap d_simulate_particle_function_map;
 
   // The simulate unresolved particle track functions
-  typedef ParticleEnteringCellEventActor::Callback SimulateUnresolvedParticleTrackFunction;
+  typedef ParticleEnteringCellEventActor::SimulateParticleForOpticalPath SimulateUnresolvedParticleTrackFunction;
 
   typedef std::map<ParticleType,SimulateUnresolvedParticleTrackFunction>
   SimulateUnresolvedParticleTrackFunctionMap;
 
-  SimulateUnresolvedParticleTrackFunctionMap d_simulate_unresolved_particle_track_function_map;  
+  SimulateUnresolvedParticleTrackFunctionMap d_simulate_unresolved_particle_track_function_map;
+
+  // The simulate unresolved particle collision functions
+  typedef ParticleCollidingGlobalEventActor::SimulateParticleCollision SimulateUnresolvedParticleCollisionFunction;
+
+  typedef std::map<ParticleType,SimulateUnresolvedParticleCollisionFunction>
+  SimulateUnresolvedParticleCollisionFunctionMap;
+
+  SimulateUnresolvedParticleCollisionFunctionMap d_simulate_unresolved_particle_collision_function_map;
 };
 
 //! Log lost particle details

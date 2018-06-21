@@ -22,6 +22,7 @@
 #include "Utility_HDF5OArchive.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 

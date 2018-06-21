@@ -28,10 +28,6 @@
 
 namespace MonteCarlo{
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( EntityEstimator<Geometry::Model::InternalCellHandle> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( EntityEstimator<moab::EntityHandle> );
-
 // Constructor (for flux estimators)
 /*! \details Flux estimators need to divide the first moment by the cell
  * volume or surface area.
@@ -552,7 +548,27 @@ void EntityEstimator<EntityId>::resizeEstimatorTotalCollection()
                 this->getNumberOfBins()*this->getNumberOfResponseFunctions() );
 }
 
+// Serialize the entity estimator
+template<typename EntityId>
+template<typename Archive>
+void EntityEstimator<EntityId>::serialize( Archive& ar, const unsigned version )
+{
+  // Serialize the base class data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Estimator );
+
+  // Serialize the local data
+  ar & BOOST_SERIALIZATION_NVP( d_total_norm_constant );
+  ar & BOOST_SERIALIZATION_NVP( d_supplied_norm_constants );
+  ar & BOOST_SERIALIZATION_NVP( d_estimator_total_bin_data );
+  ar & BOOST_SERIALIZATION_NVP( d_entity_estimator_moments_map );
+  ar & BOOST_SERIALIZATION_NVP( d_entity_norm_constants_map );
+}
+
 } // end MonteCarlo namespace
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::EntityEstimator<Geometry::Model::InternalCellHandle> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::EntityEstimator<moab::EntityHandle> );
 
 #endif // end MONTE_CARLO_ENTITY_ESTIMATOR_DEF_HPP
 
