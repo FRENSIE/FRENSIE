@@ -33,34 +33,48 @@ public:
   //! Typedef for event tags used for quick dispatcher registering
   typedef boost::mpl::vector<ParticleEnteringCellEventActor::EventTag> EventTags;
 
-  //! Typedef for the callback that will be executed after the update
-  typedef ParticleEnteringCellEventActor::Callback Callback;
+  //! This method can be used to simulate a generated particle for the desired optical path
+  typedef ParticleEnteringCellEventActor::SimulateParticleForOpticalPath SimulateParticleForOpticalPath;
 
   //! Constructor (set)
   CollisionForcer( const size_t id,
                    const MonteCarlo::FilledGeometryModel& model,
                    const std::set<ParticleType>& particle_types,
-                   const std::set<Geometry::Model::InternalCellHandle>& cells );
+                   const std::set<Geometry::Model::InternalCellHandle>& cells,
+                   const double generation_probability = 1.0 );
 
   //! Constructor (vector)
   CollisionForcer( const size_t id,
                    const MonteCarlo::FilledGeometryModel& model,
                    const std::set<ParticleType>& particle_types,
-                   const std::vector<Geometry::Model::InternalCellHandle>& cells );
+                   const std::vector<Geometry::Model::InternalCellHandle>& cells,
+                   const double generation_probability = 1.0 );
 
   //! Destructor
   ~CollisionForcer()
   { /* ... */ }
 
+  //! Return the cells where collisions will be forced
+  const std::set<Geometry::Model::InternalCellHandle>& getCells() const;
+
+  //! Return the particle types that will have forced collisions
+  const std::set<ParticleType>& getParticleTypes() const;
+
+  //! Return the generation probability
+  double getGenerationProbability() const;
+
   //! Update the particle state and bank
   void updateFromParticleEnteringCellEvent(
-                       const Geometry::Model::InternalCellHandle cell_entering,
-                       const double optical_path_to_next_cell,
-                       const Callback& callback,
-                       ParticleState& particle,
-                       ParticleBank& bank ) const override;
+          const Geometry::Model::InternalCellHandle cell_entering,
+          const double optical_path_to_next_cell,
+          const SimulateParticleForOpticalPath& simulate_particle_track_method,
+          ParticleState& particle,
+          ParticleBank& bank ) const final override;
 
 private:
+
+  // Default constructor
+  CollisionForcer();
 
   // Save the collision forcer data to an archive
   template<typename Archive>
@@ -76,13 +90,16 @@ private:
   friend class boost::serialization::access;
 
   // The collision forcer id
-  UniqueIdManager<CollisionForcer<ParticleStateType>,size_t> d_id;
+  UniqueIdManager<CollisionForcer,size_t> d_id;
 
   // The particle types that have forced collisions
   std::set<ParticleType> d_particle_types;
   
   // The cells where forced collision occur
   std::set<Geometry::Model::InternalCellHandle> d_cells;
+
+  // The generation probability
+  double d_generation_probability;
 };
 
 // Save the collision forcer data to an archive
@@ -96,6 +113,7 @@ void CollisionForcer::save( Archive& ar, const unsigned version ) const
   ar & BOOST_SERIALIZATION_NVP( d_id );
   ar & BOOST_SERIALIZATION_NVP( d_particle_types );
   ar & BOOST_SERIALIZATION_NVP( d_cells );
+  ar & BOOST_SERIALIZATION_NVP( d_generation_probability );
 }
 
 // Load the collision forcer data from an archive
@@ -109,6 +127,7 @@ void CollisionForcer::load( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_NVP( d_id );
   ar & BOOST_SERIALIZATION_NVP( d_particle_types );
   ar & BOOST_SERIALIZATION_NVP( d_cells );
+  ar & BOOST_SERIALIZATION_NVP( d_generation_probability );
 }
 
 } // end MonteCarlo namespace

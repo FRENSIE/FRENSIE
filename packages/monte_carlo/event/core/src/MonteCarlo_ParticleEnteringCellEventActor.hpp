@@ -38,9 +38,9 @@ public:
   //! Typedef for the actor event tag
   typedef ParticleEnteringCellEvent EventTag;
 
-  //! The callback that will be executed after the update
+  //! This method can be used to simulate a generated particle for the desired optical path
   typedef std::function<void(ParticleState&,ParticleBank&,const double)>
-  Callback;
+  SimulateParticleForOpticalPath;
 
   //! Constructor
   ParticleEnteringCellEventActor()
@@ -52,11 +52,11 @@ public:
 
   //! Update the particle state and bank
   virtual void updateFromParticleEnteringCellEvent(
-                       const Geometry::Model::InternalCellHandle cell_entering,
-                       const double optical_path_to_next_cell,
-                       const Callback& callback,
-                       ParticleState& particle,
-                       ParticleBank& bank ) const = 0;
+          const Geometry::Model::InternalCellHandle cell_entering,
+          const double optical_path_to_next_cell,
+          const SimulateParticleForOpticalPath& simulate_particle_track_method,
+          ParticleState& particle,
+          ParticleBank& bank ) const = 0;
 
 private:
 
