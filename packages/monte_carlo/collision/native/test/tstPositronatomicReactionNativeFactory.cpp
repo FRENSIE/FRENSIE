@@ -134,7 +134,7 @@ TEUCHOS_UNIT_TEST( PositronatomicReactionNativeFactory,
 
   energy = 4e-4;
   cross_section = reaction->getCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 3.2786275807901049e+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.2786275809074390e+08, 1e-12 );
 
   energy = 1e5;
   cross_section = reaction->getCrossSection( energy );

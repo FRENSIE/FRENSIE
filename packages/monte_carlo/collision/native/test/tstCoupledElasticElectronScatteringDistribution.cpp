@@ -1055,28 +1055,27 @@ TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
   value = log_distribution->evaluate( energy, scattering_angle_cosine );
   // Test 1 energy 3
   TEST_FLOATING_EQUALITY( value, 2.7994721919646270e-13, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "value = \t" << value << std::endl;
+
 
   scattering_angle_cosine = 0.0;
   value = log_distribution->evaluate( energy, scattering_angle_cosine );
   // Test 2 energy 3
   TEST_FLOATING_EQUALITY( value, 3.0410083116607051e-13, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "value = \t" << value << std::endl;
+
   scattering_angle_cosine = 0.71;
   value = log_distribution->evaluate( energy, scattering_angle_cosine );
   // Test 3 energy 3
   TEST_FLOATING_EQUALITY( value, 5.7108399377568105e-10, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "value = \t" << value << std::endl;
+
   scattering_angle_cosine = 0.999999;
   value = log_distribution->evaluate( energy, scattering_angle_cosine );
   // Test 4 energy 3
-  TEST_FLOATING_EQUALITY( value, 5.1628128874931019e+02, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "value = \t" << value << std::endl;
+  TEST_FLOATING_EQUALITY( value, 5.1628128366552642e+02, 1e-12 );
+
   scattering_angle_cosine = 1.0;
   value = log_distribution->evaluate( energy, scattering_angle_cosine );
   // Test 5 energy 3
-  TEST_FLOATING_EQUALITY( value, 2.0826185180954188e+06, 1e-12 );
-  std::cout << std::setprecision(16) << std::scientific << "value = \t" << value << std::endl;
+  TEST_FLOATING_EQUALITY( value, 2.0826184975880277e+06, 1e-12 );
   }
 }
 
@@ -1143,27 +1142,26 @@ TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
   value = log_distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 1 energy 3
   TEST_FLOATING_EQUALITY( value, 2.7994721335569622e-13, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "value = \t" << value << std::endl;
+
   scattering_angle_cosine = 0.0;
   value = log_distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 1 energy 3
   TEST_FLOATING_EQUALITY( value, 3.0410082468163887e-13, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "value = \t" << value << std::endl;
+
   scattering_angle_cosine = 0.71;
   value = log_distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 2 energy 3
   TEST_FLOATING_EQUALITY( value, 5.7108387748106213e-10, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "value = \t" << value << std::endl;
+
   scattering_angle_cosine = 0.999999;
   value = log_distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 3 energy 3
-  TEST_FLOATING_EQUALITY( value, 5.1831873227562471e+02, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "value = \t" << value << std::endl;
+  TEST_FLOATING_EQUALITY( value, 5.1831872731713042e+02, 1e-12 );
+
   scattering_angle_cosine = 1.0;
   value = log_distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 4 energy 3
-  TEST_FLOATING_EQUALITY( value, 8.3280257775038328e+09, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "value = \t" << value << std::endl;
+  TEST_FLOATING_EQUALITY( value, 8.3280256978338032e+09, 1e-12 );
   }
 }
 
@@ -1275,22 +1273,22 @@ TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
   scattering_angle_cosine = -0.01;
   value = log_distribution->evaluateCDF( energy, scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( value, 4.1911228527689988e-14, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "value = \t" << value << std::endl;
+
   // Test 3 energy 3
   scattering_angle_cosine = 0.0;
   value = log_distribution->evaluateCDF( energy, scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( value, 4.4836258908904261e-14, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "value = \t" << value << std::endl;
+
   // Test 4 energy 3
   scattering_angle_cosine = 0.71;
   value = log_distribution->evaluateCDF( energy, scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( value, 4.2244915239096932e-11, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "value = \t" << value << std::endl;
+
   // Test 5 energy 3
   scattering_angle_cosine = 0.999995;
   value = log_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( value, 6.7887649622766857e-05, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "value = \t" << value << std::endl;
+  TEST_FLOATING_EQUALITY( value, 6.7887648778744983e-05, 1e-12 );
+
   // Test 6 energy 3
   scattering_angle_cosine = 0.999999;
   value = log_distribution->evaluateCDF( energy, scattering_angle_cosine );
@@ -1453,13 +1451,13 @@ TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
 
   scattering_angle_cosine = test_log_distribution->sampleOneDUnion( energy );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 8.7957167459329355e-01, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   scattering_angle_cosine = test_log_distribution->sampleOneDUnion( energy );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.8136012649293924e-01, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   scattering_angle_cosine = test_log_distribution->sampleOneDUnion( energy );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999825404676779e-01, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   scattering_angle_cosine = test_log_distribution->sampleOneDUnion( energy );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999, 1e-12 );
 
@@ -1479,13 +1477,13 @@ std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosin
 
   scattering_angle_cosine = test_log_distribution->sampleOneDUnion( energy );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999642274005895e-01, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   scattering_angle_cosine = test_log_distribution->sampleOneDUnion( energy );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999837849488138e-01, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   scattering_angle_cosine = test_log_distribution->sampleOneDUnion( energy );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999837849532358e-01, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   scattering_angle_cosine = test_log_distribution->sampleOneDUnion( energy );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0, 1e-12 );
 }
@@ -1540,13 +1538,13 @@ TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
 
   scattering_angle_cosine = test_log_distribution->sampleTwoDUnion( energy );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 8.7957167459329355e-01, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   scattering_angle_cosine = test_log_distribution->sampleTwoDUnion( energy );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.8136012649293924e-01, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   scattering_angle_cosine = test_log_distribution->sampleTwoDUnion( energy );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999825404676779e-01, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   scattering_angle_cosine = test_log_distribution->sampleTwoDUnion( energy );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999, 1e-12 );
 
@@ -1566,10 +1564,10 @@ std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosin
 
   scattering_angle_cosine = test_log_distribution->sampleTwoDUnion( energy );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999704424412761e-01, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   scattering_angle_cosine = test_log_distribution->sampleTwoDUnion( energy );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999899999955777e-01, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   scattering_angle_cosine = test_log_distribution->sampleTwoDUnion( energy );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999, 1e-12 );
 
@@ -1627,13 +1625,13 @@ TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
 
   scattering_angle_cosine = test_log_distribution->sampleSimplifiedUnion( energy );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 8.7957167459329355e-01, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   scattering_angle_cosine = test_log_distribution->sampleSimplifiedUnion( energy );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.8136012649293924e-01, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   scattering_angle_cosine = test_log_distribution->sampleSimplifiedUnion( energy );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999825404676779e-01, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   scattering_angle_cosine = test_log_distribution->sampleSimplifiedUnion( energy );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999, 1e-12 );
 
@@ -1653,10 +1651,10 @@ std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosin
 
   scattering_angle_cosine = test_log_distribution->sampleSimplifiedUnion( energy );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999642274005895e-01, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   scattering_angle_cosine = test_log_distribution->sampleSimplifiedUnion( energy );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999837849488138e-01, 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   scattering_angle_cosine = test_log_distribution->sampleSimplifiedUnion( energy );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999, 1e-12 );
 
@@ -1691,13 +1689,13 @@ TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                         scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999773362030264e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, electron.getEnergy(), 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   log_distribution->sample( electron.getEnergy(),
                         outgoing_energy,
                         scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999900003692932e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, electron.getEnergy(), 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   log_distribution->sample( electron.getEnergy(),
                         outgoing_energy,
                         scattering_angle_cosine );
@@ -1709,7 +1707,7 @@ std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosin
                         scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999999774886750e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, electron.getEnergy(), 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   log_distribution->sample( electron.getEnergy(),
                         outgoing_energy,
                         scattering_angle_cosine );
@@ -1740,19 +1738,19 @@ std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosin
                         scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 8.7957167459329355e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, electron.getEnergy(), 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   log_distribution->sample( electron.getEnergy(),
                         outgoing_energy,
                         scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.8136012649293924e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, electron.getEnergy(), 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   log_distribution->sample( electron.getEnergy(),
                         outgoing_energy,
                         scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999825404676779e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, electron.getEnergy(), 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   log_distribution->sample( electron.getEnergy(),
                         outgoing_energy,
                         scattering_angle_cosine );
@@ -1782,13 +1780,13 @@ std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosin
                         scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999704424412761e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, electron.getEnergy(), 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   log_distribution->sample( electron.getEnergy(),
                         outgoing_energy,
                         scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999899999955777e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, electron.getEnergy(), 1e-12 );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   log_distribution->sample( electron.getEnergy(),
                         outgoing_energy,
                         scattering_angle_cosine );
@@ -1825,7 +1823,7 @@ TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                                        outgoing_energy,
                                        scattering_angle_cosine,
                                        trials );
-std::cout << std::setprecision(16) << std::scientific << "scattering_angle_cosine = \t" << scattering_angle_cosine << std::endl;
+
   // Test
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999999774886750e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 6.625E+01, 1e-12 );

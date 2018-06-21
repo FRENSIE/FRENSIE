@@ -282,12 +282,12 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   cdf_value = hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 7.2973328907193880e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 7.2973329008396992e-01, 1e-12 );
 
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff+1e-10;
   cdf_value = hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 7.2973328962368389e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 7.2973329063571502e-01, 1e-12 );
 
   // Test 3: at the max angle
   scattering_angle_cosine = 1.0;

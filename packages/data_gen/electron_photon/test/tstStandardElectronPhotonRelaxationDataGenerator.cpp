@@ -2421,8 +2421,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   discrete_angles =
     data_container.getMomentPreservingElasticDiscreteAngles( 20.0 );
 
-  TEST_EQUALITY_CONST( discrete_angles.front(), 9.32887510289664434e-01 );
-  TEST_EQUALITY_CONST( discrete_angles.back(), 9.98006165786147204e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.front(), 9.32887508956615763e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.back(), 9.98006166020330099e-01 );
   TEST_EQUALITY_CONST( discrete_angles.size(), 2 );
 
   std::vector<double> discrete_weights =
@@ -2434,8 +2434,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   discrete_weights = data_container.getMomentPreservingElasticWeights( 20.0 );
 
-  TEST_EQUALITY_CONST( discrete_weights.front(), 2.39458310561493307e-03 );
-  TEST_EQUALITY_CONST( discrete_weights.back(), 9.97605416894385089e-01 );
+  TEST_EQUALITY_CONST( discrete_weights.front(), 2.39458228531276443e-03 );
+  TEST_EQUALITY_CONST( discrete_weights.back(), 9.97605417714687248e-01 );
   TEST_EQUALITY_CONST( discrete_weights.size(), 2 );
 
   unsigned threshold = data_container.getCutoffElasticCrossSectionThresholdEnergyIndex();

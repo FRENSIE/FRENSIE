@@ -219,7 +219,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomNativeFactory,
   TEST_FLOATING_EQUALITY( cross_section, 2.8322030561513998e+07, 1e-12 );
 
   cross_section = atom->getTotalCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.4386701575400948e+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.4386701575384877e+05, 1e-12 );
 
 
   // Test that the absorption cross section can be returned
@@ -288,7 +288,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomNativeFactory,
   TEST_FLOATING_EQUALITY( cross_section, 1.9778260498147749e+06, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 20.0, reaction );
-  TEST_FLOATING_EQUALITY( cross_section, 2.0987213022929017, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.0987211415683742, 1e-12 );
 
 
   // Test that there is no total electroionization

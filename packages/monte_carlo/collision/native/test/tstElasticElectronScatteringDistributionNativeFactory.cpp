@@ -428,7 +428,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   TEST_EQUALITY_CONST( angular_grid.back(), 0.9 );
   TEST_EQUALITY_CONST( evaluated_pdf.size(), 21 );
   TEST_EQUALITY_CONST( evaluated_pdf.front(), 3.5132603358279131e-08 );
-  TEST_EQUALITY_CONST( evaluated_pdf.back(), 3.0235502709952670e-04 );
+  TEST_EQUALITY_CONST( evaluated_pdf.back(), 3.02355027176874332e-04 );
 
   // Test highest energy bin
   energy = 1.0e5;
@@ -495,7 +495,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test
   TEST_FLOATING_EQUALITY( scattering_angle_cosine,
-                          8.88234091357768651e-01,
+                          8.8823409100481654e-01,
                           1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-4, 1e-12 );
 }
@@ -1052,14 +1052,14 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_coupled_elastic_distribution->sample( incoming_energy,
                                                outgoing_energy,
                                                scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 8.88234091357768651e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 8.8823409100481654e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 
   // Test 3
   native_coupled_elastic_distribution->sample( incoming_energy,
                                                outgoing_energy,
                                                scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.84486904780908834e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.8448690423241103e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 
   // Test 4
@@ -1075,7 +1075,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Set fake random number stream
   fake_stream[0] = 0.0; // sample mu = -1.0
-  fake_stream[1] = 1.0e-4; // sample mu = 9.9989497571065022e-01
+  fake_stream[1] = 1.0e-4; // sample mu = 9.9989100124014851e-01
   fake_stream[2] = 1.0171e-02; // sample just below the cutoff cross section ratio
   fake_stream[3] = 1.0171287468598524e-02; // sample the cutoff cross section ratio
   fake_stream[4] = 1.0 - 1e-15; // sample mu = 1.0
@@ -1089,12 +1089,12 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_coupled_elastic_distribution->sample( incoming_energy,
                                                outgoing_energy,
                                                scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9989497571065022e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9989100124014851e-01, 1e-12 );
 
   native_coupled_elastic_distribution->sample( incoming_energy,
                                                outgoing_energy,
                                                scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999901223584842e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999827282803233e-01, 1e-12 );
 
   native_coupled_elastic_distribution->sample( incoming_energy,
                                                outgoing_energy,
@@ -1185,14 +1185,14 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_coupled_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 8.88234091357768651e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 8.8823409100481654e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 
   // Test 3
   native_coupled_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.84486904780908834e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.8448690423241103e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 
   // Test 4
@@ -1208,7 +1208,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Set fake random number stream
   fake_stream[0] = 0.0; // sample mu = -1.0
-  fake_stream[1] = 1.0e-4; // sample mu = 9.9989497571065022e-01
+  fake_stream[1] = 1.0e-4; // sample mu = 9.9989100124014851e-01
   fake_stream[2] = 1.0171e-02; // sample just below the cutoff cross section ratio
   fake_stream[3] = 1.0171287468598524e-02; // sample the cutoff cross section ratio
   fake_stream[4] = 1.0 - 1e-15; // sample mu = 1.0
@@ -1222,17 +1222,17 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_coupled_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9989497571065022e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9989100124014851e-01, 1e-12 );
 
   native_coupled_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999901223584842e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999827282803233e-01, 1e-12 );
 
   native_coupled_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999901226382204e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999827286909682e-01, 1e-12 );
 
   native_coupled_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
@@ -1318,14 +1318,14 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_coupled_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 8.88234091357768651e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 8.8823409100481654e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 
   // Test 3
   native_coupled_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.84486904780908834e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.8448690423241103e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 
   // Test 4
@@ -1341,7 +1341,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Set fake random number stream
   fake_stream[0] = 0.0; // sample mu = -1.0
-  fake_stream[1] = 1.0e-4; // sample mu = 9.9989496344746609e-01
+  fake_stream[1] = 1.0e-4; // sample mu = 9.9989172833205142e-01
   fake_stream[2] = 1.0171e-02; // sample just below the cutoff cross section ratio
   fake_stream[3] = 1.0171287468598524e-02; // sample the cutoff cross section ratio
   fake_stream[4] = 1.0 - 1e-15; // sample mu = 1.0
@@ -1355,12 +1355,12 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_coupled_elastic_distribution->sample( incoming_energy,
                                                outgoing_energy,
                                                scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9989496344746609e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9989172833205142e-01, 1e-12 );
 
   native_coupled_elastic_distribution->sample( incoming_energy,
                                                outgoing_energy,
                                                scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999899997202635e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999899995893549e-01, 1e-12 );
 
   native_coupled_elastic_distribution->sample( incoming_energy,
                                                outgoing_energy,

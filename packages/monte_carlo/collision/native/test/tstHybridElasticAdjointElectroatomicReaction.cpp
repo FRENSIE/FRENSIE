@@ -87,13 +87,13 @@ TEUCHOS_UNIT_TEST( HybridElasticAdjointElectroatomicReaction,
 
   cross_section = hybrid_elastic_reaction->getCrossSection( 1e-3 );
   TEST_FLOATING_EQUALITY( cross_section,
-                          1.9778260462206174e+06,
+                          1.9778260462237354e+06,
                           1e-12 );
 
-  ratio = 8.126760427122510161e-06;
+  ratio = 8.1267567055936911e-06;
   cross_section = hybrid_elastic_reaction->getCrossSection( 20.0 );
   TEST_FLOATING_EQUALITY( cross_section,
-                          3.047276237290374752e+02*ratio + 2.096244853899329463,
+                          3.04727623729037475e+02*ratio + 2.0962446943088544,
                           1e-12 );
 }
 
