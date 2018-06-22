@@ -29,6 +29,9 @@
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_KinematicHelpers.hpp"
 #include "Utility_ContractException.hpp"
+#include "Utility_TabularDistribution.hpp"
+#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_DiscreteDistribution.hpp"
 
 namespace DataGen{
 

@@ -30,7 +30,8 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<DataGen::FreeGasElasticCrossSectionGenerator> free_gas_generator;
-std::vector<double> E = {1e-5};
+// std::vector<double> E = {1e-11,2e-11,5e-11}; //,1e-10,2e-10,5e-10,1e-9,2e-9,5e-9,1e-8,2e-8,5e-8,1e-7,2e-7,5e-7};
+std::vector<double> E = {1e-8};
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -47,7 +48,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticSAlphaBetaFunction,
 
   for (int i = 0; i < total_cross_section.size(); ++i)
   {
-    std::cout << "Total cross section at E = " << E[i] << "  ...  sigma(E) = " << total_cross_section[E[i]] << std::endl; 
+    std::cout << E[i] << " " << total_cross_section[E[i]] << std::endl; 
   }
 }
 
@@ -73,7 +74,7 @@ int main( int argc, char** argv )
   double A = 0.99167;
   double beta_num = 100;
   double alpha_num = 100;
-  double beta_max_multiplier = -2;
+  double beta_max_multiplier = -3;
   double zero_tolerance = 1e-6;
 
   free_gas_generator.reset( new DataGen::FreeGasElasticCrossSectionGenerator(
