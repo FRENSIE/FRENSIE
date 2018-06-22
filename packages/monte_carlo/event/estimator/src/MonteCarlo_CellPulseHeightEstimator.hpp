@@ -9,11 +9,6 @@
 #ifndef MONTE_CARLO_CELL_PULSE_HEIGHT_ESTIMATOR_HPP
 #define MONTE_CARLO_CELL_PULSE_HEIGHT_ESTIMATOR_HPP
 
-// Std Lib Includes
-#include <vector>
-#include <unordered_map>
-#include <unordered_set>
-
 // Boost Includes
 #include <boost/mpl/vector.hpp>
 
@@ -23,6 +18,9 @@
 #include "MonteCarlo_ParticleEnteringCellEventObserver.hpp"
 #include "MonteCarlo_ParticleLeavingCellEventObserver.hpp"
 #include "Geometry_Model.hpp"
+#include "Utility_Map.hpp"
+#include "Utility_Set.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -41,9 +39,9 @@ class CellPulseHeightEstimator : public EntityEstimator<Geometry::Model::Interna
 				 public ParticleEnteringCellEventObserver,
 				 public ParticleLeavingCellEventObserver
 {
-
-private:
-
+  // Typedef for the base estimator type
+  typedef EntityEstimator<Geometry::Model::InternalCellHandle> BaseEstimatorType;
+  
   // Typedef for the serial update tracker
   typedef std::unordered_map<Geometry::Model::InternalCellHandle,double>
   SerialUpdateTracker;
@@ -54,7 +52,7 @@ private:
 public:
 
   //! Typedef for the cell id type
-  typedef Geometry::Model::InternalCellHandle cellIdType;
+  typedef Geometry::Model::InternalCellHandle CellIdType;
 
   //! Typedef for event tags used for quick dispatcher registering
   typedef boost::mpl::vector<ParticleEnteringCellEventObserver::EventTag,
@@ -62,10 +60,9 @@ public:
   EventTags;
 
   //! Constructor
-  template<template<typename,typename...> class STLCompliantArray>
   CellPulseHeightEstimator( const Estimator::idType id,
 			    const double multiplier,
-			    const STLCompliantArray<cellIdType>& entity_ids );
+			    const std::vector<CellIdType>& entity_ids );
 
   //! Destructor
   ~CellPulseHeightEstimator()
@@ -73,38 +70,40 @@ public:
 
   //! Add current history estimator contribution
   void updateFromParticleEnteringCellEvent(
-                                     const ParticleState& particle,
-                                     const cellIdType cell_entering ) override;
+                               const ParticleState& particle,
+                               const CellIdType cell_entering ) final override;
 
   //! Add current history estimator contribution
   void updateFromParticleLeavingCellEvent(
-                                      const ParticleState& particle,
-                                      const cellIdType cell_leaving ) override;
+                                const ParticleState& particle,
+                                const CellIdType cell_leaving ) final override;
 
   //! Commit the contribution from the current history to the estimator
-  void commitHistoryContribution() override;
+  void commitHistoryContribution() final override;
 
   //! Print the estimator data summary
-  void printSummary( std::ostream& os ) const override;
+  void printSummary( std::ostream& os ) const final override;
 
   //! Enable support for multiple threads
-  void enableThreadSupport( const unsigned num_threads ) override;
+  void enableThreadSupport( const unsigned num_threads ) final override;
 
   //! Reset the estimator data
-  void resetData() override;
+  void resetData() final override;
 
 private:
 
+  // Default constructor
+  CellPulseHeightEstimator();
+
   // Assign discretization to an estimator dimension
-  void assignDiscretization(
-              const Estimator::DimensionDiscretizationPointer& bins ) override;
+  void assignDiscretization( const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins,
+                             const bool range_dimension ) final override;
 
-  //! Assign response function to the estimator
-  void assignResponseFunction(
-        const Estimator::ResponseFunctionPointer& response_function ) override;
+  // Assign response function to the estimator
+  void assignResponseFunction( const std::shared_ptr<const Response>& response_function ) final override;
 
-  //! Assign the particle type to the estimator
-  void assignParticleType( const ParticleType particle_type ) override;
+  // Assign the particle type to the estimator
+  void assignParticleType( const ParticleType particle_type ) final override;
 
   // Calculate the estimator contribution from the entire history
   double calculateHistoryContribution( const double energy_deposition,
@@ -116,7 +115,7 @@ private:
 
   // Add info to update tracker
   void addInfoToUpdateTracker( const unsigned thread_id,
-			       const cellIdType cell_id,
+			       const CellIdType cell_id,
 			       const double contribution );
 
   // Get the entity iterators from the update tracker
@@ -128,6 +127,19 @@ private:
   // Reset the update tracker
   void resetUpdateTracker( const unsigned thread_id );
 
+  // Save the data to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the data from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+  
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // The entities that have been updated
   ParallelUpdateTracker d_update_tracker;
 
@@ -135,7 +147,15 @@ private:
   std::vector<Estimator::DimensionValueMap> d_dimension_values;
 };
 
+//! The weight multiplied cell pulse height estimator
+typedef CellPulseHeightEstimator<WeightMultiplier> WeightMultipliedCellPulseHeightEstimator;
+
+//! The weight and energy multiplied cell pulse height estimator
+typedef CellPulseHeightEstimator<WeightAndEnergyMultiplier> WeightAndEnergyMultipliedCellPulseHeightEstimator;
+
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS1_VERSION( CellPulseHeightEstimator, MonteCarlo, 0 );
 
 //---------------------------------------------------------------------------//
 // Template Includes

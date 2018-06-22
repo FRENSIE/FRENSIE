@@ -9,12 +9,10 @@
 #ifndef MONTE_CARLO_STANDARD_ENTITY_ESTIMATOR_HPP
 #define MONTE_CARLO_STANDARD_ENTITY_ESTIMATOR_HPP
 
-// Std Includes
-#include <unordered_map>
-#include <vector>
-
 // FRENSIE Includes
 #include "MonteCarlo_EntityEstimator.hpp"
+#include "Utility_Map.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
@@ -29,9 +27,9 @@ namespace MonteCarlo{
 template<typename EntityId>
 class StandardEntityEstimator : public EntityEstimator<EntityId>
 {
-
-private:
-
+  // Typedef for the base type
+  typedef EntityEstimator<EntityId> BaseEstimatorType;
+  
   // Typedef for bin contribution map
   typedef std::unordered_map<unsigned,double> BinContributionMap;
 
@@ -50,56 +48,53 @@ protected:
 public:
 
   //! Constructor (for flux estimators)
-  template<template<typename,typename...> class STLCompliantArrayA,
-           template<typename,typename...> class STLCompliantArrayB>
   StandardEntityEstimator(
                      const Estimator::idType id,
                      const double multiplier,
-                     const STLCompliantArrayA<EntityId>& entity_ids,
-		     const STLCompliantArrayB<double>& entity_norm_constants );
+                     const std::vector<EntityId>& entity_ids,
+		     const std::vector<double>& entity_norm_constants );
 
   //! Constructor (for non-flux estimators)
-  template<typename<typename,typename...> class STLCompliantArray>
   StandardEntityEstimator( const Estimator::idType id,
 			   const double multiplier,
-			   const STLCompliantArray<EntityId>& entity_ids );
+			   const std::vector<EntityId>& entity_ids );
 
   //! Destructor
   virtual ~StandardEntityEstimator()
   { /* ... */ }
 
   //! Commit the contribution from the current history to the estimator
-  void commitHistoryContribution() override;
+  void commitHistoryContribution() final override;
 
   //! Enable support for multiple threads
-  void enableThreadSupport( const unsigned num_threads ) override;
+  void enableThreadSupport( const unsigned num_threads ) final override;
 
   //! Reset estimator data
-  virtual void resetData() override;
+  void resetData() final override;
 
   //! Reduce estimator data on all processes and collect on the root process
-  void reduceData(
-	    const std::shared_ptr<const Utility::Communicator<unsigned long long> >& comm,
-	    const int root_process ) override;
+  void reduceData( Utility::Communicator& comm,
+                   const int root_process ) final override;
 
 protected:
+
+  //! Default constructor
+  StandardEntityEstimator();
 
   //! Constructor with no entities (for mesh estimators)
   StandardEntityEstimator( const Estimator::idType id,
                            const double multiplier );
 
   //! Assign entities
-  void assignEntities(
-                  const typename EntityEstimator<EntityId>::EntityNormConstMap&
-                  entity_norm_data ) override;
+  void assignEntities( const typename BaseEstimatorType::EntityNormConstMap&
+                       entity_norm_data ) override;
 
   //! Assign response function to the estimator
-  virtual void assignResponseFunction(
-        const Estimator::ResponseFunctionPointer& response_function ) override;
+  virtual void assignResponseFunction( const std::shared_ptr<const Response>& response_function );
 
   //! Print the estimator data
   void printImplementation( std::ostream& os,
-			    const std::string& entity_type ) const override;
+			    const std::string& entity_type ) const final override;
 
 
   //! Add estimator contribution from a point of the current history
@@ -109,7 +104,6 @@ protected:
                    const double contribution );
 
   //! Add estimator contribution from a range of the current history
-  template<ObserverPhaseSpaceDimensions... RangeDimensions>
   void addParticleHistoryRangeContribution(
                    const EntityId entity_id,
                    const EstimatorParticleStateWrapper& particle_state_wrapper,
@@ -139,8 +133,7 @@ private:
 					const double contribution );
 
   // Initialize the moments maps
-  template<template<typename,typename...> class STLCompliantArray>
-  void initializeMomentsMaps( const STLCompliantArray<EntityId>& entity_ids );
+  void initializeMomentsMaps( const std::vector<EntityId>& entity_ids );
 
   // Add info to update tracker
   void addInfoToUpdateTracker( const size_t thread_id,
@@ -164,6 +157,19 @@ private:
   // Reset the update tracker
   void resetUpdateTracker( const size_t thread_id );
 
+  // Save the data to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the data from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+  
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // The entities/bins that have been updated
   ParallelUpdateTracker d_update_tracker;
 
@@ -175,6 +181,8 @@ private:
 };
 
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS1_VERSION( EntityEstimator, MonteCarlo, 0 );
 
 //---------------------------------------------------------------------------//
 // Template Includes.

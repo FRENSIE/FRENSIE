@@ -86,7 +86,7 @@ public:
   //! Return the number of bins for a dimension of the phase space
   size_t getNumberOfBins( const ObserverPhaseSpaceDimension dimension ) const;
 
-  //! Return the total number of bins
+  //! Return the total number of bins (per response function)
   size_t getNumberOfBins() const;
 
   //! Set a response function
@@ -122,18 +122,6 @@ public:
   //! Return the total normalization constant
   virtual double getTotalNormConstant() const = 0;
 
-  //! Check if the estimator has uncommitted history contributions
-  bool hasUncommittedHistoryContribution( const unsigned thread_id ) const final override;
-
-  //! Check if the estimator has uncommitted history contributions
-  bool hasUncommittedHistoryContribution() const final override;
-
-  //! Enable support for multiple threads
-  void enableThreadSupport( const unsigned num_threads ) override;
-  
-  //! Log a summary of the data
-  void logSummary() const final override;
-
   //! Get the total estimator bin data first moments
   virtual Utility::ArrayView<const double> getTotalBinDataFirstMoments() const = 0;
 
@@ -158,19 +146,19 @@ public:
                                   std::vector<double>& figure_of_merit ) const;
 
   //! Check if total data is available
-  virtual bool isTotalDataAvailable() const = 0;
+  virtual bool isTotalDataAvailable() const;
 
   //! Get the total data first moments
-  virtual Utility::ArrayView<const double> getTotalDataFirstMoments() const = 0;
+  virtual Utility::ArrayView<const double> getTotalDataFirstMoments() const;
 
   //! Get the total data second moments
-  virtual Utility::ArrayView<const double> getTotalDataSecondMoments() const = 0;
+  virtual Utility::ArrayView<const double> getTotalDataSecondMoments() const;
 
   //! Get the total data third moments
-  virtual Utility::ArrayView<const double> getTotalDataThirdMoments() const = 0;
+  virtual Utility::ArrayView<const double> getTotalDataThirdMoments() const;
 
   //! Get the total data fourth moments
-  virtual Utility::ArrayView<const double> getTotalDataFourthMoments() const = 0;
+  virtual Utility::ArrayView<const double> getTotalDataFourthMoments() const;
 
   //! Get the total data mean, relative error, vov and fom
   void getTotalProcessedData( std::vector<double>& mean,
@@ -179,16 +167,16 @@ public:
                               std::vector<double>& figure_of_merit ) const;
 
   //! Get the total data first moments for an entity
-  virtual Utility::ArrayView<const double> getEntityTotalDataFirstMoments( const size_t entity_id ) const = 0;
+  virtual Utility::ArrayView<const double> getEntityTotalDataFirstMoments( const size_t entity_id ) const;
 
   //! Get the total data second moments for an entity
-  virtual Utility::ArrayView<const double> getEntityTotalDataSecondMoments( const size_t entity_id ) const = 0;
+  virtual Utility::ArrayView<const double> getEntityTotalDataSecondMoments( const size_t entity_id ) const;
 
   //! Get the total data third moments for an entity
-  virtual Utility::ArrayView<const double> getEntityTotalDataThirdMoments( const size_t entity_id ) const = 0;
+  virtual Utility::ArrayView<const double> getEntityTotalDataThirdMoments( const size_t entity_id ) const;
 
   //! Get the total data fourth moments for an entity
-  virtual Utility::ArrayView<const double> getEntityTotalDataFourthMoments( const size_t entity_id ) const = 0;
+  virtual Utility::ArrayView<const double> getEntityTotalDataFourthMoments( const size_t entity_id ) const;
 
   //! Get the total data mean, relative error, vov and fom for an entity
   void getEntityTotalProcessedData( const size_t entity_id,
@@ -196,6 +184,22 @@ public:
                                     std::vector<double>& relative_error,
                                     std::vector<double>& variance_of_variance,
                                     std::vector<double>& figure_of_merit ) const;
+
+  //! Check if the estimator has uncommitted history contributions
+  bool hasUncommittedHistoryContribution( const unsigned thread_id ) const final override;
+
+  //! Check if the estimator has uncommitted history contributions
+  bool hasUncommittedHistoryContribution() const final override;
+
+  //! Enable support for multiple threads
+  void enableThreadSupport( const unsigned num_threads ) override;
+
+  //! Reduce estimator data on all processes and collect on the root process
+  void reduceData( const Utility::Communicator& comm,
+                   const int root_process ) override;
+  
+  //! Log a summary of the data
+  void logSummary() const final override;
 
 protected:
 

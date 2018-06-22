@@ -21,18 +21,18 @@
 
 namespace MonteCarlo{
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CellPulseHeightEstimator<WeightMultiplier> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CellPulseHeightEstimator<WeightAndEnergyMultiplier> );
-
+// Default constructor
+template<typename ContributionMultiplierPolicy>
+CellPulseHeightEstimator<ContributionMultiplierPolicy>::CellPulseHeightEstimator()
+{ /* ... */ }
+  
 // Constructor
 template<typename ContributionMultiplierPolicy>
-template<template<typename,typename...> class STLCompliantArray>
 CellPulseHeightEstimator<ContributionMultiplierPolicy>::CellPulseHeightEstimator(
-    const Estimator::idType id,
-    const double multiplier,
-    const STLCompliantArray<CellPulseHeightEstimator::cellIdType>& entity_ids )
-  : EntityEstimator<cellIdType>( id, multiplier, entity_ids ),
+          const Estimator::idType id,
+          const double multiplier,
+          const std::vector<CellIdType>& entity_ids )
+  : BaseEstimatorType( id, multiplier, entity_ids ),
     ParticleEnteringCellEventObserver(),
     ParticleLeavingCellEventObserver(),
     d_update_tracker( 1 ),
@@ -41,52 +41,15 @@ CellPulseHeightEstimator<ContributionMultiplierPolicy>::CellPulseHeightEstimator
 
 // Set the response functions
 template<typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<
-                           ContributionMultiplierPolicy>::setResponseFunctions(
+void CellPulseHeightEstimator<ContributionMultiplierPolicy>::setResponseFunctions(
                       const std::vector<std::shared_ptr<ResponseFunction> >&
                       response_functions )
 {
-  std::cerr << "Warning: Response functions cannot be set for pulse height "
-	    << "estimators. The response functions requested for pulse height "
-	    << "estimator " << this->getId() << " will be ignored."
-	    << std::endl;
-}
-
-// Set the particle types that can contribute to the estimator
-/*! \details Only photons and electrons can contribute to this estimator
- */
-template<typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<ContributionMultiplierPolicy>::setParticleTypes(
-			   const std::vector<ParticleType>& particle_types )
-{
-  std::vector<ParticleType> valid_particle_types;
-
-  bool warning_issued = false;
-
-  for( unsigned i = 0; i < particle_types.size(); ++i )
-  {
-    if( particle_types[i] != PHOTON && particle_types[i] != ELECTRON && particle_types[i] != POSITRON )
-    {
-      if( !warning_issued )
-      {
-	std::cerr << "Warning: Only photons and charged particles can "
-		  << "contribute to pulse height estimators. The other "
-		  << "particle types requested (" << particle_types[i] << ") for pulse height estimator "
-		  << this->getId() << " will be ignored."
-		  << std::endl;
-
-	warning_issued = true;
-      }
-    }
-    else
-      valid_particle_types.push_back( particle_types[i] );
-  }
-
-  Estimator::setParticleTypes( valid_particle_types );
-
-  testPostcondition( !this->isParticleTypeAssigned( NEUTRON ) );
-  testPostcondition( !this->isParticleTypeAssigned( ADJOINT_NEUTRON ) );
-  testPostcondition( !this->isParticleTypeAssigned( ADJOINT_PHOTON ) );
+  FRENSIE_LOG_TAGGED_WARNING( "Estimator",
+                              "Response functions cannot be set for pulse "
+                              "height estimators. The response functions "
+                              "requested for pulse height estimator "
+                              << this->getId() << " will be ignored!" );
 }
 
 // Add current history estimator contribution
@@ -96,22 +59,21 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::setParticleTypes(
  * actually assigned to this estimator (otherwise segfaults are likely!).
  */
 template<typename ContributionMultiplierPolicy>
-inline void CellPulseHeightEstimator<
-            ContributionMultiplierPolicy>::updateFromParticleEnteringCellEvent(
+inline void CellPulseHeightEstimator<ContributionMultiplierPolicy>::updateFromParticleEnteringCellEvent(
 					       const ParticleState& particle,
-					       const cellIdType cell_entering )
+					       const CellIdType cell_entering )
 {
-  if( this->isParticleTypeAssigned( particle.getParticleType() ) )
-  {
-    unsigned thread_id = Utility::OpenMPProperties::getThreadId();
+  // Make sure that the particle type is assigned
+  testPrecondition( this->isParticleTypeAssigned( particle.getParticleType() ) );
 
-    double contribution = particle.getWeight()*particle.getEnergy();
+  unsigned thread_id = Utility::OpenMPProperties::getThreadId();
 
-    this->addInfoToUpdateTracker( thread_id, cell_entering, contribution );
+  double contribution = particle.getWeight()*particle.getEnergy();
 
-    // Indicate that there is an uncommitted history contribution
-    this->setHasUncommittedHistoryContribution( thread_id );
-  }
+  this->addInfoToUpdateTracker( thread_id, cell_entering, contribution );
+
+  // Indicate that there is an uncommitted history contribution
+  this->setHasUncommittedHistoryContribution( thread_id );
 }
 
 // Add current history estimator contribution
@@ -121,28 +83,25 @@ inline void CellPulseHeightEstimator<
  * actually assigned to this estimator (otherwise segfaults are likely! ).
  */
 template<typename ContributionMultiplierPolicy>
-inline void CellPulseHeightEstimator<
-            ContributionMultiplierPolicy>::updateFromParticleLeavingCellEvent(
+inline void CellPulseHeightEstimator<ContributionMultiplierPolicy>::updateFromParticleLeavingCellEvent(
 					        const ParticleState& particle,
-					        const cellIdType cell_leaving )
+					        const CellIdType cell_leaving )
 {
-  if( this->isParticleTypeAssigned( particle.getParticleType() ) )
-  {
-    unsigned thread_id = Utility::OpenMPProperties::getThreadId();
-
-    double contribution = -particle.getWeight()*particle.getEnergy();
-
-    this->addInfoToUpdateTracker( thread_id, cell_leaving, contribution );
-
-    // Indicate that there is an uncommitted history contribution
-    this->setHasUncommittedHistoryContribution( thread_id );
-  }
+  // Make sure that the particle type is assigned
+  testPrecondition( this->isParticleTypeAssigned( particle.getParticleType() ) );
+  unsigned thread_id = Utility::OpenMPProperties::getThreadId();
+  
+  double contribution = -particle.getWeight()*particle.getEnergy();
+  
+  this->addInfoToUpdateTracker( thread_id, cell_leaving, contribution );
+  
+  // Indicate that there is an uncommitted history contribution
+  this->setHasUncommittedHistoryContribution( thread_id );
 }
 
 // Add estimator contribution from a portion of the current history
 template<typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<
-		     ContributionMultiplierPolicy>::commitHistoryContribution()
+void CellPulseHeightEstimator<ContributionMultiplierPolicy>::commitHistoryContribution()
 {
   unsigned thread_id = Utility::OpenMPProperties::getThreadId();
 
@@ -153,7 +112,7 @@ void CellPulseHeightEstimator<
 
   double energy_deposition_in_all_cells = 0.0;
 
-  unsigned bin_index;
+  size_t bin_index;
   double bin_contribution;
 
   Estimator::DimensionValueMap& thread_dimension_values =
@@ -212,7 +171,7 @@ template<typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<ContributionMultiplierPolicy>::printSummary(
 						       std::ostream& os ) const
 {
-  os << "Cell Pulse Height Estimator: " << this->getId() << std::endl;
+  os << "Cell Pulse Height Estimator: " << this->getId() << "\n";
 
   this->printImplementation( os, "Cell" );
 }
@@ -223,7 +182,10 @@ void
 CellPulseHeightEstimator<ContributionMultiplierPolicy>::enableThreadSupport(
 						   const unsigned num_threads )
 {
-  EntityEstimator<Geometry::Model::InternalCellHandle>::enableThreadSupport( num_threads );
+  // Make sure only the root thread calls this
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
+  
+  BaseEstimatorType::enableThreadSupport( num_threads );
 
   // Add thread support to update tracker
   d_update_tracker.resize( num_threads );
@@ -239,10 +201,10 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::resetData()
   // Make sure only the root thread calls this
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
-  EntityEstimator<CellPulseHeightEstimator::cellIdType>::resetData();
+  BaseEstimatorType::resetData();
 
   // Reset the update tracker
-  for( unsigned i = 0; i < d_update_tracker.size(); ++i )
+  for( size_t i = 0; i < d_update_tracker.size(); ++i )
   {
     d_update_tracker[i].clear();
 
@@ -253,10 +215,11 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::resetData()
 // Assign bin boundaries to an estimator dimension
 template<typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<ContributionMultiplierPolicy>::assignDiscretization(
-                        const Estimator::DimensionDiscretizationPointer& bins )
+  const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins,
+  const bool range_dimension ) 
 {
   if( bins->getDimension() == ENERGY_DIMENSION )
-    EntityEstimator<cellIdType>::assignDiscretization( bins );
+    BaseEstimatorType::assignDiscretization( bins, false );
   else
   {
     FRENSIE_LOG_TAGGED_WARNING( "Estimator",
@@ -271,7 +234,7 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::assignDiscretizatio
 // Set the response functions
 template<typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<ContributionMultiplierPolicy>::assignResponseFunction(
-                  const Estimator::ResponseFunctionPointer& response_function )
+                     const std::shared_ptr<const Response>& response_function )
 {
   FRENSIE_LOG_TAGGED_WARNING( "Estimator",
                               "response functions cannot be set for pulse "
@@ -286,17 +249,20 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::assignResponseFunct
 template<typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<ContributionMultiplierPolicy>::assignParticleType( const ParticleType particle_type ) 
 {
-  if( particle_type == PHOTON || particle_type == ELECTRON )
+  if( particle_type == PHOTON ||
+      particle_type == ELECTRON ||
+      particle_type == POSITRON )
     Estimator::assignParticleType( particle_type );
   else
   {
     FRENSIE_LOG_TAGGED_WARNING( "Estimator",
                                 "cannot assign particle type "
                                 << particle_type << " to a pulse height "
-                                "estimators (only photons and electrons can "
-                                "contribute). Pulse height estimator "
-                                << this->getId() << " will ignore this "
-                                "request." );
+                                "estimators (only photons and charged "
+                                "particles can contribute). Pulse height "
+                                "estimator " << this->getId() << " will "
+                                "ignore this request." );
+  }
 }
 
 // Calculate the estimator contribution from the entire history
@@ -330,7 +296,7 @@ inline double CellPulseHeightEstimator<ContributionMultiplierPolicy>::calculateH
 template<typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<ContributionMultiplierPolicy>::addInfoToUpdateTracker(
 						   const unsigned thread_id,
-						   const cellIdType cell_id,
+						   const CellIdType cell_id,
 						   const double contribution )
 {
   // Make sure the thread id is valid
@@ -338,8 +304,10 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::addInfoToUpdateTrac
 
   SerialUpdateTracker& thread_update_tracker = d_update_tracker[thread_id];
 
-  if( thread_update_tracker.find( cell_id ) != thread_update_tracker.end() )
-    thread_update_tracker[cell_id] += contribution;
+  auto cell_it = thread_update_tracker.find( cell_id );
+
+  if( cell_it != thread_update_tracker.end() )
+    cell_it->second += contribution;
   else
     thread_update_tracker[cell_id] = contribution;
 }
@@ -370,7 +338,44 @@ CellPulseHeightEstimator<ContributionMultiplierPolicy>::resetUpdateTracker(
   d_update_tracker[thread_id].clear();
 }
 
+// Save the data to an archive
+// Note: The update tracker will not be saved. Any uncommited data should be
+// committed before the save.
+template<typename ContributionMultiplierPolicy>
+template<typename Archive>
+void CellPulseHeightEstimator<ContributionMultiplierPolicy>::save( Archive& ar, const unsigned version )
+{
+  // Save the base class data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseEstimatorType );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleEnteringCellEventObserver );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleLeavingCellEventObserver );
+}
+
+// Load the data from an archive
+template<typename ContributionMultiplierPolicy>
+template<typename Archive>
+void CellPulseHeightEstimator<ContributionMultiplierPolicy>::load( Archive& ar, const unsigned version )
+{
+  // Load the base class data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseEstimatorType );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleEnteringCellEventObserver );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleLeavingCellEventObserver );
+
+  // Initialize the local data
+  d_update_tracker.resize( 1 );
+  d_dimension_values.resize( 1 );
+}
+
 } // end MonteCarlo namespace
+
+// Explicit instantiation (extern declaration)
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightMultipliedCellPulseHeightEstimator, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndEnergyMultipliedCellPulseHeightEstimator );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 
 #endif // end MONTE_CARLO_CELL_PULSE_HEIGHT_ESTIMATOR_DEF_HPP
 

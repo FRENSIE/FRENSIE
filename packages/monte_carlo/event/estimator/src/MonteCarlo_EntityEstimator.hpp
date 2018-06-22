@@ -35,18 +35,15 @@ protected:
 public:
 
   //! Constructor (for flux estimators)
-  template<template<typename...> class STLCompliantArrayA,
-           template<typename...> class STLCompliantArrayB>
   EntityEstimator( const size_t id,
 		   const double multiplier,
-		   const STLCompliantArrayA<EntityId>& entity_ids,
-		   const STLCompliantArrayB<double>& entity_norm_constants );
+		   const std::vector<EntityId>& entity_ids,
+		   const std::vector<double>& entity_norm_constants );
 
   //! Constructor (for non-flux estimators)
-  template<typename<typename...> class STLCompliantArray>
   EntityEstimator( const size_t id,
 		   const double multiplier,
-		   const STLCompliantArray<EntityId>& entity_ids );
+		   const std::vector<EntityId>& entity_ids );
 
   //! Destructor
   virtual ~EntityEstimator()
@@ -63,6 +60,18 @@ public:
 
   //! Return the total normalization constant
   double getTotalNormConstant() const override;
+
+  //! Get the total estimator bin data first moments
+  Utility::ArrayView<const double> getTotalBinDataFirstMoments() const final override;
+
+  //! Get the total estimator bin data second moments
+  Utility::ArrayView<const double> getTotalBinDataSecondMoments() const final override;
+
+  //! Get the bin data first moments for an entity
+  Utility::ArrayView<const double> getEntityBinDataFirstMoments( const size_t entity_id ) const final override;
+
+  //! Get the bin data second moments for an entity
+  Utility::ArrayView<const double> getEntityBinDataSecondMoments( const size_t entity_id ) const final override;
 
   //! Reset estimator data
   void resetData() override;
@@ -111,21 +120,17 @@ protected:
 private:
 
   // Initialize entity estimator moments map
-  template<template<typename...> class STLCompliantArray>
   void initializeEntityEstimatorMomentsMap(
-                               const STLCompliantArray<EntityId>& entity_ids );
+                                     const std::vector<EntityId>& entity_ids );
 
   // Initialize entity norm constants map
-  template<template<typename...> class STLCompliantArray>
   void initializeEntityNormConstantsMap(
-                               const STLCompliantArray<EntityId>& entity_ids );
+                                     const std::vector<EntityId>& entity_ids );
 
   // Initialize entity norm constants map
-  template<template<typename...> class STLCompliantArrayA,
-           template<typename...> class STLCompliantArrayB>
   void initializeEntityNormConstantsMap(
-                     const STLCompliantArrayA<EntityId>& entity_ids,
-                     const STLCompliantArrayB<double>& entity_norm_constants );
+                            const std::vector<EntityId>& entity_ids,
+                            const std::vector<double>& entity_norm_constants );
 
   // Calculate the total normalization constant
   void calculateTotalNormalizationConstant();
@@ -168,6 +173,8 @@ private:
 };
 
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS1_VERSION( EntityEstimator, MonteCarlo, 0 );
 
 //---------------------------------------------------------------------------//
 // Template Includes.

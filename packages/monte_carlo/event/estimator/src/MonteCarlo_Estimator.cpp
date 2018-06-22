@@ -9,8 +9,20 @@
 // Std Lib Includes
 #include <limits>
 
+// Boost Includes
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_Estimator.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_OpenMPProperties.hpp"
 #include "Utility_LoggingMacros.hpp"
 
@@ -98,7 +110,7 @@ void Estimator::setResponseFunctions(
   STLCompliantContainer<ResponseFunctionPointer>::const_iterator
     response_function_it = response_functions.begin();
 
-  for( auto response_function_ptr : response_functions )
+  for( auto&& response_function_ptr : response_functions )
     this->setResponseFunction( response_function_ptr );
 }
 
@@ -130,7 +142,7 @@ void Estimator::setParticleTypes( const std::set<ParticleType>& particle_types )
   testPrecondition( particle_types.size() > 0 );
 
   // Assign each particle type individually
-  for( auto particle_type : particle_types )
+  for( auto&& particle_type : particle_types )
     this->assignParticleType( *particle_type_it );
 }
 
@@ -171,6 +183,14 @@ void Estimator::enableThreadSupport( const unsigned num_threads )
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   d_has_uncommitted_history_contribution.resize( num_threads, false );
+}
+
+// Reduce estimator data on all processes and collect on the root process
+void Estimator::reduceData( const Utility::Communicator& comm,
+                            const int root_process )
+{
+  if( comm.rank() != root_process )
+    this->resetData();
 }
 
 // Log a summary of the data
@@ -243,6 +263,36 @@ void Estimator::getEntityBinProcessedData(
   }
 }
 
+// Check if total data is available
+bool Estimator::isTotalDataAvailable() const
+{
+  return false;
+}
+
+// Get the total data first moments
+Utility::ArrayView<const double> Estimator::getTotalDataFirstMoments() const
+{
+  return Utility::ArrayView<const double>();
+}
+
+// Get the total data second moments
+Utility::ArrayView<const double> Estimator::getTotalDataSecondMoments() const
+{
+  return Utility::ArrayView<const double>();
+}
+
+// Get the total data third moments
+Utility::ArrayView<const double> Estimator::getTotalDataThirdMoments() const
+{
+  return Utility::ArrayView<const double>();
+}
+
+// Get the total data fourth moments
+Utility::ArrayView<const double> Estimator::getTotalDataFourthMoments() const
+{
+  return Utility::ArrayView<const double>();
+}
+
 // Get the total data mean, relative error, vov and fom
 void Estimator::getTotalProcessedData(
                                    std::vector<double>& mean,
@@ -280,6 +330,30 @@ void Estimator::getTotalProcessedData(
                           variance_of_variance[i],
                           figure_of_merit[i] );
   }
+}
+
+// Get the total data first moments for an entity
+Utility::ArrayView<const double> Estimator::getEntityTotalDataFirstMoments( const size_t ) const
+{
+  return Utility::ArrayView<const double>();
+}
+
+// Get the total data second moments for an entity
+Utility::ArrayView<const double> Estimator::getEntityTotalDataSecondMoments( const size_t ) const
+{
+  return Utility::ArrayView<const double>();
+}
+
+// Get the total data third moments for an entity
+Utility::ArrayView<const double> Estimator::getEntityTotalDataThirdMoments( const size_t ) const
+{
+  return Utility::ArrayView<const double>();
+}
+
+// Get the total data fourth moments for an entity
+Utility::ArrayView<const double> Estimator::getEntityTotalDataFourthMoments( const size_t ) const
+{
+  return Utility::ArrayView<const double>();
 }
 
 // Get the total data mean, relative error, vov and fom for an entity
@@ -419,7 +493,7 @@ void Estimator::reduceCollection(
                                                     reduced_second_moments );
 
   // The root process will store the reduced moments
-  if( comm->getRank() == root_process )
+  if( comm->rank() == root_process )
   {
     for( size_t i = 0; i < collection.size(); ++i )
     {
@@ -428,8 +502,6 @@ void Estimator::reduceCollection(
       Utility::getCurrentScore<2>( collection, i ) = reduced_second_moments[i];
     }
   }
-  else
-    collection.reset();
 
   comm.barrier();
 }
@@ -481,7 +553,7 @@ void Estimator::reduceCollection(
                                                     reduced_fourth_moments );
 
   // The root process will store the reduced moments
-  if( comm.getRank() == root_process )
+  if( comm.rank() == root_process )
   {
     for( size_t i = 0; i < collection.size(); ++i )
     {
@@ -491,8 +563,6 @@ void Estimator::reduceCollection(
       Utility::getCurrentScore<4>( collection, i ) = reduced_fourth_moments[i];
     }
   }
-  else
-    collection.reset();
 
   comm.barrier();
 }

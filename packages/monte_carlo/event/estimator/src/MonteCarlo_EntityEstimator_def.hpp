@@ -28,18 +28,21 @@
 
 namespace MonteCarlo{
 
+// Default constructor
+template<typename EntityId>
+EntityEstimator<EntityId>::EntityEstimator()
+{ /* ... */ }
+  
 // Constructor (for flux estimators)
 /*! \details Flux estimators need to divide the first moment by the cell
  * volume or surface area.
  */
 template<typename EntityId>
-template<template<typename,typename...> class STLCompliantArrayA,
-         template<typename,typename...> class STLCompliantArrayB>
 EntityEstimator<EntityId>::EntityEstimator(
                       const Estimator::idType id,
                       const double multiplier,
-                      const STLCompliantArrayA<EntityId>& entity_ids,
-		      const STLCompliantArrayB<double>& entity_norm_constants )
+                      const std::vector<EntityId>& entity_ids,
+		      const std::vector<double>& entity_norm_constants )
   : Estimator( id, multiplier ),
     d_total_norm_constant( 1.0 ),
     d_supplied_norm_constants( true ),
@@ -60,11 +63,10 @@ EntityEstimator<EntityId>::EntityEstimator(
  * cell volume or surface area.
  */
 template<typename EntityId>
-template<typename<typename,typename...> class STLCompliantArray>
 EntityEstimator<EntityId>::EntityEstimator(
-                                const Estimator::idType id,
-                                const double multiplier,
-				const STLCompliantArray<EntityId>& entity_ids )
+                                      const Estimator::idType id,
+                                      const double multiplier,
+				      const std::vector<EntityId>& entity_ids )
   : Estimator( id, multiplier ),
     d_total_norm_constant( 1.0 ),
     d_supplied_norm_constants( false ),
@@ -89,27 +91,20 @@ EntityEstimator<EntityId>::EntityEstimator( const Estimator::idType id,
 
 // Return the entity ids associated with this estimator
 template<typename EntityId>
-template<template<typename,typename...> class STLCompliantSet>
 void EntityEstimator<EntityId>::getEntityIds(
-                                  STLCompliantSet<EntityId>& entity_ids ) const
+                                        std::vector<size_t>& entity_ids ) const
 {
-  typename STLCompliantSet<EntityId>::const_iterator it =
-    d_entity_norm_constants_map.begin();
-
-  while( it != d_entity_norm_constants_map.end() )
-  {
-    entity_ids.insert( it->first );
-
-    ++it;
-  }
+  for( auto&& entity_data : d_entity_norm_constants_map )
+    entity_ids.insert( entity_data.first );
 }
 
 // Check if the entity is assigned to this estimator
 template<typename EntityId>
 inline bool EntityEstimator<EntityId>::isEntityAssigned(
-					      const EntityId& entity_id ) const
+					      const size_t& entity_id ) const
 {
-  return d_entity_norm_constants_map.count( entity_id );
+  return d_entity_norm_constants_map.find( entity_id ) !=
+    d_entity_norm_constants_map.end();
 }
 
 // Return the normalization constant for an entity
@@ -130,6 +125,54 @@ inline double EntityEstimator<EntityId>::getTotalNormConstant() const
   return d_total_norm_constant;
 }
 
+// Get the total estimator bin data first moments
+template<typename EntityId>
+Utility::ArrayView<const double> EntityEstimator<EntityId>::getTotalBinDataFirstMoments() const
+{
+  return Utility::ArrayView<const double>(
+                    Utility::getCurrentScores<1>( d_estimator_total_bin_data ),
+                    d_estimator_total_bin_data.size() );
+}
+
+// Get the total estimator bin data second moments
+template<typename EntityId>
+Utility::ArrayView<const double> EntityEstimator<EntityId>::getTotalBinDataSecondMoments() const
+{
+  return Utility::ArrayView<const double>(
+                    Utility::getCurrentScores<2>( d_estimator_total_bin_data ),
+                    d_estimator_total_bin_data.size() );
+}
+
+// Get the bin data first moments for an entity
+template<typename EntityId>
+Utility::ArrayView<const double> EntityEstimator<EntityId>::getEntityBinDataFirstMoments( const size_t entity_id ) const
+{
+  // Make sure the entity is assigned to the estimator
+  testPrecondition( this->isEntityAssigned( entity_id ) );
+
+  const TwoEstimatorMomentsCollection& entity_collection =
+    d_entity_estimator_moments_map.find( entity_id )->second;
+
+  return Utility::ArrayView<const double>(
+                             Utility::getCurrentScores<1>( entity_collection ),
+                             entity_collections.size() );
+}
+
+// Get the bin data second moments for an entity
+template<typename EntityId>
+Utility::ArrayView<const double> EntityEstimator<EntityId>::getEntityBinDataSecondMoments( const size_t entity_id ) const
+{
+  // Make sure the entity is assigned to the estimator
+  testPrecondition( this->isEntityAssigned( entity_id ) );
+
+  const TwoEstimatorMomentsCollection& entity_collection =
+    d_entity_estimator_moments_map.find( entity_id )->second;
+
+  return Utility::ArrayView<const double>(
+                             Utility::getCurrentScores<2>( entity_collection ),
+                             entity_collections.size() );
+}
+
 // Reset the estimator data
 template<typename EntityId>
 void EntityEstimator<EntityId>::resetData()
@@ -138,24 +181,14 @@ void EntityEstimator<EntityId>::resetData()
   d_estimator_total_bin_data.reset();
 
   // Reset the entity bin data
-  typename EntityEstimatorMomentsCollectionMap::iterator entity_data,
-    end_entity_data;
-  entity_data = d_entity_estimator_moments_map.begin();
-  end_entity_data = d_entity_estimator_moments_map.end();
-
-  while( entity_data != end_entity_data )
-  {
-    entity_data->second->reset();
-
-    ++entity_data;
-  }
+  for( auto&& entity_data : d_entity_estimator_moments_map )
+    entity_data.second->reset();
 }
 
 // Reduce estimator data on all processes and collect on the root process
 template<typename EntityId>
-void EntityEstimator<EntityId>::reduceData(
-	    const std::shared_ptr<const Utility::Communicator<unsigned long long> >& comm,
-	    const int root_process )
+void EntityEstimator<EntityId>::reduceData( const Utility::Communicator& comm,
+                                            const int root_process )
 {
   // Make sure the comm is valid
   testPrecondition( !comm.is_null() );
@@ -163,36 +196,65 @@ void EntityEstimator<EntityId>::reduceData(
   testPrecondition( root_process < comm->getSize() );
   
   // Only do the reduction if there is more than one process
-  if( comm->getSize() > 1 )
+  if( comm.size() > 1 )
   {
-    // Reduce bin data for each entity
-    typename EntityEstimatorMomentsCollectionMap::iterator entity_data,
-      end_entity_data;
-    entity_data = d_entity_estimator_moments_map.begin();
-    end_entity_data = d_entity_estimator_moments_map.end();
-
-    while( entity_data != end_entity_data )
-    {
-      try{
-        this->reduceCollection( comm, root_process, entity_data->second );
+    try{
+      // Gather all of the entity data on the root process
+      if( comm.rank() == root_process )
+      {
+        std::vector<EntityEstimatorMomentsCollectionMap>
+          gathered_entity_data( comm.size() );
+        
+        Utility::gather( comm,
+                         d_entity_estimator_moments_map,
+                         gathered_entity_data,
+                         root_process );
+        
+        // Reduce the data that was on each process
+        for( auto&& entity_data : d_entity_estimator_moments_map )
+        {
+          // Don't double count data on this process (j starts from 1)
+          for( size_t j = 1; j < gathered_entity_data.size(); ++j )
+          {
+            const EntityEstimatorMomentsCollectionMap::value_type&
+              other_entity_data = *gathered_entity_data[j].find( entity_data.first );
+          
+            for( size_t i = 0; i < entity_data.second.size(); ++i )
+            {
+              Utility::getCurrentScore<1>( entity_data.second, i ) +=
+                Utility::getCurrentScore<1>( other_entity_data.second, i );
+            
+              Utility::getCurrentScore<2>( entity_data.second, i ) +=
+                Utility::getCurrentScore<2>( other_entity_data.second, i );
+            }
+          }
+        }
       }
-      EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                               "unable to perform mpi reduction in entity "
-                               "estimator " << this->getId() << " for entity "
-                               << entity_data->first << "!" );
-
-      ++entity_data;
+      else
+      {
+        Utility::gather( comm,
+                         d_entity_estimator_moments_map,
+                         root_process );
+      }
     }
+    EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                             "Unable to perform mpi reduction in entity bin "
+                             "estimator " << this->getId() << " for entity "
+                             "bin data!" );
+
+    comm.barrier();
+    
+    // Reduce bin data of total
+    try{
+      this->reduceCollection( comm, root_process, d_estimator_total_bin_data );
+    }
+    EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                             "Unable to perform mpi reduction in entity "
+                             "estimator " << this->getId() << " for total bin "
+                             "data!" );
   }
 
-  // Reduce bin data of total
-  try{
-    this->reduceCollection( comm, root_process, d_estimator_total_bin_data );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                           "unable to perform mpi reduction in entity "
-                           "estimator " << this->getId() << " for total bin "
-                           "data!" );
+  Estimator::reduce( comm, root_process );
 }
 
 // Assign entities
@@ -211,16 +273,8 @@ void EntityEstimator<EntityId>::assignEntities(
   d_entity_norm_constants_map = entity_norm_data;
 
   // Initialize the entity data
-  typename EntityNormConstMap::const_iterator entity, end_entity;
-  entity = entity_norm_data.begin();
-  end_entity = entity_norm_data.end();
-
-  while( entity != end_entity )
-  {
-    d_entity_estimator_moments_map[entity->first];
-
-    ++entity;
-  }
+  for( auto&& entity_data : entity_norm_data )
+    d_entity_estimator_moments_map[entity_data.first];
 
   // Calculate the total normalization constant
   this->calculateTotalNormalizationConstant();
@@ -233,7 +287,8 @@ void EntityEstimator<EntityId>::assignEntities(
 // Assign discretization to an estimator dimension
 template<typename EntityId>
 void EntityEstimator<EntityId>::assignDiscretization(
-      const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries )
+  const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins,
+  const bool range_dimension )
 {
   // Make sure only the root thread calls this
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
@@ -250,7 +305,7 @@ void EntityEstimator<EntityId>::assignDiscretization(
 // Set the response functions
 template<typename EntityId>
 void EntityEstimator<EntityId>::assignResponseFunction(
-                  const Estimator::ResponseFunctionPointer& response_function )
+                     const std::shared_ptr<const Response>& response_function )
 {
   Estimator::assignResponseFunction( response_functions );
 
@@ -265,7 +320,7 @@ void EntityEstimator<EntityId>::assignResponseFunction(
 template<typename EntityId>
 void EntityEstimator<EntityId>::commitHistoryContributionToBinOfEntity(
 						    const EntityId& entity_id,
-						    const unsigned bin_index,
+						    const size_t bin_index,
 						    const double contribution )
 {
   // Make sure the entity is assigned to this estimator
@@ -281,14 +336,14 @@ void EntityEstimator<EntityId>::commitHistoryContributionToBinOfEntity(
   // Update the moments
   #pragma omp critical
   {
-    d_entity_estimator_moments_map[entity_id].addRawScore( contribution );
+    d_entity_estimator_moments_map[entity_id].addRawScore( bin_index, contribution );
   }
 }
 
 // Commit history contribution to a bin of the total
 template<typename EntityId>
 void EntityEstimator<EntityId>::commitHistoryContributionToBinOfTotal(
-						   const unsigned bin_index,
+						   const size_t bin_index,
 						   const double contribution )
 {
   // Make sure the bin index is valid
@@ -299,7 +354,7 @@ void EntityEstimator<EntityId>::commitHistoryContributionToBinOfTotal(
   // Update the moments
   #pragma omp critical
   {
-    d_estimator_total_bin_data.addRawScore( contribution );
+    d_estimator_total_bin_data.addRawScore( bin_index, contribution );
   }
 }
 
@@ -322,7 +377,7 @@ void EntityEstimator<EntityId>::printImplementation(
   // Print the binning data
   this->printEstimatorBins( os );
 
-  os << std::endl;
+  os << "\n";
 
   // Print the estimator data for each entity
   // typename EntityEstimatorMomentsCollectionMap::const_iterator entity_data,
@@ -366,17 +421,10 @@ void EntityEstimator<EntityId>::printEntityIds(
 
   typename EntityNormConstMap::const_iterator entity_id, end_entity_id;
 
-  entity_id = d_entity_norm_constants_map.begin();
-  end_entity_id = d_entity_norm_constants_map.end();
+  for( auto&& entity_data : d_entity_norm_constants_map )
+    os << entity_id.first << " ";
 
-  while( entity_id != end_entity_id )
-  {
-    os << entity_id->first << " ";
-
-    ++entity_id;
-  }
-
-  os << std::endl;
+  os << "\n";
 }
 
 // Print the entity norm constants assigned to the estimator
@@ -392,19 +440,10 @@ void EntityEstimator<EntityId>::printEntityNormConstants(
   else if( entity_type == "Surface" )
     os << " Areas: ";
 
-  typename EntityNormConstMap::const_iterator entity_id, end_entity_id;
+  for( auto&& entity_data : d_entity_norm_constants_map )
+    os << Utility::toString(entity_id.second) << " ";
 
-  entity_id = d_entity_norm_constants_map.begin();
-  end_entity_id = d_entity_norm_constants_map.end();
-
-  while( entity_id != end_entity_id )
-  {
-    os << entity_id->second << " ";
-
-    ++entity_id;
-  }
-
-  os << std::endl;
+  os << "\n"
 }
 
 // Get the total estimator bin data
@@ -435,22 +474,20 @@ EntityEstimator<EntityId>::getEntityBinData( const EntityId entity_id ) const
 
 // Initialize entity estimator moments map
 template<typename EntityId>
-template<template<typename,typename...> class STLCompliantArray>
 void EntityEstimator<EntityId>::initializeEntityEstimatorMomentsMap(
-                                const STLCompliantArray<EntityId>& entity_ids )
+                                      const std::vector<EntityId>& entity_ids )
 {
   // Make sure there is at least one entity id
   testPrecondition( entity_ids.size() > 0 );
 
-  for( unsigned i = 0; i < entity_ids.size(); ++i )
+  for( size_t i = 0; i < entity_ids.size(); ++i )
   {
     // Ignore duplicate entity ids
     if( d_entity_estimator_moments_map.count( entity_ids[i] ) == 0 )
     {
-
-      d_entity_estimator_moments_map[ entity_ids[i] ].resize(
-			    this->getNumberOfBins()*
-                            this->getNumberOfResponseFunctions() );
+      d_entity_estimator_moments_map[entity_ids[i]].resize(
+                                        this->getNumberOfBins()*
+                                        this->getNumberOfResponseFunctions() );
     }
     else
     {
@@ -466,14 +503,13 @@ void EntityEstimator<EntityId>::initializeEntityEstimatorMomentsMap(
 
 // Initialize the entity estimator moments map
 template<typename EntityId>
-template<template<typename,typename...> class STLCompliantArray>
 void EntityEstimator<EntityId>::initializeEntityNormConstantsMap(
-                                const STLCompliantArray<EntityId>& entity_ids )
+                                      const std::vector<EntityId>& entity_ids )
 {
   // Make sure there is at least one entity id
   testPrecondition( entity_ids.size() > 0 );
 
-  for( unsigned i = 0; i < entity_ids.size(); ++i )
+  for( size_t i = 0; i < entity_ids.size(); ++i )
   {
     // Ignore duplicate entity ids
     if( d_entity_norm_constants_map.count( entity_ids[i] ) == 0 )
@@ -483,22 +519,20 @@ void EntityEstimator<EntityId>::initializeEntityNormConstantsMap(
 
 // Initialize the entity estimator moments map
 template<typename EntityId>
-template<template<typename,typename...> class STLCompliantArrayA,
-         template<typename,typename...> class STLCompliantArrayB>
 void EntityEstimator<EntityId>::initializeEntityNormConstantsMap(
-                      const STLCompliantArrayA<EntityId>& entity_ids,
-		      const STLCompliantArrayB<double>& entity_norm_constants )
+                             const std::vector<EntityId>& entity_ids,
+                             const std::vector<double>& entity_norm_constants )
 {
   // Make sure there is at least one entity id
   testPrecondition( entity_ids.size() > 0 );
   // Make sure every entity id has a normalization constant
   testPrecondition( entity_ids.size() == entity_norm_constants.size() );
 
-  for( unsigned i = 0; i < entity_ids.size(); ++i )
+  for( size_t i = 0; i < entity_ids.size(); ++i )
   {
     // Ignore duplicate entity ids
     if( d_entity_norm_constants_map.count( entity_ids[i] ) == 0 )
-      d_entity_norm_constants_map[ entity_ids[i] ] = entity_norm_constants[i];
+      d_entity_norm_constants_map[entity_ids[i]] = entity_norm_constants[i];
   }
 }
 
@@ -506,37 +540,20 @@ void EntityEstimator<EntityId>::initializeEntityNormConstantsMap(
 template<typename EntityId>
 void EntityEstimator<EntityId>::calculateTotalNormalizationConstant()
 {
-  typename EntityNormConstMap::const_iterator norm_constant,
-    end_norm_constant;
-
-  norm_constant = d_entity_norm_constants_map.begin();
-  end_norm_constant = d_entity_norm_constants_map.end();
-
   d_total_norm_constant = 0.0;
 
-  while( norm_constant != end_norm_constant )
-  {
-    d_total_norm_constant += norm_constant->second;
-
-    ++norm_constant;
-  }
+  for( auto&& entity_data : d_entity_norm_constants_map )
+    d_total_norm_constant += entity_data.second;
 }
 
 // Resize the entity estimator moments map collections
 template<typename EntityId>
 void EntityEstimator<EntityId>::resizeEntityEstimatorMapCollections()
 {
-  typename EntityEstimatorMomentsCollectionMap::iterator start, end;
-
-  start = d_entity_estimator_moments_map.begin();
-  end = d_entity_estimator_moments_map.end();
-
-  while( start != end )
+  for( auto&& entity_data : d_entity_estimator_moments_map )
   {
-    start->second.resize( this->getNumberOfBins()*
-                          this->getNumberOfResponseFunctions() );
-
-    ++start;
+    entity_data.second.resize( this->getNumberOfBins()*
+                               this->getNumberOfResponseFunctions() );
   }
 }
 
@@ -566,9 +583,13 @@ void EntityEstimator<EntityId>::serialize( Archive& ar, const unsigned version )
 
 } // end MonteCarlo namespace
 
-// Explicit instantiation (extern declaration)
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS1( EntityEstimator, MonteCarlo );
+
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::EntityEstimator<Geometry::Model::InternalCellHandle> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZATION_INST( MonteCarlo::EntityEstimator<Geometry::Model::InternalCellHandle> );
+
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::EntityEstimator<moab::EntityHandle> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZATION_INST( MonteCarlo::EntityEstimator<moab::EntityHandle> );
 
 #endif // end MONTE_CARLO_ENTITY_ESTIMATOR_DEF_HPP
 
