@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_NUCLEAR_REACTION_HPP
 #define MONTE_CARLO_NUCLEAR_REACTION_HPP
 
+// std includes
+#include <cstdlib>
+
 // FRENSIE Includes
 #include "MonteCarlo_Reaction.hpp"
 

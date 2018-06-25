@@ -37,6 +37,9 @@ public:
   //! Return the index of the lower bin boundary that a value falls in
   virtual size_t findLowerBinIndex( const ValueType value ) const = 0;
 
+  //! Return the index of the lower bin boundary that a value falls in
+  virtual size_t findLowerBinIndexIncludingUpperBound( const ValueType value ) const = 0;
+
 private:
 
   // Save the searcher to an archive

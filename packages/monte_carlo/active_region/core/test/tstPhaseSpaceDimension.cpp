@@ -203,7 +203,7 @@ FRENSIE_UNIT_TEST( PhaseSpaceDimension, stream_operator )
 }
 
 //---------------------------------------------------------------------------//
-// Check that a database can be archived
+// Check that an enum can be archived
 FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimension,
                                    archive,
                                    TestArchives )

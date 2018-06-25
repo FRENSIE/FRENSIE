@@ -101,21 +101,38 @@ private:
 
   // Simulate an unresolved particle
   void simulateUnresolvedParticle( ParticleState& unresolved_particle,
-                                   ParticleBank& bank ) const;
+                                   ParticleBank& bank,
+                                   const bool source_particle ) const;
 
   // Simulate an individual particle
   template<typename State>
   void simulateParticle( ParticleState& unresolved_particle,
-                         ParticleBank& bank ) const;
+                         ParticleBank& bank,
+                         const bool source_particle ) const;
 
   // Simulate an individual particle track of the desired optical path length
   template<typename State>
   void simulateParticleTrack( State& particle,
-                              const double optical_path ) const;
+                              ParticleBank& bank,
+                              const double optical_path,
+                              const bool starting_from_source ) const;
+
+  // Simulate an individual particle track of the desired optical path length
+  template<typename State>
+  void simulateUnresolvedParticleTrack( ParticleState& particle,
+                                        ParticleBank& bank,
+                                        const double optical_path,
+                                        const bool starting_from_source ) const;
+
+  // Simulate a particle collision
+  template<typename State>
+  void simulateUnresolvedParticleCollision( ParticleState& particle,
+                                            ParticleBank& bank ) const;
 
   // Advance a particle to the cell boundary
   template<typename State>
   void advanceParticleToCellBoundary( State& particle,
+                                      ParticleBank& bank,
                                       const double distance_to_surface,
                                       const double subtrack_start_time ) const;
 
@@ -168,6 +185,22 @@ private:
   SimulateParticleFunctionMap;
   
   SimulateParticleFunctionMap d_simulate_particle_function_map;
+
+  // The simulate unresolved particle track functions
+  typedef ParticleEnteringCellEventActor::SimulateParticleForOpticalPath SimulateUnresolvedParticleTrackFunction;
+
+  typedef std::map<ParticleType,SimulateUnresolvedParticleTrackFunction>
+  SimulateUnresolvedParticleTrackFunctionMap;
+
+  SimulateUnresolvedParticleTrackFunctionMap d_simulate_unresolved_particle_track_function_map;
+
+  // The simulate unresolved particle collision functions
+  typedef ParticleCollidingGlobalEventActor::SimulateParticleCollision SimulateUnresolvedParticleCollisionFunction;
+
+  typedef std::map<ParticleType,SimulateUnresolvedParticleCollisionFunction>
+  SimulateUnresolvedParticleCollisionFunctionMap;
+
+  SimulateUnresolvedParticleCollisionFunctionMap d_simulate_unresolved_particle_collision_function_map;
 };
 
 //! Log lost particle details

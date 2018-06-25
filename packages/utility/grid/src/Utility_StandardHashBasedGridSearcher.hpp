@@ -74,6 +74,9 @@ public:
   //! Return the index of the lower bin boundary that a value falls in
   size_t findLowerBinIndex( const ValueType value ) const override;
 
+  //! Return the index of the lower bin boundary that a value falls in
+  size_t findLowerBinIndexIncludingUpperBound( const ValueType value ) const override;
+
 private:
 
   // Default Constructor

@@ -172,6 +172,49 @@ FRENSIE_UNIT_TEST( HashBasedGridSearcher, findLowerBinIndex_processed )
 }
 
 //---------------------------------------------------------------------------//
+// Check that hte index of the lower bin boundary of a value can be found
+FRENSIE_UNIT_TEST( HashBasedGridSearcher,
+                   findLowerBinIndexIncludingUpperBound )
+{
+  size_t grid_index =
+    grid_searcher->findLowerBinIndexIncludingUpperBound( 1.0 );
+
+  FRENSIE_CHECK_EQUAL( grid_index, 0u );
+
+  grid_index = grid_searcher->findLowerBinIndexIncludingUpperBound( 1.5 );
+
+  FRENSIE_CHECK_EQUAL( grid_index, 0u );
+
+  grid_index = grid_searcher->findLowerBinIndexIncludingUpperBound( 2.0 );
+
+  FRENSIE_CHECK_EQUAL( grid_index, 0u );
+
+  grid_index = grid_searcher->findLowerBinIndexIncludingUpperBound( 2.5 );
+
+  FRENSIE_CHECK_EQUAL( grid_index, 1u );
+
+  grid_index = grid_searcher->findLowerBinIndexIncludingUpperBound( 10.0 );
+
+  FRENSIE_CHECK_EQUAL( grid_index, 8u );
+
+  grid_index = grid_searcher->findLowerBinIndexIncludingUpperBound( 10.5 );
+
+  FRENSIE_CHECK_EQUAL( grid_index, 9u );
+
+  grid_index = grid_searcher->findLowerBinIndexIncludingUpperBound( 100.0 );
+
+  FRENSIE_CHECK_EQUAL( grid_index, 98u );
+
+  grid_index = grid_searcher->findLowerBinIndexIncludingUpperBound( 100.5 );
+
+  FRENSIE_CHECK_EQUAL( grid_index, 99u );
+
+  grid_index = grid_searcher->findLowerBinIndexIncludingUpperBound( 1000.0 );
+
+  FRENSIE_CHECK_EQUAL( grid_index, 998u );
+}
+
+//---------------------------------------------------------------------------//
 // Test that a grid searcher can be archived
 FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( HashBasedGridSearcher,
                                    archive,
