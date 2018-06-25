@@ -71,12 +71,26 @@ void ElectroatomNativeFactory::createElectroatomCore(
         }
         else
         {
-          ThisType::createElasticElectroatomCore<Utility::Direct<Utility::LogLogCosLog> >(
-                                                raw_electroatom_data,
-                                                energy_grid,
-                                                grid_searcher,
-                                                properties,
-                                                scattering_reactions );
+          if( properties.getElasticElectronDistributionMode() == COUPLED_DISTRIBUTION ||
+              ( properties.getElasticElectronDistributionMode() == HYBRID_DISTRIBUTION &&
+                properties.getElasticCutoffAngleCosine() < 1.0 ) )
+          {
+            ThisType::createElasticElectroatomCore<Utility::Direct<Utility::LogLogCosLog<true> > >(
+                                                  raw_electroatom_data,
+                                                  energy_grid,
+                                                  grid_searcher,
+                                                  properties,
+                                                  scattering_reactions );
+          }
+          else
+          {
+            ThisType::createElasticElectroatomCore<Utility::Direct<Utility::LogLogCosLog<false> > >(
+                                                  raw_electroatom_data,
+                                                  energy_grid,
+                                                  grid_searcher,
+                                                  properties,
+                                                  scattering_reactions );
+          }
         }
       }
       else
@@ -93,12 +107,26 @@ void ElectroatomNativeFactory::createElectroatomCore(
     {
       if( TwoDGridPolicy::TwoDInterpPolicy::name() == "LogLogLog" )
       {
-        ThisType::createElasticElectroatomCore<Utility::Correlated<Utility::LogLogCosLog> >(
-                                                raw_electroatom_data,
-                                                energy_grid,
-                                                grid_searcher,
-                                                properties,
-                                                scattering_reactions );
+        if( properties.getElasticElectronDistributionMode() == COUPLED_DISTRIBUTION ||
+            ( properties.getElasticElectronDistributionMode() == HYBRID_DISTRIBUTION &&
+              properties.getElasticCutoffAngleCosine() < 1.0 ) )
+        {
+          ThisType::createElasticElectroatomCore<Utility::Correlated<Utility::LogLogCosLog<true> > >(
+                                                  raw_electroatom_data,
+                                                  energy_grid,
+                                                  grid_searcher,
+                                                  properties,
+                                                  scattering_reactions );
+        }
+        else
+        {
+          ThisType::createElasticElectroatomCore<Utility::Correlated<Utility::LogLogCosLog<false> > >(
+                                                  raw_electroatom_data,
+                                                  energy_grid,
+                                                  grid_searcher,
+                                                  properties,
+                                                  scattering_reactions );
+        }
       }
       else
       {

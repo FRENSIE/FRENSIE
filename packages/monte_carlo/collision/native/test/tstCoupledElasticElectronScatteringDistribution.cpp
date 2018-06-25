@@ -2460,7 +2460,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     {
     // Create the scattering distribution
     std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function(
-        new Utility::ElasticTwoDDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
+        new Utility::ElasticTwoDDistribution<Utility::Correlated<Utility::LogLogCosLog<true> > >(
             function_data,
             1.0,
             1e-6,

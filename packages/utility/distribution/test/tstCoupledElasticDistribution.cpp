@@ -26,6 +26,7 @@
 // FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_InterpolationPolicy.hpp"
 #include "Utility_CoupledElasticDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -62,8 +63,8 @@ double cross_section_ratio = 0.1;
 #define UNIT_TEST_INSTANTIATION( type, name )                                 \
   typedef Utility::LinLin LinLin;                                             \
   typedef Utility::LogLin LogLin;                                             \
-  typedef Utility::LinLogCos LinLogCos;                                       \
-  typedef Utility::LogLogCos LogLogCos;                                       \
+  typedef Utility::LinLogCos<true> LinLogCos;                                       \
+  typedef Utility::LogLogCos<true> LogLogCos;                                       \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LinLin )                  \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LogLin )                  \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LinLogCos )               \
@@ -822,8 +823,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CoupledElasticDistribution,
 
   TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
   TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLogCos>() );
-  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLogCos>() );
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLogCos<true> >() );
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLogCos<true> >() );
   TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
 
@@ -876,8 +877,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareCoupledElasticDistribution,
 
   TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
   TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLogCos>() );
-  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLogCos>() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLogCos<true> >() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLogCos<true> >() );
   TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
 
@@ -1249,16 +1250,16 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
   TEUCHOS_ADD_TYPE_CONVERTER( Utility::CoupledElasticDistribution<Utility::LinLin> );
   TEUCHOS_ADD_TYPE_CONVERTER( Utility::CoupledElasticDistribution<Utility::LogLin> );
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::CoupledElasticDistribution<Utility::LinLogCos> );
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::CoupledElasticDistribution<Utility::LogLogCos> );
+  TEUCHOS_ADD_TYPE_CONVERTER( Utility::CoupledElasticDistribution<Utility::LinLogCos<true> > );
+  TEUCHOS_ADD_TYPE_CONVERTER( Utility::CoupledElasticDistribution<Utility::LogLogCos<true> > );
 
   typedef Utility::UnitAwareCoupledElasticDistribution<Utility::LinLin,si::dimensionless,si::amount> UnitAwareCoupledElasticLinLinDist;
   TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareCoupledElasticLinLinDist );
   typedef Utility::UnitAwareCoupledElasticDistribution<Utility::LogLin,si::dimensionless,si::amount> UnitAwareCoupledElasticLogLinDist;
   TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareCoupledElasticLogLinDist );
-  typedef Utility::UnitAwareCoupledElasticDistribution<Utility::LinLogCos,si::dimensionless,si::amount> UnitAwareCoupledElasticLinLogCosDist;
+  typedef Utility::UnitAwareCoupledElasticDistribution<Utility::LinLogCos<true>,si::dimensionless,si::amount> UnitAwareCoupledElasticLinLogCosDist;
   TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareCoupledElasticLinLogCosDist );
-  typedef Utility::UnitAwareCoupledElasticDistribution<Utility::LogLogCos,si::dimensionless,si::amount> UnitAwareCoupledElasticLogLogCosDist;
+  typedef Utility::UnitAwareCoupledElasticDistribution<Utility::LogLogCos<true>,si::dimensionless,si::amount> UnitAwareCoupledElasticLogLogCosDist;
   TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareCoupledElasticLogLogCosDist );
 
   test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );

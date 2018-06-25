@@ -1519,25 +1519,29 @@ inline const std::string LogLogLog::name()
 }
 
 // The name of the policy
-inline const std::string LinLogCosLin::name()
+template<bool use_nudge>
+inline const std::string LinLogCosLin<use_nudge>::name()
 {
   return "LinLogCosLin";
 }
 
 // The name of the policy
-inline const std::string LinLogCosLog::name()
+template<bool use_nudge>
+inline const std::string LinLogCosLog<use_nudge>::name()
 {
   return "LinLogCosLog";
 }
 
 // The name of the policy
-inline const std::string LogLogCosLin::name()
+template<bool use_nudge>
+inline const std::string LogLogCosLin<use_nudge>::name()
 {
   return "LogLogCosLin";
 }
 
 // The name of the policy
-inline const std::string LogLogCosLog::name()
+template<bool use_nudge>
+inline const std::string LogLogCosLog<use_nudge>::name()
 {
   return "LogLogCosLog";
 }

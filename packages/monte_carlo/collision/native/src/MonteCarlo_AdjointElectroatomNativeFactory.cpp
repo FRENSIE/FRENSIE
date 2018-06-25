@@ -47,13 +47,29 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
 
     if( electron_interp == "Log-Log-Log" )
     {
-      ThisType::createElasticElectroatomCore<Utility::Correlated<Utility::LogLogCosLog> >(
-                                                raw_adjoint_electroatom_data,
-                                                energy_grid,
-                                                grid_searcher,
-                                                properties,
-                                                elastic_reaction,
-                                                scattering_reactions );
+      if( properties.getAdjointElasticElectronDistributionMode() == COUPLED_DISTRIBUTION ||
+          ( properties.getAdjointElasticElectronDistributionMode() == HYBRID_DISTRIBUTION &&
+            properties.getAdjointElasticCutoffAngleCosine() < 1.0 ) )
+      {
+        ThisType::createElasticElectroatomCore<Utility::Correlated<Utility::LogLogCosLog<true> > >(
+                                                  raw_adjoint_electroatom_data,
+                                                  energy_grid,
+                                                  grid_searcher,
+                                                  properties,
+                                                  elastic_reaction,
+                                                  scattering_reactions );
+      }
+      else
+      {
+        ThisType::createElasticElectroatomCore<Utility::Correlated<Utility::LogLogCosLog<false> > >(
+                                                  raw_adjoint_electroatom_data,
+                                                  energy_grid,
+                                                  grid_searcher,
+                                                  properties,
+                                                  elastic_reaction,
+                                                  scattering_reactions );
+      }
+
     }
     else if( electron_interp == "Lin-Lin-Log" )
     {

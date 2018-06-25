@@ -56,8 +56,8 @@ double norm_const = 1.0/1.999999;
 // Instantiation Macros.
 //---------------------------------------------------------------------------//
 #define UNIT_TEST_INSTANTIATION( type, name )                    \
-typedef Utility::LogLogCos LogLogCos;                            \
-typedef Utility::LinLogCos LinLogCos;                            \
+typedef Utility::LogLogCos<false> LogLogCos;                            \
+typedef Utility::LinLogCos<false> LinLogCos;                            \
 TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LogLogCos )    \
 TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LinLogCos )
 
@@ -1139,10 +1139,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularCDFDistribution,
 {
   initialize<InterpolationPolicy>( distribution );
 
-  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLogCos>() );
-  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLogCos>() );
-  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogCosLog>() );
-  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogCosLin>() );
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLogCos<false> >() );
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLogCos<false> >() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogCosLog<false> >() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogCosLin<false> >() );
   TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
   TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
@@ -1175,10 +1175,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularCDFDistribution,
 
   initializeCDF<InterpolationPolicy>( distribution );
 
-  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLogCos>() );
-  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLogCos>() );
-  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogCosLog>() );
-  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogCosLin>() );
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLogCos<false> >() );
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLogCos<false> >() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogCosLog<false> >() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogCosLin<false> >() );
   TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
   TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
@@ -1220,10 +1220,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
 {
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
-  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLogCos>() );
-  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLogCos>() );
-  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogCosLog>() );
-  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogCosLin>() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLogCos<false> >() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLogCos<false> >() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogCosLog<false> >() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogCosLin<false> >() );
   TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
   TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
@@ -1256,10 +1256,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
 
   initializeUnitAwareCDF<InterpolationPolicy>( unit_aware_distribution );
 
-  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLogCos>() );
-  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLogCos>() );
-  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogCosLog>() );
-  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogCosLin>() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLogCos<false> >() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLogCos<false> >() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogCosLog<false> >() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogCosLin<false> >() );
   TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
   TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
@@ -1380,20 +1380,20 @@ UNIT_TEST_INSTANTIATION( UnitAwareTabularCDFDistribution, toParameterList );
 // Check that the distribution can be read from an xml file
 TEUCHOS_UNIT_TEST( TabularCDFDistribution, fromParameterList )
 {
-  Utility::TabularCDFDistribution<Utility::LogLogCos> distribution_1 =
-  test_dists_list->get<Utility::TabularCDFDistribution<Utility::LogLogCos> >( "Tabular CDF Distribution A" );
+  Utility::TabularCDFDistribution<Utility::LogLogCos<false> > distribution_1 =
+  test_dists_list->get<Utility::TabularCDFDistribution<Utility::LogLogCos<false> > >( "Tabular CDF Distribution A" );
 
   TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), -1.0 );
   TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 0.999999 );
 
   distribution_1 =
-  test_dists_list->get<Utility::TabularCDFDistribution<Utility::LogLogCos> >( "Tabular CDF Distribution B" );
+  test_dists_list->get<Utility::TabularCDFDistribution<Utility::LogLogCos<false> > >( "Tabular CDF Distribution B" );
 
   TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), -1.0 );
   TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 0.9 );
 
-  Utility::TabularCDFDistribution<Utility::LinLogCos> distribution_2 =
-  test_dists_list->get<Utility::TabularCDFDistribution<Utility::LinLogCos> >( "Tabular CDF Distribution C" );
+  Utility::TabularCDFDistribution<Utility::LinLogCos<false> > distribution_2 =
+  test_dists_list->get<Utility::TabularCDFDistribution<Utility::LinLogCos<false> > >( "Tabular CDF Distribution C" );
 
   TEST_EQUALITY_CONST( distribution_2.getLowerBoundOfIndepVar(), -1.0 );
   TEST_EQUALITY_CONST( distribution_2.getUpperBoundOfIndepVar(), 0.999999 );
@@ -1403,22 +1403,22 @@ TEUCHOS_UNIT_TEST( TabularCDFDistribution, fromParameterList )
 // Check that the unit-aware distribution can be read from an xml file
 TEUCHOS_UNIT_TEST( UnitAwareTabularCDFDistribution, fromParameterList )
 {
-  Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,cgs::dimensionless,si::amount>
+  Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos<false>,cgs::dimensionless,si::amount>
   distribution_1 =
-  test_dists_list->get<Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,cgs::dimensionless,si::amount> >( "Unit-Aware Tabular CDF Distribution A" );
+  test_dists_list->get<Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos<false>,cgs::dimensionless,si::amount> >( "Unit-Aware Tabular CDF Distribution A" );
 
   TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), -1.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 0.999999*cgs::dimensionless() );
 
   distribution_1 =
-  test_dists_list->get<Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,cgs::dimensionless,si::amount> >( "Unit-Aware Tabular CDF Distribution B" );
+  test_dists_list->get<Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos<false>,cgs::dimensionless,si::amount> >( "Unit-Aware Tabular CDF Distribution B" );
 
   TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), -1.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 0.9*cgs::dimensionless() );
 
-  Utility::UnitAwareTabularCDFDistribution<Utility::LinLogCos,cgs::dimensionless,si::amount>
+  Utility::UnitAwareTabularCDFDistribution<Utility::LinLogCos<false>,cgs::dimensionless,si::amount>
   distribution_2 =
-  test_dists_list->get<Utility::UnitAwareTabularCDFDistribution<Utility::LinLogCos,cgs::dimensionless,si::amount> >( "Unit-Aware Tabular CDF Distribution C" );
+  test_dists_list->get<Utility::UnitAwareTabularCDFDistribution<Utility::LinLogCos<false>,cgs::dimensionless,si::amount> >( "Unit-Aware Tabular CDF Distribution C" );
 
   TEST_EQUALITY_CONST( distribution_2.getLowerBoundOfIndepVar(), -1.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( distribution_2.getUpperBoundOfIndepVar(), 0.999999*cgs::dimensionless() );
@@ -1440,14 +1440,14 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareTabularCDFDistribution,
   typedef typename Utility::UnitTraits<DepUnitA>::template GetQuantityType<double>::type DepQuantityA;
   typedef typename Utility::UnitTraits<DepUnitB>::template GetQuantityType<double>::type DepQuantityB;
 
-  initializeCDF<Utility::LogLogCos>( distribution );
+  initializeCDF<Utility::LogLogCos<false> >( distribution );
 
   // Copy from unitless distribution to distribution type A
-  Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,IndepUnitA,DepUnitA>
-  unit_aware_dist_a_copy = Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::TabularCDFDistribution<Utility::LogLogCos> >( distribution ) );
+  Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos<false>,IndepUnitA,DepUnitA>
+  unit_aware_dist_a_copy = Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos<false>,IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::TabularCDFDistribution<Utility::LogLogCos<false> > >( distribution ) );
 
   // Copy from distribution type A to distribution type B
-  Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,IndepUnitB,DepUnitB>
+  Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos<false>,IndepUnitB,DepUnitB>
   unit_aware_dist_b_copy( unit_aware_dist_a_copy );
 
   IndepQuantityA indep_quantity_a =
@@ -1543,11 +1543,11 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::TabularCDFDistribution<Utility::LogLogCos> );
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::TabularCDFDistribution<Utility::LinLogCos> );
-  typedef Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,cgs::dimensionless,si::amount> UnitAwareTabularCDFLogLogCosDist;
+  TEUCHOS_ADD_TYPE_CONVERTER( Utility::TabularCDFDistribution<Utility::LogLogCos<false> > );
+  TEUCHOS_ADD_TYPE_CONVERTER( Utility::TabularCDFDistribution<Utility::LinLogCos<false> > );
+  typedef Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos<false>,cgs::dimensionless,si::amount> UnitAwareTabularCDFLogLogCosDist;
   TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareTabularCDFLogLogCosDist );
-  typedef Utility::UnitAwareTabularCDFDistribution<Utility::LinLogCos,cgs::dimensionless,si::amount> UnitAwareTabularCDFLinLogCosDist;
+  typedef Utility::UnitAwareTabularCDFDistribution<Utility::LinLogCos<false>,cgs::dimensionless,si::amount> UnitAwareTabularCDFLinLogCosDist;
   TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareTabularCDFLinLogCosDist );
 
   test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );

@@ -173,7 +173,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     double evaluation_tol = 1e-15;
 
     // Create the distribution
-    NativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
+    NativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LogLogCosLog<false> > >(
                 elastic_scattering_distribution,
                 *data_container,
                 cutoff_angle_cosine,
@@ -198,7 +198,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         data_container->getAdjointCutoffElasticCrossSection().end() );
 
     // Create the distribution
-    NativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
+    NativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LogLogCosLog<false> > >(
                 cutoff_distribution,
                 *data_container,
                 cutoff_angle_cosine,

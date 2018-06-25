@@ -43,7 +43,7 @@ TEUCHOS_UNIT_TEST( PositronatomicReactionNativeFactory,
   MonteCarlo::CoupledElasticSamplingMethod sampling_method =
     MonteCarlo::SIMPLIFIED_UNION;
 
-  MonteCarlo::PositronatomicReactionNativeFactory::createCoupledElasticReaction<Utility::Correlated<Utility::LogLogCosLog> >(
+  MonteCarlo::PositronatomicReactionNativeFactory::createCoupledElasticReaction<Utility::Correlated<Utility::LogLogCosLog<true> > >(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -78,7 +78,7 @@ TEUCHOS_UNIT_TEST( PositronatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( PositronatomicReactionNativeFactory,
                    createDecoupledElasticReaction_LogLogCosLog )
 {
-  MonteCarlo::PositronatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::Correlated<Utility::LogLogCosLog> >(
+  MonteCarlo::PositronatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::Correlated<Utility::LogLogCosLog<false> > >(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -114,7 +114,7 @@ TEUCHOS_UNIT_TEST( PositronatomicReactionNativeFactory,
 {
   double cutoff_angle_cosine = 0.9;
 
-  MonteCarlo::PositronatomicReactionNativeFactory::createHybridElasticReaction<Utility::Correlated<Utility::LogLogCosLog> >(
+  MonteCarlo::PositronatomicReactionNativeFactory::createHybridElasticReaction<Utility::Correlated<Utility::LogLogCosLog<true> > >(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -149,7 +149,7 @@ TEUCHOS_UNIT_TEST( PositronatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( PositronatomicReactionNativeFactory,
                    createCutoffElasticReaction_LogLogCosLog )
 {
-  MonteCarlo::PositronatomicReactionNativeFactory::createCutoffElasticReaction<Utility::Correlated<Utility::LogLogCosLog> >(
+  MonteCarlo::PositronatomicReactionNativeFactory::createCutoffElasticReaction<Utility::Correlated<Utility::LogLogCosLog<false> > >(
                 *data_container,
                 energy_grid,
                 grid_searcher,

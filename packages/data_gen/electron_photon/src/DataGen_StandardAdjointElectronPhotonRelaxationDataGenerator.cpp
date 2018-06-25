@@ -2063,7 +2063,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     }
     else if( d_electron_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LogLogCosLog<false> > >(
         cutoff_distribution,
         d_forward_epr_data->getCutoffElasticAngles(),
         d_forward_epr_data->getCutoffElasticPDF(),

@@ -87,7 +87,7 @@ TEUCHOS_UNIT_TEST( HybridElasticAdjointElectroatomicReaction,
 
   cross_section = hybrid_elastic_reaction->getCrossSection( 1e-3 );
   TEST_FLOATING_EQUALITY( cross_section,
-                          1.9778260462237354e+06,
+                          1.9778260462206174e+06,
                           1e-12 );
 
   ratio = 8.1267567055936911e-06;
@@ -157,7 +157,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     // Moment preserving elastic cross section
     std::vector<double> moment_preserving_cross_sections;
     unsigned mp_threshold_energy_index;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::Correlated<Utility::LogLogCosLog> >(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::Correlated<Utility::LogLogCosLog<false> > >(
                                   moment_preserving_cross_sections,
                                   mp_threshold_energy_index,
                                   data_container,
@@ -172,7 +172,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     // Create the cutoff elastic scattering distribution
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
           cutoff_distribution;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LogLogCosLog<false> > >(
               cutoff_distribution,
               data_container,
               cutoff_angle_cosine,
@@ -190,7 +190,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution>
         hybrid_elastic_distribution;
 
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::Correlated<Utility::LogLogCosLog<true> > >(
         hybrid_elastic_distribution,
         energy_grid,
         cutoff_cross_section,

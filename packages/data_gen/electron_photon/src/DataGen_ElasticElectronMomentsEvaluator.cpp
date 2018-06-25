@@ -52,7 +52,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
   {
     if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Direct<Utility::LogLogCosLog> >(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Direct<Utility::LogLogCosLog<true> > >(
       d_coupled_distribution,
       data_container,
       MonteCarlo::TWO_D_UNION,
@@ -80,7 +80,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
   {
     if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Correlated<Utility::LogLogCosLog<true> > >(
       d_coupled_distribution,
       data_container,
       MonteCarlo::TWO_D_UNION,

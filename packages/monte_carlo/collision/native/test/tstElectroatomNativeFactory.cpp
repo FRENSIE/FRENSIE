@@ -567,7 +567,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_hybrid )
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     cutoff_elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LogLogCosLog<false> > >(
         cutoff_elastic_distribution,
         *data_container,
         properties.getElasticCutoffAngleCosine(),
@@ -666,7 +666,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_hybrid )
   cross_section_ratio =
     cutoff_elastic_distribution->evaluateCutoffCrossSectionRatio( 1.995260e-4 );
   TEST_FLOATING_EQUALITY( cross_section,
-                          6.1309E+8*cross_section_ratio + 2.5195477492798278e+08,
+                          4.8815266556554884e+08,
                           1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1e-5, reaction );

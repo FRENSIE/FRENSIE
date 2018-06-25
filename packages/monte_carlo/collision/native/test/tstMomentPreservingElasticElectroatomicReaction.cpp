@@ -99,6 +99,11 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectroatomicReaction,
 
   cross_section = mp_elastic_reaction->getCrossSection( 1.0E+05 );
   TEST_FLOATING_EQUALITY( cross_section, 6.8080603251349155e-05, 1e-12 );
+
+
+  cross_section = mp_elastic_reaction->getCrossSection( 1.995260e-4 );
+  std::cout << std::setprecision(16) << std::scientific << "cross_section = \t" << cross_section << std::endl;
+
 }
 
 
@@ -178,7 +183,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     }
 
     std::shared_ptr<TwoDDist> scattering_function(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::Correlated<Utility::LogLogCosLog<false> > >(
         function_data ) );
 
     discrete_elastic_distribution.reset(
@@ -194,7 +199,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     // Moment preserving elastic cross section
     std::vector<double> moment_preserving_cross_sections;
     unsigned threshold_index;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::Correlated<Utility::LogLogCosLog> >(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::Correlated<Utility::LogLogCosLog<true> > >(
                                moment_preserving_cross_sections,
                                threshold_index,
                                data_container,

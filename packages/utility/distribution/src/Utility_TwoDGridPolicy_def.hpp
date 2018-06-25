@@ -1448,12 +1448,41 @@ struct CorrelatedEvaluatePDFCosHelperLogCosBase
                                      const ReturnType upper_eval,
                                      const T beta )
   {
-    auto lower_product = lower_eval*Utility::LinLin::convertFromCosineVar(lower_y_value);
-    auto upper_product = upper_eval*Utility::LinLin::convertFromCosineVar(upper_y_value);
+    auto lower_product = lower_eval*Utility::CosNudgeHelper<false>::convertFromCosineVar(lower_y_value);
+    auto upper_product = upper_eval*Utility::CosNudgeHelper<false>::convertFromCosineVar(upper_y_value);
 
     return (lower_product*upper_product)/
       (Utility::LinLin::interpolate( beta, upper_product, lower_product )*
-        Utility::LinLin::convertFromCosineVar(y_indep_value) );
+        Utility::CosNudgeHelper<false>::convertFromCosineVar(y_indep_value) );
+  }
+};
+
+/*! \brief Base helper struct for calculating the PDF of a bivariate
+ * distribution assuming log-cos (with nudge factor) interpolation with the
+ * secondary indep grid
+ *
+ * The PDF for log-log interpolation is defined as: f(x,y) = (1/y)*( y_0*f_0(
+ * y_0 ) * y_1*f_1( y_1 ) )/ ( y_1*f_1(y_1)+( (y_0*f_0(y_0)) - (y_1*f_1(y_1))
+ * )*beta )
+ */
+struct CorrelatedEvaluatePDFCosHelperLogCosBaseWithNudge
+{
+  template<typename YIndepType,
+           typename ReturnType,
+           typename T>
+  static inline ReturnType evaluate( const YIndepType y_indep_value,
+                                     const YIndepType lower_y_value,
+                                     const ReturnType lower_eval,
+                                     const YIndepType upper_y_value,
+                                     const ReturnType upper_eval,
+                                     const T beta )
+  {
+    auto lower_product = lower_eval*Utility::CosNudgeHelper<true>::convertFromCosineVar(lower_y_value);
+    auto upper_product = upper_eval*Utility::CosNudgeHelper<true>::convertFromCosineVar(upper_y_value);
+
+    return (lower_product*upper_product)/
+      (Utility::LinLin::interpolate( beta, upper_product, lower_product )*
+        Utility::CosNudgeHelper<true>::convertFromCosineVar(y_indep_value) );
   }
 };
 
@@ -1499,14 +1528,28 @@ struct CorrelatedEvaluatePDFCosHelper<Utility::LinLog> : public CorrelatedEvalua
  * for Utility::LogCosLin.
  */
 template<>
-struct CorrelatedEvaluatePDFCosHelper<Utility::LogCosLin> : public CorrelatedEvaluatePDFCosHelperLogCosBase
+struct CorrelatedEvaluatePDFCosHelper<Utility::LogCosLin<false> > : public CorrelatedEvaluatePDFCosHelperLogCosBase
+{ /* ... */ };
+
+/*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFCosHelper
+ * for Utility::LogCosLin.
+ */
+template<>
+struct CorrelatedEvaluatePDFCosHelper<Utility::LogCosLin<true> > : public CorrelatedEvaluatePDFCosHelperLogCosBaseWithNudge
 { /* ... */ };
 
 /*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFCosHelper
  * for Utility::LogCosLog.
  */
 template<>
-struct CorrelatedEvaluatePDFCosHelper<Utility::LogCosLog> : public CorrelatedEvaluatePDFCosHelperLogCosBase
+struct CorrelatedEvaluatePDFCosHelper<Utility::LogCosLog<false> > : public CorrelatedEvaluatePDFCosHelperLogCosBase
+{ /* ... */ };
+
+/*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFCosHelper
+ * for Utility::LogCosLog.
+ */
+template<>
+struct CorrelatedEvaluatePDFCosHelper<Utility::LogCosLog<true> > : public CorrelatedEvaluatePDFCosHelperLogCosBaseWithNudge
 { /* ... */ };
 
 } // end Details namespace
@@ -1706,7 +1749,14 @@ struct CorrelatedEvaluatePDFHelper<Utility::LogLog> : public CorrelatedEvaluateP
  * Utility::LogCosLog
  */
 template<>
-struct CorrelatedEvaluatePDFHelper<Utility::LogCosLog> : public CorrelatedEvaluatePDFHelperLogBase
+struct CorrelatedEvaluatePDFHelper<Utility::LogCosLog<false> > : public CorrelatedEvaluatePDFHelperLogBase
+{ /* ... */ };
+
+/*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFHelper for
+ * Utility::LogCosLog
+ */
+template<>
+struct CorrelatedEvaluatePDFHelper<Utility::LogCosLog<true> > : public CorrelatedEvaluatePDFHelperLogBase
 { /* ... */ };
 
 /*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFHelper for
@@ -1720,7 +1770,14 @@ struct CorrelatedEvaluatePDFHelper<Utility::LogLin> : public CorrelatedEvaluateP
  * Utility::LogCosLin
  */
 template<>
-struct CorrelatedEvaluatePDFHelper<Utility::LogCosLin> : public CorrelatedEvaluatePDFHelperLogBase
+struct CorrelatedEvaluatePDFHelper<Utility::LogCosLin<false> > : public CorrelatedEvaluatePDFHelperLogBase
+{ /* ... */ };
+
+/*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFHelper for
+ * Utility::LogCosLin
+ */
+template<>
+struct CorrelatedEvaluatePDFHelper<Utility::LogCosLin<true> > : public CorrelatedEvaluatePDFHelperLogBase
 { /* ... */ };
 
 } // end Details namespace
@@ -2857,7 +2914,14 @@ struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LogLog> : public UnitBaseCor
  * Utility::Details::UnitBaseCorrelatedEvaluatePDFHelper for Utility::LogCosLog
  */
 template<>
-struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LogCosLog> : public UnitBaseCorrelatedEvaluatePDFHelperLogBase
+struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LogCosLog<false> > : public UnitBaseCorrelatedEvaluatePDFHelperLogBase
+{ /* ... */ };
+
+/*! \brief Specialization of
+ * Utility::Details::UnitBaseCorrelatedEvaluatePDFHelper for Utility::LogCosLog
+ */
+template<>
+struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LogCosLog<true> > : public UnitBaseCorrelatedEvaluatePDFHelperLogBase
 { /* ... */ };
 
 /*! \brief Specialization of
@@ -2871,7 +2935,14 @@ struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LogLin> : public UnitBaseCor
  * Utility::Details::UnitBaseCorrelatedEvaluatePDFHelper for Utility::LogCosLin
  */
 template<>
-struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LogCosLin> : public UnitBaseCorrelatedEvaluatePDFHelperLogBase
+struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LogCosLin<false> > : public UnitBaseCorrelatedEvaluatePDFHelperLogBase
+{ /* ... */ };
+
+/*! \brief Specialization of
+ * Utility::Details::UnitBaseCorrelatedEvaluatePDFHelper for Utility::LogCosLin
+ */
+template<>
+struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LogCosLin<true> > : public UnitBaseCorrelatedEvaluatePDFHelperLogBase
 { /* ... */ };
 
 } // end Details namespace

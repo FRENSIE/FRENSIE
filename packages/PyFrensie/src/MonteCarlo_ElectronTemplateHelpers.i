@@ -80,13 +80,21 @@
 %define %cos_electron_function_interface_setup( FUNCTION )
 
 // Set LogLogLog Functions
-%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, Correlated ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog, Utility::Correlated );
+%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, Correlated ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog<false> , Utility::Correlated );
 
-%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, UnitBaseCorrelated ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog, Utility::UnitBaseCorrelated );
+%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, UnitBaseCorrelated ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog<false> , Utility::UnitBaseCorrelated );
 
-%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, Direct ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog, Utility::Direct );
+%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, Direct ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog<false> , Utility::Direct );
 
-%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, UnitBase ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog, Utility::UnitBase );
+%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, UnitBase ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog<false> , Utility::UnitBase );
+
+%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, Correlated ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog<true> , Utility::Correlated );
+
+%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, UnitBaseCorrelated ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog<true> , Utility::UnitBaseCorrelated );
+
+%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, Direct ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog<true> , Utility::Direct );
+
+%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, UnitBase ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog<true> , Utility::UnitBase );
 
 // Set LinLinLin Functions
 %template( FUNC_NEW_NAME( FUNCTION, LinLinLin, Correlated ) ) FUNC_NAME( FUNCTION, Utility::LinLinLin, Utility::Correlated );

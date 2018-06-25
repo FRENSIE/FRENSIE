@@ -395,7 +395,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test lowerest energy bin
   double energy = 1.0e-5;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Correlated<Utility::LogLogCosLog> >(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Correlated<Utility::LogLogCosLog<true> > >(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -414,7 +414,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test in between energy bins
   energy = 20.0;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Correlated<Utility::LogLogCosLog> >(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Correlated<Utility::LogLogCosLog<true> > >(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -432,7 +432,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test highest energy bin
   energy = 1.0e5;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Correlated<Utility::LogLogCosLog> >(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Correlated<Utility::LogLogCosLog<true> > >(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -457,7 +457,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   double cutoff_angle_cosine = 1.0;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LogLogCosLog<false> > >(
         native_cutoff_elastic_distribution,
         *data_container,
         cutoff_angle_cosine,
@@ -495,7 +495,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test
   TEST_FLOATING_EQUALITY( scattering_angle_cosine,
-                          8.8823409100481654e-01,
+                          8.8823409135776865e-01,
                           1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-4, 1e-12 );
 }
@@ -982,7 +982,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   MonteCarlo::CoupledElasticSamplingMethod sampling_method = MonteCarlo::SIMPLIFIED_UNION;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Correlated<Utility::LogLogCosLog<true> > >(
         native_coupled_elastic_distribution,
         cutoff_cross_section,
         total_cross_section,
@@ -1115,7 +1115,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   MonteCarlo::CoupledElasticSamplingMethod sampling_method = MonteCarlo::ONE_D_UNION;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Correlated<Utility::LogLogCosLog<true> > >(
   native_coupled_elastic_distribution,
   cutoff_cross_section,
   total_cross_section,
@@ -1248,7 +1248,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   MonteCarlo::CoupledElasticSamplingMethod sampling_method = MonteCarlo::TWO_D_UNION;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Correlated<Utility::LogLogCosLog<true> > >(
   native_coupled_elastic_distribution,
   cutoff_cross_section,
   total_cross_section,
@@ -2065,7 +2065,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   // Moment preserving elastic cross section
   std::vector<double> moment_preserving_cross_sections;
   unsigned mp_threshold_energy_index;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::Correlated<Utility::LogLogCosLog> >(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::Correlated<Utility::LogLogCosLog<false> > >(
                                moment_preserving_cross_sections,
                                mp_threshold_energy_index,
                                *adjoint_data_container,
@@ -2081,7 +2081,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     native_hybrid_elastic_distribution;
 
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::Correlated<Utility::LinLinLog> >(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::Correlated<Utility::LogLogCosLog<true> > >(
         native_hybrid_elastic_distribution,
         energy_grid,
         cutoff_cross_section,
@@ -2092,7 +2092,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Set fake random number stream
   std::vector<double> fake_stream( 4 );
-  fake_stream[0] = 0.1; // sample mu = 8.3035495004722581e-011
+  fake_stream[0] = 0.1; // sample mu = 8.4767786203388040e-011
   fake_stream[1] = 0.2; // sample mu = 9.2398608900202417e-01
   fake_stream[2] = 0.4; // sample mu = 9.7889262247552877e-01
   fake_stream[3] = 1.0-1e-15; // sample mu = 9.7889262247552877e-01
@@ -2107,7 +2107,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_hybrid_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 8.3035495004722581e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 8.4767786203388040e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 
   // Test 2
@@ -2223,7 +2223,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   // Moment preserving elastic cross section
   std::vector<double> moment_preserving_cross_sections;
   unsigned mp_threshold_energy_index;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::Correlated<Utility::LogLogCosLog> >(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::Correlated<Utility::LogLogCosLog<false> > >(
                                moment_preserving_cross_sections,
                                mp_threshold_energy_index,
                                *data_container,
@@ -2236,7 +2236,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     moment_preserving_cross_sections.end() );
 
   std::shared_ptr<TwoDDist> cutoff_scattering_function;
-  TestElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::Correlated<Utility::LogLogCosLog> >(
+  TestElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::Correlated<Utility::LogLogCosLog<false> > >(
     data_container->getCutoffElasticAngles(),
     data_container->getCutoffElasticPDF(),
     data_container->getElasticAngularEnergyGrid(),
@@ -2273,7 +2273,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   std::vector<double> moment_preserving_cross_sections;
   unsigned threshold_energy_index;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::Correlated<Utility::LogLogCosLog> >(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::Correlated<Utility::LogLogCosLog<false> > >(
                                moment_preserving_cross_sections,
                                threshold_energy_index,
                                *data_container,

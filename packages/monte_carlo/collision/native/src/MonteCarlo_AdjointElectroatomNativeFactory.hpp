@@ -54,7 +54,7 @@ public:
 private:
 
   //! Create the elastic reaction for a electroatom core
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy>
   static void createElasticElectroatomCore(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,

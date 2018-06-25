@@ -33,7 +33,7 @@ double eval_tol = 1e-7;
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createCoupledElasticReaction_LogLogCosLog )
 {
-  reaction = MonteCarlo::createCoupledElasticReaction<Utility::Correlated<Utility::LogLogCosLog> >(
+  reaction = MonteCarlo::createCoupledElasticReaction<Utility::Correlated<Utility::LogLogCosLog<true> > >(
                 *data_container,
                 "Simplified Union",
                 eval_tol );
@@ -65,7 +65,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createDecoupledElasticReaction_LogLogCosLog )
 {
-  reaction = MonteCarlo::createDecoupledElasticReaction<Utility::Correlated<Utility::LogLogCosLog> >(
+  reaction = MonteCarlo::createDecoupledElasticReaction<Utility::Correlated<Utility::LogLogCosLog<false> > >(
                 *data_container,
                 eval_tol );
 
@@ -98,7 +98,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 {
   double cutoff_angle_cosine = 0.9;
 
-  reaction = MonteCarlo::createHybridElasticReaction<Utility::Correlated<Utility::LogLogCosLog> >(
+  reaction = MonteCarlo::createHybridElasticReaction<Utility::Correlated<Utility::LogLogCosLog<true> > >(
                 *data_container,
                 cutoff_angle_cosine,
                 1e-14 );
@@ -130,7 +130,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createCutoffElasticReaction_LogLogCosLog )
 {
-  reaction = MonteCarlo::createCutoffElasticReaction<Utility::Correlated<Utility::LogLogCosLog> >(
+  reaction = MonteCarlo::createCutoffElasticReaction<Utility::Correlated<Utility::LogLogCosLog<false> > >(
                 *data_container,
                 1.0,
                 eval_tol );

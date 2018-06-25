@@ -398,7 +398,7 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDat
       {
         if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
         {
-          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Direct<Utility::LogLogCosLog> >(
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Direct<Utility::LogLogCosLog<true> > >(
             angles,
             pdf,
             elastic_angle,
@@ -442,7 +442,7 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDat
       {
         if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
         {
-          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Correlated<Utility::LogLogCosLog> >(
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Correlated<Utility::LogLogCosLog<true> > >(
             angles,
             pdf,
             elastic_angle,
@@ -1503,7 +1503,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
       {
         if ( d_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
         {
-          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Direct<Utility::LogLogCosLog> >(
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Direct<Utility::LogLogCosLog<true> > >(
             elastic_angle[this->getMaxElectronEnergy()],
             elastic_pdf[this->getMaxElectronEnergy()] ,
             elastic_angle,
@@ -1547,7 +1547,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
       {
         if ( d_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
         {
-          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Correlated<Utility::LogLogCosLog> >(
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Correlated<Utility::LogLogCosLog<true> > >(
             elastic_angle[this->getMaxElectronEnergy()],
             elastic_pdf[this->getMaxElectronEnergy()] ,
             elastic_angle,
@@ -2121,7 +2121,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
 
   if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Correlated<Utility::LogLogCosLog<true> > >(
         coupled_distribution,
         cutoff_cross_section,
         total_cross_section,
@@ -2943,7 +2943,7 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasti
 
     if ( d_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LogLogCosLog<false> > >(
             cutoff_endl_distribution,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),

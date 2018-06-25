@@ -191,7 +191,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
   double cutoff_angle_cosine = 0.9;
   double evaluation_tol = 1e-15;
 
-  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::Correlated<Utility::LogLogCosLog> >(
+  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::Correlated<Utility::LogLogCosLog<false> > >(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -214,7 +214,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
   energy = 1e-3;
   cross_section = reaction->getCrossSection( energy );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.6718090775218392e+06, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.6718090775280627e+06, 1e-12 );
 
   energy = 20.0;
   cross_section = reaction->getCrossSection( energy );

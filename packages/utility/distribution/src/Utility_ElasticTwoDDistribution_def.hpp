@@ -747,7 +747,8 @@ template<typename TwoDGridPolicy,
          typename DependentUnit>
 bool UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::isSecondIndepVarCompatibleWithCosineProcessingType() const
 {
-  if( boost::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,LogCosIndepVarProcessingTag>::value ||
+  if( boost::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,LogCosIndepVarProcessingTag<true> >::value ||
+      boost::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,LogCosIndepVarProcessingTag<false> >::value ||
       boost::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,LinIndepVarProcessingTag>::value )
     return true;
   else

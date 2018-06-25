@@ -23,6 +23,7 @@
 // FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_DynamicOutputFormatter.hpp"
+#include "Utility_InterpolationPolicy.hpp"
 #include "Utility_CoupledElasticDistribution.hpp"
 #include "Utility_ElasticTwoDDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
@@ -93,7 +94,7 @@ void initialize( std::shared_ptr<BaseTabDistribution>& tab_dist,
   Utility::setQuantity( primary_bins[1], 2.0 );
   secondary_dists[1].reset( new Utility::UnitAwareCoupledElasticDistribution<Utility::LinLin,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>( bin_boundaries, values, moliere_eta, cutoff_ratio ) );
 
-  tab_dist.reset( new Utility::UnitAwareElasticTwoDDistribution<TwoDGridPolicy<Utility::LogLogCosLog>,typename BaseTabDistribution::PrimaryIndepUnit,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>(
+  tab_dist.reset( new Utility::UnitAwareElasticTwoDDistribution<TwoDGridPolicy<Utility::LogLogCosLog<true> >,typename BaseTabDistribution::PrimaryIndepUnit,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>(
       primary_bins, secondary_dists, cutoff, 1e-3, 1e-7 ) );
 
   dist = tab_dist;
@@ -217,7 +218,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 
   // Beyond the second bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   TEST_EQUALITY_CONST( distribution->getLowerBoundOfConditionalIndepVar( 3.0 ),
                        -1.0 );
 
@@ -263,7 +264,7 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 
   // Beyond the second bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 3.0*MeV ),
                        -1.0*cgs::dimensionless() );
 
@@ -280,10 +281,10 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( distribution->getUpperBoundOfConditionalIndepVar( 0.0 ),
                        0.0 );
-  
+
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   TEST_EQUALITY_CONST( distribution->getUpperBoundOfConditionalIndepVar( 0.0 ),
                        1.0 );
 
@@ -326,10 +327,10 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 0.0*MeV ),
                        0.0*cgs::dimensionless() );
-  
+
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 0.0*MeV ),
                        1.0*cgs::dimensionless() );
 
@@ -385,7 +386,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
     distribution_data[1].first = 2.0;
     distribution_data[1].second = distribution_data[0].second;
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::UnitBase<Utility::LogLogCosLog> >(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::UnitBase<Utility::LogLogCosLog<true> > >(
                                                          distribution_data ) );
   }
 
@@ -404,7 +405,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
     distribution_data[1].first = 3.0;
     distribution_data[1].second = distribution_data[0].second;
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::UnitBase<Utility::LogLogCosLog> >(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::UnitBase<Utility::LogLogCosLog<true> > >(
                                                          distribution_data ) );
   }
 
@@ -598,7 +599,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, evaluate_direct )
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 0.0, -1.0 ), 0.09, 1e-15 );
   TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, 0.0 ), 0.45 );
   TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, 0.999999 ), 0.9 );
@@ -748,7 +749,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, evaluate_correlated )
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 0.0, -1.0 ), 0.09, 1e-15 );
   TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, 0.0 ), 0.45 );
   TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, 0.999999 ), 0.9 );
@@ -899,7 +900,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0 ),
                           8.57143469388192414e-02,
                           1e-15 );
@@ -1096,7 +1097,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0 ),
                           8.57143469388192414e-02,
                           1e-15 );
@@ -1295,7 +1296,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0 ),
                           8.57143469388192414e-02,
                           1e-15 );
@@ -1494,7 +1495,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, -1.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.0 ),
                           2.57143040816457724151e-01,
@@ -1633,7 +1634,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, -1.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.0 ),
                           2.57143040816457724151e-01,
@@ -1772,7 +1773,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, -1.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.0 ),
                           2.57143040816457724151e-01,
@@ -1916,7 +1917,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   fake_stream[3] = 1.0-1e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   double sample = distribution->sampleSecondaryConditional( 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
@@ -2079,7 +2080,7 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   fake_stream[3] = 1.0-1e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   quantity<cgs::dimensionless> sample =
                 unit_aware_distribution->sampleSecondaryConditional( 0.0*MeV );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
@@ -4472,7 +4473,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   fake_stream[3] = 1.0-1e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   double sample = distribution->sampleSecondaryConditional( 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
@@ -4635,7 +4636,7 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   fake_stream[3] = 1.0-1e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   quantity<cgs::dimensionless> sample =
                 unit_aware_distribution->sampleSecondaryConditional( 0.0*MeV );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
@@ -5542,7 +5543,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.0;
   fake_stream[1] = 2.57143040816457724151e-01;

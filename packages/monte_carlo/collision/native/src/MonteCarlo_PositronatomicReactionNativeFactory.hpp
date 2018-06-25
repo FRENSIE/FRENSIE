@@ -52,7 +52,7 @@ public:
   using ThisType = PositronatomicReactionNativeFactory;
 
   //! Create an coupled elastic scattering positron-atomic reaction
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog<true> > >
   static void createCoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -62,7 +62,7 @@ public:
     const double evaluation_tol );
 
   //! Create a hybrid elastic scattering positron-atomic reaction
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog<false> > >
   static void createHybridElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -72,7 +72,7 @@ public:
     const double evaluation_tol );
 
   //! Create a decoupled elastic scattering positron-atomic reaction
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog<false> > >
   static void createDecoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -81,7 +81,7 @@ public:
     const double evaluation_tol );
 
   //! Create an cutoff elastic scattering positron-atomic reaction
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog<false> > >
   static void createCutoffElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -98,7 +98,7 @@ public:
     std::shared_ptr<PositronatomicReaction>& elastic_reaction );
 
   //! Create the moment preserving elastic scattering positron-atomic reaction
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog<false> > >
   static void createMomentPreservingElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,

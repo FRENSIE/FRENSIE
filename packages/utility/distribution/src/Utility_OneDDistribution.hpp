@@ -138,7 +138,11 @@ protected:
 
   //! Test if the independent variable is compatible with LogCos processing
   virtual bool isIndepVarCompatibleWithProcessingType(
-                                      const LogCosIndepVarProcessingTag ) const;
+                                      const LogCosIndepVarProcessingTag<false> ) const;
+
+  //! Test if the independent variable is compatible with LogCos processing
+  virtual bool isIndepVarCompatibleWithProcessingType(
+                                      const LogCosIndepVarProcessingTag<true> ) const;
 
   //! Test if the dependent variable is compatible with Lin processing
   virtual bool isDepVarCompatibleWithProcessingType(
@@ -150,7 +154,11 @@ protected:
 
   //! Test if the dependent variable is compatible with LogCos processing
   virtual bool isDepVarCompatibleWithProcessingType(
-                                        const LogCosDepVarProcessingTag ) const;
+                                        const LogCosDepVarProcessingTag<false> ) const;
+
+  //! Test if the dependent variable is compatible with LogCos processing
+  virtual bool isDepVarCompatibleWithProcessingType(
+                                        const LogCosDepVarProcessingTag<true> ) const;
 };
 
 // Test if the distribution is tabular
@@ -229,10 +237,22 @@ inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isIndepVar
  */
 template<typename IndependentUnit, typename DependentUnit>
 inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
-                                    const LogCosIndepVarProcessingTag ) const
+                                    const LogCosIndepVarProcessingTag<false> ) const
 {
-  return LogLogCos::isIndepVarInValidRange( this->getLowerBoundOfIndepVar() ) &&
-         LogLogCos::isIndepVarInValidRange( this->getUpperBoundOfIndepVar() );
+  return LogLogCos<false>::isIndepVarInValidRange( this->getLowerBoundOfIndepVar() ) &&
+         LogLogCos<false>::isIndepVarInValidRange( this->getUpperBoundOfIndepVar() );
+}
+
+// Test if the independent variable is compatible with LogCos processing
+/*! \details It may be necessary to override this default behavior
+ * (e.g. Utility::TabularDistribution).
+ */
+template<typename IndependentUnit, typename DependentUnit>
+inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
+                                    const LogCosIndepVarProcessingTag<true> ) const
+{
+  return LogLogCos<true>::isIndepVarInValidRange( this->getLowerBoundOfIndepVar() ) &&
+         LogLogCos<true>::isIndepVarInValidRange( this->getUpperBoundOfIndepVar() );
 }
 
 // Test if the dependent variable is compatible with Lin processing
@@ -264,7 +284,19 @@ inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isDepVarCo
  */
 template<typename IndependentUnit, typename DependentUnit>
 inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isDepVarCompatibleWithProcessingType(
-                                        const LogCosDepVarProcessingTag ) const
+                                        const LogCosDepVarProcessingTag<false> ) const
+{
+  return false;
+}
+
+// Test if the dependent variable is compatible with LogCos processing
+/*! \details It is assumed that the dependent variable will never be a cosine.
+ * It may be necessary to override this default behavior
+ * (e.g. Utility::TabularDistribution).
+ */
+template<typename IndependentUnit, typename DependentUnit>
+inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isDepVarCompatibleWithProcessingType(
+                                        const LogCosDepVarProcessingTag<true> ) const
 {
   return false;
 }

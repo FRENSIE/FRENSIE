@@ -97,7 +97,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
                                      scattering_angle_cosine );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999513901149217e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999513901893400e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 12.45, 1e-12 );
 }
 

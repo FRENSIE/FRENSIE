@@ -29,8 +29,10 @@ EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LinLog,void
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LogLin,void,void> );
 
 // Explicit cosine instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LogLogCos,void,void> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LinLogCos,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LogLogCos<false>,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LinLogCos<false>,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LogLogCos<true>,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LinLogCos<true>,void,void> );
 
 // Default constructor
 template<typename InterpolationPolicy,

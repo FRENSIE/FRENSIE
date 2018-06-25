@@ -42,7 +42,7 @@ public:
 //----------------------------------------------------------------------------//
 
   //! Create the coupled elastic distribution ( combined Cutoff and Screened Rutherford )
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog<true> > >
   static void createCoupledElasticDistribution(
     std::shared_ptr<const CoupledElasticElectronScatteringDistribution>&
         coupled_elastic_distribution,
@@ -51,7 +51,7 @@ public:
     const double evaluation_tol );
 
   //! Create the coupled elastic distribution ( combined Cutoff and Screened Rutherford )
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog<true> > >
   static void createCoupledElasticDistribution(
     std::shared_ptr<const CoupledElasticElectronScatteringDistribution>&
         coupled_elastic_distribution,
@@ -63,7 +63,7 @@ public:
     const double evaluation_tol );
 
   //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog<true> > >
   static void createHybridElasticDistribution(
     std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
         hybrid_elastic_distribution,
@@ -75,7 +75,7 @@ public:
     const double evaluation_tol );
 
   //! Create a cutoff elastic distribution
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog<false> > >
   static void createCutoffElasticDistribution(
     std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
@@ -84,7 +84,7 @@ public:
     const double evaluation_tol );
 
   //! Create a moment preserving elastic distribution
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog<false> > >
   static void createMomentPreservingElasticDistribution(
     std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         moment_preserving_elastic_distribution,
@@ -93,7 +93,7 @@ public:
     const double evaluation_tol );
 
   //! Calculate the moment preserving cross sections
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog<false> > >
   static void calculateMomentPreservingCrossSections(
     std::vector<double>& cross_sections,
     unsigned& threshold_energy_index,
@@ -106,7 +106,7 @@ public:
 //----------------------------------------------------------------------------//
 
   //! Create the coupled elastic distribution ( combined Cutoff and Screened Rutherford )
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog<true> > >
   static void createCoupledElasticDistribution(
     std::shared_ptr<const CoupledElasticElectronScatteringDistribution>&
         coupled_elastic_distribution,
@@ -118,7 +118,7 @@ public:
     const double evaluation_tol );
 
   //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog<true> > >
   static void createHybridElasticDistribution(
     std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
         hybrid_elastic_distribution,
@@ -130,7 +130,7 @@ public:
     const double evaluation_tol );
 
   //! Create a cutoff elastic distribution
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog<false> > >
   static void createCutoffElasticDistribution(
     std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
@@ -139,7 +139,7 @@ public:
     const double evaluation_tol );
 
   //! Create a moment preserving elastic distribution
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog<false> > >
   static void createMomentPreservingElasticDistribution(
     std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         moment_preserving_elastic_distribution,
@@ -148,7 +148,7 @@ public:
     const double evaluation_tol );
 
   //! Calculate the moment preserving cross sections
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog<false> > >
   static void calculateMomentPreservingCrossSections(
     std::vector<double>& cross_sections,
     unsigned& threshold_energy_index,
@@ -161,7 +161,7 @@ public:
 //----------------------------------------------------------------------------//
 
   //! Create the coupled elastic distribution ( combined Cutoff and Screened Rutherford )
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog<true> > >
   static void createCoupledElasticDistribution(
     std::shared_ptr<const CoupledElasticElectronScatteringDistribution>&
         coupled_elastic_distribution,
@@ -176,7 +176,7 @@ public:
     const double evaluation_tol );
 
   //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog<true> > >
   static void createHybridElasticDistribution(
     std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
         hybrid_elastic_distribution,
@@ -192,7 +192,7 @@ public:
     const double evaluation_tol );
 
   //! Create a cutoff elastic distribution
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog<false> > >
   static void createCutoffElasticDistribution(
     std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
@@ -209,7 +209,7 @@ public:
     const unsigned atomic_number );
 
   //! Create a moment preserving elastic distribution
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog<false> > >
   static void createMomentPreservingElasticDistribution(
     std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         moment_preserving_elastic_distribution,
@@ -233,7 +233,7 @@ public:
     const double evaluation_tol );
 
   //! Return angle cosine grid with the evaluated pdf for the given energy and cutoff angle
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy>
   static void getAngularGridAndPDF(
     std::vector<double>& angular_grid,
     std::vector<double>& evaluated_pdf,
@@ -268,7 +268,7 @@ public:
     const double cutoff_angle_cosine );
 
   //! Create the coupled elastic scattering function
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog<true> > >
   static void createCoupledScatteringFunction(
     const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
     const std::shared_ptr<const ElasticTraits>& elastic_traits,
@@ -279,7 +279,7 @@ public:
     const double evaluation_tol );
 
   //! Create the cutoff elastic scattering function
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy>
   static void createScatteringFunction(
     const std::map<double,std::vector<double> >& angles,
     const std::map<double,std::vector<double> >& pdf,
@@ -290,7 +290,7 @@ public:
     const bool discrete_function = false );
 
   //! Create the hybrid elastic scattering function
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog<true> > >
   static void createHybridScatteringFunction(
     const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,

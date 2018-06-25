@@ -14,8 +14,8 @@ namespace Utility{
 // Explicit instantiation
 EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareCoupledElasticDistribution<LinLin,void,void> );
 EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareCoupledElasticDistribution<LogLin,void,void> );
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareCoupledElasticDistribution<LinLogCos,void,void> );
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareCoupledElasticDistribution<LogLogCos,void,void> );
+EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareCoupledElasticDistribution<LinLogCos<true>,void,void> );
+EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareCoupledElasticDistribution<LogLogCos<true>,void,void> );
 
 } // end Utility namespace
 

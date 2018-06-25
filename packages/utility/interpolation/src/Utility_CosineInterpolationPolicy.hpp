@@ -17,10 +17,92 @@
 namespace Utility{
 
 //! The log independent variable processing tag
+template<bool use_nudge = false>
 struct LogCosIndepVarProcessingTag{};
 
 //! The log dependent variable processing tag
+template<bool use_nudge = false>
 struct LogCosDepVarProcessingTag{};
+
+//! Helper struct for turning the cosine interp nudge factor on/off
+template<bool use_nudge>
+struct CosNudgeHelper
+{
+  static constexpr double nudge_factor = 1e-10;
+
+  //! Convert from cosine variable
+  /*! \details This function converts from cosine (mu) to the delta cosine
+  * (1 - mu) + nudge.
+  */
+  template<typename T>
+  static inline T convertFromCosineVar( const T cosine_var )
+  {
+    return (QuantityTraits<T>::one() - cosine_var) + QuantityTraits<T>::one()*nudge_factor;
+  }
+
+  //! Convert to cosine variable
+  /*! \details This function converts from the delta cosine (1 - mu) + nudge
+  *  back to cosine (mu).
+  */
+  template<typename T>
+  static inline T convertToCosineVar( const T delta_cosine )
+  {
+    return (QuantityTraits<T>::one()*nudge_factor - delta_cosine) + QuantityTraits<T>::one();
+  }
+};
+
+template<>
+struct CosNudgeHelper<true>
+{
+  static constexpr double nudge_factor = 1e-10;
+
+  //! Convert from cosine variable
+  /*! \details This function converts from cosine (mu) to the delta cosine
+  * (1 - mu) + nudge.
+  */
+  template<typename T>
+  static inline T convertFromCosineVar( const T cosine_var )
+  {
+    return (QuantityTraits<T>::one() - cosine_var) + QuantityTraits<T>::one()*1e-10;
+  }
+
+  // Convert to cosine variable
+  /*! \details This function converts from the delta cosine (1 - mu) + nudge
+  *  back to cosine (mu).
+  */
+  template<typename T>
+  static inline T convertToCosineVar( const T delta_cosine )
+  {
+    return (QuantityTraits<T>::one()*1e-10 - delta_cosine) + QuantityTraits<T>::one();
+  }
+
+};
+
+template<>
+struct CosNudgeHelper<false>
+{
+  static constexpr double nudge_factor = 0.0;
+
+  //! Convert from cosine variable
+  /*! \details This function converts from cosine (mu) to the delta cosine
+  * (1 - mu).
+  */
+  template<typename T>
+  static inline T convertFromCosineVar( const T cosine_var )
+  {
+    return QuantityTraits<T>::one() - cosine_var;
+  }
+
+  // Convert to cosine variable
+  /*! \details This function converts from the delta cosine (1 - mu)
+  *  back to cosine (mu).
+  */
+  template<typename T>
+  static inline T convertToCosineVar( const T delta_cosine )
+  {
+    return QuantityTraits<T>::one() - delta_cosine;
+  }
+};
 
 /*! \brief Policy struct for interpolating data tables that require logcos-log
  * interpolation between evaluated points.
@@ -32,26 +114,27 @@ struct LogCosDepVarProcessingTag{};
  * returned.
  * \ingroup policies
  */
-struct LogCosLog : public InterpolationHelper<LogCosLog>
+template<bool use_nudge = false>
+struct LogCosLog : public InterpolationHelper<LogCosLog<use_nudge> >
 {
   //! Independent variable processing tag
   typedef LogIndepVarProcessingTag IndepVarProcessingTag;
 
   //! Dependent variable processing tag
-  typedef LogCosDepVarProcessingTag DepVarProcessingTag;
+  typedef LogCosDepVarProcessingTag<use_nudge> DepVarProcessingTag;
 
   //! Get the interpolation type
   static InterpolationType getInterpolationType();
 
   //! Force base class template methods to be visible
-  using InterpolationHelper<LogCosLog>::interpolate;
-  using InterpolationHelper<LogCosLog>::interpolateAndProcess;
-  using InterpolationHelper<LogCosLog>::calculateUnitBaseIndepVar;
-  using InterpolationHelper<LogCosLog>::calculateUnitBaseIndepVarProcessed;
-  using InterpolationHelper<LogCosLog>::calculateIndepVar;
-  using InterpolationHelper<LogCosLog>::calculateProcessedIndepVar;
-  using InterpolationHelper<LogCosLog>::convertFromCosineVar;
-  using InterpolationHelper<LogCosLog>::convertToCosineVar;
+  using InterpolationHelper<LogCosLog<use_nudge> >::interpolate;
+  using InterpolationHelper<LogCosLog<use_nudge> >::interpolateAndProcess;
+  using InterpolationHelper<LogCosLog<use_nudge> >::calculateUnitBaseIndepVar;
+  using InterpolationHelper<LogCosLog<use_nudge> >::calculateUnitBaseIndepVarProcessed;
+  using InterpolationHelper<LogCosLog<use_nudge> >::calculateIndepVar;
+  using InterpolationHelper<LogCosLog<use_nudge> >::calculateProcessedIndepVar;
+  // using InterpolationHelper<LogCosLog<use_nudge> >::convertFromCosineVar;
+  // using InterpolationHelper<LogCosLog<use_nudge> >::convertToCosineVar;
 
   //! Interpolate between two points
   template<typename IndepType, typename DepCosineType>
@@ -104,6 +187,9 @@ struct LogCosLog : public InterpolationHelper<LogCosLog>
 
   //! The name of the policy
   static const std::string name();
+
+  //! Return if the cosine nudge factor is on
+  static const bool isCosineNudgeOn();
 };
 
 /*! \brief Policy struct for interpolating data tables that require log-log
@@ -117,10 +203,11 @@ struct LogCosLog : public InterpolationHelper<LogCosLog>
  * independent and dependent grids are inverted to maintain an ascending order.
  * \ingroup policies
  */
-struct LogLogCos : public InterpolationHelper<LogLogCos>
+template<bool use_nudge = false>
+struct LogLogCos : public InterpolationHelper<LogLogCos<use_nudge> >
 {
   //! Independent variable processing tag
-  typedef LogCosIndepVarProcessingTag IndepVarProcessingTag;
+  typedef LogCosIndepVarProcessingTag<use_nudge> IndepVarProcessingTag;
 
   //! Dependent variable processing tag
   typedef LogDepVarProcessingTag DepVarProcessingTag;
@@ -129,14 +216,14 @@ struct LogLogCos : public InterpolationHelper<LogLogCos>
   static InterpolationType getInterpolationType();
 
   //! Force base class template methods to be visible
-  using InterpolationHelper<LogLogCos>::interpolate;
-  using InterpolationHelper<LogLogCos>::interpolateAndProcess;
-  using InterpolationHelper<LogLogCos>::calculateUnitBaseIndepVar;
-  using InterpolationHelper<LogLogCos>::calculateUnitBaseIndepVarProcessed;
-  using InterpolationHelper<LogLogCos>::calculateIndepVar;
-  using InterpolationHelper<LogLogCos>::calculateProcessedIndepVar;
-  using InterpolationHelper<LogLogCos>::convertFromCosineVar;
-  using InterpolationHelper<LogLogCos>::convertToCosineVar;
+  using InterpolationHelper<LogLogCos<use_nudge> >::interpolate;
+  using InterpolationHelper<LogLogCos<use_nudge> >::interpolateAndProcess;
+  using InterpolationHelper<LogLogCos<use_nudge> >::calculateUnitBaseIndepVar;
+  using InterpolationHelper<LogLogCos<use_nudge> >::calculateUnitBaseIndepVarProcessed;
+  using InterpolationHelper<LogLogCos<use_nudge> >::calculateIndepVar;
+  using InterpolationHelper<LogLogCos<use_nudge> >::calculateProcessedIndepVar;
+  // using InterpolationHelper<LogLogCos<use_nudge> >::convertFromCosineVar;
+  // using InterpolationHelper<LogLogCos<use_nudge> >::convertToCosineVar;
 
   //! Interpolate between two points
   template<typename IndepCosineType, typename DepType>
@@ -189,6 +276,9 @@ struct LogLogCos : public InterpolationHelper<LogLogCos>
 
   //! The name of the policy
   static const std::string name();
+
+  //! Return if the cosine nudge factor is on
+  static const bool isCosineNudgeOn();
 };
 
 /*! \brief Policy struct for interpolating data tables that require logcos-lin
@@ -201,26 +291,27 @@ struct LogLogCos : public InterpolationHelper<LogLogCos>
  * returned.
  * \ingroup policies
  */
-struct LogCosLin : public InterpolationHelper<LogCosLin>
+template<bool use_nudge = false>
+struct LogCosLin : public InterpolationHelper<LogCosLin<use_nudge> >
 {
   //! Independent variable processing tag
   typedef LinIndepVarProcessingTag IndepVarProcessingTag;
 
   //! Dependent variable processing tag
-  typedef LogCosDepVarProcessingTag DepVarProcessingTag;
+  typedef LogCosDepVarProcessingTag<use_nudge> DepVarProcessingTag;
 
   //! Get the interpolation type
   static InterpolationType getInterpolationType();
 
   //! Force base class template methods to be visible
-  using InterpolationHelper<LogCosLin>::interpolate;
-  using InterpolationHelper<LogCosLin>::interpolateAndProcess;
-  using InterpolationHelper<LogCosLin>::calculateUnitBaseIndepVar;
-  using InterpolationHelper<LogCosLin>::calculateUnitBaseIndepVarProcessed;
-  using InterpolationHelper<LogCosLin>::calculateIndepVar;
-  using InterpolationHelper<LogCosLin>::calculateProcessedIndepVar;
-  using InterpolationHelper<LogCosLin>::convertFromCosineVar;
-  using InterpolationHelper<LogCosLin>::convertToCosineVar;
+  using InterpolationHelper<LogCosLin<use_nudge> >::interpolate;
+  using InterpolationHelper<LogCosLin<use_nudge> >::interpolateAndProcess;
+  using InterpolationHelper<LogCosLin<use_nudge> >::calculateUnitBaseIndepVar;
+  using InterpolationHelper<LogCosLin<use_nudge> >::calculateUnitBaseIndepVarProcessed;
+  using InterpolationHelper<LogCosLin<use_nudge> >::calculateIndepVar;
+  using InterpolationHelper<LogCosLin<use_nudge> >::calculateProcessedIndepVar;
+  // using InterpolationHelper<LogCosLin<use_nudge> >::convertFromCosineVar;
+  // using InterpolationHelper<LogCosLin<use_nudge> >::convertToCosineVar;
 
   //! Interpolate between two points
   template<typename IndepType, typename DepCosineType>
@@ -273,6 +364,9 @@ struct LogCosLin : public InterpolationHelper<LogCosLin>
 
   //! The name of the policy
   static const std::string name();
+
+  //! Return if the cosine nudge factor is on
+  static const bool isCosineNudgeOn();
 };
 
 /*! \brief Policy struct for interpolating data tables that require lin-logcos
@@ -286,10 +380,11 @@ struct LogCosLin : public InterpolationHelper<LogCosLin>
  * independent and dependent grids are inverted to maintain an ascending order.
  * \ingroup policies
  */
-struct LinLogCos : public InterpolationHelper<LinLogCos>
+template<bool use_nudge = false>
+struct LinLogCos : public InterpolationHelper<LinLogCos<use_nudge> >
 {
   //! Independent variable processing tag
-  typedef LogCosIndepVarProcessingTag IndepVarProcessingTag;
+  typedef LogCosIndepVarProcessingTag<use_nudge> IndepVarProcessingTag;
 
   //! Dependent variable processing tag
   typedef LinDepVarProcessingTag DepVarProcessingTag;
@@ -298,14 +393,14 @@ struct LinLogCos : public InterpolationHelper<LinLogCos>
   static InterpolationType getInterpolationType();
 
   //! Force base class template methods to be visible
-  using InterpolationHelper<LinLogCos>::interpolate;
-  using InterpolationHelper<LinLogCos>::interpolateAndProcess;
-  using InterpolationHelper<LinLogCos>::calculateUnitBaseIndepVar;
-  using InterpolationHelper<LinLogCos>::calculateUnitBaseIndepVarProcessed;
-  using InterpolationHelper<LinLogCos>::calculateIndepVar;
-  using InterpolationHelper<LinLogCos>::calculateProcessedIndepVar;
-  using InterpolationHelper<LinLogCos>::convertFromCosineVar;
-  using InterpolationHelper<LinLogCos>::convertToCosineVar;
+  using InterpolationHelper<LinLogCos<use_nudge> >::interpolate;
+  using InterpolationHelper<LinLogCos<use_nudge> >::interpolateAndProcess;
+  using InterpolationHelper<LinLogCos<use_nudge> >::calculateUnitBaseIndepVar;
+  using InterpolationHelper<LinLogCos<use_nudge> >::calculateUnitBaseIndepVarProcessed;
+  using InterpolationHelper<LinLogCos<use_nudge> >::calculateIndepVar;
+  using InterpolationHelper<LinLogCos<use_nudge> >::calculateProcessedIndepVar;
+  // using InterpolationHelper<LinLogCos<use_nudge> >::convertFromCosineVar;
+  // using InterpolationHelper<LinLogCos<use_nudge> >::convertToCosineVar;
 
   //! Interpolate between two points
   template<typename IndepCosineType, typename DepType>
@@ -358,38 +453,73 @@ struct LinLogCos : public InterpolationHelper<LinLogCos>
 
   //! The name of the policy
   static const std::string name();
+
+  //! Return if the cosine nudge factor is on
+  static const bool isCosineNudgeOn();
 };
 
 //! Helper class used to invert the cosine interpolation policy (LogCos-Log)
 template<>
-struct InverseInterpPolicy<LogCosLog>
+struct InverseInterpPolicy<LogCosLog<false> >
 {
   //! The inverse cosine interpolation policy
-  typedef LogLogCos InterpPolicy;
+  typedef LogLogCos<false> InterpPolicy;
+};
+
+//! Helper class used to invert the cosine interpolation policy (LogCos-Log)
+template<>
+struct InverseInterpPolicy<LogCosLog<true> >
+{
+  //! The inverse cosine interpolation policy
+  typedef LogLogCos<true> InterpPolicy;
 };
 
 //! Helper class used to invert the cosine interpolation policy (Log-LogCos)
 template<>
-struct InverseInterpPolicy<LogLogCos>
+struct InverseInterpPolicy<LogLogCos<false> >
 {
   //! The inverse cosine interpolation policy
-  typedef LogCosLog InterpPolicy;
+  typedef LogCosLog<false> InterpPolicy;
+};
+
+//! Helper class used to invert the cosine interpolation policy (Log-LogCos)
+template<>
+struct InverseInterpPolicy<LogLogCos<true> >
+{
+  //! The inverse cosine interpolation policy
+  typedef LogCosLog<true> InterpPolicy;
 };
 
 //! Helper class used to invert the cosine interpolation policy (LogCos-Lin)
 template<>
-struct InverseInterpPolicy<LogCosLin>
+struct InverseInterpPolicy<LogCosLin<false> >
 {
   //! The inverse cosine interpolation policy
-  typedef LinLogCos InterpPolicy;
+  typedef LinLogCos<false> InterpPolicy;
+};
+
+//! Helper class used to invert the cosine interpolation policy (LogCos-Lin)
+template<>
+struct InverseInterpPolicy<LogCosLin<true> >
+{
+  //! The inverse cosine interpolation policy
+  typedef LinLogCos<true> InterpPolicy;
 };
 
 //! Helper class used to invert the cosine interpolation policy (Lin-LogCos)
 template<>
-struct InverseInterpPolicy<LinLogCos>
+struct InverseInterpPolicy<LinLogCos<false> >
 {
   //! The inverse cosine interpolation policy
-  typedef LogCosLin InterpPolicy;
+  typedef LogCosLin<false> InterpPolicy;
+};
+
+//! Helper class used to invert the cosine interpolation policy (Lin-LogCos)
+template<>
+struct InverseInterpPolicy<LinLogCos<true> >
+{
+  //! The inverse cosine interpolation policy
+  typedef LogCosLin<true> InterpPolicy;
 };
 
 } // end Utility namespace
