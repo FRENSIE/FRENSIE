@@ -1,1 +1,9 @@
- 
+FRENSIE_INITIALIZE_PACKAGE_TESTS(utility_mesh)
+
+FRENSIE_ADD_TEST_EXECUTABLE(TetrahedronHelpers DEPENDS tstTetrahedronHelpers.cpp)
+FRENSIE_ADD_TEST(TetrahedronHelpers)
+
+FRENSIE_ADD_TEST_EXECUTABLE(StructuredHexMesh DEPENDS tstStructuredHexMesh.cpp)
+FRENSIE_ADD_TEST(StructuredHexMesh)
+
+FRENSIE_FINALIZE_PACKAGE_TESTS(utility_mesh)

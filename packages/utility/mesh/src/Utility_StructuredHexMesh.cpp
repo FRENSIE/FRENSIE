@@ -170,6 +170,8 @@ void StructuredHexMesh::computeTrackLengths(
                const double end_point[3],
                ElementHandleTrackLengthArray& hex_element_track_lengths ) const
 {
+  hex_element_track_lengths.clear();
+  
   if( !(start_point[X_DIMENSION] == end_point[X_DIMENSION] &&
         start_point[Y_DIMENSION] == end_point[Y_DIMENSION] &&
         start_point[Z_DIMENSION] == end_point[Z_DIMENSION]) )
@@ -179,11 +181,8 @@ void StructuredHexMesh::computeTrackLengths(
                          end_point[Y_DIMENSION] - start_point[Y_DIMENSION],
                          end_point[Z_DIMENSION] - start_point[Z_DIMENSION]};
 
-    Utility::normalizeVector( direction );
-                     
-    double track_length = Utility::vectorMagnitude( direction[X_DIMENSION],
-                                                    direction[Y_DIMENSION],
-                                                    direction[Z_DIMENSION] );
+    double track_length =
+      Utility::normalizeVectorAndReturnMagnitude( direction );
 
     double current_point[3] { start_point[X_DIMENSION], 
                               start_point[Y_DIMENSION], 
@@ -355,7 +354,7 @@ StructuredHexMesh::doesRayIntersectMesh(
     for( size_t i = 0; i < bounding_plane_distance_set.size(); ++i )
     {
       // If the distance is greater than the track length, skip it
-      if( bounding_plane_distance_set[i].second > track_length )
+      if( bounding_plane_distance_set[i].second >= track_length )
         continue;
       
       double new_point[3] { point[X_DIMENSION],
@@ -415,7 +414,7 @@ void StructuredHexMesh::traceThroughMesh(
     double partial_track_length;
     
     // Check if track length is exhausted
-    if( track_length <= iteration_distance + intersection_distance.second - s_tol )
+    if( track_length <= iteration_distance + intersection_distance.second )
     {
       partial_track_length = track_length - iteration_distance;
       continue_tracing = false;

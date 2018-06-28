@@ -113,6 +113,9 @@ public:
   void exportData( const std::string& output_file_name,
                    const TagNameSet& tag_root_names,
                    const MeshElementHandleDataMap& mesh_tag_data ) const final override;
+
+  //! Export the mesh to a file
+  using Mesh::exportData;
   
 private:
 

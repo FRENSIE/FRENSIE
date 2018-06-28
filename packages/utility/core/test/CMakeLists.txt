@@ -446,9 +446,6 @@ FRENSIE_ADD_TEST(GaussLegendreQuadratureSet)
 FRENSIE_ADD_TEST_EXECUTABLE(SloanRadauQuadrature DEPENDS tstSloanRadauQuadrature.cpp)
 FRENSIE_ADD_TEST(SloanRadauQuadrature)
 
-FRENSIE_ADD_TEST_EXECUTABLE(TetrahedronHelpers DEPENDS tstTetrahedronHelpers.cpp)
-FRENSIE_ADD_TEST(TetrahedronHelpers)
-
 FRENSIE_ADD_TEST_EXECUTABLE(SampleMoment DEPENDS tstSampleMoment.cpp)
 FRENSIE_ADD_TEST(SampleMoment)
 
@@ -460,9 +457,6 @@ FRENSIE_ADD_TEST(Measurement)
 
 FRENSIE_ADD_TEST_EXECUTABLE(PropertyTree DEPENDS tstPropertyTree.cpp)
 FRENSIE_ADD_TEST(PropertyTree)
-
-FRENSIE_ADD_TEST_EXECUTABLE(StructuredHexMesh DEPENDS tstStructuredHexMesh.cpp)
-FRENSIE_ADD_TEST(StructuredHexMesh)
 
 FRENSIE_FINALIZE_PACKAGE_TESTS(utility_core)
 

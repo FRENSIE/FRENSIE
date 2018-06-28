@@ -18,6 +18,7 @@
 
 // Std Lib Includes
 #include "Utility_Vector.hpp"
+#include "Utility_Array.hpp"
 #include "Utility_Map.hpp"
 #include "Utility_Set.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
@@ -51,7 +52,8 @@ public:
   typedef std::unordered_map<ElementHandle,std::map<std::string,std::vector<std::pair<std::string,double> > > > MeshElementHandleDataMap;
 
   //! Constructor
-  Mesh();
+  Mesh()
+  { /* ... */ }
 
   //! Destructor
   virtual ~Mesh()
@@ -85,6 +87,9 @@ public:
   virtual void exportData( const std::string& output_file_name,
                            const TagNameSet& tag_root_names,
                            const MeshElementHandleDataMap& mesh_tag_data ) const = 0;
+
+  //! Export the mesh to a file
+  void exportData( const std::string& output_file_name ) const;
 
 protected:
 

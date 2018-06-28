@@ -161,12 +161,8 @@ private:
   std::unique_ptr<moab::AdaptiveKDTree> d_kd_tree;
 
   // The map of tet ids and barycentric coordinate transform matrices
-  std::unordered_map<ElementHandle,moab::Matrix3>
-  d_tet_barycentric_transform_matrices;
-
-  // The map of tet ids and reference vertices
-  std::unordered_map<ElementHandle,moab::CartVect>
-  d_tet_reference_vertices;
+  std::unordered_map<ElementHandle,std::pair<std::array<double,9>,std::array<double,3> > >
+  d_tet_barycentric_data;
 
   // The tet element handles
   std::vector<ElementHandle> d_tets;
@@ -180,40 +176,6 @@ const double TetMeshImpl::s_tol = 1e-6;
 
 BOOST_CLASS_VERSION( Utility::TetMeshImpl, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( TetMeshImpl, Utility );
-
-namespace boost{
-
-namespace serialization{
-
-#ifdef HAVE_FRENSIE_MOAB
-  
-//! Serialize a moab::CartVect
-template<typename Archive>
-void serialize( Archive& ar,
-                moab::CartVect& cart_vect,
-                const unsigned version )
-{
-  ar & boost::serialization::make_nvp( "x", cart_vect[0] );
-  ar & boost::serialization::make_nvp( "y", cart_vect[1] );
-  ar & boost::serialization::make_nvp( "z", cart_vect[2] );
-}
-
-//! Serialize a moab::Matrix3
-template<typename Archive>
-void serialize( Archive& ar,
-                moab::Matrix3& matrix,
-                const unsigned version )
-{
-  ar & boost::serialization::make_nvp( "row_1", boost::serialization::make_array( matrix[0], 3 ) );
-  ar & boost::serialization::make_nvp( "row_2", boost::serialization::make_array( matrix[1], 3 ) );
-  ar & boost::serialization::make_nvp( "row_3", boost::serialization::make_array( matrix[2], 3 ) );
-}
-  
-#endif // end HAVE_FRENSIE_MOAB
-  
-} // end serialization namespace
-
-} // end boost namespace
 
 namespace Utility{
 
@@ -253,8 +215,7 @@ TetMeshImpl::TetMeshImpl( const std::string& input_mesh_file_name,
     d_tet_meshset(),
     d_kd_tree_root(),
     d_kd_tree( new moab::AdaptiveKDTree( d_moab_interface.get() ) ),
-    d_tet_barycentric_transform_matrices(),
-    d_tet_reference_vertices(),
+    d_tet_barycentric_data(),
     d_tets()
 #endif // end HAVE_FRENSIE_MOAB
 {
@@ -292,28 +253,27 @@ TetMeshImpl::TetMeshImpl( const std::string& input_mesh_file_name,
                           "A tet was found with an invalid number of vertices "
                           "(" << vertex_handles.size() << " != 4)" );
 
-      moab::CartVect vertices[4];
+      std::array<double,3> vertices[4];
 
       for( size_t i = 0; i < vertex_handles.size(); ++i )
       {
         d_moab_interface->get_coords( &vertex_handles[i],
                                       1,
-                                      vertices[i].array() );
+                                      vertices[i].data() );
       }
 
       // Calculate barycentric matrix
-      moab::Matrix3& barycentric_transform_matrix =
-        d_tet_barycentric_transform_matrices[tet_handle];
-
+      std::pair<std::array<double,9>,std::array<double,3> >&
+        tet_barycentric_data = d_tet_barycentric_data[tet_handle];
       Utility::calculateBarycentricTransformMatrix(
-                                                vertices[0],
-						vertices[1],
-						vertices[2],
-						vertices[3],
-                                                barycentric_transform_matrix );
+                                           vertices[0].data(),
+                                           vertices[1].data(),
+                                           vertices[2].data(),
+                                           vertices[3].data(),
+                                           tet_barycentric_data.first.data() );
 
       // Assign reference vertices (always the fourth vertex)
-      d_tet_reference_vertices[tet_handle] = vertices[3];
+      tet_barycentric_data.second = vertices[3];
     }
   }
 
@@ -509,21 +469,21 @@ void TetMeshImpl::getElementVolumes( ElementHandleVolumeMap& tet_volumes ) const
     
     d_moab_interface->get_connectivity( &tet_handle, 1, vertex_handles );
 
-    moab::CartVect vertices[4];
+    std::array<double,3> vertices[4];
 
-    for( unsigned j = 0; j != vertex_handles.size(); ++j )
+    for( unsigned i = 0; i != vertex_handles.size(); ++i )
     {
-      d_moab_interface->get_coords( &vertex_handles[j],
+      d_moab_interface->get_coords( &vertex_handles[i],
 				    1,
-				    vertices[j].array() );
+				    vertices[i].data() );
     }
 
     // Calculate the volume
     tet_volumes[element_handle] =
-      Utility::calculateTetrahedronVolume( vertices[0],
-                                           vertices[1],
-                                           vertices[2],
-                                           vertices[3] );
+      Utility::calculateTetrahedronVolume( vertices[0].data(),
+                                           vertices[1].data(),
+                                           vertices[2].data(),
+                                           vertices[3].data() );
   }
 #endif // end HAVE_FRENSIE_MOAB
 }
@@ -585,11 +545,13 @@ bool TetMeshImpl::isPointInMesh( const double point[3] ) const
          tet_handle_it != tets_in_leaf.end();
          ++tet_handle_it )
     {
-      if( Utility::isPointInTet(
-           point,
-           d_tet_reference_vertices.find( *tet_handle_it )->second,
-	   d_tet_barycentric_transform_matrices.find( *tet_handle_it )->second,
-           s_tol ) )
+      const std::pair<std::array<double,9>,std::array<double,3> >&
+        tet_barycentric_data = d_tet_barycentric_data.find( *tet_handle_it )->second;
+      
+      if( Utility::isPointInTet( point,
+                                 tet_barycentric_data.second.data(),
+                                 tet_barycentric_data.first.data(),
+                                 s_tol ) )
       {
         return true;
       }
@@ -653,11 +615,13 @@ auto TetMeshImpl::whichElementIsPointIn( const double point[3] ) const -> Elemen
        tet_handle_it != tets_in_leaf.end();
        ++tet_handle_it )
   {
-    if( Utility::isPointInTet(
-           point,
-           d_tet_reference_vertices.find( *tet_handle_it )->second,
-           d_tet_barycentric_transform_matrices.find( *tet_handle_it )->second,
-           s_tol ) )
+    const std::pair<std::array<double,9>,std::array<double,3> >&
+      tet_barycentric_data = d_tet_barycentric_data.find( *tet_handle_it )->second;
+    
+    if( Utility::isPointInTet( point,
+                               tet_barycentric_data.second.data(),
+                               tet_barycentric_data.first.data(),
+                               s_tol ) )
     {
       element_handle = *tet_handle_it;
 
@@ -874,8 +838,7 @@ void TetMeshImpl::save( Archive& ar, const unsigned version ) const
 #ifdef HAVE_FRENSIE_MOAB
   ar & BOOST_SERIALIZATION_NVP( d_mesh_input_file );
   ar & BOOST_SERIALIZATION_NVP( d_display_warnings );
-  ar & BOOST_SERIALIZATION_NVP( d_tet_barycentric_transform_matrices );
-  ar & BOOST_SERIALIZATION_NVP( d_tet_reference_vertices );
+  ar & BOOST_SERIALIZATION_NVP( d_tet_barycentric_data );
   ar & BOOST_SERIALIZATION_NVP( d_tets );
 #endif // end HAVE_FRENSIE_MOAB
 }
@@ -898,8 +861,7 @@ void TetMeshImpl::load( Archive& ar, const unsigned version )
 #ifdef HAVE_FRENSIE_MOAB
   ar & BOOST_SERIALIZATION_NVP( d_mesh_input_file );
   ar & BOOST_SERIALIZATION_NVP( d_display_warnings );
-  ar & BOOST_SERIALIZATION_NVP( d_tet_barycentric_transform_matrices );
-  ar & BOOST_SERIALIZATION_NVP( d_tet_reference_vertices );
+  ar & BOOST_SERIALIZATION_NVP( d_tet_barycentric_data );
   ar & BOOST_SERIALIZATION_NVP( d_tets );
 
   // Reconstruct the tet meshset

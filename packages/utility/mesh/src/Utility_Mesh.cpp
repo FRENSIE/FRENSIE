@@ -32,7 +32,15 @@
 
 namespace Utility{
 
-//! Default implementation of export method
+// Export the mesh to a file
+void Mesh::exportData( const std::string& output_file_name ) const
+{
+  this->exportData( output_file_name,
+                    TagNameSet(),
+                    MeshElementHandleDataMap() );
+}
+
+// Default implementation of export method
 void Mesh::exportDataImpl( const std::string& output_file_name,
                            const TagNameSet& tag_root_names,
                            const MeshElementHandleDataMap& mesh_tag_data,
@@ -96,7 +104,7 @@ void Mesh::exportDataImpl( const std::string& output_file_name,
         for( size_t i = 0; i < tag_data.second.size(); ++i )
         {
           const std::string tag_name =
-            tag_name_prefix + "_" + tag_data.first;
+            tag_name_prefix + "_" + tag_data.second[i].first;
 
           return_value = moab_interface->tag_get_handle(
                                        tag_name.c_str(),
@@ -113,7 +121,7 @@ void Mesh::exportDataImpl( const std::string& output_file_name,
                                                tag[i],
                                                &mesh_element_handle,
                                                1,
-                                               &tag_data.second );
+                                               &tag_data.second[i].second );
 
           TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                               Utility::MOABException,
