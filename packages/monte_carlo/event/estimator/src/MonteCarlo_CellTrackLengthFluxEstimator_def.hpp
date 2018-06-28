@@ -19,17 +19,18 @@
 
 namespace MonteCarlo{
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CellTrackLengthFluxEstimator<WeightMultiplier> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CellTrackLengthFluxEstimator<WeightAndEnergyMultiplier> );
-
+// Default constructor
+template<typename ContributionMultiplierPolicy>
+CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::CellTrackLengthFluxEstimator()
+{ /* ... */ }
+  
 // Constructor
 template<typename ContributionMultiplierPolicy>
 CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::CellTrackLengthFluxEstimator(
                                const Estimator::idType id,
                                const double multiplier,
-                               const STLCompliantArrayA<cellIdType>& cell_ids,
-	                       const STLCompliantArrayB<double>& cell_volumes )
+                               const std::vector<cellIdType>& cell_ids,
+	                       const std::vector<double>& cell_volumes )
   : StandardCellEstimator( id, multiplier, cell_ids, cell_volumes ),
     ParticleSubtrackEndingInCellEventObserver()
 { /* ... */ }
@@ -41,37 +42,54 @@ void CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromParti
                                              const cellIdType cell_of_subtrack,
                                              const double track_length )
 {
+  // Make sure that the particle type is assigned to this estimator
+  testPrecondition( this->isParticleTypeAssigned( particle.getParticleType() ) );
   // Make sure the cell is assigned to this estimator
   testPrecondition( this->isEntityAssigned( cell_of_subtrack ) );
   
-  if( this->isParticleTypeAssigned( particle.getParticleType() ) )
-  {
-    const double contribution = track_length*
-      ContributionMultiplierPolicy::multiplier( particle );
+  const double contribution = track_length*
+    ContributionMultiplierPolicy::multiplier( particle );
 
-    EstimatorParticleStateWrapper particle_state_wrapper( particle );
-    particle_state_wrapper.calculateStateTimesUsingParticleTimeAsEndTime( track_length );
+  EstimatorParticleStateWrapper particle_state_wrapper( particle );
+  particle_state_wrapper.calculateStateTimesUsingParticleTimeAsEndTime( track_length );
 
-    this->addPartialHistoryRangeContribution<OBSERVER_TIME_DIMENSION>(
-                                                        cell_of_subtrack,
-                                                        particle_state_wrapper,
-                                                        contribution);
-  }
+  this->addPartialHistoryRangeContribution( cell_of_subtrack,
+                                            particle_state_wrapper,
+                                            contribution );
 }
 
 // Print the estimator data
 template<typename ContributionMultiplierPolicy>
 void CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::printSummary( std::ostream& os ) const
 {
-  os << "Cell Track Length Flux Estimator: " << this->getId() << std::endl;
+  os << "Cell Track Length Flux Estimator: " << this->getId() << "\n";
 
   this->printImplementation( os, "Cell" );
+
+  os << std::flush;
 }
 
-// Set the response functions
+// Assign discretization to an estimator dimension
 template<typename ContributionMultiplierPolicy>
-void CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::setResponseFunctions(
-                  const Estimator::ResponseFunctionPointer& response_function )
+void CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignDiscretization(
+  const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins,
+  const bool )
+{
+  if( bins->getDimension() == OBSERVER_TIME_DIMENSION )
+    EstimatorBaseType::assignDiscretization( bins, true );
+  else
+    EstimatorBaseType::assignDiscretization( bins, false );
+}
+
+// Assign the response functions
+/*! \details This method does a very crude check that the response function
+ * is spatially uniform (see the MonteCarlo::ParticleResponse::isSpatiallyUniform
+ * details for the limitations of this method). If time bins have been set, the
+ * response function must also be uniform over all of the specified time bins. 
+ */
+template<typename ContributionMultiplierPolicy>
+void CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignResponseFunction(
+             const std::shared_ptr<const ParticleResponse>& response_function )
 {
   if( !response_function->isSpatiallyUniform() )
   {
@@ -87,6 +105,15 @@ void CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::setResponseFunc
 }
 
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightMultipliedCellTrackLengthFluxEstimator, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndEnergyMultipliedCellTrackLengthFluxEstimator, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
+
 
 #endif // end MONTE_CARLO_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_DEF_HPP
 

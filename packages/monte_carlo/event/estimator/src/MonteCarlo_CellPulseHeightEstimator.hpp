@@ -100,7 +100,7 @@ private:
                              const bool range_dimension ) final override;
 
   // Assign response function to the estimator
-  void assignResponseFunction( const std::shared_ptr<const Response>& response_function ) final override;
+  void assignResponseFunction( const std::shared_ptr<const ParticleResponse>& response_function ) final override;
 
   // Assign the particle type to the estimator
   void assignParticleType( const ParticleType particle_type ) final override;

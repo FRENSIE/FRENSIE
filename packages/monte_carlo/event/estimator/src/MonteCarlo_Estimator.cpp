@@ -38,14 +38,16 @@ Estimator::Estimator( const ParticleHistoryObserver::idType id,
                       const double multiplier )
   : d_id( id ),
     d_multiplier( multiplier ),
+    d_particle_types(),
+    d_response_functions( 1 ),
+    d_phase_space_discretization(),
     d_has_uncommitted_history_contribution( 1, false ),
-    d_response_functions( 1 )
 {
   // Make sure the multiplier is valid
   testPrecondition( multiplier > 0.0 );
 
   // Set the response function
-  d_response_functions[0] = ResponseFunction::default_response_function;
+  d_response_functions[0] = ParticleResponse::getDefault();
 }
 
 // Return the estimator id
@@ -86,7 +88,7 @@ size_t Estimator::getNumberOfBins() const
  * response functions).
  */
 void Estimator::setResponseFunction(
-                     const std::shared_ptr<const Response>& response_function )
+             const std::shared_ptr<const ParticleResponse>& response_function )
 {
   // Make sure that the response function pointer is valid
   testPrecondition( response_function.get() );
@@ -101,7 +103,8 @@ void Estimator::setResponseFunction(
  * response functions).
  */
 void Estimator::setResponseFunctions(
-     const std::vector<std::shared_ptr<const Response> >& response_functions );
+                   const std::vector<std::shared_ptr<const ParticleResponse> >&
+                   response_functions );
 {
   // Make sure that there is at least one response function
   testPrecondition( response_functions.size() > 0 );
@@ -412,7 +415,7 @@ void Estimator::assignDiscretization(
  * properties need to be checked before the assignment takes place.
  */
 void Estimator::assignResponseFunction(
-                     const std::shared_ptr<const Response>& response_function )
+             const std::shared_ptr<const ParticleResponse>& response_function )
 {
   // Make sure only the master thread calls this function
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
@@ -882,7 +885,7 @@ void Estimator::printEstimatorTotalData(
   
 } // end MonteCarlo namespace
 
-EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::Estimator );
+EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::Estimator );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_Estimator.cpp

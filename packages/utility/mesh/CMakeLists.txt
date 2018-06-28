@@ -1,4 +1,4 @@
-# Set up the grid subpackage directory hierarchy
+# Set up the mesh subpackage directory hierarchy
 ADD_SUBDIRECTORY(src)
 INCLUDE_DIRECTORIES(src)
 

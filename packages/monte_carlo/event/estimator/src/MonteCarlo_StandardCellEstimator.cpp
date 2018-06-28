@@ -6,31 +6,56 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Boost Includes
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_StandardCellEstimator.hpp"
-#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_LoggingMacros.hpp"
 
 namespace MonteCarlo{
 
+// Default constructor
+StandardCellEstimator::StandardCellEstimator()
+{ /* ... */ }
+  
+// Constructor
+StandardCellEstimator::StandardCellEstimator(
+                const Estimator::idType id,
+                const double multiplier,
+                const std::vector<StandardCellEstimator::CellIdType>& cell_ids,
+                const std::vector<double>& cell_volumes )
+  : BaseEstimatorType(id, multiplier, cell_ids, cell_volumes)
+{ /* ... */ }
+  
 // Assign discretization to an estimator dimension
 /*! \details The MonteCarlo::OBSERVER_COSINE_DIMENSION cannot be discretized in
  * standard cell estimators.
  */
 void StandardCellEstimator::assignDiscretization(
-                        const Estimator::DimensionDiscretizationPointer& bins )
+  const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins,
+  const bool range_dimension )
 {
   if( bins->getDimension() == OBSERVER_COSINE_DIMENSION )
   {
     FRENSIE_LOG_TAGGED_WARNING( "Estimator",
-                                bin_boundaries->getDimensionName() <<
+                                bins->getDimensionName() <<
                                 " bins cannot be set for standard cell "
                                 "estimators. The bins requested for standard "
                                 "cell estimator " << this->getId() <<
                                 " will be ignored!" );
   }
   else
-    BaseEstimatorType::assignDiscretization( bin_boundaries );
+    BaseEstimatorType::assignDiscretization( bins, range_dimension );
 }
 
 // Assign the particle type to the estimator
@@ -55,6 +80,8 @@ void StandardCellEstimator::assignParticleType(
 }
 
 } // end MonteCarlo namespace
+
+EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::StandardCellEstimator );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardCellEstimator.cpp

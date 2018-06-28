@@ -21,6 +21,51 @@
  * so these macros will be turned off when SWIG is processing files.
  */
 
+#if !defined SWIG
+
+/*! Declare an external explicit instantiation of template class 
+ * \details This can only be called once for a given instantiation. It is
+ * therefor recommneded that it is called in the header file.
+ * \ingroup explicit_instantiation_macros
+ */
+#define EXTERN_EXPLICIT_TEMPLATE_CLASS_INST_ALWAYS( ... )       \
+  extern template class __VA_ARGS__
+
+/*! Declare an external explicit instantiation of a template function
+ * \details This can only be called once for a given instantiation. It is
+ * therefor recommended that it is called in the header file. Note that
+ * both stand-alone functions and member functions can be passed to this macro.
+ * \ingroup explicit_instantiation_macros
+ */
+#define EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST_ALWAYS( ... )    \
+  extern template __VA_ARGS__
+
+/*! Declare an explicit instantiation of a template class
+ * \details When paired with the corresponding extern declaration this macro
+ * can only be called in a single compilation unit (e.g. a single .cpp file).
+ * Otherwise this macro can be called in the header file as well.
+ * \ingroup explicit_instantiation_macros
+ */
+#define EXPLICIT_TEMPLATE_CLASS_INST_ALWAYS( ... )       \
+  template class __VA_ARGS__
+
+/*! Declare an explicit instantiation of a template function
+ * \details When paired with the corresponding extern declaration this macro
+ * can only be called in a single compilation unit (e.g. a single .cpp file).
+ * Otherwise this macro can be called in the header file as well. Note that
+ * both stand-alone functions and member functions can be passed to this macro.
+ * \ingroup explicit_instantiation_macros
+ */
+#define EXPLICIT_TEMPLATE_FUNCTION_INST_ALWAYS( ... ) \
+  template __VA_ARGS__
+
+#else
+
+#define EXTERN_EXPLICIT_TEMPLATE_CLASS_INST_ALWAYS( ... )
+#define EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST_ALWAYS( ... )
+#define EXPLICIT_TEMPLATE_CLASS_INST_ALWAYS( ... )
+#define EXPLICIT_TEMPLATE_FUNCTION_INST_ALWAYS( ... )
+
 #if HAVE_FRENSIE_ENABLE_EXPLICIT_TEMPLATE_INSTANTIATION && !defined SWIG
 
 /*! Declare an external explicit instantiation of template class

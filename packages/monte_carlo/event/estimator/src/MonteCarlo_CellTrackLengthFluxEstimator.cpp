@@ -6,15 +6,28 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Boost Includes
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_CellTrackLengthFluxEstimator.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 
-namespace MonteCarlo{
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightMultipliedCellTrackLengthFluxEstimator );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> );
+EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> );
 
-EXPLICIT_TEMPLATE_CLASS_INST( CellTrackLengthFluxEstimator<WeightMultiplier> );
-EXPLICIT_TEMPLATE_CLASS_INST( CellTrackLengthFluxEstimator<WeightAndEnergyMultiplier> );
-  
-} // end MonteCarlo namespace
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightAndEnergyMultipliedCellTrackLengthFluxEstimator );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
+EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CellTrackLengthFluxEstimator.cpp

@@ -16,10 +16,11 @@
 
 namespace MonteCarlo{
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SurfaceFluxEstimator<WeightMultiplier> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SurfaceFluxEstimator<WeightAndEnergyMultiplier> );
-
+// Default constructor
+template<typename ContributionMultiplierPolicy>
+SurfaceFluxEstimator<ContributionMultiplierPolicy>::SurfaceFluxEstimator()
+{ /* ... */ }
+  
 // Constructor
 template<typename ContributionMultiplierPolicy>
 SurfaceFluxEstimator<ContributionMultiplierPolicy>::SurfaceFluxEstimator(
@@ -45,34 +46,33 @@ void SurfaceFluxEstimator<ContributionMultiplierPolicy>::updateFromParticleCross
                                           const surfaceIdType surface_crossing,
                                           const double angle_cosine )
 {
-  // Make sure the surface is assigned to this estimator
+  // Make sure that the particle type is assigned to this estimator
+  testPrecondition( this->isParticleTypeAssigned( particle.getParticleType() ) );
+  // Make sure that the surface is assigned to this estimator
   testPrecondition( this->isEntityAssigned( surface_crossing ) );
-  // Make sure the angle cosine is valid
+  // Make sure that the angle cosine is valid
   testPrecondition( angle_cosine <= 1.0 );
   testPrecondition( angle_cosine >= -1.0 );
 
-  if( this->isParticleTypeAssigned( particle.getParticleType() ) )
-  {
-    double contribution;
+  double contribution;
 
-    double abs_angle_cosine = std::fabs( angle_cosine );
+  const double abs_angle_cosine = std::fabs( angle_cosine );
 
-    // If the angle cosine is very close to zero, set it to eps/2 to
-    // prevent large contributions to the estimator
-    if( abs_angle_cosine > d_cosine_cutoff )
-      contribution = 1.0/abs_angle_cosine;
-    else
-      contribution = 2.0/d_cosine_cutoff;
+  // If the angle cosine is very close to zero, set it to eps/2 to
+  // prevent large contributions to the estimator
+  if( abs_angle_cosine > d_cosine_cutoff )
+    contribution = 1.0/abs_angle_cosine;
+  else
+    contribution = 2.0/d_cosine_cutoff;
 
-    contribution *= ContributionMultiplierPolicy::multiplier( particle );
+  contribution *= ContributionMultiplierPolicy::multiplier( particle );
 
-    EstimatorParticleStateWrapper particle_state_wrapper( particle );
-    particle_state_wrapper.setAngleCosine( angle_cosine );
-
-    this->addPartialHistoryPointContribution( surface_crossing,
-                                              particle_state_wrapper,
-                                              contribution );
-  }
+  EstimatorParticleStateWrapper particle_state_wrapper( particle );
+  particle_state_wrapper.setAngleCosine( angle_cosine );
+  
+  this->addPartialHistoryPointContribution( surface_crossing,
+                                            particle_state_wrapper,
+                                            contribution );
 }
 
 // Print the estimator data
@@ -80,12 +80,23 @@ template<typename ContributionMultiplierPolicy>
 void SurfaceFluxEstimator<ContributionMultiplierPolicy>::printSummary(
                                                        std::ostream& os ) const
 {
-  os << "Surface Flux Estimator: " << this->getId() << std::endl;
+  os << "Surface Flux Estimator: " << this->getId() << "\n"
 
   this->printImplementation( os, "Surface" );
+
+  os << std::flush;
 }
 
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightMultipliedSurfaceFluxEstimator, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightMultiplier> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightMultiplier> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndEnergyMultipliedSurfaceFluxEstimator, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
+
 
 #endif // end MONTE_CARLO_SURFACE_FLUX_ESTIMATOR_DEF_HPP
 

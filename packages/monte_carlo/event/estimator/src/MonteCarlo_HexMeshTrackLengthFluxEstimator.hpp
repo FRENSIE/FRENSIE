@@ -12,6 +12,7 @@
 // Std Lib Includes
 #include <string>
 #include <memory>
+#include <functional>
 
 // Boost Includes
 #include <boost/mpl/vector.hpp>
@@ -39,6 +40,11 @@ template<typename ContributionMultiplierPolicy = WeightMultiplier>
 class HexMeshTrackLengthFluxEstimator : public StandardEntityEstimator<Utility::StructuredHexMesh::HexIndex>,
                                         public ParticleSubtrackEndingGlobalEventObserver
 {
+  // Typedef for base estimator type
+  typedef StandardEntityEstimator<Utility::StructuredHexMesh::HexIndex> BaseEstimatorType
+
+  // Typedef for entity norm constants map
+  typedef typename BaseEstimatorType::EntityNormConstMap EntityNormConstMap;
 
 public:
 
@@ -90,11 +96,39 @@ public:
   //! Determine which hex the point is in
   moab::EntityHandle whichHexIsPointIn( const double point[3] );
 
+protected:
+
+
+
 private:
 
-  // Assign bin boundaries to an estimator dimension
-  void assignBinBoundaries(
-	const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries );
+  // Default constructor
+  HexMeshTrackLengthFluxEstimator();
+
+  // Add current history estimator contribution
+  void updateFromGlobalParticleSubtrackEndingEventNoTimeBinsImpl(
+						 const ParticleState& particle,
+						 const double start_point[3],
+						 const double end_point[3] );
+
+  // Add current history estimator contribution
+  void updateFromGlobalParticleSubtrackEndingEventTimeBinsImpl(
+						 const ParticleState& particle,
+						 const double start_point[3],
+						 const double end_point[3] );
+
+  // Assign discretization to an estimator dimension
+  void assignDiscretization( const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins,
+                             const bool range_dimension ) final override;
+
+  // Assign the particle type to the estimator
+  void assignParticleType( const ParticleType particle_type ) final override;
+
+  // Assign response function to the estimator
+  void assignResponseFunction( const std::shared_ptr<const ParticleResponse>& response_function ) final override;
+
+  // Export the estimator data and mesh as a vtk file
+  void exportAsVtk();
 
   // The output mesh file name
   std::string d_output_mesh_file_name;
@@ -102,6 +136,9 @@ private:
   // hex mesh object
   std::shared_ptr<Utility::StructuredHexMesh> d_hex_mesh;
 
+  // The update function
+  typedef std::function<void(const Particle&,const double[3],const double[3])> UpdateFunction;
+  UpdateFunction d_update_method;
 };
 
 } // end MonteCarlo namespace

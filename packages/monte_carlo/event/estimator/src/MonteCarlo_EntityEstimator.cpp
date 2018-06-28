@@ -25,6 +25,9 @@ namespace MonteCarlo{
 
 EXPLICIT_TEMPLATE_CLASS_INST( EntityEstimator<Geometry::Model::InternalCellHandle> );
 EXPLICIT_MONTE_CARLO_CLASS_SERIALIZATION_INST( MonteCarlo::EntityEstimator<Geometry::Model::InternalCellHandle> );
+
+EXPLICIT_TEMPLATE_CLASS_INST( EntityEstimator<size_t> );
+EXPLICIT_MONTE_CARLO_CLASS_SERIALIZATION_INST( MonteCarlo::EntityEstimator<size_t> );
   
 EXPLICIT_TEMPLATE_CLASS_INST( EntityEstimator<moab::EntityHandle> );
 EXPLICIT_MONTE_CARLO_CLASS_SERIALIZATION_INST( MonteCarlo::EntityEstimator<moab::EntityHandle> );

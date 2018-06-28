@@ -6,32 +6,53 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Boost Includes
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_StandardSurfaceEstimator.hpp"
-#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_LoggingMacros.hpp"
 
 namespace MonteCarlo{
 
-// Export the estimator data
-void StandardSurfaceEstimator::exportData(
-                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
-                    const bool process_data ) const
-{
-  // Export the lower level data first
-  BaseEstimatorType::exportData( hdf5_file, process_data );
+// Default constructor
+StandardSurfaceEstimator::StandardSurfaceEstimator()
+{ /* ... */ }
 
-  // Open the estimator hdf5 file
-  EstimatorHDF5FileHandler estimator_hdf5_file( hdf5_file );
+// Constructor (for flux estimators)
+StandardSurfaceEstimator::StandardSurfaceEstimator(
+                          const Estimator::idType id,
+                          const double multiplier,
+                          const std::vector<surfaceIdType>& surface_ids,
+                          const std::vector<double>& surface_areas )
+  : StandardEntityEstimator<surfaceIdType>( id,
+					    multiplier,
+					    surface_ids,
+					    surface_areas ),
+    ParticleCrossingSurfaceEventObserver()
+{ /* ... */ }
 
-  // Set the estimator as a surface estimator
-  estimator_hdf5_file.setSurfaceEstimator( this->getId() );
-}
+// Constructor (for non-flux estimators)
+StandardSurfaceEstimator::StandardSurfaceEstimator(
+                          const Estimator::idType id,
+                          const double multiplier,
+                          const std::vector<surfaceIdType>& surface_ids )
+  : StandardEntityEstimator<surfaceIdType>( id, multiplier, surface_ids ),
+    ParticleCrossingSurfaceEventObserver()
+{ /* ... */ }
 
 // Assign the particle type to the estimator
-/*! \details Photons, electrons and neutrons (or their adjoint
- * couterparts) can contribute to the estimator. Combinations are not
- * allowed.
+/*! \details All particle types can contribute to the estimator. Combinations
+ are not allowed.
  */
 void StandardSurfaceEstimator::assignParticleType(
                                             const ParticleType& particle_type )
@@ -51,6 +72,8 @@ void StandardSurfaceEstimator::assignParticleType(
 }
 
 } // end MonteCarlo namespace
+
+EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::StandardSurfaceEstimator );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardSurfaceEstimator.cpp

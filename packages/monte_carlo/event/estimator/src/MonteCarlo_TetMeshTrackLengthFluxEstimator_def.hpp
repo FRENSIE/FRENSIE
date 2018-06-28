@@ -23,10 +23,6 @@
 
 namespace MonteCarlo{
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TetMeshTrackLengthFluxEstimator<WeightMultiplier> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TetMeshTrackLengthFluxEstimator<WeightAndEnergyMultiplier> );
-
 // Initialize static member data
 template<typename ContributionMultiplierPolicy>
 const double
@@ -238,155 +234,153 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 						 const double start_point[3],
 						 const double end_point[3] )
 {
-  if( this->isParticleTypeAssigned( particle.getParticleType() ) )
-  {
-    // Calculate the track length
-    double track_length = sqrt(
+  // Make sure that the particle type is assigned
+  testPrecondition( this->isParticleTypeAssigned( particle.getParticleType() ) );
+
+  // Calculate the track length
+  double track_length = sqrt(
                 (end_point[0]-start_point[0])*(end_point[0]-start_point[0]) +
                 (end_point[1]-start_point[1])*(end_point[1]-start_point[1]) +
                 (end_point[2]-start_point[2])*(end_point[2]-start_point[2]) );
 
+  // Calculate the contribution multiplier
+  double contribution_mult =
+    ContributionMultiplierPolicy::multiplier( particle );
+
+  std::vector<double> ray_tet_intersections;
+  std::vector<moab::EntityHandle> tet_surface_triangles;
+
+  moab::ErrorCode return_value =
+    d_kd_tree->ray_intersect_triangles( d_kd_tree_root,
+                                        s_tol,
+                                        particle.getDirection(),
+                                        start_point,
+                                        tet_surface_triangles,
+                                        ray_tet_intersections,
+                                        0,
+                                        track_length );
+
+  // Clear the moab surface triangle entity handles - not used
+  tet_surface_triangles.clear();
+
+  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+                      Utility::MOABException,
+                      moab::ErrorCodeStr[return_value] );
+
+  if( ray_tet_intersections.size() > 0 )
+  {
+    // Sort all intersections of the ray with the tets
+    std::sort( ray_tet_intersections.begin(),
+               ray_tet_intersections.end() );
+    
+    // Calculate the tet intersection points and partial track lengths
+    std::vector<moab::CartVect> array_of_hit_points;
+
+    // Add the origin point
+    {
+      moab::CartVect start_point_cv( start_point[0],
+                                     start_point[1],
+                                     start_point[2] );
+
+      array_of_hit_points.push_back( start_point_cv );
+    }
+
+    for( unsigned i = 0; i < ray_tet_intersections.size(); ++i )
+    {
+      moab::CartVect hit_point;
+
+      hit_point[0] = particle.getXDirection() * ray_tet_intersections[i]
+        + start_point[0];
+      hit_point[1] = particle.getYDirection() * ray_tet_intersections[i]
+        + start_point[1];
+      hit_point[2] = particle.getZDirection() * ray_tet_intersections[i]
+        + start_point[2];
+
+      array_of_hit_points.push_back( hit_point );
+    }
+
+    // Add the end point
+    {
+      moab::CartVect end_point_cv(end_point[0], end_point[1], end_point[2]);
+      
+      array_of_hit_points.push_back( end_point_cv );
+      
+      ray_tet_intersections.push_back( track_length );
+    }
+    
     // Calculate the contribution multiplier
     double contribution_mult =
       ContributionMultiplierPolicy::multiplier( particle );
 
-    std::vector<double> ray_tet_intersections;
-    std::vector<moab::EntityHandle> tet_surface_triangles;
-
-    moab::ErrorCode return_value =
-       d_kd_tree->ray_intersect_triangles( d_kd_tree_root,
-                                           s_tol,
-                                           particle.getDirection(),
-                                           start_point,
-                                           tet_surface_triangles,
-                                           ray_tet_intersections,
-                                           0,
-                                           track_length );
-
-    // Clear the moab surface triangle entity handles - not used
-    tet_surface_triangles.clear();
-
-    TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
-			Utility::MOABException,
-			moab::ErrorCodeStr[return_value] );
-
-    if( ray_tet_intersections.size() > 0 )
+    // Compute and add the partial history contribution to appropriate tet
+    for( unsigned int i = 0; i < ray_tet_intersections.size(); ++i )
     {
-      // Sort all intersections of the ray with the tets
-      std::sort( ray_tet_intersections.begin(),
-		 ray_tet_intersections.end() );
+      moab::CartVect tet_centroid = ( (array_of_hit_points[i+1] +
+                                       array_of_hit_points[i])/2.0 );
 
-      // Calculate the tet intersection points and partial track lengths
-      std::vector<moab::CartVect> array_of_hit_points;
-
-      // Add the origin point
+      // Check that the centroid falls in the mesh - if the mesh
+      // is concave its possible that it falls outside
+      if( this->isPointInMesh( tet_centroid.array() ) )
       {
-	moab::CartVect start_point_cv( start_point[0],
-				       start_point[1],
-				       start_point[2] );
+        moab::EntityHandle tet = whichTetIsPointIn( tet_centroid.array() );
+        
+        // Make sure a tet was found (tolerance issues may prevent this)
+        if( tet == 0 )
+          continue;
 
-	array_of_hit_points.push_back( start_point_cv );
-      }
-
-      for( unsigned i = 0; i < ray_tet_intersections.size(); ++i )
-      {
-	moab::CartVect hit_point;
-
-	hit_point[0] = particle.getXDirection() * ray_tet_intersections[i]
-	  + start_point[0];
-	hit_point[1] = particle.getYDirection() * ray_tet_intersections[i]
-	  + start_point[1];
-	hit_point[2] = particle.getZDirection() * ray_tet_intersections[i]
-	  + start_point[2];
-
-	array_of_hit_points.push_back( hit_point );
-      }
-
-      // Add the end point
-      {
-	moab::CartVect end_point_cv(end_point[0], end_point[1], end_point[2]);
-
-	array_of_hit_points.push_back( end_point_cv );
-
-	ray_tet_intersections.push_back( track_length );
-      }
-
-      // Calculate the contribution multiplier
-      double contribution_mult =
-        ContributionMultiplierPolicy::multiplier( particle );
-
-      // Compute and add the partial history contribution to appropriate tet
-      for( unsigned int i = 0; i < ray_tet_intersections.size(); ++i )
-      {
-	moab::CartVect tet_centroid = ( (array_of_hit_points[i+1] +
-					 array_of_hit_points[i])/2.0 );
-
-	// Check that the centroid falls in the mesh - if the mesh
-	// is concave its possible that it falls outside
-	if( this->isPointInMesh( tet_centroid.array() ) )
+        double tet_track_length;
+        
+        if( i != 0)
 	{
-	  moab::EntityHandle tet = whichTetIsPointIn( tet_centroid.array() );
+          tet_track_length = ray_tet_intersections[i] -
+            ray_tet_intersections[i-1];
+        }
+        else
+          tet_track_length = ray_tet_intersections[i];
 
-	  // Make sure a tet was found (tolerance issues may prevent this)
-	  if( tet == 0 )
-	    continue;
-
-	  double tet_track_length;
-
-	  if( i != 0)
-	  {
-	    tet_track_length = ray_tet_intersections[i] -
-	      ray_tet_intersections[i-1];
-	  }
-	  else
-	    tet_track_length = ray_tet_intersections[i];
-
-	  // Handle the special case where the first point is on a mesh surface
-	  if( tet_track_length > 0.0 )
-	  {
-            EstimatorParticleStateWrapper particle_state_wrapper( particle );
-
-
-            double tet_contribution = tet_track_length*contribution_mult;
-
-	    // Add partial history contribution
-	    this->addPartialHistoryContribution( tet,
-                                                 particle_state_wrapper,
-                                                 tet_contribution );
-
-	  }
-	}
-      }
-    }
-    // Account for the cases where there are no intersections
-    else
-    {
-      double mid_point[3] = {(end_point[0]+start_point[0])/2,
-                             (end_point[1]+start_point[1])/2,
-                             (end_point[2]+start_point[2])/2};
-
-      // case 1: track is entirely in one tet
-      if( this->isPointInMesh( mid_point ) )
-      {
-	moab::EntityHandle tet = whichTetIsPointIn( mid_point );
-
-	// Add partial history contribution if tet was found (tolerance
-	// issues may prevent this)
-	if( tet != 0 )
-        {
+        // Handle the special case where the first point is on a mesh surface
+        if( tet_track_length > 0.0 )
+	{
           EstimatorParticleStateWrapper particle_state_wrapper( particle );
 
+          double tet_contribution = tet_track_length*contribution_mult;
 
-          double tet_contribution = track_length*contribution_mult;
-
-	  this->addPartialHistoryContribution( tet,
+          // Add partial history contribution
+          this->addPartialHistoryContribution( tet,
                                                particle_state_wrapper,
                                                tet_contribution );
 
         }
       }
-      // case 2: track entirely misses mesh - do nothing
     }
+  }
+  // Account for the cases where there are no intersections
+  else
+  {
+    double mid_point[3] = {(end_point[0]+start_point[0])/2,
+                           (end_point[1]+start_point[1])/2,
+                           (end_point[2]+start_point[2])/2};
+    
+    // case 1: track is entirely in one tet
+    if( this->isPointInMesh( mid_point ) )
+    {
+      moab::EntityHandle tet = whichTetIsPointIn( mid_point );
+      
+      // Add partial history contribution if tet was found (tolerance
+      // issues may prevent this)
+      if( tet != 0 )
+      {
+        EstimatorParticleStateWrapper particle_state_wrapper( particle );
+
+        double tet_contribution = track_length*contribution_mult;
+        
+        this->addPartialHistoryContribution( tet,
+                                             particle_state_wrapper,
+                                             tet_contribution );
+
+      }
+    }
+    // case 2: track entirely misses mesh - do nothing
   }
 }
 
@@ -664,6 +658,10 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignBinBou
 }
 
 } // end MonteCarlo namespace
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TetMeshTrackLengthFluxEstimator<WeightMultiplier> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TetMeshTrackLengthFluxEstimator<WeightAndEnergyMultiplier> );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_TetMeshTrackLengthFluxEstimator.hpp

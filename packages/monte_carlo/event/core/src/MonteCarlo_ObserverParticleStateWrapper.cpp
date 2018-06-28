@@ -76,6 +76,18 @@ void ObserverParticleStateWrapper::calculateStateTimesUsingParticleTimeAsEndTime
   d_state_start_time = d_state_end_time - track_length/d_particle->getSpeed();
 }
 
+// Set the state start time
+void ObserverParticleStateWrapper::setStartTime( const double time )
+{
+  d_state_start_time = time;
+}
+
+// Set the state end time
+void ObserverParticleStateWrapper::setEndTime( const double time )
+{
+  d_state_end_time = time;
+}
+
 // Get the state start time
 double ObserverParticleStateWrapper::getStartTime() const
 {
@@ -91,6 +103,9 @@ double ObserverParticleStateWrapper::getEndTime() const
 // Get the state time duration
 double ObserverParticleStateWrapper::getTimeDuration() const
 {
+  // Make sure that the duration is valid
+  testPrecondition( d_state_end_time <= d_state_end_time );
+  
   return d_state_end_time - d_state_start_time;
 }
 

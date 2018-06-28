@@ -63,6 +63,33 @@ public:
   virtual ~StandardEntityEstimator()
   { /* ... */ }
 
+  //! Check if total data is available
+  bool isTotalDataAvailable() const final override;
+
+  //! Get the total data first moments
+  Utility::ArrayView<const double> getTotalDataFirstMoments() const final override;
+
+  //! Get the total data second moments
+  Utility::ArrayView<const double> getTotalDataSecondMoments() const final override;
+
+  //! Get the total data third moments
+  Utility::ArrayView<const double> getTotalDataThirdMoments() const final override;
+
+  //! Get the total data fourth moments
+  Utility::ArrayView<const double> getTotalDataFourthMoments() const final override;
+
+  //! Get the total data first moments for an entity
+  Utility::ArrayView<const double> getEntityTotalDataFirstMoments( const size_t entity_id ) const final override;
+
+  //! Get the total data second moments for an entity
+  Utility::ArrayView<const double> getEntityTotalDataSecondMoments( const size_t entity_id ) const final override;
+
+  //! Get the total data third moments for an entity
+  Utility::ArrayView<const double> getEntityTotalDataThirdMoments( const size_t entity_id ) const final override;
+
+  //! Get the total data fourth moments for an entity
+  Utility::ArrayView<const double> getEntityTotalDataFourthMoments( const size_t entity_id ) const final override;
+
   //! Commit the contribution from the current history to the estimator
   void commitHistoryContribution() final override;
 
@@ -90,7 +117,7 @@ protected:
                        entity_norm_data ) override;
 
   //! Assign response function to the estimator
-  virtual void assignResponseFunction( const std::shared_ptr<const Response>& response_function );
+  void assignResponseFunction( const std::shared_ptr<const ParticleResponse>& response_function ) override;
 
   //! Print the estimator data
   void printImplementation( std::ostream& os,
@@ -104,7 +131,7 @@ protected:
                    const double contribution );
 
   //! Add estimator contribution from a range of the current history
-  void addParticleHistoryRangeContribution(
+  void addPartialHistoryRangeContribution(
                    const EntityId entity_id,
                    const EstimatorParticleStateWrapper& particle_state_wrapper,
                    const double contribution );
@@ -170,14 +197,14 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
-  // The entities/bins that have been updated
-  ParallelUpdateTracker d_update_tracker;
-
   // The total estimator moments across all entities and response functions
   Estimator::FourEstimatorMomentsCollection d_total_estimator_moments;
 
   // The total estimator moments for each entity and response functions
   EntityEstimatorMomentsCollectionMap d_entity_total_estimator_moments_map;
+
+  // The entities/bins that have been updated
+  ParallelUpdateTracker d_update_tracker;
 };
 
 } // end MonteCarlo namespace

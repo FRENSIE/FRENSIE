@@ -13,7 +13,6 @@
 #include <iostream>
 
 // FRENSIE Includes
-#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "Utility_OpenMPProperties.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_LoggingMacros.hpp"
@@ -38,19 +37,6 @@ CellPulseHeightEstimator<ContributionMultiplierPolicy>::CellPulseHeightEstimator
     d_update_tracker( 1 ),
     d_dimension_values( 1 )
 { /* ... */ }
-
-// Set the response functions
-template<typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<ContributionMultiplierPolicy>::setResponseFunctions(
-                      const std::vector<std::shared_ptr<ResponseFunction> >&
-                      response_functions )
-{
-  FRENSIE_LOG_TAGGED_WARNING( "Estimator",
-                              "Response functions cannot be set for pulse "
-                              "height estimators. The response functions "
-                              "requested for pulse height estimator "
-                              << this->getId() << " will be ignored!" );
-}
 
 // Add current history estimator contribution
 /*! \details It is unsafe to call this function directly! This function will
@@ -234,7 +220,7 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::assignDiscretizatio
 // Set the response functions
 template<typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<ContributionMultiplierPolicy>::assignResponseFunction(
-                     const std::shared_ptr<const Response>& response_function )
+             const std::shared_ptr<const ParticleResponse>& response_function )
 {
   FRENSIE_LOG_TAGGED_WARNING( "Estimator",
                               "response functions cannot be set for pulse "
@@ -361,7 +347,7 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::load( Archive& ar, 
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleEnteringCellEventObserver );
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleLeavingCellEventObserver );
 
-  // Initialize the local data
+  // Initialize the thread data
   d_update_tracker.resize( 1 );
   d_dimension_values.resize( 1 );
 }

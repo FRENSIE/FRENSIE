@@ -6,16 +6,28 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Boost Includes
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_SurfaceCurrentEstimator.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 
-namespace MonteCarlo{
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightMultipliedSurfaceCurrentEstimator );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightMultiplier> );
+EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightMultiplier> );
 
-// Explicit instantiation 
-EXPLICIT_TEMPLATE_CLASS_INST( SurfaceCurrentEstimator<WeightMultiplier> );
-EXPLICIT_TEMPLATE_CLASS_INST( SurfaceCurrentEstimator<WeightAndEnergyMultiplier> );
-  
-} // end MonteCarlo namespace
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightAndEnergyMultipliedSurfaceCurrentEstimator );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
+EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SurfaceCurrentEstimator.cpp

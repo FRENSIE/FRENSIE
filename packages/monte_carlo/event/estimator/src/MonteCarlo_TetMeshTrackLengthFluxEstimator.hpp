@@ -15,9 +15,6 @@
 
 // Boost Includes
 #include <boost/mpl/vector.hpp>
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
-#include <boost/scoped_ptr.hpp>
 
 // Moab Includes
 #include <moab/Interface.hpp>
@@ -28,8 +25,10 @@
 #include "MonteCarlo_StandardEntityEstimator.hpp"
 #include "MonteCarlo_ParticleSubtrackEndingGlobalEventObserver.hpp"
 #include "MonteCarlo_EstimatorContributionMultiplierPolicy.hpp"
-#include "Geometry_Model.hpp"
 #include "MonteCarlo_ParticleState.hpp"
+#include "Geometry_Model.hpp"
+#include "Utility_Map.hpp"
+#include "Utility_Set.hpp"
 
 namespace MonteCarlo{
 
@@ -102,16 +101,16 @@ private:
   static const double s_tol;
 
   // The moab instance that stores all mesh data
-  boost::scoped_ptr<moab::Interface> d_moab_interface;
+  std::unique_ptr<moab::Interface> d_moab_interface;
 
   // The tet meshset
   moab::EntityHandle d_tet_meshset;
 
-  // The kd-tree for finding point in tet
-  boost::scoped_ptr<moab::AdaptiveKDTree> d_kd_tree;
-
   // The root of the kd-tree
   moab::EntityHandle d_kd_tree_root;
+
+  // The kd-tree for finding point in tet
+  std::unique_ptr<moab::AdaptiveKDTree> d_kd_tree;
 
   // The map of tet ids and barycentric coordinate transform matrices
   boost::unordered_map<moab::EntityHandle,moab::Matrix3>

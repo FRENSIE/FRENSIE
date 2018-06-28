@@ -52,6 +52,12 @@ public:
   void calculateStateTimesUsingParticleTimeAsEndTime(
                                                    const double track_length );
 
+  //! Set the state start time
+  void setStartTime( const double time );
+
+  //! Set the state end time
+  void setEndTime( const double time ); 
+
   //! Get the state start time
   double getStartTime() const;
 

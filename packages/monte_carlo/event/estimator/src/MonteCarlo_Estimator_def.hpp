@@ -107,16 +107,37 @@ void Estimator::reduceCollectionAndReturnReducedMoments(
                            "order " << N << " for estimator " << d_id << "!" );
 }
 
-// Serialize the estimator
+// Save the data to an archive
 template<typename Archive>
-void Estimator::serialize( Archive& ar, const unsigned version )
+void Estimator::save( Archive& ar, const unsigned version ) const
 {
+  // Save the base class data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleHistoryObserver );
+
+  // Save the local data
   ar & BOOST_SERIALIZATION_NVP( d_id );
   ar & BOOST_SERIALIZATION_NVP( d_multiplier );
-  ar & BOOST_SERIALIZATION_NVP( d_has_uncommitted_history_contribution );
   ar & BOOST_SERIALIZATION_NVP( d_particle_types );
   ar & BOOST_SERIALIZATION_NVP( d_response_functions );
   ar & BOOST_SERIALIZATION_NVP( d_phase_space_discretization );
+}
+
+// Load the data from an archive
+template<typename Archive>
+void Estimator::load( Archive& ar, const unsigned version ) const
+{
+  // Load the base class data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleHistoryObserver );
+
+  // Load the local data
+  ar & BOOST_SERIALIZATION_NVP( d_id );
+  ar & BOOST_SERIALIZATION_NVP( d_multiplier );
+  ar & BOOST_SERIALIZATION_NVP( d_particle_types );
+  ar & BOOST_SERIALIZATION_NVP( d_response_functions );
+  ar & BOOST_SERIALIZATION_NVP( d_phase_space_discretization );
+
+  // Initialize the thread data
+  d_has_uncommitted_history_contribution.resize( 1, false );
 }
 
 } // end MonteCarlo namespace

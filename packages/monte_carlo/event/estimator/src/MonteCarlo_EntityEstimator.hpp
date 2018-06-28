@@ -96,7 +96,7 @@ protected:
                              const bool range_dimension ) override;
 
   //! Assign response function to the estimator
-  void assignResponseFunction( const std::shared_ptr<const Response>& response_function ) override;
+  void assignResponseFunction( const std::shared_ptr<const ParticleResponse>& response_function ) override;
 
   //! Commit history contribution to a bin of an entity
   void commitHistoryContributionToBinOfEntity( const EntityId& entity_id,

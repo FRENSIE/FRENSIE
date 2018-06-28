@@ -22,12 +22,12 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleType.hpp"
-#include "MonteCarlo_Response.hpp"
 #include "MonteCarlo_ObserverPhaseSpaceDimension.hpp"
 #include "MonteCarlo_ObserverPhaseSpaceDimensionTraits.hpp"
 #include "MonteCarlo_ObserverPhaseSpaceDiscretization.hpp"
 #include "MonteCarlo_EstimatorParticleStateWrapper.hpp"
 #include "MonteCarlo_ParticleHistoryObserver.hpp"
+#include "MonteCarlo_ParticleResponse.hpp"
 #include "MonteCarlo_UniqueIdManager.hpp"
 #include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
@@ -90,10 +90,10 @@ public:
   size_t getNumberOfBins() const;
 
   //! Set a response function
-  void setResponseFunction( const std::shared_ptr<const Response>& response_function );
+  void setResponseFunction( const std::shared_ptr<const ParticleResponse>& response_function );
 
   //! Set the response functions
-  void setResponseFunctions( const std::vector<std::shared_ptr<const Response> >& response_functions );
+  void setResponseFunctions( const std::vector<std::shared_ptr<const ParticleResponse> >& response_functions );
 
   //! Return the number of response functions
   size_t getNumberOfResponseFunctions() const;
@@ -211,7 +211,7 @@ protected:
                                      const bool range_dimension );
 
   //! Assign response function to the estimator
-  virtual void assignResponseFunction( const std::shared_ptr<const Response>& response_function );
+  virtual void assignResponseFunction( const std::shared_ptr<const ParticleResponse>& response_function );
 
   //! Assign the particle type to the estimator
   virtual void assignParticleType( const ParticleType particle_type );
@@ -338,10 +338,16 @@ private:
                                   const Collection& collection,
                                   std::vector<double>& reduced_moments ) const;
 
-  // Serialize the estimator
+  // Save the data to an archive
   template<typename Archive>
-  void serialize( Archive& ar, const unsigned version );
+  void save( Archive& ar, const unsigned version ) const;
 
+  // Load the data from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+  
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
@@ -351,24 +357,24 @@ private:
   // The constant multiplier for the estimator
   double d_multiplier;
 
-  // Records if there is an uncommitted history contribution
-  std::vector<bool> d_has_uncommitted_history_contribution;
-
   // The particle types that this estimator will take contributions from
   std::set<ParticleType> d_particle_types;
 
   // The response functions
-  std::vector<std::shared_ptr<const Response> > d_response_functions;
+  std::vector<std::shared_ptr<const ParticleResponse> > d_response_functions;
 
   // The estimator phase space discretization
   ObserverPhaseSpaceDiscretization d_phase_space_discretization;
+
+  // Records if there is an uncommitted history contribution
+  std::vector<bool> d_has_uncommitted_history_contribution;
 };
 
 } // end MonteCarlo namespace
 
 BOOST_CLASS_VERSION( MonteCarlo::Estimator, 0 );
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::Estimator );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::Estimator );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::Estimator );
 
 //---------------------------------------------------------------------------//
 // Template Includes

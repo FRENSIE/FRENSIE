@@ -190,10 +190,8 @@ template<typename EntityId>
 void EntityEstimator<EntityId>::reduceData( const Utility::Communicator& comm,
                                             const int root_process )
 {
-  // Make sure the comm is valid
-  testPrecondition( !comm.is_null() );
   // Make sure the root process is valid
-  testPrecondition( root_process < comm->getSize() );
+  testPrecondition( root_process < comm.size() );
   
   // Only do the reduction if there is more than one process
   if( comm.size() > 1 )
@@ -305,7 +303,7 @@ void EntityEstimator<EntityId>::assignDiscretization(
 // Set the response functions
 template<typename EntityId>
 void EntityEstimator<EntityId>::assignResponseFunction(
-                     const std::shared_ptr<const Response>& response_function )
+             const std::shared_ptr<const ParticleResponse>& response_function )
 {
   Estimator::assignResponseFunction( response_functions );
 
@@ -587,6 +585,9 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS1( EntityEstimator, MonteCarlo );
 
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::EntityEstimator<Geometry::Model::InternalCellHandle> );
 EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZATION_INST( MonteCarlo::EntityEstimator<Geometry::Model::InternalCellHandle> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::EntityEstimator<size_t> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZATION_INST( MonteCarlo::EntityEstimator<size_t> );
 
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::EntityEstimator<moab::EntityHandle> );
 EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZATION_INST( MonteCarlo::EntityEstimator<moab::EntityHandle> );
