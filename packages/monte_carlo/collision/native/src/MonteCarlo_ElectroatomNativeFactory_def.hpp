@@ -62,7 +62,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
       if( TwoDGridPolicy::TwoDInterpPolicy::name() == "LogLogLog" )
       {
         if( properties.getElasticElectronDistributionMode() == COUPLED_DISTRIBUTION &&
-            properties.getCoupledElasticSamplingMode() == TWO_D_UNION )
+            properties.getCoupledElasticSamplingMode() == MODIFIED_TWO_D_UNION )
         {
           THROW_EXCEPTION( std::runtime_error, "Error: the 2D grid policy "
                        << TwoDGridPolicy::name() << " is not currently supported "

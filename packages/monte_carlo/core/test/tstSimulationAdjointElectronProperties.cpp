@@ -22,7 +22,7 @@
 TEUCHOS_UNIT_TEST( SimulationAdjointElectronProperties, defaults )
 {
   MonteCarlo::SimulationAdjointElectronProperties properties;
-  
+
   TEST_EQUALITY_CONST( properties.getAbsoluteMinAdjointElectronEnergy(), 1e-5 );
   TEST_EQUALITY_CONST( properties.getMinAdjointElectronEnergy(), 1e-5 );
   TEST_EQUALITY_CONST( properties.getMaxAdjointElectronEnergy(), 20.0 );
@@ -34,7 +34,7 @@ TEUCHOS_UNIT_TEST( SimulationAdjointElectronProperties, defaults )
   TEST_EQUALITY_CONST( properties.getAdjointElasticElectronDistributionMode(),
                        MonteCarlo::COUPLED_DISTRIBUTION );
   TEST_EQUALITY_CONST( properties.getAdjointCoupledElasticSamplingMode(),
-                       MonteCarlo::TWO_D_UNION );
+                       MonteCarlo::MODIFIED_TWO_D_UNION );
   TEST_EQUALITY_CONST(
              properties.getAdjointBremsstrahlungAngularDistributionFunction(),
              MonteCarlo::TWOBS_DISTRIBUTION );
@@ -52,7 +52,7 @@ TEUCHOS_UNIT_TEST( SimulationAdjointElectronProperties,
                    setMinAdjointElectronEnergy )
 {
   MonteCarlo::SimulationAdjointElectronProperties properties;
-  
+
   properties.setMinAdjointElectronEnergy( 1e-2 );
 
   TEST_EQUALITY_CONST( properties.getMinAdjointElectronEnergy(), 1e-2 );
@@ -64,7 +64,7 @@ TEUCHOS_UNIT_TEST( SimulationAdjointElectronProperties,
                    setMaxAdjointElectronEnergy )
 {
   MonteCarlo::SimulationAdjointElectronProperties properties;
-  
+
   properties.setMaxAdjointElectronEnergy( 15.0 );
 
   TEST_EQUALITY_CONST( properties.getMaxAdjointElectronEnergy(), 15.0 );
@@ -82,7 +82,7 @@ TEUCHOS_UNIT_TEST( SimulationAdjointElectronProperties,
   TEST_ASSERT( !properties.isAdjointElasticModeOn() );
 
   properties.setAdjointElasticModeOn();
-  
+
   TEST_ASSERT( properties.isAdjointElasticModeOn() );
 }
 
@@ -98,7 +98,7 @@ TEUCHOS_UNIT_TEST( SimulationAdjointElectronProperties,
   TEST_ASSERT( !properties.isAdjointElectroionizationModeOn() );
 
   properties.setAdjointElectroionizationModeOn();
-  
+
   TEST_ASSERT( properties.isAdjointElectroionizationModeOn() );
 }
 
@@ -114,7 +114,7 @@ TEUCHOS_UNIT_TEST( SimulationAdjointElectronProperties,
   TEST_ASSERT( !properties.isAdjointBremsstrahlungModeOn() );
 
   properties.setAdjointBremsstrahlungModeOn();
-  
+
   TEST_ASSERT( properties.isAdjointBremsstrahlungModeOn() );
 }
 
@@ -130,7 +130,7 @@ TEUCHOS_UNIT_TEST( SimulationAdjointElectronProperties,
   TEST_ASSERT( !properties.isAdjointAtomicExcitationModeOn() );
 
   properties.setAdjointAtomicExcitationModeOn();
-  
+
   TEST_ASSERT( properties.isAdjointAtomicExcitationModeOn() );
 }
 
@@ -154,7 +154,7 @@ TEUCHOS_UNIT_TEST( SimulationAdjointElectronProperties,
                    setAdjointBremsstrahlungAngularDistributionFunction_Dipole )
 {
   MonteCarlo::SimulationAdjointElectronProperties properties;
-  
+
   MonteCarlo::BremsstrahlungAngularDistributionType function;
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
@@ -192,10 +192,10 @@ TEUCHOS_UNIT_TEST( SimulationAdjointElectronProperties,
   MonteCarlo::SimulationAdjointElectronProperties properties;
 
   TEST_EQUALITY_CONST( properties.getAdjointCoupledElasticSamplingMode(),
-                       MonteCarlo::TWO_D_UNION );
+                       MonteCarlo::MODIFIED_TWO_D_UNION );
 
   MonteCarlo::CoupledElasticSamplingMethod mode;
-  mode = MonteCarlo::SIMPLIFIED_UNION;
+  mode = MonteCarlo::TWO_D_UNION;
 
   properties.setAdjointCoupledElasticSamplingMode( mode );
 
@@ -209,7 +209,7 @@ TEUCHOS_UNIT_TEST( SimulationAdjointElectronProperties,
                    setAdjointBremsstrahlungAngularDistributionFunction_Tabular )
 {
   MonteCarlo::SimulationAdjointElectronProperties properties;
-  
+
   MonteCarlo::BremsstrahlungAngularDistributionType function;
   function = MonteCarlo::TABULAR_DISTRIBUTION;
 
@@ -226,7 +226,7 @@ TEUCHOS_UNIT_TEST( SimulationAdjointElectronProperties,
                    setAdjointElasticCutoffAngleCosine )
 {
   MonteCarlo::SimulationAdjointElectronProperties properties;
-  
+
   properties.setAdjointElasticCutoffAngleCosine( 0.9 );
 
   TEST_EQUALITY( properties.getAdjointElasticCutoffAngleCosine(), 0.9 );
@@ -238,7 +238,7 @@ TEUCHOS_UNIT_TEST( SimulationAdjointElectronProperties,
                    setNumberOfAdjointElectronHashGridBins )
 {
   MonteCarlo::SimulationAdjointElectronProperties properties;
-  
+
   properties.setNumberOfAdjointElectronHashGridBins( 750 );
 
   TEST_EQUALITY_CONST( properties.getNumberOfAdjointElectronHashGridBins(),

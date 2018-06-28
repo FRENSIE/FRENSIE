@@ -131,7 +131,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         Data::AdjointElectronPhotonRelaxationDataContainer( test_native_file_name );
 
     MonteCarlo::CoupledElasticSamplingMethod sampling_method =
-      MonteCarlo::SIMPLIFIED_UNION;
+      MonteCarlo::TWO_D_UNION;
     double evaluation_tol = 1e-7;
 
     Teuchos::ArrayRCP<double> energy_grid;

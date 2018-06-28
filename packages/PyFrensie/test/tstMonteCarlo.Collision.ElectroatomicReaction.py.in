@@ -11,6 +11,7 @@ import numpy
 import sys
 import unittest
 from optparse import *
+from testingHelpers import importPyFrensieModuleFromBuildDir
 
 # Parse the command-line arguments
 parser = OptionParser()
@@ -21,7 +22,6 @@ parser.add_option("-f", "--nativefile", type="string", dest="nativefile",
 
 options,args = parser.parse_args()
 
-from testingHelpers import importPyFrensieModuleFromBuildDir
 MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
 Collision = importPyFrensieModuleFromBuildDir('MonteCarlo.Collision')
 Utility = importPyFrensieModuleFromBuildDir('Utility')
@@ -37,7 +37,7 @@ class CoupledElasticReactionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction = Collision.createLinLinLogCorrelatedCoupledElasticReaction( self.data, "Simplified Union", 1e-7 )
+        self.reaction = Collision.createLinLinLogCorrelatedCoupledElasticReaction( self.data, "Two D Union", 1e-7 )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createCoupledElasticReaction getThresholdEnergy method"
@@ -351,7 +351,7 @@ if __name__ == "__main__":
 
     # Exit
     sys.exit(errs_plus_fails)
-    
+
 #-----------------------------------------------------------------------------#
 # end tstMonteCarlo.Collision.PhotonKinematics.py
 #-----------------------------------------------------------------------------#

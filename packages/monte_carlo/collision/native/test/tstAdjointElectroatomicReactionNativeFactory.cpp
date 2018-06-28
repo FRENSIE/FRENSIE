@@ -39,7 +39,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
                    createCoupledElasticReaction )
 {
   MonteCarlo::CoupledElasticSamplingMethod sampling_method =
-    MonteCarlo::SIMPLIFIED_UNION;
+    MonteCarlo::TWO_D_UNION;
   double evaluation_tol = 1e-7;
 
   MonteCarlo::AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::Correlated<Utility::LinLinLog> >(

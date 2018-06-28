@@ -49,8 +49,8 @@ std::string convertCoupledElasticSamplingMethodToString(
     return "One D Union";
   case TWO_D_UNION:
     return "Two D Union";
-  case SIMPLIFIED_UNION:
-    return "Simplified Union";
+  case MODIFIED_TWO_D_UNION:
+    return "Modified Two D Union";
   default:
     THROW_EXCEPTION( std::logic_error,
                      "Error: cannot convert the coupled elastic "
@@ -66,8 +66,8 @@ CoupledElasticSamplingMethod convertStringToCoupledElasticSamplingMethod(
     return ONE_D_UNION;
   else if( raw_method == "Two D Union" )
     return TWO_D_UNION;
-  else if( raw_method == "Simplified Union" )
-    return SIMPLIFIED_UNION;
+  else if( raw_method == "Modified Two D Union" )
+    return MODIFIED_TWO_D_UNION;
   else
   {
     THROW_EXCEPTION( std::logic_error,

@@ -109,7 +109,7 @@ public:
   //! Return the elastic distribution mode
   ElasticElectronDistributionType getAdjointElasticElectronDistributionMode() const;
 
-  //! Set the adjoint coupled elastic sampling mode ( Simplified Union by default )
+  //! Set the adjoint coupled elastic sampling mode ( Two D Union by default )
   void setAdjointCoupledElasticSamplingMode(
                         CoupledElasticSamplingMethod sampling_method );
 
@@ -161,7 +161,7 @@ private:
   // The adjoint elastic electron distribution mode ( Decoupled - default )
   ElasticElectronDistributionType d_adjoint_elastic_distribution_mode;
 
-  // The coupled elastic electron sampling method ( Simplified Union - default )
+  // The coupled elastic electron sampling method ( Two D Union - default )
   CoupledElasticSamplingMethod d_coupled_elastic_sampling_method;
 
   // The number of adjoint electron hash grid bins

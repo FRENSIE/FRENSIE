@@ -83,7 +83,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
       MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Correlated<Utility::LogLogCosLog<true> > >(
       d_coupled_distribution,
       data_container,
-      MonteCarlo::TWO_D_UNION,
+      MonteCarlo::MODIFIED_TWO_D_UNION,
       tabular_evaluation_tol );
     }
     else if( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
@@ -91,7 +91,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
       MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Correlated<Utility::LinLinLin> >(
       d_coupled_distribution,
       data_container,
-      MonteCarlo::TWO_D_UNION,
+      MonteCarlo::MODIFIED_TWO_D_UNION,
       tabular_evaluation_tol );
     }
     else if( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
@@ -99,7 +99,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
       MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Correlated<Utility::LinLinLog> >(
       d_coupled_distribution,
       data_container,
-      MonteCarlo::TWO_D_UNION,
+      MonteCarlo::MODIFIED_TWO_D_UNION,
       tabular_evaluation_tol );
     }
   }

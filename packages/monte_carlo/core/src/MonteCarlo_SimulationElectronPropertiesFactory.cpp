@@ -154,8 +154,8 @@ void SimulationElectronPropertiesFactory::initializeProperties(
           method = MonteCarlo::ONE_D_UNION;
         else if( raw_method == "Two D Union" || raw_method == "two d union" || raw_method == "TWO D UNION" )
           method = MonteCarlo::TWO_D_UNION;
-        else if( raw_method == "Simplified Union" || raw_method == "simplified union" || raw_method == "SIMPLIFIED UNION" )
-          method = MonteCarlo::SIMPLIFIED_UNION;
+        else if( raw_method == "Modified Two D Union" || raw_method == "modified two d union" || raw_method == "MODIFIED TWO D UNION" )
+          method = MonteCarlo::MODIFIED_TWO_D_UNION;
         else
         {
         THROW_EXCEPTION( std::runtime_error,

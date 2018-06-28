@@ -102,7 +102,7 @@ public:
   //! Return the elastic distribution mode
   ElasticElectronDistributionType getElasticElectronDistributionMode() const;
 
-  //! Set the coupled elastic sampling mode ( Simplified Union by default )
+  //! Set the coupled elastic sampling mode ( Two D Union by default )
   void setCoupledElasticSamplingMode( CoupledElasticSamplingMethod sampling_method );
 
   //! Return the coupled elastic sampling mode
@@ -193,7 +193,7 @@ private:
   // The elastic electron distribution mode ( Decoupled - default )
   ElasticElectronDistributionType d_elastic_distribution_mode;
 
-  // The coupled elastic electron sampling method ( Simplified Union - default )
+  // The coupled elastic electron sampling method ( Two D Union - default )
   CoupledElasticSamplingMethod d_coupled_elastic_sampling_method;
 
   // The elastic cutoff angle cosine (mu = 1.0 by default)

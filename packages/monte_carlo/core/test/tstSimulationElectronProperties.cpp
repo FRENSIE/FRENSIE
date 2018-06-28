@@ -39,7 +39,7 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, defaults )
   TEST_EQUALITY_CONST( properties.getElasticElectronDistributionMode(),
                        MonteCarlo::DECOUPLED_DISTRIBUTION );
   TEST_EQUALITY_CONST( properties.getCoupledElasticSamplingMode(),
-                       MonteCarlo::SIMPLIFIED_UNION );
+                       MonteCarlo::TWO_D_UNION );
   TEST_EQUALITY_CONST( properties.getElasticCutoffAngleCosine(), 1.0 );
   TEST_ASSERT( properties.isElectroionizationModeOn() );
   TEST_ASSERT( properties.isBremsstrahlungModeOn() );
@@ -220,7 +220,7 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setCoupledElasticSamplingMode )
   MonteCarlo::SimulationElectronProperties properties;
 
   TEST_EQUALITY_CONST( properties.getCoupledElasticSamplingMode(),
-                       MonteCarlo::SIMPLIFIED_UNION );
+                       MonteCarlo::TWO_D_UNION );
 
   MonteCarlo::CoupledElasticSamplingMethod mode;
 
@@ -234,7 +234,7 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setCoupledElasticSamplingMode )
   TEST_EQUALITY_CONST( properties.getCoupledElasticSamplingMode(),
                        mode );
 
-  mode = MonteCarlo::SIMPLIFIED_UNION;
+  mode = MonteCarlo::MODIFIED_TWO_D_UNION;
   properties.setCoupledElasticSamplingMode( mode );
   TEST_EQUALITY_CONST( properties.getCoupledElasticSamplingMode(),
                        mode );

@@ -1254,7 +1254,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         al_data->getCutoffElasticPDF(),
         al_data->getElasticAngularEnergyGrid(),
         al_data->getAtomicNumber(),
-        MonteCarlo::TWO_D_UNION,
+        MonteCarlo::MODIFIED_TWO_D_UNION,
         tabular_evaluation_tol );
 
   // Create the moment evaluator

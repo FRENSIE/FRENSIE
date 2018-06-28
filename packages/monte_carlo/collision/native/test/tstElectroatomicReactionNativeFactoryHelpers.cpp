@@ -35,7 +35,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 {
   reaction = MonteCarlo::createCoupledElasticReaction<Utility::Correlated<Utility::LogLogCosLog<true> > >(
                 *data_container,
-                "Simplified Union",
+                "Two D Union",
                 eval_tol );
 
   // Test reaction properties
@@ -166,7 +166,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 {
   reaction = MonteCarlo::createCoupledElasticReaction<Utility::Correlated<Utility::LinLinLog> >(
                 *data_container,
-                "Simplified Union",
+                "Two D Union",
                 eval_tol );
 
   // Test reaction properties
@@ -510,7 +510,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 {
   reaction = MonteCarlo::createCoupledElasticReaction<Utility::Correlated<Utility::LinLinLin> >(
       *data_container,
-      "Simplified Union",
+      "Two D Union",
       eval_tol );
 
   // Test reaction properties

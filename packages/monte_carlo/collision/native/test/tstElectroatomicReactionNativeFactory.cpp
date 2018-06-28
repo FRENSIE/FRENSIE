@@ -41,7 +41,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createCoupledElasticReaction_LogLogCosLog )
 {
   MonteCarlo::CoupledElasticSamplingMethod sampling_method =
-    MonteCarlo::SIMPLIFIED_UNION;
+    MonteCarlo::TWO_D_UNION;
 
   MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::Correlated<Utility::LogLogCosLog<true> > >(
                 *data_container,
@@ -187,7 +187,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createCoupledElasticReaction_LinLinLog )
 {
   MonteCarlo::CoupledElasticSamplingMethod sampling_method =
-    MonteCarlo::SIMPLIFIED_UNION;
+    MonteCarlo::TWO_D_UNION;
 
   MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::Correlated<Utility::LinLinLog> >(
                 *data_container,
@@ -565,7 +565,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createCoupledElasticReaction_LinLinLin )
 {
   MonteCarlo::CoupledElasticSamplingMethod sampling_method =
-    MonteCarlo::SIMPLIFIED_UNION;
+    MonteCarlo::TWO_D_UNION;
 
   MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::Correlated<Utility::LinLinLin> >(
                 *data_container,

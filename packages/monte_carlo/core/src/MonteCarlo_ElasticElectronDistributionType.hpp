@@ -28,7 +28,7 @@ enum ElasticElectronDistributionType{
 enum CoupledElasticSamplingMethod{
   ONE_D_UNION = 1,
   TWO_D_UNION = 2,
-  SIMPLIFIED_UNION = 3
+  MODIFIED_TWO_D_UNION = 3
 };
 
 //! Convert a ElasticElectronDistributionType to a string

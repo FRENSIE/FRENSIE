@@ -2130,7 +2130,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
         data_container.getAtomicNumber(),
-        MonteCarlo::TWO_D_UNION,
+        MonteCarlo::MODIFIED_TWO_D_UNION,
         tabular_evaluation_tol );
   }
   else if ( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
@@ -2144,7 +2144,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
         data_container.getAtomicNumber(),
-        MonteCarlo::TWO_D_UNION,
+        MonteCarlo::MODIFIED_TWO_D_UNION,
         tabular_evaluation_tol );
   }
   else if ( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
@@ -2158,7 +2158,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
         data_container.getAtomicNumber(),
-        MonteCarlo::TWO_D_UNION,
+        MonteCarlo::MODIFIED_TWO_D_UNION,
         tabular_evaluation_tol );
   }
 

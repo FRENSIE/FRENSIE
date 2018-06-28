@@ -29,7 +29,7 @@ SimulationAdjointElectronProperties::SimulationAdjointElectronProperties()
     d_adjoint_evaluation_tol( 1e-12 ),
     d_adjoint_bremsstrahlung_angular_distribution_function( TWOBS_DISTRIBUTION ),
     d_adjoint_elastic_distribution_mode( COUPLED_DISTRIBUTION ),
-    d_coupled_elastic_sampling_method( TWO_D_UNION ),
+    d_coupled_elastic_sampling_method( MODIFIED_TWO_D_UNION ),
     d_adjoint_elastic_cutoff_angle_cosine( 1.0 ),
     d_num_adjoint_electron_hash_grid_bins( 500 )
 { /* ... */ }
@@ -212,7 +212,7 @@ SimulationAdjointElectronProperties::getAdjointElasticElectronDistributionMode()
   return d_adjoint_elastic_distribution_mode;
 }
 
-// Set the coupled elastic sampling mode ( Simplified Union by default )
+// Set the coupled elastic sampling mode ( Two D Union by default )
 void SimulationAdjointElectronProperties::setAdjointCoupledElasticSamplingMode(
     CoupledElasticSamplingMethod sampling_method )
 {

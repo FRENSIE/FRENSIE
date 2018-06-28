@@ -11,6 +11,7 @@ import numpy
 import sys
 import unittest
 from optparse import *
+from testingHelpers import importPyFrensieModuleFromBuildDir
 
 # Parse the command-line arguments
 parser = OptionParser()
@@ -20,7 +21,6 @@ parser.add_option("-a", "--adjointfile", type="string", dest="adjointfile",
                   help="set the adjoint native file that the Adjoint Electron Distributions will initialized with")
 options,args = parser.parse_args()
 
-from testingHelpers import importPyFrensieModuleFromBuildDir
 MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
 Collision = importPyFrensieModuleFromBuildDir('MonteCarlo.Collision')
 Utility = importPyFrensieModuleFromBuildDir('Utility')
@@ -36,7 +36,7 @@ class CoupledElasticAdjointElectronScatteringDistributionTestCase(unittest.TestC
 
     def setUp(self):
         self.data = Native.AdjointElectronPhotonRelaxationDataContainer( options.adjointfile )
-        self.dist = Collision.createLinLinLogDirectCoupledElasticDistribution( self.data, "Simplified Union", 1e-7 )
+        self.dist = Collision.createLinLinLogDirectCoupledElasticDistribution( self.data, "Two D Union", 1e-7 )
 
     def testEvaluate(self):
         "*Test MonteCarlo.Collision.createCoupledElasticDistribution adjoint evaluate method"

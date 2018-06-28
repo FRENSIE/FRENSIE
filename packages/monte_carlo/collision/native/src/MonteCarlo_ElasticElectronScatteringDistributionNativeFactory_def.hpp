@@ -363,8 +363,8 @@ void ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservi
 /*! \details This function has been overloaded so it can be called without using
  *  the native data container. This functionality is necessary for generating
  *  native moment preserving data without first creating native data files. The
- *  Direct TwoDGridPolicy currently does not support a coupled 2D Union sampling
- *  method.
+ *  Direct TwoDGridPolicy currently does not support a coupled Modified 2D Union
+ *  sampling method.
  */
 template<typename TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution(
@@ -410,7 +410,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
                     TwoDGridPolicy::name() == "Correlated" );
   // Make sure the TwoDGridPolicy and Sampling Method are compatible
   testPrecondition( TwoDGridPolicy::name() != "Direct" ||
-                    sampling_method != TWO_D_UNION );
+                    sampling_method != MODIFIED_TWO_D_UNION );
 
   // Get the distribution data
   std::vector<double> cutoff_ratios( angular_energy_grid.size() );

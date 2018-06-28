@@ -37,7 +37,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronDistributionType,
 {
   std::string type_string =
     MonteCarlo::convertElasticElectronDistributionTypeToString( MonteCarlo::COUPLED_DISTRIBUTION );
-  
+
   TEST_EQUALITY_CONST( type_string, "Coupled Distribution" );
 
   type_string =
@@ -68,7 +68,7 @@ TEUCHOS_UNIT_TEST( CoupledElasticSamplingMethod,
 {
   std::string type_string =
     MonteCarlo::convertCoupledElasticSamplingMethodToString( MonteCarlo::ONE_D_UNION );
-  
+
   TEST_EQUALITY_CONST( type_string, "One D Union" );
 
   type_string =
@@ -77,9 +77,9 @@ TEUCHOS_UNIT_TEST( CoupledElasticSamplingMethod,
   TEST_EQUALITY_CONST( type_string, "Two D Union" );
 
   type_string =
-    MonteCarlo::convertCoupledElasticSamplingMethodToString( MonteCarlo::SIMPLIFIED_UNION );
+    MonteCarlo::convertCoupledElasticSamplingMethodToString( MonteCarlo::MODIFIED_TWO_D_UNION );
 
-  TEST_EQUALITY_CONST( type_string, "Simplified Union" );
+  TEST_EQUALITY_CONST( type_string, "Modified Two D Union" );
 }
 
 //---------------------------------------------------------------------------//
@@ -89,7 +89,7 @@ TEUCHOS_UNIT_TEST( CoupledElasticSamplingMethod,
 {
   MonteCarlo::CoupledElasticSamplingMethod method =
     MonteCarlo::convertStringToCoupledElasticSamplingMethod( "One D Union" );
-  
+
   TEST_EQUALITY_CONST( method, MonteCarlo::ONE_D_UNION );
 
   method =
@@ -98,9 +98,9 @@ TEUCHOS_UNIT_TEST( CoupledElasticSamplingMethod,
   TEST_EQUALITY_CONST( method, MonteCarlo::TWO_D_UNION );
 
   method =
-    MonteCarlo::convertStringToCoupledElasticSamplingMethod( "Simplified Union" );
+    MonteCarlo::convertStringToCoupledElasticSamplingMethod( "Modified Two D Union" );
 
-  TEST_EQUALITY_CONST( method, MonteCarlo::SIMPLIFIED_UNION );
+  TEST_EQUALITY_CONST( method, MonteCarlo::MODIFIED_TWO_D_UNION );
 }
 
 //---------------------------------------------------------------------------//
@@ -150,9 +150,9 @@ TEUCHOS_UNIT_TEST( CoupledElasticSamplingMethod, stream_operator )
   TEST_EQUALITY_CONST( ss.str(), "Two D Union" );
 
   ss.str( "" );
-  ss << MonteCarlo::SIMPLIFIED_UNION;
+  ss << MonteCarlo::MODIFIED_TWO_D_UNION;
 
-  TEST_EQUALITY_CONST( ss.str(), "Simplified Union" );
+  TEST_EQUALITY_CONST( ss.str(), "Modified Two D Union" );
 }
 
 //---------------------------------------------------------------------------//

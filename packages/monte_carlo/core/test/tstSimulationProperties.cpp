@@ -84,7 +84,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
   TEST_EQUALITY_CONST( properties.getElasticElectronDistributionMode(),
                        MonteCarlo::DECOUPLED_DISTRIBUTION );
   TEST_EQUALITY_CONST( properties.getCoupledElasticSamplingMode(),
-                       MonteCarlo::SIMPLIFIED_UNION );
+                       MonteCarlo::TWO_D_UNION );
   TEST_EQUALITY_CONST( properties.getElasticCutoffAngleCosine(), 1.0 );
 }
 
