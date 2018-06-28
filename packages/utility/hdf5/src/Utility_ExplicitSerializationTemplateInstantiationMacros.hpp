@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_ExplicitSerializeTemplateInstantiationMacros.hpp
+//! \file   Utility_ExplicitSerializationTemplateInstantiationMacros.hpp
 //! \author Alex Robinson
 //! \brief  Serialize template instantiation macros
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_EXPLICIT_SERIALIZE_TEMPLATE_INSTANTIATION_MACROS_HPP
-#define UTILITY_EXPLICIT_SERIALIZE_TEMPLATE_INSTANTIATION_MACROS_HPP
+#ifndef UTILITY_EXPLICIT_SERIALIZATION_TEMPLATE_INSTANTIATION_MACROS_HPP
+#define UTILITY_EXPLICIT_SERIALIZATION_TEMPLATE_INSTANTIATION_MACROS_HPP
 
 // FRENSIE Includes
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
@@ -66,7 +66,7 @@ namespace Utility{                                                     \
   __EXTERN_EXPLICIT_ARCHIVE_FORWARD_DECLARES__();       \
                                                         \
 namespace Namespace{                                  \
-  __SERIALIZE_INST_IMPL__( EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST, __VA_ARGS__ );
+  __SERIALIZE_INST_IMPL__( EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST, __VA_ARGS__ ); \
 }
 
 /*! Declare an explicit instantiation of a class's serialization method
@@ -86,7 +86,7 @@ namespace Namespace{                                  \
   __EXTERN_EXPLICIT_ARCHIVE_FORWARD_DECLARES__();       \
                                                         \
 namespace Namespace{                                  \
-  __SERIALIZE_INST_IMPL__( EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST_ALWAYS, __VA_ARGS__ );
+  __SERIALIZE_INST_IMPL__( EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST_ALWAYS, __VA_ARGS__ ); \
 }
 
 /*! Declare an explicit instantiation of a classes serialization method
@@ -106,7 +106,7 @@ namespace Namespace{                                  \
   __EXTERN_EXPLICIT_ARCHIVE_FORWARD_DECLARES__();       \
                                                         \
 namespace Namespace{                                  \
-  __SAVE_LOAD_INST_IMPL__( EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST, __VA_ARGS__ );
+  __SAVE_LOAD_INST_IMPL__( EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST, __VA_ARGS__ ); \
 }
 
 /*! Declare an explicit instantiation of a class's save and load methods
@@ -126,7 +126,7 @@ namespace Namespace{                                  \
   __EXTERN_EXPLICIT_ARCHIVE_FORWARD_DECLARES__();       \
                                                         \
 namespace Namespace{                                  \
-  __SAVE_LOAD_INST_IMPL__( EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST_ALWAYS, __VA_ARGS__ );
+  __SAVE_LOAD_INST_IMPL__( EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST_ALWAYS, __VA_ARGS__ ); \
 }
 
 /*! Declare an explicit instantiation of a class's save and load methods
@@ -137,8 +137,8 @@ namespace Namespace{                                  \
 #define EXPLICIT_CLASS_SAVE_LOAD_INST_ALWAYS( ... )   \
   __SAVE_LOAD_INST_IMPL__( EXPLICIT_TEMPLATE_FUNCTION_INST_ALWAYS, __VA_ARGS__ );
 
-#endif // end UTILITY_EXPLICIT_SERIALIZE_TEMPLATE_INSTANTIATION_MACROS_HPP
+#endif // end UTILITY_EXPLICIT_SERIALIZATION_TEMPLATE_INSTANTIATION_MACROS_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_ExplicitSerializeTemplateInstantiationMacros.hpp
+// end Utility_ExplicitSerializationTemplateInstantiationMacros.hpp
 //---------------------------------------------------------------------------//

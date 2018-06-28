@@ -17,7 +17,7 @@ SET(GLOBAL_ROOT_TEST_DATA_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/test_files/root
 # Set up the packages directory hierarchy
 ADD_SUBDIRECTORY(utility)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/utility/core/src
-utility/core/src utility/hdf5/src utility/system/src utility/mpi/src utility/prng/src utility/interpolation/src utility/distribution/src utility/integrator/src utility/grid/src)
+utility/core/src utility/hdf5/src utility/system/src utility/mpi/src utility/prng/src utility/interpolation/src utility/distribution/src utility/integrator/src utility/grid/src utility/mesh/src)
 
 ADD_SUBDIRECTORY(geometry)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/geometry geometry/core/src)

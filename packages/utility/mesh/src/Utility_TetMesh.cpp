@@ -15,6 +15,7 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/polymorphic_oarchive.hpp>
 #include <boost/archive/polymorphic_iarchive.hpp>
+#include <boost/serialization/array_wrapper.hpp>
 
 // FRENSIE Includes
 #include "Utility_HDF5OArchive.hpp" // This must be included first
@@ -164,7 +165,7 @@ private:
   d_tet_barycentric_transform_matrices;
 
   // The map of tet ids and reference vertices
-  boost::unordered_map<ElementHandle,moab::CartVect>
+  std::unordered_map<ElementHandle,moab::CartVect>
   d_tet_reference_vertices;
 
   // The tet element handles
@@ -180,7 +181,51 @@ const double TetMeshImpl::s_tol = 1e-6;
 BOOST_CLASS_VERSION( Utility::TetMeshImpl, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( TetMeshImpl, Utility );
 
+namespace boost{
+
+namespace serialization{
+
+#ifdef HAVE_FRENSIE_MOAB
+  
+//! Serialize a moab::CartVect
+template<typename Archive>
+void serialize( Archive& ar,
+                moab::CartVect& cart_vect,
+                const unsigned version )
+{
+  ar & boost::serialization::make_nvp( "x", cart_vect[0] );
+  ar & boost::serialization::make_nvp( "y", cart_vect[1] );
+  ar & boost::serialization::make_nvp( "z", cart_vect[2] );
+}
+
+//! Serialize a moab::Matrix3
+template<typename Archive>
+void serialize( Archive& ar,
+                moab::Matrix3& matrix,
+                const unsigned version )
+{
+  ar & boost::serialization::make_nvp( "row_1", boost::serialization::make_array( matrix[0], 3 ) );
+  ar & boost::serialization::make_nvp( "row_2", boost::serialization::make_array( matrix[1], 3 ) );
+  ar & boost::serialization::make_nvp( "row_3", boost::serialization::make_array( matrix[2], 3 ) );
+}
+  
+#endif // end HAVE_FRENSIE_MOAB
+  
+} // end serialization namespace
+
+} // end boost namespace
+
 namespace Utility{
+
+// Default constructor
+TetMesh::TetMesh()
+{
+#ifndef HAVE_FRENSIE_MOAB
+  THROW_EXCEPTION( std::logic_error,
+                   "A tetrahedral mesh cannot be created because MOAB is not "
+                   "enabled!" );
+#endif // end HAVE_FRENSIE_MOAB
+}
 
 // Constructor
 TetMesh::TetMesh( const std::string& input_mesh_file_name,
@@ -189,7 +234,13 @@ TetMesh::TetMesh( const std::string& input_mesh_file_name,
   : d_impl( new TetMeshImpl( input_mesh_file_name,
                              verbose_construction,
                              display_warnings ) )
-{ /* ... */ }
+{
+#ifndef HAVE_FRENSIE_MOAB
+  THROW_EXCEPTION( std::logic_error,
+                   "A tetrahedral mesh cannot be created because MOAB is not "
+                   "enabled!" );
+#endif // end HAVE_FRENSIE_MOAB
+}
   
 // Constructor
 TetMeshImpl::TetMeshImpl( const std::string& input_mesh_file_name,
@@ -217,7 +268,7 @@ TetMeshImpl::TetMeshImpl( const std::string& input_mesh_file_name,
   // Construct the extra tet data
   for( moab::Range::const_iterator tet_handle_it = all_tet_elements.begin();
        tet_handle_it != all_tet_elements.end();
-       ++tet )
+       ++tet_handle_it )
   {
     // Make sure that the tet is valid
     TEST_FOR_EXCEPTION( *tet_handle_it == 0,
@@ -227,7 +278,7 @@ TetMeshImpl::TetMeshImpl( const std::string& input_mesh_file_name,
     moab::EntityHandle tet_handle = *tet_handle_it;
     
     // Add the tet handle to the cached list of element handles
-    d_tests.push_back( tet_handle );
+    d_tets.push_back( tet_handle );
 
     // Extract the vertex data for the given tet
     {
@@ -247,7 +298,7 @@ TetMeshImpl::TetMeshImpl( const std::string& input_mesh_file_name,
       {
         d_moab_interface->get_coords( &vertex_handles[i],
                                       1,
-                                      vertices[j].array() );
+                                      vertices[i].array() );
       }
 
       // Calculate barycentric matrix
@@ -267,18 +318,14 @@ TetMeshImpl::TetMeshImpl( const std::string& input_mesh_file_name,
   }
 
   // Create the kd-tree
-  this->createKDTree( all_tet_elements );
-    
-#else
-  THROW_EXCEPTION( std::logic_error,
-                   "A tetrahedral mesh cannot be created because moab is not "
-                   "enabled!" );
+  this->createKDTree( all_tet_elements, verbose_construction );
 #endif // end HAVE_FRENSIE_MOAB
 }
 
 #ifdef HAVE_FRENSIE_MOAB
 // Create the tet meshset
-void TetMeshImpl::createTetMeshset( moab::Range& all_tet_elements )
+void TetMeshImpl::createTetMeshset( moab::Range& all_tet_elements,
+                                    const bool verbose_construction )
 {
   moab::ErrorCode return_value;
   
@@ -299,14 +346,14 @@ void TetMeshImpl::createTetMeshset( moab::Range& all_tet_elements )
   if( verbose_construction )
   {
     FRENSIE_LOG_PARTIAL_NOTIFICATION( "Loading tetrahedral mesh from file "
-                                      << input_mesh_file_name << " ... " );
+                                      << d_mesh_input_file << " ... " );
   }
   
   // Populate MOAB meshset with data from input file
   {
     moab::EntityHandle tmp_tet_meshset = d_tet_meshset;
     
-    return_value = d_moab_interface->load_file( input_mesh_file_name.c_str(),
+    return_value = d_moab_interface->load_file( d_mesh_input_file.c_str(),
                                                 &tmp_tet_meshset );
 
     TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
@@ -315,9 +362,7 @@ void TetMeshImpl::createTetMeshset( moab::Range& all_tet_elements )
   }
 
   // Extract the 3D elements from the meshset
-  moab::Range all_tet_elements;
-
-  return_value = d_moab_interface->getEntities_by_dimension(
+  return_value = d_moab_interface->get_entities_by_dimension(
                                           d_tet_meshset, 3, all_tet_elements );
   
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
@@ -353,7 +398,8 @@ void TetMeshImpl::createTetMeshset( moab::Range& all_tet_elements )
 }
 
 // Create the kd-tree
-void TetMeshImpl::createKDTree( moab::Range& all_tet_elements )
+void TetMeshImpl::createKDTree( moab::Range& all_tet_elements,
+                                const bool verbose_construction )
 {
   // Get the dimension of the input set
   int current_dimension =
@@ -362,11 +408,12 @@ void TetMeshImpl::createKDTree( moab::Range& all_tet_elements )
   moab::Range surface_triangles;
 
   // Determine the edges from the input set
-  return_value = d_moab_interface->get_adjacencies( all_tet_elements,
-                                                    current_dimension - 1,
-                                                    true,
-                                                    surface_triangles,
-                                                    moab::Interface::UNION );
+  moab::ErrorCode return_value =
+    d_moab_interface->get_adjacencies( all_tet_elements,
+                                       current_dimension - 1,
+                                       true,
+                                       surface_triangles,
+                                       moab::Interface::UNION );
 
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                       Utility::MOABException,
@@ -446,7 +493,7 @@ size_t TetMeshImpl::getNumberOfElements() const
 // Returns the volumes of each mesh element
 void TetMesh::getElementVolumes( ElementHandleVolumeMap& tet_volumes ) const
 {
-  return d_impl->getElementVolumes();
+  return d_impl->getElementVolumes( tet_volumes );
 }
 
 // Returns the volumes of each mesh element
@@ -482,7 +529,7 @@ void TetMeshImpl::getElementVolumes( ElementHandleVolumeMap& tet_volumes ) const
 }
 
 // Returns the moab interface pointer (obfuscated)
-void* getMoabInterface() const
+void* TetMeshImpl::getMoabInterface() const
 {
 #ifdef HAVE_FRENSIE_MOAB
   return d_moab_interface.get();
@@ -492,7 +539,7 @@ void* getMoabInterface() const
 }
 
 // Returns the tet meshset
-ElementHandle getTetMeshsetHandle() const
+auto TetMeshImpl::getTetMeshsetHandle() const -> ElementHandle
 {
 #ifdef HAVE_FRENSIE_MOAB
   return d_tet_meshset;
@@ -534,15 +581,15 @@ bool TetMeshImpl::isPointInMesh( const double point[3] ) const
                         moab::ErrorCodeStr[return_value] );
 
     // Quickly check if the point is likely in one of the tets
-    for( moab::Range::const_iterator tet_handle_it = tests_in_leaf.begin();
+    for( moab::Range::const_iterator tet_handle_it = tets_in_leaf.begin();
          tet_handle_it != tets_in_leaf.end();
          ++tet_handle_it )
     {
       if( Utility::isPointInTet(
-                  point,
-		  d_tet_reference_vertices.find( *tet )->second,
-		  d_tet_barycentric_transform_matrices.find( *tet )->second,
-		  s_tol ) )
+           point,
+           d_tet_reference_vertices.find( *tet_handle_it )->second,
+	   d_tet_barycentric_transform_matrices.find( *tet_handle_it )->second,
+           s_tol ) )
       {
         return true;
       }
@@ -607,10 +654,10 @@ auto TetMeshImpl::whichElementIsPointIn( const double point[3] ) const -> Elemen
        ++tet_handle_it )
   {
     if( Utility::isPointInTet(
-                     point,
-                     d_tet_reference_vertices.find( *tet )->second,
-                     d_tet_barycentric_transform_matrices.find( *tet )->second,
-                     s_tol ) )
+           point,
+           d_tet_reference_vertices.find( *tet_handle_it )->second,
+           d_tet_barycentric_transform_matrices.find( *tet_handle_it )->second,
+           s_tol ) )
     {
       element_handle = *tet_handle_it;
 
@@ -720,7 +767,7 @@ void TetMeshImpl::computeTrackLengths( const double start_point[3],
       array_of_hit_points.push_back( hit_point );
     }
 
-    // Add the end poitn
+    // Add the end point
     {
       moab::CartVect end_point_cv(end_point[0], end_point[1], end_point[2]);
       
@@ -739,7 +786,8 @@ void TetMeshImpl::computeTrackLengths( const double start_point[3],
       // it is possible that it falls outside
       if( this->isPointInMesh( tet_centroid.array() ) )
       {
-        element_handle = this->whichElementItPointIn( tet_centroid.array() );
+        ElementHandle element_handle =
+          this->whichElementIsPointIn( tet_centroid.array() );
 
         // Make sure that a tet was found (tolerance issue may prevent this)
         if( element_handle == 0 )
@@ -759,7 +807,7 @@ void TetMeshImpl::computeTrackLengths( const double start_point[3],
                            element_handle,
                            std::array<double,3>( {array_of_hit_points[i][0],
                                                   array_of_hit_points[i][1],
-                                                  array_of_hit_poitns[i][2]} ),
+                                                  array_of_hit_points[i][2]} ),
                            tet_track_length ) );
       }
     }
@@ -794,17 +842,17 @@ void TetMeshImpl::computeTrackLengths( const double start_point[3],
 }
 
 // Export the mesh to a vtk file (type determined by suffix - e.g. mesh.vtk)
-void TetMesh::export( const std::string& output_file_name,
-                      TagNameSet& tag_root_names,
-                      MeshElementHandleDataMap& mesh_tag_data ) const
+void TetMesh::exportData( const std::string& output_file_name,
+                          const TagNameSet& tag_root_names,
+                          const MeshElementHandleDataMap& mesh_tag_data ) const
 {
 #ifdef HAVE_FRENSIE_MOAB
-  this->exportImpl( output_file_name,
-                    tag_root_names,
-                    mesh_tag_data,
-                    d_impl->getMoabInterface(),
-                    d_impl->getTetMeshsetHandle(),
-                    [](const ElementHandle tet_handle){return tet_handle;} );
+  this->exportDataImpl( output_file_name,
+                        tag_root_names,
+                        mesh_tag_data,
+                        d_impl->getMoabInterface(),
+                        d_impl->getTetMeshsetHandle(),
+                        [](const ElementHandle tet_handle){return tet_handle;} );
 #endif // end HAVE_FRENSIE_MOAB
 }
 
@@ -824,7 +872,11 @@ template<typename Archive>
 void TetMeshImpl::save( Archive& ar, const unsigned version ) const
 {
 #ifdef HAVE_FRENSIE_MOAB
-
+  ar & BOOST_SERIALIZATION_NVP( d_mesh_input_file );
+  ar & BOOST_SERIALIZATION_NVP( d_display_warnings );
+  ar & BOOST_SERIALIZATION_NVP( d_tet_barycentric_transform_matrices );
+  ar & BOOST_SERIALIZATION_NVP( d_tet_reference_vertices );
+  ar & BOOST_SERIALIZATION_NVP( d_tets );
 #endif // end HAVE_FRENSIE_MOAB
 }
 
@@ -844,15 +896,37 @@ template<typename Archive>
 void TetMeshImpl::load( Archive& ar, const unsigned version )
 {
 #ifdef HAVE_FRENSIE_MOAB
+  ar & BOOST_SERIALIZATION_NVP( d_mesh_input_file );
+  ar & BOOST_SERIALIZATION_NVP( d_display_warnings );
+  ar & BOOST_SERIALIZATION_NVP( d_tet_barycentric_transform_matrices );
+  ar & BOOST_SERIALIZATION_NVP( d_tet_reference_vertices );
+  ar & BOOST_SERIALIZATION_NVP( d_tets );
 
+  // Reconstruct the tet meshset
+  moab::Range all_tet_elements;
+
+  this->createTetMeshset( all_tet_elements, false );
+
+  // Reconstruct the kd-tree
+  this->createKDTree( all_tet_elements, false );
+
+  // Verify that the entity handles haven't changed
+  for( auto&& cached_element_handle : d_tets )
+  {
+    TEST_FOR_EXCEPTION( all_tet_elements.find( cached_element_handle ) ==
+                        all_tet_elements.end(),
+                        std::runtime_error,
+                        "The tet mesh cannot be loaded from the archive "
+                        "because the moab::EntityHandles have changed!" );
+  }
 #endif // end HAVE_FRENSIE_MOAB
 }
   
 } // end Utility namespace
 
-BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::TetMesh )
-EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, TetMesh );
-BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::TetMeshImpl );
+BOOST_CLASS_EXPORT_IMPLEMENT( Utility::TetMeshImpl );
+BOOST_CLASS_EXPORT_IMPLEMENT( Utility::TetMesh );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::TetMesh );
 
 //---------------------------------------------------------------------------//
 // end Utility_TetMesh.cpp

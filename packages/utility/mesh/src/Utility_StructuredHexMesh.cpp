@@ -43,6 +43,10 @@ namespace Utility{
 // Initialize static member data
 const double StructuredHexMesh::s_tol = 1e-12;
 
+// Default constructor
+StructuredHexMesh::StructuredHexMesh()
+{ /* ... */ }
+  
 // Constructor
 StructuredHexMesh::StructuredHexMesh( const std::vector<double>& x_planes,
                                       const std::vector<double>& y_planes,
@@ -85,7 +89,7 @@ StructuredHexMesh::StructuredHexMesh( const std::vector<double>& x_planes,
 }
 
 // Returns the volumes of the hex elements for the estimator class.
-void StructuredHexMesh::calculateVolumes(
+void StructuredHexMesh::getElementVolumes(
                                     ElementHandleVolumeMap& hex_volumes ) const
 {
   hex_volumes.clear();
@@ -124,7 +128,7 @@ bool StructuredHexMesh::isPointInMesh( const double point[3] ) const
 }
 
 // Returns the index of the hex that contains a given point.
-StructuredHexMesh::HexIndex StructuredHexMesh::whichHexIsPointIn( const double point[3] ) const
+auto StructuredHexMesh::whichElementIsPointIn( const double point[3] ) const -> ElementHandle
 {
   // Make sure that the point is in the mesh
   testPrecondition( this->isPointInMesh(point) );
@@ -233,7 +237,7 @@ void StructuredHexMesh::computeTrackLengths(
 /*! \details returns the iterator that points to the first element in the list
  * containing all of the hex ID elements.
  */
-auto StructuredHexMesh::getStartHexIDIterator() const -> ElementHandleIterator
+auto StructuredHexMesh::getStartElementHandleIterator() const -> ElementHandleIterator
 {
   return d_hex_elements.begin(); 
 }
@@ -242,7 +246,7 @@ auto StructuredHexMesh::getStartHexIDIterator() const -> ElementHandleIterator
 /*! \details returns the iterator that points to one beyond the last element in
  * the list containing all of the hex ID elements.
  */
-auto StructuredHexMesh::getEndHexIDIterator() const -> ElementHandleIterator
+auto StructuredHexMesh::getEndElementHandleIterator() const -> ElementHandleIterator
 {
   return d_hex_elements.end();
 }
@@ -304,8 +308,8 @@ double StructuredHexMesh::getZPlaneLocation( PlaneIndex i)const
  * all three dimensions to form a structured mesh .
  */
 void StructuredHexMesh::getHexPlaneIndices(
-                                      const HexIndex h,
-                                      size_t hex_parameter_indices[3] ) const
+                                       const ElementHandle h,
+                                       size_t hex_parameter_indices[3] ) const
 {
   // Make sure that the hex index is valid
   testPrecondition( h >= 0 && h < d_hex_elements.size() );
@@ -371,7 +375,8 @@ StructuredHexMesh::doesRayIntersectMesh(
         Utility::get<1>( intersection_data ) =
           bounding_plane_distance_set[i].first;
         
-        Utility::get<2>( distance ) = bounding_plane_distance_set[i].second;
+        Utility::get<2>( intersection_data ) =
+          bounding_plane_distance_set[i].second;
         
         break;
       }
@@ -380,8 +385,7 @@ StructuredHexMesh::doesRayIntersectMesh(
 }
 
 // Trace particle path through mesh until it dies or leaves mesh
-std::vector<std::pair<StructuredHexMesh::HexIndex,double> > 
-StructuredHexMesh::traceThroughMesh(
+void StructuredHexMesh::traceThroughMesh(
                double point[3],
                const double direction[3],
                const double track_length,
@@ -483,7 +487,6 @@ void StructuredHexMesh::findInteractionPlanes(
       interaction_planes.push_back( std::make_pair( static_cast<Dimension>(i), hex_plane_indices[i] + 1) );
     }
   }
-  return interaction_planes;
 }
 
 // Find the intersection distance along the path of the particle with the next hex
@@ -534,12 +537,12 @@ void StructuredHexMesh::findIntersectionDistance(
     }
     else if(interaction_planes[i].first == Z_DIMENSION)
     {
-      possible_distane = this->findDistanceToInteractionPlane(
+      possible_distance = this->findDistanceToInteractionPlane(
                                     d_z_planes[ interaction_planes[i].second ],
                                     point[Z_DIMENSION],
                                     direction[Z_DIMENSION] );
 
-      if( possible_distane < intersection_distance.second )
+      if( possible_distance < intersection_distance.second )
       {
         intersection_distance.first = Z_DIMENSION;
         intersection_distance.second = possible_distance;
@@ -855,9 +858,9 @@ size_t StructuredHexMesh::findIndex( const size_t indices[3] ) const
 }
 
 // Export the mesh to a file (type determined by suffix)
-void export( const std::string& output_file_name,
-             TagNameSet& tag_root_names,
-             MeshElementHandleDataMap& mesh_tag_data ) const
+void StructuredHexMesh::exportData( const std::string& output_file_name,
+                                    const TagNameSet& tag_root_names,
+                                    const MeshElementHandleDataMap& mesh_tag_data ) const
 {
 #ifdef HAVE_FRENSIE_MOAB
   // Preset this value to be used with all the functions that MOAB uses
@@ -871,16 +874,13 @@ void export( const std::string& output_file_name,
   moab::ScdInterface *scdiface = new moab::ScdInterface(moab_interface);
 
   // Transform planes of mesh into moab useable interleaved coordinates;
-  std::vector<double>::size_type x_coordinates_size =
-    d_hex_mesh->getNumberOfXPlanes();
-  std::vector<double>::size_type y_coordinates_size =
-    d_hex_mesh->getNumberOfYPlanes();
-  std::vector<double>::size_type z_coordinates_size =
-    d_hex_mesh->getNumberOfZPlanes();
+  size_t x_coordinates_size = this->getNumberOfXPlanes();
+  size_t y_coordinates_size = this->getNumberOfYPlanes();
+  size_t z_coordinates_size = this->getNumberOfZPlanes();
 
   // Make an array called coordinates that MOAB can use to construct a
   // structured hex mesh
-  unsigned long size_of_coordinates =
+  size_t size_of_coordinates =
     x_coordinates_size * y_coordinates_size * z_coordinates_size;
   
   // This array can get very large, so allocate on the heap instead of the
@@ -906,9 +906,9 @@ void export( const std::string& output_file_name,
     {
       for( size_t i = 0; i < x_coordinates_size; ++i)
       {
-        coordinates[l] = d_hex_mesh->getXPlaneLocation(i);
-        coordinates[l + 1] = d_hex_mesh->getYPlaneLocation(j);
-        coordinates[l + 2] = d_hex_mesh->getZPlaneLocation(k);
+        coordinates[l] = this->getXPlaneLocation(i);
+        coordinates[l + 1] = this->getYPlaneLocation(j);
+        coordinates[l + 2] = this->getZPlaneLocation(k);
         l += 3;
       }
     }
@@ -937,32 +937,34 @@ void export( const std::string& output_file_name,
 
   size_t hex_parameter_indices[3]; 
 
-  this->exportImpl( output_file_name,
-                    tag_root_names,
-                    mesh_tag_data,
-                    moab_interface,
-                    meshset,
-                    [&box,&hex_parameter_indices,this](const ElementHandle hex_id) -> ElementHandle
-                    {
-                      this.getHexPlaneIndices( hex_id, hex_parameter_indices );
-                      return box->get_element( hex_parameter_indices[0],
-                                               hex_parameter_indices[1],
-                                               hex_parameter_indices[2] );
-                    } );
+  this->exportDataImpl( output_file_name,
+                        tag_root_names,
+                        mesh_tag_data,
+                        moab_interface,
+                        meshset,
+                        [&box,&hex_parameter_indices,this](const ElementHandle hex_id) -> ElementHandle
+                        {
+                          this->getHexPlaneIndices( hex_id, hex_parameter_indices );
+                          return box->get_element( hex_parameter_indices[0],
+                                                   hex_parameter_indices[1],
+                                                   hex_parameter_indices[2] );
+                        } );
   
   // Tidy up
   delete box;
   delete scdiface;
-  delete moab_interface;  
-#else // HAVE_FRENSIE_MOAB
-  
+  delete moab_interface;
+#else
+  THROW_EXCEPTION( std::logic_error,
+                   "The exporting of structured hex mesh data can only be "
+                   "done if MOAB has been enabled!" );
 #endif // end HAVE_FRENSIE_MOAB
 }
 
 } // end Utility namespace
 
-BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::StructuredHexMesh )
-EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, StructuredHexMesh );
+BOOST_CLASS_EXPORT_IMPLEMENT( Utility::StructuredHexMesh )
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::StructuredHexMesh );
 
 //---------------------------------------------------------------------------//
 // end Utility_StructuredHexMesh.cpp

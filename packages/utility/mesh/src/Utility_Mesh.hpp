@@ -19,6 +19,7 @@
 // Std Lib Includes
 #include "Utility_Vector.hpp"
 #include "Utility_Map.hpp"
+#include "Utility_Set.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
@@ -81,20 +82,20 @@ public:
               ElementHandleTrackLengthArray& element_track_lengths ) const = 0;
   
   //! Export the mesh to a file (type determined by suffix - e.g. mesh.vtk)
-  virtual void export( const std::string& output_file_name,
-                       const TagNameSet& tag_root_names,
-                       const MeshElementHandleDataMap& mesh_tag_data ) const = 0;
+  virtual void exportData( const std::string& output_file_name,
+                           const TagNameSet& tag_root_names,
+                           const MeshElementHandleDataMap& mesh_tag_data ) const = 0;
 
 protected:
 
   //! Default implementation of export method
-  void exportImpl( const std::string& output_file_name,
-                   const TagNameSet& tag_root_names,
-                   const MeshElementHandleDataMap& mesh_tag_data,
-                   void* obfuscated_moab_interface,
-                   const ElementHandle mesh_handle,
-                   const std::function<ElementHandle(const ElementHandle)>&
-                   convert_external_element_handle_to_internal_handle ) const;
+  void exportDataImpl( const std::string& output_file_name,
+                       const TagNameSet& tag_root_names,
+                       const MeshElementHandleDataMap& mesh_tag_data,
+                       void* obfuscated_moab_interface,
+                       const ElementHandle mesh_handle,
+                       const std::function<ElementHandle(const ElementHandle)>&
+                       convert_external_element_handle_to_internal_handle ) const;
 
 private:
 

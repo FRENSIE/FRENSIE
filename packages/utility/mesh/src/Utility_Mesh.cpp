@@ -33,13 +33,13 @@
 namespace Utility{
 
 //! Default implementation of export method
-void Mesh::exportImpl( const std::string& output_file_name,
-                       const TagNameSet& tag_root_names,
-                       const MeshElementHandleDataMap& mesh_tag_data,
-                       void* obfuscated_moab_interface,
-                       const ElementHandle mesh_handle,
-                       const std::function<ElementHandle(const ElementHandle)>&
-                       convert_external_element_handle_to_internal_handle ) const
+void Mesh::exportDataImpl( const std::string& output_file_name,
+                           const TagNameSet& tag_root_names,
+                           const MeshElementHandleDataMap& mesh_tag_data,
+                           void* obfuscated_moab_interface,
+                           const ElementHandle mesh_handle,
+                           const std::function<ElementHandle(const ElementHandle)>&
+                           convert_external_element_handle_to_internal_handle ) const
 {
 #ifdef HAVE_FRENSIE_MOAB
   // Extract the moab interface pointer from the void point
@@ -77,6 +77,7 @@ void Mesh::exportImpl( const std::string& output_file_name,
         const std::string& tag_name_prefix = tag_data.first;
 
         TEST_FOR_EXCEPTION( tags.find( tag_name_prefix ) == tags.end(),
+                            std::logic_error,
                             "Tag name prefix " << tag_name_prefix <<
                             "for mesh element "
                             << mesh_element_tag_data.first << " does not "
@@ -86,15 +87,16 @@ void Mesh::exportImpl( const std::string& output_file_name,
         std::vector<moab::Tag>& tag = tags[tag_name_prefix];
 
         TEST_FOR_EXCEPTION( tag.size() != tag_data.second.size(),
+                            std::logic_error,
                             "Tag " << tag_name_prefix << " for mesh element "
                             << mesh_element_tag_data.first << " does not "
-                            "have the correct size (" << tag.size() " != "
+                            "have the correct size (" << tag.size() << " != "
                             << tag_data.second.size() << ")!" );
 
         for( size_t i = 0; i < tag_data.second.size(); ++i )
         {
           const std::string tag_name =
-            tag_name_prefix + "_" + tag_data[i].first;
+            tag_name_prefix + "_" + tag_data.first;
 
           return_value = moab_interface->tag_get_handle(
                                        tag_name.c_str(),
@@ -111,7 +113,7 @@ void Mesh::exportImpl( const std::string& output_file_name,
                                                tag[i],
                                                &mesh_element_handle,
                                                1,
-                                               &tag_data.second[i] );
+                                               &tag_data.second );
 
           TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                               Utility::MOABException,
@@ -145,12 +147,16 @@ void Mesh::exportImpl( const std::string& output_file_name,
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                       Utility::MOABException,
                       moab::ErrorCodeStr[return_value] );
+#else // HAVE_FRENSIE_MOAB
+  THROW_EXCEPTION( std::logic_error,
+                   "The exporting of mesh data can only be done if MOAB has "
+                   "been enabled!" );
 #endif // end HAVE_FRENSIE_MOAB
 }
 
 } // end Utility namespace
 
-EXPLICIT_CLASS_SERIALIZE_INST( Utility, Mesh );
+EXPLICIT_CLASS_SERIALIZE_INST( Utility::Mesh );
 
 //---------------------------------------------------------------------------//
 // end Utility_Mesh.cpp

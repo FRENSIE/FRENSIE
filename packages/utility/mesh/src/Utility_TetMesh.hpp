@@ -86,11 +86,14 @@ public:
                             tet_element_track_lengths ) const final override;
 
   //! Export the mesh to a vtk file (type determined by suffix - e.g. mesh.vtk)
-  virtual void export( const std::string& output_file_name,
-                       TagNameSet& tag_root_names,
-                       MeshElementHandleDataMap& mesh_tag_data ) const final override;
+  virtual void exportData( const std::string& output_file_name,
+                           const TagNameSet& tag_root_names,
+                           const MeshElementHandleDataMap& mesh_tag_data ) const final override;
 
 private:
+
+  // Default constructor
+  TetMesh();
 
   // Save the data to an archive
   template<typename Archive>
@@ -101,6 +104,9 @@ private:
   void load( Archive& ar, const unsigned version );
 
   BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
   // The tet mesh implementation
   std::unique_ptr<const TetMeshImpl> d_impl;

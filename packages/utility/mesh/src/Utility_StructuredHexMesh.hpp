@@ -91,7 +91,7 @@ public:
   double getZPlaneLocation( PlaneIndex i ) const;
 
   //! Deconstruct a hex index into indices of planes on each dimension.
-  void getHexPlaneIndices( const HexIndex h,
+  void getHexPlaneIndices( const ElementHandle h,
                            size_t hex_parameter_indices[3] ) const;
 
   //! Returns the volumes of the hex elements for the estimator class.
@@ -101,7 +101,7 @@ public:
   bool isPointInMesh( const double point[3] ) const final override;
 
   //! Returns the index of the hex that contains a given point.
-  HexIndex whichElementIsPointIn( const double point[3] ) const final override;
+  ElementHandle whichElementIsPointIn( const double point[3] ) const final override;
 
   //! Returns an array of pairs of hex IDs and partial track lengths along a given line segment.
   void computeTrackLengths( const double start_point[3],
@@ -110,11 +110,14 @@ public:
                             hex_element_track_lengths ) const final override;
 
   //! Export the mesh to a file (type determined by suffix - e.g. mesh.vtk)
-  void export( const std::string& output_file_name,
-               TagNameSet& tag_root_names,
-               MeshElementHandleDataMap& mesh_tag_data ) const final override;
+  void exportData( const std::string& output_file_name,
+                   const TagNameSet& tag_root_names,
+                   const MeshElementHandleDataMap& mesh_tag_data ) const final override;
   
 private:
+
+  // Default constructor
+  StructuredHexMesh();
   
   // Enumeration type converting dimensions to integers
   enum Dimension: size_t{ X_DIMENSION = 0,
@@ -148,13 +151,14 @@ private:
                     const double point[3],
                     const double direction[3],
                     const std::vector<std::pair<Dimension,PlaneIndex> >&
-                    interaction_planes&
+                    interaction_planes,
                     std::pair<Dimension,double>& intersection_distance ) const;
 
   // Calculate distance to a plane from a ray along its direction
-  double findDistanceToInteractionPlane( const double interaction_plane_location,
-                                         const double position_component,
-                                         const double direction_component ) const;
+  double findDistanceToInteractionPlane(
+                                      const double interaction_plane_location,
+                                      const double position_component,
+                                      const double direction_component ) const;
 
   // Form the incrementer so that the particle increments over the planes in the correct direction
   void setIncrementer( size_t incrementer[3],
@@ -258,7 +262,7 @@ void StructuredHexMesh::save( Archive& ar, const unsigned version ) const
 
 // Load the data from an archive
 template<typename Archive>
-void StructureHexMesh::load( Archive& ar, const unsigned version )
+void StructuredHexMesh::load( Archive& ar, const unsigned version )
 {
   // Load the base class data
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Mesh );
