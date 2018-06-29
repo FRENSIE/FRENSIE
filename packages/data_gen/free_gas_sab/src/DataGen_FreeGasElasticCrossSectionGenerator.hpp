@@ -85,6 +85,12 @@ public:
   //! Calculate cross sections for all energies 
   void calculateEnergyCrossSectionValue(  );
 
+  //! Calculate energy differential cross section
+  void energyCrossSectionValue(
+       double E, 
+       DoubleDifferentialCrossSection& double_differential_sigma,
+       std::vector<double>& beta_contour );
+
   //! Get base cross section
   void getBaseCrossSection();
 
@@ -131,6 +137,9 @@ private:
 
   // S(alpha,beta) Function
   Teuchos::RCP<DataGen::FreeGasElasticSAlphaBetaFunction> d_sab_function;
+
+  // Energy cross section value 
+  std::vector<double> d_energy_cross_section;
 
   // Total cross section value 
   boost::unordered_map< double, double > d_total_cross_section;
