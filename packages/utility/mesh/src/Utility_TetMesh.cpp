@@ -203,6 +203,12 @@ TetMesh::TetMesh( const std::string& input_mesh_file_name,
                    "enabled!" );
 #endif // end HAVE_FRENSIE_MOAB
 }
+
+// Destructor
+TetMesh::~TetMesh()
+{
+  delete d_impl;
+}
   
 // Constructor
 TetMeshImpl::TetMeshImpl( const std::string& input_mesh_file_name,
@@ -351,9 +357,9 @@ void TetMeshImpl::createTetMeshset( moab::Range& all_tet_elements,
 
   if( verbose_construction )
   {
-    FRENSIE_LOG_PARTIAL_NOTIFICATION( "done (constructed "
-                                      << all_tet_elements.size() <<
-                                      " tetrahedrons)." );
+    FRENSIE_LOG_NOTIFICATION( "done (constructed "
+                              << all_tet_elements.size() <<
+                              " tetrahedrons)." );
   }
 }
 
@@ -397,7 +403,7 @@ void TetMeshImpl::createKDTree( moab::Range& all_tet_elements,
   
   if( verbose_construction )
   {
-    FRENSIE_LOG_PARTIAL_NOTIFICATION( "done." );
+    FRENSIE_LOG_NOTIFICATION( "done." );
   }
 }
 #endif // end HAVE_FRENSIE_MOAB
@@ -704,6 +710,10 @@ void TetMeshImpl::computeTrackLengths( const double start_point[3],
     std::sort( ray_tet_intersections.begin(),
                ray_tet_intersections.end() );
 
+    // Remove the first intersection if it is zero (start point on surface)
+    if( ray_tet_intersections.front() == 0.0 )
+      ray_tet_intersections.erase( ray_tet_intersections.begin() );
+
     // Calculate the tet intersection points and partial track lengths
     std::vector<moab::CartVect> array_of_hit_points;
 
@@ -720,18 +730,19 @@ void TetMeshImpl::computeTrackLengths( const double start_point[3],
     for( size_t i = 0; i < ray_tet_intersections.size(); ++i )
     {
       moab::CartVect hit_point;
-
+      
       hit_point[0] = direction[0]*ray_tet_intersections[i]
         + start_point[0];
       hit_point[1] = direction[1]*ray_tet_intersections[i]
         + start_point[1];
       hit_point[2] = direction[2]*ray_tet_intersections[i]
         + start_point[2];
-
+      
       array_of_hit_points.push_back( hit_point );
     }
 
-    // Add the end point
+    // Add the end point (don't add if the end point lies on the surface)
+    if( ray_tet_intersections.back() < track_length )
     {
       moab::CartVect end_point_cv(end_point[0], end_point[1], end_point[2]);
       
@@ -864,10 +875,16 @@ void TetMeshImpl::load( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_NVP( d_tet_barycentric_data );
   ar & BOOST_SERIALIZATION_NVP( d_tets );
 
+  // Initialize the moab interface
+  d_moab_interface.reset( new moab::Core );
+  
   // Reconstruct the tet meshset
   moab::Range all_tet_elements;
 
   this->createTetMeshset( all_tet_elements, false );
+
+  // Initialize the kd-tree
+  d_kd_tree.reset( new moab::AdaptiveKDTree( d_moab_interface.get() ) );
 
   // Reconstruct the kd-tree
   this->createKDTree( all_tet_elements, false );

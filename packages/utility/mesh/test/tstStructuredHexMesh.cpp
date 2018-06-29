@@ -6,16 +6,17 @@
 //!
 //---------------------------------------------------------------------------//
 
-// std includes
+// Std Lib Includes
 #include <iostream>
 #include <iomanip>
 #include <memory>
 #include <utility>
 
-// Frensie Includes
+// FRENSIE Includes
 #include "Utility_StructuredHexMesh.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
+#include "FRENSIE_config.hpp"
 #include "ArchiveTestHelpers.hpp"
 
 //---------------------------------------------------------------------------//
@@ -205,7 +206,6 @@ FRENSIE_UNIT_TEST( StructuredHexMesh, whichElementIsPointIn )
 //---------------------------------------------------------------------------//
 // test simple cases of rays not interacting with mesh and computeTrackLengths
 // returning empty arrays
-//---------------------------------------------------------------------------//
 FRENSIE_UNIT_TEST( StructuredHexMesh, computeTrackLengths_no_intersection )
 {
   std::vector<double> x_planes( {0.0, 0.5, 1.0} ),
@@ -1076,8 +1076,13 @@ FRENSIE_UNIT_TEST( StructuredHexMesh, exportData )
   std::shared_ptr<Utility::StructuredHexMesh> hex_mesh(
               new Utility::StructuredHexMesh( x_planes, y_planes, z_planes ) );
 
-  // Export an empty mesh  
+  // Export an empty mesh
+#ifdef HAVE_FRENSIE_MOAB
   FRENSIE_CHECK_NO_THROW( hex_mesh->exportData( "empty_test_hex_mesh.vtk" ) );
+#else
+  FRENSIE_CHECK_THROW( hex_mesh->exportData( "empty_test_hex_mesh.vtk" ),
+                       std::logic_error );
+#endif
 
   // Export the mesh with tag data
   Utility::StructuredHexMesh::TagNameSet tag_name_set( {"mean", "rel_err"} );
@@ -1089,10 +1094,17 @@ FRENSIE_UNIT_TEST( StructuredHexMesh, exportData )
     element_data_map[i]["mean"] = std::vector<std::pair<std::string,double> >( {std::make_pair("b0", 0.1*i), std::make_pair("b1", 0.2*i), std::make_pair("b2", 0.3*i)} );
     element_data_map[i]["rel_err"] = std::vector<std::pair<std::string,double> >( {std::make_pair("b0", 0.01), std::make_pair("b1", 0.001), std::make_pair("b2", 0.01)} );
   }
-  
+
+#ifdef HAVE_FRENSIE_MOAB
   FRENSIE_CHECK_NO_THROW( hex_mesh->exportData( "test_hex_mesh.vtk",
                                                 tag_name_set,
                                                 element_data_map ) );
+#else
+  FRENSIE_CHECK_THROW( hex_mesh->exportData( "test_hex_mesh.vtk",
+                                             tag_name_set,
+                                             element_data_map ),
+                       std::logic_error );
+#endif
 }
 
 //---------------------------------------------------------------------------//

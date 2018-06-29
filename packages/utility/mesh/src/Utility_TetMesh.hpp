@@ -58,8 +58,7 @@ public:
            const bool display_warnings = true );
 
   //! Destructor
-  ~TetMesh()
-  { /* ... */ }
+  ~TetMesh();
 
   //! Get the start iterator of the tet handle list
   ElementHandleIterator getStartElementHandleIterator() const final override;
@@ -90,6 +89,9 @@ public:
                            const TagNameSet& tag_root_names,
                            const MeshElementHandleDataMap& mesh_tag_data ) const final override;
 
+  //! Export the mesh to a vtk file
+  using Mesh::exportData;
+
 private:
 
   // Default constructor
@@ -109,7 +111,7 @@ private:
   friend class boost::serialization::access;
 
   // The tet mesh implementation
-  std::unique_ptr<const TetMeshImpl> d_impl;
+  TetMeshImpl* d_impl;
 };
   
 } // end Utility namespace
