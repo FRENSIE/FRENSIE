@@ -1167,7 +1167,7 @@ int UnitTestManager::runUnitTests( int& argc, char**& argv )
 {
   Utility::GlobalMPISession mpi_session(
                   argc, argv, Utility::GlobalMPISession::SerializedThreading );
-
+  
   return this->runUnitTests( argc, argv, mpi_session );
 }
 

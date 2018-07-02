@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_CommunicatorDecl.hpp"
+#include "Utility_Vector.hpp"
 #include "FRENSIE_config.hpp"
 
 namespace Utility{
