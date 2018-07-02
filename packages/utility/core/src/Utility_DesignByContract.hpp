@@ -19,17 +19,17 @@
 #include <boost/mpl/int.hpp>
 
 // FRENSIE Includes
-#include "FRENSIE_config.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "FRENSIE_config.hpp"
 
 /*! \defgroup contract_exceptions_macros Design-By-Contract Exceptions and Macros
  *
  * Design-By-Contract is a powerful way to ensure that certain function
- * preconditions and postconditions are explicit. When Design-By-Contract
- * functionality is enabled, the program will exit whenever one of these
- * conditions is not met. This functionality is made possible through a series
- * of macros and an exception class.
+ * preconditions, postconditions and internal assertions (invariants) are 
+ * explicit. When Design-By-Contract functionality is enabled, the program will
+ * exit whenever one of these conditions is not met. This functionality is made
+ * possible through a series of macros and an exception class.
  */
 
 namespace Utility{

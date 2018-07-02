@@ -12,6 +12,24 @@
 // FRENSIE Includes
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
+#ifdef HAVE_FRENSIE_MPI
+#define __EXTERN_EXPLICIT_MPI_ARCHIVE_FORWARD_DECLARES__()      \
+namespace boost{                                              \
+namespace mpi{                                            \
+  class packed_oarchive;                                     \
+  class packed_iarchive;                                     \
+  class packed_skeleton_oarchive;                            \
+  class packed_skeleton_iarchive;                            \
+namespace detail{                                            \
+ class content_oarchive;                                     \
+ class mpi_datatype_oarchive;                                \
+}                                                            \
+}                                                            \
+}
+#else // HAVE_FRENSIE_MPI
+#define __EXTERN_EXPLICIT_MPI_ARCHIVE_FORWARD_DECLARES__()
+#endif // end HAVE_FRENSIE_MPI
+
 #define __EXTERN_EXPLICIT_ARCHIVE_FORWARD_DECLARES__()    \
 namespace boost{                                              \
 namespace archive{                                           \
@@ -26,10 +44,25 @@ namespace archive{                                           \
 }                                                                       \
 }                                                                       \
                                                                         \
+__EXTERN_EXPLICIT_MPI_ARCHIVE_FORWARD_DECLARES__();                     \
+                                                                        \
 namespace Utility{                                                     \
   class HDF5OArchive;                                                  \
   class HDF5IArchive;                                                  \
 }
+
+#ifdef HAVE_FRENSIE_MPI
+#define __SERIALIZE_INST_MPI_IMPL__( INST_MACRO, ... )     \
+  INST_MACRO( void __VA_ARGS__::serialize<boost::mpi::detail::content_oarchive>( boost::mpi::detail::content_oarchive& ar, const unsigned version ) ); \
+  INST_MACRO( void __VA_ARGS__::serialize<boost::mpi::detail::mpi_datatype_oarchive>( boost::mpi::detail::mpi_datatype_oarchive& ar, const unsigned version ) ); \
+  INST_MACRO( void __VA_ARGS__::serialize<boost::mpi::packed_oarchive>( boost::mpi::packed_oarchive& ar, const unsigned version ) ); \
+  INST_MACRO( void __VA_ARGS__::serialize<boost::mpi::packed_skeleton_oarchive>( boost::mpi::packed_skeleton_oarchive& ar, const unsigned version ) ); \
+                                                                        \
+  INST_MACRO( void __VA_ARGS__::serialize<boost::mpi::packed_iarchive>( boost::mpi::packed_iarchive& ar, const unsigned version ) ); \
+  INST_MACRO( void __VA_ARGS__::serialize<boost::mpi::packed_skeleton_iarchive>( boost::mpi::packed_skeleton_iarchive& ar, const unsigned version ) )
+#else // HAVE_FRENSIE_MPI
+#define __SERIALIZE_INST_MPI_IMPL__( INST_MACRO, ... )
+#endif // end HAVE_FRENSIE_MPI
 
 #define __SERIALIZE_INST_IMPL__( INST_MACRO, ... )   \
   INST_MACRO( void __VA_ARGS__::serialize<boost::archive::text_oarchive>( boost::archive::text_oarchive& ar, const unsigned version ) ); \
@@ -42,7 +75,22 @@ namespace Utility{                                                     \
   INST_MACRO( void __VA_ARGS__::serialize<boost::archive::xml_iarchive>( boost::archive::xml_iarchive& ar, const unsigned version ) ); \
   INST_MACRO( void __VA_ARGS__::serialize<boost::archive::binary_iarchive>( boost::archive::binary_iarchive& ar, const unsigned version ) ); \
   INST_MACRO( void __VA_ARGS__::serialize<boost::archive::polymorphic_iarchive>( boost::archive::polymorphic_iarchive& ar, const unsigned version ) ); \
-  INST_MACRO( void __VA_ARGS__::serialize<Utility::HDF5IArchive>( Utility::HDF5IArchive& ar, const unsigned version ) )
+  INST_MACRO( void __VA_ARGS__::serialize<Utility::HDF5IArchive>( Utility::HDF5IArchive& ar, const unsigned version ) ); \
+                                                                        \
+  __SERIALIZE_INST_MPI_IMPL__( INST_MACRO, __VA_ARGS__ )
+
+#ifdef HAVE_FRENSIE_MPI
+#define __SAVE_LOAD_MPI_IMPL__( INST_MACRO, ... )       \
+  INST_MACRO( void __VA_ARGS__::save<boost::mpi::detail::content_oarchive>( boost::mpi::detail::content_oarchive&, const unsigned version ) const ); \
+  INST_MACRO( void __VA_ARGS__::save<boost::mpi::detail::mpi_datatype_oarchive>( boost::mpi::detail::mpi_datatype_oarchive& ar, const unsigned version ) const ); \
+  INST_MACRO( void __VA_ARGS__::save<boost::mpi::packed_oarchive>( boost::mpi::packed_oarchive& ar, const unsigned version ) const ); \
+  INST_MACRO( void __VA_ARGS__::save<boost::mpi::packed_skeleton_oarchive>( boost::mpi::packed_skeleton_oarchive& ar, const unsigned version ) const ); \
+                                                                        \
+  INST_MACRO( void __VA_ARGS__::load<boost::mpi::packed_iarchive>( boost::mpi::packed_iarchive& ar, const unsigned version ) ); \
+  INST_MACRO( void __VA_ARGS__::load<boost::mpi::packed_skeleton_iarchive>( boost::mpi::packed_skeleton_iarchive& ar, const unsigned version ) )
+#else // HAVE_FRENSIE_MPI
+#define __SAVE_LOAD_MPI_IMPL__( INST_MACRO, ... )
+#endif // end HAVE_FRENSIE_MPI
 
 #define __SAVE_LOAD_INST_IMPL__( INST_MACRO, ... )      \
   INST_MACRO( void __VA_ARGS__::save<boost::archive::text_oarchive>( boost::archive::text_oarchive& ar, const unsigned version ) const ); \
@@ -55,7 +103,9 @@ namespace Utility{                                                     \
   INST_MACRO( void __VA_ARGS__::load<boost::archive::xml_iarchive>( boost::archive::xml_iarchive& ar, const unsigned version ) ); \
   INST_MACRO( void __VA_ARGS__::load<boost::archive::binary_iarchive>( boost::archive::binary_iarchive& ar, const unsigned version ) ); \
   INST_MACRO( void __VA_ARGS__::load<boost::archive::polymorphic_iarchive>( boost::archive::polymorphic_iarchive& ar, const unsigned version ) ); \
-  INST_MACRO( void __VA_ARGS__::load<Utility::HDF5IArchive>( Utility::HDF5IArchive& ar, const unsigned version ) )
+  INST_MACRO( void __VA_ARGS__::load<Utility::HDF5IArchive>( Utility::HDF5IArchive& ar, const unsigned version ) ); \
+                                                                        \
+  __SAVE_LOAD_MPI_IMPL__( INST_MACRO, __VA_ARGS__ )
 
 /*! Declare an external explicit instantiation of a class's serialization method
  *

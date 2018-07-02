@@ -6,7 +6,6 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.9.3 FATAL_ERROR)
 
 # Add the custom modules to the module path
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
-  "${CMAKE_DIR}/share/cmake-3.0/Modules"
   ${PROJECT_SOURCE_DIR}/cmake)
 
 # Define the project name
@@ -14,6 +13,9 @@ INCLUDE(ProjectName)
 
 # Define the project version
 INCLUDE(Version)
+
+# Include cmake macros (ones that aren't automatically available)
+INCLUDE(${CMAKE_ROOT}/Modules/CMakeDependentOption.cmake)
 
 # Include the macros that have been defined for this project
 INCLUDE(Macros)
@@ -59,7 +61,8 @@ OPTION(FRENSIE_ENABLE_MPI "Enable distributed-memory parallelism in FRENSIE" OFF
 OPTION(FRENSIE_ENABLE_PYTHON "Enable python interfaces in FRENSIE" OFF)
 OPTION(FRENSIE_ENABLE_ROOT "Enable the Root geometry interfaces in FRENSIE" OFF)
 OPTION(FRENSIE_ENABLE_MOAB "Enable the Moab mesh interfaces in FRENSIE" OFF)
-OPTION(FRENSIE_ENABLE_DAGMC "Enable the DagMC geometry interfaces in FRENSIE" OFF)
+CMAKE_DEPENDENT_OPTION(FRENSIE_ENABLE_DAGMC "Enable the DagMC geometry interfaces in FRENSIE (MOAB required)" OFF
+  "FRENSIE_ENABLE_MOAB" OFF)
 OPTION(FRENSIE_ENABLE_DASHBOARD_CLIENT "Enable dashboard client support" OFF)
 OPTION(FRENSIE_ENABLE_MANUAL "Enable the manual in FRENSIE" ON)
 

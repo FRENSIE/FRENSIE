@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstContractException.cpp
+//! \file   tstDesignByContract.cpp
 //! \author Alex Robinson
-//! \brief  Contract Exception class unit tests.
+//! \brief  Design-By-Contract unit tests.
 //!
 //---------------------------------------------------------------------------//
 
@@ -16,7 +16,7 @@
 
 // FRENSIE Includes
 #include "FRENSIE_config.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing functions

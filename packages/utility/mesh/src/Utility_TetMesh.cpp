@@ -7,19 +7,10 @@
 //---------------------------------------------------------------------------//
 
 // Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
 #include <boost/serialization/array_wrapper.hpp>
 
 // FRENSIE Includes
-#include "Utility_HDF5OArchive.hpp" // This must be included first
-#include "Utility_HDF5IArchive.hpp" // This must be included second
+#include "Utility_Archives.hpp" // This must be included first
 #include "Utility_TetMesh.hpp"
 #include "Utility_TetrahedronHelpers.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
@@ -122,6 +113,8 @@ private:
   void createKDTree( moab::Range& all_tet_elements,
                      const bool verbose );
 
+#endif // end HAVE_FRENSIE_MOAB
+
   // Save the data to an archive
   template<typename Archive>
   void save( Archive& ar, const unsigned version ) const;
@@ -134,8 +127,6 @@ private:
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
-  
-#endif // end HAVE_FRENSIE_MOAB
 
   // The tolerance used for geometric tests
   static const double s_tol;

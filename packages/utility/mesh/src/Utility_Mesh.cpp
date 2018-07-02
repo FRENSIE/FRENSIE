@@ -6,19 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
-#include "Utility_HDF5OArchive.hpp" // This must be included first
-#include "Utility_HDF5IArchive.hpp" // This must be included second
+#include "Utility_Archives.hpp" // This must be included first
 #include "Utility_Mesh.hpp"
 #include "Utility_MOABException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
