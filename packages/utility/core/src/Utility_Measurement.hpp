@@ -19,7 +19,7 @@
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_OStreamableObject.hpp"
 #include "Utility_TypeTraits.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Utility{
 

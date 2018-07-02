@@ -11,7 +11,7 @@
 #include "MonteCarlo_ParticleHistoryObserverHDF5FileHandler.hpp"
 #include "Utility_HDF5FileHandler.hpp"
 #include "Utility_OpenMPProperties.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 

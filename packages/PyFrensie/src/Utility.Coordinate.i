@@ -25,7 +25,7 @@ conversion policies that can be used in FRENSIE and PyFrensie.
 #include "PyFrensie_PythonTypeTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_ExplicitSystemTemplateInstantiationMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 #include "Utility_SpatialCoordinateSystemType.hpp"
 #include "Utility_SpatialCoordinateSystemTraitsDecl.hpp"

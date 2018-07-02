@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_ContractException.hpp
+//! \file   Utility_DesignByContract.hpp
 //! \author Alex Robinson (aprobinson@wisc.edu)
 //! \brief  Design-by-Contract exception handling and error policy declaration.
 //!
@@ -151,5 +151,5 @@ public:
 #endif // end UTILITY_CONTRACT_EXCEPTION_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_ContractException.hpp
+// end Utility_DesignByContract.hpp
 //---------------------------------------------------------------------------//

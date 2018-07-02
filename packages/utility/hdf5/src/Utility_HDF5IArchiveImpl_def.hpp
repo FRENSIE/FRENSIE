@@ -16,7 +16,7 @@
 #include "Utility_BoostVersion.hpp"
 #include "Utility_TypeNameTraits.hpp"
 #include "Utility_LoggingMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Utility{
 

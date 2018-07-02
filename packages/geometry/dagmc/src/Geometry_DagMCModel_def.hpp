@@ -19,7 +19,7 @@
 // FRENSIE Includes
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_Tuple.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
 namespace Geometry{

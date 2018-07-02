@@ -8,7 +8,7 @@
 
 // FRENSIE Includes
 #include "Utility_GaussLegendreQuadratureSet.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Utility{
 void getLegendrePowerExpansionCoefficients(

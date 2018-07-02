@@ -17,7 +17,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleLeavingCellEventDispatcher.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_Vector.hpp"
 
 namespace MonteCarlo{

@@ -14,7 +14,7 @@
 #include <limits>
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 /*! \defgroup quantity_traits Quantity Traits
  * \ingroup traits

@@ -9,7 +9,7 @@
 // FRENSIE Includes
 #include "Geometry_DagMCRay.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 

@@ -16,7 +16,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_HexMeshTrackLengthFluxEstimator.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_MOABException.hpp"
 
 namespace MonteCarlo{

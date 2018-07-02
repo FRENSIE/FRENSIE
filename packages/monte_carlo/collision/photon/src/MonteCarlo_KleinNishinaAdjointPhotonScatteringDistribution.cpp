@@ -9,7 +9,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_KleinNishinaAdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointPhotonKinematicsHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 

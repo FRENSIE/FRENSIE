@@ -8,7 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSubtrackEndingGlobalEventDispatcher.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 

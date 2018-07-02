@@ -16,7 +16,7 @@
 #include "Utility_DirectionalCoordinateConversionPolicy.hpp"
 #include "Utility_DirectionalCoordinateSystemTraits.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Utility{
 

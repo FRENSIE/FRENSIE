@@ -11,7 +11,7 @@
 #include "Utility_Mesh.hpp"
 #include "Utility_MOABException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "FRENSIE_config.hpp"
 
 // Moab Includes

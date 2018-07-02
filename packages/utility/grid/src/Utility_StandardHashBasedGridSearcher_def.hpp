@@ -19,7 +19,7 @@
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 #define BOOST_SERIALIZATION_STD_HASH_BASED_GRID_SEARCHER_EXPORT_IMPLEMENT() \
   BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_IMPLEMENT_IMPL(      \

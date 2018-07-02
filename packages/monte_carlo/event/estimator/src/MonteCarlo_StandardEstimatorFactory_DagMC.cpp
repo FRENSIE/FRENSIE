@@ -10,7 +10,7 @@
 #include "MonteCarlo_StandardEstimatorFactory_DagMC.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 #ifdef HAVE_FRENSIE_DAGMC
 

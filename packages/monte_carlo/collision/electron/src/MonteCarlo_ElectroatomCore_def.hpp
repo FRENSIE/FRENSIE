@@ -10,7 +10,7 @@
 #define MONTE_CARLO_ELECTROATOM_CORE_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "MonteCarlo_AbsorptionElectroatomicReaction.hpp"
 #include "MonteCarlo_VoidAbsorptionElectroatomicReaction.hpp"
 

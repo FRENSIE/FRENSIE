@@ -57,7 +57,7 @@ sys.path.pop(0)
 #include "Geometry_Exceptions.hpp"
 #include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 using namespace Geometry;
 %}

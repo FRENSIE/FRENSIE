@@ -17,7 +17,7 @@
 #include "Data_AdjointElectroatomicDataProperties.hpp"
 #include "Data_AtomProperties.hpp"
 #include "Data_ExplicitTemplateInstantiationMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_ToStringTraitsDecl.hpp"
 

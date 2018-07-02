@@ -18,7 +18,7 @@
 #include <TGeoMaterial.h>
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 

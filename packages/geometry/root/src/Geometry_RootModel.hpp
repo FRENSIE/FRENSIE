@@ -24,7 +24,7 @@
 #include "Geometry_Model.hpp"
 #include "Utility_Map.hpp"
 #include "Utility_Vector.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 

@@ -15,7 +15,7 @@
 #include "Utility_Vector.hpp"
 #include "Utility_ArrayView.hpp"
 #include "Utility_TypeTraits.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Utility{
 

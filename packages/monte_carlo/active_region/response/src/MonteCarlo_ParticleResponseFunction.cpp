@@ -25,7 +25,7 @@
 #include "Utility_HDF5OArchive.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 

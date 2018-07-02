@@ -28,7 +28,7 @@
 // FRENSIE Includes
 #include "Geometry_Surface.hpp"
 #include "Utility_Tuple.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 

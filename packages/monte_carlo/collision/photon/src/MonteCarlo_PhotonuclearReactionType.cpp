@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotonuclearReactionType.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 #define __UNSIGNED_CONVERSION_CASE_LINE__( REACTION_ENUM )      \
   case (unsigned)REACTION_ENUM: return REACTION_ENUM

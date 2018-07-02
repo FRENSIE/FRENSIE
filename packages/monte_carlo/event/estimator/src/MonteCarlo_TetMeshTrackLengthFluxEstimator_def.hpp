@@ -18,7 +18,7 @@
 #include "Utility_TetrahedronHelpers.hpp"
 #include "Utility_MOABException.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
 namespace MonteCarlo{

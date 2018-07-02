@@ -13,7 +13,7 @@
 #include <limits>
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_IntegratorException.hpp"
 #include "Utility_SortAlgorithms.hpp"

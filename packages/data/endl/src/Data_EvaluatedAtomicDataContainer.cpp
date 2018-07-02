@@ -24,7 +24,7 @@
 #include "Data_ENDLDataContainer.hpp"
 #include "Data_DataContainerHelpers.hpp"
 #include "Utility_SortAlgorithms.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Data{
 

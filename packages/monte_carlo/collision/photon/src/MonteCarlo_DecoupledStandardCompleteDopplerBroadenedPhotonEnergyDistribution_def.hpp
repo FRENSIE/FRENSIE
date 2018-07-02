@@ -21,7 +21,7 @@
 #include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 

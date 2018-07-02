@@ -16,7 +16,7 @@
 #include "Geometry_ModuleInterface.hpp"
 #include "Geometry_Config.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 #ifdef HAVE_FRENSIE_ROOT
 #include "Geometry_RootInstanceFactory.hpp"

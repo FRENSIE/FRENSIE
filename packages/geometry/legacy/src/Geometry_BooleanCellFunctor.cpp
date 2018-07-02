@@ -20,7 +20,7 @@
 #include "Geometry_BooleanCellFunctor.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_SetOperationFunctor.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 

@@ -19,7 +19,7 @@
 // FRENSIE includes
 #include "Utility_LinearCongruentialGenerator.hpp"
 #include "Utility_OpenMPProperties.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Utility{
 

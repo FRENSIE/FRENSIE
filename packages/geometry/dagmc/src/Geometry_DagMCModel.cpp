@@ -33,7 +33,7 @@
 #include "Utility_MOABException.hpp"
 #include "Utility_FromStringTraits.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 

@@ -9,7 +9,7 @@
 // FRENSIE Includes
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_FakeGenerator.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Utility{
 

@@ -15,7 +15,7 @@
 #include <sstream>
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_ComparisonPolicy.hpp"
 #include "Utility_SortAlgorithms.hpp"

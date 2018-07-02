@@ -13,7 +13,7 @@
 #include "MonteCarlo_EnergyDependentNeutronMultiplicityReaction.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_InterpolationPolicy.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 

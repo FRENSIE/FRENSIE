@@ -11,7 +11,7 @@
 #include "Geometry_RootModel.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_OpenMPProperties.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 

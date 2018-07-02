@@ -32,7 +32,7 @@
 #include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_SampleMomentCollection.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_Map.hpp"
 #include "Utility_Set.hpp"

@@ -23,7 +23,7 @@ definitions in the monte_carlo/collision subpackage.
 #include "MonteCarlo_MaterialDefinitionDatabase.hpp"
 #include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 // Declare typedef for the MaterialDefinitionArray
 typedef MonteCarlo::MaterialDefinitionDatabase::MaterialDefinitionArray MaterialDefinitionArray;

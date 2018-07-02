@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "DataGen_AdjointIncoherentCrossSectionHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace DataGen{
 

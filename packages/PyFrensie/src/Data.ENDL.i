@@ -28,7 +28,7 @@ FRENSIE format data file.
 #include "Data_ENDLDataContainer.hpp"
 #include "Data_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 // Add the Data namespace to the global lookup scope
 using namespace Data;

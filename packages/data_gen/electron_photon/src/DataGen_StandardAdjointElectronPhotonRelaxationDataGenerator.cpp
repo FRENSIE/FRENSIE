@@ -37,7 +37,7 @@
 #include "Utility_StaticOutputFormatter.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace DataGen{
 

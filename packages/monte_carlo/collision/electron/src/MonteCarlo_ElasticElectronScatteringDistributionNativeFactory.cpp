@@ -9,7 +9,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "Utility_DiscreteDistribution.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Data_DataContainerHelpers.hpp"
 

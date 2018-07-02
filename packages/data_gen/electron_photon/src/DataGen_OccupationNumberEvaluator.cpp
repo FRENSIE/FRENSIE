@@ -16,7 +16,7 @@
 // FRENSIE Includes
 #include "DataGen_OccupationNumberEvaluator.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace DataGen{
 

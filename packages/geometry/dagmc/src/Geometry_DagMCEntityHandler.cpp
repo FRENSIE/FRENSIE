@@ -8,7 +8,7 @@
 
 // FRENSIE Includes
 #include "Geometry_DagMCEntityHandler.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 

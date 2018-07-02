@@ -37,7 +37,7 @@ debugging geometries.
 #include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Exceptions.hpp"
 #include "Utility_SerializationHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 using namespace Geometry;
 %}

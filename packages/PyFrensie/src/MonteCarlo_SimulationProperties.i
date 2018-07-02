@@ -25,7 +25,7 @@
 #include "MonteCarlo_SimulationAdjointElectronProperties.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_ToStringTraitsDecl.hpp"
 

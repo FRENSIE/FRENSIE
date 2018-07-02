@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "Utility_PartiallyTabularBasicBivariateDistribution.hpp"
 #include "Utility_FullyTabularBasicBivariateDistribution.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Utility{
 

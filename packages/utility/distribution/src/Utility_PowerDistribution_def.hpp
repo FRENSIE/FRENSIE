@@ -14,7 +14,7 @@
 #include "Utility_ExponentiationAlgorithms.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 #define BOOST_SERIALIZATION_POWER_DISTRIBUTION_EXPORT_IMPLEMENT()       \
   BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_IMPLEMENT_IMPL(      \

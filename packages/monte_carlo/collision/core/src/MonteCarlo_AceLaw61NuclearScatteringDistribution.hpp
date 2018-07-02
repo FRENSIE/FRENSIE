@@ -16,7 +16,7 @@
 #include "MonteCarlo_LabSystemConversionPolicy.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_Vector.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 

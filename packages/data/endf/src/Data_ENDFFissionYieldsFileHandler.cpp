@@ -9,7 +9,7 @@
 // FRENSIE Include
 #include "Data_ENDFFissionYieldsFileHandler.hpp"
 #include "Utility_FortranFileHelperWrappers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Data_ENDFFissionYieldsHelperWrappers.hpp"
 

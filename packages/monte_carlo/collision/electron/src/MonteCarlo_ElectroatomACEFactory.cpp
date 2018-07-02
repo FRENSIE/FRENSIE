@@ -10,7 +10,7 @@
 #include "MonteCarlo_ElectroatomACEFactory.hpp"
 #include "MonteCarlo_ElectroatomicReactionACEFactory.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 

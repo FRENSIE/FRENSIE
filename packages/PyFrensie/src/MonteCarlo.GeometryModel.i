@@ -37,7 +37,7 @@ GeometryModel definitions in the monte_carlo/collision subpackage.
 #include "MonteCarlo_FilledGeometryModel.hpp"
 #include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 using namespace MonteCarlo;
 %}
