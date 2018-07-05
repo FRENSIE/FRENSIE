@@ -1,15 +1,15 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_KinematicHelpers.cpp
+//! \file   MonteCarlo_KinematicHelpers.cpp
 //! \author Alex Robinson
 //! \brief  Kinematic helper function definitions
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_KinematicHelpers.hpp"
+#include "MonteCarlo_KinematicHelpers.hpp"
 
-namespace Utility{
+namespace MonteCarlo{
 
 // Calculate the beta min value
 /*! \details The kinetic energy and the temperature (kT) must be in units of
@@ -68,8 +68,8 @@ double calculateAlphaMax( const double kinetic_energy,
   return numerator*numerator/(A*kT);
 }
 
-} // end Utility namespace
+} // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end Utility_KinematicHelpers.cpp
+// end MonteCarlo_KinematicHelpers.cpp
 //---------------------------------------------------------------------------//

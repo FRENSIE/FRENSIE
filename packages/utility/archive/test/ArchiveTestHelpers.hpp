@@ -9,19 +9,29 @@
 // Std Lib Includes
 #include <memory>
 
-// Boost Includes
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-
 // FRENSIE Includes
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
-#include "Utility_PolymorphicHDF5IArchive.hpp"
-#include "Utility_PolymorphicHDF5OArchive.hpp"
+#include "Utility_Archives.hpp"
+#include "Utility_Tuple.hpp"
+#include "FRENSIE_config.hpp"
+
+//! A helper class that provides a static list of archive types for testing
+class TestArchiveHelper
+{
+  typedef std::tuple<
+    std::tuple<boost::archive::xml_oarchive*,boost::archive::xml_iarchive*>,
+    std::tuple<boost::archive::text_oarchive*,boost::archive::text_iarchive*>,
+    std::tuple<boost::archive::binary_oarchive*,boost::archive::binary_iarchive*>
+    > CoreTestArchives;
+
+public:
+
+#ifdef HAVE_FRENSIE_HDF5
+  typedef decltype(std::tuple_cat(CoreTestArchives(),std::tuple<std::tuple<Utility::HDF5OArchive*,Utility::HDF5IArchive*> >())) TestArchives;
+#else
+  typedef CoreTestArchives TestArchives;
+#endif
+};
+
 
 //! Create an Utility::HDF5OArchive
 inline void createOArchive( std::string& base_archive_name,
@@ -35,20 +45,6 @@ inline void createOArchive( std::string& base_archive_name,
   oss << base_archive_name;
   
   oarchive.reset( new Utility::HDF5OArchive( base_archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE ) );
-}
-
-//! Create a Utility::PolymorphicHDF5OArchive
-inline void createOArchive( std::string& base_archive_name,
-                            std::ostringstream& oss,
-                            std::unique_ptr<boost::archive::polymorphic_oarchive>& oarchive )
-{
-  base_archive_name += "_polymorphic.h5a";
-
-  oss.str( "" );
-  oss.clear();
-  oss << base_archive_name;
-
-  oarchive.reset( new Utility::PolymorphicHDF5OArchive( oss, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE ) );
 }
 
 //! Create a xml oarchive
@@ -97,13 +93,6 @@ inline void createIArchive( std::istringstream& iss,
                             std::unique_ptr<Utility::HDF5IArchive>& iarchive )
 {
   iarchive.reset( new Utility::HDF5IArchive( iss.str() ) );
-}
-
-//! Create a Utility::PolymorphicHDF5IArchive
-inline void createIArchive( std::istringstream& iss,
-                            std::unique_ptr<boost::archive::polymorphic_iarchive>& iarchive )
-{
-  iarchive.reset( new Utility::PolymorphicHDF5IArchive( iss ) );
 }
 
 //---------------------------------------------------------------------------//

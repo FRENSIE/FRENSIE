@@ -3,6 +3,7 @@ FRENSIE_INITIALIZE_PACKAGE_TESTS(utility_archive)
 FRENSIE_ADD_TEST_EXECUTABLE(HDF5ArchiveBasicTypes DEPENDS tstHDF5ArchiveBasicTypes.cpp)
 FRENSIE_ADD_TEST(HDF5ArchiveBasicTypes)
 
+IF(${FRENSIE_ENABLE_HDF5})
 FRENSIE_ADD_TEST_EXECUTABLE(HDF5ArchiveTupleTypes DEPENDS tstHDF5ArchiveTupleTypes.cpp)
 FRENSIE_ADD_TEST(HDF5ArchiveTupleTypes)
 
@@ -32,6 +33,7 @@ FRENSIE_ADD_TEST(HDF5ArchiveMap)
 
 FRENSIE_ADD_TEST_EXECUTABLE(HDF5ArchiveUnorderedMap DEPENDS tstHDF5ArchiveUnorderedMap.cpp)
 FRENSIE_ADD_TEST(HDF5ArchiveUnorderedMap)
+ENDIF()
 
 FRENSIE_ADD_TEST_EXECUTABLE(PolymorphicHDF5Archive DEPENDS tstPolymorphicHDF5Archive.cpp)
 FRENSIE_ADD_TEST(PolymorphicHDF5Archive)

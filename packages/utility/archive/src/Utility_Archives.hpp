@@ -12,9 +12,12 @@
 #define UTILITY_ARCHIVES_HPP
 
 // FRENSIE Includes
+#include "FRENSIE_config.hpp"
+
+#ifdef HAVE_FRENSIE_HDF5
 #include "Utility_HDF5OArchive.hpp"
 #include "Utility_HDF5IArchive.hpp"
-#include "FRENSIE_config.hpp"
+#endif // end HAVE_FRENSIE_HDF5
 
 // Boost Includes
 #include <boost/archive/text_oarchive.hpp>
@@ -23,8 +26,6 @@
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
 
 #ifdef HAVE_FRENSIE_MPI
 #include <boost/mpi/packed_oarchive.hpp>

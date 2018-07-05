@@ -7,7 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_KinematicHelpers.hpp"
+#include "MonteCarlo_KinematicHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
@@ -16,7 +16,7 @@
 //---------------------------------------------------------------------------//
 FRENSIE_UNIT_TEST( KinematicHelpers, calculateRelativisticKineticEnergy )
 {
-  double energy = Utility::calculateRelativisticKineticEnergy(1.0,1.0);
+  double energy = MonteCarlo::calculateRelativisticKineticEnergy(1.0,1.0);
   double speed_of_light = Utility::PhysicalConstants::speed_of_light;
   double result = speed_of_light * speed_of_light * ( speed_of_light /
         sqrt( speed_of_light * speed_of_light - 1 ) - 1 );
@@ -26,7 +26,7 @@ FRENSIE_UNIT_TEST( KinematicHelpers, calculateRelativisticKineticEnergy )
 //---------------------------------------------------------------------------//
 FRENSIE_UNIT_TEST( KinematicHelpers, calculateKineticEnergy )
 {
-  double energy = Utility::calculateKineticEnergy(8.0,1.0);
+  double energy = MonteCarlo::calculateKineticEnergy(8.0,1.0);
   double speed_of_light = Utility::PhysicalConstants::speed_of_light;
   FRENSIE_CHECK_FLOATING_EQUALITY(energy, 4.0/( speed_of_light * speed_of_light ), 1e-15);
 }
@@ -35,7 +35,7 @@ FRENSIE_UNIT_TEST( KinematicHelpers, calculateKineticEnergy )
 FRENSIE_UNIT_TEST( KinematicHelpers, calculateDimensionlessRelativisticSpeedSquared )
 {
   double speed_squared =
-               Utility::calculateDimensionlessRelativisticSpeedSquared(1.0,1.0);
+               MonteCarlo::calculateDimensionlessRelativisticSpeedSquared(1.0,1.0);
   double result = 3.0 / 4.0;
   FRENSIE_CHECK_FLOATING_EQUALITY(speed_squared, result, 1e-15);
 }
@@ -43,7 +43,7 @@ FRENSIE_UNIT_TEST( KinematicHelpers, calculateDimensionlessRelativisticSpeedSqua
 //---------------------------------------------------------------------------//
 FRENSIE_UNIT_TEST( KinematicHelpers, calculateRelativisticSpeed )
 {
-  double speed = Utility::calculateRelativisticSpeed(1.0,1.0);
+  double speed = MonteCarlo::calculateRelativisticSpeed(1.0,1.0);
   double speed_of_light = Utility::PhysicalConstants::speed_of_light;
   double result = speed_of_light * sqrt( 3.0 / 4.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY(speed, result, 1e-15);
@@ -52,7 +52,7 @@ FRENSIE_UNIT_TEST( KinematicHelpers, calculateRelativisticSpeed )
 //---------------------------------------------------------------------------//
 FRENSIE_UNIT_TEST( KinematicHelpers, calculateSpeed )
 {
-  double speed = Utility::calculateSpeed(8.0,1.0);
+  double speed = MonteCarlo::calculateSpeed(8.0,1.0);
   double result = Utility::PhysicalConstants::speed_of_light/2.0;
   FRENSIE_CHECK_FLOATING_EQUALITY(speed, result, 1e-15);
 }
@@ -61,7 +61,7 @@ FRENSIE_UNIT_TEST( KinematicHelpers, calculateSpeed )
 FRENSIE_UNIT_TEST( KinematicHelpers, calculateRelativisticMomentumEnergySquared )
 {
   double momentum_squared =
-               Utility::calculateRelativisticMomentumEnergySquared( 1.0, 1.0 );
+               MonteCarlo::calculateRelativisticMomentumEnergySquared( 1.0, 1.0 );
   double result = 3.0;
   FRENSIE_CHECK_FLOATING_EQUALITY( momentum_squared, result, 1e-15 );
 }
@@ -70,7 +70,7 @@ FRENSIE_UNIT_TEST( KinematicHelpers, calculateRelativisticMomentumEnergySquared 
 FRENSIE_UNIT_TEST( KinematicHelpers, calculateDimensionlessRelativisticMomentumSquared )
 {
   double momentum_squared =
-         Utility::calculateDimensionlessRelativisticMomentumSquared( 1.0 );
+         MonteCarlo::calculateDimensionlessRelativisticMomentumSquared( 1.0 );
   double result = 3.0;
   FRENSIE_CHECK_FLOATING_EQUALITY( momentum_squared, result, 1e-15 );
 }
@@ -79,7 +79,7 @@ FRENSIE_UNIT_TEST( KinematicHelpers, calculateDimensionlessRelativisticMomentumS
 FRENSIE_UNIT_TEST( KinematicHelpers, calculateRelativisticMomentum )
 {
   double momentum_squared =
-               Utility::calculateRelativisticMomentum( 1.0, 1.0 );
+               MonteCarlo::calculateRelativisticMomentum( 1.0, 1.0 );
   double result = sqrt( 3.0 )/Utility::PhysicalConstants::speed_of_light;
   FRENSIE_CHECK_FLOATING_EQUALITY( momentum_squared, result, 1e-15 );
 }
@@ -90,7 +90,7 @@ FRENSIE_UNIT_TEST( KinematicHelpers, calculateBetaMin )
   double E = 1e-6;
   double kT = 2.53010e-8;
 
-  double beta_min = Utility::calculateBetaMin( E, kT );
+  double beta_min = MonteCarlo::calculateBetaMin( E, kT );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( beta_min, -E/kT, 1e-12 );
 }
@@ -103,17 +103,17 @@ FRENSIE_UNIT_TEST( KinematicHelpers, calculateAlphaMin )
   double beta = -9.9e-7/2.53010e-8;
   double A = 0.999167;
 
-  double alpha_min = Utility::calculateAlphaMin( E, beta, A, kT );
+  double alpha_min = MonteCarlo::calculateAlphaMin( E, beta, A, kT );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( alpha_min, 32.041235228594, 1e-12 );
 
   beta = 0.0;
-  alpha_min = Utility::calculateAlphaMin( E, beta, A, kT );
+  alpha_min = MonteCarlo::calculateAlphaMin( E, beta, A, kT );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( alpha_min, 0.0, 1e-12 );
 
   beta = 1e-6/2.53010e-8;
-  alpha_min = Utility::calculateAlphaMin( E, beta, A, kT );
+  alpha_min = MonteCarlo::calculateAlphaMin( E, beta, A, kT );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( alpha_min, 6.7869220430292, 1e-12 );
 }
@@ -126,17 +126,17 @@ FRENSIE_UNIT_TEST( KinematicHelpers, calculateAlphaMax )
   double beta = -9.9e-7/2.53010e-8;
   double A = 0.999167;
 
-  double alpha_max = Utility::calculateAlphaMax( E, beta, A, kT );
+  double alpha_max = MonteCarlo::calculateAlphaMax( E, beta, A, kT );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( alpha_max, 47.864067440246, 1e-12 );
 
   beta = 0.0;
-  alpha_max = Utility::calculateAlphaMax( E, beta, A, kT );
+  alpha_max = MonteCarlo::calculateAlphaMax( E, beta, A, kT );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( alpha_max, 158.22832211652, 1e-12 );
 
   beta = 1e-6/2.53010e-8;
-  alpha_max = Utility::calculateAlphaMax( E, beta, A, kT );
+  alpha_max = MonteCarlo::calculateAlphaMax( E, beta, A, kT );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( alpha_max, 230.55556113174, 1e-12 );
 }

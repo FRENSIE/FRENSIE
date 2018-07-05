@@ -123,6 +123,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5Archive, archive_single_value, BasicTestTypes )
   
   std::string archive_name( "test_basic_types.h5a" );
 
+#ifdef HAVE_FRENSIE_HDF5
   {
     Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
 
@@ -145,7 +146,13 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5Archive, archive_single_value, BasicTestTypes )
     FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "basic_value_b", extracted_value ) );
     FRENSIE_CHECK_EQUAL( extracted_value, one(T()) );
   }
+#else
+  FRENSIE_CHECK_THROW( Utility::HDF5IArchive archive( archive_name ),
+                       std::logic_error );
+#endif
 }
+
+#ifdef HAVE_FRENSIE_HDF5
 
 //---------------------------------------------------------------------------//
 // Check that arrays of basic types can be archived
@@ -268,6 +275,8 @@ FRENSIE_UNIT_TEST( HDF5Archive, archive_class_info )
   FRENSIE_CHECK_EQUAL( advanced_class.getFileVersion(), 2 );
   FRENSIE_CHECK_EQUAL( advanced_class.getSerializationCount(), 1 );  
 }
+
+#endif // end HAVE_FRENSIE_HDF5
 
 //---------------------------------------------------------------------------//
 // end tstHDF5ArchiveBasicTypes.cpp

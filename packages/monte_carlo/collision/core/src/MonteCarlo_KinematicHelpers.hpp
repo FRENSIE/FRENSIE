@@ -1,20 +1,20 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_KinematicHelpers.hpp
+//! \file   MonteCarlo_KinematicHelpers.hpp
 //! \author Alex Bennett, Alex Robinson, Luke Kersting
 //! \brief  Kinematic helper function declarations
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_KINEMATIC_HELPERS_HPP
-#define UTILITY_KINEMATIC_HELPERS_HPP
+#ifndef MONTE_CARLO_KINEMATIC_HELPERS_HPP
+#define MONTE_CARLO_KINEMATIC_HELPERS_HPP
 
 // FRENSIE Includes
-#include "Utility_PhysicalConstants.hpp"
-#include "Utility_QuantityTraits.hpp"
-#include "Utility_DesignByContract.hpp"
+#include "MonteCarlo_PhysicalConstants.hpp"
+#include "MonteCarlo_QuantityTraits.hpp"
+#include "MonteCarlo_DesignByContract.hpp"
 
-namespace Utility{
+namespace MonteCarlo{
 
 //! Calculate the kinetic energy of a relativistic particle (MeV)
 double calculateRelativisticKineticEnergy( const double rest_mass_energy,
@@ -188,15 +188,15 @@ inline double calculateDimensionlessRelativisticMomentumSquared(
 inline double calculateRelativisticMomentum( const double rest_mass_energy,
                                              const double kinetic_energy )
 {
-  return sqrt( calculateRelativisticMomentumEnergySquared(
+  return std::sqrt( calculateRelativisticMomentumEnergySquared(
                     rest_mass_energy, kinetic_energy ) ) /
                     Utility::PhysicalConstants::speed_of_light;
 }
 
 
-} // end Utility namespace
+} // end MonteCarlo namespace
 
-#endif // end UTILITY_KINEMATIC_HELPERS_HPP
+#endif // end MONTE_CARLO_KINEMATIC_HELPERS_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_KinematicHelpers.hpp

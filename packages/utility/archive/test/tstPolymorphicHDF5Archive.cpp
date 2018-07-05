@@ -124,6 +124,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( PolymorphicHDF5Archive,
 
   std::shared_ptr<boost::archive::polymorphic_oarchive> oarchive;
 
+#ifdef HAVE_FRENSIE_HDF5
   {
     std::ostringstream archive_name_stream( archive_name );
 
@@ -152,7 +153,15 @@ FRENSIE_UNIT_TEST_TEMPLATE( PolymorphicHDF5Archive,
     FRENSIE_REQUIRE_NO_THROW( *iarchive >> boost::serialization::make_nvp( "basic_value_b", extracted_value ) );
     FRENSIE_CHECK_EQUAL( extracted_value, one(T()) );
   }
+#else
+  std::ostringstream archive_name_stream( archive_name );
+  
+  FRENSIE_CHECK_THROW( oarchive.reset( new Utility::PolymorphicHDF5OArchive( archive_name_stream, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE ) ),
+                       std::logic_error );
+#endif
 }
+
+#ifdef HAVE_FRENSIE_HDF5
 
 //---------------------------------------------------------------------------//
 // Check that arrays of basic types can be archived
@@ -426,6 +435,8 @@ FRENSIE_UNIT_TEST_TEMPLATE( PolymorphicHDF5Archive,
     FRENSIE_CHECK_EQUAL( extracted_unordered_map, unordered_map );
   }
 }
+
+#endif // end HAVE_FRENSIE_HDF5
 
 //---------------------------------------------------------------------------//
 // end tstPolymorphicHDF5Archive.cpp

@@ -101,7 +101,7 @@ void HDF5TypeTraits<bool>::freeInternalData( InternalType*& data )
 HDF5_ENABLED_LINE(std::unique_ptr<H5::StrType> HDF5TypeTraits<std::string>::s_data_type);
 
 // Returns the HDF5 data type object corresponding to std::string
-HDF5_ENABLED_DISABLED_SWITCH(const H5::StrType,int) HDF5TypeTraits<std::string>::dataType()
+HDF5_ENABLED_DISABLED_SWITCH(const H5::StrType&,int) HDF5TypeTraits<std::string>::dataType()
 {
 #ifdef HAVE_FRENSIE_HDF5
   if( !s_data_type )
