@@ -111,7 +111,7 @@ void TranslationSphericalSpatialCoordinateConversionPolicy::load( Archive& ar, c
 
 BOOST_SERIALIZATION_CLASS_VERSION( TranslationSphericalSpatialCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( TranslationSphericalSpatialCoordinateConversionPolicy, Utility );
-EXTERN_EXPLICIT_SYSTEM_CLASS_SAVE_LOAD_INST( Utility::TranslationSphericalSpatialCoordinateConversionPolicy );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, TranslationSphericalSpatialCoordinateConversionPolicy );
 
 #endif // end UTILITY_TRANSLATION_SPHERICAL_SPATIAL_COORDINATE_CONVERSION_POLICY_HPP
 

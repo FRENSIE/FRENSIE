@@ -69,7 +69,7 @@ private:
 
 BOOST_SERIALIZATION_CLASS_VERSION( BasicCylindricalSpatialCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( BasicCylindricalSpatialCoordinateConversionPolicy, Utility );
-EXTERN_EXPLICIT_SYSTEM_CLASS_SERIALIZE_INST( Utility::BasicCylindricalSpatialCoordinateConversionPolicy );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( Utility, BasicCylindricalSpatialCoordinateConversionPolicy );
 
 #endif // end UTILITY_BASIC_CYLINDRICAL_SPATIAL_COORDINATE_CONVERSION_POLICY_HPP
 

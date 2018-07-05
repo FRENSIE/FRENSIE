@@ -112,7 +112,7 @@ void RotationCylindricalSpatialCoordinateConversionPolicy::load( Archive& ar, co
 
 BOOST_SERIALIZATION_CLASS_VERSION( RotationCylindricalSpatialCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( RotationCylindricalSpatialCoordinateConversionPolicy, Utility );
-EXTERN_EXPLICIT_SYSTEM_CLASS_SAVE_LOAD_INST( Utility::RotationCylindricalSpatialCoordinateConversionPolicy );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, RotationCylindricalSpatialCoordinateConversionPolicy );
 
 #endif // end UTILITY_ROTATION_CYLINDRICAL_SPATIAL_COORDINATE_CONVERSION_POLICY_HPP
 

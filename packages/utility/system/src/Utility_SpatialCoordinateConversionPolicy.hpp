@@ -16,7 +16,7 @@
 #include "Utility_SpatialCoordinateSystemType.hpp"
 #include "Utility_SpatialCoordinateSystemTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
-#include "Utility_ExplicitSystemTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 
 namespace Utility{
 
@@ -186,7 +186,7 @@ inline void SpatialCoordinateConversionPolicy::translateLocalCartesianPositionTo
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( SpatialCoordinateConversionPolicy, Utility )
 BOOST_SERIALIZATION_CLASS_VERSION( SpatialCoordinateConversionPolicy, Utility, 0 );
-EXTERN_EXPLICIT_SYSTEM_CLASS_SERIALIZE_INST( Utility::SpatialCoordinateConversionPolicy );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( Utility, SpatialCoordinateConversionPolicy );
 
 #endif // end UTILITY_SPATIAL_COORDINATE_CONVERSION_POLICY_HPP
 

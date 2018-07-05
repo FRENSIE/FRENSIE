@@ -17,7 +17,7 @@
 #include "Utility_DirectionalCoordinateSystemTraits.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_SerializationHelpers.hpp"
-#include "Utility_ExplicitSystemTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 
 namespace Utility{
 
@@ -172,7 +172,7 @@ inline void DirectionalCoordinateConversionPolicy::convertFromCartesianDirection
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( DirectionalCoordinateConversionPolicy, Utility );
 BOOST_SERIALIZATION_CLASS_VERSION( DirectionalCoordinateConversionPolicy, Utility, 0 );
-EXTERN_EXPLICIT_SYSTEM_CLASS_SERIALIZE_INST( Utility::DirectionalCoordinateConversionPolicy );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( Utility, DirectionalCoordinateConversionPolicy );
 
 #endif // end UTILITY_DIRECTIONAL_COORDINATE_CONVERSION_POLICY_HPP
 

@@ -139,7 +139,7 @@ void RotationCartesianCoordinateConversionPolicy::load( Archive& ar, const unsig
 
 BOOST_SERIALIZATION_CLASS_VERSION( RotationCartesianCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( RotationCartesianCoordinateConversionPolicy, Utility );
-EXTERN_EXPLICIT_SYSTEM_CLASS_SAVE_LOAD_INST( Utility::RotationCartesianCoordinateConversionPolicy );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, RotationCartesianCoordinateConversionPolicy );
 
 #endif // end UTILITY_ROTATION_CARTESIAN_COORDINATE_CONVERSION_POLICY_HPP
 

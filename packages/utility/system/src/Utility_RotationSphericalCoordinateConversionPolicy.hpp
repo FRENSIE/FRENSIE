@@ -140,7 +140,7 @@ void RotationSphericalCoordinateConversionPolicy::load( Archive& ar, const unsig
 
 BOOST_SERIALIZATION_CLASS_VERSION( RotationSphericalCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( RotationSphericalCoordinateConversionPolicy, Utility );
-EXTERN_EXPLICIT_SYSTEM_CLASS_SAVE_LOAD_INST( Utility::RotationSphericalCoordinateConversionPolicy );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, RotationSphericalCoordinateConversionPolicy );
 
 #endif // end UTILITY_ROTATION_SPHERICAL_COORDINATE_CONVERSION_POLICY_HPP
 

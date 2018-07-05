@@ -185,7 +185,7 @@ inline bool CartesianSpatialCoordinateConversionPolicy::isTertiarySpatialCoordin
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( CartesianSpatialCoordinateConversionPolicy, Utility );
 BOOST_SERIALIZATION_CLASS_VERSION( CartesianSpatialCoordinateConversionPolicy, Utility, 0 );
-EXTERN_EXPLICIT_SYSTEM_CLASS_SERIALIZE_INST( Utility::CartesianSpatialCoordinateConversionPolicy );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( Utility, CartesianSpatialCoordinateConversionPolicy );
 
 #endif // end UTILITY_CARTESIAN_SPATIAL_COORDINATE_CONVERSION_POLICY_HPP
 

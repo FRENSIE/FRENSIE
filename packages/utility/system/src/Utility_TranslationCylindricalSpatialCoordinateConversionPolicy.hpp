@@ -111,7 +111,7 @@ void TranslationCylindricalSpatialCoordinateConversionPolicy::load( Archive& ar,
 
 BOOST_SERIALIZATION_CLASS_VERSION( TranslationCylindricalSpatialCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( TranslationCylindricalSpatialCoordinateConversionPolicy, Utility );
-EXTERN_EXPLICIT_SYSTEM_CLASS_SAVE_LOAD_INST( Utility::TranslationCylindricalSpatialCoordinateConversionPolicy );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, TranslationCylindricalSpatialCoordinateConversionPolicy );
 
 #endif // end UTILITY_TRANSLATION_CYLINDRICAL_COORDINATE_CONVERSION_POLICY_HPP
 

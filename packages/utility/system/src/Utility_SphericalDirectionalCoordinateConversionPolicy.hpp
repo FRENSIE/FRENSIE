@@ -261,7 +261,7 @@ inline void SphericalDirectionalCoordinateConversionPolicy::normalizeLocalDirect
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( SphericalDirectionalCoordinateConversionPolicy, Utility );
 BOOST_SERIALIZATION_CLASS_VERSION( SphericalDirectionalCoordinateConversionPolicy, Utility, 0 );
-EXTERN_EXPLICIT_SYSTEM_CLASS_SERIALIZE_INST( Utility::SphericalDirectionalCoordinateConversionPolicy );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( Utility, SphericalDirectionalCoordinateConversionPolicy );
 
 #endif // end UTILITY_SPHERICAL_DIRECTIONAL_COORDINATE_CONVERSION_POLICY_HPP
 
