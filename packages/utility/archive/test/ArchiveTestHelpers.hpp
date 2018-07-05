@@ -32,6 +32,7 @@ public:
 #endif
 };
 
+#ifdef HAVE_FRENSIE_HDF5
 
 //! Create an Utility::HDF5OArchive
 inline void createOArchive( std::string& base_archive_name,
@@ -46,6 +47,8 @@ inline void createOArchive( std::string& base_archive_name,
   
   oarchive.reset( new Utility::HDF5OArchive( base_archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE ) );
 }
+
+#endif // end HAVE_FRENSIE_HDF5
 
 //! Create a xml oarchive
 inline void createOArchive( std::string&,
@@ -88,12 +91,16 @@ inline void createIArchive( std::istringstream& iss,
   iarchive.reset( new Archive( iss ) );
 }
 
+#ifdef HAVE_FRENSIE_HDF5
+
 //! Create a Utility::HDF5IArchive
 inline void createIArchive( std::istringstream& iss,
                             std::unique_ptr<Utility::HDF5IArchive>& iarchive )
 {
   iarchive.reset( new Utility::HDF5IArchive( iss.str() ) );
 }
+
+#endif // end HAVE_FRENSIE_HDF5
 
 //---------------------------------------------------------------------------//
 // end ArchiveTestHelpers.hpp
