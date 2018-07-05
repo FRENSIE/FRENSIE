@@ -31,13 +31,29 @@ ${CMAKEDEFINE} HAVE_${PROJECT_NAME}_MPI
 #define MPI_DISABLED_LINE( ... ) __VA_ARGS__
 #endif
 
+// Define if we want to use OpenMP
 ${CMAKEDEFINE} HAVE_${PROJECT_NAME}_OPENMP
 
-// Define if we want to use OpenMP
 #ifdef HAVE_${PROJECT_NAME}_OPENMP
 #include <omp.h>
 #endif
 
+// Define if we want to use HDF5
+${CMAKEDEFINE} HAVE_${PROJECT_NAME}_HDF5
+
+#ifdef HAVE_${PROJECT_NAME}_HDF5
+#include <H5Cpp.h>
+
+// Switch between variables depending on whether or not HDF5 is enabled
+#define HDF5_ENABLED_DISABLED_SWITCH( enabled_var, disabled_var ) enabled_var
+// This line will only be used if HDF5 is enabled
+#define HDF5_ENABLED_LINE( ... ) __VA_ARGS__
+#else
+#define HDF5_ENABLED_DISABLED_SWITCH( enabled_var, disabled_var ) disabled_var
+#define HDF5_ENABLED_LINE( ... )
+#endif
+
+// Define if we want to use MOAB
 ${CMAKEDEFINE} HAVE_${PROJECT_NAME}_MOAB
 
 #endif // end ${PROJECT_NAME}_CONFIG_HPP

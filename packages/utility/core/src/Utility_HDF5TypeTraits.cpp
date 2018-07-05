@@ -12,11 +12,12 @@
 namespace Utility{
 
 // Initialize static member data
-std::unique_ptr<H5::EnumType> HDF5TypeTraits<bool>::s_data_type;
+HDF5_ENABLED_LINE(std::unique_ptr<H5::EnumType> HDF5TypeTraits<bool>::s_data_type);
 
 // Returns the HDF5 data type object corresponding to bool
-const H5::EnumType& HDF5TypeTraits<bool>::dataType()
+HDF5_ENABLED_DISABLED_SWITCH(const H5::EnumType&,int) HDF5TypeTraits<bool>::dataType()
 {
+#ifdef HAVE_FRENSIE_HDF5
   if( !s_data_type )
   {
     s_data_type.reset( new H5::EnumType( sizeof(BoolEnumType) ) );
@@ -34,6 +35,9 @@ const H5::EnumType& HDF5TypeTraits<bool>::dataType()
   }
   
   return *s_data_type;
+#else
+  return 0;
+#endif // end HAVE_FRENSIE_HDF5
 }
 
 // Initialize internal data
@@ -94,15 +98,19 @@ void HDF5TypeTraits<bool>::freeInternalData( InternalType*& data )
 }
 
 // Initialize static member data
-std::unique_ptr<H5::StrType> HDF5TypeTraits<std::string>::s_data_type;
+HDF5_ENABLED_LINE(std::unique_ptr<H5::StrType> HDF5TypeTraits<std::string>::s_data_type);
 
 // Returns the HDF5 data type object corresponding to std::string
-const H5::StrType& HDF5TypeTraits<std::string>::dataType()
+HDF5_ENABLED_DISABLED_SWITCH(const H5::StrType,int) HDF5TypeTraits<std::string>::dataType()
 {
+#ifdef HAVE_FRENSIE_HDF5
   if( !s_data_type )
     s_data_type.reset( new H5::StrType( H5::PredType::C_S1, H5T_VARIABLE ) );
 
   return *s_data_type;
+#else
+  return 0;
+#endif
 }
 
 // Initialize internal data

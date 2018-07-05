@@ -60,6 +60,7 @@ OPTION(FRENSIE_ENABLE_OPENMP "Enable shared-memory parallelism in FRENSIE" ON)
 OPTION(FRENSIE_ENABLE_MPI "Enable distributed-memory parallelism in FRENSIE" OFF)
 OPTION(FRENSIE_ENABLE_PYTHON "Enable python interfaces in FRENSIE" OFF)
 OPTION(FRENSIE_ENABLE_ROOT "Enable the Root geometry interfaces in FRENSIE" OFF)
+OPTION(FRENSIE_ENABLE_HDF5 "Enable the HDF5 file interfaces in FRENSIE" OFF)
 OPTION(FRENSIE_ENABLE_MOAB "Enable the Moab mesh interfaces in FRENSIE" OFF)
 CMAKE_DEPENDENT_OPTION(FRENSIE_ENABLE_DAGMC "Enable the DagMC geometry interfaces in FRENSIE (MOAB required)" OFF
   "FRENSIE_ENABLE_MOAB" OFF)
@@ -164,7 +165,10 @@ ENDIF()
 ##---------------------------------------------------------------------------##
 # If the HDF5 package is in a non-standard location, set the HDF5_PREFIX
 # variable.
-ENABLE_HDF5_SUPPORT()
+IF(FRENSIE_ENABLE_HDF5)
+  SET(HAVE_FRENSIE_HDF5 "1")
+  ENABLE_HDF5_SUPPORT()
+ENDIF()
 
 ##---------------------------------------------------------------------------##
 ## Configure MOAB Support

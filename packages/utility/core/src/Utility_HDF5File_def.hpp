@@ -30,6 +30,7 @@ void HDF5File::writeToDataSet( const std::string& path_to_data_set,
                                const T* data,
                                const size_t size )
 {
+#ifdef HAVE_FRENSIE_HDF5
   std::unique_ptr<H5::DataSet> data_set;
   
   if( this->doesDataSetExist( path_to_data_set ) )
@@ -60,6 +61,7 @@ void HDF5File::writeToDataSet( const std::string& path_to_data_set,
     // Clean up the temporary data
     HDF5TypeTraits<T>::freeInternalData( internal_data );
   }
+#endif
 }
 
 // Write data to a data set
@@ -74,6 +76,7 @@ void HDF5File::readFromDataSet( const std::string& path_to_data_set,
                                 T* data,
                                 const size_t size ) const
 {
+#ifdef HAVE_FRENSIE_HDF5
   // Open the data set
   std::unique_ptr<const H5::DataSet> data_set;
 
@@ -103,6 +106,7 @@ void HDF5File::readFromDataSet( const std::string& path_to_data_set,
 
   // Clean up temporary data
   HDF5TypeTraits<T>::freeInternalData( internal_data );
+#endif
 }
 
 // Write data to a data set attribute
@@ -112,6 +116,7 @@ void HDF5File::writeToDataSetAttribute( const std::string& path_to_data_set,
                                         const T* data,
                                         const size_t size )
 {
+#ifdef HAVE_FRENSIE_HDF5
   // Open the data set
   std::unique_ptr<const H5::DataSet> data_set;
 
@@ -147,6 +152,7 @@ void HDF5File::writeToDataSetAttribute( const std::string& path_to_data_set,
   }
   HDF5_EXCEPTION_CATCH( "Could not write data to data set attribute ("
                         << path_to_data_set << ":" << attribute_name << ")!" );
+#endif
 }
 
 // Write data to a data set attribute
@@ -166,6 +172,7 @@ void HDF5File::readFromDataSetAttribute( const std::string& path_to_data_set,
                                          T* data,
                                          const size_t size ) const
 {
+#ifdef HAVE_FRENSIE_HDF5
   // Open the data set
   std::unique_ptr<const H5::DataSet> data_set;
 
@@ -203,6 +210,7 @@ void HDF5File::readFromDataSetAttribute( const std::string& path_to_data_set,
 
   // Clean up temporary data
   HDF5TypeTraits<T>::freeInternalData( internal_data );
+#endif
 }
 
 // Write data to a group attribute
@@ -212,6 +220,7 @@ void HDF5File::writeToGroupAttribute( const std::string& path_to_group,
                                       const T* data,
                                       const size_t size )
 {
+#ifdef HAVE_FRENSIE_HDF5
   // Open the group
   std::unique_ptr<const H5::Group> group;
   
@@ -250,6 +259,7 @@ void HDF5File::writeToGroupAttribute( const std::string& path_to_group,
   }
   HDF5_EXCEPTION_CATCH( "Could not write data to group attribute ("
                         << path_to_group << ":" << attribute_name << ")!" );
+#endif
 }
 
 // Write data to a group attribute
@@ -266,6 +276,7 @@ void HDF5File::readFromGroupAttribute( const std::string& path_to_group,
                                        T* data,
                                        const size_t size ) const
 {
+#ifdef HAVE_FRENSIE_HDF5
   // Open the group
   std::unique_ptr<const H5::Group> group;
 
@@ -300,7 +311,10 @@ void HDF5File::readFromGroupAttribute( const std::string& path_to_group,
 
   // Clean up temporary data
   HDF5TypeTraits<T>::freeInternalData( internal_data );
+#endif
 }
+
+#ifdef HAVE_FRENSIE_HDF5
 
 // Create a data set
 template<typename T>
@@ -445,6 +459,8 @@ bool HDF5File::canArrayStoreAttributeContents(
 
   return true;
 }
+
+#endif // end HAVE_FRENSIE_HDF5
 
 namespace Details{
 
@@ -849,7 +865,8 @@ inline void readFromDataSetImpl( const HDF5File& hdf5_file,
                                  std::true_type )
 {
   // Extract the data set size
-  hsize_t data_set_size = hdf5_file.getDataSetSize( path_to_data_set );
+  HDF5_ENABLED_DISABLED_SWITCH(hsize_t,size_t) data_set_size =
+    hdf5_file.getDataSetSize( path_to_data_set );
 
   container.resize( Utility::HDF5TypeTraits<typename Container::value_type>::calculateExternalDataSize( data_set_size ) );
 
@@ -892,7 +909,7 @@ inline void readFromDataSetAttributeImpl( const HDF5File& hdf5_file,
                                           std::true_type )
 {
   // Extract the data set size
-  hsize_t data_set_attribute_size =
+  HDF5_ENABLED_DISABLED_SWITCH(hsize_t,size_t) data_set_attribute_size =
     hdf5_file.getDataSetAttributeSize( path_to_data_set, attribute_name );
 
   container.resize( Utility::HDF5TypeTraits<typename Container::value_type>::calculateExternalDataSize( data_set_attribute_size ) );
@@ -935,7 +952,7 @@ inline void readFromGroupAttributeImpl( const HDF5File& hdf5_file,
                                         std::true_type )
 {
   // Extract the data set size
-  hsize_t group_attribute_size =
+  HDF5_ENABLED_DISABLED_SWITCH(hsize_t,size_t) group_attribute_size =
     hdf5_file.getGroupAttributeSize( path_to_group, attribute_name );
 
   container.resize( Utility::HDF5TypeTraits<typename Container::value_type>::calculateExternalDataSize( group_attribute_size ) );

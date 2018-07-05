@@ -19,8 +19,8 @@
 // Boost Includes
 #include <boost/noncopyable.hpp>
 
-// HDF5 Includes
-#include <H5Cpp.h>
+// FRENSIE Includes
+#include "Utility_ExceptionCatchMacros.hpp"
 
 namespace Utility{
 
@@ -71,15 +71,18 @@ public:
                                   const std::string& attribute_name ) const throw();
 
   //! Get the size of a data set
-  hsize_t getDataSetSize( const std::string& path_to_data_set ) const;
+  HDF5_ENABLED_DISABLED_SWITCH(hsize_t,size_t) getDataSetSize(
+                                   const std::string& path_to_data_set ) const;
 
   //! Get the size of a data set attribute
-  hsize_t getDataSetAttributeSize( const std::string& path_to_data_set,
-                                   const std::string& attribute_name ) const;
+  HDF5_ENABLED_DISABLED_SWITCH(hsize_t,size_t) getDataSetAttributeSize(
+                                     const std::string& path_to_data_set,
+                                     const std::string& attribute_name ) const;
 
   //! Get the size of a group attribute
-  hsize_t getGroupAttributeSize( const std::string& path_to_group,
-                                 const std::string& attribute_name ) const;
+  HDF5_ENABLED_DISABLED_SWITCH(hsize_t,size_t) getGroupAttributeSize(
+                                     const std::string& path_to_group,
+                                     const std::string& attribute_name ) const;
 
   //! Create a group
   void createGroup( const std::string& path_to_group );
@@ -196,6 +199,7 @@ private:
   // Create the parent group, if necessary, for the specified path
   void createParentGroup( const std::string& path );
 
+#ifdef HAVE_FRENSIE_HDF5
   // Create a group
   void createGroup( const std::string& path_to_group,
                     std::unique_ptr<const H5::Group>& group );
@@ -243,13 +247,13 @@ private:
                            std::unique_ptr<const H5::Attribute>& attribute ) const;
 
   // Get the size of a data set
-  hsize_t getDataSetSize( const H5::DataSet& data_set ) const;
+  HDF5_ENABLED_DISABLED_SWITCH(hsize_t,size_t) getDataSetSize( const H5::DataSet& data_set ) const;
 
   //! Get the size of an attribute
-  hsize_t getAttributeSize( const H5::Attribute& attribute ) const;
+  HDF5_ENABLED_DISABLED_SWITCH(hsize_t,size_t) getAttributeSize( const H5::Attribute& attribute ) const;
 
   //! Get the size of a data space
-  hsize_t getDataSpaceSize( const H5::DataSpace& data_space ) const;
+  HDF5_ENABLED_DISABLED_SWITCH(hsize_t,size_t) getDataSpaceSize( const H5::DataSpace& data_space ) const;
 
   //! Check if the group attribute exists
   bool doesGroupAttributeExist( const H5::Group& group,
@@ -280,12 +284,13 @@ private:
   bool canArrayStoreAttributeContents( const InternalT* data,
                                        const size_t size,
                                        const H5::Attribute& attribute ) const;
+#endif // end HAVE_FRENSIE_HDF5
 
   // The filename
   std::string d_filename;
 
   // The HDF5 file object
-  std::unique_ptr<H5::H5File> d_hdf5_file;
+  std::unique_ptr<HDF5_ENABLED_DISABLED_SWITCH(H5::H5File,int)> d_hdf5_file;
 };
 
 /*! The HDF5File::Exception class
@@ -384,6 +389,7 @@ void readFromGroupAttribute( const HDF5File& hdf5_file,
 /*! Catch statement macro for catching an H5::Exception
  * \ingroup hdf5
  */
+#ifdef HAVE_FRENSIE_HDF5
 #define HDF5_EXCEPTION_CATCH( raw_msg ) \
 catch( const H5::Exception& exception )       \
 {                                           \
@@ -392,6 +398,10 @@ catch( const H5::Exception& exception )       \
                                                                         \
   throw HDF5File::Exception( __FILE__, __LINE__, exception.getFuncName(), exception.getDetailMsg(), msg.str() ); \
 }
+#else
+#define HDF5_EXCEPTION_CATCH( raw_msg )         \
+EXCEPTION_CATCH_RETHROW( std::runtime_error, raw_msg )
+#endif // end HAVE_FRENSIE_HDF5 
 
 //---------------------------------------------------------------------------//
 // Template includes.

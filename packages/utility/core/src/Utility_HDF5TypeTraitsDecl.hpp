@@ -9,11 +9,10 @@
 #ifndef UTILITY_HDF5_TYPE_TRAITS_DECL_HPP
 #define UTILITY_HDF5_TYPE_TRAITS_DECL_HPP
 
-// HDF5 Includes
-#include <H5Cpp.h>
-
 // FRENSIE Includes
 #include "Utility_UndefinedTraits.hpp"
+#include "FRENSIE_config.hpp"
+
 
 /*! \defgroup hdf5_type_traits HDF5 Type Traits
  * \ingroup traits
@@ -63,7 +62,7 @@ struct HDF5TypeTraits
   typedef std::false_type UsesCustomInternalType;
 
   //! Returns the HDF5 data type object corresponding to the type
-  static inline const H5::DataType& dataType()
+  static inline const HDF5_ENABLED_DISABLED_SWITCH(H5::DataType,int)& dataType()
   { return UndefinedTraits<T>::notDefined(); }
 
   /*! Initialize internal data

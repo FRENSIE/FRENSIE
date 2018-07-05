@@ -9,6 +9,7 @@
 // FRENSIE Includes
 #include "Utility_HDF5File.hpp"
 #include "Utility_LoggingMacros.hpp"
+#include "FRENSIE_config.hpp"
 
 namespace Utility{
 
@@ -17,6 +18,7 @@ namespace Details{
 // Enable exceptions in hdf5
 void enableExceptionsInHDF5()
 {
+#ifdef HAVE_FRENSIE_HDF5
   static bool hdf5_exceptions_enabled = false;
   
   try{
@@ -24,6 +26,7 @@ void enableExceptionsInHDF5()
     hdf5_exceptions_enabled = true;
   }
   HDF5_EXCEPTION_CATCH( "Could not enable exceptions in HDF5!" );
+#endif // end HAVE_FRENSIE_HDF5
 }
   
 } // end Details namespace
@@ -38,8 +41,8 @@ struct HDF5TypeTraits<void> : public Details::BasicHDF5TypeTraits<void,1>
   typedef std::true_type UsesOpaqueDataType;
   
   //! Returns the HDF5 data type object corresponding to void
-  static inline H5::PredType dataType()
-  { return H5::PredType::NATIVE_OPAQUE; }
+  static inline HDF5_ENABLED_DISABLED_SWITCH(const H5::PredType&,int) dataType()
+  { return HDF5_ENABLED_DISABLED_SWITCH(H5::PredType::NATIVE_OPAQUE,0); }
 };
 
 // Constructor
@@ -85,6 +88,7 @@ HDF5File::HDF5File( const std::string& filename,
   : d_filename( filename ),
     d_hdf5_file()
 {
+#ifdef HAVE_FRENSIE_HDF5
   Details::enableExceptionsInHDF5();
   
   switch( mode )
@@ -121,6 +125,9 @@ HDF5File::HDF5File( const std::string& filename,
       THROW_EXCEPTION( HDF5File::Exception, "Unknown HDF5 file open mode!" );
     }
   }
+#else
+  THROW_EXCEPTION( std::logic_error, "HDF5 has not been enabled!" );
+#endif // end FRENSIE_HDF5
 }
 
 // Destructor
@@ -136,6 +143,7 @@ const std::string& HDF5File::getFilename() const throw()
 // Check if the group exists
 bool HDF5File::doesGroupExist( const std::string& path_to_group ) const throw()
 {
+#ifdef HAVE_FRENSIE_HDF5
   try{
     std::unique_ptr<const H5::Group> group;
     this->openGroup( path_to_group, group );
@@ -146,12 +154,16 @@ bool HDF5File::doesGroupExist( const std::string& path_to_group ) const throw()
   }
   
   return true;
+#else
+  return false;
+#endif
 }
 
 // Check if the group attribute exists
 bool HDF5File::doesGroupAttributeExist( const std::string& path_to_group,
                                         const std::string& attribute_name ) const throw()
 {
+#ifdef HAVE_FRENSIE_HDF5
   if( this->doesGroupExist( path_to_group ) )
   {
     std::unique_ptr<const H5::Group> group;
@@ -161,18 +173,15 @@ bool HDF5File::doesGroupAttributeExist( const std::string& path_to_group,
   }
   else
     return false;
-}
-
-// Check if the group attribute exists
-bool HDF5File::doesGroupAttributeExist( const H5::Group& group,
-                                        const std::string& attribute_name ) const
-{
-  return group.attrExists( attribute_name );
+#else
+  return false;
+#endif // end HAVE_FRENSIE_HDF5
 }
 
 // Check if the data set exists
 bool HDF5File::doesDataSetExist( const std::string& path_to_data_set ) const throw()
 {
+#ifdef HAVE_FRENSIE_HDF5
   try{
     std::unique_ptr<const H5::DataSet> data_set;
     this->openDataSet( path_to_data_set, data_set );
@@ -183,12 +192,16 @@ bool HDF5File::doesDataSetExist( const std::string& path_to_data_set ) const thr
   }
 
   return true;
+#else
+  return false;
+#endif
 }
 
 // Check if the data set attribute exists
 bool HDF5File::doesDataSetAttributeExist( const std::string& path_to_data_set,
                                           const std::string& attribute_name ) const throw()
 {
+#ifdef HAVE_FRENSIE_HDF5
   if( this->doesDataSetExist( path_to_data_set ) )
   {
     std::unique_ptr<const H5::DataSet> data_set;
@@ -198,35 +211,32 @@ bool HDF5File::doesDataSetAttributeExist( const std::string& path_to_data_set,
   }
   else
     return false;
-}
-
-// Check if the data set attribute exists
-bool HDF5File::doesDataSetAttributeExist( const H5::DataSet& data_set,
-                                          const std::string& attribute_name ) const
-{
-  return data_set.attrExists( attribute_name );
+#else
+  return false;
+#endif
 }
 
 // Get the size of a data set
-hsize_t HDF5File::getDataSetSize( const std::string& path_to_data_set ) const
+HDF5_ENABLED_DISABLED_SWITCH(hsize_t,size_t) HDF5File::getDataSetSize(
+                                    const std::string& path_to_data_set ) const
 {
+#ifdef HAVE_FRENSIE_HDF5
   std::unique_ptr<const H5::DataSet> data_set;
   
   this->openDataSet( path_to_data_set, data_set );
   
   return this->getDataSetSize( *data_set );
-}
-
-// Get the size of a data set
-hsize_t HDF5File::getDataSetSize( const H5::DataSet& data_set ) const
-{
-  return this->getDataSpaceSize( data_set.getSpace() );
+#else
+  return 0;
+#endif
 }
 
 // Get the size of a data set attribute
-hsize_t HDF5File::getDataSetAttributeSize( const std::string& path_to_data_set,
-                                           const std::string& attribute_name ) const
+HDF5_ENABLED_DISABLED_SWITCH(hsize_t,size_t) HDF5File::getDataSetAttributeSize(
+                                      const std::string& path_to_data_set,
+                                      const std::string& attribute_name ) const
 {
+#ifdef HAVE_FRENSIE_HDF5
   std::unique_ptr<const H5::DataSet> data_set;
   
   this->openDataSet( path_to_data_set, data_set );
@@ -236,12 +246,17 @@ hsize_t HDF5File::getDataSetAttributeSize( const std::string& path_to_data_set,
   this->openDataSetAttribute( *data_set, path_to_data_set, attribute_name, attribute );
 
   return this->getAttributeSize( *attribute );
+#else
+  return 0;
+#endif
 }
 
 // Get the size of a group attribute
-hsize_t HDF5File::getGroupAttributeSize( const std::string& path_to_group,
-                                         const std::string& attribute_name ) const
+HDF5_ENABLED_DISABLED_SWITCH(hsize_t,size_t) HDF5File::getGroupAttributeSize(
+                                      const std::string& path_to_group,
+                                      const std::string& attribute_name ) const
 {
+#ifdef HAVE_FRENSIE_HDF5
   std::unique_ptr<const H5::Group> group;
 
   this->openGroup( path_to_group, group );
@@ -251,34 +266,15 @@ hsize_t HDF5File::getGroupAttributeSize( const std::string& path_to_group,
   this->openGroupAttribute( *group, path_to_group, attribute_name, attribute );
 
   return this->getAttributeSize( *attribute );
-}
-
-// Get the size of an attribute
-hsize_t HDF5File::getAttributeSize( const H5::Attribute& attribute ) const
-{
-  return this->getDataSpaceSize( attribute.getSpace() );
-}
-
-// Get the size of a data space
-hsize_t HDF5File::getDataSpaceSize( const H5::DataSpace& data_space ) const
-{
-  int rank = data_space.getSimpleExtentNdims();
-
-  hsize_t dimension_sizes[rank];
-    
-  data_space.getSimpleExtentDims( dimension_sizes, NULL );
-
-  hsize_t size = 0;
-  
-  for( int i = 0; i < rank; ++i )
-    size += dimension_sizes[i];
-  
-  return size;
+#else
+  return 0;
+#endif
 }
 
 // Create a group
 void HDF5File::createGroup( const std::string& path_to_group )
 {
+#ifdef HAVE_FRENSIE_HDF5
   // Check if the group exists
   if( !this->doesGroupExist( path_to_group ) )
   {
@@ -289,12 +285,14 @@ void HDF5File::createGroup( const std::string& path_to_group )
     }
     HDF5_EXCEPTION_CATCH( "Could not create group " << path_to_group << "!" );
   }
+#endif  
 }
 
 // Create a hard link
 void HDF5File::createHardLink( const std::string& existing_object_path,
                                const std::string& path_to_link )
 {
+#ifdef HAVE_FRENSIE_HDF5
   try{
     // Check if the parent group needs to be created first
     if( !this->doesParentGroupExist( path_to_link ) )
@@ -305,12 +303,14 @@ void HDF5File::createHardLink( const std::string& existing_object_path,
   HDF5_EXCEPTION_CATCH( "Could not create a hard link with name "
                         << path_to_link << " that points to object "
                         << existing_object_path << "!" );
+#endif
 }
 
 // Create a soft link
 void HDF5File::createSoftLink( const std::string& existing_object_path,
                                const std::string& path_to_link )
 {
+#ifdef HAVE_FRENSIE_HDF5
   try{
     // Check if the parent group needs to be created first
     if( !this->doesParentGroupExist( path_to_link ) )
@@ -321,6 +321,7 @@ void HDF5File::createSoftLink( const std::string& existing_object_path,
   HDF5_EXCEPTION_CATCH( "Could not create a soft link with name "
                         << path_to_link << " that points to object "
                         << existing_object_path << "!" );
+#endif
 }
 
 // Write opaque data to a data set
@@ -403,6 +404,7 @@ std::string HDF5File::extractParentGroupPath( const std::string& path ) const
 // Check if the parent group exists
 bool HDF5File::doesParentGroupExist( const std::string& path ) const
 {
+#ifdef HAVE_FRENSIE_HDF5
   try{
     std::unique_ptr<const H5::Group> group;
     this->openGroup( this->extractParentGroupPath( path ), group );
@@ -413,16 +415,69 @@ bool HDF5File::doesParentGroupExist( const std::string& path ) const
   }
 
   return true;
+#else
+  return false;
+#endif
 }
 
 // Create the parent group, if necessary, for the specified path
 void HDF5File::createParentGroup( const std::string& path )
 {
+#ifdef HAVE_FRENSIE_HDF5
   // Extract the parent group path
   std::string parent_group_path = this->extractParentGroupPath( path );
 
   std::unique_ptr<const H5::Group> group;
   this->createGroup( this->extractParentGroupPath( path ), group );
+#endif
+}
+
+#ifdef HAVE_FRENSIE_HDF5
+
+// Check if the group attribute exists
+bool HDF5File::doesGroupAttributeExist( const H5::Group& group,
+                                        const std::string& attribute_name ) const
+{
+  return group.attrExists( attribute_name );
+}
+
+// Check if the data set attribute exists
+bool HDF5File::doesDataSetAttributeExist( const H5::DataSet& data_set,
+                                          const std::string& attribute_name ) const
+{
+  return data_set.attrExists( attribute_name );
+}
+
+// Get the size of a data set
+HDF5_ENABLED_DISABLED_SWITCH(hsize_t,size_t) HDF5File::getDataSetSize(
+                                            const H5::DataSet& data_set ) const
+{
+  return this->getDataSpaceSize( data_set.getSpace() );
+}
+
+// Get the size of an attribute
+HDF5_ENABLED_DISABLED_SWITCH(hsize_t,size_t) HDF5File::getAttributeSize(
+                                         const H5::Attribute& attribute ) const
+{
+  return this->getDataSpaceSize( attribute.getSpace() );
+}
+
+// Get the size of a data space
+HDF5_ENABLED_DISABLED_SWITCH(hsize_t,size_t) HDF5File::getDataSpaceSize(
+                                        const H5::DataSpace& data_space ) const
+{
+  int rank = data_space.getSimpleExtentNdims();
+
+  hsize_t dimension_sizes[rank];
+    
+  data_space.getSimpleExtentDims( dimension_sizes, NULL );
+
+  hsize_t size = 0;
+  
+  for( int i = 0; i < rank; ++i )
+    size += dimension_sizes[i];
+  
+  return size;
 }
 
 // Create a group
@@ -486,6 +541,8 @@ void HDF5File::openGroupAttribute( const H5::Group& group,
   HDF5_EXCEPTION_CATCH( "Could not open group attribute "
                         << path_to_group << ":" << attribute_name << "!" );
 }
+
+#endif // end HAVE_FRENSIE_HDF5
   
 } // end Utility namespace
 

@@ -177,12 +177,21 @@ std::string hdf5_file_name( "test_file.h5" );
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the filename can be returned
-FRENSIE_UNIT_TEST( HDF5File, getFilename )
+FRENSIE_UNIT_TEST( HDF5File, constructor )
 {
-  Utility::HDF5File hdf5_file( hdf5_file_name );
+  std::unique_ptr<Utility::HDF5File> hdf5_file;
+  
+#ifdef HAVE_FRENSIE_HDF5
+  FRENSIE_REQUIRE_NO_THROW(hdf5_file.reset( new Utility::HDF5File( hdf5_file_name ) ));
 
-  FRENSIE_CHECK_EQUAL( hdf5_file.getFilename(), hdf5_file_name );
+  FRENSIE_CHECK_EQUAL( hdf5_file->getFilename(), hdf5_file_name );
+#else
+  FRENSIE_REQUIRE_THROW(hdf5_file.reset( new Utility::HDF5File( hdf5_file_name ) ),
+                        std::logic_error);
+#endif
 }
+
+#ifdef HAVE_FRENSIE_HDF5
 
 //---------------------------------------------------------------------------//
 // Check that a group exists
@@ -608,6 +617,8 @@ FRENSIE_UNIT_TEST( HDF5File, createSoftLink )
   FRENSIE_REQUIRE(hdf5_file.doesDataSetExist( "/link_dir/soft_links/link_to_test_dir_int_data_set" ));
 }
 
+#endif // end HAVE_FRENSIE_HDF5
+
 //---------------------------------------------------------------------------//
 // Custom Setup
 //---------------------------------------------------------------------------//
@@ -615,8 +626,10 @@ FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
+#ifdef HAVE_FRENSIE_HDF5
   // Delete any existing hdf5 test file
   Utility::HDF5File hdf5_file( hdf5_file_name, Utility::HDF5File::OVERWRITE  );
+#endif
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
