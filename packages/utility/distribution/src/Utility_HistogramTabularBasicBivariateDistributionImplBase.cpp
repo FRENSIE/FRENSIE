@@ -8,7 +8,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_Archives.hpp" // Must include first
+#include "FRENSIE_Archives.hpp" // Must include first
 #include "Utility_HistogramTabularBasicBivariateDistributionImplBase.hpp"
 
 EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Utility::UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> > );

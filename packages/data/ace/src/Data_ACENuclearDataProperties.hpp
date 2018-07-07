@@ -11,8 +11,8 @@
 
 // FRENSIE Includes
 #include "Data_NuclearDataProperties.hpp"
-#include "Data_ExplicitTemplateInstantiationMacros.hpp"
 #include "Data_ACETableName.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 
 namespace Data{
 
@@ -102,12 +102,51 @@ private:
   // The file table name
   ACETableName d_file_table_name;
 };
+
+// Save the properties to an archive
+template<typename Archive>
+void ACENuclearDataProperties::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( NuclearDataProperties );
+
+  // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight_ratio );
+  ar & BOOST_SERIALIZATION_NVP( d_evaluation_temp );
+
+  std::string raw_path = d_file_path.string();
+
+  ar & BOOST_SERIALIZATION_NVP( raw_path );
+  ar & BOOST_SERIALIZATION_NVP( d_file_start_line );
+  ar & BOOST_SERIALIZATION_NVP( d_file_table_name );
+}
+
+// Load the properties from an archive
+template<typename Archive>
+void ACENuclearDataProperties::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( NuclearDataProperties );
+
+  // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight_ratio );
+  ar & BOOST_SERIALIZATION_NVP( d_evaluation_temp );
+
+  std::string raw_path;
+  ar & BOOST_SERIALIZATION_NVP( raw_path );
+
+  d_file_path = raw_path;
+  d_file_path.make_preferred();
+
+  ar & BOOST_SERIALIZATION_NVP( d_file_start_line );
+  ar & BOOST_SERIALIZATION_NVP( d_file_table_name );
+}
   
 } // end Data namespace
 
 BOOST_SERIALIZATION_CLASS_VERSION( ACENuclearDataProperties, Data, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ACENuclearDataProperties, Data );
-EXTERN_EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ACENuclearDataProperties );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Data, ACENuclearDataProperties );
 
 #endif // end DATA_ACE_NUCLEAR_DATA_PROPERTIES_HPP
 

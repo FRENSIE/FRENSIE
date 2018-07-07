@@ -7,7 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_Archives.hpp" // Must include first
+#include "FRENSIE_Archives.hpp" // Must include first
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 
 EXPLICIT_TEMPLATE_CLASS_INST( Utility::StandardHashBasedGridSearcher<std::vector<double>,true> );

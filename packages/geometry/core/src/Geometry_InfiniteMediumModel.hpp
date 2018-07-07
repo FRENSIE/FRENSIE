@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "Geometry_Model.hpp"
 #include "Geometry_InfiniteMediumNavigator.hpp"
-#include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 
 namespace Geometry{
 
@@ -130,7 +130,7 @@ void InfiniteMediumModel::load( Archive& ar, const unsigned version )
 
 BOOST_SERIALIZATION_CLASS_VERSION( InfiniteMediumModel, Geometry, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( InfiniteMediumModel, Geometry );
-EXTERN_EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( InfiniteMediumModel );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Geometry, InfiniteMediumModel );
 
 #endif // end GEOMETRY_INFINITE_MEDIUM_MODEL_HPP
 

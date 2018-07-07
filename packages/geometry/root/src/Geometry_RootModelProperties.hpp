@@ -16,7 +16,7 @@
 #include <boost/serialization/split_member.hpp>
 
 // FRENSIE Includes
-#include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace Geometry{
@@ -86,11 +86,31 @@ private:
   std::string d_terminal_material_name;
 };
 
+// Save the model to an archive
+template<typename Archive>
+void RootModelProperties::save( Archive& ar, const unsigned version ) const
+{
+  ar & BOOST_SERIALIZATION_NVP( d_file_name );
+  ar & BOOST_SERIALIZATION_NVP( d_material_property_name );
+  ar & BOOST_SERIALIZATION_NVP( d_void_material_name );
+  ar & BOOST_SERIALIZATION_NVP( d_terminal_material_name );
+}
+
+// Load the model from an archive
+template<typename Archive>
+void RootModelProperties::load( Archive& ar, const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_NVP( d_file_name );
+  ar & BOOST_SERIALIZATION_NVP( d_material_property_name );
+  ar & BOOST_SERIALIZATION_NVP( d_void_material_name );
+  ar & BOOST_SERIALIZATION_NVP( d_terminal_material_name );
+}
+
 } // end Geometry namespace
 
 BOOST_SERIALIZATION_CLASS_VERSION( RootModelProperties, Geometry, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( RootModelProperties, Geometry );
-EXTERN_EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( RootModelProperties );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Geometry, RootModelProperties );
 
 #endif // end GEOMETRY_ROOT_MODEL_PROPERTIES_HPP
 

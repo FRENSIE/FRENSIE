@@ -7,7 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_Archives.hpp"
+#include "FRENSIE_Archives.hpp"
 #include "Utility_FullyTabularBasicBivariateDistribution.hpp"
 
 EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> );

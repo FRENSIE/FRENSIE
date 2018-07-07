@@ -7,7 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_Archives.hpp"
+#include "FRENSIE_Archives.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 
 EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareDiscreteDistribution<void,void> );

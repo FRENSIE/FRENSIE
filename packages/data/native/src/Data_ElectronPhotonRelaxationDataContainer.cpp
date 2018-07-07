@@ -12,25 +12,10 @@
 #include <sstream>
 #include <typeinfo>
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_text_oarchive.hpp>
-#include <boost/archive/polymorphic_text_iarchive.hpp>
-#include <boost/archive/polymorphic_xml_oarchive.hpp>
-#include <boost/archive/polymorphic_xml_iarchive.hpp>
-#include <boost/archive/polymorphic_binary_oarchive.hpp>
-#include <boost/archive/polymorphic_binary_iarchive.hpp>
-
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Data_DataContainerHelpers.hpp"
-#include "Utility_HDF5OArchive.hpp"
-#include "Utility_HDF5IArchive.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_DesignByContract.hpp"
 
@@ -2103,7 +2088,7 @@ void ElectronPhotonRelaxationDataContainer::setAtomicExcitationCrossSectionThres
  d_atomic_excitation_cross_section_threshold_index = index;
 }
 
-EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ElectronPhotonRelaxationDataContainer );
+EXPLICIT_CLASS_SAVE_LOAD_INST( ElectronPhotonRelaxationDataContainer );
 
 } // end Data namespace
 

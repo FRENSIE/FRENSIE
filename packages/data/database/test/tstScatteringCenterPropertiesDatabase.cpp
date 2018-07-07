@@ -9,6 +9,7 @@
 // FRENSIE Includes
 #include "Data_ScatteringCenterPropertiesDatabase.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
+#include "FRENSIE_config.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -52,7 +53,9 @@ FRENSIE_DATA_UNIT_TEST_INST( ScatteringCenterPropertiesDatabase,
   NEW_ROW( "xml" )  << "test_scattering_center_database.xml";
   NEW_ROW( "txt" )  << "test_scattering_center_database.txt";
   NEW_ROW( "bin" )  << "test_scattering_center_database.bin";
+#ifdef HAVE_FRENSIE_HDF5
   NEW_ROW( "h5fa" ) << "test_scattering_center_database.h5fa";
+#endif
 }
 
 //---------------------------------------------------------------------------//

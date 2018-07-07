@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "Data_AtomType.hpp"
-#include "Data_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_TypeTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
@@ -112,6 +112,26 @@ private:
   unsigned d_isomer_number;
 };
 
+// Save the model to an archive
+template<typename Archive>
+void ZAID::save( Archive& ar, const unsigned version ) const
+{
+  unsigned raw_zaid = this->toRaw();
+  
+  ar & BOOST_SERIALIZATION_NVP( raw_zaid );
+}
+
+// Load the model from an archive
+template<typename Archive>
+void ZAID::load( Archive& ar, const unsigned version )
+{
+  unsigned raw_zaid;
+
+  ar & BOOST_SERIALIZATION_NVP( raw_zaid );
+
+  *this = ZAID( raw_zaid );
+}
+
 } // end Data namespace
 
 namespace Utility{
@@ -158,7 +178,7 @@ struct hash<Data::ZAID> : public hash<unsigned>
 BOOST_SERIALIZATION_CLASS_VERSION( ZAID, Data, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ZAID, Data );
 
-EXTERN_EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ZAID );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Data, ZAID );
 
 #endif // end DATA_ZAID_HPP
 

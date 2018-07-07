@@ -7,24 +7,11 @@
 //---------------------------------------------------------------------------//
 
 // Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_text_oarchive.hpp>
-#include <boost/archive/polymorphic_text_iarchive.hpp>
-#include <boost/archive/polymorphic_xml_oarchive.hpp>
-#include <boost/archive/polymorphic_xml_iarchive.hpp>
-#include <boost/archive/polymorphic_binary_oarchive.hpp>
-#include <boost/archive/polymorphic_binary_iarchive.hpp>
 #include <boost/filesystem.hpp>
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "Data_ScatteringCenterPropertiesDatabase.hpp"
-#include "Utility_HDF5OArchive.hpp"
-#include "Utility_HDF5IArchive.hpp"
 
 namespace Data{
 
@@ -48,21 +35,7 @@ const char* ScatteringCenterPropertiesDatabase::getArchiveName() const
   return s_archive_name.c_str();
 }
 
-// Save the model to an archive
-template<typename Archive>
-void ScatteringCenterPropertiesDatabase::save( Archive& ar, const unsigned version ) const
-{
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ScatteringCenterPropertiesDatabaseImpl );
-}
-
-// Load the model from an archive
-template<typename Archive>
-void ScatteringCenterPropertiesDatabase::load( Archive& ar, const unsigned version )
-{
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ScatteringCenterPropertiesDatabaseImpl );
-}
-
-EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ScatteringCenterPropertiesDatabase );
+EXPLICIT_CLASS_SAVE_LOAD_INST( ScatteringCenterPropertiesDatabase );
 
 //! Make sure that the other data libraries get pulled in
 bool initializeDataLibraries()

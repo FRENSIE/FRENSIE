@@ -8,7 +8,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_Archives.hpp" // Must include first
+#include "FRENSIE_Archives.hpp" // Must include first
 #include "Utility_InterpolatedTabularBasicBivariateDistributionImplBase.hpp"
 
 EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_FULL( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase, Utility::UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> );

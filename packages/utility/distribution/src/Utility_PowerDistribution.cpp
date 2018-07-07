@@ -7,7 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_Archives.hpp"
+#include "FRENSIE_Archives.hpp"
 #include "Utility_PowerDistribution.hpp"
 
 EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwarePowerDistribution<1,void,void> );

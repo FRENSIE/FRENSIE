@@ -25,7 +25,7 @@
 #include "Geometry_DagMCNavigator.hpp"
 #include "Geometry_PointLocation.hpp"
 #include "Geometry_AdvancedModel.hpp"
-#include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_Map.hpp"
 #include "Utility_Set.hpp"
 #include "Utility_Vector.hpp"
@@ -267,7 +267,7 @@ public:
 
 BOOST_SERIALIZATION_CLASS_VERSION( DagMCModel, Geometry, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( DagMCModel, Geometry );
-EXTERN_EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( DagMCModel );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Geometry, DagMCModel );
 
 //---------------------------------------------------------------------------//
 // Template Includes

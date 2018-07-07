@@ -14,17 +14,15 @@
 
 // Boost Includes
 #include <boost/filesystem/path.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
 #include <boost/serialization/split_member.hpp>
 
 // FRENSIE Includes
-#include "Data_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ArchivableObject.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_Map.hpp"
 #include "Utility_Set.hpp"
 #include "Utility_Tuple.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace Data{
@@ -1136,7 +1134,7 @@ private:
 BOOST_SERIALIZATION_CLASS_VERSION( ElectronPhotonRelaxationDataContainer, Data, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ElectronPhotonRelaxationDataContainer, Data );
 
-EXTERN_EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ElectronPhotonRelaxationDataContainer );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Data, ElectronPhotonRelaxationDataContainer );
 
 //---------------------------------------------------------------------------//
 // Template Includes

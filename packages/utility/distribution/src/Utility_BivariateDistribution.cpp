@@ -7,7 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_Archives.hpp" // Must include first
+#include "FRENSIE_Archives.hpp" // Must include first
 #include "Utility_BivariateDistribution.hpp"
 
 EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareBivariateDistribution<void,void,void> );

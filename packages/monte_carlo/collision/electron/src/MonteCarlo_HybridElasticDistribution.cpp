@@ -7,7 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_Archives.hpp" // Must be included first
+#include "FRENSIE_Archives.hpp" // Must be included first
 #include "MonteCarlo_HybridElasticDistribution.hpp"
 
 EXPLICIT_CLASS_INST( MonteCarlo::UnitAwareHybridElasticDistribution<LinLin,void,void> );

@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "Data_PhotoatomicDataProperties.hpp"
-#include "Data_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 
 namespace Data{
 
@@ -91,12 +91,49 @@ private:
   // The atom type
   AtomType d_atom;
 };
+
+// Save the properties to an archive
+template<typename Archive>
+void NativeEPRPhotoatomicDataProperties::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( PhotoatomicDataProperties );
+
+  // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight );
+  
+  std::string raw_path = d_file_path.string();
+  
+  ar & BOOST_SERIALIZATION_NVP( raw_path );
+  ar & BOOST_SERIALIZATION_NVP( d_file_version );
+  ar & BOOST_SERIALIZATION_NVP( d_atom );
+}
+
+// Load the properties from an archive
+template<typename Archive>
+void NativeEPRPhotoatomicDataProperties::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( PhotoatomicDataProperties );
+
+  // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight );
+  
+  std::string raw_path;  
+  ar & BOOST_SERIALIZATION_NVP( raw_path );
+
+  d_file_path = raw_path;
+  d_file_path.make_preferred();
+  
+  ar & BOOST_SERIALIZATION_NVP( d_file_version );
+  ar & BOOST_SERIALIZATION_NVP( d_atom );
+}
   
 } // end Data namespace
 
 BOOST_SERIALIZATION_CLASS_VERSION( NativeEPRPhotoatomicDataProperties, Data, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( NativeEPRPhotoatomicDataProperties, Data );
-EXTERN_EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( NativeEPRPhotoatomicDataProperties );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Data, NativeEPRPhotoatomicDataProperties );
 
 #endif // end DATA_NATIVE_EPR_PHOTOATOMIC_DATA_PROPERTIES_HPP
 

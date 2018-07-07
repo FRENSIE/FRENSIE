@@ -19,7 +19,7 @@
 // FRENSIE Includes
 #include "Geometry_ParticleType.hpp"
 #include "Geometry_EstimatorType.hpp"
-#include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace Geometry{
@@ -248,11 +248,61 @@ private:
   std::string d_adjoint_electron_name;
 };
 
+// Save the model to an archive
+template<typename Archive>
+void DagMCModelProperties::save( Archive& ar, const unsigned version ) const
+{
+  ar & BOOST_SERIALIZATION_NVP( d_file_name );
+  ar & BOOST_SERIALIZATION_NVP( d_facet_tolerance );
+  ar & BOOST_SERIALIZATION_NVP( d_fast_id_lookup );
+  ar & BOOST_SERIALIZATION_NVP( d_termination_cell_property );
+  ar & BOOST_SERIALIZATION_NVP( d_reflecting_surface_property );
+  ar & BOOST_SERIALIZATION_NVP( d_material_property );
+  ar & BOOST_SERIALIZATION_NVP( d_density_property );
+  ar & BOOST_SERIALIZATION_NVP( d_estimator_property );
+  ar & BOOST_SERIALIZATION_NVP( d_surface_current_name );
+  ar & BOOST_SERIALIZATION_NVP( d_surface_flux_name );
+  ar & BOOST_SERIALIZATION_NVP( d_cell_pulse_height_name );
+  ar & BOOST_SERIALIZATION_NVP( d_cell_track_length_flux_name );
+  ar & BOOST_SERIALIZATION_NVP( d_cell_collision_flux_name );
+  ar & BOOST_SERIALIZATION_NVP( d_photon_name );
+  ar & BOOST_SERIALIZATION_NVP( d_neutron_name );
+  ar & BOOST_SERIALIZATION_NVP( d_electron_name );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_photon_name );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_neutron_name );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_electron_name );
+}
+
+// Load the model from an archive
+template<typename Archive>
+void DagMCModelProperties::load( Archive& ar, const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_NVP( d_file_name );
+  ar & BOOST_SERIALIZATION_NVP( d_facet_tolerance );
+  ar & BOOST_SERIALIZATION_NVP( d_fast_id_lookup );
+  ar & BOOST_SERIALIZATION_NVP( d_termination_cell_property );
+  ar & BOOST_SERIALIZATION_NVP( d_reflecting_surface_property );
+  ar & BOOST_SERIALIZATION_NVP( d_material_property );
+  ar & BOOST_SERIALIZATION_NVP( d_density_property );
+  ar & BOOST_SERIALIZATION_NVP( d_estimator_property );
+  ar & BOOST_SERIALIZATION_NVP( d_surface_current_name );
+  ar & BOOST_SERIALIZATION_NVP( d_surface_flux_name );
+  ar & BOOST_SERIALIZATION_NVP( d_cell_pulse_height_name );
+  ar & BOOST_SERIALIZATION_NVP( d_cell_track_length_flux_name );
+  ar & BOOST_SERIALIZATION_NVP( d_cell_collision_flux_name );
+  ar & BOOST_SERIALIZATION_NVP( d_photon_name );
+  ar & BOOST_SERIALIZATION_NVP( d_neutron_name );
+  ar & BOOST_SERIALIZATION_NVP( d_electron_name );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_photon_name );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_neutron_name );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_electron_name );
+}
+
 } // end Geometry namespace
 
 BOOST_SERIALIZATION_CLASS_VERSION( DagMCModelProperties, Geometry, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( DagMCModelProperties, Geometry );
-EXTERN_EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( DagMCModelProperties );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Geometry, DagMCModelProperties );
 
 #endif // end GEOMETRY_DAGMC_MODEL_PROPERTIES_HPP
 

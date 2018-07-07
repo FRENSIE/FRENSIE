@@ -7,7 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_Archives.hpp" // Must be included first
+#include "FRENSIE_Archives.hpp" // Must be included first
 #include "MonteCarlo_ElasticBasicBivariateDistribution.hpp"
 
 EXPLICIT_ELASTIC_BASIC_BIVARIATE_DIST( void, void, void );

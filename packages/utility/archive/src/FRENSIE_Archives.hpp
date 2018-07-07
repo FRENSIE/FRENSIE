@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_Archives.hpp
+//! \file   FRENSIE_Archives.hpp
 //! \author Alex Robinson
 //! \brief  All archives that can be used by FRENSIE. This file must be
 //!         included before all other FRENSIE includes in a .cpp file that
@@ -37,5 +37,5 @@
 #endif // end UTILITY_ARCHIVES_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_Archives.hpp
+// end FRENSIE_Archives.hpp
 //---------------------------------------------------------------------------//

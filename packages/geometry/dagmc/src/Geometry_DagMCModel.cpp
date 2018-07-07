@@ -10,25 +10,14 @@
 #include <exception>
 #include <unordered_set>
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp" // Must be included first
 #include "Geometry_DagMCModel.hpp"
 #include "Geometry_StandardDagMCCellHandler.hpp"
 #include "Geometry_FastDagMCCellHandler.hpp"
 #include "Geometry_StandardDagMCSurfaceHandler.hpp"
 #include "Geometry_FastDagMCSurfaceHandler.hpp"
 #include "Geometry_DagMCLoggingMacros.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_MOABException.hpp"
 #include "Utility_FromStringTraits.hpp"
@@ -1059,34 +1048,7 @@ moab::DagMC& DagMCModel::getRawDagMCInstance() const
   return *d_dagmc;
 }
 
-// Save the model to an archive
-template<typename Archive>
-void DagMCModel::save( Archive& ar, const unsigned version ) const
-{
-  // Save the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( AdvancedModel );
-
-  // Save the model properties - all other data will be reinitialized
-  ar & BOOST_SERIALIZATION_NVP( d_model_properties );
-}
-
-// Load the model from an archive
-template<typename Archive>
-void DagMCModel::load( Archive& ar, const unsigned version )
-{
-  // Load the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( AdvancedModel );
-
-  // Load the model properties only - all other data must be reinitialized
-  decltype(d_model_properties) cached_model_properties;
-  
-  ar & boost::serialization::make_nvp( "d_model_properties",
-                                       cached_model_properties );
-
-  this->initialize( *cached_model_properties, true );
-}
-
-EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( DagMCModel );
+EXPLICIT_CLASS_SAVE_LOAD_INST( DagMCModel );
 
 }  // end Geometry namespace
 

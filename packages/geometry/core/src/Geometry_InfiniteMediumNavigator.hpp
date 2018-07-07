@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "Geometry_Navigator.hpp"
-#include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace Geometry{
 

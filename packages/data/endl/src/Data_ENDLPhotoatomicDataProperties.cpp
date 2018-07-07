@@ -6,20 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp" // Must include first
 #include "Data_ENDLPhotoatomicDataProperties.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_FromStringTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_DesignByContract.hpp"
@@ -111,44 +100,7 @@ ENDLPhotoatomicDataProperties* ENDLPhotoatomicDataProperties::clone() const
   return new ENDLPhotoatomicDataProperties( *this );
 }
 
-// Save the properties to an archive
-template<typename Archive>
-void ENDLPhotoatomicDataProperties::save( Archive& ar, const unsigned version ) const
-{
-  // Save the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( PhotoatomicDataProperties );
-
-  // Save the local member data
-  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight );
-  
-  std::string raw_path = d_file_path.string();
-  
-  ar & BOOST_SERIALIZATION_NVP( raw_path );
-  ar & BOOST_SERIALIZATION_NVP( d_file_version );
-  ar & BOOST_SERIALIZATION_NVP( d_atom );
-}
-
-// Load the properties from an archive
-template<typename Archive>
-void ENDLPhotoatomicDataProperties::load( Archive& ar, const unsigned version )
-{
-  // Load the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( PhotoatomicDataProperties );
-
-  // Load the local member data
-  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight );
-  
-  std::string raw_path;  
-  ar & BOOST_SERIALIZATION_NVP( raw_path );
-
-  d_file_path = raw_path;
-  d_file_path.make_preferred();
-  
-  ar & BOOST_SERIALIZATION_NVP( d_file_version );
-  ar & BOOST_SERIALIZATION_NVP( d_atom );
-}
-
-EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ENDLPhotoatomicDataProperties );
+EXPLICIT_CLASS_SAVE_LOAD_INST( ENDLPhotoatomicDataProperties );
   
 } // end Data namespace
 

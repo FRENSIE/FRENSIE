@@ -7,20 +7,11 @@
 //---------------------------------------------------------------------------//
 
 // Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
 #include <boost/serialization/string.hpp>
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp" // Must include first
 #include "Geometry_RootModelProperties.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
@@ -95,27 +86,7 @@ void RootModelProperties::setTerminalMaterialName(
   d_terminal_material_name = terminal_material_name;
 }
 
-// Save the model to an archive
-template<typename Archive>
-void RootModelProperties::save( Archive& ar, const unsigned version ) const
-{
-  ar & BOOST_SERIALIZATION_NVP( d_file_name );
-  ar & BOOST_SERIALIZATION_NVP( d_material_property_name );
-  ar & BOOST_SERIALIZATION_NVP( d_void_material_name );
-  ar & BOOST_SERIALIZATION_NVP( d_terminal_material_name );
-}
-
-// Load the model from an archive
-template<typename Archive>
-void RootModelProperties::load( Archive& ar, const unsigned version )
-{
-  ar & BOOST_SERIALIZATION_NVP( d_file_name );
-  ar & BOOST_SERIALIZATION_NVP( d_material_property_name );
-  ar & BOOST_SERIALIZATION_NVP( d_void_material_name );
-  ar & BOOST_SERIALIZATION_NVP( d_terminal_material_name );
-}
-
-EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( RootModelProperties );
+EXPLICIT_CLASS_SAVE_LOAD_INST( RootModelProperties );
 
 } // end Geometry namespace
 

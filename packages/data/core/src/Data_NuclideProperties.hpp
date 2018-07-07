@@ -797,7 +797,7 @@ private:
 BOOST_SERIALIZATION_CLASS_VERSION( NuclideProperties, Data, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( NuclideProperties, Data );
 
-EXTERN_EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( NuclideProperties );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Data, NuclideProperties );
 
 //---------------------------------------------------------------------------//
 // Template Includes

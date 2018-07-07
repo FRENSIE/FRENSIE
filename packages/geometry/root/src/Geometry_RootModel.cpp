@@ -10,21 +10,10 @@
 #include <exception>
 #include <thread>
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp" // Must include first
 #include "Geometry_RootModel.hpp"
 #include "Geometry_RootLoggingMacros.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_Set.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_OpenMPProperties.hpp"
@@ -546,34 +535,7 @@ TGeoManager* RootModel::getManager() const
   return d_manager;
 }
 
-// Save the model to an archive
-template<typename Archive>
-void RootModel::save( Archive& ar, const unsigned version ) const
-{
-  // Save the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Model );
-
-  // Save the model properties - all other data will be reinitialized
-  ar & BOOST_SERIALIZATION_NVP( d_model_properties );
-}
-
-// Load the model from an archive
-template<typename Archive>
-void RootModel::load( Archive& ar, const unsigned version )
-{
-  // Load the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Model );
-
-  // Load the model properties only - all other data must be reinitialized
-  decltype(d_model_properties) cached_model_properties;
-
-  ar & boost::serialization::make_nvp( "d_model_properties",
-                                       cached_model_properties );
-
-  this->initialize( *cached_model_properties );
-}
-
-EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( RootModel );
+EXPLICIT_CLASS_SAVE_LOAD_INST( RootModel );
 
 } // end Geometry namespace
 

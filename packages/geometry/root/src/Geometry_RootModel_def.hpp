@@ -49,6 +49,33 @@ void RootModel::getCellMaterialNames( MapType<InternalCellHandle,std::string>&
   }
 }
 
+// Save the model to an archive
+template<typename Archive>
+void RootModel::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Model );
+
+  // Save the model properties - all other data will be reinitialized
+  ar & BOOST_SERIALIZATION_NVP( d_model_properties );
+}
+
+// Load the model from an archive
+template<typename Archive>
+void RootModel::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Model );
+
+  // Load the model properties only - all other data must be reinitialized
+  decltype(d_model_properties) cached_model_properties;
+
+  ar & boost::serialization::make_nvp( "d_model_properties",
+                                       cached_model_properties );
+
+  this->initialize( *cached_model_properties );
+}
+
 } // end Geometry namespace
 
 #endif // end GEOMETRY_ROOT_MODEL_DEF_HPP

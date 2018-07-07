@@ -6,21 +6,10 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "Data_ACEThermalNuclearDataProperties.hpp"
 #include "Data_ACETableName.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_FromStringTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_DesignByContract.hpp"
@@ -150,50 +139,7 @@ ACEThermalNuclearDataProperties* ACEThermalNuclearDataProperties::clone() const
   return new ACEThermalNuclearDataProperties( *this );
 }
 
-// Save the properties to an archive
-template<typename Archive>
-void ACEThermalNuclearDataProperties::save( Archive& ar, const unsigned version ) const
-{
-  // Save the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ThermalNuclearDataProperties );
-
-  // Save the local member data
-  ar & BOOST_SERIALIZATION_NVP( d_zaids );
-  ar & BOOST_SERIALIZATION_NVP( d_evaluation_temp );
-
-  std::string raw_path = d_file_path.string();
-
-  ar & BOOST_SERIALIZATION_NVP( raw_path );
-  ar & BOOST_SERIALIZATION_NVP( d_file_start_line );
-  ar & BOOST_SERIALIZATION_NVP( d_file_table_name );
-  ar & BOOST_SERIALIZATION_NVP( d_name );
-  ar & BOOST_SERIALIZATION_NVP( d_file_version );
-}
-
-// Load the properties from an archive
-template<typename Archive>
-void ACEThermalNuclearDataProperties::load( Archive& ar, const unsigned version )
-{
-  // Load the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ThermalNuclearDataProperties );
-
-  // Load the local member data
-  ar & BOOST_SERIALIZATION_NVP( d_zaids );
-  ar & BOOST_SERIALIZATION_NVP( d_evaluation_temp );
-
-  std::string raw_path;
-  ar & BOOST_SERIALIZATION_NVP( raw_path );
-
-  d_file_path = raw_path;
-  d_file_path.make_preferred();
-
-  ar & BOOST_SERIALIZATION_NVP( d_file_start_line );
-  ar & BOOST_SERIALIZATION_NVP( d_file_table_name );
-  ar & BOOST_SERIALIZATION_NVP( d_name );
-  ar & BOOST_SERIALIZATION_NVP( d_file_version );
-}
-
-EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ACEThermalNuclearDataProperties );
+EXPLICIT_CLASS_SAVE_LOAD_INST( ACEThermalNuclearDataProperties );
 
 } // end Data namespace
 

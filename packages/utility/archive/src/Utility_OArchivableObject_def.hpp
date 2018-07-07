@@ -15,12 +15,9 @@
 // Boost Includes
 #include <boost/filesystem.hpp>
 #include <boost/serialization/nvp.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
 
 // FRENSIE Includes
-#include "Utility_HDF5OArchive.hpp"
+#include "FRENSIE_Archives.hpp" // Must include first
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 

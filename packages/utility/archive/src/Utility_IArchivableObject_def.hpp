@@ -11,12 +11,9 @@
 
 // Boost Includes
 #include <boost/serialization/nvp.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
 
 // FRENSIE Includes
-#include "Utility_HDF5IArchive.hpp"
+#include "FRENSIE_Archives.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
 namespace Utility{
