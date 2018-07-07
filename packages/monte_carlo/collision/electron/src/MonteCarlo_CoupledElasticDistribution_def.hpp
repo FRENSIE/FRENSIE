@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_COUPLED_ELASTIC_DISTRIBUTION_DEF_HPP
-#define UTILITY_COUPLED_ELASTIC_DISTRIBUTION_DEF_HPP
+#ifndef MONTE_CARLO_COUPLED_ELASTIC_DISTRIBUTION_DEF_HPP
+#define MONTE_CARLO_COUPLED_ELASTIC_DISTRIBUTION_DEF_HPP
 
 // Std Includes
 #include <iostream>
@@ -16,6 +16,7 @@
 #include <cstdlib>
 
 // FRENSIE Includes
+#include "MonteCarlo_ElasticElectronTraits.hpp"
 #include "Utility_DataProcessor.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -24,9 +25,8 @@
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
-#include "Utility_ElasticElectronTraits.hpp"
 
-BOOST_SERIALIZATION_CLASS3_EXPORT_IMPLEMENT( UnitAwareCoupledElasticDistribution, Utility );
+BOOST_SERIALIZATION_CLASS3_EXPORT_IMPLEMENT( UnitAwareCoupledElasticDistribution, MonteCarlo );
 
 namespace Utility{
 
@@ -971,7 +971,7 @@ template<typename Archive>
 void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
 {
   // Save the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP2( Utility, BaseType );
 
   // Save the local member data
   ar & BOOST_SERIALIZATION_NVP( d_distribution );
@@ -995,7 +995,7 @@ template<typename Archive>
 void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
 {
   // Load the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP2( Utility, BaseType );
 
   // Load the local member data
   ar & BOOST_SERIALIZATION_NVP( d_distribution );
@@ -1013,13 +1013,19 @@ void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dep
 
 } // end Utility namespace
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareCoupledElasticDistribution<LinLin,void,void> );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareCoupledElasticDistribution<LogLin,void,void> );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareCoupledElasticDistribution<LinLogCos,void,void> );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareCoupledElasticDistribution<LogLogCos,void,void> );
+EXTERN_EXPLICIT_CLASS_INST( MonteCarlo::UnitAwareCoupledElasticDistribution<LinLin,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareCoupledElasticDistribution<LinLin,void,void> );
 
-#endif // end UTILITY_COUPLED_ELASTIC_DISTRIBUTION_DEF_HPP
+EXTERN_EXPLICIT_CLASS_INST( MonteCarlo::UnitAwareCoupledElasticDistribution<LogLin,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareCoupledElasticDistribution<LogLin,void,void> );
+
+EXTERN_EXPLICIT_CLASS_INST( MonteCarlo::UnitAwareCoupledElasticDistribution<LinLogCos,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareCoupledElasticDistribution<LinLogCos,void,void> );
+
+EXTERN_EXPLICIT_CLASS_INST( MonteCarlo::UnitAwareCoupledElasticDistribution<LogLogCos,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareCoupledElasticDistribution<LogLogCos,void,void> );
+
+#endif // end MONTE_CARLO_COUPLED_ELASTIC_DISTRIBUTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end Utility_CoupledElasticDistribution_def.hpp

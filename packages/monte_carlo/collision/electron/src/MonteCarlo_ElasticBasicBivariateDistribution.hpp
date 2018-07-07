@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_ElasticBasicBivariateDistribution.hpp
+//! \file   MonteCarlo_ElasticBasicBivariateDistribution.hpp
 //! \author Luke Kersting
 //! \brief  The elastic basic bivariate dist. class decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_ELASTIC_BASIC_BIVARIATE_DISTRIBUTION_HPP
-#define UTILITY_ELASTIC_BASIC_BIVARIATE_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_ELASTIC_BASIC_BIVARIATE_DISTRIBUTION_HPP
+#define MONTE_CARLO_ELASTIC_BASIC_BIVARIATE_DISTRIBUTION_HPP
 
 // Boost Includes
 #include <boost/units/physical_dimensions/energy.hpp>
@@ -15,7 +15,7 @@
 // FRENSIE Includes
 #include "Utility_InterpolatedFullyTabularBasicBivariateDistribution.hpp"
 
-namespace Utility{
+namespace MonteCarlo{
 
 /*! The unit-aware interpolated fully tabular two-dimensional distribution
  * \ingroup two_d_distribution
@@ -263,14 +263,14 @@ private:
 template<typename TwoDGridPolicy> using ElasticBasicBivariateDistribution =
   UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,void,void,void>;
   
-} // end Utility namespace
+} // end MonteCarlo namespace
 
 BOOST_SERIALIZATION_DISTRIBUTION4_VERSION( UnitAwareElasticBasicBivariateDistribution, 0 );
 
 #define BOOST_SERIALIZATION_ELASTIC_BASIC_BIVARIATE_DISTRIBUTION_EXPORT_STANDARD_KEY() \
-  BOOST_SERIALIZATION_CLASS4_EXPORT_STANDARD_KEY( UnitAwareElasticBasicBivariateDistribution, Utility ) \
+  BOOST_SERIALIZATION_CLASS4_EXPORT_STANDARD_KEY( UnitAwareElasticBasicBivariateDistribution, MonteCarlo ) \
   BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_KEY_IMPL(                   \
-    UnitAwareElasticBasicBivariateDistribution, Utility, \
+    UnitAwareElasticBasicBivariateDistribution, MonteCarlo, \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( std::string( "ElasticBasicBivariateDistribution<" ) + Utility::typeName<GridPolicy>() + ">" ), \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename GridPolicy ), \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( GridPolicy, void, void, void ) )
@@ -281,12 +281,12 @@ BOOST_SERIALIZATION_ELASTIC_BASIC_BIVARIATE_DISTRIBUTION_EXPORT_STANDARD_KEY();
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "Utility_ElasticBasicBivariateDistribution_def.hpp"
+#include "MonteCarlo_ElasticBasicBivariateDistribution_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end UTILITY_ELASTIC_BASIC_BIVARIATE_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_ELASTIC_BASIC_BIVARIATE_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_ElasticBasicBivariateDistribution.hpp
+// end MonteCarlo_ElasticBasicBivariateDistribution.hpp
 //---------------------------------------------------------------------------//

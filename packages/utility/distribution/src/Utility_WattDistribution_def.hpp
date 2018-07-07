@@ -16,7 +16,6 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
-#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_DesignByContract.hpp"
 
 BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_IMPLEMENT( UnitAwareWattDistribution );
@@ -446,7 +445,8 @@ void UnitAwareWattDistribution<IndependentUnit,DependentUnit>::verifyValidShapeP
 
 } // end Utility namespace
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareWattDistribution<void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareWattDistribution<void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareWattDistribution<void,void> );
 
 #endif // end UTILITY_WATT_DISTRIBUTION_DEF_HPP
 

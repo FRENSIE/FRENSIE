@@ -11,7 +11,6 @@
 
 // FRENSIE Includes
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_DesignByContract.hpp"
@@ -428,7 +427,8 @@ bool UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::canDepVarB
 
 } // end Utility namespace
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareExponentialDistribution<void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareExponentialDistribution<void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareExponentialDistribution<void,void> );
 
 #endif // end UTILITY_EXPONENTIAL_DISTRIBUTION_DEF_HPP
 

@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_ElasticBasicBivariateDistribution_def.hpp
+//! \file   MonteCarlo_ElasticBasicBivariateDistribution_def.hpp
 //! \author Luke Kersting
 //! \brief  The elastic bivariate dist. class def.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_ELASTIC_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
-#define UTILITY_ELASTIC_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
+#ifndef MONTE_CARLO_ELASTIC_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
+#define MONTE_CARLO_ELASTIC_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 
 // FRENSIE Includes
 #include "Utility_TabularDistribution.hpp"
@@ -18,7 +18,7 @@
 
 BOOST_SERIALIZATION_DISTRIBUTION4_EXPORT_IMPLEMENT( UnitAwareElasticBasicBivariateDistribution );
 
-namespace Utility{
+namespace MonteCarlo{
 
 namespace Details{
 
@@ -780,7 +780,7 @@ template<typename Archive>
 void UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
 {
   // Save the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP2( Utility, BaseType );
 
   // Save the local member data
   ar & BOOST_SERIALIZATION_NVP( d_max_upper_bound_conditional_indep_var );
@@ -797,7 +797,7 @@ template<typename Archive>
 void UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
 {
   // Load the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP2( Utility, BaseType );
 
   // Load the local member data
   ar & BOOST_SERIALIZATION_NVP( d_max_upper_bound_conditional_indep_var );
@@ -805,17 +805,27 @@ void UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependen
   ar & BOOST_SERIALIZATION_NVP( d_lower_bound_conditional_indep_var );
 }
 
-} // end Utility namespace
+} // end MonteCarlo namespace
+
+#define EXTERN_EXPLICIT_ELASTIC_BASIC_BIVARIATE_DIST_SAVE_LOAD_WITH_SAMPLE_POLICY_LINE__( Namespace, __VA_ARGS__ ) \
+  EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, __VA_ARGS__ )
+
+#define EXPLICIT_ELASTIC_BASIC_BIVARIATE_DIST_SAVE_LOAD_WITH_SAMPLE_POLICY_LINE__( Namespace, __VA_ARGS__ ) \
+  EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo::__VA_ARGS__ )
+
+#define __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, FullTwoDGridPolicy, ... ) \
+  DECL_TYPE##_TEMPLATE_CLASS_INST( MonteCarlo::UnitAwareElasticBasicBivariateDistribution<FullTwoDGridPolicy,__VA_ARGS__> ); \
+  DECL_TYPE##_ELASTIC_BASIC_BIVARIATE_DIST_SAVE_LOAD_WITH_SAMPLE_POLICY_LINE__( MonteCarlo, UnitAwareElasticBasicBivariateDistribution<FullTwoDGridPolicy,__VA_ARGS__> )
 
 #define __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, TwoDGridPolicy, ... ) \
-  DECL_TYPE##_DISTRIBUTION_INST( Utility::UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy<Utility::LinLinLin>,__VA_ARGS__ > ); \
-  DECL_TYPE##_DISTRIBUTION_INST( Utility::UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy<Utility::LinLogCosLin>,__VA_ARGS__ > ); \
-  DECL_TYPE##_DISTRIBUTION_INST( Utility::UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy<Utility::LinLinLog>,__VA_ARGS__ > ); \
-  DECL_TYPE##_DISTRIBUTION_INST( Utility::UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy<Utility::LinLogCosLog>,__VA_ARGS__ > ); \
-  DECL_TYPE##_DISTRIBUTION_INST( Utility::UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy<Utility::LogLinLin>,__VA_ARGS__ > ); \
-  DECL_TYPE##_DISTRIBUTION_INST( Utility::UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy<Utility::LogLogCosLin>,__VA_ARGS__ > ); \
-  DECL_TYPE##_DISTRIBUTION_INST( Utility::UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy<Utility::LogLinLog>,__VA_ARGS__ > ); \
-  DECL_TYPE##_DISTRIBUTION_INST( Utility::UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy<Utility::LogLogCosLog>,__VA_ARGS__ > )
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLinLin> ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLogCosLin> ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLinLog> ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLogCosLog> ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLinLin> ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLogCosLin> ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLinLog> ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLogCosLog> )
 
 #define ___ELASTIC_BASIC_BIVARIATE_DIST__( DECL_TYPE, ... ) \
   __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, Utility::Direct, __VA_ARGS__ ); \
@@ -831,8 +841,8 @@ void UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependen
 
 EXTERN_EXPLICIT_ELASTIC_BASIC_BIVARIATE_DIST( void, void, void );
 
-#endif // UTILITY_ELASTIC_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
+#endif // MONTE_CARLO_ELASTIC_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_ElasticBasicBivariateDistribution_def.hpp
+// end MonteCarlo_ElasticBasicBivariateDistribution_def.hpp
 //---------------------------------------------------------------------------//

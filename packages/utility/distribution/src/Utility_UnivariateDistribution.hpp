@@ -24,6 +24,7 @@
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_DistributionTraits.hpp"
 #include "Utility_DistributionSerializationHelpers.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 
 /*! \defgroup univariate_distributions Univariate Distributions
  */

@@ -18,7 +18,6 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
-#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_DesignByContract.hpp"
 
 BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_IMPLEMENT( UnitAwareMaxwellFissionDistribution );
@@ -417,7 +416,8 @@ void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::verifyV
 
 } // end Utility namespace
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareMaxwellFissionDistribution<void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareMaxwellFissionDistribution<void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareMaxwellFissionDistribution<void,void> );
 
 #endif // end UTILITY_MAXWELL_FISSION_DISTRIBUTION_DEF_HPP
 

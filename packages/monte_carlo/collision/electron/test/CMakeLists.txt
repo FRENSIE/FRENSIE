@@ -13,6 +13,21 @@ FRENSIE_ADD_TEST(AdjointElectroatomicReactionType)
 FRENSIE_ADD_TEST_EXECUTABLE(PositronatomicReactionType DEPENDS tstPositronatomicReactionType.cpp)
 FRENSIE_ADD_TEST(PositronatomicReactionType)
 
+FRENSIE_ADD_TEST_EXECUTABLE(ElasticElectronTraits DEPENDS tstElasticElectronTraits.cpp)
+FRENSIE_ADD_TEST(ElasticElectronTraits)
+
+FRENSIE_ADD_TEST_EXECUTABLE(CoupledElasticDistribution DEPENDS tstCoupledElasticDistribution.cpp)
+FRENSIE_ADD_TEST(CoupledElasticDistribution)
+
+FRENSIE_ADD_TEST_EXECUTABLE(LinLinLinCoupledElasticBasicBivariateDistribution DEPENDS tstLinLinLinCoupledElasticBasicBivariateDistribution.cpp)
+FRENSIE_ADD_TEST(LinLinLinCoupledElasticBasicBivariateDistribution)
+
+FRENSIE_ADD_TEST_EXECUTABLE(LogLogLogCoupledElasticBasicBivariateDistribution DEPENDS tstLogLogLogCoupledElasticBasicBivariateDistribution.cpp)
+FRENSIE_ADD_TEST(LogLogLogCoupledElasticBasicBivariateDistribution)
+
+FRENSIE_ADD_TEST_EXECUTABLE(LogLogLogCutoffElasticBasicBivariateDistribution DEPENDS tstLogLogLogCutoffElasticBasicBivariateDistribution.cpp)
+FRENSIE_ADD_TEST(LogLogLogCutoffElasticBasicBivariateDistribution)
+
 ##---------------------------------------------------------------------------##
 ## Scattering distribution tests
 ##---------------------------------------------------------------------------##

@@ -94,7 +94,8 @@ typedef UnitAwareTabularUnivariateDistribution<void,void> TabularUnivariateDistr
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION2( UnitAwareTabularUnivariateDistribution );
 BOOST_SERIALIZATION_DISTRIBUTION2_VERSION( UnitAwareTabularUnivariateDistribution, 0 );
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularUnivariateDistribution<void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularUnivariateDistribution<void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularUnivariateDistribution<void,void> );
 
 #endif // end UTILITY_TABULAR_ONE_D_DISTRIBUTION_HPP
 

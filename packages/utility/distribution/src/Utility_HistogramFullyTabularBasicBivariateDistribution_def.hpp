@@ -182,7 +182,8 @@ void UnitAwareHistogramFullyTabularBasicBivariateDistribution<PrimaryIndependent
   
 } // end Utility namespace
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareHistogramFullyTabularBasicBivariateDistribution<void,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareHistogramFullyTabularBasicBivariateDistribution<void,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareHistogramFullyTabularBasicBivariateDistribution<void,void,void> );
 
 #endif // end UTILITY_HISTOGRAM_FULLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 

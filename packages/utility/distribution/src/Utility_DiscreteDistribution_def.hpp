@@ -797,7 +797,8 @@ bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::isDepVarCompa
 
 } // end Utility namespace
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareDiscreteDistribution<void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareDiscreteDistribution<void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareDiscreteDistribution<void,void> );
 
 #endif // end UTILITY_DISCRETE_DISTRIBUTION_DEF_HPP
 

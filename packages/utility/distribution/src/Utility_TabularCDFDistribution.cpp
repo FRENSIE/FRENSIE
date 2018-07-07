@@ -6,34 +6,27 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
+#include "Utility_Archives.hpp" // Must include first
 #include "Utility_TabularCDFDistribution.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 
-namespace Utility{
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLin,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLin,void,void> );
 
-  // Explicit instantiation
-  EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LinLin,void,void> );
-  EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LogLog,void,void> );
-  EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LinLog,void,void> );
-  EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LogLin,void,void> );
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLog,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLog,void,void> );
 
-  // Explicit cosine instantiation
-  EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LogLogCos,void,void> );
-  EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LinLogCos,void,void> );
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLog,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLog,void,void> );
 
-} // end Utility namespace
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLin,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLin,void,void> );
+
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,void,void> );
+
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLogCos,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLogCos,void,void> );
 
 //---------------------------------------------------------------------------//
 // end Utility_TabularCDFDistribution.cpp

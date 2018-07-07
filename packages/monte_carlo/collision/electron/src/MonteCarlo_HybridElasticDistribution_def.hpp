@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_HybridElasticDistribution_def.hpp
+//! \file   MonteCarlo_HybridElasticDistribution_def.hpp
 //! \author Luke Kersting
 //! \brief  Hybrid elastic distribution class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_HYBRID_ELASTIC_DISTRIBUTION_DEF_HPP
-#define UTILITY_HYBRID_ELASTIC_DISTRIBUTION_DEF_HPP
+#ifndef MONTE_CARLO_HYBRID_ELASTIC_DISTRIBUTION_DEF_HPP
+#define MONTE_CARLO_HYBRID_ELASTIC_DISTRIBUTION_DEF_HPP
 
 // Std Includes
 #include <iostream>
@@ -16,6 +16,7 @@
 #include <cstdlib>
 
 // FRENSIE Includes
+#include "MonteCarlo_ElasticElectronTraits.hpp"
 #include "Utility_DataProcessor.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -24,11 +25,10 @@
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
-#include "Utility_ElasticElectronTraits.hpp"
 
-BOOST_SERIALIZATION_CLASS3_EXPORT_IMPLEMENT( UnitAwareHybridElasticDistribution, Utility );
+BOOST_SERIALIZATION_CLASS3_EXPORT_IMPLEMENT( UnitAwareHybridElasticDistribution, MonteCarlo );
 
-namespace Utility{
+namespace MonteCarlo{
 
 // Default constructor
 template<typename InterpolationPolicy,
@@ -1106,7 +1106,7 @@ template<typename Archive>
 void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
 {
   // Save the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP2( Utility, BaseType );
 
   // Save the local member data
   ar & BOOST_SERIALIZATION_NVP( d_cutoff_distribution );
@@ -1127,7 +1127,7 @@ template<typename Archive>
 void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
 {
   // Load the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP2( Utility, BaseType );
 
   // Load the local member data
   ar & BOOST_SERIALIZATION_NVP( d_cutoff_distribution );
@@ -1140,13 +1140,15 @@ void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
   ar & BOOST_SERIALIZATION_NVP( d_scaling_parameter );
 }
 
-} // end Utility namespace
+} // end MonteCarlo namespace
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareHybridElasticDistribution<LinLin,void,void> );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareHybridElasticDistribution<LogLin,void,void> );
+EXTERN_EXPLICIT_CLASS_INST( MonteCarlo::UnitAwareHybridElasticDistribution<LinLin,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareHybridElasticDistribution<LinLin,void,void> );
 
-#endif // end UTILITY_HYBRID_ELASTIC_DISTRIBUTION_DEF_HPP
+EXTERN_EXPLICIT_CLASS_INST( MonteCarlo::UnitAwareHybridElasticDistribution<LogLin,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareHybridElasticDistribution<LogLin,void,void> );
+
+#endif // end MONTE_CARLO_HYBRID_ELASTIC_DISTRIBUTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end Utility_HybridElasticDistribution_def.hpp

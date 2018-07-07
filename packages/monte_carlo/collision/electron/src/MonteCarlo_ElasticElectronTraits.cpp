@@ -7,8 +7,8 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_ElasticElectronTraits.hpp"
-#include "Utility_KinematicHelpers.hpp"
+#include "MonteCarlo_ElasticElectronTraits.hpp"
+#include "MonteCarlo_KinematicHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
 namespace Utility{
@@ -105,7 +105,7 @@ double ElasticElectronTraits::evaluateMoliereScreeningConstant(
 
   // Calculate the energy-momentum^2 in units of electron rest mass energy ( Pc / mc^2 )^2
   double energy_momentum_squared =
-    Utility::calculateDimensionlessRelativisticMomentumSquared( energy_in_mc );
+    MonteCarlo::calculateDimensionlessRelativisticMomentumSquared( energy_in_mc );
 
   // Modify eta if Seltzer modification is turned on
   if ( d_seltzer_modification_on )
@@ -148,7 +148,7 @@ double ElasticElectronTraits::evaluateMoliereScreeningConstant(
 
   // Calculate the energy-momentum^2 in units of electron rest mass energy ( Pc / mc^2 )^2
   double energy_momentum_squared =
-    Utility::calculateDimensionlessRelativisticMomentumSquared( energy_in_mc);
+    MonteCarlo::calculateDimensionlessRelativisticMomentumSquared( energy_in_mc);
 
   // Set parameter 1 for moliere screening constant ( 1/2 * (fsc/0.885)**2 * Z**(2/3) )
   double screening_param1 =

@@ -1,18 +1,18 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_ElasticElectronTraits.hpp
+//! \file   MonteCarlo_ElasticElectronTraits.hpp
 //! \author Luke Kersting
 //! \brief  The Coupled elastic electron traits declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_ELASTIC_ELECTRON_TRAITS_HPP
-#define UTILITY_ELASTIC_ELECTRON_TRAITS_HPP
+#ifndef MONTE_CARLO_ELASTIC_ELECTRON_TRAITS_HPP
+#define MONTE_CARLO_ELASTIC_ELECTRON_TRAITS_HPP
 
 // FRENSIE Includes
 #include "Utility_UndefinedTraits.hpp"
 
-namespace Utility{
+namespace MonteCarlo{
 
 //! Electron elastic traits
 class ElasticElectronTraits
@@ -86,10 +86,10 @@ private:
   bool d_seltzer_modification_on;
 };
 
-} // end Utility namespace
+} // end MonteCarlo namespace
 
-#endif // end UTILITY_ELASTIC_ELECTRON_TRAITS_HPP
+#endif // end MONTE_CARLO_ELASTIC_ELECTRON_TRAITS_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_ElasticElectronTraits.hpp
+// end MonteCarlo_ElasticElectronTraits.hpp
 //---------------------------------------------------------------------------//

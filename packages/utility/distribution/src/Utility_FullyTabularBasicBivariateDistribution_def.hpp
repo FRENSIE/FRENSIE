@@ -175,7 +175,8 @@ void UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,Seco
   
 } // end Utility namespace
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> );
 
 #endif // end UTILITY_FULLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 

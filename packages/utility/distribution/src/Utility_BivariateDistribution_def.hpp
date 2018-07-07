@@ -38,7 +38,8 @@ bool UnitAwareBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentU
 
 } // end Utility namespace
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareBivariateDistribution<void,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareBivariateDistribution<void,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareBivariateDistribution<void,void,void> );
 
 #endif // end UTILITY_BIVARIATE_DISTRIBUTION_DEF_HPP
 

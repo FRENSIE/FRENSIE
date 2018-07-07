@@ -13,7 +13,6 @@
 #include "Utility_ComparisonPolicy.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_LoggingMacros.hpp"
-#include "Utility_ExplicitDistributionTemplateInstantiationMacros.hpp"
 
 namespace Utility{
 
@@ -177,7 +176,8 @@ void UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>::toStreamWit
 
 } // end Utility namespace
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareUnivariateDistribution<void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareUnivariateDistribution<void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareUnivariateDistribution<void,void> );
 
 #endif // end UTILITY_ONE_D_DISTRIBUTION_DEF_HPP
 

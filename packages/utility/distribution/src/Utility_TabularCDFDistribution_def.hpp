@@ -992,15 +992,23 @@ void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
 
 } // end Utility namespace
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LinLin,void,void> );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LogLog,void,void> );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LinLog,void,void> );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LogLin,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLin,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularCDFDistribution<Utility::LinLin,void,void> );
 
-// Explicit cosine instantiation (extern declaration)
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LogLogCos,void,void> );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LinLogCos,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLog,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularCDFDistribution<Utility::LogLog,void,void> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLog,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularCDFDistribution<Utility::LinLog,void,void> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLin,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularCDFDistribution<Utility::LogLin,void,void> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularCDFDistribution<Utility::LogLogCos,void,void> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLogCos,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularCDFDistribution<Utility::LinLogCos,void,void> );
 
 #endif // end Utility_TabularCDFDistribution_def.hpp
 

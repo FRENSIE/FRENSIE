@@ -1,30 +1,29 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_CoupledElasticDistribution.hpp
+//! \file   MonteCarlo_HybridElasticDistribution.hpp
 //! \author Luke Kersting
-//! \brief  Coupled elastic distribution class declaration
+//! \brief  Hybrid elastic distribution class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_COUPLED_ELASTIC_HPP
-#define UTILITY_COUPLED_ELASTIC_HPP
+#ifndef MONTE_CARLO_HYBRID_ELASTIC_HPP
+#define MONTE_CARLO_HYBRID_ELASTIC_HPP
 
 // FRENSIE Includes
 #include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_InterpolationPolicy.hpp"
-#include "Utility_CosineInterpolationPolicy.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_Tuple.hpp"
 
-namespace Utility{
+namespace MonteCarlo{
 
-/*! The coupled elastic distribution class declaration
+/*! The hybrid elastic distribution class declaration
  * \ingroup one_d_distributions
  */
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-class UnitAwareCoupledElasticDistribution : public UnitAwareTabularUnivariateDistribution<IndependentUnit,DependentUnit>
+class UnitAwareHybridElasticDistribution : public UnitAwareTabularUnivariateDistribution<IndependentUnit,DependentUnit>
 {
 
   // Only allow construction when the independent unit dimensionless
@@ -66,7 +65,7 @@ class UnitAwareCoupledElasticDistribution : public UnitAwareTabularUnivariateDis
 public:
 
   //! This distribution type
-  typedef UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> ThisType;
+  typedef UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> ThisType;
 
   //! The independent quantity type
   typedef typename BaseType::IndepQuantity IndepQuantity;
@@ -78,36 +77,40 @@ public:
   typedef typename BaseType::DepQuantity DepQuantity;
 
   //! Default constructor
-  UnitAwareCoupledElasticDistribution();
+  UnitAwareHybridElasticDistribution();
 
   //! Basic constructor (potentially dangerous)
-  UnitAwareCoupledElasticDistribution(
-                    const std::vector<double>& independent_values,
-                    const std::vector<double>& dependent_values,
-                    const double& moliere_screening_constant,
-                    const double& cutoff_cross_section_ratio );
+  UnitAwareHybridElasticDistribution(
+                    const std::vector<double>& independent_cutoff_values,
+                    const std::vector<double>& dependent_cutoff_values,
+                    const std::vector<double>& independent_discrete_values,
+                    const std::vector<double>& dependent_discrete_values,
+                    const double cutoff_angle_cosine,
+                    const double cutoff_cross_section_ratio );
 
   //! Constructor
   template<typename InputIndepQuantity, typename InputDepQuantity>
-  UnitAwareCoupledElasticDistribution(
-                    const std::vector<InputIndepQuantity>& independent_values,
-                    const std::vector<InputDepQuantity>& dependent_values,
-                    const double& moliere_screening_constant,
-                    const double& cutoff_cross_section_ratio );
+  UnitAwareHybridElasticDistribution(
+        const std::vector<InputIndepQuantity>& independent_cutoff_values,
+        const std::vector<InputDepQuantity>& dependent_cutoff_values,
+        const std::vector<InputIndepQuantity>& independent_discrete_values,
+        const std::vector<InputDepQuantity>& dependent_discrete_values,
+        const InputIndepQuantity& cutoff_angle_cosine,
+        const double cutoff_cross_section_ratio );
 
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit>
-  UnitAwareCoupledElasticDistribution( const UnitAwareCoupledElasticDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>& dist_instance );
+  UnitAwareHybridElasticDistribution( const UnitAwareHybridElasticDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>& dist_instance );
 
   //! Construct distribution from a unitless dist. (potentially dangerous)
-  static UnitAwareCoupledElasticDistribution fromUnitlessDistribution( const UnitAwareCoupledElasticDistribution<InterpolationPolicy,void,void>& unitless_distribution );
+  static UnitAwareHybridElasticDistribution fromUnitlessDistribution( const UnitAwareHybridElasticDistribution<InterpolationPolicy,void,void>& unitless_distribution );
 
   //! Assignment operator
-  UnitAwareCoupledElasticDistribution& operator=(
-                           const UnitAwareCoupledElasticDistribution& dist_instance );
+  UnitAwareHybridElasticDistribution& operator=(
+                           const UnitAwareHybridElasticDistribution& dist_instance );
 
   //! Destructor
-  ~UnitAwareCoupledElasticDistribution()
+  ~UnitAwareHybridElasticDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
@@ -149,10 +152,7 @@ public:
   IndepQuantity getLowerBoundOfIndepVar() const override;
 
   //! Return the distribution type
-  UnivariateDistributionType getDistributionType() const;
-
-  //! Return the moliere screening constant for the distribution
-  double getMoliereScreeningConstant() const;
+  UnivariateDistributionType getDistributionType() const override;
 
   //! Return the cutoff cross section ratio for the distribution
   double getCutoffCrossSectionRatio() const;
@@ -164,15 +164,15 @@ public:
   void toStream( std::ostream& os ) const override;
 
   //! Equality comparison operator
-  bool operator==( const UnitAwareCoupledElasticDistribution& other ) const;
+  bool operator==( const UnitAwareHybridElasticDistribution& other ) const;
 
   //! Inequality comparison operator
-  bool operator!=( const UnitAwareCoupledElasticDistribution& other ) const;
+  bool operator!=( const UnitAwareHybridElasticDistribution& other ) const;
 
 protected:
 
   //! Copy constructor (copying from unitless distribution only)
-  UnitAwareCoupledElasticDistribution( const UnitAwareCoupledElasticDistribution<InterpolationPolicy,void,void>& unitless_dist_instance, int );
+  UnitAwareHybridElasticDistribution( const UnitAwareHybridElasticDistribution<InterpolationPolicy,void,void>& unitless_dist_instance, int );
 
   //! Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const override;
@@ -196,25 +196,37 @@ protected:
 private:
 
   // Initialize the distribution
-  void initializeDistributionFromRawData(
-                              const std::vector<double>& independent_values,
-                              const std::vector<double>& dependent_values );
+  void initializeDistributionsFromRawData(
+                    const std::vector<double>& independent_cutoff_values,
+                    const std::vector<double>& dependent_cutoff_values,
+                    const std::vector<double>& independent_discrete_values,
+                    const std::vector<double>& dependent_discrete_values );
 
   // Initialize the distribution
   template<typename InputIndepQuantity, typename InputDepQuantity>
-  void initializeDistribution(
+  void initializeCutoffDistribution(
                   const std::vector<InputIndepQuantity>& independent_values,
                   const std::vector<InputDepQuantity>& dependent_values );
 
-  // Reconstruct original distribution
-  void reconstructOriginalDistribution(
-                         std::vector<IndepQuantity>& independent_values,
-                         std::vector<DepQuantity>& dependent_values ) const;
+  // Initialize the distribution
+  template<typename InputIndepQuantity, typename InputDepQuantity>
+  void initializeDiscreteDistribution(
+                  const std::vector<InputIndepQuantity>& independent_values,
+                  const std::vector<InputDepQuantity>& dependent_values );
 
-  // Reconstruct original distribution w/o units
-  void reconstructOriginalUnitlessDistribution(
-                              std::vector<double>& independent_values,
-                              std::vector<double>& dependent_values ) const;
+  // Reconstruct original distributions
+  void reconstructOriginalDistributions(
+                 std::vector<IndepQuantity>& independent_cutoff_values,
+                 std::vector<DepQuantity>& dependent_cutoff_values,
+                 std::vector<IndepQuantity>& independent_discrete_values,
+                 std::vector<DepQuantity>& dependent_discrete_values ) const;
+
+  // Reconstruct original distributions w/o units
+  void reconstructOriginalUnitlessDistributions(
+                      std::vector<double>& independent_cutoff_values,
+                      std::vector<double>& dependent_cutoff_values,
+                      std::vector<double>& independent_discrete_values,
+                      std::vector<double>& dependent_discrete_values ) const;
 
   // Convert the unitless values to the correct units
   template<typename Quantity>
@@ -226,8 +238,9 @@ private:
   IndepQuantity sampleImplementation( double random_number,
                                       size_t& sampled_bin_index ) const;
 
-  // Return a random sample of the screened Rutherford analytical peak using the random number
-  IndepQuantity sampleScreenedRutherford( double random_number ) const;
+  // Return a random sample of the moment preserving discrete distribution using the random number and record the bin index
+  IndepQuantity sampleDiscrete( double random_number,
+                                size_t& sampled_bin_index ) const;
 
   // Return a random sample of the cutoff tabular distribution using the random number and record the bin index
   IndepQuantity sampleCutoff( double random_number,
@@ -236,11 +249,13 @@ private:
   // Verify that the values are valid
   template<typename InputIndepQuantity, typename InputDepQuantity>
   static void verifyValidValues(
-                    const std::vector<InputIndepQuantity>& independent_values,
-                    const std::vector<InputDepQuantity>& dependent_values,
-                    const double& moliere_screening_constant,
-                    const double& cutoff_cross_section_ratio );
-
+           const std::vector<InputIndepQuantity>& independent_cutoff_values,
+           const std::vector<InputDepQuantity>& dependent_cutoff_values,
+           const std::vector<InputIndepQuantity>& independent_discrete_values,
+           const std::vector<InputDepQuantity>& dependent_discrete_values,
+           const InputIndepQuantity cutoff_angle_cosine,
+           const double cutoff_cross_section_ratio);
+  
   // Save the distribution to an archive
   template<typename Archive>
   void save( Archive& ar, const unsigned version ) const;
@@ -258,89 +273,71 @@ private:
   template<typename FriendInterpolationPolicy,
            typename FriendIndepUnit,
            typename FriendDepUnit>
-  friend class UnitAwareCoupledElasticDistribution;
+  friend class UnitAwareHybridElasticDistribution;
 
   // The distribution type
-  static const UnivariateDistributionType distribution_type = COUPLED_ELASTIC_DISTRIBUTION;
+  static const UnivariateDistributionType distribution_type = HYBRID_ELASTIC_DISTRIBUTION;
 
   // The distribution (first = indep_var, second = cdf, third = pdf,
   // fourth = pdf slope): both the pdf and cdf are left unnormalized to
   // prevent altering the grid with log interpolation
   typedef std::vector<std::tuple<IndepQuantity,UnnormCDFQuantity,DepQuantity,SlopeQuantity> > DistributionArray;
-  DistributionArray d_distribution;
+  DistributionArray d_cutoff_distribution;
 
-  // The normalization constant
-  DistNormQuantity d_norm_constant;
+  // The distribution (first = independent value, second = CDF)
+  std::vector<std::pair<IndepQuantity,double> > d_discrete_distribution;
 
-  // The scaled_normalization constant
-  DistNormQuantity d_scaled_norm_constant;
+  // The discrete normalization constant
+  DistNormQuantity d_discrete_norm_constant;
 
-  // The max CDF value
-  UnnormCDFQuantity d_max_cdf;
+  // The cutoff normalization constant
+  DistNormQuantity d_cutoff_norm_constant;
 
-  // The lower bounds of the independent variable
-  IndepQuantity d_min_indep_var;
+  // The unnormalized CDF value a the cutoff angle cosine
+  UnnormCDFQuantity d_max_cutoff_cdf;
 
-  // The upper bounds of the independent variable
-  IndepQuantity d_max_indep_var;
-
-  /* Moliere's atomic screening constant at the energy of the distribution
-   * eta = 1/4 ( alpha m c / 0.885 p )**2 Z**(2/3) ( 1.13 + 3.76 [ alpha Z / beta ]**2 sqrt{ E/ (E + 1)})
-   *
-   * The numerical value is the same as that of Seltzer
-   * (Chapter 7) in the "Orange Book"".
-   */
-  double d_moliere_eta;
+  // The cutoff angle cosine between the tabular and discrete distributions
+  IndepQuantity d_cutoff_mu;
 
   // The ratio of the cutoff cross section to the total cross section at the energy of the distribution
   double d_cutoff_cross_section_ratio;
 
   /* Parameter for rescaling the random number to sample the
-   * screened Rutherford analytical peak ( 1/(1 - cutoff_cs_ratio) )
+   * moment preserving discrete peak ( 1/(1 - cutoff_cs_ratio) )
    */
   double d_scaling_parameter;
-
-  /* Parameter for evaluating the PDF of the screened Rutherford analytical peak
-   * ( cutoff_cs_ratio * cutoff_pdf * ( 1 - mu_c + eta )**2 )
-   */
-  DepQuantity d_pdf_parameter;
-
-  /* Parameter for evaluating the CDF of the screened Rutherford analytical peak
-   * ( (1 - cutoff_cs_ratio)*eta/mu_c )
-   */
-  double d_cdf_parameter;
 };
 
-/*! The coupled elastic distribution (unit-agnostic)
+/*! The hybrid elastic distribution (unit-agnostic)
  * \ingroup one_d_distributions
  */
-template<typename InterpolationPolicy> using CoupledElasticDistribution =
-  UnitAwareCoupledElasticDistribution<InterpolationPolicy,void,void>;
+template<typename InterpolationPolicy> using HybridElasticDistribution =
+  UnitAwareHybridElasticDistribution<InterpolationPolicy,void,void>;
 
-} // end Utility namespace
+} // end MonteCarlo namespace
 
-BOOST_SERIALIZATION_CLASS3_VERSION( UnitAwareCoupledElasticDistribution, Utility, 0 );
+BOOST_SERIALIZATION_CLASS3_VERSION( UnitAwareHybridElasticDistribution, MonteCarlo, 0 );
 
-#define BOOST_SERIALIZATION_COUPLED_ELASTIC_DISRIBUTION_EXPORT_STANDARD_KEY()   \
-  BOOST_SERIALIZATION_CLASS3_EXPORT_STANDARD_KEY( UnitAwareCoupledElasticDistribution, Utility ) \
+#define BOOST_SERIALIZATION_HYBRID_ELASTIC_DISRIBUTION_EXPORT_STANDARD_KEY()   \
+  BOOST_SERIALIZATION_CLASS3_EXPORT_STANDARD_KEY( UnitAwareHybridElasticDistribution, MonteCarlo ) \
   BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_KEY_IMPL(                   \
-    UnitAwareCoupledElasticDistribution, Utility,                                \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( std::string( "CoupledElasticDistribution<" ) + Utility::typeName<InterpPolicy>() + ">" ), \
+    UnitAwareHybridElasticDistribution, MonteCarlo,                                \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( std::string( "HybridElasticDistribution<" ) + Utility::typeName<InterpPolicy>() + ">" ), \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename InterpPolicy ), \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( InterpPolicy, void, void ) )
 
-BOOST_SERIALIZATION_COUPLED_ELASTIC_DISRIBUTION_EXPORT_STANDARD_KEY();
+BOOST_SERIALIZATION_HYBRID_ELASTIC_DISRIBUTION_EXPORT_STANDARD_KEY();
 
 //---------------------------------------------------------------------------//
 // Template includes.
 //---------------------------------------------------------------------------//
 
-#include "Utility_CoupledElasticDistribution_def.hpp"
+#include "MonteCarlo_HybridElasticDistribution_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end UTILITY_COUPLED_ELASTIC_ONE_D_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_HYBRID_ELASTIC_ONE_D_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_CoupledElasticDistribution.hpp
+// end MonteCarlo_HybridElasticDistribution.hpp
 //---------------------------------------------------------------------------//

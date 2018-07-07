@@ -801,7 +801,7 @@ void UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,
 
 } // end Utility namespace
 
-EXTERN_EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_FULL( Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution, void, void, void );
+EXTERN_EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_FULL( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution, void, void, void );
 
 #endif // UTILITY_INTERPOLATED_FULLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 

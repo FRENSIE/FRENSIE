@@ -497,6 +497,18 @@ namespace extra_detail{ \
     deserialized_value = enum_value;                                      \
     break
 
+/*! Serialize a base class object in a different namespace
+ *
+ * The BOOST_SERIALIZATION_BASE_OBJECT_NVP macro only works when the derived
+ * class is in the same namespace as the base class. This macro will work
+ * in all cases.
+ * \ingroup boost_serialization_helpers
+ */
+#define BOOST_SERIALIZATION_BASE_OBJECT_NVP2( base_namespace, name )    \
+  boost::serialization::make_nvp(                                       \
+      BOOST_PP_STRINGIZE(name),                                             \
+      boost::serialization::base_object<base_namespace::name >(*this)     \
+  )
 
 #else // !defined SWIG
 
@@ -535,6 +547,7 @@ namespace extra_detail{ \
 #define BOOST_SERIALIZATION_CLASS5_EXPORT_IMPLEMENT( ... )
 #define BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ... )
 #define BOOST_SERIALIZATION_ENUM_CASE( ... )
+#define BOOST_SERIALIZATION_BASE_OBJECT_NVP2( ... )
 
 #endif // end !defined SWIG
 

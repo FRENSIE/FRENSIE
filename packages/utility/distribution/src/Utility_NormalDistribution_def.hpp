@@ -14,7 +14,6 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
-#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_DesignByContract.hpp"
 
 BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_IMPLEMENT( UnitAwareNormalDistribution );
@@ -446,7 +445,8 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::verifyValidShap
 
 } // end Utility namespace
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareNormalDistribution<void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareNormalDistribution<void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareNormalDistribution<void,void> );
 
 #endif // end UTILITY_NORMAL_DISTRIBUTION_DEF_HPP
 

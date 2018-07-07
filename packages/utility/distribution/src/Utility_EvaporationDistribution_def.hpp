@@ -412,7 +412,8 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::verifyVali
 
 } // end Utility namespace
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareEvaporationDistribution<void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareEvaporationDistribution<void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareEvaporationDistribution<void,void> );
 
 #endif // end UTILITY_EVAPORATION_DISTRIBUTION_DEF_HPP
 

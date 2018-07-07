@@ -784,11 +784,17 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
 
 } // end Utility namespace
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularDistribution<LinLin,void,void> );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularDistribution<LinLog,void,void> );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularDistribution<LogLin,void,void> );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularDistribution<LogLog,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularDistribution<Utility::LinLin,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularDistribution<Utility::LinLin,void,void> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularDistribution<Utility::LinLog,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularDistribution<Utility::LinLog,void,void> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularDistribution<Utility::LogLin,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularDistribution<Utility::LogLin,void,void> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularDistribution<Utility::LogLog,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularDistribution<Utility::LogLog,void,void> );
 
 #endif // end Utility_TabularDistribution_def.hpp
 
