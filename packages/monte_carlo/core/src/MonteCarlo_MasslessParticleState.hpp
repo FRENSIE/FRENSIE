@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_MASSLESS_PARTICLE_STATE_HPP
 #define MONTE_CARLO_MASSLESS_PARTICLE_STATE_HPP
 
+// Boost Includes
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
 #include "Utility_QuantityTraits.hpp"
@@ -56,9 +59,7 @@ private:
   // Save the state to an archive
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ParticleState);
-  }
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ParticleState); }
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
@@ -68,7 +69,7 @@ private:
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::MasslessParticleState );
 BOOST_CLASS_VERSION( MonteCarlo::MasslessParticleState, 0 );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::MasslessParticleState );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, MasslessParticleState );
 
 #endif // end MONTE_CARLO_MASSLESS_PARTICLE_STATE_HPP
 

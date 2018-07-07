@@ -10,9 +10,9 @@
 #define MONTE_CARLO_KINEMATIC_HELPERS_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_PhysicalConstants.hpp"
-#include "MonteCarlo_QuantityTraits.hpp"
-#include "MonteCarlo_DesignByContract.hpp"
+#include "Utility_PhysicalConstants.hpp"
+#include "Utility_QuantityTraits.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -76,10 +76,10 @@ inline double calculateRelativisticKineticEnergy(const double rest_mass_energy,
                                                  const double speed )
 {
   // Make sure the rest mass energy is valid
-  testPrecondition( !QuantityTraits<double>::isnaninf( rest_mass_energy ) );
+  testPrecondition( !Utility::QuantityTraits<double>::isnaninf( rest_mass_energy ) );
   testPrecondition( rest_mass_energy > 0.0 );
   // Make sure the speed is valid
-  testPrecondition( !QuantityTraits<double>::isnaninf( speed ) );
+  testPrecondition( !Utility::QuantityTraits<double>::isnaninf( speed ) );
   testPrecondition( speed < Utility::PhysicalConstants::speed_of_light );
   testPrecondition( speed > 0.0 );
 
@@ -95,10 +95,10 @@ inline double calculateKineticEnergy( const double rest_mass_energy,
 				      const double speed )
 {
   // Make sure the rest mass energy is valid
-  testPrecondition( !QuantityTraits<double>::isnaninf( rest_mass_energy ) );
+  testPrecondition( !Utility::QuantityTraits<double>::isnaninf( rest_mass_energy ) );
   testPrecondition( rest_mass_energy > 0.0 );
   // Make sure the speed is valid
-  testPrecondition( !QuantityTraits<double>::isnaninf( speed ) );
+  testPrecondition( !Utility::QuantityTraits<double>::isnaninf( speed ) );
   testPrecondition( speed < Utility::PhysicalConstants::speed_of_light );
   testPrecondition( speed > 0.0 );
 
@@ -122,10 +122,10 @@ inline double calculateDimensionlessRelativisticSpeedSquared(
                                                 const double kinetic_energy )
 {
   // Make sure the rest mass energy is valid
-  testPrecondition( !QuantityTraits<double>::isnaninf( rest_mass_energy ) );
+  testPrecondition( !Utility::QuantityTraits<double>::isnaninf( rest_mass_energy ) );
   testPrecondition( rest_mass_energy > 0.0 );
   // Make sure the kinetic energy is valid
-  testPrecondition( !QuantityTraits<double>::isnaninf( kinetic_energy ) );
+  testPrecondition( !Utility::QuantityTraits<double>::isnaninf( kinetic_energy ) );
   testPrecondition( kinetic_energy > 0.0 );
 
   double energy = kinetic_energy + rest_mass_energy;
@@ -149,10 +149,10 @@ inline double calculateSpeed( const double rest_mass_energy,
                               const double kinetic_energy )
 {
   // Make sure the rest mass energy is valid
-  testPrecondition( !QuantityTraits<double>::isnaninf( rest_mass_energy ) );
+  testPrecondition( !Utility::QuantityTraits<double>::isnaninf( rest_mass_energy ) );
   testPrecondition( rest_mass_energy > 0.0 );
   // Make sure the kinetic energy is valid
-  testPrecondition( !QuantityTraits<double>::isnaninf( kinetic_energy ) );
+  testPrecondition( !Utility::QuantityTraits<double>::isnaninf( kinetic_energy ) );
   testPrecondition( kinetic_energy > 0.0 );
 
   return Utility::PhysicalConstants::speed_of_light * sqrt( 2 * kinetic_energy /
@@ -165,10 +165,10 @@ inline double calculateRelativisticMomentumEnergySquared(
                                                   const double kinetic_energy )
 {
   // Make sure the rest mass energy is valid
-  testPrecondition( !QuantityTraits<double>::isnaninf( rest_mass_energy ) );
+  testPrecondition( !Utility::QuantityTraits<double>::isnaninf( rest_mass_energy ) );
   testPrecondition( rest_mass_energy > 0.0 );
   // Make sure the kinetic energy is valid
-  testPrecondition( !QuantityTraits<double>::isnaninf( kinetic_energy ) );
+  testPrecondition( !Utility::QuantityTraits<double>::isnaninf( kinetic_energy ) );
   testPrecondition( kinetic_energy > 0.0 );
 
   return kinetic_energy*( kinetic_energy + 2.0*rest_mass_energy );

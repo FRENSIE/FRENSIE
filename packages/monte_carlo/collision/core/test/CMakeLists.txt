@@ -1,8 +1,5 @@
 FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_collision_core)
 
-FRENSIE_ADD_TEST_EXECUTABLE(KinematicHelpers DEPENDS tstKinematicHelpers.cpp)
-FRENSIE_ADD_TEST(KinematicHelpers)
-
 FRENSIE_ADD_TEST_EXECUTABLE(DetailedSubshellRelaxationModel DEPENDS tstDetailedSubshellRelaxationModel.cpp)
 FRENSIE_ADD_TEST(DetailedSubshellRelaxationModel
   EXTRA_ARGS

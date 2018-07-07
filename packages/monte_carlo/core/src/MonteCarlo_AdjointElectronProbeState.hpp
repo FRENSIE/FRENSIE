@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_ADJOINT_ELECTRON_PROBE_STATE_HPP
 #define MONTE_CARLO_ADJOINT_ELECTRON_PROBE_STATE_HPP
 
+// Boost Includes
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectronState.hpp"
 #include "Utility_TypeNameTraits.hpp"
@@ -91,7 +94,7 @@ private:
 
 BOOST_CLASS_VERSION( MonteCarlo::AdjointElectronProbeState, 0 );
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::AdjointElectronProbeState, "AdjointElectronProbeState" );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::AdjointElectronProbeState );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, AdjointElectronProbeState );
 TYPE_NAME_TRAITS_QUICK_DECL2( AdjointElectronProbeState, MonteCarlo );
 
 #endif // end MONTE_CARLO_ADJOINT_ELECTRON_PROBE_STATE_HPP

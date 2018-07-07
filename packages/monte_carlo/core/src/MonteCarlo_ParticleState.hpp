@@ -13,6 +13,7 @@
 #include <memory>
 
 // Boost Includes
+#include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/assume_abstract.hpp>
@@ -20,11 +21,11 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleType.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Navigator.hpp"
 #include "Geometry_Model.hpp"
 #include "Utility_OStreamableObject.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
@@ -401,7 +402,7 @@ inline const Geometry::Navigator& ParticleState::navigator() const
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleState );
 BOOST_CLASS_VERSION( MonteCarlo::ParticleState, 0 );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::ParticleState );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, ParticleState );
 
 //---------------------------------------------------------------------------//
 // Template includes

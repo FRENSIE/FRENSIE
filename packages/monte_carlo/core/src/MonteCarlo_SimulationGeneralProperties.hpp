@@ -10,13 +10,14 @@
 #define MONTE_CARLO_SIMULATION_GENERAL_PROPERTIES_HPP
 
 // Boost Includes
+#include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/export.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleModeType.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -125,7 +126,7 @@ void SimulationGeneralProperties::serialize( Archive& ar,
 
 BOOST_CLASS_VERSION( MonteCarlo::SimulationGeneralProperties, 0 );
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::SimulationGeneralProperties, "SimulationGeneralProperties" );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SimulationGeneralProperties );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SimulationGeneralProperties );
 
 #endif // end !defined SWIG
 

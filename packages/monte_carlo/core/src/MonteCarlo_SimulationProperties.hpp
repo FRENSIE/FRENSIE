@@ -10,6 +10,7 @@
 #define MONTE_CARLO_SIMULATION_PROPERTIES_HPP
 
 // Boost Includes
+#include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/export.hpp>
@@ -82,7 +83,7 @@ private:
 
 BOOST_CLASS_VERSION( MonteCarlo::SimulationProperties, 0 );
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::SimulationProperties, "SimulationProperties" );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SimulationProperties );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SimulationProperties );
 
 #endif // end !defined SWIG
 

@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_NEUTRON_STATE_HPP
 #define MONTE_CARLO_NEUTRON_STATE_HPP
 
+// Boost Includes
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_MassiveParticleState.hpp"
 #include "Utility_QuantityTraits.hpp"
@@ -70,9 +73,7 @@ private:
   // Save the state to an archive
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MassiveParticleState);
-  }
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MassiveParticleState); }
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
@@ -82,7 +83,7 @@ private:
 
 BOOST_CLASS_VERSION( MonteCarlo::NeutronState, 0 );
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::NeutronState, "NeutronState" );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::NeutronState );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, NeutronState );
 TYPE_NAME_TRAITS_QUICK_DECL2( NeutronState, MonteCarlo );
 
 #endif // end MonteCarlo_NEUTRON_STATE_HPP
