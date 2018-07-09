@@ -119,7 +119,7 @@
 
 %typemap(out) const std::vector<TYPE>&
 {
-  $result = PyFrensie::convertToPython( $1 );
+  $result = PyFrensie::convertToPython( *$1 );
 
   if( !$result )
     SWIG_fail;

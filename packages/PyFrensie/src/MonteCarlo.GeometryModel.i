@@ -66,6 +66,9 @@ using namespace MonteCarlo;
 // Geometry properties handling
 %import Geometry.Geometry__init__.i
 
+// Array typenames
+%import PyFrensie_Array.i
+
 // Standard exception handling
 %include "exception.i"
 
