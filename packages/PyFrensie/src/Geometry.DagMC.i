@@ -33,7 +33,6 @@ geometries.
 #include "Geometry_DagMCModelProperties.hpp"
 #include "Geometry_DagMCModel.hpp"
 #include "Geometry_DagMCNavigator.hpp"
-#include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Exceptions.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_DesignByContract.hpp"

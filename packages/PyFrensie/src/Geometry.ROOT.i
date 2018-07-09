@@ -34,7 +34,6 @@ debugging geometries.
 #include "Geometry_RootModel.hpp"
 #include "Geometry_AdvancedModel.hpp"
 #include "Geometry_RootNavigator.hpp"
-#include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Exceptions.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_DesignByContract.hpp"

@@ -55,7 +55,6 @@ sys.path.pop(0)
 #include "Geometry_Navigator.hpp"
 #include "Geometry_InfiniteMediumNavigator.hpp"
 #include "Geometry_Exceptions.hpp"
-#include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_DesignByContract.hpp"
 
@@ -76,9 +75,6 @@ using namespace Geometry;
 
 // Include the serialization helpers for macros
 %include "Utility_SerializationHelpers.hpp"
-
-// Import the explicit template instantiation helpers
-%include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
 
 // Include the geometry helpers
 %include "Geometry_Helpers.i"

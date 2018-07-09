@@ -33,7 +33,6 @@ FRENSIE formate data file.
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_ArchivableObject.hpp"
 
-#include "Data_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_DesignByContract.hpp"
 
@@ -60,9 +59,6 @@ using namespace Data;
 
 // Include the serialization helpers for macros
 %include "Utility_SerializationHelpers.hpp"
-
-// Import the explicit template instantiation helpers
-%include "Data_ExplicitTemplateInstantiationMacros.hpp"
 
 // Standard exception handling
 %include "exception.i"

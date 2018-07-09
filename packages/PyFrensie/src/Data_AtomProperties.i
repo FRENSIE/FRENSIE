@@ -16,7 +16,6 @@
 #include "Data_ElectroatomicDataProperties.hpp"
 #include "Data_AdjointElectroatomicDataProperties.hpp"
 #include "Data_AtomProperties.hpp"
-#include "Data_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_DesignByContract.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_ToStringTraitsDecl.hpp"
@@ -39,9 +38,6 @@ using namespace Data;
 
 // Include the serialization helpers for handling macros
 %include "Utility_SerializationHelpers.hpp"
-
-// Include the explicit template instantiation helpers
-%include "Data_ExplicitTemplateInstantiationMacros.hpp"
 
 // Include the data property helpers
 %include "Data_PropertyHelpers.i"

@@ -45,7 +45,7 @@ will only be accessed under the Utility.Distribution sub-module.
 #include "Utility_TabularCDFDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_WattDistribution.hpp"
-#include "Utility_CoupledElasticDistribution.hpp"
+//#include "Utility_CoupledElasticDistribution.hpp"
 
 #include "Utility_BasicBivariateDistribution.hpp"
 #include "Utility_TabularBasicBivariateDistribution.hpp"

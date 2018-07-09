@@ -35,7 +35,6 @@ GeometryModel definitions in the monte_carlo/collision subpackage.
 #include "MonteCarlo_FilledAdjointElectronGeometryModel.hpp"
 #include "MonteCarlo_FilledPositronGeometryModel.hpp"
 #include "MonteCarlo_FilledGeometryModel.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_DesignByContract.hpp"
 
@@ -53,9 +52,6 @@ using namespace MonteCarlo;
 
 // Include the serialization helpers for handling macros
 %include "Utility_SerializationHelpers.hpp"
-
-// Include the explicit template instantiation helpers
-%include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 
 // Simulation properties handling
 %import(module="PyFrensie.MonteCarlo") MonteCarlo_SimulationProperties.i

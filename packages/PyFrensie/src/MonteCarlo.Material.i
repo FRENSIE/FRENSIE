@@ -21,7 +21,6 @@ definitions in the monte_carlo/collision subpackage.
 // FRENSIE Includes
 #include "PyFrensie_PythonTypeTraits.hpp"
 #include "MonteCarlo_MaterialDefinitionDatabase.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_DesignByContract.hpp"
 
@@ -46,9 +45,6 @@ using namespace MonteCarlo;
 
 // Include the serialization helpers for handling macros
 %include "Utility_SerializationHelpers.hpp"
-
-// Include the explicit template instantiation helpers
-%include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 
 // Standard exception handling
 %include "exception.i"
