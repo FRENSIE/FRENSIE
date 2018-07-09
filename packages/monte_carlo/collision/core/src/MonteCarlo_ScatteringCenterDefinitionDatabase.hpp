@@ -17,9 +17,9 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ScatteringCenterDefinition.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Data_ZAID.hpp"
 #include "Utility_OStreamableObject.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
@@ -94,8 +94,7 @@ private:
 } // end MonteCarlo namespace
 
 BOOST_SERIALIZATION_CLASS_VERSION( ScatteringCenterDefinitionDatabase, MonteCarlo, 0 );
-
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( ScatteringCenterDefinitionDatabase );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, ScatteringCenterDefinitionDatabase );
 
 #endif // end MONTE_CARLO_SCATTERING_CENTER_DEFINITION_DATABASE_HPP
 

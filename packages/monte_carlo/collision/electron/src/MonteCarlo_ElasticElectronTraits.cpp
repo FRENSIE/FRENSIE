@@ -11,8 +11,7 @@
 #include "MonteCarlo_KinematicHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
-namespace Utility{
-
+namespace MonteCarlo{
 
 // The change scattering angle cosine below which the screened Rutherford distribution is used
 double ElasticElectronTraits::delta_mu_peak = 1e-6;
@@ -185,9 +184,7 @@ void ElasticElectronTraits::setScreeningParameters()
   d_screening_param2 = s_screening_param2*d_atomic_number*d_atomic_number;
 }
 
-} // end Utility namespace
-
-
+} // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
 // end Utility_ElasticElectronTraits.cpp

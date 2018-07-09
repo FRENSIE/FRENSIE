@@ -15,10 +15,10 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_PositronState.hpp"
+#include "MonteCarlo_KinematicHelpers.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_KinematicHelpers.hpp"
 #include "Utility_EquiprobableBinDistribution.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -392,7 +392,7 @@ double PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::
     beta = 0.0;
   else
   {
-    beta = Utility::calculateDimensionlessRelativisticSpeed(
+    beta = MonteCarlo::calculateDimensionlessRelativisticSpeed(
                 Utility::PhysicalConstants::electron_rest_mass_energy, energy );
   }
 

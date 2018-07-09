@@ -48,10 +48,9 @@ FRENSIE_UNIT_TEST( AdjointPhotonMaterial, getCriticalLineEnergies )
   const std::vector<double>& critical_line_energies =
     material->getCriticalLineEnergies();
 
-  FRENSIE_REQUIRE_EQUAL( critical_line_energies.size(), 2 );
+  FRENSIE_REQUIRE_EQUAL( critical_line_energies.size(), 1 );
   FRENSIE_REQUIRE_EQUAL( critical_line_energies[0],
                          Utility::PhysicalConstants::electron_rest_mass_energy );
-  FRENSIE_REQUIRE_EQUAL( critical_line_energies[1], 20.0 );
 }
 
 //---------------------------------------------------------------------------//

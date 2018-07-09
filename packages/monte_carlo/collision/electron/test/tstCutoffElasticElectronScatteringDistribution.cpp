@@ -11,13 +11,13 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_ElasticBasicBivariateDistribution.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
-#include "Utility_ElasticBasicBivariateDistribution.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
@@ -850,13 +850,13 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
   // Create the scattering distribution
   native_scattering_distribution.reset(
-    new Utility::ElasticBasicBivariateDistribution<Utility::Correlated<Utility::LinLinLin> >(
+    new MonteCarlo::ElasticBasicBivariateDistribution<Utility::Correlated<Utility::LinLinLin> >(
                                                     native_primary_grid,
                                                     native_secondary_dists ) );
 
   // Create the scattering distribution
   partial_native_scattering_distribution.reset(
-    new Utility::ElasticBasicBivariateDistribution<Utility::Correlated<Utility::LinLinLin> >(
+    new MonteCarlo::ElasticBasicBivariateDistribution<Utility::Correlated<Utility::LinLinLin> >(
                                             partial_native_primary_grid,
                                             partial_native_secondary_dists ) );
 

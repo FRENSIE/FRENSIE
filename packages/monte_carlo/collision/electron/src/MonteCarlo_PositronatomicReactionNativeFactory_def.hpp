@@ -122,7 +122,7 @@ void PositronatomicReactionNativeFactory::createDecoupledElasticReaction(
   ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
     tabular_distribution,
     raw_positronatom_data,
-    Utility::ElasticElectronTraits::mu_peak,
+    MonteCarlo::ElasticElectronTraits::mu_peak,
     evaluation_tol );
 
   // Create the analytical screened Rutherford elastic scattering distribution

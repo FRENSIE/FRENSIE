@@ -28,7 +28,7 @@
 
 BOOST_SERIALIZATION_CLASS3_EXPORT_IMPLEMENT( UnitAwareCoupledElasticDistribution, MonteCarlo );
 
-namespace Utility{
+namespace MonteCarlo{
 
 // Default constructor
 template<typename InterpolationPolicy,
@@ -69,8 +69,8 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
   testPrecondition( independent_values.size() > 1 );
   testPrecondition( dependent_values.size() == independent_values.size() );
   // Make sure that the bins are sorted
-  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
-                                             independent_values.end() ) );
+  testPrecondition( Utility::Sort::isSortedAscending( independent_values.begin(),
+                                                      independent_values.end() ) );
   // Make sure that the independent_values have the proper range
   testPrecondition( independent_values.front() == -1.0 );
   testPrecondition( independent_values.back() == 0.999999 );
@@ -117,8 +117,8 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
   testPrecondition( independent_values.size() > 1 );
   testPrecondition( dependent_values.size() == independent_values.size() );
   // Make sure that the bins are sorted
-  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
-                                             independent_values.end() ) );
+  testPrecondition( Utility::Sort::isSortedAscending( independent_values.begin(),
+                                                      independent_values.end() ) );
   // Make sure that the independent_values have the proper range
   testPrecondition( independent_values.front() == InputIndepQuantity(-1.0) );
   testPrecondition( independent_values.back() == InputIndepQuantity(0.999999) );
@@ -287,9 +287,10 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
     start = d_distribution.begin();
     end = d_distribution.end();
 
-    lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
-                                                          end,
-                                                          indep_var_value );
+    lower_bin_boundary =
+      Utility::Search::binaryLowerBound<Utility::FIRST>( start,
+                                                         end,
+                                                         indep_var_value );
 
     upper_bin_boundary = lower_bin_boundary;
     ++upper_bin_boundary;
@@ -342,9 +343,10 @@ double UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,D
     start = d_distribution.begin();
     end = d_distribution.end();
 
-    lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
-                                                          end,
-                                                          indep_var_value );
+    lower_bin_boundary =
+      Utility::Search::binaryLowerBound<Utility::FIRST>( start,
+                                                         end,
+                                                         indep_var_value );
 
     IndepQuantity indep_diff =
       indep_var_value - Utility::get<0>(*lower_bin_boundary);
@@ -374,7 +376,8 @@ template<typename InterpolationPolicy,
 inline typename UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sample() const
 {
-  double random_number = RandomNumberGenerator::getRandomNumber<double>();
+  double random_number =
+    Utility::RandomNumberGenerator::getRandomNumber<double>();
 
   size_t dummy_index;
 
@@ -387,7 +390,7 @@ template<typename InterpolationPolicy,
          typename DependentUnit>
 typename UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleAndRecordTrials(
-                                    DistributionTraits::Counter& trials ) const
+                           Utility::DistributionTraits::Counter& trials ) const
 {
   ++trials;
 
@@ -402,7 +405,8 @@ typename UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit
 UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleAndRecordBinIndex(
                                             size_t& sampled_bin_index ) const
 {
-  double random_number = RandomNumberGenerator::getRandomNumber<double>();
+  double random_number =
+    Utility::RandomNumberGenerator::getRandomNumber<double>();
 
   return this->sampleImplementation( random_number, sampled_bin_index );
 }
@@ -435,7 +439,8 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
   // Make sure the maximum indep var is valid
   testPrecondition( max_indep_var >= this->getLowerBoundOfIndepVar() );
 
-  double random_number = RandomNumberGenerator::getRandomNumber<double>();
+  double random_number =
+    Utility::RandomNumberGenerator::getRandomNumber<double>();
 
   return this->sampleWithRandomNumberInSubrange( random_number,
                                                  max_indep_var );
@@ -572,9 +577,10 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
   start = d_distribution.begin();
   end = d_distribution.end();
 
-  lower_bin_boundary = Search::binaryLowerBound<SECOND>( start,
-                                                         end,
-                                                         scaled_random_number);
+  lower_bin_boundary =
+    Utility::Search::binaryLowerBound<Utility::SECOND>( start,
+                                                        end,
+                                                        scaled_random_number);
 
   // Calculate the sampled bin index
   sampled_bin_index = std::distance(d_distribution.begin(),lower_bin_boundary);
@@ -586,9 +592,9 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
   SlopeQuantity slope = Utility::get<3>(*lower_bin_boundary);
 
   // x = x0 + [sqrt(pdf(x0)^2 + 2m[cdf(x)-cdf(x0)]) - pdf(x0)]/m
-  if( slope != QuantityTraits<SlopeQuantity>::zero() )
+  if( slope != Utility::QuantityTraits<SlopeQuantity>::zero() )
   {
-    typedef typename QuantityTraits<DepQuantity>::template GetQuantityToPowerType<2>::type DepQuantitySqr;
+    typedef typename Utility::QuantityTraits<DepQuantity>::template GetQuantityToPowerType<2>::type DepQuantitySqr;
 
     DepQuantitySqr term_1 = pdf_value*pdf_value;
     DepQuantitySqr term_2( 2.0*slope*cdf_diff );
@@ -645,7 +651,7 @@ auto UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dep
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-UnivariateDistributionType
+Utility::UnivariateDistributionType
 UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return ThisType::distribution_type;
@@ -774,8 +780,8 @@ void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dep
   // Make sure that every independent value has a dependent value
   testPrecondition( independent_values.size() == dependent_values.size() );
   // Make sure that the independent values are sorted
-  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
-                                             independent_values.end() ) );
+  testPrecondition( Utility::Sort::isSortedAscending( independent_values.begin(),
+                                                      independent_values.end() ) );
   // Make sure that the independent_values have the proper range
   testPrecondition( independent_values.front() == IndepQuantity(-1.0) );
   testPrecondition( independent_values.back() == IndepQuantity(0.999999) );
@@ -806,8 +812,7 @@ void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dep
 
   // Create a CDF from the raw distribution data
   d_norm_constant =
-    DataProcessor::calculateContinuousCDF<FIRST,THIRD,SECOND>( d_distribution,
-                                                               false );
+    Utility::DataProcessor::calculateContinuousCDF<Utility::FIRST,Utility::THIRD,Utility::SECOND>( d_distribution, false );
 
   // Scale norm constant by the cross section ratio
   /*! \details The norm constant given by the calculateContinuousCDF function
@@ -825,7 +830,7 @@ void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dep
   d_cdf_parameter = (1.0 - d_cutoff_cross_section_ratio )*d_moliere_eta*1e6;
 
   // Calculate the slopes of the PDF
-  DataProcessor::calculateSlopes<FIRST,THIRD,FOURTH>( d_distribution );
+  Utility::DataProcessor::calculateSlopes<Utility::FIRST,Utility::THIRD,Utility::FOURTH>( d_distribution );
 }
 
 // Reconstruct original distribution
@@ -885,7 +890,7 @@ void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dep
 
   // Copy the bin boundaries
   for( unsigned i = 0u; i < unitless_values.size(); ++i )
-    setQuantity( quantities[i], unitless_values[i] );
+    Utility::setQuantity( quantities[i], unitless_values[i] );
 }
 
 // Test if the dependent variable can be zero within the indep bounds
@@ -971,7 +976,7 @@ template<typename Archive>
 void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
 {
   // Save the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP2( Utility, BaseType );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
 
   // Save the local member data
   ar & BOOST_SERIALIZATION_NVP( d_distribution );
@@ -995,7 +1000,7 @@ template<typename Archive>
 void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
 {
   // Load the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP2( Utility, BaseType );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
 
   // Load the local member data
   ar & BOOST_SERIALIZATION_NVP( d_distribution );
@@ -1011,19 +1016,19 @@ void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dep
   ar & BOOST_SERIALIZATION_NVP( d_cdf_parameter );
 }
 
-} // end Utility namespace
+} // end MonteCarlo namespace
 
-EXTERN_EXPLICIT_CLASS_INST( MonteCarlo::UnitAwareCoupledElasticDistribution<LinLin,void,void> );
-EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareCoupledElasticDistribution<LinLin,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::UnitAwareCoupledElasticDistribution<Utility::LinLin,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareCoupledElasticDistribution<Utility::LinLin,void,void> );
 
-EXTERN_EXPLICIT_CLASS_INST( MonteCarlo::UnitAwareCoupledElasticDistribution<LogLin,void,void> );
-EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareCoupledElasticDistribution<LogLin,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::UnitAwareCoupledElasticDistribution<Utility::LogLin,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareCoupledElasticDistribution<Utility::LogLin,void,void> );
 
-EXTERN_EXPLICIT_CLASS_INST( MonteCarlo::UnitAwareCoupledElasticDistribution<LinLogCos,void,void> );
-EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareCoupledElasticDistribution<LinLogCos,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::UnitAwareCoupledElasticDistribution<Utility::LinLogCos,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareCoupledElasticDistribution<Utility::LinLogCos,void,void> );
 
-EXTERN_EXPLICIT_CLASS_INST( MonteCarlo::UnitAwareCoupledElasticDistribution<LogLogCos,void,void> );
-EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareCoupledElasticDistribution<LogLogCos,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::UnitAwareCoupledElasticDistribution<Utility::LogLogCos,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareCoupledElasticDistribution<Utility::LogLogCos,void,void> );
 
 #endif // end MONTE_CARLO_COUPLED_ELASTIC_DISTRIBUTION_DEF_HPP
 

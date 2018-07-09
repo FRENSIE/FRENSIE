@@ -131,7 +131,7 @@ void AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
   ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
     tabular_distribution,
     raw_adjoint_electroatom_data,
-    Utility::ElasticElectronTraits::mu_peak,
+    MonteCarlo::ElasticElectronTraits::mu_peak,
     evaluation_tol );
 
   // Create the analytical screened Rutherford elastic scattering distribution

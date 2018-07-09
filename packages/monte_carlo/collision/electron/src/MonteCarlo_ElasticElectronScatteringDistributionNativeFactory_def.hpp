@@ -10,9 +10,9 @@
 #define MONTE_CARLO_ELASTIC_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_CoupledElasticDistribution.hpp"
-#include "Utility_HybridElasticDistribution.hpp"
-#include "Utility_ElasticBasicBivariateDistribution.hpp"
+#include "MonteCarlo_CoupledElasticDistribution.hpp"
+#include "MonteCarlo_HybridElasticDistribution.hpp"
+#include "MonteCarlo_ElasticBasicBivariateDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -673,7 +673,7 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
 
     // Create the BasicBivariateDistribution between the two distributions
     std::shared_ptr<BasicBivariateDist> scattering_function(
-       new Utility::ElasticBasicBivariateDistribution<TwoDGridPolicy<TwoDInterpPolicy> >(
+       new MonteCarlo::ElasticBasicBivariateDistribution<TwoDGridPolicy<TwoDInterpPolicy> >(
                                                             primary_grid,
                                                             secondary_dists,
                                                             max_angle_cosine,
@@ -795,7 +795,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringF
 
     // Create hybrid elastic distribution
     secondary_dists[n].reset(
-      new const Utility::HybridElasticDistribution<Utility::LinLin>(
+      new const MonteCarlo::HybridElasticDistribution<Utility::LinLin>(
                       elastic_angles.find( energy_grid[n] )->second,
                       elastic_pdf.find( energy_grid[n] )->second,
                       moment_preserving_angles.find( energy_grid[n] )->second,
@@ -806,7 +806,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringF
 
   // Set the hybrid function
   hybrid_function.reset(
-    new Utility::ElasticBasicBivariateDistribution<TwoDGridPolicy<TwoDInterpPolicy> >(
+    new MonteCarlo::ElasticBasicBivariateDistribution<TwoDGridPolicy<TwoDInterpPolicy> >(
                                                             primary_grid,
                                                             secondary_dists,
                                                             1.0,
@@ -851,7 +851,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledScattering
 
     // Create coupled elastic distribution
     secondary_dists[n].reset(
-               new const Utility::CoupledElasticDistribution<Utility::LinLin>(
+               new const MonteCarlo::CoupledElasticDistribution<Utility::LinLin>(
                                 elastic_angles.find( energy_grid[n] )->second,
                                 elastic_pdf.find( energy_grid[n] )->second,
                                 eta,
@@ -860,7 +860,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledScattering
 
   // Set the scattering function
   scattering_function.reset(
-    new Utility::ElasticBasicBivariateDistribution<TwoDGridPolicy<TwoDInterpPolicy> >(
+    new MonteCarlo::ElasticBasicBivariateDistribution<TwoDGridPolicy<TwoDInterpPolicy> >(
                                                             primary_grid,
                                                             secondary_dists,
                                                             1.0,
@@ -924,7 +924,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctio
 
   // Set the scattering function
   scattering_function.reset(
-    new Utility::ElasticBasicBivariateDistribution<TwoDGridPolicy<TwoDInterpPolicy> >(
+    new MonteCarlo::ElasticBasicBivariateDistribution<TwoDGridPolicy<TwoDInterpPolicy> >(
                                                            primary_grid,
                                                            secondary_dists,
                                                            cutoff_angle_cosine,

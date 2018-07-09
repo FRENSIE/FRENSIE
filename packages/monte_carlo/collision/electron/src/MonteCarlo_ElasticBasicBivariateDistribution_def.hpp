@@ -16,7 +16,7 @@
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_DesignByContract.hpp"
 
-BOOST_SERIALIZATION_DISTRIBUTION4_EXPORT_IMPLEMENT( UnitAwareElasticBasicBivariateDistribution );
+BOOST_SERIALIZATION_CLASS4_EXPORT_IMPLEMENT( UnitAwareElasticBasicBivariateDistribution, MonteCarlo );
 
 namespace MonteCarlo{
 
@@ -32,18 +32,18 @@ struct CosGridHelper
 
 //! Helper class used to construct a UnitBase cosine sampling policy
 template<typename TwoDInterpPolicy>
-struct CosGridHelper<UnitBase<TwoDInterpPolicy> >
+struct CosGridHelper<Utility::UnitBase<TwoDInterpPolicy> >
 {
   //! The cosine sampling policy
-  using CosGridPolicy = Direct<TwoDInterpPolicy>;
+  using CosGridPolicy = Utility::Direct<TwoDInterpPolicy>;
 };
 
 //! Helper class used to construct a UnitBaseCorrelated cosine sampling policy
 template<typename TwoDInterpPolicy>
-struct CosGridHelper<UnitBaseCorrelated<TwoDInterpPolicy> >
+struct CosGridHelper<Utility::UnitBaseCorrelated<TwoDInterpPolicy> >
 {
   //! The cosine sampling policy
-  using CosGridPolicy = Correlated<TwoDInterpPolicy>;
+  using CosGridPolicy = Utility::Correlated<TwoDInterpPolicy>;
 };
   
 } // end Details namespace
@@ -65,7 +65,7 @@ template<typename TwoDGridPolicy,
          typename DependentUnit>
 UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareElasticBasicBivariateDistribution(
       const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
-      const std::vector<std::shared_ptr<const UnitAwareTabularUnivariateDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions,
+      const std::vector<std::shared_ptr<const Utility::UnitAwareTabularUnivariateDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions,
       const SecondaryIndepQuantity upper_bound_conditional_indep_var,
       const double fuzzy_boundary_tol,
       const double evaluate_relative_error_tol,
@@ -214,7 +214,7 @@ inline ReturnType UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,Prim
     if( this->arePrimaryLimitsExtended() )
       return ((*lower_bin_boundary->second).*evaluate)(angle_cosine);
     else
-      return QuantityTraits<ReturnType>::zero();
+      return Utility::QuantityTraits<ReturnType>::zero();
   }
   // else if( lower_bin_boundary->first == primary_indep_var_value )
   // {
@@ -294,7 +294,7 @@ inline ReturnType UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,Prim
     if( this->arePrimaryLimitsExtended() )
       return ((*lower_bin_boundary->second).*evaluate)(angle_cosine);
     else
-      return QuantityTraits<ReturnType>::zero();
+      return Utility::QuantityTraits<ReturnType>::zero();
   }
 }
 
@@ -459,8 +459,8 @@ template<typename TwoDGridPolicy,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 auto UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordTrials(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            DistributionTraits::Counter& trials ) const
+                           const PrimaryIndepQuantity primary_indep_var_value,
+                           Utility::DistributionTraits::Counter& trials ) const
   -> SecondaryIndepQuantity
 {
   FRENSIE_LOG_TAGGED_WARNING( "ElasticBasicBivariateDistribution",
@@ -491,7 +491,7 @@ auto UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependen
   
   // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
-    sampling_functor = Details::TwoDGridPolicySamplingFunctorCreationHelper<TwoDGridPolicy>::template createSamplingFunctorWithSecondaryBinIndex<BaseUnivariateDistributionType>( secondary_bin_index );
+    sampling_functor = Utility::Details::TwoDGridPolicySamplingFunctorCreationHelper<TwoDGridPolicy>::template createSamplingFunctorWithSecondaryBinIndex<BaseUnivariateDistributionType>( secondary_bin_index );
 
   return this->sampleDetailedImpl( primary_indep_var_value,
                                    sampling_functor,
@@ -517,7 +517,7 @@ auto UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependen
 {
   // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
-    sampling_functor = Details::TwoDGridPolicySamplingFunctorCreationHelper<TwoDGridPolicy>::template createSamplingFunctorWithSecondaryBinIndex<BaseUnivariateDistributionType>( secondary_bin_index );
+    sampling_functor = Utility::Details::TwoDGridPolicySamplingFunctorCreationHelper<TwoDGridPolicy>::template createSamplingFunctorWithSecondaryBinIndex<BaseUnivariateDistributionType>( secondary_bin_index );
 
   return this->sampleDetailedImpl( primary_indep_var_value,
                                    sampling_functor,
@@ -750,8 +750,8 @@ template<typename TwoDGridPolicy,
          typename DependentUnit>
 void UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::verifyValidSecondIndepVarProcessingType()
 {
-  TEST_FOR_EXCEPTION( !(std::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,LogCosIndepVarProcessingTag>::value ||
-                        std::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,LinIndepVarProcessingTag>::value),
+  TEST_FOR_EXCEPTION( !(std::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,Utility::LogCosIndepVarProcessingTag>::value ||
+                        std::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,Utility::LinIndepVarProcessingTag>::value),
                       std::runtime_error,
                       "The interpolation type used must be either Z-LogCos-X "
                       "or Z-Lin-X!" );
@@ -780,7 +780,7 @@ template<typename Archive>
 void UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
 {
   // Save the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP2( Utility, BaseType );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
 
   // Save the local member data
   ar & BOOST_SERIALIZATION_NVP( d_max_upper_bound_conditional_indep_var );
@@ -797,7 +797,7 @@ template<typename Archive>
 void UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
 {
   // Load the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP2( Utility, BaseType );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
 
   // Load the local member data
   ar & BOOST_SERIALIZATION_NVP( d_max_upper_bound_conditional_indep_var );
@@ -807,10 +807,10 @@ void UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependen
 
 } // end MonteCarlo namespace
 
-#define EXTERN_EXPLICIT_ELASTIC_BASIC_BIVARIATE_DIST_SAVE_LOAD_WITH_SAMPLE_POLICY_LINE__( Namespace, __VA_ARGS__ ) \
+#define EXTERN_EXPLICIT_ELASTIC_BASIC_BIVARIATE_DIST_SAVE_LOAD_WITH_SAMPLE_POLICY_LINE__( Namespace, ... ) \
   EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, __VA_ARGS__ )
 
-#define EXPLICIT_ELASTIC_BASIC_BIVARIATE_DIST_SAVE_LOAD_WITH_SAMPLE_POLICY_LINE__( Namespace, __VA_ARGS__ ) \
+#define EXPLICIT_ELASTIC_BASIC_BIVARIATE_DIST_SAVE_LOAD_WITH_SAMPLE_POLICY_LINE__( Namespace, ... ) \
   EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo::__VA_ARGS__ )
 
 #define __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, FullTwoDGridPolicy, ... ) \
@@ -818,14 +818,14 @@ void UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependen
   DECL_TYPE##_ELASTIC_BASIC_BIVARIATE_DIST_SAVE_LOAD_WITH_SAMPLE_POLICY_LINE__( MonteCarlo, UnitAwareElasticBasicBivariateDistribution<FullTwoDGridPolicy,__VA_ARGS__> )
 
 #define __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, TwoDGridPolicy, ... ) \
-  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLinLin> ); \
-  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLogCosLin> ); \
-  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLinLog> ); \
-  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLogCosLog> ); \
-  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLinLin> ); \
-  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLogCosLin> ); \
-  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLinLog> ); \
-  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLogCosLog> )
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLinLin>, __VA_ARGS__ ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLogCosLin>, __VA_ARGS__ ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLinLog>, __VA_ARGS__ ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLogCosLog>, __VA_ARGS__ ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLinLin>, __VA_ARGS__ ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLogCosLin>, __VA_ARGS__ ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLinLog>, __VA_ARGS__ ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLogCosLog>, __VA_ARGS__ )
 
 #define ___ELASTIC_BASIC_BIVARIATE_DIST__( DECL_TYPE, ... ) \
   __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, Utility::Direct, __VA_ARGS__ ); \

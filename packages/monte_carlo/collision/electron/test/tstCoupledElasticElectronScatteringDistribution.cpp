@@ -11,13 +11,13 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp"
-#include "Utility_ElasticElectronTraits.hpp"
+#include "MonteCarlo_ElasticElectronTraits.hpp"
+#include "MonteCarlo_CoupledElasticDistribution.hpp"
+#include "MonteCarlo_ElasticBasicBivariateDistribution.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
-#include "Utility_CoupledElasticDistribution.hpp"
-#include "Utility_ElasticBasicBivariateDistribution.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
@@ -30,7 +30,7 @@ public:
     const std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution>&
         elastic_cutoff_distribution,
     const std::shared_ptr<const Utility::UnivariateDistribution>& cutoff_cross_section_ratios,
-    const std::shared_ptr<const Utility::ElasticElectronTraits>& elastic_traits,
+    const std::shared_ptr<const MonteCarlo::ElasticElectronTraits>& elastic_traits,
     const MonteCarlo::CoupledElasticSamplingMethod& sampling_method )
     : MonteCarlo::CoupledElasticElectronScatteringDistribution(
         elastic_cutoff_distribution,
@@ -2386,8 +2386,8 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     Data::ElectronPhotonRelaxationDataContainer( test_native_file_name );
 
   // Get the Elastic electron traits
-  std::shared_ptr<Utility::ElasticElectronTraits> traits(
-    new Utility::ElasticElectronTraits( data_container.getAtomicNumber() ) );
+  std::shared_ptr<MonteCarlo::ElasticElectronTraits> traits(
+    new MonteCarlo::ElasticElectronTraits( data_container.getAtomicNumber() ) );
 
   // Electron energy grid
   std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
@@ -2445,7 +2445,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
   // Create coupled elastic distribution
   secondary_dists[n].reset(
-    new const Utility::CoupledElasticDistribution<Utility::LinLin>( angles, pdf, eta, cutoff_ratio ) );
+    new const MonteCarlo::CoupledElasticDistribution<Utility::LinLin>( angles, pdf, eta, cutoff_ratio ) );
   }
 
   MonteCarlo::CoupledElasticSamplingMethod sampling_method =
@@ -2456,7 +2456,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     {
     // Create the scattering distribution
     std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> scattering_function(
-       new Utility::ElasticBasicBivariateDistribution<Utility::Correlated<Utility::LogLogCosLog>>(
+       new MonteCarlo::ElasticBasicBivariateDistribution<Utility::Correlated<Utility::LogLogCosLog>>(
                                                        primary_grid,
                                                        secondary_dists,
                                                        1.0,
@@ -2485,7 +2485,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     {
     // Create the scattering distribution
     std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> scattering_function(
-        new Utility::ElasticBasicBivariateDistribution<Utility::Correlated<Utility::LinLinLog>>(
+        new MonteCarlo::ElasticBasicBivariateDistribution<Utility::Correlated<Utility::LinLinLog>>(
                                                     primary_grid,
                                                     secondary_dists,
                                                     1.0,
@@ -2513,7 +2513,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     {
     // Create the scattering distribution
     std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> scattering_function(
-       new Utility::ElasticBasicBivariateDistribution<Utility::Correlated<Utility::LinLinLin>>(
+       new MonteCarlo::ElasticBasicBivariateDistribution<Utility::Correlated<Utility::LinLinLin>>(
                                                         primary_grid,
                                                         secondary_dists,
                                                         1.0,

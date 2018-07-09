@@ -14,11 +14,11 @@
 #include "MonteCarlo_HybridElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
+#include "MonteCarlo_HybridElasticDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
-#include "Utility_HybridElasticDistribution.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//

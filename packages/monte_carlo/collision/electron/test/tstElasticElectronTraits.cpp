@@ -11,14 +11,14 @@
 #include <memory>
 
 // FRENSIE Includes
-#include "Utility_ElasticElectronTraits.hpp"
+#include "MonteCarlo_ElasticElectronTraits.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-typedef Utility::ElasticElectronTraits ElasticTraits;
+typedef MonteCarlo::ElasticElectronTraits ElasticTraits;
 
 double energy, eta;
 unsigned atomic_number;

@@ -17,12 +17,12 @@
 #include <boost/bimap.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_Set.hpp"
 #include "Utility_Map.hpp"
 #include "Utility_OStreamableObject.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
@@ -232,8 +232,7 @@ auto MaterialDefinitionDatabase::getUniqueScatteringCenterNames(
 } // end MonteCarlo namespace
 
 BOOST_SERIALIZATION_CLASS_VERSION( MaterialDefinitionDatabase, MonteCarlo, 0 );
-
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MaterialDefinitionDatabase );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, MaterialDefinitionDatabase );
 
 #endif // end MONTE_CARLO_MATERIAL_DEFINITION_DATABASE_HPP
 

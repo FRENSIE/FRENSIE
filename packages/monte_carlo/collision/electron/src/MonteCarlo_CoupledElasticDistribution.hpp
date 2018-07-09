@@ -24,20 +24,20 @@ namespace MonteCarlo{
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-class UnitAwareCoupledElasticDistribution : public UnitAwareTabularUnivariateDistribution<IndependentUnit,DependentUnit>
+class UnitAwareCoupledElasticDistribution : public Utility::UnitAwareTabularUnivariateDistribution<IndependentUnit,DependentUnit>
 {
 
   // Only allow construction when the independent unit dimensionless
   RESTRICT_UNIT_TO_BOOST_DIMENSION( IndependentUnit, dimensionless_type );
 
   // Typedef for base type
-  typedef UnitAwareTabularUnivariateDistribution<IndependentUnit,DependentUnit> BaseType;
+  typedef Utility::UnitAwareTabularUnivariateDistribution<IndependentUnit,DependentUnit> BaseType;
 
   // The unnormalized cdf quantity
-  typedef typename QuantityTraits<typename BaseType::DistNormQuantity>::template GetQuantityToPowerType<-1>::type UnnormCDFQuantity;
+  typedef typename Utility::QuantityTraits<typename BaseType::DistNormQuantity>::template GetQuantityToPowerType<-1>::type UnnormCDFQuantity;
 
   // The slope unit traits
-  typedef UnitTraits<typename UnitTraits<DependentUnit>::template GetMultipliedUnitType<typename UnitTraits<IndependentUnit>::InverseUnit>::type> SlopeUnitTraits;
+  typedef Utility::UnitTraits<typename Utility::UnitTraits<DependentUnit>::template GetMultipliedUnitType<typename Utility::UnitTraits<IndependentUnit>::InverseUnit>::type> SlopeUnitTraits;
 
   // The slope quantity
   typedef typename SlopeUnitTraits::template GetQuantityType<double>::type SlopeQuantity;
@@ -46,22 +46,22 @@ class UnitAwareCoupledElasticDistribution : public UnitAwareTabularUnivariateDis
   typedef typename BaseType::DistNormQuantity DistNormQuantity;
 
   // Typedef for QuantityTraits<double>
-  typedef QuantityTraits<double> QT;
+  typedef Utility::QuantityTraits<double> QT;
 
   // Typedef for QuantityTraits<IndepQuantity>
-  typedef QuantityTraits<typename BaseType::IndepQuantity> IQT;
+  typedef Utility::QuantityTraits<typename BaseType::IndepQuantity> IQT;
 
   // Typedef for QuantityTraits<InverseIndepQuantity>
-  typedef QuantityTraits<typename BaseType::InverseIndepQuantity> IIQT;
+  typedef Utility::QuantityTraits<typename BaseType::InverseIndepQuantity> IIQT;
 
   // Typedef for QuantityTraits<DepQuantity>
-  typedef QuantityTraits<typename BaseType::DepQuantity> DQT;
+  typedef Utility::QuantityTraits<typename BaseType::DepQuantity> DQT;
 
   // Typedef for QuantityTraits<DistNormQuantity>
-  typedef QuantityTraits<DistNormQuantity> DNQT;
+  typedef Utility::QuantityTraits<DistNormQuantity> DNQT;
 
   // Typedef for QuantityTraits<UnnormCDFQuantity>
-  typedef QuantityTraits<UnnormCDFQuantity> UCQT;
+  typedef Utility::QuantityTraits<UnnormCDFQuantity> UCQT;
 
 public:
 
@@ -123,7 +123,7 @@ public:
   IndepQuantity sample() const override;
 
   //! Return a random sample and record the number of trials
-  IndepQuantity sampleAndRecordTrials( DistributionTraits::Counter& trials ) const override;
+  IndepQuantity sampleAndRecordTrials( Utility::DistributionTraits::Counter& trials ) const override;
 
   //! Return a random sample and bin index from the distribution
   IndepQuantity sampleAndRecordBinIndex( size_t& sampled_bin_index ) const override;
@@ -149,7 +149,7 @@ public:
   IndepQuantity getLowerBoundOfIndepVar() const override;
 
   //! Return the distribution type
-  UnivariateDistributionType getDistributionType() const;
+  Utility::UnivariateDistributionType getDistributionType() const;
 
   //! Return the moliere screening constant for the distribution
   double getMoliereScreeningConstant() const;
@@ -261,7 +261,8 @@ private:
   friend class UnitAwareCoupledElasticDistribution;
 
   // The distribution type
-  static const UnivariateDistributionType distribution_type = COUPLED_ELASTIC_DISTRIBUTION;
+  static const Utility::UnivariateDistributionType distribution_type =
+    Utility::COUPLED_ELASTIC_DISTRIBUTION;
 
   // The distribution (first = indep_var, second = cdf, third = pdf,
   // fourth = pdf slope): both the pdf and cdf are left unnormalized to

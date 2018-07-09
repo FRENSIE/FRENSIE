@@ -153,7 +153,7 @@ double DecoupledElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross
   {
     // Get the PDF
     double pdf;
-    if( scattering_angle_cosine <= Utility::ElasticElectronTraits::mu_peak )
+    if( scattering_angle_cosine <= MonteCarlo::ElasticElectronTraits::mu_peak )
     {
       pdf = d_tabular_distribution->evaluatePDF( incoming_energy,
                                                  scattering_angle_cosine );

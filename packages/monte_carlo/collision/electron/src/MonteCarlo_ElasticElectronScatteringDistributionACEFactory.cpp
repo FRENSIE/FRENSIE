@@ -8,8 +8,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElasticElectronScatteringDistributionACEFactory.hpp"
+#include "MonteCarlo_ElasticBasicBivariateDistribution.hpp"
 #include "Utility_TabularCDFDistribution.hpp"
-#include "Utility_ElasticBasicBivariateDistribution.hpp"
 #include "Utility_ArrayView.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_DesignByContract.hpp"
@@ -98,7 +98,7 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
 
     // Set the scattering function with LogLogCosLog interp (eprdata14)
     scattering_function.reset(
-      new Utility::ElasticBasicBivariateDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
+      new MonteCarlo::ElasticBasicBivariateDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
                                                          primary_grid,
                                                          secondary_dists,
                                                          0.999999 ) );

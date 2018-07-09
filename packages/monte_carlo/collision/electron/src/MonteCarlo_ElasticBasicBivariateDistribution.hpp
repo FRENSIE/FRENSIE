@@ -24,9 +24,8 @@ template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-class UnitAwareElasticBasicBivariateDistribution : public UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>
+class UnitAwareElasticBasicBivariateDistribution : public Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>
 {
-
   // Only allow construction when the primary independent unit corresponds to energy
   RESTRICT_UNIT_TO_BOOST_DIMENSION( PrimaryIndependentUnit, energy_dimension );
 
@@ -34,7 +33,7 @@ class UnitAwareElasticBasicBivariateDistribution : public UnitAwareInterpolatedF
   typedef UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ThisType;
 
   // The parent distribution type
-  typedef UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> BaseType;
+  typedef Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> BaseType;
 
   // The base one-dimensional distribution type (UnitAwareTabularUnivariateDist)
   typedef typename BaseType::BaseUnivariateDistributionType BaseUnivariateDistributionType;
@@ -80,7 +79,7 @@ public:
   //! Constructor
   UnitAwareElasticBasicBivariateDistribution(
         const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
-        const std::vector<std::shared_ptr<const UnitAwareTabularUnivariateDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions,
+        const std::vector<std::shared_ptr<const Utility::UnitAwareTabularUnivariateDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions,
         const SecondaryIndepQuantity upper_bound_conditional_indep_var = SIQT::one(),
         const double fuzzy_boundary_tol = 1e-7,
         const double evaluate_relative_error_tol = 1e-7,
@@ -129,7 +128,7 @@ public:
   //! Return a random sample and record the number of trials
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordTrials(
             const PrimaryIndepQuantity primary_indep_var_value,
-            DistributionTraits::Counter& trials ) const override;
+            Utility::DistributionTraits::Counter& trials ) const override;
 
 // Return a random sample from the secondary conditional PDF and the index
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
@@ -265,7 +264,7 @@ template<typename TwoDGridPolicy> using ElasticBasicBivariateDistribution =
   
 } // end MonteCarlo namespace
 
-BOOST_SERIALIZATION_DISTRIBUTION4_VERSION( UnitAwareElasticBasicBivariateDistribution, 0 );
+BOOST_SERIALIZATION_CLASS4_VERSION( UnitAwareElasticBasicBivariateDistribution, MonteCarlo, 0 );
 
 #define BOOST_SERIALIZATION_ELASTIC_BASIC_BIVARIATE_DISTRIBUTION_EXPORT_STANDARD_KEY() \
   BOOST_SERIALIZATION_CLASS4_EXPORT_STANDARD_KEY( UnitAwareElasticBasicBivariateDistribution, MonteCarlo ) \

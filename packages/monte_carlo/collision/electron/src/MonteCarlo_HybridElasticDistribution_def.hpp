@@ -73,9 +73,9 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
   testPrecondition( dependent_discrete_values.size() ==
                     independent_discrete_values.size() );
   // Make sure that the bins are sorted
-  testPrecondition( Sort::isSortedAscending( independent_cutoff_values.begin(),
+  testPrecondition( Utility::Sort::isSortedAscending( independent_cutoff_values.begin(),
                                              independent_cutoff_values.end() ) );
-  testPrecondition( Sort::isSortedAscending( independent_discrete_values.begin(),
+  testPrecondition( Utility::Sort::isSortedAscending( independent_discrete_values.begin(),
                                              independent_discrete_values.end() ) );
   // Make sure that the independent_values have the proper range
   testPrecondition( independent_cutoff_values.front() == -1.0 );
@@ -114,7 +114,7 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
         const double cutoff_cross_section_ratio )
   : d_cutoff_distribution( independent_cutoff_values.size() ),
     d_discrete_distribution( independent_discrete_values.size() ),
-    d_cutoff_mu( cutoff_angle_cosine*QuantityTraits<InputDepQuantity>::one() ),
+    d_cutoff_mu( cutoff_angle_cosine*Utility::QuantityTraits<InputDepQuantity>::one() ),
     d_cutoff_cross_section_ratio( cutoff_cross_section_ratio ),
     d_discrete_norm_constant( DNQT::zero() ),
     d_cutoff_norm_constant( DNQT::zero() ),
@@ -127,9 +127,9 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
   testPrecondition( dependent_discrete_values.size() ==
                     independent_discrete_values.size() );
   // Make sure that the bins are sorted
-  testPrecondition( Sort::isSortedAscending( independent_cutoff_values.begin(),
+  testPrecondition( Utility::Sort::isSortedAscending( independent_cutoff_values.begin(),
                                              independent_cutoff_values.end() ) );
-  testPrecondition( Sort::isSortedAscending( independent_discrete_values.begin(),
+  testPrecondition( Utility::Sort::isSortedAscending( independent_discrete_values.begin(),
                                              independent_discrete_values.end() ) );
   // Make sure that the independent_values have the proper range
   testPrecondition( independent_cutoff_values.front() == -1.0 );
@@ -309,7 +309,7 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
   { // evaluate the cutoff tabular large angle distribution
 
     typename DistributionArray::const_iterator lower_bin_boundary =
-                Search::binaryLowerBound<FIRST>( d_cutoff_distribution.begin(),
+                Utility::Search::binaryLowerBound<Utility::FIRST>( d_cutoff_distribution.begin(),
                                                  d_cutoff_distribution.end(),
                                                  indep_var_value );
 
@@ -353,7 +353,7 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
 //           indep_var_value <= d_discrete_distribution.back().first )
 //  {
 //    typename std::vector<Pair<IndepQuantity,double> >::const_iterator bin =
-//        Search::binaryLowerBound<FIRST>( d_discrete_distribution.begin(),
+//        Utility::Search::binaryLowerBound<Utility::FIRST>( d_discrete_distribution.begin(),
 //                                         d_discrete_distribution.end(),
 //                                         indep_var_value );
 
@@ -387,7 +387,7 @@ double UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,De
   else if( indep_var_value < d_cutoff_mu )
   {
     typename DistributionArray::const_iterator lower_bin_boundary =
-                Search::binaryLowerBound<FIRST>( d_cutoff_distribution.begin(),
+                Utility::Search::binaryLowerBound<Utility::FIRST>( d_cutoff_distribution.begin(),
                                                  d_cutoff_distribution.end(),
                                                  indep_var_value );
 
@@ -404,7 +404,7 @@ double UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,De
   else // indep_var_value >= d_discrete_distribution.front().first && indep_var_value <= d_discrete_distribution.back().first
   {
     typename std::vector<std::pair<IndepQuantity,double> >::const_iterator bin =
-      Search::binaryLowerBound<FIRST>( d_discrete_distribution.begin(),
+      Utility::Search::binaryLowerBound<Utility::FIRST>( d_discrete_distribution.begin(),
                                        d_discrete_distribution.end(),
                                        indep_var_value );
 
@@ -420,7 +420,7 @@ template<typename InterpolationPolicy,
 inline typename UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sample() const
 {
-  double random_number = RandomNumberGenerator::getRandomNumber<double>();
+  double random_number = Utility::RandomNumberGenerator::getRandomNumber<double>();
 
   size_t dummy_index;
 
@@ -433,7 +433,7 @@ template<typename InterpolationPolicy,
          typename DependentUnit>
 typename UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleAndRecordTrials(
-                                    DistributionTraits::Counter& trials ) const
+                           Utility::DistributionTraits::Counter& trials ) const
 {
   ++trials;
 
@@ -448,7 +448,7 @@ typename UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,
 UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleAndRecordBinIndex(
                                             size_t& sampled_bin_index ) const
 {
-  double random_number = RandomNumberGenerator::getRandomNumber<double>();
+  double random_number = Utility::RandomNumberGenerator::getRandomNumber<double>();
 
   return this->sampleImplementation( random_number, sampled_bin_index );
 }
@@ -477,7 +477,7 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
   // Make sure the maximum indep var is valid
   testPrecondition( max_indep_var >= this->getLowerBoundOfIndepVar() );
 
-  double random_number = RandomNumberGenerator::getRandomNumber<double>();
+  double random_number = Utility::RandomNumberGenerator::getRandomNumber<double>();
 
   return this->sampleWithRandomNumberInSubrange( random_number,
                                                  max_indep_var );
@@ -567,7 +567,7 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
 
   // Get the bin index sampled
   sampled_bin_index =
-    Search::binaryUpperBoundIndex<SECOND>( d_discrete_distribution.begin(),
+    Utility::Search::binaryUpperBoundIndex<Utility::SECOND>( d_discrete_distribution.begin(),
                                            d_discrete_distribution.end(),
                                            scaled_random_number );
 
@@ -595,7 +595,7 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
                 random_number*d_max_cutoff_cdf;
 
   typename DistributionArray::const_iterator lower_bin_boundary =
-        Search::binaryLowerBound<SECOND>( d_cutoff_distribution.begin(),
+        Utility::Search::binaryLowerBound<Utility::SECOND>( d_cutoff_distribution.begin(),
                                           d_cutoff_distribution.end(),
                                           scaled_random_number );
 
@@ -611,9 +611,9 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
   SlopeQuantity slope = Utility::get<3>(*lower_bin_boundary);
 
   // x = x0 + [sqrt(pdf(x0)^2 + 2m[cdf(x)-cdf(x0)]) - pdf(x0)]/m
-  if( slope != QuantityTraits<SlopeQuantity>::zero() )
+  if( slope != Utility::QuantityTraits<SlopeQuantity>::zero() )
   {
-    typedef typename QuantityTraits<DepQuantity>::template GetQuantityToPowerType<2>::type DepQuantitySqr;
+    typedef typename Utility::QuantityTraits<DepQuantity>::template GetQuantityToPowerType<2>::type DepQuantitySqr;
 
     DepQuantitySqr term_1 = pdf_value*pdf_value;
     DepQuantitySqr term_2( 2.0*slope*cdf_diff );
@@ -673,7 +673,7 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-UnivariateDistributionType
+Utility::UnivariateDistributionType
 UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return ThisType::distribution_type;
@@ -825,7 +825,7 @@ void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
   // Make sure that every independent value has a dependent value
   testPrecondition( independent_values.size() == dependent_values.size() );
   // Make sure that the independent values are sorted
-  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
+  testPrecondition( Utility::Sort::isSortedAscending( independent_values.begin(),
                                              independent_values.end() ) );
   // Make sure that the independent_values have the proper range
   testPrecondition( independent_values.front() == this->getLowerBoundOfIndepVar() );
@@ -852,15 +852,15 @@ void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
 
   // Create a CDF from the raw distribution data
   d_cutoff_norm_constant =
-    DataProcessor::calculateContinuousCDF<FIRST,THIRD,SECOND>( d_cutoff_distribution,
+    Utility::DataProcessor::calculateContinuousCDF<Utility::FIRST,Utility::THIRD,Utility::SECOND>( d_cutoff_distribution,
                                                                false );
 
   // Calculate the slopes of the PDF
-  DataProcessor::calculateSlopes<FIRST,THIRD,FOURTH>( d_cutoff_distribution );
+  Utility::DataProcessor::calculateSlopes<Utility::FIRST,Utility::THIRD,Utility::FOURTH>( d_cutoff_distribution );
 
   // Find the raw CDF at the cutoff angle cosine
   typename DistributionArray::const_iterator lower_bin_boundary =
-                Search::binaryLowerBound<FIRST>( d_cutoff_distribution.begin(),
+                Utility::Search::binaryLowerBound<Utility::FIRST>( d_cutoff_distribution.begin(),
                                                  d_cutoff_distribution.end(),
                                                  d_cutoff_mu );
 
@@ -889,7 +889,7 @@ void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
   // Make sure that every value has a probability assigned
   testPrecondition( independent_values.size() == dependent_values.size() );
   // Make sure that the bins are sorted
-  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
+  testPrecondition( Utility::Sort::isSortedAscending( independent_values.begin(),
                                              independent_values.end() ) );
 
   // Resize the distribution array
@@ -911,7 +911,7 @@ void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
   }
 
   // Create a CDF from the raw distribution data
-  DataProcessor::calculateDiscreteCDF<SECOND,SECOND>( d_discrete_distribution );
+  Utility::DataProcessor::calculateDiscreteCDF<Utility::SECOND,Utility::SECOND>( d_discrete_distribution );
 }
 
 // Reconstruct original distribution
@@ -1106,7 +1106,7 @@ template<typename Archive>
 void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
 {
   // Save the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP2( Utility, BaseType );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
 
   // Save the local member data
   ar & BOOST_SERIALIZATION_NVP( d_cutoff_distribution );
@@ -1127,7 +1127,7 @@ template<typename Archive>
 void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
 {
   // Load the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP2( Utility, BaseType );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
 
   // Load the local member data
   ar & BOOST_SERIALIZATION_NVP( d_cutoff_distribution );
@@ -1142,11 +1142,11 @@ void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
 
 } // end MonteCarlo namespace
 
-EXTERN_EXPLICIT_CLASS_INST( MonteCarlo::UnitAwareHybridElasticDistribution<LinLin,void,void> );
-EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareHybridElasticDistribution<LinLin,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::UnitAwareHybridElasticDistribution<Utility::LinLin,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareHybridElasticDistribution<Utility::LinLin,void,void> );
 
-EXTERN_EXPLICIT_CLASS_INST( MonteCarlo::UnitAwareHybridElasticDistribution<LogLin,void,void> );
-EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareHybridElasticDistribution<LogLin,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::UnitAwareHybridElasticDistribution<Utility::LogLin,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareHybridElasticDistribution<Utility::LogLin,void,void> );
 
 #endif // end MONTE_CARLO_HYBRID_ELASTIC_DISTRIBUTION_DEF_HPP
 

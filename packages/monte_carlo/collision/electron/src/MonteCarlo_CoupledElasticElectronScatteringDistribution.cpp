@@ -8,10 +8,10 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_KinematicHelpers.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
-#include "Utility_KinematicHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
 namespace MonteCarlo{

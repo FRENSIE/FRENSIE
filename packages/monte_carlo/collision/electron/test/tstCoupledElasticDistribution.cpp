@@ -16,8 +16,8 @@
 #include <boost/units/io.hpp>
 
 // FRENSIE Includes
+#include "MonteCarlo_CoupledElasticDistribution.hpp"
 #include "Utility_TabularUnivariateDistribution.hpp"
-#include "Utility_CoupledElasticDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_UnitTraits.hpp"
@@ -37,13 +37,7 @@ typedef quantity<si::dimensionless> dl;
 
 typedef std::tuple<Utility::LinLin,Utility::LogLin,Utility::LinLogCos,Utility::LogLogCos> InterpTypes;
 
-typedef std::tuple<
-  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
-  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
-  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
-  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>,
-  std::tuple<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>
-  > TestArchives;
+typedef TestArchiveHelper::TestArchives TestArchives;
 
 typedef std::tuple<
   std::tuple<si::dimensionless,si::amount,cgs::dimensionless,si::amount>,
@@ -94,7 +88,7 @@ void initialize( std::shared_ptr<BaseDistribution>& dist )
   Utility::setQuantity( dependent_values[2], 1.0 );
   Utility::setQuantity( dependent_values[3], 1e-1 );
 
-  dist.reset(new Utility::UnitAwareCoupledElasticDistribution<InterpolationPolicy,typename BaseDistribution::IndepUnit, typename BaseDistribution::DepUnit>(
+  dist.reset(new MonteCarlo::UnitAwareCoupledElasticDistribution<InterpolationPolicy,typename BaseDistribution::IndepUnit, typename BaseDistribution::DepUnit>(
                                                       independent_values,
                                                       dependent_values,
                                                       eta,
@@ -674,7 +668,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( CoupledElasticDistribution,
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
   
-  std::shared_ptr<Utility::CoupledElasticDistribution<InterpolationPolicy> >
+  std::shared_ptr<MonteCarlo::CoupledElasticDistribution<InterpolationPolicy> >
                 coupled_distribution;
 
   initialize<InterpolationPolicy>( coupled_distribution );
@@ -691,7 +685,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareCoupledElasticDistribution,
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
   
-std::shared_ptr<Utility::UnitAwareCoupledElasticDistribution<InterpolationPolicy,si::dimensionless,si::amount> >
+std::shared_ptr<MonteCarlo::UnitAwareCoupledElasticDistribution<InterpolationPolicy,si::dimensionless,si::amount> >
 unit_aware_coupled_distribution;
 
   initialize<InterpolationPolicy>( unit_aware_coupled_distribution );
@@ -945,11 +939,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareCoupledElasticDistribution,
   initialize<Utility::LinLin>( distribution );
 
   // Copy from unitless distribution to distribution type A
-  Utility::UnitAwareCoupledElasticDistribution<Utility::LinLin,IndepUnitA,DepUnitA>
-    unit_aware_dist_a_copy = Utility::UnitAwareCoupledElasticDistribution<Utility::LinLin,IndepUnitA,DepUnitA>::fromUnitlessDistribution( *dynamic_cast<Utility::CoupledElasticDistribution<Utility::LinLin>*>( distribution.get() ) );
+  MonteCarlo::UnitAwareCoupledElasticDistribution<Utility::LinLin,IndepUnitA,DepUnitA>
+    unit_aware_dist_a_copy = MonteCarlo::UnitAwareCoupledElasticDistribution<Utility::LinLin,IndepUnitA,DepUnitA>::fromUnitlessDistribution( *dynamic_cast<MonteCarlo::CoupledElasticDistribution<Utility::LinLin>*>( distribution.get() ) );
 
   // Copy from distribution type A to distribution type B
-  Utility::UnitAwareCoupledElasticDistribution<Utility::LinLin,IndepUnitB,DepUnitB>
+  MonteCarlo::UnitAwareCoupledElasticDistribution<Utility::LinLin,IndepUnitB,DepUnitB>
     unit_aware_dist_b_copy( unit_aware_dist_a_copy );
 
   IndepQuantityA indep_quantity_a =
@@ -1027,7 +1021,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( CoupledElasticDistribution,
 
     createOArchive( archive_base_name, archive_ostream, oarchive );
 
-    std::shared_ptr<Utility::CoupledElasticDistribution<Utility::LinLin> >
+    std::shared_ptr<MonteCarlo::CoupledElasticDistribution<Utility::LinLin> >
       concrete_dist;
     initialize<Utility::LinLin>( concrete_dist );
 
@@ -1060,7 +1054,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( CoupledElasticDistribution,
 
   createIArchive( archive_istream, iarchive );
 
-  Utility::CoupledElasticDistribution<Utility::LinLin> concrete_dist;
+  MonteCarlo::CoupledElasticDistribution<Utility::LinLin> concrete_dist;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( concrete_dist ) );
 
@@ -1123,7 +1117,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareCoupledElasticDistribution,
 
     createOArchive( archive_base_name, archive_ostream, oarchive );
 
-    std::shared_ptr<Utility::UnitAwareCoupledElasticDistribution<Utility::LinLin,si::dimensionless,si::amount> >
+    std::shared_ptr<MonteCarlo::UnitAwareCoupledElasticDistribution<Utility::LinLin,si::dimensionless,si::amount> >
       concrete_dist;
     initialize<Utility::LinLin>( concrete_dist );
 
@@ -1156,7 +1150,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareCoupledElasticDistribution,
 
   createIArchive( archive_istream, iarchive );
 
-  Utility::UnitAwareCoupledElasticDistribution<Utility::LinLin,si::dimensionless,si::amount> concrete_dist;
+  MonteCarlo::UnitAwareCoupledElasticDistribution<Utility::LinLin,si::dimensionless,si::amount> concrete_dist;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( concrete_dist ) );
 
