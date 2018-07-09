@@ -266,6 +266,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
   {
     Geometry::RootModelProperties local_properties( test_root_geom_file_name );
+    local_properties.setMaterialPropertyName( "mat" );
   
     std::shared_ptr<Geometry::RootModel> local_model =
       Geometry::RootModel::getInstance();

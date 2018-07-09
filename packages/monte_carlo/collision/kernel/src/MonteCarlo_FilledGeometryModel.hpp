@@ -23,8 +23,8 @@
 #include "MonteCarlo_ScatteringCenterDefinitionDatabase.hpp"
 #include "MonteCarlo_MaterialDefinitionDatabase.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Model.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
@@ -256,7 +256,7 @@ private:
 
 BOOST_SERIALIZATION_CLASS_VERSION( FilledGeometryModel, MonteCarlo, 0 );
 
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( FilledGeometryModel );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, FilledGeometryModel );
 
 //---------------------------------------------------------------------------//
 // Template Includes

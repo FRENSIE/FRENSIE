@@ -25,12 +25,7 @@ using boost::units::si::kelvin;
 using boost::units::cgs::cubic_centimeter;
 using Utility::Units::MeV;
 
-typedef std::tuple<
-  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
-  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
-  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
-  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>
-  > TestArchives;
+typedef TestArchiveHelper::TestArchives TestArchives;
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -2902,10 +2897,9 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_adjoint_photon_mode )
     const std::vector<double>& critical_line_energies =
       filled_model.getCriticalLineEnergies<MonteCarlo::AdjointPhotonState>();
 
-    FRENSIE_REQUIRE_EQUAL( critical_line_energies.size(), 2 );
+    FRENSIE_REQUIRE_EQUAL( critical_line_energies.size(), 1 );
     FRENSIE_CHECK_EQUAL( critical_line_energies[0],
                          Utility::PhysicalConstants::electron_rest_mass_energy );
-    FRENSIE_CHECK_EQUAL( critical_line_energies[1], 20.0 );
   }
 
   // Check the adjoint electron cross sections

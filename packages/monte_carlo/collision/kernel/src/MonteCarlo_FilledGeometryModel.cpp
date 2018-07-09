@@ -9,22 +9,11 @@
 // Std Lib Includes
 #include <stdexcept>
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp" // Must included first
 #include "MonteCarlo_FilledGeometryModel.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 #include "MonteCarlo_ParticleModeTypeTraits.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_DesignByContract.hpp"
@@ -372,7 +361,7 @@ void FilledGeometryModel::fillGeometry( const bool verbose )
   }
 }
 
-EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( FilledGeometryModel );
+EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo::FilledGeometryModel );
   
 } // end MonteCarlo namespace
 
