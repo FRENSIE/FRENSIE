@@ -25,9 +25,9 @@
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
 #include "MonteCarlo_PhaseSpaceDimensionClass.hpp"
 #include "MonteCarlo_PhaseSpacePoint.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_UnivariateDistributionType.hpp"
 #include "Utility_DistributionTraits.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_Map.hpp"
 #include "Utility_Set.hpp"
@@ -220,7 +220,7 @@ void PhaseSpaceDimensionDistribution::load( Archive& ar,
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::PhaseSpaceDimensionDistribution );
 BOOST_CLASS_VERSION( MonteCarlo::PhaseSpaceDimensionDistribution, 0 );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::PhaseSpaceDimensionDistribution );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, PhaseSpaceDimensionDistribution );
 
 #endif // end MONTE_CARLO_PHASE_SPACE_DIMENSION_DISTRIBUTION_HPP
 
