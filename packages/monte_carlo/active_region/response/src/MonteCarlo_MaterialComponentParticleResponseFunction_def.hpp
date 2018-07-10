@@ -10,7 +10,7 @@
 #define MONTE_CARLO_MATERIAL_COMPONENT_PARTICLE_RESPONSE_FUNCTION_DEF_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_DesignByContract.hpp"
@@ -202,23 +202,23 @@ void MaterialComponentParticleResponseFunction<Material>::load( Archive& ar, con
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( NeutronMaterialComponentParticleResponseFunction, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MaterialComponentParticleResponseFunction<MonteCarlo::NeutronMaterial> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::MaterialComponentParticleResponseFunction<MonteCarlo::NeutronMaterial> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, MaterialComponentParticleResponseFunction<MonteCarlo::NeutronMaterial> );
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ElectronMaterialComponentParticleResponseFunction, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MaterialComponentParticleResponseFunction<MonteCarlo::ElectronMaterial> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::MaterialComponentParticleResponseFunction<MonteCarlo::ElectronMaterial> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, MaterialComponentParticleResponseFunction<MonteCarlo::ElectronMaterial> );
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( PositronMaterialComponentParticleResponseFunction, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MaterialComponentParticleResponseFunction<MonteCarlo::PositronMaterial> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::MaterialComponentParticleResponseFunction<MonteCarlo::PositronMaterial> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, MaterialComponentParticleResponseFunction<MonteCarlo::PositronMaterial> );
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( AdjointPhotonMaterialComponentParticleResponseFunction, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MaterialComponentParticleResponseFunction<MonteCarlo::AdjointPhotonMaterial> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::MaterialComponentParticleResponseFunction<MonteCarlo::AdjointPhotonMaterial> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, MaterialComponentParticleResponseFunction<MonteCarlo::AdjointPhotonMaterial> );
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( AdjointElectronMaterialComponentParticleResponseFunction, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MaterialComponentParticleResponseFunction<MonteCarlo::AdjointElectronMaterial> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::MaterialComponentParticleResponseFunction<MonteCarlo::AdjointElectronMaterial> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, MaterialComponentParticleResponseFunction<MonteCarlo::AdjointElectronMaterial> );
 
 #endif // end MONTE_CARLO_MATERIAL_COMPONENT_PARTICLE_RESPONSE_FUNCTION_DEF_HPP
 

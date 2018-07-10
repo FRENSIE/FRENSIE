@@ -22,7 +22,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
@@ -73,7 +73,7 @@ private:
 
 BOOST_CLASS_VERSION( MonteCarlo::ParticleResponseFunction, 0 );
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleResponseFunction );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleResponseFunction );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleResponseFunction );
 
 //! Create a new response function from the addition of two response functions
 std::shared_ptr<const MonteCarlo::ParticleResponseFunction> operator+(

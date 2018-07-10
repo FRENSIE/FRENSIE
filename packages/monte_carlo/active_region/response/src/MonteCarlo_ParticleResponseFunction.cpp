@@ -9,20 +9,9 @@
 // Std Lib Includes
 #include <functional>
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_ParticleResponseFunction.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_DesignByContract.hpp"
@@ -355,12 +344,12 @@ BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( SubtractionParticleResponseFunction,
 BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( MultiplicationParticleResponseFunction, MonteCarlo );
 BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( DivisionParticleResponseFunction, MonteCarlo );
 
-EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleResponseFunction  );
-EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ScalarParticleResponseFunction );
-EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::AdditionParticleResponseFunction );
-EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SubtractionParticleResponseFunction );
-EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::MultiplicationParticleResponseFunction );
-EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::DivisionParticleResponseFunction );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ParticleResponseFunction  );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ScalarParticleResponseFunction );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::AdditionParticleResponseFunction );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::SubtractionParticleResponseFunction );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::MultiplicationParticleResponseFunction );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::DivisionParticleResponseFunction );
 
 // Create a new response function from the addition of two response functions
 std::shared_ptr<const MonteCarlo::ParticleResponseFunction> operator+(
