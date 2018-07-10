@@ -226,11 +226,11 @@ void StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleState
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardAdjointPhotonSourceComponent, MonteCarlo )
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::StandardAdjointParticleSourceComponent<MonteCarlo::AdjointPhotonState,MonteCarlo::AdjointPhotonProbeState> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardAdjointParticleSourceComponent<MonteCarlo::AdjointPhotonState,MonteCarlo::AdjointPhotonProbeState> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, StandardAdjointParticleSourceComponent<MonteCarlo::AdjointPhotonState,MonteCarlo::AdjointPhotonProbeState> );
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardAdjointElectronSourceComponent, MonteCarlo )
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::StandardAdjointParticleSourceComponent<MonteCarlo::AdjointElectronState,MonteCarlo::AdjointElectronProbeState> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardAdjointParticleSourceComponent<MonteCarlo::AdjointElectronState,MonteCarlo::AdjointElectronProbeState> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, StandardAdjointParticleSourceComponent<MonteCarlo::AdjointElectronState,MonteCarlo::AdjointElectronProbeState> );
 
 #endif // end MONTE_CARLO_STANDARD_ADJOINT_PARTICLE_SOURCE_COMPONENT_DEF_HPP
 

@@ -137,7 +137,7 @@ private:
 
 BOOST_CLASS_VERSION( MonteCarlo::ParticleSource, 0 );
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleSource );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleSource );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleSource );
 
 #endif // end MONTE_CARLO_PARTICLE_SOURCE_HPP
 

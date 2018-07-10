@@ -577,19 +577,19 @@ void StandardParticleSourceComponent<ParticleStateType>::load( Archive& ar, cons
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardNeutronSourceComponent, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::NeutronState> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::NeutronState> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, StandardParticleSourceComponent<MonteCarlo::NeutronState> );
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardPhotonSourceComponent, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::PhotonState> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::PhotonState> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, StandardParticleSourceComponent<MonteCarlo::PhotonState> );
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardElectronSourceComponent, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::ElectronState> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::ElectronState> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, StandardParticleSourceComponent<MonteCarlo::ElectronState> );
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardPositronSourceComponent, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::PositronState> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::PositronState> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, StandardParticleSourceComponent<MonteCarlo::PositronState> );
 
 #endif // end MONTE_CARLO_STANDARD_PARTICLE_SOURCE_COMPONENT_DEF_HPP
 

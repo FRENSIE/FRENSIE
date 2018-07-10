@@ -45,12 +45,7 @@ typedef std::tuple<
   std::tuple<MonteCarlo::AdjointElectronState,MonteCarlo::AdjointElectronProbeState>
                   > TestParticleStateTypes;
 
-typedef std::tuple<
-  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
-  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
-  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
-  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>
-  > TestArchives;
+typedef TestArchiveHelper::TestArchives TestArchives;
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -150,7 +145,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
   }
   else
   {
-    source_component.reset( new MonteCarlo::StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>( 0, 1.0, static_cast<std::shared_ptr<const Geometry::Model> >(*ModelHelper<ParticleStateType>::model()), particle_distribution, std::vector<double>( {Utility::PhysicalConstants::electron_rest_mass_energy, 10.0} ) ) );
+    source_component.reset( new MonteCarlo::StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>( 0, 1.0, static_cast<std::shared_ptr<const Geometry::Model> >(*ModelHelper<ParticleStateType>::model()), particle_distribution, std::vector<double>( {Utility::PhysicalConstants::electron_rest_mass_energy} ) ) );
   }
 
   MonteCarlo::ParticleBank bank;
@@ -172,18 +167,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
   fake_stream[11] = 0.5; // mu
   fake_stream[12] = 0.5; // time
 
-  fake_stream[13] = 0.0; // x
-  fake_stream[14] = 1.0-1e-15; // y
-  fake_stream[15] = 0.0; // z
-  fake_stream[16] = 0.0; // theta
-  fake_stream[17] = 1.0-1e-15; // mu
-  fake_stream[18] = 1.0-1e-15; // time
-
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   source_component->sampleParticleState( bank, 0ull );
 
-  FRENSIE_REQUIRE_EQUAL( bank.size(), 3 );
+  FRENSIE_REQUIRE_EQUAL( bank.size(), 2 );
   
   FRENSIE_CHECK_EQUAL( bank.top().getHistoryNumber(), 0ull );
   FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), particle_type );
@@ -226,27 +214,6 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
   FRENSIE_CHECK_EQUAL( bank.top().getSourceWeight(), 0.05 );
   FRENSIE_CHECK_EQUAL( bank.top().getWeight(), 0.05 );
   
-  bank.pop();
-  
-  FRENSIE_CHECK_EQUAL( bank.top().getHistoryNumber(), 0ull );
-  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), particle_type );
-  FRENSIE_CHECK( dynamic_cast<const ProbeParticleStateType&>( bank.top() ).isProbe() );
-  FRENSIE_CHECK_EQUAL( bank.top().getXPosition(), -1.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getYPosition(), 1.0, 1e-12 );
-  FRENSIE_CHECK_EQUAL( bank.top().getZPosition(), -1.0 );
-  FRENSIE_CHECK_SMALL( bank.top().getXDirection(), 1e-7 );
-  FRENSIE_CHECK_SMALL( bank.top().getYDirection(), 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(), 1.0, 1e-12 );
-  FRENSIE_CHECK_EQUAL( bank.top().getSourceEnergy(), 10.0 );
-  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 10.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getSourceTime(), 1.0, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getTime(), 1.0, 1e-12 );
-  FRENSIE_CHECK_EQUAL( bank.top().getSourceId(), 0 );
-  FRENSIE_CHECK_EQUAL( bank.top().getSourceCell(), 1 );
-  FRENSIE_CHECK_EQUAL( bank.top().getCell(), 1 );
-  FRENSIE_CHECK_EQUAL( bank.top().getSourceWeight(), 0.1 );
-  FRENSIE_CHECK_EQUAL( bank.top().getWeight(), 0.1 );
-  
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -273,9 +240,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
 
   if( ParticleStateType::type == MonteCarlo::ADJOINT_PHOTON )
   {
-    samples = 3000;
-    trials = 3000;
-    bank_size = 3000;
+    samples = 2000;
+    trials = 2000;
+    bank_size = 2000;
 
     energy_dimension_samples = 1000;
     energy_dimension_trials = 1000;
@@ -498,44 +465,44 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
   iarchive.reset();
 
   {
-    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfTrials(), 3000 );
-    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfSamples(), 3000 );
+    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfTrials(), 2000 );
+    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfSamples(), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getSamplingEfficiency(), 1.0 );
     
-    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 3000 );
-    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 3000 );
+    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 2000 );
+    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getDimensionSamplingEfficiency( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 1.0 );
     
-    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 3000 );
-    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 3000 );
+    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 2000 );
+    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getDimensionSamplingEfficiency( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 1.0 );
     
-    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 3000 );
-    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 3000 );
+    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 2000 );
+    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getDimensionSamplingEfficiency( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 1.0 );
     
-    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 3000 );
-    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 3000 );
+    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 2000 );
+    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getDimensionSamplingEfficiency( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 1.0 );
     
-    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 3000 );
-    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 3000 );
+    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 2000 );
+    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getDimensionSamplingEfficiency( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 1.0 );
     
-    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 3000 );
-    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 3000 );
+    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 2000 );
+    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getDimensionSamplingEfficiency( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 1.0 );
     
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::ENERGY_DIMENSION ), 1000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::ENERGY_DIMENSION ), 1000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getDimensionSamplingEfficiency( MonteCarlo::ENERGY_DIMENSION ), 1.0 );
     
-    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::TIME_DIMENSION ), 3000 );
-    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::TIME_DIMENSION ), 3000 );
+    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::TIME_DIMENSION ), 2000 );
+    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::TIME_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getDimensionSamplingEfficiency( MonteCarlo::TIME_DIMENSION ), 1.0 );
     
-    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::WEIGHT_DIMENSION ), 3000 );
-    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::WEIGHT_DIMENSION ), 3000 );
+    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::WEIGHT_DIMENSION ), 2000 );
+    FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::WEIGHT_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getDimensionSamplingEfficiency( MonteCarlo::WEIGHT_DIMENSION ), 1.0 );
 
     MonteCarlo::ParticleBank bank;
@@ -568,7 +535,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
 
     adjoint_photon_source_component->sampleParticleState( bank, 0ull );
 
-    FRENSIE_REQUIRE_EQUAL( bank.size(), 3 );
+    FRENSIE_REQUIRE_EQUAL( bank.size(), 2 );
     FRENSIE_CHECK_EQUAL( bank.top().getHistoryNumber(), 0ull );
     FRENSIE_CHECK_EQUAL( bank.top().getParticleType(),
                          MonteCarlo::ADJOINT_PHOTON );
@@ -611,28 +578,6 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
     FRENSIE_CHECK_EQUAL( bank.top().getCell(), 1 );
     FRENSIE_CHECK_EQUAL( bank.top().getSourceWeight(), 0.05 );
     FRENSIE_CHECK_EQUAL( bank.top().getWeight(), 0.05 );
-    
-    bank.pop();
-
-    FRENSIE_CHECK_EQUAL( bank.top().getHistoryNumber(), 0ull );
-    FRENSIE_CHECK_EQUAL( bank.top().getParticleType(),
-                         MonteCarlo::ADJOINT_PHOTON );
-    FRENSIE_CHECK( dynamic_cast<const MonteCarlo::AdjointPhotonProbeState&>( bank.top() ).isProbe() );
-    FRENSIE_CHECK_EQUAL( bank.top().getXPosition(), -1.0 );
-    FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getYPosition(), 1.0, 1e-12 );
-    FRENSIE_CHECK_EQUAL( bank.top().getZPosition(), -1.0 );
-    FRENSIE_CHECK_SMALL( bank.top().getXDirection(), 1e-7 );
-    FRENSIE_CHECK_SMALL( bank.top().getYDirection(), 1e-12 );
-    FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(), 1.0, 1e-12 );
-    FRENSIE_CHECK_EQUAL( bank.top().getSourceEnergy(), 10.0 );
-    FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 10.0 );
-    FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getSourceTime(), 1.0, 1e-12 );
-    FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getTime(), 1.0, 1e-12 );
-    FRENSIE_CHECK_EQUAL( bank.top().getSourceId(), 0 );
-    FRENSIE_CHECK_EQUAL( bank.top().getSourceCell(), 1 );
-    FRENSIE_CHECK_EQUAL( bank.top().getCell(), 1 );
-    FRENSIE_CHECK_EQUAL( bank.top().getSourceWeight(), 0.1 );
-    FRENSIE_CHECK_EQUAL( bank.top().getWeight(), 0.1 );
   
     Utility::RandomNumberGenerator::unsetFakeStream();
   }

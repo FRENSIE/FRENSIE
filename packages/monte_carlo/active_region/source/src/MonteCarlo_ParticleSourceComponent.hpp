@@ -28,7 +28,7 @@
 #include "Utility_Communicator.hpp"
 #include "Utility_DistributionTraits.hpp"
 #include "Utility_TypeNameTraits.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
@@ -300,7 +300,7 @@ void ParticleSourceComponent::load( Archive& ar, const unsigned version )
 
 BOOST_CLASS_VERSION( MonteCarlo::ParticleSourceComponent, 0 );
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleSourceComponent );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::ParticleSourceComponent );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, ParticleSourceComponent );
 
 namespace Utility{
 
