@@ -19,9 +19,9 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleEventTags.hpp"
 #include "MonteCarlo_ParticleState.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Model.hpp"
 #include "Utility_Vector.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
@@ -66,7 +66,7 @@ private:
 
 BOOST_CLASS_VERSION( MonteCarlo::ParticleSubtrackEndingInCellEventObserver, 0 );
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleSubtrackEndingInCellEventObserver );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleSubtrackEndingInCellEventObserver );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleSubtrackEndingInCellEventObserver );
 
 #endif // end MONTE_CARLO_PARTICLE_SUBTRACK_ENDING_IN_CELL_EVENT_OBSERVER_HPP
 

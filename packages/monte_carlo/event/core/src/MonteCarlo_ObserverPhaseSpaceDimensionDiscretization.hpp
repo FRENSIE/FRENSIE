@@ -24,7 +24,7 @@
 #include "MonteCarlo_ObserverPhaseSpaceDimension.hpp"
 #include "MonteCarlo_ObserverParticleStateWrapper.hpp"
 #include "MonteCarlo_ParticleHistoryObserver.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_Vector.hpp"
@@ -117,7 +117,7 @@ private:
 
 BOOST_CLASS_VERSION( MonteCarlo::ObserverPhaseSpaceDimensionDiscretization, 0 );
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ObserverPhaseSpaceDimensionDiscretization );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ObserverPhaseSpaceDimensionDiscretization );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ObserverPhaseSpaceDimensionDiscretization );
 
 #endif // end MONTE_CARLO_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_HPP
 

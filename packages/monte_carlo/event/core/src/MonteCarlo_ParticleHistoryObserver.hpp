@@ -22,7 +22,7 @@
 
 // FRENSIE Includes
 #include "Utility_Communicator.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
@@ -98,7 +98,7 @@ private:
 
 BOOST_CLASS_VERSION( MonteCarlo::ParticleHistoryObserver, 0 );
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleHistoryObserver );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleHistoryObserver );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleHistoryObserver );
 
 namespace std{
 
