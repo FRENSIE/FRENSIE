@@ -52,6 +52,24 @@ FRENSIE_UNIT_TEST( TetMesh, constructor )
 #ifdef HAVE_FRENSIE_MOAB
 
 //---------------------------------------------------------------------------//
+// Check that the mesh type name can be returned
+FRENSIE_UNIT_TEST( TetMesh, getMeshTypeName )
+{
+  std::unique_ptr<Utility::Mesh> mesh( new Utility::TetMesh( tet_mesh_file_name ) );
+
+  FRENSIE_CHECK_EQUAL( mesh->getMeshTypeName(), "Tet Mesh" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the mesh element type name can be returned
+FRENSIE_UNIT_TEST( TetMesh, getMeshElementTypeName )
+{
+  std::unique_ptr<Utility::Mesh> mesh( new Utility::TetMesh( tet_mesh_file_name ) );
+
+  FRENSIE_CHECK_EQUAL( mesh->getMeshElementTypeName(), "Tet" );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the volume of each tet element can be calculated
 FRENSIE_UNIT_TEST( TetMesh, getElementVolumes )
 {

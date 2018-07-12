@@ -51,8 +51,7 @@ public:
   typedef std::unordered_map<ElementHandle,std::map<std::string,std::vector<std::pair<std::string,double> > > > MeshElementHandleDataMap;
 
   //! Constructor
-  Mesh( const Estimator::idType id,
-        const double multiplier )
+  Mesh()
   { /* ... */ }
 
   //! Destructor

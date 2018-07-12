@@ -60,6 +60,12 @@ public:
   //! Destructor
   ~TetMesh();
 
+  //! Get the mesh type name
+  std::string getMeshTypeName() const final override;
+
+  //! Get the mesh element type name
+  std::string getMeshElementTypeName() const final override;
+
   //! Get the start iterator of the tet handle list
   ElementHandleIterator getStartElementHandleIterator() const final override;
 

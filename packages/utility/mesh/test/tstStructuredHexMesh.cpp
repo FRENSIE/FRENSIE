@@ -77,6 +77,35 @@ FRENSIE_UNIT_TEST( StructuredHexMesh, constructor )
 }
 
 //---------------------------------------------------------------------------//
+// Test the getMeshTypeName method
+FRENSIE_UNIT_TEST( StructuredHexMesh, getMeshTypeName )
+{
+  std::vector<double> x_planes( {0.0, 0.5, 1.0} ),
+    y_planes( {0.0, 0.5, 1.0} ),
+    z_planes( {0.0, 0.5, 1.0} );
+
+  std::shared_ptr<Utility::StructuredHexMesh> hex_mesh(
+              new Utility::StructuredHexMesh( x_planes, y_planes, z_planes ) );
+
+  FRENSIE_CHECK_EQUAL( hex_mesh->getMeshTypeName(),
+                       "Structured Hex Mesh" );
+}
+
+//---------------------------------------------------------------------------//
+// Test the getMeshElementTypeName method
+FRENSIE_UNIT_TEST( StructuredHexMex, getMeshElementTypeName )
+{
+  std::vector<double> x_planes( {0.0, 0.5, 1.0} ),
+    y_planes( {0.0, 0.5, 1.0} ),
+    z_planes( {0.0, 0.5, 1.0} );
+
+  std::shared_ptr<Utility::StructuredHexMesh> hex_mesh(
+              new Utility::StructuredHexMesh( x_planes, y_planes, z_planes ) );
+
+  FRENSIE_CHECK_EQUAL( hex_mesh->getMeshElementTypeName(), "Hex" );
+}
+
+//---------------------------------------------------------------------------//
 // Test the getElementVolumes method
 FRENSIE_UNIT_TEST( StructuredHexMesh, getElementVolumes )
 {

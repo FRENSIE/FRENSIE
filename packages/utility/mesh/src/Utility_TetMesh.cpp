@@ -399,6 +399,18 @@ void TetMeshImpl::createKDTree( moab::Range& all_tet_elements,
 }
 #endif // end HAVE_FRENSIE_MOAB
 
+// Get the mesh type name
+std::string TetMesh::getMeshTypeName() const
+{
+  return "Tet Mesh";
+}
+
+// Get the mesh element type name
+std::string TetMesh::getMeshElementTypeName() const
+{
+  return "Tet"; 
+}
+
 // Get the start iterator of the tet handle list
 auto TetMesh::getStartElementHandleIterator() const -> ElementHandleIterator
 {

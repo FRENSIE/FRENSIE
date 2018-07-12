@@ -77,6 +77,18 @@ StructuredHexMesh::StructuredHexMesh( const std::vector<double>& x_planes,
 #endif // end HAVE_FRENSIE_MOAB
 }
 
+// Get the mesh type name
+std::string StructuredHexMesh::getMeshTypeName() const
+{
+  return "Structured Hex Mesh";
+}
+
+// Get the mesh element type name
+std::string StructuredHexMesh::getMeshElementTypeName() const
+{
+  return "Hex";
+}
+
 // Returns the volumes of the hex elements for the estimator class.
 void StructuredHexMesh::getElementVolumes(
                                     ElementHandleVolumeMap& hex_volumes ) const
