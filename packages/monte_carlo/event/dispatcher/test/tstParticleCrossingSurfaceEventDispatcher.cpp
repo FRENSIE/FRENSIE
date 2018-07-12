@@ -40,7 +40,7 @@ void initializeSurfaceFluxEstimator( const unsigned estimator_id,
 				 std::shared_ptr<SurfaceEstimator>& estimator )
 {
   // Set the entity ids
-  std::vector<Geometry::ModuleTraits::InternalSurfaceHandle>
+  std::vector<Geometry::ModuleTraits::EntityId>
     surface_ids( 2 );
   surface_ids[0] = 0;
   surface_ids[1] = 1;
@@ -69,7 +69,7 @@ void initializeSurfaceCurrentEstimator( const unsigned estimator_id,
 				 std::shared_ptr<SurfaceEstimator>& estimator )
 {
   // Set the entity ids
-  std::vector<Geometry::ModuleTraits::InternalSurfaceHandle>
+  std::vector<Geometry::ModuleTraits::EntityId>
     surface_ids( 2 );
   surface_ids[0] = 0;
   surface_ids[1] = 1;

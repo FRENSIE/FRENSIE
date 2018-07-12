@@ -42,7 +42,7 @@ template<typename ParticleStateType>
 StandardParticleSourceComponent<ParticleStateType>::StandardParticleSourceComponent(
      const size_t id,
      const double selection_weight,
-     const std::vector<Geometry::Model::InternalCellHandle>& rejection_cells,
+     const std::vector<Geometry::Model::EntityId>& rejection_cells,
      const std::shared_ptr<const Geometry::Model>& model,
      const std::shared_ptr<const ParticleDistribution>& particle_distribution )
   : StandardParticleSourceComponent( id,

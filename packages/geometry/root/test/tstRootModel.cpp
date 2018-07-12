@@ -135,7 +135,7 @@ FRENSIE_UNIT_TEST( RootModel, getCellMaterialNames )
   std::shared_ptr<const Geometry::RootModel> model =
     Geometry::RootModel::getInstance();
 
-  std::map<Geometry::Model::InternalCellHandle,std::string>
+  std::map<Geometry::Model::EntityId,std::string>
     cell_id_material_name_map;
 
   model->getCellMaterialNames( cell_id_material_name_map );

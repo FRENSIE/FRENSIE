@@ -21,7 +21,7 @@ namespace MonteCarlo{
 template<typename Material>
 MaterialComponentParticleResponseFunction<Material>::MaterialComponentParticleResponseFunction(
                        const std::shared_ptr<const FilledGeometryModel>& model,
-                       const Geometry::Model::InternalCellHandle cell,
+                       const Geometry::Model::EntityId cell,
                        const std::string& component_name,
                        const typename Material::ReactionEnumType reaction,
                        const int )
@@ -49,7 +49,7 @@ MaterialComponentParticleResponseFunction<Material>::MaterialComponentParticleRe
 template<typename Material>
 MaterialComponentParticleResponseFunction<Material>::MaterialComponentParticleResponseFunction(
                        const std::shared_ptr<const FilledGeometryModel>& model,
-                       const Geometry::Model::InternalCellHandle cell,
+                       const Geometry::Model::EntityId cell,
                        const std::string& component_name,
                        const typename Material::ReactionEnumType reaction )
   : MaterialComponentParticleResponseFunction( model,

@@ -48,7 +48,7 @@ public:
   //! Update the observer
   virtual void updateFromParticleCrossingSurfaceEvent(
 	  const ParticleState& particle,
-	  const Geometry::Model::InternalSurfaceHandle surface_crossing,
+	  const Geometry::Model::EntityId surface_crossing,
 	  const double angle_cosine ) = 0;
 
 private:

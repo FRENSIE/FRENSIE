@@ -24,10 +24,10 @@ class AdvancedModel : public Model
 public:
 
   //! The surface id set type
-  typedef std::set<InternalSurfaceHandle> SurfaceIdSet;
+  typedef std::set<EntityId> SurfaceIdSet;
 
   //! The surface id array type
-  typedef std::vector<InternalSurfaceHandle> SurfaceIdArray;
+  typedef std::vector<EntityId> SurfaceIdArray;
 
   //! The surface estimator data type
   typedef std::tuple<EstimatorType,ParticleType,SurfaceIdArray> SurfaceEstimatorData;
@@ -64,15 +64,15 @@ public:
 
   //! Check if a surface exists
   virtual bool doesSurfaceExist(
-                            const InternalSurfaceHandle surface_id ) const = 0;
+                            const EntityId surface_id ) const = 0;
 
   //! Get the surface area
   virtual Area getSurfaceArea(
-                            const InternalSurfaceHandle surface_id ) const = 0;
+                            const EntityId surface_id ) const = 0;
 
   //! Check if the surface is a reflecting surface
   virtual bool isReflectingSurface(
-                            const InternalSurfaceHandle surface_id ) const = 0;
+                            const EntityId surface_id ) const = 0;
 
 private:
 

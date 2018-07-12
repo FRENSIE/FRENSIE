@@ -29,13 +29,13 @@ Navigator::Navigator( const Navigator& other )
 { /* ... */ }
 
 // The invalid cell handle
-auto Navigator::invalidCellHandle() -> InternalCellHandle
+auto Navigator::invalidCellHandle() -> EntityId
 {
   return 0;
 }
 
 // The invalid surface handle
-auto Navigator::invalidSurfaceHandle() -> InternalSurfaceHandle
+auto Navigator::invalidSurfaceHandle() -> EntityId
 {
   return 0;
 }

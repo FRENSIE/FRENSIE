@@ -186,7 +186,7 @@ void EstimatorFactory::createAndRegisterEstimator(
     if( this->isCellEstimator( estimator_type ) )
     {
       // Get the cells
-      std::vector<Geometry::Model::InternalCellHandle> cells;
+      std::vector<Geometry::Model::EntityId> cells;
 
       this->getEstimatorCells( cells, estimator_id, estimator_rep );
 
@@ -204,7 +204,7 @@ void EstimatorFactory::createAndRegisterEstimator(
     else if( this->isSurfaceEstimator( estimator_type ) )
     {
       // Get the surfaces
-      std::vector<Geometry::Model::InternalSurfaceHandle> surfaces;
+      std::vector<Geometry::Model::EntityId> surfaces;
 
       this->getEstimatorSurfaces( surfaces, estimator_id, estimator_rep );
 
@@ -440,13 +440,13 @@ void EstimatorFactory::convertParticleTypeNameToParticleTypes(
 
 // Get the cells assigned to the estimator - required if cell estimator
 void EstimatorFactory::getEstimatorCells(
-                    std::vector<Geometry::Model::InternalCellHandle>&
+                    std::vector<Geometry::Model::EntityId>&
                     assigned_cells,
                     const unsigned estimator_id,
                     const Teuchos::ParameterList& estimator_rep ) const
 {
   // Filter out multiple occurrences of the same cell
-  boost::unordered_set<Geometry::Model::InternalCellHandle>
+  boost::unordered_set<Geometry::Model::EntityId>
     unique_cells;
 
   // Get the cells specified in the xml file
@@ -487,13 +487,13 @@ void EstimatorFactory::getEstimatorCells(
 
 // Get the surfaces assigned to the estimator - required if surface est.
 void EstimatorFactory::getEstimatorSurfaces(
-                 std::vector<Geometry::Model::InternalSurfaceHandle>&
+                 std::vector<Geometry::Model::EntityId>&
                  assigned_surfaces,
                  const unsigned estimator_id,
                  const Teuchos::ParameterList& estimator_rep ) const
 {
   // Filter out multiple occurrences of the same surface
-  boost::unordered_set<Geometry::Model::InternalSurfaceHandle>
+  boost::unordered_set<Geometry::Model::EntityId>
     unique_surfaces;
 
   // Get the surfaces specified in the xml file
@@ -624,7 +624,7 @@ void EstimatorFactory::createAndRegisterCellEstimator(
       const double multiplier,
       const std::vector<ParticleType> particle_types,
       const std::vector<std::shared_ptr<ResponseFunction> >& response_funcs,
-      const std::vector<Geometry::Model::InternalCellHandle>& cells,
+      const std::vector<Geometry::Model::EntityId>& cells,
       const bool energy_multiplication,
       const Teuchos::ParameterList* bins )
 {
@@ -691,7 +691,7 @@ void EstimatorFactory::createAndRegisterSurfaceEstimator(
       const double multiplier,
       const std::vector<ParticleType> particle_types,
       const std::vector<std::shared_ptr<ResponseFunction> >& response_funcs,
-      const std::vector<Geometry::Model::InternalSurfaceHandle>&
+      const std::vector<Geometry::Model::EntityId>&
       surfaces,
       const bool energy_multiplication,
       const Teuchos::ParameterList* bins )
@@ -746,7 +746,7 @@ void EstimatorFactory::createAndRegisterCellPulseHeightEstimator(
       const double multiplier,
       const std::vector<ParticleType> particle_types,
       const std::vector<std::shared_ptr<ResponseFunction> >& response_funcs,
-      const std::vector<Geometry::Model::InternalCellHandle>& cells,
+      const std::vector<Geometry::Model::EntityId>& cells,
       const bool energy_multiplication,
       const Teuchos::ParameterList* bins ) const
 {
@@ -809,7 +809,7 @@ void EstimatorFactory::createAndRegisterCellTrackLengthFluxEstimator(
       const double multiplier,
       const std::vector<ParticleType> particle_types,
       const std::vector<std::shared_ptr<ResponseFunction> >& response_funcs,
-      const std::vector<Geometry::Model::InternalCellHandle>& cells,
+      const std::vector<Geometry::Model::EntityId>& cells,
       const bool energy_multiplication,
       const Teuchos::ParameterList* bins )
 {
@@ -882,7 +882,7 @@ void EstimatorFactory::createAndRegisterCellCollisionFluxEstimator(
       const double multiplier,
       const std::vector<ParticleType> particle_types,
       const std::vector<std::shared_ptr<ResponseFunction> >& response_funcs,
-      const std::vector<Geometry::Model::InternalCellHandle>& cells,
+      const std::vector<Geometry::Model::EntityId>& cells,
       const bool energy_multiplication,
       const Teuchos::ParameterList* bins )
 {
@@ -954,7 +954,7 @@ void EstimatorFactory::createAndRegisterSurfaceFluxEstimator(
       const double multiplier,
       const std::vector<ParticleType> particle_types,
       const std::vector<std::shared_ptr<ResponseFunction> >& response_funcs,
-      const std::vector<Geometry::Model::InternalSurfaceHandle>&
+      const std::vector<Geometry::Model::EntityId>&
       surfaces,
       const bool energy_multiplication,
       const Teuchos::ParameterList* bins )
@@ -1029,7 +1029,7 @@ void EstimatorFactory::createAndRegisterSurfaceCurrentEstimator(
       const double multiplier,
       const std::vector<ParticleType> particle_types,
       const std::vector<std::shared_ptr<ResponseFunction> >& response_funcs,
-      const std::vector<Geometry::Model::InternalSurfaceHandle>&
+      const std::vector<Geometry::Model::EntityId>&
       surfaces,
       const bool energy_multiplication,
       const Teuchos::ParameterList* bins ) const

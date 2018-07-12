@@ -23,7 +23,7 @@ public:
 
   //! Constructor
   InfiniteMediumNavigator(
-          const InternalCellHandle infinite_medium_cell_id,
+          const EntityId infinite_medium_cell_id,
           const Navigator::AdvanceCompleteCallback& advance_complete_callback =
           Navigator::AdvanceCompleteCallback() );
 
@@ -34,22 +34,22 @@ public:
   PointLocation getPointLocation(
                                 const Length position[3],
                                 const double direction[3],
-                                const InternalCellHandle cell ) const override;
+                                const EntityId cell ) const override;
   
   //! Get the surface normal at a point on the surface
-  void getSurfaceNormal( const InternalSurfaceHandle surface_id,
+  void getSurfaceNormal( const EntityId surface_id,
                          const Length position[3],
                          const double direction[3],
                          double normal[3] ) const override;
 
   //! Find the cell that contains a given ray
-  InternalCellHandle findCellContainingRay(
+  EntityId findCellContainingRay(
                                   const Length position[3],
                                   const double direction[3],
                                   CellIdSet& found_cell_cache ) const override;
 
   //! Find the cell that contains a given ray
-  InternalCellHandle findCellContainingRay(
+  EntityId findCellContainingRay(
                                     const Length position[3],
                                     const double direction[3] ) const override;
   
@@ -71,7 +71,7 @@ public:
                  const double x_direction,
                  const double y_direction,
                  const double z_direction,
-                 const InternalCellHandle start_cell ) override;
+                 const EntityId start_cell ) override;
 
   //! Set the internal ray state (base class overloads)
   using Navigator::setState;
@@ -83,10 +83,10 @@ public:
   const double* getDirection() const override;
 
   //! Get the cell that contains the internal ray
-  InternalCellHandle getCurrentCell() const override;
+  EntityId getCurrentCell() const override;
 
   //! Fire the internal ray through the geometry
-  Length fireRay( InternalSurfaceHandle* surface_hit ) override;
+  Length fireRay( EntityId* surface_hit ) override;
 
   //! Change the internal ray direction
   void changeDirection( const double x_direction,
@@ -117,7 +117,7 @@ private:
   InfiniteMediumNavigator();
 
   // The infinite medium cell id
-  InternalCellHandle d_cell;
+  EntityId d_cell;
   
   // The position
   Length* d_position;

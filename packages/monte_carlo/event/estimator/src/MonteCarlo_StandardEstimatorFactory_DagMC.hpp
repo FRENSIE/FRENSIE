@@ -55,36 +55,36 @@ protected:
 
   //! Verify the existence of cells
   void verifyExistenceOfCells(
-        const boost::unordered_set<Geometry::Model::InternalCellHandle>&
+        const boost::unordered_set<Geometry::Model::EntityId>&
         cells,
         const unsigned estimator_id ) const;
 
   //! Get the cached cells (add to set)
   void getCachedCells(
-       boost::unordered_set<Geometry::Model::InternalCellHandle>& cells,
+       boost::unordered_set<Geometry::Model::EntityId>& cells,
        const unsigned estimator_id ) const;
 
   //! Get the cell volumes
   void getCellVolumes(
      std::vectorArray<double>& cell_volumes,
-     const std::vectorArray<Geometry::Model::InternalCellHandle>& cells );
+     const std::vectorArray<Geometry::Model::EntityId>& cells );
 
   //! Verify the existence of surfaces
   void verifyExistenceOfSurfaces(
-     const boost::unordered_set<Geometry::Model::InternalSurfaceHandle>&
+     const boost::unordered_set<Geometry::Model::EntityId>&
      surfaces,
      const unsigned estimator_id ) const;
 
   //! Get the cached surfaces (add to set)
   void getCachedSurfaces(
-     boost::unordered_set<Geometry::Model::InternalSurfaceHandle>&
+     boost::unordered_set<Geometry::Model::EntityId>&
      surfaces,
      const unsigned estimator_id ) const;
 
   //! Get the surface areas
   void getSurfaceAreas(
            std::vectorArray<double>& surface_areas,
-           const std::vectorArray<Geometry::Model::InternalSurfaceHandle>&
+           const std::vectorArray<Geometry::Model::EntityId>&
            surfaces );
 
   //! Update the estimator cache info
@@ -115,19 +115,19 @@ private:
   boost::unordered_map<unsigned,std::string> d_geom_estimator_id_ptype_map;
 
   // The estimator id cells map (from DagMC geom)
-  typedef boost::unordered_map<unsigned,std::vectorArray<Geometry::Model::InternalCellHandle> > EstimatorIdCellsMap;
+  typedef boost::unordered_map<unsigned,std::vectorArray<Geometry::Model::EntityId> > EstimatorIdCellsMap;
   EstimatorIdCellsMap d_geom_estimator_id_cells_map;
 
   // The estimator id surfaces map (from DagMC geom)
-  typedef boost::unordered_map<unsigned,std::vectorArray<Geometry::Model::InternalSurfaceHandle> > EstimatorIdSurfacesMap;
+  typedef boost::unordered_map<unsigned,std::vectorArray<Geometry::Model::EntityId> > EstimatorIdSurfacesMap;
   EstimatorIdSurfacesMap d_geom_estimator_id_surfaces_map;
 
   // The cell volume map
-  boost::unordered_map<Geometry::Model::InternalCellHandle,double>
+  boost::unordered_map<Geometry::Model::EntityId,double>
   d_cell_volume_map;
 
   // The surface area map
-  boost::unordered_map<Geometry::Model::InternalSurfaceHandle,double>
+  boost::unordered_map<Geometry::Model::EntityId,double>
   d_surface_area_map;
 };
 

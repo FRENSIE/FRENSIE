@@ -25,7 +25,7 @@ FastDagMCSurfaceHandler::FastDagMCSurfaceHandler(
 
   while( surface_it != this->end() )
   {
-    InternalSurfaceHandle surface_id =
+    EntityId surface_id =
       const_cast<moab::DagMC*>( dagmc_instance )->get_entity_id( *surface_it );
 
     d_surface_id_handle_map.insert(
@@ -37,7 +37,7 @@ FastDagMCSurfaceHandler::FastDagMCSurfaceHandler(
 
 // Get the surface id from a surface handle
 auto FastDagMCSurfaceHandler::getSurfaceId(
-       const moab::EntityHandle surface_handle ) const -> InternalSurfaceHandle
+       const moab::EntityHandle surface_handle ) const -> EntityId
 {
   // Make sure the surface handle exists
   testPrecondition( this->doesSurfaceHandleExist( surface_handle ) );
@@ -47,7 +47,7 @@ auto FastDagMCSurfaceHandler::getSurfaceId(
 
 // Get the surface handle from a surface id
 moab::EntityHandle FastDagMCSurfaceHandler::getSurfaceHandle(
-                                 const InternalSurfaceHandle surface_id ) const
+                                 const EntityId surface_id ) const
 {
   // Make sure the surface id exists
   testPrecondition( this->doesSurfaceExist( surface_id ) );
@@ -58,7 +58,7 @@ moab::EntityHandle FastDagMCSurfaceHandler::getSurfaceHandle(
 
 // Check if the surface exists
 bool FastDagMCSurfaceHandler::doesSurfaceExist(
-                                 const InternalSurfaceHandle surface_id ) const
+                                 const EntityId surface_id ) const
 {
   return d_surface_id_handle_map.left.find( surface_id ) !=
     d_surface_id_handle_map.left.end();

@@ -80,12 +80,12 @@ void StandardEstimatorFactory<Geometry::DagMC>::createAndRegisterCachedEstimator
       // Create and register a cell estimator
       if( this->isCellEstimator( estimator_type ) )
       {
-        boost::unordered_set<Geometry::Model::InternalCellHandle>
+        boost::unordered_set<Geometry::Model::EntityId>
           unique_cells;
 
         this->getCachedCells( unique_cells, estimator_id );
 
-        std::vector<Geometry::Model::InternalCellHandle>
+        std::vector<Geometry::Model::EntityId>
           assigned_cells( unique_cells.begin(), unique_cells.end() );
 
         TEST_FOR_EXCEPTION( assigned_cells.size() == 0,
@@ -104,12 +104,12 @@ void StandardEstimatorFactory<Geometry::DagMC>::createAndRegisterCachedEstimator
       // Create and register a surface estimator
       else if( this->isSurfaceEstimator( estimator_type ) )
       {
-        boost::unordered_set<Geometry::Model::InternalSurfaceHandle>
+        boost::unordered_set<Geometry::Model::EntityId>
           unique_surfaces;
 
         this->getCachedSurfaces( unique_surfaces, estimator_id );
 
-        std::vector<Geometry::Model::InternalSurfaceHandle>
+        std::vector<Geometry::Model::EntityId>
           assigned_surfaces( unique_surfaces.begin(), unique_surfaces.end() );
 
         TEST_FOR_EXCEPTION( assigned_surfaces.size() == 0,
@@ -151,7 +151,7 @@ void StandardEstimatorFactory<Geometry::DagMC>::createAndRegisterCachedEstimator
 // Load estimator id maps with cell estimator properties
 void StandardEstimatorFactory<Geometry::DagMC>::loadEstimatorIdMapsWithCellEstimatorProps()
 {
-  typedef std::unordered_map<unsigned,Utility::Trip<std::string,std::string,std::vector<Geometry::Model::InternalCellHandle> > > EstimatorIdDataMap;
+  typedef std::unordered_map<unsigned,Utility::Trip<std::string,std::string,std::vector<Geometry::Model::EntityId> > > EstimatorIdDataMap;
   EstimatorIdDataMap cell_estimator_id_data_map;
 
   try{
@@ -205,7 +205,7 @@ void StandardEstimatorFactory<Geometry::DagMC>::loadEstimatorIdMapsWithCellEstim
       convertShortParticleTypeNameToVerboseParticleTypeName( particle_type );
 
     // Store the cells assigned to the estimator
-    const std::vector<Geometry::Model::InternalCellHandle>& cells =
+    const std::vector<Geometry::Model::EntityId>& cells =
       cell_estimator_id_data_it->second.third;
 
     TEST_FOR_EXCEPTION( cells.size() == 0,
@@ -222,7 +222,7 @@ void StandardEstimatorFactory<Geometry::DagMC>::loadEstimatorIdMapsWithCellEstim
 // Load estimator id mpas with surface estimator properties
 void StandardEstimatorFactory<Geometry::DagMC>::loadEstimatorIdMapsWithSurfaceEstimatorProps()
 {
-  typedef std::unordered_map<unsigned,Utility::Trip<std::string,std::string,std::vector<Geometry::Model::InternalSurfaceHandle> > > EstimatorIdDataMap;
+  typedef std::unordered_map<unsigned,Utility::Trip<std::string,std::string,std::vector<Geometry::Model::EntityId> > > EstimatorIdDataMap;
   EstimatorIdDataMap surface_estimator_id_data_map;
 
   try{
@@ -268,7 +268,7 @@ void StandardEstimatorFactory<Geometry::DagMC>::loadEstimatorIdMapsWithSurfaceEs
       convertShortParticleTypeNameToVerboseParticleTypeName( particle_type );
 
     // Store the surfaces assigned to the estimator
-    const std::vector<Geometry::Model::InternalSurfaceHandle>&
+    const std::vector<Geometry::Model::EntityId>&
       surfaces = surface_estimator_id_data_it->second.third;
 
     TEST_FOR_EXCEPTION( surfaces.size() == 0,
@@ -439,11 +439,11 @@ void StandardEstimatorFactory<Geometry::DagMC>::getEstimatorParticleType(
 
 // Verify the existence of cells
 void StandardEstimatorFactory<Geometry::DagMC>::verifyExistenceOfCells(
-        const boost::unordered_set<Geometry::Model::InternalCellHandle>&
+        const boost::unordered_set<Geometry::Model::EntityId>&
         cells,
         const unsigned estimator_id ) const
 {
-  boost::unordered_set<Geometry::Model::InternalCellHandle>::const_iterator cell = cells.begin();
+  boost::unordered_set<Geometry::Model::EntityId>::const_iterator cell = cells.begin();
 
   while( cell != cells.end() )
   {
@@ -459,7 +459,7 @@ void StandardEstimatorFactory<Geometry::DagMC>::verifyExistenceOfCells(
 
 // Get the cached cells (add to set)
 void StandardEstimatorFactory<Geometry::DagMC>::getCachedCells(
-       boost::unordered_set<Geometry::Model::InternalCellHandle>& cells,
+       boost::unordered_set<Geometry::Model::EntityId>& cells,
        const unsigned estimator_id ) const
 {
   if( d_geom_estimator_id_cells_map.find( estimator_id ) !=
@@ -477,7 +477,7 @@ void StandardEstimatorFactory<Geometry::DagMC>::getCachedCells(
  */
 void StandardEstimatorFactory<Geometry::DagMC>::getCellVolumes(
      std::vector<double>& cell_volumes,
-     const std::vector<Geometry::Model::InternalCellHandle>& cells )
+     const std::vector<Geometry::Model::EntityId>& cells )
 {
   // Resize the cell volume array
   cell_volumes.resize( cells.size() );
@@ -501,11 +501,11 @@ void StandardEstimatorFactory<Geometry::DagMC>::getCellVolumes(
 
 // Verify the existence of surfaces
 void StandardEstimatorFactory<Geometry::DagMC>::verifyExistenceOfSurfaces(
-     const boost::unordered_set<Geometry::Model::InternalSurfaceHandle>&
+     const boost::unordered_set<Geometry::Model::EntityId>&
      surfaces,
      const unsigned estimator_id ) const
 {
-  boost::unordered_set<Geometry::Model::InternalSurfaceHandle>::const_iterator surface = surfaces.begin();
+  boost::unordered_set<Geometry::Model::EntityId>::const_iterator surface = surfaces.begin();
 
   while( surface != surfaces.end() )
   {
@@ -521,7 +521,7 @@ void StandardEstimatorFactory<Geometry::DagMC>::verifyExistenceOfSurfaces(
 
 // Get the cached surfaces (add to set)
 void StandardEstimatorFactory<Geometry::DagMC>::getCachedSurfaces(
-     boost::unordered_set<Geometry::Model::InternalSurfaceHandle>&
+     boost::unordered_set<Geometry::Model::EntityId>&
      surfaces,
      const unsigned estimator_id ) const
 {
@@ -540,7 +540,7 @@ void StandardEstimatorFactory<Geometry::DagMC>::getCachedSurfaces(
  */
 void StandardEstimatorFactory<Geometry::DagMC>::getSurfaceAreas(
            std::vector<double>& surface_areas,
-           const std::vector<Geometry::Model::InternalSurfaceHandle>&
+           const std::vector<Geometry::Model::EntityId>&
            surfaces )
 {
   // Resize the surface areas array

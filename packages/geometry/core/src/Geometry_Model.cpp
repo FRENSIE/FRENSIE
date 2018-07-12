@@ -15,13 +15,13 @@
 namespace Geometry{
 
 // The invalid cell handle
-auto Model::invalidCellHandle() -> InternalCellHandle
+auto Model::invalidCellHandle() -> EntityId
 {
   return Navigator::invalidCellHandle();
 }
 
 // The invalid surface handle
-auto Model::invalidSurfaceHandle() -> InternalSurfaceHandle
+auto Model::invalidSurfaceHandle() -> EntityId
 {
   return Navigator::invalidSurfaceHandle();
 }

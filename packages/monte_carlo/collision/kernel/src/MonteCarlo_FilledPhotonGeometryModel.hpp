@@ -49,7 +49,7 @@ public:
 
   //! Get the macroscopic cross section for a specific reaction
   double getMacroscopicReactionCrossSection(
-                         const Geometry::Model::InternalCellHandle cell,
+                         const Geometry::Model::EntityId cell,
                          const double energy,
                          const PhotonuclearReactionType reaction ) const;
 
@@ -60,7 +60,7 @@ public:
 
   //! Get the macroscopic cross section for a specific reaction
   double getMacroscopicReactionCrossSectionQuick(
-                         const Geometry::Model::InternalCellHandle cell,
+                         const Geometry::Model::EntityId cell,
                          const double energy,
                          const PhotonuclearReactionType reaction ) const;
 

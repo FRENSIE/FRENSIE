@@ -27,7 +27,7 @@ class StandardSurfaceEstimator : public StandardEntityEstimator,
 public:
 
   //! Typedef for the surface id type
-  typedef Geometry::Model::InternalSurfaceHandle SurfaceIdType;
+  typedef Geometry::Model::EntityId SurfaceIdType;
 
   //! Typedef for event tags used for quick dispatcher registering
   typedef boost::mpl::vector<ParticleCrossingSurfaceEventObserver::EventTag>

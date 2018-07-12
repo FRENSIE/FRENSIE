@@ -40,7 +40,7 @@ void initializeCellPulseHeightEstimator(
 			    std::shared_ptr<CellPulseHeightEstimator>& estimator )
 {
   // Set the entity ids
-  std::vector<Geometry::ModuleTraits::InternalCellHandle>
+  std::vector<Geometry::ModuleTraits::EntityId>
     cell_ids( 2 );
   cell_ids[0] = 0;
   cell_ids[1] = 1;

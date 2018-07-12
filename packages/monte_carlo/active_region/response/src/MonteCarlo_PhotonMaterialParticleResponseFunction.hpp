@@ -28,13 +28,13 @@ public:
   //! Constructor (photoatomic reaction)
   PhotonMaterialParticleResponseFunction(
                        const std::shared_ptr<const FilledGeometryModel>& model,
-                       const Geometry::Model::InternalCellHandle cell,
+                       const Geometry::Model::EntityId cell,
                        const PhotoatomicReactionType reaction );
 
   //! Constructor (photonuclear reaction)
   PhotonMaterialParticleResponseFunction(
                        const std::shared_ptr<const FilledGeometryModel>& model,
-                       const Geometry::Model::InternalCellHandle cell,
+                       const Geometry::Model::EntityId cell,
                        const PhotonuclearReactionType reaction );
 
   //! Evaluate the response function at the desired phase space point

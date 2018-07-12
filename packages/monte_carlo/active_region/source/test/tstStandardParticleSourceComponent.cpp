@@ -416,7 +416,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardParticleSourceComponent,
 
     // Construct a positron source component
     std::shared_ptr<MonteCarlo::ParticleSourceComponent>
-      positron_source_component( new MonteCarlo::StandardPositronSourceComponent( 3, 1.0, std::vector<Geometry::Model::InternalCellHandle>({1}), model, particle_distribution ) );
+      positron_source_component( new MonteCarlo::StandardPositronSourceComponent( 3, 1.0, std::vector<Geometry::Model::EntityId>({1}), model, particle_distribution ) );
 
     MonteCarlo::ParticleBank bank;
 

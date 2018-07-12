@@ -17,7 +17,7 @@ namespace MonteCarlo{
 // Constructor (photoatomic reaction)
 PhotonMaterialParticleResponseFunction::PhotonMaterialParticleResponseFunction(
                        const std::shared_ptr<const FilledGeometryModel>& model,
-                       const Geometry::Model::InternalCellHandle cell,
+                       const Geometry::Model::EntityId cell,
                        const PhotoatomicReactionType reaction )
   : BaseType( model, cell, reaction ),
     d_use_photonuclear_reaction_type( false ),
@@ -30,7 +30,7 @@ PhotonMaterialParticleResponseFunction::PhotonMaterialParticleResponseFunction(
 // Constructor (photonuclear reaction)
 PhotonMaterialParticleResponseFunction::PhotonMaterialParticleResponseFunction(
                        const std::shared_ptr<const FilledGeometryModel>& model,
-                       const Geometry::Model::InternalCellHandle cell,
+                       const Geometry::Model::EntityId cell,
                        const PhotonuclearReactionType reaction )
   : BaseType( model, cell, TOTAL_PHOTOATOMIC_REACTION, 0 ),
     d_use_photonuclear_reaction_type( true ),

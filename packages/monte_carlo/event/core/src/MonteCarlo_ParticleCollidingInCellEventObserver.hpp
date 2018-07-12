@@ -49,7 +49,7 @@ public:
   //! Update the observer
   virtual void updateFromParticleCollidingInCellEvent(
 	    const ParticleState& particle,
-	    const Geometry::Model::InternalCellHandle cell_of_collision,
+	    const Geometry::Model::EntityId cell_of_collision,
 	    const double inverse_total_cross_section ) = 0;
 
 private:

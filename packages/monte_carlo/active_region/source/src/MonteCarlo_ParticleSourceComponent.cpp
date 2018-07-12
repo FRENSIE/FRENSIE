@@ -245,7 +245,7 @@ void ParticleSourceComponent::sampleParticleState(
     // Determine the cell that this particle has been born in
     if( valid_sample )
     {
-      Geometry::Model::InternalCellHandle start_cell_id;
+      Geometry::Model::EntityId start_cell_id;
 
       try{
         start_cell_id =

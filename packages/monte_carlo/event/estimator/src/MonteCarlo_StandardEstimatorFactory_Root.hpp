@@ -48,36 +48,36 @@ protected:
 
   //! Verify the existence of cells
   void verifyExistenceOfCells(
-        const boost::unordered_set<Geometry::Model::InternalCellHandle>&
+        const boost::unordered_set<Geometry::Model::EntityId>&
         cells,
         const unsigned estimator_id ) const;
 
   //! Get the cached cells (add to set)
   void getCachedCells(
-       boost::unordered_set<Geometry::Model::InternalCellHandle>& cells,
+       boost::unordered_set<Geometry::Model::EntityId>& cells,
        const unsigned estimator_id ) const;
 
   //! Get the cell volumes
   void getCellVolumes(
      std::vector<double>& cell_volumes,
-     const std::vector<Geometry::Model::InternalCellHandle>& cells );
+     const std::vector<Geometry::Model::EntityId>& cells );
 
   //! Verify the existence of surfaces
   void verifyExistenceOfSurfaces(
-     const boost::unordered_set<Geometry::Model::InternalSurfaceHandle>&
+     const boost::unordered_set<Geometry::Model::EntityId>&
      surfaces,
      const unsigned estimator_id ) const;
 
   //! Get the cached surfaces (add to set)
   void getCachedSurfaces(
-           boost::unordered_set<Geometry::Model::InternalSurfaceHandle>&
+           boost::unordered_set<Geometry::Model::EntityId>&
            surfaces,
            const unsigned estimator_id ) const;
 
   //! Get the surface areas
   void getSurfaceAreas(
            std::vector<double>& surface_areas,
-           const std::vector<Geometry::Model::InternalSurfaceHandle>&
+           const std::vector<Geometry::Model::EntityId>&
            surfaces );
 
   //! Create and register a surface estimator
@@ -87,7 +87,7 @@ protected:
       const double multiplier,
       const std::vector<ParticleType> particle_types,
       const std::vector<std::shared_ptr<ResponseFunction> >& response_funcs,
-      const std::vector<Geometry::Model::InternalSurfaceHandle>&
+      const std::vector<Geometry::Model::EntityId>&
       surfaces,
       const bool energy_multiplication = false,
       const Teuchos::ParameterList* bins = NULL );
@@ -98,11 +98,11 @@ protected:
 private:
 
   // The cell volume map
-  boost::unordered_map<Geometry::Model::InternalCellHandle,double>
+  boost::unordered_map<Geometry::Model::EntityId,double>
   d_cell_volume_map;
 
   // The surface area map
-  boost::unordered_map<Geometry::Model::InternalSurfaceHandle,double>
+  boost::unordered_map<Geometry::Model::EntityId,double>
   d_surface_area_map;
 };
 

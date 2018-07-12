@@ -121,7 +121,7 @@ struct FilledGeometryModelUpcastHelper<PositronState>
  */
 template<typename ParticleStateType>
 bool FilledGeometryModel::isCellVoid(
-                         const Geometry::Model::InternalCellHandle cell ) const
+                         const Geometry::Model::EntityId cell ) const
 {
   return Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::isCellVoid( cell );
 }
@@ -129,7 +129,7 @@ bool FilledGeometryModel::isCellVoid(
 // Get the total macroscopic cross section of a material for the given particle type
 template<typename ParticleStateType>
 double FilledGeometryModel::getMacroscopicTotalCrossSection(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const
 {
   return Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getMacroscopicTotalCrossSection( cell, energy );
@@ -138,7 +138,7 @@ double FilledGeometryModel::getMacroscopicTotalCrossSection(
 // Get the total macroscopic cross section of a material for the given particle type
 template<typename ParticleStateType>
 double FilledGeometryModel::getMacroscopicTotalCrossSectionQuick(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const
 {
   return Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getMacroscopicTotalCrossSectionQuick( cell, energy );
@@ -147,7 +147,7 @@ double FilledGeometryModel::getMacroscopicTotalCrossSectionQuick(
 // Get the total forward macroscopic cross section of a material for the given particle type
 template<typename ParticleStateType>
 double FilledGeometryModel::getMacroscopicTotalForwardCrossSection(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const
 {
   return Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getMacroscopicTotalForwardCrossSection( cell, energy );
@@ -156,7 +156,7 @@ double FilledGeometryModel::getMacroscopicTotalForwardCrossSection(
 // Get the total macroscopic cross section of a material for the given particle type
 template<typename ParticleStateType>
 double FilledGeometryModel::getMacroscopicTotalForwardCrossSectionQuick(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const
 {
   return Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getMacroscopicTotalForwardCrossSectionQuick( cell, energy );
@@ -165,7 +165,7 @@ double FilledGeometryModel::getMacroscopicTotalForwardCrossSectionQuick(
 // Get the adjoint weight factor of a material for the given particle type
 template<typename ParticleStateType>
 double FilledGeometryModel::getAdjointWeightFactor(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const
 {
   return Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getAdjointWeightFactor( cell, energy );
@@ -174,7 +174,7 @@ double FilledGeometryModel::getAdjointWeightFactor(
 // Get the adjoint weight factor of a material for the given particle type
 template<typename ParticleStateType>
 double FilledGeometryModel::getAdjointWeightFactorQuick(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const
 {
   return Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getAdjointWeightFactorQuick( cell, energy );

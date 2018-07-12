@@ -22,7 +22,7 @@ class StandardCellEstimator : public StandardEntityEstimator
 public:
 
   //! Typedef for the cell id type
-  typedef Geometry::Model::InternalCellHandle CellIdType;
+  typedef Geometry::Model::EntityId CellIdType;
 
   //! Constructor
   StandardCellEstimator( const uint32_t id,

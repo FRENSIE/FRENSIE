@@ -320,7 +320,7 @@ void DagMCModel::extractReflectingSurfaces()
   
   for( size_t i = 0; i < surfaces_with_property.size(); ++i )
   {
-    InternalSurfaceHandle surface_id =
+    EntityId surface_id =
       d_surface_handler->getSurfaceId( surfaces_with_property[i] );
     
     d_reflecting_surfaces.insert( ReflectingSurfaceIdHandleMap::value_type(
@@ -392,7 +392,7 @@ void DagMCModel::getCells( CellIdSet& cell_set,
 
   while( cell_handle_it != d_cell_handler->end() )
   {
-    InternalCellHandle cell_id =
+    EntityId cell_id =
       d_cell_handler->getCellId( *cell_handle_it );
 
     // Check if it is a termination cell
@@ -587,7 +587,7 @@ void DagMCModel::getSurfaces( SurfaceIdSet& surface_set ) const
 
   while( surface_handle_it != d_surface_handler->end() )
   {
-    InternalSurfaceHandle surface_id =
+    EntityId surface_id =
       d_surface_handler->getSurfaceId( *surface_handle_it );
 
     surface_set.insert( surface_id );
@@ -669,7 +669,7 @@ void DagMCModel::getSurfaceEstimatorData(
 }
 
 // Check if a cell exists
-bool DagMCModel::doesCellExist( const InternalCellHandle cell_id ) const
+bool DagMCModel::doesCellExist( const EntityId cell_id ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -678,7 +678,7 @@ bool DagMCModel::doesCellExist( const InternalCellHandle cell_id ) const
 }
 
 // Check if the surface exists
-bool DagMCModel::doesSurfaceExist( const InternalSurfaceHandle surface_id ) const
+bool DagMCModel::doesSurfaceExist( const EntityId surface_id ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -687,7 +687,7 @@ bool DagMCModel::doesSurfaceExist( const InternalSurfaceHandle surface_id ) cons
 }
 
 // Get the cell volume
-auto DagMCModel::getCellVolume( const InternalCellHandle cell_id ) const -> Volume
+auto DagMCModel::getCellVolume( const EntityId cell_id ) const -> Volume
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -714,7 +714,7 @@ auto DagMCModel::getCellVolume( const InternalCellHandle cell_id ) const -> Volu
 }
 
 // Get the surface area
-auto DagMCModel::getSurfaceArea( const InternalSurfaceHandle surface_id ) const -> Area
+auto DagMCModel::getSurfaceArea( const EntityId surface_id ) const -> Area
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -742,7 +742,7 @@ auto DagMCModel::getSurfaceArea( const InternalSurfaceHandle surface_id ) const 
 }
 
 // Check if the cell is a termination cell
-bool DagMCModel::isTerminationCell( const InternalCellHandle cell_id ) const
+bool DagMCModel::isTerminationCell( const EntityId cell_id ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -754,7 +754,7 @@ bool DagMCModel::isTerminationCell( const InternalCellHandle cell_id ) const
 }
 
 // Check if the cell is a void cell
-bool DagMCModel::isVoidCell( const InternalCellHandle cell_id ) const
+bool DagMCModel::isVoidCell( const EntityId cell_id ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -768,7 +768,7 @@ bool DagMCModel::isVoidCell( const InternalCellHandle cell_id ) const
 }
 
 // Check if the surface is a reflecting surface
-bool DagMCModel::isReflectingSurface( const InternalSurfaceHandle surface_id ) const
+bool DagMCModel::isReflectingSurface( const EntityId surface_id ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -873,7 +873,7 @@ void DagMCModel::getCellPropertyValues(
   // Get the property value for each cell
   for( size_t i = 0; i < cells_with_property.size(); ++i )
   {
-    InternalCellHandle cell_id =
+    EntityId cell_id =
       d_cell_handler->getCellId( cells_with_property[i] );
 
     moab::ErrorCode return_value =
@@ -955,7 +955,7 @@ void DagMCModel::getSurfacePropertyValues(
   // Get the property value for each surface
   for( size_t i = 0; i < surfaces_with_property.size(); ++i )
   {
-    InternalSurfaceHandle surface_id =
+    EntityId surface_id =
       d_surface_handler->getSurfaceId( surfaces_with_property[i] );
 
     moab::EntityHandle return_value =

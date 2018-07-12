@@ -172,15 +172,15 @@ A brief usage tutorial for this class is shown below:
 
 %model_interface_setup( RootModel )
 
-%template(MatNameMap) std::map<Geometry::Model::InternalCellHandle,std::string>;
+%template(MatNameMap) std::map<Geometry::Model::EntityId,std::string>;
 
 // Add some useful methods to the RootModel class
 %extend Geometry::RootModel
 {
   // Return the cell material names
-  std::map<Geometry::Model::InternalCellHandle,std::string> Geometry::RootModel::getCellMaterialNames() const
+  std::map<Geometry::Model::EntityId,std::string> Geometry::RootModel::getCellMaterialNames() const
   {
-    std::map<Geometry::RootModel::InternalCellHandle,std::string> cell_id_mat_name_map;
+    std::map<Geometry::RootModel::EntityId,std::string> cell_id_mat_name_map;
     $self->getCellMaterialNames( cell_id_mat_name_map );
 
     return cell_id_mat_name_map;

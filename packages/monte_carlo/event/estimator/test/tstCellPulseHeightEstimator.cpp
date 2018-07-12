@@ -51,7 +51,7 @@ void initializePulseHeightEstimator(
 				Teuchos::RCP<PulseHeightEstimator>& estimator )
 {
   // Set the entity ids
-  Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>
+  Teuchos::Array<Geometry::ModuleTraits::EntityId>
     entity_ids( 2 );
   entity_ids[0] = 0;
   entity_ids[1] = 1;
@@ -211,7 +211,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
   TEST_ASSERT( !hdf5_file_handler.isEntityAssignedToEstimator( 0u, 2u ) );
 
   // Check that the entities and norm constants have been set
-  std::map<Geometry::ModuleTraits::InternalCellHandle,double> entity_norms_map;
+  std::map<Geometry::ModuleTraits::EntityId,double> entity_norms_map;
   hdf5_file_handler.getEstimatorEntities( 0u, entity_norms_map );
 
   TEST_EQUALITY_CONST( entity_norms_map.size(), 2 );
@@ -360,7 +360,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
   TEST_ASSERT( !hdf5_file_handler.isEntityAssignedToEstimator( 0u, 2u ) );
 
   // Check that the entities and norm constants have been set
-  std::map<Geometry::ModuleTraits::InternalCellHandle,double> entity_norms_map;
+  std::map<Geometry::ModuleTraits::EntityId,double> entity_norms_map;
   hdf5_file_handler.getEstimatorEntities( 0u, entity_norms_map );
 
   TEST_EQUALITY_CONST( entity_norms_map.size(), 2 );
@@ -448,7 +448,7 @@ TEUCHOS_UNIT_TEST( CellPulseHeightEstimator, updateFromParticleEvent )
 
   {
     // Set the entity ids
-    Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>
+    Teuchos::Array<Geometry::ModuleTraits::EntityId>
       entity_ids( 2 );
     entity_ids[0] = 0;
     entity_ids[1] = 1;
@@ -668,7 +668,7 @@ TEUCHOS_UNIT_TEST( CellPulseHeightEstimator,
 
   {
     // Set the entity ids
-    Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>
+    Teuchos::Array<Geometry::ModuleTraits::EntityId>
       entity_ids( 2 );
     entity_ids[0] = 0;
     entity_ids[1] = 1;

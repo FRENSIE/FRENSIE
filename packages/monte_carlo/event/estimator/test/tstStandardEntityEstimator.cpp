@@ -25,7 +25,7 @@
 //---------------------------------------------------------------------------//
 // Instantiation Macros.
 //---------------------------------------------------------------------------//
-typedef Geometry::ModuleTraits::InternalCellHandle CellId;
+typedef Geometry::ModuleTraits::EntityId CellId;
 
 #define UNIT_TEST_INSTANTIATION( type, name ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, CellId ) \

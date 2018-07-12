@@ -348,14 +348,14 @@ class is shown below:
 %navigator_interface_setup( Navigator )
 
 // Rename a few overloaded methods
-%rename(fireRayAndGetSurfaceHit) Geometry::Navigator::fireRay( InternalSurfaceHandle* );
-%rename(fireRayAndGetSurfaceHit2) Geometry::Navigator::fireRay( InternalSurfaceHandle& );
+%rename(fireRayAndGetSurfaceHit) Geometry::Navigator::fireRay( EntityId* );
+%rename(fireRayAndGetSurfaceHit2) Geometry::Navigator::fireRay( EntityId& );
 %rename(advanceToCellBoundaryAndGetSurfaceNormal) Geometry::Navigator::advanceToCellBoundary( double* );
 
-// Add typemaps for the InternalSurfaceHandle
-%typemap(in,numinputs=0) Geometry::Navigator::InternalSurfaceHandle* (Geometry::Navigator::InternalSurfaceHandle temp) "$1 = &temp;"
+// Add typemaps for the EntityId
+%typemap(in,numinputs=0) Geometry::Navigator::EntityId* (Geometry::Navigator::EntityId temp) "$1 = &temp;"
 
-%typemap(argout) Geometry::Navigator::InternalSurfaceHandle* {
+%typemap(argout) Geometry::Navigator::EntityId* {
   %append_output(PyFrensie::convertToPython( *$1 ));
 }
 
@@ -541,14 +541,14 @@ A brief usage tutorial for this class is shown below:
 %typemap(in,numinputs=0) Geometry::Model::CellIdDensityMap& (Geometry::Model::CellIdDensityMap temp) "$1 = &temp;"
 
 %typemap(argout) Geometry::Model::CellIdDensityMap& {
-  std::map<Geometry::Model::InternalCellHandle,double> density_map;
+  std::map<Geometry::Model::EntityId,double> density_map;
 
   Geometry::Model::CellIdDensityMap::const_iterator it = ($1)->begin();
 
   while( it != ($1)->end() )
   {
     // insert raw elements in density_map
-    density_map.insert(std::pair<Geometry::Model::InternalCellHandle,double> (it->first, it->second.value()));
+    density_map.insert(std::pair<Geometry::Model::EntityId,double> (it->first, it->second.value()));
 
     ++it;
   }

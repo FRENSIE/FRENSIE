@@ -38,17 +38,14 @@ class Model
 
 public:
 
-  //! The internal cell handle type
-  typedef Navigator::InternalCellHandle InternalCellHandle;
-
-  //! The internal surface handle type
-  typedef Navigator::InternalSurfaceHandle InternalSurfaceHandle;
+  //! The entity (cell or surface) id type
+  typedef Navigator::EntityId EntityId;
 
   //! The internal material handle type
-  typedef unsigned long long InternalMaterialHandle;
+  typedef uint32_t InternalMaterialHandle;
 
   //! The internal estimator handle type
-  typedef unsigned long long InternalEstimatorHandle;
+  typedef uint32_t InternalEstimatorHandle;
 
   //! The length unit
   typedef Navigator::LengthUnit LengthUnit;
@@ -80,13 +77,13 @@ public:
   typedef Navigator::CellIdSet CellIdSet;
 
   //! The cell id material id map type
-  typedef std::map<InternalCellHandle,InternalMaterialHandle> CellIdMatIdMap;
+  typedef std::map<EntityId,InternalMaterialHandle> CellIdMatIdMap;
 
   //! The cell id density map type
-  typedef std::map<InternalCellHandle,Density> CellIdDensityMap;
+  typedef std::map<EntityId,Density> CellIdDensityMap;
 
   //! The cell id array type
-  typedef std::vector<InternalCellHandle> CellIdArray;
+  typedef std::vector<EntityId> CellIdArray;
 
   //! The cell estimator data type
   typedef std::tuple<EstimatorType,ParticleType,CellIdArray> CellEstimatorData;
@@ -131,22 +128,22 @@ public:
                 CellEstimatorIdDataMap& cell_estimator_id_data_map ) const = 0;
 
   //! Check if a cell exists
-  virtual bool doesCellExist( const InternalCellHandle cell ) const = 0;
+  virtual bool doesCellExist( const EntityId cell ) const = 0;
 
   //! Check if the cell is a termination cell
-  virtual bool isTerminationCell( const InternalCellHandle cell ) const = 0;
+  virtual bool isTerminationCell( const EntityId cell ) const = 0;
 
   //! Check if a cell is void
-  virtual bool isVoidCell( const InternalCellHandle cell ) const = 0;
+  virtual bool isVoidCell( const EntityId cell ) const = 0;
 
   //! Get the cell volume
-  virtual Volume getCellVolume( const InternalCellHandle cell ) const = 0;
+  virtual Volume getCellVolume( const EntityId cell ) const = 0;
 
   //! The invalid cell handle
-  static InternalCellHandle invalidCellHandle();
+  static EntityId invalidCellHandle();
 
   //! The invalid surface handle
-  static InternalSurfaceHandle invalidSurfaceHandle();
+  static EntityId invalidSurfaceHandle();
 
   //! The invalid material handle
   static InternalMaterialHandle invalidMaterialHandle();

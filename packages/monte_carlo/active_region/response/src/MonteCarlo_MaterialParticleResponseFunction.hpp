@@ -25,7 +25,7 @@ public:
   //! Constructor
   MaterialParticleResponseFunction(
                        const std::shared_ptr<const FilledGeometryModel>& model,
-                       const Geometry::Model::InternalCellHandle cell,
+                       const Geometry::Model::EntityId cell,
                        const typename Material::ReactionEnumType reaction );
 
   //! Destructor
@@ -50,7 +50,7 @@ protected:
   //! Constructor (do not check reaction type)
   MaterialParticleResponseFunction(
                        const std::shared_ptr<const FilledGeometryModel>& model,
-                       const Geometry::Model::InternalCellHandle cell,
+                       const Geometry::Model::EntityId cell,
                        const typename Material::ReactionEnumType reaction,
                        const int );
 
@@ -86,7 +86,7 @@ private:
   std::shared_ptr<const FilledGeometryModel> d_model;
 
   // The cell that contains the material
-  Geometry::Model::InternalCellHandle d_cell;
+  Geometry::Model::EntityId d_cell;
 
   // The reaction
   typename Material::ReactionEnumType d_reaction;

@@ -57,7 +57,7 @@ DagMCNavigator::DagMCNavigator( const DagMCNavigator& other )
 PointLocation DagMCNavigator::getPointLocation(
                                        const Length position[3],
                                        const double direction[3],
-                                       const InternalCellHandle cell_id ) const
+                                       const EntityId cell_id ) const
 {
   // Make sure that the cell exists
   testPrecondition( d_dagmc_model->getCellHandler().doesCellExist( cell_id ) );
@@ -65,7 +65,9 @@ PointLocation DagMCNavigator::getPointLocation(
   moab::EntityHandle cell_handle = d_dagmc_model->getCellHandler().getCellHandle( cell_id );
  
   try{
-    return this->getPointLocation( position, direction, cell_handle );
+    return this->getPointLocationWithCellHandle( position,
+                                                 direction,
+                                                 cell_handle );
   }
   EXCEPTION_CATCH_RETHROW( DagMCGeometryError,
                            "Could not determing the location of the "
@@ -81,7 +83,7 @@ PointLocation DagMCNavigator::getPointLocation(
 /*! \details The dot product of the normal and the direction will be 
  * positive defined.
  */
-void DagMCNavigator::getSurfaceNormal( const InternalSurfaceHandle surface_id,
+void DagMCNavigator::getSurfaceNormal( const EntityId surface_id,
                                        const Length position[3],
                                        const double direction[3],
                                        double normal[3] ) const
@@ -130,8 +132,8 @@ void DagMCNavigator::getSurfaceHandleNormal(
  * cell and the boundary surface.
  */
 auto DagMCNavigator::getBoundaryCell(
-  const InternalCellHandle cell_id,
-  const InternalSurfaceHandle boundary_surface_id ) const -> InternalCellHandle
+  const EntityId cell_id,
+  const EntityId boundary_surface_id ) const -> EntityId
 {
   // Make sure that the cell exists
   testPrecondition( d_dagmc_model->getCellHandler().doesCellExist( cell_id ) );
@@ -155,7 +157,7 @@ auto DagMCNavigator::getBoundaryCell(
 auto DagMCNavigator::findCellContainingRay( const Length position[3],
                                             const double direction[3],
                                             CellIdSet& found_cell_cache ) const
-  -> InternalCellHandle
+  -> EntityId
 {
   // Test the cells in the cache first
   CellIdSet::const_iterator cell_cache_it, cell_cache_end;
@@ -174,7 +176,7 @@ auto DagMCNavigator::findCellContainingRay( const Length position[3],
   }
 
   // Check all other cells
-  InternalCellHandle found_cell =
+  EntityId found_cell =
     this->findCellContainingRay( position, direction );
 
   // Add the new cell to the cache
@@ -186,7 +188,7 @@ auto DagMCNavigator::findCellContainingRay( const Length position[3],
 // Find the cell that contains the ray
 auto DagMCNavigator::findCellContainingRay( const Length position[3],
                                             const double direction[3] ) const
-  -> InternalCellHandle
+  -> EntityId
 {
   moab::EntityHandle cell_handle =
     this->findCellHandleContainingRay( position, direction );
@@ -215,9 +217,9 @@ void DagMCNavigator::setState( const Length x_position,
     this->findCellHandleContainingRay( x_position, y_position, z_position,
                                        x_direction, y_direction, z_direction );
 
-  this->setState( x_position, y_position, z_position,
-                  x_direction, y_direction, z_direction,
-                  cell_handle );
+  this->setStateWithCellHandle( x_position, y_position, z_position,
+                                x_direction, y_direction, z_direction,
+                                cell_handle );
 }
                        
 // Initialize (or reset) an internal DagMC ray
@@ -227,7 +229,7 @@ void DagMCNavigator::setState( const Length x_position,
                                const double x_direction,
                                const double y_direction,
                                const double z_direction,
-                               const InternalCellHandle current_cell )
+                               const EntityId current_cell )
 {
   // Make sure that the direction is valid
   testPrecondition( Utility::isUnitVector( x_direction, y_direction, z_direction ) );
@@ -245,9 +247,9 @@ void DagMCNavigator::setState( const Length x_position,
   moab::EntityHandle cell_handle =
     d_dagmc_model->getCellHandler().getCellHandle( current_cell );
 
-  this->setState( x_position, y_position, z_position,
-                  x_direction, y_direction, z_direction,
-                  cell_handle );
+  this->setStateWithCellHandle( x_position, y_position, z_position,
+                                x_direction, y_direction, z_direction,
+                                cell_handle );
 }
 
 // Get the internal DagMC ray position
@@ -269,7 +271,7 @@ const double* DagMCNavigator::getDirection() const
 }
 
 // Get the cell containing the internal DagMC ray position
-auto DagMCNavigator::getCurrentCell() const -> InternalCellHandle
+auto DagMCNavigator::getCurrentCell() const -> EntityId
 {
   // Make sure that the ray is set
   testPrecondition( this->isStateSet() );
@@ -278,7 +280,7 @@ auto DagMCNavigator::getCurrentCell() const -> InternalCellHandle
 }
 
 // Get the distance from the internal DagMC ray pos. to the nearest boundary
-auto DagMCNavigator::fireRay( InternalSurfaceHandle* surface_hit ) -> Length
+auto DagMCNavigator::fireRay( EntityId* surface_hit ) -> Length
 {
   // Make sure that the ray is set
   testPrecondition( this->isStateSet() );
@@ -445,7 +447,7 @@ bool DagMCNavigator::isReflectingSurfaceHandle(
 }
 
 // Get the point location w.r.t. a given cell
-PointLocation DagMCNavigator::getPointLocation(
+PointLocation DagMCNavigator::getPointLocationWithCellHandle(
                                  const Length position[3],
                                  const double direction[3],
                                  const moab::EntityHandle cell_handle,
@@ -526,7 +528,9 @@ moab::EntityHandle DagMCNavigator::findCellHandleContainingRay(
 
     try{
       test_point_location =
-        this->getPointLocation( position, direction, *cell_handle_it );
+        this->getPointLocationWithCellHandle( position,
+                                              direction,
+                                              *cell_handle_it );
     }
     EXCEPTION_CATCH_RETHROW( DagMCGeometryError,
                              "Could not find the location of the ray with "
@@ -654,13 +658,14 @@ auto DagMCNavigator::fireRayWithCellHandle(
 }
 
 // Set an internal DagMC ray
-void DagMCNavigator::setState( const Length x_position,
-                               const Length y_position,
-                               const Length z_position,
-                               const double x_direction,
-                               const double y_direction,
-                               const double z_direction,
-                               const moab::EntityHandle current_cell_handle )
+void DagMCNavigator::setStateWithCellHandle(
+                                 const Length x_position,
+                                 const Length y_position,
+                                 const Length z_position,
+                                 const double x_direction,
+                                 const double y_direction,
+                                 const double z_direction,
+                                 const moab::EntityHandle current_cell_handle )
 {
   // Make sure that the direction is valid
   testPrecondition( Utility::isUnitVector( x_direction, y_direction, z_direction ) );
@@ -715,7 +720,7 @@ DagMCNavigator* DagMCNavigator::clone() const
   
 //   if( internal_ray_set )
 //   {
-//     InternalCellHandle current_cell = this->getCurrentCell();
+//     EntityId current_cell = this->getCurrentCell();
 
 //     ar & BOOST_SERIALIZATION_NVP( current_cell );
 //     ar & boost::serialization::make_nvp( "current_position", boost::serialization::make_array<double>( const_cast<double*>(Utility::reinterpretAsRaw(this->getPosition())), 3 ) );
@@ -739,7 +744,7 @@ DagMCNavigator* DagMCNavigator::clone() const
 
 //   if( internal_ray_set )
 //   {
-//     InternalCellHandle current_cell;
+//     EntityId current_cell;
 //     Length current_position[3];
 //     double current_direction[3];
 

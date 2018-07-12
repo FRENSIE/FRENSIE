@@ -48,7 +48,7 @@ public:
   //! Update the observer
   virtual void updateFromParticleEnteringCellEvent(
 	  const ParticleState& particle,
-	  const Geometry::Model::InternalCellHandle cell_entering ) = 0;
+	  const Geometry::Model::EntityId cell_entering ) = 0;
 
 private:
 

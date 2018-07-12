@@ -316,7 +316,7 @@ void ParticleSimulateManager<mode>::simulateParticleTrack(
     d_simulate_unresolved_particle_track_function_map.find( State::type );
 
   // Surface information
-  Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
+  Geometry::ModuleTraits::EntityId surface_hit;
 
   // Cell information
   double cell_total_macro_cross_section;
@@ -431,7 +431,7 @@ void ParticleSimulateManager<mode>::advanceParticleToCellBoundary(
 {
   // Advance the particle to the cell boundary
   // Note: this will change the particle's cell
-  Geometry::ModuleTraits::InternalCellHandle start_cell = particle.getCell();
+  Geometry::ModuleTraits::EntityId start_cell = particle.getCell();
   double surface_normal[3];
   bool reflected =
     particle.navigator().advanceInternalRayToCellBoundary( surface_normal );

@@ -272,7 +272,7 @@ void RootModel::getCellMaterialIds( CellIdMatIdMap& cell_id_mat_id_map ) const
     d_model_properties->getMaterialPropertyName() + "_";
 
   // Get the cell material names
-  typedef std::unordered_map<InternalCellHandle,std::string>
+  typedef std::unordered_map<EntityId,std::string>
     CellIdMatNameMap;
   CellIdMatNameMap cell_id_material_name;
 
@@ -365,7 +365,7 @@ void RootModel::getCellEstimatorData( CellEstimatorIdDataMap&  ) const
 { /* ... */ }
 
 // Check if a cell exists
-bool RootModel::doesCellExist( const InternalCellHandle cell_id ) const
+bool RootModel::doesCellExist( const EntityId cell_id ) const
 {
   // Make sure that root has been initialized
   testPrecondition( this->isInitialized() );
@@ -374,7 +374,7 @@ bool RootModel::doesCellExist( const InternalCellHandle cell_id ) const
 }
 
 // Check if the cell is a termination cell
-bool RootModel::isTerminationCell( const InternalCellHandle cell_id ) const
+bool RootModel::isTerminationCell( const EntityId cell_id ) const
 {
   // Make sure that root has been initialized
   testPrecondition( this->isInitialized() );
@@ -392,7 +392,7 @@ bool RootModel::isTerminationVolume( const TGeoVolume* volume ) const
 }
 
 // Check if the cell is a void cell
-bool RootModel::isVoidCell( const InternalCellHandle cell_id ) const
+bool RootModel::isVoidCell( const EntityId cell_id ) const
 {
   // Make sure that root has been initialized
   testPrecondition( RootModel::isInitialized() );
@@ -413,7 +413,7 @@ bool RootModel::isVoidVolume( const TGeoVolume* volume ) const
 /*! \details This will only return the correct cell volume when the daughters
  * are completely contained in the cell of interest (no overlaps)
  */
-auto RootModel::getCellVolume( const InternalCellHandle cell_id ) const -> Volume
+auto RootModel::getCellVolume( const EntityId cell_id ) const -> Volume
 {
   // Make sure that root has been initialized
   testPrecondition( this->isInitialized() );
@@ -476,7 +476,7 @@ RootNavigator* RootModel::createNavigatorAdvanced() const
 }
 
 // Get the cell
-TGeoVolume* RootModel::getVolumePtr( const InternalCellHandle& cell_id ) const
+TGeoVolume* RootModel::getVolumePtr( const EntityId& cell_id ) const
 {
   // Make sure root is initialized
   testPrecondition( this->isInitialized() );

@@ -48,22 +48,22 @@ public:
   PointLocation getPointLocation(
                              const Length position[3],
                              const double direction[3],
-                             const InternalCellHandle cell_id ) const override;
+                             const EntityId cell_id ) const override;
 
   //! Get the surface normal at a point on the surface
-  void getSurfaceNormal( const InternalSurfaceHandle surface_id,
+  void getSurfaceNormal( const EntityId surface_id,
                          const Length position[3],
                          const double direction[3],
                          double normal[3] ) const override;
 
   //! Find the cell that contains a given ray
-  InternalCellHandle findCellContainingRay(
+  EntityId findCellContainingRay(
                                   const Length position[3],
                                   const double direction[3],
                                   CellIdSet& found_cell_cache ) const override;
 
   //! Find the cell that contains the ray
-  InternalCellHandle findCellContainingRay(
+  EntityId findCellContainingRay(
                                     const Length position[3],
                                     const double direction[3] ) const override;
 
@@ -86,7 +86,7 @@ public:
                  const double x_direction,
                  const double y_direction,
                  const double z_direction,
-                 const InternalCellHandle current_cell ) override;
+                 const EntityId current_cell ) override;
 
   //! Initialize (or reset) the state (base overloads)
   using Navigator::setState;
@@ -98,10 +98,10 @@ public:
   const double* getDirection() const override;
 
   //! Get the cell containing the internal Root ray position
-  InternalCellHandle getCurrentCell() const override;
+  EntityId getCurrentCell() const override;
 
   //! Get the distance from the internal Root ray pos. to the nearest boundary
-  Length fireRay( InternalSurfaceHandle* surface_hit ) override;
+  Length fireRay( EntityId* surface_hit ) override;
 
   //! Change the internal ray direction (without changing its location)
   void changeDirection( const double x_direction,

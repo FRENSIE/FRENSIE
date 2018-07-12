@@ -52,14 +52,14 @@ public:
   bool isVoid() const;
 
   //! Check if a cell is void
-  bool isCellVoid( const Geometry::Model::InternalCellHandle cell ) const;
+  bool isCellVoid( const Geometry::Model::EntityId cell ) const;
 
   //! Check if a cell is a termination cell
-  bool isTerminationCell( const Geometry::Model::InternalCellHandle cell ) const;
+  bool isTerminationCell( const Geometry::Model::EntityId cell ) const;
 
   //! Get the material contained in a cell
   const std::shared_ptr<const MaterialType>&
-  getMaterial( const Geometry::Model::InternalCellHandle cell ) const;
+  getMaterial( const Geometry::Model::EntityId cell ) const;
 
   //! Destructor
   virtual ~StandardFilledParticleGeometryModel()
@@ -71,7 +71,7 @@ public:
 
   //! Get the total macroscopic cross section of a material
   double getMacroscopicTotalCrossSection(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const;
 
   //! Get the total macroscopic cross section of a material
@@ -80,7 +80,7 @@ public:
 
   //! Get the total macroscopic cross section of a material
   double getMacroscopicTotalCrossSectionQuick(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const;
 
   //! Get the total forward macroscopic cross section of a material
@@ -89,7 +89,7 @@ public:
 
   //! Get the total forward macroscopic cross section of a material
   virtual double getMacroscopicTotalForwardCrossSection(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const;
 
   //! Get the total forward macroscopic cross section of a material
@@ -98,7 +98,7 @@ public:
 
   //! Get the total forward macroscopic cross section of a material
   virtual double getMacroscopicTotalForwardCrossSectionQuick(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const;
 
   //! Get the macroscopic reaction cross section for a specific reaction
@@ -108,7 +108,7 @@ public:
 
   //! Get the macroscopic reaction cross section for a specific reaction
   double getMacroscopicReactionCrossSection(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy,
                                 const ReactionEnumType reaction ) const;
 
@@ -119,7 +119,7 @@ public:
 
   //! Get the macroscopic reaction cross section for a specific reaction
   double getMacroscopicReactionCrossSectionQuick(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy,
                                 const ReactionEnumType reaction ) const;
 
@@ -172,7 +172,7 @@ private:
 
   // Add a material to the collision kernel
   void addMaterial( const std::shared_ptr<const MaterialType>& material,
-                    const std::vector<Geometry::Model::InternalCellHandle>&
+                    const std::vector<Geometry::Model::EntityId>&
                     cells_containing_material );
 
   // The unfilled model
@@ -188,7 +188,7 @@ private:
   MaterialNameMap d_material_name_map;
 
   // The cell id material map
-  typedef std::unordered_map<Geometry::Model::InternalCellHandle,std::shared_ptr<const MaterialType> >
+  typedef std::unordered_map<Geometry::Model::EntityId,std::shared_ptr<const MaterialType> >
   CellIdMaterialMap;
 
   CellIdMaterialMap d_cell_id_material_map;  

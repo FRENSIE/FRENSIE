@@ -40,14 +40,14 @@ public:
   CollisionForcer( const size_t id,
                    const MonteCarlo::FilledGeometryModel& model,
                    const std::set<ParticleType>& particle_types,
-                   const std::set<Geometry::Model::InternalCellHandle>& cells,
+                   const std::set<Geometry::Model::EntityId>& cells,
                    const double generation_probability = 1.0 );
 
   //! Constructor (vector)
   CollisionForcer( const size_t id,
                    const MonteCarlo::FilledGeometryModel& model,
                    const std::set<ParticleType>& particle_types,
-                   const std::vector<Geometry::Model::InternalCellHandle>& cells,
+                   const std::vector<Geometry::Model::EntityId>& cells,
                    const double generation_probability = 1.0 );
 
   //! Destructor
@@ -55,7 +55,7 @@ public:
   { /* ... */ }
 
   //! Return the cells where collisions will be forced
-  const std::set<Geometry::Model::InternalCellHandle>& getCells() const;
+  const std::set<Geometry::Model::EntityId>& getCells() const;
 
   //! Return the particle types that will have forced collisions
   const std::set<ParticleType>& getParticleTypes() const;
@@ -65,7 +65,7 @@ public:
 
   //! Update the particle state and bank
   void updateFromParticleEnteringCellEvent(
-          const Geometry::Model::InternalCellHandle cell_entering,
+          const Geometry::Model::EntityId cell_entering,
           const double optical_path_to_next_cell,
           const SimulateParticleForOpticalPath& simulate_particle_track_method,
           ParticleState& particle,
@@ -96,7 +96,7 @@ private:
   std::set<ParticleType> d_particle_types;
   
   // The cells where forced collision occur
-  std::set<Geometry::Model::InternalCellHandle> d_cells;
+  std::set<Geometry::Model::EntityId> d_cells;
 
   // The generation probability
   double d_generation_probability;

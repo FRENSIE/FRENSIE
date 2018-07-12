@@ -45,11 +45,11 @@ void StandardEstimatorFactory<Geometry::Root>::verifyEstimatorTypeConsistency(
 
 // Verify the existence of cells
 void StandardEstimatorFactory<Geometry::Root>::verifyExistenceOfCells(
-        const boost::unordered_set<Geometry::Model::InternalCellHandle>&
+        const boost::unordered_set<Geometry::Model::EntityId>&
         cells,
         const unsigned estimator_id ) const
 {
-  boost::unordered_set<Geometry::Model::InternalCellHandle>::const_iterator cell = cells.begin();
+  boost::unordered_set<Geometry::Model::EntityId>::const_iterator cell = cells.begin();
 
   while( cell != cells.end() )
   {
@@ -67,14 +67,14 @@ void StandardEstimatorFactory<Geometry::Root>::verifyExistenceOfCells(
 /*! \details Root does not cache any estimator data so this method is empty.
  */
 void StandardEstimatorFactory<Geometry::Root>::getCachedCells(
-       boost::unordered_set<Geometry::Model::InternalCellHandle>& cells,
+       boost::unordered_set<Geometry::Model::EntityId>& cells,
        const unsigned estimator_id ) const
 { /* ... */ }
 
 // Get the cell volumes
 void StandardEstimatorFactory<Geometry::Root>::getCellVolumes(
      std::vector<double>& cell_volumes,
-     const std::vector<Geometry::Model::InternalCellHandle>& cells )
+     const std::vector<Geometry::Model::EntityId>& cells )
 {
   // Resize the cell volume array
   cell_volumes.resize( cells.size() );
@@ -98,7 +98,7 @@ void StandardEstimatorFactory<Geometry::Root>::getCellVolumes(
 
 // Verify the existence of surfaces
 void StandardEstimatorFactory<Geometry::Root>::verifyExistenceOfSurfaces(
-     const boost::unordered_set<Geometry::Model::InternalSurfaceHandle>&
+     const boost::unordered_set<Geometry::Model::EntityId>&
      surfaces,
      const unsigned estimator_id ) const
 { /* ... */ }
@@ -107,7 +107,7 @@ void StandardEstimatorFactory<Geometry::Root>::verifyExistenceOfSurfaces(
 /*! \details Root does not cache any estimator data so this method is empty.
  */
 void StandardEstimatorFactory<Geometry::Root>::getCachedSurfaces(
-           boost::unordered_set<Geometry::Model::InternalSurfaceHandle>&
+           boost::unordered_set<Geometry::Model::EntityId>&
            surfaces,
            const unsigned estimator_id ) const
 { /* ... */ }
@@ -115,7 +115,7 @@ void StandardEstimatorFactory<Geometry::Root>::getCachedSurfaces(
 // Get the surface areas
 void StandardEstimatorFactory<Geometry::Root>::getSurfaceAreas(
            std::vector<double>& surface_areas,
-           const std::vector<Geometry::Model::InternalSurfaceHandle>&
+           const std::vector<Geometry::Model::EntityId>&
            surfaces )
 {
   THROW_EXCEPTION( InvalidEstimatorRepresentation,
@@ -132,7 +132,7 @@ void StandardEstimatorFactory<Geometry::Root>::createAndRegisterSurfaceEstimator
       const double multiplier,
       const std::vector<ParticleType> particle_types,
       const std::vector<std::shared_ptr<ResponseFunction> >& response_funcs,
-      const std::vector<Geometry::Model::InternalSurfaceHandle>&
+      const std::vector<Geometry::Model::EntityId>&
       surfaces,
       const bool energy_multiplication,
       const Teuchos::ParameterList* bins )

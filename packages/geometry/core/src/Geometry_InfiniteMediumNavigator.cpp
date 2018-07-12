@@ -23,7 +23,7 @@ InfiniteMediumNavigator::InfiniteMediumNavigator()
 
 // Constructor
 InfiniteMediumNavigator::InfiniteMediumNavigator(
-          const InternalCellHandle infinite_medium_cell_id,
+          const EntityId infinite_medium_cell_id,
           const Navigator::AdvanceCompleteCallback& advance_complete_callback )
   : Navigator( advance_complete_callback ),
     d_cell( infinite_medium_cell_id ),
@@ -70,7 +70,7 @@ InfiniteMediumNavigator::~InfiniteMediumNavigator()
 PointLocation InfiniteMediumNavigator::getPointLocation(
                                           const Length*,
                                           const double*,
-                                          const InternalCellHandle cell ) const
+                                          const EntityId cell ) const
 {
   if( cell == d_cell )
     return POINT_INSIDE_CELL;
@@ -82,7 +82,7 @@ PointLocation InfiniteMediumNavigator::getPointLocation(
 /*! \details An infinite medium has no surface. A normal of (0,0,1) will
  * always be returned.
  */
-void InfiniteMediumNavigator::getSurfaceNormal( const InternalSurfaceHandle,
+void InfiniteMediumNavigator::getSurfaceNormal( const EntityId,
                                                 const Length*,
                                                 const double*,
                                                 double normal[3] ) const
@@ -96,7 +96,7 @@ void InfiniteMediumNavigator::getSurfaceNormal( const InternalSurfaceHandle,
 auto InfiniteMediumNavigator::findCellContainingRay(
                       const Length*,
                       const double*,
-                      CellIdSet& found_cell_cache ) const -> InternalCellHandle
+                      CellIdSet& found_cell_cache ) const -> EntityId
 {
   found_cell_cache.insert( d_cell );
 
@@ -106,7 +106,7 @@ auto InfiniteMediumNavigator::findCellContainingRay(
 // Find the cell that contains a given ray
 auto InfiniteMediumNavigator::findCellContainingRay(
                                     const Length*,
-                                    const double* ) const -> InternalCellHandle
+                                    const double* ) const -> EntityId
 {
   return d_cell;
 }
@@ -144,7 +144,7 @@ void InfiniteMediumNavigator::setState( const Length x_position,
                                         const double x_direction,
                                         const double y_direction,
                                         const double z_direction,
-                                        const InternalCellHandle )
+                                        const EntityId )
 {
   this->setState( x_position, y_position, z_position,
                         x_direction, y_direction, z_direction );
@@ -163,7 +163,7 @@ const double* InfiniteMediumNavigator::getDirection() const
 }
 
 // Get the cell that contains the internal ray
-auto InfiniteMediumNavigator::getCurrentCell() const -> InternalCellHandle
+auto InfiniteMediumNavigator::getCurrentCell() const -> EntityId
 {
   return d_cell;
 }
@@ -173,7 +173,7 @@ auto InfiniteMediumNavigator::getCurrentCell() const -> InternalCellHandle
  * to the invalid surface.
  */
 auto InfiniteMediumNavigator::fireRay(
-                                 InternalSurfaceHandle* surface_hit ) -> Length
+                                 EntityId* surface_hit ) -> Length
 {
   if( surface_hit != NULL )
     *surface_hit = Navigator::invalidSurfaceHandle();

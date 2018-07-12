@@ -65,7 +65,7 @@ RootNavigator::~RootNavigator()
 PointLocation RootNavigator::getPointLocation(
                                        const Length position[3],
                                        const double*,
-                                       const InternalCellHandle cell_id ) const
+                                       const EntityId cell_id ) const
 {
   TGeoVolume* cell = d_root_model->getVolumePtr( cell_id );
 
@@ -110,7 +110,7 @@ PointLocation RootNavigator::getPointLocation(
 /*! \details The surface id will not be used. The dot product of the normal
  * and the direction will be positive defined.
  */
-void RootNavigator::getSurfaceNormal( const InternalSurfaceHandle,
+void RootNavigator::getSurfaceNormal( const EntityId,
                                       const Length position[3],
                                       const double direction[3],
                                       double normal[3] ) const
@@ -147,9 +147,9 @@ void RootNavigator::getSurfaceNormal( const InternalSurfaceHandle,
 auto RootNavigator::findCellContainingRay(
                       const Length position[3],
                       const double direction[3],
-                      CellIdSet& found_cell_cache ) const -> InternalCellHandle
+                      CellIdSet& found_cell_cache ) const -> EntityId
 {
-  InternalCellHandle found_cell =
+  EntityId found_cell =
     this->findCellContainingRay( position, direction );
 
   // Add the new cell to the cache
@@ -161,7 +161,7 @@ auto RootNavigator::findCellContainingRay(
 // Find the cell that contains the ray
 auto RootNavigator::findCellContainingRay(
                         const Length position[3],
-                        const double direction[3] ) const -> InternalCellHandle
+                        const double direction[3] ) const -> EntityId
 {
   return this->findNodeContainingRay( position, direction )->GetVolume()->GetUniqueID();
 }
@@ -272,7 +272,7 @@ void RootNavigator::setState( const Length x_position,
                               const double x_direction,
                               const double y_direction,
                               const double z_direction,
-                              const InternalCellHandle )
+                              const EntityId )
 {
   this->setState( x_position, y_position, z_position,
                   x_direction, y_direction, z_direction );
@@ -297,7 +297,7 @@ const double* RootNavigator::getDirection() const
 }
 
 // Get the cell containing the internal Root ray position
-auto RootNavigator::getCurrentCell() const -> InternalCellHandle
+auto RootNavigator::getCurrentCell() const -> EntityId
 {
   // Make sure that the internal ray is set
   testPrecondition( this->isStateSet() );
@@ -310,7 +310,7 @@ auto RootNavigator::getCurrentCell() const -> InternalCellHandle
  * aren't managed separately in Root (they are simply part of the cell
  * definition). Therefore the surface hit will always be invalid.
  */
-auto RootNavigator::fireRay( InternalSurfaceHandle* surface_hit ) -> Length
+auto RootNavigator::fireRay( EntityId* surface_hit ) -> Length
 {
   // Make sure that the internal ray is set
   testPrecondition( this->isStateSet() );
@@ -426,7 +426,7 @@ void RootNavigator::freeInternalRay()
 
 //   if( d_internal_ray_set )
 //   {
-//     InternalCellHandle current_cell = this->getCurrentCell();
+//     EntityId current_cell = this->getCurrentCell();
 
 //     ar & BOOST_SERIALIZATION_NVP( current_cell );
 //     ar & boost::serialization::make_nvp( "current_position", boost::serialization::make_array<double>( const_cast<double*>(d_navigator->GetCurrentPoint()), 3 ) );
@@ -454,7 +454,7 @@ void RootNavigator::freeInternalRay()
 //   // Set the internal ray state (if one was archived)
 //   if( d_internal_ray_set )
 //   {
-//     InternalCellHandle current_cell;
+//     EntityId current_cell;
 //     Length current_position[3];
 //     double current_direction[3];
 

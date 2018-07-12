@@ -20,7 +20,7 @@ namespace MonteCarlo{
 // Get the total forward macroscopic cross section of a material
 template<typename Material>
 double StandardFilledAdjointParticleGeometryModel<Material>::getMacroscopicTotalForwardCrossSection(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const
 {
   if( this->isCellVoid( cell ) )
@@ -35,7 +35,7 @@ double StandardFilledAdjointParticleGeometryModel<Material>::getMacroscopicTotal
  */
 template<typename Material>
 double StandardFilledAdjointParticleGeometryModel<Material>::getMacroscopicTotalForwardCrossSectionQuick(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const
 {
   // Make sure that the cell is not void
@@ -55,7 +55,7 @@ double StandardFilledAdjointParticleGeometryModel<Material>::getAdjointWeightFac
 // Get the adjoint weight factor
 template<typename Material>
 double StandardFilledAdjointParticleGeometryModel<Material>::getAdjointWeightFactor(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const
 {
   // We don't want to modify the particle weight if the cell is void
@@ -82,7 +82,7 @@ double StandardFilledAdjointParticleGeometryModel<Material>::getAdjointWeightFac
  */
 template<typename Material>
 double StandardFilledAdjointParticleGeometryModel<Material>::getAdjointWeightFactorQuick(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const
 {
   // Make sure that the cell is not void

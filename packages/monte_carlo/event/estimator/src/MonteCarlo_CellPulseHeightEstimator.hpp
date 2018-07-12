@@ -40,7 +40,7 @@ class CellPulseHeightEstimator : public EntityEstimator,
 				 public ParticleLeavingCellEventObserver
 {
   // Typedef for the serial update tracker
-  typedef std::unordered_map<Geometry::Model::InternalCellHandle,double>
+  typedef std::unordered_map<Geometry::Model::EntityId,double>
   SerialUpdateTracker;
 
   // Typedef for the parallel update tracker
@@ -49,7 +49,7 @@ class CellPulseHeightEstimator : public EntityEstimator,
 public:
 
   //! Typedef for the cell id type
-  typedef Geometry::Model::InternalCellHandle CellIdType;
+  typedef Geometry::Model::EntityId CellIdType;
 
   //! Typedef for event tags used for quick dispatcher registering
   typedef boost::mpl::vector<ParticleEnteringCellEventObserver::EventTag,

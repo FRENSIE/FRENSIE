@@ -48,7 +48,7 @@ public:
   //! Update the observer
   virtual void updateFromParticleSubtrackEndingInCellEvent(
 	     const ParticleState& particle,
-	     const Geometry::Model::InternalCellHandle cell_of_subtrack,
+	     const Geometry::Model::EntityId cell_of_subtrack,
 	     const double track_length ) = 0;
 
 private:

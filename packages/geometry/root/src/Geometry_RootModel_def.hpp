@@ -24,7 +24,7 @@ namespace Geometry{
 
 // Get the cell materials
 template<template<typename,typename,typename...> class MapType>
-void RootModel::getCellMaterialNames( MapType<InternalCellHandle,std::string>&
+void RootModel::getCellMaterialNames( MapType<EntityId,std::string>&
                                       cell_id_mat_name_map ) const
 {
   // Make sure that root is initialized

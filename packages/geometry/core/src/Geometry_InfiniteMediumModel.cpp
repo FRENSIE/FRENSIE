@@ -17,7 +17,7 @@ namespace Geometry{
 
 // Constructor
 InfiniteMediumModel::InfiniteMediumModel(
-                               const InternalCellHandle cell,
+                               const EntityId cell,
                                const Model::InternalMaterialHandle material_id,
                                const Model::Density density )
   : Model(),
@@ -74,7 +74,7 @@ void InfiniteMediumModel::getCellEstimatorData( CellEstimatorIdDataMap& ) const
 { /* ... */ }
 
 // Check if a cell exists
-bool InfiniteMediumModel::doesCellExist( const InternalCellHandle cell ) const
+bool InfiniteMediumModel::doesCellExist( const EntityId cell ) const
 {
   if( cell == d_cell )
     return true;
@@ -85,7 +85,7 @@ bool InfiniteMediumModel::doesCellExist( const InternalCellHandle cell ) const
 // Check if the cell is a termination cell
 /*! \details An infinite medium has no termination cell.
  */
-bool InfiniteMediumModel::isTerminationCell( const InternalCellHandle ) const
+bool InfiniteMediumModel::isTerminationCell( const EntityId ) const
 {
   return false;
 }
@@ -93,7 +93,7 @@ bool InfiniteMediumModel::isTerminationCell( const InternalCellHandle ) const
 // Check if a cell is void
 /*! \details By default there will only be a single void cell with an id of 1.
  */
-bool InfiniteMediumModel::isVoidCell( const InternalCellHandle cell ) const
+bool InfiniteMediumModel::isVoidCell( const EntityId cell ) const
 {
   if( cell == d_cell )
     return true;
@@ -103,7 +103,7 @@ bool InfiniteMediumModel::isVoidCell( const InternalCellHandle cell ) const
 
 // Get the cell volume
 auto InfiniteMediumModel::getCellVolume(
-                                const InternalCellHandle cell ) const -> Volume
+                                const EntityId cell ) const -> Volume
 {
   if( cell == d_cell )
     return Utility::QuantityTraits<Volume>::inf();

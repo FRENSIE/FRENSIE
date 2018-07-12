@@ -126,14 +126,14 @@ MonteCarlo::StandardFilledParticleGeometryModel<PARTICLE ## Material>
 %extend MonteCarlo::StandardFilledParticleGeometryModel<PARTICLE ## Material>
 {
   double MonteCarlo::StandardFilledParticleGeometryModel<PARTICLE ## Material>::get ## PARTICLE ## MacroscopicTotalForwardCrossSection(
-      const Geometry::Model::InternalCellHandle cell,
+      const Geometry::Model::EntityId cell,
       const double energy ) const
   {
     return $self->getMacroscopicTotalForwardCrossSection( cell, energy );
   }
 
   double MonteCarlo::StandardFilledParticleGeometryModel<PARTICLE ## Material>::get ## PARTICLE ## MacroscopicTotalForwardCrossSectionQuick(
-      const Geometry::Model::InternalCellHandle cell,
+      const Geometry::Model::EntityId cell,
       const double energy ) const
   {
     return $self->getMacroscopicTotalForwardCrossSectionQuick( cell, energy );
@@ -237,7 +237,7 @@ It is used as a base class for the Filled Geometry Model classes."
 %ignore *::operator std::shared_ptr<const Geometry::Model>() const;
 
 // %ignore the templated version of isCellVoid
-%ignore MonteCarlo::FilledGeometryModel::isCellVoid( const Geometry::Model::InternalCellHandle cell ) const;
+%ignore MonteCarlo::FilledGeometryModel::isCellVoid( const Geometry::Model::EntityId cell ) const;
 
 // Add typemaps for converting file_path to and from Python string
 %typemap(in) const boost::filesystem::path& ( boost::filesystem::path temp ){

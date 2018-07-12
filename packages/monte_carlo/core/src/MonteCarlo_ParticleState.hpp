@@ -106,13 +106,13 @@ public:
   void setSourceId( const size_t id );
 
   //! Return the cell handle for the cell where the particle (history) started
-  Geometry::Model::InternalCellHandle getSourceCell() const;
+  Geometry::Model::EntityId getSourceCell() const;
 
   //! Set the cell where the particle (history) started
-  void setSourceCell( const Geometry::Model::InternalCellHandle cell );
+  void setSourceCell( const Geometry::Model::EntityId cell );
 
   //! Return the cell handle for the cell containing the particle
-  Geometry::Model::InternalCellHandle getCell() const;
+  Geometry::Model::EntityId getCell() const;
 
   //! Return the x position of the particle
   double getXPosition() const;
@@ -241,7 +241,7 @@ public:
 
   //! Embed the particle in the desired model
   void embedInModel( const std::shared_ptr<const Geometry::Model>& model,
-                     const Geometry::Model::InternalCellHandle cell );
+                     const Geometry::Model::EntityId cell );
 
   //! Embed the particle in the desired model at the desired position
   void embedInModel( const std::shared_ptr<const Geometry::Model>& model,
@@ -252,7 +252,7 @@ public:
   void embedInModel( const std::shared_ptr<const Geometry::Model>& model,
                      const double position[3],
                      const double direction[3],
-                     const Geometry::Model::InternalCellHandle cell );
+                     const Geometry::Model::EntityId cell );
 
   //! Extract the particle from the model
   void extractFromModel();
@@ -339,7 +339,7 @@ private:
   weightType d_weight;
 
   // The source (starting) cell of the particle (history)
-  Geometry::Model::InternalCellHandle d_source_cell;
+  Geometry::Model::EntityId d_source_cell;
 
   // Lost particle boolean
   bool d_lost;

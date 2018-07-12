@@ -36,11 +36,8 @@ class Navigator
 
 public:
 
-  //! The internal cell handle type
-  typedef unsigned long long InternalCellHandle;
-
-  //! The internal surface handle type
-  typedef unsigned long long InternalSurfaceHandle;
+  //! The entity (cell or surface) id type
+  typedef uint64_t EntityId;
 
   //! The length unit
   typedef boost::units::cgs::length LengthUnit;
@@ -52,7 +49,7 @@ public:
   typedef UnitAwareRay<LengthUnit> Ray;
 
   //! The cell id set
-  typedef std::set<InternalCellHandle> CellIdSet;
+  typedef std::set<EntityId> CellIdSet;
 
   //! The advance callback
   typedef std::function<void(const Length)> AdvanceCompleteCallback;
@@ -73,7 +70,7 @@ public:
   virtual PointLocation getPointLocation(
                                      const Length position[3],
                                      const double direction[3],
-                                     const InternalCellHandle cell ) const = 0;
+                                     const EntityId cell ) const = 0;
 
   /*! Get the location of a cell w.r.t. a given cell
    *
@@ -81,13 +78,13 @@ public:
    * outside of the cell when close to a boundary.
    */
   PointLocation getPointLocation( const Ray& ray,
-                                  const InternalCellHandle cell ) const;
+                                  const EntityId cell ) const;
 
   /*! Get the surface normal at a point on the surface
    *
    * The dot product of the direction and normal must be positive defined.
    */
-  virtual void getSurfaceNormal( const InternalSurfaceHandle surface_id,
+  virtual void getSurfaceNormal( const EntityId surface_id,
                                  const Length position[3],
                                  const double direction[3],
                                  double normal[3] ) const = 0;
@@ -96,7 +93,7 @@ public:
    *
    * The dot product of the direction and normal will be positive defined.
    */
-  void getSurfaceNormal( const InternalSurfaceHandle surface_id,
+  void getSurfaceNormal( const EntityId surface_id,
                          const Ray& ray,
                          double normal[3] ) const;
 
@@ -108,7 +105,7 @@ public:
    * cache. A std::runtime_error (or class derived from it) will be thrown if
    * an error occurs.
    */
-  virtual InternalCellHandle findCellContainingRay(
+  virtual EntityId findCellContainingRay(
                                        const Length position[3],
                                        const double direction[3],
                                        CellIdSet& found_cell_cache ) const = 0;
@@ -121,7 +118,7 @@ public:
    * cache. A std::runtime_error (or class derived from it) will be thrown if
    * an error occurs.
    */
-  InternalCellHandle findCellContainingRay(
+  EntityId findCellContainingRay(
                                            const Ray& ray,
                                            CellIdSet& found_cell_cache ) const;
 
@@ -131,7 +128,7 @@ public:
    * the point when close to a boundary. A std::runtime_error (or class
    * derived from it) must be thrown if an error occurs.
    */
-  virtual InternalCellHandle findCellContainingRay(
+  virtual EntityId findCellContainingRay(
                                          const Length position[3],
                                          const double direction[3] ) const = 0;
 
@@ -143,7 +140,7 @@ public:
    * A std::runtime_error (or class derived from it) will be thrown if an error
    * occurs.
    */
-  InternalCellHandle findCellContainingRay( const Ray& ray ) const;
+  EntityId findCellContainingRay( const Ray& ray ) const;
 
   //! Check if an internal ray has been set
   virtual bool isStateSet() const = 0;
@@ -186,7 +183,7 @@ public:
                          const double x_direction,
                          const double y_direction,
                          const double z_direction,
-                         const InternalCellHandle start_cell ) = 0;
+                         const EntityId start_cell ) = 0;
 
   /*! Set the internal ray with known starting cell
    *
@@ -196,7 +193,7 @@ public:
    */
   void setState( const Length position[3],
                  const double direction[3],
-                 const InternalCellHandle start_cell );
+                 const EntityId start_cell );
 
   /*! Set the internal ray with known starting cell
    *
@@ -205,7 +202,7 @@ public:
    * if an error occurs.
    */
   void setState( const Ray& ray,
-                 const InternalCellHandle start_cell );
+                 const EntityId start_cell );
 
   //! Get the internal ray position
   virtual const Length* getPosition() const = 0;
@@ -218,21 +215,21 @@ public:
    * A std::runtime_error (or class derived from it) must be thrown
    * if an error occurs.
    */
-  virtual InternalCellHandle getCurrentCell() const = 0;
+  virtual EntityId getCurrentCell() const = 0;
 
   /*! Fire the internal ray through the geometry
    *
    * A std::runtime_error (or class derived from it) must be thrown if a ray
    * tracing error occurs.
    */
-  virtual Length fireRay( InternalSurfaceHandle* surface_hit ) = 0;
+  virtual Length fireRay( EntityId* surface_hit ) = 0;
 
   /*! Fire the internal ray through the geometry
    *
    * A std::runtime_error (or class derived from it) must be thrown if a ray
    * tracing error occurs.
    */
-  Length fireRay( InternalSurfaceHandle& surface_hit );
+  Length fireRay( EntityId& surface_hit );
 
   /*! Fire the internal ray through the geometry
    *
@@ -267,10 +264,10 @@ public:
   void changeDirection( const double direction[3] );
 
   //! The invalid cell handle
-  static InternalCellHandle invalidCellHandle();
+  static EntityId invalidCellHandle();
 
   //! The invalid surface handle
-  static InternalSurfaceHandle invalidSurfaceHandle();
+  static EntityId invalidSurfaceHandle();
 
   /*! Clone the navigator
    *
@@ -309,14 +306,14 @@ private:
 // Get the location of a cell w.r.t. a given cell
 inline PointLocation Navigator::getPointLocation(
                                           const Ray& ray,
-                                          const InternalCellHandle cell ) const
+                                          const EntityId cell ) const
 {
   return this->getPointLocation( ray.getPosition(), ray.getDirection(), cell );
 }
 
 // Get the surface normal at a point on the surface
 inline void Navigator::getSurfaceNormal(
-                                        const InternalSurfaceHandle surface_id,
+                                        const EntityId surface_id,
                                         const Ray& ray,
                                         double normal[3] ) const
 {
@@ -333,7 +330,7 @@ inline void Navigator::getSurfaceNormal(
 // Find the cell that contains a given ray
 inline auto Navigator::findCellContainingRay(
                       const Ray& ray,
-                      CellIdSet& found_cell_cache ) const -> InternalCellHandle
+                      CellIdSet& found_cell_cache ) const -> EntityId
 {
   return this->findCellContainingRay( ray.getPosition(),
                                       ray.getDirection(),
@@ -341,7 +338,7 @@ inline auto Navigator::findCellContainingRay(
 }
 
 // Find the cell that contains a given ray
-inline auto Navigator::findCellContainingRay( const Ray& ray ) const -> InternalCellHandle
+inline auto Navigator::findCellContainingRay( const Ray& ray ) const -> EntityId
 {
   return this->findCellContainingRay( ray.getPosition(), ray.getDirection() );
 }
@@ -364,7 +361,7 @@ inline void Navigator::setState( const Ray& ray )
 // Set the internal ray with known starting cell
 inline void Navigator::setState( const Length position[3],
                                  const double direction[3],
-                                 const InternalCellHandle start_cell )
+                                 const EntityId start_cell )
 {
   this->setState( position[0], position[1], position[2],
                   direction[0], direction[1], direction[2],
@@ -373,13 +370,13 @@ inline void Navigator::setState( const Length position[3],
 
 // Set the internal ray with known starting cell
 inline void Navigator::setState( const Ray& ray,
-                                 const InternalCellHandle start_cell )
+                                 const EntityId start_cell )
 {
   this->setState( ray.getPosition(), ray.getDirection() );
 }
 
 // Fire the internal ray through the geometry
-inline auto Navigator::fireRay( InternalSurfaceHandle& surface_hit ) -> Length
+inline auto Navigator::fireRay( EntityId& surface_hit ) -> Length
 {
   return this->fireRay( &surface_hit );
 }

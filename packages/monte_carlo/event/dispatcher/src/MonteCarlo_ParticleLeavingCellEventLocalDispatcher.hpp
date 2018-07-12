@@ -25,7 +25,7 @@ namespace MonteCarlo{
  * \ingroup particle_leaving_cell_event
  */
 class ParticleLeavingCellEventLocalDispatcher :
-    public ParticleEventLocalDispatcher<Geometry::Model::InternalCellHandle,
+    public ParticleEventLocalDispatcher<Geometry::Model::EntityId,
                                         ParticleLeavingCellEventObserver>
 {
 
@@ -33,7 +33,7 @@ public:
 
   //! Constructor
   ParticleLeavingCellEventLocalDispatcher(
-		    const Geometry::Model::InternalCellHandle cell_id );
+		    const Geometry::Model::EntityId cell_id );
 
   //! Destructor
   ~ParticleLeavingCellEventLocalDispatcher()
@@ -42,7 +42,7 @@ public:
   //! Dispatch the new event to the observers
   void dispatchParticleLeavingCellEvent(
 	       const ParticleState& particle,
-	       const Geometry::Model::InternalCellHandle cell_leaving );
+	       const Geometry::Model::EntityId cell_leaving );
 };
 
 } // end MonteCarlo namespace

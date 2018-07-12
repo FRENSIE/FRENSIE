@@ -46,7 +46,7 @@ double FilledPhotonGeometryModel::getMacroscopicReactionCrossSection(
 
 // Get the macroscopic cross section for a specific reaction
 double FilledPhotonGeometryModel::getMacroscopicReactionCrossSection(
-                         const Geometry::Model::InternalCellHandle cell,
+                         const Geometry::Model::EntityId cell,
                          const double energy,
                          const PhotonuclearReactionType reaction ) const
 {
@@ -77,7 +77,7 @@ double FilledPhotonGeometryModel::getMacroscopicReactionCrossSectionQuick(
  * is void. Calling this method with a void cell is not allowed.
  */
 double FilledPhotonGeometryModel::getMacroscopicReactionCrossSectionQuick(
-                         const Geometry::Model::InternalCellHandle cell,
+                         const Geometry::Model::EntityId cell,
                          const double energy,
                          const PhotonuclearReactionType reaction ) const
 {

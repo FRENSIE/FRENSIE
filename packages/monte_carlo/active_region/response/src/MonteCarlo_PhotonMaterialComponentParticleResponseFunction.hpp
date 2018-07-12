@@ -28,14 +28,14 @@ public:
   //! Constructor (photoatomic reaction)
   PhotonMaterialComponentParticleResponseFunction(
                        const std::shared_ptr<const FilledGeometryModel>& model,
-                       const Geometry::Model::InternalCellHandle cell,
+                       const Geometry::Model::EntityId cell,
                        const std::string& component_name,
                        const PhotoatomicReactionType reaction );
 
   //! Constructor (photonuclear reaction)
   PhotonMaterialComponentParticleResponseFunction(
                        const std::shared_ptr<const FilledGeometryModel>& model,
-                       const Geometry::Model::InternalCellHandle cell,
+                       const Geometry::Model::EntityId cell,
                        const std::string& component_name,
                        const PhotonuclearReactionType reaction );
 

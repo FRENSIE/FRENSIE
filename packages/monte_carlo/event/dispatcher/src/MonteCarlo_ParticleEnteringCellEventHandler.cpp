@@ -33,7 +33,7 @@ ParticleEnteringCellEventHandler::getParticleEnteringCellEventDispatcher() const
 // Update the observers from a particle entering cell event
 void ParticleEnteringCellEventHandler::updateObserversFromParticleEnteringCellEvent(
               const ParticleState& particle,
-              const Geometry::Model::InternalCellHandle cell_entering )
+              const Geometry::Model::EntityId cell_entering )
 {
   d_particle_entering_cell_event_dispatcher.dispatchParticleEnteringCellEvent(
                                                                particle,

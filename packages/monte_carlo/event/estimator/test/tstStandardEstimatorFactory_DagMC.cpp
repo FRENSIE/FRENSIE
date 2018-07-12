@@ -181,7 +181,7 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC, createAndRegisterEstimator )
   TEST_EQUALITY_CONST( energy_bins.front(), 1e-3 );
   TEST_EQUALITY_CONST( energy_bins.back(), 20.0 );
 
-  std::unordered_map<Geometry::ModuleTraits::InternalCellHandle,double>
+  std::unordered_map<Geometry::ModuleTraits::EntityId,double>
     cell_id_vols;
 
   hdf5_file_handler.getEstimatorEntities( 1, cell_id_vols );
@@ -283,7 +283,7 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC, createAndRegisterEstimator )
   TEST_EQUALITY_CONST( energy_bins.front(), 1e-3 );
   TEST_EQUALITY_CONST( energy_bins.back(), 20.0 );
 
-  std::unordered_map<Geometry::ModuleTraits::InternalSurfaceHandle,double>
+  std::unordered_map<Geometry::ModuleTraits::EntityId,double>
     surface_id_areas;
   hdf5_file_handler.getEstimatorEntities( 9, surface_id_areas );
 
@@ -599,7 +599,7 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC,
 
   TEST_EQUALITY_CONST( dimension_ordering.size(), 0 );
 
-  std::unordered_map<Geometry::ModuleTraits::InternalCellHandle,double>
+  std::unordered_map<Geometry::ModuleTraits::EntityId,double>
     cell_id_vols;
   hdf5_file_handler.getEstimatorEntities( 0, cell_id_vols );
 
@@ -648,7 +648,7 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC,
 
   TEST_EQUALITY_CONST( dimension_ordering.size(), 0 );
 
-  std::unordered_map<Geometry::ModuleTraits::InternalSurfaceHandle,double>
+  std::unordered_map<Geometry::ModuleTraits::EntityId,double>
     surface_id_areas;
   hdf5_file_handler.getEstimatorEntities( 5, surface_id_areas );
 

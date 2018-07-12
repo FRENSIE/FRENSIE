@@ -143,7 +143,7 @@ void ParticleState::setSourceId( const size_t id )
 }
 
 // Return the cell handle for the cell where the particle (history) started
-Geometry::Model::InternalCellHandle ParticleState::getSourceCell() const
+Geometry::Model::EntityId ParticleState::getSourceCell() const
 {
   return d_source_cell;
 }
@@ -153,13 +153,13 @@ Geometry::Model::InternalCellHandle ParticleState::getSourceCell() const
  * is first started (particle with generation number 0).
  */
 void ParticleState::setSourceCell(
-                        const Geometry::Model::InternalCellHandle cell )
+                        const Geometry::Model::EntityId cell )
 {
   d_source_cell = cell;
 }
 
 // Return the cell handle for the cell containing the particle
-Geometry::Model::InternalCellHandle ParticleState::getCell() const
+Geometry::Model::EntityId ParticleState::getCell() const
 {
   return d_navigator->getCurrentCell();
 }
@@ -545,7 +545,7 @@ void ParticleState::embedInModel(
  */
 void ParticleState::embedInModel(
                         const std::shared_ptr<const Geometry::Model>& model,
-                        const Geometry::Model::InternalCellHandle cell )
+                        const Geometry::Model::EntityId cell )
 {
   // Make sure that the model is valid
   testPrecondition( model.get() );
@@ -599,7 +599,7 @@ void ParticleState::embedInModel(
                         const std::shared_ptr<const Geometry::Model>& model,
                         const double position[3],
                         const double direction[3],
-                        const Geometry::Model::InternalCellHandle cell )
+                        const Geometry::Model::EntityId cell )
 {
   // Make sure that the model is valid
   testPrecondition( model.get() );

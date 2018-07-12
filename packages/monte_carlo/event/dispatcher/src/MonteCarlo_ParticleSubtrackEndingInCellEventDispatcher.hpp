@@ -37,7 +37,7 @@ public:
   //! Dispatch the particle subtrack ending in cell event to the observers
   void dispatchParticleSubtrackEndingInCellEvent(
 	     const ParticleState& particle,
-	     const Geometry::Model::InternalCellHandle cell_of_subtrack,
+	     const Geometry::Model::EntityId cell_of_subtrack,
 	     const double track_length );
 };
 
@@ -45,7 +45,7 @@ public:
 inline void
 ParticleSubtrackEndingInCellEventDispatcher::dispatchParticleSubtrackEndingInCellEvent(
 	    const ParticleState& particle,
-	    const Geometry::Model::InternalCellHandle  cell_of_subtrack,
+	    const Geometry::Model::EntityId  cell_of_subtrack,
 	    const double track_length )
 {
   DispatcherMap::iterator it = this->dispatcher_map().find( cell_of_subtrack );

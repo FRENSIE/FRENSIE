@@ -72,7 +72,7 @@ FilledGeometryModel::FilledGeometryModel(
   
 // Check if a cell is void
 bool FilledGeometryModel::isCellVoid(
-                           const Geometry::Model::InternalCellHandle cell,
+                           const Geometry::Model::EntityId cell,
                            const MonteCarlo::ParticleType particle_type ) const
 {
   switch( particle_type )

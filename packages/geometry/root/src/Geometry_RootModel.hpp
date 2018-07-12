@@ -75,7 +75,7 @@ public:
   #if !defined SWIG
   //! Get the cell materials
   template<template<typename,typename,typename...> class MapType>
-  void getCellMaterialNames( MapType<InternalCellHandle,std::string>&
+  void getCellMaterialNames( MapType<EntityId,std::string>&
                              cell_id_mat_name_map ) const;
   #endif // end !defined SWIG
 
@@ -90,16 +90,16 @@ public:
            CellEstimatorIdDataMap& cell_estimator_id_data_map ) const override;
 
   //! Check if a cell exists
-  bool doesCellExist( const InternalCellHandle cell_id ) const override;
+  bool doesCellExist( const EntityId cell_id ) const override;
 
   //! Check if the cell is a termination cell
-  bool isTerminationCell( const InternalCellHandle cell_id ) const override;
+  bool isTerminationCell( const EntityId cell_id ) const override;
 
   //! Check if the cell is a void cell
-  bool isVoidCell( const InternalCellHandle cell_id ) const override;
+  bool isVoidCell( const EntityId cell_id ) const override;
 
   //! Get the cell volume
-  Volume getCellVolume( const InternalCellHandle cell_id ) const override;
+  Volume getCellVolume( const EntityId cell_id ) const override;
 
   //! Create a raw, heap-allocated navigator
   RootNavigator* createNavigatorAdvanced(
@@ -130,7 +130,7 @@ private:
   bool isTerminationVolume( const TGeoVolume* volume ) const;
 
   // Get the cell
-  TGeoVolume* getVolumePtr( const InternalCellHandle& cell_id ) const;
+  TGeoVolume* getVolumePtr( const EntityId& cell_id ) const;
 
   // Get the manager
   TGeoManager* getManager() const;
@@ -164,7 +164,7 @@ private:
   TGeoManager* d_manager;
 
   // Root cell id to uid map
-  typedef std::unordered_map<InternalCellHandle,Int_t>
+  typedef std::unordered_map<EntityId,Int_t>
   CellIdUidMap;
   CellIdUidMap d_cell_id_uid_map;
 

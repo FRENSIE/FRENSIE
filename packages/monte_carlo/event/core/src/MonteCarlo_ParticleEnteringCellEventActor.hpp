@@ -55,7 +55,7 @@ public:
 
   //! Update the particle state and bank
   virtual void updateFromParticleEnteringCellEvent(
-          const Geometry::Model::InternalCellHandle cell_entering,
+          const Geometry::Model::EntityId cell_entering,
           const double optical_path_to_next_cell,
           const SimulateParticleForOpticalPath& simulate_particle_track_method,
           ParticleState& particle,
