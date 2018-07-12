@@ -42,14 +42,14 @@ public:
 
   //! Constructor
   StandardParticleSourceComponent(
-    const size_t id,
+    const uint32_t id,
     const double selection_weight,
     const std::shared_ptr<const Geometry::Model>& model,
     const std::shared_ptr<const ParticleDistribution>& particle_distribution );
 
   //! Constructor (with rejection cells )
   StandardParticleSourceComponent(
-    const size_t id,
+    const uint32_t id,
     const double selection_weight,
     const std::vector<Geometry::Model::EntityId>& rejection_cells,
     const std::shared_ptr<const Geometry::Model>& model,
@@ -57,7 +57,7 @@ public:
   
   //! Constructor (with rejection cells )
   StandardParticleSourceComponent(
-    const size_t id,
+    const uint32_t id,
     const double selection_weight,
     const CellIdSet& rejection_cells,
     const std::shared_ptr<const Geometry::Model>& model,

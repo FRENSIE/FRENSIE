@@ -20,7 +20,7 @@ StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>
 // Constructor
 template<typename ParticleStateType,typename ProbeParticleStateType>
 StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::StandardAdjointParticleSourceComponent(
-    const size_t id,
+    const uint32_t id,
     const double selection_weight,
     const std::shared_ptr<const Geometry::Model>& model,
     const std::shared_ptr<const ParticleDistribution>& particle_distribution,
@@ -36,7 +36,7 @@ StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>
 // Constructor (with rejection cells )
 template<typename ParticleStateType,typename ProbeParticleStateType>
 StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::StandardAdjointParticleSourceComponent(
-    const size_t id,
+    const uint32_t id,
     const double selection_weight,
     const std::vector<Geometry::Model::EntityId>& rejection_cells,
     const std::shared_ptr<const Geometry::Model>& model,
@@ -54,7 +54,7 @@ StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>
 // Constructor (with rejection cells )
 template<typename ParticleStateType,typename ProbeParticleStateType>
 StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::StandardAdjointParticleSourceComponent(
-    const size_t id,
+    const uint32_t id,
     const double selection_weight,
     const CellIdSet& rejection_cells,
     const std::shared_ptr<const Geometry::Model>& model,
@@ -77,7 +77,7 @@ StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>
  */
 template<typename ParticleStateType,typename ProbeParticleStateType>
 StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::StandardAdjointParticleSourceComponent(
-     const size_t id,
+     const uint32_t id,
      const double selection_weight,
      const std::shared_ptr<const FilledGeometryModel>& model,
      const std::shared_ptr<const ParticleDistribution>& particle_distribution )
@@ -94,7 +94,7 @@ StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>
  */
 template<typename ParticleStateType,typename ProbeParticleStateType>
 StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::StandardAdjointParticleSourceComponent(
-     const size_t id,
+     const uint32_t id,
      const double selection_weight,
      const CellIdSet& rejection_cells,
      const std::shared_ptr<const FilledGeometryModel>& model,

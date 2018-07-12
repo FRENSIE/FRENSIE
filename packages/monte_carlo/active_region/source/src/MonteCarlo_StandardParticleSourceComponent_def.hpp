@@ -26,7 +26,7 @@ StandardParticleSourceComponent<ParticleStateType>::StandardParticleSourceCompon
 // Constructor
 template<typename ParticleStateType>
 StandardParticleSourceComponent<ParticleStateType>::StandardParticleSourceComponent(
-     const size_t id,
+     const uint32_t id,
      const double selection_weight,
      const std::shared_ptr<const Geometry::Model>& model,
      const std::shared_ptr<const ParticleDistribution>& particle_distribution )
@@ -40,7 +40,7 @@ StandardParticleSourceComponent<ParticleStateType>::StandardParticleSourceCompon
 // Constructor (with rejection cells )
 template<typename ParticleStateType>
 StandardParticleSourceComponent<ParticleStateType>::StandardParticleSourceComponent(
-     const size_t id,
+     const uint32_t id,
      const double selection_weight,
      const std::vector<Geometry::Model::EntityId>& rejection_cells,
      const std::shared_ptr<const Geometry::Model>& model,
@@ -56,7 +56,7 @@ StandardParticleSourceComponent<ParticleStateType>::StandardParticleSourceCompon
 // Constructor (with rejection cells )
 template<typename ParticleStateType>
 StandardParticleSourceComponent<ParticleStateType>::StandardParticleSourceComponent(
-     const size_t id,
+     const uint32_t id,
      const double selection_weight,
      const CellIdSet& rejection_cells,
      const std::shared_ptr<const Geometry::Model>& model,

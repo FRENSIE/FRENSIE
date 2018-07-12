@@ -37,7 +37,7 @@ class ParticleState : public Utility::OStreamableObject
 public:
 
   //! Typedef for history number type
-  typedef unsigned long long historyNumberType;
+  typedef uint64_t historyNumberType;
 
   //! Typedef for energy type
   typedef double energyType;
