@@ -6,20 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_StandardCellEstimator.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_LoggingMacros.hpp"
 
 namespace MonteCarlo{
@@ -30,11 +19,11 @@ StandardCellEstimator::StandardCellEstimator()
   
 // Constructor
 StandardCellEstimator::StandardCellEstimator(
-                const Estimator::idType id,
-                const double multiplier,
-                const std::vector<StandardCellEstimator::CellIdType>& cell_ids,
-                const std::vector<double>& cell_volumes )
-  : BaseEstimatorType(id, multiplier, cell_ids, cell_volumes)
+                                      const uint32_t id,
+                                      const double multiplier,
+                                      const std::vector<CellIdType>& cell_ids,
+                                      const std::vector<double>& cell_volumes )
+  : StandardEntityEstimator( id, multiplier, cell_ids, cell_volumes )
 { /* ... */ }
   
 // Assign discretization to an estimator dimension
@@ -55,7 +44,7 @@ void StandardCellEstimator::assignDiscretization(
                                 " will be ignored!" );
   }
   else
-    BaseEstimatorType::assignDiscretization( bins, range_dimension );
+    StandardEntityEstimator::assignDiscretization( bins, range_dimension );
 }
 
 // Assign the particle type to the estimator
@@ -76,12 +65,12 @@ void StandardCellEstimator::assignParticleType(
                                 << particle_type << " will be ignored!" );
   }
   else
-    Estimator::assignParticleType( particle_types);
+    Estimator::assignParticleType( particle_type );
 }
 
 } // end MonteCarlo namespace
 
-EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::StandardCellEstimator );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::StandardCellEstimator );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardCellEstimator.cpp

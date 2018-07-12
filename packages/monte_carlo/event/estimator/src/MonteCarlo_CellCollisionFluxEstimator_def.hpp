@@ -71,11 +71,11 @@ void CellCollisionFluxEstimator<ContributionMultiplierPolicy>::printSummary( std
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightMultipliedCellCollisionFluxEstimator, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightMultiplier> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightMultiplier> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, CellCollisionFluxEstimator<MonteCarlo::WeightMultiplier> );
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndEnergyMultipliedCellCollisionFluxEstimator, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, CellCollisionFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 
 #endif // end MONTE_CARLO_CELL_COLLISION_FLUX_ESTIMATOR_DEF_HPP
 

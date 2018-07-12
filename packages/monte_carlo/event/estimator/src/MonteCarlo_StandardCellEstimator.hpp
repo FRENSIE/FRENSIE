@@ -16,11 +16,8 @@
 namespace MonteCarlo{
 
 //! The standard cell estimator base class
-class StandardCellEstimator : public StandardEntityEstimator<Geometry::Model::InternalCellHandle>
+class StandardCellEstimator : public StandardEntityEstimator
 {
-  // Typedef for the base estimator type
-  typedef StandardEntityEstimator<Geometry::Model::InternalCellHandle>
-  BaseEstimatorType;
 
 public:
 
@@ -28,7 +25,7 @@ public:
   typedef Geometry::Model::InternalCellHandle CellIdType;
 
   //! Constructor
-  StandardCellEstimator( const Estimator::idType id,
+  StandardCellEstimator( const uint32_t id,
 			 const double multiplier,
 			 const std::vector<CellIdType>& cell_ids,
 			 const std::vector<double>& cell_volumes );
@@ -67,7 +64,7 @@ private:
 
 BOOST_CLASS_VERSION( MonteCarlo::StandardCellEstimator, 0 );
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::StandardCellEstimator );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::StandardCellEstimator );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, StandardCellEstimator );
 
 #endif // end MONTE_CARLO_STANDARD_CELL_ESTIMATOR_HPP
 

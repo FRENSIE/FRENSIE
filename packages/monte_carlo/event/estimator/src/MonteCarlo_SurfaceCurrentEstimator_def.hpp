@@ -95,11 +95,11 @@ void SurfaceCurrentEstimator<ContributionMultiplierPolicy>::assignResponseFuncti
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightMultipliedSurfaceCurrentEstimator, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightMultiplier> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightMultiplier> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SurfaceCurrentEstimator<MonteCarlo::WeightMultiplier> );
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndEnergyMultipliedSurfaceCurrentEstimator, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SurfaceCurrentEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 
 #endif // end MONTE_CARLO_SURFACE_CURRENT_ESTIMATOR_DEF_HPP
 

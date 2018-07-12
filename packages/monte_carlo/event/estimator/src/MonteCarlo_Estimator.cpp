@@ -9,20 +9,9 @@
 // Std Lib Includes
 #include <limits>
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_Estimator.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_OpenMPProperties.hpp"
 #include "Utility_LoggingMacros.hpp"
 
@@ -30,12 +19,11 @@ namespace MonteCarlo{
 
 // Default constructor
 Estimator::Estimator()
-  : d_id( std::numeric_limits<size_t>::max() )
+  : d_id( std::numeric_limits<uint32_t>::max() )
 { /* ... */ }
   
 // Constructor
-Estimator::Estimator( const ParticleHistoryObserver::idType id,
-                      const double multiplier )
+Estimator::Estimator( const uint32_t id, const double multiplier )
   : d_id( id ),
     d_multiplier( multiplier ),
     d_particle_types(),
@@ -51,7 +39,7 @@ Estimator::Estimator( const ParticleHistoryObserver::idType id,
 }
 
 // Return the estimator id
-size_t Estimator::getId() const
+uint32_t Estimator::getId() const
 {
   return d_id;
 }
@@ -236,7 +224,7 @@ void Estimator::getTotalBinProcessedData(
 
 // Get the bin data mean and relative error for an entity
 void Estimator::getEntityBinProcessedData(
-                                   const size_t entity_id,
+                                   const uint64_t entity_id,
                                    std::vector<double>& mean,
                                    std::vector<double>& relative_error,
                                    std::vector<double>& figure_of_merit ) const
@@ -361,7 +349,7 @@ Utility::ArrayView<const double> Estimator::getEntityTotalDataFourthMoments( con
 
 // Get the total data mean, relative error, vov and fom for an entity
 void Estimator::getEntityTotalProcessedData(
-                                   const size_t entity_id,
+                                   const uint64_t entity_id,
                                    std::vector<double>& mean,
                                    std::vector<double>& relative_error,
                                    std::vector<double>& variance_of_variance,
@@ -885,7 +873,7 @@ void Estimator::printEstimatorTotalData(
   
 } // end MonteCarlo namespace
 
-EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::Estimator );
+EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo::Estimator );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_Estimator.cpp

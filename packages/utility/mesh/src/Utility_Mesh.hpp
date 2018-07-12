@@ -51,12 +51,19 @@ public:
   typedef std::unordered_map<ElementHandle,std::map<std::string,std::vector<std::pair<std::string,double> > > > MeshElementHandleDataMap;
 
   //! Constructor
-  Mesh()
+  Mesh( const Estimator::idType id,
+        const double multiplier )
   { /* ... */ }
 
   //! Destructor
   virtual ~Mesh()
   { /* ... */ }
+
+  //! Get the mesh type name
+  virtual std::string getMeshTypeName() const = 0;
+
+  //! Get the mesh element type name
+  virtual std::string getMeshElementTypeName() const = 0;
 
   //! Get the start iterator of the mesh element list
   virtual ElementHandleIterator getStartElementHandleIterator() const = 0;

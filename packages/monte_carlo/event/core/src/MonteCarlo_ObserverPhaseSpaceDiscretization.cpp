@@ -61,12 +61,12 @@ void ObserverPhaseSpaceDiscretization::assignDiscretizationToDimension(
     std::map<ObserverPhaseSpaceDimension,std::pair<std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>,bool> > discretized_dimensions;
 
     d_impl->getDiscretizedDimensions( discretized_dimensions );
-
+    
     d_impl.reset( new DetailedObserverPhaseSpaceDiscretizationImpl );
-
+    
     const decltype(discretized_dimensions)::mapped_type&
       discretized_dimension_data = discretized_dimensions.begin()->second;
-
+    
     d_impl->assignDiscretizationToDimension( discretized_dimension_data.first,
                                              discretized_dimension_data.second );
     d_impl->assignDiscretizationToDimension( discretization, range_dimension );

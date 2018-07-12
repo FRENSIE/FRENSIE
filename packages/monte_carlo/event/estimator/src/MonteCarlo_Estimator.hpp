@@ -29,7 +29,7 @@
 #include "MonteCarlo_ParticleHistoryObserver.hpp"
 #include "MonteCarlo_ParticleResponse.hpp"
 #include "MonteCarlo_UniqueIdManager.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_SampleMomentCollection.hpp"
 #include "Utility_DesignByContract.hpp"
@@ -64,14 +64,14 @@ protected:
 public:
 
   //! Constructor
-  Estimator( const size_t id, const double multiplier );
+  Estimator( const uint32_t id, const double multiplier );
 
   //! Destructor
   virtual ~Estimator()
   { /* ... */ }
 
   //! Return the estimator id
-  size_t getId() const;
+  uint32_t getId() const;
 
   //! Return the estimator constant multiplier
   double getMultiplier() const;
@@ -111,13 +111,13 @@ public:
   bool isParticleTypeAssigned( const ParticleType particle_type ) const;
 
   //! Get the entities assigned to the estimator
-  virtual void getEntityIds( std::set<size_t>& entity_ids ) const = 0;
+  virtual void getEntityIds( std::set<uint64_t>& entity_ids ) const = 0;
 
   //! Check if an entity is assigned to this estimator
-  virtual bool isEntityAssigned( const size_t entity_id ) const = 0;
+  virtual bool isEntityAssigned( const uint64_t entity_id ) const = 0;
 
   //! Return the normalization constant for an entity
-  virtual double getEntityNormConstant( const size_t entity_id ) const = 0;
+  virtual double getEntityNormConstant( const uint64_t entity_id ) const = 0;
 
   //! Return the total normalization constant
   virtual double getTotalNormConstant() const = 0;
@@ -134,13 +134,13 @@ public:
                                  std::vector<double>& figure_of_merit ) const;
 
   //! Get the bin data first moments for an entity
-  virtual Utility::ArrayView<const double> getEntityBinDataFirstMoments( const size_t entity_id ) const = 0;
+  virtual Utility::ArrayView<const double> getEntityBinDataFirstMoments( const uint64_t entity_id ) const = 0;
 
   //! Get the bin data second moments for an entity
-  virtual Utility::ArrayView<const double> getEntityBinDataSecondMoments( const size_t entity_id ) const = 0;
+  virtual Utility::ArrayView<const double> getEntityBinDataSecondMoments( const uint64_t entity_id ) const = 0;
 
   //! Get the bin data mean and relative error for an entity
-  void getEntityBinProcessedData( const size_t entity_id,
+  void getEntityBinProcessedData( const uint64_t entity_id,
                                   std::vector<double>& mean,
                                   std::vector<double>& relative_error,
                                   std::vector<double>& figure_of_merit ) const;
@@ -167,19 +167,19 @@ public:
                               std::vector<double>& figure_of_merit ) const;
 
   //! Get the total data first moments for an entity
-  virtual Utility::ArrayView<const double> getEntityTotalDataFirstMoments( const size_t entity_id ) const;
+  virtual Utility::ArrayView<const double> getEntityTotalDataFirstMoments( const uint64_t entity_id ) const;
 
   //! Get the total data second moments for an entity
-  virtual Utility::ArrayView<const double> getEntityTotalDataSecondMoments( const size_t entity_id ) const;
+  virtual Utility::ArrayView<const double> getEntityTotalDataSecondMoments( const uint64_t entity_id ) const;
 
   //! Get the total data third moments for an entity
-  virtual Utility::ArrayView<const double> getEntityTotalDataThirdMoments( const size_t entity_id ) const;
+  virtual Utility::ArrayView<const double> getEntityTotalDataThirdMoments( const uint64_t entity_id ) const;
 
   //! Get the total data fourth moments for an entity
-  virtual Utility::ArrayView<const double> getEntityTotalDataFourthMoments( const size_t entity_id ) const;
+  virtual Utility::ArrayView<const double> getEntityTotalDataFourthMoments( const uint64_t entity_id ) const;
 
   //! Get the total data mean, relative error, vov and fom for an entity
-  void getEntityTotalProcessedData( const size_t entity_id,
+  void getEntityTotalProcessedData( const uint64_t entity_id,
                                     std::vector<double>& mean,
                                     std::vector<double>& relative_error,
                                     std::vector<double>& variance_of_variance,
@@ -352,7 +352,7 @@ private:
   friend class boost::serialization::access;
 
   // The estimator id
-  UniqueIdManager<Estimator,size_t> d_id;
+  UniqueIdManager<Estimator,uint32_t> d_id;
   
   // The constant multiplier for the estimator
   double d_multiplier;
@@ -374,7 +374,7 @@ private:
 
 BOOST_CLASS_VERSION( MonteCarlo::Estimator, 0 );
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::Estimator );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::Estimator );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, Estimator );
 
 //---------------------------------------------------------------------------//
 // Template Includes

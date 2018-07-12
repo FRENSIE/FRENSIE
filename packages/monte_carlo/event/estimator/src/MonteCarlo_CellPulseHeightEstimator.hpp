@@ -35,13 +35,10 @@ namespace MonteCarlo{
  * a single thread.
  */
 template<typename ContributionMultiplierPolicy = WeightMultiplier>
-class CellPulseHeightEstimator : public EntityEstimator<Geometry::Model::InternalCellHandle>,
+class CellPulseHeightEstimator : public EntityEstimator,
 				 public ParticleEnteringCellEventObserver,
 				 public ParticleLeavingCellEventObserver
 {
-  // Typedef for the base estimator type
-  typedef EntityEstimator<Geometry::Model::InternalCellHandle> BaseEstimatorType;
-  
   // Typedef for the serial update tracker
   typedef std::unordered_map<Geometry::Model::InternalCellHandle,double>
   SerialUpdateTracker;
@@ -60,7 +57,7 @@ public:
   EventTags;
 
   //! Constructor
-  CellPulseHeightEstimator( const Estimator::idType id,
+  CellPulseHeightEstimator( const uint32_t id,
 			    const double multiplier,
 			    const std::vector<CellIdType>& entity_ids );
 

@@ -20,13 +20,10 @@
 namespace MonteCarlo{
 
 //! The standard surface estimator base class
-class StandardSurfaceEstimator : public StandardEntityEstimator<Geometry::Model::InternalSurfaceHandle>,
+class StandardSurfaceEstimator : public StandardEntityEstimator,
 				 public ParticleCrossingSurfaceEventObserver
 {
-  // Typedef for the base estimator type
-  typedef StandardEntityEstimator<Geometry::Model::InternalSurfaceHandle>
-  BaseEstimatorType;
-
+  
 public:
 
   //! Typedef for the surface id type
@@ -37,13 +34,13 @@ public:
   EventTags;
 
   //! Constructor (for flux estimators)
-  StandardSurfaceEstimator( const Estimator::idType id,
+  StandardSurfaceEstimator( const uint32_t id,
                             const double multiplier,
                             const std::vector<SurfaceIdType>& surface_ids,
                             const std::vector<double>& surface_areas );
 
   //! Constructor (for non-flux estimators)
-  StandardSurfaceEstimator( const Estimator::idType id,
+  StandardSurfaceEstimator( const uint32_t id,
                             const double multiplier,
                             const std::vector<SurfaceIdType>& surface_ids );
 
@@ -73,7 +70,7 @@ private:
 template<typename Archive>
 void StandardSurfaceEstimator::serialize( Archive& ar, const unsigned version )
 {
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseEstimatorType );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( StandardEntityEstimator );
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleCrossingSurfaceEventObserver );
 }
 
@@ -81,7 +78,7 @@ void StandardSurfaceEstimator::serialize( Archive& ar, const unsigned version )
 
 BOOST_CLASS_VERSION( MonteCarlo::StandardSurfaceEstimator, 0 );
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::StandardSurfaceEstimator );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::StandardSurfaceEstimator );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, StandardSurfaceEstimator );
 
 #endif // end MONTE_CARLO_STANDARD_SURFACE_ESTIMATOR_HPP
 

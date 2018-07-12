@@ -28,10 +28,10 @@ CellPulseHeightEstimator<ContributionMultiplierPolicy>::CellPulseHeightEstimator
 // Constructor
 template<typename ContributionMultiplierPolicy>
 CellPulseHeightEstimator<ContributionMultiplierPolicy>::CellPulseHeightEstimator(
-          const Estimator::idType id,
+          const uint32_t id,
           const double multiplier,
           const std::vector<CellIdType>& entity_ids )
-  : BaseEstimatorType( id, multiplier, entity_ids ),
+  : EntityEstimator( id, multiplier, entity_ids ),
     ParticleEnteringCellEventObserver(),
     ParticleLeavingCellEventObserver(),
     d_update_tracker( 1 ),
@@ -171,7 +171,7 @@ CellPulseHeightEstimator<ContributionMultiplierPolicy>::enableThreadSupport(
   // Make sure only the root thread calls this
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
   
-  BaseEstimatorType::enableThreadSupport( num_threads );
+  EntityEstimator::enableThreadSupport( num_threads );
 
   // Add thread support to update tracker
   d_update_tracker.resize( num_threads );
@@ -187,7 +187,7 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::resetData()
   // Make sure only the root thread calls this
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
-  BaseEstimatorType::resetData();
+  EntityEstimator::resetData();
 
   // Reset the update tracker
   for( size_t i = 0; i < d_update_tracker.size(); ++i )
@@ -205,7 +205,7 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::assignDiscretizatio
   const bool range_dimension ) 
 {
   if( bins->getDimension() == ENERGY_DIMENSION )
-    BaseEstimatorType::assignDiscretization( bins, false );
+    EntityEstimator::assignDiscretization( bins, false );
   else
   {
     FRENSIE_LOG_TAGGED_WARNING( "Estimator",
@@ -332,7 +332,7 @@ template<typename Archive>
 void CellPulseHeightEstimator<ContributionMultiplierPolicy>::save( Archive& ar, const unsigned version )
 {
   // Save the base class data
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseEstimatorType );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( EntityEstimator );
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleEnteringCellEventObserver );
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleLeavingCellEventObserver );
 }
@@ -343,7 +343,7 @@ template<typename Archive>
 void CellPulseHeightEstimator<ContributionMultiplierPolicy>::load( Archive& ar, const unsigned version )
 {
   // Load the base class data
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseEstimatorType );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( EntityEstimator );
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleEnteringCellEventObserver );
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleLeavingCellEventObserver );
 
@@ -357,11 +357,11 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::load( Archive& ar, 
 // Explicit instantiation (extern declaration)
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightMultipliedCellPulseHeightEstimator, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> );
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndEnergyMultipliedCellPulseHeightEstimator );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 
 #endif // end MONTE_CARLO_CELL_PULSE_HEIGHT_ESTIMATOR_DEF_HPP
 
