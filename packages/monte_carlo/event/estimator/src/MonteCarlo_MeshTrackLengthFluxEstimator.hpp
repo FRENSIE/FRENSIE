@@ -41,9 +41,9 @@ public:
   EventTags;
 
   //! Constructor
-  MeshTrackLengthFluxEsimator( const uint32_t id,
-                               const double multiplier,
-                               const std::shared_ptr<const Utility::Mesh>& mesh );
+  MeshTrackLengthFluxEstimator( const uint32_t id,
+                                const double multiplier,
+                                const std::shared_ptr<const Utility::Mesh>& mesh );
 
   //! Destructor
   ~MeshTrackLengthFluxEstimator()
@@ -92,7 +92,7 @@ private:
   void assignUpdateMethod();
 
   // Export the estimator data and mesh as a vtk file
-  void exportAsVtk();
+  void exportAsVtk() const;
 
   // Save the data to an archive
   template<typename Archive>
@@ -114,7 +114,7 @@ private:
   bool d_no_time_bins_update_method;
 
   // The update function
-  typedef std::function<void(const Particle&,const double[3],const double[3])> UpdateFunction;
+  typedef std::function<void(const ParticleState&,const double[3],const double[3])> UpdateFunction;
   UpdateFunction d_update_method;
 };
 

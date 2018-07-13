@@ -44,7 +44,7 @@ StandardSurfaceEstimator::StandardSurfaceEstimator(
  are not allowed.
  */
 void StandardSurfaceEstimator::assignParticleType(
-                                            const ParticleType& particle_type )
+                                             const ParticleType particle_type )
 {
   if( this->getNumberOfAssignedParticleTypes() != 0 )
   {

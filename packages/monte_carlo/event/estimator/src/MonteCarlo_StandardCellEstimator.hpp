@@ -54,7 +54,7 @@ private:
   // Serialize the estimator data
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseEstimatorType ); }
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( StandardEntityEstimator ); }
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;

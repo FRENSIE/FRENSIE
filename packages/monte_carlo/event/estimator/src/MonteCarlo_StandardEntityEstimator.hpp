@@ -77,16 +77,16 @@ public:
   Utility::ArrayView<const double> getTotalDataFourthMoments() const final override;
 
   //! Get the total data first moments for an entity
-  Utility::ArrayView<const double> getEntityTotalDataFirstMoments( const uint32_t entity_id ) const final override;
+  Utility::ArrayView<const double> getEntityTotalDataFirstMoments( const uint64_t entity_id ) const final override;
 
   //! Get the total data second moments for an entity
-  Utility::ArrayView<const double> getEntityTotalDataSecondMoments( const uint32_t entity_id ) const final override;
+  Utility::ArrayView<const double> getEntityTotalDataSecondMoments( const uint64_t entity_id ) const final override;
 
   //! Get the total data third moments for an entity
-  Utility::ArrayView<const double> getEntityTotalDataThirdMoments( const uint32_t entity_id ) const final override;
+  Utility::ArrayView<const double> getEntityTotalDataThirdMoments( const uint64_t entity_id ) const final override;
 
   //! Get the total data fourth moments for an entity
-  Utility::ArrayView<const double> getEntityTotalDataFourthMoments( const uint32_t entity_id ) const final override;
+  Utility::ArrayView<const double> getEntityTotalDataFourthMoments( const uint64_t entity_id ) const final override;
 
   //! Commit the contribution from the current history to the estimator
   void commitHistoryContribution() final override;
@@ -98,7 +98,7 @@ public:
   void resetData() final override;
 
   //! Reduce estimator data on all processes and collect on the root process
-  void reduceData( Utility::Communicator& comm,
+  void reduceData( const Utility::Communicator& comm,
                    const int root_process ) final override;
 
 protected:
@@ -111,8 +111,7 @@ protected:
                            const double multiplier );
 
   //! Assign entities
-  void assignEntities( const typename BaseEstimatorType::EntityNormConstMap&
-                       entity_norm_data ) override;
+  void assignEntities( const EntityEstimator::EntityNormConstMap& entity_norm_data ) override;
 
   //! Assign response function to the estimator
   void assignResponseFunction( const std::shared_ptr<const ParticleResponse>& response_function ) override;
@@ -125,13 +124,13 @@ protected:
   //! Add estimator contribution from a point of the current history
   void addPartialHistoryPointContribution(
                    const uint64_t entity_id,
-                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   const ObserverParticleStateWrapper& particle_state_wrapper,
                    const double contribution );
 
   //! Add estimator contribution from a range of the current history
   void addPartialHistoryRangeContribution(
                    const uint64_t entity_id,
-                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   const ObserverParticleStateWrapper& particle_state_wrapper,
                    const double contribution );
 
   //! Get the total estimator data
@@ -208,7 +207,7 @@ private:
 
 } // end MonteCarlo namespace
 
-BOOST_SERIALIZATION_CLASS1_VERSION( EntityEstimator, MonteCarlo, 0 );
+BOOST_SERIALIZATION_CLASS_VERSION( StandardEntityEstimator, MonteCarlo, 0 );
 
 //---------------------------------------------------------------------------//
 // Template Includes.

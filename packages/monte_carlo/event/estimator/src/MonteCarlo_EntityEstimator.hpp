@@ -100,7 +100,7 @@ protected:
   void assignResponseFunction( const std::shared_ptr<const ParticleResponse>& response_function ) override;
 
   //! Commit history contribution to a bin of an entity
-  void commitHistoryContributionToBinOfEntity( const uint64_t& entity_id,
+  void commitHistoryContributionToBinOfEntity( const uint64_t entity_id,
 					       const size_t bin_index,
 					       const double contribution );
 
@@ -113,10 +113,10 @@ protected:
 				    const std::string& entity_type ) const;
 
   //! Get the total estimator bin data
-  const Estimator::TwoEstimatorMomentsCollection& getTotalBinData() const final override;
+  const Estimator::TwoEstimatorMomentsCollection& getTotalBinData() const;
 
   //! Get the bin data for an entity
-  const Estimator::TwoEstimatorMomentsCollection& getEntityBinData( const uint64_t entity_id ) const final override;
+  const Estimator::TwoEstimatorMomentsCollection& getEntityBinData( const uint64_t entity_id ) const;
 
 private:
 

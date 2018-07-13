@@ -37,7 +37,7 @@ public:
   EventTags;
 
   //! Constructor
-  CellCollisionFluxEstimator( const Estimator::idType id,
+  CellCollisionFluxEstimator( const uint32_t id,
                               const double multiplier,
                               const std::vector<CellIdType>& cell_ids,
                               const std::vector<double>& cell_volumes );
@@ -49,7 +49,7 @@ public:
   //! Add current history estimator contribution
   void updateFromParticleCollidingInCellEvent(
                      const ParticleState& particle,
-                     const cellIdType cell_of_collision,
+                     const CellIdType cell_of_collision,
                      const double inverse_total_cross_section ) final override;
 
   //! Print the estimator data summary

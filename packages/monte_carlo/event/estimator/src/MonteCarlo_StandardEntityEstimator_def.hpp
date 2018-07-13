@@ -87,7 +87,7 @@ void StandardEntityEstimator::load( Archive& ar, const unsigned version )
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( StandardEntityEstimator, MonteCarlo );
 
-EXTERN_EXPLICIT_CLASS_SERIALIZATION_INST( MonteCarlo, StandardEntityEstimator );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, StandardEntityEstimator );
 
 #endif // end MONTE_CARLO_STANDARD_ENTITY_ESTIMATOR_DEF_HPP
 

@@ -26,9 +26,9 @@ CellCollisionFluxEstimator<ContributionMultiplierPolicy>::CellCollisionFluxEstim
 // Constructor
 template<typename ContributionMultiplierPolicy>
 CellCollisionFluxEstimator<ContributionMultiplierPolicy>::CellCollisionFluxEstimator(
-                                      const Estimator::idType id,
+                                      const uint32_t id,
                                       const double multiplier,
-                                      const std::vector<cellIdType>& cell_ids,
+                                      const std::vector<CellIdType>& cell_ids,
                                       const std::vector<double>& cell_volumes )
   : StandardCellEstimator( id, multiplier, cell_ids, cell_volumes ),
     ParticleCollidingInCellEventObserver()
@@ -38,7 +38,7 @@ CellCollisionFluxEstimator<ContributionMultiplierPolicy>::CellCollisionFluxEstim
 template<typename ContributionMultiplierPolicy>
 void CellCollisionFluxEstimator<ContributionMultiplierPolicy>::updateFromParticleCollidingInCellEvent(
                                      const ParticleState& particle,
-                                     const cellIdType cell_of_collision,
+                                     const CellIdType cell_of_collision,
 		                     const double inverse_total_cross_section )
 {
   // Make sure that the particle type is assigned to this estimator
@@ -49,7 +49,7 @@ void CellCollisionFluxEstimator<ContributionMultiplierPolicy>::updateFromParticl
   const double contribution = inverse_total_cross_section*
     ContributionMultiplierPolicy::multiplier( particle );
 
-  EstimatorParticleStateWrapper particle_state_wrapper( particle );
+  ObserverParticleStateWrapper particle_state_wrapper( particle );
 
   this->addPartialHistoryPointContribution( cell_of_collision,
                                             particle_state_wrapper,

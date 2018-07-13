@@ -24,9 +24,9 @@ SurfaceFluxEstimator<ContributionMultiplierPolicy>::SurfaceFluxEstimator()
 // Constructor
 template<typename ContributionMultiplierPolicy>
 SurfaceFluxEstimator<ContributionMultiplierPolicy>::SurfaceFluxEstimator(
-                              const Estimator::idType id,
+                              const uint32_t id,
                               const double multiplier,
-                              const std::vector<surfaceIdType>& surface_ids,
+                              const std::vector<SurfaceIdType>& surface_ids,
                               const std::vector<double>& surface_areas,
                               const double cosine_cutoff )
   : StandardSurfaceEstimator( id, multiplier, surface_ids, surface_areas ),
@@ -43,7 +43,7 @@ SurfaceFluxEstimator<ContributionMultiplierPolicy>::SurfaceFluxEstimator(
 template<typename ContributionMultiplierPolicy>
 void SurfaceFluxEstimator<ContributionMultiplierPolicy>::updateFromParticleCrossingSurfaceEvent(
                                           const ParticleState& particle,
-                                          const surfaceIdType surface_crossing,
+                                          const SurfaceIdType surface_crossing,
                                           const double angle_cosine )
 {
   // Make sure that the particle type is assigned to this estimator
@@ -67,7 +67,7 @@ void SurfaceFluxEstimator<ContributionMultiplierPolicy>::updateFromParticleCross
 
   contribution *= ContributionMultiplierPolicy::multiplier( particle );
 
-  EstimatorParticleStateWrapper particle_state_wrapper( particle );
+  ObserverParticleStateWrapper particle_state_wrapper( particle );
   particle_state_wrapper.setAngleCosine( angle_cosine );
   
   this->addPartialHistoryPointContribution( surface_crossing,
@@ -80,7 +80,7 @@ template<typename ContributionMultiplierPolicy>
 void SurfaceFluxEstimator<ContributionMultiplierPolicy>::printSummary(
                                                        std::ostream& os ) const
 {
-  os << "Surface Flux Estimator: " << this->getId() << "\n"
+  os << "Surface Flux Estimator: " << this->getId() << "\n";
 
   this->printImplementation( os, "Surface" );
 

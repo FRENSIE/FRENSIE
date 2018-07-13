@@ -25,7 +25,7 @@
 #include "MonteCarlo_ObserverPhaseSpaceDimension.hpp"
 #include "MonteCarlo_ObserverPhaseSpaceDimensionTraits.hpp"
 #include "MonteCarlo_ObserverPhaseSpaceDiscretization.hpp"
-#include "MonteCarlo_EstimatorParticleStateWrapper.hpp"
+#include "MonteCarlo_ObserverParticleStateWrapper.hpp"
 #include "MonteCarlo_ParticleHistoryObserver.hpp"
 #include "MonteCarlo_ParticleResponse.hpp"
 #include "MonteCarlo_UniqueIdManager.hpp"
@@ -186,7 +186,7 @@ public:
                                     std::vector<double>& figure_of_merit ) const;
 
   //! Check if the estimator has uncommitted history contributions
-  bool hasUncommittedHistoryContribution( const unsigned thread_id ) const final override;
+  bool hasUncommittedHistoryContribution( const unsigned thread_id ) const;
 
   //! Check if the estimator has uncommitted history contributions
   bool hasUncommittedHistoryContribution() const final override;
@@ -227,13 +227,13 @@ protected:
 
   //! Reduce a single collection
   void reduceCollection(
-                      const std::shared_ptr<const Utility::Communicator>& comm,
+                      const Utility::Communicator& comm,
                       const int root_process,
                       TwoEstimatorMomentsCollection& collection ) const;
 
   //! Reduce a single collection
   void reduceCollection(
-                      const std::shared_ptr<const Utility::Communicator>& comm,
+                      const Utility::Communicator& comm,
                       const int root_process,
                       FourEstimatorMomentsCollection& collection ) const;
 
@@ -257,7 +257,7 @@ protected:
 
   //! Check if the range intersects the estimator phase space
   bool doesRangeIntersectEstimatorPhaseSpace(
-           const EstimatorParticleStateWrapper& particle_state_wrapper ) const;
+            const ObserverParticleStateWrapper& particle_state_wrapper ) const;
 
   //! Calculate the bin index for the desired response function
   template<typename PointType>
@@ -269,7 +269,7 @@ protected:
 
   //! Calculate the bin indices for the desired response function
   void calculateBinIndicesAndWeightsOfRange(
-            const EstimatorParticleStateWrapper& particle_state_wrapper,
+            const ObserverParticleStateWrapper& particle_state_wrapper,
             const size_t response_function_index,
             ObserverPhaseSpaceDimensionDiscretization::BinIndexWeightPairArray&
             bin_indices_and_weights ) const;
@@ -312,18 +312,18 @@ protected:
 private:
 
   // Convert first and second moments to mean and relative error
-  void processMoments( const double first_moment,
-                       const double second_moment,
+  void processMoments( const Utility::SampleMoment<1,double>& first_moment,
+                       const Utility::SampleMoment<2,double>& second_moment,
 		       const double norm_constant,
 		       double& mean,
 		       double& relative_error,
                        double& figure_of_merit ) const;
 
   // Convert first, second, third, fourth moments to mean, rel. er., vov, fom
-  void processMoments( const double first_moment,
-                       const double second_moment,
-                       const double third_moment,
-                       const double fourth_moment,
+  void processMoments( const Utility::SampleMoment<1,double>& first_moment,
+                       const Utility::SampleMoment<2,double>& second_moment,
+                       const Utility::SampleMoment<3,double>& third_moment,
+                       const Utility::SampleMoment<4,double>& fourth_moment,
                        const double norm_constant,
                        double& mean,
                        double& relative_error,
@@ -375,6 +375,22 @@ private:
 BOOST_CLASS_VERSION( MonteCarlo::Estimator, 0 );
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::Estimator );
 EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, Estimator );
+
+namespace Utility{
+
+//! Specialization of Utility::TypeNameTraits or MonteCarlo::Estimator
+template<>
+struct TypeNameTraits<MonteCarlo::Estimator>
+{
+  //! Check if the type has a specialization
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  { return "Estimator"; }
+};
+  
+} // end Utility namespace
 
 //---------------------------------------------------------------------------//
 // Template Includes

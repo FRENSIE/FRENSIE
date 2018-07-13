@@ -27,7 +27,7 @@ SurfaceCurrentEstimator<ContributionMultiplierPolicy>::SurfaceCurrentEstimator()
 // Constructor
 template<typename ContributionMultiplierPolicy>
 SurfaceCurrentEstimator<ContributionMultiplierPolicy>::SurfaceCurrentEstimator(
-                    const Estimator::idType id,
+                    const uint32_t id,
                     const double multiplier,
                     const std::vector<StandardSurfaceEstimator::SurfaceIdType>&
                     surface_ids )
@@ -58,7 +58,7 @@ void SurfaceCurrentEstimator<ContributionMultiplierPolicy>::updateFromParticleCr
   const double contribution =
     ContributionMultiplierPolicy::multiplier( particle );
 
-  EstimatorParticleStateWrapper particle_state_wrapper( particle );
+  ObserverParticleStateWrapper particle_state_wrapper( particle );
   particle_state_wrapper.setAngleCosine( angle_cosine );
 
   this->addPartialHistoryPointContribution( surface_crossing,

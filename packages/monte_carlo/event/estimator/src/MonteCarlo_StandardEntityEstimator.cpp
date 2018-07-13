@@ -1,4 +1,4 @@
-/---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //!
 //! \file   MonteCarlo_StandardEntityEstimator.cpp
 //! \author Alex Robinson
@@ -222,7 +222,7 @@ void StandardEntityEstimator::commitHistoryContribution()
 }
 
 // Enable support for multiple threads
-void StandardEntityEstimator::enableThreadSupport( const size_t num_threads )
+void StandardEntityEstimator::enableThreadSupport( const unsigned num_threads )
 {
   // Make sure only the root thread calls this
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
@@ -258,9 +258,8 @@ void StandardEntityEstimator::resetData()
 }
 
 // Reduce estimator data on all processes and collect on the root process
-void StandardEntityEstimator::reduceData(
-                                             const Utility::Communicator& comm,
-                                             const int root_process )
+void StandardEntityEstimator::reduceData( const Utility::Communicator& comm,
+                                          const int root_process )
 {
   // Make sure only the root thread calls this
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
@@ -338,8 +337,7 @@ void StandardEntityEstimator::reduceData(
 
 // Assign entities
 void StandardEntityEstimator::assignEntities(
-                          const typename EntityEstimator::EntityNormConstMap&
-                          entity_norm_data )
+                  const EntityEstimator::EntityNormConstMap& entity_norm_data )
 {
   // Make sure there is at least one entity
   testPrecondition( entity_norm_data.size() > 0 );
@@ -388,7 +386,7 @@ void StandardEntityEstimator::printImplementation(
   EntityEstimator::printImplementation( os, entity_type );
 
   // Print the entity total estimator data
-  for( auto&& : d_entity_total_estimator_moments_map )
+  for( auto&& entity_id : d_entity_total_estimator_moments_map )
   {
     os << entity_type << " " << entity_id.first << " Total Data:\n";
     os << "--------\n";
@@ -418,7 +416,7 @@ void StandardEntityEstimator::printImplementation(
  */
 void StandardEntityEstimator::addPartialHistoryPointContribution(
 		   const uint64_t entity_id,
-		   const EstimatorParticleStateWrapper& particle_state_wrapper,
+		   const ObserverParticleStateWrapper& particle_state_wrapper,
                    const double contribution )
 {
   // Make sure the thread id is valid
@@ -470,7 +468,7 @@ void StandardEntityEstimator::addPartialHistoryPointContribution(
  */
 void StandardEntityEstimator::addPartialHistoryRangeContribution(
                    const uint64_t entity_id,
-                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   const ObserverParticleStateWrapper& particle_state_wrapper,
                    const double contribution )
 {
   // Make sure the thread id is valid
@@ -489,26 +487,29 @@ void StandardEntityEstimator::addPartialHistoryRangeContribution(
     typename ObserverPhaseSpaceDimensionDiscretization::BinIndexWeightPairArray
       bin_indices_and_weights;
 
+    this->calculateBinIndicesAndWeightsOfRange( particle_state_wrapper,
+                                                0,
+                                                bin_indices_and_weights );
+
     for( size_t r = 0; r < this->getNumberOfResponseFunctions(); ++r )
     {
-      this->calculateBinIndicesAndWeightsOfRange( particle_state_wrapper,
-                                                  r,
-                                                  bin_indices_and_weights );
-
+      const size_t bin_index_shift = r*this->getNumberOfBins();
+      
       for( size_t i = 0; i < bin_indices_and_weights.size(); ++i )
       {
         const double processed_contribution = contribution*
           Utility::get<1>( bin_indices_and_weights[i] )*
           this->evaluateResponseFunction(
                                 particle_state_wrapper.getParticleState(), r );
-                  
+
+        const size_t complete_bin_index =
+          Utility::get<0>( bin_indices_and_weights[i] ) + bin_index_shift;
+        
         this->addInfoToUpdateTracker( thread_id,
                                       entity_id,
-                                      bin_indices_and_weights[i],
+                                      complete_bin_index,
                                       processed_contribution );
       }
-
-      bin_indices_and_weights.clear();
     }
   }
 
@@ -542,7 +543,7 @@ StandardEntityEstimator::getEntityTotalData( const uint64_t entity_id ) const
 }
 
 // Resize the entity total estimator moments map arrays
-void StandardEntityEstimator::resizeEntityTotalEstimatorMomentsMapArrays()
+void StandardEntityEstimator::resizeEntityTotalEstimatorMomentsMapCollections()
 {
   typename EntityEstimatorMomentsCollectionMap::iterator
     start, end;
@@ -569,6 +570,8 @@ void StandardEntityEstimator::commitHistoryContributionToTotalOfEntity(
   // Make sure the response function index is valid
   testPrecondition( response_function_index <
 		    this->getNumberOfResponseFunctions() );
+  // Make sure the contribution is valid
+  testPrecondition( !Utility::QuantityTraits<double>::isnaninf( contribution ) );
   
   Estimator::FourEstimatorMomentsCollection&
     entity_total_estimator_moments_collection =
@@ -577,7 +580,7 @@ void StandardEntityEstimator::commitHistoryContributionToTotalOfEntity(
   // Update the moments 
   #pragma omp critical
   {
-    entity_total_estimator_moments_collection.addRawScore( response_function_index, constribution );
+    entity_total_estimator_moments_collection.addRawScore( response_function_index, contribution );
   }
 }
 
@@ -656,7 +659,7 @@ void StandardEntityEstimator::resetUpdateTracker( const size_t thread_id )
   d_update_tracker[thread_id].clear();
 }
   
-EXPLICIT_CLASS_SERIALIZATION_INST( MonteCarlo::StandardEntityEstimator );
+EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardEntityEstimator );
 
 } // end MonteCarlo namespace  
 

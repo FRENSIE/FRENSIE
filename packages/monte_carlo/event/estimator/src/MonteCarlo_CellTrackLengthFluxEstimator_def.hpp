@@ -27,9 +27,9 @@ CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::CellTrackLengthFluxE
 // Constructor
 template<typename ContributionMultiplierPolicy>
 CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::CellTrackLengthFluxEstimator(
-                               const Estimator::idType id,
+                               const uint32_t id,
                                const double multiplier,
-                               const std::vector<cellIdType>& cell_ids,
+                               const std::vector<CellIdType>& cell_ids,
 	                       const std::vector<double>& cell_volumes )
   : StandardCellEstimator( id, multiplier, cell_ids, cell_volumes ),
     ParticleSubtrackEndingInCellEventObserver()
@@ -39,7 +39,7 @@ CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::CellTrackLengthFluxE
 template<typename ContributionMultiplierPolicy>
 void CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromParticleSubtrackEndingInCellEvent(
                                              const ParticleState& particle,
-                                             const cellIdType cell_of_subtrack,
+                                             const CellIdType cell_of_subtrack,
                                              const double track_length )
 {
   // Make sure that the particle type is assigned to this estimator
@@ -50,7 +50,7 @@ void CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromParti
   const double contribution = track_length*
     ContributionMultiplierPolicy::multiplier( particle );
 
-  EstimatorParticleStateWrapper particle_state_wrapper( particle );
+  ObserverParticleStateWrapper particle_state_wrapper( particle );
   particle_state_wrapper.calculateStateTimesUsingParticleTimeAsEndTime( track_length );
 
   this->addPartialHistoryRangeContribution( cell_of_subtrack,
@@ -101,7 +101,7 @@ void CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignResponseF
                                 << response_function->getName() << "!" );
   }
   else
-    Estimator::setResponseFunctions( response_functions );
+    Estimator::assignResponseFunction( response_function );
 }
 
 } // end MonteCarlo namespace

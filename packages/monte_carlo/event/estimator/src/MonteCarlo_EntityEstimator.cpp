@@ -9,7 +9,6 @@
 // FRENSIE Includes
 #include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_EntityEstimator.hpp"
-#include "Utility_CommHelpers.hpp"
 #include "Utility_OpenMPProperties.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_LoggingMacros.hpp"
@@ -31,23 +30,20 @@ EntityEstimator::EntityEstimator( const uint32_t id,
 { /* ... */ }
 
 // Return the entity ids associated with this estimator
-void EntityEstimator::getEntityIds(
-                                      std::vector<uint64_t>& entity_ids ) const
+void EntityEstimator::getEntityIds( std::set<uint64_t>& entity_ids ) const
 {
   for( auto&& entity_data : d_entity_norm_constants_map )
     entity_ids.insert( entity_data.first );
 }
 // Check if the entity is assigned to this estimator
-bool EntityEstimator::isEntityAssigned(
-					       const uint64_t entity_id ) const
+bool EntityEstimator::isEntityAssigned( const uint64_t entity_id ) const
 {
   return d_entity_norm_constants_map.find( entity_id ) !=
     d_entity_norm_constants_map.end();
 }
 
 // Return the normalization constant for an entity
-double EntityEstimator::getEntityNormConstant(
-					       const uint64_t entity_id ) const
+double EntityEstimator::getEntityNormConstant( const uint64_t entity_id ) const
 {
   // Make sure the entity is assigned to the estimator
   testPrecondition( this->isEntityAssigned( entity_id ) );
@@ -78,7 +74,7 @@ Utility::ArrayView<const double> EntityEstimator::getTotalBinDataSecondMoments()
 }
 
 // Get the bin data first moments for an entity
-Utility::ArrayView<const double> EntityEstimator::getEntityBinDataFirstMoments( const uint32_t entity_id ) const
+Utility::ArrayView<const double> EntityEstimator::getEntityBinDataFirstMoments( const uint64_t entity_id ) const
 {
   // Make sure the entity is assigned to the estimator
   testPrecondition( this->isEntityAssigned( entity_id ) );
@@ -88,10 +84,10 @@ Utility::ArrayView<const double> EntityEstimator::getEntityBinDataFirstMoments( 
 
   return Utility::ArrayView<const double>(
                              Utility::getCurrentScores<1>( entity_collection ),
-                             entity_collections.size() );
+                             entity_collection.size() );
 }
 // Get the bin data second moments for an entity
-Utility::ArrayView<const double> EntityEstimator::getEntityBinDataSecondMoments( const uint32_t entity_id ) const
+Utility::ArrayView<const double> EntityEstimator::getEntityBinDataSecondMoments( const uint64_t entity_id ) const
 {
   // Make sure the entity is assigned to the estimator
   testPrecondition( this->isEntityAssigned( entity_id ) );
@@ -101,7 +97,7 @@ Utility::ArrayView<const double> EntityEstimator::getEntityBinDataSecondMoments(
 
   return Utility::ArrayView<const double>(
                              Utility::getCurrentScores<2>( entity_collection ),
-                             entity_collections.size() );
+                             entity_collection.size() );
 }
 
 // Reset the estimator data
@@ -112,7 +108,7 @@ void EntityEstimator::resetData()
 
   // Reset the entity bin data
   for( auto&& entity_data : d_entity_estimator_moments_map )
-    entity_data.second->reset();
+    entity_data.second.reset();
 }
 
 // Reduce estimator data on all processes and collect on the root process
@@ -181,7 +177,7 @@ void EntityEstimator::reduceData( const Utility::Communicator& comm,
                              "data!" );
   }
 
-  Estimator::reduce( comm, root_process );
+  Estimator::reduceData( comm, root_process );
 }
 
 // Assign entities
@@ -218,7 +214,7 @@ void EntityEstimator::assignDiscretization(
   // Make sure only the root thread calls this
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
-  Estimator::assignDiscretization( bin_boundaries );
+  Estimator::assignDiscretization( bins, range_dimension );
 
   // Resize the entity estimator moments map collections
   this->resizeEntityEstimatorMapCollections();
@@ -231,7 +227,7 @@ void EntityEstimator::assignDiscretization(
 void EntityEstimator::assignResponseFunction(
              const std::shared_ptr<const ParticleResponse>& response_function )
 {
-  Estimator::assignResponseFunction( response_functions );
+  Estimator::assignResponseFunction( response_function );
 
   // Resize the entity estimator moment map collections
   this->resizeEntityEstimatorMapCollections();
@@ -296,7 +292,7 @@ void EntityEstimator::printImplementation(
   this->printEstimatorResponseFunctionNames( os );
 
   // Print the binning data
-  this->printEstimatorBins( os );
+  this->printEstimatorDiscretization( os );
 
   os << "\n";
 
@@ -341,7 +337,7 @@ void EntityEstimator::printEntityIds( std::ostream& os,
   typename EntityNormConstMap::const_iterator entity_id, end_entity_id;
 
   for( auto&& entity_data : d_entity_norm_constants_map )
-    os << entity_id.first << " ";
+    os << entity_id->first << " ";
 
   os << "\n";
 }
@@ -359,16 +355,16 @@ void EntityEstimator::printEntityNormConstants(
     os << " Areas: ";
 
   for( auto&& entity_data : d_entity_norm_constants_map )
-    os << Utility::toString(entity_id.second) << " ";
+    os << Utility::toString(entity_data.second) << " ";
 
-  os << "\n"
+  os << "\n";
 }
 
 // Get the total estimator bin data
 /*! \details This function breaks encapsulation and is therefore not ideal.
  * It is needed by mesh estimators for exporting data in .h5m and .vtk formats.
  */
-const Estimator::TwoEstimatorMomentsArray&
+const Estimator::TwoEstimatorMomentsCollection&
 EntityEstimator::getTotalBinData() const
 {
   return d_estimator_total_bin_data;
@@ -378,7 +374,7 @@ EntityEstimator::getTotalBinData() const
 /*! \details This function breaks encapsulation and is therefore not ideal.
  * It is needed by mesh estimators for exporting data in .h5m and .vtk formats.
  */
-const Estimator::TwoEstimatorMomentsArray&
+const Estimator::TwoEstimatorMomentsCollection&
 EntityEstimator::getEntityBinData( const uint64_t entity_id ) const
 {
   // Make sure the entity is valid
@@ -414,7 +410,7 @@ void EntityEstimator::resizeEstimatorTotalCollection()
                 this->getNumberOfBins()*this->getNumberOfResponseFunctions() );
 }
 
-EXPLICIT_CLASS_SERIALIZATION_INST( EntityEstimator );
+EXPLICIT_CLASS_SERIALIZE_INST( EntityEstimator );
   
 } // end MonteCarlo namespace
 

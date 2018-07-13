@@ -83,6 +83,9 @@ void ObserverPhaseSpaceDiscretization::getDiscretizedDimensions(
 }
 
 // Return the dimensions that have been discretized
+/*! \details The returned dimensions will be in the order that they
+ * were assigned.
+ */
 void ObserverPhaseSpaceDiscretization::getDiscretizedDimensions(
        std::vector<ObserverPhaseSpaceDimension>& discretized_dimensions ) const
 {

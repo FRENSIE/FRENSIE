@@ -84,7 +84,7 @@ void EntityEstimator::initializeEntityEstimatorMomentsMap(
                                   " has been specified more than once in "
                                   "estimator " << this->getId() <<
                                   ". All but the first occurrence will be "
-                                  "ignored."
+                                  "ignored." );
     }
   }
 }
@@ -142,7 +142,7 @@ void EntityEstimator::serialize( Archive& ar, const unsigned version )
 } // end MonteCarlo namespace
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( EntityEstimator, MonteCarlo );
-EXTERN_EXPLICIT_CLASS_SERIALIZATION_INST( MonteCarlo, EntityEstimator );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, EntityEstimator );
 
 #endif // end MONTE_CARLO_ENTITY_ESTIMATOR_DEF_HPP
 

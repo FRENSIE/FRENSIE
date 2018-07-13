@@ -22,13 +22,13 @@ MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::MeshTrackLengthFluxE
   
 // Constructor
 template<typename ContributionMultiplierPolicy>
-MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::MeshTrackLengthFluxEsimator(
+MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::MeshTrackLengthFluxEstimator(
                              const uint32_t id,
                              const double multiplier,
                              const std::shared_ptr<const Utility::Mesh>& mesh )
   : StandardEntityEstimator( id, multiplier ),
     d_mesh( mesh ),
-    d_no_time_bins_update_methos( true ),
+    d_no_time_bins_update_method( true ),
     d_update_method()
 {
   // Make sure that the mesh pointer is valid
@@ -179,15 +179,15 @@ void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::printSummary(
 
     for( size_t i = 0; i < this->getNumberOfResponseFunctions(); ++i )
     {
-      if( mean == 0.0 && relative_error == 0.0 )
+      if( mean[i] == 0.0 && relative_error[i] == 0.0 )
         ++num_zero_elements[i];
       else
       {
-        if( relative_error <= 0.10 )
+        if( relative_error[i] <= 0.10 )
           ++num_elements_lte_10pc_re[i];
-        if( relative_error <= 0.05 )
+        if( relative_error[i] <= 0.05 )
           ++num_elements_lte_5pc_re[i];
-        if( relative_error <= 0.01 )
+        if( relative_error[i] <= 0.01 )
           ++num_elements_lte_1pc_re[i];
       }
     }
@@ -241,7 +241,7 @@ void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::printSummary(
 
 // Export the estimator data and mesh as a vtk file
 template<typename ContributionMultiplierPolicy>
-void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportAsVtk()
+void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportAsVtk() const
 {
   Utility::Mesh::TagNameSet bin_tag_name_set( {"mean: ", "relative_error: ", "fom: "} );
                                              
@@ -394,7 +394,7 @@ void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignResponseF
                                 << response_function->getName() << "!" );
   }
   else
-    Estimator::setResponseFunctions( response_functions );
+    Estimator::assignResponseFunction( response_function );
 }
 
 // Save the data to an archive
@@ -424,8 +424,7 @@ void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::load( Archive& 
   ar & BOOST_SERIALIZATION_NVP( d_mesh );
   ar & BOOST_SERIALIZATION_NVP( d_no_time_bins_update_method );
 
-  if( d_no_time_bins_update_method )
-    this->assignUpdateMethod();
+  this->assignUpdateMethod();
 }
 
 // Assign the update method

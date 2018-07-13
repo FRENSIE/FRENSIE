@@ -106,20 +106,27 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::commitHistoryContri
 
   while( cell_data != end_cell_data )
   {
-    thread_dimension_values[ENERGY_DIMENSION] =
+    thread_dimension_values[OBSERVER_ENERGY_DIMENSION] =
       boost::any( cell_data->second );
 
     if( this->isPointInEstimatorPhaseSpace( thread_dimension_values ) )
     {
-      bin_index = this->calculateBinIndex( thread_dimension_values, 0u );
+      ObserverPhaseSpaceDimensionDiscretization::BinIndexArray bin_indices;
+      
+      this->calculateBinIndicesOfPoint( thread_dimension_values,
+                                        0u,
+                                        bin_indices );
 
       bin_contribution = this->calculateHistoryContribution(
 					      cell_data->second,
 					      ContributionMultiplierPolicy() );
 
-      this->commitHistoryContributionToBinOfEntity( cell_data->first,
-						    bin_index,
-						    bin_contribution );
+      for( size_t i = 0; i < bin_indices.size(); ++i )
+      {
+        this->commitHistoryContributionToBinOfEntity( cell_data->first,
+                                                      bin_indices[i],
+                                                      bin_contribution );
+      }
 
       // Add the energy deposition in this cell to the total energy deposition
       energy_deposition_in_all_cells += cell_data->second;
@@ -129,20 +136,27 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::commitHistoryContri
   }
 
   // Store the total energy deposition in the dimension values map
-  thread_dimension_values[ENERGY_DIMENSION] =
+  thread_dimension_values[OBSERVER_ENERGY_DIMENSION] =
     boost::any( energy_deposition_in_all_cells );
 
   // Determine the pulse bin for the combination of all cells
   if( this->isPointInEstimatorPhaseSpace( thread_dimension_values ) )
   {
-    bin_index = this->calculateBinIndex( thread_dimension_values, 0u );
+    ObserverPhaseSpaceDimensionDiscretization::BinIndexArray bin_indices;
+    
+    this->calculateBinIndicesOfPoint( thread_dimension_values,
+                                      0u,
+                                      bin_indices );
 
     bin_contribution = this->calculateHistoryContribution(
 					      energy_deposition_in_all_cells,
 					      ContributionMultiplierPolicy() );
 
-    this->commitHistoryContributionToBinOfTotal( bin_index,
-						 bin_contribution );
+    for( size_t i = 0; i < bin_indices.size(); ++i )
+    {
+      this->commitHistoryContributionToBinOfTotal( bin_indices[i],
+                                                   bin_contribution );
+    }
   }
 
   // Reset the update tracker
@@ -204,12 +218,12 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::assignDiscretizatio
   const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins,
   const bool range_dimension ) 
 {
-  if( bins->getDimension() == ENERGY_DIMENSION )
+  if( bins->getDimension() == OBSERVER_ENERGY_DIMENSION )
     EntityEstimator::assignDiscretization( bins, false );
   else
   {
     FRENSIE_LOG_TAGGED_WARNING( "Estimator",
-                                << bin_boundaries->getDimensionName() <<
+                                bins->getDimensionName() <<
                                 " bins cannot be set for pulse height "
                                 "estimators. The bins requested for pulse "
                                 "height estimator " << this->getId() <<
@@ -329,7 +343,7 @@ CellPulseHeightEstimator<ContributionMultiplierPolicy>::resetUpdateTracker(
 // committed before the save.
 template<typename ContributionMultiplierPolicy>
 template<typename Archive>
-void CellPulseHeightEstimator<ContributionMultiplierPolicy>::save( Archive& ar, const unsigned version )
+void CellPulseHeightEstimator<ContributionMultiplierPolicy>::save( Archive& ar, const unsigned version ) const
 {
   // Save the base class data
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( EntityEstimator );
@@ -359,7 +373,7 @@ BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightMultipliedCellPulseHeightEs
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> );
 EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> );
 
-BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndEnergyMultipliedCellPulseHeightEstimator );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndEnergyMultipliedCellPulseHeightEstimator, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 

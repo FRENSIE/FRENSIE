@@ -31,7 +31,7 @@ public:
   typedef StandardSurfaceEstimator::EventTags EventTags;
 
   //! Constructor
-  SurfaceFluxEstimator( const Estimator::idType id,
+  SurfaceFluxEstimator( const uint32_t id,
                         const double multiplier,
                         const std::vector<SurfaceIdType>& surface_ids,
                         const std::vector<double>& surface_areas,

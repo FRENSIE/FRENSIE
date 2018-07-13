@@ -53,7 +53,7 @@ void StandardCellEstimator::assignDiscretization(
  * allowed.
  */
 void StandardCellEstimator::assignParticleType(
-                                            const ParticleType& particle_type )
+                                            const ParticleType particle_type )
 {
   if( this->getNumberOfAssignedParticleTypes() != 0 )
   {

@@ -29,7 +29,7 @@ Estimator::Estimator( const uint32_t id, const double multiplier )
     d_particle_types(),
     d_response_functions( 1 ),
     d_phase_space_discretization(),
-    d_has_uncommitted_history_contribution( 1, false ),
+    d_has_uncommitted_history_contribution( 1, false )
 {
   // Make sure the multiplier is valid
   testPrecondition( multiplier > 0.0 );
@@ -92,15 +92,12 @@ void Estimator::setResponseFunction(
  */
 void Estimator::setResponseFunctions(
                    const std::vector<std::shared_ptr<const ParticleResponse> >&
-                   response_functions );
+                   response_functions )
 {
   // Make sure that there is at least one response function
   testPrecondition( response_functions.size() > 0 );
 
   // Assign each response function individually
-  STLCompliantContainer<ResponseFunctionPointer>::const_iterator
-    response_function_it = response_functions.begin();
-
   for( auto&& response_function_ptr : response_functions )
     this->setResponseFunction( response_function_ptr );
 }
@@ -134,7 +131,7 @@ void Estimator::setParticleTypes( const std::set<ParticleType>& particle_types )
 
   // Assign each particle type individually
   for( auto&& particle_type : particle_types )
-    this->assignParticleType( *particle_type_it );
+    this->assignParticleType( particle_type );
 }
 
 // Get the particle types that can contribute to the estimator
@@ -395,7 +392,7 @@ void Estimator::assignDiscretization(
   // Make sure only the master thread calls this function
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
-  d_phase_space_discretization.assignDiscretizationToDimension( discretization, range_dimension );
+  d_phase_space_discretization.assignDiscretizationToDimension( bins, range_dimension );
 }
 
 // Assign response function to the estimator
@@ -484,7 +481,7 @@ void Estimator::reduceCollection(
                                                     reduced_second_moments );
 
   // The root process will store the reduced moments
-  if( comm->rank() == root_process )
+  if( comm.rank() == root_process )
   {
     for( size_t i = 0; i < collection.size(); ++i )
     {
@@ -602,14 +599,14 @@ size_t Estimator::calculateResponseFunctionIndex(
 
 // Check if the range intersects the estimator phase space
 bool Estimator::doesRangeIntersectEstimatorPhaseSpace(
-            const EstimatorParticleStateWrapper& particle_state_wrapper ) const
+            const ObserverParticleStateWrapper& particle_state_wrapper ) const
 {
   return d_phase_space_discretization.doesRangeIntersectDiscretization( particle_state_wrapper );
 }
 
 // Calculate the bin indices for the desired response function
 void Estimator::calculateBinIndicesAndWeightsOfRange(
-            const EstimatorParticleStateWrapper& particle_state_wrapper,
+            const ObserverParticleStateWrapper& particle_state_wrapper,
             const size_t response_function_index,
             ObserverPhaseSpaceDimensionDiscretization::BinIndexWeightPairArray&
             bin_indices_and_weights ) const
@@ -625,7 +622,7 @@ void Estimator::calculateBinIndicesAndWeightsOfRange(
   // Add the response function index to each phase space bin index
   for( size_t i = 0; i < bin_indices_and_weights.size(); ++i )
   {
-    bin_indices_and_weights[i] +=
+    Utility::get<0>(bin_indices_and_weights[i]) +=
       response_function_index*this->getNumberOfBins();
   }
 }
@@ -647,12 +644,13 @@ void Estimator::processMoments( const TwoEstimatorMomentsCollection& moments,
                         Utility::getMoment<2>( moments, index ),
                         norm_constant,
                         mean,
-                        relative_error );
+                        relative_error,
+                        figure_of_merit );
 }
 
 // Convert first and second moments to mean and relative error
-void Estimator::processMoments( const double first_moment,
-                                const double second_moment,
+void Estimator::processMoments( const Utility::SampleMoment<1,double>& first_moment,
+                                const Utility::SampleMoment<2,double>& second_moment,
                                 const double norm_constant,
                                 double& mean,
                                 double& relative_error,
@@ -705,10 +703,10 @@ void Estimator::processMoments( const FourEstimatorMomentsCollection& moments,
 }
 
 // Convert first, second, third, fourth moments to mean, rel. er., vov, fom
-void Estimator::processMoments( const double first_moment,
-                                const double second_moment,
-                                const double third_moment,
-                                const double fourth_moment,
+void Estimator::processMoments( const Utility::SampleMoment<1,double>& first_moment,
+                                const Utility::SampleMoment<2,double>& second_moment,
+                                const Utility::SampleMoment<3,double>& third_moment,
+                                const Utility::SampleMoment<4,double>& fourth_moment,
                                 const double norm_constant,
                                 double& mean,
                                 double& relative_error,
@@ -761,9 +759,9 @@ void Estimator::printEstimatorDiscretization( std::ostream& os ) const
  * the number of estimator bins times the number of response functions.
  */
 void Estimator::printEstimatorBinData(
-			std::ostream& os,
-		        const TwoEstimatorMomentsArray& estimator_moments_data,
-			const double norm_constant ) const
+                   std::ostream& os,
+		   const TwoEstimatorMomentsCollection& estimator_moments_data,
+                   const double norm_constant ) const
 {
   // Make sure that the estimator moment array is valid
   testPrecondition( estimator_moments_data.size() ==
@@ -773,6 +771,22 @@ void Estimator::printEstimatorBinData(
   // Get the dimension ordering
   std::vector<ObserverPhaseSpaceDimension> dimension_ordering;
   d_phase_space_discretization.getDiscretizedDimensions( dimension_ordering );
+
+  std::map<ObserverPhaseSpaceDimension,size_t> dimension_index_step_size_map;
+  
+  // Get the number of bins for each dimension
+  if( !dimension_ordering.empty() )
+  {
+    dimension_index_step_size_map[dimension_ordering.front()] = 1;
+  
+    for( size_t i = 1; i < dimension_ordering.size(); ++i )
+    {
+      size_t& step_size = dimension_index_step_size_map[dimension_ordering[i]];
+      
+      step_size = dimension_index_step_size_map[dimension_ordering[i-1]];
+      step_size *= this->getNumberOfBins( dimension_ordering[i-1] );
+    }
+  }        
   
   // Use this array to determine when bin indices should be printed
   std::vector<size_t> previous_bin_indices(
@@ -786,10 +800,10 @@ void Estimator::printEstimatorBinData(
 
     for( size_t i = 0u; i < this->getNumberOfBins(); ++i )
     {
-      for( int d = dimension_ordering.size()-1; d >= 0; --d )
+      for( size_t d = dimension_ordering.size()-1; d >= 0; --d )
       {
-	const size_t& dimension_index_step_size =
-	 d_dimension_index_step_size_map.find(dimension_ordering[d])->second;
+	const size_t dimension_index_step_size =
+          dimension_index_step_size_map.find(dimension_ordering[d])->second;
 
 	// Calculate the bin index for the dimension
 	size_t bin_index = (i/dimension_index_step_size)%
@@ -809,7 +823,7 @@ void Estimator::printEstimatorBinData(
 
 	  // Print a new line character for all but the first dimension
 	  if( d != 0 )
-	    os << std::endl;
+	    os << "\n";
 	}
       }
 
@@ -819,18 +833,24 @@ void Estimator::printEstimatorBinData(
       // Calculate the estimator bin data
       double estimator_bin_value;
       double estimator_bin_rel_err;
+      double estimator_bin_fom;
 
       this->processMoments( estimator_moments_data,
                             bin_index,
                             norm_constant,
                             estimator_bin_value,
-                            estimator_bin_rel_err );
+                            estimator_bin_rel_err,
+                            estimator_bin_fom );
 
       // Print the estimator bin data
-      os << " " << estimator_bin_value << " "
-	 << estimator_bin_rel_err << std::endl;
+      os << " " << estimator_bin_value
+         << " " << estimator_bin_rel_err
+         << " " << estimator_bin_fom
+         << "\n";
     }
   }
+
+  os << std::flush;
 }
 
 // Print the total estimator data stored in an array
