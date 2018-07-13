@@ -89,8 +89,8 @@ public:
   //! Return the total number of bins (per response function)
   size_t getNumberOfBins() const;
 
-  //! Set a response function
-  void setResponseFunction( const std::shared_ptr<const ParticleResponse>& response_function );
+  //! Add a response function
+  void addResponseFunction( const std::shared_ptr<const ParticleResponse>& response_function );
 
   //! Set the response functions
   void setResponseFunctions( const std::vector<std::shared_ptr<const ParticleResponse> >& response_functions );

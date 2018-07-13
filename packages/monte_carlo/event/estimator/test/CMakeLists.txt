@@ -1,1 +1,8 @@
- 
+FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_event_estimator)
+
+FRENSIE_ADD_TEST_EXECUTABLE(Estimator DEPENDS tstEstimator.cpp)
+FRENSIE_ADD_TEST(Estimator)
+
+# Add parallel tests
+
+FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_event_estimator)

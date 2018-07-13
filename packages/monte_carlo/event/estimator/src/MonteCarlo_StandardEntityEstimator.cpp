@@ -366,7 +366,7 @@ void StandardEntityEstimator::assignResponseFunction(
   // Make sure only the root thread calls this
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
-  EntityEstimator::setResponseFunction( response_function );
+  EntityEstimator::assignResponseFunction( response_function );
 
   // Resize the entity total estimator momens map collections
   this->resizeEntityTotalEstimatorMomentsMapCollections();

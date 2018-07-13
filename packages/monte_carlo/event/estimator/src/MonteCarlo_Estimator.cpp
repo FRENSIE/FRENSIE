@@ -69,13 +69,13 @@ size_t Estimator::getNumberOfBins() const
   return d_phase_space_discretization.getNumberOfBins();
 }
 
-// Set a response function
+// Add a response function
 /*! \details Before the response function is assigned, the object will check
  * if it is compatible with the estimator type (e.g. cell
  * track-length flux estimators are only compatible with spatially uniform
  * response functions).
  */
-void Estimator::setResponseFunction(
+void Estimator::addResponseFunction(
              const std::shared_ptr<const ParticleResponse>& response_function )
 {
   // Make sure that the response function pointer is valid
@@ -88,7 +88,8 @@ void Estimator::setResponseFunction(
 /*! \details Before the response functions are assigned, the object will check
  * if each response function is compatible with the estimator type (e.g. cell
  * track-length flux estimators are only compatible with spatially uniform
- * response functions).
+ * response functions). Any previously added response functions will be 
+ * removed.
  */
 void Estimator::setResponseFunctions(
                    const std::vector<std::shared_ptr<const ParticleResponse> >&
@@ -97,9 +98,16 @@ void Estimator::setResponseFunctions(
   // Make sure that there is at least one response function
   testPrecondition( response_functions.size() > 0 );
 
+  d_response_functions.clear();
+
   // Assign each response function individually
   for( auto&& response_function_ptr : response_functions )
-    this->setResponseFunction( response_function_ptr );
+    this->addResponseFunction( response_function_ptr );
+
+  // There must always be at least one response function - if they were all
+  // rejected add the default.
+  if( d_response_functions.empty() )
+    d_response_functions.push_back( ParticleResponse::getDefault() );
 }
 
 // Return the number of response functions
