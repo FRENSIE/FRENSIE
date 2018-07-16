@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_ComparisonPolicy.hpp"
+#include "Utility_Tuple.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_ExplicitDistributionTemplateInstantiationMacros.hpp"
