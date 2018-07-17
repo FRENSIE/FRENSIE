@@ -22,7 +22,7 @@
 #include "Utility_HDF5OArchive.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -36,12 +36,12 @@ CollisionForcer::CollisionForcer(
                 const size_t id,
                 const MonteCarlo::FilledGeometryModel& model,
                 const std::set<ParticleType>& particle_types,
-                const std::vector<Geometry::Model::InternalCellHandle>& cells,
+                const std::vector<Geometry::Model::EntityId>& cells,
                 const double generation_probability )
   : CollisionForcer( id,
                      model,
                      particle_types,
-                     std::set<Geometry::Model::InternalCellHandle>( cells.begin(), cells.end() ),
+                     std::set<Geometry::Model::EntityId>( cells.begin(), cells.end() ),
                      generation_probability )
 { /* ... */ }
   
@@ -50,7 +50,7 @@ CollisionForcer::CollisionForcer(
                    const size_t id,
                    const MonteCarlo::FilledGeometryModel& model,
                    const std::set<ParticleType>& particle_types,
-                   const std::set<Geometry::Model::InternalCellHandle>& cells,
+                   const std::set<Geometry::Model::EntityId>& cells,
                    const double generation_probability )
   : d_id( id ),
     d_particle_types( particle_types ),
@@ -83,7 +83,7 @@ CollisionForcer::CollisionForcer(
 }
 
 // Return the cells where collisions will be forced
-const std::set<Geometry::Model::InternalCellHandle>& CollisionForcer::getCells() const
+const std::set<Geometry::Model::EntityId>& CollisionForcer::getCells() const
 {
   return d_cells;
 }
@@ -102,7 +102,7 @@ double CollisionForcer::getGenerationProbability() const
 
 // Update the particle state and bank
 void CollisionForcer::updateFromParticleEnteringCellEvent(
-          const Geometry::Model::InternalCellHandle cell_entering,
+          const Geometry::Model::EntityId cell_entering,
           const double optical_path_to_next_cell,
           const SimulateParticleForOpticalPath& simulate_particle_track_method,
           ParticleState& particle,

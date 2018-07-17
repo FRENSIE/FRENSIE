@@ -21,8 +21,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_TypeNameTraits.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
@@ -81,7 +81,7 @@ void ParticleResponse::serialize( Archive& ar, const unsigned version )
 
 BOOST_SERIALIZATION_CLASS_VERSION( ParticleResponse, MonteCarlo, 0 );
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleResponse );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleResponse );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleResponse );
 
 namespace Utility{
 

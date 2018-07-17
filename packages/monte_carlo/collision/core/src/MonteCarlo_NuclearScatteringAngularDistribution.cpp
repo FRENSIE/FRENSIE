@@ -9,7 +9,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringAngularDistribution.hpp"
 #include "MonteCarlo_TwoDDistributionHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_SearchAlgorithms.hpp"

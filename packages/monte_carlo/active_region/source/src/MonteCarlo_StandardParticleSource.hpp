@@ -164,7 +164,7 @@ void StandardParticleSource::load( Archive& ar, const unsigned version )
 
 BOOST_SERIALIZATION_CLASS_VERSION( StandardParticleSource, MonteCarlo, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardParticleSource, MonteCarlo );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardParticleSource );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, StandardParticleSource );
 
 #endif // end MONTE_CARLO_STANDARD_PARTICLE_SOURCE_HPP
 

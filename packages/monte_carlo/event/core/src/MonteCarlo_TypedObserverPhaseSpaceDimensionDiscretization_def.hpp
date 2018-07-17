@@ -11,7 +11,7 @@
 #define MONTE_CARLO_TYPED_ESTIMATOR_DIMENSION_DISCRETIZATION_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -137,25 +137,25 @@ void TypedObserverPhaseSpaceDimensionDiscretization<dimension>::serialize( Archi
 } // end MonteCarlo namespace
 
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION> );
 
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION> );
 
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION> );
 
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION> );
 
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION> );
 
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION> );
 
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, TypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION> );
 
 #endif // end MONTE_CARLO_TYPED_ESTIMATOR_DIMENSION_DISCRETIZATION_DEF_HPP
 

@@ -16,7 +16,7 @@
 #include "Data_ENDLFileHandler.hpp"
 #include "Data_ENDLHelperWrappers.hpp"
 #include "Data_SubshellType.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
 namespace Data{

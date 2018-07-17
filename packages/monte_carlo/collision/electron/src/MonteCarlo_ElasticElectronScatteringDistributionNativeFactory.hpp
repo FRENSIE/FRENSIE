@@ -18,10 +18,10 @@
 #include "MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_HybridElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_ElasticElectronTraits.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
-#include "Utility_ElasticElectronTraits.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_Vector.hpp"
 
@@ -34,7 +34,7 @@ class ElasticElectronScatteringDistributionNativeFactory
 public:
 
   using ThisType = ElasticElectronScatteringDistributionNativeFactory;
-  using ElasticTraits = Utility::ElasticElectronTraits;
+  using ElasticTraits = MonteCarlo::ElasticElectronTraits;
   using BasicBivariateDist = Utility::FullyTabularBasicBivariateDistribution;
   using TabularDist = Utility::TabularDistribution<Utility::LinLin>;
 

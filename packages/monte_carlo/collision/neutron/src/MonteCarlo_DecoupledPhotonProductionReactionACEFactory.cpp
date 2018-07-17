@@ -18,7 +18,7 @@
 #include "MonteCarlo_NeutronAbsorptionReaction.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 
 namespace MonteCarlo{

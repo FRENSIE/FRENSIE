@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "Geometry_Model.hpp"
 #include "Geometry_InfiniteMediumNavigator.hpp"
-#include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 
 namespace Geometry{
 
@@ -23,7 +23,7 @@ class InfiniteMediumModel : public Model
 public:
 
   //! Constructor
-  InfiniteMediumModel( const InternalCellHandle cell = 1,
+  InfiniteMediumModel( const EntityId cell = 1,
                        const Model::InternalMaterialHandle material_id = 0,
                        const Model::Density density = 0.0*Model::DensityUnit() );
 
@@ -56,16 +56,16 @@ public:
            CellEstimatorIdDataMap& cell_estimator_id_data_map ) const override;
 
   //! Check if a cell exists
-  bool doesCellExist( const InternalCellHandle cell ) const override;
+  bool doesCellExist( const EntityId cell ) const override;
 
   //! Check if the cell is a termination cell
-  bool isTerminationCell( const InternalCellHandle cell ) const override;
+  bool isTerminationCell( const EntityId cell ) const override;
 
   //! Check if a cell is void
-  bool isVoidCell( const InternalCellHandle cell ) const override;
+  bool isVoidCell( const EntityId cell ) const override;
 
   //! Get the cell volume
-  Volume getCellVolume( const InternalCellHandle cell ) const override;
+  Volume getCellVolume( const EntityId cell ) const override;
 
   //! Create a raw, heap-allocated navigator
   InfiniteMediumNavigator* createNavigatorAdvanced(
@@ -91,7 +91,7 @@ private:
   friend class boost::serialization::access;
 
   // The infinite medium cell id
-  InternalCellHandle d_cell;
+  EntityId d_cell;
 
   // The infinite medium material id
   Model::InternalMaterialHandle d_material_id;
@@ -130,7 +130,7 @@ void InfiniteMediumModel::load( Archive& ar, const unsigned version )
 
 BOOST_SERIALIZATION_CLASS_VERSION( InfiniteMediumModel, Geometry, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( InfiniteMediumModel, Geometry );
-EXTERN_EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( InfiniteMediumModel );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Geometry, InfiniteMediumModel );
 
 #endif // end GEOMETRY_INFINITE_MEDIUM_MODEL_HPP
 

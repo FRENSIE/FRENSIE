@@ -70,6 +70,14 @@ PyFrensie_MAKE_TEST(tstData.ScatteringCenterPropertiesDatabase)
 ADD_TEST(PyFrensie.Data.ScatteringCenterPropertiesDatabase_test ${PYTHON_EXECUTABLE} tstData.ScatteringCenterPropertiesDatabase.py)
 SET_PROPERTY(TEST PyFrensie.Data.ScatteringCenterPropertiesDatabase_test PROPERTY LABELS pyfrensie )
 
+IF(HAVE_FRENSIE_HDF5)
+  ADD_TEST(PyFrensie.Data.ScatteringCenterPropertiesDatabase_test ${PYTHON_EXECUTABLE} tstData.ScatteringCenterPropertiesDatabase.py)
+  SET_PROPERTY(TEST PyFrensie.Data.ScatteringCenterPropertiesDatabase_test PROPERTY LABELS pyfrensie hdf5)
+ELSE()
+  ADD_TEST(PyFrensie.Data.ScatteringCenterPropertiesDatabase_test ${PYTHON_EXECUTABLE} tstData.ScatteringCenterPropertiesDatabase.py)
+  SET_PROPERTY(TEST PyFrensie.Data.ScatteringCenterPropertiesDatabase_test PROPERTY LABELS pyfrensie)
+ENDIF()
+
 # Add the Data.ACE.ACEElectroatomicDataProperties unit tests
 PyFrensie_MAKE_TEST(tstData.ACE.ACEElectroatomicDataProperties)
 ADD_TEST(PyFrensie.Data.ACE.ACEElectroatomicDataProperties_test ${PYTHON_EXECUTABLE} tstData.ACE.ACEElectroatomicDataProperties.py)

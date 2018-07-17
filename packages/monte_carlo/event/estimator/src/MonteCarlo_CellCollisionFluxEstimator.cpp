@@ -7,14 +7,16 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_CellCollisionFluxEstimator.hpp"
 
-namespace MonteCarlo{
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightMultipliedCellCollisionFluxEstimator );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightMultiplier> );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightMultiplier> );
 
-EXPLICIT_TEMPLATE_CLASS_INST( CellCollisionFluxEstimator<WeightMultiplier> );
-EXPLICIT_TEMPLATE_CLASS_INST( CellCollisionFluxEstimator<WeightAndEnergyMultiplier> );
-  
-} // end MonteCarlo namespace
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightAndEnergyMultipliedCellCollisionFluxEstimator );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CellCollisionFluxEstimator.cpp

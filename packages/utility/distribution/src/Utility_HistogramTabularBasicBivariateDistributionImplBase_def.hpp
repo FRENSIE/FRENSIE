@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "Utility_PartiallyTabularBasicBivariateDistribution.hpp"
 #include "Utility_FullyTabularBasicBivariateDistribution.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Utility{
 
@@ -223,8 +223,11 @@ void UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Distribution>::
   
 } // end Utility namespace
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Utility::UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> > );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Utility::UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> > );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Utility::UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> > );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Utility::UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> > );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Utility::UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> > );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Utility::UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> > );
 
 #endif // end UTILITY_HISTOGRAM_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_IMPL_BASE_DEF_HPP
 

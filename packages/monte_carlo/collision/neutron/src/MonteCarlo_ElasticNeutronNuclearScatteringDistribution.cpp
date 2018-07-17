@@ -12,9 +12,9 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElasticNeutronNuclearScatteringDistribution.hpp"
 #include "MonteCarlo_SimulationNeutronProperties.hpp"
-#include "Utility_KinematicHelpers.hpp"
+#include "MonteCarlo_KinematicHelpers.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
@@ -89,7 +89,7 @@ void ElasticNeutronNuclearScatteringDistribution::scatterParticle(
    // model.
 
    // Calculate the neutron velocity (classical)
-   double incoming_neutron_speed = Utility::calculateSpeed(
+   double incoming_neutron_speed = MonteCarlo::calculateSpeed(
 			  Utility::PhysicalConstants::neutron_rest_mass_energy,
 			  incoming_neutron.getEnergy() );
 
@@ -156,7 +156,7 @@ void ElasticNeutronNuclearScatteringDistribution::scatterParticle(
 
    // Calculate and set the outgoing neutron energy (classical)
    double outgoing_neutron_energy =
-     Utility::calculateKineticEnergy(
+     MonteCarlo::calculateKineticEnergy(
 			  Utility::PhysicalConstants::neutron_rest_mass_energy,
 			  outgoing_neutron_speed );
 

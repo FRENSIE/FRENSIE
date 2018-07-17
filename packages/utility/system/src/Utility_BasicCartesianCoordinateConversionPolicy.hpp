@@ -97,7 +97,7 @@ private:
 
 BOOST_SERIALIZATION_CLASS_VERSION( BasicCartesianCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( BasicCartesianCoordinateConversionPolicy, Utility );
-EXTERN_EXPLICIT_SYSTEM_CLASS_SERIALIZE_INST( Utility::BasicCartesianCoordinateConversionPolicy );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( Utility, BasicCartesianCoordinateConversionPolicy );
 
 #endif // end UTILITY_BASIC_CARTESIAN_COORDINATE_CONVERSION_POLICY_HPP
 

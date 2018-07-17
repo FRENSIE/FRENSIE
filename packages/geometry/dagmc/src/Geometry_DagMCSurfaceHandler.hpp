@@ -25,7 +25,7 @@ class DagMCSurfaceHandler : public DagMCEntityHandler
 public:
 
   //! The internal surface handle type
-  typedef unsigned long long InternalSurfaceHandle;
+  typedef unsigned long long EntityId;
 
   //! Constructor
   DagMCSurfaceHandler( const moab::DagMC* dagmc_instance );
@@ -39,19 +39,19 @@ public:
 
   //! Check if the surface exists
   virtual bool doesSurfaceExist(
-                            const InternalSurfaceHandle surface_id ) const = 0;
+                            const EntityId surface_id ) const = 0;
 
   //! Check if the surface handle exists
   virtual bool doesSurfaceHandleExist(
                                const moab::EntityHandle surface_handle ) const;
 
   //! Get the surface id from a surface handle
-  virtual InternalSurfaceHandle getSurfaceId(
+  virtual EntityId getSurfaceId(
                            const moab::EntityHandle surface_handle ) const = 0;
 
   //! Get the surface handle from a surface id
   virtual moab::EntityHandle getSurfaceHandle(
-                            const InternalSurfaceHandle surface_id ) const = 0;
+                            const EntityId surface_id ) const = 0;
 };
 
 } // end Geometry namespace

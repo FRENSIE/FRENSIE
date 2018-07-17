@@ -19,9 +19,9 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleEventTags.hpp"
 #include "MonteCarlo_ParticleState.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Model.hpp"
 #include "Utility_Vector.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
@@ -48,7 +48,7 @@ public:
   //! Update the observer
   virtual void updateFromParticleCrossingSurfaceEvent(
 	  const ParticleState& particle,
-	  const Geometry::Model::InternalSurfaceHandle surface_crossing,
+	  const Geometry::Model::EntityId surface_crossing,
 	  const double angle_cosine ) = 0;
 
 private:
@@ -66,7 +66,7 @@ private:
 
 BOOST_CLASS_VERSION( MonteCarlo::ParticleCrossingSurfaceEventObserver, 0 );
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleCrossingSurfaceEventObserver );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleCrossingSurfaceEventObserver );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleCrossingSurfaceEventObserver );
 
 #endif // end MONTE_CARLO_PARTICLE_CROSSING_SURFACE_EVENT_OBSERVER_HPP
 

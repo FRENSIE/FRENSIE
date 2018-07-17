@@ -7,15 +7,16 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_SurfaceCurrentEstimator.hpp"
 
-namespace MonteCarlo{
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightMultipliedSurfaceCurrentEstimator );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightMultiplier> );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightMultiplier> );
 
-// Explicit instantiation 
-EXPLICIT_TEMPLATE_CLASS_INST( SurfaceCurrentEstimator<WeightMultiplier> );
-EXPLICIT_TEMPLATE_CLASS_INST( SurfaceCurrentEstimator<WeightAndEnergyMultiplier> );
-  
-} // end MonteCarlo namespace
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightAndEnergyMultipliedSurfaceCurrentEstimator );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SurfaceCurrentEstimator.cpp

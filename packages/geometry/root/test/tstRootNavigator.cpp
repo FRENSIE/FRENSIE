@@ -219,7 +219,7 @@ FRENSIE_UNIT_TEST( RootNavigator, findCellContainingRay_cache )
                                        0.0*cgs::centimeter,
                                        0.0, 0.0, 1.0 ) );
 
-  Geometry::Navigator::InternalCellHandle cell;
+  Geometry::Navigator::EntityId cell;
 
   cell = navigator->findCellContainingRay( *ray, found_cell_cache );
 
@@ -265,7 +265,7 @@ FRENSIE_UNIT_TEST( RootNavigator, findCellContainingRay )
                                        0.0*cgs::centimeter,
                                        0.0, 0.0, 1.0 ) );
 
-  Geometry::Navigator::InternalCellHandle cell;
+  Geometry::Navigator::EntityId cell;
 
   cell = navigator->findCellContainingRay( *ray );
 
@@ -356,7 +356,7 @@ FRENSIE_UNIT_TEST( RootNavigator, setState )
                                            2.5*cgs::centimeter,
                                            0.0, 0.0, 1.0 ) );
 
-  Geometry::Navigator::InternalCellHandle cell =
+  Geometry::Navigator::EntityId cell =
     navigator->findCellContainingRay( *ray );
 
   FRENSIE_CHECK_EQUAL( navigator->getPosition()[0],
@@ -436,7 +436,7 @@ FRENSIE_UNIT_TEST( RootNavigator, ray_trace )
                              0.0*cgs::centimeter,
                              0.0, 0.0, 1.0 );
 
-  Geometry::Navigator::InternalCellHandle cell =
+  Geometry::Navigator::EntityId cell =
     navigator->getCurrentCell();
 
   FRENSIE_CHECK_EQUAL( cell, 2 );
@@ -507,7 +507,7 @@ FRENSIE_UNIT_TEST( RootNavigator, advance_with_callback )
                        0.0*cgs::centimeter,
                        0.0, 0.0, 1.0 );
 
-  Geometry::Navigator::InternalCellHandle cell =
+  Geometry::Navigator::EntityId cell =
     navigator->getCurrentCell();
 
   FRENSIE_CHECK_EQUAL( cell, 2 );

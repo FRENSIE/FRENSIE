@@ -31,7 +31,7 @@ PhaseSpaceDimension definitions in the monte_carlo/active_region subpackage.
 #include "MonteCarlo_DependentPhaseSpaceDimensionDistribution.hpp"
 #include "MonteCarlo_ImportanceSampledDependentPhaseSpaceDimensionDistribution.hpp"
 
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
+// #include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 
 #include "Utility_UnivariateDistributionType.hpp"
 #include "Utility_UnivariateDistribution.hpp"
@@ -50,7 +50,7 @@ PhaseSpaceDimension definitions in the monte_carlo/active_region subpackage.
 #include "Utility_TabularCDFDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_WattDistribution.hpp"
-#include "Utility_CoupledElasticDistribution.hpp"
+// #include "Utility_CoupledElasticDistribution.hpp"
 
 #include "Utility_BasicBivariateDistribution.hpp"
 #include "Utility_TabularBasicBivariateDistribution.hpp"
@@ -90,7 +90,7 @@ PhaseSpaceDimension definitions in the monte_carlo/active_region subpackage.
 #include "Utility_DirectionalDimensionType.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
-#include "Utility_ContractException.hpp"
+// #include "Utility_ContractException.hpp"
 
 using namespace MonteCarlo;
 %}
@@ -108,7 +108,7 @@ using namespace MonteCarlo;
 %include "Utility_SerializationHelpers.hpp"
 
 // Include the explicit template instantiation helpers
-%include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
+// %include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 
 // Import the UnivariateDistribution handling
 %import "Utility.UnivariateDistribution.i"

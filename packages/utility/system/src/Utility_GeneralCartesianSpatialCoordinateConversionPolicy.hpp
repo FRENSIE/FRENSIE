@@ -118,7 +118,7 @@ void GeneralCartesianSpatialCoordinateConversionPolicy::load( Archive& ar, const
 
 BOOST_SERIALIZATION_CLASS_VERSION( GeneralCartesianSpatialCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( GeneralCartesianSpatialCoordinateConversionPolicy, Utility );
-EXTERN_EXPLICIT_SYSTEM_CLASS_SAVE_LOAD_INST( Utility::GeneralCartesianSpatialCoordinateConversionPolicy );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, GeneralCartesianSpatialCoordinateConversionPolicy );
 
 #endif // end UTILITY_GENERAL_CARTESIAN_SPATIAL_COORDINATE_CONVERSION_POLICY_HPP
 

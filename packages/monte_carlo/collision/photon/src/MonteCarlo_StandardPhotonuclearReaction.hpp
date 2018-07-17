@@ -16,7 +16,7 @@
 #include "Utility_Vector.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_QuantityTraits.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 

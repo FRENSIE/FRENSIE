@@ -13,7 +13,7 @@
 #include "Utility_DirectionalCoordinateConversionPolicy.hpp"
 #include "Utility_DirectionalCoordinateSystemTraits.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Utility{
 
@@ -218,7 +218,7 @@ inline void CartesianDirectionalCoordinateConversionPolicy::normalizeLocalDirect
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( CartesianDirectionalCoordinateConversionPolicy, Utility );
 BOOST_SERIALIZATION_CLASS_VERSION( CartesianDirectionalCoordinateConversionPolicy, Utility, 0 );
-EXTERN_EXPLICIT_SYSTEM_CLASS_SERIALIZE_INST( Utility::CartesianDirectionalCoordinateConversionPolicy );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( Utility, CartesianDirectionalCoordinateConversionPolicy );
 
 #endif // end UTILITY_CARTESIAN_DIRECTIONAL_COORDINATE_CONVERSION_POLICY_HPP
 

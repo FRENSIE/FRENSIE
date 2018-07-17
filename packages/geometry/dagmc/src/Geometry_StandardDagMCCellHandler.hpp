@@ -34,13 +34,13 @@ public:
   { /* ... */ }
 
   //! Check if the cell exists
-  bool doesCellExist( const InternalCellHandle cell_id ) const;
+  bool doesCellExist( const EntityId cell_id ) const;
 
   //! Get the cell id from a cell handle
-  InternalCellHandle getCellId( const moab::EntityHandle cell_handle ) const;
+  EntityId getCellId( const moab::EntityHandle cell_handle ) const;
 
   //! Get the cell handle from a cell id
-  moab::EntityHandle getCellHandle( const InternalCellHandle cell_id ) const;
+  moab::EntityHandle getCellHandle( const EntityId cell_id ) const;
 
 private:
 

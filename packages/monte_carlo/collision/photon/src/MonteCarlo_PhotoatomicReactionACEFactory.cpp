@@ -24,7 +24,7 @@
 #include "MonteCarlo_IncoherentPhotoatomicReaction.hpp"
 #include "Data_SubshellType.hpp"
 #include "Utility_SortAlgorithms.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 

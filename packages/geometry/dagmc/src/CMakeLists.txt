@@ -1,4 +1,4 @@
 FRENSIE_SETUP_PACKAGE(geometry_dagmc
   MPI_LIBRARIES ${MPI_CXX_LIBRARIES} 
-  NON_MPI_LIBRARIES ${Boost_LIBRARIES} ${MOAB} utility_core utility_hdf5 geometry_core
+  NON_MPI_LIBRARIES ${Boost_LIBRARIES} ${MOAB} utility_core utility_archive geometry_core
   SET_VERBOSE ${CMAKE_VERBOSE_CONFIGURE})

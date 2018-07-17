@@ -8,8 +8,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroionizationSubshellAdjointElectronScatteringDistribution.hpp"
+#include "MonteCarlo_KinematicHelpers.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
-#include "Utility_KinematicHelpers.hpp"
 
 namespace MonteCarlo{
 

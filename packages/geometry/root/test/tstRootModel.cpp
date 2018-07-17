@@ -22,13 +22,7 @@
 
 namespace cgs = boost::units::cgs;
 
-typedef std::tuple<
-  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
-  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
-  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
-  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>,
-  std::tuple<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>
-  > TestArchives;
+typedef TestArchiveHelper::TestArchives TestArchives;
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -141,7 +135,7 @@ FRENSIE_UNIT_TEST( RootModel, getCellMaterialNames )
   std::shared_ptr<const Geometry::RootModel> model =
     Geometry::RootModel::getInstance();
 
-  std::map<Geometry::Model::InternalCellHandle,std::string>
+  std::map<Geometry::Model::EntityId,std::string>
     cell_id_material_name_map;
 
   model->getCellMaterialNames( cell_id_material_name_map );

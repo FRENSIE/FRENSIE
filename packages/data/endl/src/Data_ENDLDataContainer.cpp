@@ -12,27 +12,11 @@
 #include <sstream>
 #include <typeinfo>
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_text_oarchive.hpp>
-#include <boost/archive/polymorphic_text_iarchive.hpp>
-#include <boost/archive/polymorphic_xml_oarchive.hpp>
-#include <boost/archive/polymorphic_xml_iarchive.hpp>
-#include <boost/archive/polymorphic_binary_oarchive.hpp>
-#include <boost/archive/polymorphic_binary_iarchive.hpp>
-
 // FRENSIE Includes
 #include "Data_ENDLDataContainer.hpp"
 #include "Data_DataContainerHelpers.hpp"
-#include "Utility_HDF5OArchive.hpp"
-#include "Utility_HDF5IArchive.hpp"
 #include "Utility_SortAlgorithms.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Data{
 
@@ -84,7 +68,7 @@ void ENDLDataContainer::setAtomicWeight( const double atomic_weight )
   d_atomic_weight = atomic_weight;
 }
 
-EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ENDLDataContainer );
+EXPLICIT_CLASS_SAVE_LOAD_INST( ENDLDataContainer );
 
 } // end Data namespace
 

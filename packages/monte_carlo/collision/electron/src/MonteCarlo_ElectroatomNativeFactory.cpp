@@ -11,7 +11,7 @@
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_TwoDInterpolationPolicy.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 

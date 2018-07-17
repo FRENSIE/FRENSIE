@@ -25,12 +25,7 @@
 // Testing Types
 //---------------------------------------------------------------------------//
 
-typedef std::tuple<
-  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
-  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
-  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
-  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>
-  > TestArchives;
+typedef TestArchiveHelper::TestArchives TestArchives;
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -131,7 +126,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FullPhaseSpaceParticleResponseFunction,
       time_dimension_dist( new MonteCarlo::IndependentTimeDimensionDistribution( exponential_response_dist ) );
 
     std::shared_ptr<MonteCarlo::StandardParticleDistribution>
-      local_particle_distribution( new MonteCarlo::StandardParticleDistribution( 1, "archived phase space dist" ) );
+      local_particle_distribution( new MonteCarlo::StandardParticleDistribution( "archived phase space dist" ) );
 
     local_particle_distribution->setDimensionDistribution( x_dimension_dist );
     local_particle_distribution->setDimensionDistribution( y_dimension_dist );
@@ -215,7 +210,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     time_dimension_dist( new MonteCarlo::IndependentTimeDimensionDistribution( exponential_response_dist ) );
 
   MonteCarlo::StandardParticleDistribution* local_particle_distribution =
-    new MonteCarlo::StandardParticleDistribution( 2, "phase space dist" );
+    new MonteCarlo::StandardParticleDistribution( "phase space dist" );
 
   local_particle_distribution->setDimensionDistribution( x_dimension_dist );
   local_particle_distribution->setDimensionDistribution( y_dimension_dist );

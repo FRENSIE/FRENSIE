@@ -96,7 +96,7 @@ private:
 
 BOOST_SERIALIZATION_CLASS_VERSION( BasicSphericalCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( BasicSphericalCoordinateConversionPolicy, Utility );
-EXTERN_EXPLICIT_SYSTEM_CLASS_SERIALIZE_INST( Utility::BasicSphericalCoordinateConversionPolicy );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( Utility, BasicSphericalCoordinateConversionPolicy );
 
 #endif // end UTILITY_BASIC_SPHERICAL_COORDINATE_CONVERSION_POLICY_HPP
 

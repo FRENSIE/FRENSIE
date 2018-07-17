@@ -13,7 +13,7 @@
 #include "MonteCarlo_StandardParticleSourceComponent.hpp"
 #include "Utility_OpenMPProperties.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -26,7 +26,7 @@ StandardParticleSourceComponent<ParticleStateType>::StandardParticleSourceCompon
 // Constructor
 template<typename ParticleStateType>
 StandardParticleSourceComponent<ParticleStateType>::StandardParticleSourceComponent(
-     const size_t id,
+     const uint32_t id,
      const double selection_weight,
      const std::shared_ptr<const Geometry::Model>& model,
      const std::shared_ptr<const ParticleDistribution>& particle_distribution )
@@ -40,9 +40,9 @@ StandardParticleSourceComponent<ParticleStateType>::StandardParticleSourceCompon
 // Constructor (with rejection cells )
 template<typename ParticleStateType>
 StandardParticleSourceComponent<ParticleStateType>::StandardParticleSourceComponent(
-     const size_t id,
+     const uint32_t id,
      const double selection_weight,
-     const std::vector<Geometry::Model::InternalCellHandle>& rejection_cells,
+     const std::vector<Geometry::Model::EntityId>& rejection_cells,
      const std::shared_ptr<const Geometry::Model>& model,
      const std::shared_ptr<const ParticleDistribution>& particle_distribution )
   : StandardParticleSourceComponent( id,
@@ -56,7 +56,7 @@ StandardParticleSourceComponent<ParticleStateType>::StandardParticleSourceCompon
 // Constructor (with rejection cells )
 template<typename ParticleStateType>
 StandardParticleSourceComponent<ParticleStateType>::StandardParticleSourceComponent(
-     const size_t id,
+     const uint32_t id,
      const double selection_weight,
      const CellIdSet& rejection_cells,
      const std::shared_ptr<const Geometry::Model>& model,
@@ -577,19 +577,19 @@ void StandardParticleSourceComponent<ParticleStateType>::load( Archive& ar, cons
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardNeutronSourceComponent, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::NeutronState> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::NeutronState> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, StandardParticleSourceComponent<MonteCarlo::NeutronState> );
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardPhotonSourceComponent, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::PhotonState> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::PhotonState> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, StandardParticleSourceComponent<MonteCarlo::PhotonState> );
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardElectronSourceComponent, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::ElectronState> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::ElectronState> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, StandardParticleSourceComponent<MonteCarlo::ElectronState> );
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardPositronSourceComponent, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::PositronState> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardParticleSourceComponent<MonteCarlo::PositronState> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, StandardParticleSourceComponent<MonteCarlo::PositronState> );
 
 #endif // end MONTE_CARLO_STANDARD_PARTICLE_SOURCE_COMPONENT_DEF_HPP
 

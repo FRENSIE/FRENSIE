@@ -118,7 +118,7 @@ void GeneralSphericalSpatialCoordinateConversionPolicy::load( Archive& ar, const
 
 BOOST_SERIALIZATION_CLASS_VERSION( GeneralSphericalSpatialCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( GeneralSphericalSpatialCoordinateConversionPolicy, Utility );
-EXTERN_EXPLICIT_SYSTEM_CLASS_SAVE_LOAD_INST( Utility::GeneralSphericalSpatialCoordinateConversionPolicy );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, GeneralSphericalSpatialCoordinateConversionPolicy );
 
 #endif // end UTILITY_GENERAL_SPHERICAL_SPATIAL_COORDINATE_CONVERSION_POLICY_HPP
 

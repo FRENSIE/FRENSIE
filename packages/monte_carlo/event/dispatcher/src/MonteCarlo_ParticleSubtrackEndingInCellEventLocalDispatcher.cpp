@@ -8,21 +8,21 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSubtrackEndingInCellEventLocalDispatcher.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
 ParticleSubtrackEndingInCellEventLocalDispatcher::ParticleSubtrackEndingInCellEventLocalDispatcher(
-		     const Geometry::Model::InternalCellHandle cell_id )
-  : ParticleEventLocalDispatcher<Geometry::Model::InternalCellHandle,
+		     const Geometry::Model::EntityId cell_id )
+  : ParticleEventLocalDispatcher<Geometry::Model::EntityId,
                                  ParticleSubtrackEndingInCellEventObserver>(cell_id)
 { /* ... */ }
 
 // Dispatch the new event to the observers
 void ParticleSubtrackEndingInCellEventLocalDispatcher::dispatchParticleSubtrackEndingInCellEvent(
 	     const ParticleState& particle,
-	     const Geometry::Model::InternalCellHandle cell_of_subtrack,
+	     const Geometry::Model::EntityId cell_of_subtrack,
 	     const double track_length )
 {
   // Make sure the cell being collided with is valid

@@ -9,7 +9,7 @@
 // FRENSIE Includes
 #include "Utility_SpatialCoordinateSystemType.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Utility{
 

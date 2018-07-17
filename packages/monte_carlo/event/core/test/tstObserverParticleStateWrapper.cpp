@@ -44,6 +44,30 @@ FRENSIE_UNIT_TEST( ObserverParticleStateWrapper, setgetAngleCosine )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the particle start time can be set
+FRENSIE_UNIT_TEST( ObserverParticleStateWrapper, setStartTime )
+{
+  MonteCarlo::PhotonState photon( 1ull );
+
+  MonteCarlo::ObserverParticleStateWrapper particle_wrapper( photon );
+  particle_wrapper.setStartTime( 1.0 );
+
+  FRENSIE_CHECK_EQUAL( particle_wrapper.getStartTime(), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the particle end time can be set
+FRENSIE_UNIT_TEST( ObserverParticleStateWrapper, setEndTime )
+{
+  MonteCarlo::PhotonState photon( 1ull );
+
+  MonteCarlo::ObserverParticleStateWrapper particle_wrapper( photon );
+  particle_wrapper.setEndTime( 2.0 );
+
+  FRENSIE_CHECK_EQUAL( particle_wrapper.getEndTime(), 2.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the particle track start/end times can be calculated
 FRENSIE_UNIT_TEST( ObserverParticleStateWrapper,
                    calculateStateTimesUsingParticleTimeAsStartTime )

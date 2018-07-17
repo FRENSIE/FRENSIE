@@ -125,7 +125,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, findCellContainingRay_cache )
                                                          0.0, 0.0, 1.0 ) );
 
   // Find the cell that contains the point
-  Geometry::Navigator::InternalCellHandle cell =
+  Geometry::Navigator::EntityId cell =
     navigator->findCellContainingRay( *ray, found_cell_cache );
 
   FRENSIE_CHECK_EQUAL( cell, 53 );
@@ -185,7 +185,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, findCellContainingRay )
                                                          0.0, 0.0, 1.0 ) );
 
   // Find the cell that contains the point
-  Geometry::Navigator::InternalCellHandle cell =
+  Geometry::Navigator::EntityId cell =
     navigator->findCellContainingRay( *ray );
 
   FRENSIE_CHECK_EQUAL( cell, 53 );
@@ -318,7 +318,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, fireRay )
   navigator->setState( ray.getPosition(), ray.getDirection(), 53 );
 
   // Fire an external ray through the geometry
-  Geometry::Navigator::InternalSurfaceHandle surface_hit;
+  Geometry::Navigator::EntityId surface_hit;
 
   Geometry::Navigator::Length distance_to_surface_hit =
     navigator->fireRay( &surface_hit );
@@ -346,12 +346,12 @@ FRENSIE_UNIT_TEST( DagMCNavigator, advanceBySubstep )
   navigator->advanceBySubstep( 0.959999084*cgs::centimeter );
 
   // Find the cell that contains the ray
-  Geometry::Navigator::InternalCellHandle cell = navigator->getCurrentCell();
+  Geometry::Navigator::EntityId cell = navigator->getCurrentCell();
 
   FRENSIE_CHECK_EQUAL( cell, 53 );
 
   // Fire the ray
-  Geometry::Navigator::InternalSurfaceHandle surface_hit;
+  Geometry::Navigator::EntityId surface_hit;
 
   Geometry::Navigator::Length distance_to_surface_hit =
     navigator->fireRay( &surface_hit );
@@ -377,7 +377,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, advanceToCellBoundary_basic )
                        53 );
 
   // Find the cell that contains the ray
-  Geometry::Navigator::InternalCellHandle cell =
+  Geometry::Navigator::EntityId cell =
     navigator->getCurrentCell();
 
   FRENSIE_CHECK_EQUAL( cell, 53 );
@@ -405,7 +405,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, advanceToCellBoundary_advanced )
                        53 );
 
   // Find the cell that contains the ray
-  Geometry::Navigator::InternalCellHandle cell = navigator->getCurrentCell();
+  Geometry::Navigator::EntityId cell = navigator->getCurrentCell();
 
   FRENSIE_CHECK_EQUAL( cell, 53 );
 
@@ -495,12 +495,12 @@ FRENSIE_UNIT_TEST( DagMCNavigator, ray_trace )
                        0.0, 0.0, 1.0 );
 
   // Find the cell that contains the ray
-  Geometry::Navigator::InternalCellHandle cell = navigator->getCurrentCell();
+  Geometry::Navigator::EntityId cell = navigator->getCurrentCell();
 
   FRENSIE_CHECK_EQUAL( cell, 53 );
 
   // Fire the ray
-  Geometry::Navigator::InternalSurfaceHandle surface_hit;
+  Geometry::Navigator::EntityId surface_hit;
 
   Geometry::Navigator::Length distance_to_surface_hit =
     navigator->fireRay( &surface_hit );
@@ -569,12 +569,12 @@ FRENSIE_UNIT_TEST( DagMCNavigator, ray_trace_with_reflection )
                        0.0, 0.0, 1.0 );
 
   // Find the cell that contains the ray
-  Geometry::Navigator::InternalCellHandle cell = navigator->getCurrentCell();
+  Geometry::Navigator::EntityId cell = navigator->getCurrentCell();
 
   FRENSIE_CHECK_EQUAL( cell, 82 );
 
   // Fire the ray
-  Geometry::Navigator::InternalSurfaceHandle surface_hit;
+  Geometry::Navigator::EntityId surface_hit;
 
   Geometry::Navigator::Length distance_to_surface_hit =
     navigator->fireRay( &surface_hit );

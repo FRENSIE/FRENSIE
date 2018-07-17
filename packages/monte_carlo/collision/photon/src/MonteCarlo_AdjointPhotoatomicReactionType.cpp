@@ -10,7 +10,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotoatomicReactionType.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 

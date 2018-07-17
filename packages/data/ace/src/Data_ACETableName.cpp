@@ -6,23 +6,11 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-#include <boost/algorithm/string.hpp>
-
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "Data_ACETableName.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Data{
 
@@ -174,25 +162,7 @@ ACETableName::operator std::string() const
   return d_raw_table_name;
 }
 
-// Save the model to an archive
-template<typename Archive>
-void ACETableName::save( Archive& ar, const unsigned version ) const
-{
-  ar & boost::serialization::make_nvp( "raw_table_name", d_raw_table_name );
-}
-
-// Load the model from an archive
-template<typename Archive>
-void ACETableName::load( Archive& ar, const unsigned version )
-{
-  std::string raw_table_name;
-
-  ar & boost::serialization::make_nvp( "raw_table_name", raw_table_name );
-
-  *this = ACETableName( raw_table_name );
-}
-
-EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ACETableName );
+EXPLICIT_CLASS_SAVE_LOAD_INST( ACETableName );
   
 } // end Data namespace
 

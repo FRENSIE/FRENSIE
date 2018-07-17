@@ -14,6 +14,7 @@
 #include <functional>
 
 // Boost Includes
+#include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/shared_ptr.hpp>
@@ -21,7 +22,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_List.hpp"
 
 namespace MonteCarlo{
@@ -112,9 +113,7 @@ private:
   // Save the bank to an archive
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  {
-    ar & BOOST_SERIALIZATION_NVP(d_particle_states);
-  }
+  { ar & BOOST_SERIALIZATION_NVP(d_particle_states); }
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
@@ -133,7 +132,7 @@ inline const ParticleState& ParticleBank::dereference(
 } // end MonteCarlo namespace
 
 BOOST_CLASS_VERSION( MonteCarlo::ParticleBank, 0 );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleBank );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleBank );
 
 //---------------------------------------------------------------------------//
 // Template Includes

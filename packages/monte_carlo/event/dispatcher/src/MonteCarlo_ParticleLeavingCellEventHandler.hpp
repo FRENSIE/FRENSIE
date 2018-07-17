@@ -17,7 +17,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleLeavingCellEventDispatcher.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
@@ -48,7 +48,7 @@ public:
   //! Update the observers from a particle leaving cell event
   void updateObserversFromParticleLeavingCellEvent(
                const ParticleState& particle,
-               const Geometry::Model::InternalCellHandle cell_leaving );
+               const Geometry::Model::EntityId cell_leaving );
 
 protected:
 

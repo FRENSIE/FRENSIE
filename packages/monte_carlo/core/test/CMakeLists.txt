@@ -5,6 +5,9 @@ SET(ROOT_GEOM_TEST_TARGET monte_carlo_core_test_root_geometry)
 ADD_SUBDIRECTORY(test_files)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
+FRENSIE_ADD_TEST_EXECUTABLE(KinematicHelpers DEPENDS tstKinematicHelpers.cpp)
+FRENSIE_ADD_TEST(KinematicHelpers)
+
 FRENSIE_ADD_TEST_EXECUTABLE(ParticleType DEPENDS tstParticleType.cpp)
 FRENSIE_ADD_TEST(ParticleType)
 

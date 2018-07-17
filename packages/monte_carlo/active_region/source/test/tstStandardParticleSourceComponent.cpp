@@ -43,12 +43,7 @@ typedef std::tuple<MonteCarlo::NeutronState,
                    MonteCarlo::PositronState
                   > TestParticleStateTypes;
 
-typedef std::tuple<
-  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
-  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
-  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
-  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>
-  > TestArchives;
+typedef TestArchiveHelper::TestArchives TestArchives;
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -421,7 +416,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardParticleSourceComponent,
 
     // Construct a positron source component
     std::shared_ptr<MonteCarlo::ParticleSourceComponent>
-      positron_source_component( new MonteCarlo::StandardPositronSourceComponent( 3, 1.0, std::vector<Geometry::Model::InternalCellHandle>({1}), model, particle_distribution ) );
+      positron_source_component( new MonteCarlo::StandardPositronSourceComponent( 3, 1.0, std::vector<Geometry::Model::EntityId>({1}), model, particle_distribution ) );
 
     MonteCarlo::ParticleBank bank;
 

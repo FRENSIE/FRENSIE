@@ -15,7 +15,7 @@
 // FRENSIE Includes
 #include "Utility_SpatialCoordinateConversionPolicy.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Utility{
 
@@ -242,7 +242,7 @@ inline bool CylindricalSpatialCoordinateConversionPolicy::isTertiarySpatialCoord
 
 BOOST_SERIALIZATION_CLASS_VERSION( CylindricalSpatialCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( CylindricalSpatialCoordinateConversionPolicy, Utility );
-EXTERN_EXPLICIT_SYSTEM_CLASS_SERIALIZE_INST( Utility::CylindricalSpatialCoordinateConversionPolicy );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( Utility, CylindricalSpatialCoordinateConversionPolicy );
 
 #endif // end UTILITY_CYLINDRICAL_SPATIAL_COORDINATE_CONVERSION_POLICY_HPP
 

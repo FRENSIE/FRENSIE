@@ -9,26 +9,15 @@
 // Std Lib Includes
 #include <sstream>
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_ObserverPhaseSpaceDiscretization.hpp"
 #include "MonteCarlo_EmptyObserverPhaseSpaceDiscretizationImpl.hpp"
 #include "MonteCarlo_SingleObserverPhaseSpaceDiscretizationImpl.hpp"
 #include "MonteCarlo_RangedSingleObserverPhaseSpaceDiscretizationImpl.hpp"
 #include "MonteCarlo_DetailedObserverPhaseSpaceDiscretizationImpl.hpp"
-#include "Utility_HDF5OArchive.hpp"
-#include "Utility_HDF5IArchive.hpp"
 #include "Utility_LoggingMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -72,12 +61,12 @@ void ObserverPhaseSpaceDiscretization::assignDiscretizationToDimension(
     std::map<ObserverPhaseSpaceDimension,std::pair<std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>,bool> > discretized_dimensions;
 
     d_impl->getDiscretizedDimensions( discretized_dimensions );
-
+    
     d_impl.reset( new DetailedObserverPhaseSpaceDiscretizationImpl );
-
+    
     const decltype(discretized_dimensions)::mapped_type&
       discretized_dimension_data = discretized_dimensions.begin()->second;
-
+    
     d_impl->assignDiscretizationToDimension( discretized_dimension_data.first,
                                              discretized_dimension_data.second );
     d_impl->assignDiscretizationToDimension( discretization, range_dimension );
@@ -94,6 +83,9 @@ void ObserverPhaseSpaceDiscretization::getDiscretizedDimensions(
 }
 
 // Return the dimensions that have been discretized
+/*! \details The returned dimensions will be in the order that they
+ * were assigned.
+ */
 void ObserverPhaseSpaceDiscretization::getDiscretizedDimensions(
        std::vector<ObserverPhaseSpaceDimension>& discretized_dimensions ) const
 {
@@ -194,7 +186,7 @@ void ObserverPhaseSpaceDiscretization::calculateBinIndicesAndWeightsOfRange(
   
 } // end MonteCarlo namespace
 
-EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ObserverPhaseSpaceDiscretization );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ObserverPhaseSpaceDiscretization );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ObserverPhaseSpaceDiscretization.cpp

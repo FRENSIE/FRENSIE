@@ -23,7 +23,7 @@
 #include "Geometry_Surface.hpp"
 #include "Geometry_Vector.hpp"
 #include "Utility_Tuple.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 

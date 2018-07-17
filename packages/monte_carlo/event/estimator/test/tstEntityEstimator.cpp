@@ -25,7 +25,7 @@
 //---------------------------------------------------------------------------//
 // Instantiation Macros.
 //---------------------------------------------------------------------------//
-typedef Geometry::ModuleTraits::InternalCellHandle CellId;
+typedef Geometry::ModuleTraits::EntityId CellId;
 
 #define UNIT_TEST_INSTANTIATION( type, name )	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, CellId ) \
@@ -135,12 +135,12 @@ void initializeEntityEstimator(
 // Initialize the entity estimator (int)
 template<>
 void
-initializeEntityEstimator<Geometry::ModuleTraits::InternalCellHandle>(
-                     Teuchos::RCP<TestEntityEstimator<Geometry::ModuleTraits::InternalCellHandle> >& entity_estimator,
+initializeEntityEstimator<Geometry::ModuleTraits::EntityId>(
+                     Teuchos::RCP<TestEntityEstimator<Geometry::ModuleTraits::EntityId> >& entity_estimator,
 		     const bool assign_entity_norm_consts )
 {
   // Set the entity ids
-  Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>
+  Teuchos::Array<Geometry::ModuleTraits::EntityId>
     entity_ids( 5 );
   entity_ids[0] = 0;
   entity_ids[1] = 1;
@@ -162,7 +162,7 @@ initializeEntityEstimator<Geometry::ModuleTraits::InternalCellHandle>(
   if( assign_entity_norm_consts )
   {
     entity_estimator.reset(
-     new TestEntityEstimator<Geometry::ModuleTraits::InternalCellHandle>(
+     new TestEntityEstimator<Geometry::ModuleTraits::EntityId>(
 						     0ull,
 						     estimator_multiplier,
 						     entity_ids,
@@ -171,14 +171,14 @@ initializeEntityEstimator<Geometry::ModuleTraits::InternalCellHandle>(
   else
   {
     entity_estimator.reset(
-     new TestEntityEstimator<Geometry::ModuleTraits::InternalCellHandle>(
+     new TestEntityEstimator<Geometry::ModuleTraits::EntityId>(
 							  0ull,
 							  estimator_multiplier,
 							  entity_ids ) );
   }
 
   // Set the entity estimator bins (and response functions)
-  setEntityEstimatorBins<Geometry::ModuleTraits::InternalCellHandle>(
+  setEntityEstimatorBins<Geometry::ModuleTraits::EntityId>(
 							    entity_estimator );
 }
 

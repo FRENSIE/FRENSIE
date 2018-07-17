@@ -139,7 +139,7 @@ private:
 
 BOOST_CLASS_VERSION( MonteCarlo::SingleObserverPhaseSpaceDiscretizationImpl, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( SingleObserverPhaseSpaceDiscretizationImpl, MonteCarlo );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SingleObserverPhaseSpaceDiscretizationImpl );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SingleObserverPhaseSpaceDiscretizationImpl );
 
 #endif // end MONTE_CARLO_SINGLE_OBSERVER_PHASE_SPACE_DISCRETIZATION_IMPL_HPP
 

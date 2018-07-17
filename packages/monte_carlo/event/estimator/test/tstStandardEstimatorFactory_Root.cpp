@@ -164,7 +164,7 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_Root, createAndRegisterEstimator )
   TEST_EQUALITY_CONST( energy_bins.front(), 1e-3 );
   TEST_EQUALITY_CONST( energy_bins.back(), 20.0 );
 
-  std::unordered_map<Geometry::ModuleTraits::InternalCellHandle,double>
+  std::unordered_map<Geometry::ModuleTraits::EntityId,double>
     cell_id_vols;
   hdf5_file_handler.getEstimatorEntities( 12, cell_id_vols );
   

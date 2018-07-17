@@ -1911,9 +1911,8 @@ class FilledGeometryModelTestCase(unittest.TestCase):
 
         line_energies = filled_model.getCriticalLineEnergies()
 
-        self.assertEqual( len(line_energies), 2 )
+        self.assertEqual( len(line_energies), 1 )
         self.assertAlmostEqual( line_energies[0], 0.51099891013, delta=1e-10*0.51099891 )
-        self.assertEqual( line_energies[1], 20.0 )
 
 #-----------------------------------------------------------------------------#
 # Custom main

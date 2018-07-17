@@ -18,13 +18,13 @@
 #include <TGeoMaterial.h>
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 
 // Get the cell materials
 template<template<typename,typename,typename...> class MapType>
-void RootModel::getCellMaterialNames( MapType<InternalCellHandle,std::string>&
+void RootModel::getCellMaterialNames( MapType<EntityId,std::string>&
                                       cell_id_mat_name_map ) const
 {
   // Make sure that root is initialized
@@ -47,6 +47,33 @@ void RootModel::getCellMaterialNames( MapType<InternalCellHandle,std::string>&
     // Add the material name to the map
     cell_id_mat_name_map[cell->GetUniqueID()] = mat->GetName();
   }
+}
+
+// Save the model to an archive
+template<typename Archive>
+void RootModel::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Model );
+
+  // Save the model properties - all other data will be reinitialized
+  ar & BOOST_SERIALIZATION_NVP( d_model_properties );
+}
+
+// Load the model from an archive
+template<typename Archive>
+void RootModel::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Model );
+
+  // Load the model properties only - all other data must be reinitialized
+  decltype(d_model_properties) cached_model_properties;
+
+  ar & boost::serialization::make_nvp( "d_model_properties",
+                                       cached_model_properties );
+
+  this->initialize( *cached_model_properties );
 }
 
 } // end Geometry namespace

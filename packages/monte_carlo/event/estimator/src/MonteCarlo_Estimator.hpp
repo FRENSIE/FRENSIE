@@ -22,17 +22,17 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleType.hpp"
-#include "MonteCarlo_Response.hpp"
 #include "MonteCarlo_ObserverPhaseSpaceDimension.hpp"
 #include "MonteCarlo_ObserverPhaseSpaceDimensionTraits.hpp"
 #include "MonteCarlo_ObserverPhaseSpaceDiscretization.hpp"
-#include "MonteCarlo_EstimatorParticleStateWrapper.hpp"
+#include "MonteCarlo_ObserverParticleStateWrapper.hpp"
 #include "MonteCarlo_ParticleHistoryObserver.hpp"
+#include "MonteCarlo_ParticleResponse.hpp"
 #include "MonteCarlo_UniqueIdManager.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_SampleMomentCollection.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_Map.hpp"
 #include "Utility_Set.hpp"
@@ -64,14 +64,14 @@ protected:
 public:
 
   //! Constructor
-  Estimator( const size_t id, const double multiplier );
+  Estimator( const uint32_t id, const double multiplier );
 
   //! Destructor
   virtual ~Estimator()
   { /* ... */ }
 
   //! Return the estimator id
-  size_t getId() const;
+  uint32_t getId() const;
 
   //! Return the estimator constant multiplier
   double getMultiplier() const;
@@ -89,11 +89,11 @@ public:
   //! Return the total number of bins (per response function)
   size_t getNumberOfBins() const;
 
-  //! Set a response function
-  void setResponseFunction( const std::shared_ptr<const Response>& response_function );
+  //! Add a response function
+  void addResponseFunction( const std::shared_ptr<const ParticleResponse>& response_function );
 
   //! Set the response functions
-  void setResponseFunctions( const std::vector<std::shared_ptr<const Response> >& response_functions );
+  void setResponseFunctions( const std::vector<std::shared_ptr<const ParticleResponse> >& response_functions );
 
   //! Return the number of response functions
   size_t getNumberOfResponseFunctions() const;
@@ -111,13 +111,13 @@ public:
   bool isParticleTypeAssigned( const ParticleType particle_type ) const;
 
   //! Get the entities assigned to the estimator
-  virtual void getEntityIds( std::set<size_t>& entity_ids ) const = 0;
+  virtual void getEntityIds( std::set<uint64_t>& entity_ids ) const = 0;
 
   //! Check if an entity is assigned to this estimator
-  virtual bool isEntityAssigned( const size_t entity_id ) const = 0;
+  virtual bool isEntityAssigned( const uint64_t entity_id ) const = 0;
 
   //! Return the normalization constant for an entity
-  virtual double getEntityNormConstant( const size_t entity_id ) const = 0;
+  virtual double getEntityNormConstant( const uint64_t entity_id ) const = 0;
 
   //! Return the total normalization constant
   virtual double getTotalNormConstant() const = 0;
@@ -134,13 +134,13 @@ public:
                                  std::vector<double>& figure_of_merit ) const;
 
   //! Get the bin data first moments for an entity
-  virtual Utility::ArrayView<const double> getEntityBinDataFirstMoments( const size_t entity_id ) const = 0;
+  virtual Utility::ArrayView<const double> getEntityBinDataFirstMoments( const uint64_t entity_id ) const = 0;
 
   //! Get the bin data second moments for an entity
-  virtual Utility::ArrayView<const double> getEntityBinDataSecondMoments( const size_t entity_id ) const = 0;
+  virtual Utility::ArrayView<const double> getEntityBinDataSecondMoments( const uint64_t entity_id ) const = 0;
 
   //! Get the bin data mean and relative error for an entity
-  void getEntityBinProcessedData( const size_t entity_id,
+  void getEntityBinProcessedData( const uint64_t entity_id,
                                   std::vector<double>& mean,
                                   std::vector<double>& relative_error,
                                   std::vector<double>& figure_of_merit ) const;
@@ -167,26 +167,26 @@ public:
                               std::vector<double>& figure_of_merit ) const;
 
   //! Get the total data first moments for an entity
-  virtual Utility::ArrayView<const double> getEntityTotalDataFirstMoments( const size_t entity_id ) const;
+  virtual Utility::ArrayView<const double> getEntityTotalDataFirstMoments( const uint64_t entity_id ) const;
 
   //! Get the total data second moments for an entity
-  virtual Utility::ArrayView<const double> getEntityTotalDataSecondMoments( const size_t entity_id ) const;
+  virtual Utility::ArrayView<const double> getEntityTotalDataSecondMoments( const uint64_t entity_id ) const;
 
   //! Get the total data third moments for an entity
-  virtual Utility::ArrayView<const double> getEntityTotalDataThirdMoments( const size_t entity_id ) const;
+  virtual Utility::ArrayView<const double> getEntityTotalDataThirdMoments( const uint64_t entity_id ) const;
 
   //! Get the total data fourth moments for an entity
-  virtual Utility::ArrayView<const double> getEntityTotalDataFourthMoments( const size_t entity_id ) const;
+  virtual Utility::ArrayView<const double> getEntityTotalDataFourthMoments( const uint64_t entity_id ) const;
 
   //! Get the total data mean, relative error, vov and fom for an entity
-  void getEntityTotalProcessedData( const size_t entity_id,
+  void getEntityTotalProcessedData( const uint64_t entity_id,
                                     std::vector<double>& mean,
                                     std::vector<double>& relative_error,
                                     std::vector<double>& variance_of_variance,
                                     std::vector<double>& figure_of_merit ) const;
 
   //! Check if the estimator has uncommitted history contributions
-  bool hasUncommittedHistoryContribution( const unsigned thread_id ) const final override;
+  bool hasUncommittedHistoryContribution( const unsigned thread_id ) const;
 
   //! Check if the estimator has uncommitted history contributions
   bool hasUncommittedHistoryContribution() const final override;
@@ -211,7 +211,7 @@ protected:
                                      const bool range_dimension );
 
   //! Assign response function to the estimator
-  virtual void assignResponseFunction( const std::shared_ptr<const Response>& response_function );
+  virtual void assignResponseFunction( const std::shared_ptr<const ParticleResponse>& response_function );
 
   //! Assign the particle type to the estimator
   virtual void assignParticleType( const ParticleType particle_type );
@@ -227,13 +227,13 @@ protected:
 
   //! Reduce a single collection
   void reduceCollection(
-                      const std::shared_ptr<const Utility::Communicator>& comm,
+                      const Utility::Communicator& comm,
                       const int root_process,
                       TwoEstimatorMomentsCollection& collection ) const;
 
   //! Reduce a single collection
   void reduceCollection(
-                      const std::shared_ptr<const Utility::Communicator>& comm,
+                      const Utility::Communicator& comm,
                       const int root_process,
                       FourEstimatorMomentsCollection& collection ) const;
 
@@ -257,7 +257,7 @@ protected:
 
   //! Check if the range intersects the estimator phase space
   bool doesRangeIntersectEstimatorPhaseSpace(
-           const EstimatorParticleStateWrapper& particle_state_wrapper ) const;
+            const ObserverParticleStateWrapper& particle_state_wrapper ) const;
 
   //! Calculate the bin index for the desired response function
   template<typename PointType>
@@ -269,7 +269,7 @@ protected:
 
   //! Calculate the bin indices for the desired response function
   void calculateBinIndicesAndWeightsOfRange(
-            const EstimatorParticleStateWrapper& particle_state_wrapper,
+            const ObserverParticleStateWrapper& particle_state_wrapper,
             const size_t response_function_index,
             ObserverPhaseSpaceDimensionDiscretization::BinIndexWeightPairArray&
             bin_indices_and_weights ) const;
@@ -312,18 +312,18 @@ protected:
 private:
 
   // Convert first and second moments to mean and relative error
-  void processMoments( const double first_moment,
-                       const double second_moment,
+  void processMoments( const Utility::SampleMoment<1,double>& first_moment,
+                       const Utility::SampleMoment<2,double>& second_moment,
 		       const double norm_constant,
 		       double& mean,
 		       double& relative_error,
                        double& figure_of_merit ) const;
 
   // Convert first, second, third, fourth moments to mean, rel. er., vov, fom
-  void processMoments( const double first_moment,
-                       const double second_moment,
-                       const double third_moment,
-                       const double fourth_moment,
+  void processMoments( const Utility::SampleMoment<1,double>& first_moment,
+                       const Utility::SampleMoment<2,double>& second_moment,
+                       const Utility::SampleMoment<3,double>& third_moment,
+                       const Utility::SampleMoment<4,double>& fourth_moment,
                        const double norm_constant,
                        double& mean,
                        double& relative_error,
@@ -338,37 +338,59 @@ private:
                                   const Collection& collection,
                                   std::vector<double>& reduced_moments ) const;
 
-  // Serialize the estimator
+  // Save the data to an archive
   template<typename Archive>
-  void serialize( Archive& ar, const unsigned version );
+  void save( Archive& ar, const unsigned version ) const;
 
+  // Load the data from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+  
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
   // The estimator id
-  UniqueIdManager<Estimator,size_t> d_id;
+  UniqueIdManager<Estimator,uint32_t> d_id;
   
   // The constant multiplier for the estimator
   double d_multiplier;
-
-  // Records if there is an uncommitted history contribution
-  std::vector<bool> d_has_uncommitted_history_contribution;
 
   // The particle types that this estimator will take contributions from
   std::set<ParticleType> d_particle_types;
 
   // The response functions
-  std::vector<std::shared_ptr<const Response> > d_response_functions;
+  std::vector<std::shared_ptr<const ParticleResponse> > d_response_functions;
 
   // The estimator phase space discretization
   ObserverPhaseSpaceDiscretization d_phase_space_discretization;
+
+  // Records if there is an uncommitted history contribution
+  std::vector<bool> d_has_uncommitted_history_contribution;
 };
 
 } // end MonteCarlo namespace
 
 BOOST_CLASS_VERSION( MonteCarlo::Estimator, 0 );
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::Estimator );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::Estimator );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, Estimator );
+
+namespace Utility{
+
+//! Specialization of Utility::TypeNameTraits or MonteCarlo::Estimator
+template<>
+struct TypeNameTraits<MonteCarlo::Estimator>
+{
+  //! Check if the type has a specialization
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  { return "Estimator"; }
+};
+  
+} // end Utility namespace
 
 //---------------------------------------------------------------------------//
 // Template Includes

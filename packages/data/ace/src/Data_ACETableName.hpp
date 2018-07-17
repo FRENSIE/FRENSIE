@@ -9,11 +9,14 @@
 #ifndef DATA_ACE_TABLE_NAME_HPP
 #define DATA_ACE_TABLE_NAME_HPP
 
+// Boost Includes
+#include <boost/algorithm/string.hpp>
+
 // FRENSIE Includes
 #include "Data_ZAID.hpp"
-#include "Data_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_ToStringTraits.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace Data{
@@ -106,6 +109,24 @@ private:
   char d_table_name_type_key;
 };
 
+// Save the model to an archive
+template<typename Archive>
+void ACETableName::save( Archive& ar, const unsigned version ) const
+{
+  ar & boost::serialization::make_nvp( "raw_table_name", d_raw_table_name );
+}
+
+// Load the model from an archive
+template<typename Archive>
+void ACETableName::load( Archive& ar, const unsigned version )
+{
+  std::string raw_table_name;
+
+  ar & boost::serialization::make_nvp( "raw_table_name", raw_table_name );
+
+  *this = ACETableName( raw_table_name );
+}
+
 } // end Data namespace
 
 namespace Utility{
@@ -140,7 +161,7 @@ inline std::ostream& operator<<( std::ostream& os, const Data::ACETableName obj 
 BOOST_SERIALIZATION_CLASS_VERSION( ACETableName, Data, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ACETableName, Data );
 
-EXTERN_EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ACETableName );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Data, ACETableName );
 
 #endif // end DATA_ACE_TABLE_NAME_HPP
 

@@ -16,6 +16,8 @@ from optparse import *
 parser = OptionParser()
 parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
                   help="set the verbosity level [default 2]")
+parser.add_option("-5", "--hdf5", action="store_true", dest="hdf5_on", default=False,
+                  help="run test for hdf5.")
 
 options,args = parser.parse_args()
 
@@ -87,21 +89,23 @@ class ScatteringCenterPropertiesDatabaseTestCase(unittest.TestCase):
         self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(2004) ) )
         self.assertEqual( database.getNuclideProperties( Data.ZAID(2004) ).atomicWeightRatio(), 4.0 )
 
-        name = "test_scattering_center_database.h5fa"
-        self.database.saveToFile(name, True)
-        database = Data.ScatteringCenterPropertiesDatabase(name)
+        if options.hdf5_on:
+          name = "test_scattering_center_database.h5fa"
+          self.database.saveToFile(name, True)
+          database = Data.ScatteringCenterPropertiesDatabase(name)
 
-        self.assertTrue( database.doAtomPropertiesExist( Data.H_ATOM ) )
-        self.assertEqual( database.getAtomProperties( Data.ZAID(1000) ).atomicWeightRatio(), 1.0 )
+          self.assertTrue( database.doAtomPropertiesExist( Data.H_ATOM ) )
+          self.assertEqual( database.getAtomProperties( Data.ZAID(1000) ).atomicWeightRatio(), 1.0 )
 
-        self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(1001) ) )
-        self.assertEqual( database.getNuclideProperties( Data.ZAID(1001) ).atomicWeightRatio(), 1.0 )
+          self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(1001) ) )
+          self.assertEqual( database.getNuclideProperties( Data.ZAID(1001) ).atomicWeightRatio(), 1.0 )
 
-        self.assertTrue( database.doAtomPropertiesExist( Data.He_ATOM ) )
-        self.assertEqual( database.getAtomProperties( Data.ZAID(2000) ).atomicWeightRatio(), 4.0 )
+          self.assertTrue( database.doAtomPropertiesExist( Data.He_ATOM ) )
+          self.assertEqual( database.getAtomProperties( Data.ZAID(2000) ).atomicWeightRatio(), 4.0 )
 
-        self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(2004) ) )
-        self.assertEqual( database.getNuclideProperties( Data.ZAID(2004) ).atomicWeightRatio(), 4.0 )
+          self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(2004) ) )
+          self.assertEqual( database.getNuclideProperties( Data.ZAID(2004) ).atomicWeightRatio(), 4.0 )
+
 
 #-----------------------------------------------------------------------------#
 # Custom main

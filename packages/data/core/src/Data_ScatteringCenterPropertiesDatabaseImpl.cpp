@@ -10,25 +10,12 @@
 #include <fstream>
 
 // Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_text_oarchive.hpp>
-#include <boost/archive/polymorphic_text_iarchive.hpp>
-#include <boost/archive/polymorphic_xml_oarchive.hpp>
-#include <boost/archive/polymorphic_xml_iarchive.hpp>
-#include <boost/archive/polymorphic_binary_oarchive.hpp>
-#include <boost/archive/polymorphic_binary_iarchive.hpp>
 #include <boost/serialization/map.hpp>
 #include <boost/filesystem.hpp>
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp" // Must include first
 #include "Data_ScatteringCenterPropertiesDatabaseImpl.hpp"
-#include "Utility_HDF5OArchive.hpp"
-#include "Utility_HDF5IArchive.hpp"
 #include "Utility_PolymorphicHDF5OArchive.hpp"
 #include "Utility_PolymorphicHDF5IArchive.hpp"
 #include "Utility_LoggingMacros.hpp"
@@ -383,7 +370,7 @@ void ScatteringCenterPropertiesDatabaseImpl::logZaids(
                                    oss.str() );
 }
 
-EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ScatteringCenterPropertiesDatabaseImpl );
+EXPLICIT_CLASS_SAVE_LOAD_INST( ScatteringCenterPropertiesDatabaseImpl );
   
 } // end Data namespace
 

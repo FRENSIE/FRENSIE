@@ -35,9 +35,8 @@ GeometryModel definitions in the monte_carlo/collision subpackage.
 #include "MonteCarlo_FilledAdjointElectronGeometryModel.hpp"
 #include "MonteCarlo_FilledPositronGeometryModel.hpp"
 #include "MonteCarlo_FilledGeometryModel.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 using namespace MonteCarlo;
 %}
@@ -54,9 +53,6 @@ using namespace MonteCarlo;
 // Include the serialization helpers for handling macros
 %include "Utility_SerializationHelpers.hpp"
 
-// Include the explicit template instantiation helpers
-%include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
-
 // Simulation properties handling
 %import(module="PyFrensie.MonteCarlo") MonteCarlo_SimulationProperties.i
 
@@ -69,6 +65,9 @@ using namespace MonteCarlo;
 
 // Geometry properties handling
 %import Geometry.Geometry__init__.i
+
+// Array typenames
+%import PyFrensie_Array.i
 
 // Standard exception handling
 %include "exception.i"
@@ -127,14 +126,14 @@ MonteCarlo::StandardFilledParticleGeometryModel<PARTICLE ## Material>
 %extend MonteCarlo::StandardFilledParticleGeometryModel<PARTICLE ## Material>
 {
   double MonteCarlo::StandardFilledParticleGeometryModel<PARTICLE ## Material>::get ## PARTICLE ## MacroscopicTotalForwardCrossSection(
-      const Geometry::Model::InternalCellHandle cell,
+      const Geometry::Model::EntityId cell,
       const double energy ) const
   {
     return $self->getMacroscopicTotalForwardCrossSection( cell, energy );
   }
 
   double MonteCarlo::StandardFilledParticleGeometryModel<PARTICLE ## Material>::get ## PARTICLE ## MacroscopicTotalForwardCrossSectionQuick(
-      const Geometry::Model::InternalCellHandle cell,
+      const Geometry::Model::EntityId cell,
       const double energy ) const
   {
     return $self->getMacroscopicTotalForwardCrossSectionQuick( cell, energy );
@@ -242,7 +241,7 @@ It is used as a base class for the Filled Geometry Model classes."
 %ignore *::operator std::shared_ptr<const Geometry::Model>() const;
 
 // %ignore the templated version of isCellVoid
-%ignore MonteCarlo::FilledGeometryModel::isCellVoid( const Geometry::Model::InternalCellHandle cell ) const;
+%ignore MonteCarlo::FilledGeometryModel::isCellVoid( const Geometry::Model::EntityId cell ) const;
 
 // Add typemaps for converting file_path to and from Python string
 %typemap(in) const boost::filesystem::path& ( boost::filesystem::path temp ){

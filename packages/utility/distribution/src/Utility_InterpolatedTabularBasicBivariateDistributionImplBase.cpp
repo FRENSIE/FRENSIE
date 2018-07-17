@@ -7,27 +7,12 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp" // Must include first
 #include "Utility_InterpolatedTabularBasicBivariateDistributionImplBase.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 
-namespace Utility{
-
-EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_FULL( Utility::UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase, Utility::UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> );
-EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_PARTIAL( Utility::UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase, Utility::UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> );
-
-} // end Utility namespace
+EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_FULL( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase, Utility::UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> );
+EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_PARTIAL( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase, Utility::UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> );
 
 //---------------------------------------------------------------------------//
 // end Utility_InterpolatedTabularBasicBivariateDistributionImplBase.cpp

@@ -17,7 +17,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSubtrackEndingInCellEventDispatcher.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
@@ -48,7 +48,7 @@ public:
   //! Update the observers from a particle subtrack ending in cell event
   void updateObserversFromParticleSubtrackEndingInCellEvent(
              const ParticleState& particle,
-             const Geometry::Model::InternalCellHandle cell_of_subtrack,
+             const Geometry::Model::EntityId cell_of_subtrack,
              const double particle_subtrack_length,
              const double subtrack_start_time );
 

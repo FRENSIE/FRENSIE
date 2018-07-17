@@ -15,7 +15,7 @@
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -126,7 +126,7 @@ void AdjointElectroatomFactory::createAdjointElectroatomFromNativeTable(
                                 "Loading native adjoint EPR cross section "
                                 "table (v " << data_properties.fileVersion() <<
                                 ") for " << data_properties.atom() <<
-                                "from " << native_file_path.string() <<
+                                " from " << native_file_path.string() <<
                                 " ... " );
       FRENSIE_FLUSH_ALL_LOGS();
     }

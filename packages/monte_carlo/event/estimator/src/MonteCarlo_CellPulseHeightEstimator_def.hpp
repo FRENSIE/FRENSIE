@@ -13,11 +13,10 @@
 #include <iostream>
 
 // FRENSIE Includes
-#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "Utility_OpenMPProperties.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_LoggingMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -29,28 +28,15 @@ CellPulseHeightEstimator<ContributionMultiplierPolicy>::CellPulseHeightEstimator
 // Constructor
 template<typename ContributionMultiplierPolicy>
 CellPulseHeightEstimator<ContributionMultiplierPolicy>::CellPulseHeightEstimator(
-          const Estimator::idType id,
+          const uint32_t id,
           const double multiplier,
           const std::vector<CellIdType>& entity_ids )
-  : BaseEstimatorType( id, multiplier, entity_ids ),
+  : EntityEstimator( id, multiplier, entity_ids ),
     ParticleEnteringCellEventObserver(),
     ParticleLeavingCellEventObserver(),
     d_update_tracker( 1 ),
     d_dimension_values( 1 )
 { /* ... */ }
-
-// Set the response functions
-template<typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<ContributionMultiplierPolicy>::setResponseFunctions(
-                      const std::vector<std::shared_ptr<ResponseFunction> >&
-                      response_functions )
-{
-  FRENSIE_LOG_TAGGED_WARNING( "Estimator",
-                              "Response functions cannot be set for pulse "
-                              "height estimators. The response functions "
-                              "requested for pulse height estimator "
-                              << this->getId() << " will be ignored!" );
-}
 
 // Add current history estimator contribution
 /*! \details It is unsafe to call this function directly! This function will
@@ -120,20 +106,27 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::commitHistoryContri
 
   while( cell_data != end_cell_data )
   {
-    thread_dimension_values[ENERGY_DIMENSION] =
+    thread_dimension_values[OBSERVER_ENERGY_DIMENSION] =
       boost::any( cell_data->second );
 
     if( this->isPointInEstimatorPhaseSpace( thread_dimension_values ) )
     {
-      bin_index = this->calculateBinIndex( thread_dimension_values, 0u );
+      ObserverPhaseSpaceDimensionDiscretization::BinIndexArray bin_indices;
+      
+      this->calculateBinIndicesOfPoint( thread_dimension_values,
+                                        0u,
+                                        bin_indices );
 
       bin_contribution = this->calculateHistoryContribution(
 					      cell_data->second,
 					      ContributionMultiplierPolicy() );
 
-      this->commitHistoryContributionToBinOfEntity( cell_data->first,
-						    bin_index,
-						    bin_contribution );
+      for( size_t i = 0; i < bin_indices.size(); ++i )
+      {
+        this->commitHistoryContributionToBinOfEntity( cell_data->first,
+                                                      bin_indices[i],
+                                                      bin_contribution );
+      }
 
       // Add the energy deposition in this cell to the total energy deposition
       energy_deposition_in_all_cells += cell_data->second;
@@ -143,20 +136,27 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::commitHistoryContri
   }
 
   // Store the total energy deposition in the dimension values map
-  thread_dimension_values[ENERGY_DIMENSION] =
+  thread_dimension_values[OBSERVER_ENERGY_DIMENSION] =
     boost::any( energy_deposition_in_all_cells );
 
   // Determine the pulse bin for the combination of all cells
   if( this->isPointInEstimatorPhaseSpace( thread_dimension_values ) )
   {
-    bin_index = this->calculateBinIndex( thread_dimension_values, 0u );
+    ObserverPhaseSpaceDimensionDiscretization::BinIndexArray bin_indices;
+    
+    this->calculateBinIndicesOfPoint( thread_dimension_values,
+                                      0u,
+                                      bin_indices );
 
     bin_contribution = this->calculateHistoryContribution(
 					      energy_deposition_in_all_cells,
 					      ContributionMultiplierPolicy() );
 
-    this->commitHistoryContributionToBinOfTotal( bin_index,
-						 bin_contribution );
+    for( size_t i = 0; i < bin_indices.size(); ++i )
+    {
+      this->commitHistoryContributionToBinOfTotal( bin_indices[i],
+                                                   bin_contribution );
+    }
   }
 
   // Reset the update tracker
@@ -185,7 +185,7 @@ CellPulseHeightEstimator<ContributionMultiplierPolicy>::enableThreadSupport(
   // Make sure only the root thread calls this
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
   
-  BaseEstimatorType::enableThreadSupport( num_threads );
+  EntityEstimator::enableThreadSupport( num_threads );
 
   // Add thread support to update tracker
   d_update_tracker.resize( num_threads );
@@ -201,7 +201,7 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::resetData()
   // Make sure only the root thread calls this
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
-  BaseEstimatorType::resetData();
+  EntityEstimator::resetData();
 
   // Reset the update tracker
   for( size_t i = 0; i < d_update_tracker.size(); ++i )
@@ -218,12 +218,12 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::assignDiscretizatio
   const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins,
   const bool range_dimension ) 
 {
-  if( bins->getDimension() == ENERGY_DIMENSION )
-    BaseEstimatorType::assignDiscretization( bins, false );
+  if( bins->getDimension() == OBSERVER_ENERGY_DIMENSION )
+    EntityEstimator::assignDiscretization( bins, false );
   else
   {
     FRENSIE_LOG_TAGGED_WARNING( "Estimator",
-                                << bin_boundaries->getDimensionName() <<
+                                bins->getDimensionName() <<
                                 " bins cannot be set for pulse height "
                                 "estimators. The bins requested for pulse "
                                 "height estimator " << this->getId() <<
@@ -234,7 +234,7 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::assignDiscretizatio
 // Set the response functions
 template<typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<ContributionMultiplierPolicy>::assignResponseFunction(
-                     const std::shared_ptr<const Response>& response_function )
+             const std::shared_ptr<const ParticleResponse>& response_function )
 {
   FRENSIE_LOG_TAGGED_WARNING( "Estimator",
                               "response functions cannot be set for pulse "
@@ -343,10 +343,10 @@ CellPulseHeightEstimator<ContributionMultiplierPolicy>::resetUpdateTracker(
 // committed before the save.
 template<typename ContributionMultiplierPolicy>
 template<typename Archive>
-void CellPulseHeightEstimator<ContributionMultiplierPolicy>::save( Archive& ar, const unsigned version )
+void CellPulseHeightEstimator<ContributionMultiplierPolicy>::save( Archive& ar, const unsigned version ) const
 {
   // Save the base class data
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseEstimatorType );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( EntityEstimator );
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleEnteringCellEventObserver );
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleLeavingCellEventObserver );
 }
@@ -357,11 +357,11 @@ template<typename Archive>
 void CellPulseHeightEstimator<ContributionMultiplierPolicy>::load( Archive& ar, const unsigned version )
 {
   // Load the base class data
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseEstimatorType );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( EntityEstimator );
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleEnteringCellEventObserver );
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleLeavingCellEventObserver );
 
-  // Initialize the local data
+  // Initialize the thread data
   d_update_tracker.resize( 1 );
   d_dimension_values.resize( 1 );
 }
@@ -371,11 +371,11 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::load( Archive& ar, 
 // Explicit instantiation (extern declaration)
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightMultipliedCellPulseHeightEstimator, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> );
 
-BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndEnergyMultipliedCellPulseHeightEstimator );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndEnergyMultipliedCellPulseHeightEstimator, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 
 #endif // end MONTE_CARLO_CELL_PULSE_HEIGHT_ESTIMATOR_DEF_HPP
 

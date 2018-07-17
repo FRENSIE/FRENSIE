@@ -23,9 +23,9 @@
 #include "MonteCarlo_ParticleEventTags.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Model.hpp"
 #include "Utility_Vector.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
@@ -73,7 +73,7 @@ private:
 
 BOOST_CLASS_VERSION( MonteCarlo::ParticleCollidingGlobalEventActor, 0 );
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleCollidingGlobalEventActor );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleCollidingGlobalEventActor );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleCollidingGlobalEventActor );
 
 #endif // end MONTE_CARLO_PARTICLE_COLLISING_GLOBAL_EVENT_ACTOR_HPP
 

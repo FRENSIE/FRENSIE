@@ -8,7 +8,7 @@
 
 // FRENSIE Includes
 #include "Data_XSSPhotonuclearDataExtractor.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Data{
 

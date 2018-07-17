@@ -14,7 +14,7 @@
 #include "MonteCarlo_NuclearScatteringEnergyDistribution.hpp"
 #include "MonteCarlo_AceLaw44ARDistribution.hpp"
 #include "MonteCarlo_LabSystemConversionPolicy.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_Vector.hpp"
 

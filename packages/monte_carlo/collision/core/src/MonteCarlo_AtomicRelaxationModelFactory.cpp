@@ -11,7 +11,7 @@
 #include "MonteCarlo_DetailedSubshellRelaxationModel.hpp"
 #include "MonteCarlo_VoidAtomicRelaxationModel.hpp"
 #include "MonteCarlo_DetailedAtomicRelaxationModel.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 

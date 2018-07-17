@@ -6,23 +6,12 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp" // Must include first
 #include "Data_ZAID.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_FromStringTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Data{
 
@@ -186,28 +175,9 @@ std::string ZAID::toName() const
 
   return name;
 }
-  
-// Save the model to an archive
-template<typename Archive>
-void ZAID::save( Archive& ar, const unsigned version ) const
-{
-  unsigned raw_zaid = this->toRaw();
-  
-  ar & BOOST_SERIALIZATION_NVP( raw_zaid );
-}
+ 
 
-// Load the model from an archive
-template<typename Archive>
-void ZAID::load( Archive& ar, const unsigned version )
-{
-  unsigned raw_zaid;
-
-  ar & BOOST_SERIALIZATION_NVP( raw_zaid );
-
-  *this = ZAID( raw_zaid );
-}
-
-EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ZAID );
+EXPLICIT_CLASS_SAVE_LOAD_INST( ZAID );
   
 } // end Data namespace
 

@@ -5,9 +5,6 @@ FRENSIE_INITIALIZE_PACKAGE_TESTS(utility_core BOOST_TEST_LIB ${BOOST_TEST_LIBRAR
 # dependencies using another test framework. These first tests will all use
 # the Boost unit test framework.
 ##---------------------------------------------------------------------------##
-FRENSIE_ADD_TEST_EXECUTABLE(Assertion DEPENDS tstAssertion.cpp BOOST_TEST)
-FRENSIE_ADD_TEST(Assertion VERBOSE_TEST_OUTPUT)
-
 FRENSIE_ADD_TEST_EXECUTABLE(ElectronVoltUnit DEPENDS tstElectronVoltUnit.cpp BOOST_TEST)
 FRENSIE_ADD_TEST(ElectronVoltUnit VERBOSE_TEST_OUTPUT)
 
@@ -104,8 +101,8 @@ FRENSIE_ADD_TEST(LoggingMacros VERBOSE_TEST_OUTPUT)
 FRENSIE_ADD_TEST_EXECUTABLE(ExceptionCatchMacros DEPENDS tstExceptionCatchMacros.cpp BOOST_TEST)
 FRENSIE_ADD_TEST(ExceptionCatchMacros VERBOSE_TEST_OUTPUT)
 
-FRENSIE_ADD_TEST_EXECUTABLE(ContractException DEPENDS tstContractException.cpp BOOST_TEST)
-FRENSIE_ADD_TEST(ContractException VERBOSE_TEST_OUTPUT)
+FRENSIE_ADD_TEST_EXECUTABLE(DesignByContract DEPENDS tstDesignByContract.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(DesignByContract VERBOSE_TEST_OUTPUT)
 
 FRENSIE_ADD_TEST_EXECUTABLE(ComparisonPolicy DEPENDS tstComparisonPolicy.cpp BOOST_TEST)
 FRENSIE_ADD_TEST(ComparisonPolicy VERBOSE_TEST_OUTPUT)
@@ -434,21 +431,6 @@ FRENSIE_ADD_TEST(FortranFileHelpers
 FRENSIE_ADD_TEST_EXECUTABLE(3DCartesianVectorHelpers DEPENDS tst3DCartesianVectorHelpers.cpp)
 FRENSIE_ADD_TEST(3DCartesianVectorHelpers)
 
-FRENSIE_ADD_TEST_EXECUTABLE(KinematicHelpers DEPENDS tstKinematicHelpers.cpp)
-FRENSIE_ADD_TEST(KinematicHelpers)
-
-FRENSIE_ADD_TEST_EXECUTABLE(LegendrePolynomial DEPENDS tstLegendrePolynomial.cpp)
-FRENSIE_ADD_TEST(LegendrePolynomial)
-
-FRENSIE_ADD_TEST_EXECUTABLE(GaussLegendreQuadratureSet DEPENDS tstGaussLegendreQuadratureSet.cpp)
-FRENSIE_ADD_TEST(GaussLegendreQuadratureSet)
-
-FRENSIE_ADD_TEST_EXECUTABLE(SloanRadauQuadrature DEPENDS tstSloanRadauQuadrature.cpp)
-FRENSIE_ADD_TEST(SloanRadauQuadrature)
-
-FRENSIE_ADD_TEST_EXECUTABLE(TetrahedronHelpers DEPENDS tstTetrahedronHelpers.cpp)
-FRENSIE_ADD_TEST(TetrahedronHelpers)
-
 FRENSIE_ADD_TEST_EXECUTABLE(SampleMoment DEPENDS tstSampleMoment.cpp)
 FRENSIE_ADD_TEST(SampleMoment)
 
@@ -461,8 +443,19 @@ FRENSIE_ADD_TEST(Measurement)
 FRENSIE_ADD_TEST_EXECUTABLE(PropertyTree DEPENDS tstPropertyTree.cpp)
 FRENSIE_ADD_TEST(PropertyTree)
 
-FRENSIE_ADD_TEST_EXECUTABLE(StructuredHexMesh DEPENDS tstStructuredHexMesh.cpp)
-FRENSIE_ADD_TEST(StructuredHexMesh)
+FRENSIE_ADD_TEST_EXECUTABLE(HDF5File DEPENDS tstHDF5File.cpp)
+FRENSIE_ADD_TEST(HDF5File)
+
+IF(${FRENSIE_ENABLE_HDF5})
+FRENSIE_ADD_TEST_EXECUTABLE(HDF5FileDataSetHelpers DEPENDS tstHDF5FileDataSetHelpers.cpp)
+FRENSIE_ADD_TEST(HDF5FileDataSetHelpers)
+
+FRENSIE_ADD_TEST_EXECUTABLE(HDF5FileDataSetAttributeHelpers DEPENDS tstHDF5FileDataSetAttributeHelpers.cpp)
+FRENSIE_ADD_TEST(HDF5FileDataSetAttributeHelpers)
+
+FRENSIE_ADD_TEST_EXECUTABLE(HDF5FileGroupAttributeHelpers DEPENDS tstHDF5FileGroupAttributeHelpers.cpp)
+FRENSIE_ADD_TEST(HDF5FileGroupAttributeHelpers)
+ENDIF()
 
 FRENSIE_FINALIZE_PACKAGE_TESTS(utility_core)
 

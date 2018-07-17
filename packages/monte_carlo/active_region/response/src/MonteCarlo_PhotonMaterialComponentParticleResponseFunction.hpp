@@ -28,14 +28,14 @@ public:
   //! Constructor (photoatomic reaction)
   PhotonMaterialComponentParticleResponseFunction(
                        const std::shared_ptr<const FilledGeometryModel>& model,
-                       const Geometry::Model::InternalCellHandle cell,
+                       const Geometry::Model::EntityId cell,
                        const std::string& component_name,
                        const PhotoatomicReactionType reaction );
 
   //! Constructor (photonuclear reaction)
   PhotonMaterialComponentParticleResponseFunction(
                        const std::shared_ptr<const FilledGeometryModel>& model,
-                       const Geometry::Model::InternalCellHandle cell,
+                       const Geometry::Model::EntityId cell,
                        const std::string& component_name,
                        const PhotonuclearReactionType reaction );
 
@@ -111,7 +111,7 @@ void PhotonMaterialComponentParticleResponseFunction::load( Archive& ar, const u
 
 BOOST_SERIALIZATION_CLASS_VERSION( PhotonMaterialComponentParticleResponseFunction, MonteCarlo, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( PhotonMaterialComponentParticleResponseFunction, MonteCarlo );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::PhotonMaterialComponentParticleResponseFunction );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, PhotonMaterialComponentParticleResponseFunction );
 
 #endif // end MONTE_CARLO_PHOTON_MATERIAL_COMPONENT_PARTICLE_RESPONSE_FUNCTION_HPP
 

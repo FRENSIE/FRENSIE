@@ -24,8 +24,7 @@ conversion policies that can be used in FRENSIE and PyFrensie.
 // FRENSIE Includes
 #include "PyFrensie_PythonTypeTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
-#include "Utility_ExplicitSystemTemplateInstantiationMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 #include "Utility_SpatialCoordinateSystemType.hpp"
 #include "Utility_SpatialCoordinateSystemTraitsDecl.hpp"
@@ -58,9 +57,6 @@ using namespace Utility;
 
 // Include the serialization helpers for handling macros
 %include "Utility_SerializationHelpers.hpp"
-
-// Include the explicit template instantiation helpers
-%include "Utility_ExplicitSystemTemplateInstantiationMacros.hpp"
 
 // Include the coordinate helpers
 %include "Utility_CoordinateHelpers.i"

@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 

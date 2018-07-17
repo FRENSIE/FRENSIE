@@ -18,8 +18,8 @@
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_SortAlgorithms.hpp"
-#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
+#include "Utility_DesignByContract.hpp"
 
 #define BOOST_SERIALIZATION_STD_HASH_BASED_GRID_SEARCHER_EXPORT_IMPLEMENT() \
   BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_IMPLEMENT_IMPL(      \
@@ -448,51 +448,12 @@ void StandardHashBasedGridSearcher<STLCompliantArray,processed_grid>::load( Arch
 
 } // end Utility namespace
 
-namespace boost{
-namespace archive{
-  class text_oarchive;
-  class text_iarchive;
-  class xml_oarchive;
-  class xml_iarchive;
-  class binary_oarchive;
-  class binary_iarchive;
-  class polymorphic_oarchive;
-  class polymorphic_iarchive;
-}
-}
 
-namespace Utility{
-  class HDF5OArchive;
-  class HDF5IArchive;
-
-  EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardHashBasedGridSearcher<std::vector<double>,true> );
-
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,true>::save<boost::archive::text_oarchive>( boost::archive::text_oarchive& ar, const unsigned version ) const );
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,true>::save<boost::archive::xml_oarchive>( boost::archive::xml_oarchive& ar, const unsigned version ) const );
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,true>::save<boost::archive::binary_oarchive>( boost::archive::binary_oarchive& ar, const unsigned version ) const );
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,true>::save<boost::archive::polymorphic_oarchive>( boost::archive::polymorphic_oarchive& ar, const unsigned version ) const );
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,true>::save<Utility::HDF5OArchive>( Utility::HDF5OArchive& ar, const unsigned version ) const );
-
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,true>::load<boost::archive::text_iarchive>( boost::archive::text_iarchive& ar, const unsigned version ) );
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,true>::load<boost::archive::xml_iarchive>( boost::archive::xml_iarchive& ar, const unsigned version ) );
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,true>::load<boost::archive::binary_iarchive>( boost::archive::binary_iarchive& ar, const unsigned version ) );
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,true>::load<boost::archive::polymorphic_iarchive>( boost::archive::polymorphic_iarchive& ar, const unsigned version ) );
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,true>::load<Utility::HDF5IArchive>( Utility::HDF5IArchive& ar, const unsigned version ) );
-
-  EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardHashBasedGridSearcher<std::vector<double>,false> );
-
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,false>::save<boost::archive::text_oarchive>( boost::archive::text_oarchive& ar, const unsigned version ) const );
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,false>::save<boost::archive::xml_oarchive>( boost::archive::xml_oarchive& ar, const unsigned version ) const );
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,false>::save<boost::archive::binary_oarchive>( boost::archive::binary_oarchive& ar, const unsigned version ) const );
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,false>::save<boost::archive::polymorphic_oarchive>( boost::archive::polymorphic_oarchive& ar, const unsigned version ) const );
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,false>::save<Utility::HDF5OArchive>( Utility::HDF5OArchive& ar, const unsigned version ) const );
-
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,false>::load<boost::archive::text_iarchive>( boost::archive::text_iarchive& ar, const unsigned version ) );
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,false>::load<boost::archive::xml_iarchive>( boost::archive::xml_iarchive& ar, const unsigned version ) );
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,false>::load<boost::archive::binary_iarchive>( boost::archive::binary_iarchive& ar, const unsigned version ) );
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,false>::load<boost::archive::polymorphic_iarchive>( boost::archive::polymorphic_iarchive& ar, const unsigned version ) );
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,false>::load<Utility::HDF5IArchive>( Utility::HDF5IArchive& ar, const unsigned version ) );
-}
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::StandardHashBasedGridSearcher<std::vector<double>,true> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, StandardHashBasedGridSearcher<std::vector<double>,true> );
+  
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::StandardHashBasedGridSearcher<std::vector<double>,false> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, StandardHashBasedGridSearcher<std::vector<double>,false> );
 
 #endif // end UTILITY_STANDARD_HASH_BASED_GRID_SEARCHER_DEF_HPP
 

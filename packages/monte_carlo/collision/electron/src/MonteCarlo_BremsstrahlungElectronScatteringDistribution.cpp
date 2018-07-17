@@ -9,9 +9,9 @@
 // FRENSIE Includes
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
 #include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_KinematicHelpers.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_KinematicHelpers.hpp"
 
 namespace MonteCarlo{
 
@@ -248,9 +248,10 @@ double BremsstrahlungElectronScatteringDistribution::SampleDipoleAngle(
   testPrecondition( photon_energy <= incoming_electron_energy );
 
   // get the velocity of the electron divided by the speed of light beta = v/c
-  double beta = sqrt ( Utility::calculateDimensionlessRelativisticSpeedSquared(
-                          Utility::PhysicalConstants::electron_rest_mass_energy,
-                          incoming_electron_energy ) );
+  double beta =
+    std::sqrt( MonteCarlo::calculateDimensionlessRelativisticSpeedSquared(
+                         Utility::PhysicalConstants::electron_rest_mass_energy,
+                         incoming_electron_energy ) );
 
   double scaled_random_number =
             2.0 * Utility::RandomNumberGenerator::getRandomNumber<double>();

@@ -35,9 +35,9 @@ std::shared_ptr<const Geometry::RootModel> model;
 // Check that a parallel internal ray trace can be done
 FRENSIE_UNIT_TEST( Root, parallel_ray_trace )
 {
-  std::vector<std::tuple<Geometry::Navigator::InternalCellHandle,
-                         Geometry::Navigator::InternalCellHandle,
-                         Geometry::Navigator::InternalCellHandle> >
+  std::vector<std::tuple<Geometry::Navigator::EntityId,
+                         Geometry::Navigator::EntityId,
+                         Geometry::Navigator::EntityId> >
     cell_ids( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
 
   std::vector<std::tuple<double,double,double> >
@@ -138,9 +138,9 @@ FRENSIE_UNIT_TEST( Root, parallel_ray_trace )
   }
 
   // Check that each of the rays traces were successful
-  std::vector<std::tuple<Geometry::Navigator::InternalCellHandle,
-                         Geometry::Navigator::InternalCellHandle,
-                         Geometry::Navigator::InternalCellHandle> >
+  std::vector<std::tuple<Geometry::Navigator::EntityId,
+                         Geometry::Navigator::EntityId,
+                         Geometry::Navigator::EntityId> >
     correct_cell_ids( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
   
   for( unsigned i = 0; i < correct_cell_ids.size(); ++i )

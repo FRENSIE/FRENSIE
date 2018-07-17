@@ -9,22 +9,11 @@
 // Std Lib Includes
 #include <limits>
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_ParticleDistribution.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_ToStringTraits.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -47,7 +36,7 @@ const std::string& ParticleDistribution::getName() const
   return d_name;
 }
 
-EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( ParticleDistribution );
+EXPLICIT_CLASS_SAVE_LOAD_INST( ParticleDistribution );
   
 } // end MonteCarlo namespace
 

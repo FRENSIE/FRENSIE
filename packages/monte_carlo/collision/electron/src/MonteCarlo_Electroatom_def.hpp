@@ -10,7 +10,7 @@
 #define MONTE_CARLO_ELECTROATOM_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 

@@ -18,8 +18,7 @@
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
-#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_IMPLEMENT( UnitAwareHistogramDistribution );
 
@@ -764,8 +763,8 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::verifyValidV
 
 } // end Utility namespace
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareHistogramDistribution<void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareHistogramDistribution<void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareHistogramDistribution<void,void> );
 
 #endif // end UTILITY_HISTOGRAM_DISTRIBUTION_DEF_HPP
 

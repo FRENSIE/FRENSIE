@@ -23,9 +23,9 @@
 #include "MonteCarlo_ParticleEventTags.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Model.hpp"
 #include "Utility_Vector.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
@@ -55,7 +55,7 @@ public:
 
   //! Update the particle state and bank
   virtual void updateFromParticleEnteringCellEvent(
-          const Geometry::Model::InternalCellHandle cell_entering,
+          const Geometry::Model::EntityId cell_entering,
           const double optical_path_to_next_cell,
           const SimulateParticleForOpticalPath& simulate_particle_track_method,
           ParticleState& particle,
@@ -76,7 +76,7 @@ private:
 
 BOOST_CLASS_VERSION( MonteCarlo::ParticleEnteringCellEventActor, 0 );
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleEnteringCellEventActor );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleEnteringCellEventActor );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleEnteringCellEventActor );
 
 #endif // end MONTE_CARLO_PARTICLE_ENTERING_CELL_EVENT_ACTOR_HPP
 

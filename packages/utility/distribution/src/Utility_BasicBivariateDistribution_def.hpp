@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_ComparisonPolicy.hpp"
-#include "Utility_ExplicitDistributionTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 
 namespace Utility{
 
@@ -60,7 +60,8 @@ void UnitAwareBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndepen
   
 } // end Utility namespace
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareBasicBivariateDistribution<void,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareBasicBivariateDistribution<void,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareBasicBivariateDistribution<void,void,void> );
 
 #endif // end UTILITY_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 

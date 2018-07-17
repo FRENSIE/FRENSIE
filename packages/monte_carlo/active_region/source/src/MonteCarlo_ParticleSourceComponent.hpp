@@ -28,7 +28,7 @@
 #include "Utility_Communicator.hpp"
 #include "Utility_DistributionTraits.hpp"
 #include "Utility_TypeNameTraits.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
@@ -46,12 +46,12 @@ public:
   typedef Geometry::Model::CellIdSet CellIdSet;
 
   //! Constructor
-  ParticleSourceComponent( const size_t id,
+  ParticleSourceComponent( const uint32_t id,
                            const double selection_weight,
                            const std::shared_ptr<const Geometry::Model>& model );
 
   //! Constructor (with rejection cells)
-  ParticleSourceComponent( const size_t id,
+  ParticleSourceComponent( const uint32_t id,
                            const double selection_weight,
                            const CellIdSet& rejection_cells,
                            const std::shared_ptr<const Geometry::Model>& model );
@@ -81,7 +81,7 @@ public:
   double getSelectionWeight() const;
 
   //! Get the id of this source
-  size_t getId() const;
+  uint32_t getId() const;
 
   //! Return the number of sampling trials
   Counter getNumberOfTrials() const;
@@ -215,7 +215,7 @@ private:
   friend class boost::serialization::access;
 
   // The component id
-  UniqueIdManager<ParticleSourceComponent,size_t> d_id;
+  UniqueIdManager<ParticleSourceComponent,uint32_t> d_id;
 
   // The component selection weight
   double d_selection_weight;
@@ -300,7 +300,7 @@ void ParticleSourceComponent::load( Archive& ar, const unsigned version )
 
 BOOST_CLASS_VERSION( MonteCarlo::ParticleSourceComponent, 0 );
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleSourceComponent );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::ParticleSourceComponent );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, ParticleSourceComponent );
 
 namespace Utility{
 

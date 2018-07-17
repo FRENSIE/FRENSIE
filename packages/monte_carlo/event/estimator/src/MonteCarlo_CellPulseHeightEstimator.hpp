@@ -35,15 +35,12 @@ namespace MonteCarlo{
  * a single thread.
  */
 template<typename ContributionMultiplierPolicy = WeightMultiplier>
-class CellPulseHeightEstimator : public EntityEstimator<Geometry::Model::InternalCellHandle>,
+class CellPulseHeightEstimator : public EntityEstimator,
 				 public ParticleEnteringCellEventObserver,
 				 public ParticleLeavingCellEventObserver
 {
-  // Typedef for the base estimator type
-  typedef EntityEstimator<Geometry::Model::InternalCellHandle> BaseEstimatorType;
-  
   // Typedef for the serial update tracker
-  typedef std::unordered_map<Geometry::Model::InternalCellHandle,double>
+  typedef std::unordered_map<Geometry::Model::EntityId,double>
   SerialUpdateTracker;
 
   // Typedef for the parallel update tracker
@@ -52,7 +49,7 @@ class CellPulseHeightEstimator : public EntityEstimator<Geometry::Model::Interna
 public:
 
   //! Typedef for the cell id type
-  typedef Geometry::Model::InternalCellHandle CellIdType;
+  typedef Geometry::Model::EntityId CellIdType;
 
   //! Typedef for event tags used for quick dispatcher registering
   typedef boost::mpl::vector<ParticleEnteringCellEventObserver::EventTag,
@@ -60,7 +57,7 @@ public:
   EventTags;
 
   //! Constructor
-  CellPulseHeightEstimator( const Estimator::idType id,
+  CellPulseHeightEstimator( const uint32_t id,
 			    const double multiplier,
 			    const std::vector<CellIdType>& entity_ids );
 
@@ -100,7 +97,7 @@ private:
                              const bool range_dimension ) final override;
 
   // Assign response function to the estimator
-  void assignResponseFunction( const std::shared_ptr<const Response>& response_function ) final override;
+  void assignResponseFunction( const std::shared_ptr<const ParticleResponse>& response_function ) final override;
 
   // Assign the particle type to the estimator
   void assignParticleType( const ParticleType particle_type ) final override;

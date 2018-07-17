@@ -35,13 +35,7 @@ namespace cgs = boost::units::cgs;
 
 typedef std::tuple<Utility::LinLin,Utility::LogLog,Utility::LinLog,Utility::LogLin> InterpTypes;
 
-typedef std::tuple<
-  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
-  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
-  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
-  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>,
-  std::tuple<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>
-  > TestArchives;
+typedef TestArchiveHelper::TestArchives TestArchives;
 
 typedef std::tuple<
   std::tuple<si::energy,si::amount,cgs::energy,si::amount>,

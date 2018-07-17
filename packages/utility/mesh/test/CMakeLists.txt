@@ -1,0 +1,13 @@
+FRENSIE_INITIALIZE_PACKAGE_TESTS(utility_mesh)
+
+FRENSIE_ADD_TEST_EXECUTABLE(TetrahedronHelpers DEPENDS tstTetrahedronHelpers.cpp)
+FRENSIE_ADD_TEST(TetrahedronHelpers)
+
+FRENSIE_ADD_TEST_EXECUTABLE(StructuredHexMesh DEPENDS tstStructuredHexMesh.cpp)
+FRENSIE_ADD_TEST(StructuredHexMesh)
+
+FRENSIE_ADD_TEST_EXECUTABLE(TetMesh DEPENDS tstTetMesh.cpp)
+FRENSIE_ADD_TEST(TetMesh
+  EXTRA_ARGS --test_tet_mesh_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk)
+
+FRENSIE_FINALIZE_PACKAGE_TESTS(utility_mesh)

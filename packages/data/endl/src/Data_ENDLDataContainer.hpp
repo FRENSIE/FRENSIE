@@ -14,12 +14,10 @@
 
 // Boost Includes
 #include <boost/filesystem/path.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
 #include <boost/serialization/split_member.hpp>
 
 // FRENSIE Includes
-#include "Data_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_ArchivableObject.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_Map.hpp"
@@ -1335,7 +1333,7 @@ private:
 BOOST_SERIALIZATION_CLASS_VERSION( ENDLDataContainer, Data, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ENDLDataContainer, Data );
 
-EXTERN_EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ENDLDataContainer );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Data, ENDLDataContainer );
 
 //---------------------------------------------------------------------------//
 // Template Includes

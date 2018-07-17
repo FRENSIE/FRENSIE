@@ -9,26 +9,15 @@
 // Std Lib Includes
 #include <limits>
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp" // Must be included first
 #include "Geometry_InfiniteMediumModel.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 
 namespace Geometry{
 
 // Constructor
 InfiniteMediumModel::InfiniteMediumModel(
-                               const InternalCellHandle cell,
+                               const EntityId cell,
                                const Model::InternalMaterialHandle material_id,
                                const Model::Density density )
   : Model(),
@@ -85,7 +74,7 @@ void InfiniteMediumModel::getCellEstimatorData( CellEstimatorIdDataMap& ) const
 { /* ... */ }
 
 // Check if a cell exists
-bool InfiniteMediumModel::doesCellExist( const InternalCellHandle cell ) const
+bool InfiniteMediumModel::doesCellExist( const EntityId cell ) const
 {
   if( cell == d_cell )
     return true;
@@ -96,7 +85,7 @@ bool InfiniteMediumModel::doesCellExist( const InternalCellHandle cell ) const
 // Check if the cell is a termination cell
 /*! \details An infinite medium has no termination cell.
  */
-bool InfiniteMediumModel::isTerminationCell( const InternalCellHandle ) const
+bool InfiniteMediumModel::isTerminationCell( const EntityId ) const
 {
   return false;
 }
@@ -104,7 +93,7 @@ bool InfiniteMediumModel::isTerminationCell( const InternalCellHandle ) const
 // Check if a cell is void
 /*! \details By default there will only be a single void cell with an id of 1.
  */
-bool InfiniteMediumModel::isVoidCell( const InternalCellHandle cell ) const
+bool InfiniteMediumModel::isVoidCell( const EntityId cell ) const
 {
   if( cell == d_cell )
     return true;
@@ -114,7 +103,7 @@ bool InfiniteMediumModel::isVoidCell( const InternalCellHandle cell ) const
 
 // Get the cell volume
 auto InfiniteMediumModel::getCellVolume(
-                                const InternalCellHandle cell ) const -> Volume
+                                const EntityId cell ) const -> Volume
 {
   if( cell == d_cell )
     return Utility::QuantityTraits<Volume>::inf();
@@ -134,11 +123,10 @@ InfiniteMediumNavigator* InfiniteMediumModel::createNavigatorAdvanced() const
 {
   return new InfiniteMediumNavigator( d_cell );
 }
-
-EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( InfiniteMediumModel );
   
 } // end Geometry namespace
 
+EXPLICIT_CLASS_SAVE_LOAD_INST( Geometry::InfiniteMediumModel );
 BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( InfiniteMediumModel, Geometry );
 
 //---------------------------------------------------------------------------//

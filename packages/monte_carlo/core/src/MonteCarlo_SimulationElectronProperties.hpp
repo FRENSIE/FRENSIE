@@ -10,6 +10,7 @@
 #define MONTE_CARLO_SIMULATION_ELECTRON_PROPERTIES_HPP
 
 // Boost Includes
+#include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/export.hpp>
@@ -20,7 +21,7 @@
 #include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "MonteCarlo_TwoDInterpolationType.hpp"
 #include "MonteCarlo_TwoDSamplingType.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -263,7 +264,7 @@ void SimulationElectronProperties::serialize( Archive& ar,
 
 BOOST_CLASS_VERSION( MonteCarlo::SimulationElectronProperties, 0 );
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::SimulationElectronProperties, "SimulationElectronProperties" );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SimulationElectronProperties );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SimulationElectronProperties );
 
 #endif // end !defined SWIG
 

@@ -16,7 +16,7 @@
 #include "Utility_SpatialCoordinateConversionPolicy.hpp"
 #include "Utility_SpatialCoordinateSystemTraits.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Utility{
 
@@ -267,7 +267,7 @@ inline bool SphericalSpatialCoordinateConversionPolicy::isTertiarySpatialCoordin
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( SphericalSpatialCoordinateConversionPolicy, Utility );
 BOOST_SERIALIZATION_CLASS_VERSION( SphericalSpatialCoordinateConversionPolicy, Utility, 0 );
-EXTERN_EXPLICIT_SYSTEM_CLASS_SERIALIZE_INST( Utility::SphericalSpatialCoordinateConversionPolicy );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( Utility, SphericalSpatialCoordinateConversionPolicy );
 
 #endif // end UTILITY_SPHERICAL_SPATIAL_COORDINATE_CONVERSION_POLICY_HPP
 

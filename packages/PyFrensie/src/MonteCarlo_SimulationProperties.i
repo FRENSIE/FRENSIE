@@ -24,8 +24,7 @@
 #include "MonteCarlo_SimulationElectronProperties.hpp"
 #include "MonteCarlo_SimulationAdjointElectronProperties.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_ToStringTraitsDecl.hpp"
 
@@ -47,9 +46,6 @@ using namespace MonteCarlo;
 
 // Include the serialization helpers for handling macros
 %include "Utility_SerializationHelpers.hpp"
-
-// Include the explicit template instantiation helpers
-%include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 
 // Include the MonteCarlo simulation properties helpers
 %include "MonteCarlo_SimulationPropertiesHelpers.i"

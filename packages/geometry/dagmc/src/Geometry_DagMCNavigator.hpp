@@ -33,7 +33,7 @@ class DagMCNavigator : public Navigator
 public:
 
   //! The reflecting surface map type
-  typedef boost::bimap<InternalSurfaceHandle,moab::EntityHandle>
+  typedef boost::bimap<EntityId,moab::EntityHandle>
   ReflectingSurfaceIdHandleMap;
 
   //! Constructor
@@ -50,27 +50,27 @@ public:
   PointLocation getPointLocation(
                              const Length position[3],
                              const double direction[3],
-                             const InternalCellHandle cell_id ) const override;
+                             const EntityId cell_id ) const override;
 
   //! Get the surface normal at a point on the surface
-  void getSurfaceNormal( const InternalSurfaceHandle surface_id,
+  void getSurfaceNormal( const EntityId surface_id,
                          const Length position[3],
                          const double direction[3],
                          double normal[3] ) const override;
 
   //! Get the boundary cell
-  InternalCellHandle getBoundaryCell(
-                       const InternalCellHandle cell_id,
-                       const InternalSurfaceHandle boundary_surface_id ) const;
+  EntityId getBoundaryCell(
+                       const EntityId cell_id,
+                       const EntityId boundary_surface_id ) const;
 
   //! Find the cell that contains a given ray
-  InternalCellHandle findCellContainingRay(
+  EntityId findCellContainingRay(
                                   const Length position[3],
                                   const double direction[3],
                                   CellIdSet& found_cell_cache ) const override;
 
   //! Find the cell that contains the ray
-  InternalCellHandle findCellContainingRay(
+  EntityId findCellContainingRay(
                                     const Length position[3],
                                     const double direction[3] ) const override;
 
@@ -93,7 +93,7 @@ public:
                  const double x_direction,
                  const double y_direction,
                  const double z_direction,
-                 const InternalCellHandle current_cell ) override;
+                 const EntityId current_cell ) override;
 
   //! Initialize (or reset) the state (base overloads)
   using Navigator::setState;
@@ -105,10 +105,10 @@ public:
   const double* getDirection() const override;
 
   //! Get the cell containing the internal DagMC ray position
-  InternalCellHandle getCurrentCell() const override;
+  EntityId getCurrentCell() const override;
 
   //! Get the distance from the internal DagMC ray pos. to the nearest boundary
-  Length fireRay( InternalSurfaceHandle* surface_hit ) override;
+  Length fireRay( EntityId* surface_hit ) override;
 
   //! Change the internal ray direction (without changing its location)
   void changeDirection( const double x_direction,
@@ -143,7 +143,7 @@ private:
                                const moab::EntityHandle surface_handle ) const;
 
   // Get the point location w.r.t. a given cell
-  PointLocation getPointLocation(
+  PointLocation getPointLocationWithCellHandle(
                          const Length position[3],
                          const double direction[3],
                          const moab::EntityHandle cell_handle,
@@ -186,13 +186,13 @@ private:
                                 moab::DagMC::RayHistory* history = NULL ) const;
   
   // Set an internal DagMC ray
-  void setState( const Length x_position,
-                 const Length y_position,
-                 const Length z_position,
-                 const double x_direction,
-                 const double y_direction,
-                 const double z_direction,
-                 const moab::EntityHandle current_cell_handle );
+  void setStateWithCellHandle( const Length x_position,
+                               const Length y_position,
+                               const Length z_position,
+                               const double x_direction,
+                               const double y_direction,
+                               const double z_direction,
+                               const moab::EntityHandle current_cell_handle );
 
   // The boundary tolerance
   static const double s_boundary_tol;

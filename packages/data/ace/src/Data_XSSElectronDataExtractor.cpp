@@ -9,7 +9,7 @@
 // FRENSIE Includes
 #include "Data_XSSElectronDataExtractor.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Data{
 

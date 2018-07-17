@@ -6,7 +6,6 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.9.3 FATAL_ERROR)
 
 # Add the custom modules to the module path
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
-  "${CMAKE_DIR}/share/cmake-3.0/Modules"
   ${PROJECT_SOURCE_DIR}/cmake)
 
 # Define the project name
@@ -14,6 +13,9 @@ INCLUDE(ProjectName)
 
 # Define the project version
 INCLUDE(Version)
+
+# Include cmake macros (ones that aren't automatically available)
+INCLUDE(${CMAKE_ROOT}/Modules/CMakeDependentOption.cmake)
 
 # Include the macros that have been defined for this project
 INCLUDE(Macros)
@@ -58,7 +60,10 @@ OPTION(FRENSIE_ENABLE_OPENMP "Enable shared-memory parallelism in FRENSIE" ON)
 OPTION(FRENSIE_ENABLE_MPI "Enable distributed-memory parallelism in FRENSIE" OFF)
 OPTION(FRENSIE_ENABLE_PYTHON "Enable python interfaces in FRENSIE" OFF)
 OPTION(FRENSIE_ENABLE_ROOT "Enable the Root geometry interfaces in FRENSIE" OFF)
-OPTION(FRENSIE_ENABLE_DAGMC "Enable the DagMC geometry interfaces in FRENSIE" OFF)
+OPTION(FRENSIE_ENABLE_HDF5 "Enable the HDF5 file interfaces in FRENSIE" OFF)
+OPTION(FRENSIE_ENABLE_MOAB "Enable the Moab mesh interfaces in FRENSIE" OFF)
+CMAKE_DEPENDENT_OPTION(FRENSIE_ENABLE_DAGMC "Enable the DagMC geometry interfaces in FRENSIE (MOAB required)" OFF
+  "FRENSIE_ENABLE_MOAB" OFF)
 OPTION(FRENSIE_ENABLE_DASHBOARD_CLIENT "Enable dashboard client support" OFF)
 OPTION(FRENSIE_ENABLE_MANUAL "Enable the manual in FRENSIE" ON)
 
@@ -99,18 +104,7 @@ IF(FRENSIE_ENABLE_OPENMP)
   ENABLE_OPENMP_SUPPORT()
 ENDIF()
 
-# Parse the DBC configure file so it can be used in the source files
 SET(CMAKEDEFINE \#cmakedefine)
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/config.hpp.in ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp.in)
-CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp.in ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp)
-
-# Add the CMAKE_BINARY_DIR to the include path to access config file
-INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
-
-# Add the config file to the install target
-INSTALL(FILES ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/include
-  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
 
 ##---------------------------------------------------------------------------##
 ## Enable Color Output Support
@@ -162,14 +156,19 @@ ENDIF()
 ##---------------------------------------------------------------------------##
 # SWIG will be used to generate the Python interfaces. If SWIG is located
 # in a non-standard location set the SWIG_PREFIX variable.
-ENABLE_SWIG_SUPPORT()
+IF(FRENSIE_ENABLE_PYTHON)
+  ENABLE_SWIG_SUPPORT()
+ENDIF()
 
 ##---------------------------------------------------------------------------##
 ## Configure HDF5 Support
 ##---------------------------------------------------------------------------##
 # If the HDF5 package is in a non-standard location, set the HDF5_PREFIX
 # variable.
-ENABLE_HDF5_SUPPORT()
+IF(FRENSIE_ENABLE_HDF5)
+  SET(HAVE_FRENSIE_HDF5 "1")
+  ENABLE_HDF5_SUPPORT()
+ENDIF()
 
 ##---------------------------------------------------------------------------##
 ## Configure MOAB Support
@@ -177,16 +176,10 @@ ENABLE_HDF5_SUPPORT()
 # If the MOAB package is in a non-standard location, set the MOAB_PREFIX
 # variable. If FRENSIE_ENABLE_DAGMC is set to ON, the DagMC library will
 # be found.
-ENABLE_MOAB_SUPPORT()
-
-##---------------------------------------------------------------------------##
-## Configure Trilinos Support
-##---------------------------------------------------------------------------##
-# If the Trilinos package is in a non-standard location, set the
-# TRILINOS_PREFIX variable. If the Trilinos source directory is not located
-# in the TRILINOS_PREFIX directory, the TRILINOS_SOURCE variable can also be
-# set.
-# ENABLE_TRILINOS_SUPPORT()
+IF(FRENSIE_ENABLE_MOAB)
+  SET(HAVE_FRENSIE_MOAB "1")
+  ENABLE_MOAB_SUPPORT()
+ENDIF()
 
 ##---------------------------------------------------------------------------##
 ## Configure Boost Support
@@ -204,6 +197,21 @@ ENABLE_BOOST_SUPPORT()
 IF(FRENSIE_ENABLE_ROOT)
   ENABLE_ROOT_SUPPORT()
 ENDIF()
+
+##---------------------------------------------------------------------------##
+## Parse the FRENSIE config file
+##---------------------------------------------------------------------------##
+
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/config.hpp.in ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp.in)
+CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp.in ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp)
+
+# Add the CMAKE_BINARY_DIR to the include path to access config file
+INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
+
+# Add the config file to the install target
+INSTALL(FILES ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/include
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
 
 ##---------------------------------------------------------------------------##
 ## Configure Dashboard Client Support

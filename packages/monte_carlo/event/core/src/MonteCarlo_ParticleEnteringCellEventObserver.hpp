@@ -19,9 +19,9 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleEventTags.hpp"
 #include "MonteCarlo_ParticleState.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Model.hpp"
 #include "Utility_Vector.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
@@ -48,7 +48,7 @@ public:
   //! Update the observer
   virtual void updateFromParticleEnteringCellEvent(
 	  const ParticleState& particle,
-	  const Geometry::Model::InternalCellHandle cell_entering ) = 0;
+	  const Geometry::Model::EntityId cell_entering ) = 0;
 
 private:
 
@@ -65,7 +65,7 @@ private:
 
 BOOST_CLASS_VERSION( MonteCarlo::ParticleEnteringCellEventObserver, 0 );
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleEnteringCellEventObserver );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleEnteringCellEventObserver );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleEnteringCellEventObserver );
 
 #endif // end MONTE_CARLO_PARTICLE_ENTERING_CELL_EVENT_OBSERVER_HPP
 

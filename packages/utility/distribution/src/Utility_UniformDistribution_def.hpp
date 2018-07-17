@@ -417,7 +417,8 @@ bool UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::operator!=( co
 
 } // end Utility namespace
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareUniformDistribution<void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareUniformDistribution<void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareUniformDistribution<void,void> );
 
 #endif // end UTILITY_UNIFORM_DISTRIBUTION_DEF_HPP
 

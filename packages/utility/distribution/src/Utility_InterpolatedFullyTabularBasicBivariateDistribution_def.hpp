@@ -18,7 +18,7 @@
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_LoggingMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 BOOST_SERIALIZATION_DISTRIBUTION4_EXPORT_IMPLEMENT( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution );
 
@@ -801,7 +801,7 @@ void UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,
 
 } // end Utility namespace
 
-EXTERN_EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_FULL( Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution, void, void, void );
+EXTERN_EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_FULL( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution, void, void, void );
 
 #endif // UTILITY_INTERPOLATED_FULLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 

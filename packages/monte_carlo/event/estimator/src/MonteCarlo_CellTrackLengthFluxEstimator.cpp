@@ -7,14 +7,16 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_CellTrackLengthFluxEstimator.hpp"
 
-namespace MonteCarlo{
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightMultipliedCellTrackLengthFluxEstimator );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> );
 
-EXPLICIT_TEMPLATE_CLASS_INST( CellTrackLengthFluxEstimator<WeightMultiplier> );
-EXPLICIT_TEMPLATE_CLASS_INST( CellTrackLengthFluxEstimator<WeightAndEnergyMultiplier> );
-  
-} // end MonteCarlo namespace
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightAndEnergyMultipliedCellTrackLengthFluxEstimator );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CellTrackLengthFluxEstimator.cpp

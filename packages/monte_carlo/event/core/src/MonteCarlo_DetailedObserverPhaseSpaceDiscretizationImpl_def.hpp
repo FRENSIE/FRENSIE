@@ -124,7 +124,7 @@ void DetailedObserverPhaseSpaceDiscretizationImpl::load( Archive& ar, const unsi
 } // end MonteCarlo namespace
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( DetailedObserverPhaseSpaceDiscretizationImpl, MonteCarlo );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::DetailedObserverPhaseSpaceDiscretizationImpl );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, DetailedObserverPhaseSpaceDiscretizationImpl );
 
 #endif // end MONTE_CARLO_DETAILED_OBSERVER_PHASE_SPACE_DISCRETIZATION_IMPL_DEF_HPP
 

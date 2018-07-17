@@ -36,15 +36,15 @@ std::shared_ptr<const Geometry::DagMCModel> model;
 // Check that a parallel internal ray trace can be done
 FRENSIE_UNIT_TEST( DagMC, parallel_ray_trace )
 {
-  std::vector<std::tuple<Geometry::Navigator::InternalCellHandle,
-                         Geometry::Navigator::InternalCellHandle,
-                         Geometry::Navigator::InternalCellHandle> >
+  std::vector<std::tuple<Geometry::Navigator::EntityId,
+                         Geometry::Navigator::EntityId,
+                         Geometry::Navigator::EntityId> >
     cell_ids( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
 
-  std::vector<std::tuple<Geometry::Navigator::InternalSurfaceHandle,
-                         Geometry::Navigator::InternalSurfaceHandle,
-                         Geometry::Navigator::InternalSurfaceHandle,
-                         Geometry::Navigator::InternalSurfaceHandle> >
+  std::vector<std::tuple<Geometry::Navigator::EntityId,
+                         Geometry::Navigator::EntityId,
+                         Geometry::Navigator::EntityId,
+                         Geometry::Navigator::EntityId> >
     surface_ids( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
 
   std::vector<std::tuple<double,double,double,double> >
@@ -101,13 +101,13 @@ FRENSIE_UNIT_TEST( DagMC, parallel_ray_trace )
     }
 
     // Find the cell that contains the ray
-    Geometry::Navigator::InternalCellHandle cell = navigator->getCurrentCell();
+    Geometry::Navigator::EntityId cell = navigator->getCurrentCell();
 
     Utility::get<0>(cell_ids[Utility::OpenMPProperties::getThreadId()]) =
       cell;
 
     // Fire the ray
-    Geometry::Navigator::InternalSurfaceHandle surface_hit;
+    Geometry::Navigator::EntityId surface_hit;
 
     Geometry::Navigator::Length distance_to_surface_hit =
       navigator->fireRay( &surface_hit );
@@ -169,9 +169,9 @@ FRENSIE_UNIT_TEST( DagMC, parallel_ray_trace )
   }
 
   // Check that each of the rays traces were successful
-  std::vector<std::tuple<Geometry::Navigator::InternalCellHandle,
-                         Geometry::Navigator::InternalCellHandle,
-                         Geometry::Navigator::InternalCellHandle> >
+  std::vector<std::tuple<Geometry::Navigator::EntityId,
+                         Geometry::Navigator::EntityId,
+                         Geometry::Navigator::EntityId> >
     correct_cell_ids( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
 
   for( size_t i = 0; i < correct_cell_ids.size(); ++i )
@@ -179,10 +179,10 @@ FRENSIE_UNIT_TEST( DagMC, parallel_ray_trace )
 
   FRENSIE_CHECK_EQUAL( cell_ids, correct_cell_ids );
 
-  std::vector<std::tuple<Geometry::Navigator::InternalSurfaceHandle,
-                         Geometry::Navigator::InternalSurfaceHandle,
-                         Geometry::Navigator::InternalSurfaceHandle,
-                         Geometry::Navigator::InternalSurfaceHandle> >
+  std::vector<std::tuple<Geometry::Navigator::EntityId,
+                         Geometry::Navigator::EntityId,
+                         Geometry::Navigator::EntityId,
+                         Geometry::Navigator::EntityId> >
     correct_surface_ids( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
 
   for( size_t i = 0; i < correct_cell_ids.size(); ++i )
@@ -203,14 +203,14 @@ FRENSIE_UNIT_TEST( DagMC, parallel_ray_trace )
 // Check that a parallel internal ray trace can be done
 FRENSIE_UNIT_TEST( DagMC, parallel_ray_trace_with_reflection )
 {
-  std::vector<std::tuple<Geometry::Navigator::InternalCellHandle,
-                         Geometry::Navigator::InternalCellHandle,
-                         Geometry::Navigator::InternalCellHandle> >
+  std::vector<std::tuple<Geometry::Navigator::EntityId,
+                         Geometry::Navigator::EntityId,
+                         Geometry::Navigator::EntityId> >
     cell_ids( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
   
-  std::vector<std::tuple<Geometry::Navigator::InternalSurfaceHandle,
-                         Geometry::Navigator::InternalSurfaceHandle,
-                         Geometry::Navigator::InternalSurfaceHandle> >
+  std::vector<std::tuple<Geometry::Navigator::EntityId,
+                         Geometry::Navigator::EntityId,
+                         Geometry::Navigator::EntityId> >
     surface_ids( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
 
   std::vector<std::tuple<double,double,double> >
@@ -231,13 +231,13 @@ FRENSIE_UNIT_TEST( DagMC, parallel_ray_trace_with_reflection )
                          0.0, 0.0, 1.0 );
 
     // Find the cell that contains the ray
-    Geometry::Navigator::InternalCellHandle cell = navigator->getCurrentCell();
+    Geometry::Navigator::EntityId cell = navigator->getCurrentCell();
 
     Utility::get<0>(cell_ids[Utility::OpenMPProperties::getThreadId()]) =
       cell;
 
     // Fire the ray
-    Geometry::Navigator::InternalSurfaceHandle surface_hit;
+    Geometry::Navigator::EntityId surface_hit;
 
     Geometry::Navigator::Length distance_to_surface_hit =
       navigator->fireRay( &surface_hit );
@@ -284,9 +284,9 @@ FRENSIE_UNIT_TEST( DagMC, parallel_ray_trace_with_reflection )
   }
 
   // Check that each of the rays traces were successful
-  std::vector<std::tuple<Geometry::Navigator::InternalCellHandle,
-                               Geometry::Navigator::InternalCellHandle,
-                               Geometry::Navigator::InternalCellHandle> >
+  std::vector<std::tuple<Geometry::Navigator::EntityId,
+                               Geometry::Navigator::EntityId,
+                               Geometry::Navigator::EntityId> >
     correct_cell_ids( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
 
   for( size_t i = 0; i < correct_cell_ids.size(); ++i )
@@ -294,9 +294,9 @@ FRENSIE_UNIT_TEST( DagMC, parallel_ray_trace_with_reflection )
 
   FRENSIE_CHECK_EQUAL( cell_ids, correct_cell_ids );
 
-  std::vector<std::tuple<Geometry::Navigator::InternalSurfaceHandle,
-                               Geometry::Navigator::InternalSurfaceHandle,
-                               Geometry::Navigator::InternalSurfaceHandle> >
+  std::vector<std::tuple<Geometry::Navigator::EntityId,
+                               Geometry::Navigator::EntityId,
+                               Geometry::Navigator::EntityId> >
     correct_surface_ids( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
 
   for( size_t i = 0; i < correct_cell_ids.size(); ++i )

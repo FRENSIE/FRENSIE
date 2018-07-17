@@ -24,17 +24,13 @@ namespace MonteCarlo{
  * member function to set up an instance of this class for the requested number
  * of threads. The classes default initialization is for a single thread.
  */
-template<typename EntityId>
-class StandardEntityEstimator : public EntityEstimator<EntityId>
+class StandardEntityEstimator : public EntityEstimator
 {
-  // Typedef for the base type
-  typedef EntityEstimator<EntityId> BaseEstimatorType;
-  
   // Typedef for bin contribution map
-  typedef std::unordered_map<unsigned,double> BinContributionMap;
+  typedef std::unordered_map<size_t,double> BinContributionMap;
 
   // Typedef for serial update tracker
-  typedef std::unordered_map<EntityId,BinContributionMap> SerialUpdateTracker;
+  typedef std::unordered_map<uint64_t,BinContributionMap> SerialUpdateTracker;
 
   // Typedef for parallel update tracker
   typedef std::vector<SerialUpdateTracker> ParallelUpdateTracker;
@@ -42,26 +38,55 @@ class StandardEntityEstimator : public EntityEstimator<EntityId>
 protected:
 
   //! Typedef for the map of entity ids and estimator moments array
-  typedef std::unordered_map<EntityId,Estimator::FourEstimatorMomentsCollection>
+  typedef std::unordered_map<uint64_t,Estimator::FourEstimatorMomentsCollection>
   EntityEstimatorMomentsCollectionMap;
 
 public:
 
   //! Constructor (for flux estimators)
+  template<typename EntityId>
   StandardEntityEstimator(
-                     const Estimator::idType id,
+                     const uint32_t id,
                      const double multiplier,
                      const std::vector<EntityId>& entity_ids,
 		     const std::vector<double>& entity_norm_constants );
 
   //! Constructor (for non-flux estimators)
-  StandardEntityEstimator( const Estimator::idType id,
+  template<typename EntityId>
+  StandardEntityEstimator( const uint32_t id,
 			   const double multiplier,
 			   const std::vector<EntityId>& entity_ids );
 
   //! Destructor
   virtual ~StandardEntityEstimator()
   { /* ... */ }
+
+  //! Check if total data is available
+  bool isTotalDataAvailable() const final override;
+
+  //! Get the total data first moments
+  Utility::ArrayView<const double> getTotalDataFirstMoments() const final override;
+
+  //! Get the total data second moments
+  Utility::ArrayView<const double> getTotalDataSecondMoments() const final override;
+
+  //! Get the total data third moments
+  Utility::ArrayView<const double> getTotalDataThirdMoments() const final override;
+
+  //! Get the total data fourth moments
+  Utility::ArrayView<const double> getTotalDataFourthMoments() const final override;
+
+  //! Get the total data first moments for an entity
+  Utility::ArrayView<const double> getEntityTotalDataFirstMoments( const uint64_t entity_id ) const final override;
+
+  //! Get the total data second moments for an entity
+  Utility::ArrayView<const double> getEntityTotalDataSecondMoments( const uint64_t entity_id ) const final override;
+
+  //! Get the total data third moments for an entity
+  Utility::ArrayView<const double> getEntityTotalDataThirdMoments( const uint64_t entity_id ) const final override;
+
+  //! Get the total data fourth moments for an entity
+  Utility::ArrayView<const double> getEntityTotalDataFourthMoments( const uint64_t entity_id ) const final override;
 
   //! Commit the contribution from the current history to the estimator
   void commitHistoryContribution() final override;
@@ -73,7 +98,7 @@ public:
   void resetData() final override;
 
   //! Reduce estimator data on all processes and collect on the root process
-  void reduceData( Utility::Communicator& comm,
+  void reduceData( const Utility::Communicator& comm,
                    const int root_process ) final override;
 
 protected:
@@ -82,15 +107,14 @@ protected:
   StandardEntityEstimator();
 
   //! Constructor with no entities (for mesh estimators)
-  StandardEntityEstimator( const Estimator::idType id,
+  StandardEntityEstimator( const uint32_t id,
                            const double multiplier );
 
   //! Assign entities
-  void assignEntities( const typename BaseEstimatorType::EntityNormConstMap&
-                       entity_norm_data ) override;
+  void assignEntities( const EntityEstimator::EntityNormConstMap& entity_norm_data ) override;
 
   //! Assign response function to the estimator
-  virtual void assignResponseFunction( const std::shared_ptr<const Response>& response_function );
+  void assignResponseFunction( const std::shared_ptr<const ParticleResponse>& response_function ) override;
 
   //! Print the estimator data
   void printImplementation( std::ostream& os,
@@ -99,14 +123,14 @@ protected:
 
   //! Add estimator contribution from a point of the current history
   void addPartialHistoryPointContribution(
-                   const EntityId entity_id,
-                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   const uint64_t entity_id,
+                   const ObserverParticleStateWrapper& particle_state_wrapper,
                    const double contribution );
 
   //! Add estimator contribution from a range of the current history
-  void addParticleHistoryRangeContribution(
-                   const EntityId entity_id,
-                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+  void addPartialHistoryRangeContribution(
+                   const uint64_t entity_id,
+                   const ObserverParticleStateWrapper& particle_state_wrapper,
                    const double contribution );
 
   //! Get the total estimator data
@@ -114,7 +138,7 @@ protected:
 
   //! Get the total data for an entity
   const Estimator::FourEstimatorMomentsCollection&
-  getEntityTotalData( const EntityId entity_id ) const;
+  getEntityTotalData( const uint64_t entity_id ) const;
 
 private:
 
@@ -123,21 +147,22 @@ private:
 
   // Commit history contr. to the total for a response function of an entity
   void commitHistoryContributionToTotalOfEntity(
-					const EntityId& entity_id,
-					const unsigned response_function_index,
+					const uint64_t entity_id,
+					const size_t response_function_index,
 					const double contribution );
 
   // Commit hist. contr. to the total for a response function of the estimator
   void commitHistoryContributionToTotalOfEstimator(
-					const unsigned response_function_index,
+					const size_t response_function_index,
 					const double contribution );
 
   // Initialize the moments maps
+  template<typename EntityId>
   void initializeMomentsMaps( const std::vector<EntityId>& entity_ids );
 
   // Add info to update tracker
   void addInfoToUpdateTracker( const size_t thread_id,
-                               const EntityId entity_id,
+                               const uint64_t entity_id,
                                const size_t bin_index,
                                const double contribution );
 
@@ -170,19 +195,19 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
-  // The entities/bins that have been updated
-  ParallelUpdateTracker d_update_tracker;
-
   // The total estimator moments across all entities and response functions
   Estimator::FourEstimatorMomentsCollection d_total_estimator_moments;
 
   // The total estimator moments for each entity and response functions
   EntityEstimatorMomentsCollectionMap d_entity_total_estimator_moments_map;
+
+  // The entities/bins that have been updated
+  ParallelUpdateTracker d_update_tracker;
 };
 
 } // end MonteCarlo namespace
 
-BOOST_SERIALIZATION_CLASS1_VERSION( EntityEstimator, MonteCarlo, 0 );
+BOOST_SERIALIZATION_CLASS_VERSION( StandardEntityEstimator, MonteCarlo, 0 );
 
 //---------------------------------------------------------------------------//
 // Template Includes.

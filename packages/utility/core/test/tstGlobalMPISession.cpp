@@ -28,6 +28,12 @@
 typedef boost::mpl::list<bool,int,double> Types;
 
 //---------------------------------------------------------------------------//
+// Test Variables
+//---------------------------------------------------------------------------//
+
+std::unique_ptr<Utility::GlobalMPISession> mpi_session;
+
+//---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
 struct InitFixture
@@ -35,7 +41,7 @@ struct InitFixture
   InitFixture()
   {
     FRENSIE_ADD_STANDARD_LOG_ATTRIBUTES();
-    
+
     if( !mpi_session.get() )
     {
       mpi_session.reset( new Utility::GlobalMPISession(
@@ -43,14 +49,10 @@ struct InitFixture
                      boost::unit_test::framework::master_test_suite().argv ) );
     }
   }
-
-  static std::unique_ptr<Utility::GlobalMPISession> mpi_session;
 };
 
-std::unique_ptr<Utility::GlobalMPISession> InitFixture::mpi_session;
-
 // Register the InitFixture with the test suite
-BOOST_FIXTURE_TEST_SUITE( GlobalMPISession, InitFixture )
+BOOST_TEST_GLOBAL_FIXTURE( InitFixture );
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -506,8 +508,6 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( gatherData, T, Types )
     }
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END()
 
 //---------------------------------------------------------------------------//
 // end tstGlobalMPISession.cpp

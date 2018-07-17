@@ -39,39 +39,41 @@ typedef std::tuple<Utility::LinLin,
                    Utility::LogLog
                   > TestInterpPolicies;
 
-template<typename OArchive, typename IArchive>
+template<typename ArchivePair>
 struct InterpPolicyArchiveList
 {
   typedef std::tuple<
-    std::tuple<Utility::LinLin,OArchive,IArchive>,
-    std::tuple<Utility::LogLin,OArchive,IArchive>,
-    std::tuple<Utility::LinLog,OArchive,IArchive>,
-    std::tuple<Utility::LogLog,OArchive,IArchive>
+    std::tuple<Utility::LinLin,typename Utility::TupleElement<0,ArchivePair>::type,typename Utility::TupleElement<1,ArchivePair>::type>,
+    std::tuple<Utility::LogLin,typename Utility::TupleElement<0,ArchivePair>::type,typename Utility::TupleElement<1,ArchivePair>::type>,
+    std::tuple<Utility::LinLog,typename Utility::TupleElement<0,ArchivePair>::type,typename Utility::TupleElement<1,ArchivePair>::type>,
+    std::tuple<Utility::LogLog,typename Utility::TupleElement<0,ArchivePair>::type,typename Utility::TupleElement<1,ArchivePair>::type>
    > type;
 };
 
 template<typename... Types>
-struct MergeTypeLists;
+struct CreateInterpPolicyArchiveList;
 
 template<typename T, typename... Types>
-struct MergeTypeLists<T,Types...>
+struct CreateInterpPolicyArchiveList<T,Types...>
 {
-  typedef decltype(std::tuple_cat(T(), typename MergeTypeLists<Types...>::type())) type;
+  typedef decltype(std::tuple_cat(typename InterpPolicyArchiveList<T>::type(), typename CreateInterpPolicyArchiveList<Types...>::type())) type;
 };
 
 template<typename T>
-struct MergeTypeLists<T>
+struct CreateInterpPolicyArchiveList<T>
 {
-  typedef T type;
+  typedef typename InterpPolicyArchiveList<T>::type type;
 };
 
-typedef typename MergeTypeLists<
-  typename InterpPolicyArchiveList<boost::archive::xml_oarchive*,boost::archive::xml_iarchive*>::type,
-  typename InterpPolicyArchiveList<boost::archive::text_oarchive*,boost::archive::text_iarchive*>::type,
-  typename InterpPolicyArchiveList<boost::archive::binary_oarchive*,boost::archive::binary_iarchive*>::type,
-  typename InterpPolicyArchiveList<Utility::HDF5OArchive*,Utility::HDF5IArchive*>::type,
-  typename InterpPolicyArchiveList<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>::type
-  >::type InterpPoliciesAndArchives;
+template<typename... Types>
+struct CreateInterpPolicyArchiveList<std::true_type,std::tuple<Types...> > : public CreateInterpPolicyArchiveList<Types...>
+{ /* ... */ };
+
+template<typename... Types>
+struct CreateInterpPolicyArchiveList<std::false_type,std::tuple<Types...> > : public CreateInterpPolicyArchiveList<std::tuple<Types...> >
+{ /* ... */ };
+
+typedef typename CreateInterpPolicyArchiveList<std::true_type,TestArchiveHelper::TestArchives>::type InterpPoliciesAndArchives;
 
 typedef std::tuple<
   std::tuple<si::energy,si::amount,cgs::energy,si::amount>,

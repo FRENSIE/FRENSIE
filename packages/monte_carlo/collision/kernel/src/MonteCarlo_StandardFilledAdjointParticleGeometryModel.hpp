@@ -44,12 +44,12 @@ public:
 
   //! Get the total forward macroscopic cross section of a material
   double getMacroscopicTotalForwardCrossSection(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const final override;
 
   //! Get the total forward macroscopic cross section of a material
   double getMacroscopicTotalForwardCrossSectionQuick(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const final override;
 
   //! Get the total forward macroscopic cross section of a material
@@ -63,7 +63,7 @@ public:
 
   //! Get the adjoint weight factor
   double getAdjointWeightFactor(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const;
 
   //! Get the adjoint weight factor
@@ -71,7 +71,7 @@ public:
 
   //! Get the adjoint weight factor
   double getAdjointWeightFactorQuick(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const;
 
   //! Get the critical line energies

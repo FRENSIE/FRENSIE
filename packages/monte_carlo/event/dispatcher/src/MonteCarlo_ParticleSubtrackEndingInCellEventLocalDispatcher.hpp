@@ -24,14 +24,14 @@ namespace MonteCarlo{
 /*! The particle subtrack ending in cell event dispatcher class
  * \ingroup particle_subtrack_ending_in_cell_event
  */
-class ParticleSubtrackEndingInCellEventLocalDispatcher : public ParticleEventLocalDispatcher<Geometry::Model::InternalCellHandle,ParticleSubtrackEndingInCellEventObserver>
+class ParticleSubtrackEndingInCellEventLocalDispatcher : public ParticleEventLocalDispatcher<Geometry::Model::EntityId,ParticleSubtrackEndingInCellEventObserver>
 {
 
 public:
 
   //! Constructor
   ParticleSubtrackEndingInCellEventLocalDispatcher(
-		    const Geometry::Model::InternalCellHandle cell_id );
+		    const Geometry::Model::EntityId cell_id );
 
   //! Destructor
   ~ParticleSubtrackEndingInCellEventLocalDispatcher()
@@ -40,7 +40,7 @@ public:
   //! Dispatch the new event to the observers
   void dispatchParticleSubtrackEndingInCellEvent(
 	     const ParticleState& particle,
-	     const Geometry::Model::InternalCellHandle cell_of_subtrack,
+	     const Geometry::Model::EntityId cell_of_subtrack,
 	     const double track_length );
 };
 

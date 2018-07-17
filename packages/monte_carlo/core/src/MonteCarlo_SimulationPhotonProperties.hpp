@@ -10,6 +10,7 @@
 #define MONTE_CARLO_SIMULATION_PHOTON_PROPERTIES_HPP
 
 // Boost Includes
+#include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/export.hpp>
@@ -17,7 +18,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleModeType.hpp"
 #include "MonteCarlo_IncoherentModelType.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -167,7 +168,7 @@ void SimulationPhotonProperties::serialize( Archive& ar,
 
 BOOST_CLASS_VERSION( MonteCarlo::SimulationPhotonProperties, 0 );
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::SimulationPhotonProperties, "SimulationPhotonProperties" );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SimulationPhotonProperties );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SimulationPhotonProperties );
 
 #endif // end !defined SWIG
 

@@ -24,7 +24,7 @@
 #include "MonteCarlo_AbsorptionPhotoatomicReaction.hpp"
 #include "Data_SubshellType.hpp"
 #include "Utility_TabularDistribution.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 

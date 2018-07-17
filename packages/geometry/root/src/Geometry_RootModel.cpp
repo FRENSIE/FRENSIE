@@ -10,21 +10,10 @@
 #include <exception>
 #include <thread>
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp" // Must include first
 #include "Geometry_RootModel.hpp"
 #include "Geometry_RootLoggingMacros.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_Set.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_OpenMPProperties.hpp"
@@ -283,7 +272,7 @@ void RootModel::getCellMaterialIds( CellIdMatIdMap& cell_id_mat_id_map ) const
     d_model_properties->getMaterialPropertyName() + "_";
 
   // Get the cell material names
-  typedef std::unordered_map<InternalCellHandle,std::string>
+  typedef std::unordered_map<EntityId,std::string>
     CellIdMatNameMap;
   CellIdMatNameMap cell_id_material_name;
 
@@ -376,7 +365,7 @@ void RootModel::getCellEstimatorData( CellEstimatorIdDataMap&  ) const
 { /* ... */ }
 
 // Check if a cell exists
-bool RootModel::doesCellExist( const InternalCellHandle cell_id ) const
+bool RootModel::doesCellExist( const EntityId cell_id ) const
 {
   // Make sure that root has been initialized
   testPrecondition( this->isInitialized() );
@@ -385,7 +374,7 @@ bool RootModel::doesCellExist( const InternalCellHandle cell_id ) const
 }
 
 // Check if the cell is a termination cell
-bool RootModel::isTerminationCell( const InternalCellHandle cell_id ) const
+bool RootModel::isTerminationCell( const EntityId cell_id ) const
 {
   // Make sure that root has been initialized
   testPrecondition( this->isInitialized() );
@@ -403,7 +392,7 @@ bool RootModel::isTerminationVolume( const TGeoVolume* volume ) const
 }
 
 // Check if the cell is a void cell
-bool RootModel::isVoidCell( const InternalCellHandle cell_id ) const
+bool RootModel::isVoidCell( const EntityId cell_id ) const
 {
   // Make sure that root has been initialized
   testPrecondition( RootModel::isInitialized() );
@@ -424,7 +413,7 @@ bool RootModel::isVoidVolume( const TGeoVolume* volume ) const
 /*! \details This will only return the correct cell volume when the daughters
  * are completely contained in the cell of interest (no overlaps)
  */
-auto RootModel::getCellVolume( const InternalCellHandle cell_id ) const -> Volume
+auto RootModel::getCellVolume( const EntityId cell_id ) const -> Volume
 {
   // Make sure that root has been initialized
   testPrecondition( this->isInitialized() );
@@ -487,7 +476,7 @@ RootNavigator* RootModel::createNavigatorAdvanced() const
 }
 
 // Get the cell
-TGeoVolume* RootModel::getVolumePtr( const InternalCellHandle& cell_id ) const
+TGeoVolume* RootModel::getVolumePtr( const EntityId& cell_id ) const
 {
   // Make sure root is initialized
   testPrecondition( this->isInitialized() );
@@ -546,34 +535,7 @@ TGeoManager* RootModel::getManager() const
   return d_manager;
 }
 
-// Save the model to an archive
-template<typename Archive>
-void RootModel::save( Archive& ar, const unsigned version ) const
-{
-  // Save the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Model );
-
-  // Save the model properties - all other data will be reinitialized
-  ar & BOOST_SERIALIZATION_NVP( d_model_properties );
-}
-
-// Load the model from an archive
-template<typename Archive>
-void RootModel::load( Archive& ar, const unsigned version )
-{
-  // Load the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Model );
-
-  // Load the model properties only - all other data must be reinitialized
-  decltype(d_model_properties) cached_model_properties;
-
-  ar & boost::serialization::make_nvp( "d_model_properties",
-                                       cached_model_properties );
-
-  this->initialize( *cached_model_properties );
-}
-
-EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( RootModel );
+EXPLICIT_CLASS_SAVE_LOAD_INST( RootModel );
 
 } // end Geometry namespace
 

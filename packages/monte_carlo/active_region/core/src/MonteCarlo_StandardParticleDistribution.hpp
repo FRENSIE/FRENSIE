@@ -185,7 +185,7 @@ private:
 
 BOOST_CLASS_VERSION( MonteCarlo::StandardParticleDistribution, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardParticleDistribution, MonteCarlo );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( StandardParticleDistribution );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, StandardParticleDistribution );
 
 //---------------------------------------------------------------------------//
 // Template Includes

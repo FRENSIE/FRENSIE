@@ -24,16 +24,18 @@ class SurfaceCurrentEstimator : public StandardSurfaceEstimator
 
 public:
 
+  //! Typedef for the surface id type
+  typedef StandardSurfaceEstimator::SurfaceIdType SurfaceIdType;
+
   //! Typedef for event tags
   typedef StandardSurfaceEstimator::EventTags EventTags;
 
   //! Constructor
-  template<typename<typename,typename...> class STLCompliantArray>
   SurfaceCurrentEstimator(
-              const Estimator::idType id,
-              const double multiplier,
-              const STLCompliantArray<StandardSurfaceEstimator::surfaceIdType>&
-              surface_ids);
+                    const uint32_t id,
+                    const double multiplier,
+                    const std::vector<StandardSurfaceEstimator::SurfaceIdType>&
+                    surface_ids );
 
   //! Destructor
   ~SurfaceCurrentEstimator()
@@ -41,18 +43,42 @@ public:
 
   //! Add current history estimator contribution
   void updateFromParticleCrossingSurfaceEvent(
-	  const ParticleState& particle,
-	  const Geometry::Model::InternalSurfaceHandle surface_crossing,
-	  const double angle_cosine ) override;
+                 const ParticleState& particle,
+	         const Geometry::Model::EntityId surface_crossing,
+                 const double angle_cosine ) final override;
 
   //! Print the estimator data summary
-  void printSummary( std::ostream& os ) const override;
+  void printSummary( std::ostream& os ) const final override;
 
 private:
 
-  //! Assign the particle type to the estimator
-  void assignParticleType( const ParticleType particle_type ) override;
+  // Default constructor
+  SurfaceCurrentEstimator();
+
+  // Assign response function to the estimator
+  void assignResponseFunction( const std::shared_ptr<const ParticleResponse>& response_function ) final override;
+
+  // Serialize the entity estimator
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version );
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 };
+
+// Serialize the entity estimator
+template<typename ContributionMultiplierPolicy>
+template<typename Archive>
+void SurfaceCurrentEstimator<ContributionMultiplierPolicy>::serialize( Archive& ar, const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( StandardSurfaceEstimator );
+}
+
+//! The weight multiplied surface current estimator
+typedef SurfaceCurrentEstimator<WeightMultiplier> WeightMultipliedSurfaceCurrentEstimator;
+
+//! The weight and energy multiplied surface current estimator
+typedef SurfaceCurrentEstimator<WeightAndEnergyMultiplier> WeightAndEnergyMultipliedSurfaceCurrentEstimator;
 
 } // end MonteCarlo namespace
 

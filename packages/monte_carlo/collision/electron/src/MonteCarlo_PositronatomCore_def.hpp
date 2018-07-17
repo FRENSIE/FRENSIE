@@ -10,7 +10,7 @@
 #define MONTE_CARLO_POSITRONATOM_CORE_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "MonteCarlo_AbsorptionPositronatomicReaction.hpp"
 #include "MonteCarlo_VoidAbsorptionPositronatomicReaction.hpp"
 

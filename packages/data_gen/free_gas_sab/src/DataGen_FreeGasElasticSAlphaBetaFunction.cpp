@@ -20,7 +20,7 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_KinematicHelpers.hpp"
 #include "Utility_ComparePolicy.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace DataGen{
 

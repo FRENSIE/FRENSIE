@@ -16,7 +16,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_PositronionizationPositronatomicReaction.hpp"
 #include "MonteCarlo_PositronatomicReactionType.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 

@@ -15,7 +15,6 @@
 #include <boost/serialization/optional.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Data_PhotoatomicDataProperties.hpp"
 #include "Data_AdjointPhotoatomicDataProperties.hpp"
 #include "Data_ElectroatomicDataProperties.hpp"
@@ -28,6 +27,7 @@
 #include "Data_AdjointPhotonuclearDataProperties.hpp"
 #include "Data_ZAID.hpp"
 #include "Utility_OStreamableObject.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
@@ -356,8 +356,7 @@ void ScatteringCenterDefinition::load( Archive& ar,
 } // end MonteCarlo namespace
 
 BOOST_SERIALIZATION_CLASS_VERSION( ScatteringCenterDefinition, MonteCarlo, 0 );
-
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( ScatteringCenterDefinition );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, ScatteringCenterDefinition );
 
 #endif // end MONTE_CARLO_SCATTERING_CENTER_DEFINITION_HPP
 

@@ -14,7 +14,7 @@
 #include <iterator>
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 
 namespace Utility{

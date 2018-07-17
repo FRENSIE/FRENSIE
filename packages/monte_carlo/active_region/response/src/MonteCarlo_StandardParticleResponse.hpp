@@ -72,7 +72,7 @@ void StandardParticleResponse::serialize( Archive& ar, const unsigned version )
 
 BOOST_SERIALIZATION_CLASS_VERSION( StandardParticleResponse, MonteCarlo, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardParticleResponse, MonteCarlo );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::StandardParticleResponse );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, StandardParticleResponse );
 
 #endif // end MONTE_CARLO_STANDARD_PARTICLE_RESPONSE_HPP
 

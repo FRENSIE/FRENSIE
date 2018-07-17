@@ -10,7 +10,7 @@
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionFactory.hpp"
 #include "MonteCarlo_KleinNishinaPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_SimulationPhotonProperties.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 

@@ -16,10 +16,10 @@
 #include "MonteCarlo_PositronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
 #include "MonteCarlo_ElasticElectronDistributionType.hpp"
+#include "MonteCarlo_CoupledElasticDistribution.hpp"
+#include "MonteCarlo_ElasticElectronTraits.hpp"
 #include "Utility_InterpolationPolicy.hpp"
-#include "Utility_CoupledElasticDistribution.hpp"
 #include "Utility_InterpolatedFullyTabularBasicBivariateDistribution.hpp"
-#include "Utility_ElasticElectronTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -38,7 +38,7 @@ public:
   typedef ElectronScatteringDistribution::Counter Counter;
 
   //! Typedef for the Elastic electron traits
-  typedef Utility::ElasticElectronTraits ElasticTraits;
+  typedef MonteCarlo::ElasticElectronTraits ElasticTraits;
 
   //! Typedef for the one d distributions
   typedef Utility::UnivariateDistribution UnivariateDist;

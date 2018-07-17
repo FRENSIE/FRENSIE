@@ -14,23 +14,22 @@
 
 // FRENSIE Includes
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CellCollisionFluxEstimator<WeightMultiplier> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CellCollisionFluxEstimator<WeightAndEnergyMultiplier> );
-
+// Default constructor
+template<typename ContributionMultiplierPolicy>
+CellCollisionFluxEstimator<ContributionMultiplierPolicy>::CellCollisionFluxEstimator()
+{ /* ... */ }
+  
 // Constructor
 template<typename ContributionMultiplierPolicy>
-template<template<typename,typename...> class STLCompliantArrayA,
-           template<typename,typename...> class STLCompliantArrayB>
 CellCollisionFluxEstimator<ContributionMultiplierPolicy>::CellCollisionFluxEstimator(
-                               const Estimator::idType id,
-                               const double multiplier,
-                               const STLCompliantArrayA<cellIdType>& cell_ids,
-                               const STLCompliantArrayB<double>& cell_volumes )
+                                      const uint32_t id,
+                                      const double multiplier,
+                                      const std::vector<CellIdType>& cell_ids,
+                                      const std::vector<double>& cell_volumes )
   : StandardCellEstimator( id, multiplier, cell_ids, cell_volumes ),
     ParticleCollidingInCellEventObserver()
 { /* ... */ }
@@ -39,35 +38,44 @@ CellCollisionFluxEstimator<ContributionMultiplierPolicy>::CellCollisionFluxEstim
 template<typename ContributionMultiplierPolicy>
 void CellCollisionFluxEstimator<ContributionMultiplierPolicy>::updateFromParticleCollidingInCellEvent(
                                      const ParticleState& particle,
-                                     const cellIdType cell_of_collision,
+                                     const CellIdType cell_of_collision,
 		                     const double inverse_total_cross_section )
 {
-  // Make sure the cell is assigned to this estimator
+  // Make sure that the particle type is assigned to this estimator
+  testPrecondition( this->isParticleTypeAssigned( particle.getParticleType() ) )
+  // Make sure that the cell is assigned to this estimator
   testPrecondition( this->isEntityAssigned( cell_of_collision ) );
 
-  if( this->isParticleTypeAssigned( particle.getParticleType() ) )
-  {
-    const double contribution = inverse_total_cross_section*
-      ContributionMultiplierPolicy::multiplier( particle );
+  const double contribution = inverse_total_cross_section*
+    ContributionMultiplierPolicy::multiplier( particle );
 
-    EstimatorParticleStateWrapper particle_state_wrapper( particle );
+  ObserverParticleStateWrapper particle_state_wrapper( particle );
 
-    this->addPartialHistoryPointContribution( cell_of_collision,
-                                              particle_state_wrapper,
-                                              contribution );
-  }
+  this->addPartialHistoryPointContribution( cell_of_collision,
+                                            particle_state_wrapper,
+                                            contribution );
 }
 
 // Print the estimator data
 template<typename ContributionMultiplierPolicy>
 void CellCollisionFluxEstimator<ContributionMultiplierPolicy>::printSummary( std::ostream& os ) const
 {
-  os << "Cell Collision Estimator: " << getId() << std::endl;
+  os << "Cell Collision Estimator: " << this->getId() << "\n";
 
   this->printImplementation( os, "Cell" );
+
+  os << std::flush;
 }
 
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightMultipliedCellCollisionFluxEstimator, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightMultiplier> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, CellCollisionFluxEstimator<MonteCarlo::WeightMultiplier> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndEnergyMultipliedCellCollisionFluxEstimator, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, CellCollisionFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 
 #endif // end MONTE_CARLO_CELL_COLLISION_FLUX_ESTIMATOR_DEF_HPP
 

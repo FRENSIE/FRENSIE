@@ -39,9 +39,8 @@ and extracting data blocks from the XSS array.
 #include "Data_XSSPhotoatomicDataExtractor.hpp"
 #include "Data_XSSPhotonuclearDataExtractor.hpp"
 
-#include "Data_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 // Add the Data namespace to the global lookup scope
 using namespace Data;
@@ -66,9 +65,6 @@ using namespace Data;
 
 // Include the serialization helpers for macros
 %include "Utility_SerializationHelpers.hpp"
-
-// Import the explicit template instantiation helpers
-%include "Data_ExplicitTemplateInstantiationMacros.hpp"
 
 // Standard exception handling
 %include "exception.i"

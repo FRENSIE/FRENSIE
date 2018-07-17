@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "Data_ThermalNuclearDataProperties.hpp"
-#include "Data_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 
 namespace Data{
 
@@ -134,11 +134,54 @@ ACEThermalNuclearDataProperties::ACEThermalNuclearDataProperties(
                                      file_table_name )
 { /* ... */ }
 
+// Save the properties to an archive
+template<typename Archive>
+void ACEThermalNuclearDataProperties::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ThermalNuclearDataProperties );
+
+  // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_zaids );
+  ar & BOOST_SERIALIZATION_NVP( d_evaluation_temp );
+
+  std::string raw_path = d_file_path.string();
+
+  ar & BOOST_SERIALIZATION_NVP( raw_path );
+  ar & BOOST_SERIALIZATION_NVP( d_file_start_line );
+  ar & BOOST_SERIALIZATION_NVP( d_file_table_name );
+  ar & BOOST_SERIALIZATION_NVP( d_name );
+  ar & BOOST_SERIALIZATION_NVP( d_file_version );
+}
+
+// Load the properties from an archive
+template<typename Archive>
+void ACEThermalNuclearDataProperties::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ThermalNuclearDataProperties );
+
+  // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_zaids );
+  ar & BOOST_SERIALIZATION_NVP( d_evaluation_temp );
+
+  std::string raw_path;
+  ar & BOOST_SERIALIZATION_NVP( raw_path );
+
+  d_file_path = raw_path;
+  d_file_path.make_preferred();
+
+  ar & BOOST_SERIALIZATION_NVP( d_file_start_line );
+  ar & BOOST_SERIALIZATION_NVP( d_file_table_name );
+  ar & BOOST_SERIALIZATION_NVP( d_name );
+  ar & BOOST_SERIALIZATION_NVP( d_file_version );
+}
+
 } // end Data namespace
 
 BOOST_SERIALIZATION_CLASS_VERSION( ACEThermalNuclearDataProperties, Data, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ACEThermalNuclearDataProperties, Data );
-EXTERN_EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ACEThermalNuclearDataProperties );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Data, ACEThermalNuclearDataProperties );
 
 #endif // end DATA_ACE_THERMAL_NUCLEAR_DATA_PROPERTIES_HPP
 

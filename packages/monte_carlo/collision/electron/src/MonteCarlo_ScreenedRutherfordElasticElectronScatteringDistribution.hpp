@@ -19,7 +19,7 @@
 #include "MonteCarlo_PositronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
-#include "Utility_ElasticElectronTraits.hpp"
+#include "MonteCarlo_ElasticElectronTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -39,7 +39,7 @@ public:
             ElasticDistribution;
 
   //! Typedef for the Elastic electron traits
-  typedef Utility::ElasticElectronTraits ElasticTraits;
+  typedef MonteCarlo::ElasticElectronTraits ElasticTraits;
 
   //! Constructor
   ScreenedRutherfordElasticElectronScatteringDistribution(

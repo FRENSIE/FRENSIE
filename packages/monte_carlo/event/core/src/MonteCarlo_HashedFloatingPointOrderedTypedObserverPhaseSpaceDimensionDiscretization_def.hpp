@@ -13,7 +13,7 @@
 // FRENSIE Includes
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_SearchAlgorithms.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -69,27 +69,27 @@ void HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<di
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION>,
                          "HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<OBSERVER_COSINE_DIMENSION>" );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION> );
 
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION>,
                          "HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<OBSERVER_SOURCE_ENERGY_DIMENSION>" );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION> );
 
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>,
                          "HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<OBSERVER_ENERGY_DIMENSION>" );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION> );
 
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION>,
                          "HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<OBSERVER_SOURCE_TIME_DIMENSION>" );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION> );
 
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION>,
                          "HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<OBSERVER_TIME_DIMENSION>" );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION> );
 
 #endif // end MONTE_CARLO_HASHED_FLOATING_POINT_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_DEF_HPP
 

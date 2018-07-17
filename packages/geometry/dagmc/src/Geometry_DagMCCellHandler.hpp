@@ -25,7 +25,7 @@ class DagMCCellHandler : public DagMCEntityHandler
 public:
 
   //! The internal cell handle type
-  typedef Navigator::InternalCellHandle InternalCellHandle;
+  typedef Navigator::EntityId EntityId;
 
   //! Constructor
   DagMCCellHandler( const moab::DagMC* dagmc_instance );
@@ -38,19 +38,19 @@ public:
   size_t getNumberOfCells() const;
 
   //! Check if the cell exists
-  virtual bool doesCellExist( const InternalCellHandle cell_id ) const = 0;
+  virtual bool doesCellExist( const EntityId cell_id ) const = 0;
 
   //! Check if the cell handle exists
   virtual bool doesCellHandleExist(
                                   const moab::EntityHandle cell_handle ) const;
 
   //! Get the cell id from a cell handle
-  virtual InternalCellHandle getCellId(
+  virtual EntityId getCellId(
                               const moab::EntityHandle cell_handle ) const = 0;
 
   //! Get the cell handle from a cell id
   virtual moab::EntityHandle getCellHandle(
-                                  const InternalCellHandle cell_id ) const = 0;
+                                  const EntityId cell_id ) const = 0;
 };
 
 } // end Geometry namespace

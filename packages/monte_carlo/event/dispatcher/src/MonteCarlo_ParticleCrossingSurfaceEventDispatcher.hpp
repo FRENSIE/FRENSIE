@@ -37,7 +37,7 @@ public:
   //! Dispatch the particle crossing surface event to the observers
   void dispatchParticleCrossingSurfaceEvent(
 	  const ParticleState& particle,
-	  const Geometry::Model::InternalSurfaceHandle surface_crossing,
+	  const Geometry::Model::EntityId surface_crossing,
 	  const double angle_cosine );
 };
 
@@ -45,7 +45,7 @@ public:
 inline void
 ParticleCrossingSurfaceEventDispatcher::dispatchParticleCrossingSurfaceEvent(
 	  const ParticleState& particle,
-	  const Geometry::Model::InternalSurfaceHandle surface_crossing,
+	  const Geometry::Model::EntityId surface_crossing,
 	  const double angle_cosine )
 {
   DispatcherMap::iterator it = this->dispatcher_map().find( surface_crossing );

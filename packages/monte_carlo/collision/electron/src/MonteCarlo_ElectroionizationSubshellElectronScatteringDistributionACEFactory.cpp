@@ -10,7 +10,7 @@
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionACEFactory.hpp"
 #include "Utility_TabularCDFDistribution.hpp"
 #include "Utility_Vector.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 

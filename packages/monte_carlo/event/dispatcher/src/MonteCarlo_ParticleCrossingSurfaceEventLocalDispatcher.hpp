@@ -24,14 +24,14 @@ namespace MonteCarlo{
 /*! The particle crossing surface event dispatcher class
  * \ingroup particle_crossing_surface_event
  */
-class ParticleCrossingSurfaceEventLocalDispatcher : public ParticleEventLocalDispatcher<Geometry::Model::InternalSurfaceHandle,ParticleCrossingSurfaceEventObserver>
+class ParticleCrossingSurfaceEventLocalDispatcher : public ParticleEventLocalDispatcher<Geometry::Model::EntityId,ParticleCrossingSurfaceEventObserver>
 {
 
 public:
 
   //! Constructor
   ParticleCrossingSurfaceEventLocalDispatcher(
-	      const Geometry::Model::InternalSurfaceHandle surface_id );
+	      const Geometry::Model::EntityId surface_id );
 
   //! Destructor
   ~ParticleCrossingSurfaceEventLocalDispatcher()
@@ -40,7 +40,7 @@ public:
   //! Dispatch the new event to the observers
   void dispatchParticleCrossingSurfaceEvent(
 	  const ParticleState& particle,
-	  const Geometry::Model::InternalSurfaceHandle surface_crossing,
+	  const Geometry::Model::EntityId surface_crossing,
 	  const double angle_cosine );
 };
 

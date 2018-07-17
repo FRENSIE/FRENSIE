@@ -44,45 +44,47 @@ typedef std::tuple<
   std::integral_constant<size_t,10>
  > TestInts;
 
-template<typename OArchive, typename IArchive>
+template<typename ArchivePair>
 struct IntArchiveList
 {
   typedef std::tuple<
-    std::tuple<std::integral_constant<size_t,1>,OArchive,IArchive>,
-    std::tuple<std::integral_constant<size_t,2>,OArchive,IArchive>,
-    std::tuple<std::integral_constant<size_t,3>,OArchive,IArchive>,
-    std::tuple<std::integral_constant<size_t,4>,OArchive,IArchive>,
-    std::tuple<std::integral_constant<size_t,5>,OArchive,IArchive>,
-    std::tuple<std::integral_constant<size_t,6>,OArchive,IArchive>,
-    std::tuple<std::integral_constant<size_t,7>,OArchive,IArchive>,
-    std::tuple<std::integral_constant<size_t,8>,OArchive,IArchive>,
-    std::tuple<std::integral_constant<size_t,9>,OArchive,IArchive>,
-    std::tuple<std::integral_constant<size_t,10>,OArchive,IArchive>
+    std::tuple<std::integral_constant<size_t,1>,typename Utility::TupleElement<0,ArchivePair>::type,typename Utility::TupleElement<1,ArchivePair>::type>,
+    std::tuple<std::integral_constant<size_t,2>,typename Utility::TupleElement<0,ArchivePair>::type,typename Utility::TupleElement<1,ArchivePair>::type>,
+    std::tuple<std::integral_constant<size_t,3>,typename Utility::TupleElement<0,ArchivePair>::type,typename Utility::TupleElement<1,ArchivePair>::type>,
+    std::tuple<std::integral_constant<size_t,4>,typename Utility::TupleElement<0,ArchivePair>::type,typename Utility::TupleElement<1,ArchivePair>::type>,
+    std::tuple<std::integral_constant<size_t,5>,typename Utility::TupleElement<0,ArchivePair>::type,typename Utility::TupleElement<1,ArchivePair>::type>,
+    std::tuple<std::integral_constant<size_t,6>,typename Utility::TupleElement<0,ArchivePair>::type,typename Utility::TupleElement<1,ArchivePair>::type>,
+    std::tuple<std::integral_constant<size_t,7>,typename Utility::TupleElement<0,ArchivePair>::type,typename Utility::TupleElement<1,ArchivePair>::type>,
+    std::tuple<std::integral_constant<size_t,8>,typename Utility::TupleElement<0,ArchivePair>::type,typename Utility::TupleElement<1,ArchivePair>::type>,
+    std::tuple<std::integral_constant<size_t,9>,typename Utility::TupleElement<0,ArchivePair>::type,typename Utility::TupleElement<1,ArchivePair>::type>,
+    std::tuple<std::integral_constant<size_t,10>,typename Utility::TupleElement<0,ArchivePair>::type,typename Utility::TupleElement<1,ArchivePair>::type>
    > type;
 };
 
 template<typename... Types>
-struct MergeTypeLists;
+struct CreateIntArchiveList;
 
 template<typename T, typename... Types>
-struct MergeTypeLists<T,Types...>
+struct CreateIntArchiveList<T,Types...>
 {
-  typedef decltype(std::tuple_cat(T(), typename MergeTypeLists<Types...>::type())) type;
+  typedef decltype(std::tuple_cat(typename IntArchiveList<T>::type(), typename CreateIntArchiveList<Types...>::type())) type;
 };
 
 template<typename T>
-struct MergeTypeLists<T>
+struct CreateIntArchiveList<T>
 {
-  typedef T type;
+  typedef typename IntArchiveList<T>::type type;
 };
 
-typedef typename MergeTypeLists<
-  typename IntArchiveList<boost::archive::xml_oarchive*,boost::archive::xml_iarchive*>::type,
-  typename IntArchiveList<boost::archive::text_oarchive*,boost::archive::text_iarchive*>::type,
-  typename IntArchiveList<boost::archive::binary_oarchive*,boost::archive::binary_iarchive*>::type,
-  typename IntArchiveList<Utility::HDF5OArchive*,Utility::HDF5IArchive*>::type,
-  typename IntArchiveList<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>::type
-  >::type TestIntsAndArchives;
+template<typename... Types>
+struct CreateIntArchiveList<std::true_type,std::tuple<Types...> > : public CreateIntArchiveList<Types...>
+{ /* ... */ };
+
+template<typename... Types>
+struct CreateIntArchiveList<std::false_type,std::tuple<Types...> > : public CreateIntArchiveList<std::tuple<Types...> >
+{ /* ... */ };
+
+typedef typename CreateIntArchiveList<std::true_type,TestArchiveHelper::TestArchives>::type TestIntsAndArchives;
 
 typedef std::tuple<
   std::tuple<si::length,si::amount,cgs::length,si::amount>,

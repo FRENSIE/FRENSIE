@@ -1,4 +1,4 @@
-# Set up the distribution subpackage directory hierarchy
+# Set up the grid subpackage directory hierarchy
 ADD_SUBDIRECTORY(src)
 INCLUDE_DIRECTORIES(src)
 

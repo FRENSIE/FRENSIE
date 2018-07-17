@@ -111,7 +111,7 @@ void TranslationCartesianSpatialCoordinateConversionPolicy::load( Archive& ar, c
 
 BOOST_SERIALIZATION_CLASS_VERSION( TranslationCartesianSpatialCoordinateConversionPolicy, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( TranslationCartesianSpatialCoordinateConversionPolicy, Utility );
-EXTERN_EXPLICIT_SYSTEM_CLASS_SAVE_LOAD_INST( Utility::TranslationCartesianSpatialCoordinateConversionPolicy );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, TranslationCartesianSpatialCoordinateConversionPolicy );
 
 #endif // end UTILITY_TRANSLATION_CARTESIAN_SPATIAL_COORDINATE_CONVERSION_POLICY_HPP
 

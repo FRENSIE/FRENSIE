@@ -10,10 +10,10 @@
 #include <iostream>
 
 // FRENSIE Includes
-#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "MonteCarlo_MomentPreservingElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_ElasticBasicBivariateDistribution.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_ElasticBasicBivariateDistribution.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
 

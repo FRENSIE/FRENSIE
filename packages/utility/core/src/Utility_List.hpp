@@ -23,7 +23,7 @@
 #include "Utility_FromStringTraits.hpp"
 #include "Utility_TypeNameTraits.hpp"
 #include "Utility_ComparisonTraits.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 /*! \defgroup list List
  *

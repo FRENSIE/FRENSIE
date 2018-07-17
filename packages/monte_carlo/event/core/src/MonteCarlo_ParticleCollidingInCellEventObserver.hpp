@@ -19,9 +19,9 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleEventTags.hpp"
 #include "MonteCarlo_ParticleState.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Model.hpp"
 #include "Utility_Vector.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
@@ -49,7 +49,7 @@ public:
   //! Update the observer
   virtual void updateFromParticleCollidingInCellEvent(
 	    const ParticleState& particle,
-	    const Geometry::Model::InternalCellHandle cell_of_collision,
+	    const Geometry::Model::EntityId cell_of_collision,
 	    const double inverse_total_cross_section ) = 0;
 
 private:
@@ -67,7 +67,7 @@ private:
 
 BOOST_CLASS_VERSION( MonteCarlo::ParticleCollidingInCellEventObserver, 0 );
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleCollidingInCellEventObserver );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleCollidingInCellEventObserver );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleCollidingInCellEventObserver );
 
 #endif // end MONTE_CARLO_PARTICLE_COLLIDING_IN_CELL_EVENT_OBSERVER_HPP
 

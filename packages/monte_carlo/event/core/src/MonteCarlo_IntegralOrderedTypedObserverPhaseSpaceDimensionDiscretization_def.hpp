@@ -11,7 +11,7 @@
 #define MONTE_CARLO_INTEGRAL_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 
 namespace MonteCarlo{
@@ -166,7 +166,7 @@ void IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typ
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>,
                          "IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<OBSERVER_COLLISION_NUMBER_DIMENSION>" );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION> );
 
 #endif // end MONTE_CARLO_INTEGRAL_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_DEF_HPP
 

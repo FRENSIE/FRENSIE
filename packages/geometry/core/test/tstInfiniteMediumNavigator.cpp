@@ -97,7 +97,7 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, findCellContainingRay_cache )
 
   Geometry::Navigator::CellIdSet cell_cache;
   
-  Geometry::Navigator::InternalCellHandle cell =
+  Geometry::Navigator::EntityId cell =
     navigator->findCellContainingRay( *ray, cell_cache );
 
   FRENSIE_CHECK_EQUAL( cell, 1 );
@@ -130,7 +130,7 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, findCellContainingRay )
                                        0.0*cgs::centimeter,
                                        0.0, 0.0, 1.0 ) );
 
-  Geometry::Navigator::InternalCellHandle cell =
+  Geometry::Navigator::EntityId cell =
     navigator->findCellContainingRay( *ray );
 
   FRENSIE_CHECK_EQUAL( cell, 1 );
@@ -207,7 +207,7 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, fireRay )
   FRENSIE_CHECK_EQUAL( distance_to_boundary,
                        Utility::QuantityTraits<Geometry::Navigator::Length>::inf() );
 
-  Geometry::Navigator::InternalSurfaceHandle surface_hit;
+  Geometry::Navigator::EntityId surface_hit;
 
   navigator->setState( 1.0*cgs::centimeter,
                        -1.0*cgs::centimeter,

@@ -8,14 +8,14 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleCollidingInCellEventLocalDispatcher.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
 ParticleCollidingInCellEventLocalDispatcher::ParticleCollidingInCellEventLocalDispatcher(
-	             const Geometry::ModuleTraits::InternalCellHandle cell_id )
-  : ParticleEventLocalDispatcher<Geometry::ModuleTraits::InternalCellHandle,
+	             const Geometry::ModuleTraits::EntityId cell_id )
+  : ParticleEventLocalDispatcher<Geometry::ModuleTraits::EntityId,
                                  ParticleCollidingInCellEventObserver>( cell_id )
 { /* ... */ }
 
@@ -23,7 +23,7 @@ ParticleCollidingInCellEventLocalDispatcher::ParticleCollidingInCellEventLocalDi
 void
 ParticleCollidingInCellEventLocalDispatcher::dispatchParticleCollidingInCellEvent(
 	    const ParticleState& particle,
-	    const Geometry::ModuleTraits::InternalCellHandle cell_of_collision,
+	    const Geometry::ModuleTraits::EntityId cell_of_collision,
 	    const double inverse_total_cross_section )
 {
   // Make sure the cell being collided in is valid

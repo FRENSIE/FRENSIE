@@ -282,9 +282,7 @@ void AtomProperties::load( Archive& ar, const unsigned version )
 BOOST_SERIALIZATION_CLASS_VERSION( AtomProperties, Data, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( AtomProperties, Data );
 
-EXTERN_EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( AtomProperties );
-
-//---------------------------------------------------------------------------//
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Data, AtomProperties );
 
 #endif // end DATA_ATOM_PROPRETIES_HPP
 

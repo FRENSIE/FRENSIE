@@ -63,12 +63,26 @@ private:
   static const std::string s_archive_name;
 };
 
+// Save the model to an archive
+template<typename Archive>
+void ScatteringCenterPropertiesDatabase::save( Archive& ar, const unsigned version ) const
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ScatteringCenterPropertiesDatabaseImpl );
+}
+
+// Load the model from an archive
+template<typename Archive>
+void ScatteringCenterPropertiesDatabase::load( Archive& ar, const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ScatteringCenterPropertiesDatabaseImpl );
+}
+
 } // end Data namespace
 
 BOOST_SERIALIZATION_CLASS_VERSION( ScatteringCenterPropertiesDatabase, Data, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ScatteringCenterPropertiesDatabase, Data );
 
-EXTERN_EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ScatteringCenterPropertiesDatabase );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Data, ScatteringCenterPropertiesDatabase );
 
 //---------------------------------------------------------------------------//
 // end Data_ScatteringCenterPropertiesDatabase.hpp

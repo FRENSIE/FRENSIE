@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "Utility_CommHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
 namespace MonteCarlo{

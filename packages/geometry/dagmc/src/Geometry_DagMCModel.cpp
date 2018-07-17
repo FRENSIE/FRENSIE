@@ -10,30 +10,19 @@
 #include <exception>
 #include <unordered_set>
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp" // Must be included first
 #include "Geometry_DagMCModel.hpp"
 #include "Geometry_StandardDagMCCellHandler.hpp"
 #include "Geometry_FastDagMCCellHandler.hpp"
 #include "Geometry_StandardDagMCSurfaceHandler.hpp"
 #include "Geometry_FastDagMCSurfaceHandler.hpp"
 #include "Geometry_DagMCLoggingMacros.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_MOABException.hpp"
 #include "Utility_FromStringTraits.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 
@@ -331,7 +320,7 @@ void DagMCModel::extractReflectingSurfaces()
   
   for( size_t i = 0; i < surfaces_with_property.size(); ++i )
   {
-    InternalSurfaceHandle surface_id =
+    EntityId surface_id =
       d_surface_handler->getSurfaceId( surfaces_with_property[i] );
     
     d_reflecting_surfaces.insert( ReflectingSurfaceIdHandleMap::value_type(
@@ -403,7 +392,7 @@ void DagMCModel::getCells( CellIdSet& cell_set,
 
   while( cell_handle_it != d_cell_handler->end() )
   {
-    InternalCellHandle cell_id =
+    EntityId cell_id =
       d_cell_handler->getCellId( *cell_handle_it );
 
     // Check if it is a termination cell
@@ -598,7 +587,7 @@ void DagMCModel::getSurfaces( SurfaceIdSet& surface_set ) const
 
   while( surface_handle_it != d_surface_handler->end() )
   {
-    InternalSurfaceHandle surface_id =
+    EntityId surface_id =
       d_surface_handler->getSurfaceId( *surface_handle_it );
 
     surface_set.insert( surface_id );
@@ -680,7 +669,7 @@ void DagMCModel::getSurfaceEstimatorData(
 }
 
 // Check if a cell exists
-bool DagMCModel::doesCellExist( const InternalCellHandle cell_id ) const
+bool DagMCModel::doesCellExist( const EntityId cell_id ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -689,7 +678,7 @@ bool DagMCModel::doesCellExist( const InternalCellHandle cell_id ) const
 }
 
 // Check if the surface exists
-bool DagMCModel::doesSurfaceExist( const InternalSurfaceHandle surface_id ) const
+bool DagMCModel::doesSurfaceExist( const EntityId surface_id ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -698,7 +687,7 @@ bool DagMCModel::doesSurfaceExist( const InternalSurfaceHandle surface_id ) cons
 }
 
 // Get the cell volume
-auto DagMCModel::getCellVolume( const InternalCellHandle cell_id ) const -> Volume
+auto DagMCModel::getCellVolume( const EntityId cell_id ) const -> Volume
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -725,7 +714,7 @@ auto DagMCModel::getCellVolume( const InternalCellHandle cell_id ) const -> Volu
 }
 
 // Get the surface area
-auto DagMCModel::getSurfaceArea( const InternalSurfaceHandle surface_id ) const -> Area
+auto DagMCModel::getSurfaceArea( const EntityId surface_id ) const -> Area
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -753,7 +742,7 @@ auto DagMCModel::getSurfaceArea( const InternalSurfaceHandle surface_id ) const 
 }
 
 // Check if the cell is a termination cell
-bool DagMCModel::isTerminationCell( const InternalCellHandle cell_id ) const
+bool DagMCModel::isTerminationCell( const EntityId cell_id ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -765,7 +754,7 @@ bool DagMCModel::isTerminationCell( const InternalCellHandle cell_id ) const
 }
 
 // Check if the cell is a void cell
-bool DagMCModel::isVoidCell( const InternalCellHandle cell_id ) const
+bool DagMCModel::isVoidCell( const EntityId cell_id ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -779,7 +768,7 @@ bool DagMCModel::isVoidCell( const InternalCellHandle cell_id ) const
 }
 
 // Check if the surface is a reflecting surface
-bool DagMCModel::isReflectingSurface( const InternalSurfaceHandle surface_id ) const
+bool DagMCModel::isReflectingSurface( const EntityId surface_id ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -884,7 +873,7 @@ void DagMCModel::getCellPropertyValues(
   // Get the property value for each cell
   for( size_t i = 0; i < cells_with_property.size(); ++i )
   {
-    InternalCellHandle cell_id =
+    EntityId cell_id =
       d_cell_handler->getCellId( cells_with_property[i] );
 
     moab::ErrorCode return_value =
@@ -966,7 +955,7 @@ void DagMCModel::getSurfacePropertyValues(
   // Get the property value for each surface
   for( size_t i = 0; i < surfaces_with_property.size(); ++i )
   {
-    InternalSurfaceHandle surface_id =
+    EntityId surface_id =
       d_surface_handler->getSurfaceId( surfaces_with_property[i] );
 
     moab::EntityHandle return_value =
@@ -1059,34 +1048,7 @@ moab::DagMC& DagMCModel::getRawDagMCInstance() const
   return *d_dagmc;
 }
 
-// Save the model to an archive
-template<typename Archive>
-void DagMCModel::save( Archive& ar, const unsigned version ) const
-{
-  // Save the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( AdvancedModel );
-
-  // Save the model properties - all other data will be reinitialized
-  ar & BOOST_SERIALIZATION_NVP( d_model_properties );
-}
-
-// Load the model from an archive
-template<typename Archive>
-void DagMCModel::load( Archive& ar, const unsigned version )
-{
-  // Load the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( AdvancedModel );
-
-  // Load the model properties only - all other data must be reinitialized
-  decltype(d_model_properties) cached_model_properties;
-  
-  ar & boost::serialization::make_nvp( "d_model_properties",
-                                       cached_model_properties );
-
-  this->initialize( *cached_model_properties, true );
-}
-
-EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( DagMCModel );
+EXPLICIT_CLASS_SAVE_LOAD_INST( DagMCModel );
 
 }  // end Geometry namespace
 

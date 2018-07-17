@@ -19,7 +19,7 @@
 // FRENSIE Includes
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_Tuple.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
 namespace Geometry{
@@ -84,6 +84,33 @@ void DagMCModel::extractEstimatorPropertyValues(
                      ") specified!" );
 
   particle_type = d_model_properties->getParticleType( particle_name );
+}
+
+// Save the model to an archive
+template<typename Archive>
+void DagMCModel::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( AdvancedModel );
+
+  // Save the model properties - all other data will be reinitialized
+  ar & BOOST_SERIALIZATION_NVP( d_model_properties );
+}
+
+// Load the model from an archive
+template<typename Archive>
+void DagMCModel::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( AdvancedModel );
+
+  // Load the model properties only - all other data must be reinitialized
+  decltype(d_model_properties) cached_model_properties;
+  
+  ar & boost::serialization::make_nvp( "d_model_properties",
+                                       cached_model_properties );
+
+  this->initialize( *cached_model_properties, true );
 }
 
 } // end Geometry namespace

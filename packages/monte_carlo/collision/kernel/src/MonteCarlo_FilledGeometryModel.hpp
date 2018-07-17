@@ -23,8 +23,8 @@
 #include "MonteCarlo_ScatteringCenterDefinitionDatabase.hpp"
 #include "MonteCarlo_MaterialDefinitionDatabase.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Model.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
@@ -65,12 +65,12 @@ public:
                         const boost::filesystem::path& default_database_path );
 
   //! Check if a cell is void (as experienced by the given particle type)
-  bool isCellVoid( const Geometry::Model::InternalCellHandle cell,
+  bool isCellVoid( const Geometry::Model::EntityId cell,
                    const MonteCarlo::ParticleType particle_type ) const;
 
   //! Check if a cell is void (as experienced by the given particle type)
   template<typename ParticleStateType>
-  bool isCellVoid( const Geometry::Model::InternalCellHandle cell ) const;
+  bool isCellVoid( const Geometry::Model::EntityId cell ) const;
 
   //! Check if a cell is a termination cell
   using FilledNeutronGeometryModel::isTerminationCell;
@@ -78,13 +78,13 @@ public:
   //! Get the total macroscopic cross section of a material for the given particle type
   template<typename ParticleStateType>
   double getMacroscopicTotalCrossSection(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const;
 
   //! Get the total macroscopic cross section of a material for the given particle type
   template<typename ParticleStateType>
   double getMacroscopicTotalCrossSectionQuick(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const;
 
   //! Get the total macroscopic cross section of a material for neutrons
@@ -126,13 +126,13 @@ public:
   //! Get the total forward macroscopic cross section of a material for the given particle type
   template<typename ParticleStateType>
   double getMacroscopicTotalForwardCrossSection(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const;
 
   //! Get the total macroscopic cross section of a material for the given particle type
   template<typename ParticleStateType>
   double getMacroscopicTotalForwardCrossSectionQuick(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const;
 
   //! Get the total forward macroscopic cs of a material for neutrons
@@ -174,13 +174,13 @@ public:
   //! Get the adjoint weight factor of a material for the given particle type
   template<typename ParticleStateType>
   double getAdjointWeightFactor(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const;
 
   //! Get the adjoint weight factor of a material for the given particle type
   template<typename ParticleStateType>
   double getAdjointWeightFactorQuick(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const;
 
   //! Get the adjoint weight factor for adjoint photons
@@ -256,7 +256,7 @@ private:
 
 BOOST_SERIALIZATION_CLASS_VERSION( FilledGeometryModel, MonteCarlo, 0 );
 
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( FilledGeometryModel );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, FilledGeometryModel );
 
 //---------------------------------------------------------------------------//
 // Template Includes

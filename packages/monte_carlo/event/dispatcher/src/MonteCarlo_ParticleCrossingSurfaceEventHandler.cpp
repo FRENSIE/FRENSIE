@@ -34,7 +34,7 @@ ParticleCrossingSurfaceEventHandler::getParticleCrossingSurfaceEventDispatcher()
 // Update the observers from a surface intersection event
 void ParticleCrossingSurfaceEventHandler::updateObserversFromParticleCrossingSurfaceEvent(
 	  const ParticleState& particle,
-          const Geometry::Model::InternalSurfaceHandle surface_crossing,
+          const Geometry::Model::EntityId surface_crossing,
 	  const double surface_normal[3] )
 {
   // Make sure the surface normal is valid

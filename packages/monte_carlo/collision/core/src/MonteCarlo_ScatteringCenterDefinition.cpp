@@ -6,20 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_ScatteringCenterDefinition.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_StaticOutputFormatter.hpp"
 #include "Utility_LoggingMacros.hpp"
@@ -780,7 +769,7 @@ void ScatteringCenterDefinition::toStream( std::ostream& os ) const
   Details::photonuclearDataPropertiesToStreamImpl( os, "adjoint photonuclear data", indent, d_zaid, d_adjoint_photonuclear_data_properties );
 }
 
-EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( ScatteringCenterDefinition );
+EXPLICIT_CLASS_SAVE_LOAD_INST( ScatteringCenterDefinition );
   
 } // end MonteCarlo namespace
 

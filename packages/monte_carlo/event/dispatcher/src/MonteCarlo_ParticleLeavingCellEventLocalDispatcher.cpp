@@ -8,21 +8,21 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleLeavingCellEventLocalDispatcher.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
 ParticleLeavingCellEventLocalDispatcher::ParticleLeavingCellEventLocalDispatcher(
-		     const Geometry::Model::InternalCellHandle cell_id )
-  : ParticleEventLocalDispatcher<Geometry::Model::InternalCellHandle,
+		     const Geometry::Model::EntityId cell_id )
+  : ParticleEventLocalDispatcher<Geometry::Model::EntityId,
                                  ParticleLeavingCellEventObserver>( cell_id )
 { /* ... */ }
 
 // Dispatch the new event to the observers
 void ParticleLeavingCellEventLocalDispatcher::dispatchParticleLeavingCellEvent(
 	        const ParticleState& particle,
-	        const Geometry::Model::InternalCellHandle cell_leaving )
+	        const Geometry::Model::EntityId cell_leaving )
 {
   // Make sure the cell being entered is valid
   testPrecondition( cell_leaving == this->getId() );

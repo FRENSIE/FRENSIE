@@ -13,7 +13,7 @@
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -78,14 +78,14 @@ void StandardFilledParticleGeometryModel<Material>::loadMaterialsAndFillModel(
   this->processLoadedScatteringCenters( d_scattering_center_name_map );
 
   // Create each material
-  std::unordered_map<std::string,std::vector<Geometry::Model::InternalCellHandle> > material_name_cell_ids_map;
+  std::unordered_map<std::string,std::vector<Geometry::Model::EntityId> > material_name_cell_ids_map;
   
   Geometry::Model::CellIdMatIdMap::const_iterator
     cell_id_mat_id_it = cell_id_mat_id_map.begin();
 
   while( cell_id_mat_id_it != cell_id_mat_id_map.end() )
   {
-    Geometry::Model::InternalCellHandle cell_id =
+    Geometry::Model::EntityId cell_id =
       cell_id_mat_id_it->first;
 
     typename MaterialType::InternalMaterialHandle material_id =
@@ -150,7 +150,7 @@ void StandardFilledParticleGeometryModel<Material>::loadMaterialsAndFillModel(
 template<typename Material>
 void StandardFilledParticleGeometryModel<Material>::addMaterial(
                        const std::shared_ptr<const MaterialType>& material,
-                       const std::vector<Geometry::Model::InternalCellHandle>&
+                       const std::vector<Geometry::Model::EntityId>&
                        cells_containing_material )
 {
   // Make sure the material pointer is valid
@@ -174,7 +174,7 @@ void StandardFilledParticleGeometryModel<Material>::addMaterial(
 // Get the material contained in a cell
 template<typename Material>
 auto StandardFilledParticleGeometryModel<Material>::getMaterial(
-                         const Geometry::Model::InternalCellHandle cell ) const
+                         const Geometry::Model::EntityId cell ) const
   -> const std::shared_ptr<const MaterialType>&
 {
   // Make sure the cell is not void
@@ -203,7 +203,7 @@ bool StandardFilledParticleGeometryModel<Material>::isVoid() const
 // Check if a cell is void
 template<typename Material>
 bool StandardFilledParticleGeometryModel<Material>::isCellVoid(
-                         const Geometry::Model::InternalCellHandle cell ) const
+                         const Geometry::Model::EntityId cell ) const
 {
   return d_cell_id_material_map.find( cell ) == d_cell_id_material_map.end();
 }
@@ -211,7 +211,7 @@ bool StandardFilledParticleGeometryModel<Material>::isCellVoid(
 // Check if a cell is a termination cell
 template<typename Material>
 bool StandardFilledParticleGeometryModel<Material>::isTerminationCell(
-                         const Geometry::Model::InternalCellHandle cell ) const
+                         const Geometry::Model::EntityId cell ) const
 {
   return d_unfilled_model->isTerminationCell( cell );
 }
@@ -228,7 +228,7 @@ double StandardFilledParticleGeometryModel<Material>::getMacroscopicTotalCrossSe
 // Get the total macroscopic cross section of a material
 template<typename Material>
 inline double StandardFilledParticleGeometryModel<Material>::getMacroscopicTotalCrossSection(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const
 {
   if( this->isCellVoid( cell ) )
@@ -255,7 +255,7 @@ double StandardFilledParticleGeometryModel<Material>::getMacroscopicTotalCrossSe
  */
 template<typename Material>
 inline double StandardFilledParticleGeometryModel<Material>::getMacroscopicTotalCrossSectionQuick(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const
 {
   // Make sure the cell is not void
@@ -279,7 +279,7 @@ double StandardFilledParticleGeometryModel<Material>::getMacroscopicTotalForward
 // Get the total forward macroscopic cross section of a material
 template<typename Material>
 inline double StandardFilledParticleGeometryModel<Material>::getMacroscopicTotalForwardCrossSection(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const
 {
   if( this->isCellVoid( cell ) )
@@ -308,7 +308,7 @@ double StandardFilledParticleGeometryModel<Material>::getMacroscopicTotalForward
  */
 template<typename Material>
 inline double StandardFilledParticleGeometryModel<Material>::getMacroscopicTotalForwardCrossSectionQuick(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy ) const
 {
   // Make sure the cell is not void
@@ -331,7 +331,7 @@ double StandardFilledParticleGeometryModel<Material>::getMacroscopicReactionCros
 // Get the macroscopic reaction cross section for a specific reaction
 template<typename Material>
 double StandardFilledParticleGeometryModel<Material>::getMacroscopicReactionCrossSection(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy,
                                 const ReactionEnumType reaction ) const
 {
@@ -364,7 +364,7 @@ double StandardFilledParticleGeometryModel<Material>::getMacroscopicReactionCros
  */
 template<typename Material>
 double StandardFilledParticleGeometryModel<Material>::getMacroscopicReactionCrossSectionQuick(
-                                const Geometry::Model::InternalCellHandle cell,
+                                const Geometry::Model::EntityId cell,
                                 const double energy,
                                 const ReactionEnumType reaction ) const
 {

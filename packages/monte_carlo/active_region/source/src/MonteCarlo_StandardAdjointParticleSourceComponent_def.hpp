@@ -20,7 +20,7 @@ StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>
 // Constructor
 template<typename ParticleStateType,typename ProbeParticleStateType>
 StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::StandardAdjointParticleSourceComponent(
-    const size_t id,
+    const uint32_t id,
     const double selection_weight,
     const std::shared_ptr<const Geometry::Model>& model,
     const std::shared_ptr<const ParticleDistribution>& particle_distribution,
@@ -36,9 +36,9 @@ StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>
 // Constructor (with rejection cells )
 template<typename ParticleStateType,typename ProbeParticleStateType>
 StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::StandardAdjointParticleSourceComponent(
-    const size_t id,
+    const uint32_t id,
     const double selection_weight,
-    const std::vector<Geometry::Model::InternalCellHandle>& rejection_cells,
+    const std::vector<Geometry::Model::EntityId>& rejection_cells,
     const std::shared_ptr<const Geometry::Model>& model,
     const std::shared_ptr<const ParticleDistribution>& particle_distribution,
     const std::vector<double>& critical_line_energies )
@@ -54,7 +54,7 @@ StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>
 // Constructor (with rejection cells )
 template<typename ParticleStateType,typename ProbeParticleStateType>
 StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::StandardAdjointParticleSourceComponent(
-    const size_t id,
+    const uint32_t id,
     const double selection_weight,
     const CellIdSet& rejection_cells,
     const std::shared_ptr<const Geometry::Model>& model,
@@ -77,7 +77,7 @@ StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>
  */
 template<typename ParticleStateType,typename ProbeParticleStateType>
 StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::StandardAdjointParticleSourceComponent(
-     const size_t id,
+     const uint32_t id,
      const double selection_weight,
      const std::shared_ptr<const FilledGeometryModel>& model,
      const std::shared_ptr<const ParticleDistribution>& particle_distribution )
@@ -94,7 +94,7 @@ StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>
  */
 template<typename ParticleStateType,typename ProbeParticleStateType>
 StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::StandardAdjointParticleSourceComponent(
-     const size_t id,
+     const uint32_t id,
      const double selection_weight,
      const CellIdSet& rejection_cells,
      const std::shared_ptr<const FilledGeometryModel>& model,
@@ -226,11 +226,11 @@ void StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleState
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardAdjointPhotonSourceComponent, MonteCarlo )
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::StandardAdjointParticleSourceComponent<MonteCarlo::AdjointPhotonState,MonteCarlo::AdjointPhotonProbeState> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardAdjointParticleSourceComponent<MonteCarlo::AdjointPhotonState,MonteCarlo::AdjointPhotonProbeState> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, StandardAdjointParticleSourceComponent<MonteCarlo::AdjointPhotonState,MonteCarlo::AdjointPhotonProbeState> );
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardAdjointElectronSourceComponent, MonteCarlo )
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::StandardAdjointParticleSourceComponent<MonteCarlo::AdjointElectronState,MonteCarlo::AdjointElectronProbeState> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardAdjointParticleSourceComponent<MonteCarlo::AdjointElectronState,MonteCarlo::AdjointElectronProbeState> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, StandardAdjointParticleSourceComponent<MonteCarlo::AdjointElectronState,MonteCarlo::AdjointElectronProbeState> );
 
 #endif // end MONTE_CARLO_STANDARD_ADJOINT_PARTICLE_SOURCE_COMPONENT_DEF_HPP
 

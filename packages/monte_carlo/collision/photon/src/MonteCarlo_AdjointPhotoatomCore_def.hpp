@@ -13,7 +13,7 @@
 #include "MonteCarlo_AbsorptionAdjointPhotoatomicReaction.hpp"
 #include "MonteCarlo_VoidAbsorptionAdjointPhotoatomicReaction.hpp"
 #include "MonteCarlo_VoidAtomicRelaxationModel.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 

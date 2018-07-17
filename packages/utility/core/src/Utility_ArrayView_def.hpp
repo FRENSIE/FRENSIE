@@ -10,7 +10,7 @@
 #define UTILITY_ARRAY_VIEW_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Utility{
 

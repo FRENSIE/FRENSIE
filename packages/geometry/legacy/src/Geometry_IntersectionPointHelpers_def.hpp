@@ -15,7 +15,7 @@
 #include "Geometry_Matrix.hpp"
 #include "Geometry_MatrixHelpers.hpp"
 #include "Geometry_LinearAlgebraAlgorithms.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 

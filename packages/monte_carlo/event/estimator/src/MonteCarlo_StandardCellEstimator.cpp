@@ -7,30 +7,44 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_StandardCellEstimator.hpp"
-#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "Utility_LoggingMacros.hpp"
 
 namespace MonteCarlo{
 
+// Default constructor
+StandardCellEstimator::StandardCellEstimator()
+{ /* ... */ }
+  
+// Constructor
+StandardCellEstimator::StandardCellEstimator(
+                                      const uint32_t id,
+                                      const double multiplier,
+                                      const std::vector<CellIdType>& cell_ids,
+                                      const std::vector<double>& cell_volumes )
+  : StandardEntityEstimator( id, multiplier, cell_ids, cell_volumes )
+{ /* ... */ }
+  
 // Assign discretization to an estimator dimension
 /*! \details The MonteCarlo::OBSERVER_COSINE_DIMENSION cannot be discretized in
  * standard cell estimators.
  */
 void StandardCellEstimator::assignDiscretization(
-                        const Estimator::DimensionDiscretizationPointer& bins )
+  const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins,
+  const bool range_dimension )
 {
   if( bins->getDimension() == OBSERVER_COSINE_DIMENSION )
   {
     FRENSIE_LOG_TAGGED_WARNING( "Estimator",
-                                bin_boundaries->getDimensionName() <<
+                                bins->getDimensionName() <<
                                 " bins cannot be set for standard cell "
                                 "estimators. The bins requested for standard "
                                 "cell estimator " << this->getId() <<
                                 " will be ignored!" );
   }
   else
-    BaseEstimatorType::assignDiscretization( bin_boundaries );
+    StandardEntityEstimator::assignDiscretization( bins, range_dimension );
 }
 
 // Assign the particle type to the estimator
@@ -39,7 +53,7 @@ void StandardCellEstimator::assignDiscretization(
  * allowed.
  */
 void StandardCellEstimator::assignParticleType(
-                                            const ParticleType& particle_type )
+                                            const ParticleType particle_type )
 {
   if( this->getNumberOfAssignedParticleTypes() != 0 )
   {
@@ -51,10 +65,12 @@ void StandardCellEstimator::assignParticleType(
                                 << particle_type << " will be ignored!" );
   }
   else
-    Estimator::assignParticleType( particle_types);
+    Estimator::assignParticleType( particle_type );
 }
 
 } // end MonteCarlo namespace
+
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::StandardCellEstimator );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardCellEstimator.cpp

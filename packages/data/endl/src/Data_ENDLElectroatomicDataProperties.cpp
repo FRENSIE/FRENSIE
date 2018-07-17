@@ -6,23 +6,12 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "Data_ENDLElectroatomicDataProperties.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_FromStringTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Data{
 
@@ -110,44 +99,7 @@ ENDLElectroatomicDataProperties* ENDLElectroatomicDataProperties::clone() const
   return new ENDLElectroatomicDataProperties( *this );
 }
 
-// Save the properties to an archive
-template<typename Archive>
-void ENDLElectroatomicDataProperties::save( Archive& ar, const unsigned version ) const
-{
-  // Save the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ElectroatomicDataProperties );
-
-  // Save the local member data
-  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight );
-  
-  std::string raw_path = d_file_path.string();
-  
-  ar & BOOST_SERIALIZATION_NVP( raw_path );
-  ar & BOOST_SERIALIZATION_NVP( d_file_version );
-  ar & BOOST_SERIALIZATION_NVP( d_atom );
-}
-
-// Load the properties from an archive
-template<typename Archive>
-void ENDLElectroatomicDataProperties::load( Archive& ar, const unsigned version )
-{
-  // Load the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ElectroatomicDataProperties );
-
-  // Load the local member data
-  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight );
-  
-  std::string raw_path;  
-  ar & BOOST_SERIALIZATION_NVP( raw_path );
-
-  d_file_path = raw_path;
-  d_file_path.make_preferred();
-  
-  ar & BOOST_SERIALIZATION_NVP( d_file_version );
-  ar & BOOST_SERIALIZATION_NVP( d_atom );
-}
-
-EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ENDLElectroatomicDataProperties );
+EXPLICIT_CLASS_SAVE_LOAD_INST( ENDLElectroatomicDataProperties );
   
 } // end Data namespace
 

@@ -22,8 +22,7 @@
 #include "Data_AdjointPhotonuclearDataProperties.hpp"
 #include "Data_NuclideProperties.hpp"
 #include "Data_ZAID.hpp"
-#include "Data_ExplicitTemplateInstantiationMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_ToStringTraitsDecl.hpp"
 #include "Utility_TypeTraitsDecl.hpp"
@@ -50,9 +49,6 @@ using namespace Data;
 
 // Include the serialization helpers for handling macros
 %include "Utility_SerializationHelpers.hpp"
-
-// Import the explicit template instantiation helpers
-%include "Data_ExplicitTemplateInstantiationMacros.hpp"
 
 // Include the data property helpers
 %include "Data_PropertyHelpers.i"

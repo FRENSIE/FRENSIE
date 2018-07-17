@@ -23,7 +23,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhaseSpaceDimensionDistribution.hpp"
 #include "MonteCarlo_ParticleState.hpp"
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_TypeNameTraits.hpp"
 #include "Utility_Set.hpp"
@@ -147,7 +147,7 @@ struct TypeNameTraits<MonteCarlo::ParticleDistribution>
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleDistribution );
 BOOST_CLASS_VERSION( MonteCarlo::ParticleDistribution, 0 );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::ParticleDistribution );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, ParticleDistribution );
 
 #endif // end MONTE_CARLO_PARTICLE_DISTRIBUTION_HPP
 

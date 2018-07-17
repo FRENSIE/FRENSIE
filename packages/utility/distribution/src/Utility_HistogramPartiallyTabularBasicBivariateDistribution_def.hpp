@@ -67,7 +67,8 @@ void UnitAwareHistogramPartiallyTabularBasicBivariateDistribution<PrimaryIndepen
   
 } // end Utility namespace
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareHistogramPartiallyTabularBasicBivariateDistribution<void,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareHistogramPartiallyTabularBasicBivariateDistribution<void,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareHistogramPartiallyTabularBasicBivariateDistribution<void,void,void> );
 
 //---------------------------------------------------------------------------//
 

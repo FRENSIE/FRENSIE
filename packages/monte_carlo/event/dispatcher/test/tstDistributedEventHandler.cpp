@@ -73,7 +73,7 @@ std::shared_ptr<MonteCarlo::EventHandler> event_handler;
 template<typename CellEstimator>
 void initializeCellEstimator(
     const unsigned estimator_id,
-    const std::vector<Geometry::ModuleTraits::InternalCellHandle>& cell_ids,
+    const std::vector<Geometry::ModuleTraits::EntityId>& cell_ids,
     std::shared_ptr<CellEstimator>& estimator )
 {
   // Set the estimator multiplier
@@ -96,7 +96,7 @@ void initializeCellEstimator(
 template<typename CellPulseHeightEstimator>
 void initializeCellPulseHeightEstimator(
     const unsigned estimator_id,
-    const std::vector<Geometry::ModuleTraits::InternalCellHandle>& cell_ids,
+    const std::vector<Geometry::ModuleTraits::EntityId>& cell_ids,
     std::shared_ptr<CellPulseHeightEstimator>& estimator )
 {
   // Set the estimator multiplier
@@ -116,7 +116,7 @@ void initializeCellPulseHeightEstimator(
 template<typename SurfaceEstimator>
 void initializeSurfaceFluxEstimator(
 	   const unsigned estimator_id,
-           const std::vector<Geometry::ModuleTraits::InternalSurfaceHandle>&
+           const std::vector<Geometry::ModuleTraits::EntityId>&
 	   surface_ids,
 	   std::shared_ptr<SurfaceEstimator>& estimator )
 {
@@ -140,7 +140,7 @@ void initializeSurfaceFluxEstimator(
 template<typename SurfaceEstimator>
 void initializeSurfaceCurrentEstimator(
 	   const unsigned estimator_id,
-           const std::vector<Geometry::ModuleTraits::InternalSurfaceHandle>&
+           const std::vector<Geometry::ModuleTraits::EntityId>&
 	   surface_ids,
 	   std::shared_ptr<SurfaceEstimator>& estimator )
 {
@@ -805,7 +805,7 @@ int main( int argc, char** argv )
   event_handler.reset( new MonteCarlo::EventHandler );
 
   // Initialize estimators
-  std::vector<Geometry::ModuleTraits::InternalCellHandle> cell_ids( 2 );
+  std::vector<Geometry::ModuleTraits::EntityId> cell_ids( 2 );
   cell_ids[0] = 0;
   cell_ids[1] = 1;
 
@@ -823,7 +823,7 @@ int main( int argc, char** argv )
   event_handler->addEntityEventObserver( estimator_5, cell_ids );
   event_handler->addEntityEventObserver( estimator_6, cell_ids );
 
-  std::vector<Geometry::ModuleTraits::InternalSurfaceHandle> surface_ids(2);
+  std::vector<Geometry::ModuleTraits::EntityId> surface_ids(2);
   surface_ids[0] = 0;
   surface_ids[1] = 1;
 

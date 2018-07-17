@@ -55,7 +55,7 @@ FRENSIE_UNIT_TEST( ParticleState, embedInModel )
   // Check that the particle can move through the geometry
   FRENSIE_CHECK_EQUAL( particle.getCell(), 82 );
 
-  Geometry::Navigator::InternalSurfaceHandle surface_hit;
+  Geometry::Navigator::EntityId surface_hit;
 
   Geometry::Navigator::Length distance_to_surface_hit =
     particle.navigator().fireRay( surface_hit );

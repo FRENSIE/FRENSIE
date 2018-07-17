@@ -15,7 +15,7 @@
 #include "MonteCarlo_AdjointPhotoatomicReactionNativeFactory.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_SortAlgorithms.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -216,8 +216,13 @@ std::shared_ptr<const std::vector<double> > AdjointPhotoatomNativeFactory::addCr
   critical_line_energies_copy->assign( critical_line_energies.begin(),
                                        critical_line_energies.end() );
 
-  if( max_energy > critical_line_energies_copy->back() )
-    critical_line_energies_copy->push_back( max_energy );
+  // if( !critical_line_energies_copy->empty() )
+  // {
+  //   if( max_energy > critical_line_energies_copy->back() )
+  //     critical_line_energies_copy->push_back( max_energy );
+  // }
+  // else
+  //   critical_line_energies_copy->push_back( max_energy );
   
   return critical_line_energies_copy;
 }

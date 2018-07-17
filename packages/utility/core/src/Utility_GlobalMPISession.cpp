@@ -696,7 +696,7 @@ bool GlobalMPISession::is_main_thread()
 #ifdef HAVE_FRENSIE_MPI
   return boost::mpi::environment::is_main_thread();
 #else
-  return GlobalOpenMPISession::getThreadId() == 0;
+  return OpenMPProperties::getThreadId() == 0;
 #endif
 }
 

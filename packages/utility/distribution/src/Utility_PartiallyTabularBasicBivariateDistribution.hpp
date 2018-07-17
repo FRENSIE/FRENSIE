@@ -113,7 +113,8 @@ typedef UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> Part
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION3( UnitAwarePartiallyTabularBasicBivariateDistribution );
 BOOST_SERIALIZATION_DISTRIBUTION3_VERSION( UnitAwarePartiallyTabularBasicBivariateDistribution, 0 );
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> );
 
 #endif // end UTILITY_PARTIALLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_HPP
 

@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -250,7 +250,7 @@ void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename 
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::UnorderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION>,
                          "UnorderedTypedObserverPhaseSpaceDimensionDiscretization<OBSERVER_SOURCE_ID_DIMENSION>" );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::UnorderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION> );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::UnorderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, UnorderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION> );
 
 #endif // end MONTE_CARLO_UNORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_DEF_HPP
 

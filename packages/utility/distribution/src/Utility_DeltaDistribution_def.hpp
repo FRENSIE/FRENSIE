@@ -15,8 +15,7 @@
 // FRENSIE Includes
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
-#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_IMPLEMENT( UnitAwareDeltaDistribution );
 
@@ -329,8 +328,8 @@ bool UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroI
 
 } // end Utility namespace
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareDeltaDistribution<void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareDeltaDistribution<void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareDeltaDistribution<void,void> );
 
 #endif // end UTILITY_DELTA_DISTRIBUTION_DEF_HPP
 

@@ -10,7 +10,7 @@
 #define UTILITY_SEPARABLE_TWO_D_DISTRIBUTION_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
@@ -426,7 +426,7 @@ void UnitAwareSeparableBivariateDistribution<PrimaryIndependentUnit,PrimaryDepen
 
 } // end Utility namespace
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareSeparableBivariateDistribution<void,void,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareSeparableBivariateDistribution<void,void,void,void> );
 
 #endif // end UTILITY_SEPARABLE_TWO_D_DISTRIBUTION_DEF_HPP
 

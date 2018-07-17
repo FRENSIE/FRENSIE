@@ -17,7 +17,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleCrossingSurfaceEventDispatcher.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
@@ -48,7 +48,7 @@ public:
   //! Update the observers from a surface intersection event
   void updateObserversFromParticleCrossingSurfaceEvent(
 	  const ParticleState& particle,
-          const Geometry::Model::InternalSurfaceHandle surface_crossing,
+          const Geometry::Model::EntityId surface_crossing,
 	  const double surface_normal[3] );
 
 protected:

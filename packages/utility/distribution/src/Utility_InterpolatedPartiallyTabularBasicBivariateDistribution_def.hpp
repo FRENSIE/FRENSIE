@@ -11,7 +11,7 @@
 #define UTILITY_INTERPOLATED_PARTIALLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 BOOST_SERIALIZATION_DISTRIBUTION4_EXPORT_IMPLEMENT( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution );
 
@@ -87,7 +87,7 @@ void UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<TwoDGridPol
   
 } // end Utility namespace
 
-EXTERN_EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_PARTIAL( Utility::UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution, void, void, void );
+EXTERN_EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_PARTIAL( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution, void, void, void );
 
 #endif // end UTILITY_INTERPOLATED_PARTIALLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 

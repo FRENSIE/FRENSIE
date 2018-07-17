@@ -1,4 +1,4 @@
 FRENSIE_SETUP_PACKAGE(data_core
   MPI_LIBRARIES ${MPI_CXX_LIBRARIES} 
-  NON_MPI_LIBRARIES ${Boost_LIBRARIES} utility_core utility_hdf5
+  NON_MPI_LIBRARIES ${Boost_LIBRARIES} utility_core utility_archive
   SET_VERBOSE ${CMAKE_VERBOSE_CONFIGURE})

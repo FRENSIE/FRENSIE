@@ -6,30 +6,21 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp" // Must include first
 #include "Utility_TabularDistribution.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 
-namespace Utility{
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularDistribution<Utility::LinLin,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularDistribution<Utility::LinLin,void,void> );
 
-// Explicit instantiation
-EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularDistribution<LinLin,void,void> );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularDistribution<LinLog,void,void> );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularDistribution<LogLin,void,void> );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularDistribution<LogLog,void,void> );
-  
-} // end Utility namespace
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularDistribution<Utility::LinLog,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularDistribution<Utility::LinLog,void,void> );
+
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularDistribution<Utility::LogLin,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularDistribution<Utility::LogLin,void,void> );
+
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularDistribution<Utility::LogLog,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularDistribution<Utility::LogLog,void,void> );
 
 //---------------------------------------------------------------------------//
 // end Utility_TabularDistribution.cpp

@@ -8,14 +8,14 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleCrossingSurfaceEventLocalDispatcher.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
 ParticleCrossingSurfaceEventLocalDispatcher::ParticleCrossingSurfaceEventLocalDispatcher(
-	       const Geometry::Model::InternalSurfaceHandle surface_id )
-  : ParticleEventLocalDispatcher<Geometry::Model::InternalSurfaceHandle,
+	       const Geometry::Model::EntityId surface_id )
+  : ParticleEventLocalDispatcher<Geometry::Model::EntityId,
                                  ParticleCrossingSurfaceEventObserver>( surface_id )
 { /* ... */ }
 
@@ -23,7 +23,7 @@ ParticleCrossingSurfaceEventLocalDispatcher::ParticleCrossingSurfaceEventLocalDi
 void
 ParticleCrossingSurfaceEventLocalDispatcher::dispatchParticleCrossingSurfaceEvent(
 	  const ParticleState& particle,
-	  const Geometry::Model::InternalSurfaceHandle surface_crossing,
+	  const Geometry::Model::EntityId surface_crossing,
 	  const double angle_cosine )
 {
   // Make sure the surface being crossed is valid

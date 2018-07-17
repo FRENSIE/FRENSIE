@@ -24,9 +24,8 @@ monte_carlo/collision subpackage.
 #include "MonteCarlo_ScatteringCenterDefinition.hpp"
 #include "MonteCarlo_ScatteringCenterDefinitionDatabase.hpp"
 
-#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 using namespace MonteCarlo;
 %}
@@ -41,9 +40,6 @@ using namespace MonteCarlo;
 
 // Include the serialization helpers for handling macros
 %include "Utility_SerializationHelpers.hpp"
-
-// Include the explicit template instantiation helpers
-%include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 
 // Simulation properties handling
 %import MonteCarlo.MonteCarlo__init__.i

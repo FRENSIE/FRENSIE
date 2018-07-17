@@ -12,36 +12,25 @@
 #include <numeric>
 #include <limits>
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_ParticleSourceComponent.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_OpenMPProperties.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
 // Default constructor
 ParticleSourceComponent::ParticleSourceComponent()
-  : d_id( std::numeric_limits<size_t>::max() )
+  : d_id( std::numeric_limits<uint32_t>::max() )
 { /* ... */ }
 
 // Constructor
 ParticleSourceComponent::ParticleSourceComponent(
-                          const size_t id,
+                          const uint32_t id,
                           const double selection_weight,
                           const std::shared_ptr<const Geometry::Model>& model )
   : ParticleSourceComponent( id, selection_weight, CellIdSet(), model )
@@ -57,7 +46,7 @@ ParticleSourceComponent::ParticleSourceComponent(
  * specified all sampled particle states will be used.
  */ 
 ParticleSourceComponent::ParticleSourceComponent(
-                          const size_t id,
+                          const uint32_t id,
                           const double selection_weight,
                           const CellIdSet& rejection_cells,
                           const std::shared_ptr<const Geometry::Model>& model )
@@ -256,7 +245,7 @@ void ParticleSourceComponent::sampleParticleState(
     // Determine the cell that this particle has been born in
     if( valid_sample )
     {
-      Geometry::Model::InternalCellHandle start_cell_id;
+      Geometry::Model::EntityId start_cell_id;
 
       try{
         start_cell_id =
@@ -309,7 +298,7 @@ double ParticleSourceComponent::getSelectionWeight() const
 }
 
 // Get the id of this source
-size_t ParticleSourceComponent::getId() const
+uint32_t ParticleSourceComponent::getId() const
 {
   return d_id;
 }
@@ -530,7 +519,7 @@ bool ParticleSourceComponent::isSampledParticlePositionValid(
     return true;
 }
 
-EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( ParticleSourceComponent );
+EXPLICIT_CLASS_SAVE_LOAD_INST( ParticleSourceComponent );
   
 } // end MonteCarlo namespace
 

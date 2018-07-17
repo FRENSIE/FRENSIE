@@ -7,15 +7,17 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_SurfaceFluxEstimator.hpp"
 
-namespace MonteCarlo{
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightMultipliedSurfaceFluxEstimator );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightMultiplier> );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightMultiplier> );
 
-EXPLICIT_TEMPLATE_CLASS_INST( SurfaceFluxEstimator<WeightMultiplier> );
-EXPLICIT_TEMPLATE_CLASS_INST( SurfaceFluxEstimator<WeightAndEnergyMultiplier> );
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightAndEnergyMultipliedSurfaceFluxEstimator );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
   
-} // end MonteCarlo namespace
-
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SurfaceFluxEstimator.cpp
 //---------------------------------------------------------------------------//

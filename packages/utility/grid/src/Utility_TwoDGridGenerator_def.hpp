@@ -22,7 +22,7 @@
 #include "Utility_ComparisonPolicy.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_QuantityTraits.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace Utility{

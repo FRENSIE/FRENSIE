@@ -17,8 +17,7 @@
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_IMPLEMENT( UnitAwareEquiprobableBinDistribution );
 
@@ -475,7 +474,8 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::verify
 
 } // end Utility namespace
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareEquiprobableBinDistribution<void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareEquiprobableBinDistribution<void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareEquiprobableBinDistribution<void,void> );
 
 #endif // end UTILITY_EQUIPROBABLE_BIN_DISTRIBUTION_DEF_HPP
 

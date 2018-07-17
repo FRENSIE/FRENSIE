@@ -25,7 +25,7 @@
 #include "Geometry_DagMCNavigator.hpp"
 #include "Geometry_PointLocation.hpp"
 #include "Geometry_AdvancedModel.hpp"
-#include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_Map.hpp"
 #include "Utility_Set.hpp"
 #include "Utility_Vector.hpp"
@@ -86,16 +86,16 @@ public:
   void getCellEstimatorData( CellEstimatorIdDataMap& estimator_id_data_map ) const override;
 
   //! Check if a cell exists
-  bool doesCellExist( const InternalCellHandle cell_id ) const override;
+  bool doesCellExist( const EntityId cell_id ) const override;
 
   //! Check if the cell is a termination cell
-  bool isTerminationCell( const InternalCellHandle cell_id ) const override;
+  bool isTerminationCell( const EntityId cell_id ) const override;
 
   //! Check if the cell is a void cell
-  bool isVoidCell( const InternalCellHandle cell_id ) const override;
+  bool isVoidCell( const EntityId cell_id ) const override;
 
   //! Get the cell volume
-  Volume getCellVolume( const InternalCellHandle cell_id ) const override;
+  Volume getCellVolume( const EntityId cell_id ) const override;
 
   //! Get the problem surfaces
   void getSurfaces( SurfaceIdSet& surface_set ) const override;
@@ -104,13 +104,13 @@ public:
   void getSurfaceEstimatorData( SurfaceEstimatorIdDataMap& estimator_id_data_map ) const;
 
   //! Check if the surface exists
-  bool doesSurfaceExist( const InternalSurfaceHandle surface_id ) const override;
+  bool doesSurfaceExist( const EntityId surface_id ) const override;
 
   //! Get the surface area
-  Area getSurfaceArea( const InternalSurfaceHandle surface_id ) const override;
+  Area getSurfaceArea( const EntityId surface_id ) const override;
 
   //! Check if the surface is a reflecting surface
-  bool isReflectingSurface( const InternalSurfaceHandle surface_id ) const override;
+  bool isReflectingSurface( const EntityId surface_id ) const override;
 
   //! Create a raw, heap-allocated navigator
   DagMCNavigator* createNavigatorAdvanced( const Navigator::AdvanceCompleteCallback& advance_complete_callback ) const override;
@@ -125,13 +125,13 @@ private:
   typedef std::vector<std::string> PropertyValuesArray;
 
   // The cell id property values array map type
-  typedef std::map<InternalCellHandle,PropertyValuesArray> CellIdPropertyValuesMap;
+  typedef std::map<EntityId,PropertyValuesArray> CellIdPropertyValuesMap;
 
   // The property value cell id array map type
   typedef std::map<std::string,CellIdArray> PropValueCellIdMap;
 
   // The surface id property values array map type
-  typedef std::map<InternalSurfaceHandle,PropertyValuesArray> SurfaceIdPropertyValuesMap;
+  typedef std::map<EntityId,PropertyValuesArray> SurfaceIdPropertyValuesMap;
 
   // The property value surface id array map type
   typedef std::map<std::string,SurfaceIdArray> PropValueSurfaceIdMap;
@@ -267,7 +267,7 @@ public:
 
 BOOST_SERIALIZATION_CLASS_VERSION( DagMCModel, Geometry, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( DagMCModel, Geometry );
-EXTERN_EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( DagMCModel );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Geometry, DagMCModel );
 
 //---------------------------------------------------------------------------//
 // Template Includes

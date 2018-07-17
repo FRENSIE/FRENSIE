@@ -31,7 +31,7 @@ data.
 // FRENSIE Includes
 #include "DataGen_EPRDataGeneratorHelpers.hpp"
 #include "Utility_ArchivableObject.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 %}
 
 // Include std::string support
