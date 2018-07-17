@@ -84,11 +84,6 @@ public:
   using MonteCarlo::Estimator::getMultiplier;
   using MonteCarlo::Estimator::getResponseFunctionName;
   using MonteCarlo::Estimator::getBinName;
-  using MonteCarlo::Estimator::evaluateResponseFunction;
-  using MonteCarlo::Estimator::isPointInEstimatorPhaseSpace;
-  using MonteCarlo::Estimator::doesRangeIntersectEstimatorPhaseSpace;
-  using MonteCarlo::Estimator::calculateBinIndicesOfPoint;
-  using MonteCarlo::Estimator::calculateBinIndicesAndWeightsOfRange;
   using MonteCarlo::Estimator::calculateResponseFunctionIndex;
 };
 
@@ -266,6 +261,17 @@ FRENSIE_UNIT_TEST( Estimator, setDiscretization )
     estimator.setDiscretization( dimension_discretization );
     
     FRENSIE_CHECK_EQUAL( estimator.getNumberOfBins( MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION ), 4u );
+
+    // These bins should be ignored
+    collision_number_bins.resize( 2 );
+    collision_number_bins[0] = 0u;
+    collision_number_bins[1] = 1u;
+
+    dimension_discretization.reset( new MonteCarlo::DefaultTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>( collision_number_bins ) );
+
+    estimator.setDiscretization( dimension_discretization );
+    
+    FRENSIE_CHECK_EQUAL( estimator.getNumberOfBins( MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION ), 4u );
   }
 }
 
@@ -299,6 +305,16 @@ FRENSIE_UNIT_TEST( Estimator, getNumberOfBins )
   collision_number_bins[1] = 1u;
   collision_number_bins[2] = 2u;
   collision_number_bins[3] = std::numeric_limits<unsigned>::max();
+
+  estimator.setDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>(
+						       collision_number_bins );
+
+  FRENSIE_CHECK_EQUAL( estimator.getNumberOfBins(), 72u );
+
+  // These bins should be ignored
+  collision_number_bins.resize( 2 );
+  collision_number_bins[0] = 0u;
+  collision_number_bins[1] = 1u;
 
   estimator.setDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>(
 						       collision_number_bins );
@@ -384,518 +400,439 @@ FRENSIE_UNIT_TEST( Estimator, setParticleTypes )
   FRENSIE_CHECK( !estimator.isParticleTypeAssigned( MonteCarlo::ADJOINT_NEUTRON ) );
 }
 
-// //---------------------------------------------------------------------------//
-// // Check that the response functions can be evaluated
-// FRENSIE_UNIT_TEST( Estimator, evaluateResponseFunction )
-// {
-//   TestEstimator estimator( 0, 1.0 );
+//---------------------------------------------------------------------------//
+// Check if the estimator can calculate the response function index
+FRENSIE_UNIT_TEST( Estimator, calculateResponseFunctionIndex )
+{
+  TestEstimator estimator( 0, 1.0 );
 
-//   std::vector<std::shared_ptr<MonteCarlo::ResponseFunction> >
-//     response_functions( 2 );
+  // Set the bins
+  std::vector<double> energy_bin_boundaries( 7 );
+  energy_bin_boundaries[0] = 0.0;
+  energy_bin_boundaries[1] = 1e-1;
+  energy_bin_boundaries[2] = 1e-1;
+  energy_bin_boundaries[3] = 1.0;
+  energy_bin_boundaries[4] = 10.0;
+  energy_bin_boundaries[5] = 10.0;
+  energy_bin_boundaries[6] = 20.0;
 
-//   std::shared_ptr<Utility::OneDDistribution> energy_distribution(
-// 			   new Utility::UniformDistribution( 0.0, 10., 1.0 ) );
+  estimator.setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>( energy_bin_boundaries);
 
-//   response_functions[0].reset( new MonteCarlo::EnergySpaceResponseFunction(
-// 						       0,
-// 						       "uniform_energy",
-// 						       energy_distribution ) );
-//   response_functions[1] =
-//     MonteCarlo::ResponseFunction::default_response_function;
-
-//   estimator.setResponseFunctions( response_functions );
-
-//   MonteCarlo::PhotonState particle( 0ull );
-//   particle.setEnergy( 1.0 );
-
-//   double response_function_value =
-//     estimator.evaluateResponseFunction( particle, 0u );
-
-//   FRENSIE_CHECK_EQUAL( response_function_value, 1.0 );
-
-//   response_function_value =
-//     estimator.evaluateResponseFunction( particle, 1u );
-
-//   FRENSIE_CHECK_EQUAL( response_function_value, 1.0 );
-// }
-
-// //---------------------------------------------------------------------------//
-// // Check if a point is in the estimator phase space
-// FRENSIE_UNIT_TEST( Estimator, isPointInEstimatorPhaseSpace )
-// {
-//   TestEstimator estimator( 0, 1.0 );
-
-//   std::vector<double> energy_bin_boundaries( 7 );
-//   energy_bin_boundaries[0] = 0.0;
-//   energy_bin_boundaries[1] = 1e-1;
-//   energy_bin_boundaries[2] = 1e-1;
-//   energy_bin_boundaries[3] = 1.0;
-//   energy_bin_boundaries[4] = 10.0;
-//   energy_bin_boundaries[5] = 10.0;
-//   energy_bin_boundaries[6] = 20.0;
-
-//   estimator.setDiscretization<MonteCarlo::ENERGY_DIMENSION>( energy_bin_boundaries);
-
-//   std::vector<double> cosine_bin_boundaries( 4 );
-//   cosine_bin_boundaries[0] = -1.0;
-//   cosine_bin_boundaries[1] = -1.0/3.0;
-//   cosine_bin_boundaries[2] = 1.0/3.0;
-//   cosine_bin_boundaries[3] = 1.0;
-
-//   estimator.setDiscretization<MonteCarlo::COSINE_DIMENSION>( cosine_bin_boundaries);
-
-//   std::vector<double> time_bin_boundaries( 4 );
-//   time_bin_boundaries[0] = 0.0;
-//   time_bin_boundaries[1] = 1e3;
-//   time_bin_boundaries[2] = 1e5;
-//   time_bin_boundaries[3] = 1e7;
-
-//   estimator.setDiscretization<MonteCarlo::TIME_DIMENSION>( time_bin_boundaries);
-
-//   std::vector<unsigned> collision_number_bins( 4 );
-//   collision_number_bins[0] = 0u;
-//   collision_number_bins[1] = 1u;
-//   collision_number_bins[2] = 2u;
-//   collision_number_bins[3] = std::numeric_limits<unsigned>::max();
-
-//   estimator.setDiscretization<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
-// 						       collision_number_bins );
-
-//   TestEstimator::DimensionValueMap dimension_values;
-//   dimension_values[MonteCarlo::ENERGY_DIMENSION] = Teuchos::any( 0.0 );
-//   dimension_values[MonteCarlo::COSINE_DIMENSION] = Teuchos::any( -1.0 );
-//   dimension_values[MonteCarlo::TIME_DIMENSION] = Teuchos::any( 0.0 );
-//   dimension_values[MonteCarlo::COLLISION_NUMBER_DIMENSION] = Teuchos::any( 0u );
-
-//   FRENSIE_CHECK( estimator.isPointInEstimatorPhaseSpace( dimension_values ) );
+  std::vector<double> cosine_bin_boundaries( 4 );
+  cosine_bin_boundaries[0] = -1.0;
+  cosine_bin_boundaries[1] = -1.0/3.0;
+  cosine_bin_boundaries[2] = 1.0/3.0;
+  cosine_bin_boundaries[3] = 1.0;
 
-//   dimension_values[MonteCarlo::ENERGY_DIMENSION] = Teuchos::any( 20.0 );
-//   dimension_values[MonteCarlo::COSINE_DIMENSION] = Teuchos::any( 1.0 );
-//   dimension_values[MonteCarlo::TIME_DIMENSION] = Teuchos::any( 1e7 );
-//   dimension_values[MonteCarlo::COLLISION_NUMBER_DIMENSION] =
-//     Teuchos::any( std::numeric_limits<unsigned>::max() );
+  estimator.setDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION>( cosine_bin_boundaries);
 
-//   FRENSIE_CHECK( estimator.isPointInEstimatorPhaseSpace( dimension_values ) );
+  std::vector<double> time_bin_boundaries( 4 );
+  time_bin_boundaries[0] = 0.0;
+  time_bin_boundaries[1] = 1e3;
+  time_bin_boundaries[2] = 1e5;
+  time_bin_boundaries[3] = 1e7;
 
-//   dimension_values[MonteCarlo::ENERGY_DIMENSION] = Teuchos::any( 21.0 );
+  estimator.setDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION>( time_bin_boundaries);
 
-//   FRENSIE_CHECK( !estimator.isPointInEstimatorPhaseSpace( dimension_values ) );
+  std::vector<unsigned> collision_number_bins( 4 );
+  collision_number_bins[0] = 0u;
+  collision_number_bins[1] = 1u;
+  collision_number_bins[2] = 2u;
+  collision_number_bins[3] = std::numeric_limits<unsigned>::max();
 
-//   dimension_values[MonteCarlo::ENERGY_DIMENSION] = Teuchos::any( 20.0 );
-//   dimension_values[MonteCarlo::TIME_DIMENSION] = Teuchos::any( 2e7 );
+  estimator.setDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>(
+						       collision_number_bins );
 
-//   FRENSIE_CHECK( !estimator.isPointInEstimatorPhaseSpace( dimension_values ) );
-// }
+  // Set the response functions
+  std::vector<std::shared_ptr<const MonteCarlo::ParticleResponse> >
+    response_functions( 2 );
 
-// //---------------------------------------------------------------------------//
-// // Check that the bin index for the desired response function can be
-// // calculated
-// FRENSIE_UNIT_TEST( Estimator, calculateBinIndex )
-// {
-//   TestEstimator estimator( 0, 1.0 );
+  std::shared_ptr<const Utility::UnivariateDistribution> energy_distribution(
+			   new Utility::UniformDistribution( 0.0, 10., 1.0 ) );
 
-//   // Set the bins
-//   std::vector<double> energy_bin_boundaries( 7 );
-//   energy_bin_boundaries[0] = 0.0;
-//   energy_bin_boundaries[1] = 1e-1;
-//   energy_bin_boundaries[2] = 1e-1;
-//   energy_bin_boundaries[3] = 1.0;
-//   energy_bin_boundaries[4] = 10.0;
-//   energy_bin_boundaries[5] = 10.0;
-//   energy_bin_boundaries[6] = 20.0;
-
-//   estimator.setDiscretization<MonteCarlo::ENERGY_DIMENSION>( energy_bin_boundaries);
-
-//   std::vector<double> cosine_bin_boundaries( 4 );
-//   cosine_bin_boundaries[0] = -1.0;
-//   cosine_bin_boundaries[1] = -1.0/3.0;
-//   cosine_bin_boundaries[2] = 1.0/3.0;
-//   cosine_bin_boundaries[3] = 1.0;
-
-//   estimator.setDiscretization<MonteCarlo::COSINE_DIMENSION>( cosine_bin_boundaries);
-
-//   std::vector<double> time_bin_boundaries( 4 );
-//   time_bin_boundaries[0] = 0.0;
-//   time_bin_boundaries[1] = 1e3;
-//   time_bin_boundaries[2] = 1e5;
-//   time_bin_boundaries[3] = 1e7;
-
-//   estimator.setDiscretization<MonteCarlo::TIME_DIMENSION>( time_bin_boundaries);
-
-//   std::vector<unsigned> collision_number_bins( 4 );
-//   collision_number_bins[0] = 0u;
-//   collision_number_bins[1] = 1u;
-//   collision_number_bins[2] = 2u;
-//   collision_number_bins[3] = std::numeric_limits<unsigned>::max();
-
-//   estimator.setDiscretization<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
-// 						       collision_number_bins );
-
-//   TestEstimator::DimensionValueMap dimension_values;
-//   dimension_values[MonteCarlo::ENERGY_DIMENSION] = Teuchos::any( 0.0 );
-//   dimension_values[MonteCarlo::COSINE_DIMENSION] = Teuchos::any( -1.0 );
-//   dimension_values[MonteCarlo::TIME_DIMENSION] = Teuchos::any( 0.0 );
-//   dimension_values[MonteCarlo::COLLISION_NUMBER_DIMENSION] = Teuchos::any( 0u );
-//   // Set the response functions
-//   std::vector<std::shared_ptr<MonteCarlo::ResponseFunction> >
-//     response_functions( 2 );
+  std::shared_ptr<const MonteCarlo::ParticleResponseFunction> response_function(
+       new MonteCarlo::EnergyParticleResponseFunction( energy_distribution ) );
 
-//   std::shared_ptr<Utility::OneDDistribution> energy_distribution(
-// 			   new Utility::UniformDistribution( 0.0, 10., 1.0 ) );
-
-//   response_functions[0].reset( new MonteCarlo::EnergySpaceResponseFunction(
-// 						       0,
-// 						       "uniform_energy",
-// 						       energy_distribution ) );
-//   response_functions[1] =
-//     MonteCarlo::ResponseFunction::default_response_function;
-
-//   estimator.setResponseFunctions( response_functions );
+  response_functions[0].reset( new MonteCarlo::StandardParticleResponse(
+                                                         response_function ) );
 
-//   // Calculate the bin indices
-//   unsigned bin_index = estimator.calculateBinIndex( dimension_values, 0u );
+  response_functions[1] = MonteCarlo::ParticleResponse::getDefault();
 
-//   FRENSIE_CHECK_EQUAL( bin_index, 0u );
+  estimator.setResponseFunctions( response_functions );
 
-//   bin_index = estimator.calculateBinIndex( dimension_values, 1u );
+  // Calculate the response function index
+  unsigned bin_index = 0u;
 
-//   FRENSIE_CHECK_EQUAL( bin_index, 216u );
+  unsigned response_function_index =
+    estimator.calculateResponseFunctionIndex( bin_index );
 
-//   dimension_values[MonteCarlo::ENERGY_DIMENSION] = Teuchos::any( 10.0 );
-//   dimension_values[MonteCarlo::COSINE_DIMENSION] = Teuchos::any( 0.0 );
-//   dimension_values[MonteCarlo::TIME_DIMENSION] = Teuchos::any( 1e6 );
-//   dimension_values[MonteCarlo::COLLISION_NUMBER_DIMENSION] = Teuchos::any( 2u );
+  FRENSIE_CHECK_EQUAL( response_function_index, 0u );
 
-//   bin_index = estimator.calculateBinIndex( dimension_values, 0u );
+  bin_index = 215;
 
-//   FRENSIE_CHECK_EQUAL( bin_index, 154u );
+  response_function_index =
+    estimator.calculateResponseFunctionIndex( bin_index );
 
-//   bin_index = estimator.calculateBinIndex( dimension_values, 1u );
+  FRENSIE_CHECK_EQUAL( response_function_index, 0u );
 
-//   FRENSIE_CHECK_EQUAL( bin_index, 370u );
+  bin_index = 216;
 
-//   dimension_values[MonteCarlo::ENERGY_DIMENSION] = Teuchos::any( 20.0 );
-//   dimension_values[MonteCarlo::COSINE_DIMENSION] = Teuchos::any( 1.0 );
-//   dimension_values[MonteCarlo::TIME_DIMENSION] = Teuchos::any( 1e7 );
-//   dimension_values[MonteCarlo::COLLISION_NUMBER_DIMENSION] =
-//     Teuchos::any( std::numeric_limits<unsigned>::max() );
+  response_function_index =
+    estimator.calculateResponseFunctionIndex( bin_index );
 
-//   bin_index = estimator.calculateBinIndex( dimension_values, 0u );
+  FRENSIE_CHECK_EQUAL( response_function_index, 1u );
 
-//   FRENSIE_CHECK_EQUAL( bin_index, 215u );
+  bin_index = 431;
 
-//   bin_index = estimator.calculateBinIndex( dimension_values, 1u );
+  response_function_index =
+    estimator.calculateResponseFunctionIndex( bin_index );
 
-//   FRENSIE_CHECK_EQUAL( bin_index, 431u );
-// }
+  FRENSIE_CHECK_EQUAL( response_function_index, 1u );
+}
 
-// //---------------------------------------------------------------------------//
-// // Check if the estimator can calculate the response function index
-// FRENSIE_UNIT_TEST( Estimator, calculateResponseFunctionIndex )
-// {
-//   TestEstimator estimator( 0, 1.0 );
+//---------------------------------------------------------------------------//
+// Check if the estimator has an uncommitted history contribution
+FRENSIE_UNIT_TEST( Estimator, hasUncommittedHisotryContribution_serial )
+{
+  TestEstimator estimator( 0, 1.0 );
 
-//   // Set the bins
-//   std::vector<double> energy_bin_boundaries( 7 );
-//   energy_bin_boundaries[0] = 0.0;
-//   energy_bin_boundaries[1] = 1e-1;
-//   energy_bin_boundaries[2] = 1e-1;
-//   energy_bin_boundaries[3] = 1.0;
-//   energy_bin_boundaries[4] = 10.0;
-//   energy_bin_boundaries[5] = 10.0;
-//   energy_bin_boundaries[6] = 20.0;
+  FRENSIE_CHECK( !estimator.hasUncommittedHistoryContribution() );
 
-//   estimator.setDiscretization<MonteCarlo::ENERGY_DIMENSION>( energy_bin_boundaries);
+  estimator.setHasUncommittedHistoryContribution( 0u );
 
-//   std::vector<double> cosine_bin_boundaries( 4 );
-//   cosine_bin_boundaries[0] = -1.0;
-//   cosine_bin_boundaries[1] = -1.0/3.0;
-//   cosine_bin_boundaries[2] = 1.0/3.0;
-//   cosine_bin_boundaries[3] = 1.0;
+  FRENSIE_CHECK( estimator.hasUncommittedHistoryContribution() );
 
-//   estimator.setDiscretization<MonteCarlo::COSINE_DIMENSION>( cosine_bin_boundaries);
+  estimator.unsetHasUncommittedHistoryContribution( 0u );
 
-//   std::vector<double> time_bin_boundaries( 4 );
-//   time_bin_boundaries[0] = 0.0;
-//   time_bin_boundaries[1] = 1e3;
-//   time_bin_boundaries[2] = 1e5;
-//   time_bin_boundaries[3] = 1e7;
+  FRENSIE_CHECK( !estimator.hasUncommittedHistoryContribution() );
+}
 
-//   estimator.setDiscretization<MonteCarlo::TIME_DIMENSION>( time_bin_boundaries);
+//---------------------------------------------------------------------------//
+// Check if the estimator has an uncommitted history contribution on a
+// given thread
+FRENSIE_UNIT_TEST( Estimator, hasUncommittedHistoryContribution_parallel_safe )
+{
+  TestEstimator estimator( 0, 1.0 );
 
-//   std::vector<unsigned> collision_number_bins( 4 );
-//   collision_number_bins[0] = 0u;
-//   collision_number_bins[1] = 1u;
-//   collision_number_bins[2] = 2u;
-//   collision_number_bins[3] = std::numeric_limits<unsigned>::max();
+  estimator.enableThreadSupport(
+		 Utility::OpenMPProperties::getRequestedNumberOfThreads() );
 
-//   estimator.setDiscretization<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
-// 						       collision_number_bins );
+  #pragma omp parallel num_threads( Utility::OpenMPProperties::getRequestedNumberOfThreads() )
+  {
+    unsigned thread_id = Utility::OpenMPProperties::getThreadId();
+
+    #pragma omp critical(thread_check)
+    {
+      // Explicit thread id
+      FRENSIE_CHECK( !estimator.hasUncommittedHistoryContribution( thread_id ) );
+      // Implicit thread id
+      FRENSIE_CHECK( !estimator.hasUncommittedHistoryContribution() );
 
-//   // Set the response functions
-//   std::vector<std::shared_ptr<MonteCarlo::ResponseFunction> >
-//     response_functions( 2 );
-
-//   std::shared_ptr<Utility::OneDDistribution> energy_distribution(
-// 			   new Utility::UniformDistribution( 0.0, 10., 1.0 ) );
-
-//   response_functions[0].reset( new MonteCarlo::EnergySpaceResponseFunction(
-// 						       0,
-// 						       "uniform_energy",
-// 						       energy_distribution ) );
-//   response_functions[1] =
-//     MonteCarlo::ResponseFunction::default_response_function;
-
-//   estimator.setResponseFunctions( response_functions );
-
-//   // Calculate the response function index
-//   unsigned bin_index = 0u;
-
-//   unsigned response_function_index =
-//     estimator.calculateResponseFunctionIndex( bin_index );
-
-//   FRENSIE_CHECK_EQUAL( response_function_index, 0u );
-
-//   bin_index = 215;
-
-//   response_function_index =
-//     estimator.calculateResponseFunctionIndex( bin_index );
-
-//   FRENSIE_CHECK_EQUAL( response_function_index, 0u );
-
-//   bin_index = 216;
-
-//   response_function_index =
-//     estimator.calculateResponseFunctionIndex( bin_index );
-
-//   FRENSIE_CHECK_EQUAL( response_function_index, 1u );
-
-//   bin_index = 431;
-
-//   response_function_index =
-//     estimator.calculateResponseFunctionIndex( bin_index );
-
-//   FRENSIE_CHECK_EQUAL( response_function_index, 1u );
-// }
-
-// //---------------------------------------------------------------------------//
-// // Check if the estimator has an uncommitted history contribution
-// FRENSIE_UNIT_TEST( Estimator, hasUncommittedHisotryContribution_serial )
-// {
-//   TestEstimator estimator( 0, 1.0 );
-
-//   FRENSIE_CHECK( !estimator.hasUncommittedHistoryContribution() );
-
-//   estimator.setHasUncommittedHistoryContribution( 0u );
-
-//   FRENSIE_CHECK( estimator.hasUncommittedHistoryContribution() );
-
-//   estimator.unsetHasUncommittedHistoryContribution( 0u );
-
-//   FRENSIE_CHECK( !estimator.hasUncommittedHistoryContribution() );
-// }
-
-// //---------------------------------------------------------------------------//
-// // Check if the estimator has an uncommitted history contribution on a
-// // given thread
-// FRENSIE_UNIT_TEST( Estimator, hasUncommittedHistoryContribution_parallel_safe )
-// {
-//   TestEstimator estimator( 0, 1.0 );
-
-//   estimator.enableThreadSupport(
-// 		 Utility::OpenMPProperties::getRequestedNumberOfThreads() );
-
-//   #pragma omp parallel num_threads( Utility::OpenMPProperties::getRequestedNumberOfThreads() )
-//   {
-//     unsigned thread_id = Utility::OpenMPProperties::getThreadId();
-
-//     #pragma omp critical(thread_check)
-//     {
-//       // Explicit thread id
-//       FRENSIE_CHECK( !estimator.hasUncommittedHistoryContribution( thread_id ) );
-//       // Implicit thread id
-//       FRENSIE_CHECK( !estimator.hasUncommittedHistoryContribution() );
-
-//       estimator.setHasUncommittedHistoryContribution( thread_id );
-
-//       FRENSIE_CHECK( estimator.hasUncommittedHistoryContribution() );
-
-//       estimator.unsetHasUncommittedHistoryContribution( thread_id );
-
-//       FRENSIE_CHECK( !estimator.hasUncommittedHistoryContribution() );
-//     }
-//   }
-// }
-
-// //---------------------------------------------------------------------------//
-// // Check that the bin name can be created
-// FRENSIE_UNIT_TEST( Estimator, getBinName )
-// {
-//   TestEstimator estimator( 0, 1.0 );
-
-//   std::vector<double> energy_bin_boundaries( 7 );
-//   energy_bin_boundaries[0] = 0.0;
-//   energy_bin_boundaries[1] = 1e-1;
-//   energy_bin_boundaries[2] = 1e-1;
-//   energy_bin_boundaries[3] = 1.0;
-//   energy_bin_boundaries[4] = 10.0;
-//   energy_bin_boundaries[5] = 10.0;
-//   energy_bin_boundaries[6] = 20.0;
-
-//   estimator.setDiscretization<MonteCarlo::ENERGY_DIMENSION>( energy_bin_boundaries);
-
-//   std::vector<double> time_bin_boundaries( 4 );
-//   time_bin_boundaries[0] = 0.0;
-//   time_bin_boundaries[1] = 1.0;
-//   time_bin_boundaries[2] = 2.0;
-//   time_bin_boundaries[3] = 3.0;
-
-//   estimator.setDiscretization<MonteCarlo::TIME_DIMENSION>( time_bin_boundaries);
-
-//   std::vector<unsigned> collision_number_bins( 4 );
-//   collision_number_bins[0] = 0u;
-//   collision_number_bins[1] = 1u;
-//   collision_number_bins[2] = 2u;
-//   collision_number_bins[3] = 10u;
-
-//   estimator.setDiscretization<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
-// 						       collision_number_bins );
-
-//   std::vector<double> cosine_bin_boundaries( 4 );
-//   cosine_bin_boundaries[0] = -1.0;
-//   cosine_bin_boundaries[1] = -0.5;
-//   cosine_bin_boundaries[2] = 0.5;
-//   cosine_bin_boundaries[3] = 1.0;
-
-//   estimator.setDiscretization<MonteCarlo::COSINE_DIMENSION>( cosine_bin_boundaries);
-
-//   std::vector<std::shared_ptr<MonteCarlo::ResponseFunction> >
-//     response_functions( 2 );
-
-//   std::shared_ptr<Utility::OneDDistribution> energy_distribution(
-// 			   new Utility::UniformDistribution( 0.0, 10., 1.0 ) );
-
-//   response_functions[0].reset( new MonteCarlo::EnergySpaceResponseFunction(
-// 						       0,
-// 						       "Uniform Energy Resp.",
-// 						       energy_distribution ) );
-//   response_functions[1] =
-//     MonteCarlo::ResponseFunction::default_response_function;
-
-//   estimator.setResponseFunctions( response_functions );
-
-//   std::string bin_name = estimator.getBinName( 0u );
-//   std::string true_bin_name = "Energy Bin: [0,0.1], Time Bin: [0,1], ";
-//   true_bin_name += "Collision Number Bin: [0,0], Cosine Bin: [-1,-0.5], ";
-//   true_bin_name += "Uniform Energy Resp.";
-
-//   FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
-
-//   bin_name = estimator.getBinName( 5u );
-//   true_bin_name = "Energy Bin: (10,20], Time Bin: [0,1], ";
-//   true_bin_name += "Collision Number Bin: [0,0], Cosine Bin: [-1,-0.5], ";
-//   true_bin_name += "Uniform Energy Resp.";
-
-//   FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
-
-//   bin_name = estimator.getBinName( 12u );
-//   true_bin_name = "Energy Bin: [0,0.1], Time Bin: (2,3], ";
-//   true_bin_name += "Collision Number Bin: [0,0], Cosine Bin: [-1,-0.5], ";
-//   true_bin_name += "Uniform Energy Resp.";
-
-//   FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
-
-//   bin_name = estimator.getBinName( 17u );
-//   true_bin_name = "Energy Bin: (10,20], Time Bin: (2,3], ";
-//   true_bin_name += "Collision Number Bin: [0,0], Cosine Bin: [-1,-0.5], ";
-//   true_bin_name += "Uniform Energy Resp.";
-
-//   FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
-
-//   bin_name = estimator.getBinName( 54u );
-//   true_bin_name = "Energy Bin: [0,0.1], Time Bin: [0,1], ";
-//   true_bin_name += "Collision Number Bin: [3,10], Cosine Bin: [-1,-0.5], ";
-//   true_bin_name += "Uniform Energy Resp.";
-
-//   FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
-
-//   bin_name = estimator.getBinName( 71u );
-//   true_bin_name = "Energy Bin: (10,20], Time Bin: (2,3], ";
-//   true_bin_name += "Collision Number Bin: [3,10], Cosine Bin: [-1,-0.5], ";
-//   true_bin_name += "Uniform Energy Resp.";
-
-//   FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
-
-//   bin_name = estimator.getBinName( 144u );
-//   true_bin_name = "Energy Bin: [0,0.1], Time Bin: [0,1], ";
-//   true_bin_name += "Collision Number Bin: [0,0], Cosine Bin: (0.5,1], ";
-//   true_bin_name += "Uniform Energy Resp.";
-
-//   FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
-
-//   bin_name = estimator.getBinName( 215u );
-//   true_bin_name = "Energy Bin: (10,20], Time Bin: (2,3], ";
-//   true_bin_name += "Collision Number Bin: [3,10], Cosine Bin: (0.5,1], ";
-//   true_bin_name += "Uniform Energy Resp.";
-
-//   FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
-
-//   bin_name = estimator.getBinName( 216u );
-//   true_bin_name = "Energy Bin: [0,0.1], Time Bin: [0,1], ";
-//   true_bin_name += "Collision Number Bin: [0,0], Cosine Bin: [-1,-0.5], ";
-//   true_bin_name += "default";
-
-//   FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
-
-//   bin_name = estimator.getBinName( 221u );
-//   true_bin_name = "Energy Bin: (10,20], Time Bin: [0,1], ";
-//   true_bin_name += "Collision Number Bin: [0,0], Cosine Bin: [-1,-0.5], ";
-//   true_bin_name += "default";
-
-//   FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
-
-//   bin_name = estimator.getBinName( 228u );
-//   true_bin_name = "Energy Bin: [0,0.1], Time Bin: (2,3], ";
-//   true_bin_name += "Collision Number Bin: [0,0], Cosine Bin: [-1,-0.5], ";
-//   true_bin_name += "default";
-
-//   FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
-
-//   bin_name = estimator.getBinName( 233u );
-//   true_bin_name = "Energy Bin: (10,20], Time Bin: (2,3], ";
-//   true_bin_name += "Collision Number Bin: [0,0], Cosine Bin: [-1,-0.5], ";
-//   true_bin_name += "default";
-
-//   FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
-
-//   bin_name = estimator.getBinName( 270u );
-//   true_bin_name = "Energy Bin: [0,0.1], Time Bin: [0,1], ";
-//   true_bin_name += "Collision Number Bin: [3,10], Cosine Bin: [-1,-0.5], ";
-//   true_bin_name += "default";
-
-//   FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
-
-//   bin_name = estimator.getBinName( 287u );
-//   true_bin_name = "Energy Bin: (10,20], Time Bin: (2,3], ";
-//   true_bin_name += "Collision Number Bin: [3,10], Cosine Bin: [-1,-0.5], ";
-//   true_bin_name += "default";
-
-//   FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
-
-//   bin_name = estimator.getBinName( 360u );
-//   true_bin_name = "Energy Bin: [0,0.1], Time Bin: [0,1], ";
-//   true_bin_name += "Collision Number Bin: [0,0], Cosine Bin: (0.5,1], ";
-//   true_bin_name += "default";
-
-//   FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
-
-//   bin_name = estimator.getBinName( 431u );
-//   true_bin_name = "Energy Bin: (10,20], Time Bin: (2,3], ";
-//   true_bin_name += "Collision Number Bin: [3,10], Cosine Bin: (0.5,1], ";
-//   true_bin_name += "default";
-
-//   FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
-// }
+      estimator.setHasUncommittedHistoryContribution( thread_id );
+
+      FRENSIE_CHECK( estimator.hasUncommittedHistoryContribution() );
+
+      estimator.unsetHasUncommittedHistoryContribution( thread_id );
+
+      FRENSIE_CHECK( !estimator.hasUncommittedHistoryContribution() );
+    }
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that the bin name can be created
+FRENSIE_UNIT_TEST( Estimator, getBinName )
+{
+  TestEstimator estimator( 0, 1.0 );
+
+  std::vector<double> energy_bin_boundaries( 7 );
+  energy_bin_boundaries[0] = 0.0;
+  energy_bin_boundaries[1] = 1e-1;
+  energy_bin_boundaries[2] = 1e-1;
+  energy_bin_boundaries[3] = 1.0;
+  energy_bin_boundaries[4] = 10.0;
+  energy_bin_boundaries[5] = 10.0;
+  energy_bin_boundaries[6] = 20.0;
+
+  estimator.setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>( energy_bin_boundaries);
+
+  std::vector<double> time_bin_boundaries( 4 );
+  time_bin_boundaries[0] = 0.0;
+  time_bin_boundaries[1] = 1.0;
+  time_bin_boundaries[2] = 2.0;
+  time_bin_boundaries[3] = 3.0;
+
+  estimator.setDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION>( time_bin_boundaries);
+
+  std::vector<unsigned> collision_number_bins( 4 );
+  collision_number_bins[0] = 0u;
+  collision_number_bins[1] = 1u;
+  collision_number_bins[2] = 2u;
+  collision_number_bins[3] = 10u;
+
+  estimator.setDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>(
+						       collision_number_bins );
+
+  std::vector<double> cosine_bin_boundaries( 4 );
+  cosine_bin_boundaries[0] = -1.0;
+  cosine_bin_boundaries[1] = -0.5;
+  cosine_bin_boundaries[2] = 0.5;
+  cosine_bin_boundaries[3] = 1.0;
+
+  estimator.setDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION>( cosine_bin_boundaries);
+
+  std::vector<std::shared_ptr<const MonteCarlo::ParticleResponse> >
+    response_functions( 2 );
+
+  std::shared_ptr<const Utility::UnivariateDistribution> energy_distribution(
+			   new Utility::UniformDistribution( 0.0, 10., 1.0 ) );
+
+  std::shared_ptr<const MonteCarlo::ParticleResponseFunction> response_function(
+       new MonteCarlo::EnergyParticleResponseFunction( energy_distribution ) );
+
+  response_functions[0].reset( new MonteCarlo::StandardParticleResponse(
+                                                         response_function ) );
+
+  response_functions[1] = MonteCarlo::ParticleResponse::getDefault();
+
+  estimator.setResponseFunctions( response_functions );
+
+  std::string bin_name = estimator.getBinName( 0u );
+
+  std::string true_bin_name = "Energy Bin: [";
+  true_bin_name += Utility::toString( 0.0 ) + "," + Utility::toString( 0.1 ) + "], ";
+  true_bin_name += "Time Bin: [";
+  true_bin_name += Utility::toString( 0.0 ) + "," + Utility::toString( 1.0 ) + "], ";
+  true_bin_name += "Collision Number Bin: [";
+  true_bin_name += Utility::toString( 0 ) + "," + Utility::toString( 0 ) + "], ";
+  true_bin_name += "Cosine Bin: [";
+  true_bin_name += Utility::toString( -1.0 ) + "," + Utility::toString( -0.5 ) + "], ";
+  true_bin_name += response_functions[0]->getName();
+
+  FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 5u );
+  
+  true_bin_name = "Energy Bin: (";
+  true_bin_name += Utility::toString( 10.0 ) + "," + Utility::toString( 20.0 ) + "], ";
+  true_bin_name += "Time Bin: [";
+  true_bin_name += Utility::toString( 0.0 ) + "," + Utility::toString( 1.0 ) + "], ";
+  true_bin_name += "Collision Number Bin: [";
+  true_bin_name += Utility::toString( 0 ) + "," + Utility::toString( 0 ) + "], ";
+  true_bin_name += "Cosine Bin: [";
+  true_bin_name += Utility::toString( -1.0 ) + "," + Utility::toString( -0.5 ) + "], ";
+  true_bin_name += response_functions[0]->getName();
+
+  FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 12u );
+
+  true_bin_name = "Energy Bin: [";
+  true_bin_name += Utility::toString( 0.0 ) + "," + Utility::toString( 0.1 ) + "], ";
+  true_bin_name += "Time Bin: (";
+  true_bin_name += Utility::toString( 2.0 ) + "," + Utility::toString( 3.0 ) + "], ";
+  true_bin_name += "Collision Number Bin: [";
+  true_bin_name += Utility::toString( 0 ) + "," + Utility::toString( 0 ) + "], ";
+  true_bin_name += "Cosine Bin: [";
+  true_bin_name += Utility::toString( -1.0 ) + "," + Utility::toString( -0.5 ) + "], ";
+  true_bin_name += response_functions[0]->getName();
+
+  FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 17u );
+
+  true_bin_name = "Energy Bin: (";
+  true_bin_name += Utility::toString( 10.0 ) + "," + Utility::toString( 20.0 ) + "], ";
+  true_bin_name += "Time Bin: (";
+  true_bin_name += Utility::toString( 2.0 ) + "," + Utility::toString( 3.0 ) + "], ";
+  true_bin_name += "Collision Number Bin: [";
+  true_bin_name += Utility::toString( 0 ) + "," + Utility::toString( 0 ) + "], ";
+  true_bin_name += "Cosine Bin: [";
+  true_bin_name += Utility::toString( -1.0 ) + "," + Utility::toString( -0.5 ) + "], ";
+  true_bin_name += response_functions[0]->getName();
+
+  FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 54u );
+
+  true_bin_name = "Energy Bin: [";
+  true_bin_name += Utility::toString( 0.0 ) + "," + Utility::toString( 0.1 ) + "], ";
+  true_bin_name += "Time Bin: [";
+  true_bin_name += Utility::toString( 0.0 ) + "," + Utility::toString( 1.0 ) + "], ";
+  true_bin_name += "Collision Number Bin: [";
+  true_bin_name += Utility::toString( 3 ) + "," + Utility::toString( 10 ) + "], ";
+  true_bin_name += "Cosine Bin: [";
+  true_bin_name += Utility::toString( -1.0 ) + "," + Utility::toString( -0.5 ) + "], ";
+  true_bin_name += response_functions[0]->getName();
+  
+  FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 71u );
+
+  true_bin_name = "Energy Bin: (";
+  true_bin_name += Utility::toString( 10.0 ) + "," + Utility::toString( 20.0 ) + "], ";
+  true_bin_name += "Time Bin: (";
+  true_bin_name += Utility::toString( 2.0 ) + "," + Utility::toString( 3.0 ) + "], ";
+  true_bin_name += "Collision Number Bin: [";
+  true_bin_name += Utility::toString( 3 ) + "," + Utility::toString( 10 ) + "], ";
+  true_bin_name += "Cosine Bin: [";
+  true_bin_name += Utility::toString( -1.0 ) + "," + Utility::toString( -0.5 ) + "], ";
+  true_bin_name += response_functions[0]->getName();
+  
+  FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 144u );
+
+  true_bin_name = "Energy Bin: [";
+  true_bin_name += Utility::toString( 0.0 ) + "," + Utility::toString( 0.1 ) + "], ";
+  true_bin_name += "Time Bin: [";
+  true_bin_name += Utility::toString( 0.0 ) + "," + Utility::toString( 1.0 ) + "], ";
+  true_bin_name += "Collision Number Bin: [";
+  true_bin_name += Utility::toString( 0 ) + "," + Utility::toString( 0 ) + "], ";
+  true_bin_name += "Cosine Bin: (";
+  true_bin_name += Utility::toString( 0.5 ) + "," + Utility::toString( 1.0 ) + "], ";
+  true_bin_name += response_functions[0]->getName();
+  
+  FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 215u );
+
+  true_bin_name = "Energy Bin: (";
+  true_bin_name += Utility::toString( 10.0 ) + "," + Utility::toString( 20.0 ) + "], ";
+  true_bin_name += "Time Bin: (";
+  true_bin_name += Utility::toString( 2.0 ) + "," + Utility::toString( 3.0 ) + "], ";
+  true_bin_name += "Collision Number Bin: [";
+  true_bin_name += Utility::toString( 3 ) + "," + Utility::toString( 10 ) + "], ";
+  true_bin_name += "Cosine Bin: (";
+  true_bin_name += Utility::toString( 0.5 ) + "," + Utility::toString( 1.0 ) + "], ";
+  true_bin_name += response_functions[0]->getName();
+  
+  FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 216u );
+
+  true_bin_name = "Energy Bin: [";
+  true_bin_name += Utility::toString( 0.0 ) + "," + Utility::toString( 0.1 ) + "], ";
+  true_bin_name += "Time Bin: [";
+  true_bin_name += Utility::toString( 0.0 ) + "," + Utility::toString( 1.0 ) + "], ";
+  true_bin_name += "Collision Number Bin: [";
+  true_bin_name += Utility::toString( 0 ) + "," + Utility::toString( 0 ) + "], ";
+  true_bin_name += "Cosine Bin: [";
+  true_bin_name += Utility::toString( -1.0 ) + "," + Utility::toString( -0.5 ) + "], ";
+  true_bin_name += response_functions[1]->getName();
+  
+  FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 221u );
+
+  true_bin_name = "Energy Bin: (";
+  true_bin_name += Utility::toString( 10.0 ) + "," + Utility::toString( 20.0 ) + "], ";
+  true_bin_name += "Time Bin: [";
+  true_bin_name += Utility::toString( 0.0 ) + "," + Utility::toString( 1.0 ) + "], ";
+  true_bin_name += "Collision Number Bin: [";
+  true_bin_name += Utility::toString( 0 ) + "," + Utility::toString( 0 ) + "], ";
+  true_bin_name += "Cosine Bin: [";
+  true_bin_name += Utility::toString( -1.0 ) + "," + Utility::toString( -0.5 ) + "], ";
+  true_bin_name += response_functions[1]->getName();
+  
+  FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 228u );
+
+  true_bin_name = "Energy Bin: [";
+  true_bin_name += Utility::toString( 0.0 ) + "," + Utility::toString( 0.1 ) + "], ";
+  true_bin_name += "Time Bin: (";
+  true_bin_name += Utility::toString( 2.0 ) + "," + Utility::toString( 3.0 ) + "], ";
+  true_bin_name += "Collision Number Bin: [";
+  true_bin_name += Utility::toString( 0 ) + "," + Utility::toString( 0 ) + "], ";
+  true_bin_name += "Cosine Bin: [";
+  true_bin_name += Utility::toString( -1.0 ) + "," + Utility::toString( -0.5 ) + "], ";
+  true_bin_name += response_functions[1]->getName();
+  
+  FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 233u );
+
+  true_bin_name = "Energy Bin: (";
+  true_bin_name += Utility::toString( 10.0 ) + "," + Utility::toString( 20.0 ) + "], ";
+  true_bin_name += "Time Bin: (";
+  true_bin_name += Utility::toString( 2.0 ) + "," + Utility::toString( 3.0 ) + "], ";
+  true_bin_name += "Collision Number Bin: [";
+  true_bin_name += Utility::toString( 0 ) + "," + Utility::toString( 0 ) + "], ";
+  true_bin_name += "Cosine Bin: [";
+  true_bin_name += Utility::toString( -1.0 ) + "," + Utility::toString( -0.5 ) + "], ";
+  true_bin_name += response_functions[1]->getName();
+
+  FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 270u );
+
+  true_bin_name = "Energy Bin: [";
+  true_bin_name += Utility::toString( 0.0 ) + "," + Utility::toString( 0.1 ) + "], ";
+  true_bin_name += "Time Bin: [";
+  true_bin_name += Utility::toString( 0.0 ) + "," + Utility::toString( 1.0 ) + "], ";
+  true_bin_name += "Collision Number Bin: [";
+  true_bin_name += Utility::toString( 3 ) + "," + Utility::toString( 10 ) + "], ";
+  true_bin_name += "Cosine Bin: [";
+  true_bin_name += Utility::toString( -1.0 ) + "," + Utility::toString( -0.5 ) + "], ";
+  true_bin_name += response_functions[1]->getName();
+  
+  FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 287u );
+
+  true_bin_name = "Energy Bin: (";
+  true_bin_name += Utility::toString( 10.0 ) + "," + Utility::toString( 20.0 ) + "], ";
+  true_bin_name += "Time Bin: (";
+  true_bin_name += Utility::toString( 2.0 ) + "," + Utility::toString( 3.0 ) + "], ";
+  true_bin_name += "Collision Number Bin: [";
+  true_bin_name += Utility::toString( 3 ) + "," + Utility::toString( 10 ) + "], ";
+  true_bin_name += "Cosine Bin: [";
+  true_bin_name += Utility::toString( -1.0 ) + "," + Utility::toString( -0.5 ) + "], ";
+  true_bin_name += response_functions[1]->getName();
+  
+  FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
+
+  true_bin_name = "Energy Bin: (";
+  true_bin_name += Utility::toString( 10.0 ) + "," + Utility::toString( 20.0 ) + "], ";
+  true_bin_name += "Time Bin: (";
+  true_bin_name += Utility::toString( 2.0 ) + "," + Utility::toString( 3.0 ) + "], ";
+  true_bin_name += "Collision Number Bin: [";
+  true_bin_name += Utility::toString( 3 ) + "," + Utility::toString( 10 ) + "], ";
+  true_bin_name += "Cosine Bin: [";
+  true_bin_name += Utility::toString( -1.0 ) + "," + Utility::toString( -0.5 ) + "], ";
+  true_bin_name += response_functions[1]->getName();
+  
+  FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 360u );
+
+  true_bin_name = "Energy Bin: [";
+  true_bin_name += Utility::toString( 0.0 ) + "," + Utility::toString( 0.1 ) + "], ";
+  true_bin_name += "Time Bin: [";
+  true_bin_name += Utility::toString( 0.0 ) + "," + Utility::toString( 1.0 ) + "], ";
+  true_bin_name += "Collision Number Bin: [";
+  true_bin_name += Utility::toString( 0 ) + "," + Utility::toString( 0 ) + "], ";
+  true_bin_name += "Cosine Bin: (";
+  true_bin_name += Utility::toString( 0.5 ) + "," + Utility::toString( 1.0 ) + "], ";
+  true_bin_name += response_functions[1]->getName();
+  
+  FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 431u );
+
+  true_bin_name = "Energy Bin: (";
+  true_bin_name += Utility::toString( 10.0 ) + "," + Utility::toString( 20.0 ) + "], ";
+  true_bin_name += "Time Bin: (";
+  true_bin_name += Utility::toString( 2.0 ) + "," + Utility::toString( 3.0 ) + "], ";
+  true_bin_name += "Collision Number Bin: [";
+  true_bin_name += Utility::toString( 3 ) + "," + Utility::toString( 10 ) + "], ";
+  true_bin_name += "Cosine Bin: (";
+  true_bin_name += Utility::toString( 0.5 ) + "," + Utility::toString( 1.0 ) + "], ";
+  true_bin_name += response_functions[1]->getName();
+  
+  FRENSIE_CHECK_EQUAL( bin_name, true_bin_name );
+}
 
 //---------------------------------------------------------------------------//
 // Custom setup

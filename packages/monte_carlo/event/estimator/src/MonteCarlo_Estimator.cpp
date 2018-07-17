@@ -580,7 +580,7 @@ std::string Estimator::getBinName( const size_t bin_index ) const
   // Make sure the bin index is valid
   testPrecondition( bin_index < this->getNumberOfBins()*this->getNumberOfResponseFunctions() );
 
-  return d_phase_space_discretization.getBinName( bin_index % this->getNumberOfBins() ) +
+  return d_phase_space_discretization.getBinName( bin_index % this->getNumberOfBins() ) + ", " +
     this->getResponseFunctionName( this->calculateResponseFunctionIndex( bin_index ) );
 }
 

@@ -250,14 +250,16 @@
 #define FETCH_TEMPLATE_PARAM( TypeIndex, TypeAlias )     \
   typedef typename BaseType::template _T<TypeIndex>::get TypeAlias
 
+#define __FRENSIE_RETURN_LINE_true return;
+#define __FRENSIE_RETURN_LINE_false
+  
 #define __FRENSIE_PROCESS_LOCAL_TEST_RESULT__( local_result, test_success, RETURN_ON_FAILURE ) \
   if( !local_result )                                                   \
   {                                                                   \
-    test_success = false;                                                  \
-                                                                      \
-    if( RETURN_ON_FAILURE )                                           \
-      return;                                                         \
-  }                                                                   \
+    test_success = false;                                               \
+                                                                        \
+    __FRENSIE_RETURN_LINE_##RETURN_ON_FAILURE                          \
+  }                                                                 \
   else                                                                \
   {                                                                 \
     ++__NUMBER_OF_PASSED_CHECKS__;                                  \
