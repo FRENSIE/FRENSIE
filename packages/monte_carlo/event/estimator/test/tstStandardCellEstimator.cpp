@@ -9,13 +9,9 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_StandardCellEstimator.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
@@ -23,181 +19,134 @@
 class TestStandardCellEstimator : public MonteCarlo::StandardCellEstimator
 {
 public:
-  TestStandardCellEstimator(
-	       const unsigned long long id,
-	       const double multiplier,
-               const Teuchos::Array<MonteCarlo::StandardCellEstimator::cellIdType>&
-	       entity_ids,
-	       const Teuchos::Array<double>& entity_norm_constants )
+  TestStandardCellEstimator( const unsigned long long id,
+                             const double multiplier,
+                             const std::vector<uint64_t>& entity_ids,
+	                     const std::vector<double>& entity_norm_constants )
     : MonteCarlo::StandardCellEstimator( id,
-				     multiplier,
-				     entity_ids,
-				     entity_norm_constants )
+                                         multiplier,
+                                         entity_ids,
+                                         entity_norm_constants )
   { /* ... */ }
 
   ~TestStandardCellEstimator()
   { /* ... */ }
 
-  void printSummary( std::ostream& os ) const
-  { printImplementation( os, "Cell" ); }
+  void printSummary( std::ostream& os ) const final override
+  { this->printImplementation( os, "Cell" ); }
 };
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that estimator bins can be set
-TEUCHOS_UNIT_TEST( StandardCellEstimator, setBinBoundaries )
+FRENSIE_UNIT_TEST( StandardCellEstimator, setDiscretization )
 {
-  Teuchos::Array<MonteCarlo::StandardCellEstimator::cellIdType>
-    cell_ids( 2 );
+  std::vector<uint64_t> cell_ids( 2 );
   cell_ids[0] = 0;
   cell_ids[1] = 1;
 
-  Teuchos::Array<double> cell_norm_consts( 2 );
+  std::vector<double> cell_norm_consts( 2 );
   cell_norm_consts[0] = 1.0;
   cell_norm_consts[1] = 2.0;
 
-  Teuchos::RCP<MonteCarlo::Estimator> estimator(
+  std::shared_ptr<MonteCarlo::Estimator> estimator(
 			   new TestStandardCellEstimator( 0ull,
 							  2.0,
 							  cell_ids,
 							  cell_norm_consts ) );
 
-  Teuchos::Array<double> energy_bin_boundaries( 3 );
+  std::vector<double> energy_bin_boundaries( 3 );
   energy_bin_boundaries[0] = 0.0;
   energy_bin_boundaries[1] = 0.1;
   energy_bin_boundaries[2] = 1.0;
 
-  estimator->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
+  estimator->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
 						       energy_bin_boundaries );
 
-  TEST_EQUALITY_CONST(estimator->getNumberOfBins(MonteCarlo::ENERGY_DIMENSION),
+  FRENSIE_CHECK_EQUAL(estimator->getNumberOfBins(MonteCarlo::OBSERVER_ENERGY_DIMENSION),
 		      2 );
-  TEST_EQUALITY_CONST( estimator->getNumberOfBins(), 2 );
+  FRENSIE_CHECK_EQUAL( estimator->getNumberOfBins(), 2 );
 
-  Teuchos::Array<double> time_bin_boundaries( 3 );
+  std::vector<double> time_bin_boundaries( 3 );
   time_bin_boundaries[0] = 0.0;
   time_bin_boundaries[1] = 1.0;
   time_bin_boundaries[2] = 2.0;
 
-  estimator->setBinBoundaries<MonteCarlo::TIME_DIMENSION>(
+  estimator->setDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION>(
 							 time_bin_boundaries );
 
-  TEST_EQUALITY_CONST( estimator->getNumberOfBins(MonteCarlo::TIME_DIMENSION),
+  FRENSIE_CHECK_EQUAL( estimator->getNumberOfBins(MonteCarlo::OBSERVER_TIME_DIMENSION),
 		       2 );
-  TEST_EQUALITY_CONST( estimator->getNumberOfBins(), 4 );
+  FRENSIE_CHECK_EQUAL( estimator->getNumberOfBins(), 4 );
 
-  Teuchos::Array<unsigned> collision_number_bins( 2 );
+  std::vector<unsigned> collision_number_bins( 2 );
   collision_number_bins[0] = 0u;
   collision_number_bins[1] = 10u;
 
-  estimator->setBinBoundaries<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
+  estimator->setDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>(
 						       collision_number_bins );
 
-  TEST_EQUALITY_CONST(
-     estimator->getNumberOfBins( MonteCarlo::COLLISION_NUMBER_DIMENSION ), 2 );
-  TEST_EQUALITY_CONST( estimator->getNumberOfBins(), 8 );
+  FRENSIE_CHECK_EQUAL(
+     estimator->getNumberOfBins( MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION ), 2 );
+  FRENSIE_CHECK_EQUAL( estimator->getNumberOfBins(), 8 );
 
   // Make sure cosine bins cannot be set
-  Teuchos::Array<double> cosine_bin_boundaries( 3 );
+  std::vector<double> cosine_bin_boundaries( 3 );
   cosine_bin_boundaries[0] = -1.0;
   cosine_bin_boundaries[1] = 0.0;
   cosine_bin_boundaries[2] = 1.0;
 
-  estimator->setBinBoundaries<MonteCarlo::COSINE_DIMENSION>(
+  estimator->setDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION>(
 						       cosine_bin_boundaries );
 
-  TEST_EQUALITY_CONST(estimator->getNumberOfBins(MonteCarlo::COSINE_DIMENSION),
+  FRENSIE_CHECK_EQUAL(estimator->getNumberOfBins(MonteCarlo::OBSERVER_COSINE_DIMENSION),
 		      1 );
-  TEST_EQUALITY_CONST( estimator->getNumberOfBins(), 8 );
+  FRENSIE_CHECK_EQUAL( estimator->getNumberOfBins(), 8 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that particle types can be assigned
-TEUCHOS_UNIT_TEST( StandardCellEstimator, setParticleType )
+FRENSIE_UNIT_TEST( StandardCellEstimator, setParticleType )
 {
-  Teuchos::Array<MonteCarlo::StandardCellEstimator::cellIdType>
-    cell_ids( 2 );
+  std::vector<uint64_t> cell_ids( 2 );
   cell_ids[0] = 0;
   cell_ids[1] = 1;
 
-  Teuchos::Array<double> cell_norm_consts( 2 );
+  std::vector<double> cell_norm_consts( 2 );
   cell_norm_consts[0] = 1.0;
   cell_norm_consts[1] = 2.0;
 
-  Teuchos::RCP<MonteCarlo::Estimator> estimator(
-	  new TestStandardCellEstimator( 0ull,
-					 2.0,
-					 cell_ids,
-					 cell_norm_consts ) );
+  std::shared_ptr<MonteCarlo::Estimator> estimator(
+                           new TestStandardCellEstimator( 0ull,
+                                                          2.0,
+                                                          cell_ids,
+					                  cell_norm_consts ) );
 
-  Teuchos::Array<MonteCarlo::ParticleType> particle_types( 4 );
+  std::vector<MonteCarlo::ParticleType> particle_types( 4 );
   particle_types[0] = MonteCarlo::PHOTON;
   particle_types[1] = MonteCarlo::NEUTRON;
   particle_types[2] = MonteCarlo::ADJOINT_PHOTON;
   particle_types[3] = MonteCarlo::ADJOINT_NEUTRON;
 
+  // All but the first particle type should be ignored
   estimator->setParticleTypes( particle_types );
 
-  TEST_ASSERT( estimator->isParticleTypeAssigned( MonteCarlo::PHOTON ) );
-  TEST_ASSERT( !estimator->isParticleTypeAssigned( MonteCarlo::NEUTRON ) );
-  TEST_ASSERT( !estimator->isParticleTypeAssigned( MonteCarlo::ADJOINT_PHOTON ) );
-  TEST_ASSERT( !estimator->isParticleTypeAssigned( MonteCarlo::ADJOINT_NEUTRON ) );
+  FRENSIE_CHECK( estimator->isParticleTypeAssigned( MonteCarlo::PHOTON ) );
+  FRENSIE_CHECK( !estimator->isParticleTypeAssigned( MonteCarlo::NEUTRON ) );
+  FRENSIE_CHECK( !estimator->isParticleTypeAssigned( MonteCarlo::ADJOINT_PHOTON ) );
+  FRENSIE_CHECK( !estimator->isParticleTypeAssigned( MonteCarlo::ADJOINT_NEUTRON ) );
 
   particle_types[0] = MonteCarlo::NEUTRON;
   particle_types[1] = MonteCarlo::PHOTON;
 
+  // All particle types should be ignored
   estimator->setParticleTypes( particle_types );
 
-  TEST_ASSERT( !estimator->isParticleTypeAssigned( MonteCarlo::PHOTON ) );
-  TEST_ASSERT( estimator->isParticleTypeAssigned( MonteCarlo::NEUTRON ) );
-  TEST_ASSERT( !estimator->isParticleTypeAssigned( MonteCarlo::ADJOINT_PHOTON ) );
-  TEST_ASSERT( !estimator->isParticleTypeAssigned( MonteCarlo::ADJOINT_NEUTRON ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the estimator data can be exported
-TEUCHOS_UNIT_TEST( StandardCellEstimator, exportData )
-{
-  Teuchos::Array<MonteCarlo::StandardCellEstimator::cellIdType>
-    cell_ids( 2 );
-  cell_ids[0] = 0;
-  cell_ids[1] = 1;
-
-  Teuchos::Array<double> cell_norm_consts( 2 );
-  cell_norm_consts[0] = 1.0;
-  cell_norm_consts[1] = 2.0;
-
-  Teuchos::RCP<MonteCarlo::Estimator> estimator(
-	  new TestStandardCellEstimator( 0ull,
-					 2.0,
-					 cell_ids,
-					 cell_norm_consts ) );
-
-  Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
-  particle_types[0] = MonteCarlo::PHOTON;
-
-  estimator->setParticleTypes( particle_types );
-
-  // Initialize the hdf5 file
-  std::shared_ptr<Utility::HDF5FileHandler>
-    hdf5_file( new Utility::HDF5FileHandler );
-  hdf5_file->openHDF5FileAndOverwrite( "test_standard_cell_estimator.h5" );
-
-  estimator->exportData( hdf5_file, false );
-
-  // Create an estimator hdf5 file handler
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
-
-  // Make sure the estimator has been set as a cell estimator
-  TEST_ASSERT( !hdf5_file_handler.isSurfaceEstimator( 0u ) );
-  TEST_ASSERT( hdf5_file_handler.isCellEstimator( 0u ) );
-
-  // Make sure that there are no dimension bins
-  Teuchos::Array<MonteCarlo::PhaseSpaceDimension> dimension_ordering;
-  hdf5_file_handler.getEstimatorDimensionOrdering( 0u, dimension_ordering );
-
-  TEST_EQUALITY_CONST( dimension_ordering.size(), 0u );
+  FRENSIE_CHECK( estimator->isParticleTypeAssigned( MonteCarlo::PHOTON ) );
+  FRENSIE_CHECK( !estimator->isParticleTypeAssigned( MonteCarlo::NEUTRON ) );
+  FRENSIE_CHECK( !estimator->isParticleTypeAssigned( MonteCarlo::ADJOINT_PHOTON ) );
+  FRENSIE_CHECK( !estimator->isParticleTypeAssigned( MonteCarlo::ADJOINT_NEUTRON ) );
 }
 
 //---------------------------------------------------------------------------//
