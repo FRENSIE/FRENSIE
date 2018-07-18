@@ -367,7 +367,10 @@ private:
   ObserverPhaseSpaceDiscretization d_phase_space_discretization;
 
   // Records if there is an uncommitted history contribution
-  std::vector<bool> d_has_uncommitted_history_contribution;
+  // Note: uint8_t is used instead of bool deliberately due to a un
+  //       unusual thread safety issue that was encountered with
+  //       std::vector<bool>.
+  std::vector<uint8_t> d_has_uncommitted_history_contribution;
 };
 
 } // end MonteCarlo namespace

@@ -491,6 +491,8 @@ void StandardEntityEstimator::addPartialHistoryRangeContribution(
                                                 0,
                                                 bin_indices_and_weights );
 
+    //std::cout << bin_indices_and_weights << std::endl;
+    
     for( size_t r = 0; r < this->getNumberOfResponseFunctions(); ++r )
     {
       const size_t bin_index_shift = r*this->getNumberOfBins();
@@ -501,10 +503,10 @@ void StandardEntityEstimator::addPartialHistoryRangeContribution(
           Utility::get<1>( bin_indices_and_weights[i] )*
           this->evaluateResponseFunction(
                                 particle_state_wrapper.getParticleState(), r );
-
+        
         const size_t complete_bin_index =
           Utility::get<0>( bin_indices_and_weights[i] ) + bin_index_shift;
-        
+
         this->addInfoToUpdateTracker( thread_id,
                                       entity_id,
                                       complete_bin_index,

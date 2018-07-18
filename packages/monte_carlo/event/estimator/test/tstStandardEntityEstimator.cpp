@@ -54,7 +54,7 @@ void setEstimatorBins( TestStandardEntityEstimator& estimator,
   // Set the energy bins
   std::vector<double> energy_bin_boundaries( 3 );
   energy_bin_boundaries[0] = 0.0;
-  energy_bin_boundaries[1] = 1e-1;
+  energy_bin_boundaries[1] = 0.1;
   energy_bin_boundaries[2] = 1.0;
 
   estimator.setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(energy_bin_boundaries);
@@ -68,29 +68,44 @@ void setEstimatorBins( TestStandardEntityEstimator& estimator,
   estimator.setDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION>(cosine_bin_boundaries);
 
   // Set the time bins
-  std::vector<double> time_bin_boundaries( 3 );
-  time_bin_boundaries[0] = 0.0;
-  time_bin_boundaries[1] = 1e3;
-  time_bin_boundaries[2] = 1e5;
+  if( ranged_time_bins )
+  {
+    std::vector<double> time_bin_boundaries( 3 );
+    time_bin_boundaries[0] = 1e-6;
+    time_bin_boundaries[1] = 1e-5;
+    time_bin_boundaries[2] = 1.9e-5;
 
-  std::shared_ptr<const MonteCarlo::ObserverPhaseSpaceDimensionDiscretization>
-    time_discretization( new MonteCarlo::DefaultTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION>( time_bin_boundaries ) );
+    std::shared_ptr<const MonteCarlo::ObserverPhaseSpaceDimensionDiscretization>
+      time_discretization( new MonteCarlo::DefaultTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION>( time_bin_boundaries ) );
 
-  estimator.assignDiscretization( time_discretization, ranged_time_bins );
+    estimator.assignDiscretization( time_discretization, ranged_time_bins );
+  }
+  else
+  {
+    std::vector<double> time_bin_boundaries( 3 );
+    time_bin_boundaries[0] = 1e-6;
+    time_bin_boundaries[1] = 1e-5;
+    time_bin_boundaries[2] = 1e-4;
+
+    std::shared_ptr<const MonteCarlo::ObserverPhaseSpaceDimensionDiscretization>
+      time_discretization( new MonteCarlo::DefaultTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION>( time_bin_boundaries ) );
+
+    estimator.assignDiscretization( time_discretization, ranged_time_bins );
+  }
 
   // Set the collision number bins
-  std::vector<unsigned> collision_number_bins( 3 );
+  std::vector<unsigned> collision_number_bins( 2 );
   collision_number_bins[0] = 0u;
   collision_number_bins[1] = 1u;
-  collision_number_bins[2] = std::numeric_limits<unsigned>::max();
 
   estimator.setDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>(
 						       collision_number_bins );
 
   // Set the response functions
   std::vector<std::shared_ptr<const MonteCarlo::ParticleResponse> >
-    response_functions( 1 );
+    response_functions( 2 );
   response_functions[0] = MonteCarlo::ParticleResponse::getDefault();
+  response_functions[1] = response_functions[0];
   
   estimator.setResponseFunctions( response_functions );
 }
@@ -134,1730 +149,1674 @@ FRENSIE_UNIT_TEST( StandardEntityEstimator, getNumberOfBins )
   std::shared_ptr<TestStandardEntityEstimator> estimator;
   initializeStandardEntityEstimator( estimator );
 
-  FRENSIE_CHECK_EQUAL( estimator->getNumberOfBins(), 24 );
+  FRENSIE_CHECK_EQUAL( estimator->getNumberOfBins(), 16 );
 }
 
-// //---------------------------------------------------------------------------//
-// // Check that the number of response functions can be returned
-// TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
-// 				   getNumberOfResponseFunctions,
-// 				   EntityId )
-// {
-//   Teuchos::RCP<TestStandardEntityEstimator<EntityId> > estimator;
-//   initializeStandardEntityEstimator( estimator );
-
-//   FRENSIE_CHECK_EQUAL( estimator->getNumberOfResponseFunctions(), 1 );
-// }
-
-// UNIT_TEST_INSTANTIATION( StandardEntityEstimator,
-// 			 getNumberOfResponseFunctions );
-
-// //---------------------------------------------------------------------------//
-// // Check that the raw estimator data can be exported
-// TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
-// 				   exportData_raw,
-// 				   EntityId )
-// {
-//   Teuchos::RCP<MonteCarlo::Estimator> estimator;
-
-//   std::vector<uint64_t> entity_ids;
-//   std::vector<double> entity_norm_constants;
-
-//   {
-//     // Set the entities ids
-//     entity_ids.resize( 5 );
-//     entity_ids[0] = 0;
-//     entity_ids[1] = 1;
-//     entity_ids[2] = 2;
-//     entity_ids[3] = 3;
-//     entity_ids[4] = 4;
-
-//     // Set the entity normalization constants
-//     entity_norm_constants.resize( 5 );
-//     entity_norm_constants[0] = 1.0;
-//     entity_norm_constants[1] = 2.0;
-//     entity_norm_constants[2] = 3.0;
-//     entity_norm_constants[3] = 4.0;
-//     entity_norm_constants[4] = 5.0;
-
-//     estimator.reset( new TestStandardEntityEstimator<EntityId>(
-// 						     0u,
-// 						     5.0,
-// 						     entity_ids,
-// 						     entity_norm_constants ) );
-//   }
-
-//   std::vector<double> energy_bin_boundaries, cosine_bin_boundaries,
-//     time_bin_boundaries;
-//   std::vector<unsigned> collision_number_bins;
-
-//   {
-//     // Set the energy bins
-//     energy_bin_boundaries.resize( 3 );
-//     energy_bin_boundaries[0] = 0.0;
-//     energy_bin_boundaries[1] = 1e-1;
-//     energy_bin_boundaries[2] = 1.0;
-
-//     estimator->setDiscretization<MonteCarlo::ENERGY_DIMENSION>(
-// 						       energy_bin_boundaries );
-
-//     // Set the cosine bins
-//     cosine_bin_boundaries.resize( 3 );
-//     cosine_bin_boundaries[0] = -1.0;
-//     cosine_bin_boundaries[1] = 0.0;
-//     cosine_bin_boundaries[2] = 1.0;
-
-//     estimator->setDiscretization<MonteCarlo::COSINE_DIMENSION>(
-// 						       cosine_bin_boundaries );
-
-//     // Set the time bins
-//     time_bin_boundaries.resize( 3 );
-//     time_bin_boundaries[0] = 0.0;
-//     time_bin_boundaries[1] = 1e3;
-//     time_bin_boundaries[2] = 1e5;
-
-//     estimator->setDiscretization<MonteCarlo::TIME_DIMENSION>(
-// 							 time_bin_boundaries );
-
-//     // Set the collision number bins
-//     collision_number_bins.resize( 3 );
-//     collision_number_bins[0] = 0u;
-//     collision_number_bins[1] = 1u;
-//     collision_number_bins[2] = std::numeric_limits<unsigned>::max();
-
-//     estimator->setDiscretization<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
-// 						       collision_number_bins );
-
-//     // Set the response functions
-//     std::vector<std::shared_ptr<MonteCarlo::ResponseFunction> >
-//       response_functions( 1 );
-//     response_functions[0] =
-//       MonteCarlo::ResponseFunction::default_response_function;
-
-//     estimator->setResponseFunctions( response_functions );
-//   }
-
-//   // Initialize the hdf5 file
-//   std::shared_ptr<Utility::HDF5FileHandler>
-//     hdf5_file( new Utility::HDF5FileHandler );
-//   hdf5_file->openHDF5FileAndOverwrite( "test_standard_entity_estimator.h5" );
-
-//   estimator->exportData( hdf5_file, false );
-
-//   // Create an estimator hdf5 file handler
-//   MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
-
-//   // Make sure that the estimator exists in the hdf5 file
-//   TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 0u ) );
-
-//   // Check that the estimator multiplier has been set
-//   double multiplier;
-//   hdf5_file_handler.getEstimatorMultiplier( 0u, multiplier );
+//---------------------------------------------------------------------------//
+// Check that the number of response functions can be returned
+FRENSIE_UNIT_TEST( StandardEntityEstimator, getNumberOfResponseFunctions )
+{
+  std::shared_ptr<TestStandardEntityEstimator> estimator;
+  initializeStandardEntityEstimator( estimator );
 
-//   FRENSIE_CHECK_EQUAL( multiplier, 5.0 );
+  FRENSIE_CHECK_EQUAL( estimator->getNumberOfResponseFunctions(), 2 );
+}
 
-//   // Check that the estimator response function ordering has been set
-//   std::vector<unsigned> response_function_ordering;
-//   hdf5_file_handler.getEstimatorResponseFunctionOrdering(
-// 						  0u,
-// 						  response_function_ordering );
+//---------------------------------------------------------------------------//
+// Check that a partial history contribution can be added to the estimator
+FRENSIE_UNIT_TEST( StandardEntityEstimator,
+                   addPartialHistoryPointContribution )
+{
+  std::shared_ptr<TestStandardEntityEstimator> estimator;
+  initializeStandardEntityEstimator( estimator );
 
-//   FRENSIE_CHECK_EQUAL( response_function_ordering.size(), 1 );
-//   TEST_EQUALITY( response_function_ordering[0],
-// 		 std::numeric_limits<unsigned>::max() );
+  FRENSIE_CHECK( !estimator->hasUncommittedHistoryContribution() );
 
-//   // Check that the estimator dimension ordering has been set
-//   std::vector<MonteCarlo::PhaseSpaceDimension> dimension_ordering;
-//   hdf5_file_handler.getEstimatorDimensionOrdering( 0u, dimension_ordering );
+  // bin 0 (E=0, Mu=0, T=0, Col=0)
+  MonteCarlo::PhotonState particle( 0ull );
+  MonteCarlo::ObserverParticleStateWrapper particle_wrapper( particle );
+  
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( -0.5 );
+  particle.setTime( 5e-6 );
 
-//   FRENSIE_CHECK_EQUAL( dimension_ordering.size(), 4 );
-//   FRENSIE_CHECK_EQUAL( dimension_ordering[0], MonteCarlo::ENERGY_DIMENSION );
-//   FRENSIE_CHECK_EQUAL( dimension_ordering[1], MonteCarlo::COSINE_DIMENSION );
-//   FRENSIE_CHECK_EQUAL( dimension_ordering[2], MonteCarlo::TIME_DIMENSION );
-//   FRENSIE_CHECK_EQUAL( dimension_ordering[3],
-// 		       MonteCarlo::COLLISION_NUMBER_DIMENSION );
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
 
-//   // Check that the energy bins have been set
-//   std::vector<double> energy_bin_boundaries_copy;
-//   hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
-// 						  0u,
-// 						  energy_bin_boundaries_copy );
+  FRENSIE_CHECK( estimator->hasUncommittedHistoryContribution() );
 
-//   TEST_COMPARE_ARRAYS( energy_bin_boundaries, energy_bin_boundaries_copy );
+  // bin 1 (E=1, Mu=0, T=0, Col=0)
+  particle.setEnergy( 0.11 );
 
-//   // Check that the cosine bins have been set
-//   std::vector<double> cosine_bin_boundaries_copy;
-//   hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::COSINE_DIMENSION>(
-// 						  0u,
-// 						  cosine_bin_boundaries_copy );
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
 
-//   TEST_COMPARE_ARRAYS( cosine_bin_boundaries, cosine_bin_boundaries_copy );
+  // bin 2 (E=0, Mu=1, T=0, Col=0)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( 0.5 );
 
-//   // Check that the time bins have been set
-//   std::vector<double> time_bin_boundaries_copy;
-//   hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::TIME_DIMENSION>(
-// 						    0u,
-// 						    time_bin_boundaries_copy );
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
 
-//   TEST_COMPARE_ARRAYS( time_bin_boundaries, time_bin_boundaries_copy );
+  // bin 3 (E=1, Mu=1, T=0, Col=0)
+  particle.setEnergy( 0.11 );
 
-//   // Check that the collision number bins have been set
-//   std::vector<unsigned> collision_number_bins_copy;
-//   hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
-// 						  0u,
-// 						  collision_number_bins_copy );
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
 
-//   TEST_COMPARE_ARRAYS( collision_number_bins, collision_number_bins_copy );
+  // bin 4 (E=0, Mu=0, T=1, Col=0)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( -0.5 );
+  particle.setTime( 5e-5 );
 
-//   // Check if entities are assigned to the estimator
-//   TEST_ASSERT( hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-// 								    0u, 0u ) );
-//   TEST_ASSERT( hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-// 								    0u, 1u ) );
-//   TEST_ASSERT( hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-// 								    0u, 2u ) );
-//   TEST_ASSERT( hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-// 								    0u, 3u ) );
-//   TEST_ASSERT( hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-// 								    0u, 4u ) );
-//   TEST_ASSERT( !hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-// 								    0u, 5u ) );
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
 
-//   // Check that the entities and norm constants have been set
-//   std::map<EntityId,double> entity_id_norms;
-//   hdf5_file_handler.getEstimatorEntities( 0u, entity_id_norms );
+  // bin 5 (E=1, Mu=0, T=1, Col=0)
+  particle.setEnergy( 0.11 );
+  
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
 
-//   FRENSIE_CHECK_EQUAL( entity_id_norms.size(), 5 );
-//   FRENSIE_CHECK_EQUAL( entity_id_norms[0], 1.0 );
-//   FRENSIE_CHECK_EQUAL( entity_id_norms[1], 2.0 );
-//   FRENSIE_CHECK_EQUAL( entity_id_norms[2], 3.0 );
-//   FRENSIE_CHECK_EQUAL( entity_id_norms[3], 4.0 );
-//   FRENSIE_CHECK_EQUAL( entity_id_norms[4], 5.0 );
+  // bin 6 (E=0, Mu=1, T=1, Col=0)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( 0.5 );
 
-//   // Check that entity norm constants have been set
-//   double entity_norm_constant;
-//   hdf5_file_handler.getEntityNormConstant( 0u, 0u, entity_norm_constant );
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
 
-//   FRENSIE_CHECK_EQUAL( entity_norm_constant, 1.0 );
+  // bin 7 (E=1, Mu=1, T=1, Col=0)
+  particle.setEnergy( 0.11 );
 
-//   hdf5_file_handler.getEntityNormConstant( 0u, 1u, entity_norm_constant );
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
 
-//   FRENSIE_CHECK_EQUAL( entity_norm_constant, 2.0 );
+  // bin 8 (E=0, Mu=0, T=0, Col=1)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( -0.5 );
+  particle.setTime( 5e-6 );
+  particle.incrementCollisionNumber();
 
-//   hdf5_file_handler.getEntityNormConstant( 0u, 2u, entity_norm_constant );
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
 
-//   FRENSIE_CHECK_EQUAL( entity_norm_constant, 3.0 );
+  // bin 9 (E=1, Mu=0, T=0, Col=1)
+  particle.setEnergy( 0.11 );
 
-//   hdf5_file_handler.getEntityNormConstant( 0u, 3u, entity_norm_constant );
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
 
-//   FRENSIE_CHECK_EQUAL( entity_norm_constant, 4.0 );
+  // bin 10 (E=0, Mu=1, T=0, Col=1)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( 0.5 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
 
-//   hdf5_file_handler.getEntityNormConstant( 0u, 4u, entity_norm_constant );
+  // bin 11 (E=1, Mu=1, T=0, Col=1)
+  particle.setEnergy( 0.11 );
 
-//   FRENSIE_CHECK_EQUAL( entity_norm_constant, 5.0 );
-
-//   // Check that the total norm constant has been set
-//   double total_norm_constant;
-//   hdf5_file_handler.getEstimatorTotalNormConstant( 0u, total_norm_constant );
-
-//   FRENSIE_CHECK_EQUAL( total_norm_constant, 15.0 );
-
-//   // Check that the raw entity bin data has been set
-//   std::vector<Utility::Pair<double,double> >
-//     raw_bin_data( 24, Utility::Pair<double,double>( 0.0, 0.0 ) ),
-//     raw_bin_data_copy;
-
-//   hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 0u, raw_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-//   hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 1u, raw_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-//   hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 2u, raw_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-//   hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 3u, raw_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-//   hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 4u, raw_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-//   // Check that there is no processed data since it was not requested on export
-//   std::vector<Utility::Pair<double,double> >
-//     processed_bin_data_copy;
-
-//   TEST_THROW( hdf5_file_handler.getProcessedEstimatorEntityBinData(
-// 						     0u,
-// 						     0u,
-// 						     processed_bin_data_copy ),
-// 	      std::runtime_error );
-//   TEST_THROW( hdf5_file_handler.getProcessedEstimatorEntityBinData(
-// 						     0u,
-// 						     1u,
-// 						     processed_bin_data_copy ),
-// 	      std::runtime_error );
-//   TEST_THROW( hdf5_file_handler.getProcessedEstimatorEntityBinData(
-// 						     0u,
-// 						     2u,
-// 						     processed_bin_data_copy ),
-// 	      std::runtime_error );
-//   TEST_THROW( hdf5_file_handler.getProcessedEstimatorEntityBinData(
-// 						     0u,
-// 						     3u,
-// 						     processed_bin_data_copy ),
-// 	      std::runtime_error );
-//   TEST_THROW( hdf5_file_handler.getProcessedEstimatorEntityBinData(
-// 						     0u,
-// 						     4u,
-// 						     processed_bin_data_copy ),
-// 	      std::runtime_error );
-
-//   // Check that the raw total bin data has been set
-//   std::vector<Utility::Pair<double,double> >
-//     raw_total_bin_data( 24, Utility::Pair<double,double>( 0.0, 0.0 ) ),
-//     raw_total_bin_data_copy;
-
-//   hdf5_file_handler.getRawEstimatorTotalBinData( 0u, raw_total_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_total_bin_data, raw_total_bin_data_copy );
-
-//   // Check that the processed total bin data has not been set
-//   std::vector<Utility::Pair<double,double> >
-//     processed_total_bin_data;
-
-//   TEST_THROW( hdf5_file_handler.getProcessedEstimatorTotalBinData(
-// 						0u, processed_total_bin_data ),
-// 	      std::runtime_error );
-
-//   Utility::Quad<double,double,double,double> empty_quad( 0.0, 0.0, 0.0, 0.0 );
-
-//   // Check that the raw total entity data has been set
-//   std::vector<Utility::Quad<double,double,double,double> >
-//     raw_total_entity_data( 1, empty_quad ),
-//     raw_total_entity_data_copy;
-
-//   hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>(
-// 					  0u, 0u, raw_total_entity_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_total_entity_data,
-// 			       raw_total_entity_data_copy );
-
-//   hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>(
-// 					  0u, 1u, raw_total_entity_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_total_entity_data,
-// 			       raw_total_entity_data_copy );
-
-//   hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>(
-// 					  0u, 2u, raw_total_entity_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_total_entity_data,
-// 			       raw_total_entity_data_copy );
-
-//   hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>(
-// 					  0u, 3u, raw_total_entity_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_total_entity_data,
-// 			       raw_total_entity_data_copy );
-
-//   hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>(
-// 					  0u, 4u, raw_total_entity_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_total_entity_data,
-// 			       raw_total_entity_data_copy );
-
-//   // Check that the processed total entity data has not been set
-//   std::vector<Utility::Quad<double,double,double,double> >
-//     processed_total_entity_data;
-
-//   TEST_THROW( hdf5_file_handler.getProcessedEstimatorEntityTotalData<EntityId>(
-// 					 0u, 0u, processed_total_entity_data ),
-// 	      std::runtime_error );
-//   TEST_THROW( hdf5_file_handler.getProcessedEstimatorEntityTotalData<EntityId>(
-// 					 0u, 1u, processed_total_entity_data ),
-// 	      std::runtime_error );
-//   TEST_THROW( hdf5_file_handler.getProcessedEstimatorEntityTotalData<EntityId>(
-// 					 0u, 2u, processed_total_entity_data ),
-// 	      std::runtime_error );
-//   TEST_THROW( hdf5_file_handler.getProcessedEstimatorEntityTotalData<EntityId>(
-// 					 0u, 3u, processed_total_entity_data ),
-// 	      std::runtime_error );
-//   TEST_THROW( hdf5_file_handler.getProcessedEstimatorEntityTotalData<EntityId>(
-// 					 0u, 4u, processed_total_entity_data ),
-// 	      std::runtime_error );
-
-//   // Check that the raw total data has been set
-//   std::vector<Utility::Quad<double,double,double,double> >
-//     raw_total_data( 1, empty_quad ),
-//     raw_total_data_copy;
-
-//   hdf5_file_handler.getRawEstimatorTotalData( 0u, raw_total_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_total_data, raw_total_data_copy );
-
-//   // Check that the processed total data has been set
-//   std::vector<Utility::Quad<double,double,double,double> >
-//     processed_total_data;
-
-//   TEST_THROW( hdf5_file_handler.getProcessedEstimatorTotalData(
-// 						    0u, processed_total_data ),
-// 	      std::runtime_error );
-// }
-
-// UNIT_TEST_INSTANTIATION( StandardEntityEstimator,
-// 			 exportData_raw );
-
-// //---------------------------------------------------------------------------//
-// // Check that the processed estimator data can be exported
-// TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
-// 				   exportData_process,
-// 				   EntityId )
-// {
-//   Teuchos::RCP<MonteCarlo::Estimator> estimator;
-
-//   std::vector<uint64_t> entity_ids;
-//   std::vector<double> entity_norm_constants;
-
-//   {
-//     // Set the entities ids
-//     entity_ids.resize( 5 );
-//     entity_ids[0] = 0;
-//     entity_ids[1] = 1;
-//     entity_ids[2] = 2;
-//     entity_ids[3] = 3;
-//     entity_ids[4] = 4;
-
-//     // Set the entity normalization constants
-//     entity_norm_constants.resize( 5 );
-//     entity_norm_constants[0] = 1.0;
-//     entity_norm_constants[1] = 2.0;
-//     entity_norm_constants[2] = 3.0;
-//     entity_norm_constants[3] = 4.0;
-//     entity_norm_constants[4] = 5.0;
-
-//     estimator.reset( new TestStandardEntityEstimator<EntityId>(
-// 						     0u,
-// 						     5.0,
-// 						     entity_ids,
-// 						     entity_norm_constants ) );
-//   }
-
-//   std::vector<double> energy_bin_boundaries, cosine_bin_boundaries,
-//     time_bin_boundaries;
-//   std::vector<unsigned> collision_number_bins;
-
-//   {
-//     // Set the energy bins
-//     energy_bin_boundaries.resize( 3 );
-//     energy_bin_boundaries[0] = 0.0;
-//     energy_bin_boundaries[1] = 1e-1;
-//     energy_bin_boundaries[2] = 1.0;
-
-//     estimator->setDiscretization<MonteCarlo::ENERGY_DIMENSION>(
-// 						       energy_bin_boundaries );
-
-//     // Set the cosine bins
-//     cosine_bin_boundaries.resize( 3 );
-//     cosine_bin_boundaries[0] = -1.0;
-//     cosine_bin_boundaries[1] = 0.0;
-//     cosine_bin_boundaries[2] = 1.0;
-
-//     estimator->setDiscretization<MonteCarlo::COSINE_DIMENSION>(
-// 						       cosine_bin_boundaries );
-
-//     // Set the time bins
-//     time_bin_boundaries.resize( 3 );
-//     time_bin_boundaries[0] = 0.0;
-//     time_bin_boundaries[1] = 1e3;
-//     time_bin_boundaries[2] = 1e5;
-
-//     estimator->setDiscretization<MonteCarlo::TIME_DIMENSION>(
-// 							 time_bin_boundaries );
-
-//     // Set the collision number bins
-//     collision_number_bins.resize( 3 );
-//     collision_number_bins[0] = 0u;
-//     collision_number_bins[1] = 1u;
-//     collision_number_bins[2] = std::numeric_limits<unsigned>::max();
-
-//     estimator->setDiscretization<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
-// 						       collision_number_bins );
-
-//     // Set the response functions
-//     std::vector<std::shared_ptr<MonteCarlo::ResponseFunction> >
-//       response_functions( 1 );
-//     response_functions[0] =
-//       MonteCarlo::ResponseFunction::default_response_function;
-
-//     estimator->setResponseFunctions( response_functions );
-//   }
-
-//   // Initialize the hdf5 file
-//   std::shared_ptr<Utility::HDF5FileHandler>
-//     hdf5_file( new Utility::HDF5FileHandler );
-//   hdf5_file->openHDF5FileAndOverwrite( "test_standard_entity_estimator.h5" );
-
-//   MonteCarlo::ParticleHistoryObserver::setStartTime( 0.0 );
-//   MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
-//   MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( 1 );
-
-//   estimator->exportData( hdf5_file, true );
-
-//   // Create an estimator hdf5 file handler
-//   MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
-
-//   // Make sure that the estimator exists in the hdf5 file
-//   TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 0u ) );
-
-//   // Check that the estimator multiplier has been set
-//   double multiplier;
-//   hdf5_file_handler.getEstimatorMultiplier( 0u, multiplier );
-
-//   FRENSIE_CHECK_EQUAL( multiplier, 5.0 );
-
-//   // Check that the estimator response function ordering has been set
-//   std::vector<unsigned> response_function_ordering;
-//   hdf5_file_handler.getEstimatorResponseFunctionOrdering(
-// 						  0u,
-// 						  response_function_ordering );
-
-//   FRENSIE_CHECK_EQUAL( response_function_ordering.size(), 1 );
-//   TEST_EQUALITY( response_function_ordering[0],
-// 		 std::numeric_limits<unsigned>::max() );
-
-//   // Check that the estimator dimension ordering has been set
-//   std::vector<MonteCarlo::PhaseSpaceDimension> dimension_ordering;
-//   hdf5_file_handler.getEstimatorDimensionOrdering( 0u, dimension_ordering );
-
-//   FRENSIE_CHECK_EQUAL( dimension_ordering.size(), 4 );
-//   FRENSIE_CHECK_EQUAL( dimension_ordering[0], MonteCarlo::ENERGY_DIMENSION );
-//   FRENSIE_CHECK_EQUAL( dimension_ordering[1], MonteCarlo::COSINE_DIMENSION );
-//   FRENSIE_CHECK_EQUAL( dimension_ordering[2], MonteCarlo::TIME_DIMENSION );
-//   FRENSIE_CHECK_EQUAL( dimension_ordering[3],
-// 		       MonteCarlo::COLLISION_NUMBER_DIMENSION );
-
-//   // Check that the energy bins have been set
-//   std::vector<double> energy_bin_boundaries_copy;
-//   hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
-// 						  0u,
-// 						  energy_bin_boundaries_copy );
-
-//   TEST_COMPARE_ARRAYS( energy_bin_boundaries, energy_bin_boundaries_copy );
-
-//   // Check that the cosine bins have been set
-//   std::vector<double> cosine_bin_boundaries_copy;
-//   hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::COSINE_DIMENSION>(
-// 						  0u,
-// 						  cosine_bin_boundaries_copy );
-
-//   TEST_COMPARE_ARRAYS( cosine_bin_boundaries, cosine_bin_boundaries_copy );
-
-//   // Check that the time bins have been set
-//   std::vector<double> time_bin_boundaries_copy;
-//   hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::TIME_DIMENSION>(
-// 						    0u,
-// 						    time_bin_boundaries_copy );
-
-//   TEST_COMPARE_ARRAYS( time_bin_boundaries, time_bin_boundaries_copy );
-
-//   // Check that the collision number bins have been set
-//   std::vector<unsigned> collision_number_bins_copy;
-//   hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
-// 						  0u,
-// 						  collision_number_bins_copy );
-
-//   TEST_COMPARE_ARRAYS( collision_number_bins, collision_number_bins_copy );
-
-//   // Check if entities are assigned to the estimator
-//   TEST_ASSERT( hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-// 								    0u, 0u ) );
-//   TEST_ASSERT( hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-// 								    0u, 1u ) );
-//   TEST_ASSERT( hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-// 								    0u, 2u ) );
-//   TEST_ASSERT( hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-// 								    0u, 3u ) );
-//   TEST_ASSERT( hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-// 								    0u, 4u ) );
-//   TEST_ASSERT( !hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-// 								    0u, 5u ) );
-
-//   // Check that the entities and norm constants have been set
-//   std::map<EntityId,double> entity_id_norms;
-//   hdf5_file_handler.getEstimatorEntities( 0u, entity_id_norms );
-
-//   FRENSIE_CHECK_EQUAL( entity_id_norms.size(), 5 );
-//   FRENSIE_CHECK_EQUAL( entity_id_norms[0], 1.0 );
-//   FRENSIE_CHECK_EQUAL( entity_id_norms[1], 2.0 );
-//   FRENSIE_CHECK_EQUAL( entity_id_norms[2], 3.0 );
-//   FRENSIE_CHECK_EQUAL( entity_id_norms[3], 4.0 );
-//   FRENSIE_CHECK_EQUAL( entity_id_norms[4], 5.0 );
-
-//   // Check that entity norm constants have been set
-//   double entity_norm_constant;
-//   hdf5_file_handler.getEntityNormConstant( 0u, 0u, entity_norm_constant );
-
-//   FRENSIE_CHECK_EQUAL( entity_norm_constant, 1.0 );
-
-//   hdf5_file_handler.getEntityNormConstant( 0u, 1u, entity_norm_constant );
-
-//   FRENSIE_CHECK_EQUAL( entity_norm_constant, 2.0 );
-
-//   hdf5_file_handler.getEntityNormConstant( 0u, 2u, entity_norm_constant );
-
-//   FRENSIE_CHECK_EQUAL( entity_norm_constant, 3.0 );
-
-//   hdf5_file_handler.getEntityNormConstant( 0u, 3u, entity_norm_constant );
-
-//   FRENSIE_CHECK_EQUAL( entity_norm_constant, 4.0 );
-
-//   hdf5_file_handler.getEntityNormConstant( 0u, 4u, entity_norm_constant );
-
-//   FRENSIE_CHECK_EQUAL( entity_norm_constant, 5.0 );
-
-//   // Check that the total norm constant has been set
-//   double total_norm_constant;
-//   hdf5_file_handler.getEstimatorTotalNormConstant( 0u, total_norm_constant );
-
-//   FRENSIE_CHECK_EQUAL( total_norm_constant, 15.0 );
-
-//   // Check that the raw entity bin data has been set
-//   std::vector<Utility::Pair<double,double> >
-//     raw_bin_data( 24, Utility::Pair<double,double>( 0.0, 0.0 ) ),
-//     raw_bin_data_copy;
-
-//   hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 0u, raw_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-//   hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 1u, raw_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-//   hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 2u, raw_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-//   hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 3u, raw_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-//   hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 4u, raw_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-//   // Check that there is no processed data since it was not requested on export
-//   std::vector<Utility::Pair<double,double> >
-//     processed_bin_data( 24, Utility::Pair<double,double>( 0.0, 0.0 ) ),
-//     processed_bin_data_copy;
-
-//   hdf5_file_handler.getProcessedEstimatorEntityBinData(
-// 						     0u,
-// 						     0u,
-// 						     processed_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( processed_bin_data, processed_bin_data_copy );
-
-//   hdf5_file_handler.getProcessedEstimatorEntityBinData(
-// 						     0u,
-// 						     1u,
-// 						     processed_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( processed_bin_data, processed_bin_data_copy );
-
-//   hdf5_file_handler.getProcessedEstimatorEntityBinData(
-// 						     0u,
-// 						     2u,
-// 						     processed_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( processed_bin_data, processed_bin_data_copy );
-
-//   hdf5_file_handler.getProcessedEstimatorEntityBinData(
-// 						     0u,
-// 						     3u,
-// 						     processed_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( processed_bin_data, processed_bin_data_copy );
-
-//   hdf5_file_handler.getProcessedEstimatorEntityBinData(
-// 						     0u,
-// 						     4u,
-// 						     processed_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( processed_bin_data, processed_bin_data_copy );
-
-//   // Check that the raw total bin data has been set
-//   std::vector<Utility::Pair<double,double> >
-//     raw_total_bin_data( 24, Utility::Pair<double,double>( 0.0, 0.0 ) ),
-//     raw_total_bin_data_copy;
-
-//   hdf5_file_handler.getRawEstimatorTotalBinData( 0u, raw_total_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_total_bin_data, raw_total_bin_data_copy );
-
-//   // Check that the processed total bin data has not been set
-//   std::vector<Utility::Pair<double,double> >
-//     processed_total_bin_data( 24, Utility::Pair<double,double>( 0.0, 0.0 ) ),
-//     processed_total_bin_data_copy;
-
-//   hdf5_file_handler.getProcessedEstimatorTotalBinData(
-// 					   0u, processed_total_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( processed_total_bin_data,
-// 			       processed_total_bin_data_copy );
-
-//   Utility::Quad<double,double,double,double> empty_quad( 0.0, 0.0, 0.0, 0.0 );
-
-//   // Check that the raw total entity data has been set
-//   std::vector<Utility::Quad<double,double,double,double> >
-//     raw_total_entity_data( 1, empty_quad ),
-//     raw_total_entity_data_copy;
-
-//   hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>(
-// 					  0u, 0u, raw_total_entity_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_total_entity_data,
-// 			       raw_total_entity_data_copy );
-
-//   hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>(
-// 					  0u, 1u, raw_total_entity_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_total_entity_data,
-// 			       raw_total_entity_data_copy );
-
-//   hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>(
-// 					  0u, 2u, raw_total_entity_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_total_entity_data,
-// 			       raw_total_entity_data_copy );
-
-//   hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>(
-// 					  0u, 3u, raw_total_entity_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_total_entity_data,
-// 			       raw_total_entity_data_copy );
-
-//   hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>(
-// 					  0u, 4u, raw_total_entity_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_total_entity_data,
-// 			       raw_total_entity_data_copy );
-
-//   // Check that the processed total entity data has not been set
-//   std::vector<Utility::Quad<double,double,double,double> >
-//     processed_total_entity_data( 1, empty_quad ),
-//     processed_total_entity_data_copy;
-
-//   hdf5_file_handler.getProcessedEstimatorEntityTotalData<EntityId>(
-// 				    0u, 0u, processed_total_entity_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( processed_total_entity_data,
-// 			       processed_total_entity_data_copy );
-
-//   hdf5_file_handler.getProcessedEstimatorEntityTotalData<EntityId>(
-// 				    0u, 1u, processed_total_entity_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( processed_total_entity_data,
-// 			       processed_total_entity_data_copy );
-
-//   hdf5_file_handler.getProcessedEstimatorEntityTotalData<EntityId>(
-// 				    0u, 2u, processed_total_entity_data_copy );
-
-//   hdf5_file_handler.getProcessedEstimatorEntityTotalData<EntityId>(
-// 				    0u, 3u, processed_total_entity_data_copy );
-
-//   hdf5_file_handler.getProcessedEstimatorEntityTotalData<EntityId>(
-// 				    0u, 4u, processed_total_entity_data_copy );
-
-//   // Check that the raw total data has been set
-//   std::vector<Utility::Quad<double,double,double,double> >
-//     raw_total_data( 1, empty_quad ),
-//     raw_total_data_copy;
-
-//   hdf5_file_handler.getRawEstimatorTotalData( 0u, raw_total_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_total_data, raw_total_data_copy );
-
-//   // Check that the processed total data has been set
-//   std::vector<Utility::Quad<double,double,double,double> >
-//     processed_total_data( 1, empty_quad ),
-//     processed_total_data_copy;
-
-//   hdf5_file_handler.getProcessedEstimatorTotalData(
-// 					       0u, processed_total_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( processed_total_data,
-// 			       processed_total_data_copy );
-// }
-
-// UNIT_TEST_INSTANTIATION( StandardEntityEstimator,
-// 			 exportData_process );
-
-// //---------------------------------------------------------------------------//
-// // Check that a partial history contribution can be added to the estimator
-// TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
-// 				   addPartialHistoryContribution,
-// 				   EntityId )
-// {
-//   Teuchos::RCP<MonteCarlo::Estimator> estimator_base;
-//   Teuchos::RCP<TestStandardEntityEstimator<EntityId> > estimator;
-
-//   {
-//     // Set the entity ids
-//     std::vector<uint64_t> entity_ids( 2 );
-//     entity_ids[0] = 0;
-//     entity_ids[1] = 1;
-
-//     // Set the entity norm constants
-//     std::vector<double> entity_norm_consts( 2 );
-//     entity_norm_consts[0] = 1.0;
-//     entity_norm_consts[1] = 2.0;
-
-//     estimator.reset(
-// 	     new TestStandardEntityEstimator<EntityId>( 0u,
-// 							10.0,
-// 							entity_ids,
-// 							entity_norm_consts ) );
-
-//     estimator_base = estimator;
-
-//     // Set the energy bins
-//     std::vector<double> energy_bin_boundaries( 3 );
-//     energy_bin_boundaries[0] = 0.0;
-//     energy_bin_boundaries[1] = 0.1;
-//     energy_bin_boundaries[2] = 1.0;
-
-//     estimator_base->setDiscretization<MonteCarlo::ENERGY_DIMENSION>(
-// 						       energy_bin_boundaries );
-
-//     // Set the cosine bins
-//     std::vector<double> cosine_bin_boundaries( 3 );
-//     cosine_bin_boundaries[0] = -1.0;
-//     cosine_bin_boundaries[1] = 0.0;
-//     cosine_bin_boundaries[2] = 1.0;
-
-//     estimator_base->setDiscretization<MonteCarlo::COSINE_DIMENSION>(
-// 						       cosine_bin_boundaries );
-
-//     // Set the time bins
-//     std::vector<double> time_bin_boundaries( 3 );
-//     time_bin_boundaries[0] = 0.0;
-//     time_bin_boundaries[1] = 1.0;
-//     time_bin_boundaries[2] = 2.0;
-
-//     estimator_base->setDiscretization<MonteCarlo::TIME_DIMENSION>(
-// 							 time_bin_boundaries );
-
-//     // Set collision number bins
-//     std::vector<unsigned> collision_number_bins( 2 );
-//     collision_number_bins[0] = 0u;
-//     collision_number_bins[1] = 1u;
-
-//     estimator_base->setDiscretization<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
-// 						       collision_number_bins );
-
-//     // Set the particle types
-//     std::vector<MonteCarlo::ParticleType> particle_types( 1 );
-//     particle_types[0] = MonteCarlo::PHOTON;
-
-//     estimator_base->setParticleTypes( particle_types );
-//   }
-
-//   TEST_ASSERT( !estimator_base->hasUncommittedHistoryContribution() );
-
-//   // bin 0
-//   MonteCarlo::PhotonState particle( 0ull );
-//   particle.setEnergy( 1.0 );
-//   particle.setTime( 2.0 );
-
-//   MonteCarlo::EstimatorParticleStateWrapper particle_wrapper( particle );
-//   particle_wrapper.setAngleCosine( 1.0 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   TEST_ASSERT( estimator_base->hasUncommittedHistoryContribution() );
-
-//   // bin 1
-//   particle.setEnergy( 0.1 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 2
-//   particle.setEnergy( 1.0 );
-
-//   particle_wrapper.setAngleCosine( 0.0 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 3
-//   particle.setEnergy( 0.1 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 4
-//   particle.setTime( 1.0 );
-//   particle.setEnergy( 1.0 );
-
-//   particle_wrapper.setAngleCosine( 1.0 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 5
-//   particle.setEnergy( 0.1 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 6
-//   particle.setEnergy( 1.0 );
-
-//   particle_wrapper.setAngleCosine( 0.0 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 7
-//   particle.setEnergy( 0.1 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 8
-//   particle.incrementCollisionNumber();
-//   particle.setTime( 2.0 );
-//   particle.setEnergy( 1.0 );
-
-//   particle_wrapper.setAngleCosine( 1.0 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 9
-//   particle.setEnergy( 0.1 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 10
-//   particle.setEnergy( 1.0 );
-
-//   particle_wrapper.setAngleCosine( 0.0 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 11
-//   particle.setEnergy( 0.1 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 12
-//   particle.setTime( 1.0 );
-//   particle.setEnergy( 1.0 );
-
-//   particle_wrapper.setAngleCosine( 1.0 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 13
-//   particle.setEnergy( 0.1 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 14
-//   particle.setEnergy( 1.0 );
-
-//   particle_wrapper.setAngleCosine( 0.0 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 15
-//   particle.setEnergy( 0.1 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // Commit the contributions
-//   estimator_base->commitHistoryContribution();
-
-//   TEST_ASSERT( !estimator_base->hasUncommittedHistoryContribution() );
-
-//   MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( 1.0 );
-//   MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
-
-//   // Initialize the HDF5 file
-//   std::shared_ptr<Utility::HDF5FileHandler>
-//     hdf5_file( new Utility::HDF5FileHandler );
-//   hdf5_file->openHDF5FileAndOverwrite( "test_standard_entity_estimator2.h5" );
-
-//   estimator_base->exportData( hdf5_file, true );
-
-//   // Create an estimator hdf5 file handler
-//   MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
-
-//   // Retrieve the raw bin data for each entity
-//   std::vector<Utility::Pair<double,double> >
-//     raw_bin_data( 16, Utility::Pair<double,double>( 1.0, 1.0 ) ),
-//     raw_bin_data_copy;
-
-//   hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>(
-// 						   0u, 0u, raw_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-//   hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>(
-// 						   0u, 1u, raw_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-//   // Retrieve the processed bin data for each entity
-//   std::vector<Utility::Pair<double,double> >
-//     processed_bin_data( 16, Utility::Pair<double,double>( 10.0, 0.0 ) ),
-//     processed_bin_data_copy;
-
-//   hdf5_file_handler.getProcessedEstimatorEntityBinData<EntityId>(
-// 					     0u, 0u, processed_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( processed_bin_data, processed_bin_data_copy );
-
-//   processed_bin_data.clear();
-//   processed_bin_data.resize( 16, Utility::Pair<double,double>( 5.0, 0.0 ) );
-
-//   hdf5_file_handler.getProcessedEstimatorEntityBinData<EntityId>(
-// 					     0u, 1u, processed_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( processed_bin_data, processed_bin_data_copy );
-
-//   // Retrieve the raw total bin data
-//   std::vector<Utility::Pair<double,double> >
-//     raw_total_bin_data( 16, Utility::Pair<double,double>( 2.0, 4.0 ) ),
-//     raw_total_bin_data_copy;
-
-//   hdf5_file_handler.getRawEstimatorTotalBinData( 0u, raw_total_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_total_bin_data, raw_total_bin_data_copy );
-
-//   // Retrieve the processed total bin data
-//   std::vector<Utility::Pair<double,double> >
-//     processed_total_bin_data( 16, Utility::Pair<double,double>( 20.0/3, 0.0 )),
-//     processed_total_bin_data_copy;
-
-//   hdf5_file_handler.getProcessedEstimatorTotalBinData(
-// 					   0u, processed_total_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( processed_total_bin_data,
-// 			       processed_total_bin_data_copy );
-
-//   // Retrieve the raw estimator total data for each entity
-//   Utility::Quad<double,double,double,double>
-//     raw_moments( 16.0, 256.0, 4096.0, 65536.0 );
-
-//   std::vector<Utility::Quad<double,double,double,double> >
-//     raw_total_data( 1, raw_moments ),
-//     raw_total_data_copy;
-
-//   hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>(
-// 						 0u, 0u, raw_total_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_total_data, raw_total_data_copy );
-
-//   hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>(
-// 						 0u, 1u, raw_total_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_total_data, raw_total_data_copy );
-
-//   // Retrieve the processed estimator total data for each entity
-//   Utility::Quad<double,double,double,double>
-//     processed_moments( 160.0, 0.0, 0.0, 0.0 );
-
-//   std::vector<Utility::Quad<double,double,double,double> >
-//     processed_total_data( 1, processed_moments ),
-//     processed_total_data_copy;
-
-//   hdf5_file_handler.getProcessedEstimatorEntityTotalData<EntityId>(
-// 					   0u, 0u, processed_total_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( processed_total_data,
-// 			       processed_total_data_copy );
-
-//   processed_total_data[0]( 80.0, 0.0, 0.0, 0.0 );
-
-//   hdf5_file_handler.getProcessedEstimatorEntityTotalData<EntityId>(
-// 					   0u, 1u, processed_total_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( processed_total_data,
-// 			       processed_total_data_copy );
-
-//   // Retrieve the raw total data
-//   raw_total_data[0]( 32.0, 1024.0, 32768.0, 1048576.0 );
-
-//   hdf5_file_handler.getRawEstimatorTotalData( 0u, raw_total_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_total_data, raw_total_data_copy );
-
-//   // Retrieve the processed total data
-//   processed_total_data[0]( 320.0/3, 0.0, 0.0, 0.0 );
-
-//   hdf5_file_handler.getProcessedEstimatorTotalData(
-// 					       0u, processed_total_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( processed_total_data,
-// 			       processed_total_data_copy );
-// }
-
-// UNIT_TEST_INSTANTIATION( StandardEntityEstimator,
-// 			 addPartialHistoryContribution );
-
-// //---------------------------------------------------------------------------//
-// // Check that a partial history contribution can be added to the estimator
-// // in a thread safe way
-// TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
-// 				   addPartialHistoryContribution_thread_safe,
-// 				   EntityId )
-// {
-//   Teuchos::RCP<MonteCarlo::Estimator> estimator_base;
-//   Teuchos::RCP<TestStandardEntityEstimator<EntityId> > estimator;
-
-//   {
-//     // Set the entity ids
-//     std::vector<uint64_t> entity_ids( 2 );
-//     entity_ids[0] = 0;
-//     entity_ids[1] = 1;
-
-//     // Set the entity norm constants
-//     std::vector<double> entity_norm_consts( 2 );
-//     entity_norm_consts[0] = 1.0;
-//     entity_norm_consts[1] = 2.0;
-
-//     estimator.reset(
-// 	     new TestStandardEntityEstimator<EntityId>( 0u,
-// 							10.0,
-// 							entity_ids,
-// 							entity_norm_consts ) );
-
-//     estimator_base = estimator;
-
-//     // Set the energy bins
-//     std::vector<double> energy_bin_boundaries( 3 );
-//     energy_bin_boundaries[0] = 0.0;
-//     energy_bin_boundaries[1] = 0.1;
-//     energy_bin_boundaries[2] = 1.0;
-
-//     estimator_base->setDiscretization<MonteCarlo::ENERGY_DIMENSION>(
-// 						       energy_bin_boundaries );
-
-//     // Set the cosine bins
-//     std::vector<double> cosine_bin_boundaries( 3 );
-//     cosine_bin_boundaries[0] = -1.0;
-//     cosine_bin_boundaries[1] = 0.0;
-//     cosine_bin_boundaries[2] = 1.0;
-
-//     estimator_base->setDiscretization<MonteCarlo::COSINE_DIMENSION>(
-// 						       cosine_bin_boundaries );
-
-//     // Set the time bins
-//     std::vector<double> time_bin_boundaries( 3 );
-//     time_bin_boundaries[0] = 0.0;
-//     time_bin_boundaries[1] = 1.0;
-//     time_bin_boundaries[2] = 2.0;
-
-//     estimator_base->setDiscretization<MonteCarlo::TIME_DIMENSION>(
-// 							 time_bin_boundaries );
-
-//     // Set collision number bins
-//     std::vector<unsigned> collision_number_bins( 2 );
-//     collision_number_bins[0] = 0u;
-//     collision_number_bins[1] = 1u;
-
-//     estimator_base->setDiscretization<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
-// 						       collision_number_bins );
-
-//     // Set the particle types
-//     std::vector<MonteCarlo::ParticleType> particle_types( 1 );
-//     particle_types[0] = MonteCarlo::PHOTON;
-
-//     estimator_base->setParticleTypes( particle_types );
-
-//     // Enable thread support
-//     estimator_base->enableThreadSupport(
-// 	         Utility::OpenMPProperties::getRequestedNumberOfThreads() );
-//   }
-
-//   unsigned threads =
-//     Utility::OpenMPProperties::getRequestedNumberOfThreads();
-
-//   for( unsigned i = 0; i < threads; ++i )
-//     TEST_ASSERT( !estimator_base->hasUncommittedHistoryContribution( i ) );
-
-//   #pragma omp parallel num_threads( threads )
-//   {
-//     // bin 0
-//     MonteCarlo::PhotonState particle( 0ull );
-//     particle.setEnergy( 1.0 );
-//     particle.setTime( 2.0 );
-
-//     MonteCarlo::EstimatorParticleStateWrapper particle_wrapper( particle );
-//     particle_wrapper.setAngleCosine( 1.0 );
-
-//     estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//     estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//     // bin 1
-//     particle.setEnergy( 0.1 );
-
-//     estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//     estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//     // bin 2
-//     particle.setEnergy( 1.0 );
-
-//     particle_wrapper.setAngleCosine( 0.0 );
-
-//     estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//     estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//     // bin 3
-//     particle.setEnergy( 0.1 );
-
-//     estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//     estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//     // bin 4
-//     particle.setTime( 1.0 );
-//     particle.setEnergy( 1.0 );
-
-//     particle_wrapper.setAngleCosine( 1.0 );
-
-//     estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//     estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//     // bin 5
-//     particle.setEnergy( 0.1 );
-
-//     estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//     estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//     // bin 6
-//     particle.setEnergy( 1.0 );
-
-//     particle_wrapper.setAngleCosine( 0.0 );
-
-//     estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//     estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//     // bin 7
-//     particle.setEnergy( 0.1 );
-
-//     estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//     estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//     // bin 8
-//     particle.incrementCollisionNumber();
-//     particle.setTime( 2.0 );
-//     particle.setEnergy( 1.0 );
-
-//     particle_wrapper.setAngleCosine( 1.0 );
-
-//     estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//     estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//     // bin 9
-//     particle.setEnergy( 0.1 );
-
-//     estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//     estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//     // bin 10
-//     particle.setEnergy( 1.0 );
-
-//     particle_wrapper.setAngleCosine( 0.0 );
-
-//     estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//     estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//     // bin 11
-//     particle.setEnergy( 0.1 );
-
-//     estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//     estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//     // bin 12
-//     particle.setTime( 1.0 );
-//     particle.setEnergy( 1.0 );
-
-//     particle_wrapper.setAngleCosine( 1.0 );
-
-//     estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//     estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//     // bin 13
-//     particle.setEnergy( 0.1 );
-
-//     estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//     estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//     // bin 14
-//     particle.setEnergy( 1.0 );
-
-//     particle_wrapper.setAngleCosine( 0.0 );
-
-//     estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//     estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//     // bin 15
-//     particle.setEnergy( 0.1 );
-
-//     estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//     estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//     // Commit the contributions
-//     estimator_base->commitHistoryContribution();
-//   }
-
-//   for( unsigned i = 0; i < threads; ++i )
-//     TEST_ASSERT( !estimator_base->hasUncommittedHistoryContribution( i ) );
-
-//   MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( threads );
-//   MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
-
-//   // Initialize the HDF5 file
-//   std::shared_ptr<Utility::HDF5FileHandler>
-//     hdf5_file( new Utility::HDF5FileHandler );
-//   hdf5_file->openHDF5FileAndOverwrite( "test_standard_entity_estimator2.h5" );
-
-//   estimator_base->exportData( hdf5_file, true );
-
-//   // Create an estimator hdf5 file handler
-//   MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
-
-//   // Retrieve the raw bin data for each entity
-//   std::vector<Utility::Pair<double,double> >
-//     raw_bin_data( 16, Utility::Pair<double,double>( threads, threads ) ),
-//     raw_bin_data_copy;
-
-//   hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>(
-// 						   0u, 0u, raw_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-//   hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>(
-// 						   0u, 1u, raw_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-//   // Retrieve the processed bin data for each entity
-//   std::vector<Utility::Pair<double,double> >
-//     processed_bin_data( 16, Utility::Pair<double,double>( 10.0, 0.0 ) ),
-//     processed_bin_data_copy;
-
-//   hdf5_file_handler.getProcessedEstimatorEntityBinData<EntityId>(
-// 					     0u, 0u, processed_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( processed_bin_data, processed_bin_data_copy );
-
-//   processed_bin_data.clear();
-//   processed_bin_data.resize( 16, Utility::Pair<double,double>( 5.0, 0.0 ) );
-
-//   hdf5_file_handler.getProcessedEstimatorEntityBinData<EntityId>(
-// 					     0u, 1u, processed_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( processed_bin_data, processed_bin_data_copy );
-
-//   // Retrieve the raw total bin data
-//   std::vector<Utility::Pair<double,double> >
-//     raw_total_bin_data( 16,
-// 			Utility::Pair<double,double>(2.0*threads,4.0*threads)),
-//     raw_total_bin_data_copy;
-
-//   hdf5_file_handler.getRawEstimatorTotalBinData( 0u, raw_total_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_total_bin_data, raw_total_bin_data_copy );
-
-//   // Retrieve the processed total bin data
-//   std::vector<Utility::Pair<double,double> >
-//     processed_total_bin_data( 16, Utility::Pair<double,double>( 20.0/3, 0.0 )),
-//     processed_total_bin_data_copy;
-
-//   hdf5_file_handler.getProcessedEstimatorTotalBinData(
-// 					   0u, processed_total_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( processed_total_bin_data,
-// 			       processed_total_bin_data_copy );
-
-//   // Retrieve the raw estimator total data for each entity
-//   Utility::Quad<double,double,double,double>
-//     raw_moments( 16.0*threads, 256.0*threads, 4096.0*threads, 65536.0*threads);
-
-//   std::vector<Utility::Quad<double,double,double,double> >
-//     raw_total_data( 1, raw_moments ),
-//     raw_total_data_copy;
-
-//   hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>(
-// 						 0u, 0u, raw_total_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_total_data, raw_total_data_copy );
-
-//   hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>(
-// 						 0u, 1u, raw_total_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_total_data, raw_total_data_copy );
-
-//   // Retrieve the processed estimator total data for each entity
-//   Utility::Quad<double,double,double,double>
-//     processed_moments( 160.0, 0.0, 0.0, 0.0 );
-
-//   std::vector<Utility::Quad<double,double,double,double> >
-//     processed_total_data( 1, processed_moments ),
-//     processed_total_data_copy;
-
-//   hdf5_file_handler.getProcessedEstimatorEntityTotalData<EntityId>(
-// 					   0u, 0u, processed_total_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( processed_total_data,
-// 			       processed_total_data_copy );
-
-//   processed_total_data[0]( 80.0, 0.0, 0.0, 0.0 );
-
-//   hdf5_file_handler.getProcessedEstimatorEntityTotalData<EntityId>(
-// 					   0u, 1u, processed_total_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( processed_total_data,
-// 			       processed_total_data_copy );
-
-//   // Retrieve the raw total data
-//   raw_total_data[0]( 32.0*threads,
-// 		     1024.0*threads,
-// 		     32768.0*threads,
-// 		     1048576.0*threads );
-
-//   hdf5_file_handler.getRawEstimatorTotalData( 0u, raw_total_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( raw_total_data, raw_total_data_copy );
-
-//   // Retrieve the processed total data
-//   processed_total_data[0]( 320.0/3, 0.0, 0.0, 0.0 );
-
-//   hdf5_file_handler.getProcessedEstimatorTotalData(
-// 					       0u, processed_total_data_copy );
-
-//   UTILITY_TEST_COMPARE_ARRAYS( processed_total_data,
-// 			       processed_total_data_copy );
-// }
-
-// UNIT_TEST_INSTANTIATION( StandardEntityEstimator,
-// 			 addPartialHistoryContribution_thread_safe );
-
-// //---------------------------------------------------------------------------//
-// // Check that a partial history contribution can be added to the estimator
-// TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
-//                                    resetData,
-// 				   EntityId )
-// {
-//   Teuchos::RCP<MonteCarlo::Estimator> estimator_base;
-//   Teuchos::RCP<TestStandardEntityEstimator<EntityId> > estimator;
-
-//   {
-//     // Set the entity ids
-//     std::vector<uint64_t> entity_ids( 2 );
-//     entity_ids[0] = 0;
-//     entity_ids[1] = 1;
-
-//     // Set the entity norm constants
-//     std::vector<double> entity_norm_consts( 2 );
-//     entity_norm_consts[0] = 1.0;
-//     entity_norm_consts[1] = 2.0;
-
-//     estimator.reset(
-// 	     new TestStandardEntityEstimator<EntityId>( 0u,
-// 							10.0,
-// 							entity_ids,
-// 							entity_norm_consts ) );
-
-//     estimator_base = estimator;
-
-//     // Set the energy bins
-//     std::vector<double> energy_bin_boundaries( 3 );
-//     energy_bin_boundaries[0] = 0.0;
-//     energy_bin_boundaries[1] = 0.1;
-//     energy_bin_boundaries[2] = 1.0;
-
-//     estimator_base->setDiscretization<MonteCarlo::ENERGY_DIMENSION>(
-// 						       energy_bin_boundaries );
-
-//     // Set the cosine bins
-//     std::vector<double> cosine_bin_boundaries( 3 );
-//     cosine_bin_boundaries[0] = -1.0;
-//     cosine_bin_boundaries[1] = 0.0;
-//     cosine_bin_boundaries[2] = 1.0;
-
-//     estimator_base->setDiscretization<MonteCarlo::COSINE_DIMENSION>(
-// 						       cosine_bin_boundaries );
-
-//     // Set the time bins
-//     std::vector<double> time_bin_boundaries( 3 );
-//     time_bin_boundaries[0] = 0.0;
-//     time_bin_boundaries[1] = 1.0;
-//     time_bin_boundaries[2] = 2.0;
-
-//     estimator_base->setDiscretization<MonteCarlo::TIME_DIMENSION>(
-// 							 time_bin_boundaries );
-
-//     // Set collision number bins
-//     std::vector<unsigned> collision_number_bins( 2 );
-//     collision_number_bins[0] = 0u;
-//     collision_number_bins[1] = 1u;
-
-//     estimator_base->setDiscretization<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
-// 						       collision_number_bins );
-
-//     // Set the particle types
-//     std::vector<MonteCarlo::ParticleType> particle_types( 1 );
-//     particle_types[0] = MonteCarlo::PHOTON;
-
-//     estimator_base->setParticleTypes( particle_types );
-//   }
-
-//   TEST_ASSERT( !estimator_base->hasUncommittedHistoryContribution() );
-
-//   // bin 0
-//   MonteCarlo::PhotonState particle( 0ull );
-//   particle.setEnergy( 1.0 );
-//   particle.setTime( 2.0 );
-
-//   MonteCarlo::EstimatorParticleStateWrapper particle_wrapper( particle );
-//   particle_wrapper.setAngleCosine( 1.0 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   TEST_ASSERT( estimator_base->hasUncommittedHistoryContribution() );
-
-//   // bin 1
-//   particle.setEnergy( 0.1 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 2
-//   particle.setEnergy( 1.0 );
-
-//   particle_wrapper.setAngleCosine( 0.0 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 3
-//   particle.setEnergy( 0.1 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 4
-//   particle.setTime( 1.0 );
-//   particle.setEnergy( 1.0 );
-
-//   particle_wrapper.setAngleCosine( 1.0 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 5
-//   particle.setEnergy( 0.1 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 6
-//   particle.setEnergy( 1.0 );
-
-//   particle_wrapper.setAngleCosine( 0.0 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 7
-//   particle.setEnergy( 0.1 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 8
-//   particle.incrementCollisionNumber();
-//   particle.setTime( 2.0 );
-//   particle.setEnergy( 1.0 );
-
-//   particle_wrapper.setAngleCosine( 1.0 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 9
-//   particle.setEnergy( 0.1 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 10
-//   particle.setEnergy( 1.0 );
-
-//   particle_wrapper.setAngleCosine( 0.0 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 11
-//   particle.setEnergy( 0.1 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 12
-//   particle.setTime( 1.0 );
-//   particle.setEnergy( 1.0 );
-
-//   particle_wrapper.setAngleCosine( 1.0 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 13
-//   particle.setEnergy( 0.1 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 14
-//   particle.setEnergy( 1.0 );
-
-//   particle_wrapper.setAngleCosine( 0.0 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // bin 15
-//   particle.setEnergy( 0.1 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   // Commit the contributions
-//   estimator_base->commitHistoryContribution();
-
-//   TEST_ASSERT( !estimator_base->hasUncommittedHistoryContribution() );
-
-//   // Start a new history
-//   particle.setEnergy( 1.0 );
-//   particle.setTime( 2.0 );
-
-//   particle_wrapper.setAngleCosine( 1.0 );
-
-//   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
-//   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-
-//   TEST_ASSERT( estimator_base->hasUncommittedHistoryContribution() );
-
-//   // Reset the estimator data
-//   estimator_base->resetData();
-
-//   // Make sure all partial contributions have been deleted
-//   TEST_ASSERT( !estimator_base->hasUncommittedHistoryContribution() );
-
-//   // Make sure the bins have not been changed
-//   FRENSIE_CHECK_EQUAL(
-// 	     estimator_base->getNumberOfBins( MonteCarlo::ENERGY_DIMENSION ),
-// 	     2 );
-//   FRENSIE_CHECK_EQUAL(
-// 	     estimator_base->getNumberOfBins( MonteCarlo::TIME_DIMENSION ),
-// 	     2 );
-//   FRENSIE_CHECK_EQUAL(
-// 	     estimator_base->getNumberOfBins( MonteCarlo::COSINE_DIMENSION ),
-// 	     2 );
-//   FRENSIE_CHECK_EQUAL(
-//    estimator_base->getNumberOfBins( MonteCarlo::COLLISION_NUMBER_DIMENSION ),
-//    2 );
-//   FRENSIE_CHECK_EQUAL( estimator_base->getNumberOfBins(), 16 );
-
-//   // Make sure the response functions have not changed
-//   FRENSIE_CHECK_EQUAL( estimator_base->getNumberOfResponseFunctions(), 1 );
-
-//   // Initialize the HDF5 file
-//   std::shared_ptr<Utility::HDF5FileHandler>
-//     hdf5_file( new Utility::HDF5FileHandler );
-//   hdf5_file->openHDF5FileAndOverwrite( "test_standard_entity_estimator3.h5" );
-
-//   estimator_base->exportData( hdf5_file, false );
-
-//   // Create and estimator hdf5 file handler
-//   MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
-
-//   // Retrieve the raw bin data for each entity
-//   std::vector<Utility::Pair<double,double> >
-//     raw_bin_data( 16, Utility::Pair<double,double>( 0.0, 0.0 ) ),
-//     raw_bin_data_copy;
-
-//   hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>(
-//                                                    0u, 0u, raw_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
-// 					raw_bin_data_copy,
-// 					1e-15 );
-
-//   hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>(
-//                                                    0u, 1u, raw_bin_data_copy );
-
-//   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
-// 					raw_bin_data_copy,
-// 					1e-15 );
-
-//   // Retrieve the total raw total bin data
-//   hdf5_file_handler.getRawEstimatorTotalBinData( 0u, raw_bin_data );
-
-//   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
-// 					raw_bin_data_copy,
-// 					1e-15 );
-
-//   // Retrieve the raw total entity data
-//   std::vector<Utility::Quad<double,double,double,double> >
-//     raw_total_data( 1, Utility::Quad<double,double,double,double>(0, 0, 0, 0)),
-//     raw_total_data_copy;
-
-//   hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>(
-//                                                  0u, 0u, raw_total_data_copy );
-
-//   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
-// 					raw_total_data_copy,
-// 					1e-15 );
-
-//   hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>(
-//                                                  0u, 1u, raw_total_data_copy );
-
-//   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
-// 					raw_total_data_copy,
-// 					1e-15 );
-
-//   // Retrieve the raw total data
-//   hdf5_file_handler.getRawEstimatorTotalData( 0u, raw_total_data_copy );
-
-//   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
-// 					raw_total_data_copy,
-// 					1e-15 );
-// }
-
-// UNIT_TEST_INSTANTIATION( StandardEntityEstimator, resetData );
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 12 (E=0, Mu=0, T=1, Col=1)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( -0.5 );
+  particle.setTime( 5e-5 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 13 (E=1, Mu=0, T=1, Col=1)
+  particle.setEnergy( 0.11 );
+  
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 14 (E=0, Mu=1, T=1, Col=1)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( 0.5 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 15 (E=1, Mu=1, T=1, Col=1)
+  particle.setEnergy( 0.11 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // Commit the contributions
+  estimator->commitHistoryContribution();
+
+  FRENSIE_CHECK( !estimator->hasUncommittedHistoryContribution() );
+
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( 1.0 );
+  MonteCarlo::ParticleHistoryObserver::setElapsedTime( 1.0 );
+
+  // Check the total bin data moments
+  Utility::ArrayView<const double> total_bin_first_moments =
+    estimator->getTotalBinDataFirstMoments();
+
+  Utility::ArrayView<const double> total_bin_second_moments =
+    estimator->getTotalBinDataSecondMoments();
+
+  FRENSIE_CHECK_EQUAL( total_bin_first_moments,
+                       std::vector<double>( 32, 2.0 ) );
+  FRENSIE_CHECK_EQUAL( total_bin_second_moments,
+                       std::vector<double>( 32, 4.0 ) );
+  
+  // Check the entity bin data moments
+  Utility::ArrayView<const double> entity_bin_first_moments =
+    estimator->getEntityBinDataFirstMoments( 0 );
+
+  Utility::ArrayView<const double> entity_bin_second_moments =
+    estimator->getEntityBinDataSecondMoments( 0 );
+
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( 32, 1.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 32, 1.0 ) );
+
+  entity_bin_first_moments = estimator->getEntityBinDataFirstMoments( 1 );
+  entity_bin_second_moments = estimator->getEntityBinDataSecondMoments( 1 );
+
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( 32, 1.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 32, 1.0 ) );
+
+  // Check the entity total data moments
+  FRENSIE_REQUIRE( estimator->isTotalDataAvailable() );
+  
+  Utility::ArrayView<const double> entity_total_first_moments =
+    estimator->getEntityTotalDataFirstMoments( 0 );
+
+  Utility::ArrayView<const double> entity_total_second_moments =
+    estimator->getEntityTotalDataSecondMoments( 0 );
+
+  Utility::ArrayView<const double> entity_total_third_moments =
+    estimator->getEntityTotalDataThirdMoments( 0 );
+
+  Utility::ArrayView<const double> entity_total_fourth_moments =
+    estimator->getEntityTotalDataFourthMoments( 0 );
+
+  FRENSIE_CHECK_EQUAL( entity_total_first_moments,
+                       std::vector<double>( 2, 16.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_second_moments,
+                       std::vector<double>( 2, 256.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_third_moments,
+                       std::vector<double>( 2, 4096.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
+                       std::vector<double>( 2, 65536.0 ) );
+
+  entity_total_first_moments = estimator->getEntityTotalDataFirstMoments( 1 );
+  entity_total_second_moments = estimator->getEntityTotalDataSecondMoments( 1 );
+  entity_total_third_moments = estimator->getEntityTotalDataThirdMoments( 1 );
+  entity_total_fourth_moments = estimator->getEntityTotalDataFourthMoments( 1 );
+
+  FRENSIE_CHECK_EQUAL( entity_total_first_moments,
+                       std::vector<double>( 2, 16.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_second_moments,
+                       std::vector<double>( 2, 256.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_third_moments,
+                       std::vector<double>( 2, 4096.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
+                       std::vector<double>( 2, 65536.0 ) );
+
+  // Check the entity processed total data
+  std::vector<double> entity_total_mean, entity_total_re, entity_total_vov,
+    entity_total_fom;
+
+  estimator->getEntityTotalProcessedData( 0,
+                                          entity_total_mean,
+                                          entity_total_re,
+                                          entity_total_vov,
+                                          entity_total_fom );
+
+  FRENSIE_CHECK_EQUAL( entity_total_mean, std::vector<double>( 2, 160.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_re, std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_vov, std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_fom, std::vector<double>( 2, 0.0 ) );
+
+  estimator->getEntityTotalProcessedData( 1,
+                                          entity_total_mean,
+                                          entity_total_re,
+                                          entity_total_vov,
+                                          entity_total_fom );
+
+  FRENSIE_CHECK_EQUAL( entity_total_mean, std::vector<double>( 2, 80.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_re, std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_vov, std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_fom, std::vector<double>( 2, 0.0 ) );
+
+  // Check the total data moments
+  Utility::ArrayView<const double> total_first_moments =
+    estimator->getTotalDataFirstMoments();
+
+  Utility::ArrayView<const double> total_second_moments =
+    estimator->getTotalDataSecondMoments();
+
+  Utility::ArrayView<const double> total_third_moments =
+    estimator->getTotalDataThirdMoments();
+
+  Utility::ArrayView<const double> total_fourth_moments =
+    estimator->getTotalDataFourthMoments();
+
+  FRENSIE_CHECK_EQUAL( total_first_moments,
+                       std::vector<double>( 2, 32.0 ) );
+  FRENSIE_CHECK_EQUAL( total_second_moments,
+                       std::vector<double>( 2, 1024.0 ) );
+  FRENSIE_CHECK_EQUAL( total_third_moments,
+                       std::vector<double>( 2, 32768.0 ) );
+  FRENSIE_CHECK_EQUAL( total_fourth_moments,
+                       std::vector<double>( 2, 1048576.0 ) );
+
+  // Check the processed total data
+  std::vector<double> total_mean, total_re, total_vov, total_fom;
+
+  estimator->getTotalProcessedData( total_mean, total_re, total_vov, total_fom );
+
+  FRENSIE_CHECK_EQUAL( total_mean, std::vector<double>( 2, 320.0/3 ) );
+  FRENSIE_CHECK_EQUAL( total_re, std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( total_vov, std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( total_fom, std::vector<double>( 2, 0.0 ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a partial history contribution can be added to the estimator
+// in a thread safe way
+FRENSIE_UNIT_TEST( StandardEntityEstimator,
+                   addPartialHistoryPointContribution_thread_safe )
+{
+  std::shared_ptr<TestStandardEntityEstimator> estimator;
+  initializeStandardEntityEstimator( estimator );
+  
+  // Enable thread support
+  estimator->enableThreadSupport( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
+
+  unsigned threads =
+    Utility::OpenMPProperties::getRequestedNumberOfThreads();
+
+  for( unsigned i = 0; i < threads; ++i )
+  {
+    FRENSIE_CHECK( !estimator->hasUncommittedHistoryContribution( i ) );
+  }
+
+  #pragma omp parallel num_threads( threads )
+  {
+    // bin 0 (E=0, Mu=0, T=0, Col=0)
+    MonteCarlo::PhotonState particle( 0ull );
+    MonteCarlo::ObserverParticleStateWrapper particle_wrapper( particle );
+  
+    particle.setEnergy( 1e-2 );
+    particle_wrapper.setAngleCosine( -0.5 );
+    particle.setTime( 5e-6 );
+
+    estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+    #pragma omp critical
+    {
+      FRENSIE_CHECK( estimator->hasUncommittedHistoryContribution() );
+    }
+  }
+
+  #pragma omp parallel num_threads( threads )
+  {
+    // bin 1 (E=1, Mu=0, T=0, Col=0)
+    MonteCarlo::PhotonState particle( 0ull );
+    MonteCarlo::ObserverParticleStateWrapper particle_wrapper( particle );
+  
+    particle.setEnergy( 0.11 );
+    particle_wrapper.setAngleCosine( -0.5 );
+    particle.setTime( 5e-6 );
+        
+    estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+    
+    // bin 2 (E=0, Mu=1, T=0, Col=0)
+    particle.setEnergy( 1e-2 );
+    particle_wrapper.setAngleCosine( 0.5 );
+    
+    estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+    
+    // bin 3 (E=1, Mu=1, T=0, Col=0)
+    particle.setEnergy( 0.11 );
+    
+    estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+    
+    // bin 4 (E=0, Mu=0, T=1, Col=0)
+    particle.setEnergy( 1e-2 );
+    particle_wrapper.setAngleCosine( -0.5 );
+    particle.setTime( 5e-5 );
+    
+    estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+    
+    // bin 5 (E=1, Mu=0, T=1, Col=0)
+    particle.setEnergy( 0.11 );
+    
+    estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+    
+    // bin 6 (E=0, Mu=1, T=1, Col=0)
+    particle.setEnergy( 1e-2 );
+    particle_wrapper.setAngleCosine( 0.5 );
+    
+    estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+    
+    // bin 7 (E=1, Mu=1, T=1, Col=0)
+    particle.setEnergy( 0.11 );
+    
+    estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+    // bin 8 (E=0, Mu=0, T=0, Col=1)
+    particle.setEnergy( 1e-2 );
+    particle_wrapper.setAngleCosine( -0.5 );
+    particle.setTime( 5e-6 );
+    particle.incrementCollisionNumber();
+    
+    estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+    
+    // bin 9 (E=1, Mu=0, T=0, Col=1)
+    particle.setEnergy( 0.11 );
+    
+    estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+    
+    // bin 10 (E=0, Mu=1, T=0, Col=1)
+    particle.setEnergy( 1e-2 );
+    particle_wrapper.setAngleCosine( 0.5 );
+    
+    estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+    
+    // bin 11 (E=1, Mu=1, T=0, Col=1)
+    particle.setEnergy( 0.11 );
+    
+    estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+    // bin 12 (E=0, Mu=0, T=1, Col=1)
+    particle.setEnergy( 1e-2 );
+    particle_wrapper.setAngleCosine( -0.5 );
+    particle.setTime( 5e-5 );
+    
+    estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+    
+    // bin 13 (E=1, Mu=0, T=1, Col=1)
+    particle.setEnergy( 0.11 );
+    
+    estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+    
+    // bin 14 (E=0, Mu=1, T=1, Col=1)
+    particle.setEnergy( 1e-2 );
+    particle_wrapper.setAngleCosine( 0.5 );
+    
+    estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+    
+    // bin 15 (E=1, Mu=1, T=1, Col=1)
+    particle.setEnergy( 0.11 );
+    
+    estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+    
+    // Commit the contributions
+    estimator->commitHistoryContribution();
+  }
+
+  for( unsigned i = 0; i < threads; ++i )
+  {
+    FRENSIE_CHECK( !estimator->hasUncommittedHistoryContribution( i ) );
+  }
+
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( threads );
+  MonteCarlo::ParticleHistoryObserver::setElapsedTime( 1.0 );
+
+  // Check the total bin data moments
+  Utility::ArrayView<const double> total_bin_first_moments =
+    estimator->getTotalBinDataFirstMoments();
+
+  Utility::ArrayView<const double> total_bin_second_moments =
+    estimator->getTotalBinDataSecondMoments();
+
+  FRENSIE_CHECK_EQUAL( total_bin_first_moments,
+                       std::vector<double>( 32, 2.0*threads ) );
+  FRENSIE_CHECK_EQUAL( total_bin_second_moments,
+                       std::vector<double>( 32, 4.0*threads ) );
+  
+  // Check the entity bin data moments
+  Utility::ArrayView<const double> entity_bin_first_moments =
+    estimator->getEntityBinDataFirstMoments( 0 );
+
+  Utility::ArrayView<const double> entity_bin_second_moments =
+    estimator->getEntityBinDataSecondMoments( 0 );
+
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( 32, threads ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 32, threads ) );
+
+  entity_bin_first_moments = estimator->getEntityBinDataFirstMoments( 1 );
+  entity_bin_second_moments = estimator->getEntityBinDataSecondMoments( 1 );
+
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( 32, threads ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 32, threads ) );
+
+  // Check the entity total data moments
+  FRENSIE_REQUIRE( estimator->isTotalDataAvailable() );
+  
+  Utility::ArrayView<const double> entity_total_first_moments =
+    estimator->getEntityTotalDataFirstMoments( 0 );
+
+  Utility::ArrayView<const double> entity_total_second_moments =
+    estimator->getEntityTotalDataSecondMoments( 0 );
+
+  Utility::ArrayView<const double> entity_total_third_moments =
+    estimator->getEntityTotalDataThirdMoments( 0 );
+
+  Utility::ArrayView<const double> entity_total_fourth_moments =
+    estimator->getEntityTotalDataFourthMoments( 0 );
+
+  FRENSIE_CHECK_EQUAL( entity_total_first_moments,
+                       std::vector<double>( 2, 16.0*threads ) );
+  FRENSIE_CHECK_EQUAL( entity_total_second_moments,
+                       std::vector<double>( 2, 256.0*threads ) );
+  FRENSIE_CHECK_EQUAL( entity_total_third_moments,
+                       std::vector<double>( 2, 4096.0*threads ) );
+  FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
+                       std::vector<double>( 2, 65536.0*threads ) );
+
+  entity_total_first_moments = estimator->getEntityTotalDataFirstMoments( 1 );
+  entity_total_second_moments = estimator->getEntityTotalDataSecondMoments( 1 );
+  entity_total_third_moments = estimator->getEntityTotalDataThirdMoments( 1 );
+  entity_total_fourth_moments = estimator->getEntityTotalDataFourthMoments( 1 );
+
+  FRENSIE_CHECK_EQUAL( entity_total_first_moments,
+                       std::vector<double>( 2, 16.0*threads ) );
+  FRENSIE_CHECK_EQUAL( entity_total_second_moments,
+                       std::vector<double>( 2, 256.0*threads ) );
+  FRENSIE_CHECK_EQUAL( entity_total_third_moments,
+                       std::vector<double>( 2, 4096.0*threads ) );
+  FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
+                       std::vector<double>( 2, 65536.0*threads ) );
+
+  // Check the entity processed total data
+  std::vector<double> entity_total_mean, entity_total_re, entity_total_vov,
+    entity_total_fom;
+
+  estimator->getEntityTotalProcessedData( 0,
+                                          entity_total_mean,
+                                          entity_total_re,
+                                          entity_total_vov,
+                                          entity_total_fom );
+
+  FRENSIE_CHECK_EQUAL( entity_total_mean, std::vector<double>( 2, 160.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_re, std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_vov, std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_fom, std::vector<double>( 2, 0.0 ) );
+
+  estimator->getEntityTotalProcessedData( 1,
+                                          entity_total_mean,
+                                          entity_total_re,
+                                          entity_total_vov,
+                                          entity_total_fom );
+
+  FRENSIE_CHECK_EQUAL( entity_total_mean, std::vector<double>( 2, 80.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_re, std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_vov, std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_fom, std::vector<double>( 2, 0.0 ) );
+
+  // Check the total data moments
+  Utility::ArrayView<const double> total_first_moments =
+    estimator->getTotalDataFirstMoments();
+
+  Utility::ArrayView<const double> total_second_moments =
+    estimator->getTotalDataSecondMoments();
+
+  Utility::ArrayView<const double> total_third_moments =
+    estimator->getTotalDataThirdMoments();
+
+  Utility::ArrayView<const double> total_fourth_moments =
+    estimator->getTotalDataFourthMoments();
+
+  FRENSIE_CHECK_EQUAL( total_first_moments,
+                       std::vector<double>( 2, 32.0*threads ) );
+  FRENSIE_CHECK_EQUAL( total_second_moments,
+                       std::vector<double>( 2, 1024.0*threads ) );
+  FRENSIE_CHECK_EQUAL( total_third_moments,
+                       std::vector<double>( 2, 32768.0*threads ) );
+  FRENSIE_CHECK_EQUAL( total_fourth_moments,
+                       std::vector<double>( 2, 1048576.0*threads ) );
+
+  // Check the processed total data
+  std::vector<double> total_mean, total_re, total_vov, total_fom;
+
+  estimator->getTotalProcessedData( total_mean, total_re, total_vov, total_fom );
+
+  FRENSIE_CHECK_EQUAL( total_mean, std::vector<double>( 2, 320.0/3 ) );
+  FRENSIE_CHECK_EQUAL( total_re, std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( total_vov, std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( total_fom, std::vector<double>( 2, 0.0 ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a partial history contribution can be added to the estimator
+FRENSIE_UNIT_TEST( StandardEntityEstimator,
+                   addPartialHistoryRangeContribution )
+{
+  std::shared_ptr<TestStandardEntityEstimator> estimator;
+  initializeStandardEntityEstimator( estimator, true );
+
+  FRENSIE_CHECK( !estimator->hasUncommittedHistoryContribution() );
+
+  // bin 0, bin 4 (E=0, Mu=0, T=0 and T=1, Col=0)
+  MonteCarlo::PhotonState particle( 0ull );
+  MonteCarlo::ObserverParticleStateWrapper particle_wrapper( particle );
+  
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( -0.5 );
+  particle.setTime( 0.0 );
+  particle_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 134906606.10000002 );
+
+  estimator->addPartialHistoryRangeContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryRangeContribution( 1, particle_wrapper, 1.0 );
+
+  FRENSIE_CHECK( estimator->hasUncommittedHistoryContribution() );
+
+  // bin 1, bin 5 (E=1, Mu=0, T=0 and T=1, Col=0)
+  particle.setEnergy( 0.11 );
+
+  estimator->addPartialHistoryRangeContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryRangeContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 2, bin 6 (E=0, Mu=1, T=0 and T=1, Col=0)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( 0.5 );
+
+  estimator->addPartialHistoryRangeContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryRangeContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 3, bin 7 (E=1, Mu=1, T=0 and T=1, Col=0)
+  particle.setEnergy( 0.11 );
+
+  estimator->addPartialHistoryRangeContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryRangeContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 8, bin 12 (E=0, Mu=0, T=0 and T=1, Col=1)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( -0.5 );
+  particle.incrementCollisionNumber();
+
+  estimator->addPartialHistoryRangeContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryRangeContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 9, bin 13 (E=1, Mu=0, T=0 and T=1, Col=1)
+  particle.setEnergy( 0.11 );
+
+  estimator->addPartialHistoryRangeContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryRangeContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 10, bin 14 (E=0, Mu=1, T=0 and T=1, Col=1)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( 0.5 );
+
+  estimator->addPartialHistoryRangeContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryRangeContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 11, bin 15 (E=1, Mu=1, T=0 and T=1, Col=1)
+  particle.setEnergy( 0.11 );
+
+  estimator->addPartialHistoryRangeContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryRangeContribution( 1, particle_wrapper, 1.0 );
+
+  // Commit the contributions
+  estimator->commitHistoryContribution();
+
+  FRENSIE_CHECK( !estimator->hasUncommittedHistoryContribution() );
+
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( 1.0 );
+  MonteCarlo::ParticleHistoryObserver::setElapsedTime( 1.0 );
+
+  // Check the total bin data moments
+  Utility::ArrayView<const double> total_bin_first_moments =
+    estimator->getTotalBinDataFirstMoments();
+
+  Utility::ArrayView<const double> total_bin_second_moments =
+    estimator->getTotalBinDataSecondMoments();
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( total_bin_first_moments,
+                                   std::vector<double>( 32, 4e-3 ),
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( total_bin_second_moments,
+                                   std::vector<double>( 32, 1.6e-5 ),
+                                   1e-15 );
+  
+  // Check the entity bin data moments
+  Utility::ArrayView<const double> entity_bin_first_moments =
+    estimator->getEntityBinDataFirstMoments( 0 );
+
+  Utility::ArrayView<const double> entity_bin_second_moments =
+    estimator->getEntityBinDataSecondMoments( 0 );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_bin_first_moments,
+                                   std::vector<double>( 32, 2e-3 ),
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_bin_second_moments,
+                                   std::vector<double>( 32, 4e-6 ),
+                                   1e-15 );
+
+  entity_bin_first_moments = estimator->getEntityBinDataFirstMoments( 1 );
+  entity_bin_second_moments = estimator->getEntityBinDataSecondMoments( 1 );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_bin_first_moments,
+                                   std::vector<double>( 32, 2e-3 ),
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_bin_second_moments,
+                                   std::vector<double>( 32, 4e-6 ),
+                                   1e-15 );
+
+  // Check the entity total data moments
+  FRENSIE_REQUIRE( estimator->isTotalDataAvailable() );
+  
+  Utility::ArrayView<const double> entity_total_first_moments =
+    estimator->getEntityTotalDataFirstMoments( 0 );
+
+  Utility::ArrayView<const double> entity_total_second_moments =
+    estimator->getEntityTotalDataSecondMoments( 0 );
+
+  Utility::ArrayView<const double> entity_total_third_moments =
+    estimator->getEntityTotalDataThirdMoments( 0 );
+
+  Utility::ArrayView<const double> entity_total_fourth_moments =
+    estimator->getEntityTotalDataFourthMoments( 0 );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_total_first_moments,
+                                   std::vector<double>( 2, 0.032 ),
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_total_second_moments,
+                                   std::vector<double>( 2, 0.001024 ),
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_total_third_moments,
+                                   std::vector<double>( 2, 3.2768e-05 ),
+                                   1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_total_fourth_moments,
+                                   std::vector<double>( 2, 1.048576e-06 ),
+                                   1e-14 );
+
+  entity_total_first_moments = estimator->getEntityTotalDataFirstMoments( 1 );
+  entity_total_second_moments = estimator->getEntityTotalDataSecondMoments( 1 );
+  entity_total_third_moments = estimator->getEntityTotalDataThirdMoments( 1 );
+  entity_total_fourth_moments = estimator->getEntityTotalDataFourthMoments( 1 );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_total_first_moments,
+                                   std::vector<double>( 2, 0.032 ),
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_total_second_moments,
+                                   std::vector<double>( 2, 0.001024 ),
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_total_third_moments,
+                                   std::vector<double>( 2, 3.2768e-05 ),
+                                   1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_total_fourth_moments,
+                                   std::vector<double>( 2, 1.048576e-06 ),
+                                   1e-14 );
+
+  // Check the entity processed total data
+  std::vector<double> entity_total_mean, entity_total_re, entity_total_vov,
+    entity_total_fom;
+
+  estimator->getEntityTotalProcessedData( 0,
+                                          entity_total_mean,
+                                          entity_total_re,
+                                          entity_total_vov,
+                                          entity_total_fom );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_total_mean,
+                                   std::vector<double>( 2, 0.32 ),
+                                   1e-15 );
+  FRENSIE_CHECK_SMALL( entity_total_re, 1e-15 );
+  FRENSIE_CHECK_SMALL( entity_total_vov, 1e-15 );
+  FRENSIE_CHECK_SMALL( entity_total_fom, 1e-15 );
+
+  estimator->getEntityTotalProcessedData( 1,
+                                          entity_total_mean,
+                                          entity_total_re,
+                                          entity_total_vov,
+                                          entity_total_fom );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_total_mean,
+                                   std::vector<double>( 2, 0.16 ),
+                                   1e-15 );
+  FRENSIE_CHECK_SMALL( entity_total_re, 1e-15 );
+  FRENSIE_CHECK_SMALL( entity_total_vov, 1e-15 );
+  FRENSIE_CHECK_SMALL( entity_total_fom, 1e-15 );
+
+  // Check the total data moments
+  Utility::ArrayView<const double> total_first_moments =
+    estimator->getTotalDataFirstMoments();
+
+  Utility::ArrayView<const double> total_second_moments =
+    estimator->getTotalDataSecondMoments();
+
+  Utility::ArrayView<const double> total_third_moments =
+    estimator->getTotalDataThirdMoments();
+
+  Utility::ArrayView<const double> total_fourth_moments =
+    estimator->getTotalDataFourthMoments();
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( total_first_moments,
+                                   std::vector<double>( 2, 0.064 ),
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( total_second_moments,
+                                   std::vector<double>( 2, 0.004096 ),
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( total_third_moments,
+                                   std::vector<double>( 2, 0.000262144 ),
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( total_fourth_moments,
+                                   std::vector<double>( 2, 1.6777216e-05 ),
+                                   1e-15 );
+
+  // Check the processed total data
+  std::vector<double> total_mean, total_re, total_vov, total_fom;
+
+  estimator->getTotalProcessedData( total_mean, total_re, total_vov, total_fom );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( total_mean,
+                                   std::vector<double>( 2, 0.64/3 ),
+                                   1e-15 );
+  FRENSIE_CHECK_SMALL( total_re, 1e-15 );
+  FRENSIE_CHECK_SMALL( total_vov, 1e-15 );
+  FRENSIE_CHECK_SMALL( total_fom, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a partial history contribution can be added to the estimator
+FRENSIE_UNIT_TEST( StandardEntityEstimator,
+                   addPartialHistoryRangeContribution_thread_safe )
+{
+  std::shared_ptr<TestStandardEntityEstimator> estimator;
+  initializeStandardEntityEstimator( estimator, true );
+
+  // Enable thread support
+  estimator->enableThreadSupport( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
+
+  unsigned threads =
+    Utility::OpenMPProperties::getRequestedNumberOfThreads();
+
+  for( unsigned i = 0; i < threads; ++i )
+  {
+    FRENSIE_CHECK( !estimator->hasUncommittedHistoryContribution( i ) );
+  }
+
+  #pragma omp parallel num_threads( threads )
+  {
+    // bin 0, bin 4 (E=0, Mu=0, T=0 and T=1, Col=0)
+    MonteCarlo::PhotonState particle( 0ull );
+    MonteCarlo::ObserverParticleStateWrapper particle_wrapper( particle );
+  
+    particle.setEnergy( 1e-2 );
+    particle_wrapper.setAngleCosine( -0.5 );
+    particle.setTime( 0.0 );
+    particle_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 134906606.10000002 );
+    
+    estimator->addPartialHistoryRangeContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryRangeContribution( 1, particle_wrapper, 1.0 );
+
+    #pragma omp critical
+    {
+      FRENSIE_CHECK( estimator->hasUncommittedHistoryContribution() );
+    }
+  }
+
+  #pragma omp parallel num_threads( threads )
+  {
+    // bin 1, bin 5 (E=1, Mu=0, T=0 and T=1, Col=0)
+    MonteCarlo::PhotonState particle( 0ull );
+    MonteCarlo::ObserverParticleStateWrapper particle_wrapper( particle );
+  
+    particle.setEnergy( 0.11 );
+    particle_wrapper.setAngleCosine( -0.5 );
+    particle.setTime( 0.0 );
+    particle_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 134906606.10000002 );
+
+    estimator->addPartialHistoryRangeContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryRangeContribution( 1, particle_wrapper, 1.0 );
+
+    // bin 2, bin 6 (E=0, Mu=1, T=0 and T=1, Col=0)
+    particle.setEnergy( 1e-2 );
+    particle_wrapper.setAngleCosine( 0.5 );
+    
+    estimator->addPartialHistoryRangeContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryRangeContribution( 1, particle_wrapper, 1.0 );
+    
+    // bin 3, bin 7 (E=1, Mu=1, T=0 and T=1, Col=0)
+    particle.setEnergy( 0.11 );
+    
+    estimator->addPartialHistoryRangeContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryRangeContribution( 1, particle_wrapper, 1.0 );
+    
+    // bin 8, bin 12 (E=0, Mu=0, T=0 and T=1, Col=1)
+    particle.setEnergy( 1e-2 );
+    particle_wrapper.setAngleCosine( -0.5 );
+    particle.incrementCollisionNumber();
+    
+    estimator->addPartialHistoryRangeContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryRangeContribution( 1, particle_wrapper, 1.0 );
+
+    // bin 9, bin 13 (E=1, Mu=0, T=0 and T=1, Col=1)
+    particle.setEnergy( 0.11 );
+    
+    estimator->addPartialHistoryRangeContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryRangeContribution( 1, particle_wrapper, 1.0 );
+    
+    // bin 10, bin 14 (E=0, Mu=1, T=0 and T=1, Col=1)
+    particle.setEnergy( 1e-2 );
+    particle_wrapper.setAngleCosine( 0.5 );
+    
+    estimator->addPartialHistoryRangeContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryRangeContribution( 1, particle_wrapper, 1.0 );
+    
+    // bin 11, bin 15 (E=1, Mu=1, T=0 and T=1, Col=1)
+    particle.setEnergy( 0.11 );
+    
+    estimator->addPartialHistoryRangeContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryRangeContribution( 1, particle_wrapper, 1.0 );
+    
+    // Commit the contributions
+    estimator->commitHistoryContribution();
+  }
+
+  for( unsigned i = 0; i < threads; ++i )
+  {
+    FRENSIE_CHECK( !estimator->hasUncommittedHistoryContribution() );
+  }
+  
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( threads );
+  MonteCarlo::ParticleHistoryObserver::setElapsedTime( 1.0 );
+
+  // Check the total bin data moments
+  Utility::ArrayView<const double> total_bin_first_moments =
+    estimator->getTotalBinDataFirstMoments();
+
+  Utility::ArrayView<const double> total_bin_second_moments =
+    estimator->getTotalBinDataSecondMoments();
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( total_bin_first_moments,
+                                   std::vector<double>( 32, 4e-3*threads ),
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( total_bin_second_moments,
+                                   std::vector<double>( 32, 1.6e-5*threads ),
+                                   1e-15 );
+  
+  // Check the entity bin data moments
+  Utility::ArrayView<const double> entity_bin_first_moments =
+    estimator->getEntityBinDataFirstMoments( 0 );
+
+  Utility::ArrayView<const double> entity_bin_second_moments =
+    estimator->getEntityBinDataSecondMoments( 0 );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_bin_first_moments,
+                                   std::vector<double>( 32, 2e-3*threads ),
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_bin_second_moments,
+                                   std::vector<double>( 32, 4e-6*threads ),
+                                   1e-15 );
+
+  entity_bin_first_moments = estimator->getEntityBinDataFirstMoments( 1 );
+  entity_bin_second_moments = estimator->getEntityBinDataSecondMoments( 1 );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_bin_first_moments,
+                                   std::vector<double>( 32, 2e-3*threads ),
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_bin_second_moments,
+                                   std::vector<double>( 32, 4e-6*threads ),
+                                   1e-15 );
+
+  // Check the entity total data moments
+  FRENSIE_REQUIRE( estimator->isTotalDataAvailable() );
+  
+  Utility::ArrayView<const double> entity_total_first_moments =
+    estimator->getEntityTotalDataFirstMoments( 0 );
+
+  Utility::ArrayView<const double> entity_total_second_moments =
+    estimator->getEntityTotalDataSecondMoments( 0 );
+
+  Utility::ArrayView<const double> entity_total_third_moments =
+    estimator->getEntityTotalDataThirdMoments( 0 );
+
+  Utility::ArrayView<const double> entity_total_fourth_moments =
+    estimator->getEntityTotalDataFourthMoments( 0 );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_total_first_moments,
+                                   std::vector<double>( 2, 0.032*threads ),
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_total_second_moments,
+                                   std::vector<double>( 2, 0.001024*threads ),
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_total_third_moments,
+                                   std::vector<double>( 2, 3.2768e-05*threads ),
+                                   1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_total_fourth_moments,
+                                   std::vector<double>( 2, 1.048576e-06*threads ),
+                                   1e-14 );
+
+  entity_total_first_moments = estimator->getEntityTotalDataFirstMoments( 1 );
+  entity_total_second_moments = estimator->getEntityTotalDataSecondMoments( 1 );
+  entity_total_third_moments = estimator->getEntityTotalDataThirdMoments( 1 );
+  entity_total_fourth_moments = estimator->getEntityTotalDataFourthMoments( 1 );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_total_first_moments,
+                                   std::vector<double>( 2, 0.032*threads ),
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_total_second_moments,
+                                   std::vector<double>( 2, 0.001024*threads ),
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_total_third_moments,
+                                   std::vector<double>( 2, 3.2768e-05*threads ),
+                                   1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_total_fourth_moments,
+                                   std::vector<double>( 2, 1.048576e-06*threads ),
+                                   1e-14 );
+
+  // Check the entity processed total data
+  std::vector<double> entity_total_mean, entity_total_re, entity_total_vov,
+    entity_total_fom;
+
+  estimator->getEntityTotalProcessedData( 0,
+                                          entity_total_mean,
+                                          entity_total_re,
+                                          entity_total_vov,
+                                          entity_total_fom );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_total_mean,
+                                   std::vector<double>( 2, 0.32 ),
+                                   1e-15 );
+  FRENSIE_CHECK_SMALL( entity_total_re, 1e-6 );
+  FRENSIE_CHECK_SMALL( entity_total_vov, 1e-15 );
+
+  if( entity_total_re.front() > 0.0 )
+  {
+    FRENSIE_CHECK_FLOATING_EQUALITY( entity_total_fom,
+                                     std::vector<double>( 2, 1.0/(entity_total_re.front()*entity_total_re.front()) ),
+                                     1e-15 );
+  }
+  else
+  {
+    FRENSIE_CHECK_SMALL( entity_total_fom, 1e-15 );
+  }
+
+  estimator->getEntityTotalProcessedData( 1,
+                                          entity_total_mean,
+                                          entity_total_re,
+                                          entity_total_vov,
+                                          entity_total_fom );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( entity_total_mean,
+                                   std::vector<double>( 2, 0.16 ),
+                                   1e-15 );
+  FRENSIE_CHECK_SMALL( entity_total_re, 1e-6 );
+  FRENSIE_CHECK_SMALL( entity_total_vov, 1e-15 );
+
+  if( entity_total_re.front() > 0.0 )
+  {
+    FRENSIE_CHECK_FLOATING_EQUALITY( entity_total_fom,
+                                     std::vector<double>( 2, 1.0/(entity_total_re.front()*entity_total_re.front()) ),
+                                     1e-15 );
+  }
+  else
+  {
+    FRENSIE_CHECK_SMALL( entity_total_fom, 1e-15 );
+  }
+
+  // Check the total data moments
+  Utility::ArrayView<const double> total_first_moments =
+    estimator->getTotalDataFirstMoments();
+
+  Utility::ArrayView<const double> total_second_moments =
+    estimator->getTotalDataSecondMoments();
+
+  Utility::ArrayView<const double> total_third_moments =
+    estimator->getTotalDataThirdMoments();
+
+  Utility::ArrayView<const double> total_fourth_moments =
+    estimator->getTotalDataFourthMoments();
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( total_first_moments,
+                                   std::vector<double>( 2, 0.064*threads ),
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( total_second_moments,
+                                   std::vector<double>( 2, 0.004096*threads ),
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( total_third_moments,
+                                   std::vector<double>( 2, 0.000262144*threads ),
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( total_fourth_moments,
+                                   std::vector<double>( 2, 1.6777216e-05*threads ),
+                                   1e-15 );
+
+  // Check the processed total data
+  std::vector<double> total_mean, total_re, total_vov, total_fom;
+
+  estimator->getTotalProcessedData( total_mean, total_re, total_vov, total_fom );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( total_mean,
+                                   std::vector<double>( 2, 0.64/3 ),
+                                   1e-15 );
+  FRENSIE_CHECK_SMALL( total_re, 1e-6 );
+  FRENSIE_CHECK_SMALL( total_vov, 1e-15 );
+
+  if( total_re.front() > 0.0 )
+  {
+    FRENSIE_CHECK_FLOATING_EQUALITY( total_fom,
+                                     std::vector<double>( 2, 1.0/(total_re.front()*total_re.front()) ),
+                                     1e-15 );
+  }
+  else
+  {
+    FRENSIE_CHECK_SMALL( total_fom, 1e-15 );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a partial history contribution can be added to the estimator
+FRENSIE_UNIT_TEST( StandardEntityEstimator, resetData )
+{
+  std::shared_ptr<TestStandardEntityEstimator> estimator;
+  initializeStandardEntityEstimator( estimator );
+
+  FRENSIE_CHECK( !estimator->hasUncommittedHistoryContribution() );
+
+  // bin 0 (E=0, Mu=0, T=0, Col=0)
+  MonteCarlo::PhotonState particle( 0ull );
+  MonteCarlo::ObserverParticleStateWrapper particle_wrapper( particle );
+  
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( -0.5 );
+  particle.setTime( 5e-6 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  FRENSIE_CHECK( estimator->hasUncommittedHistoryContribution() );
+
+  // bin 1 (E=1, Mu=0, T=0, Col=0)
+  particle.setEnergy( 0.11 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 2 (E=0, Mu=1, T=0, Col=0)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( 0.5 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 3 (E=1, Mu=1, T=0, Col=0)
+  particle.setEnergy( 0.11 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 4 (E=0, Mu=0, T=1, Col=0)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( -0.5 );
+  particle.setTime( 5e-5 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 5 (E=1, Mu=0, T=1, Col=0)
+  particle.setEnergy( 0.11 );
+  
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 6 (E=0, Mu=1, T=1, Col=0)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( 0.5 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 7 (E=1, Mu=1, T=1, Col=0)
+  particle.setEnergy( 0.11 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 8 (E=0, Mu=0, T=0, Col=1)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( -0.5 );
+  particle.setTime( 5e-6 );
+  particle.incrementCollisionNumber();
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 9 (E=1, Mu=0, T=0, Col=1)
+  particle.setEnergy( 0.11 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 10 (E=0, Mu=1, T=0, Col=1)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( 0.5 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 11 (E=1, Mu=1, T=0, Col=1)
+  particle.setEnergy( 0.11 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 12 (E=0, Mu=0, T=1, Col=1)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( -0.5 );
+  particle.setTime( 5e-5 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 13 (E=1, Mu=0, T=1, Col=1)
+  particle.setEnergy( 0.11 );
+  
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 14 (E=0, Mu=1, T=1, Col=1)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( 0.5 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 15 (E=1, Mu=1, T=1, Col=1)
+  particle.setEnergy( 0.11 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // Commit the contributions
+  estimator->commitHistoryContribution();
+
+  FRENSIE_CHECK( !estimator->hasUncommittedHistoryContribution() );
+
+  // Reset the estimator data
+  estimator->resetData();
+
+  // Make sure all partial contributions have been deleted
+  FRENSIE_CHECK( !estimator->hasUncommittedHistoryContribution() );
+
+  // Check the total bin data moments
+  Utility::ArrayView<const double> total_bin_first_moments =
+    estimator->getTotalBinDataFirstMoments();
+
+  Utility::ArrayView<const double> total_bin_second_moments =
+    estimator->getTotalBinDataSecondMoments();
+
+  FRENSIE_CHECK_EQUAL( total_bin_first_moments,
+                       std::vector<double>( 32, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( total_bin_second_moments,
+                       std::vector<double>( 32, 0.0 ) );
+  
+  // Check the entity bin data moments
+  Utility::ArrayView<const double> entity_bin_first_moments =
+    estimator->getEntityBinDataFirstMoments( 0 );
+
+  Utility::ArrayView<const double> entity_bin_second_moments =
+    estimator->getEntityBinDataSecondMoments( 0 );
+
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( 32, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 32, 0.0 ) );
+
+  entity_bin_first_moments = estimator->getEntityBinDataFirstMoments( 1 );
+  entity_bin_second_moments = estimator->getEntityBinDataSecondMoments( 1 );
+
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( 32, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 32, 0.0 ) );
+
+  // Check the entity total data moments
+  FRENSIE_REQUIRE( estimator->isTotalDataAvailable() );
+  
+  Utility::ArrayView<const double> entity_total_first_moments =
+    estimator->getEntityTotalDataFirstMoments( 0 );
+
+  Utility::ArrayView<const double> entity_total_second_moments =
+    estimator->getEntityTotalDataSecondMoments( 0 );
+
+  Utility::ArrayView<const double> entity_total_third_moments =
+    estimator->getEntityTotalDataThirdMoments( 0 );
+
+  Utility::ArrayView<const double> entity_total_fourth_moments =
+    estimator->getEntityTotalDataFourthMoments( 0 );
+
+  FRENSIE_CHECK_EQUAL( entity_total_first_moments,
+                       std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_second_moments,
+                       std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_third_moments,
+                       std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
+                       std::vector<double>( 2, 0.0 ) );
+
+  entity_total_first_moments = estimator->getEntityTotalDataFirstMoments( 1 );
+  entity_total_second_moments = estimator->getEntityTotalDataSecondMoments( 1 );
+  entity_total_third_moments = estimator->getEntityTotalDataThirdMoments( 1 );
+  entity_total_fourth_moments = estimator->getEntityTotalDataFourthMoments( 1 );
+
+  FRENSIE_CHECK_EQUAL( entity_total_first_moments,
+                       std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_second_moments,
+                       std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_third_moments,
+                       std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
+                       std::vector<double>( 2, 0.0 ) );
+
+  // Check the total data moments
+  Utility::ArrayView<const double> total_first_moments =
+    estimator->getTotalDataFirstMoments();
+
+  Utility::ArrayView<const double> total_second_moments =
+    estimator->getTotalDataSecondMoments();
+
+  Utility::ArrayView<const double> total_third_moments =
+    estimator->getTotalDataThirdMoments();
+
+  Utility::ArrayView<const double> total_fourth_moments =
+    estimator->getTotalDataFourthMoments();
+
+  FRENSIE_CHECK_EQUAL( total_first_moments,
+                       std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( total_second_moments,
+                       std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( total_third_moments,
+                       std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( total_fourth_moments,
+                       std::vector<double>( 2, 0.0 ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the estimator data can be reduced
+FRENSIE_UNIT_TEST( StandardEntityEstimator, reduceData )
+{
+  std::shared_ptr<TestStandardEntityEstimator> estimator;
+  initializeStandardEntityEstimator( estimator );
+
+  // bin 0 (E=0, Mu=0, T=0, Col=0)
+  MonteCarlo::PhotonState particle( 0ull );
+  MonteCarlo::ObserverParticleStateWrapper particle_wrapper( particle );
+  
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( -0.5 );
+  particle.setTime( 5e-6 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 1 (E=1, Mu=0, T=0, Col=0)
+  particle.setEnergy( 0.11 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 2 (E=0, Mu=1, T=0, Col=0)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( 0.5 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 3 (E=1, Mu=1, T=0, Col=0)
+  particle.setEnergy( 0.11 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 4 (E=0, Mu=0, T=1, Col=0)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( -0.5 );
+  particle.setTime( 5e-5 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 5 (E=1, Mu=0, T=1, Col=0)
+  particle.setEnergy( 0.11 );
+  
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 6 (E=0, Mu=1, T=1, Col=0)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( 0.5 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 7 (E=1, Mu=1, T=1, Col=0)
+  particle.setEnergy( 0.11 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 8 (E=0, Mu=0, T=0, Col=1)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( -0.5 );
+  particle.setTime( 5e-6 );
+  particle.incrementCollisionNumber();
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 9 (E=1, Mu=0, T=0, Col=1)
+  particle.setEnergy( 0.11 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 10 (E=0, Mu=1, T=0, Col=1)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( 0.5 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 11 (E=1, Mu=1, T=0, Col=1)
+  particle.setEnergy( 0.11 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 12 (E=0, Mu=0, T=1, Col=1)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( -0.5 );
+  particle.setTime( 5e-5 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 13 (E=1, Mu=0, T=1, Col=1)
+  particle.setEnergy( 0.11 );
+  
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 14 (E=0, Mu=1, T=1, Col=1)
+  particle.setEnergy( 1e-2 );
+  particle_wrapper.setAngleCosine( 0.5 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // bin 15 (E=1, Mu=1, T=1, Col=1)
+  particle.setEnergy( 0.11 );
+
+  estimator->addPartialHistoryPointContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryPointContribution( 1, particle_wrapper, 1.0 );
+
+  // Commit the contributions
+  estimator->commitHistoryContribution();
+
+  std::shared_ptr<const Utility::Communicator> comm =
+    Utility::Communicator::getDefault();
+
+  comm->barrier();
+
+  estimator->reduceData( *comm, 0 );
+
+  unsigned procs = comm->size();
+
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( procs );
+  MonteCarlo::ParticleHistoryObserver::setElapsedTime( 1.0 );
+
+  if( comm->rank() == 0 )
+  {
+    // Check the total bin data moments
+    Utility::ArrayView<const double> total_bin_first_moments =
+      estimator->getTotalBinDataFirstMoments();
+
+    Utility::ArrayView<const double> total_bin_second_moments =
+      estimator->getTotalBinDataSecondMoments();
+    
+    FRENSIE_CHECK_EQUAL( total_bin_first_moments,
+                         std::vector<double>( 32, 2.0*procs ) );
+    FRENSIE_CHECK_EQUAL( total_bin_second_moments,
+                         std::vector<double>( 32, 4.0*procs ) );
+  
+    // Check the entity bin data moments
+    Utility::ArrayView<const double> entity_bin_first_moments =
+      estimator->getEntityBinDataFirstMoments( 0 );
+    
+    Utility::ArrayView<const double> entity_bin_second_moments =
+      estimator->getEntityBinDataSecondMoments( 0 );
+    
+    FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                         std::vector<double>( 32, procs ) );
+    FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                         std::vector<double>( 32, procs ) );
+
+    entity_bin_first_moments = estimator->getEntityBinDataFirstMoments( 1 );
+    entity_bin_second_moments = estimator->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                         std::vector<double>( 32, procs ) );
+    FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                         std::vector<double>( 32, procs ) );
+    
+    // Check the entity total data moments
+    FRENSIE_REQUIRE( estimator->isTotalDataAvailable() );
+    
+    Utility::ArrayView<const double> entity_total_first_moments =
+      estimator->getEntityTotalDataFirstMoments( 0 );
+    
+    Utility::ArrayView<const double> entity_total_second_moments =
+      estimator->getEntityTotalDataSecondMoments( 0 );
+    
+    Utility::ArrayView<const double> entity_total_third_moments =
+      estimator->getEntityTotalDataThirdMoments( 0 );
+    
+    Utility::ArrayView<const double> entity_total_fourth_moments =
+      estimator->getEntityTotalDataFourthMoments( 0 );
+    
+    FRENSIE_CHECK_EQUAL( entity_total_first_moments,
+                         std::vector<double>( 2, 16.0*procs ) );
+    FRENSIE_CHECK_EQUAL( entity_total_second_moments,
+                         std::vector<double>( 2, 256.0*procs ) );
+    FRENSIE_CHECK_EQUAL( entity_total_third_moments,
+                         std::vector<double>( 2, 4096.0*procs ) );
+    FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
+                         std::vector<double>( 2, 65536.0*procs ) );
+    
+    entity_total_first_moments = estimator->getEntityTotalDataFirstMoments( 1 );
+    entity_total_second_moments = estimator->getEntityTotalDataSecondMoments( 1 );
+    entity_total_third_moments = estimator->getEntityTotalDataThirdMoments( 1 );
+    entity_total_fourth_moments = estimator->getEntityTotalDataFourthMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( entity_total_first_moments,
+                         std::vector<double>( 2, 16.0*procs ) );
+    FRENSIE_CHECK_EQUAL( entity_total_second_moments,
+                         std::vector<double>( 2, 256.0*procs ) );
+    FRENSIE_CHECK_EQUAL( entity_total_third_moments,
+                         std::vector<double>( 2, 4096.0*procs ) );
+    FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
+                         std::vector<double>( 2, 65536.0*procs ) );
+    
+    // Check the entity processed total data
+    std::vector<double> entity_total_mean, entity_total_re, entity_total_vov,
+      entity_total_fom;
+    
+    estimator->getEntityTotalProcessedData( 0,
+                                            entity_total_mean,
+                                            entity_total_re,
+                                            entity_total_vov,
+                                            entity_total_fom );
+    
+    FRENSIE_CHECK_EQUAL( entity_total_mean, std::vector<double>( 2, 160.0 ) );
+    FRENSIE_CHECK_EQUAL( entity_total_re, std::vector<double>( 2, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( entity_total_vov, std::vector<double>( 2, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( entity_total_fom, std::vector<double>( 2, 0.0 ) );
+    
+    estimator->getEntityTotalProcessedData( 1,
+                                            entity_total_mean,
+                                            entity_total_re,
+                                            entity_total_vov,
+                                            entity_total_fom );
+    
+    FRENSIE_CHECK_EQUAL( entity_total_mean, std::vector<double>( 2, 80.0 ) );
+    FRENSIE_CHECK_EQUAL( entity_total_re, std::vector<double>( 2, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( entity_total_vov, std::vector<double>( 2, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( entity_total_fom, std::vector<double>( 2, 0.0 ) );
+    
+    // Check the total data moments
+    Utility::ArrayView<const double> total_first_moments =
+      estimator->getTotalDataFirstMoments();
+    
+    Utility::ArrayView<const double> total_second_moments =
+      estimator->getTotalDataSecondMoments();
+    
+    Utility::ArrayView<const double> total_third_moments =
+      estimator->getTotalDataThirdMoments();
+    
+    Utility::ArrayView<const double> total_fourth_moments =
+      estimator->getTotalDataFourthMoments();
+    
+    FRENSIE_CHECK_EQUAL( total_first_moments,
+                         std::vector<double>( 2, 32.0*procs ) );
+    FRENSIE_CHECK_EQUAL( total_second_moments,
+                         std::vector<double>( 2, 1024.0*procs ) );
+    FRENSIE_CHECK_EQUAL( total_third_moments,
+                         std::vector<double>( 2, 32768.0*procs ) );
+    FRENSIE_CHECK_EQUAL( total_fourth_moments,
+                         std::vector<double>( 2, 1048576.0*procs ) );
+    
+    // Check the processed total data
+    std::vector<double> total_mean, total_re, total_vov, total_fom;
+    
+    estimator->getTotalProcessedData( total_mean, total_re, total_vov, total_fom );
+    
+    FRENSIE_CHECK_EQUAL( total_mean, std::vector<double>( 2, 320.0/3 ) );
+    FRENSIE_CHECK_EQUAL( total_re, std::vector<double>( 2, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( total_vov, std::vector<double>( 2, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( total_fom, std::vector<double>( 2, 0.0 ) );
+  }
+  // Make sure that estimators on other processes were reset
+  else
+  {
+    // Check the total bin data moments
+    Utility::ArrayView<const double> total_bin_first_moments =
+      estimator->getTotalBinDataFirstMoments();
+
+    Utility::ArrayView<const double> total_bin_second_moments =
+      estimator->getTotalBinDataSecondMoments();
+
+    FRENSIE_CHECK_EQUAL( total_bin_first_moments,
+                         std::vector<double>( 32, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( total_bin_second_moments,
+                         std::vector<double>( 32, 0.0 ) );
+    
+    // Check the entity bin data moments
+    Utility::ArrayView<const double> entity_bin_first_moments =
+      estimator->getEntityBinDataFirstMoments( 0 );
+    
+    Utility::ArrayView<const double> entity_bin_second_moments =
+      estimator->getEntityBinDataSecondMoments( 0 );
+    
+    FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                         std::vector<double>( 32, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                         std::vector<double>( 32, 0.0 ) );
+    
+    entity_bin_first_moments = estimator->getEntityBinDataFirstMoments( 1 );
+    entity_bin_second_moments = estimator->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                         std::vector<double>( 32, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                         std::vector<double>( 32, 0.0 ) );
+    
+    // Check the entity total data moments
+    FRENSIE_REQUIRE( estimator->isTotalDataAvailable() );
+    
+    Utility::ArrayView<const double> entity_total_first_moments =
+      estimator->getEntityTotalDataFirstMoments( 0 );
+    
+    Utility::ArrayView<const double> entity_total_second_moments =
+      estimator->getEntityTotalDataSecondMoments( 0 );
+    
+    Utility::ArrayView<const double> entity_total_third_moments =
+      estimator->getEntityTotalDataThirdMoments( 0 );
+    
+    Utility::ArrayView<const double> entity_total_fourth_moments =
+      estimator->getEntityTotalDataFourthMoments( 0 );
+    
+    FRENSIE_CHECK_EQUAL( entity_total_first_moments,
+                         std::vector<double>( 2, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( entity_total_second_moments,
+                         std::vector<double>( 2, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( entity_total_third_moments,
+                         std::vector<double>( 2, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
+                         std::vector<double>( 2, 0.0 ) );
+    
+    entity_total_first_moments = estimator->getEntityTotalDataFirstMoments( 1 );
+    entity_total_second_moments = estimator->getEntityTotalDataSecondMoments( 1 );
+    entity_total_third_moments = estimator->getEntityTotalDataThirdMoments( 1 );
+    entity_total_fourth_moments = estimator->getEntityTotalDataFourthMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( entity_total_first_moments,
+                         std::vector<double>( 2, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( entity_total_second_moments,
+                         std::vector<double>( 2, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( entity_total_third_moments,
+                         std::vector<double>( 2, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
+                         std::vector<double>( 2, 0.0 ) );
+    
+    // Check the total data moments
+    Utility::ArrayView<const double> total_first_moments =
+      estimator->getTotalDataFirstMoments();
+    
+    Utility::ArrayView<const double> total_second_moments =
+      estimator->getTotalDataSecondMoments();
+    
+    Utility::ArrayView<const double> total_third_moments =
+      estimator->getTotalDataThirdMoments();
+    
+    Utility::ArrayView<const double> total_fourth_moments =
+      estimator->getTotalDataFourthMoments();
+    
+    FRENSIE_CHECK_EQUAL( total_first_moments,
+                         std::vector<double>( 2, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( total_second_moments,
+                         std::vector<double>( 2, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( total_third_moments,
+                       std::vector<double>( 2, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( total_fourth_moments,
+                         std::vector<double>( 2, 0.0 ) );
+  }
+}
 
 //---------------------------------------------------------------------------//
 // Custom setup
