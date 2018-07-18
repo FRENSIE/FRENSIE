@@ -54,7 +54,7 @@ public:
    spatial_coord_conversion_policy,
    const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
    directional_coord_conversion_policy );
-  
+
   //! Constructor
   StandardParticleDistribution(
    const std::string& name,
@@ -133,12 +133,12 @@ protected:
 
   //! Default Constructor
   StandardParticleDistribution();
-  
+
 private:
 
   // Reset the spatial distributions
   void resetSpatialDistributions();
-  
+
   // Reset the directional distributions
   void resetDirectionalDistributions();
 
@@ -180,10 +180,10 @@ private:
   // Determines if the distribution is ready for use
   bool d_ready;
 };
-  
+
 } // end MonteCarlo namespace
 
-BOOST_CLASS_VERSION( MonteCarlo::StandardParticleDistribution, 0 );
+BOOST_SERIALIZATION_CLASS_VERSION( StandardParticleDistribution, MonteCarlo, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardParticleDistribution, MonteCarlo );
 EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, StandardParticleDistribution );
 

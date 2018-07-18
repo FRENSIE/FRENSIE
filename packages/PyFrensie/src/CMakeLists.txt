@@ -127,9 +127,6 @@ SET(MONTE_CARLO_PACKAGES ${MONTE_CARLO_PACKAGES} GeometryModel)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.Collision)
 SET(MONTE_CARLO_PACKAGES ${MONTE_CARLO_PACKAGES} Collision)
 
-SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.PhaseSpaceDimension)
-SET(MONTE_CARLO_PACKAGES ${MONTE_CARLO_PACKAGES} PhaseSpaceDimension)
-
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.ActiveRegion)
 SET(MONTE_CARLO_PACKAGES ${MONTE_CARLO_PACKAGES} ActiveRegion)
 

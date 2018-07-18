@@ -274,6 +274,10 @@ ADD_TEST(PyFrensie.MonteCarlo.Collision.FilledGeometryModel_test ${PYTHON_EXECUT
 PyFrensie_MAKE_TEST(tstMonteCarlo.ActiveRegion.PhaseSpaceDimension)
 ADD_TEST(PyFrensie.MonteCarlo.ActiveRegion.PhaseSpaceDimension_test ${PYTHON_EXECUTABLE} tstMonteCarlo.ActiveRegion.PhaseSpaceDimension.py)
 
+# Add the MonteCarlo.ActiveRegion.ParticleDistribution unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.ActiveRegion.StandardParticleDistribution)
+ADD_TEST(PyFrensie.MonteCarlo.ActiveRegion.StandardParticleDistribution_test ${PYTHON_EXECUTABLE} tstMonteCarlo.ActiveRegion.StandardParticleDistribution.py)
+
 # # Add the MonteCarlo.Collision.PhotonKinematics unit tests
 # PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.PhotonKinematics)
 # ADD_TEST(PyFrensie.MonteCarlo.Collision.PhotonKinematics_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.PhotonKinematics.py)

@@ -242,7 +242,7 @@ FRENSIE_UNIT_TEST( AdjointElectronMaterial, collideAnalogue )
   // Set up the random number stream
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.5; // select the H atom
-  fake_stream[1] = 9.35e-2; // select pair production
+  fake_stream[1] = 1.0-1e-15; // select elastic scattering
   fake_stream[2] = 0.0; // sample cutoff distribution
   fake_stream[3] = 0.0; // sample mu = -1.0
 
@@ -271,7 +271,7 @@ FRENSIE_UNIT_TEST( AdjointElectronMaterial, collideSurvivalBias )
   // Set up the random number stream
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.5; // select the H atom
-  fake_stream[1] = 9.35e-2; // select pair production
+  fake_stream[1] = 1.0-1e-15; // select elastic scattering
   fake_stream[2] = 1.0-1e-15; // sample cutoff distribution
   fake_stream[3] = 1.0-1e-15; // sample mu = 0.999999
 

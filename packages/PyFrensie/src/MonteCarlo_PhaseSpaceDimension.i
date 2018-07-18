@@ -1,21 +1,10 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo.PhaseSpaceDimension.i
+//! \file   MonteCarlo_PhaseSpaceDimension.i
 //! \author Luke Kersting
-//! \brief  The MonteCarlo.PhaseSpaceDimension sub-module swig interface file
+//! \brief  The PhaseSpaceDimension classes interface file
 //!
 //---------------------------------------------------------------------------//
-
-%define %monte_carlo_phase_space_docstring
-"
-PyFrensie.MonteCarlo.PhaseSpaceDimension is the python interface to the FRENSIE
-PhaseSpaceDimension definitions in the monte_carlo/active_region subpackage.
-"
-%enddef
-
-%module(package   = "PyFrensie.MonteCarlo",
-        autodoc   = "1",
-        docstring = %monte_carlo_phase_space_docstring) PhaseSpaceDimension
 
 %{
 // FRENSIE Includes
@@ -30,8 +19,6 @@ PhaseSpaceDimension definitions in the monte_carlo/active_region subpackage.
 #include "MonteCarlo_ImportanceSampledIndependentPhaseSpaceDimensionDistribution.hpp"
 #include "MonteCarlo_DependentPhaseSpaceDimensionDistribution.hpp"
 #include "MonteCarlo_ImportanceSampledDependentPhaseSpaceDimensionDistribution.hpp"
-
-// #include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 
 #include "Utility_UnivariateDistributionType.hpp"
 #include "Utility_UnivariateDistribution.hpp"
@@ -50,7 +37,6 @@ PhaseSpaceDimension definitions in the monte_carlo/active_region subpackage.
 #include "Utility_TabularCDFDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_WattDistribution.hpp"
-// #include "Utility_CoupledElasticDistribution.hpp"
 
 #include "Utility_BasicBivariateDistribution.hpp"
 #include "Utility_TabularBasicBivariateDistribution.hpp"
@@ -90,65 +76,12 @@ PhaseSpaceDimension definitions in the monte_carlo/active_region subpackage.
 #include "Utility_DirectionalDimensionType.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
-// #include "Utility_ContractException.hpp"
 
 using namespace MonteCarlo;
 %}
 
-// C++ STL support
-%include <stl.i>
-%include <std_except.i>
-%include <std_string.i>
-%include <std_shared_ptr.i>
-
-// Include typemaps support
-%include <typemaps.i>
-
-// Include the serialization helpers for handling macros
-%include "Utility_SerializationHelpers.hpp"
-
-// Include the explicit template instantiation helpers
-// %include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
-
-// Import the UnivariateDistribution handling
-%import "Utility.UnivariateDistribution.i"
-
-// Import the BivariateDistribution handling
-%import "Utility.BivariateDistribution.i"
-
-// Import the Coordinate handling
-%import "Utility.Coordinate.i"
-
 // Include the PhaseSpaceDimension helpers
 %include "MonteCarlo_PhaseSpaceDimensionHelpers.i"
-
-// Standard exception handling
-%include "exception.i"
-
-// General exception handling
-%exception
-{
-  try{
-    $action;
-    if( PyErr_Occurred() )
-      SWIG_fail;
-  }
-  catch( Utility::ContractException& e )
-  {
-    SWIG_exception( SWIG_ValueError, e.what() );
-  }
-  catch( std::runtime_error& e )
-  {
-    SWIG_exception( SWIG_RuntimeError, e.what() );
-  }
-  catch( ... )
-  {
-    SWIG_exception( SWIG_UnknownError, "Unknown C++ exception" );
-  }
-}
-
-// Global swig features
-%feature("autodoc", "1");
 
 // ---------------------------------------------------------------------------//
 // Add PhaseSpacePoint support
@@ -210,13 +143,32 @@ using namespace MonteCarlo;
 // Add PhaseSpaceDimensionDistribution support
 // ---------------------------------------------------------------------------//
 
+%shared_ptr( MonteCarlo::PhaseSpaceDimensionDistribution );
+
 %include "MonteCarlo_PhaseSpaceDimensionDistribution.hpp"
 
-%shared_ptr( MonteCarlo::PhaseSpaceDimensionDistribution );
+//---------------------------------------------------------------------------//
+// Helper macro for shared pointers
+//---------------------------------------------------------------------------//
+%define %shared_ptr_setup_helper( DISTRIBUTION )
+
+  %shared_ptr( MonteCarlo::DISTRIBUTION<MonteCarlo::PRIMARY_SPATIAL_DIMENSION> );
+  %shared_ptr( MonteCarlo::DISTRIBUTION<MonteCarlo::SECONDARY_SPATIAL_DIMENSION> );
+  %shared_ptr( MonteCarlo::DISTRIBUTION<MonteCarlo::TERTIARY_SPATIAL_DIMENSION> );
+  %shared_ptr( MonteCarlo::DISTRIBUTION<MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION> );
+  %shared_ptr( MonteCarlo::DISTRIBUTION<MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION> );
+  %shared_ptr( MonteCarlo::DISTRIBUTION<MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION> );
+  %shared_ptr( MonteCarlo::DISTRIBUTION<MonteCarlo::ENERGY_DIMENSION> );
+  %shared_ptr( MonteCarlo::DISTRIBUTION<MonteCarlo::TIME_DIMENSION> );
+  %shared_ptr( MonteCarlo::DISTRIBUTION<MonteCarlo::WEIGHT_DIMENSION> );
+
+%enddef
 
 // ---------------------------------------------------------------------------//
 // Add IndependentPhaseSpaceDimensionDistribution support
 // ---------------------------------------------------------------------------//
+
+%shared_ptr_setup_helper( IndependentPhaseSpaceDimensionDistribution )
 
 %include "MonteCarlo_IndependentPhaseSpaceDimensionDistribution.hpp"
 
@@ -226,28 +178,24 @@ using namespace MonteCarlo;
 // Add ImportanceSampledIndependentPhaseSpaceDimensionDistribution support
 // ---------------------------------------------------------------------------//
 
+%shared_ptr_setup_helper( ImportanceSampledIndependentPhaseSpaceDimensionDistribution )
+
 %include "MonteCarlo_ImportanceSampledIndependentPhaseSpaceDimensionDistribution.hpp"
 
 %independent_phase_space_dimension_setup( ImportanceSampledIndependent )
 
-// // ---------------------------------------------------------------------------//
-// // Add DependentPhaseSpaceDimensionDistribution support
-// // ---------------------------------------------------------------------------//
+// ---------------------------------------------------------------------------//
+// Add DependentPhaseSpaceDimensionDistribution support
+// ---------------------------------------------------------------------------//
 
-// // The default constructor is protected and needs to be ignored
-// %ignore MonteCarlo::DependentPhaseSpaceDimensionDistribution::DependentPhaseSpaceDimensionDistribution();
+// The default constructor is protected and needs to be ignored
+%ignore MonteCarlo::DependentPhaseSpaceDimensionDistribution::DependentPhaseSpaceDimensionDistribution();
 
-// %pre_dependent_phase_space_dimension_setup( Dependent )
+%pre_dependent_phase_space_dimension_setup( Dependent )
 
-// %include "MonteCarlo_DependentPhaseSpaceDimensionDistribution.hpp"
+%include "MonteCarlo_DependentPhaseSpaceDimensionDistribution.hpp"
 
-// // %extend MonteCarlo::DependentPhaseSpaceDimensionDistribution
-// // {
-// //   DependentPhaseSpaceDimensionDistribution()
-// //   { /* ... */ }
-// // };
-
-// %basic_dependent_phase_space_dimension_setup( Dependent )
+%basic_dependent_phase_space_dimension_setup( Dependent )
 
 
 // ---------------------------------------------------------------------------//

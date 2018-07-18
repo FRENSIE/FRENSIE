@@ -18,7 +18,7 @@ namespace MonteCarlo{
 
 // Constructor
 template<PhaseSpaceDimension parent_dimension, PhaseSpaceDimension dimension>
-DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::DependentPhaseSpaceDimensionDistribution(
+DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension>::DependentPhaseSpaceDimensionDistribution(
               const std::shared_ptr<const Utility::BasicBivariateDistribution>&
               dimension_distribution )
   : d_dimension_distribution( dimension_distribution )
@@ -29,42 +29,42 @@ DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std
 
 // Return the phase space dimension
 template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
-PhaseSpaceDimension DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::getDimension() const
+PhaseSpaceDimension DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension>::getDimension() const
 {
   return dimension;
 }
 
 // Return the phase space dimension class
 template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
-PhaseSpaceDimensionClass DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::getDimensionClass() const
+PhaseSpaceDimensionClass DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension>::getDimensionClass() const
 {
   return PhaseSpaceDimensionTraits<dimension>::getClass();
 }
 
 // Return the independent phase space dimension
 template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
-PhaseSpaceDimension DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::getParentDimension() const
+PhaseSpaceDimension DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension>::getParentDimension() const
 {
   return parent_dimension;
 }
 
 // Return the independent phase space dimension class
 template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
-PhaseSpaceDimensionClass DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::getParentDimensionClass() const
+PhaseSpaceDimensionClass DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension>::getParentDimensionClass() const
 {
   return PhaseSpaceDimensionTraits<parent_dimension>::getClass();
 }
 
 // Check if the dimension distribution is independent
 template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
-bool DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::isIndependent() const
+bool DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension>::isIndependent() const
 {
   return false;
 }
 
 // Check if the dimension is dependent on the dimension of interest
 template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
-bool DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::isDependentOnDimension(
+bool DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension>::isDependentOnDimension(
                               const PhaseSpaceDimension other_dimension ) const
 {
   return parent_dimension == other_dimension;
@@ -77,18 +77,18 @@ bool DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typenam
  */
 template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
 
-bool DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::isContinuous() const
+bool DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension>::isContinuous() const
 {
   return d_dimension_distribution->isPrimaryDimensionContinuous();
 }
 
 // Check if the dimension distribution is tabular
 /*! \details This method only checks if the distribution is tabular w.r.t.
- * the independent dimension. More information is needed to check if the 
+ * the independent dimension. More information is needed to check if the
  * distribution is tabular w.r.t. the dependent dimension.
  */
 template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
-bool DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::isTabular() const
+bool DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension>::isTabular() const
 {
   return d_dimension_distribution->isPrimaryDimensionTabular();
 }
@@ -98,18 +98,18 @@ bool DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typenam
  * if the two-d distribution is constant everywhere that it is defined.
  */
 template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
-bool DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::isUniform() const
+bool DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension>::isUniform() const
 {
   return false;
 }
 
 // Check if the underlying distribution has the form of interest
 /*! \details This method will always return false since we cannot test
- * if the two-d distribution has the form of interest everywhere that it is 
+ * if the two-d distribution has the form of interest everywhere that it is
  * defined.
  */
 template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
-bool DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::hasForm(
+bool DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension>::hasForm(
                               const Utility::UnivariateDistributionType ) const
 {
   return false;
@@ -117,14 +117,14 @@ bool DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typenam
 
 // Get the distribution type name
 template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
-std::string DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::getDistributionTypeName() const
+std::string DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension>::getDistributionTypeName() const
 {
   return "BasicBivariateDistribution";
 }
 
 // Evaluate the dimension distribution without cascade to dependent dists.
 template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
-double DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::evaluateWithoutCascade(
+double DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension>::evaluateWithoutCascade(
                                const PhaseSpacePoint& phase_space_point ) const
 {
   return d_dimension_distribution->evaluate(
@@ -134,7 +134,7 @@ double DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typen
 
 // Sample a dimension value without a cascade to the dependent dists.
 template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
-void DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::sampleWithoutCascade(
+void DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension>::sampleWithoutCascade(
                                     PhaseSpacePoint& phase_space_sample ) const
 {
   const double sample =
@@ -147,7 +147,7 @@ void DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typenam
 
 // Sample a dimension value without a cascade to the dependent dists.
 template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
-void DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::sampleAndRecordTrialsWithoutCascade(
+void DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension>::sampleAndRecordTrialsWithoutCascade(
                                   PhaseSpacePoint& phase_space_sample,
                                   Counter& trials ) const
 {
@@ -162,7 +162,7 @@ void DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typenam
 
 // Set the dimension value (weight appropriately)
 template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
-void DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::setDimensionValueAndApplyWeight(
+void DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension>::setDimensionValueAndApplyWeight(
                                            PhaseSpacePoint& phase_space_sample,
                                            const double dimension_value ) const
 {
@@ -182,7 +182,7 @@ void DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typenam
 
 // Evaluate the PDF of this dimension distribution
 template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
-double DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::evaluatePDFWithoutCascade(
+double DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension>::evaluatePDFWithoutCascade(
                                           const double parent_dimension_value,
                                           const double dimension_value ) const
 {
@@ -193,7 +193,7 @@ double DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typen
 // Save the data to an archive
 template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
 template<typename Archive>
-void DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::save( Archive& ar, const unsigned version ) const
+void DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension>::save( Archive& ar, const unsigned version ) const
 {
   // Save the base class member data
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( PhaseSpaceDimensionDistribution );
@@ -205,7 +205,7 @@ void DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typenam
 // Load the data from an archive
 template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
 template<typename Archive>
-void DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::load( Archive& ar, const unsigned version )
+void DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension>::load( Archive& ar, const unsigned version )
 {
   // Load the base class member data
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( PhaseSpaceDimensionDistribution );
@@ -213,7 +213,7 @@ void DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typenam
   // Load the local member data
   ar & BOOST_SERIALIZATION_NVP( d_dimension_distribution );
 }
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

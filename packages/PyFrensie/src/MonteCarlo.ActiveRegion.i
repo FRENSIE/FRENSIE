@@ -17,6 +17,36 @@ monte_carlo/active_region subpackage.
         autodoc   = "1",
         docstring = %monte_carlo_active_region_docstring) ActiveRegion
 
+
+%{
+// FRENSIE Includes
+#include "Utility_ToStringTraits.hpp"
+#include "Utility_SerializationHelpers.hpp"
+
+// using namespace MonteCarlo;
+%}
+
+// C++ STL support
+%include <stl.i>
+%include <std_except.i>
+%include <std_string.i>
+%include <std_shared_ptr.i>
+
+// Include typemaps support
+%include <typemaps.i>
+
+// Include the serialization helpers for handling macros
+%include "Utility_SerializationHelpers.hpp"
+
+// Import the UnivariateDistribution handling
+%import "Utility.UnivariateDistribution.i"
+
+// Import the BivariateDistribution handling
+%import "Utility.BivariateDistribution.i"
+
+// Import the Coordinate handling
+%import "Utility.Coordinate.i"
+
 // Standard exception handling
 %include "exception.i"
 
@@ -45,11 +75,11 @@ monte_carlo/active_region subpackage.
 // Global swig features
 %feature("autodoc", "1");
 
-// PhaseSpaceDimension support
-%pythoncode
-%{
-from PyFrensie.MonteCarlo.PhaseSpaceDimension import *
-%}
+// Add support for the PhaseSpaceDimension classes
+%include "MonteCarlo_PhaseSpaceDimension.i"
+
+// Add support for the ParticleDistribution classes
+%include "MonteCarlo_ParticleDistribution.i"
 
 //---------------------------------------------------------------------------//
 // Turn off the exception handling
