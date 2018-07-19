@@ -69,17 +69,27 @@ FRENSIE_ADD_TEST(StandardCellEstimator)
 FRENSIE_ADD_TEST_EXECUTABLE(SurfaceFluxEstimator DEPENDS tstSurfaceFluxEstimator.cpp)
 FRENSIE_ADD_TEST(SurfaceFluxEstimator)
 
-# IF(${FRENSIE_ENABLE_OPENMP})
-#   ADD_TEST(SharedParallelSurfaceFluxEstimator_2_test tstSurfaceFluxEstimator --threads=2)
-#   ADD_TEST(SharedParallelSurfaceFluxEstimator_4_test tstSurfaceFluxEstimator --threads=4)
-#   SET_PROPERTY(TEST SharedParallelSurfaceFluxEstimator_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
-#   SET_PROPERTY(TEST SharedParallelSurfaceFluxEstimator_4_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
-# ENDIF()
+IF(${FRENSIE_ENABLE_OPENMP})
+  FRENSIE_ADD_TEST(SharedParallelSurfaceFluxEstimator_2
+    TEST_EXEC_NAME_ROOT SurfaceFluxEstimator
+    EXTRA_ARGS --threads=2
+    OPENMP_TEST)
+  FRENSIE_ADD_TEST(SharedParallelSurfaceFluxEstimator_4
+    TEST_EXEC_NAME_ROOT SurfaceFluxEstimator
+    EXTRA_ARGS --threads=4
+    OPENMP_TEST)
+ENDIF()
 
-# Add_EXECUTABLE(tstSurfaceCurrentEstimator tstSurfaceCurrentEstimator.cpp)
-# TARGET_LINK_LIBRARIES(tstSurfaceCurrentEstimator monte_carlo_estimator_native)
-# ADD_TEST(SurfaceCurrentEstimator_test tstSurfaceCurrentEstimator)
-# SET_PROPERTY(TEST SurfaceCurrentEstimator_test PROPERTY LABELS monte_carlo_estimator_native)
+IF(${FRENSIE_ENABLE_DAGMC})
+  FRENSIE_ADD_TEST_EXECUTABLE(SurfaceFluxEstimatorDagMC
+    DEPENDS tstSurfaceFluxEstimatorDagMC.cpp
+    LIB_DEPENDS geometry_dagmc)
+  FRENSIE_ADD_TEST(SurfaceFluxEstimatorDagMC
+    EXTRA_ARGS --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat)
+ENDIF()
+
+FRENSIE_ADD_TEST_EXECUTABLE(SurfaceCurrentEstimator DEPENDS tstSurfaceCurrentEstimator.cpp)
+FRENSIE_ADD_TEST(SurfaceCurrentEstimator)
 
 # IF(${FRENSIE_ENABLE_OPENMP})
 #   ADD_TEST(SharedParallelSurfaceCurrentEstimator_2_test tstSurfaceCurrentEstimator --threads=2)

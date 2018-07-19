@@ -39,6 +39,12 @@ public:
                             const std::vector<SurfaceIdType>& surface_ids,
                             const std::vector<double>& surface_areas );
 
+  //! Constructor (for flux estimators)
+  StandardSurfaceEstimator( const uint32_t id,
+                            const double multiplier,
+                            const std::vector<SurfaceIdType>& surface_ids,
+                            const Geometry::Model& model );
+
   //! Constructor (for non-flux estimators)
   StandardSurfaceEstimator( const uint32_t id,
                             const double multiplier,

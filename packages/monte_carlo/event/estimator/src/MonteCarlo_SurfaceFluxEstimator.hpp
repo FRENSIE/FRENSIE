@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_StandardSurfaceEstimator.hpp"
 #include "MonteCarlo_EstimatorContributionMultiplierPolicy.hpp"
+#include "Geometry_Model.hpp"
 
 namespace MonteCarlo{
 
@@ -35,6 +36,13 @@ public:
                         const double multiplier,
                         const std::vector<SurfaceIdType>& surface_ids,
                         const std::vector<double>& surface_areas,
+                        const double cosine_cutoff = 0.001 );
+
+  //! Constructor (extract surface areas from model)
+  SurfaceFluxEstimator( const uint32_t id,
+                        const double multiplier,
+                        const std::vector<SurfaceIdType>& surface_ids,
+                        const Geometry::Model& model,
                         const double cosine_cutoff = 0.001 );
 
   //! Destructor
