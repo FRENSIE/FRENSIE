@@ -52,10 +52,10 @@ IF(${FRENSIE_ENABLE_OPENMP})
 ENDIF()
 
 IF(${FRENSIE_ENABLE_MPI})
-  FRENSIE_ADD_TEST(DistributedParallelEntityEstimator
+  FRENSIE_ADD_TEST(DistributedParallelStandardEntityEstimator
     TEST_EXEC_NAME_ROOT StandardEntityEstimator
     MPI_PROCS 2)
-  FRENSIE_ADD_TEST(DistributedParallelEntityEstimator
+  FRENSIE_ADD_TEST(DistributedParallelStandardEntityEstimator
     TEST_EXEC_NAME_ROOT StandardEntityEstimator
     MPI_PROCS 4)
 ENDIF()
@@ -91,12 +91,43 @@ ENDIF()
 FRENSIE_ADD_TEST_EXECUTABLE(SurfaceCurrentEstimator DEPENDS tstSurfaceCurrentEstimator.cpp)
 FRENSIE_ADD_TEST(SurfaceCurrentEstimator)
 
-# IF(${FRENSIE_ENABLE_OPENMP})
-#   ADD_TEST(SharedParallelSurfaceCurrentEstimator_2_test tstSurfaceCurrentEstimator --threads=2)
-#   ADD_TEST(SharedParallelSurfaceCurrentEstimator_4_test tstSurfaceCurrentEstimator --threads=4)
-#   SET_PROPERTY(TEST SharedParallelSurfaceCurrentEstimator_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
-#   SET_PROPERTY(TEST SharedParallelSurfaceCurrentEstimator_4_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
-# ENDIF()
+IF(${FRENSIE_ENABLE_OPENMP})
+  FRENSIE_ADD_TEST(SharedParallelSurfaceCurrentEstimator_2
+    TEST_EXEC_NAME_ROOT SurfaceCurrentEstimator
+    EXTRA_ARGS --threads=2
+    OPENMP_TEST)
+  FRENSIE_ADD_TEST(SharedParallelSurfaceCurrentEstimator_4
+    TEST_EXEC_NAME_ROOT SurfaceCurrentEstimator
+    EXTRA_ARGS --threads=4
+    OPENMP_TEST)
+ENDIF()
 
+FRENSIE_ADD_TEST_EXECUTABLE(CellPulseHeightEstimator DEPENDS tstCellPulseHeightEstimator.cpp)
+FRENSIE_ADD_TEST(CellPulseHeightEstimator)
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(SharedParallelCellPulseHeightEstimator_2
+    TEST_EXEC_NAME_ROOT CellPulseHeightEstimator
+    EXTRA_ARGS --threads=2
+    OPENMP_TEST)
+  ADD_TEST(SharedParallelCellPulseHeightEstimator_4
+    TEST_EXEC_NAME_ROOT CellPulseHeightEstimator
+    EXTRA_ARGS --threads=4
+    OPENMP_TEST)
+ENDIF()
+
+FRENSIE_ADD_TEST_EXECUTABLE(CellCollisionFluxEstimator DEPENDS tstCellCollisionFluxEstimator.cpp)
+FRENSIE_ADD_TEST(CellCollisionFluxEstimator)
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  FRENSIE_ADD_TEST(SharedParallelCellCollisionFluxEstimator_2
+    TEST_EXEC_NAME_ROOT CellCollisionFluxEstimator
+    EXTRA_ARGS --threads=2
+    OPENMP_TEST)
+  FRENSIE_ADD_TEST(SharedParallelCellCollisionFluxEstimator_4
+    TEST_EXEC_NAME_ROOT CellCollisionFluxEstimator
+    EXTRA_ARGS --threads=4
+    OPENMP_TEST)
+ENDIF()
 
 FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_event_estimator)

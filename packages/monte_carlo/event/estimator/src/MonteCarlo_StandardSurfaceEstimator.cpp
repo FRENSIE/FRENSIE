@@ -64,7 +64,7 @@ StandardSurfaceEstimator::StandardSurfaceEstimator(
     {
       FRENSIE_LOG_TAGGED_WARNING( "Estimator",
                                   "A surface (" << surface_ids[i] << ") was "
-                                  "requested twice for estimator "
+                                  "requested multiple times for estimator "
                                   << id << "!" );
     }
     

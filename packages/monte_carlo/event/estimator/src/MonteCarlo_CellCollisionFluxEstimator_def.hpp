@@ -34,6 +34,17 @@ CellCollisionFluxEstimator<ContributionMultiplierPolicy>::CellCollisionFluxEstim
     ParticleCollidingInCellEventObserver()
 { /* ... */ }
 
+// Constructor (extract cell volumes from model)
+template<typename ContributionMultiplierPolicy>
+CellCollisionFluxEstimator<ContributionMultiplierPolicy>::CellCollisionFluxEstimator(
+                                      const uint32_t id,
+                                      const double multiplier,
+                                      const std::vector<CellIdType>& cell_ids,
+                                      const Geometry::Model& model )
+  : StandardCellEstimator( id, multiplier, cell_ids, model ),
+    ParticleCollidingInCellEventObserver()
+{ /* ... */ }
+
 // Add estimator contribution from a portion of the current history
 template<typename ContributionMultiplierPolicy>
 void CellCollisionFluxEstimator<ContributionMultiplierPolicy>::updateFromParticleCollidingInCellEvent(

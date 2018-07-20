@@ -25,6 +25,40 @@ StandardCellEstimator::StandardCellEstimator(
                                       const std::vector<double>& cell_volumes )
   : StandardEntityEstimator( id, multiplier, cell_ids, cell_volumes )
 { /* ... */ }
+
+// Constructor (extract cell volumes from model)
+StandardCellEstimator::StandardCellEstimator(
+                                       const uint32_t id,
+                                       const double multiplier,
+                                       const std::vector<CellIdType>& cell_ids,
+                                       const Geometry::Model& model )
+  : StandardEntityEstimator( id, multiplier )
+{
+  // Extract the cell volumes
+  EntityEstimator::EntityNormConstMap cell_id_volume_map;
+
+  for( size_t i = 0; i < cell_ids.size(); ++i )
+  {
+    TEST_FOR_EXCEPTION( !model.doesCellExist( cell_ids[i] ),
+                        std::runtime_error,
+                        "A requested cell (" << cell_ids[i] << ") for "
+                        "estimator " << id << " does not exist!" );
+
+    if( cell_id_volume_map.find( cell_ids[i] ) !=
+        cell_id_volume_map.end() )
+    {
+      FRENSIE_LOG_TAGGED_WARNING( "Estimator",
+                                  "A cell (" << cell_ids[i] << ") was "
+                                  "requested multiple times for estimator "
+                                  << id << "!" );
+    }
+
+    cell_id_volume_map[cell_ids[i]] =
+      model.getCellVolume( cell_ids[i] ).value();
+  }
+
+  this->assignEntities( cell_id_volume_map );
+}
   
 // Assign discretization to an estimator dimension
 /*! \details The MonteCarlo::OBSERVER_COSINE_DIMENSION cannot be discretized in
