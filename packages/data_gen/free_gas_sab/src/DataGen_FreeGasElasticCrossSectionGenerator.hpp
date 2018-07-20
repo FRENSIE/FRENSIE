@@ -78,18 +78,15 @@ public:
        DoubleDifferentialCrossSection& double_differential_sigma );
 
   //! Integrate over energy and angle for a total cross section 
-  double totalCrossSectionValue(
-       double E,
-       DoubleDifferentialCrossSection& double_differential_sigma );
+  void totalCrossSectionValue(
+       double E );
 
   //! Calculate cross sections for all energies 
   void calculateEnergyCrossSectionValue(  );
 
   //! Calculate energy differential cross section
   void energyCrossSectionValue(
-       double E, 
-       DoubleDifferentialCrossSection& double_differential_sigma,
-       std::vector<double>& beta_contour );
+       double E );
 
   //! Get base cross section
   void getBaseCrossSection();
@@ -146,6 +143,12 @@ private:
 
   // Double differential cross section 
   DoubleDifferentialCrossSectionMap d_double_differential_cross_section_map;
+
+  // Beta Function
+  Teuchos::RCP<DataGen::FreeGasElasticMarginalBetaFunction> d_beta_function;
+
+  // Alpha Function
+  Teuchos::RCP<DataGen::FreeGasElasticMarginalAlphaFunction> d_alpha_function;
 
 };
 

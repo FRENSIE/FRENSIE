@@ -130,7 +130,8 @@ double FreeGasElasticMarginalBetaFunction::evaluateCDF( const double beta )
 void FreeGasElasticMarginalBetaFunction::updateCachedValues()
 {
   d_beta_min = Utility::calculateBetaMin( d_E, d_kT );
-  //std::cout << "beta min: " << d_beta_min << std::endl;
+  double beta_max = (100*d_kT - d_E)/d_kT;
+  
   // Calculate the norm constant
   double norm_constant_error;
 
@@ -138,8 +139,8 @@ void FreeGasElasticMarginalBetaFunction::updateCachedValues()
     boost::bind<double>( &FreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction, boost::ref( *this ), _1 );
   
   d_beta_gkq_set.integrateAdaptively<15>( d_integrated_sab_function,
-  					 400.0,
-  					 540.0,
+  					 d_beta_min,
+  					 beta_max,
   					 d_norm_constant,
   					 norm_constant_error );
   
@@ -180,17 +181,17 @@ double FreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction(
   boost::function<double (double alpha)> sab_function_wrapper = 
     boost::bind<double>( boost::ref( d_sab_function ), _1, beta, d_E );
   
-  // d_alpha_gkq_set.integrateAdaptively<15>( sab_function_wrapper,
-  // 					  alpha_min,
-  // 					  alpha_max,
-  // 					  function_value,
-  // 					  function_value_error );
-
+  d_alpha_gkq_set.integrateAdaptively<15>( sab_function_wrapper,
+  					  alpha_min,
+  					  alpha_max,
+  					  function_value,
+  					  function_value_error );
+  
+  /*
   if( beta < 0.0 && beta > d_beta_min )
   {
     Teuchos::Tuple<double,3> points_of_interest = 
       Teuchos::tuple( alpha_min, -beta, alpha_max );
-    std::cout << points_of_interest() << std::endl;
     d_beta_gkq_set.integrateAdaptivelyWynnEpsilon( sab_function_wrapper,
 						  points_of_interest(),
 						  function_value,
@@ -203,9 +204,7 @@ double FreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction(
 					    alpha_max,
 					    function_value,
 					    function_value_error );
-  }
-
-  // std::cout << beta << " " << function_value << std::endl;
+  } */
 
   // Make sure the return value is valid
   testPostcondition(!Teuchos::ScalarTraits<double>::isnaninf(function_value));

@@ -18,6 +18,8 @@
 #include "DataGen_FreeGasElasticMarginalAlphaFunction.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_KinematicHelpers.hpp"
+
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -178,6 +180,46 @@ TEUCHOS_UNIT_TEST( FreeGasElasticMarginalAlphaFunction, evaluateCDF )
   cdf_value = alpha_function->evaluateCDF( alpha_function->getAlphaMax() );
   
   TEST_EQUALITY_CONST( cdf_value, 1.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CDF can be evaluated
+TEUCHOS_UNIT_TEST( FreeGasElasticMarginalAlphaFunction, assessNormalization )
+{
+  std::vector<double> beta_vector;
+  double beta_min = Utility::calculateBetaMin( 2.53010e-8, 2.53010e-8 );
+  double beta_max = -5*beta_min;
+  double num_points = 1001;
+  double beta_spacing = (beta_max - beta_min)/(num_points - 1);
+
+  for (int i = 0; i < num_points; ++i)
+  {
+    beta_vector.push_back(beta_min + i* beta_spacing);
+  }
+
+  for (int i = 0; i < num_points; ++i)
+  {
+    alpha_function->setIndependentVariables( beta_vector[i], 2.53010e-8 );
+    //std::cout << beta_vector[i] + 1 << " " << alpha_function->getNormalizationConstant() << std::endl;
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CDF can be evaluated
+TEUCHOS_UNIT_TEST( FreeGasElasticMarginalAlphaFunction, assessPDF )
+{
+  double beta = -0.5; 
+  alpha_function->setIndependentVariables( beta, 2.53010e-8 );
+
+  double alpha_min = Utility::calculateAlphaMin( 2.53010e-8, beta, 0.999167, 2.53010e-8 );
+  double alpha_max = Utility::calculateAlphaMax( 2.53010e-8, beta, 0.999167, 2.53010e-8 );
+  double alpha_space = (alpha_max - alpha_min)/(1000);
+
+  for (int i = 0; i < 1001; ++i)
+  {
+    const double alpha_value = alpha_min + i*alpha_space;
+    //std::cout << alpha_function->operator()(alpha_value) << std::endl;
+  }
 }
 
 //---------------------------------------------------------------------------//

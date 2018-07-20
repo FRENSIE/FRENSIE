@@ -45,7 +45,7 @@ FreeGasElasticMarginalAlphaFunction::FreeGasElasticMarginalAlphaFunction(
   testPrecondition( A > 0.0 );
   testPrecondition( kT > 0.0 );
   testPrecondition( E > 0.0 );
-  testPrecondition( beta > Utility::calculateBetaMin( E, kT ) );
+  testPrecondition( beta >= Utility::calculateBetaMin( E, kT ) );
   
   updateCachedValues();
 }
@@ -57,7 +57,7 @@ void FreeGasElasticMarginalAlphaFunction::setIndependentVariables(
 {
   // Make sure beta is valid
   remember( double kT = d_sab_function.getTemperature() );
-  testPrecondition( beta > Utility::calculateBetaMin( E, kT ) );
+  testPrecondition( beta >= Utility::calculateBetaMin( E, kT ) );
 
   d_beta = beta;
   d_E = E;
