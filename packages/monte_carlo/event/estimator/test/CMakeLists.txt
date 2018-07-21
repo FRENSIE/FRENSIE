@@ -1,5 +1,10 @@
 FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_event_estimator)
 
+SET(ROOT_GEOM_TEST_TARGET monte_carlo_event_estimator_test_root_geometry)
+
+ADD_SUBDIRECTORY(test_files)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+
 FRENSIE_ADD_TEST_EXECUTABLE(Estimator DEPENDS tstEstimator.cpp)
 FRENSIE_ADD_TEST(Estimator)
 
@@ -128,6 +133,54 @@ IF(${FRENSIE_ENABLE_OPENMP})
     TEST_EXEC_NAME_ROOT CellCollisionFluxEstimator
     EXTRA_ARGS --threads=4
     OPENMP_TEST)
+ENDIF()
+
+IF(${FRENSIE_ENABLE_DAGMC})
+  FRENSIE_ADD_TEST_EXECUTABLE(CellCollisionFluxEstimatorDagMC
+    DEPENDS tstCellCollisionFluxEstimatorDagMC.cpp
+    LIB_DEPENDS geometry_dagmc)
+  FRENSIE_ADD_TEST(CellCollisionFluxEstimatorDagMC
+    EXTRA_ARGS --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat)
+ENDIF()
+
+IF(${FRENSIE_ENABLE_ROOT})
+  FRENSIE_ADD_TEST_EXECUTABLE(CellCollisionFluxEstimatorRoot
+    DEPENDS tstCellCollisionFluxEstimatorRoot.cpp
+    TARGET_DEPENDS ${ROOT_GEOM_TEST_TARGET}
+    LIB_DEPENDS geometry_root)
+  FRENSIE_ADD_TEST(CellCollisionFluxEstimatorRoot
+    EXTRA_ARGS --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_geometry.root)
+ENDIF()
+
+FRENSIE_ADD_TEST_EXECUTABLE(CellTrackLengthFluxEstimator DEPENDS tstCellTrackLengthFluxEstimator.cpp)
+FRENSIE_ADD_TEST(CellTrackLengthFluxEstimator)
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  FRENSIE_ADD_TEST(SharedParallelCellTrackLengthFluxEstimator_2
+    TEST_EXEC_NAME_ROOT CellTrackLengthFluxEstimator
+    EXTRA_ARGS --threads=2
+    OPENMP_TEST)
+FRENSIE_ADD_TEST(SharedParallelCellTrackLengthFluxEstimator_4
+    TEST_EXEC_NAME_ROOT CellTrackLengthFluxEstimator
+    EXTRA_ARGS --threads=4
+    OPENMP_TEST)
+ENDIF()
+
+IF(${FRENSIE_ENABLE_DAGMC})
+  FRENSIE_ADD_TEST_EXECUTABLE(CellTrackLengthFluxEstimatorDagMC
+    DEPENDS tstCellTrackLengthFluxEstimatorDagMC.cpp
+    LIB_DEPENDS geometry_dagmc)
+  FRENSIE_ADD_TEST(CellTrackLengthFluxEstimatorDagMC
+    EXTRA_ARGS --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat)
+ENDIF()
+
+IF(${FRENSIE_ENABLE_ROOT})
+  FRENSIE_ADD_TEST_EXECUTABLE(CellTrackLengthFluxEstimatorRoot
+    DEPENDS tstCellTrackLengthFluxEstimatorRoot.cpp
+    TARGET_DEPENDS ${ROOT_GEOM_TEST_TARGET}
+    LIB_DEPENDS geometry_root)
+  FRENSIE_ADD_TEST(CellTrackLengthFluxEstimatorRoot
+    EXTRA_ARGS --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_geometry.root)
 ENDIF()
 
 FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_event_estimator)

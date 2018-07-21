@@ -12,7 +12,6 @@
 // FRENSIE Includes
 #include "MonteCarlo_SurfaceFluxEstimator.hpp"
 #include "MonteCarlo_PhotonState.hpp"
-#include "Geometry_DagMCNavigator.hpp"
 #include "Geometry_DagMCModel.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
 

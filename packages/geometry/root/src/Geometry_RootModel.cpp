@@ -63,9 +63,9 @@ void RootModel::initialize( const RootModelProperties& model_properties,
     // Cache the model properties
     d_model_properties.reset( new RootModelProperties( model_properties ) );
 
-    FRENSIE_LOG_ROOT_NOTIFICATION( "Loading model "
-                                   << d_model_properties->getModelFileName() <<
-                                   " ..." );
+    FRENSIE_LOG_PARTIAL_NOTIFICATION( "Loading model "
+                                      << d_model_properties->getModelFileName() <<
+                                      " ... " );
     try{
       this->loadRootGeometry( root_init_verbosity );
     }
@@ -88,7 +88,7 @@ void RootModel::initialize( const RootModelProperties& model_properties,
     EXCEPTION_CATCH_RETHROW( InvalidRootGeometry,
                              "Invalid root geometry detected!" );
 
-    FRENSIE_LOG_ROOT_NOTIFICATION( "Finished loading model!" );
+    FRENSIE_LOG_NOTIFICATION( "done!" );
     FRENSIE_FLUSH_ALL_LOGS();
   }
   else
