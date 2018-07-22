@@ -183,4 +183,18 @@ IF(${FRENSIE_ENABLE_ROOT})
     EXTRA_ARGS --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_geometry.root)
 ENDIF()
 
+FRENSIE_ADD_TEST_EXECUTABLE(HexMeshTrackLengthFluxEstimator DEPENDS tstHexMeshTrackLengthFluxEstimator.cpp)
+FRENSIE_ADD_TEST(HexMeshTrackLengthFluxEstimator)
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  FRENSIE_ADD_TEST(SharedParallelHexMeshTrackLengthFluxEstimator_2
+    TEST_EXEC_NAME_ROOT HexMeshTrackLengthFluxEstimator
+    EXTRA_ARGS --threads=2
+    OPENMP_TEST)
+FRENSIE_ADD_TEST(SharedParallelHexMeshTrackLengthFluxEstimator_4
+    TEST_EXEC_NAME_ROOT HexMeshTrackLengthFluxEstimator
+    EXTRA_ARGS --threads=4
+    OPENMP_TEST)
+ENDIF()
+
 FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_event_estimator)

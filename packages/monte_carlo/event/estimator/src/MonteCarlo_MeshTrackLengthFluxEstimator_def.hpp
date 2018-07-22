@@ -349,7 +349,7 @@ void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignDiscretiz
                                 "cell estimator " << this->getId() <<
                                 " will be ignored!" );
   }
-  if( bins->getDimension() == OBSERVER_TIME_DIMENSION )
+  else if( bins->getDimension() == OBSERVER_TIME_DIMENSION )
   {
     StandardEntityEstimator::assignDiscretization( bins, true );
     
