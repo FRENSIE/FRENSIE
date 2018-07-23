@@ -268,15 +268,21 @@ ADD_TEST(PyFrensie.MonteCarlo.Collision.MaterialDefinitionDatabase_test ${PYTHON
 
 # Add the MonteCarlo.Collision.FilledGeometryModel unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.FilledGeometryModel)
-ADD_TEST(PyFrensie.MonteCarlo.Collision.FilledGeometryModel_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.FilledGeometryModel.py --dagmc_sat_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat --database_path=${CMAKE_CURRENT_BINARY_DIR}/../../monte_carlo/collision/database.xml)
+ADD_TEST(PyFrensie.MonteCarlo.Collision.FilledGeometryModel_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.FilledGeometryModel.py --dagmc_sat_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat --database_path=${COLLISION_DATABASE_XML_FILE})
+ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Collision.FilledGeometryModel ${COLLISION_DATABASE_XML_FILE_TARGET} )
 
 # Add the MonteCarlo.ActiveRegion.PhaseSpaceDimension unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.ActiveRegion.PhaseSpaceDimension)
 ADD_TEST(PyFrensie.MonteCarlo.ActiveRegion.PhaseSpaceDimension_test ${PYTHON_EXECUTABLE} tstMonteCarlo.ActiveRegion.PhaseSpaceDimension.py)
 
-# Add the MonteCarlo.ActiveRegion.ParticleDistribution unit tests
+# Add the MonteCarlo.ActiveRegion.StandardParticleDistribution unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.ActiveRegion.StandardParticleDistribution)
 ADD_TEST(PyFrensie.MonteCarlo.ActiveRegion.StandardParticleDistribution_test ${PYTHON_EXECUTABLE} tstMonteCarlo.ActiveRegion.StandardParticleDistribution.py)
+
+# Add the MonteCarlo.ActiveRegion.ParticleResponse unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.ActiveRegion.ParticleResponse)
+ADD_TEST(PyFrensie.MonteCarlo.ActiveRegion.ParticleResponse_test ${PYTHON_EXECUTABLE} tstMonteCarlo.ActiveRegion.ParticleResponse.py --database=${COLLISION_DATABASE_XML_FILE})
+ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.ActiveRegion.ParticleResponse ${COLLISION_DATABASE_XML_FILE_TARGET} )
 
 # # Add the MonteCarlo.Collision.PhotonKinematics unit tests
 # PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.PhotonKinematics)

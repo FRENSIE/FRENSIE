@@ -95,6 +95,24 @@ using namespace MonteCarlo;
 
 %include "MonteCarlo_PhaseSpaceDimension.hpp"
 
+// Add some useful methods to the class
+%extend MonteCarlo::PhaseSpaceDimension
+{
+  // String representation method
+  PyObject* __repr__() const
+  {
+    std::string repr_string = Utility::toString($self);
+    return PyString_FromString( repr_string.c_str() );
+  }
+
+  // String conversion method
+  PyObject* __str__() const
+  {
+    std::string repr_string = Utility::toString($self);
+    return PyString_FromString( repr_string.c_str() );
+  }
+};
+
 // ---------------------------------------------------------------------------//
 // Add PhaseSpaceDimensionClass support
 // ---------------------------------------------------------------------------//
@@ -290,24 +308,6 @@ using namespace MonteCarlo;
     $self->setDimensionValueAndApplyWeight(phase_space_sample, dimension_value);
   }
 };
-
-// // Add typemaps for converting MaterialIdSet to and from Python set
-// %typemap(in) MonteCarlo::PhaseSpacePoint& ( std::set<size_t> temp ){
-//   temp = PyFrensie::convertFromPython<std::set<size_t> >( $input );
-//   $1 = &temp;
-// }
-
-// %typemap(argout) MonteCarlo::PhaseSpacePoint& {
-//   %append_output(PyFrensie::convertToPython<std::set<size_t> >( *$1 ) );
-// }
-
-// %typemap(out) MonteCarlo::MaterialDefinitionDatabase::MaterialIdSet {
-//   return PyFrensie::convertToPython<std::set<size_t> >( $1 );
-// }
-
-// %typemap(typecheck, precedence=SWIG_TYPECHECK_SET) (MonteCarlo::MaterialDefinitionDatabase::MaterialIdSet&) {
-//   $1 = (PySet_Check($input)) ? 1 : 0;
-// }
 
 %advanced_dependent_phase_space_dimension_setup( ImportanceSampledDependent, ImportanceSampled )
 

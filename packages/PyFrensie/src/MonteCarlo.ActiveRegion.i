@@ -81,6 +81,9 @@ monte_carlo/active_region subpackage.
 // Add support for the ParticleDistribution classes
 %include "MonteCarlo_ParticleDistribution.i"
 
+// Add support for the ParticleResponse classes
+%include "MonteCarlo_ParticleResponse.i"
+
 //---------------------------------------------------------------------------//
 // Turn off the exception handling
 //---------------------------------------------------------------------------//

@@ -13,7 +13,6 @@
 #include "MonteCarlo_StandardParticleDistribution.hpp"
 
 #include "Utility_ToStringTraits.hpp"
-#include "Utility_SerializationHelpers.hpp"
 
 using namespace MonteCarlo;
 %}
@@ -22,12 +21,14 @@ using namespace MonteCarlo;
 // Add ParticleDistribution support
 // ---------------------------------------------------------------------------//
 
+%shared_ptr( MonteCarlo::ParticleDistribution )
 %include "MonteCarlo_ParticleDistribution.hpp"
 
 // ---------------------------------------------------------------------------//
 // Add StandardParticleDistribution support
 // ---------------------------------------------------------------------------//
 
+%shared_ptr( MonteCarlo::StandardParticleDistribution )
 %include "MonteCarlo_StandardParticleDistribution.hpp"
 
 //---------------------------------------------------------------------------//

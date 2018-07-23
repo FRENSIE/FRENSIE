@@ -28,7 +28,7 @@
 namespace MonteCarlo{
 
 //! The particle response function base class
-class ParticleResponseFunction 
+class ParticleResponseFunction : public std::enable_shared_from_this<ParticleResponseFunction>
 {
 
 public:
@@ -52,6 +52,12 @@ public:
   //! Check if the description requires parentheses
   virtual bool doesDescriptionRequireParentheses() const;
 
+  //! Return a shared ptr of the object
+  std::shared_ptr<ParticleResponseFunction> getShared();
+
+  //! Return a shared ptr of the object (const)
+  std::shared_ptr<const ParticleResponseFunction> getShared() const;
+
 protected:
 
   //! Constructor
@@ -71,8 +77,8 @@ private:
 
 } // end MonteCarlo namespace
 
-BOOST_CLASS_VERSION( MonteCarlo::ParticleResponseFunction, 0 );
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleResponseFunction );
+BOOST_SERIALIZATION_CLASS_VERSION( ParticleResponseFunction, MonteCarlo, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( ParticleResponseFunction, MonteCarlo );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleResponseFunction );
 
 //! Create a new response function from the addition of two response functions
