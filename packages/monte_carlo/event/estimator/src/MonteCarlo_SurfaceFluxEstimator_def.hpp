@@ -33,6 +33,18 @@ SurfaceFluxEstimator<ContributionMultiplierPolicy>::SurfaceFluxEstimator(
     d_cosine_cutoff( cosine_cutoff )
 { /* ... */ }
 
+// Constructor (extract surface areas from model)
+template<typename ContributionMultiplierPolicy>
+SurfaceFluxEstimator<ContributionMultiplierPolicy>::SurfaceFluxEstimator(
+                        const uint32_t id,
+                        const double multiplier,
+                        const std::vector<SurfaceIdType>& surface_ids,
+                        const Geometry::Model& model,
+                        const double cosine_cutoff )
+  : StandardSurfaceEstimator( id, multiplier, surface_ids, model ),
+    d_cosine_cutoff( cosine_cutoff )
+{ /* ... */ }
+
 // Add estimator contribution from a portion of the current history
 /*! \details It is unsafe to call this function directly! This function will
  * be called by the appropriate dispatcher whan an event of interest occurs.

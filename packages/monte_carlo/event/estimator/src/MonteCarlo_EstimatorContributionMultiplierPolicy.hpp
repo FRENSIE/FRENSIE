@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
+#include "Utility_TypeNameTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -29,6 +30,9 @@ struct WeightAndEnergyMultiplier
 };
 
 } // end MonteCarlo namespace
+
+TYPE_NAME_TRAITS_QUICK_DECL2( WeightMultiplier, MonteCarlo );
+TYPE_NAME_TRAITS_QUICK_DECL2( WeightAndEnergyMultiplier, MonteCarlo );
 
 #endif // end MONTE_CARLO_ESTIMATOR_CONTRIBUTION_MULTIPLIER_POLICY_HPP
 

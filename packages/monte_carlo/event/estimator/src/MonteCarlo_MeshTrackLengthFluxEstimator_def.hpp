@@ -128,7 +128,7 @@ void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGloba
 
       const double track_end_time =
         track_start_time + Utility::get<2>( contribution_array[i] )/particle.getSpeed();
-
+      
       particle_state_wrapper.setStartTime( track_start_time );
       particle_state_wrapper.setEndTime( track_end_time );
       
@@ -349,7 +349,7 @@ void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignDiscretiz
                                 "cell estimator " << this->getId() <<
                                 " will be ignored!" );
   }
-  if( bins->getDimension() == OBSERVER_TIME_DIMENSION )
+  else if( bins->getDimension() == OBSERVER_TIME_DIMENSION )
   {
     StandardEntityEstimator::assignDiscretization( bins, true );
     

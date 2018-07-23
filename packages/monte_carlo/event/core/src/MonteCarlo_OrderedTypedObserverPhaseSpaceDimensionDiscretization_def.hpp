@@ -160,6 +160,7 @@ void OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculate
       // intersects the bin)
       const double bin_intersection_size =
         this->calculateBinIntersectionSize( bin_index, range_start, range_end );
+      
       bin_indices_and_weights[i].second =
         bin_intersection_size/range_size;
     }

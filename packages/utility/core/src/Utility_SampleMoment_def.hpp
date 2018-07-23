@@ -164,7 +164,7 @@ calculateRelativeError( const SampleMoment<1,T>& first_moment,
                         const size_t number_of_samples )
 {
   // Make sure that there is at least one sample
-  testPrecondition( number_of_samples > 1 );
+  testPrecondition( number_of_samples > 0 );
 
   typename QuantityTraits<T>::RawType relative_error;
 
@@ -175,7 +175,8 @@ calculateRelativeError( const SampleMoment<1,T>& first_moment,
       (first_moment.getCurrentScore()*first_moment.getCurrentScore()) -
       1.0/number_of_samples;
 
-    argument *= number_of_samples/(number_of_samples-1.);
+    if( number_of_samples > 1 )
+      argument *= number_of_samples/(number_of_samples-1.0);
     
     if( argument < 0.0 )
       relative_error = 0.0;

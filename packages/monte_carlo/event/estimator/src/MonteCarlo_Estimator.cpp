@@ -200,6 +200,11 @@ void Estimator::logSummary() const
 }
 
 // Get the total estimator bin mean and relative error
+/*! \details Make sure that the number of histories have been set
+ * (MonteCarlo::ParticleHistoryObserver::setNumberOfHistories) and that the
+ * elapsed time has been set 
+ * (MonteCarlo::ParticleHistoryObserver::setNumberOfHistories).
+ */
 void Estimator::getTotalBinProcessedData(
                                    std::vector<double>& mean,
                                    std::vector<double>& relative_error,
@@ -218,8 +223,8 @@ void Estimator::getTotalBinProcessedData(
 
   for( size_t i = 0; i < first_moments.size(); ++i )
   {
-    this->processMoments( first_moments[i],
-                          second_moments[i],
+    this->processMoments( Utility::SampleMoment<1,double>(first_moments[i]),
+                          Utility::SampleMoment<2,double>(second_moments[i]),
                           this->getTotalNormConstant(),
                           mean[i],
                           relative_error[i],
@@ -228,6 +233,11 @@ void Estimator::getTotalBinProcessedData(
 }
 
 // Get the bin data mean and relative error for an entity
+/*! \details Make sure that the number of histories have been set
+ * (MonteCarlo::ParticleHistoryObserver::setNumberOfHistories) and that the
+ * elapsed time has been set 
+ * (MonteCarlo::ParticleHistoryObserver::setNumberOfHistories).
+ */
 void Estimator::getEntityBinProcessedData(
                                    const uint64_t entity_id,
                                    std::vector<double>& mean,
@@ -250,8 +260,8 @@ void Estimator::getEntityBinProcessedData(
 
   for( size_t i = 0; i < first_moments.size(); ++i )
   {
-    this->processMoments( first_moments[i],
-                          second_moments[i],
+    this->processMoments( Utility::SampleMoment<1,double>(first_moments[i]),
+                          Utility::SampleMoment<2,double>(second_moments[i]),
                           this->getEntityNormConstant( entity_id ),
                           mean[i],
                           relative_error[i],
@@ -290,6 +300,11 @@ Utility::ArrayView<const double> Estimator::getTotalDataFourthMoments() const
 }
 
 // Get the total data mean, relative error, vov and fom
+/*! \details Make sure that the number of histories have been set
+ * (MonteCarlo::ParticleHistoryObserver::setNumberOfHistories) and that the
+ * elapsed time has been set 
+ * (MonteCarlo::ParticleHistoryObserver::setNumberOfHistories).
+ */
 void Estimator::getTotalProcessedData(
                                    std::vector<double>& mean,
                                    std::vector<double>& relative_error,
@@ -316,10 +331,10 @@ void Estimator::getTotalProcessedData(
 
   for( size_t i = 0; i < first_moments.size(); ++i )
   {
-    this->processMoments( first_moments[i],
-                          second_moments[i],
-                          third_moments[i],
-                          fourth_moments[i],
+    this->processMoments( Utility::SampleMoment<1,double>(first_moments[i]),
+                          Utility::SampleMoment<2,double>(second_moments[i]),
+                          Utility::SampleMoment<3,double>(third_moments[i]),
+                          Utility::SampleMoment<4,double>(fourth_moments[i]),
                           this->getTotalNormConstant(),
                           mean[i],
                           relative_error[i],
@@ -353,6 +368,11 @@ Utility::ArrayView<const double> Estimator::getEntityTotalDataFourthMoments( con
 }
 
 // Get the total data mean, relative error, vov and fom for an entity
+/*! \details Make sure that the number of histories have been set
+ * (MonteCarlo::ParticleHistoryObserver::setNumberOfHistories) and that the
+ * elapsed time has been set 
+ * (MonteCarlo::ParticleHistoryObserver::setNumberOfHistories).
+ */
 void Estimator::getEntityTotalProcessedData(
                                    const uint64_t entity_id,
                                    std::vector<double>& mean,
@@ -380,10 +400,10 @@ void Estimator::getEntityTotalProcessedData(
 
   for( size_t i = 0; i < first_moments.size(); ++i )
   {
-    this->processMoments( first_moments[i],
-                          second_moments[i],
-                          third_moments[i],
-                          fourth_moments[i],
+    this->processMoments( Utility::SampleMoment<1,double>(first_moments[i]),
+                          Utility::SampleMoment<2,double>(second_moments[i]),
+                          Utility::SampleMoment<3,double>(third_moments[i]),
+                          Utility::SampleMoment<4,double>(fourth_moments[i]),
                           this->getEntityNormConstant( entity_id ),
                           mean[i],
                           relative_error[i],

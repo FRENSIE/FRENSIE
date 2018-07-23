@@ -35,6 +35,17 @@ CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::CellTrackLengthFluxE
     ParticleSubtrackEndingInCellEventObserver()
 { /* ... */ }
 
+// Constructor (extract cell volumes from model)
+template<typename ContributionMultiplierPolicy>
+CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::CellTrackLengthFluxEstimator(
+                               const uint32_t id,
+                               const double multiplier,
+                               const std::vector<CellIdType>& cell_ids,
+	                       const Geometry::Model& model )
+  : StandardCellEstimator( id, multiplier, cell_ids, model ),
+    ParticleSubtrackEndingInCellEventObserver()
+{ /* ... */ }
+
 // Add estimator contribution from a portion of the current history
 template<typename ContributionMultiplierPolicy>
 void CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromParticleSubtrackEndingInCellEvent(

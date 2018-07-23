@@ -10,137 +10,104 @@
 #include <iostream>
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_VerboseObject.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_EntityEstimator.hpp"
-#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
-#include "Geometry_ModuleTraits.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
-
-//---------------------------------------------------------------------------//
-// Instantiation Macros.
-//---------------------------------------------------------------------------//
-typedef Geometry::ModuleTraits::EntityId CellId;
-
-#define UNIT_TEST_INSTANTIATION( type, name )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, CellId ) \
+#include "Utility_OpenMPProperties.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
-template<typename EntityId>
-class TestEntityEstimator : public MonteCarlo::EntityEstimator<EntityId>
+class TestEntityEstimator : public MonteCarlo::EntityEstimator
 {
 public:
-  TestEntityEstimator( const unsigned long long id,
+  TestEntityEstimator( const uint32_t id,
 		       const double multiplier,
-		       const Teuchos::Array<EntityId>& entity_ids,
-		       const Teuchos::Array<double>& entity_norm_constants )
-    : MonteCarlo::EntityEstimator<EntityId>( id,
-					 multiplier,
-					 entity_ids,
-					 entity_norm_constants )
+		       const std::vector<uint64_t>& entity_ids,
+		       const std::vector<double>& entity_norm_constants )
+    : MonteCarlo::EntityEstimator( id,
+                                   multiplier,
+                                   entity_ids,
+                                   entity_norm_constants )
   { /* ... */ }
 
-  TestEntityEstimator( const unsigned long long id,
+  TestEntityEstimator( const uint32_t id,
 		       const double multiplier,
-		       const Teuchos::Array<EntityId>& entity_ids )
-    : MonteCarlo::EntityEstimator<EntityId>( id, multiplier, entity_ids )
+		       const std::vector<uint64_t>& entity_ids )
+    : MonteCarlo::EntityEstimator( id, multiplier, entity_ids )
   { /* ... */ }
 
   ~TestEntityEstimator()
   { /* ... */ }
 
-  void printSummary( std::ostream& os ) const
+  void printSummary( std::ostream& os ) const final override
   { this->printImplementation( os, "Surface" ); }
 
-  void commitHistoryContribution()
+  void commitHistoryContribution() final override
   { /* ... */ }
 
   // Allow public access to the entity estimator protected member functions
-  using MonteCarlo::EntityEstimator<EntityId>::getEntityNormConstant;
-  using MonteCarlo::EntityEstimator<EntityId>::getTotalNormConstant;
-  using MonteCarlo::EntityEstimator<EntityId>::commitHistoryContributionToBinOfEntity;
-  using MonteCarlo::EntityEstimator<EntityId>::commitHistoryContributionToBinOfTotal;
+  using MonteCarlo::EntityEstimator::commitHistoryContributionToBinOfEntity;
+  using MonteCarlo::EntityEstimator::commitHistoryContributionToBinOfTotal;
 };
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
 //---------------------------------------------------------------------------//
 // Set the entity estimator bins (and response functions)
-template<typename EntityId>
-void setEntityEstimatorBins(
-	       Teuchos::RCP<TestEntityEstimator<EntityId> >& entity_estimator )
+void setEntityEstimatorBins( MonteCarlo::Estimator& estimator )
 {
-  // Use a base class pointer to test the virtual functions
-  Teuchos::RCP<MonteCarlo::Estimator> base_estimator =
-    Teuchos::rcp_dynamic_cast<MonteCarlo::Estimator>( entity_estimator );
-
   // Set the energy bins
-  Teuchos::Array<double> energy_bin_boundaries( 3 );
+  std::vector<double> energy_bin_boundaries( 3 );
   energy_bin_boundaries[0] = 0.0;
   energy_bin_boundaries[1] = 1e-1;
   energy_bin_boundaries[2] = 1.0;
 
-  base_estimator->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
+  estimator.setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
 						       energy_bin_boundaries );
 
   // Set the cosine bins
-  Teuchos::Array<double> cosine_bin_boundaries( 3 );
+  std::vector<double> cosine_bin_boundaries( 3 );
   cosine_bin_boundaries[0] = -1.0;
   cosine_bin_boundaries[1] = 0.0;
   cosine_bin_boundaries[2] = 1.0;
 
-  base_estimator->setBinBoundaries<MonteCarlo::COSINE_DIMENSION>(
+  estimator.setDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION>(
 						       cosine_bin_boundaries );
 
   // Set the time bins
-  Teuchos::Array<double> time_bin_boundaries( 3 );
+  std::vector<double> time_bin_boundaries( 3 );
   time_bin_boundaries[0] = 0.0;
   time_bin_boundaries[1] = 1e3;
   time_bin_boundaries[2] = 1e5;
 
-  base_estimator->setBinBoundaries<MonteCarlo::TIME_DIMENSION>(
+  estimator.setDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION>(
 							 time_bin_boundaries );
 
   // Set the collision number bins
-  Teuchos::Array<unsigned> collision_number_bins( 3 );
+  std::vector<unsigned> collision_number_bins( 3 );
   collision_number_bins[0] = 0u;
   collision_number_bins[1] = 1u;
   collision_number_bins[2] = std::numeric_limits<unsigned>::max();
 
-  base_estimator->setBinBoundaries<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
+  estimator.setDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>(
 						       collision_number_bins );
 
   // Set the response functions
-  Teuchos::Array<std::shared_ptr<MonteCarlo::ResponseFunction> >
+  std::vector<std::shared_ptr<const MonteCarlo::ParticleResponse> >
     response_functions( 1 );
-  response_functions[0] = MonteCarlo::ResponseFunction::default_response_function;
+  response_functions[0] = MonteCarlo::ParticleResponse::getDefault();
 
-  base_estimator->setResponseFunctions( response_functions );
+  estimator.setResponseFunctions( response_functions );
 }
 
-// Initialize the entity estimator (general)
-template<typename EntityId>
+// Initialize the entity estimator
 void initializeEntityEstimator(
-		Teuchos::RCP<TestEntityEstimator<EntityId> >& entity_estimator,
-		const bool assign_entity_norm_consts )
-{ /* ... */ }
-
-// Initialize the entity estimator (int)
-template<>
-void
-initializeEntityEstimator<Geometry::ModuleTraits::EntityId>(
-                     Teuchos::RCP<TestEntityEstimator<Geometry::ModuleTraits::EntityId> >& entity_estimator,
-		     const bool assign_entity_norm_consts )
+                        std::shared_ptr<TestEntityEstimator>& entity_estimator,
+                        const bool assign_entity_norm_consts )
 {
   // Set the entity ids
-  Teuchos::Array<Geometry::ModuleTraits::EntityId>
+  std::vector<uint64_t>
     entity_ids( 5 );
   entity_ids[0] = 0;
   entity_ids[1] = 1;
@@ -149,7 +116,7 @@ initializeEntityEstimator<Geometry::ModuleTraits::EntityId>(
   entity_ids[4] = 4;
 
   // Set the entity normalization constants
-  Teuchos::Array<double> entity_norm_constants( 5 );
+  std::vector<double> entity_norm_constants( 5 );
   entity_norm_constants[0] = 1.0;
   entity_norm_constants[1] = 2.0;
   entity_norm_constants[2] = 3.0;
@@ -161,1076 +128,444 @@ initializeEntityEstimator<Geometry::ModuleTraits::EntityId>(
 
   if( assign_entity_norm_consts )
   {
-    entity_estimator.reset(
-     new TestEntityEstimator<Geometry::ModuleTraits::EntityId>(
-						     0ull,
+    entity_estimator.reset( new TestEntityEstimator( 0ul,
 						     estimator_multiplier,
 						     entity_ids,
 						     entity_norm_constants ) );
   }
   else
   {
-    entity_estimator.reset(
-     new TestEntityEstimator<Geometry::ModuleTraits::EntityId>(
-							  0ull,
-							  estimator_multiplier,
-							  entity_ids ) );
+    entity_estimator.reset( new TestEntityEstimator( 0ull,
+                                                     estimator_multiplier,
+                                                     entity_ids ) );
   }
 
   // Set the entity estimator bins (and response functions)
-  setEntityEstimatorBins<Geometry::ModuleTraits::EntityId>(
-							    entity_estimator );
+  setEntityEstimatorBins( *entity_estimator );
 }
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the number of bins can be returned
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
-				   getNumberOfBins,
-				   EntityId )
+FRENSIE_UNIT_TEST( EntityEstimator, getNumberOfBins )
 {
-  Teuchos::RCP<TestEntityEstimator<EntityId> > entity_estimator;
+  std::shared_ptr<TestEntityEstimator> entity_estimator;
   initializeEntityEstimator( entity_estimator, true );
 
-  TEST_EQUALITY_CONST( entity_estimator->getNumberOfBins(), 24 );
+  FRENSIE_CHECK_EQUAL( entity_estimator->getNumberOfBins(), 24 );
 
+  entity_estimator.reset();
+  
   initializeEntityEstimator( entity_estimator, false );
 
-  TEST_EQUALITY_CONST( entity_estimator->getNumberOfBins(), 24 );
+  FRENSIE_CHECK_EQUAL( entity_estimator->getNumberOfBins(), 24 );
 }
-
-UNIT_TEST_INSTANTIATION( EntityEstimator, getNumberOfBins );
 
 //---------------------------------------------------------------------------//
 // Check that the number of response functions can be returned
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
-				   getNumberOfResponseFunctions,
-				   EntityId )
+FRENSIE_UNIT_TEST( EntityEstimator, getNumberOfResponseFunctions )
 {
-  Teuchos::RCP<TestEntityEstimator<EntityId> > entity_estimator;
-
+  std::shared_ptr<TestEntityEstimator> entity_estimator;
   initializeEntityEstimator( entity_estimator, true );
 
-  TEST_EQUALITY_CONST( entity_estimator->getNumberOfResponseFunctions(), 1 );
+  FRENSIE_CHECK_EQUAL( entity_estimator->getNumberOfResponseFunctions(), 1 );
+
+  entity_estimator.reset();
 
   initializeEntityEstimator( entity_estimator, false );
 
-  TEST_EQUALITY_CONST( entity_estimator->getNumberOfResponseFunctions(), 1 );
+  FRENSIE_CHECK_EQUAL( entity_estimator->getNumberOfResponseFunctions(), 1 );
 }
-
-UNIT_TEST_INSTANTIATION( EntityEstimator, getNumberOfResponseFunctions );
 
 //---------------------------------------------------------------------------//
 // Check that the entity ids associated with the estimator can be returned
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
-				   getEntityIds,
-				   EntityId )
+FRENSIE_UNIT_TEST( EntityEstimator, getEntityIds )
 {
-  Teuchos::RCP<TestEntityEstimator<EntityId> > entity_estimator;
-  typename MonteCarlo::EntityEstimator<EntityId>::EntityIdSet entity_ids;
-
+  std::shared_ptr<TestEntityEstimator> entity_estimator;
   initializeEntityEstimator( entity_estimator, true );
 
+  std::set<uint64_t> entity_ids;
   entity_estimator->getEntityIds( entity_ids );
 
-  TEST_EQUALITY_CONST( entity_ids.size(), 5 );
+  FRENSIE_CHECK_EQUAL( entity_ids.size(), 5 );
 }
-
-UNIT_TEST_INSTANTIATION( EntityEstimator, getEntityIds );
 
 //---------------------------------------------------------------------------//
 // Check if an entity is assigned to the estimator
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
-				   isEntityAssigned,
-				   EntityId )
+FRENSIE_UNIT_TEST( EntityEstimator, isEntityAssigned )
 {
-  Teuchos::RCP<TestEntityEstimator<EntityId> > entity_estimator;
-
+  std::shared_ptr<TestEntityEstimator> entity_estimator;
   initializeEntityEstimator( entity_estimator, true );
 
-  TEST_ASSERT( entity_estimator->isEntityAssigned( 0 ) );
-  TEST_ASSERT( entity_estimator->isEntityAssigned( 1 ) );
-  TEST_ASSERT( entity_estimator->isEntityAssigned( 2 ) );
-  TEST_ASSERT( entity_estimator->isEntityAssigned( 3 ) );
-  TEST_ASSERT( entity_estimator->isEntityAssigned( 4 ) );
-  TEST_ASSERT( !entity_estimator->isEntityAssigned( 5 ) );
+  FRENSIE_CHECK( entity_estimator->isEntityAssigned( 0 ) );
+  FRENSIE_CHECK( entity_estimator->isEntityAssigned( 1 ) );
+  FRENSIE_CHECK( entity_estimator->isEntityAssigned( 2 ) );
+  FRENSIE_CHECK( entity_estimator->isEntityAssigned( 3 ) );
+  FRENSIE_CHECK( entity_estimator->isEntityAssigned( 4 ) );
+  FRENSIE_CHECK( !entity_estimator->isEntityAssigned( 5 ) );
 }
-
-UNIT_TEST_INSTANTIATION( EntityEstimator, isEntityAssigned );
 
 //---------------------------------------------------------------------------//
 // Check if the entity norm constant can be returned
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
-				   getEntityNormConstant,
-				   EntityId )
+FRENSIE_UNIT_TEST( EntityEstimator, getEntityNormConstant )
 {
-  Teuchos::RCP<TestEntityEstimator<EntityId> > entity_estimator;
-
+  std::shared_ptr<TestEntityEstimator> entity_estimator;
   initializeEntityEstimator( entity_estimator, true );
 
-  TEST_EQUALITY_CONST( entity_estimator->getEntityNormConstant( 0 ), 1.0 );
-  TEST_EQUALITY_CONST( entity_estimator->getEntityNormConstant( 1 ), 2.0 );
-  TEST_EQUALITY_CONST( entity_estimator->getEntityNormConstant( 2 ), 3.0 );
-  TEST_EQUALITY_CONST( entity_estimator->getEntityNormConstant( 3 ), 4.0 );
-  TEST_EQUALITY_CONST( entity_estimator->getEntityNormConstant( 4 ), 5.0 );
+  FRENSIE_CHECK_EQUAL( entity_estimator->getEntityNormConstant( 0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( entity_estimator->getEntityNormConstant( 1 ), 2.0 );
+  FRENSIE_CHECK_EQUAL( entity_estimator->getEntityNormConstant( 2 ), 3.0 );
+  FRENSIE_CHECK_EQUAL( entity_estimator->getEntityNormConstant( 3 ), 4.0 );
+  FRENSIE_CHECK_EQUAL( entity_estimator->getEntityNormConstant( 4 ), 5.0 );
+
+  entity_estimator.reset();
 
   initializeEntityEstimator( entity_estimator, false );
 
-  TEST_EQUALITY_CONST( entity_estimator->getEntityNormConstant( 0 ), 1.0 );
-  TEST_EQUALITY_CONST( entity_estimator->getEntityNormConstant( 1 ), 1.0 );
-  TEST_EQUALITY_CONST( entity_estimator->getEntityNormConstant( 2 ), 1.0 );
-  TEST_EQUALITY_CONST( entity_estimator->getEntityNormConstant( 3 ), 1.0 );
-  TEST_EQUALITY_CONST( entity_estimator->getEntityNormConstant( 4 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( entity_estimator->getEntityNormConstant( 0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( entity_estimator->getEntityNormConstant( 1 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( entity_estimator->getEntityNormConstant( 2 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( entity_estimator->getEntityNormConstant( 3 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( entity_estimator->getEntityNormConstant( 4 ), 1.0 );
 }
-
-UNIT_TEST_INSTANTIATION( EntityEstimator, getEntityNormConstant );
 
 //---------------------------------------------------------------------------//
 // Check if the total norm constant can be returned
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
-				   getTotalNormConstant,
-				   EntityId )
+FRENSIE_UNIT_TEST( EntityEstimator, getTotalNormConstant )
 {
-  Teuchos::RCP<TestEntityEstimator<EntityId> > entity_estimator;
-
+  std::shared_ptr<TestEntityEstimator> entity_estimator;
   initializeEntityEstimator( entity_estimator, true );
 
-  TEST_EQUALITY_CONST( entity_estimator->getTotalNormConstant(), 15.0 );
+  FRENSIE_CHECK_EQUAL( entity_estimator->getTotalNormConstant(), 15.0 );
 
+  entity_estimator.reset();
+  
   initializeEntityEstimator( entity_estimator, false );
 
-  TEST_EQUALITY_CONST( entity_estimator->getTotalNormConstant(), 1.0 );
+  FRENSIE_CHECK_EQUAL( entity_estimator->getTotalNormConstant(), 1.0 );
 }
-
-UNIT_TEST_INSTANTIATION( EntityEstimator, getTotalNormConstant );
-
-//---------------------------------------------------------------------------//
-// Check if the estimator data can be exported
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
-				   exportData_raw,
-				   EntityId )
-{
-  Teuchos::RCP<MonteCarlo::Estimator> estimator;
-
-  Teuchos::Array<EntityId> entity_ids;
-  Teuchos::Array<double> entity_norm_constants;
-
-  {
-    // Set the entities ids
-    entity_ids.resize( 5 );
-    entity_ids[0] = 0;
-    entity_ids[1] = 1;
-    entity_ids[2] = 2;
-    entity_ids[3] = 3;
-    entity_ids[4] = 4;
-
-    // Set the entity normalization constants
-    entity_norm_constants.resize( 5 );
-    entity_norm_constants[0] = 1.0;
-    entity_norm_constants[1] = 2.0;
-    entity_norm_constants[2] = 3.0;
-    entity_norm_constants[3] = 4.0;
-    entity_norm_constants[4] = 5.0;
-  }
-
-  estimator.reset( new TestEntityEstimator<EntityId>(0u,
-						     5.0,
-						     entity_ids,
-						     entity_norm_constants ) );
-
-  Teuchos::Array<double> energy_bin_boundaries, cosine_bin_boundaries,
-    time_bin_boundaries;
-  Teuchos::Array<unsigned> collision_number_bins;
-
-  {
-    // Set the energy bins
-    energy_bin_boundaries.resize( 3 );
-    energy_bin_boundaries[0] = 0.0;
-    energy_bin_boundaries[1] = 1e-1;
-    energy_bin_boundaries[2] = 1.0;
-
-    estimator->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
-						       energy_bin_boundaries );
-
-    // Set the cosine bins
-    cosine_bin_boundaries.resize( 3 );
-    cosine_bin_boundaries[0] = -1.0;
-    cosine_bin_boundaries[1] = 0.0;
-    cosine_bin_boundaries[2] = 1.0;
-
-    estimator->setBinBoundaries<MonteCarlo::COSINE_DIMENSION>(
-						       cosine_bin_boundaries );
-
-    // Set the time bins
-    time_bin_boundaries.resize( 3 );
-    time_bin_boundaries[0] = 0.0;
-    time_bin_boundaries[1] = 1e3;
-    time_bin_boundaries[2] = 1e5;
-
-    estimator->setBinBoundaries<MonteCarlo::TIME_DIMENSION>(
-							 time_bin_boundaries );
-
-    // Set the collision number bins
-    collision_number_bins.resize( 3 );
-    collision_number_bins[0] = 0u;
-    collision_number_bins[1] = 1u;
-    collision_number_bins[2] = std::numeric_limits<unsigned>::max();
-
-    estimator->setBinBoundaries<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
-						       collision_number_bins );
-
-    // Set the response functions
-    Teuchos::Array<std::shared_ptr<MonteCarlo::ResponseFunction> >
-      response_functions( 1 );
-    response_functions[0] =
-      MonteCarlo::ResponseFunction::default_response_function;
-
-    estimator->setResponseFunctions( response_functions );
-  }
-
-  // Initialize the hdf5 file
-  std::shared_ptr<Utility::HDF5FileHandler>
-    hdf5_file( new Utility::HDF5FileHandler );
-  hdf5_file->openHDF5FileAndOverwrite( "test_entity_estimator.h5" );
-
-  estimator->exportData( hdf5_file, false );
-
-  // Create an estimator hdf5 file handler
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
-
-  // Make sure that the estimator exists in the hdf5 file
-  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 0u ) );
-
-  // Check that the estimator multiplier has been set
-  double multiplier;
-  hdf5_file_handler.getEstimatorMultiplier( 0u, multiplier );
-
-  TEST_EQUALITY_CONST( multiplier, 5.0 );
-
-  // Check that the estimator response function ordering has been set
-  Teuchos::Array<unsigned> response_function_ordering;
-  hdf5_file_handler.getEstimatorResponseFunctionOrdering(
-						  0u,
-						  response_function_ordering );
-
-  TEST_EQUALITY_CONST( response_function_ordering.size(), 1 );
-  TEST_EQUALITY( response_function_ordering[0],
-		 std::numeric_limits<unsigned>::max() );
-
-  // Check that the estimator dimension ordering has been set
-  Teuchos::Array<MonteCarlo::PhaseSpaceDimension> dimension_ordering;
-  hdf5_file_handler.getEstimatorDimensionOrdering( 0u, dimension_ordering );
-
-  TEST_EQUALITY_CONST( dimension_ordering.size(), 4 );
-  TEST_EQUALITY_CONST( dimension_ordering[0], MonteCarlo::ENERGY_DIMENSION );
-  TEST_EQUALITY_CONST( dimension_ordering[1], MonteCarlo::COSINE_DIMENSION );
-  TEST_EQUALITY_CONST( dimension_ordering[2], MonteCarlo::TIME_DIMENSION );
-  TEST_EQUALITY_CONST( dimension_ordering[3],
-		       MonteCarlo::COLLISION_NUMBER_DIMENSION );
-
-  // Check that the energy bins have been set
-  Teuchos::Array<double> energy_bin_boundaries_copy;
-  hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
-						  0u,
-						  energy_bin_boundaries_copy );
-
-  TEST_COMPARE_ARRAYS( energy_bin_boundaries, energy_bin_boundaries_copy );
-
-  // Check that the cosine bins have been set
-  Teuchos::Array<double> cosine_bin_boundaries_copy;
-  hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::COSINE_DIMENSION>(
-						  0u,
-						  cosine_bin_boundaries_copy );
-
-  TEST_COMPARE_ARRAYS( cosine_bin_boundaries, cosine_bin_boundaries_copy );
-
-  // Check that the time bins have been set
-  Teuchos::Array<double> time_bin_boundaries_copy;
-  hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::TIME_DIMENSION>(
-						    0u,
-						    time_bin_boundaries_copy );
-
-  TEST_COMPARE_ARRAYS( time_bin_boundaries, time_bin_boundaries_copy );
-
-  // Check that the collision number bins have been set
-  Teuchos::Array<unsigned> collision_number_bins_copy;
-  hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
-						  0u,
-						  collision_number_bins_copy );
-
-  TEST_COMPARE_ARRAYS( collision_number_bins, collision_number_bins_copy );
-
-  // Check if entities are assigned to the estimator
-  TEST_ASSERT( hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-								    0u, 0u ) );
-  TEST_ASSERT( hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-								    0u, 1u ) );
-  TEST_ASSERT( hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-								    0u, 2u ) );
-  TEST_ASSERT( hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-								    0u, 3u ) );
-  TEST_ASSERT( hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-								    0u, 4u ) );
-  TEST_ASSERT( !hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-								    0u, 5u ) );
-
-  // Check that the entities and norm constants have been set
-  std::map<EntityId,double> entity_id_norms;
-  hdf5_file_handler.getEstimatorEntities( 0u, entity_id_norms );
-
-  TEST_EQUALITY_CONST( entity_id_norms.size(), 5 );
-  TEST_EQUALITY_CONST( entity_id_norms[0], 1.0 );
-  TEST_EQUALITY_CONST( entity_id_norms[1], 2.0 );
-  TEST_EQUALITY_CONST( entity_id_norms[2], 3.0 );
-  TEST_EQUALITY_CONST( entity_id_norms[3], 4.0 );
-  TEST_EQUALITY_CONST( entity_id_norms[4], 5.0 );
-
-  // Check that entity norm constants have been set
-  double entity_norm_constant;
-  hdf5_file_handler.getEntityNormConstant( 0u, 0u, entity_norm_constant );
-
-  TEST_EQUALITY_CONST( entity_norm_constant, 1.0 );
-
-  hdf5_file_handler.getEntityNormConstant( 0u, 1u, entity_norm_constant );
-
-  TEST_EQUALITY_CONST( entity_norm_constant, 2.0 );
-
-  hdf5_file_handler.getEntityNormConstant( 0u, 2u, entity_norm_constant );
-
-  TEST_EQUALITY_CONST( entity_norm_constant, 3.0 );
-
-  hdf5_file_handler.getEntityNormConstant( 0u, 3u, entity_norm_constant );
-
-  TEST_EQUALITY_CONST( entity_norm_constant, 4.0 );
-
-  hdf5_file_handler.getEntityNormConstant( 0u, 4u, entity_norm_constant );
-
-  TEST_EQUALITY_CONST( entity_norm_constant, 5.0 );
-
-  // Check that the total norm constant has been set
-  double total_norm_constant;
-  hdf5_file_handler.getEstimatorTotalNormConstant( 0u, total_norm_constant );
-
-  TEST_EQUALITY_CONST( total_norm_constant, 15.0 );
-
-  // Check that the raw entity bin data has been set
-  Teuchos::Array<Utility::Pair<double,double> >
-    raw_bin_data( 24, Utility::Pair<double,double>( 0.0, 0.0 ) ),
-    raw_bin_data_copy;
-
-  hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 0u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-  hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 1u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-  hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 2u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-  hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 3u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-  hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 4u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-  // Check that there is no processed data since it was not requested on export
-  Teuchos::Array<Utility::Pair<double,double> >
-    processed_bin_data_copy;
-
-  TEST_THROW( hdf5_file_handler.getProcessedEstimatorEntityBinData(
-						     0u,
-						     0u,
-						     processed_bin_data_copy ),
-	      std::runtime_error );
-  TEST_THROW( hdf5_file_handler.getProcessedEstimatorEntityBinData(
-						     0u,
-						     1u,
-						     processed_bin_data_copy ),
-	      std::runtime_error );
-  TEST_THROW( hdf5_file_handler.getProcessedEstimatorEntityBinData(
-						     0u,
-						     2u,
-						     processed_bin_data_copy ),
-	      std::runtime_error );
-  TEST_THROW( hdf5_file_handler.getProcessedEstimatorEntityBinData(
-						     0u,
-						     3u,
-						     processed_bin_data_copy ),
-	      std::runtime_error );
-  TEST_THROW( hdf5_file_handler.getProcessedEstimatorEntityBinData(
-						     0u,
-						     4u,
-						     processed_bin_data_copy ),
-	      std::runtime_error );
-
-  // Check that the raw total bin data has been set
-  Teuchos::Array<Utility::Pair<double,double> >
-    raw_total_bin_data( 24, Utility::Pair<double,double>( 0.0, 0.0 ) ),
-    raw_total_bin_data_copy;
-
-  hdf5_file_handler.getRawEstimatorTotalBinData( 0u, raw_total_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( raw_total_bin_data, raw_total_bin_data_copy );
-
-  // Check that the processed total bin data has not been set
-  Teuchos::Array<Utility::Pair<double,double> >
-    processed_total_bin_data;
-
-  TEST_THROW( hdf5_file_handler.getProcessedEstimatorTotalBinData(
-						0u, processed_total_bin_data ),
-	      std::runtime_error );
-}
-
-UNIT_TEST_INSTANTIATION( EntityEstimator, exportData_raw );
-
-//---------------------------------------------------------------------------//
-// Check if the estimator data can be processed and exported
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
-				   exportData_process,
-				   EntityId )
-{
-  Teuchos::RCP<MonteCarlo::Estimator> estimator;
-
-  Teuchos::Array<EntityId> entity_ids;
-  Teuchos::Array<double> entity_norm_constants;
-
-  {
-    // Set the entities ids
-    entity_ids.resize( 5 );
-    entity_ids[0] = 0;
-    entity_ids[1] = 1;
-    entity_ids[2] = 2;
-    entity_ids[3] = 3;
-    entity_ids[4] = 4;
-
-    // Set the entity normalization constants
-    entity_norm_constants.resize( 5 );
-    entity_norm_constants[0] = 1.0;
-    entity_norm_constants[1] = 2.0;
-    entity_norm_constants[2] = 3.0;
-    entity_norm_constants[3] = 4.0;
-    entity_norm_constants[4] = 5.0;
-  }
-
-  estimator.reset( new TestEntityEstimator<EntityId>(0u,
-						     5.0,
-						     entity_ids,
-						     entity_norm_constants ) );
-
-  Teuchos::Array<double> energy_bin_boundaries, cosine_bin_boundaries,
-    time_bin_boundaries;
-  Teuchos::Array<unsigned> collision_number_bins;
-
-  {
-    // Set the energy bins
-    energy_bin_boundaries.resize( 3 );
-    energy_bin_boundaries[0] = 0.0;
-    energy_bin_boundaries[1] = 1e-1;
-    energy_bin_boundaries[2] = 1.0;
-
-    estimator->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
-						       energy_bin_boundaries );
-
-    // Set the cosine bins
-    cosine_bin_boundaries.resize( 3 );
-    cosine_bin_boundaries[0] = -1.0;
-    cosine_bin_boundaries[1] = 0.0;
-    cosine_bin_boundaries[2] = 1.0;
-
-    estimator->setBinBoundaries<MonteCarlo::COSINE_DIMENSION>(
-						       cosine_bin_boundaries );
-
-    // Set the time bins
-    time_bin_boundaries.resize( 3 );
-    time_bin_boundaries[0] = 0.0;
-    time_bin_boundaries[1] = 1e3;
-    time_bin_boundaries[2] = 1e5;
-
-    estimator->setBinBoundaries<MonteCarlo::TIME_DIMENSION>(
-							 time_bin_boundaries );
-
-    // Set the collision number bins
-    collision_number_bins.resize( 3 );
-    collision_number_bins[0] = 0u;
-    collision_number_bins[1] = 1u;
-    collision_number_bins[2] = std::numeric_limits<unsigned>::max();
-
-    estimator->setBinBoundaries<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
-						       collision_number_bins );
-
-    // Set the response functions
-    Teuchos::Array<std::shared_ptr<MonteCarlo::ResponseFunction> >
-      response_functions( 1 );
-    response_functions[0] =
-      MonteCarlo::ResponseFunction::default_response_function;
-
-    estimator->setResponseFunctions( response_functions );
-  }
-
-  // Initialize the hdf5 file
-  std::shared_ptr<Utility::HDF5FileHandler>
-    hdf5_file( new Utility::HDF5FileHandler );
-  hdf5_file->openHDF5FileAndOverwrite( "test_entity_estimator.h5" );
-
-  MonteCarlo::ParticleHistoryObserver::setStartTime( 0.0 );
-  MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
-  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( 1 );
-
-  estimator->exportData( hdf5_file, true );
-
-  // Create an estimator hdf5 file handler
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
-
-  // Make sure that the estimator exists in the hdf5 file
-  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 0u ) );
-
-  // Check that the estimator multiplier has been set
-  double multiplier;
-  hdf5_file_handler.getEstimatorMultiplier( 0u, multiplier );
-
-  TEST_EQUALITY_CONST( multiplier, 5.0 );
-
-  // Check that the estimator response function ordering has been set
-  Teuchos::Array<unsigned> response_function_ordering;
-  hdf5_file_handler.getEstimatorResponseFunctionOrdering(
-						  0u,
-						  response_function_ordering );
-
-  TEST_EQUALITY_CONST( response_function_ordering.size(), 1 );
-  TEST_EQUALITY( response_function_ordering[0],
-		 std::numeric_limits<unsigned>::max() );
-
-  // Check that the estimator dimension ordering has been set
-  Teuchos::Array<MonteCarlo::PhaseSpaceDimension> dimension_ordering;
-  hdf5_file_handler.getEstimatorDimensionOrdering( 0u, dimension_ordering );
-
-  TEST_EQUALITY_CONST( dimension_ordering.size(), 4 );
-  TEST_EQUALITY_CONST( dimension_ordering[0], MonteCarlo::ENERGY_DIMENSION );
-  TEST_EQUALITY_CONST( dimension_ordering[1], MonteCarlo::COSINE_DIMENSION );
-  TEST_EQUALITY_CONST( dimension_ordering[2], MonteCarlo::TIME_DIMENSION );
-  TEST_EQUALITY_CONST( dimension_ordering[3],
-		       MonteCarlo::COLLISION_NUMBER_DIMENSION );
-
-  // Check that the energy bins have been set
-  Teuchos::Array<double> energy_bin_boundaries_copy;
-  hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
-						  0u,
-						  energy_bin_boundaries_copy );
-
-  TEST_COMPARE_ARRAYS( energy_bin_boundaries, energy_bin_boundaries_copy );
-
-  // Check that the cosine bins have been set
-  Teuchos::Array<double> cosine_bin_boundaries_copy;
-  hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::COSINE_DIMENSION>(
-						  0u,
-						  cosine_bin_boundaries_copy );
-
-  TEST_COMPARE_ARRAYS( cosine_bin_boundaries, cosine_bin_boundaries_copy );
-
-  // Check that the time bins have been set
-  Teuchos::Array<double> time_bin_boundaries_copy;
-  hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::TIME_DIMENSION>(
-						    0u,
-						    time_bin_boundaries_copy );
-
-  TEST_COMPARE_ARRAYS( time_bin_boundaries, time_bin_boundaries_copy );
-
-  // Check that the collision number bins have been set
-  Teuchos::Array<unsigned> collision_number_bins_copy;
-  hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
-						  0u,
-						  collision_number_bins_copy );
-
-  TEST_COMPARE_ARRAYS( collision_number_bins, collision_number_bins_copy );
-
-  // Check if entities are assigned to the estimator
-  TEST_ASSERT( hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-								    0u, 0u ) );
-  TEST_ASSERT( hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-								    0u, 1u ) );
-  TEST_ASSERT( hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-								    0u, 2u ) );
-  TEST_ASSERT( hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-								    0u, 3u ) );
-  TEST_ASSERT( hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-								    0u, 4u ) );
-  TEST_ASSERT( !hdf5_file_handler.isEntityAssignedToEstimator<EntityId>(
-								    0u, 5u ) );
-
-  // Check that the entities and norm constants have been set
-  std::map<EntityId,double> entity_id_norms;
-  hdf5_file_handler.getEstimatorEntities( 0u, entity_id_norms );
-
-  TEST_EQUALITY_CONST( entity_id_norms.size(), 5 );
-  TEST_EQUALITY_CONST( entity_id_norms[0], 1.0 );
-  TEST_EQUALITY_CONST( entity_id_norms[1], 2.0 );
-  TEST_EQUALITY_CONST( entity_id_norms[2], 3.0 );
-  TEST_EQUALITY_CONST( entity_id_norms[3], 4.0 );
-  TEST_EQUALITY_CONST( entity_id_norms[4], 5.0 );
-
-  // Check that entity norm constants have been set
-  double entity_norm_constant;
-  hdf5_file_handler.getEntityNormConstant( 0u, 0u, entity_norm_constant );
-
-  TEST_EQUALITY_CONST( entity_norm_constant, 1.0 );
-
-  hdf5_file_handler.getEntityNormConstant( 0u, 1u, entity_norm_constant );
-
-  TEST_EQUALITY_CONST( entity_norm_constant, 2.0 );
-
-  hdf5_file_handler.getEntityNormConstant( 0u, 2u, entity_norm_constant );
-
-  TEST_EQUALITY_CONST( entity_norm_constant, 3.0 );
-
-  hdf5_file_handler.getEntityNormConstant( 0u, 3u, entity_norm_constant );
-
-  TEST_EQUALITY_CONST( entity_norm_constant, 4.0 );
-
-  hdf5_file_handler.getEntityNormConstant( 0u, 4u, entity_norm_constant );
-
-  TEST_EQUALITY_CONST( entity_norm_constant, 5.0 );
-
-  // Check that the total norm constant has been set
-  double total_norm_constant;
-  hdf5_file_handler.getEstimatorTotalNormConstant( 0u, total_norm_constant );
-
-  TEST_EQUALITY_CONST( total_norm_constant, 15.0 );
-
-  // Check that the raw entity bin data has been set
-  Teuchos::Array<Utility::Pair<double,double> >
-    raw_bin_data( 24, Utility::Pair<double,double>( 0.0, 0.0 ) ),
-    raw_bin_data_copy;
-
-  hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 0u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-  hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 1u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-  hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 2u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-  hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 3u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-  hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 4u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-  // Check that the processed bin data has been set
-  Teuchos::Array<Utility::Pair<double,double> >
-    processed_bin_data( 24, Utility::Pair<double,double>( 0.0, 0.0 ) ),
-    processed_bin_data_copy;
-
-  hdf5_file_handler.getProcessedEstimatorEntityBinData(
-						     0u,
-						     0u,
-						     processed_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( processed_bin_data, processed_bin_data_copy );
-
-  hdf5_file_handler.getProcessedEstimatorEntityBinData(
-						     0u,
-						     1u,
-						     processed_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( processed_bin_data, processed_bin_data_copy );
-
-  hdf5_file_handler.getProcessedEstimatorEntityBinData(
-						     0u,
-						     2u,
-						     processed_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( processed_bin_data, processed_bin_data_copy );
-
-  hdf5_file_handler.getProcessedEstimatorEntityBinData(
-						     0u,
-						     3u,
-						     processed_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( processed_bin_data, processed_bin_data_copy );
-
-  hdf5_file_handler.getProcessedEstimatorEntityBinData(
-						     0u,
-						     4u,
-						     processed_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( processed_bin_data, processed_bin_data_copy );
-
-  // Check that the raw total bin data has been set
-  Teuchos::Array<Utility::Pair<double,double> >
-    raw_total_bin_data( 24, Utility::Pair<double,double>( 0.0, 0.0 ) ),
-    raw_total_bin_data_copy;
-
-  hdf5_file_handler.getRawEstimatorTotalBinData( 0u, raw_total_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( raw_total_bin_data, raw_total_bin_data_copy );
-
-  // Check that the processed total bin data has not been set
-  Teuchos::Array<Utility::Pair<double,double> >
-    processed_total_bin_data( 24, Utility::Pair<double,double>( 0.0, 0.0 ) ),
-    processed_total_bin_data_copy;
-
-  hdf5_file_handler.getProcessedEstimatorTotalBinData(
-					   0u, processed_total_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( processed_total_bin_data,
-			       processed_total_bin_data_copy );
-}
-
-UNIT_TEST_INSTANTIATION( EntityEstimator, exportData_process );
 
 //---------------------------------------------------------------------------//
 // Check that a history contribution can be committed to a bin
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
-				   commitHistoryContributionToBinOfEntity,
-				   EntityId )
+FRENSIE_UNIT_TEST( EntityEstimator, commitHistoryContributionToBinOfEntity )
 {
-  Teuchos::RCP<TestEntityEstimator<EntityId> > entity_estimator;
-
+  std::shared_ptr<TestEntityEstimator> entity_estimator;
   initializeEntityEstimator( entity_estimator, true );
 
-  unsigned num_estimator_bins = entity_estimator->getNumberOfBins()*
+  size_t num_estimator_bins = entity_estimator->getNumberOfBins()*
     entity_estimator->getNumberOfResponseFunctions();
 
-  typename MonteCarlo::EntityEstimator<EntityId>::EntityIdSet entity_ids;
+  std::set<uint64_t> entity_ids;
 
   entity_estimator->getEntityIds( entity_ids );
 
-  typename MonteCarlo::EntityEstimator<EntityId>::EntityIdSet::const_iterator
-    entity_id, end_entity_id;
-  entity_id = entity_ids.begin();
-  end_entity_id = entity_ids.end();
-
   // Commit one contribution to every bin of the estimator
-  while( entity_id != end_entity_id )
+  for( auto&& entity_id : entity_ids )
   {
-    for( unsigned i = 0u; i < num_estimator_bins; ++i )
+    for( size_t i = 0; i < num_estimator_bins; ++i )
     {
-      entity_estimator->commitHistoryContributionToBinOfEntity( *entity_id,
+      entity_estimator->commitHistoryContributionToBinOfEntity( entity_id,
 								i,
 								0.5 );
     }
-
-    ++entity_id;
   }
 
-  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( 1.0 );
-  MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( 1 );
+  MonteCarlo::ParticleHistoryObserver::setElapsedTime( 1.0 );
 
-  // Initialize the hdf5 file
-  std::shared_ptr<Utility::HDF5FileHandler>
-    hdf5_file( new Utility::HDF5FileHandler );
-  hdf5_file->openHDF5FileAndOverwrite( "test_entity_estimator2.h5" );
+  // Check the entity bin data moments
+  Utility::ArrayView<const double> entity_bin_first_moments =
+    entity_estimator->getEntityBinDataFirstMoments( 0 );
 
-  // Export the estimator data
-  entity_estimator->exportData( hdf5_file, true );
+  Utility::ArrayView<const double> entity_bin_second_moments =
+    entity_estimator->getEntityBinDataSecondMoments( 0 );
 
-  // Create and estimator hdf5 file handler
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( 24, 0.5 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 24, 0.25 ) );
 
-  // Retrieve the raw bin data for each entity
-  Teuchos::Array<Utility::Pair<double,double> >
-    raw_bin_data( 24, Utility::Pair<double,double>( 0.5, 0.25 ) ),
-    raw_bin_data_copy;
+  entity_bin_first_moments =
+    entity_estimator->getEntityBinDataFirstMoments( 1 );
+  
+  entity_bin_second_moments =
+    entity_estimator->getEntityBinDataSecondMoments( 1 );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 0u, raw_bin_data_copy );
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( 24, 0.5 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 24, 0.25 ) );
 
-  UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
+  entity_bin_first_moments =
+    entity_estimator->getEntityBinDataFirstMoments( 2 );
+  
+  entity_bin_second_moments =
+    entity_estimator->getEntityBinDataSecondMoments( 2 );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 1u, raw_bin_data_copy );
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( 24, 0.5 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 24, 0.25 ) );
 
-  UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
+  entity_bin_first_moments =
+    entity_estimator->getEntityBinDataFirstMoments( 3 );
+  
+  entity_bin_second_moments =
+    entity_estimator->getEntityBinDataSecondMoments( 3 );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 2u, raw_bin_data_copy );
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( 24, 0.5 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 24, 0.25 ) );
 
-  UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
+  entity_bin_first_moments =
+    entity_estimator->getEntityBinDataFirstMoments( 4 );
+  
+  entity_bin_second_moments =
+    entity_estimator->getEntityBinDataSecondMoments( 4 );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 3u, raw_bin_data_copy );
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( 24, 0.5 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 24, 0.25 ) );
 
-  UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
+  // Check the entity bin data mean, re, and fom
+  std::vector<double> entity_mean, entity_relative_error, entity_figure_of_merit;
 
-  hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 4u, raw_bin_data_copy );
+  entity_estimator->getEntityBinProcessedData( 0, entity_mean, entity_relative_error, entity_figure_of_merit );
 
-  UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
+  FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, 5.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, 0.0 ) );
 
-  // Retrieve the processed in data for each entity
-  Teuchos::Array<Utility::Pair<double,double> >
-    proc_bin_data( 24, Utility::Pair<double,double>( 5.0, 0.0 ) ),
-    proc_bin_data_copy;
+  entity_estimator->getEntityBinProcessedData( 1, entity_mean, entity_relative_error, entity_figure_of_merit );
 
-  hdf5_file_handler.getProcessedEstimatorEntityBinData( 0u,
-							0u,
-							proc_bin_data_copy );
+  FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, 2.5 ) );
+  FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, 0.0 ) );
 
-  UTILITY_TEST_COMPARE_ARRAYS( proc_bin_data, proc_bin_data_copy );
+  entity_estimator->getEntityBinProcessedData( 2, entity_mean, entity_relative_error, entity_figure_of_merit );
 
-  proc_bin_data.clear();
-  proc_bin_data.resize( 24, Utility::Pair<double,double>( 2.5, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, 5.0/3 ) );
+  FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, 0.0 ) );
 
-  hdf5_file_handler.getProcessedEstimatorEntityBinData( 0u,
-							1u,
-							proc_bin_data_copy );
+  entity_estimator->getEntityBinProcessedData( 3, entity_mean, entity_relative_error, entity_figure_of_merit );
 
-  UTILITY_TEST_COMPARE_ARRAYS( proc_bin_data, proc_bin_data_copy );
+  FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, 5.0/4 ) );
+  FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, 0.0 ) );
 
-  proc_bin_data.clear();
-  proc_bin_data.resize( 24, Utility::Pair<double,double>( 5.0/3.0, 0.0 ) );
+  entity_estimator->getEntityBinProcessedData( 4, entity_mean, entity_relative_error, entity_figure_of_merit );
 
-  hdf5_file_handler.getProcessedEstimatorEntityBinData( 0u,
-							2u,
-							proc_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( proc_bin_data, proc_bin_data_copy );
-
-  proc_bin_data.clear();
-  proc_bin_data.resize( 24, Utility::Pair<double,double>( 5.0/4.0, 0.0 ) );
-
-  hdf5_file_handler.getProcessedEstimatorEntityBinData( 0u,
-							3u,
-							proc_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( proc_bin_data, proc_bin_data_copy );
-
-  proc_bin_data.clear();
-  proc_bin_data.resize( 24, Utility::Pair<double,double>( 1.0, 0.0 ) );
-
-  hdf5_file_handler.getProcessedEstimatorEntityBinData( 0u,
-							4u,
-							proc_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( proc_bin_data, proc_bin_data_copy );
+  FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, 1.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, 0.0 ) );
 }
-
-UNIT_TEST_INSTANTIATION( EntityEstimator,
-			 commitHistoryContributionToBinOfEntity );
 
 //---------------------------------------------------------------------------//
 // Check that a history contribution can be committed to a bin
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL(
-			  EntityEstimator,
-			  commitHistoryContributionToBinOfEntity_thread_safe,
-			  EntityId )
+FRENSIE_UNIT_TEST( EntityEstimator,
+                   commitHistoryContributionToBinOfEntity_thread_safe )
 {
-  Teuchos::RCP<TestEntityEstimator<EntityId> > entity_estimator;
-
+  std::shared_ptr<TestEntityEstimator> entity_estimator;
   initializeEntityEstimator( entity_estimator, true );
 
-  unsigned num_estimator_bins = entity_estimator->getNumberOfBins()*
+  size_t num_estimator_bins = entity_estimator->getNumberOfBins()*
     entity_estimator->getNumberOfResponseFunctions();
 
-  typename MonteCarlo::EntityEstimator<EntityId>::EntityIdSet entity_ids;
+  std::set<uint64_t> entity_ids;
 
   entity_estimator->getEntityIds( entity_ids );
 
-  typename MonteCarlo::EntityEstimator<EntityId>::EntityIdSet::const_iterator
-    entity_id, end_entity_id;
-  entity_id = entity_ids.begin();
-  end_entity_id = entity_ids.end();
-
   // Commit one contribution to every bin of the estimator
-  while( entity_id != end_entity_id )
+  for( auto&& entity_id : entity_ids )
   {
-    for( unsigned i = 0u; i < num_estimator_bins; ++i )
+    for( size_t i = 0u; i < num_estimator_bins; ++i )
     {
       #pragma omp parallel num_threads( Utility::OpenMPProperties::getRequestedNumberOfThreads() )
       {
 	entity_estimator->commitHistoryContributionToBinOfEntity(
-			     *entity_id,
+			     entity_id,
 			     i,
 			     Utility::OpenMPProperties::getThreadId()+1.0 );
       }
     }
-
-    ++entity_id;
   }
 
   unsigned histories =
     Utility::OpenMPProperties::getRequestedNumberOfThreads();
+  
   MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( histories );
-  MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
-
-  // Initialize the hdf5 file
-  std::shared_ptr<Utility::HDF5FileHandler>
-    hdf5_file( new Utility::HDF5FileHandler );
-  hdf5_file->openHDF5FileAndOverwrite( "test_entity_estimator2.h5" );
-
-  // Export the estimator data
-  entity_estimator->exportData( hdf5_file, true );
-
-  // Create an estimator hdf5 file handler
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
+  MonteCarlo::ParticleHistoryObserver::setElapsedTime( 1.0 );
 
   double moment_1 = histories*(histories+1.0)/2.0;
-
   double moment_2 = histories*(histories+1.0)*(2*histories+1.0)/6.0;
 
-  // Retrieve the raw bin data for each entity
-  Teuchos::Array<Utility::Pair<double,double> >
-    raw_bin_data( 24, Utility::Pair<double,double>( moment_1, moment_2 ) ),
-    raw_bin_data_copy;
+  // Check the entity bin data moments
+  Utility::ArrayView<const double> entity_bin_first_moments =
+    entity_estimator->getEntityBinDataFirstMoments( 0 );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 0u, raw_bin_data_copy );
+  Utility::ArrayView<const double> entity_bin_second_moments =
+    entity_estimator->getEntityBinDataSecondMoments( 0 );
 
-  UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( 24, moment_1 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 24, moment_2 ) );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 1u, raw_bin_data_copy );
+  entity_bin_first_moments =
+    entity_estimator->getEntityBinDataFirstMoments( 1 );
+  
+  entity_bin_second_moments =
+    entity_estimator->getEntityBinDataSecondMoments( 1 );
 
-  UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( 24, moment_1 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 24, moment_2 ) );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 2u, raw_bin_data_copy );
+  entity_bin_first_moments =
+    entity_estimator->getEntityBinDataFirstMoments( 2 );
+  
+  entity_bin_second_moments =
+    entity_estimator->getEntityBinDataSecondMoments( 2 );
 
-  UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( 24, moment_1 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 24, moment_2 ) );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 3u, raw_bin_data_copy );
+  entity_bin_first_moments =
+    entity_estimator->getEntityBinDataFirstMoments( 3 );
+  
+  entity_bin_second_moments =
+    entity_estimator->getEntityBinDataSecondMoments( 3 );
 
-  UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( 24, moment_1 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 24, moment_2 ) );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 4u, raw_bin_data_copy );
+  entity_bin_first_moments =
+    entity_estimator->getEntityBinDataFirstMoments( 4 );
+  
+  entity_bin_second_moments =
+    entity_estimator->getEntityBinDataSecondMoments( 4 );
 
-  UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( 24, moment_1 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 24, moment_2 ) );
 
   double unnorm_mean = moment_1*10.0/histories;
-  double rel_err = sqrt( moment_2/(moment_1*moment_1) - 1.0/histories );
+  
+  double rel_err = moment_2/(moment_1*moment_1) - 1.0/histories;
+  
+  if( histories > 1 )
+    rel_err *= histories/(histories-1);
 
-  // Retrieve the processed in data for each entity
+  rel_err = std::sqrt( rel_err );
+  
+  double fom = 0.0;
+
+  if( rel_err > 0.0 )
+    fom = 1.0/(rel_err*rel_err);
+
+  // Check the entity bin data mean, re, and fom
+  std::vector<double> entity_mean, entity_relative_error, entity_figure_of_merit;
+
   double mean = unnorm_mean;
-  Teuchos::Array<Utility::Pair<double,double> >
-    proc_bin_data( 24, Utility::Pair<double,double>( mean, rel_err ) ),
-    proc_bin_data_copy;
+  entity_estimator->getEntityBinProcessedData( 0, entity_mean, entity_relative_error, entity_figure_of_merit );
 
-  hdf5_file_handler.getProcessedEstimatorEntityBinData( 0u,
-							0u,
-							proc_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( proc_bin_data, proc_bin_data_copy );
+  FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, mean ) );
+  FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, rel_err ) );
+  FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, fom ) );
 
   mean = unnorm_mean/2.0;
-  proc_bin_data.clear();
-  proc_bin_data.resize( 24, Utility::Pair<double,double>( mean, rel_err ) );
+  entity_estimator->getEntityBinProcessedData( 1, entity_mean, entity_relative_error, entity_figure_of_merit );
 
-  hdf5_file_handler.getProcessedEstimatorEntityBinData( 0u,
-							1u,
-							proc_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( proc_bin_data, proc_bin_data_copy );
+  FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, mean ) );
+  FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, rel_err ) );
+  FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, fom ) );
 
   mean = unnorm_mean/3.0;
-  proc_bin_data.clear();
-  proc_bin_data.resize( 24, Utility::Pair<double,double>( mean, rel_err ) );
+  entity_estimator->getEntityBinProcessedData( 2, entity_mean, entity_relative_error, entity_figure_of_merit );
 
-  hdf5_file_handler.getProcessedEstimatorEntityBinData( 0u,
-							2u,
-							proc_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( proc_bin_data, proc_bin_data_copy );
+  FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, mean ) );
+  FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, rel_err ) );
+  FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, fom ) );
 
   mean = unnorm_mean/4.0;
-  proc_bin_data.clear();
-  proc_bin_data.resize( 24, Utility::Pair<double,double>( mean, rel_err ) );
+  entity_estimator->getEntityBinProcessedData( 3, entity_mean, entity_relative_error, entity_figure_of_merit );
 
-  hdf5_file_handler.getProcessedEstimatorEntityBinData( 0u,
-							3u,
-							proc_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( proc_bin_data, proc_bin_data_copy );
+  FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, mean ) );
+  FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, rel_err ) );
+  FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, fom ) );
 
   mean = unnorm_mean/5.0;
-  proc_bin_data.clear();
-  proc_bin_data.resize( 24, Utility::Pair<double,double>( mean, rel_err ) );
+  entity_estimator->getEntityBinProcessedData( 4, entity_mean, entity_relative_error, entity_figure_of_merit );
 
-  hdf5_file_handler.getProcessedEstimatorEntityBinData( 0u,
-							4u,
-							proc_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( proc_bin_data, proc_bin_data_copy );
+  FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, mean ) );
+  FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, rel_err ) );
+  FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, fom ) );
 }
-
-UNIT_TEST_INSTANTIATION( EntityEstimator,
-			 commitHistoryContributionToBinOfEntity_thread_safe);
 
 //---------------------------------------------------------------------------//
 // Check that a history contribution can be committed to a bin of the total
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
-				   commitHistoryContributionToBinOfTotal,
-				   EntityId )
+FRENSIE_UNIT_TEST( EntityEstimator, commitHistoryContributionToBinOfTotal )
 {
-  Teuchos::RCP<TestEntityEstimator<EntityId> > entity_estimator;
-
+  std::shared_ptr<TestEntityEstimator> entity_estimator;
   initializeEntityEstimator( entity_estimator, true );
 
-  unsigned num_estimator_bins = entity_estimator->getNumberOfBins()*
+  size_t num_estimator_bins = entity_estimator->getNumberOfBins()*
     entity_estimator->getNumberOfResponseFunctions();
 
   // Commit one contribution to every bin of the estimator
-  for( unsigned i = 0u; i < num_estimator_bins; ++i )
+  for( size_t i = 0u; i < num_estimator_bins; ++i )
   {
     entity_estimator->commitHistoryContributionToBinOfTotal( i, 0.5 );
   }
 
-  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( 1.0 );
-  MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( 2 );
+  MonteCarlo::ParticleHistoryObserver::setElapsedTime( 1.5 );
 
-  // Initialize the hdf5 file
-  std::shared_ptr<Utility::HDF5FileHandler>
-    hdf5_file( new Utility::HDF5FileHandler );
-  hdf5_file->openHDF5FileAndOverwrite( "test_entity_estimator3.h5" );
+  // Check the total bin data moments
+  Utility::ArrayView<const double> total_bin_first_moments =
+    entity_estimator->getTotalBinDataFirstMoments();
 
-  // Export the estimator data
-  entity_estimator->exportData( hdf5_file, true );
+  Utility::ArrayView<const double> total_bin_second_moments =
+    entity_estimator->getTotalBinDataSecondMoments();
 
-  // Create an estimator hfd5 file handler
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
+  FRENSIE_CHECK_EQUAL( total_bin_first_moments,
+                       std::vector<double>( 24, 0.5 ) );
+  FRENSIE_CHECK_EQUAL( total_bin_second_moments,
+                       std::vector<double>( 24, 0.25 ) );
 
-  // Retrieve the raw bin data for the total
-  Teuchos::Array<Utility::Pair<double,double> >
-    raw_bin_data( 24, Utility::Pair<double,double>( 0.5, 0.25 ) ),
-    raw_bin_data_copy;
+  // Check the total mean, relative error, and fom
+  std::vector<double> mean, relative_error, fom;
 
-  hdf5_file_handler.getRawEstimatorTotalBinData( 0u, raw_bin_data_copy );
+  entity_estimator->getTotalBinProcessedData( mean, relative_error, fom );
 
-  UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
-
-  // Retrieve the processed in data for the total
-  Teuchos::Array<Utility::Pair<double,double> >
-    proc_bin_data( 24, Utility::Pair<double,double>( 5.0/15.0, 0.0 ) ),
-    proc_bin_data_copy;
-
-  hdf5_file_handler.getProcessedEstimatorTotalBinData( 0u,
-						       proc_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_ARRAYS( proc_bin_data, proc_bin_data_copy );
+  FRENSIE_CHECK_EQUAL( mean, std::vector<double>( 24, 5.0/30.0 ) );
+  FRENSIE_CHECK_EQUAL( relative_error, std::vector<double>( 24, 1.0 ) );
+  FRENSIE_CHECK_EQUAL( fom, std::vector<double>( 24, 1.0/1.5 ) );
 }
-
-UNIT_TEST_INSTANTIATION( EntityEstimator,
-			 commitHistoryContributionToBinOfTotal );
 
 //---------------------------------------------------------------------------//
 // Check that a history contribution can be committed to a bin of the total
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL(
-			   EntityEstimator,
-			   commitHistoryContributionToBinOfTotal_thread_safe,
-			   EntityId )
+FRENSIE_UNIT_TEST( EntityEstimator,
+                   commitHistoryContributionToBinOfTotal_thread_safe )
 {
-  Teuchos::RCP<TestEntityEstimator<EntityId> > entity_estimator;
-
+  std::shared_ptr<TestEntityEstimator> entity_estimator;
   initializeEntityEstimator( entity_estimator, true );
 
-  unsigned num_estimator_bins = entity_estimator->getNumberOfBins()*
+  size_t num_estimator_bins = entity_estimator->getNumberOfBins()*
     entity_estimator->getNumberOfResponseFunctions();
 
   // Commit one contribution to every bin of the estimator
-  for( unsigned i = 0u; i < num_estimator_bins; ++i )
+  for( size_t i = 0u; i < num_estimator_bins; ++i )
   {
     #pragma omp parallel num_threads( Utility::OpenMPProperties::getRequestedNumberOfThreads() )
     {
@@ -1243,64 +578,135 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL(
     Utility::OpenMPProperties::getRequestedNumberOfThreads();
 
   MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( histories );
-  MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
-
-  // Initialize the hdf5 file
-  std::shared_ptr<Utility::HDF5FileHandler>
-    hdf5_file( new Utility::HDF5FileHandler );
-  hdf5_file->openHDF5FileAndOverwrite( "test_entity_estimator3.h5" );
-
-  // Export the estimator data
-  entity_estimator->exportData( hdf5_file, true );
-
-  // Create an hdf5 file and overwrite
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
+  MonteCarlo::ParticleHistoryObserver::setElapsedTime( 1.5 );
 
   double moment_1 = histories*(histories+1.0)/2.0;
-
   double moment_2 = histories*(histories+1.0)*(2*histories+1.0)/6.0;
 
-  // Retrieve the raw bin data for each entity
-  Teuchos::Array<Utility::Pair<double,double> >
-    raw_bin_data( 24, Utility::Pair<double,double>( moment_1, moment_2 ) ),
-    raw_bin_data_copy;
+  // Check the total bin data moments
+  Utility::ArrayView<const double> total_bin_first_moments =
+    entity_estimator->getTotalBinDataFirstMoments();
 
-  hdf5_file_handler.getRawEstimatorTotalBinData( 0u, raw_bin_data_copy );
+  Utility::ArrayView<const double> total_bin_second_moments =
+    entity_estimator->getTotalBinDataSecondMoments();
 
-  UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
+  FRENSIE_CHECK_EQUAL( total_bin_first_moments,
+                       std::vector<double>( 24, moment_1 ) );
+  FRENSIE_CHECK_EQUAL( total_bin_second_moments,
+                       std::vector<double>( 24, moment_2 ) );
 
-  double mean = moment_1*10.0/(histories*15.0);
-  double rel_err = sqrt( moment_2/(moment_1*moment_1) - 1.0/histories );
+  // Check the total mean, relative error, and fom
+  std::vector<double> mean, relative_error, fom;
 
-  // Retrieve the processed in data for each entity
-  Teuchos::Array<Utility::Pair<double,double> >
-    proc_bin_data( 24, Utility::Pair<double,double>( mean, rel_err ) ),
-    proc_bin_data_copy;
+  entity_estimator->getTotalBinProcessedData( mean, relative_error, fom );
 
-  hdf5_file_handler.getProcessedEstimatorTotalBinData( 0u,
-						       proc_bin_data_copy );
+  double expected_mean = moment_1*10.0/(histories*15.0);
+  double expected_rel_err = moment_2/(moment_1*moment_1) - 1.0/histories;
 
-  UTILITY_TEST_COMPARE_ARRAYS( proc_bin_data, proc_bin_data_copy );
+  if( histories > 1 )
+    expected_rel_err *= histories/(histories-1);
+
+  expected_rel_err = std::sqrt( expected_rel_err );
+  
+  double expected_fom = 0.0;
+
+  if( expected_rel_err > 0.0 )
+    expected_fom = 1.0/(expected_rel_err*expected_rel_err*1.5);
+
+  FRENSIE_CHECK_EQUAL( mean, std::vector<double>( 24, expected_mean ) );
+  FRENSIE_CHECK_EQUAL( relative_error, std::vector<double>( 24, expected_rel_err ) );
+  FRENSIE_CHECK_EQUAL( fom, std::vector<double>( 24, expected_fom ) );
 }
 
-UNIT_TEST_INSTANTIATION( EntityEstimator,
-			 commitHistoryContributionToBinOfTotal_thread_safe );
+//---------------------------------------------------------------------------//
+// Check that the total data can be returned
+FRENSIE_UNIT_TEST( EntityEstimator, isTotalDataAvailable )
+{
+  std::shared_ptr<TestEntityEstimator> entity_estimator;
+  initializeEntityEstimator( entity_estimator, true );
+
+  FRENSIE_CHECK( !entity_estimator->isTotalDataAvailable() );
+
+  Utility::ArrayView<const double> first_moments =
+    entity_estimator->getEntityTotalDataFirstMoments( 0 );
+
+  Utility::ArrayView<const double> second_moments =
+    entity_estimator->getEntityTotalDataSecondMoments( 0 );
+
+  Utility::ArrayView<const double> third_moments =
+    entity_estimator->getEntityTotalDataThirdMoments( 0 );
+
+  Utility::ArrayView<const double> fourth_moments =
+    entity_estimator->getEntityTotalDataFourthMoments( 0 );
+
+  FRENSIE_CHECK_EQUAL( first_moments.size(), 0 );
+  FRENSIE_CHECK_EQUAL( second_moments.size(), 0 );
+  FRENSIE_CHECK_EQUAL( third_moments.size(), 0 );
+  FRENSIE_CHECK_EQUAL( fourth_moments.size(), 0 );
+
+  first_moments = entity_estimator->getEntityTotalDataFirstMoments( 1 );
+  second_moments = entity_estimator->getEntityTotalDataSecondMoments( 1 );
+  third_moments = entity_estimator->getEntityTotalDataThirdMoments( 1 );
+  fourth_moments = entity_estimator->getEntityTotalDataFourthMoments( 1 );
+
+  FRENSIE_CHECK_EQUAL( first_moments.size(), 0 );
+  FRENSIE_CHECK_EQUAL( second_moments.size(), 0 );
+  FRENSIE_CHECK_EQUAL( third_moments.size(), 0 );
+  FRENSIE_CHECK_EQUAL( fourth_moments.size(), 0 );
+
+  first_moments = entity_estimator->getEntityTotalDataFirstMoments( 2 );
+  second_moments = entity_estimator->getEntityTotalDataSecondMoments( 2 );
+  third_moments = entity_estimator->getEntityTotalDataThirdMoments( 2 );
+  fourth_moments = entity_estimator->getEntityTotalDataFourthMoments( 2 );
+
+  FRENSIE_CHECK_EQUAL( first_moments.size(), 0 );
+  FRENSIE_CHECK_EQUAL( second_moments.size(), 0 );
+  FRENSIE_CHECK_EQUAL( third_moments.size(), 0 );
+  FRENSIE_CHECK_EQUAL( fourth_moments.size(), 0 );
+
+  first_moments = entity_estimator->getEntityTotalDataFirstMoments( 3 );
+  second_moments = entity_estimator->getEntityTotalDataSecondMoments( 3 );
+  third_moments = entity_estimator->getEntityTotalDataThirdMoments( 3 );
+  fourth_moments = entity_estimator->getEntityTotalDataFourthMoments( 3 );
+
+  FRENSIE_CHECK_EQUAL( first_moments.size(), 0 );
+  FRENSIE_CHECK_EQUAL( second_moments.size(), 0 );
+  FRENSIE_CHECK_EQUAL( third_moments.size(), 0 );
+  FRENSIE_CHECK_EQUAL( fourth_moments.size(), 0 );
+
+  first_moments = entity_estimator->getEntityTotalDataFirstMoments( 4 );
+  second_moments = entity_estimator->getEntityTotalDataSecondMoments( 4 );
+  third_moments = entity_estimator->getEntityTotalDataThirdMoments( 4 );
+  fourth_moments = entity_estimator->getEntityTotalDataFourthMoments( 4 );
+
+  FRENSIE_CHECK_EQUAL( first_moments.size(), 0 );
+  FRENSIE_CHECK_EQUAL( second_moments.size(), 0 );
+  FRENSIE_CHECK_EQUAL( third_moments.size(), 0 );
+  FRENSIE_CHECK_EQUAL( fourth_moments.size(), 0 );
+
+  first_moments = entity_estimator->getTotalDataFirstMoments();
+  second_moments = entity_estimator->getTotalDataSecondMoments();
+  third_moments = entity_estimator->getTotalDataThirdMoments();
+  fourth_moments = entity_estimator->getTotalDataFourthMoments();
+
+  FRENSIE_CHECK_EQUAL( first_moments.size(), 0 );
+  FRENSIE_CHECK_EQUAL( second_moments.size(), 0 );
+  FRENSIE_CHECK_EQUAL( third_moments.size(), 0 );
+  FRENSIE_CHECK_EQUAL( fourth_moments.size(), 0 );
+}
 
 //---------------------------------------------------------------------------//
 // Check that a history contribution can be committed to a bin of the total
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
-				   resetData,
-				   EntityId )
+FRENSIE_UNIT_TEST( EntityEstimator, resetData )
 {
-  Teuchos::RCP<TestEntityEstimator<EntityId> > entity_estimator;
-
+  std::shared_ptr<TestEntityEstimator> entity_estimator;
   initializeEntityEstimator( entity_estimator, true );
 
-  unsigned num_estimator_bins = entity_estimator->getNumberOfBins()*
+  size_t num_estimator_bins = entity_estimator->getNumberOfBins()*
     entity_estimator->getNumberOfResponseFunctions();
 
   // Commit one contribution to every bin of the estimator
-  for( unsigned i = 0u; i < num_estimator_bins; ++i )
+  for( size_t i = 0u; i < num_estimator_bins; ++i )
   {
     entity_estimator->commitHistoryContributionToBinOfTotal( i, 0.5 );
   }
@@ -1309,124 +715,176 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
   entity_estimator->resetData();
 
   // Make sure the bins have not been changed
-  TEST_EQUALITY_CONST(
-	     entity_estimator->getNumberOfBins( MonteCarlo::ENERGY_DIMENSION ),
-	     2 );
-  TEST_EQUALITY_CONST(
-	     entity_estimator->getNumberOfBins( MonteCarlo::TIME_DIMENSION ),
-	     2 );
-  TEST_EQUALITY_CONST(
-	     entity_estimator->getNumberOfBins( MonteCarlo::COSINE_DIMENSION ),
-	     2 );
-  TEST_EQUALITY_CONST(
-   entity_estimator->getNumberOfBins( MonteCarlo::COLLISION_NUMBER_DIMENSION ),
-   3 );
-  TEST_EQUALITY_CONST( entity_estimator->getNumberOfBins(), 24 );
+  FRENSIE_CHECK_EQUAL( entity_estimator->getNumberOfBins(), 24 );
 
   // Make sure the response functions have not changed
-  TEST_EQUALITY_CONST( entity_estimator->getNumberOfResponseFunctions(), 1 );
+  FRENSIE_CHECK_EQUAL( entity_estimator->getNumberOfResponseFunctions(), 1 );
 
-  // Initialize the hdf5 file
-  std::shared_ptr<Utility::HDF5FileHandler>
-    hdf5_file( new Utility::HDF5FileHandler );
-  hdf5_file->openHDF5FileAndOverwrite( "test_entity_estimator4.h5" );
+  Utility::ArrayView<const double> entity_bin_first_moments =
+    entity_estimator->getEntityBinDataFirstMoments( 0 );
 
-  // Export the estimator data
-  entity_estimator->exportData( hdf5_file, false );
+  Utility::ArrayView<const double> entity_bin_second_moments =
+    entity_estimator->getEntityBinDataSecondMoments( 0 );
 
-  // Create an estimator hdf5 file handler
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 24, 0.0 ) );
 
-  // Retrieve the raw bin data for each entity
-  Teuchos::Array<Utility::Pair<double,double> >
-    raw_bin_data( 24, Utility::Pair<double,double>( 0.0, 0.0 ) ),
-    raw_bin_data_copy;
+  Utility::ArrayView<const double> total_bin_first_moments =
+    entity_estimator->getTotalBinDataFirstMoments();
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>(
-						   0u, 0u, raw_bin_data_copy );
+  Utility::ArrayView<const double> total_bin_second_moments =
+    entity_estimator->getTotalBinDataSecondMoments();
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
-					raw_bin_data_copy,
-					1e-15 );
-
-  hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>(
-						   0u, 1u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
-					raw_bin_data_copy,
-					1e-15 );
-
-  hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>(
-						   0u, 2u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
-					raw_bin_data_copy,
-					1e-15 );
-
-  hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>(
-						   0u, 3u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
-					raw_bin_data_copy,
-					1e-15 );
-
-  hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>(
-						   0u, 4u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
-					raw_bin_data_copy,
-					1e-15 );
-
-  // Retrieve the total raw total bin data
-  hdf5_file_handler.getRawEstimatorTotalBinData( 0u, raw_bin_data );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
-					raw_bin_data_copy,
-					1e-15 );
+  FRENSIE_CHECK_EQUAL( total_bin_first_moments,
+                       std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( total_bin_second_moments,
+                       std::vector<double>( 24, 0.0 ) );
 }
 
-UNIT_TEST_INSTANTIATION( EntityEstimator, resetData )
-
 //---------------------------------------------------------------------------//
-// Custom main function
-//---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+// Check that the estimator data can be reduced
+FRENSIE_UNIT_TEST( EntityEstimator, reduceData )
 {
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+  std::shared_ptr<TestEntityEstimator> entity_estimator;
+  initializeEntityEstimator( entity_estimator, true );
 
-  int threads = 1;
+  size_t num_estimator_bins = entity_estimator->getNumberOfBins()*
+    entity_estimator->getNumberOfResponseFunctions();
 
-  clp.setOption( "threads",
-		 &threads,
-		 "Number of threads to use" );
+  for( size_t i = 0; i < num_estimator_bins; ++i )
+  {
+    entity_estimator->commitHistoryContributionToBinOfEntity( 0, i, 1.0 );
+    entity_estimator->commitHistoryContributionToBinOfEntity( 2, i, 1.0 );
+    entity_estimator->commitHistoryContributionToBinOfEntity( 4, i, 1.0 );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
+    entity_estimator->commitHistoryContributionToBinOfTotal( i, 2.0 );
   }
 
+  std::shared_ptr<const Utility::Communicator> comm =
+    Utility::Communicator::getDefault();
+
+  comm->barrier();
+
+  entity_estimator->reduceData( *comm, 0 );
+
+  unsigned procs = comm->size();
+
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( procs );
+  MonteCarlo::ParticleHistoryObserver::setElapsedTime( 1.0 );
+
+  if( comm->rank() == 0 )
+  {
+    // Check the total bin data moments
+    Utility::ArrayView<const double> first_moments =
+      entity_estimator->getTotalBinDataFirstMoments();
+
+    Utility::ArrayView<const double> second_moments =
+      entity_estimator->getTotalBinDataSecondMoments();
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, 2*procs ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, 4*procs ) );
+
+    // Check the entity bin data moments
+    first_moments = entity_estimator->getEntityBinDataFirstMoments( 0 );
+    second_moments = entity_estimator->getEntityBinDataSecondMoments( 0 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, procs ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, procs ) );
+
+    first_moments = entity_estimator->getEntityBinDataFirstMoments( 1 );
+    second_moments = entity_estimator->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, 0.0 ) );
+
+    first_moments = entity_estimator->getEntityBinDataFirstMoments( 2 );
+    second_moments = entity_estimator->getEntityBinDataSecondMoments( 2 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, procs ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, procs ) );
+
+    first_moments = entity_estimator->getEntityBinDataFirstMoments( 3 );
+    second_moments = entity_estimator->getEntityBinDataSecondMoments( 3 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, 0.0 ) );
+
+    first_moments = entity_estimator->getEntityBinDataFirstMoments( 4 );
+    second_moments = entity_estimator->getEntityBinDataSecondMoments( 4 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, procs ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, procs ) );
+  }
+  // Make sure that estimators on other processes were reset
+  else
+  {
+    // Check the total bin data moments
+    Utility::ArrayView<const double> first_moments =
+      entity_estimator->getTotalBinDataFirstMoments();
+
+    Utility::ArrayView<const double> second_moments =
+      entity_estimator->getTotalBinDataSecondMoments();
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, 0.0 ) );
+
+    // Check the entity bin data moments
+    first_moments = entity_estimator->getEntityBinDataFirstMoments( 0 );
+    second_moments = entity_estimator->getEntityBinDataSecondMoments( 0 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, 0.0 ) );
+
+    first_moments = entity_estimator->getEntityBinDataFirstMoments( 1 );
+    second_moments = entity_estimator->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, 0.0 ) );
+
+    first_moments = entity_estimator->getEntityBinDataFirstMoments( 2 );
+    second_moments = entity_estimator->getEntityBinDataSecondMoments( 2 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, 0.0 ) );
+
+    first_moments = entity_estimator->getEntityBinDataFirstMoments( 3 );
+    second_moments = entity_estimator->getEntityBinDataSecondMoments( 3 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, 0.0 ) );
+
+    first_moments = entity_estimator->getEntityBinDataFirstMoments( 4 );
+    second_moments = entity_estimator->getEntityBinDataSecondMoments( 4 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, 0.0 ) );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Custom setup
+//---------------------------------------------------------------------------//
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+int threads;
+
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
+{
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "threads",
+                                        threads, 1,
+                                        "Number of threads to use" );
+}
+
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
+{
   // Set up the global OpenMP session
   if( Utility::OpenMPProperties::isOpenMPUsed() )
     Utility::OpenMPProperties::setNumberOfThreads( threads );
-
-  // Run the unit tests
-  const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // tstEntityEstimator.cpp

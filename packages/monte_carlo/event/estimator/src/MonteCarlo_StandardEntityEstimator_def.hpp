@@ -65,7 +65,7 @@ void StandardEntityEstimator::save( Archive& ar, const unsigned version ) const
 
   // Save the local data
   ar & BOOST_SERIALIZATION_NVP( d_total_estimator_moments );
-  ar & BOOST_SERIALIZATION_NVP( d_total_estimator_moments );
+  ar & BOOST_SERIALIZATION_NVP( d_entity_total_estimator_moments_map );
 }
 
 // Load the data from an archive
@@ -77,7 +77,7 @@ void StandardEntityEstimator::load( Archive& ar, const unsigned version )
 
   // Load the local data
   ar & BOOST_SERIALIZATION_NVP( d_total_estimator_moments );
-  ar & BOOST_SERIALIZATION_NVP( d_total_estimator_moments );
+  ar & BOOST_SERIALIZATION_NVP( d_entity_total_estimator_moments_map );
 
   // Initialize the thread data
   d_update_tracker.resize( 1 );

@@ -258,7 +258,7 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::assignParticleType(
     FRENSIE_LOG_TAGGED_WARNING( "Estimator",
                                 "cannot assign particle type "
                                 << particle_type << " to a pulse height "
-                                "estimators (only photons and charged "
+                                "estimator (only photons and charged "
                                 "particles can contribute). Pulse height "
                                 "estimator " << this->getId() << " will "
                                 "ignore this request." );

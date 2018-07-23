@@ -79,12 +79,18 @@ void ObserverParticleStateWrapper::calculateStateTimesUsingParticleTimeAsEndTime
 // Set the state start time
 void ObserverParticleStateWrapper::setStartTime( const double time )
 {
+  // Make sure that the time is valid
+  testPrecondition( time >= 0.0 );
+  
   d_state_start_time = time;
 }
 
 // Set the state end time
 void ObserverParticleStateWrapper::setEndTime( const double time )
 {
+  // Make sure that the time is valid
+  testPrecondition( time >= 0.0 );
+  
   d_state_end_time = time;
 }
 

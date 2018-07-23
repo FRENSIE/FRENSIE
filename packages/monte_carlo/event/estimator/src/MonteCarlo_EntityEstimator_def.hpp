@@ -30,6 +30,15 @@ EntityEstimator::EntityEstimator(
     d_supplied_norm_constants( true ),
     d_estimator_total_bin_data( 1 )
 {
+  TEST_FOR_EXCEPTION( entity_ids.empty(),
+                      std::runtime_error,
+                      "At least one entity id must be specified!" );
+
+  TEST_FOR_EXCEPTION( entity_ids.size() != entity_norm_constants.size(),
+                      std::runtime_error,
+                      "Every entity id must have an associated entity norm "
+                      "constant!" );
+  
   this->initializeEntityEstimatorMomentsMap( entity_ids );
   this->initializeEntityNormConstantsMap( entity_ids, entity_norm_constants );
 
@@ -53,6 +62,10 @@ EntityEstimator::EntityEstimator( const uint32_t id,
     d_supplied_norm_constants( false ),
     d_estimator_total_bin_data( 1 )
 {
+  TEST_FOR_EXCEPTION( entity_ids.empty(),
+                      std::runtime_error,
+                      "At least one entity id must be specified!" );
+  
   this->initializeEntityEstimatorMomentsMap( entity_ids );
   this->initializeEntityNormConstantsMap( entity_ids );
 

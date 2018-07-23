@@ -26,7 +26,7 @@
 typedef TestArchiveHelper::TestArchives TestArchives;
 
 //---------------------------------------------------------------------------//
-// Tests.
+// Testing Variables
 //---------------------------------------------------------------------------//
 
 std::shared_ptr<const MonteCarlo::ObserverPhaseSpaceDimensionDiscretization>

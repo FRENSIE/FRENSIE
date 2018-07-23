@@ -42,6 +42,12 @@ public:
                               const std::vector<CellIdType>& cell_ids,
                               const std::vector<double>& cell_volumes );
 
+  //! Constructor (extract cell volumes from model)
+  CellCollisionFluxEstimator( const uint32_t id,
+                              const double multiplier,
+                              const std::vector<CellIdType>& cell_ids,
+                              const Geometry::Model& model );
+
   //! Destructor
   ~CellCollisionFluxEstimator()
   { /* ... */ }
