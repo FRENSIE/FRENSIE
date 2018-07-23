@@ -1738,7 +1738,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( HexMeshTrackLengthFluxEstimator,
   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
 
-  std::string archive_base_name( "test_cell_track_length_flux_estimator" );
+  std::string archive_base_name( "test_hex_mesh_track_length_flux_estimator" );
   std::ostringstream archive_ostream;
 
   {
