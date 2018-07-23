@@ -104,7 +104,7 @@ public:
   virtual void sampleWithoutCascade(
                                PhaseSpacePoint& phase_space_sample ) const = 0;
 
-  //! Sample a dimension value and cascade to the dependent distributions 
+  //! Sample a dimension value and cascade to the dependent distributions
   void sampleAndRecordTrialsWithCascade(
                                       PhaseSpacePoint& phase_space_sample,
                                       DimensionCounterMap& trials ) const;
@@ -215,11 +215,12 @@ void PhaseSpaceDimensionDistribution::load( Archive& ar,
   ar & BOOST_SERIALIZATION_NVP( d_parent_distribution );
   ar & BOOST_SERIALIZATION_NVP( d_dependent_dimension_distributions );
 }
-  
+
 } // end MonteCarlo namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::PhaseSpaceDimensionDistribution );
-BOOST_CLASS_VERSION( MonteCarlo::PhaseSpaceDimensionDistribution, 0 );
+
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( PhaseSpaceDimensionDistribution, MonteCarlo );
+BOOST_SERIALIZATION_CLASS_VERSION( PhaseSpaceDimensionDistribution, MonteCarlo, 0 );
 EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, PhaseSpaceDimensionDistribution );
 
 #endif // end MONTE_CARLO_PHASE_SPACE_DIMENSION_DISTRIBUTION_HPP

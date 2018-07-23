@@ -153,6 +153,10 @@ MonteCarlo::StandardFilledParticleGeometryModel<PARTICLE ## Material>
 // Add StandardFilledAdjointParticleGeometryModel support
 // ---------------------------------------------------------------------------//
 
+%typemap(out) const std::vector<double>& {
+  %append_output(PyFrensie::convertToPython( *$1 ) );
+}
+
 %import "MonteCarlo_StandardFilledAdjointParticleGeometryModel.hpp"
 
 // Helper macro for templating the StandardFilledAdjointParticleGeometryModel

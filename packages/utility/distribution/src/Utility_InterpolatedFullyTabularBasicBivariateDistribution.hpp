@@ -88,13 +88,6 @@ public:
   virtual ~UnitAwareInterpolatedFullyTabularBasicBivariateDistribution()
   { /* ... */ }
 
-  using BaseType::evaluate;
-  using BaseType::evaluateSecondaryConditionalPDF;
-  using BaseType::sampleSecondaryConditional;
-  using BaseType::sampleSecondaryConditionalWithRandomNumber;
-  using BaseType::sampleSecondaryConditionalInSubrange;
-  using BaseType::sampleSecondaryConditionalWithRandomNumberInSubrange;
-
   //! Evaluate the distribution
   DepQuantity evaluate(
             const PrimaryIndepQuantity primary_indep_var_value,
@@ -203,6 +196,13 @@ public:
 
   //! Method for placing the object in an output stream
   virtual void toStream( std::ostream& os ) const override;
+
+  using BaseType::evaluate;
+  using BaseType::evaluateSecondaryConditionalPDF;
+  using BaseType::sampleSecondaryConditional;
+  using BaseType::sampleSecondaryConditionalWithRandomNumber;
+  using BaseType::sampleSecondaryConditionalInSubrange;
+  using BaseType::sampleSecondaryConditionalWithRandomNumberInSubrange;
 
 protected:
 

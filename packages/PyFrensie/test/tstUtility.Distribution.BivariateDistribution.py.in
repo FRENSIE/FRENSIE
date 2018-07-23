@@ -29,7 +29,7 @@ tol = 1e-12
 #-----------------------------------------------------------------------------#
 # Test the Interpolated Fully Tabular Basic Bivariate Distribution
 class InterpolatedFullyTabularBasicBivariateDistributionTestCase(unittest.TestCase):
-    "TestCase class for Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution class"
+    "TestCase class for Utility.Distribution.pInterpolatedFullyTabularBasicBivariateDistribution class"
 
     def setUp(self):
         tab_dist1 = Distribution.TabularDistribution_LogLog( [1.0, 2.0, 3.0], [0.5, 0.5, 0.5] )
@@ -40,7 +40,7 @@ class InterpolatedFullyTabularBasicBivariateDistributionTestCase(unittest.TestCa
         dep = [[0.5, 0.5, 0.5], [0.1, 0.5, 1.5, 3.5]]
 
         self.dist = Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase( [0.0,1.0], [tab_dist1, tab_dist2] )
-        self.dist1 = Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase( [0.0,1.0], [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0]], [[0.5, 0.5, 0.5], [0.1, 0.5, 1.5, 3.5]] )
+        self.dist1 = Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase( [0.0,1.0], [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0]], [[0.5, 0.5, 0.5], [0.1, 0.5, 1.5, 3.5]], 1e-3, 1e-7, 1e-16 )
         self.dist2 = Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase( primary_indep, secondary_indep, dep, 1e-3, 1e-7, 1e-16 )
 
     def testConstructor(self):
@@ -233,20 +233,13 @@ class InterpolatedFullyTabularBasicBivariateDistributionTestCase(unittest.TestCa
         "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution isPrimaryDimensionTabular method"
         self.assertTrue(self.dist.isPrimaryDimensionTabular())
 
-    # def testHasSamePrimaryBounds(self):
-    #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution hasSamePrimaryBounds method"
-    #     diff_dist = Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase( [0.0,2.0], [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0]], [[0.5, 0.5, 0.5], [0.1, 0.5, 1.5, 3.5]] )
+    def testHasSamePrimaryBounds(self):
+        "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution hasSamePrimaryBounds method"
+        diff_dist = Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase( [0.0,2.0], [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0]], [[0.5, 0.5, 0.5], [0.1, 0.5, 1.5, 3.5]] )
 
-    #     self.assertTrue(self.dist.hasSamePrimaryBounds( self.dist1 ) )
-    #     self.assertTrue(self.dist.hasSamePrimaryBounds( self.dist2 ) )
-    #     self.assertTrue(not self.dist.hasSamePrimaryBounds( diff_dist ) )
-
-    # def testEquality(self):
-    #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution ==,!= methods"
-    #     diff_dist = Distribution.InterpolatedFullyTabularBasicBivariateDistribution( 1.0 )
-    #     same_dist = Distribution.InterpolatedFullyTabularBasicBivariateDistribution( 0.0 )
-    #     self.assertTrue(self.dist != diff_dist)
-    #     self.assertTrue(self.dist == same_dist)
+        self.assertTrue(self.dist.hasSamePrimaryBounds( self.dist1 ) )
+        self.assertTrue(self.dist.hasSamePrimaryBounds( self.dist2 ) )
+        self.assertTrue(not self.dist.hasSamePrimaryBounds( diff_dist ) )
 
 #-----------------------------------------------------------------------------#
 # Test the Interpolated Partially Tabular Basic Bivariate Distribution
@@ -380,23 +373,43 @@ class InterpolatedPartiallyTabularBasicBivariateDistributionTestCase(unittest.Te
         "*Test Utility.Distribution.InterpolatedPartiallyTabularBasicBivariateDistribution isPrimaryDimensionTabular method"
         self.assertTrue(self.dist.isPrimaryDimensionTabular())
 
-    # def testHasSamePrimaryBounds(self):
-    #     "*Test Utility.Distribution.InterpolatedPartiallyTabularBasicBivariateDistribution hasSamePrimaryBounds method"
-    #     diff_dist = Distribution.InterpolatedPartiallyTabularBasicBivariateDistribution_LinLinLin_UnitBase( [0.0,2.0], [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0]], [[0.5, 0.5, 0.5], [0.1, 0.5, 1.5, 3.5]] )
+    def testHasSamePrimaryBounds(self):
+        "*Test Utility.Distribution.InterpolatedPartiallyTabularBasicBivariateDistribution hasSamePrimaryBounds method"
 
-    #     self.assertTrue(self.dist.hasSamePrimaryBounds( self.dist1 ) )
-    #     self.assertTrue(self.dist.hasSamePrimaryBounds( self.dist2 ) )
-    #     self.assertTrue(not self.dist.hasSamePrimaryBounds( diff_dist ) )
+        # Self test
+        self.assertTrue( self.dist.hasSamePrimaryBounds( self.dist ) )
 
-    # def testEquality(self):
-    #     "*Test Utility.Distribution.InterpolatedPartiallyTabularBasicBivariateDistribution ==,!= methods"
-    #     diff_dist = Distribution.InterpolatedPartiallyTabularBasicBivariateDistribution( 1.0 )
-    #     same_dist = Distribution.InterpolatedPartiallyTabularBasicBivariateDistribution( 0.0 )
-    #     self.assertTrue(self.dist != diff_dist)
-    #     self.assertTrue(self.dist == same_dist)
+        # Create a test distribution with same lower bound, different upper bound
+        primary_grid = [0.0, 2.0]
+        # Create the secondary distribution in the first bin
+        uniform_dist = Distribution.UniformDistribution( 0.0, 10.0, 0.1 )
+        # Create the secondary distribution in the second bin
+        exp_dist = Distribution.ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 )
+        secondary_dists = [uniform_dist, exp_dist]
 
+        test_dist = Distribution.InterpolatedPartiallyTabularBasicBivariateDistribution_LinLinLin_UnitBase(
+                                                           primary_grid,
+                                                           secondary_dists )
 
+        self.assertFalse( self.dist.hasSamePrimaryBounds( test_dist ) )
 
+        # Create a test distribution with different lower bound, same upper bound
+        primary_grid = [0.5, 1.0]
+
+        test_dist = Distribution.InterpolatedPartiallyTabularBasicBivariateDistribution_LinLinLin_UnitBase(
+                                                           primary_grid,
+                                                           secondary_dists )
+
+        self.assertFalse( self.dist.hasSamePrimaryBounds( test_dist ) )
+
+        # Create a test distribution with different bounds
+        primary_grid = [30.0, 100.0]
+
+        test_dist = Distribution.InterpolatedPartiallyTabularBasicBivariateDistribution_LinLinLin_UnitBase(
+                                                           primary_grid,
+                                                           secondary_dists )
+
+        self.assertFalse( self.dist.hasSamePrimaryBounds( test_dist ) )
 
 
 #-----------------------------------------------------------------------------#
@@ -591,20 +604,44 @@ class HistogramFullyTabularBasicBivariateDistributionTestCase(unittest.TestCase)
         "*Test Utility.Distribution.HistogramFullyTabularBasicBivariateDistribution isPrimaryDimensionTabular method"
         self.assertTrue(self.dist.isPrimaryDimensionTabular())
 
-    # def testHasSamePrimaryBounds(self):
-    #     "*Test Utility.Distribution.HistogramFullyTabularBasicBivariateDistribution hasSamePrimaryBounds method"
-    #     diff_dist = Distribution.HistogramFullyTabularBasicBivariateDistribution( [0.0,2.0], [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0]], [[0.5, 0.5, 0.5], [0.1, 0.5, 1.5, 3.5]] )
+    def testHasSamePrimaryBounds(self):
+        "*Test Utility.Distribution.HistogramFullyTabularBasicBivariateDistribution hasSamePrimaryBounds method"
 
-    #     self.assertTrue(self.dist.hasSamePrimaryBounds( self.dist1 ) )
-    #     self.assertTrue(self.dist.hasSamePrimaryBounds( self.dist2 ) )
-    #     self.assertTrue(not self.dist.hasSamePrimaryBounds( diff_dist ) )
+        # Create a test distribution with same lower bound, different upper bound
+        primary_grid = [0.0, 2.0]
 
-    # def testEquality(self):
-    #     "*Test Utility.Distribution.HistogramFullyTabularBasicBivariateDistribution ==,!= methods"
-    #     diff_dist = Distribution.HistogramFullyTabularBasicBivariateDistribution( 1.0 )
-    #     same_dist = Distribution.HistogramFullyTabularBasicBivariateDistribution( 0.0 )
-    #     self.assertTrue(self.dist != diff_dist)
-    #     self.assertTrue(self.dist == same_dist)
+        delta_dist1 = Distribution.DeltaDistribution( 0.0 )
+        delta_dist2 = Distribution.DeltaDistribution( 1.0 )
+
+        secondary_dists = [delta_dist1, delta_dist2]
+
+        test_dist = Distribution.HistogramFullyTabularBasicBivariateDistribution(
+                                                           primary_grid,
+                                                           secondary_dists )
+
+
+        self.assertTrue(self.dist.hasSamePrimaryBounds( test_dist ) )
+
+        primary_grid = [-1.0, 2.0]
+        test_dist = Distribution.HistogramFullyTabularBasicBivariateDistribution(
+                                                           primary_grid,
+                                                           secondary_dists )
+
+        self.assertFalse(self.dist.hasSamePrimaryBounds( test_dist ) )
+
+        primary_grid = [0.0, 3.0]
+        test_dist = Distribution.HistogramFullyTabularBasicBivariateDistribution(
+                                                           primary_grid,
+                                                           secondary_dists )
+
+        self.assertFalse(self.dist.hasSamePrimaryBounds( test_dist ) )
+
+        primary_grid = [-1.0, 3.0]
+        test_dist = Distribution.HistogramFullyTabularBasicBivariateDistribution(
+                                                           primary_grid,
+                                                           secondary_dists )
+
+        self.assertFalse(self.dist.hasSamePrimaryBounds( test_dist ) )
 
 #-----------------------------------------------------------------------------#
 # Test the Histogram Partially Tabular Basic Bivariate Distribution
@@ -739,20 +776,41 @@ class HistogramPartiallyTabularBasicBivariateDistributionTestCase(unittest.TestC
         "*Test Utility.Distribution.HistogramPartiallyTabularBasicBivariateDistribution isPrimaryDimensionTabular method"
         self.assertTrue(self.dist.isPrimaryDimensionTabular())
 
-    # def testHasSamePrimaryBounds(self):
-    #     "*Test Utility.Distribution.HistogramPartiallyTabularBasicBivariateDistribution hasSamePrimaryBounds method"
-    #     diff_dist = Distribution.HistogramPartiallyTabularBasicBivariateDistribution( [0.0,2.0], [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0]], [[0.5, 0.5, 0.5], [0.1, 0.5, 1.5, 3.5]] )
+        # Create a test distribution with same lower bound, different upper bound
+        primary_grid = [0.0, 2.0]
 
-    #     self.assertTrue(self.dist.hasSamePrimaryBounds( self.dist1 ) )
-    #     self.assertTrue(self.dist.hasSamePrimaryBounds( self.dist2 ) )
-    #     self.assertTrue(not self.dist.hasSamePrimaryBounds( diff_dist ) )
+        delta_dist1 = Distribution.DeltaDistribution( 0.0 )
+        delta_dist2 = Distribution.DeltaDistribution( 1.0 )
 
-    # def testEquality(self):
-    #     "*Test Utility.Distribution.HistogramPartiallyTabularBasicBivariateDistribution ==,!= methods"
-    #     diff_dist = Distribution.HistogramPartiallyTabularBasicBivariateDistribution( 1.0 )
-    #     same_dist = Distribution.HistogramPartiallyTabularBasicBivariateDistribution( 0.0 )
-    #     self.assertTrue(self.dist != diff_dist)
-    #     self.assertTrue(self.dist == same_dist)
+        secondary_dists = [delta_dist1, delta_dist2]
+
+        test_dist = Distribution.HistogramPartiallyTabularBasicBivariateDistribution(
+                                                           primary_grid,
+                                                           secondary_dists )
+
+
+        self.assertTrue(self.dist.hasSamePrimaryBounds( test_dist ) )
+
+        primary_grid = [-1.0, 2.0]
+        test_dist = Distribution.HistogramPartiallyTabularBasicBivariateDistribution(
+                                                           primary_grid,
+                                                           secondary_dists )
+
+        self.assertFalse(self.dist.hasSamePrimaryBounds( test_dist ) )
+
+        primary_grid = [0.0, 3.0]
+        test_dist = Distribution.HistogramPartiallyTabularBasicBivariateDistribution(
+                                                           primary_grid,
+                                                           secondary_dists )
+
+        self.assertFalse(self.dist.hasSamePrimaryBounds( test_dist ) )
+
+        primary_grid = [-1.0, 3.0]
+        test_dist = Distribution.HistogramPartiallyTabularBasicBivariateDistribution(
+                                                           primary_grid,
+                                                           secondary_dists )
+
+        self.assertFalse(self.dist.hasSamePrimaryBounds( test_dist ) )
 
 #-----------------------------------------------------------------------------#
 # Custom main

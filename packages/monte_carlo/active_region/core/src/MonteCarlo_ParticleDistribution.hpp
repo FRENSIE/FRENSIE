@@ -59,7 +59,7 @@ public:
 
   //! Check if the distribution is spatially uniform (somewhere)
   virtual bool isSpatiallyUniform() const = 0;
-  
+
   //! Check if the distribution is directionally uniform (isotropic)
   virtual bool isDirectionallyUniform() const = 0;
 
@@ -93,7 +93,7 @@ protected:
 
   //! Default constructor
   ParticleDistribution();
-  
+
 private:
 
   // Save the state to an archive
@@ -126,7 +126,7 @@ void ParticleDistribution::load( Archive& ar, const unsigned version )
 {
   ar & BOOST_SERIALIZATION_NVP( d_name );
 }
-  
+
 } // end MonteCarlo namespace
 
 namespace Utility{
@@ -142,11 +142,11 @@ struct TypeNameTraits<MonteCarlo::ParticleDistribution>
   static inline std::string name()
   { return "ParticleDistribution"; }
 };
-  
+
 } // end Utility namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleDistribution );
-BOOST_CLASS_VERSION( MonteCarlo::ParticleDistribution, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( ParticleDistribution, MonteCarlo );
+BOOST_SERIALIZATION_CLASS_VERSION( ParticleDistribution, MonteCarlo, 0 );
 EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, ParticleDistribution );
 
 #endif // end MONTE_CARLO_PARTICLE_DISTRIBUTION_HPP

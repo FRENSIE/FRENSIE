@@ -70,6 +70,14 @@ PyFrensie_MAKE_TEST(tstData.ScatteringCenterPropertiesDatabase)
 ADD_TEST(PyFrensie.Data.ScatteringCenterPropertiesDatabase_test ${PYTHON_EXECUTABLE} tstData.ScatteringCenterPropertiesDatabase.py)
 SET_PROPERTY(TEST PyFrensie.Data.ScatteringCenterPropertiesDatabase_test PROPERTY LABELS pyfrensie )
 
+IF(HAVE_FRENSIE_HDF5)
+  ADD_TEST(PyFrensie.Data.ScatteringCenterPropertiesDatabase_test ${PYTHON_EXECUTABLE} tstData.ScatteringCenterPropertiesDatabase.py)
+  SET_PROPERTY(TEST PyFrensie.Data.ScatteringCenterPropertiesDatabase_test PROPERTY LABELS pyfrensie hdf5)
+ELSE()
+  ADD_TEST(PyFrensie.Data.ScatteringCenterPropertiesDatabase_test ${PYTHON_EXECUTABLE} tstData.ScatteringCenterPropertiesDatabase.py)
+  SET_PROPERTY(TEST PyFrensie.Data.ScatteringCenterPropertiesDatabase_test PROPERTY LABELS pyfrensie)
+ENDIF()
+
 # Add the Data.ACE.ACEElectroatomicDataProperties unit tests
 PyFrensie_MAKE_TEST(tstData.ACE.ACEElectroatomicDataProperties)
 ADD_TEST(PyFrensie.Data.ACE.ACEElectroatomicDataProperties_test ${PYTHON_EXECUTABLE} tstData.ACE.ACEElectroatomicDataProperties.py)
@@ -261,6 +269,14 @@ ADD_TEST(PyFrensie.MonteCarlo.Collision.MaterialDefinitionDatabase_test ${PYTHON
 # Add the MonteCarlo.Collision.FilledGeometryModel unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.FilledGeometryModel)
 ADD_TEST(PyFrensie.MonteCarlo.Collision.FilledGeometryModel_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.FilledGeometryModel.py --dagmc_sat_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat --database_path=${CMAKE_CURRENT_BINARY_DIR}/../../monte_carlo/collision/database.xml)
+
+# Add the MonteCarlo.ActiveRegion.PhaseSpaceDimension unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.ActiveRegion.PhaseSpaceDimension)
+ADD_TEST(PyFrensie.MonteCarlo.ActiveRegion.PhaseSpaceDimension_test ${PYTHON_EXECUTABLE} tstMonteCarlo.ActiveRegion.PhaseSpaceDimension.py)
+
+# Add the MonteCarlo.ActiveRegion.ParticleDistribution unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.ActiveRegion.StandardParticleDistribution)
+ADD_TEST(PyFrensie.MonteCarlo.ActiveRegion.StandardParticleDistribution_test ${PYTHON_EXECUTABLE} tstMonteCarlo.ActiveRegion.StandardParticleDistribution.py)
 
 # # Add the MonteCarlo.Collision.PhotonKinematics unit tests
 # PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.PhotonKinematics)

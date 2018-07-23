@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "FRENSIE_Archives.hpp"
+#include "Utility_HDF5IArchive.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
 namespace Utility{
@@ -31,7 +32,7 @@ void IArchivableObject<DerivedType>::loadFromFile( const boost::filesystem::path
                       "Cannot create the input archive "
                       << archive_name_with_path.string() <<
                       " because the file does not exist!" );
-  
+
   // Initialize the archive istream here to ensure that it gets deleted
   // after the archive
   std::unique_ptr<std::istream> iarchive_stream;
@@ -108,7 +109,7 @@ void IArchivableObject<DerivedType>::loadFromArchive( Archive& archive )
   {
     boost::serialization::singleton<boost::archive::detail::iserializer<Archive, std::vector<double> > >::get_mutable_instance().set_bpis( NULL );
   }
-  
+
   try{
     archive >> boost::serialization::make_nvp( this->getIArchiveName(), *dynamic_cast<DerivedType*>(this) );
   }
@@ -117,12 +118,12 @@ void IArchivableObject<DerivedType>::loadFromArchive( Archive& archive )
                               "Unable to load the object from the desired "
                               "archive!" );
 }
-  
+
 // if( boost::serialization::singleton<boost::archive::detail::iserializer<boost::archive::polymorphic_iarchive, std::vector<double> > >::get_const_instance().get_bpis_ptr() != NULL )
 // {
 //   boost::serialization::singleton<boost::archive::detail::iserializer<boost::archive::polymorphic_iarchive, std::vector<double> > >::get_mutable_instance().set_bpis( NULL );
 // }
-  
+
 } // end Utility namespace
 
 #endif // end UTILITY_IARCHIVABLE_OBJECT_DEF_HPP

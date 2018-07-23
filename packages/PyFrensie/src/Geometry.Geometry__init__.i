@@ -123,6 +123,10 @@ using namespace Geometry;
 // Add a few general templates
 %template(DoubleVector) std::vector<double>;
 
+// Add a few general typedefs
+typedef unsigned long int uint64_t;
+typedef unsigned int uint32_t;
+
 //---------------------------------------------------------------------------//
 // Add support for the PointLocation enum
 //---------------------------------------------------------------------------//
@@ -387,7 +391,7 @@ class is shown below:
 }
 
 // Add typemaps for the CellIdSet
-%typemap(in) Geometry::Navigator::CellIdSet& (std::set<unsigned long long> temp)
+%typemap(in) Geometry::Navigator::CellIdSet& (std::set<Geometry::Navigator::EntityId> temp)
 {
   $1 = &temp;
 }

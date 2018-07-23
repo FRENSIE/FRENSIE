@@ -1894,6 +1894,26 @@ class FilledGeometryModelTestCase(unittest.TestCase):
           9.998738696962278238e-01,
           10 )
 
+    # Check that the Critical Line Energies can be returned
+    def testGetCriticalLineEnergies_adjoint_photon_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel getCriticalLineEnergies_adjoint_photon_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1.0 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.ADJOINT_PHOTON_MODE )
+
+        filled_model = Collision.FilledGeometryModel( self.data_directory,
+                                                self.scattering_center_definition_database,
+                                                self.material_definition_database,
+                                                properties,
+                                                unfilled_model,
+                                                True )
+
+        line_energies = filled_model.getCriticalLineEnergies()
+
+        self.assertEqual( len(line_energies), 1 )
+        self.assertAlmostEqual( line_energies[0], 0.51099891013, delta=1e-10*0.51099891 )
+
 #-----------------------------------------------------------------------------#
 # Custom main
 #-----------------------------------------------------------------------------#

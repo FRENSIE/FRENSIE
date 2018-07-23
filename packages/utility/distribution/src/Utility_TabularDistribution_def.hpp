@@ -14,6 +14,7 @@
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_SortAlgorithms.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_DesignByContract.hpp"
@@ -727,7 +728,7 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
                       "The tabular distribution cannot be constructed "
                       "because there aren't enough independent values "
                       "specified!" );
-  
+
   // The independent values must be sorted
   TEST_FOR_EXCEPTION( !Sort::isSortedAscending( independent_values.begin(),
 						independent_values.end() ),
@@ -767,7 +768,7 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
                       << dependent_values.size() << ")!" );
 
   typedef Utility::QuantityTraits<InputDepQuantity> InputDQT;
-  
+
   // Search for bad dependent values
   typename Utility::ArrayView<const InputDepQuantity>::const_iterator bad_dependent_value =
     std::find_if( dependent_values.begin(),

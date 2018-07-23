@@ -18,6 +18,7 @@
 
 // FRENSIE Includes
 #include "FRENSIE_Archives.hpp" // Must include first
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
@@ -50,7 +51,7 @@ void OArchivableObject<DerivedType>::saveToFile(
                         << archive_name_with_path.string() <<
                         " because the parent directory does not exist!" );
   }
-  
+
   // Initialize the archive ostream here to ensure that it gets deleted
   // after the archive
   std::unique_ptr<std::ostream> oarchive_stream;
@@ -64,7 +65,7 @@ void OArchivableObject<DerivedType>::saveToFile(
     // Create the oarchive file stream
     oarchive_stream.reset(
                         new std::ofstream( archive_name_with_path.string() ) );
-    
+
     if( extension == ".xml" )
     {
       boost::archive::xml_oarchive archive( *oarchive_stream );
@@ -117,7 +118,7 @@ void OArchivableObject<DerivedType>::saveToArchive( Archive& archive ) const
                               "Unable to save the object to the desired "
                               "archive!" );
 }
-  
+
 } // end Utility namespace
 
 #endif // end UTILITY_OARCHIVABLE_OBJECT_DEF_HPP

@@ -19,21 +19,21 @@
 
 namespace MonteCarlo{
 
-/*! The dependent phase space dimension distribution class
- * \details This class will be used if parent_dimension == dimension. 
+/*! The dependent phase space dimension distribution class helper
+ * \details This class will be used if parent_dimension == dimension.
  * Compilation should fail.
  */
 template<PhaseSpaceDimension parent_dimension,
          PhaseSpaceDimension dimension,
          typename Enabled = void>
-class DependentPhaseSpaceDimensionDistribution
+class DependentPhaseSpaceDimensionDistributionHelper
 { /* ... */ };
 
 /*! The dependent phase space dimension distribution class
  * \details This class will be used if parent_dimension != dimension.
  */
 template<PhaseSpaceDimension parent_dimension, PhaseSpaceDimension dimension>
-class DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension, typename std::enable_if<parent_dimension!=dimension>::type> : public PhaseSpaceDimensionDistribution
+class DependentPhaseSpaceDimensionDistribution : public DependentPhaseSpaceDimensionDistributionHelper<parent_dimension,dimension, typename std::enable_if<parent_dimension!=dimension>::type>, public PhaseSpaceDimensionDistribution
 {
 
 public:
@@ -275,7 +275,7 @@ typedef DependentPhaseSpaceDimensionDistribution<WEIGHT_DIMENSION,SECONDARY_DIRE
 //---------------------------------------------------------------------------//
 // DependentTertiaryDirectionalDimensionDistributions
 //---------------------------------------------------------------------------//
-  
+
 //! The primary spatial dimension dependent tertiary directional dimension distribution
 typedef DependentPhaseSpaceDimensionDistribution<PRIMARY_SPATIAL_DIMENSION,TERTIARY_DIRECTIONAL_DIMENSION> PrimarySpatialDependentTertiaryDirectionalDimensionDistribution;
 
