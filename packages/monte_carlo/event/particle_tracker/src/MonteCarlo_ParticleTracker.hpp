@@ -120,7 +120,10 @@ public:
 
 private:
 
-  //! Initialize the data maps
+  // Default constructor
+  ParticleTracker();
+
+  // Initialize the data maps
   void initialize( const unsigned thread );
 
   // Save the data to an archive
@@ -143,7 +146,7 @@ private:
   std::set<uint64_t> d_histories_to_track;
 
   // The partial tracked history info
-  typedef std::map<ParticleState*,ParticleDataArray> PartialHistorySubmap;
+  typedef std::map<const ParticleState*,ParticleDataArray> PartialHistorySubmap;
   std::map<unsigned,PartialHistorySubmap> d_partial_history_map;
   
   // The tracked history info
@@ -166,7 +169,8 @@ void ParticleTracker::save( Archive& ar, const unsigned version ) const
 }
 
 // Load the estimator data
-void ParticleTracker::save( Archive& ar, const unsigned version ) const
+template<typename Archive>
+void ParticleTracker::load( Archive& ar, const unsigned version )
 {
   // Load the base class data
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleSubtrackEndingGlobalEventObserver );

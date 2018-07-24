@@ -7,25 +7,30 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_ParticleTracker.hpp"
 #include "MonteCarlo_ParticleType.hpp"
-#include "Utility_CommHelpers.hpp"
 #include "Utility_OpenMPProperties.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
+// Default constructor
+ParticleTracker::ParticleTracker()
+  : d_id( std::numeric_limits<uint32_t>::max() )
+{ /* ... */ }
+
 // Constructor
-ParticleTracker::ParticleTracker( const ParticleHistoryObserver::idType id,
+ParticleTracker::ParticleTracker( const uint32_t id,
                                   const uint64_t number_of_histories )
-  : ParticleHistoryObserver( id ),
+  : d_id( id ),
     d_histories_to_track(),
     d_partial_history_map(),
     d_history_number_map()
 {
   // Make sure there are some particles being tracked
-  testPrecondition( d_number_of_histories >= 0 );
+  testPrecondition( number_of_histories >= 0 );
 
   for( uint64_t i = 0; i < number_of_histories; ++i )
     d_histories_to_track.insert( i );
@@ -37,7 +42,7 @@ ParticleTracker::ParticleTracker( const ParticleHistoryObserver::idType id,
 // Constructor
 ParticleTracker::ParticleTracker( const uint32_t id,
                                   const std::set<uint64_t>& history_numbers )
-  : ParticleHistoryObserver( id ),
+  : d_id( id ),
     d_histories_to_track( history_numbers ),
     d_partial_history_map(),
     d_history_number_map()
@@ -68,14 +73,12 @@ void ParticleTracker::updateFromGlobalParticleSubtrackEndingEvent(
 						 const double end_point[3] )
 {
   // Check if we still need to be tracking particles
-  if( d_histories_to_track.find( particle.getHistoryNumber() ) )
+  if( d_histories_to_track.find( particle.getHistoryNumber() ) !=
+      d_histories_to_track.end() )
   {
     unsigned thread_id = Utility::OpenMPProperties::getThreadId();
 
-    ParticleDataTwoDArray& partial_history_map =
-      d_partial_history_map[thread_id][&particle];
-
-    partial_history_map.push_back(
+    d_partial_history_map[thread_id][&particle].push_back(
            std::make_tuple( std::array<double,3>( {particle.getXPosition(),
                                                    particle.getYPosition(),
                                                    particle.getZPosition()} ),
@@ -86,6 +89,7 @@ void ParticleTracker::updateFromGlobalParticleSubtrackEndingEvent(
                             particle.getTime(),
                             particle.getWeight(),
                             particle.getCollisionNumber() ) );
+  }
 }
 
 // Update the observer
@@ -100,7 +104,7 @@ void ParticleTracker::updateFromGlobalParticleGoneEvent(
     #pragma omp critical
     {
       IndividualParticleSubmap& particle_data = 
-        d_history_number_map[particle.getHistoryNumber()][particle.getParticleType][particle.getGenerationNumber()];
+        d_history_number_map[particle.getHistoryNumber()][particle.getParticleType()][particle.getGenerationNumber()];
 
       // Get the unique id of this particle state
       unsigned i = 0u;
@@ -124,7 +128,7 @@ void ParticleTracker::resetData()
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   // Clear the partial history data
-  std::map<unsigned,OverallHistoryMap>::iterator partial_history_map_it =
+  std::map<unsigned,PartialHistorySubmap>::iterator partial_history_map_it =
     d_partial_history_map.begin();
 
   while( partial_history_map_it != d_partial_history_map.end() )
@@ -185,7 +189,7 @@ void ParticleTracker::reduceData( const Utility::Communicator& comm,
         for( size_t i = 0; i < gathered_entity_data.size(); ++i )
         {
           OverallHistoryMap::const_iterator gathered_entity_data_it =
-            gathered_entity_data[i];
+            gathered_entity_data[i].begin();
 
           while( gathered_entity_data_it != gathered_entity_data[i].end() )
           {
@@ -222,7 +226,7 @@ void ParticleTracker::printSummary( std::ostream& os ) const
   
   for( size_t i = 1; i < tracked_histories.size(); ++i )
   {
-    if( tracked_history[i] == range_end_history + 1 )
+    if( tracked_histories[i] == range_end_history + 1 )
       ++range_end_history;
     else
     {
@@ -240,7 +244,7 @@ void ParticleTracker::printSummary( std::ostream& os ) const
 }
 
 // Get the data map
-void ParticleTracker::getHistoryData( OverallHistoryMap& history_map ) const;
+void ParticleTracker::getHistoryData( OverallHistoryMap& history_map ) const
 {
   history_map = d_history_number_map;
 }

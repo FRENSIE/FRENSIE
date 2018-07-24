@@ -29,7 +29,7 @@ namespace MonteCarlo{
 /*! The particle gone global event observer
  * \ingroup particle_gone_global_event
  */
-class ParticleGoneGlobalEvent
+class ParticleGoneGlobalEventObserver
 {
 
 public:
@@ -38,11 +38,11 @@ public:
   typedef ParticleGoneGlobalEvent EventTag;
 
   //! Constructor
-  ParticleGoneGlobalEvent()
+  ParticleGoneGlobalEventObserver()
   { /* ... */ }
 
   //! Destructor
-  virtual ~ParticleGoneGlobalEvent()
+  virtual ~ParticleGoneGlobalEventObserver()
   { /* ... */ }
 
   //! Update the observer
