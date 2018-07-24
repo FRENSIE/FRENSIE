@@ -381,6 +381,7 @@ void ParticleSimulateManager<mode>::simulateParticleTrack(
   						      particle,
   						      track_start_point,
   						      particle.getPosition() );
+
         particle.setAsGone();
 
         break;
@@ -417,6 +418,9 @@ void ParticleSimulateManager<mode>::simulateParticleTrack(
       break;
     }
   }
+
+  if( !particle )
+    EMI::updateObserversFromParticleGoneGlobalEvent( particle );
 }
 
 // Advance a particle to the cell boundary

@@ -39,6 +39,12 @@
  * Infrastructure used to handle particle subtrack ending in cell events.
  */
 
+/*! \defgroup particle_gone_global_event Particle Gone Global Event
+ * \ingroup global_events
+ *
+ * Infrastructure used to handle particle gone global events.
+ */
+
 /*! \defgroup particle_colliding_global_event Particle Colliding Global Event
  * \ingroup global_events
  *
@@ -78,6 +84,11 @@ struct ParticleLeavingCellEvent{};
  */
 struct ParticleSubtrackEndingInCellEvent{};
 
+/*! The particle gone global event
+ * \ingroup particle_gone_global_event
+ */
+struct ParticleGoneGlobalEvent{};
+  
 /*! The particle colliding global event
  * \ingroup particle_colliding_global_event
  */

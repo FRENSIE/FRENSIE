@@ -5,8 +5,8 @@ INCLUDE_DIRECTORIES(core/src)
 ADD_SUBDIRECTORY(estimator)
 INCLUDE_DIRECTORIES(estimator/src)
  
-# ADD_SUBDIRECTORY(particle_tracker)
-# INCLUDE_DIRECTORIES(particle_tracker/src)
+ADD_SUBDIRECTORY(particle_tracker)
+INCLUDE_DIRECTORIES(particle_tracker/src)
 
 ADD_SUBDIRECTORY(forced_collisions)
 INCLUDE_DIRECTORIES(forced_collisions/src)
