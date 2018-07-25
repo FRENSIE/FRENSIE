@@ -9,6 +9,7 @@
 // FRENSIE Includes
 #include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_ParticleTracker.hpp"
+#include "MonteCarlo_ObserverParticleStateWrapper.hpp"
 #include "MonteCarlo_ParticleType.hpp"
 #include "Utility_OpenMPProperties.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
@@ -26,7 +27,7 @@ ParticleTracker::ParticleTracker( const uint32_t id,
                                   const uint64_t number_of_histories )
   : d_id( id ),
     d_histories_to_track(),
-    d_partial_history_map(),
+    d_partial_history_map( 1 ),
     d_history_number_map()
 {
   // Make sure there are some particles being tracked
@@ -34,9 +35,6 @@ ParticleTracker::ParticleTracker( const uint32_t id,
 
   for( uint64_t i = 0; i < number_of_histories; ++i )
     d_histories_to_track.insert( i );
-
-  // Initialize the data maps
-  this->initialize( 0u );
 }
 
 // Constructor
@@ -44,26 +42,23 @@ ParticleTracker::ParticleTracker( const uint32_t id,
                                   const std::set<uint64_t>& history_numbers )
   : d_id( id ),
     d_histories_to_track( history_numbers ),
-    d_partial_history_map(),
+    d_partial_history_map( 1 ),
     d_history_number_map()
 {
   // Make sure there are some particles being tracked
   testPrecondition( history_numbers.size() > 0 )
-
-  // Initialize the data maps
-  this->initialize( 0u );
-}
-
-// Initialize the data maps
-void ParticleTracker::initialize( const unsigned thread )
-{
-  d_partial_history_map[thread];
 }
 
 // Return the estimator id
 uint32_t ParticleTracker::getId() const
 {
   return d_id;
+}
+
+// Return the histories that will be tracked
+const std::set<uint64_t>& ParticleTracker::getTrackedHistories() const
+{
+  return d_histories_to_track;
 }
 
 // Add current history estimator contribution
@@ -78,10 +73,38 @@ void ParticleTracker::updateFromGlobalParticleSubtrackEndingEvent(
   {
     unsigned thread_id = Utility::OpenMPProperties::getThreadId();
 
-    d_partial_history_map[thread_id][&particle].push_back(
-           std::make_tuple( std::array<double,3>( {particle.getXPosition(),
-                                                   particle.getYPosition(),
-                                                   particle.getZPosition()} ),
+    PartialHistorySubmap& thread_partial_history_map =
+      d_partial_history_map[thread_id];
+
+    if( thread_partial_history_map.find( &particle ) ==
+        thread_partial_history_map.end() )
+    {
+      ObserverParticleStateWrapper particle_wrapper( particle );
+
+      const double track_length =
+        std::sqrt( (end_point[0] - start_point[0])*(end_point[0] - start_point[0]) +
+                   (end_point[1] - start_point[1])*(end_point[1] - start_point[1]) +
+                   (end_point[2] - start_point[2])*(end_point[2] - start_point[2]) );
+
+      particle_wrapper.calculateStateTimesUsingParticleTimeAsEndTime( track_length );
+      
+      thread_partial_history_map[&particle].push_back(
+           std::make_tuple( std::array<double,3>( {start_point[0],
+                                                   start_point[1],
+                                                   start_point[2]} ),
+                            std::array<double,3>( {particle.getXDirection(),
+                                                   particle.getYDirection(),
+                                                   particle.getZDirection()} ),
+                            particle.getEnergy(),
+                            particle_wrapper.getStartTime(),
+                            particle.getWeight(),
+                            particle.getCollisionNumber() ) );
+    }
+    
+    thread_partial_history_map[&particle].push_back(
+           std::make_tuple( std::array<double,3>( {end_point[0],
+                                                   end_point[1],
+                                                   end_point[2]} ),
                             std::array<double,3>( {particle.getXDirection(),
                                                    particle.getYDirection(),
                                                    particle.getZDirection()} ),
@@ -127,19 +150,19 @@ void ParticleTracker::resetData()
   // Make sure only the root process calls this function
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
-  // Clear the partial history data
-  std::map<unsigned,PartialHistorySubmap>::iterator partial_history_map_it =
-    d_partial_history_map.begin();
-
-  while( partial_history_map_it != d_partial_history_map.end() )
-  {
-    partial_history_map_it->second.clear();
-
-    ++partial_history_map_it;
-  }
+  for( size_t i = 0; i < d_partial_history_map.size(); ++i )
+    d_partial_history_map[i].clear();
 
   // Clear the history number map
   d_history_number_map.clear();
+}
+
+// Enable support for multiple threads
+void ParticleTracker::enableThreadSupport( const unsigned num_threads )
+{
+  testPrecondition( num_threads > 0 );
+  
+  d_partial_history_map.resize( num_threads );
 }
 
 // Has Uncommited History Contribution
@@ -167,42 +190,43 @@ void ParticleTracker::reduceData( const Utility::Communicator& comm,
     // Handle the master
     if( comm.rank() == root_process )
     {
-      std::vector<OverallHistoryMap> gathered_entity_data( comm.size() );
-      std::vector<Utility::Communicator::Request> gathered_entity_requests;
+      std::vector<OverallHistoryMap> gathered_data( comm.size() );
+      std::vector<Utility::Communicator::Request> gathered_requests;
 
       for( size_t i = 0; i < comm.size(); ++i )
       {
         if( i != root_process )
         {
-          gathered_entity_requests.push_back(
-                                Utility::ireceive( comm,
-                                                   i,
-                                                   0,
-                                                   gathered_entity_data[i] ) );
+          gathered_requests.push_back( Utility::ireceive( comm,
+                                                          i,
+                                                          0,
+                                                          gathered_data[i] ) );
         }
+      }
 
-        std::vector<Utility::Communicator::Status>
-          gathered_entity_statuses( gathered_entity_requests.size() );
+      std::vector<Utility::Communicator::Status>
+        gathered_statuses( gathered_requests.size() );
 
-        Utility::wait( gathered_entity_requests, gathered_entity_statuses );
+      Utility::wait( gathered_requests, gathered_statuses );
 
-        for( size_t i = 0; i < gathered_entity_data.size(); ++i )
+      for( size_t i = 0; i < gathered_data.size(); ++i )
+      {
+        OverallHistoryMap::const_iterator gathered_data_it =
+          gathered_data[i].begin();
+        
+        while( gathered_data_it != gathered_data[i].end() )
         {
-          OverallHistoryMap::const_iterator gathered_entity_data_it =
-            gathered_entity_data[i].begin();
+          d_history_number_map[gathered_data_it->first] =
+            gathered_data_it->second;
 
-          while( gathered_entity_data_it != gathered_entity_data[i].end() )
-          {
-            d_history_number_map[gathered_entity_data_it->first] =
-              gathered_entity_data_it->second;
-          }
+          ++gathered_data_it;
         }
       }
     }
     else
     {
       Utility::send( comm, root_process, 0, d_history_number_map );
-      
+
       // Reset the non-root process data
       this->resetData();
     }
