@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ParticleResponseFunction.i
+//! \file   MonteCarlo_ParticleResponse.i
 //! \author Luke Kersting
-//! \brief  The ParticleResponseFunction classes interface file
+//! \brief  The ParticleResponse classes interface file
 //!
 //---------------------------------------------------------------------------//
 
@@ -10,7 +10,6 @@
 // FRENSIE Includes
 #include "PyFrensie_PythonTypeTraits.hpp"
 #include "MonteCarlo_ParticleResponseFunction.hpp"
-// #include "MonteCarlo_ParticleResponseFunction.cpp"
 #include "MonteCarlo_SinglePhaseSpaceDimensionParticleResponseFunction.hpp"
 #include "MonteCarlo_FullPhaseSpaceParticleResponseFunction.hpp"
 #include "MonteCarlo_MaterialParticleResponseFunction.hpp"
@@ -42,27 +41,6 @@ using namespace MonteCarlo;
 // %import MonteCarlo.Collision.i
 %import MonteCarlo.GeometryModel.i
 // %import(module="PyFrensie.MonteCarlo") MonteCarlo.GeometryModel.i
-
-// Helper macro for the pre setup
-%define %pre_setup_helper( RESPONSE_FUNCTION, TEMPLATE_NAME )
-
-  // The particle response function typedef
-  %inline %{
-  typedef RESPONSE_FUNCTION TEMPLATE_NAME;
-  %}
-
-  // The particle response function shared ptr
-  %shared_ptr( RESPONSE_FUNCTION )
-
-%enddef
-
-// Helper macro for the post setup
-%define %post_setup_helper( RESPONSE_FUNCTION, TEMPLATE_NAME )
-
-  // The particle response function template
-  %template( TEMPLATE_NAME ) RESPONSE_FUNCTION;
-
-%enddef
 
 // Helper macro for extending the class with arithmetic operators
 %define %extend_setup_helper( RESPONSE_FUNCTION )
@@ -114,9 +92,6 @@ using namespace MonteCarlo;
 
 %enddef
 
-// Primatives types like double cannot be extended directly, so a std::vector<double> is used instead.
-
-
 // Add typemaps for converting float to Double
 %typemap(in) Double ( double temp ){
   temp = PyFloat_AsDouble( $input );
@@ -126,8 +101,6 @@ using namespace MonteCarlo;
 %typemap(typecheck, precedence=1140) (Double) {
   $1 = (PyFloat_Check($input)) ? 1 : 0;
 }
-
-// %shared_ptr( MonteCarlo::FilledGeometryModel )
 
 // ---------------------------------------------------------------------------//
 // Add ParticleResponseFunction support
@@ -177,15 +150,15 @@ using namespace MonteCarlo;
 // ---------------------------------------------------------------------------//
 
 // The particle response functions (typedefs and shared ptrs)
-%pre_setup_helper( MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>, XPositionParticleResponseFunction)
-%pre_setup_helper( MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>, YPositionParticleResponseFunction)
-%pre_setup_helper( MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>, ZPositionParticleResponseFunction)
-%pre_setup_helper( MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION>, XDirectionParticleResponseFunction)
-%pre_setup_helper( MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION>, YDirectionParticleResponseFunction)
-%pre_setup_helper( MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION>, ZDirectionParticleResponseFunction)
-%pre_setup_helper( MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::ENERGY_DIMENSION>, EnergyParticleResponseFunction)
-%pre_setup_helper( MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::TIME_DIMENSION>, TimeParticleResponseFunction)
-%pre_setup_helper( MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::WEIGHT_DIMENSION>, WeightParticleResponseFunction)
+%pre_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>, XPositionParticleResponseFunction)
+%pre_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>, YPositionParticleResponseFunction)
+%pre_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>, ZPositionParticleResponseFunction)
+%pre_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION>, XDirectionParticleResponseFunction)
+%pre_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION>, YDirectionParticleResponseFunction)
+%pre_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION>, ZDirectionParticleResponseFunction)
+%pre_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::ENERGY_DIMENSION>, EnergyParticleResponseFunction)
+%pre_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::TIME_DIMENSION>, TimeParticleResponseFunction)
+%pre_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::WEIGHT_DIMENSION>, WeightParticleResponseFunction)
 
 // (use template instantiation typedefs as python %template names)
 %include "MonteCarlo_SinglePhaseSpaceDimensionParticleResponseFunction.hpp"
@@ -194,15 +167,15 @@ using namespace MonteCarlo;
 %extend_setup_helper(MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction)
 
 // The particle response functions (templates)
-%post_setup_helper( MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>, XPositionParticleResponseFunction)
-%post_setup_helper( MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>, YPositionParticleResponseFunction)
-%post_setup_helper( MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>, ZPositionParticleResponseFunction)
-%post_setup_helper( MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION>, XDirectionParticleResponseFunction)
-%post_setup_helper( MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION>, YDirectionParticleResponseFunction)
-%post_setup_helper( MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION>, ZDirectionParticleResponseFunction)
-%post_setup_helper( MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::ENERGY_DIMENSION>, EnergyParticleResponseFunction)
-%post_setup_helper( MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::TIME_DIMENSION>, TimeParticleResponseFunction)
-%post_setup_helper( MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::WEIGHT_DIMENSION>, WeightParticleResponseFunction)
+%post_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>, XPositionParticleResponseFunction)
+%post_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>, YPositionParticleResponseFunction)
+%post_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>, ZPositionParticleResponseFunction)
+%post_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION>, XDirectionParticleResponseFunction)
+%post_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION>, YDirectionParticleResponseFunction)
+%post_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION>, ZDirectionParticleResponseFunction)
+%post_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::ENERGY_DIMENSION>, EnergyParticleResponseFunction)
+%post_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::TIME_DIMENSION>, TimeParticleResponseFunction)
+%post_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::WEIGHT_DIMENSION>, WeightParticleResponseFunction)
 
 // ---------------------------------------------------------------------------//
 // Add FullPhaseSpaceParticleResponseFunction support
@@ -216,12 +189,12 @@ using namespace MonteCarlo;
 // ---------------------------------------------------------------------------//
 
 // The material particle response functions (typedefs and shared ptrs)
-%pre_setup_helper( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::NeutronMaterial>, NeutronMaterialParticleResponseFunction)
-%pre_setup_helper( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::PhotonMaterial>, PhotonMaterialParticleResponseFunction)
-%pre_setup_helper( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::ElectronMaterial>, ElectronMaterialParticleResponseFunction)
-%pre_setup_helper( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::PositronMaterial>, PositronMaterialParticleResponseFunction)
-%pre_setup_helper( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::AdjointPhotonMaterial>, AdjointPhotonMaterialParticleResponseFunction)
-%pre_setup_helper( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::AdjointElectronMaterial>, AdjointElectronMaterialParticleResponseFunction)
+%pre_template_setup_helper( MaterialParticleResponseFunction<MonteCarlo::NeutronMaterial>, NeutronMaterialParticleResponseFunction)
+%pre_template_setup_helper( MaterialParticleResponseFunction<MonteCarlo::PhotonMaterial>, PhotonMaterialParticleResponseFunction)
+%pre_template_setup_helper( MaterialParticleResponseFunction<MonteCarlo::ElectronMaterial>, ElectronMaterialParticleResponseFunction)
+%pre_template_setup_helper( MaterialParticleResponseFunction<MonteCarlo::PositronMaterial>, PositronMaterialParticleResponseFunction)
+%pre_template_setup_helper( MaterialParticleResponseFunction<MonteCarlo::AdjointPhotonMaterial>, AdjointPhotonMaterialParticleResponseFunction)
+%pre_template_setup_helper( MaterialParticleResponseFunction<MonteCarlo::AdjointElectronMaterial>, AdjointElectronMaterialParticleResponseFunction)
 
 // Add typemaps for converting ReactionEnumType to AdjointPhotoatomicReactionType
 %typemap(in) const MonteCarlo::AdjointPhotonMaterial::ReactionEnumType ( MonteCarlo::AdjointPhotoatomicReactionType temp ){
@@ -252,12 +225,12 @@ using namespace MonteCarlo;
 %extend_setup_helper(MonteCarlo::MaterialParticleResponseFunction)
 
 // The material particle response functions (templates)
-%post_setup_helper( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::NeutronMaterial>, NeutronMaterialParticleResponseFunction)
-%post_setup_helper( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::PhotonMaterial>, PhotonMaterialParticleResponseFunction)
-%post_setup_helper( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::ElectronMaterial>, ElectronMaterialParticleResponseFunction)
-%post_setup_helper( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::PositronMaterial>, PositronMaterialParticleResponseFunction)
-%post_setup_helper( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::AdjointPhotonMaterial>, AdjointPhotonMaterialParticleResponseFunction)
-%post_setup_helper( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::AdjointElectronMaterial>, AdjointElectronMaterialParticleResponseFunction)
+%post_template_setup_helper( MaterialParticleResponseFunction<MonteCarlo::NeutronMaterial>, NeutronMaterialParticleResponseFunction)
+%post_template_setup_helper( MaterialParticleResponseFunction<MonteCarlo::PhotonMaterial>, PhotonMaterialParticleResponseFunction)
+%post_template_setup_helper( MaterialParticleResponseFunction<MonteCarlo::ElectronMaterial>, ElectronMaterialParticleResponseFunction)
+%post_template_setup_helper( MaterialParticleResponseFunction<MonteCarlo::PositronMaterial>, PositronMaterialParticleResponseFunction)
+%post_template_setup_helper( MaterialParticleResponseFunction<MonteCarlo::AdjointPhotonMaterial>, AdjointPhotonMaterialParticleResponseFunction)
+%post_template_setup_helper( MaterialParticleResponseFunction<MonteCarlo::AdjointElectronMaterial>, AdjointElectronMaterialParticleResponseFunction)
 
 // ---------------------------------------------------------------------------//
 // Add PhotonMaterialParticleResponseFunction support
@@ -270,12 +243,12 @@ using namespace MonteCarlo;
 
 
 // The material component particle response functions (typedefs and shared ptrs)
-%pre_setup_helper( MonteCarlo::MaterialComponentParticleResponseFunction<MonteCarlo::NeutronMaterial>, NeutronMaterialComponentParticleResponseFunction)
-%pre_setup_helper( MonteCarlo::MaterialComponentParticleResponseFunction<MonteCarlo::PhotonMaterial>, PhotonMaterialComponentParticleResponseFunction)
-%pre_setup_helper( MonteCarlo::MaterialComponentParticleResponseFunction<MonteCarlo::ElectronMaterial>, ElectronMaterialComponentParticleResponseFunction)
-%pre_setup_helper( MonteCarlo::MaterialComponentParticleResponseFunction<MonteCarlo::PositronMaterial>, PositronMaterialComponentParticleResponseFunction)
-%pre_setup_helper( MonteCarlo::MaterialComponentParticleResponseFunction<MonteCarlo::AdjointPhotonMaterial>, AdjointPhotonMaterialComponentParticleResponseFunction)
-%pre_setup_helper( MonteCarlo::MaterialComponentParticleResponseFunction<MonteCarlo::AdjointElectronMaterial>, AdjointElectronMaterialComponentParticleResponseFunction)
+%pre_template_setup_helper( MaterialComponentParticleResponseFunction<MonteCarlo::NeutronMaterial>, NeutronMaterialComponentParticleResponseFunction)
+%pre_template_setup_helper( MaterialComponentParticleResponseFunction<MonteCarlo::PhotonMaterial>, PhotonMaterialComponentParticleResponseFunction)
+%pre_template_setup_helper( MaterialComponentParticleResponseFunction<MonteCarlo::ElectronMaterial>, ElectronMaterialComponentParticleResponseFunction)
+%pre_template_setup_helper( MaterialComponentParticleResponseFunction<MonteCarlo::PositronMaterial>, PositronMaterialComponentParticleResponseFunction)
+%pre_template_setup_helper( MaterialComponentParticleResponseFunction<MonteCarlo::AdjointPhotonMaterial>, AdjointPhotonMaterialComponentParticleResponseFunction)
+%pre_template_setup_helper( MaterialComponentParticleResponseFunction<MonteCarlo::AdjointElectronMaterial>, AdjointElectronMaterialComponentParticleResponseFunction)
 
 // (use template instantiation typedefs as python %template names)
 %include "MonteCarlo_MaterialComponentParticleResponseFunction.hpp"
@@ -284,12 +257,12 @@ using namespace MonteCarlo;
 %extend_setup_helper(MonteCarlo::MaterialComponentParticleResponseFunction)
 
 // The material particle response functions (templates)
-%post_setup_helper( MonteCarlo::MaterialComponentParticleResponseFunction<MonteCarlo::NeutronMaterial>, NeutronMaterialComponentParticleResponseFunction)
-%post_setup_helper( MonteCarlo::MaterialComponentParticleResponseFunction<MonteCarlo::PhotonMaterial>, PhotonMaterialComponentParticleResponseFunction)
-%post_setup_helper( MonteCarlo::MaterialComponentParticleResponseFunction<MonteCarlo::ElectronMaterial>, ElectronMaterialComponentParticleResponseFunction)
-%post_setup_helper( MonteCarlo::MaterialComponentParticleResponseFunction<MonteCarlo::PositronMaterial>, PositronMaterialComponentParticleResponseFunction)
-%post_setup_helper( MonteCarlo::MaterialComponentParticleResponseFunction<MonteCarlo::AdjointPhotonMaterial>, AdjointPhotonMaterialComponentParticleResponseFunction)
-%post_setup_helper( MonteCarlo::MaterialComponentParticleResponseFunction<MonteCarlo::AdjointElectronMaterial>, AdjointElectronMaterialComponentParticleResponseFunction)
+%post_template_setup_helper( MaterialComponentParticleResponseFunction<MonteCarlo::NeutronMaterial>, NeutronMaterialComponentParticleResponseFunction)
+%post_template_setup_helper( MaterialComponentParticleResponseFunction<MonteCarlo::PhotonMaterial>, PhotonMaterialComponentParticleResponseFunction)
+%post_template_setup_helper( MaterialComponentParticleResponseFunction<MonteCarlo::ElectronMaterial>, ElectronMaterialComponentParticleResponseFunction)
+%post_template_setup_helper( MaterialComponentParticleResponseFunction<MonteCarlo::PositronMaterial>, PositronMaterialComponentParticleResponseFunction)
+%post_template_setup_helper( MaterialComponentParticleResponseFunction<MonteCarlo::AdjointPhotonMaterial>, AdjointPhotonMaterialComponentParticleResponseFunction)
+%post_template_setup_helper( MaterialComponentParticleResponseFunction<MonteCarlo::AdjointElectronMaterial>, AdjointElectronMaterialComponentParticleResponseFunction)
 
 // ---------------------------------------------------------------------------//
 // Add PhotonMaterialComponentParticleResponseFunction support

@@ -112,7 +112,7 @@ public:
   virtual void getMaterialIds( MaterialIdSet& material_ids ) const = 0;
 
   //! Get the cells
-  virtual void getCells( CellIdSet& cells,
+  virtual void getCells( CellIdSet& cell_set,
                          const bool include_void_cells,
                          const bool include_termination_cells ) const = 0;
 

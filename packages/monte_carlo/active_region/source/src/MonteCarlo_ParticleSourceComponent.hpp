@@ -125,7 +125,7 @@ protected:
   virtual void reduceDataImpl( const Utility::Communicator& comm,
                                const int root_process ) = 0;
 
-  /*! \brief Return the number of particle states that will be sampled for the 
+  /*! \brief Return the number of particle states that will be sampled for the
    * given history number
    */
   virtual unsigned long long getNumberOfParticleStateSamples(
@@ -139,9 +139,9 @@ protected:
   /*! Sample a particle state from the source
    *
    * All geometry model considerations can (and should) be ignored in the
-   * implementation of this method. These will be handled by the 
-   * MonteCarlo::ParticleSourceComponent::sampleParticleState method. True 
-   * should be returned if another sample can be made for this history state 
+   * implementation of this method. These will be handled by the
+   * MonteCarlo::ParticleSourceComponent::sampleParticleState method. True
+   * should be returned if another sample can be made for this history state
    * id.
    */
   virtual bool sampleParticleStateImpl(
@@ -222,7 +222,7 @@ private:
 
   // The rejection cells
   CellIdSet d_rejection_cells;
-  
+
   // The model that the source is embedded in
   std::shared_ptr<const Geometry::Model> d_model;
 
@@ -250,15 +250,15 @@ void ParticleSourceComponent::save( Archive& ar, const unsigned version ) const
 
   CellIdSet start_cell_cache;
   this->mergeLocalStartCellCaches( start_cell_cache );
-  
+
   ar & BOOST_SERIALIZATION_NVP( start_cell_cache );
-  
+
   Counter number_of_trials = this->reduceLocalTrialCounters();
 
   ar & BOOST_SERIALIZATION_NVP( number_of_trials );
 
   Counter number_of_samples = this->reduceLocalSampleCounters();
-  
+
   ar & BOOST_SERIALIZATION_NVP( number_of_samples );
 }
 
@@ -289,17 +289,17 @@ void ParticleSourceComponent::load( Archive& ar, const unsigned version )
   d_number_of_trials.front() = number_of_trials;
 
   Counter number_of_samples = 0u;
-  
+
   ar & BOOST_SERIALIZATION_NVP( number_of_samples );
 
   d_number_of_samples.resize( 1 );
   d_number_of_samples.front() = number_of_samples;
 }
-  
+
 } // end MonteCarlo namespace
 
-BOOST_CLASS_VERSION( MonteCarlo::ParticleSourceComponent, 0 );
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleSourceComponent );
+BOOST_SERIALIZATION_CLASS_VERSION( ParticleSourceComponent, MonteCarlo, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( ParticleSourceComponent, MonteCarlo );
 EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, ParticleSourceComponent );
 
 namespace Utility{
@@ -315,7 +315,7 @@ struct TypeNameTraits<MonteCarlo::ParticleSourceComponent>
   static inline std::string name()
   { return "ParticleSourceComponent"; }
 };
-  
+
 } // end Utility namespace
 
 #endif // end MONTE_CARLO_PARTICLE_SOURCE_COMPONENT_HPP

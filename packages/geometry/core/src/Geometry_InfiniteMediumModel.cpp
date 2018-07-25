@@ -40,32 +40,32 @@ bool InfiniteMediumModel::hasCellEstimatorData() const
 
 // Get the material ids
 void InfiniteMediumModel::getMaterialIds( MaterialIdSet& material_ids ) const
-{ 
+{
   material_ids.insert( d_material_id );
 }
 
 // Get the cells
 /*! \details By default there will only be a single cell with an id of 1.
  */
-void InfiniteMediumModel::getCells( CellIdSet& cells,
+void InfiniteMediumModel::getCells( CellIdSet& cell_set,
                                     const bool include_void_cells,
                                     const bool ) const
 {
   if( include_void_cells )
-    cells.insert( d_cell );
+    cell_set.insert( d_cell );
 }
 
 // Get the cell material ids
 void InfiniteMediumModel::getCellMaterialIds(
                                      CellIdMatIdMap& cell_id_mat_id_map ) const
-{ 
+{
   cell_id_mat_id_map[d_cell] = d_material_id;
 }
 
 // Get the cell densities
 void InfiniteMediumModel::getCellDensities(
                                   CellIdDensityMap& cell_id_density_map ) const
-{ 
+{
   cell_id_density_map[d_cell] = d_density;
 }
 
@@ -123,7 +123,7 @@ InfiniteMediumNavigator* InfiniteMediumModel::createNavigatorAdvanced() const
 {
   return new InfiniteMediumNavigator( d_cell );
 }
-  
+
 } // end Geometry namespace
 
 EXPLICIT_CLASS_SAVE_LOAD_INST( Geometry::InfiniteMediumModel );

@@ -246,29 +246,6 @@ MonteCarlo::MaterialDefinitionDatabase::getUniqueScatteringCenterNamesFromIds;
 // Add ReactionType support
 // ---------------------------------------------------------------------------//
 
-// Helper macro for defining python string
-%define %extend_string( TYPE )
-
-  // Add some useful methods to the class
-  %extend TYPE
-  {
-    // String representation method
-    PyObject* __repr__() const
-    {
-      std::string repr_string = Utility::toString($self);
-      return PyString_FromString( repr_string.c_str() );
-    }
-
-    // String conversion method
-    PyObject* __str__() const
-    {
-      std::string repr_string = Utility::toString($self);
-      return PyString_FromString( repr_string.c_str() );
-    }
-  };
-
-%enddef
-
 %include "MonteCarlo_NuclearReactionType.hpp"
 %include "MonteCarlo_PhotonuclearReactionType.hpp"
 %include "MonteCarlo_PhotoatomicReactionType.hpp"
@@ -276,16 +253,6 @@ MonteCarlo::MaterialDefinitionDatabase::getUniqueScatteringCenterNamesFromIds;
 %include "MonteCarlo_ElectroatomicReactionType.hpp"
 %include "MonteCarlo_AdjointElectroatomicReactionType.hpp"
 %include "MonteCarlo_PositronatomicReactionType.hpp"
-
-// Add python string to enum classes
-%extend_string( MonteCarlo::NuclearReactionType )
-%extend_string( MonteCarlo::PhotonuclearReactionType )
-%extend_string( MonteCarlo::PhotoatomicReactionType )
-%extend_string( MonteCarlo::AdjointPhotoatomicReactionType )
-%extend_string( MonteCarlo::ElectroatomicReactionType )
-%extend_string( MonteCarlo::AdjointElectroatomicReactionType )
-%extend_string( MonteCarlo::PositronatomicReactionType )
-
 
 //---------------------------------------------------------------------------//
 // Add Nuclide support

@@ -378,21 +378,12 @@ class is shown below:
   normal[2] = $1[2];
 
   %append_output(PyFrensie::convertToPython( normal ));
-
-  // Utility::ArrayView<const double> output_view( $1, 3 );
-  // npy_intp dims[1] = { output_view.size() };
-
-  // $result = PyArray_SimpleNewFromData( 1, dims, NPY_DOUBLE, (void*)output_view.data() );
-
-  // if( !$result )
-  //   SWIG_fail;
-
-  // // %append_output(PyFrensie::convertToPython( output_view ));
 }
 
 // Add typemaps for the CellIdSet
-%typemap(in) Geometry::Navigator::CellIdSet& (std::set<Geometry::Navigator::EntityId> temp)
+%typemap(in) Geometry::Navigator::CellIdSet& (Geometry::Navigator::CellIdSet temp)
 {
+  temp = PyFrensie::convertFromPython<Geometry::Navigator::CellIdSet>( $input );
   $1 = &temp;
 }
 
@@ -415,15 +406,6 @@ class is shown below:
   temp_normal[2] = $1[2];
 
   %append_output(PyFrensie::convertToPython( temp_normal ));
-
-  // Utility::ArrayView<const double> output_view( $1, 3 );
-
-  // npy_intp dims[1] = { output_view.size() };
-
-  // $result = PyArray_SimpleNewFromData( 1, dims, NPY_DOUBLE, (void*)output_view.data() );
-
-  // if( !$result )
-  //   SWIG_fail;
 }
 
 // Add typemaps for converting the Length to and from a Python float/array
@@ -530,9 +512,9 @@ A brief usage tutorial for this class is shown below:
   %append_output(PyFrensie::convertToPython( *$1 ));
 }
 
-%typemap(in,numinputs=0) Geometry::Model::CellIdSet& (Geometry::Model::CellIdSet temp) "$1 = &temp;"
+%typemap(in,numinputs=0) Geometry::Model::CellIdSet &cell_set(Geometry::Model::CellIdSet temp) "$1 = &temp;"
 
-%typemap(argout) Geometry::Model::CellIdSet& {
+%typemap(argout) Geometry::Model::CellIdSet &cell_set {
   %append_output(PyFrensie::convertToPython( *$1 ));
 }
 

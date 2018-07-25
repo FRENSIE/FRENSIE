@@ -75,6 +75,17 @@ monte_carlo/active_region subpackage.
 // Global swig features
 %feature("autodoc", "1");
 
+// Helper macro for the pre template setup
+%define %pre_template_setup_helper( NAME, RENAME )
+  %inline %{ typedef MonteCarlo::NAME RENAME; %}
+  %shared_ptr( MonteCarlo::NAME )
+%enddef
+
+// Helper macro for the post template setup
+%define %post_template_setup_helper( NAME, RENAME )
+  %template( RENAME ) MonteCarlo::NAME;
+%enddef
+
 // Add support for the PhaseSpaceDimension classes
 %include "MonteCarlo_PhaseSpaceDimension.i"
 
@@ -83,6 +94,9 @@ monte_carlo/active_region subpackage.
 
 // Add support for the ParticleResponse classes
 %include "MonteCarlo_ParticleResponse.i"
+
+// Add support for the ParticleSource classes
+%include "MonteCarlo_ParticleSource.i"
 
 //---------------------------------------------------------------------------//
 // Turn off the exception handling

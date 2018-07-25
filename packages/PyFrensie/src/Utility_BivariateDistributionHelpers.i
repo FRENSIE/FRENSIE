@@ -9,7 +9,7 @@
 // Include std::string support
 %include <std_string.i>
 
- // Import the PyFrensie_ArraySharedPtr.i
+// Import the PyFrensie_ArraySharedPtr.i
 %include "PyFrensie_ArraySharedPtr.i"
 
 //---------------------------------------------------------------------------//

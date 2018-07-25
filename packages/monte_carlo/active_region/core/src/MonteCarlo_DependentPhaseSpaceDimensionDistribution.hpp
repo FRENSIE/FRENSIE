@@ -33,7 +33,11 @@ class DependentPhaseSpaceDimensionDistributionHelper
  * \details This class will be used if parent_dimension != dimension.
  */
 template<PhaseSpaceDimension parent_dimension, PhaseSpaceDimension dimension>
-class DependentPhaseSpaceDimensionDistribution : public DependentPhaseSpaceDimensionDistributionHelper<parent_dimension,dimension, typename std::enable_if<parent_dimension!=dimension>::type>, public PhaseSpaceDimensionDistribution
+class DependentPhaseSpaceDimensionDistribution :
+#if !defined SWIG
+public DependentPhaseSpaceDimensionDistributionHelper<parent_dimension,dimension, typename std::enable_if<parent_dimension!=dimension>::type>,
+#endif // end !defined SWIG
+ public PhaseSpaceDimensionDistribution
 {
 
 public:
