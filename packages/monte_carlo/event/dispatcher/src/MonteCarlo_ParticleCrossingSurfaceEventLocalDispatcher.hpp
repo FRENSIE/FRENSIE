@@ -9,14 +9,10 @@
 #ifndef MONTE_CARLO_PARTICLE_CROSSING_SURFACE_EVENT_LOCAL_DISPATCHER_HPP
 #define MONTE_CARLO_PARTICLE_CROSSING_SURFACE_EVENT_LOCAL_DISPATCHER_HPP
 
-// Boost Includes
-#include <boost/unordered_map.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ParticleEventLocalDispatcher.hpp"
 #include "MonteCarlo_ParticleCrossingSurfaceEventObserver.hpp"
 #include "MonteCarlo_ParticleState.hpp"
-#include "MonteCarlo_ModuleTraits.hpp"
 #include "Geometry_Model.hpp"
 
 namespace MonteCarlo{
@@ -24,14 +20,15 @@ namespace MonteCarlo{
 /*! The particle crossing surface event dispatcher class
  * \ingroup particle_crossing_surface_event
  */
-class ParticleCrossingSurfaceEventLocalDispatcher : public ParticleEventLocalDispatcher<Geometry::Model::EntityId,ParticleCrossingSurfaceEventObserver>
+class ParticleCrossingSurfaceEventLocalDispatcher : public ParticleEventLocalDispatcher<ParticleCrossingSurfaceEventObserver>
 {
+  typedef ParticleEventLocalDispatcher<ParticleCrossingSurfaceEventObserver> BaseType;
 
 public:
 
   //! Constructor
   ParticleCrossingSurfaceEventLocalDispatcher(
-	      const Geometry::Model::EntityId surface_id );
+                                  const Geometry::Model::EntityId surface_id );
 
   //! Destructor
   ~ParticleCrossingSurfaceEventLocalDispatcher()
@@ -39,12 +36,25 @@ public:
 
   //! Dispatch the new event to the observers
   void dispatchParticleCrossingSurfaceEvent(
-	  const ParticleState& particle,
-	  const Geometry::Model::EntityId surface_crossing,
-	  const double angle_cosine );
+                              const ParticleState& particle,
+	                      const Geometry::Model::EntityId surface_crossing,
+                              const double angle_cosine );
+
+private:
+
+  // Serialize the observer
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType ); }
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 };
 
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::ParticleCrossingSurfaceEventLocalDispatcher, 0 );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleCrossingSurfaceEventLocalDispatcher );
 
 #endif // end MONTE_CARLO_PARTICLE_CROSSING_SURFACE_EVENT_LOCAL_DISPATCHER_HPP
 

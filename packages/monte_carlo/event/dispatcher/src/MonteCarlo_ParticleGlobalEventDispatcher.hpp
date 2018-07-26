@@ -13,10 +13,16 @@
 #include <memory>
 
 // Boost Includes
-#include <boost/unordered_map.hpp>
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/assume_abstract.hpp>
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ModuleTraits.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
+#include "Utility_SerializationHelpers.hpp"
+#include "Utility_Map.hpp"
 
 namespace MonteCarlo{
 
@@ -38,33 +44,44 @@ public:
   { /* ... */ }
 
   //! Attach an observer to the dispatcher
-  void attachObserver( const ModuleTraits::InternalEventObserverHandle id,
+  void attachObserver( const std::set<ParticleType>& particle_types,
                        const std::shared_ptr<Observer>& observer );
 
+  //! Attach an observer to the dispatcher
+  void attachObserver( const std::shared_ptr<Observer>& observer );
+
   //! Detach an observer from the dispatcher
-  void detachObserver( const ModuleTraits::InternalEventObserverHandle id );
+  void detachObserver( const std::shared_ptr<Observer>& observer );
 
   //! Detach all observers
   void detachAllObservers();
 
   //! Get the number of attached observers
-  unsigned getNumberOfObservers();
+  size_t getNumberOfObservers( const ParticleType particle_type ) const;
 
 protected:
 
   // The observer map
-  typedef typename boost::unordered_map<ModuleTraits::InternalEventObserverHandle,
-					std::shared_ptr<Observer> > ObserverIdMap;
+  typedef typename std::set<std::shared_ptr<Observer> > ObserverSet;
 
   // Get the oberver map
-  ObserverIdMap& observer_id_map();
+  ObserverSet& getObserverSet( const ParticleType particle_type );
 
 private:
 
-  ObserverIdMap d_observer_map;
+  // Serialize the observer
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version );
+  
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
+  std::map<int,ObserverSet> d_observer_sets;
 };
 
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS1_VERSION( ParticleGlobalEventDispatcher, MonteCarlo, 0 );
 
 //---------------------------------------------------------------------------//
 // Template Includes.

@@ -11,6 +11,7 @@
 #include "MonteCarlo_ParticleHistoryObserverHDF5FileHandler.hpp"
 #include "Utility_HDF5FileHandler.hpp"
 #include "Utility_OpenMPProperties.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
@@ -19,18 +20,75 @@ namespace MonteCarlo{
 EventHandler::EventHandler()
 { /* ... */ }
 
-// Return the number of estimators that have been added
-unsigned EventHandler::getNumberOfObservers() const
+// Add a particle tracker to the handler
+void EventHandler::addParticleTracker(
+                     const std::shared_ptr<ParticleTracker>& particle_tracker )
 {
-  return d_particle_history_observers.size();
+  this->registerGlobalObserver( particle_tracker );
 }
 
-// Check if an observer with the given id exists
-bool EventHandler::doesObserverExist(
-                      const ParticleHistoryObserver::idType observer_id ) const
+// Return the number of estimators that have been added
+size_t EventHandler::getNumberOfEstimators() const
 {
-  return d_particle_history_observers.find( observer_id ) !=
-    d_particle_history_observers.end();
+  return d_estimators.size();
+}
+
+// Return the number of particle trackers
+size_t EventHandler::getNumberOfParticleTrackers() const
+{
+  return d_particle_trackers.size();
+}
+
+// Check if an estimator with the given id exists
+bool EventHandler::doesEstimatorExist( const uint32_t estimator_id ) const
+{
+  return d_estimators.find( estimator_id ) != d_estimators.end();
+}
+
+// Return the estimator
+Estimator& EventHandler::getEstimator( const uint32_t estimator_id )
+{
+  TEST_FOR_EXCEPTION( !this->doesEstimatorExist(),
+                      std::runtime_error,
+                      "Estimator " << estimator_id << " has not been "
+                      "registered with the event handler!" );
+
+  return *d_estimators.find( estimator_id )->second;
+}
+
+// Return the estimator
+const Estimator& EventHandler::getEstimator( const uint32_t estimator_id ) const
+{
+  TEST_FOR_EXCEPTION( !this->doesEstimatorExist(),
+                      std::runtime_error,
+                      "Estimator " << estimator_id << " has not been "
+                      "registered with the event handler!" );
+
+  return *d_estimators.find( estimator_id )->second;
+}
+
+// Check if a particle tracker with the given id exists
+bool EventHandler::doesParticleTrackerExist( const uint32_t particle_tracker_id ) const
+{
+  return d_particle_trackers.find( particle_tracker_id ) !=
+    d_particle_trackers.end();
+}
+
+// Return the particle tracker
+ParticleTracker& EventHandler::getParticleTracker( const uint32_t particle_tracker_id )
+{
+  TEST_FOR_EXCEPTION( !this->doesParticleTrackerExist(),
+                      std::runtime_error,
+                      "Particle tracker " << particle_tracker_id <<
+                      " has not been registered with the event handler!" );
+
+  return *d_particle_trackers.find( particle_tracker_id )->second;
+}
+
+// Return the particle tracker
+const ParticleTracker& EventHandler::getParticleTracker( const uint32_t particle_tracker_id ) const
+{
+
 }
 
 // Enable support for multiple threads
@@ -78,8 +136,7 @@ void EventHandler::printObserverSummaries( std::ostream& os,
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   ParticleHistoryObserver::setNumberOfHistories( num_histories );
-  ParticleHistoryObserver::setStartTime( start_time );
-  ParticleHistoryObserver::setEndTime( end_time );
+  ParticleHistoryObserver::setElapsedTime( end_time - start_time );
 
   os << "Observers: " << std::endl;
 
@@ -112,9 +169,8 @@ void EventHandler::resetObserverData()
 }
 
 // Reduce the observer data on all processes in comm and collect on the root
-void EventHandler::reduceObserverData(
-	    const std::shared_ptr<const Utility::Communicator<unsigned long long> >& comm,
-	    const int root_process )
+void EventHandler::reduceObserverData( const Utility::Communicator& comm,
+                                       const int root_process )
 {
   // Make sure only the master thread calls this function
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );

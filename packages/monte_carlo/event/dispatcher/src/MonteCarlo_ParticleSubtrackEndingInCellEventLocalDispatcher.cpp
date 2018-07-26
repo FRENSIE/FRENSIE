@@ -7,6 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_ParticleSubtrackEndingInCellEventLocalDispatcher.hpp"
 #include "Utility_DesignByContract.hpp"
 
@@ -14,34 +15,37 @@ namespace MonteCarlo{
 
 // Constructor
 ParticleSubtrackEndingInCellEventLocalDispatcher::ParticleSubtrackEndingInCellEventLocalDispatcher(
-		     const Geometry::Model::EntityId cell_id )
-  : ParticleEventLocalDispatcher<Geometry::Model::EntityId,
-                                 ParticleSubtrackEndingInCellEventObserver>(cell_id)
+                                      const Geometry::Model::EntityId cell_id )
+  : BaseType( cell_id )
 { /* ... */ }
 
 // Dispatch the new event to the observers
 void ParticleSubtrackEndingInCellEventLocalDispatcher::dispatchParticleSubtrackEndingInCellEvent(
-	     const ParticleState& particle,
-	     const Geometry::Model::EntityId cell_of_subtrack,
-	     const double track_length )
+                              const ParticleState& particle,
+	                      const Geometry::Model::EntityId cell_of_subtrack,
+                              const double track_length )
 {
   // Make sure the cell being collided with is valid
-  testPrecondition( cell_of_subtrack == this->getId() );
+  testPrecondition( cell_of_subtrack == this->getEntityId() );
 
-  ObserverIdMap::iterator it = observer_id_map().begin();
+  ObserverSet& observer_set =
+    this->getObserverSet( particle.getParticleType() );
+  
+  ObserverSet::iterator it = observer_set.begin();
 
-  while( it != observer_id_map().end() )
+  while( it != observer_set.end() )
   {
-    it->second->updateFromParticleSubtrackEndingInCellEvent(
-							    particle,
-							    cell_of_subtrack,
-							    track_length );
+    it->second->updateFromParticleSubtrackEndingInCellEvent( particle,
+                                                             cell_of_subtrack,
+                                                             track_length );
 
     ++it;
   }
 }
 
 } // end MonteCarlo namespace
+
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ParticleSubtrackEndingInCellEventLocalDispatcher );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleSubtrackEndingInCellEventLocalDispatcher.cpp

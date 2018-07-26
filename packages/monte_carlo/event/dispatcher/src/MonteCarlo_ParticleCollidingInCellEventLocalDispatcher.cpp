@@ -7,6 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_ParticleCollidingInCellEventLocalDispatcher.hpp"
 #include "Utility_DesignByContract.hpp"
 
@@ -14,24 +15,26 @@ namespace MonteCarlo{
 
 // Constructor
 ParticleCollidingInCellEventLocalDispatcher::ParticleCollidingInCellEventLocalDispatcher(
-	             const Geometry::ModuleTraits::EntityId cell_id )
-  : ParticleEventLocalDispatcher<Geometry::ModuleTraits::EntityId,
-                                 ParticleCollidingInCellEventObserver>( cell_id )
+	                       const Geometry::ModuleTraits::EntityId cell_id )
+  : BaseType( cell_id )
 { /* ... */ }
 
 // Dispatch the new event to the observers
 void
 ParticleCollidingInCellEventLocalDispatcher::dispatchParticleCollidingInCellEvent(
-	    const ParticleState& particle,
-	    const Geometry::ModuleTraits::EntityId cell_of_collision,
-	    const double inverse_total_cross_section )
+                      const ParticleState& particle,
+                      const Geometry::ModuleTraits::EntityId cell_of_collision,
+                      const double inverse_total_cross_section )
 {
   // Make sure the cell being collided in is valid
-  testPrecondition( cell_of_collision == this->getId() );
+  testPrecondition( cell_of_collision == this->getEntityId() );
 
-  ObserverIdMap::iterator it = observer_id_map().begin();
+  ObserverSet& observer_set =
+    this->getObserverSet( particle.getParticleType() );
+  
+  ObserverSet::iterator it = observer_set.begin();
 
-  while( it != observer_id_map().end() )
+  while( it != observer_set.end() )
   {
     it->second->updateFromParticleCollidingInCellEvent(
 						 particle,
@@ -43,6 +46,8 @@ ParticleCollidingInCellEventLocalDispatcher::dispatchParticleCollidingInCellEven
 }
 
 } // end MonteCarlo namespace
+
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ParticleCollidingInCellEventLocalDispatcher );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleCollidingInCellEventLocalDispatcher.cpp

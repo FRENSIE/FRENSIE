@@ -7,6 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_ParticleCollidingInCellEventHandler.hpp"
 
 namespace MonteCarlo{
@@ -42,6 +43,8 @@ void ParticleCollidingInCellEventHandler::updateObserversFromParticleCollidingIn
 }
 
 } // end MonteCarlo namespace
+
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ParticleCollidingInCellEventHandler );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleCollidingInCellEventHandler.hpp

@@ -23,13 +23,15 @@ namespace MonteCarlo{
  * method must be updated.
  */
 enum ParticleType{
-  PHOTON = 0,
+  ParticleType_START = 0,
+  PHOTON = ParticleType_START,
   NEUTRON,
   ELECTRON,
   POSITRON,
   ADJOINT_PHOTON,
   ADJOINT_NEUTRON,
   ADJOINT_ELECTRON,
+  PartileType_END
 };
 
 //! Convert the geometry particle type enum to a ParticleType enum

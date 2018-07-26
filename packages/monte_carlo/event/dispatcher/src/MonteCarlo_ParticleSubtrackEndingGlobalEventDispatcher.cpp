@@ -7,14 +7,11 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_ParticleSubtrackEndingGlobalEventDispatcher.hpp"
 #include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
-
-// Constructor
-ParticleSubtrackEndingGlobalEventDispatcher::ParticleSubtrackEndingGlobalEventDispatcher()
-{ /* ... */ }
 
 // Dispatch the new event to the observers
 void ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
@@ -22,9 +19,12 @@ void ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEnding
 						 const double start_point[3],
 						 const double end_point[3] )
 {
-  ObserverIdMap::iterator it = this->observer_id_map().begin();
+  ObserverSet& observer_set =
+    this->getObserverSet( particle.getParticleType() );
+  
+  ObserverSet::iterator it = observer_set.begin();
 
-  while( it != this->observer_id_map().end() )
+  while( it != observer_set.end() )
   {
     it->second->updateFromGlobalParticleSubtrackEndingEvent( particle,
                                                              start_point,
@@ -35,6 +35,8 @@ void ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEnding
 }
 
 } // end namespace MonteCarlo
+
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleSubtrackEndingGlobalEventDispatcher.cpp

@@ -57,14 +57,49 @@ protected:
   template<typename Observer>
   void registerGlobalObserverWithTag(
 			 const std::shared_ptr<Observer>& observer,
+                         const std::set<ParticleType>& particle_types,
+			 ParticleSubtrackEndingGlobalEventObserver::EventTag );
+
+  // Register a global observer with the appropraite particle subtrack ending
+  // global event dispatcher
+  template<typename Observer>
+  void registerGlobalObserverWithTag(
+			 const std::shared_ptr<Observer>& observer,
 			 ParticleSubtrackEndingGlobalEventObserver::EventTag );
 
 private:
+
+  // Serialize the observer
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version );
+  
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
   // The particle subtrack ending global event dispatcher
   ParticleSubtrackEndingGlobalEventDispatcher
   d_particle_subtrack_ending_global_event_dispatcher;
 };
+
+// Register a global observer with the appropraite particle subtrack ending
+// global event dispatcher
+template<typename Observer>
+void ParticleSubtrackEndingGlobalEventHandler::registerGlobalObserverWithTag(
+			 const std::shared_ptr<Observer>& observer,
+                         const std::set<ParticleType>& particle_types,
+			 ParticleSubtrackEndingGlobalEventObserver::EventTag )
+{
+  // Make sure the Observer class has the expected event tag
+  testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleSubtrackEndingGlobalEventObserver::EventTag>::value));
+
+  std::shared_ptr<ParticleSubtrackEndingGlobalEventObserver> observer_base =
+    observer;
+
+  d_particle_subtrack_ending_global_event_dispatcher.attachObserver(
+							     observer->getId(),
+                                                             particle_types,
+							     observer_base );
+}
 
 // Register a global observer with the appropraite particle subtrack ending
 // global event dispatcher
@@ -84,7 +119,17 @@ void ParticleSubtrackEndingGlobalEventHandler::registerGlobalObserverWithTag(
 							     observer_base );
 }
 
+// Serialize the observer
+template<typename Archive>
+void ParticleSubtrackEndingGlobalEventHandler::serialize( Archive& ar, const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_NVP( d_particle_subtrack_ending_global_event_dispatcher );
+}
+
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::ParticleSubtrackEndingGlobalEventHandler, 0 );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleSubtrackEndingGlobalEventHandler );
 
 #endif // end MONTE_CARLO_PARTICLE_SUBTRACK_ENDING_GLOBAL_EVENT_HANDLER_HPP
 

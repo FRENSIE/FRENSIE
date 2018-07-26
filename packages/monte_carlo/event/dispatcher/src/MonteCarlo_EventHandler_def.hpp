@@ -20,68 +20,102 @@
 
 namespace MonteCarlo{
 
-// Add an entity observer to the handler
-/*! \details The observer will be registered with the appropriate dispatchers.
- * It is important to pass a pointer to the class that maintains the event
- * tags associated with the observer (so that automatic dispatcher
+// Add an estimator to the handler
+/*! \details The estimators will be registered with the appropriate 
+ * dispatchers. It is important to pass a pointer to the class that maintains
+ * the event tags associated with the observer (so that automatic dispatcher
  * registration can occur).
  */
-template<typename ObserverType, typename EntityHandle>
-void EventHandler::addEntityEventObserver(
-                               const std::shared_ptr<ObserverType>& observer,
-			       const std::vector<EntityHandle>& entity_ids )
+template<typename EstimatorType>
+void EventHandler::addEstimator( const std::shared_ptr<EstimatorType>& estimator )
 {
   // Make sure the observer is valid
-  testPrecondition( observer.get() );
-  // Make sure at least one entity id is specified
-  testPrecondition( entity_ids.size() > 0 );
+  testPrecondition( estimator.get() );
   // Make sure the observer id is unique
-  testPrecondition( d_particle_history_observers.find( observer->getId() ) ==
+  testPrecondition( d_particle_history_observers.find( estimator ) ==
                     d_particle_history_observers.end() );
 
-  // Register the observer with the particle event dispatchers
-  this->registerObserver( observer, entity_ids );
+  EstimatorRegistrationHelper<EstimatorType>::registerEstimator( *this, estimator );
 
-  // Add the observer to the map
-  d_particle_history_observers[observer->getId()] = observer;
+  // Add the observer to set
+  d_particle_history_observers.insert( estimator );
 }
 
-// Add a global observer to the handler
-/*! \details The estimator will be registered with the appropriate dispatchers.
- */
-template<typename ObserverType>
-void EventHandler::addGlobalEventObserver(
-                                const std::shared_ptr<ObserverType>& observer )
+// Struct for registering estimator
+template<typename Estimator>
+EventHandler::EstimatorRegistrationHelper<Estimator>::registerEstimator(
+                              EventHandler& event_handler,
+                              const std::shared_ptr<EstimatorType>& estimator )
 {
-  // Make sure observer is valid
-  testPrecondition( observer.get() );
-  // Make sure the observer id is unique
-  testPrecondition( d_particle_history_observers.find( observer->getId() ) ==
-                    d_particle_history_observers.end() );
+  std::set<uint64_t> entity_ids;
 
-  // Register the estimator with the particle global event dispatchers
-  this->registerGlobalObserver( observer );
+  estimator->getEntityIds( entity_ids );
 
-  // Add the estimator to the master list
-  d_particle_history_observers[observer->getId()] = observer;
+  std::set<ParticleType> particle_types = estimator->getParticleTypes();
+
+  event_handler.registerObserver( estimator, entity_ids, particle_types );
+}
+
+// Struct for registering estimator
+template<typename T>
+EventHandler::EstimatorRegistrationHelper<MeshTrackLengthFluxEstimator<T> >::registerEstimator(
+           EventHandler& event_handler,
+           const std::shared_ptr<MeshTrackLengthFluxEstimator<T> >& estimator )
+{
+  std::set<ParticleType> particle_types = estimator->getParticleTypes();
+
+  event_handler.registerGlobalObserver( estimator, particle_types );
 }
 
 // Register an observer with the appropriate dispatcher
-template<typename Observer, typename EntityHandle>
-void EventHandler::registerObserver(
-                               const std::shared_ptr<Observer>& observer,
-                               const std::vector<EntityHandle>& entity_ids )
+template<typename Observer>
+void EventHandler::registerObserver( const std::shared_ptr<Observer>& observer,
+                                     const std::set<uint64_t>& entity_ids )
 {
   typedef typename boost::mpl::begin<typename Observer::EventTags>::type
     BeginEventTagIterator;
   typedef typename boost::mpl::end<typename Observer::EventTags>::type
     EndEventTagIterator;
 
-  ObserverRegistrationHelper<BeginEventTagIterator,
-                             EndEventTagIterator>::registerObserverWithTag(
+  ObserverRegistrationHelper<BeginEventTagIterator,EndEventTagIterator>::registerObserverWithTag(
                                                                   *this,
 								  observer,
 								  entity_ids );
+}
+
+// Register an observer with the appropriate dispatcher
+template<typename Observer>
+void EventHandler::registerObserver( const std::shared_ptr<Observer>& observer,
+                                     const std::set<uint64_t>& entity_ids,
+                                     const std::set<ParticleType>& particle_types )
+{
+  typedef typename boost::mpl::begin<typename Observer::EventTags>::type
+    BeginEventTagIterator;
+  typedef typename boost::mpl::end<typename Observer::EventTags>::type
+    EndEventTagIterator;
+
+  ObserverRegistrationHelper<BeginEventTagIterator,EndEventTagIterator>::registerObserverWithTag(
+                                                                  *this,
+								  observer,
+								  entity_ids );
+}
+
+// Register an observer with the appropriate dispatcher
+template<typename Observer>
+void EventHandler::registerObserver( const std::shared_ptr<Observer>& observer,
+                                     const std::set<uint64_t>& entity_ids,
+                                     const std::set<ParticleType>& particle_types )
+{
+  typedef typename boost::mpl::begin<typename Observer::EventTags>::type
+    BeginEventTagIterator;
+  typedef typename boost::mpl::end<typename Observer::EventTags>::type
+    EndEventTagIterator;
+
+  ObserverRegistrationHelper<BeginEventTagIterator,EndEventTagIterator>::registerObserverWithTag(
+                                                              *this,
+                                                              observer,
+                                                              entity_ids,
+                                                              particle_types );
 }
 
 // Register a global observer with the appropriate dispatcher
@@ -94,27 +128,42 @@ void EventHandler::registerGlobalObserver(
   typedef typename boost::mpl::end<typename Observer::EventTags>::type
     EndEventTagIterator;
 
-  ObserverRegistrationHelper<BeginEventTagIterator,
-			   EndEventTagIterator>::registerGlobalObserverWithTag(
+  ObserverRegistrationHelper<BeginEventTagIterator,EndEventTagIterator>::registerGlobalObserverWithTag(
                                                                     *this,
 								    observer );
 }
 
+// Register a global observer with the appropriate dispatcher
+template<typename Observer>
+void EventHandler::registerGlobalObserver(
+                                 const std::shared_ptr<Observer>& observer,
+                                 const std::set<ParticleType>& particle_types )
+{
+  typedef typename boost::mpl::begin<typename Observer::EventTags>::type
+    BeginEventTagIterator;
+  typedef typename boost::mpl::end<typename Observer::EventTags>::type
+    EndEventTagIterator;
+
+  ObserverRegistrationHelper<BeginEventTagIterator,EndEventTagIterator>::registerGlobalObserverWithTag(
+                                                              *this,
+                                                              observer,
+                                                              particle_types );
+}
+
 // Register the obs. with dispatchers associated with BeginEventTag tag
 template<typename BeginEventTagIterator, typename EndEventTagIterator>
-template<typename Observer, typename EntityHandle>
+template<typename Observer>
 void EventHandler::ObserverRegistrationHelper<BeginEventTagIterator,EndEventTagIterator>::registerObserverWithTag(
-                               EventHandler& event_handler,
-                               const std::shared_ptr<Observer>& observer,
-			       const std::vector<EntityHandle>& entity_ids )
+                                     EventHandler& event_handler,
+                                     const std::shared_ptr<Observer>& observer,
+                                     const std::set<uint64_t>& entity_ids )
 {
   event_handler.registerObserverWithTag(
                    observer,
                    entity_ids,
                    typename boost::mpl::deref<BeginEventTagIterator>::type() );
 
-  ObserverRegistrationHelper<typename boost::mpl::next<BeginEventTagIterator>::type,
-                             EndEventTagIterator>::registerObserverWithTag(
+  ObserverRegistrationHelper<typename boost::mpl::next<BeginEventTagIterator>::type,EndEventTagIterator>::registerObserverWithTag(
                                                                  event_handler,
                                                                  observer,
                                                                  entity_ids );
@@ -122,11 +171,43 @@ void EventHandler::ObserverRegistrationHelper<BeginEventTagIterator,EndEventTagI
 
 // End registration iteration
 template<typename EndEventTagIterator>
-template<typename Observer, typename EntityHandle>
+template<typename Observer>
 void EventHandler::ObserverRegistrationHelper<EndEventTagIterator,EndEventTagIterator>::registerObserverWithTag(
                                EventHandler& event_handler,
 			       const std::shared_ptr<Observer>& observer,
-                               const std::vector<EntityHandle>& entity_ids )
+                               const std::set<uint64_t>& entity_ids )
+{ /* ... */ }
+
+// Register the obs. with dispatchers associated with BeginEventTag tag
+template<typename BeginEventTagIterator, typename EndEventTagIterator>
+template<typename Observer>
+void EventHandler::ObserverRegistrationHelper<BeginEventTagIterator,EndEventTagIterator>::registerObserverWithTag(
+                                 EventHandler& event_handler,
+                                 const std::shared_ptr<Observer>& observer,
+                                 const std::set<uint64_t>& entity_ids,
+                                 const std::set<ParticleType>& particle_types )
+{
+  event_handler.registerObserverWithTag(
+                   observer,
+                   entity_ids,
+                   particle_types,
+                   typename boost::mpl::deref<BeginEventTagIterator>::type() );
+
+  ObserverRegistrationHelper<typename boost::mpl::next<BeginEventTagIterator>::type,EndEventTagIterator>::registerObserverWithTag(
+                                                              event_handler,
+                                                              observer,
+                                                              entity_ids,
+                                                              particle_types );
+}
+
+// End registration iteration
+template<typename EndEventTagIterator>
+template<typename Observer>
+void EventHandler::ObserverRegistrationHelper<EndEventTagIterator,EndEventTagIterator>::registerObserverWithTag(
+                               EventHandler& event_handler,
+			       const std::shared_ptr<Observer>& observer,
+                               const std::set<uint64_t>& entity_ids,
+                               const std::set<ParticleType>& particle_types )
 { /* ... */ }
 
 // Register the global observer with the global dispatcher associated with
@@ -141,8 +222,7 @@ void EventHandler::ObserverRegistrationHelper<BeginEventTagIterator,EndEventTagI
                    observer,
                    typename boost::mpl::deref<BeginEventTagIterator>::type() );
 
-  ObserverRegistrationHelper<typename boost::mpl::next<BeginEventTagIterator>::type,
-			     EndEventTagIterator>::registerGlobalObserverWithTag(
+  ObserverRegistrationHelper<typename boost::mpl::next<BeginEventTagIterator>::type,EndEventTagIterator>::registerGlobalObserverWithTag(
                                                                  event_handler,
                                                                  observer );
 }
@@ -154,6 +234,53 @@ void EventHandler::ObserverRegistrationHelper<EndEventTagIterator,EndEventTagIte
                                      EventHandler& event_handler,
                                      const std::shared_ptr<Observer>& observer)
 { /* ... */ }
+
+// Register the global observer with the global dispatcher associated with
+// BeginEventTag tag
+template<typename BeginEventTagIterator, typename EndEventTagIterator>
+template<typename Observer>
+void EventHandler::ObserverRegistrationHelper<BeginEventTagIterator,EndEventTagIterator>::registerGlobalObserverWithTag(
+                                 EventHandler& event_handler,
+                                 const std::shared_ptr<Observer>& observer,
+                                 const std::set<ParticleType>& particle_types )
+{
+  event_handler.registerGlobalObserverWithTag(
+                   observer,
+                   particle_types,
+                   typename boost::mpl::deref<BeginEventTagIterator>::type() );
+
+  ObserverRegistrationHelper<typename boost::mpl::next<BeginEventTagIterator>::type,EndEventTagIterator>::registerGlobalObserverWithTag(
+                                                                 event_handler,
+                                                                 observer );
+}
+
+// End global registration iteration
+template<typename EndEventTagIterator>
+template<typename Observer>
+void EventHandler::ObserverRegistrationHelper<EndEventTagIterator,EndEventTagIterator>::registerGlobalObserverWithTag(
+                                 EventHandler& event_handler,
+                                 const std::shared_ptr<Observer>& observer,
+                                 const std::set<ParticleType>& particle_types )
+{ /* ... */ }
+
+// Serialize the observer
+template<typename Archive>
+void EventHandler::serialize( Archive& ar, const unsigned version )
+{
+  // Serialize the base class data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleCollidingInCellEventHandler );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleCrossingSurfaceEventHandler );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleEnteringCellEventHandler );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleLeavingCellEventHandler );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleSubtrackEndingInCellEventHandler );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleSubtrackEndingGlobalEventHandler );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleGoneGlobalEventHandler );
+
+  // Serialize the local data
+  ar & BOOST_SERIALIZATION_NVP( d_estimators );
+  ar & BOOST_SERIALIZATION_NVP( d_particle_trackers );
+  ar & BOOST_SERIALIZATION_NVP( d_particle_hisotry_observers );
+}
 
 } // end MonteCarlo namespace
 

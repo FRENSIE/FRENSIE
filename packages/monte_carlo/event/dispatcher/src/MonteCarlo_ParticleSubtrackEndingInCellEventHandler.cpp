@@ -7,6 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_ParticleSubtrackEndingInCellEventHandler.hpp"
 
 namespace MonteCarlo{
@@ -44,6 +45,8 @@ void ParticleSubtrackEndingInCellEventHandler::updateObserversFromParticleSubtra
 }
 
 } // end MonteCarlo namespace
+
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ParticleSubtrackEndingInCellEventHandler );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleSubtrackEndingInCellEventHandler.cpp

@@ -23,46 +23,74 @@ ParticleGlobalEventDispatcher<Observer>::ParticleGlobalEventDispatcher()
 // Attach an observer to the dispatcher
 template<typename Observer>
 void ParticleGlobalEventDispatcher<Observer>::attachObserver(
-			    const ModuleTraits::InternalEventObserverHandle id,
-                            const std::shared_ptr<Observer>& observer  )
+                                  const std::set<ParticleType>& particle_types,
+                                  const std::shared_ptr<Observer>& observer )
 {
-  // Make sure the observer has not been attached yet
-  testPrecondition( d_observer_map.find( id ) == d_observer_map.end() );
-
-  if( d_observer_map.find( id ) == d_observer_map.end() )
-    d_observer_map[id] = observer;
+  for( auto&& particle_type : particle_types )
+    d_observer_sets[particle_type].insert( observer );
+}
+  
+// Attach an observer to the dispatcher
+template<typename Observer>
+void ParticleGlobalEventDispatcher<Observer>::attachObserver(
+                                    const std::shared_ptr<Observer>& observer )
+{
+  for( int i = ParticleType_START; i < ParticleType_END; ++i )
+    d_observer_sets[i].insert( observer );
 }
 
 // Detach an observer from the dispatcher
 template<typename Observer>
 void ParticleGlobalEventDispatcher<Observer>::detachObserver(
-			   const ModuleTraits::InternalEventObserverHandle id )
+                                    const std::shared_ptr<Observer>& observer )
 {
-  d_observer_map.erase( id );
+  std::map<int,ObserverSet>::iterator particle_observer_sets_it =
+    d_observer_sets.begin();
+
+  while( particle_observer_sets_it != d_observer_sets.end() )
+  {
+    particle_observer_sets_it->second.erase( observer );
+
+    ++particle_observer_sets_it;
+  }
 }
 
 // Get the number of attached observers
 template<typename Observer>
-unsigned ParticleGlobalEventDispatcher<Observer>::getNumberOfObservers()
+size_t ParticleGlobalEventDispatcher<Observer>::getNumberOfObservers(
+                                       const ParticleType particle_type ) const
 {
-  return d_observer_map.size();
+  std::map<int,ObserverSet>::const_iterator
+    particle_observer_sets_it = d_observer_sets.find( particle_type );
+
+  if( particle_observer_sets_it != d_observer_sets.end() )
+    return particle_observer_sets_it->size();
+  else
+    return 0;
 }
 
 // Detach an observer from the dispatcher
 template<typename Observer>
 void ParticleGlobalEventDispatcher<Observer>::detachAllObservers()
 {
-  d_observer_map.clear();
+  d_observer_sets.clear();
 }
 
 // Get the observer id map
 template<typename Observer>
-typename ParticleGlobalEventDispatcher<Observer>::ObserverIdMap&
-ParticleGlobalEventDispatcher<Observer>::observer_id_map()
+inline auto ParticleGlobalEventDispatcher<Observer>::getObserverSet(
+                             const ParticleType particle_type ) -> ObserverSet&
 {
-  return d_observer_map;
+  return d_observer_sets[particle_type];
 }
 
+// Serialize the observer
+template<typename Observer>
+template<typename Archive>
+void ParticleGlobalEventDispatcher<Observer>::serialize( Archive& ar, const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_NVP( d_observer_sets );
+}
 
 } // end MonteCarlo namespace
 

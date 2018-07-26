@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_PARTICLE_SUBTRACK_ENDING_IN_CELL_EVENT_DISPATCHER_HPP
 #define MONTE_CARLO_PARTICLE_SUBTRACK_ENDING_IN_CELL_EVENT_DISPATCHER_HPP
 
-// Boost Includes
-#include <boost/unordered_map.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSubtrackEndingInCellEventLocalDispatcher.hpp"
 #include "MonteCarlo_ParticleEventDispatcher.hpp"
@@ -23,6 +20,7 @@ namespace MonteCarlo{
  */
 class ParticleSubtrackEndingInCellEventDispatcher : public ParticleEventDispatcher<ParticleSubtrackEndingInCellEventLocalDispatcher>
 {
+  typedef ParticleEventDispatcher<ParticleSubtrackEndingInCellEventLocalDispatcher> BaseType;
 
 public:
 
@@ -36,29 +34,25 @@ public:
 
   //! Dispatch the particle subtrack ending in cell event to the observers
   void dispatchParticleSubtrackEndingInCellEvent(
-	     const ParticleState& particle,
-	     const Geometry::Model::EntityId cell_of_subtrack,
-	     const double track_length );
+                              const ParticleState& particle,
+                              const Geometry::Model::EntityId cell_of_subtrack,
+                              const double track_length );
+
+private:
+
+  // Serialize the observer
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType ); }
+  
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 };
 
-// Dispatch the particle subtrack ending in cell event to the observers
-inline void
-ParticleSubtrackEndingInCellEventDispatcher::dispatchParticleSubtrackEndingInCellEvent(
-	    const ParticleState& particle,
-	    const Geometry::Model::EntityId  cell_of_subtrack,
-	    const double track_length )
-{
-  DispatcherMap::iterator it = this->dispatcher_map().find( cell_of_subtrack );
-
-  if( it != this->dispatcher_map().end() )
-  {
-    it->second->dispatchParticleSubtrackEndingInCellEvent( particle,
-							   cell_of_subtrack,
-							   track_length );
-  }
-}
-
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcher, 0 );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleSubtrackEndingInCellEventDispatcher );
 
 #endif // end MONTE_CARLO_PARTICLE_SUBTRACK_ENDING_IN_CELL_EVENT_DISPATCHER_HPP
 

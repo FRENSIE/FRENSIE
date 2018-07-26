@@ -7,6 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_ParticleCrossingSurfaceEventHandler.hpp"
 #include "Utility_DirectionHelpers.hpp"
 
@@ -51,6 +52,8 @@ void ParticleCrossingSurfaceEventHandler::updateObserversFromParticleCrossingSur
 }
 
 } // end MonteCarlo namespace
+
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ParticleCrossingSurfaceEventHandler );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleCrossingSurfaceEventHandler.cpp
