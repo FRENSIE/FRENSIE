@@ -8,333 +8,544 @@
 
 // Std Lib Includes
 #include <iostream>
-#include <typeinfo>
-
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_DefaultComm.hpp>
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleTracker.hpp"
 #include "MonteCarlo_PhotonState.hpp"
-#include "MonteCarlo_ParticleTrackerHDF5FileHandler.hpp"
+#include "MonteCarlo_ElectronState.hpp"
 #include "Utility_OpenMPProperties.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
 
 //---------------------------------------------------------------------------//
-// Construct a particle tracker
-MonteCarlo::ParticleTracker particle_tracker( 100u );
-int threads = 1;
+// Testing Types
+//---------------------------------------------------------------------------//
+
+typedef TestArchiveHelper::TestArchives TestArchives;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that the data is updated appropriately in the
-// GlobalSubtrackEndingEvent
-TEUCHOS_UNIT_TEST( SharedParallelParticleTracker,
-                   testUpdateFromGlobalSubtrackEndingEvent )
+// Check that the id can be returned
+FRENSIE_UNIT_TEST( ParticleTracker, getId )
 {
-  particle_tracker.enableThreadSupport( threads );
+  MonteCarlo::ParticleTracker particle_tracker_0( 0, 100 );
 
+  FRENSIE_CHECK_EQUAL( particle_tracker_0.getId(), 0 );
+
+  MonteCarlo::ParticleTracker particle_tracker_1( 1, 100 );
+
+  FRENSIE_CHECK_EQUAL( particle_tracker_1.getId(), 1 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the tracked histories can be returned
+FRENSIE_UNIT_TEST( ParticleTracker, getTrackedHistories )
+{
+  MonteCarlo::ParticleTracker particle_tracker_a( 0, 3 );
+
+  FRENSIE_CHECK_EQUAL( particle_tracker_a.getTrackedHistories().size(), 3 );
+  FRENSIE_CHECK( particle_tracker_a.getTrackedHistories().count( 0 ) );
+  FRENSIE_CHECK( particle_tracker_a.getTrackedHistories().count( 1 ) );
+  FRENSIE_CHECK( particle_tracker_a.getTrackedHistories().count( 2 ) );
+
+  MonteCarlo::ParticleTracker particle_tracker_b( 1, {0, 2, 4, 7} );
+
+  FRENSIE_CHECK_EQUAL( particle_tracker_b.getTrackedHistories().size(), 4 );
+  FRENSIE_CHECK( particle_tracker_b.getTrackedHistories().count( 0 ) );
+  FRENSIE_CHECK( particle_tracker_b.getTrackedHistories().count( 2 ) );
+  FRENSIE_CHECK( particle_tracker_b.getTrackedHistories().count( 4 ) );
+  FRENSIE_CHECK( particle_tracker_b.getTrackedHistories().count( 7 ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the data is updated appropriately after events
+FRENSIE_UNIT_TEST( ParticleTracker, update_from_events )
+{
+  MonteCarlo::ParticleTracker particle_tracker( 0, 100 );
+
+  unsigned threads = Utility::OpenMPProperties::getRequestedNumberOfThreads();
+  
+  particle_tracker.enableThreadSupport( threads );
+  
   #pragma omp parallel num_threads( threads )
   {
-    MonteCarlo::PhotonState particle( Utility::OpenMPProperties::getThreadId() );
-
     // Initial particle state
-    particle.setPosition( 1.0, 1.0, 1.0 );
-    particle.setDirection( 1.0, 0.0, 0.0 );
-    particle.setEnergy( 2.5 );
-    particle.setWeight( 1.0 );
+    std::unique_ptr<MonteCarlo::ParticleState> particle;
+
+    if( Utility::OpenMPProperties::getThreadId()%2 == 0 )
+    {
+      particle.reset( new MonteCarlo::PhotonState( Utility::OpenMPProperties::getThreadId() ) );
+    }
+    else
+    {
+      particle.reset( new MonteCarlo::ElectronState( Utility::OpenMPProperties::getThreadId() ) );
+    }
+    
+    particle->setPosition( 2.0, 1.0, 1.0 );
+    particle->setDirection( 1.0, 0.0, 0.0 );
+    particle->setEnergy( 2.5 );
+    particle->setTime( 5e-11 );
+    particle->setWeight( 1.0 );
 
     // Start and end positions
     double start_point[3] = { 1.0, 1.0, 1.0 };
     double end_point[3] = { 2.0, 1.0, 1.0 };
 
-    particle_tracker.updateFromGlobalParticleSubtrackEndingEvent( particle,
+    particle_tracker.updateFromGlobalParticleSubtrackEndingEvent( *particle,
                                                                   start_point,
                                                                   end_point );
+    
+    particle->setAsGone();
+    
+    particle_tracker.updateFromGlobalParticleGoneEvent( *particle );
+    particle_tracker.commitHistoryContribution();
+  }
 
-    // Final particle state
-    particle.setPosition( 2.0, 1.0, 1.0 );
-    particle.setDirection( 1.0, 0.0, 0.0 );
-    particle.setEnergy( 2.5 );
-    particle.setWeight( 1.0 );
+  MonteCarlo::ParticleTracker::OverallHistoryMap history_map;
 
-    // Start and end positions
-    start_point[0] = 2.0;
+  particle_tracker.getHistoryData( history_map );
 
-    particle_tracker.updateFromGlobalParticleSubtrackEndingEvent( particle,
-                                                                  start_point,
-                                                                  end_point );
+  const MonteCarlo::ParticleTracker::ParticleDataArray* cached_particle_state;
+  
+  for( size_t i = 0; i < threads; ++i )
+  {
+    FRENSIE_REQUIRE( history_map.find( i ) != history_map.end() );
 
-    // Expected data
-    std::vector< double > input_x_position;
-    input_x_position.push_back( 1.0 );
-    input_x_position.push_back( 2.0 );
-
-    std::vector< double > input_y_position;
-    input_y_position.push_back( 1.0 );
-    input_y_position.push_back( 1.0 );
-
-    std::vector< double > input_z_position;
-    input_z_position.push_back( 1.0 );
-    input_z_position.push_back( 1.0 );
-
-    std::vector< double > input_x_direction;
-    input_x_direction.push_back( 1.0 );
-    input_x_direction.push_back( 1.0 );
-
-    std::vector< double > input_y_direction;
-    input_y_direction.push_back( 0.0 );
-    input_y_direction.push_back( 0.0 );
-
-    std::vector< double > input_z_direction;
-    input_z_direction.push_back( 0.0 );
-    input_z_direction.push_back( 0.0 );
-
-    std::vector< double > input_energy;
-    input_energy.push_back( 2.5 );
-    input_energy.push_back( 2.5 );
-
-    std::vector< double > input_collision_number;
-    input_collision_number.push_back( 0.0 );
-    input_collision_number.push_back( 0.0 );
-
-    std::vector< double > input_weight;
-    input_weight.push_back( 1.0 );
-    input_weight.push_back( 1.0 );
-
-    // Define and populate the output data
-    std::vector< double > output_x_position;
-    particle_tracker.getXPositionData( output_x_position );
-
-    std::vector< double > output_y_position;
-    particle_tracker.getYPositionData( output_y_position );
-
-    std::vector< double > output_z_position;
-    particle_tracker.getZPositionData( output_z_position );
-
-    std::vector< double > output_x_direction;
-    particle_tracker.getXDirectionData( output_x_direction );
-
-    std::vector< double > output_y_direction;
-    particle_tracker.getYDirectionData( output_y_direction );
-
-    std::vector< double > output_z_direction;
-    particle_tracker.getZDirectionData( output_z_direction );
-
-    std::vector< double > output_energy;
-    particle_tracker.getEnergyData( output_energy );
-
-    std::vector< double > output_collision_number;
-    particle_tracker.getCollisionNumberData( output_collision_number );
-
-    std::vector< double > output_weight;
-    particle_tracker.getWeightData( output_weight );
-
-    #pragma omp critical
+    if( i%2 == 0 )
     {
-      UTILITY_TEST_COMPARE_ARRAYS( input_x_position, output_x_position );
-      UTILITY_TEST_COMPARE_ARRAYS( input_y_position, output_y_position );
-      UTILITY_TEST_COMPARE_ARRAYS( input_z_position, output_z_position );
+      FRENSIE_REQUIRE( history_map[i].find( MonteCarlo::PHOTON ) !=
+                       history_map[i].end() );
+      FRENSIE_REQUIRE( history_map[i][MonteCarlo::PHOTON].find( 0 ) !=
+                       history_map[i][MonteCarlo::PHOTON].end() );
+      FRENSIE_REQUIRE( history_map[i][MonteCarlo::PHOTON][0].find( 0 ) !=
+                       history_map[i][MonteCarlo::PHOTON][0].end() );
 
-      UTILITY_TEST_COMPARE_ARRAYS( input_x_direction, output_x_direction );
-      UTILITY_TEST_COMPARE_ARRAYS( input_y_direction, output_y_direction );
-      UTILITY_TEST_COMPARE_ARRAYS( input_z_direction, output_z_direction );
+      cached_particle_state = &history_map[i][MonteCarlo::PHOTON][0][0];
+    }
+    else
+    {
+      FRENSIE_REQUIRE( history_map[i].find( MonteCarlo::ELECTRON ) !=
+                       history_map[i].end() );
+      FRENSIE_REQUIRE( history_map[i][MonteCarlo::ELECTRON].find( 0 ) !=
+                       history_map[i][MonteCarlo::ELECTRON].end() );
+      FRENSIE_REQUIRE( history_map[i][MonteCarlo::ELECTRON][0].find( 0 ) !=
+                       history_map[i][MonteCarlo::ELECTRON][0].end() );
 
-      UTILITY_TEST_COMPARE_ARRAYS( input_energy, output_energy );
-      UTILITY_TEST_COMPARE_ARRAYS( input_collision_number, output_collision_number );
-      UTILITY_TEST_COMPARE_ARRAYS( input_weight, output_weight );
+      cached_particle_state = &history_map[i][MonteCarlo::ELECTRON][0][0];
+    }
+
+    FRENSIE_REQUIRE_EQUAL( cached_particle_state->size(), 2 );
+    FRENSIE_CHECK_EQUAL( Utility::get<0>( cached_particle_state->at( 0 ) ),
+                         (std::array<double,3>( {1.0, 1.0, 1.0} )) );
+    FRENSIE_CHECK_EQUAL( Utility::get<1>( cached_particle_state->at( 0 ) ),
+                         (std::array<double,3>( {1.0, 0.0, 0.0} )) );
+    FRENSIE_CHECK_EQUAL( Utility::get<2>( cached_particle_state->at( 0 ) ),
+                         2.5 );
+
+    if( i%2 == 0 )
+    {
+      FRENSIE_CHECK_FLOATING_EQUALITY( Utility::get<3>( cached_particle_state->at( 0 ) ),
+                                       1.664359048018479962e-11,
+                                       1e-15 );
+    }
+    else
+    {
+      FRENSIE_CHECK_FLOATING_EQUALITY( Utility::get<3>( cached_particle_state->at( 0 ) ),
+                                       1.615259720929651211e-11,
+                                       1e-15 );
+    }
+    
+    FRENSIE_CHECK_EQUAL( Utility::get<4>( cached_particle_state->at( 0 ) ),
+                         1.0 );
+    FRENSIE_CHECK_EQUAL( Utility::get<5>( cached_particle_state->at( 0 ) ),
+                         0 );
+
+    FRENSIE_CHECK_EQUAL( Utility::get<0>( cached_particle_state->at( 1 ) ),
+                         (std::array<double,3>( {2.0, 1.0, 1.0} )) );
+    FRENSIE_CHECK_EQUAL( Utility::get<1>( cached_particle_state->at( 1 ) ),
+                         (std::array<double,3>( {1.0, 0.0, 0.0} )) );
+    FRENSIE_CHECK_EQUAL( Utility::get<2>( cached_particle_state->at( 1 ) ),
+                         2.5 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( Utility::get<3>( cached_particle_state->at( 1 ) ),
+                                     5.0e-11,
+                                     1e-15 );
+    FRENSIE_CHECK_EQUAL( Utility::get<4>( cached_particle_state->at( 1 ) ),
+                         1.0 );
+    FRENSIE_CHECK_EQUAL( Utility::get<5>( cached_particle_state->at( 1 ) ),
+                         0 );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that particle tracker data can be reset
+FRENSIE_UNIT_TEST( ParticleTracker, resetData )
+{
+  MonteCarlo::ParticleTracker particle_tracker( 0, 100 );
+
+  unsigned threads = Utility::OpenMPProperties::getRequestedNumberOfThreads();
+  
+  particle_tracker.enableThreadSupport( threads );
+  
+  // Initial particle state
+  MonteCarlo::PhotonState particle( 0 );
+
+  particle.setPosition( 2.0, 1.0, 1.0 );
+  particle.setDirection( 1.0, 0.0, 0.0 );
+  particle.setEnergy( 2.5 );
+  particle.setTime( 5e-11 );
+  particle.setWeight( 1.0 );
+
+  // Start and end positions
+  double start_point[3] = { 1.0, 1.0, 1.0 };
+  double end_point[3] = { 2.0, 1.0, 1.0 };
+
+  particle_tracker.updateFromGlobalParticleSubtrackEndingEvent( particle,
+                                                                start_point,
+                                                                end_point );
+    
+  particle.setAsGone();
+    
+  particle_tracker.updateFromGlobalParticleGoneEvent( particle );
+  particle_tracker.commitHistoryContribution();
+
+  // Reset the data
+  particle_tracker.resetData();
+  
+  MonteCarlo::ParticleTracker::OverallHistoryMap history_map;
+
+  particle_tracker.getHistoryData( history_map );
+
+  FRENSIE_CHECK( history_map.empty() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that particle tracker data can be reduced
+FRENSIE_UNIT_TEST( ParticleTracker, reduceData )
+{
+  MonteCarlo::ParticleTracker particle_tracker( 0, 100 );
+
+  std::shared_ptr<const Utility::Communicator> comm =
+    Utility::Communicator::getDefault();
+
+  comm->barrier();
+  
+  // Initial particle state
+  std::unique_ptr<MonteCarlo::ParticleState> particle;
+
+  if( comm->rank()%2 == 0 )
+  {
+    particle.reset( new MonteCarlo::PhotonState( comm->rank() ) );
+  }
+  else
+  {
+    particle.reset( new MonteCarlo::ElectronState( comm->rank() ) );
+  }
+    
+  particle->setPosition( 2.0, 1.0, 1.0 );
+  particle->setDirection( 1.0, 0.0, 0.0 );
+  particle->setEnergy( 2.5 );
+  particle->setTime( 5e-11 );
+  particle->setWeight( 1.0 );
+  
+  // Start and end positions
+  double start_point[3] = { 1.0, 1.0, 1.0 };
+  double end_point[3] = { 2.0, 1.0, 1.0 };
+  
+  particle_tracker.updateFromGlobalParticleSubtrackEndingEvent( *particle,
+                                                                start_point,
+                                                                end_point );
+  
+  particle->setAsGone();
+  
+  particle_tracker.updateFromGlobalParticleGoneEvent( *particle );
+  particle_tracker.commitHistoryContribution();
+
+  particle_tracker.reduceData( *comm, 0 );
+
+  MonteCarlo::ParticleTracker::OverallHistoryMap history_map;
+
+  particle_tracker.getHistoryData( history_map );
+
+  if( comm->rank() == 0 )
+  {
+    const MonteCarlo::ParticleTracker::ParticleDataArray* cached_particle_state;
+  
+    for( size_t i = 0; i < comm->size(); ++i )
+    {
+      FRENSIE_REQUIRE( history_map.find( i ) != history_map.end() );
+      
+      if( i%2 == 0 )
+      {
+        FRENSIE_REQUIRE( history_map[i].find( MonteCarlo::PHOTON ) !=
+                         history_map[i].end() );
+        FRENSIE_REQUIRE( history_map[i][MonteCarlo::PHOTON].find( 0 ) !=
+                         history_map[i][MonteCarlo::PHOTON].end() );
+        FRENSIE_REQUIRE( history_map[i][MonteCarlo::PHOTON][0].find( 0 ) !=
+                         history_map[i][MonteCarlo::PHOTON][0].end() );
+        
+        cached_particle_state = &history_map[i][MonteCarlo::PHOTON][0][0];
+      }
+      else
+      {
+        FRENSIE_REQUIRE( history_map[i].find( MonteCarlo::ELECTRON ) !=
+                         history_map[i].end() );
+        FRENSIE_REQUIRE( history_map[i][MonteCarlo::ELECTRON].find( 0 ) !=
+                         history_map[i][MonteCarlo::ELECTRON].end() );
+        FRENSIE_REQUIRE( history_map[i][MonteCarlo::ELECTRON][0].find( 0 ) !=
+                         history_map[i][MonteCarlo::ELECTRON][0].end() );
+        
+        cached_particle_state = &history_map[i][MonteCarlo::ELECTRON][0][0];
+      }
+      
+      FRENSIE_REQUIRE_EQUAL( cached_particle_state->size(), 2 );
+      FRENSIE_CHECK_EQUAL( Utility::get<0>( cached_particle_state->at( 0 ) ),
+                           (std::array<double,3>( {1.0, 1.0, 1.0} )) );
+      FRENSIE_CHECK_EQUAL( Utility::get<1>( cached_particle_state->at( 0 ) ),
+                           (std::array<double,3>( {1.0, 0.0, 0.0} )) );
+      FRENSIE_CHECK_EQUAL( Utility::get<2>( cached_particle_state->at( 0 ) ),
+                           2.5 );
+      
+      if( i%2 == 0 )
+      {
+        FRENSIE_CHECK_FLOATING_EQUALITY( Utility::get<3>( cached_particle_state->at( 0 ) ),
+                                         1.664359048018479962e-11,
+                                         1e-15 );
+      }
+      else
+      {
+        FRENSIE_CHECK_FLOATING_EQUALITY( Utility::get<3>( cached_particle_state->at( 0 ) ),
+                                         1.615259720929651211e-11,
+                                         1e-15 );
+      }
+      
+      FRENSIE_CHECK_EQUAL( Utility::get<4>( cached_particle_state->at( 0 ) ),
+                           1.0 );
+      FRENSIE_CHECK_EQUAL( Utility::get<5>( cached_particle_state->at( 0 ) ),
+                           0 );
+      
+      FRENSIE_CHECK_EQUAL( Utility::get<0>( cached_particle_state->at( 1 ) ),
+                           (std::array<double,3>( {2.0, 1.0, 1.0} )) );
+      FRENSIE_CHECK_EQUAL( Utility::get<1>( cached_particle_state->at( 1 ) ),
+                           (std::array<double,3>( {1.0, 0.0, 0.0} )) );
+      FRENSIE_CHECK_EQUAL( Utility::get<2>( cached_particle_state->at( 1 ) ),
+                           2.5 );
+      FRENSIE_CHECK_FLOATING_EQUALITY( Utility::get<3>( cached_particle_state->at( 1 ) ),
+                                       5.0e-11,
+                                       1e-15 );
+      FRENSIE_CHECK_EQUAL( Utility::get<4>( cached_particle_state->at( 1 ) ),
+                           1.0 );
+      FRENSIE_CHECK_EQUAL( Utility::get<5>( cached_particle_state->at( 1 ) ),
+                           0 );
     }
   }
-
-  particle_tracker.resetData();
+  else
+  {
+    FRENSIE_CHECK( history_map.empty() );
+  }
 }
 
 //---------------------------------------------------------------------------//
-// Check that the data is committed appropriately
-TEUCHOS_UNIT_TEST( SharedParallelParticleTracker, testcommitParticleTrackData )
+// Check that an estimator can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceFluxEstimator,
+                                   archive,
+                                   TestArchives )
 {
-  #pragma omp parallel num_threads( threads )
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_particle_tracker" );
+  std::ostringstream archive_ostream;
+
   {
-    MonteCarlo::PhotonState particle( Utility::OpenMPProperties::getThreadId() );
+    std::unique_ptr<OArchive> oarchive;
 
-    // Final particle state
-    particle.setPosition( 2.0, 1.0, 1.0 );
-    particle.setDirection( 1.0, 0.0, 0.0 );
-    particle.setEnergy( 2.5 );
-    particle.setWeight( 1.0 );
-    particle.setAsGone();
+    createOArchive( archive_base_name, archive_ostream, oarchive );
 
-    // Start and end positions
-    double start_point[3] = { 2.0, 1.0, 1.0 };
-    double end_point[3] = { 2.0, 1.0, 1.0 };
-
-    particle_tracker.updateFromGlobalParticleSubtrackEndingEvent( particle,
-                                                                  start_point,
-                                                                  end_point );
-  }
-
-  // Expected data
-  std::vector< double > input_x_position;
-  input_x_position.push_back( 2.0 );
-
-  MonteCarlo::ParticleTrackerHDF5FileHandler::OverallHistoryMap history_map;
-
-  particle_tracker.getDataMap( history_map );
-
-  std::vector< double > mapped_x_position;
-
-  mapped_x_position = history_map[ 0 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
-
-  #pragma omp critical
-  {
-    UTILITY_TEST_COMPARE_ARRAYS( input_x_position, mapped_x_position );
-  }
-
-  particle_tracker.resetData();
-}
-
-//---------------------------------------------------------------------------//
-// Check that the data can be reset
-TEUCHOS_UNIT_TEST( SharedParallelParticleTracker, testParticleReset )
-{
-  #pragma omp parallel num_threads( threads )
-  {
-    #pragma omp critical
+    std::shared_ptr<MonteCarlo::ParticleTracker>
+      particle_tracker( new MonteCarlo::ParticleTracker( 0, 100 ) );
+  
+    // Initial particle state
+    for( size_t i = 0; i < 4; ++i )
     {
-      TEST_ASSERT( particle_tracker.isParticleReset() );
+      // Initial particle state
+      std::unique_ptr<MonteCarlo::ParticleState> particle;
+      
+      if( i%2 == 0 )
+      {
+        particle.reset( new MonteCarlo::PhotonState( i ) );
+      }
+      else
+      {
+        particle.reset( new MonteCarlo::ElectronState( i ) );
+      }
+    
+      particle->setPosition( 2.0, 1.0, 1.0 );
+      particle->setDirection( 1.0, 0.0, 0.0 );
+      particle->setEnergy( 2.5 );
+      particle->setTime( 5e-11 );
+      particle->setWeight( 1.0 );
+      
+      // Start and end positions
+      double start_point[3] = { 1.0, 1.0, 1.0 };
+      double end_point[3] = { 2.0, 1.0, 1.0 };
+      
+      particle_tracker->updateFromGlobalParticleSubtrackEndingEvent( *particle,
+                                                                     start_point,
+                                                                     end_point );
+      
+      particle->setAsGone();
+      
+      particle_tracker->updateFromGlobalParticleGoneEvent( *particle );
+      particle_tracker->commitHistoryContribution();
     }
+
+    std::shared_ptr<const MonteCarlo::ParticleSubtrackEndingGlobalEventObserver>
+      global_event_observer_a = particle_tracker;
+
+    std::shared_ptr<const MonteCarlo::ParticleGoneGlobalEventObserver>
+      global_event_observer_b = particle_tracker;
+
+    std::shared_ptr<const MonteCarlo::ParticleHistoryObserver>
+      history_observer = particle_tracker;
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( particle_tracker ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( global_event_observer_a ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( global_event_observer_b ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( history_observer ) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  std::shared_ptr<MonteCarlo::ParticleTracker> particle_tracker;
+  
+  std::shared_ptr<const MonteCarlo::ParticleSubtrackEndingGlobalEventObserver>
+    global_event_observer_a;
+
+  std::shared_ptr<const MonteCarlo::ParticleGoneGlobalEventObserver>
+    global_event_observer_b;
+
+  std::shared_ptr<const MonteCarlo::ParticleHistoryObserver>
+    history_observer;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( particle_tracker ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( global_event_observer_a ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( global_event_observer_b ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( history_observer ) );
+
+  iarchive.reset();
+
+  FRENSIE_CHECK( particle_tracker.get() == global_event_observer_a.get() );
+  FRENSIE_CHECK( particle_tracker.get() == global_event_observer_b.get() );
+  FRENSIE_CHECK( particle_tracker.get() == history_observer.get() );
+
+  MonteCarlo::ParticleTracker::OverallHistoryMap history_map;
+
+  particle_tracker->getHistoryData( history_map );
+
+  const MonteCarlo::ParticleTracker::ParticleDataArray* cached_particle_state;
+  
+  for( size_t i = 0; i < 4; ++i )
+  {
+    FRENSIE_REQUIRE( history_map.find( i ) != history_map.end() );
+
+    if( i%2 == 0 )
+    {
+      FRENSIE_REQUIRE( history_map[i].find( MonteCarlo::PHOTON ) !=
+                       history_map[i].end() );
+      FRENSIE_REQUIRE( history_map[i][MonteCarlo::PHOTON].find( 0 ) !=
+                       history_map[i][MonteCarlo::PHOTON].end() );
+      FRENSIE_REQUIRE( history_map[i][MonteCarlo::PHOTON][0].find( 0 ) !=
+                       history_map[i][MonteCarlo::PHOTON][0].end() );
+
+      cached_particle_state = &history_map[i][MonteCarlo::PHOTON][0][0];
+    }
+    else
+    {
+      FRENSIE_REQUIRE( history_map[i].find( MonteCarlo::ELECTRON ) !=
+                       history_map[i].end() );
+      FRENSIE_REQUIRE( history_map[i][MonteCarlo::ELECTRON].find( 0 ) !=
+                       history_map[i][MonteCarlo::ELECTRON].end() );
+      FRENSIE_REQUIRE( history_map[i][MonteCarlo::ELECTRON][0].find( 0 ) !=
+                       history_map[i][MonteCarlo::ELECTRON][0].end() );
+
+      cached_particle_state = &history_map[i][MonteCarlo::ELECTRON][0][0];
+    }
+
+    FRENSIE_REQUIRE_EQUAL( cached_particle_state->size(), 2 );
+    FRENSIE_CHECK_EQUAL( Utility::get<0>( cached_particle_state->at( 0 ) ),
+                         (std::array<double,3>( {1.0, 1.0, 1.0} )) );
+    FRENSIE_CHECK_EQUAL( Utility::get<1>( cached_particle_state->at( 0 ) ),
+                         (std::array<double,3>( {1.0, 0.0, 0.0} )) );
+    FRENSIE_CHECK_EQUAL( Utility::get<2>( cached_particle_state->at( 0 ) ),
+                         2.5 );
+
+    if( i%2 == 0 )
+    {
+      FRENSIE_CHECK_FLOATING_EQUALITY( Utility::get<3>( cached_particle_state->at( 0 ) ),
+                                       1.664359048018479962e-11,
+                                       1e-15 );
+    }
+    else
+    {
+      FRENSIE_CHECK_FLOATING_EQUALITY( Utility::get<3>( cached_particle_state->at( 0 ) ),
+                                       1.615259720929651211e-11,
+                                       1e-15 );
+    }
+    
+    FRENSIE_CHECK_EQUAL( Utility::get<4>( cached_particle_state->at( 0 ) ),
+                         1.0 );
+    FRENSIE_CHECK_EQUAL( Utility::get<5>( cached_particle_state->at( 0 ) ),
+                         0 );
+
+    FRENSIE_CHECK_EQUAL( Utility::get<0>( cached_particle_state->at( 1 ) ),
+                         (std::array<double,3>( {2.0, 1.0, 1.0} )) );
+    FRENSIE_CHECK_EQUAL( Utility::get<1>( cached_particle_state->at( 1 ) ),
+                         (std::array<double,3>( {1.0, 0.0, 0.0} )) );
+    FRENSIE_CHECK_EQUAL( Utility::get<2>( cached_particle_state->at( 1 ) ),
+                         2.5 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( Utility::get<3>( cached_particle_state->at( 1 ) ),
+                                     5.0e-11,
+                                     1e-15 );
+    FRENSIE_CHECK_EQUAL( Utility::get<4>( cached_particle_state->at( 1 ) ),
+                         1.0 );
+    FRENSIE_CHECK_EQUAL( Utility::get<5>( cached_particle_state->at( 1 ) ),
+                         0 );
   }
 }
 
 //---------------------------------------------------------------------------//
-// Check that the data map can be converted into a string and back into a map
-TEUCHOS_UNIT_TEST( SharedParallelParticleTracker, testDataPackaging )
+// Custom setup
+//---------------------------------------------------------------------------//
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+int threads;
+
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  #pragma omp parallel num_threads( threads )
-  {
-    MonteCarlo::PhotonState particle( Utility::OpenMPProperties::getThreadId() );
-
-    // Final particle state
-    particle.setPosition( 2.0, 1.0, 1.0 );
-    particle.setDirection( 1.0, 0.0, 0.0 );
-    particle.setEnergy( 2.5 );
-    particle.setWeight( 1.0 );
-    particle.setAsGone();
-
-    // Start and end positions
-    double start_point[3] = { 2.0, 1.0, 1.0 };
-    double end_point[3] = { 2.0, 1.0, 1.0 };
-
-    particle_tracker.updateFromGlobalParticleSubtrackEndingEvent( particle,
-                                                                  start_point,
-                                                                  end_point );
-  }
-
-  std::string packaged_data = particle_tracker.packDataInString();
-
-  MonteCarlo::ParticleTrackerHDF5FileHandler::OverallHistoryMap history_map;
-
-  particle_tracker.unpackDataFromString( packaged_data, history_map );
-
-  // Test that the data is unchanged after serialization/deserialization
-
-  // Expected data
-  std::vector< double > input_x_position;
-  input_x_position.push_back( 2.0 );
-
-  std::vector< double > mapped_x_position;
-
-  mapped_x_position = history_map[ 0 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
-
-  UTILITY_TEST_COMPARE_ARRAYS( input_x_position, mapped_x_position );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "threads",
+                                        threads, 1,
+                                        "Number of threads to use" );
 }
 
-//---------------------------------------------------------------------------//
-// Check that parallel data can be brought together
-TEUCHOS_UNIT_TEST( SharedParallelParticleTracker, checkParallelData )
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  // Overall history map
-  MonteCarlo::ParticleTrackerHDF5FileHandler::OverallHistoryMap history_map;
-  particle_tracker.getDataMap( history_map );
-
-  // Expected data
-  std::vector< double > input_x_position;
-  input_x_position.push_back( 2.0 );
-
-  // Mapped data
-  std::vector< double > mapped_x_position_0 =
-    history_map[ 0 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
-
-  UTILITY_TEST_COMPARE_ARRAYS( input_x_position, mapped_x_position_0 );
-
-  if( threads > 1 )
-  {
-    std::vector< double > mapped_x_position_1 =
-      history_map[ 1 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
-
-    UTILITY_TEST_COMPARE_ARRAYS( input_x_position, mapped_x_position_1 );
-  }
-
-  if( threads > 2 )
-  {
-    std::vector< double > mapped_x_position_2 =
-      history_map[ 2 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
-
-    UTILITY_TEST_COMPARE_ARRAYS( input_x_position, mapped_x_position_2 );
-  }
-
-  if( threads > 3 )
-  {
-    std::vector< double > mapped_x_position_3 =
-      history_map[ 3 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
-
-    UTILITY_TEST_COMPARE_ARRAYS( input_x_position, mapped_x_position_3 );
-  }
-}
-
-//---------------------------------------------------------------------------//
-// Custom main function
-//---------------------------------------------------------------------------//
-int main( int argc, char** argv )
-{
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "threads",
-		 &threads,
-		 "Number of threads to use" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
   // Set up the global OpenMP session
   if( Utility::OpenMPProperties::isOpenMPUsed() )
     Utility::OpenMPProperties::setNumberOfThreads( threads );
-
-  // Run the unit tests
-  const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstStandardCellEstimator.cpp

@@ -85,6 +85,9 @@ public:
   //! Return the estimator id
   uint32_t getId() const;
 
+  //! Return the histories that will be tracked
+  const std::set<uint64_t>& getTrackedHistories() const;
+
   //! Add current history contribution
   void updateFromGlobalParticleSubtrackEndingEvent(
 				    const ParticleState& particle,
@@ -123,9 +126,6 @@ private:
   // Default constructor
   ParticleTracker();
 
-  // Initialize the data maps
-  void initialize( const unsigned thread );
-
   // Save the data to an archive
   template<typename Archive>
   void save( Archive& ar, const unsigned version ) const;
@@ -147,7 +147,7 @@ private:
 
   // The partial tracked history info
   typedef std::map<const ParticleState*,ParticleDataArray> PartialHistorySubmap;
-  std::map<unsigned,PartialHistorySubmap> d_partial_history_map;
+  std::vector<PartialHistorySubmap> d_partial_history_map;
   
   // The tracked history info
   OverallHistoryMap d_history_number_map;
@@ -182,7 +182,7 @@ void ParticleTracker::load( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_NVP( d_histories_to_track );
   ar & BOOST_SERIALIZATION_NVP( d_history_number_map );
 
-  this->initialize( 0u );
+  d_partial_history_map.resize( 1 );
 }
 
 } // end MonteCarlo namespace
