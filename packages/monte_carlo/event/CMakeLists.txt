@@ -14,7 +14,5 @@ INCLUDE_DIRECTORIES(forced_collisions/src)
 ADD_SUBDIRECTORY(weight_windows)
 INCLUDE_DIRECTORIES(weight_windows/src)
 
-# ADD_SUBDIRECTORY(dispatcher)
-# INCLUDE_DIRECTORIES(dispatcher/src) 
-
-# ADD_SUBDIRECTORY(interface)
+ADD_SUBDIRECTORY(dispatcher)
+INCLUDE_DIRECTORIES(dispatcher/src) 
