@@ -20,17 +20,21 @@
 namespace MonteCarlo{
 
 /*! The unordered typed observer phase space dimension discretization class
- * 
- * This is a dummy class that will cause a compilation error if the dimension 
+ *
+ * This is a dummy class that will cause a compilation error if the dimension
  * value type associated with a dimension is not an integral type.
  */
 template<ObserverPhaseSpaceDimension dimension, typename Enabled = void>
-class UnorderedTypedObserverPhaseSpaceDimensionDiscretization
+class UnorderedTypedObserverPhaseSpaceDimensionDiscretizationHelper
 { /* ... */ };
 
 //! The unordered typed observer phase space dimension discretization class
 template<ObserverPhaseSpaceDimension dimension>
-class UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type> : public TypedObserverPhaseSpaceDimensionDiscretization<dimension>
+class UnorderedTypedObserverPhaseSpaceDimensionDiscretization :
+#if !defined SWIG
+public UnorderedTypedObserverPhaseSpaceDimensionDiscretizationHelper<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>,
+#endif // !defined SWIG
+public TypedObserverPhaseSpaceDimensionDiscretization<dimension>
 {
   // Typedef for the base type
   typedef TypedObserverPhaseSpaceDimensionDiscretization<dimension> BaseType;
@@ -47,13 +51,13 @@ public:
 
   //! Typedef for bin index and weight pair
   typedef typename BaseType::BinIndexWeightPair BinIndexWeightPair;
-  
+
   //! Typedef for bin index and weight pair array
   typedef typename BaseType::BinIndexWeightPairArray BinIndexWeightPairArray;
 
   //! Typedef for the bin set
   typedef std::set<DimensionValueType> BinSet;
-  
+
   //! Typedef for the bin set array
   typedef std::vector<BinSet> BinSetArray;
 
@@ -72,7 +76,7 @@ public:
   void print( std::ostream& os ) const override;
 
 protected:
-  
+
   //! Default constructor
   UnorderedTypedObserverPhaseSpaceDimensionDiscretization();
 
@@ -122,7 +126,7 @@ private:
   // The set of values in all bins (for fast lookup)
   BinSet d_merged_bin_set;
 };
-  
+
 } // end MonteCarlo namespace
 
 #define BOOST_SERIALIZATION_UNORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_VERSION( version ) \

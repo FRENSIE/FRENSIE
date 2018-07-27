@@ -13,7 +13,7 @@
 #include <type_traits>
 
 // FRENSIE Includes
-#include "MonteCarlo_DefaultTypedObserverPhaseSpaceDimensionDiscretizationDecl.hpp"
+#include "MonteCarlo_ObserverPhaseSpaceDimension.hpp"
 #include "MonteCarlo_FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization.hpp"
 #include "MonteCarlo_HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization.hpp"
 #include "MonteCarlo_IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization.hpp"
@@ -21,6 +21,20 @@
 #include "MonteCarlo_ObserverPhaseSpaceDimensionTraits.hpp"
 
 namespace MonteCarlo{
+
+/*! \brief The default typed observer phase space dimension discretization
+ * class
+ *
+ * If the dimension is not compatible with the floating point ordered,
+ * integral ordered or unordered discretization treatments provided then
+ * a specialization of this class for the dimension must be made. The layout
+ * that has been given for this class should be used for all specializations.
+ * Note that specializations of this class are only meant to provide a
+ * convenient and homogenized interface for creating dimension discretizations.
+ */
+template<ObserverPhaseSpaceDimension dimension>
+class DefaultTypedObserverPhaseSpaceDimensionDiscretization
+{ /* ... */ };
 
 /*! \brief The default typed observer phase space dimension discretization
  * class specialization for MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION

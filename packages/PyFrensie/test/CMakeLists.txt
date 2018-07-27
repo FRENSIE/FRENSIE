@@ -289,6 +289,10 @@ PyFrensie_MAKE_TEST(tstMonteCarlo.ActiveRegion.ParticleSource)
 ADD_TEST(PyFrensie.MonteCarlo.ActiveRegion.ParticleSource_test ${PYTHON_EXECUTABLE} tstMonteCarlo.ActiveRegion.ParticleSource.py --database=${COLLISION_DATABASE_XML_FILE})
 ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.ActiveRegion.ParticleSource ${COLLISION_DATABASE_XML_FILE_TARGET} )
 
+# Add the MonteCarlo.Event.ObserverPhaseSpaceDimensionDiscretization unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Event.ObserverPhaseSpaceDimensionDiscretization)
+ADD_TEST(PyFrensie.MonteCarlo.Event.ObserverPhaseSpaceDimensionDiscretization_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.ObserverPhaseSpaceDimensionDiscretization.py)
+
 # # Add the MonteCarlo.Collision.PhotonKinematics unit tests
 # PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.PhotonKinematics)
 # ADD_TEST(PyFrensie.MonteCarlo.Collision.PhotonKinematics_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.PhotonKinematics.py)

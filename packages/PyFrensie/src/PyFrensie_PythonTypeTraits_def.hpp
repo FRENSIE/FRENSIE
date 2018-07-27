@@ -418,6 +418,91 @@ inline STLCompliant2DArray convertPythonTo2DArray( PyObject* py_obj )
   return output_array;
 }
 
+// // Create a Python (list of NumPy arrays) object from a vector set object
+// template<typename STLCompliantVectorSet>
+// inline PyObject* convertVectorSetToPython( const STLCompliantVectorSet& obj )
+// {
+//   typedef typename std::remove_const<typename STLCompliantVectorSet::value_type::value_type>::type ValueType;
+
+//   PyObject* py_array_list = PyList_New(0);
+
+//   // Create a list of arrays
+//   for( unsigned i = 0; i < obj.size(); ++i )
+//   {
+//     // Create a new Python set
+//     PyObject* py_set_i = PySet_New(0);
+
+//     // Copy the set elements into the Python set
+//     typename STLCompliantVectorSet::value_type::const_iterator it = obj.begin();
+
+//     while( it != obj.end() )
+//     {
+//       PyObject* py_elem = PythonTypeTraits<typename STLCompliantVectorSet::value_type::value_type>::convertToPython( *it );
+
+//       int return_value = PySet_Add( py_set_i, py_elem );
+
+//       if( return_value != 0 )
+//       {
+//         PyErr_Format( PyExc_RuntimeError,
+//                       "Could not convert a set of a vector of sets element to Python!" );
+//       }
+
+//       ++it;
+//     }
+
+//     PyList_Append( py_array_list, (PyObject*)py_set_i );
+//   }
+
+//   return py_array_list;
+// }
+
+// // Create a list of arrays object from a Python object (list of Numpy arrays)
+// template<typename STLCompliantVectorSet>
+// inline STLCompliantVectorSet convertPythonToVectorSet( PyObject* py_obj )
+// {
+//   std::cout << std::setprecision(16) << std::scientific << "VECTOR SET is called!"<< std::endl;
+
+//   // An exception will be thrown if this fails
+//   int is_list = 0;
+//   int is_new_array = 0;
+
+//   is_list = PyList_Check(py_obj);
+
+//   typename STLCompliantVectorSet::size_type dimensions = PyList_Size(py_obj);
+//   std::cout << std::setprecision(16) << std::scientific << "dimensions = \t" << dimensions << std::endl;
+
+//   STLCompliantVectorSet output_array( dimensions );
+
+//   for( typename STLCompliantVectorSet::size_type i = 0; i < dimensions; ++i )
+//   {
+//     PyObject* py_elem = PyList_GetItem( py_obj, i );
+
+//     PyArrayObject *py_array =
+//       Details::getNumPyArray<typename STLCompliantVectorSet::value_type::value_type>( py_elem, &is_new_array );
+
+//     typename STLCompliantVectorSet::value_type::size_type length = PyArray_DIM(py_array, 0);
+//     std::cout << std::setprecision(16) << std::scientific << "length = \t" << length << std::endl;
+
+//     typename STLCompliantVectorSet::value_type::value_type* data =
+//       (typename STLCompliantVectorSet::value_type::value_type*)PyArray_DATA(py_array);
+
+//     typename STLCompliantVectorSet::value_type output_array_i;
+//     for( typename STLCompliantVectorSet::size_type j = 0; j < length; ++j )
+//     {
+//       output_array_i.insert( *(data++) );
+//       std::cout << std::setprecision(16) << std::scientific << "*(data++) = \t" << *(data++) << std::endl;
+
+//     }
+
+//     if( is_new_array )
+//       Py_DECREF(py_array);
+
+//     output_array[i] = output_array_i;
+//   }
+
+//   return output_array;
+// }
+
 // Create a Python (set) object from a set object
 template<typename STLCompliantSet>
 inline PyObject* convertSetToPython( const STLCompliantSet& obj )

@@ -19,22 +19,22 @@ namespace MonteCarlo{
 
 // Default constructor
 template<ObserverPhaseSpaceDimension dimension>
-HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization()
+HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization()
   : BaseType()
 { /* ... */ }
 
 // Constructor (with number of hash grid bins specified)
 template<ObserverPhaseSpaceDimension dimension>
-HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization(
+HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization(
                              const BinBoundaryArray& dimension_bin_boundaries )
   : HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization(
                                         dimension_bin_boundaries,
                                         dimension_bin_boundaries.size()/10+1 )
 { /* ... */ }
-  
+
 // Constructor (with number of hash grid bins specified)
 template<ObserverPhaseSpaceDimension dimension>
-HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization(
+HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization(
                               const BinBoundaryArray& dimension_bin_boundaries,
                               const unsigned hash_grid_bins )
   : BaseType( dimension_bin_boundaries ),
@@ -43,7 +43,7 @@ HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimensi
 
 // Calculate the index of the bin  that the value falls in
 template<ObserverPhaseSpaceDimension dimension>
-size_t HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::calculateBinIndexOfValue(
+size_t HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateBinIndexOfValue(
                                          const DimensionValueType value ) const
 {
   // Make sure the value is in the discretization
@@ -55,7 +55,7 @@ size_t HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<
 // Serialize the discretization
 template<ObserverPhaseSpaceDimension dimension>
 template<typename Archive>
-void HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::serialize( Archive& ar, const unsigned version )
+void HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::serialize( Archive& ar, const unsigned version )
 {
   // Serialize the base class data
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
@@ -63,7 +63,7 @@ void HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<di
   // Serialize the local data
   ar & BOOST_SERIALIZATION_NVP( d_grid_searcher );
 }
-  
+
 } // end MonteCarlo namespace
 
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION>,

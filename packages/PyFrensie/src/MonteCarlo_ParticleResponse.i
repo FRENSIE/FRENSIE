@@ -92,16 +92,6 @@ using namespace MonteCarlo;
 
 %enddef
 
-// Add typemaps for converting float to Double
-%typemap(in) Double ( double temp ){
-  temp = PyFloat_AsDouble( $input );
-  $1 = &temp;
-}
-
-%typemap(typecheck, precedence=1140) (Double) {
-  $1 = (PyFloat_Check($input)) ? 1 : 0;
-}
-
 // ---------------------------------------------------------------------------//
 // Add ParticleResponseFunction support
 // ---------------------------------------------------------------------------//

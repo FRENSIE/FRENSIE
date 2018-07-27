@@ -91,25 +91,25 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
   MonteCarlo::ObserverParticleStateWrapper photon_wrapper( photon );
 
   FRENSIE_CHECK( dimension_discretization->isValueInDiscretization( photon_wrapper ) );
-  
+
   photon.setEnergy( 1e-3 );
-  
+
   FRENSIE_CHECK( dimension_discretization->isValueInDiscretization( photon_wrapper ) );
 
   photon.setEnergy( 5e-3 );
-  
+
   FRENSIE_CHECK( !dimension_discretization->isValueInDiscretization( photon_wrapper ) );
 
   photon.setEnergy( 1e-15 );
-                 
+
   FRENSIE_CHECK( dimension_discretization_with_line_bins->isValueInDiscretization( photon_wrapper ) );
 
   photon.setEnergy( 1.0 );
-  
+
   FRENSIE_CHECK( dimension_discretization_with_line_bins->isValueInDiscretization( photon_wrapper ) );
 
   photon.setEnergy( 1.5 );
-  
+
   FRENSIE_CHECK( !dimension_discretization_with_line_bins->isValueInDiscretization( photon_wrapper ) );
 }
 
@@ -124,25 +124,25 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
   MonteCarlo::ObserverParticleStateWrapper photon_wrapper( photon );
 
   FRENSIE_CHECK( dimension_discretization->doesRangeIntersectDiscretization( photon_wrapper ) );
-  
+
   photon.setEnergy( 1e-3 );
-  
+
   FRENSIE_CHECK( dimension_discretization->doesRangeIntersectDiscretization( photon_wrapper ) );
 
   photon.setEnergy( 5e-3 );
-  
+
   FRENSIE_CHECK( !dimension_discretization->doesRangeIntersectDiscretization( photon_wrapper ) );
 
   photon.setEnergy( 1e-15 );
-                 
+
   FRENSIE_CHECK( dimension_discretization_with_line_bins->doesRangeIntersectDiscretization( photon_wrapper ) );
 
   photon.setEnergy( 1.0 );
-  
+
   FRENSIE_CHECK( dimension_discretization_with_line_bins->doesRangeIntersectDiscretization( photon_wrapper ) );
 
   photon.setEnergy( 1.5 );
-  
+
   FRENSIE_CHECK( !dimension_discretization_with_line_bins->doesRangeIntersectDiscretization( photon_wrapper ) );
 }
 
@@ -231,37 +231,37 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
   FRENSIE_CHECK_EQUAL( bin_indices.front(), 4 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( boost::any(1e-2), bin_indices );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices.front(), 4 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( boost::any(5e-2), bin_indices );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices.front(), 5 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( boost::any(9.999999999999e-2), bin_indices );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices.front(), 5 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( boost::any(1e-1), bin_indices );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices.front(), 6 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( boost::any(1.000000000001e-1), bin_indices );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices.front(), 7 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( boost::any(0.5), bin_indices );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices.front(), 7 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( boost::any(1.0), bin_indices );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices.front(), 7 );
 }
@@ -276,7 +276,7 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
 
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 1e-15 );
-  
+
   MonteCarlo::ObserverParticleStateWrapper photon_wrapper( photon );
 
   dimension_discretization->calculateBinIndicesOfValue( photon_wrapper, bin_indices );
@@ -321,7 +321,7 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
 
   // Check that line bins indices are calculated correctly
   photon.setEnergy( 1e-15 );
-  
+
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( photon_wrapper, bin_indices );
 
   FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
@@ -386,49 +386,49 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
   photon.setEnergy( 1e-2 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( photon_wrapper, bin_indices );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices.front(), 4 );
 
   photon.setEnergy( 5e-2 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( photon_wrapper, bin_indices );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices.front(), 5 );
 
   photon.setEnergy( 9.999999999999e-2 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( photon_wrapper, bin_indices );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices.front(), 5 );
 
   photon.setEnergy( 1e-1 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( photon_wrapper, bin_indices );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices.front(), 6 );
 
   photon.setEnergy( 1.000000000001e-1 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( photon_wrapper, bin_indices );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices.front(), 7 );
 
   photon.setEnergy( 0.5 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( photon_wrapper, bin_indices );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices.front(), 7 );
 
   photon.setEnergy( 1.0 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( photon_wrapper, bin_indices );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices.front(), 7 );
 }
@@ -443,7 +443,7 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
 
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 1e-15 );
-  
+
   MonteCarlo::ObserverParticleStateWrapper photon_wrapper( photon );
 
   dimension_discretization->calculateBinIndicesOfValue( photon_wrapper, bin_indices_and_weights );
@@ -494,7 +494,7 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
 
   // Check that line bins indices are calculated correctly
   photon.setEnergy( 1e-15 );
-  
+
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( photon_wrapper, bin_indices_and_weights );
 
   FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 1 );
@@ -568,7 +568,7 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
   photon.setEnergy( 1e-2 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( photon_wrapper, bin_indices_and_weights );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().first, 4 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().second, 1.0 );
@@ -576,7 +576,7 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
   photon.setEnergy( 5e-2 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( photon_wrapper, bin_indices_and_weights );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().first, 5 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().second, 1.0 );
@@ -584,7 +584,7 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
   photon.setEnergy( 9.999999999999e-2 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( photon_wrapper, bin_indices_and_weights );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().first, 5 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().second, 1.0 );
@@ -592,7 +592,7 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
   photon.setEnergy( 1e-1 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( photon_wrapper, bin_indices_and_weights );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().first, 6 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().second, 1.0 );
@@ -600,7 +600,7 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
   photon.setEnergy( 1.000000000001e-1 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( photon_wrapper, bin_indices_and_weights );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().first, 7 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().second, 1.0 );
@@ -608,7 +608,7 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
   photon.setEnergy( 0.5 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( photon_wrapper, bin_indices_and_weights );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().first, 7 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().second, 1.0 );
@@ -616,7 +616,7 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
   photon.setEnergy( 1.0 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfValue( photon_wrapper, bin_indices_and_weights );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().first, 7 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().second, 1.0 );
@@ -632,7 +632,7 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
 
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 1e-15 );
-  
+
   MonteCarlo::ObserverParticleStateWrapper photon_wrapper( photon );
 
   dimension_discretization->calculateBinIndicesOfRange( photon_wrapper, bin_indices_and_weights );
@@ -683,7 +683,7 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
 
   // Check that line bins indices are calculated correctly
   photon.setEnergy( 1e-15 );
-  
+
   dimension_discretization_with_line_bins->calculateBinIndicesOfRange( photon_wrapper, bin_indices_and_weights );
 
   FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 1 );
@@ -757,7 +757,7 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
   photon.setEnergy( 1e-2 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfRange( photon_wrapper, bin_indices_and_weights );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().first, 4 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().second, 1.0 );
@@ -765,7 +765,7 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
   photon.setEnergy( 5e-2 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfRange( photon_wrapper, bin_indices_and_weights );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().first, 5 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().second, 1.0 );
@@ -773,7 +773,7 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
   photon.setEnergy( 9.999999999999e-2 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfRange( photon_wrapper, bin_indices_and_weights );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().first, 5 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().second, 1.0 );
@@ -781,7 +781,7 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
   photon.setEnergy( 1e-1 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfRange( photon_wrapper, bin_indices_and_weights );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().first, 6 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().second, 1.0 );
@@ -789,7 +789,7 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
   photon.setEnergy( 1.000000000001e-1 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfRange( photon_wrapper, bin_indices_and_weights );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().first, 7 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().second, 1.0 );
@@ -797,7 +797,7 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
   photon.setEnergy( 0.5 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfRange( photon_wrapper, bin_indices_and_weights );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().first, 7 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().second, 1.0 );
@@ -805,7 +805,7 @@ FRENSIE_UNIT_TEST( ObserverEnergyDimensionDiscretization,
   photon.setEnergy( 1.0 );
 
   dimension_discretization_with_line_bins->calculateBinIndicesOfRange( photon_wrapper, bin_indices_and_weights );
-  
+
   FRENSIE_REQUIRE_EQUAL( bin_indices_and_weights.size(), 1 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().first, 7 );
   FRENSIE_CHECK_EQUAL( bin_indices_and_weights.front().second, 1.0 );

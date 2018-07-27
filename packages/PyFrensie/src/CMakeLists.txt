@@ -130,8 +130,11 @@ SET(MONTE_CARLO_PACKAGES ${MONTE_CARLO_PACKAGES} Collision)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.ActiveRegion)
 SET(MONTE_CARLO_PACKAGES ${MONTE_CARLO_PACKAGES} ActiveRegion)
 
+SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.Event)
+SET(MONTE_CARLO_PACKAGES ${MONTE_CARLO_PACKAGES} Event)
 
-SET(MONTE_CARLO_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} monte_carlo_core monte_carlo_collision_core monte_carlo_collision_neutron monte_carlo_collision_photon monte_carlo_collision_electron monte_carlo_collision_kernel monte_carlo_active_region_core monte_carlo_active_region_response monte_carlo_active_region_source pyfrensie)
+
+SET(MONTE_CARLO_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} monte_carlo_core monte_carlo_collision_core monte_carlo_collision_neutron monte_carlo_collision_photon monte_carlo_collision_electron monte_carlo_collision_kernel monte_carlo_active_region_core monte_carlo_active_region_response monte_carlo_active_region_source monte_carlo_event_core pyfrensie)
 
 # Add the PyFrensie subdirectory
 ADD_SUBDIRECTORY(PyFrensie)

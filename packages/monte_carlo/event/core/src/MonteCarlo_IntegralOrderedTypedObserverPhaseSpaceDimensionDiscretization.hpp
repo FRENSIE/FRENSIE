@@ -25,7 +25,7 @@ namespace MonteCarlo{
  * value type associated with a dimension is not an integral type.
  */
 template<ObserverPhaseSpaceDimension dimension, typename Enabled = void>
-class IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization
+class IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretizationHelper
 { /* ... */ };
 
 /*! \brief The integral ordered typed observer phase space dimension
@@ -36,7 +36,11 @@ class IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization
  * that does not meet this requirement a compilation error will occur.
  */
 template<ObserverPhaseSpaceDimension dimension>
-class IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type> : public OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>
+class IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization :
+#if !defined SWIG
+public IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretizationHelper<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>,
+#endif // !defined SWIG
+public OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>
 {
   // Typedef for the base type
   typedef OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension> BaseType;
@@ -45,7 +49,7 @@ protected:
 
   //! Typedef for the dimension value type
   typedef typename BaseType::DimensionValueType DimensionValueType;
-  
+
 public:
 
   //! Typedef for bin index array
@@ -53,7 +57,7 @@ public:
 
   //! Typedef for bin index and weight pair
   typedef typename BaseType::BinIndexWeightPair BinIndexWeightPair;
-  
+
   //! Typedef for bin index and weight pair array
   typedef typename BaseType::BinIndexWeightPairArray BinIndexWeightPairArray;
 
@@ -75,7 +79,7 @@ protected:
 
   //! Default constructor
   IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization();
-  
+
   //! Constructor
   IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization(
                             const BinBoundaryArray& dimension_bin_boundaries );
