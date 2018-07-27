@@ -64,7 +64,7 @@ size_t ParticleGlobalEventDispatcher<Observer>::getNumberOfObservers(
     particle_observer_sets_it = d_observer_sets.find( particle_type );
 
   if( particle_observer_sets_it != d_observer_sets.end() )
-    return particle_observer_sets_it->size();
+    return particle_observer_sets_it->second.size();
   else
     return 0;
 }
