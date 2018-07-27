@@ -47,22 +47,39 @@ public:
 
   //! Update the observers from a surface intersection event
   void updateObserversFromParticleCrossingSurfaceEvent(
-	  const ParticleState& particle,
-          const Geometry::Model::EntityId surface_crossing,
-	  const double surface_normal[3] );
+                              const ParticleState& particle,
+                              const Geometry::Model::EntityId surface_crossing,
+                              const double surface_normal[3] );
 
 protected:
 
   /*! \brief Register an observer with the appropriate particle crossing
    * surface event dispatcher
    */
-  template<typename Observer, typename EntityHandle>
+  template<typename Observer>
   void registerObserverWithTag(
                               const std::shared_ptr<Observer>& observer,
-                              const std::vector<EntityHandle>& entity_ids,
+                              const std::set<uint64_t>& entity_ids,
+                              const std::set<ParticleType>& particle_types,
+                              ParticleCrossingSurfaceEventObserver::EventTag );
+
+  /*! \brief Register an observer with the appropriate particle crossing
+   * surface event dispatcher
+   */
+  template<typename Observer>
+  void registerObserverWithTag(
+                              const std::shared_ptr<Observer>& observer,
+                              const std::set<uint64_t>& entity_ids,
                               ParticleCrossingSurfaceEventObserver::EventTag );
 
 private:
+
+  // Serialize the observer
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version );
+  
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
   // The particle crossing surface event dispatcher
   ParticleCrossingSurfaceEventDispatcher
@@ -71,10 +88,11 @@ private:
 
 // Register an observer with the appropriate particle crossing
 // surface event dispatcher
-template<typename Observer, typename EntityHandle>
+template<typename Observer>
 inline void ParticleCrossingSurfaceEventHandler::registerObserverWithTag(
                                const std::shared_ptr<Observer>& observer,
-                               const std::vector<EntityHandle>& entity_ids,
+                               const std::set<uint64_t>& entity_ids,
+                               const std::set<ParticleType>& particle_types,
                                ParticleCrossingSurfaceEventObserver::EventTag )
 {
   // Make sure the Observer class has the corrent event tag
@@ -83,16 +101,48 @@ inline void ParticleCrossingSurfaceEventHandler::registerObserverWithTag(
   std::shared_ptr<ParticleCrossingSurfaceEventObserver> observer_base =
     std::dynamic_pointer_cast<ParticleCrossingSurfaceEventObserver>( observer );
 
-  for( unsigned i = 0u; i < entity_ids.size(); ++i )
+  for( auto&& entity_id : entity_ids )
   {
     d_particle_crossing_surface_event_dispatcher.attachObserver(
-                                                             entity_ids[i],
-							     observer->getId(),
-							     observer_base );
+                                                               entity_id,
+                                                               particle_types,
+                                                               observer_base );
   }
 }
 
+// Register an observer with the appropriate particle crossing
+// surface event dispatcher
+template<typename Observer>
+inline void ParticleCrossingSurfaceEventHandler::registerObserverWithTag(
+                               const std::shared_ptr<Observer>& observer,
+                               const std::set<uint64_t>& entity_ids,
+                               ParticleCrossingSurfaceEventObserver::EventTag )
+{
+  // Make sure the Observer class has the corrent event tag
+  testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleCrossingSurfaceEventObserver::EventTag>::value));
+
+  std::shared_ptr<ParticleCrossingSurfaceEventObserver> observer_base =
+    std::dynamic_pointer_cast<ParticleCrossingSurfaceEventObserver>( observer );
+
+  for( auto&& entity_id : entity_ids )
+  {
+    d_particle_crossing_surface_event_dispatcher.attachObserver(
+                                                               entity_id,
+                                                               observer_base );
+  }
+}
+
+// Serialize the observer
+template<typename Archive>
+void ParticleCrossingSurfaceEventHandler::serialize( Archive& ar, const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_NVP( d_particle_crossing_surface_event_dispatcher );
+}
+
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::ParticleCrossingSurfaceEventHandler, 0 );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleCrossingSurfaceEventHandler );
 
 #endif // end MONTE_CARLO_PARTICLE_CROSSING_SURFACE_EVENT_HANDLER_HPP
 

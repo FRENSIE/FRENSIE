@@ -13,65 +13,79 @@
 #include <memory>
 
 // Boost Includes
-#include <boost/unordered_map.hpp>
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/assume_abstract.hpp>
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ModuleTraits.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
+#include "Utility_SerializationHelpers.hpp"
+#include "Utility_Map.hpp"
 
 namespace MonteCarlo{
 
 //! The particle event dispatcher base class
-template<typename EntityHandle, typename Observer>
+template<typename Observer>
 class ParticleEventLocalDispatcher
 {
 
 public:
 
-  //! Typedef for EntityHandle type
-  typedef EntityHandle EntityHandleType;
-
   //! Typedef for Observer type
   typedef Observer ObserverType;
 
   //! Constructor
-  ParticleEventLocalDispatcher( const EntityHandle entity_id );
+  ParticleEventLocalDispatcher( const uint64_t entity_id );
 
   //! Destructor
   virtual ~ParticleEventLocalDispatcher()
   { /* ... */ }
 
   //! Attach an observer to the dispatcher
-  void attachObserver( const ModuleTraits::InternalEventObserverHandle id,
-		       const std::shared_ptr<Observer>& observer );
+  void attachObserver( const std::set<ParticleType>& particle_types,
+                       const std::shared_ptr<Observer>& observer );
+
+  //! Attach an observer to the dispatcher
+  void attachObserver( const std::shared_ptr<Observer>& observer );
 
   //! Detach an observer from the dispatcher
-  void detachObserver( const ModuleTraits::InternalEventObserverHandle id );
+  void detachObserver( const std::shared_ptr<Observer>& observer );
 
   //! Get the entity id corresponding to this particle event dispatcher
-  EntityHandle getId() const;
+  uint64_t getEntityId() const;
 
   //! Get the number of attached observers
-  unsigned getNumberOfObservers() const;
+  size_t getNumberOfObservers( const ParticleType particle_type ) const;
 
 protected:
 
-  // The observer map
-  typedef typename boost::unordered_map<ModuleTraits::InternalEventObserverHandle,
-					std::shared_ptr<Observer> > ObserverIdMap;
-
+  // The observers set
+  typedef std::set<std::shared_ptr<Observer> > ObserverSet;
 
   // Get the observer map
-  ObserverIdMap& observer_id_map();
+  ObserverSet& getObserverSet( const ParticleType particle_type );
 
 private:
 
-  // The entity id for which the particle event will be dispatched
-  EntityHandle d_entity_id;
+  // Serialize the observer
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
-  ObserverIdMap d_observer_map;
+  // The entity id for which the particle event will be dispatched
+  uint64_t d_entity_id;
+
+  // The particle type observer set
+  std::map<int,ObserverSet> d_observer_sets;
 };
 
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS1_VERSION( ParticleEventLocalDispatcher, MonteCarlo, 0 );
 
 //---------------------------------------------------------------------------//
 // Template Includes.

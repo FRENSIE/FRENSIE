@@ -1,12 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ParticleSubtrackEnsingGlobalEventHandler.cpp
+//! \file   MonteCarlo_ParticleSubtrackEndingGlobalEventHandler.cpp
 //! \author Alex Robinson
 //! \brief  The particle subtrack ending global event handler definition
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_ParticleSubtrackEndingGlobalEventHandler.hpp"
 
 namespace MonteCarlo{
@@ -43,6 +44,8 @@ void ParticleSubtrackEndingGlobalEventHandler::updateObserversFromParticleSubtra
 }
 
 } // end MonteCarlo namespace
+
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ParticleSubtrackEndingGlobalEventHandler );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleSubtrackEndingGlobalEventHandler.cpp

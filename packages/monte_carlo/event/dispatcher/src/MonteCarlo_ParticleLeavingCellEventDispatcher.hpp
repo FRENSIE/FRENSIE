@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_PARTICLE_LEAVING_CELL_EVENT_DISPATCHER_HPP
 #define MONTE_CARLO_PARTICLE_LEAVING_CELL_EVENT_DISPATCHER_HPP
 
-// Boost Includes
-#include <boost/unordered_map.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ParticleLeavingCellEventLocalDispatcher.hpp"
 #include "MonteCarlo_ParticleEventDispatcher.hpp"
@@ -23,6 +20,7 @@ namespace MonteCarlo{
  */
 class ParticleLeavingCellEventDispatcher : public ParticleEventDispatcher<ParticleLeavingCellEventLocalDispatcher>
 {
+  typedef ParticleEventDispatcher<ParticleLeavingCellEventLocalDispatcher> BaseType;
 
 public:
 
@@ -36,23 +34,24 @@ public:
 
   //! Dispatch the particle leaving cell event to the observers
   void dispatchParticleLeavingCellEvent(
-	       const ParticleState& particle,
-	       const Geometry::Model::EntityId cell_leaving );
+                                const ParticleState& particle,
+                                const Geometry::Model::EntityId cell_leaving );
+
+private:
+
+  // Serialize the observer
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType ); }
+  
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 };
 
-// Dispatch the particle leaving cell event to the observers
-inline void
-ParticleLeavingCellEventDispatcher::dispatchParticleLeavingCellEvent(
-	        const ParticleState& particle,
-	        const Geometry::Model::EntityId cell_leaving )
-{
-  DispatcherMap::iterator it = this->dispatcher_map().find( cell_leaving );
-
-  if( it != this->dispatcher_map().end() )
-    it->second->dispatchParticleLeavingCellEvent( particle, cell_leaving );
-}
-
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::ParticleLeavingCellEventDispatcher, 0 );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleLeavingCellEventDispatcher );
 
 #endif // end MONTE_CARLO_PARTICLE_LEAVING_CELL_EVENT_DISPATCHER_HPP
 

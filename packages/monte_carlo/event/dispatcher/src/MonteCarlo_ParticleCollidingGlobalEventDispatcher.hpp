@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ParticleSubtrackEndingGlobalEventDispatcher.hpp
-//! \author Alex Robinson, Eli Moll
+//! \file   MonteCarlo_ParticleCollidingGlobalEventDispatcher.hpp
+//! \author Alex Robinson
 //! \brief  Particle subtrack ending global event dispatcher
 //!
 //---------------------------------------------------------------------------//
@@ -9,9 +9,12 @@
 #ifndef MONTE_CARLO_PARTICLE_SUBTRACK_ENDING_GLOBAL_EVENT_DISPATCHER_HPP
 #define MONTE_CARLO_PARTICLE_SUBTRACK_ENDING_GLOBAL_EVENT_DISPATCHER_HPP
 
+// Boost Includes
+#include <boost/unordered_map.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_ParticleGlobalEventDispatcher.hpp"
-#include "MonteCarlo_ParticleSubtrackEndingGlobalEventObserver.hpp"
+#include "MonteCarlo_ParticleCollidingGlobalEventObserver.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 
 namespace MonteCarlo{
@@ -19,22 +22,22 @@ namespace MonteCarlo{
 /*! The particle subtrack ending global event dispatcher class
  * \ingroup particle_subtrack_ending_global_event
  */
-class ParticleSubtrackEndingGlobalEventDispatcher : public ParticleGlobalEventDispatcher<ParticleSubtrackEndingGlobalEventObserver>
+class ParticleCollidingGlobalEventDispatcher : public ParticleGlobalEventDispatcher<ParticleCollidingGlobalEventObserver>
 {
-  typedef ParticleGlobalEventDispatcher<ParticleSubtrackEndingGlobalEventObserver> BaseType;
+  typedef ParticleGlobalEventDispatcher<ParticleCollidingGlobalEventObserver> BaseType;
 
 public:
 
   //! Constructor
-  ParticleSubtrackEndingGlobalEventDispatcher()
+  ParticleCollidingGlobalEventDispatcher()
   { /* ... */ }
 
   //! Destructor
-  ~ParticleSubtrackEndingGlobalEventDispatcher()
+  ~ParticleCollidingGlobalEventDispatcher()
   { /* ... */ }
 
   //! Dispatch the new event to the observers
-  void dispatchParticleSubtrackEndingGlobalEvent( const ParticleState& particle,
+  void dispatchParticleCollidingGlobalEvent( const ParticleState& particle,
                                                   const double start_point[3],
                                                   const double end_point[3] );
 
@@ -51,11 +54,11 @@ private:
 
 } // end MonteCarlo namespace
 
-BOOST_CLASS_VERSION( MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher, 0 );
-EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleSubtrackEndingGlobalEventDispatcher );
+BOOST_CLASS_VERSION( MonteCarlo::ParticleCollidingGlobalEventDispatcher, 0 );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleCollidingGlobalEventDispatcher );
 
 #endif // end MONTE_CARLO_PARTICLE_SUBTRACK_ENDING_GLOBAL_EVENT_DISPATCHER_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ParticleSubtrackEndingGlobalEventDispatcher.hpp
+// end MonteCarlo_ParticleCollidingGlobalEventDispatcher.hpp
 //---------------------------------------------------------------------------//

@@ -47,35 +47,77 @@ public:
 
   //! Update the observers from a particle subtrack ending in cell event
   void updateObserversFromParticleSubtrackEndingInCellEvent(
-             const ParticleState& particle,
-             const Geometry::Model::EntityId cell_of_subtrack,
-             const double particle_subtrack_length,
-             const double subtrack_start_time );
+                              const ParticleState& particle,
+                              const Geometry::Model::EntityId cell_of_subtrack,
+                              const double particle_subtrack_length,
+                              const double subtrack_start_time );
 
 protected:
 
   /*! \brief Register an observer with the appropriate particle subtrack ending
    * in cell event dispatcher.
    */
-  template<typename Observer, typename EntityHandle>
+  template<typename Observer>
   void registerObserverWithTag(
                          const std::shared_ptr<Observer>& observer,
-			 const std::vector<EntityHandle>& entity_ids,
+			 const std::set<uint64_t>& entity_ids,
+                         const std::set<ParticleType>& particle_types,
+			 ParticleSubtrackEndingInCellEventObserver::EventTag );
+
+  /*! \brief Register an observer with the appropriate particle subtrack ending
+   * in cell event dispatcher.
+   */
+  template<typename Observer>
+  void registerObserverWithTag(
+                         const std::shared_ptr<Observer>& observer,
+			 const std::set<uint64_t>& entity_ids,
 			 ParticleSubtrackEndingInCellEventObserver::EventTag );
 
 private:
+
+  // Serialize the observer
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version );
+  
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
   // The particle colliding in cell event dispatcher
   ParticleSubtrackEndingInCellEventDispatcher
   d_particle_subtrack_ending_in_cell_event_dispatcher;
 };
 
-// Register an observer with the appropriate particle subtrack ending in cell
-// event dispatcher
-template<typename Observer, typename EntityHandle>
+// Register an observer with the appropriate particle subtrack ending
+// cell event dispatcher.
+template<typename Observer>
 inline void ParticleSubtrackEndingInCellEventHandler::registerObserverWithTag(
                           const std::shared_ptr<Observer>& observer,
-                          const std::vector<EntityHandle>& entity_ids,
+                          const std::set<uint64_t>& entity_ids,
+                          const std::set<ParticleType>& particle_types,
+			  ParticleSubtrackEndingInCellEventObserver::EventTag )
+{
+  // Make sure the Observer class has the expected event tag
+  testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleSubtrackEndingInCellEventObserver::EventTag>::value));
+
+  std::shared_ptr<ParticleSubtrackEndingInCellEventObserver> observer_base =
+    std::dynamic_pointer_cast<ParticleSubtrackEndingInCellEventObserver>(
+								    observer );
+
+  for( auto&& entity_id : entity_ids )
+  {
+    d_particle_subtrack_ending_in_cell_event_dispatcher.attachObserver(
+                                                             entity_id,
+                                                             particle_types,
+                                                             observer_base );
+  }
+}
+
+// Register an observer with the appropriate particle subtrack ending in cell
+// event dispatcher
+template<typename Observer>
+inline void ParticleSubtrackEndingInCellEventHandler::registerObserverWithTag(
+                          const std::shared_ptr<Observer>& observer,
+                          const std::set<uint64_t>& entity_ids,
                           ParticleSubtrackEndingInCellEventObserver::EventTag )
 {
   // Make sure the Observer class has the expected event tag
@@ -85,19 +127,28 @@ inline void ParticleSubtrackEndingInCellEventHandler::registerObserverWithTag(
     std::dynamic_pointer_cast<ParticleSubtrackEndingInCellEventObserver>(
 								    observer );
 
-  for( unsigned i = 0u; i < entity_ids.size(); ++i )
+  for( auto&& entity_id : entity_ids )
   {
     d_particle_subtrack_ending_in_cell_event_dispatcher.attachObserver(
-							     entity_ids[i],
-							     observer->getId(),
-							     observer_base );
+                                                             entity_id,
+                                                             observer_base );
   }
+}
+
+// Serialize the observer
+template<typename Archive>
+void ParticleSubtrackEndingInCellEventHandler::serialize( Archive& ar, const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_NVP( d_particle_subtrack_ending_in_cell_event_dispatcher );
 }
 
 } // end MonteCarlo namespace
 
+BOOST_CLASS_VERSION( MonteCarlo::ParticleSubtrackEndingInCellEventHandler, 0 );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleSubtrackEndingInCellEventHandler );
+
 #endif // end MONTE_CARLO_PARTICLE_SUBTRACK_ENDING_IN_CELL_EVENT_HANDLER_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ParticleSubtrackEndingInCellEventHandler
+// end MonteCarlo_ParticleSubtrackEndingInCellEventHandler.hpp
 //---------------------------------------------------------------------------//

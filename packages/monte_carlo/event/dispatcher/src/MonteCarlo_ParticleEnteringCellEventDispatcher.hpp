@@ -9,12 +9,6 @@
 #ifndef MONTE_CARLO_PARTICLE_ENTERING_CELL_EVENT_DISPATCHER_HPP
 #define MONTE_CARLO_PARTICLE_ENTERING_CELL_EVENT_DISPATCHER_HPP
 
-// Std Lib Includes
-#include <memory>
-
-// Boost Includes
-#include <boost/unordered_map.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ParticleEnteringCellEventLocalDispatcher.hpp"
 #include "MonteCarlo_ParticleEventDispatcher.hpp"
@@ -26,6 +20,7 @@ namespace MonteCarlo{
  */
 class ParticleEnteringCellEventDispatcher : public ParticleEventDispatcher<ParticleEnteringCellEventLocalDispatcher>
 {
+  typedef ParticleEventDispatcher<ParticleEnteringCellEventLocalDispatcher> BaseType;
 
 public:
 
@@ -39,23 +34,24 @@ public:
 
   //! Dispatch the particle entering cell event to the observers
   void dispatchParticleEnteringCellEvent(
-	      const ParticleState& particle,
-	      const Geometry::Model::EntityId cell_entering );
+                               const ParticleState& particle,
+                               const Geometry::Model::EntityId cell_entering );
+
+private:
+
+  // Serialize the observer
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType ); }
+  
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 };
 
-// Dispatch the particle entering cell event to the observers
-inline void
-ParticleEnteringCellEventDispatcher::dispatchParticleEnteringCellEvent(
-	       const ParticleState& particle,
-	       const Geometry::Model::EntityId cell_entering )
-{
-  DispatcherMap::iterator it = this->dispatcher_map().find( cell_entering );
-
-  if( it != this->dispatcher_map().end() )
-    it->second->dispatchParticleEnteringCellEvent( particle, cell_entering );
-}
-
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::ParticleEnteringCellEventDispatcher, 0 );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleEnteringCellEventDispatcher );
 
 #endif // end MONTE_CARLO_PARTICLE_ENTERING_CELL_EVENT_DISPATCHER_HPP
 

@@ -15,55 +15,84 @@
 namespace MonteCarlo{
 
 // Constructor
-template<typename EntityHandle, typename Observer>
-ParticleEventLocalDispatcher<EntityHandle,Observer>::ParticleEventLocalDispatcher(
-						 const EntityHandle entity_id )
-  : d_entity_id( entity_id )
+template<typename Observer>
+ParticleEventLocalDispatcher<Observer>::ParticleEventLocalDispatcher(
+						     const uint64_t entity_id )
+  : d_entity_id( entity_id ),
+    d_observer_sets()
 { /* ... */ }
 
 // Attach an observer to the dispatcher
-template<typename EntityHandle, typename Observer>
-void ParticleEventLocalDispatcher<EntityHandle,Observer>::attachObserver(
-			    const ModuleTraits::InternalEventObserverHandle id,
-                            const std::shared_ptr<Observer>& observer )
+template<typename Observer>
+void ParticleEventLocalDispatcher<Observer>::attachObserver(
+                                  const std::set<ParticleType>& particle_types,
+                                  const std::shared_ptr<Observer>& observer )
 {
-  // Make sure the observer has not been attached yet
-  testPrecondition( d_observer_map.find( id ) == d_observer_map.end() );
+  for( auto&& particle_type : particle_types )
+    d_observer_sets[particle_type].insert( observer );
+}
 
-  if( d_observer_map.find( id ) == d_observer_map.end() )
-    d_observer_map[id] = observer;
+// Attach an observer to the dispatcher
+template<typename Observer>
+void ParticleEventLocalDispatcher<Observer>::attachObserver(
+                                    const std::shared_ptr<Observer>& observer )
+{
+  for( int i = ParticleType_START; i < ParticleType_END; ++i )
+    d_observer_sets[i].insert( observer );
 }
 
 // Detach an observer from the dispatcher
-template<typename EntityHandle, typename Observer>
-void ParticleEventLocalDispatcher<EntityHandle,Observer>::detachObserver(
-			   const ModuleTraits::InternalEventObserverHandle id )
+template<typename Observer>
+void ParticleEventLocalDispatcher<Observer>::detachObserver(
+                                    const std::shared_ptr<Observer>& observer )
 {
-  d_observer_map.erase( id );
+  std::map<int,ObserverSet>::iterator particle_observer_sets_it =
+    d_observer_sets.begin();
+
+  while( particle_observer_sets_it != d_observer_sets.end() )
+  {
+    particle_observer_sets_it->second.erase( observer );
+
+    ++particle_observer_map_it;
+  }
 }
 
 // Get the entity id corresponding to this particle event dispatcher
-template<typename EntityHandle, typename Observer>
-inline EntityHandle
-ParticleEventLocalDispatcher<EntityHandle,Observer>::getId() const
+template<typename Observer>
+inline uint32_t ParticleEventLocalDispatcher<Observer>::getId() const
 {
   return d_entity_id;
 }
 
 // Get the number of attached observers
-template<typename EntityHandle, typename Observer>
-unsigned
-ParticleEventLocalDispatcher<EntityHandle,Observer>::getNumberOfObservers() const
+template<typename Observer>
+size_t ParticleEventLocalDispatcher<Observer>::getNumberOfObservers(
+                                       const ParticleType particle_type ) const
 {
-  return d_observer_map.size();
+  std::map<int,ObserverSet>::const_iterator
+    particle_observer_sets_it = d_observer_sets.find( particle_type );
+
+  if( particle_observer_sets_it != d_observer_sets.end() )
+    return particle_observer_sets_it->size();
+  else
+    return 0;
 }
 
 // Get the observer map
-template<typename EntityHandle, typename Observer>
-inline typename ParticleEventLocalDispatcher<EntityHandle,Observer>::ObserverIdMap&
-ParticleEventLocalDispatcher<EntityHandle,Observer>::observer_id_map()
+template<typename Observer>
+inline auto ParticleEventLocalDispatcher<Observer>::getObserverSet(
+                            const ParticleType particle_types ) -> ObserverSet&
 {
-  return d_observer_map;
+  return d_observer_sets[particle_types];
+}
+
+// Serialize the observer
+template<typename Observer>
+template<typename Archive>
+void ParticleEventLocalDispatcher<Observer>::serialize( Archive& ar, const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_NVP( d_entity_id );
+  ar & BOOST_SERIALIZATION_NVP( d_observer_sets );
 }
 
 } // end MonteCarlo namespace

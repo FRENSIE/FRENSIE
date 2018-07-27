@@ -9,14 +9,10 @@
 #ifndef MONTE_CARLO_PARTICLE_ENTERING_CELL_EVENT_LOCAL_DISPATCHER_HPP
 #define MONTE_CARLO_PARTICLE_ENTERING_CELL_EVENT_LOCAL_DISPATCHER_HPP
 
-// Boost Includes
-#include <boost/unordered_map.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ParticleEventLocalDispatcher.hpp"
 #include "MonteCarlo_ParticleEnteringCellEventObserver.hpp"
 #include "MonteCarlo_ParticleState.hpp"
-#include "MonteCarlo_ModuleTraits.hpp"
 #include "Geometry_Model.hpp"
 
 namespace MonteCarlo{
@@ -24,14 +20,15 @@ namespace MonteCarlo{
 /*! The particle entering cell event dispatcher class
  * \ingroup particle_entering_cell_event
  */
-class ParticleEnteringCellEventLocalDispatcher : public ParticleEventLocalDispatcher<Geometry::Model::EntityId,ParticleEnteringCellEventObserver>
+class ParticleEnteringCellEventLocalDispatcher : public ParticleEventLocalDispatcher<ParticleEnteringCellEventObserver>
 {
+  typedef ParticleEventLocalDispatcher<ParticleEnteringCellEventObserver> BaseType;
 
 public:
 
   //! Constructor
   ParticleEnteringCellEventLocalDispatcher(
-		    const Geometry::Model::EntityId cell_id );
+                                     const Geometry::Model::EntityId cell_id );
 
   //! Destructor
   ~ParticleEnteringCellEventLocalDispatcher()
@@ -39,11 +36,24 @@ public:
 
   //! Dispatch the new event to the observers
   void dispatchParticleEnteringCellEvent(
-	      const ParticleState& particle,
-	      const Geometry::Model::EntityId cell_entering );
+                               const ParticleState& particle,
+                               const Geometry::Model::EntityId cell_entering );
+
+private:
+
+  // Serialize the observer
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType ); }
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 };
 
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::ParticleEnteringCellEventLocalDispatcher, 0 );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleEnteringCellEventLocalDispatcher );
 
 #endif // end MONTE_CARLO_PARTICLE_ENTERING_CELL_EVENT_LOCAL_DISPATCHER_HPP
 

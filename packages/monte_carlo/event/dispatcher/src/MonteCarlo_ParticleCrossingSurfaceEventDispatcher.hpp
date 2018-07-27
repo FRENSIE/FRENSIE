@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_PARTICLE_CROSSING_SURFACE_EVENT_DISPATCHER_HPP
 #define MONTE_CARLO_PARTICLE_CROSSING_SURFACE_EVENT_DISPATCHER_HPP
 
-// Boost Includes
-#include <boost/unordered_map.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ParticleCrossingSurfaceEventLocalDispatcher.hpp"
 #include "MonteCarlo_ParticleEventDispatcher.hpp"
@@ -23,6 +20,7 @@ namespace MonteCarlo{
  */
 class ParticleCrossingSurfaceEventDispatcher : public ParticleEventDispatcher<ParticleCrossingSurfaceEventLocalDispatcher>
 {
+  typedef ParticleEventDispatcher<ParticleCrossingSurfaceEventLocalDispatcher> BaseType;
 
 public:
 
@@ -36,29 +34,25 @@ public:
 
   //! Dispatch the particle crossing surface event to the observers
   void dispatchParticleCrossingSurfaceEvent(
-	  const ParticleState& particle,
-	  const Geometry::Model::EntityId surface_crossing,
-	  const double angle_cosine );
+                              const ParticleState& particle,
+                              const Geometry::Model::EntityId surface_crossing,
+                              const double angle_cosine );
+
+private:
+
+  // Serialize the observer
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType ); }
+  
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 };
 
-// Dispatch the particle crossing surface event to the observers
-inline void
-ParticleCrossingSurfaceEventDispatcher::dispatchParticleCrossingSurfaceEvent(
-	  const ParticleState& particle,
-	  const Geometry::Model::EntityId surface_crossing,
-	  const double angle_cosine )
-{
-  DispatcherMap::iterator it = this->dispatcher_map().find( surface_crossing );
-
-  if( it != this->dispatcher_map().end() )
-  {
-    it->second->dispatchParticleCrossingSurfaceEvent( particle,
-						      surface_crossing,
-						      angle_cosine );
-  }
-}
-
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::ParticleCrossingSurfaceEventDispatcher, 0 );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleCrossingSurfaceEventDispatcher );
 
 #endif // end MONTE_CARLO_PARTICLE_CROSSING_SURFACE_EVENT_DISPATCHER_HPP
 

@@ -19,9 +19,8 @@ ParticleEventDispatcher<Dispatcher>::ParticleEventDispatcher()
 
 // Get the appropriate local dispatcher for the given entity id
 template<typename Dispatcher>
-inline Dispatcher&
-ParticleEventDispatcher<Dispatcher>::getLocalDispatcher(
-		        const typename Dispatcher::EntityHandleType entity_id )
+inline Dispatcher& ParticleEventDispatcher<Dispatcher>::getLocalDispatcher(
+                                                     const uint64_t entity_id )
 {
   typename DispatcherMap::iterator it = d_dispatcher_map.find( entity_id );
 
@@ -29,7 +28,7 @@ ParticleEventDispatcher<Dispatcher>::getLocalDispatcher(
     return *(it->second);
   else
   {
-    std::shared_ptr<Dispatcher>& new_dispatcher =
+    std::unique_ptr<Dispatcher>& new_dispatcher =
       d_dispatcher_map[entity_id];
 
     new_dispatcher.reset( new Dispatcher( entity_id ) );
@@ -41,26 +40,36 @@ ParticleEventDispatcher<Dispatcher>::getLocalDispatcher(
 // Attach an observer to the appropriate dispatcher
 template<typename Dispatcher>
 inline void ParticleEventDispatcher<Dispatcher>::attachObserver(
-	   const typename Dispatcher::EntityHandleType entity_id,
-           const ModuleTraits::InternalEventObserverHandle observer_id,
+	   const uint64_t entity_id,
+           const std::set<ParticleType>& particle_types,
            const std::shared_ptr<typename Dispatcher::ObserverType>& observer )
 {
-  this->getLocalDispatcher( entity_id ).attachObserver( observer_id, observer);
+  this->getLocalDispatcher( entity_id ).attachObserver( particle_types,
+                                                        observer );
+}
+
+// Attach an observer to the appropriate dispatcher
+template<typename Dispatcher>
+inline void ParticleEventDispatcher<Dispatcher>::attachObserver(
+	   const uint64_t entity_id,
+           const std::shared_ptr<typename Dispatcher::ObserverType>& observer )
+{
+  this->getLocalDispatcher( entity_id ).attachObserver( observer );
 }
 
 // Detach an observer from the appropriate dispatcher
 template<typename Dispatcher>
 inline void ParticleEventDispatcher<Dispatcher>::detachObserver(
-		 const typename Dispatcher::EntityHandleType entity_id,
-		 const ModuleTraits::InternalEventObserverHandle observer_id )
+           const uint64_t entity_id,
+           const std::shared_ptr<typename Dispatcher::ObserverType>& observer )
 {
-  this->getLocalDispatcher( entity_id ).detachObserver( observer_id );
+  this->getLocalDispatcher( entity_id ).detachObserver( observer );
 }
 
 // Detach the observer from all dispatchers
 template<typename Dispatcher>
 inline void ParticleEventDispatcher<Dispatcher>::detachObserver(
-		 const ModuleTraits::InternalEventObserverHandle observer_id )
+           const std::shared_ptr<typename Dispatcher::ObserverType>& observer )
 {
   typename DispatcherMap::iterator it = d_dispatcher_map.begin();
 
@@ -72,19 +81,26 @@ inline void ParticleEventDispatcher<Dispatcher>::detachObserver(
   }
 }
 
-// Get the dispatcher map
-template<typename Dispatcher>
-inline typename ParticleEventDispatcher<Dispatcher>::DispatcherMap&
-ParticleEventDispatcher<Dispatcher>::dispatcher_map()
-{
-  return d_dispatcher_map;
-}
-
 // Detach all observers
 template<typename Dispatcher>
 void ParticleEventDispatcher<Dispatcher>::detachAllObservers()
 {
   d_dispatcher_map.clear();
+}
+
+// Get the dispatcher map
+template<typename Dispatcher>
+inline auto ParticleEventDispatcher<Dispatcher>::getDispatcherMap() -> DispatcherMap&
+{
+  return d_dispatcher_map;
+}
+
+// Serialize the observer
+template<typename Dispatcher>
+template<typename Archive>
+void ParticleEventDispatcher<Dispatcher>::serialize( Archive& ar, const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_NVP( d_dispatcher_map );
 }
 
 } // end MonteCarlo namespace
