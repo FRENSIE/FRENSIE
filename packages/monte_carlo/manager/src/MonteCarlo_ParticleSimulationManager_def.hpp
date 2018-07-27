@@ -355,14 +355,15 @@ void ParticleSimulateManager<mode>::simulateParticleTrack(
     // The particle passes through this cell to the next
     if( op_to_surface_hit < remaining_subtrack_op )
     {
+      // Force a collision - if required
       if( subtrack_starting_from_source_point || 
           subtrack_starting_from_cell_boundary )
       {
-        EMI::updateParticleStateAfterEnteringCell( particle.getCell(),
-                                                   op_to_surface_hit,
-                                                   simulate_unresolved_particle_track,
-                                                   particle,
-                                                   bank );
+        d_collision_forcer->forceCollision( particle.getCell(),
+                                            op_to_surface_hit,
+                                            simulate_unresolved_particle_track,
+                                            particle,
+                                            bank );
       }
       
       try{
@@ -408,11 +409,25 @@ void ParticleSimulateManager<mode>::simulateParticleTrack(
 
       // Update the particle state before the collision (e.g. roulette/split
       // using weight window mesh)
-      EMI::updateParticleStateBeforeCollision( particle, local_bank, d_simulate_unresolved_particle_collision_function_map.find( State::type )->second );
-
+      ParticleBank local_bank;
+      d_weight_windows->updateParticleState( particle, local_bank );
+      
       // Undergo a collision with the material in the cell
       if( particle )
         CMI::collideWithCellMaterial( particle, bank );
+
+      while( !local_bank.isEmpty() )
+      {
+        ParticleBank next_gen_local_bank;
+        CMI::collideWithCellMaterial( local_bank.top(), next_gen_local_bank );
+
+        std::shared_ptr<ParticleState> local_particle;
+
+        local_bank.pop( local_particle );
+
+        bank.push( local_particle );
+        bank.splice( next_gen_local_bank );
+      }
       
       // This track is finished
       break;
