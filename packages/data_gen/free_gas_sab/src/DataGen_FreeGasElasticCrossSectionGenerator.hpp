@@ -47,6 +47,12 @@ public:
   typedef boost::unordered_map< double, DoubleDifferentialCrossSection >
     DoubleDifferentialCrossSectionMap;
 
+  typedef std::vector< std::pair< double, double > > 
+    DifferentialEnergyCrossSection;
+
+  typedef boost::unordered_map< double, DifferentialEnergyCrossSection >
+    DifferentialEnergyCrossSectionMap;
+
   //! Constructor
   FreeGasElasticCrossSectionGenerator(
 	    double kT,
@@ -67,10 +73,8 @@ public:
                                     double E );
 
   //! Calculate cross section
-  double crossSectionValue( double alpha,
-				                    double beta,
-                            double E,
-				                    double sab_value );
+  double crossSectionValue( double beta_int,
+                            double E );
 
   //! Construct full double differential cross section
   void doubleDifferentialCrossSectionValue( 
@@ -82,7 +86,8 @@ public:
        double E );
 
   //! Calculate cross sections for all energies 
-  void calculateEnergyCrossSectionValue(  );
+  void getDifferentialEnergyCrossSectionMap( 
+    DifferentialEnergyCrossSectionMap& energy_cross_section_map);
 
   //! Calculate energy differential cross section
   void energyCrossSectionValue(
@@ -149,6 +154,9 @@ private:
 
   // Alpha Function
   Teuchos::RCP<DataGen::FreeGasElasticMarginalAlphaFunction> d_alpha_function;
+
+  // Differential Energy cross section
+  DifferentialEnergyCrossSectionMap d_beta_pdf_map; 
 
 };
 

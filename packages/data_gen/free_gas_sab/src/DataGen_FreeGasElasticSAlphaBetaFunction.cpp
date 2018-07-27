@@ -234,7 +234,6 @@ double FreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
         value = d_average_zero_temp_elastic_cross_section/
           ((d_A+1)*(d_A+1)*sqrt(alpha))*
           exp( -(alpha + beta)*(alpha + beta)/(4*alpha) );
-          value = 0;
 
         if( value > std::numeric_limits<double>::max() )
         {

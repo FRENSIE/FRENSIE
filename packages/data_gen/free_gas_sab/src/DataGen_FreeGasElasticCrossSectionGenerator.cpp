@@ -50,7 +50,8 @@ void FreeGasElasticCrossSectionGenerator::setBaseCrossSection()
   
   
   std::vector<double> energy_vector = {1e-12, 1e-11, 1e-6, 20};
-  std::vector<double> xs_vector     = { 1, 1, 1, 1 };//3000, 1170, 20, 20};
+  std::vector<double> xs_vector     = {1170, 1170, 20, 20};
+  //std::vector<double> xs_vector     = {1, 1, 1, 1};
   const Teuchos::Array<double> energy_array( energy_vector );
   const Teuchos::Array<double> xs_array( xs_vector );
   d_cross_section.reset( new Utility::TabularDistribution<Utility::LogLog>( energy_array, xs_array ) );
@@ -100,19 +101,14 @@ double FreeGasElasticCrossSectionGenerator::analyticCrossSectionValue(
 
 // Calculate cross section
 double FreeGasElasticCrossSectionGenerator::crossSectionValue( 
-        double alpha, 
-        double beta,
-        double E,
-        double sab )
+        double beta_int,
+        double E )
 {
   double pi3 = Utility::PhysicalConstants::pi*
     Utility::PhysicalConstants::pi*
     Utility::PhysicalConstants::pi;
 
-  if( sab < std::numeric_limits<double>::infinity() )
-    return ((d_A+1)*(d_A+1)*(d_A+1)*(d_A+1)*d_kT/(16*sqrt(pi3)*d_A*E))*sab;
-  else
-    return std::numeric_limits<double>::infinity();
+  return (d_A+1)*(d_A+1)*(d_A+1)*(d_A+1)*(d_kT/E)/(4*d_A*sqrt(pi3))*beta_int;
 }
 
 //  Constructruct full double differential cross section at a given energy
@@ -161,11 +157,7 @@ void FreeGasElasticCrossSectionGenerator::doubleDifferentialCrossSectionValue(
 
       double sab = (*d_sab_function)( alpha, beta, E );
 
-      double value = crossSectionValue(
-                                  alpha,
-                                  beta,
-                                  E,
-                                  sab );
+      double value = crossSectionValue( sab, E );
 
       std::pair<double,double> beta_alpha( beta, alpha );
       double_differential_sigma[beta_alpha] = value;    
@@ -184,7 +176,7 @@ void FreeGasElasticCrossSectionGenerator::totalCrossSectionValue(
 						    d_kT,
 						    E ) );
 
-  d_total_cross_section[E] = d_beta_function->getNormalizationConstant();
+  d_total_cross_section[E] = this->crossSectionValue( d_beta_function->getNormalizationConstant(), E );
 }
 
 void FreeGasElasticCrossSectionGenerator::energyCrossSectionValue(
@@ -201,15 +193,36 @@ void FreeGasElasticCrossSectionGenerator::energyCrossSectionValue(
   double beta_max = d_beta_max_multiplier*beta_min;
   double beta_spacing = (beta_max - beta_min)/(d_beta_num - 1.0);
 
-  std::vector< std::pair<double,double> > beta_pdf;
+  DifferentialEnergyCrossSection beta_pdf;
 
   // Loop over beta
   for (int i = 0; i < d_beta_num; ++i)
   {
-    double beta = beta_min + i*beta_spacing;
-    double pdf  = d_beta_function->operator()( beta );
-    beta_pdf.push_back( std::make_pair(beta, pdf) );
+    if (true)
+    {
+      double beta = beta_min + i*beta_spacing;
+      double pdf  = d_beta_function->operator()( beta );
+      beta_pdf.push_back( std::make_pair(beta, pdf) ); 
+    }
+    else
+    {
+      double beta = beta_min + i*beta_spacing;
+
+      d_alpha_function.reset( new DataGen::FreeGasElasticMarginalAlphaFunction(
+						    d_cross_section, 
+						    d_angular_distribution,
+						    d_A,
+						    d_kT,
+						    beta,
+                E ) );
+
+      double pdf = d_alpha_function->getNormalizationConstant();
+
+      beta_pdf.push_back( std::make_pair(beta, pdf) );
+    }
   }
+
+  d_beta_pdf_map[E] = beta_pdf;
 }
 
 // Get total cross section
@@ -225,15 +238,16 @@ void FreeGasElasticCrossSectionGenerator::getTotalCrossSection(
 }
 
 // Calculate cross sections for all energies
-void FreeGasElasticCrossSectionGenerator::calculateEnergyCrossSectionValue()
+void FreeGasElasticCrossSectionGenerator::getDifferentialEnergyCrossSectionMap(
+  DifferentialEnergyCrossSectionMap& energy_cross_section_map )
 {
   // Loop over all energies
   for ( int i = 0; i < d_E.size(); ++i) 
   {
-    double E = d_E[i];
-
-    energyCrossSectionValue( E );
+    energyCrossSectionValue( d_E[i] );
   }
+
+  energy_cross_section_map = d_beta_pdf_map;
 }
 
 } // end DataGen namespace

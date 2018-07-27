@@ -130,7 +130,16 @@ double FreeGasElasticMarginalBetaFunction::evaluateCDF( const double beta )
 void FreeGasElasticMarginalBetaFunction::updateCachedValues()
 {
   d_beta_min = Utility::calculateBetaMin( d_E, d_kT );
-  double beta_max = (100*d_kT - d_E)/d_kT;
+  double beta_max = 0;
+
+  if ( d_E >= 1e-5 )
+  {
+    beta_max = 0;
+  }
+  else
+  {
+    beta_max = (1e-5-d_E)/d_kT;
+  }
   
   // Calculate the norm constant
   double norm_constant_error;
@@ -186,25 +195,6 @@ double FreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction(
   					  alpha_max,
   					  function_value,
   					  function_value_error );
-  
-  /*
-  if( beta < 0.0 && beta > d_beta_min )
-  {
-    Teuchos::Tuple<double,3> points_of_interest = 
-      Teuchos::tuple( alpha_min, -beta, alpha_max );
-    d_beta_gkq_set.integrateAdaptivelyWynnEpsilon( sab_function_wrapper,
-						  points_of_interest(),
-						  function_value,
-						  function_value_error );
-  }
-  else
-  {
-    d_alpha_gkq_set.integrateAdaptively<15>( sab_function_wrapper,
-					    alpha_min,
-					    alpha_max,
-					    function_value,
-					    function_value_error );
-  } */
 
   // Make sure the return value is valid
   testPostcondition(!Teuchos::ScalarTraits<double>::isnaninf(function_value));
