@@ -13,18 +13,22 @@
 
 namespace MonteCarlo{
 
+// Default constructor
+ParticleCollidingInCellEventLocalDispatcher::ParticleCollidingInCellEventLocalDispatcher()
+{ /* ... */ }
+
 // Constructor
 ParticleCollidingInCellEventLocalDispatcher::ParticleCollidingInCellEventLocalDispatcher(
-	                       const Geometry::ModuleTraits::EntityId cell_id )
+                                      const Geometry::Model::EntityId cell_id )
   : BaseType( cell_id )
 { /* ... */ }
 
 // Dispatch the new event to the observers
 void
 ParticleCollidingInCellEventLocalDispatcher::dispatchParticleCollidingInCellEvent(
-                      const ParticleState& particle,
-                      const Geometry::ModuleTraits::EntityId cell_of_collision,
-                      const double inverse_total_cross_section )
+                             const ParticleState& particle,
+                             const Geometry::Model::EntityId cell_of_collision,
+                             const double inverse_total_cross_section )
 {
   // Make sure the cell being collided in is valid
   testPrecondition( cell_of_collision == this->getEntityId() );
@@ -36,10 +40,9 @@ ParticleCollidingInCellEventLocalDispatcher::dispatchParticleCollidingInCellEven
 
   while( it != observer_set.end() )
   {
-    it->second->updateFromParticleCollidingInCellEvent(
-						 particle,
-						 cell_of_collision,
-						 inverse_total_cross_section );
+    (*it)->updateFromParticleCollidingInCellEvent( particle,
+                                                   cell_of_collision,
+                                                   inverse_total_cross_section );
 
     ++it;
   }
@@ -47,6 +50,7 @@ ParticleCollidingInCellEventLocalDispatcher::dispatchParticleCollidingInCellEven
 
 } // end MonteCarlo namespace
 
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::ParticleCollidingInCellEventLocalDispatcher );
 EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ParticleCollidingInCellEventLocalDispatcher );
 
 //---------------------------------------------------------------------------//

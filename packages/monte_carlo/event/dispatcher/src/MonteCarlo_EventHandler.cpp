@@ -8,8 +8,6 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_EventHandler.hpp"
-#include "MonteCarlo_ParticleHistoryObserverHDF5FileHandler.hpp"
-#include "Utility_HDF5FileHandler.hpp"
 #include "Utility_OpenMPProperties.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_DesignByContract.hpp"
@@ -48,7 +46,7 @@ bool EventHandler::doesEstimatorExist( const uint32_t estimator_id ) const
 // Return the estimator
 Estimator& EventHandler::getEstimator( const uint32_t estimator_id )
 {
-  TEST_FOR_EXCEPTION( !this->doesEstimatorExist(),
+  TEST_FOR_EXCEPTION( !this->doesEstimatorExist( estimator_id ),
                       std::runtime_error,
                       "Estimator " << estimator_id << " has not been "
                       "registered with the event handler!" );
@@ -59,7 +57,7 @@ Estimator& EventHandler::getEstimator( const uint32_t estimator_id )
 // Return the estimator
 const Estimator& EventHandler::getEstimator( const uint32_t estimator_id ) const
 {
-  TEST_FOR_EXCEPTION( !this->doesEstimatorExist(),
+  TEST_FOR_EXCEPTION( !this->doesEstimatorExist( estimator_id ),
                       std::runtime_error,
                       "Estimator " << estimator_id << " has not been "
                       "registered with the event handler!" );
@@ -77,7 +75,7 @@ bool EventHandler::doesParticleTrackerExist( const uint32_t particle_tracker_id 
 // Return the particle tracker
 ParticleTracker& EventHandler::getParticleTracker( const uint32_t particle_tracker_id )
 {
-  TEST_FOR_EXCEPTION( !this->doesParticleTrackerExist(),
+  TEST_FOR_EXCEPTION( !this->doesParticleTrackerExist( particle_tracker_id ),
                       std::runtime_error,
                       "Particle tracker " << particle_tracker_id <<
                       " has not been registered with the event handler!" );
@@ -88,7 +86,12 @@ ParticleTracker& EventHandler::getParticleTracker( const uint32_t particle_track
 // Return the particle tracker
 const ParticleTracker& EventHandler::getParticleTracker( const uint32_t particle_tracker_id ) const
 {
+  TEST_FOR_EXCEPTION( !this->doesParticleTrackerExist( particle_tracker_id ),
+                      std::runtime_error,
+                      "Particle tracker " << particle_tracker_id <<
+                      " has not been registered with the event handler!" );
 
+  return *d_particle_trackers.find( particle_tracker_id )->second;
 }
 
 // Enable support for multiple threads
@@ -105,7 +108,7 @@ void EventHandler::enableThreadSupport( const unsigned num_threads )
 
   while( it != d_particle_history_observers.end() )
   {
-    it->second->enableThreadSupport( num_threads );
+    (*it)->enableThreadSupport( num_threads );
 
     ++it;
   }
@@ -119,8 +122,8 @@ void EventHandler::commitObserverHistoryContributions()
 
   while( it != d_particle_history_observers.end() )
   {
-    if( it->second->hasUncommittedHistoryContribution() )
-      it->second->commitHistoryContribution();
+    if( (*it)->hasUncommittedHistoryContribution() )
+      (*it)->commitHistoryContribution();
 
     ++it;
   }
@@ -145,7 +148,7 @@ void EventHandler::printObserverSummaries( std::ostream& os,
 
   while( it != d_particle_history_observers.end() )
   {
-    os << *(it->second) << std::endl;
+    os << *(*it) << std::endl;
 
     ++it;
   }
@@ -162,7 +165,7 @@ void EventHandler::resetObserverData()
 
   while( it != d_particle_history_observers.end() )
   {
-    it->second->resetData();
+    (*it)->resetData();
 
     ++it;
   }
@@ -180,7 +183,7 @@ void EventHandler::reduceObserverData( const Utility::Communicator& comm,
 
   while( it != d_particle_history_observers.end() )
   {
-    it->second->reduceData( comm, root_process );
+    (*it)->reduceData( comm, root_process );
 
     ++it;
   }

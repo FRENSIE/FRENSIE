@@ -13,6 +13,10 @@
 
 namespace MonteCarlo{
 
+// Default constructor
+ParticleCrossingSurfaceEventLocalDispatcher::ParticleCrossingSurfaceEventLocalDispatcher()
+{ /* ... */ }
+  
 // Constructor
 ParticleCrossingSurfaceEventLocalDispatcher::ParticleCrossingSurfaceEventLocalDispatcher(
                                    const Geometry::Model::EntityId surface_id )
@@ -35,9 +39,9 @@ void ParticleCrossingSurfaceEventLocalDispatcher::dispatchParticleCrossingSurfac
 
   while( it != observer_set.end() )
   {
-    it->second->updateFromParticleCrossingSurfaceEvent( particle,
-							surface_crossing,
-							angle_cosine );
+    (*it)->updateFromParticleCrossingSurfaceEvent( particle,
+                                                   surface_crossing,
+                                                   angle_cosine );
 
     ++it;
   }
@@ -45,6 +49,7 @@ void ParticleCrossingSurfaceEventLocalDispatcher::dispatchParticleCrossingSurfac
 
 } // end MonteCarlo namespace
 
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::ParticleCrossingSurfaceEventLocalDispatcher );
 EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ParticleCrossingSurfaceEventLocalDispatcher );
 
 //---------------------------------------------------------------------------//

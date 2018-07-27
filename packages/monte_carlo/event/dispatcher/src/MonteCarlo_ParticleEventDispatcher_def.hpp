@@ -75,7 +75,7 @@ inline void ParticleEventDispatcher<Dispatcher>::detachObserver(
 
   while( it != d_dispatcher_map.end() )
   {
-    it->second->detachObserver( observer_id );
+    it->second->detachObserver( observer );
 
     ++it;
   }

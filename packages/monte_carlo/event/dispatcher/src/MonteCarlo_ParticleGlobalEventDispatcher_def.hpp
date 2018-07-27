@@ -17,7 +17,7 @@ namespace MonteCarlo{
 // Constructor
 template<typename Observer>
 ParticleGlobalEventDispatcher<Observer>::ParticleGlobalEventDispatcher()
-  : d_observer_map()
+  : d_observer_sets()
 { /* ... */ }
 
 // Attach an observer to the dispatcher
@@ -44,7 +44,7 @@ template<typename Observer>
 void ParticleGlobalEventDispatcher<Observer>::detachObserver(
                                     const std::shared_ptr<Observer>& observer )
 {
-  std::map<int,ObserverSet>::iterator particle_observer_sets_it =
+  typename std::map<int,ObserverSet>::iterator particle_observer_sets_it =
     d_observer_sets.begin();
 
   while( particle_observer_sets_it != d_observer_sets.end() )
@@ -60,7 +60,7 @@ template<typename Observer>
 size_t ParticleGlobalEventDispatcher<Observer>::getNumberOfObservers(
                                        const ParticleType particle_type ) const
 {
-  std::map<int,ObserverSet>::const_iterator
+  typename std::map<int,ObserverSet>::const_iterator
     particle_observer_sets_it = d_observer_sets.find( particle_type );
 
   if( particle_observer_sets_it != d_observer_sets.end() )

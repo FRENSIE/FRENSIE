@@ -13,6 +13,10 @@
 
 namespace MonteCarlo{
 
+// Default constructor
+ParticleSubtrackEndingInCellEventLocalDispatcher::ParticleSubtrackEndingInCellEventLocalDispatcher()
+{ /* ... */ }
+  
 // Constructor
 ParticleSubtrackEndingInCellEventLocalDispatcher::ParticleSubtrackEndingInCellEventLocalDispatcher(
                                       const Geometry::Model::EntityId cell_id )
@@ -35,9 +39,9 @@ void ParticleSubtrackEndingInCellEventLocalDispatcher::dispatchParticleSubtrackE
 
   while( it != observer_set.end() )
   {
-    it->second->updateFromParticleSubtrackEndingInCellEvent( particle,
-                                                             cell_of_subtrack,
-                                                             track_length );
+    (*it)->updateFromParticleSubtrackEndingInCellEvent( particle,
+                                                        cell_of_subtrack,
+                                                        track_length );
 
     ++it;
   }
@@ -45,6 +49,7 @@ void ParticleSubtrackEndingInCellEventLocalDispatcher::dispatchParticleSubtrackE
 
 } // end MonteCarlo namespace
 
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::ParticleSubtrackEndingInCellEventLocalDispatcher );
 EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ParticleSubtrackEndingInCellEventLocalDispatcher );
 
 //---------------------------------------------------------------------------//

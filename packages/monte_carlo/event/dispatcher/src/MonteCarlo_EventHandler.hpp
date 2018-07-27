@@ -25,7 +25,6 @@
 #include "MonteCarlo_MeshTrackLengthFluxEstimator.hpp"
 #include "MonteCarlo_ParticleTracker.hpp"
 #include "MonteCarlo_ParticleState.hpp"
-#include "MonteCarlo_ModuleTraits.hpp"
 #include "Geometry_Model.hpp"
 #include "Utility_Vector.hpp"
 
@@ -108,7 +107,7 @@ public:
 private:
 
   // Struct for registering estimator
-  template<typename Estimator>
+  template<typename EstimatorType>
   struct EstimatorRegistrationHelper
   {
     static void registerEstimator( EventHandler& event_handler,
@@ -159,9 +158,9 @@ private:
      */
     template<typename Observer>
     static void registerGlobalObserverWithTag(
-                               EventHandler& event_handler,
-                               const std::shared_ptr<Observer>& observer,
-                               const std::set<ParticleTypes>& particle_types );
+                                EventHandler& event_handler,
+                                const std::shared_ptr<Observer>& observer,
+                                const std::set<ParticleType>& particle_types );
   };
 
   // Struct for ending iteration through all event tags
@@ -173,7 +172,7 @@ private:
     static void registerObserverWithTag(
                               EventHandler& event_handler,
 			      const std::shared_ptr<Observer>& observer,
-			      const std::vector<uint64_t>& entity_ids );
+			      const std::set<uint64_t>& entity_ids );
 
     //! End registration iteration
     template<typename Observer>
@@ -192,9 +191,9 @@ private:
     //! End global registration iteration
     template<typename Observer>
     static void registerGlobalObserverWithTag(
-                               EventHandler& event_handler,
-                               const std::shared_ptr<Observer>& observer,
-                               const std::set<ParticleTypes>& particle_types );
+                                EventHandler& event_handler,
+                                const std::shared_ptr<Observer>& observer,
+                                const std::set<ParticleType>& particle_types );
   };
 
   // Add the observer registration helper as a friend class
@@ -240,7 +239,7 @@ private:
   friend class boost::serialization::access;
 
   // Typedef for the estimators container
-  typedef std::unordered_map<uint32_t,std::shared<Estimator> > EstimatorIdMap;
+  typedef std::unordered_map<uint32_t,std::shared_ptr<Estimator> > EstimatorIdMap;
 
   // Typedef for the particle tracker container
   typedef std::unordered_map<uint32_t,std::shared_ptr<ParticleTracker> > ParticleTrackerIdMap;

@@ -13,6 +13,10 @@
 
 namespace MonteCarlo{
 
+// Default constructor
+ParticleLeavingCellEventLocalDispatcher::ParticleLeavingCellEventLocalDispatcher()
+{ /* ... */ }
+
 // Constructor
 ParticleLeavingCellEventLocalDispatcher::ParticleLeavingCellEventLocalDispatcher(
                                       const Geometry::Model::EntityId cell_id )
@@ -34,7 +38,7 @@ void ParticleLeavingCellEventLocalDispatcher::dispatchParticleLeavingCellEvent(
 
   while( it != observer_set.end() )
   {
-    it->second->updateFromParticleLeavingCellEvent( particle, cell_leaving );
+    (*it)->updateFromParticleLeavingCellEvent( particle, cell_leaving );
 
     ++it;
   }
@@ -42,7 +46,8 @@ void ParticleLeavingCellEventLocalDispatcher::dispatchParticleLeavingCellEvent(
 
 } // end MonteCarlo namespace
 
-EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleLeavingCellEventLocalDispatcher );
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::ParticleLeavingCellEventLocalDispatcher );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ParticleLeavingCellEventLocalDispatcher );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleLeavingCellEventLocalDispatcher.cpp

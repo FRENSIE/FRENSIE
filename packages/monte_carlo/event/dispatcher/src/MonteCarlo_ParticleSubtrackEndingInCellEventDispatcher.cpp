@@ -32,6 +32,7 @@ void ParticleSubtrackEndingInCellEventDispatcher::dispatchParticleSubtrackEnding
 
 } // end MonteCarlo namespace
 
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcher );
 EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcher );
 
 //---------------------------------------------------------------------------//

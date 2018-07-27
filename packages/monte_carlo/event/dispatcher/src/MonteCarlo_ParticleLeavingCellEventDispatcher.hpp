@@ -51,6 +51,7 @@ private:
 } // end MonteCarlo namespace
 
 BOOST_CLASS_VERSION( MonteCarlo::ParticleLeavingCellEventDispatcher, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ParticleLeavingCellEventDispatcher, MonteCarlo );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleLeavingCellEventDispatcher );
 
 #endif // end MONTE_CARLO_PARTICLE_LEAVING_CELL_EVENT_DISPATCHER_HPP

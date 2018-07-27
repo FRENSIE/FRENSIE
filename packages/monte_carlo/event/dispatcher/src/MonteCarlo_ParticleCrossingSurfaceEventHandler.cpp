@@ -9,7 +9,7 @@
 // FRENSIE Includes
 #include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_ParticleCrossingSurfaceEventHandler.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 
 namespace MonteCarlo{
 
@@ -39,7 +39,7 @@ void ParticleCrossingSurfaceEventHandler::updateObserversFromParticleCrossingSur
 	  const double surface_normal[3] )
 {
   // Make sure the surface normal is valid
-  testPrecondition( Utility::validDirection( surface_normal ) );
+  testPrecondition( Utility::isUnitVector( surface_normal ) );
 
   double angle_cosine = Utility::calculateCosineOfAngleBetweenVectors(
 						       particle.getDirection(),

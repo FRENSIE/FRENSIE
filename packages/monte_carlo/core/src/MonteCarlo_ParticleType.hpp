@@ -31,7 +31,7 @@ enum ParticleType{
   ADJOINT_PHOTON,
   ADJOINT_NEUTRON,
   ADJOINT_ELECTRON,
-  PartileType_END
+  ParticleType_END
 };
 
 //! Convert the geometry particle type enum to a ParticleType enum

@@ -14,6 +14,11 @@
 
 namespace MonteCarlo{
 
+// Default constructor
+template<typename Observer>
+ParticleEventLocalDispatcher<Observer>::ParticleEventLocalDispatcher()
+{ /* ... */ }
+
 // Constructor
 template<typename Observer>
 ParticleEventLocalDispatcher<Observer>::ParticleEventLocalDispatcher(
@@ -46,20 +51,20 @@ template<typename Observer>
 void ParticleEventLocalDispatcher<Observer>::detachObserver(
                                     const std::shared_ptr<Observer>& observer )
 {
-  std::map<int,ObserverSet>::iterator particle_observer_sets_it =
+  typename std::map<int,ObserverSet>::iterator particle_observer_sets_it =
     d_observer_sets.begin();
 
   while( particle_observer_sets_it != d_observer_sets.end() )
   {
     particle_observer_sets_it->second.erase( observer );
 
-    ++particle_observer_map_it;
+    ++particle_observer_sets_it;
   }
 }
 
 // Get the entity id corresponding to this particle event dispatcher
 template<typename Observer>
-inline uint32_t ParticleEventLocalDispatcher<Observer>::getId() const
+inline uint64_t ParticleEventLocalDispatcher<Observer>::getEntityId() const
 {
   return d_entity_id;
 }
@@ -69,7 +74,7 @@ template<typename Observer>
 size_t ParticleEventLocalDispatcher<Observer>::getNumberOfObservers(
                                        const ParticleType particle_type ) const
 {
-  std::map<int,ObserverSet>::const_iterator
+  typename std::map<int,ObserverSet>::const_iterator
     particle_observer_sets_it = d_observer_sets.find( particle_type );
 
   if( particle_observer_sets_it != d_observer_sets.end() )
