@@ -62,6 +62,13 @@ void ParticleEventLocalDispatcher<Observer>::detachObserver(
   }
 }
 
+// Detach all observers
+template<typename Observer>
+void ParticleEventLocalDispatcher<Observer>::detachAllObservers()
+{
+  d_observer_sets.clear();
+}
+
 // Get the entity id corresponding to this particle event dispatcher
 template<typename Observer>
 inline uint64_t ParticleEventLocalDispatcher<Observer>::getEntityId() const
@@ -78,7 +85,7 @@ size_t ParticleEventLocalDispatcher<Observer>::getNumberOfObservers(
     particle_observer_sets_it = d_observer_sets.find( particle_type );
 
   if( particle_observer_sets_it != d_observer_sets.end() )
-    return particle_observer_sets_it->size();
+    return particle_observer_sets_it->second.size();
   else
     return 0;
 }

@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstParticleSubtrackEndingGlobalEventDispatcher.cpp
-//! \author Alex Robinson, Eli Moll
-//! \brief  Particle subtrack ending in cell event dispatcher unit tests
+//! \file   tstParticleGoneGlobalEventDispatcher.cpp
+//! \author Alex Robinson
+//! \brief  Particle gone global event dispatcher unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -12,7 +12,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleTracker.hpp"
-#include "MonteCarlo_ParticleSubtrackEndingGlobalEventDispatcher.hpp"
+#include "MonteCarlo_ParticleGoneGlobalEventDispatcher.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ElectronState.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
@@ -33,11 +33,10 @@ std::shared_ptr<MonteCarlo::ParticleTracker> tracker;
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that an observer can be managed
-FRENSIE_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher,
-		   manage_observers )
+FRENSIE_UNIT_TEST( ParticleGoneGlobalEventDispatcher, manage_observers )
 {
-  std::shared_ptr<MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher>
-    dispatcher( new MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher );
+  std::shared_ptr<MonteCarlo::ParticleGoneGlobalEventDispatcher>
+    dispatcher( new MonteCarlo::ParticleGoneGlobalEventDispatcher );
 
   dispatcher->attachObserver( tracker );
 
@@ -73,12 +72,12 @@ FRENSIE_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the dispatcher can update from the global ending event
-FRENSIE_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher,
-                   dispatchParticleSubtrackEndingGlobalEvent )
+// Check that the dispatcher can updated from the global gone event
+FRENSIE_UNIT_TEST( ParticleGoneGlobalEventDispatcher,
+                   dispatchParticleGoneGlobalEvent )
 {
-  std::shared_ptr<MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher>
-    dispatcher( new MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher );
+  std::shared_ptr<MonteCarlo::ParticleGoneGlobalEventDispatcher>
+    dispatcher( new MonteCarlo::ParticleGoneGlobalEventDispatcher );
 
   dispatcher->attachObserver( tracker );
 
@@ -94,13 +93,13 @@ FRENSIE_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher,
     double start_point[3] = { 1.0, 1.0, 1.0 };
     double end_point[3] = { 2.0, 1.0, 1.0 };
 
-    dispatcher->dispatchParticleSubtrackEndingGlobalEvent( particle,
-                                                           start_point,
-                                                           end_point );
-
-    particle.setAsGone();
+    tracker->updateFromGlobalParticleSubtrackEndingEvent( particle,
+                                                          start_point,
+                                                          end_point );
     
-    tracker->updateFromGlobalParticleGoneEvent( particle );
+    particle.setAsGone();
+
+    dispatcher->dispatchParticleGoneGlobalEvent( particle );
     
     tracker->commitHistoryContribution();
 
@@ -162,13 +161,13 @@ FRENSIE_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher,
     double start_point[3] = { 1.0, 1.0, 1.0 };
     double end_point[3] = { 2.0, 1.0, 1.0 };
 
-    dispatcher->dispatchParticleSubtrackEndingGlobalEvent( particle,
-                                                           start_point,
-                                                           end_point );
-
-    particle.setAsGone();
+    tracker->updateFromGlobalParticleSubtrackEndingEvent( particle,
+                                                          start_point,
+                                                          end_point );
     
-    tracker->updateFromGlobalParticleGoneEvent( particle );
+    particle.setAsGone();
+
+    dispatcher->dispatchParticleGoneGlobalEvent( particle );
     
     tracker->commitHistoryContribution();
 
@@ -222,7 +221,7 @@ FRENSIE_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher,
 
 //---------------------------------------------------------------------------//
 // Check that an event dispatcher can be archived
-FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleSubtrackEndingGlobalEventDispatcher,
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleGoneGlobalEventDispatcher,
                                    archive,
                                    TestArchives )
 {
@@ -232,7 +231,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleSubtrackEndingGlobalEventDispatcher,
   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
 
-  std::string archive_base_name( "test_particle_subtrack_ending_global_event_dispatcher" );
+  std::string archive_base_name( "test_particle_gone_global_event_dispatcher" );
   std::ostringstream archive_ostream;
 
   {
@@ -243,8 +242,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleSubtrackEndingGlobalEventDispatcher,
     std::shared_ptr<MonteCarlo::ParticleTracker> local_tracker(
                              new MonteCarlo::ParticleTracker( 1, {0, 2, 4} ) );
     
-    std::shared_ptr<MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher>
-      dispatcher( new MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher );
+    std::shared_ptr<MonteCarlo::ParticleGoneGlobalEventDispatcher>
+      dispatcher( new MonteCarlo::ParticleGoneGlobalEventDispatcher );
 
     dispatcher->attachObserver( local_tracker );
 
@@ -261,8 +260,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleSubtrackEndingGlobalEventDispatcher,
   createIArchive( archive_istream, iarchive );
 
   std::shared_ptr<MonteCarlo::ParticleTracker> local_tracker;
-  std::shared_ptr<MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher>
-    dispatcher;
+  std::shared_ptr<MonteCarlo::ParticleGoneGlobalEventDispatcher> dispatcher;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(local_tracker) );
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(dispatcher) );
@@ -287,19 +285,19 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleSubtrackEndingGlobalEventDispatcher,
     double start_point[3] = { 1.0, 1.0, 1.0 };
     double end_point[3] = { 2.0, 1.0, 1.0 };
 
-    dispatcher->dispatchParticleSubtrackEndingGlobalEvent( particle,
-                                                           start_point,
-                                                           end_point );
-
+    tracker->updateFromGlobalParticleSubtrackEndingEvent( particle,
+                                                          start_point,
+                                                          end_point );
+    
     particle.setAsGone();
+
+    dispatcher->dispatchParticleGoneGlobalEvent( particle );
     
-    local_tracker->updateFromGlobalParticleGoneEvent( particle );
-    
-    local_tracker->commitHistoryContribution();
+    tracker->commitHistoryContribution();
 
     MonteCarlo::ParticleTracker::OverallHistoryMap history_map;
 
-    local_tracker->getHistoryData( history_map );
+    tracker->getHistoryData( history_map );
 
     FRENSIE_REQUIRE( history_map.find( 0 ) != history_map.end() );
 
@@ -357,5 +355,5 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstParticleSubtrackEndingGlobalEventDispatcher.cpp
+// end tstParticleGoneGlobalEventDispatcher.cpp
 //---------------------------------------------------------------------------//

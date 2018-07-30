@@ -14,188 +14,488 @@
 #include "MonteCarlo_CellCollisionFluxEstimator.hpp"
 #include "MonteCarlo_ParticleCollidingInCellEventDispatcher.hpp"
 #include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_ElectronState.hpp"
 #include "Geometry_Model.hpp"
-#include "Utility_UnitTestHarness.hpp"
-#include "Utility_Vector.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+typedef TestArchiveHelper::TestArchives TestArchives;
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-std::shared_ptr<MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightMultiplier> >
-    estimator_1;
+std::shared_ptr<MonteCarlo::WeightMultipliedCellCollisionFluxEstimator>
+estimator_1;
 
-std::shared_ptr<MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
-    estimator_2;
-
-std::shared_ptr<MonteCarlo::ParticleCollidingInCellEventDispatcher>
-  dispatcher( new MonteCarlo::ParticleCollidingInCellEventDispatcher );
-
-//---------------------------------------------------------------------------//
-// Testing Functions.
-//---------------------------------------------------------------------------//
-// Initialize the estimator
-template<typename CellCollisionFluxEstimator>
-void initializeCellCollisionFluxEstimator(
-			  const unsigned estimator_id,
-			  std::shared_ptr<CellCollisionFluxEstimator>& estimator )
-{
-  // Set the entity ids
-  std::shared_ptr<Geometry::ModuleTraits::EntityId>
-    cell_ids( 2 );
-  cell_ids[0] = 0;
-  cell_ids[1] = 1;
-
-  std::shared_ptr<double> cell_volumes( 2 );
-  cell_volumes[0] = 1.0;
-  cell_volumes[1] = 2.0;
-
-  // Set the estimator multiplier
-  double estimator_multiplier = 10.0;
-
-  estimator.reset( new CellCollisionFluxEstimator( estimator_id,
-						   estimator_multiplier,
-						   cell_ids,
-						   cell_volumes ) );
-
-  std::shared_ptr<MonteCarlo::ParticleType> particle_types( 1 );
-  particle_types[0] = MonteCarlo::PHOTON;
-
-  estimator->setParticleTypes( particle_types );
-}
+std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedCellCollisionFluxEstimator>
+estimator_2;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the correct event local dispatchers can be returned
-TEUCHOS_UNIT_TEST( ParticleCollidingInCellEventDispatcher,
+FRENSIE_UNIT_TEST( ParticleCollidingInCellEventDispatcher,
                    getLocalDispatcher )
 {
-  TEST_EQUALITY_CONST( dispatcher->getLocalDispatcher( 0 ).getId(), 0 );
+  std::shared_ptr<MonteCarlo::ParticleCollidingInCellEventDispatcher>
+    dispatcher( new MonteCarlo::ParticleCollidingInCellEventDispatcher );
+  
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getEntityId(), 0 );
 
-  TEST_EQUALITY_CONST( dispatcher->getLocalDispatcher( 1 ).getId(), 1 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getEntityId(), 1 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that observers can be attached to dispatchers
-TEUCHOS_UNIT_TEST( ParticleCollidingInCellEventDispatcher, attachObserver )
+// Check that observers can be managed
+FRENSIE_UNIT_TEST( ParticleCollidingInCellEventDispatcher, manage_observers )
 {
-  initializeCellCollisionFluxEstimator( 0u, estimator_1 );
-  initializeCellCollisionFluxEstimator( 1u, estimator_2 );
+  std::shared_ptr<MonteCarlo::ParticleCollidingInCellEventDispatcher>
+    dispatcher( new MonteCarlo::ParticleCollidingInCellEventDispatcher );
 
-  std::shared_ptr<MonteCarlo::ParticleCollidingInCellEventObserver> observer_1 =
-    std::dynamic_pointer_cast<MonteCarlo::ParticleCollidingInCellEventObserver>(
-								 estimator_1 );
-  std::shared_ptr<MonteCarlo::ParticleCollidingInCellEventObserver> observer_2 =
-    std::dynamic_pointer_cast<MonteCarlo::ParticleCollidingInCellEventObserver>(
-								 estimator_2 );
+  dispatcher->attachObserver( 0, estimator_1 );
 
-  dispatcher->attachObserver( 0, estimator_1->getId(), observer_1 );
+  FRENSIE_CHECK( estimator_1.use_count() > 1 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::PHOTON ), 1 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 1 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::POSITRON ), 1 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::NEUTRON ), 1 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::PHOTON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::POSITRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::NEUTRON ), 0 );
 
-  dispatcher->attachObserver( 1, estimator_1->getId(), observer_1 );
+  dispatcher->detachAllObservers();
 
-  dispatcher->attachObserver( 0, estimator_2->getId(), observer_2 );
+  FRENSIE_CHECK_EQUAL( estimator_1.use_count(), 1 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::PHOTON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::POSITRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::NEUTRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::PHOTON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::POSITRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::NEUTRON ), 0 );
 
-  dispatcher->attachObserver( 1, estimator_2->getId(), observer_2 );
+  dispatcher->attachObserver( 0, {MonteCarlo::PHOTON}, estimator_1 );
 
-  observer_1.reset();
-  observer_2.reset();
+  FRENSIE_CHECK_EQUAL( estimator_1.use_count(), 2 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::PHOTON ), 1 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::POSITRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::NEUTRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::PHOTON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::POSITRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::NEUTRON ), 0 );
 
-  TEST_EQUALITY_CONST( estimator_1.use_count(), 3 );
-  TEST_EQUALITY_CONST( estimator_2.use_count(), 3 );
+  dispatcher->attachObserver( 0, estimator_1 );
+  dispatcher->attachObserver( 1, estimator_1 );
 
-  TEST_EQUALITY_CONST( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers(), 2 );
+  FRENSIE_CHECK( estimator_1.use_count() > 1 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::PHOTON ), 1 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 1 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::POSITRON ), 1 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::NEUTRON ), 1 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::PHOTON ), 1 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 1 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::POSITRON ), 1 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::NEUTRON ), 1 );
 
-  TEST_EQUALITY_CONST( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers(), 2 );
+  dispatcher->detachObserver( 0, estimator_1 );
+
+  FRENSIE_CHECK( estimator_1.use_count() > 1 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::PHOTON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::POSITRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::NEUTRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::PHOTON ), 1 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 1 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::POSITRON ), 1 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::NEUTRON ), 1 );
+
+  dispatcher->detachObserver( 1, estimator_1 );
+
+  FRENSIE_CHECK_EQUAL( estimator_1.use_count(), 1 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::PHOTON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::POSITRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::NEUTRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::PHOTON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::POSITRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::NEUTRON ), 0 );
+
+  dispatcher->attachObserver( 0, estimator_1 );
+  dispatcher->attachObserver( 1, estimator_1 );
+
+  dispatcher->detachObserver( estimator_1 );
+
+  FRENSIE_CHECK_EQUAL( estimator_1.use_count(), 1 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::PHOTON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::POSITRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::NEUTRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::PHOTON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::POSITRON ), 0 );
+  FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::NEUTRON ), 0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a collision event can be dispatched
-TEUCHOS_UNIT_TEST( ParticleCollidingInCellEventDispatcher,
-		   dispatchParticleCollidingInCellEvent )
+FRENSIE_UNIT_TEST( ParticleCollidingInCellEventDispatcher,
+                   dispatchParticleCollidingInCellEvent )
 {
-  MonteCarlo::PhotonState particle( 0ull );
-  particle.setWeight( 1.0 );
-  particle.setEnergy( 1.0 );
+  std::shared_ptr<MonteCarlo::ParticleCollidingInCellEventDispatcher>
+    dispatcher( new MonteCarlo::ParticleCollidingInCellEventDispatcher );
 
-  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  dispatcher->attachObserver( 0, estimator_1->getParticleTypes(), estimator_1 );
+  dispatcher->attachObserver( 0, estimator_2->getParticleTypes(), estimator_2 );
 
-  dispatcher->dispatchParticleCollidingInCellEvent( particle, 0, 1.0 );
+  dispatcher->attachObserver( 1, estimator_1->getParticleTypes(), estimator_1 );
+  dispatcher->attachObserver( 1, estimator_2->getParticleTypes(), estimator_2 );
 
-  TEST_ASSERT( estimator_1->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( estimator_2->hasUncommittedHistoryContribution() );
+  {
+    MonteCarlo::PhotonState photon( 0ull );
+    photon.setWeight( 1.0 );
+    photon.setEnergy( 1.0 );
+    
+    FRENSIE_CHECK( !estimator_1->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_2->hasUncommittedHistoryContribution() );
+    
+    dispatcher->dispatchParticleCollidingInCellEvent( photon, 0, 1.0 );
+    
+    FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_2->hasUncommittedHistoryContribution() );
 
-  estimator_1->commitHistoryContribution();
-  estimator_2->commitHistoryContribution();
+    MonteCarlo::ElectronState electron( 0ull );
+    electron.setWeight( 1.0 );
+    electron.setEnergy( 1.0 );
 
-  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+    dispatcher->dispatchParticleCollidingInCellEvent( electron, 0, 1.0 );
 
-  dispatcher->dispatchParticleCollidingInCellEvent( particle, 1, 1.0 );
+    FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_2->hasUncommittedHistoryContribution() );
 
-  TEST_ASSERT( estimator_1->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( estimator_2->hasUncommittedHistoryContribution() );
+    estimator_1->commitHistoryContribution();
+    estimator_2->commitHistoryContribution();
+
+    Utility::ArrayView<const double> first_moments, second_moments;
+    first_moments = estimator_1->getEntityBinDataFirstMoments( 0 );
+    second_moments = estimator_1->getEntityBinDataSecondMoments( 0 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = estimator_1->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_1->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = estimator_2->getEntityBinDataFirstMoments( 0 );
+    second_moments = estimator_2->getEntityBinDataSecondMoments( 0 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = estimator_2->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_2->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  }
+
+  {
+    MonteCarlo::PhotonState photon( 0ull );
+    photon.setWeight( 1.0 );
+    photon.setEnergy( 1.0 );
+    
+    FRENSIE_CHECK( !estimator_1->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_2->hasUncommittedHistoryContribution() );
+    
+    dispatcher->dispatchParticleCollidingInCellEvent( photon, 1, 1.0 );
+    
+    FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_2->hasUncommittedHistoryContribution() );
+
+    MonteCarlo::ElectronState electron( 0ull );
+    electron.setWeight( 1.0 );
+    electron.setEnergy( 1.0 );
+
+    dispatcher->dispatchParticleCollidingInCellEvent( electron, 1, 1.0 );
+
+    FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_2->hasUncommittedHistoryContribution() );
+
+    estimator_1->commitHistoryContribution();
+    estimator_2->commitHistoryContribution();
+
+    Utility::ArrayView<const double> first_moments, second_moments;
+    first_moments = estimator_1->getEntityBinDataFirstMoments( 0 );
+    second_moments = estimator_1->getEntityBinDataSecondMoments( 0 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = estimator_1->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_1->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = estimator_2->getEntityBinDataFirstMoments( 0 );
+    second_moments = estimator_2->getEntityBinDataSecondMoments( 0 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = estimator_2->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_2->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+  }
 }
 
 //---------------------------------------------------------------------------//
-// Check that an observer can be detached from the dispatcher
-TEUCHOS_UNIT_TEST( ParticleCollidingInCellEventDispatcher,
-		   detachObserver_dispatcher )
+// Check that an event dispatcher can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleCollidingInCellEventDispatcher,
+                                   archive,
+                                   TestArchives )
 {
-  dispatcher->detachObserver( 0, 0 );
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
 
-  TEST_EQUALITY_CONST( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers(), 1 );
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
 
-  dispatcher->detachObserver( 1, 0 );
+  std::string archive_base_name( "test_particle_colliding_in_cell_event_dispatcher" );
+  std::ostringstream archive_ostream;
 
-  TEST_EQUALITY_CONST( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers(), 1 );
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    std::shared_ptr<MonteCarlo::WeightMultipliedCellCollisionFluxEstimator>
+      local_estimator_1;
+
+    std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedCellCollisionFluxEstimator>
+      local_estimator_2;
+    
+    {
+      std::vector<Geometry::Model::EntityId>
+        cell_ids( 2 );
+      cell_ids[0] = 0;
+      cell_ids[1] = 1;
+
+      std::vector<double> cell_volumes( 2 );
+      cell_volumes[0] = 1.0;
+      cell_volumes[1] = 2.0;
+
+      local_estimator_1.reset( new MonteCarlo::WeightMultipliedCellCollisionFluxEstimator(
+                                                              10, 
+                                                              1.0,
+                                                              cell_ids,
+                                                              cell_volumes ) );
+
+      local_estimator_1->setParticleTypes( std::vector<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
+
+      local_estimator_2.reset( new MonteCarlo::WeightAndEnergyMultipliedCellCollisionFluxEstimator(
+                                                              11,
+                                                              10.0,
+                                                              cell_ids,
+                                                              cell_volumes ) );
+
+      local_estimator_2->setParticleTypes( std::vector<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
+    }
+
+    std::shared_ptr<MonteCarlo::ParticleCollidingInCellEventDispatcher>
+      dispatcher( new MonteCarlo::ParticleCollidingInCellEventDispatcher );
+
+    dispatcher->attachObserver( 0, local_estimator_1->getParticleTypes(), local_estimator_1 );
+    dispatcher->attachObserver( 0, local_estimator_2->getParticleTypes(), local_estimator_2 );
+
+    dispatcher->attachObserver( 1, local_estimator_1->getParticleTypes(), local_estimator_1 );
+    dispatcher->attachObserver( 1, local_estimator_2->getParticleTypes(), local_estimator_2 );
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(local_estimator_1) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(local_estimator_2) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(dispatcher) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  std::shared_ptr<MonteCarlo::WeightMultipliedCellCollisionFluxEstimator>
+    local_estimator_1;
+
+  std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedCellCollisionFluxEstimator>
+    local_estimator_2;
+
+  std::shared_ptr<MonteCarlo::ParticleCollidingInCellEventDispatcher>
+    dispatcher;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(local_estimator_1) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(local_estimator_2) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(dispatcher) );
+
+  iarchive.reset();
+
+  {
+    FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::PHOTON ), 1 );
+    FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 1 );
+
+    MonteCarlo::PhotonState photon( 0ull );
+    photon.setWeight( 1.0 );
+    photon.setEnergy( 1.0 );
+    
+    FRENSIE_CHECK( !local_estimator_1->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !local_estimator_2->hasUncommittedHistoryContribution() );
+    
+    dispatcher->dispatchParticleCollidingInCellEvent( photon, 0, 1.0 );
+    
+    FRENSIE_CHECK( local_estimator_1->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !local_estimator_2->hasUncommittedHistoryContribution() );
+
+    MonteCarlo::ElectronState electron( 0ull );
+    electron.setWeight( 1.0 );
+    electron.setEnergy( 1.0 );
+
+    dispatcher->dispatchParticleCollidingInCellEvent( electron, 0, 1.0 );
+
+    FRENSIE_CHECK( local_estimator_1->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( local_estimator_2->hasUncommittedHistoryContribution() );
+
+    local_estimator_1->commitHistoryContribution();
+    local_estimator_2->commitHistoryContribution();
+
+    Utility::ArrayView<const double> first_moments, second_moments;
+    first_moments = local_estimator_1->getEntityBinDataFirstMoments( 0 );
+    second_moments = local_estimator_1->getEntityBinDataSecondMoments( 0 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = local_estimator_1->getEntityBinDataFirstMoments( 1 );
+    second_moments = local_estimator_1->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = local_estimator_2->getEntityBinDataFirstMoments( 0 );
+    second_moments = local_estimator_2->getEntityBinDataSecondMoments( 0 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = local_estimator_2->getEntityBinDataFirstMoments( 1 );
+    second_moments = local_estimator_2->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  }
+
+  {
+    FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::PHOTON ), 1 );
+    FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 1 );
+
+    MonteCarlo::PhotonState photon( 0ull );
+    photon.setWeight( 1.0 );
+    photon.setEnergy( 1.0 );
+    
+    FRENSIE_CHECK( !local_estimator_1->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !local_estimator_2->hasUncommittedHistoryContribution() );
+    
+    dispatcher->dispatchParticleCollidingInCellEvent( photon, 1, 1.0 );
+    
+    FRENSIE_CHECK( local_estimator_1->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !local_estimator_2->hasUncommittedHistoryContribution() );
+
+    MonteCarlo::ElectronState electron( 0ull );
+    electron.setWeight( 1.0 );
+    electron.setEnergy( 1.0 );
+
+    dispatcher->dispatchParticleCollidingInCellEvent( electron, 1, 1.0 );
+
+    FRENSIE_CHECK( local_estimator_1->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( local_estimator_2->hasUncommittedHistoryContribution() );
+
+    local_estimator_1->commitHistoryContribution();
+    local_estimator_2->commitHistoryContribution();
+
+    Utility::ArrayView<const double> first_moments, second_moments;
+    first_moments = local_estimator_1->getEntityBinDataFirstMoments( 0 );
+    second_moments = local_estimator_1->getEntityBinDataSecondMoments( 0 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = local_estimator_1->getEntityBinDataFirstMoments( 1 );
+    second_moments = local_estimator_1->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = local_estimator_2->getEntityBinDataFirstMoments( 0 );
+    second_moments = local_estimator_2->getEntityBinDataSecondMoments( 0 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = local_estimator_2->getEntityBinDataFirstMoments( 1 );
+    second_moments = local_estimator_2->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+  }
 }
 
 //---------------------------------------------------------------------------//
-// Check that an observer can be detached from all dispatchers
-TEUCHOS_UNIT_TEST( ParticleCollidingInCellEventDispatcher,
-		   detachObserver_all_dispatchers )
-{
-  dispatcher->detachObserver( 1 );
-
-  TEST_EQUALITY_CONST( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers(), 0 );
-
-  TEST_EQUALITY_CONST( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers(), 0 );
-}
-
+// Custom setup
 //---------------------------------------------------------------------------//
-// Check that an all observers can be detached from all dispatchers
-TEUCHOS_UNIT_TEST( ParticleCollidingInCellEventDispatcher,
-		   detachAllObservers )
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  std::shared_ptr<MonteCarlo::ParticleCollidingInCellEventObserver> observer_1 =
-    std::dynamic_pointer_cast<MonteCarlo::ParticleCollidingInCellEventObserver>(
-								 estimator_1 );
-  std::shared_ptr<MonteCarlo::ParticleCollidingInCellEventObserver> observer_2 =
-    std::dynamic_pointer_cast<MonteCarlo::ParticleCollidingInCellEventObserver>(
-								 estimator_2 );
+  // Set the entity ids
+  std::vector<Geometry::Model::EntityId>
+    cell_ids( 2 );
+  cell_ids[0] = 0;
+  cell_ids[1] = 1;
 
-  dispatcher->attachObserver( 0, estimator_1->getId(), observer_1 );
+  std::vector<double> cell_volumes( 2 );
+  cell_volumes[0] = 1.0;
+  cell_volumes[1] = 2.0;
 
-  dispatcher->attachObserver( 1, estimator_1->getId(), observer_1 );
+  estimator_1.reset( new MonteCarlo::WeightMultipliedCellCollisionFluxEstimator(
+                                                              0, 
+                                                              1.0,
+                                                              cell_ids,
+                                                              cell_volumes ) );
 
-  dispatcher->attachObserver( 0, estimator_2->getId(), observer_2 );
+  estimator_1->setParticleTypes( std::vector<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
 
-  dispatcher->attachObserver( 1, estimator_2->getId(), observer_2 );
+  estimator_2.reset( new MonteCarlo::WeightAndEnergyMultipliedCellCollisionFluxEstimator(
+                                                              1,
+                                                              10.0,
+                                                              cell_ids,
+                                                              cell_volumes ) );
 
-  observer_1.reset();
-  observer_2.reset();
-
-  TEST_EQUALITY_CONST( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers(), 2 );
-
-  TEST_EQUALITY_CONST( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers(), 2 );
-
-  dispatcher->detachAllObservers();
-
-  TEST_EQUALITY_CONST( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers(), 0 );
-
-  TEST_EQUALITY_CONST( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers(), 0 );
+  estimator_2->setParticleTypes( std::vector<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstParticleCollidingInCellEventDispatcher.cpp
