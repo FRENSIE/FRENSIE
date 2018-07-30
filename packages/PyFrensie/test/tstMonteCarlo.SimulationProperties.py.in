@@ -95,24 +95,6 @@ class SimulationPropertiesTestCase(unittest.TestCase):
                           MonteCarlo.SIMPLIFIED_UNION )
         self.assertEqual( properties.getElasticCutoffAngleCosine(), 1.0 )
 
-    # def testGetMinParticleEnergy(self):
-    #     "*Test MonteCarlo.SimulationProperties getMinParticleEnergy"
-    #     properties = MonteCarlo.SimulationProperties()
-
-    #     self.assertEqual( properties.getMinParticleEnergy(MonteCarlo.NeutronState), 1e-11 )
-    #     self.assertEqual( properties.getMinParticleEnergy(MonteCarlo.PhotonState), 1e-3 )
-    #     self.assertEqual( properties.getMinParticleEnergy(MonteCarlo.AdjointPhotonState), 1e-3 )
-    #     self.assertEqual( properties.getMinParticleEnergy(MonteCarlo.ElectronState), 1.5e-5 )
-
-    # def testGetMaxParticleEnergy(self):
-    #     "*Test MonteCarlo.SimulationProperties getMaxParticleEnergy"
-    #     properties = MonteCarlo.SimulationProperties()
-
-    #     self.assertEqual( properties.getMaxParticleEnergy(MonteCarlo.NeutronState), 20.0 )
-    #     self.assertEqual( properties.getMaxParticleEnergy(MonteCarlo.PhotonState), 20.0 )
-    #     self.assertEqual( properties.getMaxParticleEnergy(MonteCarlo.AdjointPhotonState), 20.0 )
-    #     self.assertEqual( properties.getMaxParticleEnergy(MonteCarlo.ElectronState), 20.0 )
-
     def testSetAtomicRelaxationMode(self):
         "*Test MonteCarlo.SimulationProperties setAtomicRelaxationMode"
         properties = MonteCarlo.SimulationProperties()

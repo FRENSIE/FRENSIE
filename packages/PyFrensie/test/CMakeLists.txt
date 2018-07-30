@@ -226,6 +226,14 @@ IF(FRENSIE_ENABLE_DAGMC OR FRENSIE_ENABLE_ROOT)
   ENDIF()
 ENDIF()
 
+# Add the MonteCarlo.ParticleState unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.ParticleState)
+ADD_TEST(PyFrensie.MonteCarlo.ParticleState_test ${PYTHON_EXECUTABLE} tstMonteCarlo.ParticleState.py)
+
+# Add the MonteCarlo.ParticleBank unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.ParticleBank)
+ADD_TEST(PyFrensie.MonteCarlo.ParticleBank_test ${PYTHON_EXECUTABLE} tstMonteCarlo.ParticleBank.py)
+
 # Add the MonteCarlo.SimulationGeneralProperties unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.SimulationGeneralProperties)
 ADD_TEST(PyFrensie.MonteCarlo.SimulationGeneralProperties_test ${PYTHON_EXECUTABLE} tstMonteCarlo.SimulationGeneralProperties.py)

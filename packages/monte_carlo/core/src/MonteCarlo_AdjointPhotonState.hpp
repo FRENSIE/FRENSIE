@@ -89,8 +89,8 @@ private:
 
 } // end MonteCarlo namespace
 
-BOOST_CLASS_VERSION( MonteCarlo::AdjointPhotonState, 0 );
-BOOST_CLASS_EXPORT_KEY2( MonteCarlo::AdjointPhotonState, "AdjointPhotonState" );
+BOOST_SERIALIZATION_CLASS_VERSION( AdjointPhotonState, MonteCarlo, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( AdjointPhotonState, MonteCarlo );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, AdjointPhotonState );
 TYPE_NAME_TRAITS_QUICK_DECL2( AdjointPhotonState, MonteCarlo );
 

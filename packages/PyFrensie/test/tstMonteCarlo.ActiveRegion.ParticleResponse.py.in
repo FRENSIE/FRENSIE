@@ -60,13 +60,13 @@ class ParticleResponseFunctionArithmeticOperatorsTestCase(unittest.TestCase):
         print total_response_function.description()
         self.assertTrue( total_response_function.description().find( '+' ) )
 
-#         photon = MonteCarlo.PhotonState( 1 )
-#         photon.setEnergy( 1.0 )
-#         photon.setTime( 2.0 )
+        photon = MonteCarlo.PhotonState( 1 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 2.0 )
 
-#         self.assertAlmostEqual( total_response_function.evaluate( photon ),
-#                                 0.503214724408055,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( total_response_function.evaluate( photon ),
+                                0.503214724408055,
+                                delta=1e-15 )
 
     def testSubtraction_operator(self):
         "*Test MonteCarlo.ActiveRegion.ParticleResponse subtraction_operator"
@@ -86,13 +86,13 @@ class ParticleResponseFunctionArithmeticOperatorsTestCase(unittest.TestCase):
         self.assertTrue( total_response_function.isSpatiallyUniform() )
         self.assertTrue( total_response_function.description().find( '-' ) )
 
-#         photon = MonteCarlo.PhotonState( 1 )
-#         photon.setEnergy( 1.0 )
-#         photon.setTime( 2.0 )
+        photon = MonteCarlo.PhotonState( 1 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 2.0 )
 
-#         self.assertAlmostEqual( total_response_function.evaluate( photon ),
-#                                 0.23254415793482963,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( total_response_function.evaluate( photon ),
+                                0.23254415793482963,
+                                delta=1e-15 )
 
     def testMultiplication_operator(self):
         "*Test MonteCarlo.ActiveRegion.ParticleResponse multiplication_operator"
@@ -113,13 +113,13 @@ class ParticleResponseFunctionArithmeticOperatorsTestCase(unittest.TestCase):
         self.assertTrue( total_response_function.isSpatiallyUniform() )
         self.assertTrue( total_response_function.description().find( '*' ) )
 
-#         photon = MonteCarlo.PhotonState( 1 )
-#         photon.setEnergy( 1.0 )
-#         photon.setTime( 2.0 )
+        photon = MonteCarlo.PhotonState( 1 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 2.0 )
 
-#         self.assertAlmostEqual( total_response_function.evaluate( photon ),
-#                                 0.04978706836786395,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( total_response_function.evaluate( photon ),
+                                0.04978706836786395,
+                                delta=1e-15 )
 
         # Check scalar multiplication
         # total_response_function = 2.0 * energy_response_function
@@ -132,9 +132,9 @@ class ParticleResponseFunctionArithmeticOperatorsTestCase(unittest.TestCase):
 
         self.assertTrue( total_response_function.isSpatiallyUniform() )
         self.assertTrue( total_response_function.description().find( '*' ) )
-#         self.assertAlmostEqual( total_response_function.evaluate( photon ),
-#                                 0.7357588823428847,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( total_response_function.evaluate( photon ),
+                                0.7357588823428847,
+                                delta=1e-15 )
 
         total_response_function = ActiveRegion.multiply(energy_response_function, 0.5)
 
@@ -145,9 +145,9 @@ class ParticleResponseFunctionArithmeticOperatorsTestCase(unittest.TestCase):
 
         self.assertTrue( total_response_function.isSpatiallyUniform() )
         self.assertTrue( total_response_function.description().find( '*' ) )
-#         self.assertAlmostEqual( total_response_function.evaluate( photon ),
-#                                 0.18393972058572117,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( total_response_function.evaluate( photon ),
+                                0.18393972058572117,
+                                delta=1e-15 )
 
     def testDivision_operator(self):
         "*Test MonteCarlo.ActiveRegion.ParticleResponse division_operator"
@@ -164,13 +164,13 @@ class ParticleResponseFunctionArithmeticOperatorsTestCase(unittest.TestCase):
         self.assertTrue( total_response_function.isSpatiallyUniform() )
         self.assertTrue( total_response_function.description().find( '/' ) )
 
-#         photon = MonteCarlo.PhotonState( 1 )
-#         photon.setEnergy( 1.0 )
-#         photon.setTime( 2.0 )
+        photon = MonteCarlo.PhotonState( 1 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 2.0 )
 
-#         self.assertAlmostEqual( total_response_function.evaluate( photon ),
-#                                 2.718281828459045,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( total_response_function.evaluate( photon ),
+                                2.718281828459045,
+                                delta=1e-15 )
 
         # Check scalar division
         total_response_function = ActiveRegion.divide(2.0, energy_response_function)
@@ -178,13 +178,13 @@ class ParticleResponseFunctionArithmeticOperatorsTestCase(unittest.TestCase):
         self.assertTrue( total_response_function.isSpatiallyUniform() )
         self.assertTrue( total_response_function.description().find( '/' ) )
 
-        # total_response_function = 2.0 / energy_response_function
+        # total_response_function = ActiveRegion.divide(2.0 , energy_response_function)
 
         # self.assertTrue( total_response_function.isSpatiallyUniform() )
         # self.assertTrue( total_response_function.description().find( '/' ) )
-#         self.assertAlmostEqual( total_response_function.evaluate( photon ),
-#                                 5.43656365691809,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( total_response_function.evaluate( photon ),
+                                5.43656365691809,
+                                delta=1e-15 )
 
         total_response_function = ActiveRegion.divide(energy_response_function, 2.0)
 
@@ -195,9 +195,9 @@ class ParticleResponseFunctionArithmeticOperatorsTestCase(unittest.TestCase):
 
         self.assertTrue( total_response_function.isSpatiallyUniform() )
         self.assertTrue( total_response_function.description().find( '/' ) )
-#         self.assertAlmostEqual( total_response_function.evaluate( photon ),
-#                                 0.18393972058572117,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( total_response_function.evaluate( photon ),
+                                0.18393972058572117,
+                                delta=1e-15 )
 
     def testMultiple_operators(self):
         "*Test MonteCarlo.ActiveRegion.ParticleResponse multiple_operators"
@@ -216,13 +216,13 @@ class ParticleResponseFunctionArithmeticOperatorsTestCase(unittest.TestCase):
 
         self.assertTrue( total_response_function.isSpatiallyUniform() )
 
-#         photon = MonteCarlo.PhotonState( 1 )
-#         photon.setEnergy( 1.0 )
-#         photon.setTime( 2.0 )
+        photon = MonteCarlo.PhotonState( 1 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 2.0 )
 
-#         self.assertAlmostEqual( (*total_response_function)( photon ),
-#                                 0.7468825795439807,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( total_response_function.evaluate( photon ),
+                                0.7468825795439807,
+                                delta=1e-15 )
 
 
 #-----------------------------------------------------------------------------#
@@ -286,16 +286,16 @@ class FullPhaseSpaceParticleResponseFunctionTestCase(unittest.TestCase):
 
         response_function = ActiveRegion.FullPhaseSpaceParticleResponseFunction( self.particle_distribution )
 
-#         photon = MonteCarlo.PhotonState( 1 )
-#         photon.setPosition( 1.0, 2.0, 3.0 )
-#         photon.setDirection( 0.2672612419124244, 0.5345224838248488, 0.8017837257372732 )
-#         photon.setEnergy( 4.0 )
-#         photon.setTime( 5.0 )
-#         photon.setWeight( 0.5 )
+        photon = MonteCarlo.PhotonState( 1 )
+        photon.setPosition( 1.0, 2.0, 3.0 )
+        photon.setDirection( 0.2672612419124244, 0.5345224838248488, 0.8017837257372732 )
+        photon.setEnergy( 4.0 )
+        photon.setTime( 5.0 )
+        photon.setWeight( 0.5 )
 
-#         self.assertAlmostEqual( response_function.evaluate( photon ),
-#                                 7.898227461547490183e-03,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( response_function.evaluate( photon ),
+                                7.898227461547490183e-03,
+                                delta=1e-15 )
 
 #-----------------------------------------------------------------------------#
 # Test the SinglePhaseSpaceDimensionParticleResponseFunction class
@@ -384,40 +384,40 @@ class SinglePhaseSpaceDimensionParticleResponseFunctionTestCase(unittest.TestCas
 
         weight_response_function = ActiveRegion.WeightParticleResponseFunction( response_distribution )
 
-#         photon = MonteCarlo.PhotonState( 1 )
-#         photon.setPosition( 1.0, 2.0, 3.0 )
-#         photon.setDirection( 0.2672612419124244, 0.5345224838248488, 0.8017837257372732 )
-#         photon.setEnergy( 10.0 )
-#         photon.setTime( 5.0 )
-#         photon.setWeight( 0.5 )
+        photon = MonteCarlo.PhotonState( 1 )
+        photon.setPosition( 1.0, 2.0, 3.0 )
+        photon.setDirection( 0.2672612419124244, 0.5345224838248488, 0.8017837257372732 )
+        photon.setEnergy( 10.0 )
+        photon.setTime( 5.0 )
+        photon.setWeight( 0.5 )
 
-#         self.assertAlmostEqual( x_response_function.evaluate( photon ),
-#                                 0.36787944117144233,
-#                                 delta=1e-15 )
-#         self.assertAlmostEqual( y_response_function.evaluate( photon ),
-#                                 0.1353352832366127,
-#                                 delta=1e-15 )
-#         self.assertAlmostEqual( z_response_function.evaluate( photon ),
-#                                 0.049787068367863944,
-#                                 delta=1e-15 )
-#         self.assertAlmostEqual( u_response_function.evaluate( photon ),
-#                                 0.7654730716931915,
-#                                 delta=1e-15 )
-#         self.assertAlmostEqual( v_response_function.evaluate( photon ),
-#                                 0.5859490234874097,
-#                                 delta=1e-15 )
-#         self.assertAlmostEqual( w_response_function.evaluate( photon ),
-#                                 0.4485281988645335,
-#                                 delta=1e-15 )
-#         self.assertAlmostEqual( energy_response_function.evaluate( photon ),
-#                                 4.5399929762484854e-05,
-#                                 delta=1e-15 )
-#         self.assertAlmostEqual( time_response_function.evaluate( photon ),
-#                                 0.006737946999085467,
-#                                 delta=1e-15 )
-#         self.assertAlmostEqual( weight_response_function.evaluate( photon ),
-#                                 0.6065306597126334,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( x_response_function.evaluate( photon ),
+                                0.36787944117144233,
+                                delta=1e-15 )
+        self.assertAlmostEqual( y_response_function.evaluate( photon ),
+                                0.1353352832366127,
+                                delta=1e-15 )
+        self.assertAlmostEqual( z_response_function.evaluate( photon ),
+                                0.049787068367863944,
+                                delta=1e-15 )
+        self.assertAlmostEqual( u_response_function.evaluate( photon ),
+                                0.7654730716931915,
+                                delta=1e-15 )
+        self.assertAlmostEqual( v_response_function.evaluate( photon ),
+                                0.5859490234874097,
+                                delta=1e-15 )
+        self.assertAlmostEqual( w_response_function.evaluate( photon ),
+                                0.4485281988645335,
+                                delta=1e-15 )
+        self.assertAlmostEqual( energy_response_function.evaluate( photon ),
+                                4.5399929762484854e-05,
+                                delta=1e-15 )
+        self.assertAlmostEqual( time_response_function.evaluate( photon ),
+                                0.006737946999085467,
+                                delta=1e-15 )
+        self.assertAlmostEqual( weight_response_function.evaluate( photon ),
+                                0.6065306597126334,
+                                delta=1e-15 )
 
 #-----------------------------------------------------------------------------#
 # Test the MaterialParticleResponseFunction class
@@ -641,12 +641,12 @@ class MaterialParticleResponseFunctionTestCase(unittest.TestCase):
                                              1,
                                              Collision.N__GAMMA_REACTION )
 
-#         neutron = MonteCarlo.NeutronState( 1 )
-#         neutron.setEnergy( 1.0 )
+        neutron = MonteCarlo.NeutronState( 1 )
+        neutron.setEnergy( 1.0 )
 
-#         self.assertAlmostEqual( response_function.evaluate( neutron ),
-#                                 2.254581767386568063e-06,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( response_function.evaluate( neutron ),
+                                2.254581767386568063e-06,
+                                delta=1e-15 )
 
 
         response_function = ActiveRegion.PhotonMaterialParticleResponseFunction(
@@ -654,12 +654,12 @@ class MaterialParticleResponseFunctionTestCase(unittest.TestCase):
                           1,
                           Collision.PAIR_PRODUCTION_PHOTOATOMIC_REACTION )
 
-#         photon = MonteCarlo.PhotonState( 1 )
-#         photon.setEnergy( 4.0 )
+        photon = MonteCarlo.PhotonState( 1 )
+        photon.setEnergy( 4.0 )
 
-#         self.assertAlmostEqual( response_function.evaluate( photon ),
-#                                 1.855849991744731604e-03,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( response_function.evaluate( photon ),
+                                1.855849991744731604e-03,
+                                delta=1e-15 )
 
         with self.assertRaises(RuntimeError) as cm:
             response_function = ActiveRegion.PhotonMaterialParticleResponseFunction(
@@ -671,54 +671,54 @@ class MaterialParticleResponseFunctionTestCase(unittest.TestCase):
             self.assertEqual( 'Error: evaluation of the hybrid distribution is currently not supported!',
                               str(cm.exception) )
 
-            response_function = ActiveRegion.ElectronMaterialParticleResponseFunction(
+        response_function = ActiveRegion.ElectronMaterialParticleResponseFunction(
                          self.electron_material_filled_model,
                          1,
                          Collision.BREMSSTRAHLUNG_ELECTROATOMIC_REACTION )
 
-#         MonteCarlo.ElectronState electron( 1 )
-#         electron.setEnergy( 1.0 )
+        electron = MonteCarlo.ElectronState( 1 )
+        electron.setEnergy( 1.0 )
 
-#         self.assertAlmostEqual( response_function.evaluate( electron ),
-#                                 5.673817218470100787e-01,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( response_function.evaluate( electron ),
+                                5.673817218470100787e-01,
+                                delta=1e-15 )
 
-            response_function = ActiveRegion.PositronMaterialParticleResponseFunction(
+        response_function = ActiveRegion.PositronMaterialParticleResponseFunction(
                         self.positron_material_filled_model,
                         1,
                         Collision.BREMSSTRAHLUNG_POSITRONATOMIC_REACTION )
 
-#         MonteCarlo.PositronState positron( 1 )
-#         positron.setEnergy( 1.0 )
+        positron = MonteCarlo.PositronState( 1 )
+        positron.setEnergy( 1.0 )
 
-#         self.assertAlmostEqual( response_function.evaluate( positron ),
-#                                 5.673817218470100787e-01,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( response_function.evaluate( positron ),
+                                5.673817218470100787e-01,
+                                delta=1e-15 )
 
-            response_function = ActiveRegion.AdjointPhotonMaterialParticleResponseFunction(
+        response_function = ActiveRegion.AdjointPhotonMaterialParticleResponseFunction(
                          self.adjoint_photon_material_filled_model,
                          1,
                          Collision.COHERENT_ADJOINT_PHOTOATOMIC_REACTION )
 
-#         MonteCarlo.AdjointPhotonState adjoint_photon( 1 )
-#         adjoint_photon.setEnergy( 1.0 )
+        adjoint_photon = MonteCarlo.AdjointPhotonState( 1 )
+        adjoint_photon.setEnergy( 1.0 )
 
-#         self.assertAlmostEqual( response_function.evaluate( adjoint_photon ),
-#                                 4.629028371467505184e-06,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( response_function.evaluate( adjoint_photon ),
+                                4.629028371467505184e-06,
+                                delta=1e-15 )
 
-            response_function = ActiveRegion.AdjointElectronMaterialParticleResponseFunction(
+        response_function = ActiveRegion.AdjointElectronMaterialParticleResponseFunction(
                  self.adjoint_electron_material_filled_model,
                  1,
                  Collision.BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION )
 
 
-#         MonteCarlo.AdjointElectronState adjoint_electron( 1 )
-#         adjoint_electron.setEnergy( 1.0 )
+        adjoint_electron = MonteCarlo.AdjointElectronState( 1 )
+        adjoint_electron.setEnergy( 1.0 )
 
-#         self.assertAlmostEqual( response_function.evaluate( adjoint_electron ),
-#                                 5.103322094058865277e-01,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( response_function.evaluate( adjoint_electron ),
+                                5.103322094058865277e-01,
+                                delta=1e-15 )
 
 #-----------------------------------------------------------------------------#
 # Test the MaterialComponentParticleResponseFunction class
@@ -961,12 +961,12 @@ class MaterialComponentParticleResponseFunctionTestCase(unittest.TestCase):
                                              "H1 @ 293.6K",
                                              Collision.N__GAMMA_REACTION )
 
-#         neutron = MonteCarlo.NeutronState( 1 )
-#         neutron.setEnergy( 1.0 )
+        neutron = MonteCarlo.NeutronState( 1 )
+        neutron.setEnergy( 1.0 )
 
-#         self.assertAlmostEqual( response_function.evaluate( neutron ),
-#                                 2.254581767386568063e-06,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( response_function.evaluate( neutron ),
+                                2.253571264294286624e-06,
+                                delta=1e-15 )
 
 
         response_function = ActiveRegion.PhotonMaterialComponentParticleResponseFunction(
@@ -975,14 +975,14 @@ class MaterialComponentParticleResponseFunctionTestCase(unittest.TestCase):
                           "H1 @ 293.6K",
                           Collision.PAIR_PRODUCTION_PHOTOATOMIC_REACTION )
 
-#         photon = MonteCarlo.PhotonState( 1 )
-#         photon.setEnergy( 4.0 )
+        photon = MonteCarlo.PhotonState( 1 )
+        photon.setEnergy( 4.0 )
 
-#         self.assertAlmostEqual( response_function.evaluate( photon ),
-#                                 1.855849991744731604e-03,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( response_function.evaluate( photon ),
+                                5.481451375530086199e-05,
+                                delta=1e-15 )
 
-        with self.assertRaises(RuntimeError) as cm:
+        with self.assertRaises(RuntimeError):
             response_function = ActiveRegion.PhotonMaterialComponentParticleResponseFunction(
                           self.photon_material_filled_model,
                           1,
@@ -993,58 +993,57 @@ class MaterialComponentParticleResponseFunctionTestCase(unittest.TestCase):
             self.assertEqual( 'Error: evaluation of the hybrid distribution is currently not supported!',
                               str(cm.exception) )
 
-            response_function = ActiveRegion.ElectronMaterialComponentParticleResponseFunction(
-                         self.electron_material_filled_model,
-                         1,
-                         "H1 @ 293.6K",
-                         Collision.BREMSSTRAHLUNG_ELECTROATOMIC_REACTION )
+        response_function = ActiveRegion.ElectronMaterialComponentParticleResponseFunction(
+                      self.electron_material_filled_model,
+                      1,
+                      "H1 @ 293.6K",
+                      Collision.BREMSSTRAHLUNG_ELECTROATOMIC_REACTION )
 
-#         MonteCarlo.ElectronState electron( 1 )
-#         electron.setEnergy( 1.0 )
+        electron = MonteCarlo.ElectronState( 1 )
+        electron.setEnergy( 1.0 )
 
-#         self.assertAlmostEqual( response_function.evaluate( electron ),
-#                                 5.673817218470100787e-01,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( response_function.evaluate( electron ),
+                                3.693456508334262700e-02,
+                                delta=1e-15 )
 
-            response_function = ActiveRegion.PositronMaterialComponentParticleResponseFunction(
-                        self.positron_material_filled_model,
-                        1,
-                        "H1 @ 293.6K",
-                        Collision.BREMSSTRAHLUNG_POSITRONATOMIC_REACTION )
+        response_function = ActiveRegion.PositronMaterialComponentParticleResponseFunction(
+                    self.positron_material_filled_model,
+                    1,
+                    "H1 @ 293.6K",
+                    Collision.BREMSSTRAHLUNG_POSITRONATOMIC_REACTION )
 
-#         MonteCarlo.PositronState positron( 1 )
-#         positron.setEnergy( 1.0 )
+        positron = MonteCarlo.PositronState( 1 )
+        positron.setEnergy( 1.0 )
 
-#         self.assertAlmostEqual( response_function.evaluate( positron ),
-#                                 5.673817218470100787e-01,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( response_function.evaluate( positron ),
+                                3.693456508334262700e-02,
+                                delta=1e-15 )
 
-            response_function = ActiveRegion.AdjointPhotonMaterialComponentParticleResponseFunction(
-                         self.adjoint_photon_material_filled_model,
-                         1,
-                         "H1 @ 293.6K",
-                         Collision.COHERENT_ADJOINT_PHOTOATOMIC_REACTION )
+        response_function = ActiveRegion.AdjointPhotonMaterialComponentParticleResponseFunction(
+                      self.adjoint_photon_material_filled_model,
+                      1,
+                      "H1 @ 293.6K",
+                      Collision.COHERENT_ADJOINT_PHOTOATOMIC_REACTION )
 
-#         MonteCarlo.AdjointPhotonState adjoint_photon( 1 )
-#         adjoint_photon.setEnergy( 1.0 )
+        adjoint_photon = MonteCarlo.AdjointPhotonState( 1 )
+        adjoint_photon.setEnergy( 1.0 )
 
-#         self.assertAlmostEqual( response_function.evaluate( adjoint_photon ),
-#                                 4.629028371467505184e-06,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( response_function.evaluate( adjoint_photon ),
+                                4.629028371467505184e-06,
+                                delta=1e-15 )
 
-            response_function = ActiveRegion.AdjointElectronMaterialComponentParticleResponseFunction(
-                 self.adjoint_electron_material_filled_model,
-                 1,
-                 "H1 @ 293.6K",
-                 Collision.BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION )
+        response_function = ActiveRegion.AdjointElectronMaterialComponentParticleResponseFunction(
+              self.adjoint_electron_material_filled_model,
+              1,
+              "H1 @ 293.6K",
+              Collision.BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION )
 
+        adjoint_electron = MonteCarlo.AdjointElectronState( 1 )
+        adjoint_electron.setEnergy( 1.0 )
 
-#         MonteCarlo.AdjointElectronState adjoint_electron( 1 )
-#         adjoint_electron.setEnergy( 1.0 )
-
-#         self.assertAlmostEqual( response_function.evaluate( adjoint_electron ),
-#                                 5.103322094058865277e-01,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( response_function.evaluate( adjoint_electron ),
+                                5.103322094058865277e-01,
+                                delta=1e-15 )
 
 #-----------------------------------------------------------------------------#
 # Test the StandardParticleResponse class
@@ -1085,12 +1084,12 @@ class StandardParticleResponseTestCase(unittest.TestCase):
 
         particle_response = ActiveRegion.StandardParticleResponse( energy_response_function )
 
-#         photon = MonteCarlo.PhotonState( 1 )
-#         photon.setEnergy( 1.0 )
+        photon = MonteCarlo.PhotonState( 1 )
+        photon.setEnergy( 1.0 )
 
-#         self.assertAlmostEqual( particle_response.evaluate( photon ),
-#                                 0.36787944117144233,
-#                                 delta=1e-15 )
+        self.assertAlmostEqual( particle_response.evaluate( photon ),
+                                0.36787944117144233,
+                                delta=1e-15 )
 
     def testDefault_response(self):
         "*Test MonteCarlo.ActiveRegion.StandardParticleResponse default_response"
@@ -1098,14 +1097,14 @@ class StandardParticleResponseTestCase(unittest.TestCase):
 
         self.assertEqual( particle_response.getName(), "f(particle) = 1" )
 
-#         photon = MonteCarlo.PhotonState( 1 )
-#         photon.setEnergy( 1.0 )
+        photon = MonteCarlo.PhotonState( 1 )
+        photon.setEnergy( 1.0 )
 
-#         self.assertEqual( particle_response.evaluate( photon ), 1.0 )
+        self.assertEqual( particle_response.evaluate( photon ), 1.0 )
 
-#         photon.setEnergy( 10.0 )
+        photon.setEnergy( 10.0 )
 
-#         self.assertEqual( particle_response.evaluate( photon ), 1.0 )
+        self.assertEqual( particle_response.evaluate( photon ), 1.0 )
 
 #-----------------------------------------------------------------------------#
 # Custom main

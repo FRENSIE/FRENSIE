@@ -68,7 +68,7 @@ void initializeCylindricalSpatialDimensionDists(
 
   std::shared_ptr<const Utility::UnivariateDistribution> raw_uniform_dist_a(
           new Utility::UniformDistribution( 0.0, 2*Utility::PhysicalConstants::pi, 0.1 ) );
-  
+
   std::shared_ptr<const Utility::UnivariateDistribution> raw_uniform_dist_b(
                           new Utility::UniformDistribution( -1.0, 1.0, 2.0 ) );
 
@@ -93,7 +93,7 @@ void initializeSphericalSpatialDimensionDists(
 
   std::shared_ptr<const Utility::UnivariateDistribution> raw_uniform_dist_a(
           new Utility::UniformDistribution( 0.0, 2*Utility::PhysicalConstants::pi, 0.1 ) );
-  
+
   std::shared_ptr<const Utility::UnivariateDistribution> raw_uniform_dist_b(
                           new Utility::UniformDistribution( -1.0, 1.0, 2.0 ) );
 
@@ -146,10 +146,10 @@ void initializeMiscDimensionDists(
   std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
     weight_dimension_dist( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::WEIGHT_DIMENSION>( raw_delta_dist ) );
   particle_distribution->setDimensionDistribution( weight_dimension_dist );
-  
+
   std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
     energy_dimension_dist;
-  
+
   {
     // Create the fully tabular distribution
     std::vector<double> primary_grid( {-1.0, 0.0, 1.0} );
@@ -158,7 +158,7 @@ void initializeMiscDimensionDists(
 
     // Create the secondary distribution in the first bin
     secondary_dists[0].reset( new Utility::UniformDistribution( 0.0, 10.0, 0.5 ) );
-    
+
     // Create the secondary distribution in the second bin
     secondary_dists[1].reset( new Utility::UniformDistribution( 0.0, 20.0, 0.25 ) );
 
@@ -169,7 +169,7 @@ void initializeMiscDimensionDists(
       raw_dependent_distribution( new Utility::HistogramFullyTabularBasicBivariateDistribution( primary_grid, secondary_dists ) );
 
     raw_dependent_distribution->limitToPrimaryIndepLimits();
-  
+
     energy_dimension_dist.reset( new MonteCarlo::DependentPhaseSpaceDimensionDistribution<parent_energy_dimension,MonteCarlo::ENERGY_DIMENSION>( raw_dependent_distribution ) );
   }
   particle_distribution->setDimensionDistribution( energy_dimension_dist );
@@ -183,7 +183,7 @@ createCartesianSpatialCartesianDirectionalDist()
 
   std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
     directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
-  
+
   std::shared_ptr<MonteCarlo::StandardParticleDistribution>
     particle_distribution( new MonteCarlo::StandardParticleDistribution(
                                        "test dist",
@@ -196,7 +196,7 @@ createCartesianSpatialCartesianDirectionalDist()
   initializeMiscDimensionDists<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( particle_distribution );
 
   particle_distribution->constructDimensionDistributionDependencyTree();
-  
+
   return particle_distribution;
 }
 
@@ -208,7 +208,7 @@ createCartesianSpatialSphericalDirectionalDist()
 
   std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
     directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
-  
+
   std::shared_ptr<MonteCarlo::StandardParticleDistribution>
     particle_distribution( new MonteCarlo::StandardParticleDistribution(
                                        "test dist",
@@ -220,7 +220,7 @@ createCartesianSpatialSphericalDirectionalDist()
   initializeMiscDimensionDists<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( particle_distribution );
 
   particle_distribution->constructDimensionDistributionDependencyTree();
-  
+
   return particle_distribution;
 }
 
@@ -232,7 +232,7 @@ createCylindricalSpatialCartesianDirectionalDist()
 
   std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
     directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
-  
+
   std::shared_ptr<MonteCarlo::StandardParticleDistribution>
     particle_distribution( new MonteCarlo::StandardParticleDistribution(
                                        "test dist",
@@ -245,7 +245,7 @@ createCylindricalSpatialCartesianDirectionalDist()
   initializeMiscDimensionDists<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( particle_distribution );
 
   particle_distribution->constructDimensionDistributionDependencyTree();
-  
+
   return particle_distribution;
 }
 
@@ -257,7 +257,7 @@ createCylindricalSpatialSphericalDirectionalDist()
 
   std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
     directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
-  
+
   std::shared_ptr<MonteCarlo::StandardParticleDistribution>
     particle_distribution( new MonteCarlo::StandardParticleDistribution(
                                        "test dist",
@@ -269,7 +269,7 @@ createCylindricalSpatialSphericalDirectionalDist()
   initializeMiscDimensionDists<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( particle_distribution );
 
   particle_distribution->constructDimensionDistributionDependencyTree();
-  
+
   return particle_distribution;
 }
 
@@ -281,7 +281,7 @@ createSphericalSpatialCartesianDirectionalDist()
 
   std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
     directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
-  
+
   std::shared_ptr<MonteCarlo::StandardParticleDistribution>
     particle_distribution( new MonteCarlo::StandardParticleDistribution(
                                        "test dist",
@@ -294,7 +294,7 @@ createSphericalSpatialCartesianDirectionalDist()
   initializeMiscDimensionDists<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( particle_distribution );
 
   particle_distribution->constructDimensionDistributionDependencyTree();
-  
+
   return particle_distribution;
 }
 
@@ -306,7 +306,7 @@ createSphericalSpatialSphericalDirectionalDist()
 
   std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
     directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
-  
+
   std::shared_ptr<MonteCarlo::StandardParticleDistribution>
     particle_distribution( new MonteCarlo::StandardParticleDistribution(
                                        "test dist",
@@ -318,7 +318,7 @@ createSphericalSpatialSphericalDirectionalDist()
   initializeMiscDimensionDists<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( particle_distribution );
 
   particle_distribution->constructDimensionDistributionDependencyTree();
-  
+
   return particle_distribution;
 }
 
@@ -367,7 +367,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   std::shared_ptr<const Utility::UnivariateDistribution> raw_delta_dist(
                                        new Utility::DeltaDistribution( 1.0 ) );
-  
+
   // Create a uniform Cartesian spatial distribution
   std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
     x_dimension_dist(new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_uniform_dist ) );
@@ -488,7 +488,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
     directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
-  
+
   MonteCarlo::StandardParticleDistribution
     particle_distribution( "test dist",
                            spatial_coord_conversion_policy,
@@ -499,7 +499,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   std::shared_ptr<const Utility::UnivariateDistribution> raw_uniform_dist(
      new Utility::UniformDistribution( 0.0, 2*Utility::PhysicalConstants::pi, 1.0 ) );
-  
+
   // Create a uniform cylindrical spatial distribution
   std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
     r_dimension_dist(new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_power_dist ) );
@@ -518,7 +518,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   // Create a non-uniform cylindrical spatial distribution
   particle_distribution.reset();
-  
+
   r_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_uniform_dist ) );
   theta_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_uniform_dist ) );
   z_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_uniform_dist ) );
@@ -531,7 +531,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   // Create a non-uniform cylindrical spatial distribution
   particle_distribution.reset();
-  
+
   r_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_power_dist ) );
   theta_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_power_dist ) );
   z_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_uniform_dist ) );
@@ -544,7 +544,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   // Create a non-uniform cylindrical spatial distribution
   particle_distribution.reset();
-  
+
   r_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_power_dist ) );
   theta_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_uniform_dist ) );
   z_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_power_dist ) );
@@ -557,7 +557,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   // Create a non-uniform cylindrical spatial distribution
   particle_distribution.reset();
-  
+
   r_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_uniform_dist ) );
   theta_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_power_dist ) );
   z_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_uniform_dist ) );
@@ -570,7 +570,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   // Create a non-uniform cylindrical spatial distribution
   particle_distribution.reset();
-  
+
   r_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_uniform_dist ) );
   theta_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_uniform_dist ) );
   z_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_power_dist ) );
@@ -583,7 +583,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   // Create a non-uniform cylindrical spatial distribution
   particle_distribution.reset();
-  
+
   r_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_uniform_dist ) );
   theta_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_power_dist ) );
   z_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_power_dist ) );
@@ -605,7 +605,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
     directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
-  
+
   MonteCarlo::StandardParticleDistribution
     particle_distribution( "test dist",
                            spatial_coord_conversion_policy,
@@ -619,7 +619,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   std::shared_ptr<const Utility::UnivariateDistribution> raw_uniform_dist_b(
                           new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
-  
+
   // Create a uniform spherical spatial distribution
   std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
     r_dimension_dist(new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_power_dist ) );
@@ -740,7 +740,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
     directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
-  
+
   MonteCarlo::StandardParticleDistribution
     particle_distribution( "test dist",
                            spatial_coord_conversion_policy,
@@ -751,7 +751,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   std::shared_ptr<const Utility::UnivariateDistribution> raw_delta_dist(
                                        new Utility::DeltaDistribution( 1.0 ) );
-  
+
   // Create a non-uniform Cartesian directional distribution
   std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
     u_dimension_dist(new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION>( raw_uniform_dist ) );
@@ -836,10 +836,10 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   std::shared_ptr<const Utility::UnivariateDistribution> raw_uniform_dist_a(
        new Utility::UniformDistribution( 0.0, 2*Utility::PhysicalConstants::pi, 1.0 ) );
-  
+
   std::shared_ptr<const Utility::UnivariateDistribution> raw_uniform_dist_b(
                           new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
-  
+
   // Create a non-uniform spherical directional distribution
   std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
     r_dimension_dist(new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION>( raw_delta_dist ) );
@@ -927,7 +927,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
   photon.setWeight( 1.0 );
 
   FRENSIE_CHECK_EQUAL( particle_distribution->evaluate( photon ), 0.0 );
-  
+
   photon.setPosition( -1.0, -0.5, -0.5 );
   photon.setDirection( 0.0, 1.0, 0.0 );
   photon.setEnergy( 1.0 );
@@ -935,7 +935,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
   photon.setWeight( 1.0 );
 
   FRENSIE_CHECK_EQUAL( particle_distribution->evaluate( photon ), 0.0078125 );
-  
+
   photon.setPosition( -0.5, -0.5, -0.5 );
   photon.setDirection( 0.0, 0.0, 1.0 );
   photon.setEnergy( 1.0 );
@@ -993,7 +993,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
   photon.setWeight( 1.0 );
 
   FRENSIE_CHECK_EQUAL( particle_distribution->evaluate( photon ), 0.0 );
-  
+
   photon.setPosition( -1.0, -0.5, -0.5 );
   photon.setDirection( 0.0, 1.0, 0.0 );
   photon.setEnergy( 1.0 );
@@ -1001,7 +1001,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
   photon.setWeight( 1.0 );
 
   FRENSIE_CHECK_EQUAL( particle_distribution->evaluate( photon ), 0.0625 );
-  
+
   photon.setPosition( -0.5, -0.5, -0.5 );
   photon.setDirection( 0.0, 0.0, 1.0 );
   photon.setEnergy( 1.0 );
@@ -1338,11 +1338,11 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 {
   std::shared_ptr<const ParticleDistribution> particle_distribution =
     createCartesianSpatialCartesianDirectionalDist();
-  
+
   // Set the random number generator stream
   std::vector<double> fake_stream( 8 );
   fake_stream[0] = 0.0; // x
-  fake_stream[1] = 0.5; // energy 
+  fake_stream[1] = 0.5; // energy
   fake_stream[2] = 0.5; // y
   fake_stream[3] = 1.0-1e-15; // z
   fake_stream[4] = 0.5; // u
@@ -1371,7 +1371,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   // Set the random number generator stream
   fake_stream[0] = 0.5; // x
-  fake_stream[1] = 0.5; // energy 
+  fake_stream[1] = 0.5; // energy
   fake_stream[2] = 1.0-1e-15; // y
   fake_stream[3] = 0.5; // z
   fake_stream[4] = 0.5; // u
@@ -1398,7 +1398,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   // Set the random number generator stream
   fake_stream[0] = 1.0-1e-15; // x
-  fake_stream[1] = 1.0-1e-15; // energy 
+  fake_stream[1] = 1.0-1e-15; // energy
   fake_stream[2] = 0.0; // y
   fake_stream[3] = 0.0; // z
   fake_stream[4] = 1.0-1e-15; // u
@@ -1433,11 +1433,11 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 {
   std::shared_ptr<const ParticleDistribution> particle_distribution =
     createCartesianSpatialSphericalDirectionalDist();
-  
+
   // Set the random number generator stream
   std::vector<double> fake_stream( 7 );
   fake_stream[0] = 0.0; // x
-  fake_stream[1] = 0.5; // energy 
+  fake_stream[1] = 0.5; // energy
   fake_stream[2] = 0.5; // y
   fake_stream[3] = 1.0-1e-15; // z
   fake_stream[4] = 0.0; // theta
@@ -1465,7 +1465,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   // Set the random number generator stream
   fake_stream[0] = 0.5; // x
-  fake_stream[1] = 0.5; // energy 
+  fake_stream[1] = 0.5; // energy
   fake_stream[2] = 0.0; // y
   fake_stream[3] = 0.5; // z
   fake_stream[4] = 0.0; // theta
@@ -1491,7 +1491,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   // Set the random number generator stream
   fake_stream[0] = 1.0-1e-15; // x
-  fake_stream[1] = 1.0-1e-15; // energy 
+  fake_stream[1] = 1.0-1e-15; // energy
   fake_stream[2] = 1.0-1e-15; // y
   fake_stream[3] = 0.0; // z
   fake_stream[4] = 0.5; // theta
@@ -1525,7 +1525,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 {
   std::shared_ptr<const ParticleDistribution> particle_distribution =
     createCylindricalSpatialCartesianDirectionalDist();
-  
+
   // Set the random number generator stream
   std::vector<double> fake_stream( 8 );
   fake_stream[0] = 0.0; // r
@@ -1620,7 +1620,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 {
   std::shared_ptr<const ParticleDistribution> particle_distribution =
     createCylindricalSpatialSphericalDirectionalDist();
-  
+
   // Set the random number generator stream
   std::vector<double> fake_stream( 7 );
   fake_stream[0] = 0.0; // r
@@ -1712,7 +1712,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 {
   std::shared_ptr<const ParticleDistribution> particle_distribution =
     createSphericalSpatialCartesianDirectionalDist();
-  
+
   // Set the random number generator stream
   std::vector<double> fake_stream( 8 );
   fake_stream[0] = 1.0-1e-12; // r
@@ -1823,7 +1823,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( photon.getTime(), 1.0, 1e-12 );
   FRENSIE_CHECK_EQUAL( photon.getSourceWeight(), 0.5 );
   FRENSIE_CHECK_EQUAL( photon.getWeight(), 0.5 );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -1834,7 +1834,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 {
   std::shared_ptr<const ParticleDistribution> particle_distribution =
     createSphericalSpatialSphericalDirectionalDist();
-  
+
   // Set the random number generator stream
   std::vector<double> fake_stream( 7 );
   fake_stream[0] = 1.0-1e-12; // r
@@ -1941,7 +1941,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( photon.getTime(), 1.0, 1e-12 );
   FRENSIE_CHECK_EQUAL( photon.getSourceWeight(), 0.5 );
   FRENSIE_CHECK_EQUAL( photon.getWeight(), 0.5 );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -1968,7 +1968,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
     std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
       energy_dimension_dist( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::ENERGY_DIMENSION>( raw_uniform_dist ) );
     tmp_particle_distribution->setDimensionDistribution( energy_dimension_dist );
-    
+
     std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
       time_dimension_dist( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TIME_DIMENSION>( raw_uniform_dist ) );
     tmp_particle_distribution->setDimensionDistribution( time_dimension_dist );
@@ -1981,12 +1981,12 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
     tmp_particle_distribution->setDimensionDistribution( weight_dimension_dist );
 
     tmp_particle_distribution->constructDimensionDistributionDependencyTree();
-  
+
     particle_distribution = tmp_particle_distribution;
   }
 
   // Set the random number generator stream
-  std::vector<double> fake_stream( 7 );
+  std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.25; // energy
   fake_stream[1] = 0.5; // time
 
@@ -2023,7 +2023,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution, sampleAndRecordTrials )
   ParticleDistribution::DimensionCounterMap trials;
 
   particle_distribution->initializeDimensionCounters( trials );
-  
+
   // Set the random number generator stream
   std::vector<double> fake_stream( 7 );
   fake_stream[0] = 1.0-1e-12; // r
@@ -2166,7 +2166,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution, sampleAndRecordTrials )
   FRENSIE_CHECK_EQUAL( trials[ENERGY_DIMENSION], 4 );
   FRENSIE_CHECK_EQUAL( trials[TIME_DIMENSION], 4 );
   FRENSIE_CHECK_EQUAL( trials[WEIGHT_DIMENSION], 4 );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -2176,7 +2176,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution, sampleWithDimensionValue )
 {
   std::shared_ptr<const ParticleDistribution> particle_distribution =
     createSphericalSpatialSphericalDirectionalDist();
-  
+
   // Set the random number generator stream
   std::vector<double> fake_stream( 6 );
   fake_stream[0] = 0.0; // theta
@@ -2212,7 +2212,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution, sampleWithDimensionValue )
   fake_stream[3] = 0.0; // theta
   fake_stream[4] = 1.0-1e-15; // mu
   fake_stream[5] = 0.0; // time
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   particle_distribution->sampleWithDimensionValue( photon, SECONDARY_SPATIAL_DIMENSION, Utility::PhysicalConstants::pi/2 );
@@ -2237,7 +2237,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution, sampleWithDimensionValue )
   fake_stream[3] = 0.0; // theta
   fake_stream[4] = 1.0-1e-15; // mu
   fake_stream[5] = 0.0; // time
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   particle_distribution->sampleWithDimensionValue( photon, TERTIARY_SPATIAL_DIMENSION, 0.0 );
@@ -2262,7 +2262,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution, sampleWithDimensionValue )
   fake_stream[3] = 0.5; // energy
   fake_stream[4] = 0.5; // mu
   fake_stream[5] = 0.0; // time
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   particle_distribution->sampleWithDimensionValue( photon, SECONDARY_DIRECTIONAL_DIMENSION, 0.0 );
@@ -2287,7 +2287,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution, sampleWithDimensionValue )
   fake_stream[3] = 0.5; // energy
   fake_stream[4] = 0.0; // theta
   fake_stream[5] = 0.0; // time
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   particle_distribution->sampleWithDimensionValue( photon, TERTIARY_DIRECTIONAL_DIMENSION, 1.0 );
@@ -2304,7 +2304,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution, sampleWithDimensionValue )
   FRENSIE_CHECK_EQUAL( photon.getTime(), 0.0 );
   FRENSIE_CHECK_EQUAL( photon.getSourceWeight(), 0.25 );
   FRENSIE_CHECK_EQUAL( photon.getWeight(), 0.25 );
-  
+
   // Set the random number generator stream
   fake_stream[0] = 1.0-1e-12; // r
   fake_stream[1] = 0.0; // theta
@@ -2394,7 +2394,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
   ParticleDistribution::DimensionCounterMap trials;
 
   particle_distribution->initializeDimensionCounters( trials );
-  
+
   // Set the random number generator stream
   std::vector<double> fake_stream( 6 );
   fake_stream[0] = 0.0; // theta
@@ -2439,7 +2439,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
   fake_stream[3] = 0.0; // theta
   fake_stream[4] = 1.0-1e-15; // mu
   fake_stream[5] = 0.0; // time
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   particle_distribution->sampleWithDimensionValueAndRecordTrials( photon, trials, SECONDARY_SPATIAL_DIMENSION, Utility::PhysicalConstants::pi/2 );
@@ -2473,7 +2473,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
   fake_stream[3] = 0.0; // theta
   fake_stream[4] = 1.0-1e-15; // mu
   fake_stream[5] = 0.0; // time
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   particle_distribution->sampleWithDimensionValueAndRecordTrials( photon, trials, TERTIARY_SPATIAL_DIMENSION, 0.0 );
@@ -2507,7 +2507,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
   fake_stream[3] = 0.5; // energy
   fake_stream[4] = 0.5; // mu
   fake_stream[5] = 0.0; // time
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   particle_distribution->sampleWithDimensionValueAndRecordTrials( photon, trials, SECONDARY_DIRECTIONAL_DIMENSION, 0.0 );
@@ -2541,7 +2541,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
   fake_stream[3] = 0.5; // energy
   fake_stream[4] = 0.0; // theta
   fake_stream[5] = 0.0; // time
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   particle_distribution->sampleWithDimensionValueAndRecordTrials( photon, trials, TERTIARY_DIRECTIONAL_DIMENSION, 1.0 );
@@ -2567,7 +2567,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
   FRENSIE_CHECK_EQUAL( trials[ENERGY_DIMENSION], 5 );
   FRENSIE_CHECK_EQUAL( trials[TIME_DIMENSION], 5 );
   FRENSIE_CHECK_EQUAL( trials[WEIGHT_DIMENSION], 5 );
-  
+
   // Set the random number generator stream
   fake_stream[0] = 1.0-1e-12; // r
   fake_stream[1] = 0.0; // theta
@@ -2615,7 +2615,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
     directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
-  
+
   MonteCarlo::StandardParticleDistribution
     particle_distribution( "test dist",
                            spatial_coord_conversion_policy,
@@ -2627,14 +2627,14 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
                        "Delta Distribution" );
   FRENSIE_CHECK_EQUAL( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TERTIARY_SPATIAL_DIMENSION),
                        "Delta Distribution" );
-  
+
   FRENSIE_CHECK_EQUAL( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ),
                        "Uniform Distribution" );
   FRENSIE_CHECK_EQUAL( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION),
                        "Uniform Distribution" );
   FRENSIE_CHECK_EQUAL( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION),
                        "Uniform Distribution" );
-  
+
   FRENSIE_CHECK_EQUAL( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::ENERGY_DIMENSION),
                        "Delta Distribution" );
   FRENSIE_CHECK_EQUAL( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TIME_DIMENSION),
@@ -2683,7 +2683,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
     directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
-  
+
   MonteCarlo::StandardParticleDistribution
     particle_distribution( "test dist",
                            spatial_coord_conversion_policy,
@@ -2695,7 +2695,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
                        "Delta Distribution" );
   FRENSIE_CHECK_EQUAL( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TERTIARY_SPATIAL_DIMENSION),
                        "Delta Distribution" );
-  
+
   FRENSIE_CHECK_EQUAL( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ),
                        "Uniform Distribution" );
   FRENSIE_CHECK_EQUAL( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION),
@@ -2721,7 +2721,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
     directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
-  
+
   MonteCarlo::StandardParticleDistribution
     particle_distribution( "test dist",
                            spatial_coord_conversion_policy,
@@ -2733,7 +2733,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
                        "Delta Distribution" );
   FRENSIE_CHECK_EQUAL( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TERTIARY_SPATIAL_DIMENSION),
                        "Delta Distribution" );
-  
+
   FRENSIE_CHECK_EQUAL( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ),
                        "Delta Distribution" );
   FRENSIE_CHECK_EQUAL( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION),
@@ -2759,7 +2759,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
     directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
-  
+
   MonteCarlo::StandardParticleDistribution
     particle_distribution( "test dist",
                            spatial_coord_conversion_policy,
@@ -2771,7 +2771,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
                        "Delta Distribution" );
   FRENSIE_CHECK_EQUAL( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TERTIARY_SPATIAL_DIMENSION),
                        "Delta Distribution" );
-  
+
   FRENSIE_CHECK_EQUAL( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ),
                        "Uniform Distribution" );
   FRENSIE_CHECK_EQUAL( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION),
@@ -2797,7 +2797,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
 
   std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
     directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
-  
+
   MonteCarlo::StandardParticleDistribution
     particle_distribution( "test dist",
                            spatial_coord_conversion_policy,
@@ -2809,7 +2809,7 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
                        "Delta Distribution" );
   FRENSIE_CHECK_EQUAL( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TERTIARY_SPATIAL_DIMENSION),
                        "Delta Distribution" );
-  
+
   FRENSIE_CHECK_EQUAL( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ),
                        "Delta Distribution" );
   FRENSIE_CHECK_EQUAL( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION),
@@ -2971,7 +2971,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardParticleDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( photon.getTime(), 1.0, 1e-12 );
   FRENSIE_CHECK_EQUAL( photon.getSourceWeight(), 0.5 );
   FRENSIE_CHECK_EQUAL( photon.getWeight(), 0.5 );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 

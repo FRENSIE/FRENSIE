@@ -25,6 +25,7 @@ monte_carlo/collision subpackage.
 #include "MonteCarlo_ScatteringCenterDefinitionDatabase.hpp"
 
 #include "Utility_SerializationHelpers.hpp"
+#include "Utility_ToStringTraitsDecl.hpp"
 #include "Utility_DesignByContract.hpp"
 
 using namespace MonteCarlo;
@@ -38,12 +39,14 @@ using namespace MonteCarlo;
 // Include typemaps support
 %include <typemaps.i>
 
+// Import the ToStringTraitsDecl
+%import "Utility_ToStringTraitsDecl.hpp"
+
 // Include the serialization helpers for handling macros
 %include "Utility_SerializationHelpers.hpp"
 
 // Simulation properties handling
-%import MonteCarlo.MonteCarlo__init__.i
-%import MonteCarlo_SimulationProperties.i
+%import(module="PyFrensie.MonteCarlo") MonteCarlo_SimulationProperties.i
 
 // Atom properties handling
 %import(module="PyFrensie.Data") Data_AtomProperties.i

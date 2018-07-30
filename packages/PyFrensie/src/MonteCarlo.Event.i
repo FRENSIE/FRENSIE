@@ -25,7 +25,17 @@ monte_carlo/event subpackage.
 // FRENSIE Includes
 #include "PyFrensie_PythonTypeTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
-
+#include "MonteCarlo_ParticleType.hpp"
+#include "MonteCarlo_ParticleState.hpp"
+#include "MonteCarlo_MasslessParticleState.hpp"
+#include "MonteCarlo_MassiveParticleState.hpp"
+#include "MonteCarlo_NeutronState.hpp"
+#include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_ElectronState.hpp"
+#include "MonteCarlo_PositronState.hpp"
+#include "MonteCarlo_AdjointPhotonState.hpp"
+#include "MonteCarlo_AdjointElectronState.hpp"
+#include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ObserverParticleStateWrapper.hpp"
 #include "MonteCarlo_ObserverPhaseSpaceDimension.hpp"
 #include "MonteCarlo_ObserverPhaseSpaceDimensionDiscretization.hpp"
@@ -37,7 +47,7 @@ monte_carlo/event subpackage.
 #include "MonteCarlo_UnorderedTypedObserverPhaseSpaceDimensionDiscretization.hpp"
 #include "MonteCarlo_DefaultTypedObserverPhaseSpaceDimensionDiscretization.hpp"
 
-// using namespace MonteCarlo;
+using namespace MonteCarlo;
 %}
 
 // C++ STL support
@@ -55,6 +65,9 @@ monte_carlo/event subpackage.
 
 // Include the MonteCarlo event helpers
 %include "MonteCarlo_EventHelpers.i"
+
+// Particle state handling
+%import(module="PyFrensie.MonteCarlo") MonteCarlo_ParticleState.i
 
 // Standard exception handling
 %include "exception.i"
@@ -96,7 +109,7 @@ monte_carlo/event subpackage.
 // Add ObserverPhaseSpaceDimension support
 // ---------------------------------------------------------------------------//
 
-%import "MonteCarlo_ObserverParticleStateWrapper.hpp"
+%include "MonteCarlo_ObserverParticleStateWrapper.hpp"
 
 // ---------------------------------------------------------------------------//
 // Add ObserverPhaseSpaceDimension support

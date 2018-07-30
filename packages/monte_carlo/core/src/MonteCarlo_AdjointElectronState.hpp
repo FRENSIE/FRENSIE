@@ -93,8 +93,8 @@ private:
 
 } // end MonteCarlo namespace
 
-BOOST_CLASS_VERSION( MonteCarlo::AdjointElectronState, 0 );
-BOOST_CLASS_EXPORT_KEY2( MonteCarlo::AdjointElectronState, "AdjointElectronState" );
+BOOST_SERIALIZATION_CLASS_VERSION( AdjointElectronState, MonteCarlo, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( AdjointElectronState, MonteCarlo );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, AdjointElectronState );
 TYPE_NAME_TRAITS_QUICK_DECL2( AdjointElectronState, MonteCarlo );
 

@@ -22,6 +22,7 @@ monte_carlo/active_region subpackage.
 // FRENSIE Includes
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
+#include "Utility_ToStringTraitsDecl.hpp"
 
 // using namespace MonteCarlo;
 %}
@@ -34,6 +35,9 @@ monte_carlo/active_region subpackage.
 
 // Include typemaps support
 %include <typemaps.i>
+
+// Import the ToStringTraitsDecl
+%import "Utility_ToStringTraitsDecl.hpp"
 
 // Include the serialization helpers for handling macros
 %include "Utility_SerializationHelpers.hpp"
@@ -85,6 +89,8 @@ monte_carlo/active_region subpackage.
 %define %post_template_setup_helper( NAME, RENAME )
   %template( RENAME ) MonteCarlo::NAME;
 %enddef
+
+%import(module="PyFrensie.MonteCarlo") MonteCarlo_ParticleState.i
 
 // Add support for the PhaseSpaceDimension classes
 %include "MonteCarlo_PhaseSpaceDimension.i"

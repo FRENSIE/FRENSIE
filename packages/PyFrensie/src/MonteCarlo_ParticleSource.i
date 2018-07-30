@@ -56,7 +56,7 @@ using namespace MonteCarlo;
 
 // Pre-include helper macro for the StandardParticleSourceComponent class
 %define %pre_particle_source_component_setup_helper( PARTICLE, RENAME )
-  %pre_template_setup_helper( StandardParticleSourceComponent<PARTICLE ## State>, RENAME)
+  %pre_template_setup_helper( StandardParticleSourceComponent<MonteCarlo::PARTICLE ## State>, RENAME)
 %enddef
 
 // The standard neutron source component
@@ -81,7 +81,7 @@ using namespace MonteCarlo;
 
 // Post-include helper macro for the StandardParticleSourceComponent class
 %define %post_particle_source_component_setup_helper( PARTICLE, RENAME )
-  %post_template_setup_helper( StandardParticleSourceComponent<PARTICLE ## State>, RENAME)
+  %post_template_setup_helper( StandardParticleSourceComponent<MonteCarlo::PARTICLE ## State>, RENAME)
 %enddef
 
 // The standard neutron source component
@@ -109,9 +109,9 @@ using namespace MonteCarlo;
 // Pre-include helper macro for the StandardAdjointParticleSourceComponent class
 %define %pre_adjoint_particle_source_component_setup_helper( PARTICLE )
   %inline %{
-    typedef MonteCarlo::StandardAdjointParticleSourceComponent<Adjoint ## PARTICLE ## State,Adjoint ## PARTICLE ## ProbeState> StandardAdjoint ## PARTICLE ## SourceComponent;
+    typedef MonteCarlo::StandardAdjointParticleSourceComponent<MonteCarlo::Adjoint ## PARTICLE ## State,MonteCarlo::Adjoint ## PARTICLE ## ProbeState> StandardAdjoint ## PARTICLE ## SourceComponent;
   %}
-  %shared_ptr( MonteCarlo::StandardAdjointParticleSourceComponent<Adjoint ## PARTICLE ## State,Adjoint ## PARTICLE ## ProbeState> )
+  %shared_ptr( MonteCarlo::StandardAdjointParticleSourceComponent<MonteCarlo::Adjoint ## PARTICLE ## State,MonteCarlo::Adjoint ## PARTICLE ## ProbeState> )
 %enddef
 
 // The standard adjoint photon source component
@@ -124,7 +124,7 @@ using namespace MonteCarlo;
 
 // Post-include helper macro for the StandardAdjointParticleSourceComponent class
 %define %post_adjoint_particle_source_component_setup_helper( PARTICLE )
-  %template( StandardAdjoint ## PARTICLE ## SourceComponent ) MonteCarlo::StandardAdjointParticleSourceComponent<Adjoint ## PARTICLE ## State,Adjoint ## PARTICLE ## ProbeState>;
+  %template( StandardAdjoint ## PARTICLE ## SourceComponent ) MonteCarlo::StandardAdjointParticleSourceComponent<MonteCarlo::Adjoint ## PARTICLE ## State,MonteCarlo::Adjoint ## PARTICLE ## ProbeState>;
 %enddef
 
 // The standard adjoint photon source component
@@ -135,6 +135,20 @@ using namespace MonteCarlo;
 
 // ---------------------------------------------------------------------------//
 // Add ParticleSource support
+// ---------------------------------------------------------------------------//
+
+// Add a typemap for CellIdSet starting_cells
+%typemap(in,numinputs=0) MonteCarlo::ParticleSource::CellIdSet& starting_cells (MonteCarlo::ParticleSource::CellIdSet temp) "$1 = &temp;"
+
+%typemap(argout) MonteCarlo::ParticleSource::CellIdSet& starting_cells {
+  %append_output(PyFrensie::convertToPython( *$1 ));
+}
+
+%shared_ptr( MonteCarlo::ParticleSource);
+%include "MonteCarlo_ParticleSource.hpp"
+
+// ---------------------------------------------------------------------------//
+// Add StandardParticleSource support
 // ---------------------------------------------------------------------------//
 
 // Extend class constructor to take a list of shared pointers as a PyObject
@@ -159,19 +173,6 @@ using namespace MonteCarlo;
   }
 };
 
-// Add a typemap for CellIdSet starting_cells
-%typemap(in,numinputs=0) MonteCarlo::ParticleSource::CellIdSet& starting_cells(MonteCarlo::ParticleSource::CellIdSet temp) "$1 = &temp;"
-
-%typemap(argout) MonteCarlo::ParticleSource::CellIdSet& starting_cells {
-  %append_output(PyFrensie::convertToPython( *$1 ));
-}
-
-%shared_ptr( MonteCarlo::ParticleSource);
-%include "MonteCarlo_ParticleSource.hpp"
-
-// ---------------------------------------------------------------------------//
-// Add StandardParticleSource support
-// ---------------------------------------------------------------------------//
 %shared_ptr( MonteCarlo::StandardParticleSource );
 %include "MonteCarlo_StandardParticleSource.hpp"
 

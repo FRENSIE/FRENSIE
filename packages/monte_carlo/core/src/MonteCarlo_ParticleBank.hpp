@@ -103,7 +103,7 @@ protected:
 
   //! The bank container type
   typedef std::list<std::shared_ptr<ParticleState> > BankContainerType;
-  
+
 private:
 
   // Dereference a smart ptr
@@ -131,7 +131,7 @@ inline const ParticleState& ParticleBank::dereference(
 
 } // end MonteCarlo namespace
 
-BOOST_CLASS_VERSION( MonteCarlo::ParticleBank, 0 );
+BOOST_SERIALIZATION_CLASS_VERSION( ParticleBank, MonteCarlo, 0 );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleBank );
 
 //---------------------------------------------------------------------------//

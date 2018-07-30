@@ -77,8 +77,8 @@ private:
 
 } // end MonteCarlo namespace
 
-BOOST_CLASS_VERSION( MonteCarlo::PhotonState, 0 );
-BOOST_CLASS_EXPORT_KEY2( MonteCarlo::PhotonState, "PhotonState" );
+BOOST_SERIALIZATION_CLASS_VERSION( PhotonState, MonteCarlo, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( PhotonState, MonteCarlo );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, PhotonState );
 TYPE_NAME_TRAITS_QUICK_DECL2( PhotonState, MonteCarlo );
 

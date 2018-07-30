@@ -146,7 +146,7 @@ def initializeMiscDimensionDists_tertiary( particle_distribution ):
 
     raw_dependent_distribution.limitToPrimaryIndepLimits()
 
-    energy_dimension_dist = ActiveRegion.EnergyDependentTertiarySpatialDimensionDistribution( raw_dependent_distribution )
+    energy_dimension_dist = ActiveRegion.TertiarySpatialDependentEnergyDimensionDistribution( raw_dependent_distribution )
 
     particle_distribution.setDimensionDistribution( energy_dimension_dist )
     return particle_distribution
@@ -765,1589 +765,1220 @@ class StandardParticleDistributionTestCase(unittest.TestCase):
 
         self.assertFalse( particle_distribution.isDirectionallyUniform() )
 
-    # def testEvaluate_cartesian_spatial_cartesian_directional(self):
-    #     "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution evaluate_cartesian_spatial_cartesian_directional"
-    #     particle_distribution = createCartesianSpatialCartesianDirectionalDist()
-
-    #     photon = MonteCarlo.PhotonState( 0 )
-    #     photon.setPosition( -1.1, -0.5, -0.5 )
-    #     photon.setDirection( 1.0, 0.0, 0.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
-
-    #     photon.setPosition( -1.0, -0.5, -0.5 )
-    #     photon.setDirection( 0.0, 1.0, 0.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertEqual( particle_distribution.evaluate( photon ), 0.0078125 )
-
-    #     photon.setPosition( -0.5, -0.5, -0.5 )
-    #     photon.setDirection( 0.0, 0.0, 1.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertEqual( particle_distribution.evaluate( photon ), 0.0078125 )
-
-    #     photon.setPosition( 0.0, -0.5, -0.5 )
-    #     photon.setDirection( -1.0, 0.0, 0.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertEqual( particle_distribution.evaluate( photon ), 0.00390625 )
-
-    #     photon.setPosition( 0.5, -0.5, -0.5 )
-    #     photon.setDirection( 0.0, -1.0, 0.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertEqual( particle_distribution.evaluate( photon ), 0.00390625 )
-
-    #     photon.setPosition( 1.0, -0.5, -0.5 )
-    #     photon.setDirection( 0.0, 0.0, -1.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertEqual( particle_distribution.evaluate( photon ), 0.00390625 )
-
-    #     photon.setPosition( 1.1, -0.5, -0.5 )
-    #     photon.setDirection( 1.0/sqrt(3.0), 1.0/sqrt(3.0), 1.0/sqrt(3.0) )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
-
-    # def testEvaluate_cartesian_spatial_spherical_directional(self):
-    #     "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution evaluate_cartesian_spatial_spherical_directional"
-    #     particle_distribution = createCartesianSpatialSphericalDirectionalDist()
-
-    #     photon = MonteCarlo.PhotonState( 0 )
-    #     photon.setPosition( -1.1, -0.5, -0.5 )
-    #     photon.setDirection( 1.0, 0.0, 0.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
-
-    #     photon.setPosition( -1.0, -0.5, -0.5 )
-    #     photon.setDirection( 0.0, 1.0, 0.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertEqual( particle_distribution.evaluate( photon ), 0.0625 )
-
-    #     photon.setPosition( -0.5, -0.5, -0.5 )
-    #     photon.setDirection( 0.0, 0.0, 1.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertEqual( particle_distribution.evaluate( photon ), 0.0625 )
-
-    #     photon.setPosition( 0.0, -0.5, -0.5 )
-    #     photon.setDirection( -1.0, 0.0, 0.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertEqual( particle_distribution.evaluate( photon ), 0.03125 )
-
-    #     photon.setPosition( 0.5, -0.5, -0.5 )
-    #     photon.setDirection( 0.0, -1.0, 0.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertEqual( particle_distribution.evaluate( photon ), 0.03125 )
-
-    #     photon.setPosition( 1.0, -0.5, -0.5 )
-    #     photon.setDirection( 0.0, 0.0, -1.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertEqual( particle_distribution.evaluate( photon ), 0.03125 )
-
-    #     photon.setPosition( 1.1, -0.5, -0.5 )
-    #     photon.setDirection( 1.0/sqrt(3.0), 1.0/sqrt(3.0), 1.0/sqrt(3.0) )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
-
-    # def testEvaluate_cylindrical_spatial_cartesian_directional(self):
-    #     "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution evaluate_cylindrical_spatial_cartesian_directional"
-    #     particle_distribution = createCylindricalSpatialCartesianDirectionalDist()
-
-    #     photon = MonteCarlo.PhotonState( 0 )
-    #     photon.setPosition( 0.0, 0.0, -1.1 )
-    #     photon.setDirection( 1.0, 0.0, 0.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
-
-    #     photon.setPosition( 0.0, 0.0, -1.0 )
-    #     photon.setDirection( 1.0, 0.0, 0.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
-
-    #     photon.setPosition( 0.1, 0.1, -1.0 )
-    #     photon.setDirection( 1.0, 0.0, 0.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertAlmostEqual( particle_distribution.evaluate( photon ),
-    #                             0.0008838834764831846,
-    #                             delta=1e-15 )
-
-    #     photon.setPosition( 0.1, -0.1, 0.0 )
-    #     photon.setDirection( 0.0, 1.0, 0.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertAlmostEqual( particle_distribution.evaluate( photon ),
-    #                             0.0004419417382415923,
-    #                             delta=1e-15 )
-
-    #     photon.setPosition( -0.1, 0.1, 1.0 )
-    #     photon.setDirection( 0.0, 0.0, 1.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertAlmostEqual( particle_distribution.evaluate( photon ),
-    #                             0.0004419417382415923,
-    #                             delta=1e-15 )
-
-    #     photon.setPosition( 0.1, 0.1, 1.1 )
-    #     photon.setDirection( 0.0, 0.0, 1.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
-
-    # def testEvaluate_cylindrical_spatial_spherical_directional(self):
-    #     "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution evaluate_cylindrical_spatial_spherical_directional"
-    #     particle_distribution = createCylindricalSpatialSphericalDirectionalDist()
-
-    #     photon = MonteCarlo.PhotonState( 0 )
-    #     photon.setPosition( 0.0, 0.0, -1.1 )
-    #     photon.setDirection( 1.0, 0.0, 0.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
-
-    #     photon.setPosition( 0.0, 0.0, -1.0 )
-    #     photon.setDirection( 1.0, 0.0, 0.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
-
-    #     photon.setPosition( 0.1, 0.1, -1.0 )
-    #     photon.setDirection( 1.0, 0.0, 0.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertAlmostEqual( particle_distribution.evaluate( photon ),
-    #                             0.007071067811865477,
-    #                             delta=1e-15 )
-
-    #     photon.setPosition( 0.1, -0.1, 0.0 )
-    #     photon.setDirection( 0.0, 1.0, 0.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertAlmostEqual( particle_distribution.evaluate( photon ),
-    #                             0.0035355339059327385,
-    #                             delta=1e-15 )
-
-    #     photon.setPosition( -0.1, 0.1, 1.0 )
-    #     photon.setDirection( 1.0/sqrt(3.0), 1.0/sqrt(3.0), 1.0/sqrt(3.0) )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertAlmostEqual( particle_distribution.evaluate( photon ),
-    #                             0.0035355339059327385,
-    #                             delta=1e-15 )
-
-    #     photon.setPosition( 0.1, 0.1, 1.1 )
-    #     photon.setDirection( 0.0, 0.0, 1.0 )
-    #     photon.setEnergy( 1.0 )
-    #     photon.setTime( 1.0 )
-    #     photon.setWeight( 1.0 )
-
-    #     self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
-
-#     def testEvaluate_spherical_spatial_cartesian_directional(self):
-#         "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution evaluate_spherical_spatial_cartesian_directional"
-#         particle_distribution = createSphericalSpatialCartesianDirectionalDist()
-
-#         photon = MonteCarlo.PhotonState( 0 )
-#         photon.setPosition( 0.0, 0.0, -1.1 )
-#         photon.setDirection( 1.0, 0.0, 0.0 )
-#         photon.setEnergy( 1.0 )
-#         photon.setTime( 1.0 )
-#         photon.setWeight( 1.0 )
-
-#         self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
-
-#         photon.setPosition( 0.0, 0.0, -1.0 )
-#         photon.setDirection( 1.0, 0.0, 0.0 )
-#         photon.setEnergy( 1.0 )
-#         photon.setTime( 1.0 )
-#         photon.setWeight( 1.0 )
-
-#         self.assertEqual( particle_distribution.evaluate( photon ), 0.00625 )
-
-#         photon.setPosition( -1.0/sqrt(3.0), -1.0/sqrt(3.0), -1.0/sqrt(3.0) )
-#         photon.setDirection( -1.0, 0.0, 0.0 )
-#         photon.setEnergy( 1.0 )
-#         photon.setTime( 1.0 )
-#         photon.setWeight( 1.0 )
-
-#         self.assertAlmostEqual( particle_distribution.evaluate( photon ),
-#                                 0.00625,
-#                                 delta=1e-15 )
-
-#         photon.setPosition( 0.0, 0.0, 0.0 )
-#         photon.setDirection( 1.0, 0.0, 0.0 )
-#         photon.setEnergy( 1.0 )
-#         photon.setTime( 1.0 )
-#         photon.setWeight( 1.0 )
-
-#         self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
-
-#         photon.setPosition( 0.1, 0.1, 0.0 )
-#         photon.setDirection( 1.0, 0.0, 0.0 )
-#         photon.setEnergy( 1.0 )
-#         photon.setTime( 1.0 )
-#         photon.setWeight( 1.0 )
-
-#         self.assertAlmostEqual( particle_distribution.evaluate( photon ),
-#                                 6.25e-5,
-#                                 delta=1e-15 )
-
-#         photon.setPosition( 1.0/sqrt(3.0), 1.0/sqrt(3.0), 1.0/sqrt(3.0) )
-#         photon.setDirection( 0.0, 1.0, 0.0 )
-#         photon.setEnergy( 1.0 )
-#         photon.setTime( 1.0 )
-#         photon.setWeight( 1.0 )
-
-#         self.assertAlmostEqual( particle_distribution.evaluate( photon ),
-#                                 0.003125,
-#                                 delta=1e-15 )
-
-#         photon.setPosition( 0.0, 0.0, 1.0 )
-#         photon.setDirection( 1.0, 0.0, 0.0 )
-#         photon.setEnergy( 1.0 )
-#         photon.setTime( 1.0 )
-#         photon.setWeight( 1.0 )
-
-#         self.assertEqual( particle_distribution.evaluate( photon ), 0.003125 )
-
-#         photon.setPosition( 0.0, 0.0, 1.1 )
-#         photon.setDirection( 1.0, 0.0, 0.0 )
-#         photon.setEnergy( 1.0 )
-#         photon.setTime( 1.0 )
-#         photon.setWeight( 1.0 )
-
-#         self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
-
-#     def testEvaluate_spherical_spatial_spherical_directional(self):
-#         "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution evaluate_spherical_spatial_spherical_directional"
-#         particle_distribution = createSphericalSpatialSphericalDirectionalDist()
-
-#         photon = MonteCarlo.PhotonState( 0 )
-#         photon.setPosition( 0.0, 0.0, -1.1 )
-#         photon.setDirection( 1.0, 0.0, 0.0 )
-#         photon.setEnergy( 1.0 )
-#         photon.setTime( 1.0 )
-#         photon.setWeight( 1.0 )
-
-#         self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
-
-#         photon.setPosition( 0.0, 0.0, -1.0 )
-#         photon.setDirection( 1.0, 0.0, 0.0 )
-#         photon.setEnergy( 1.0 )
-#         photon.setTime( 1.0 )
-#         photon.setWeight( 1.0 )
-
-#         self.assertEqual( particle_distribution.evaluate( photon ), 0.05 )
-
-#         photon.setPosition( -1.0/sqrt(3.0), -1.0/sqrt(3.0), -1.0/sqrt(3.0) )
-#         photon.setDirection( -1.0, 0.0, 0.0 )
-#         photon.setEnergy( 1.0 )
-#         photon.setTime( 1.0 )
-#         photon.setWeight( 1.0 )
-
-#         self.assertAlmostEqual( particle_distribution.evaluate( photon ),
-#                                 0.05,
-#                                 delta=1e-15 )
-
-#         photon.setPosition( 0.0, 0.0, 0.0 )
-#         photon.setDirection( 1.0, 0.0, 0.0 )
-#         photon.setEnergy( 1.0 )
-#         photon.setTime( 1.0 )
-#         photon.setWeight( 1.0 )
-
-#         self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
-
-#         photon.setPosition( 0.1, 0.1, 0.0 )
-#         photon.setDirection( 1.0, 0.0, 0.0 )
-#         photon.setEnergy( 1.0 )
-#         photon.setTime( 1.0 )
-#         photon.setWeight( 1.0 )
-
-#         self.assertAlmostEqual( particle_distribution.evaluate( photon ),
-#                                 5.0e-4,
-#                                 delta=1e-15 )
-
-#         photon.setPosition( 1.0/sqrt(3.0), 1.0/sqrt(3.0), 1.0/sqrt(3.0) )
-#         photon.setDirection( 0.0, 1.0, 0.0 )
-#         photon.setEnergy( 1.0 )
-#         photon.setTime( 1.0 )
-#         photon.setWeight( 1.0 )
-
-#         self.assertAlmostEqual( particle_distribution.evaluate( photon ),
-#                                 0.025,
-#                                 delta=1e-15 )
-
-#         photon.setPosition( 0.0, 0.0, 1.0 )
-#         photon.setDirection( 1.0, 0.0, 0.0 )
-#         photon.setEnergy( 1.0 )
-#         photon.setTime( 1.0 )
-#         photon.setWeight( 1.0 )
-
-#         self.assertEqual( particle_distribution.evaluate( photon ), 0.025 )
-
-#         photon.setPosition( 0.0, 0.0, 1.1 )
-#         photon.setDirection( 1.0, 0.0, 0.0 )
-#         photon.setEnergy( 1.0 )
-#         photon.setTime( 1.0 )
-#         photon.setWeight( 1.0 )
-
-#         self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
-
-#     def testSample_cartesian_spatial_cartesian_directional(self):
-#         "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution sample_cartesian_spatial_cartesian_directional"
-#         particle_distribution = createCartesianSpatialCartesianDirectionalDist()
-
-#         # Set the random number generator stream
-#         fake_stream = [ 0.0, 0.5, 0.5, 1.0-1e-15, 0.5, 0.5, 1.0-1e-15, 0.0 ]
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         photon = MonteCarlo.PhotonState( 0 )
-
-#         particle_distribution.sample( photon )
-
-#         self.assertEqual( photon.getXPosition(), -1.0 )
-#         self.assertEqual( photon.getYPosition(), 0.0 )
-#         self.assertAlmostEqual( photon.getZPosition(), 1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZDirection(), 1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 5.0 )
-#         self.assertEqual( photon.getEnergy(), 5.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.0 )
-#         self.assertEqual( photon.getTime(), 0.0 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-
-#         # Set the random number generator stream
-#         fake_stream = [ 0.5, 0.5, 1.0-1e-15, 0.5, 0.5, 0.0, 0.5, 0.5 ]
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sample( photon )
-
-#         self.assertEqual( photon.getXPosition(), 0.0 )
-#         self.assertAlmostEqual( photon.getYPosition(), 1.0, 1e-12 )
-#         self.assertEqual( photon.getZPosition(), 0.0 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getYDirection(), -1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZDirection(), 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 10.0 )
-#         self.assertEqual( photon.getEnergy(), 10.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.5 )
-#         self.assertEqual( photon.getTime(), 0.5 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-
-#         # Set the random number generator stream
-#         fake_stream = [ 1.0-1e-15, 1.0-1e-15, 0.0, 0.0, 1.0-1e-15, 0.5, 0.5, 1.0-1e-15 ]
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sample( photon )
-
-#         self.assertAlmostEqual( photon.getXPosition(), 1.0, 1e-12 )
-#         self.assertEqual( photon.getYPosition(), -1.0 )
-#         self.assertEqual( photon.getZPosition(), -1.0 )
-#         self.assertAlmostEqual( photon.getXDirection(), 1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getEnergy(), 20.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getSourceTime(), 1.0, 1e-15 )
-#         self.assertAlmostEqual( photon.getTime(), 1.0, 1e-15 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-
-#         Prng.RandomNumberGenerator.unsetFakeStream()
-
-#     def testSample_cartesian_spatial_spherical_directional(self):
-#         "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution sample_cartesian_spatial_spherical_directional"
-#         particle_distribution = createCartesianSpatialSphericalDirectionalDist()
-
-# #         # Set the random number generator stream
-# #   std.vector<double> fake_stream( 7 )
-# #   fake_stream[0] = 0.0 // x
-# #   fake_stream[1] = 0.5 // energy
-# #   fake_stream[2] = 0.5 // y
-# #   fake_stream[3] = 1.0-1e-15 // z
-# #   fake_stream[4] = 0.0 // theta
-# #   fake_stream[5] = 1.0-1e-15 // mu
-# #   fake_stream[6] = 0.0 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         photon = MonteCarlo.PhotonState( 0 )
-
-#         particle_distribution.sample( photon )
-
-#         self.assertEqual( photon.getXPosition(), -1.0 )
-#         self.assertEqual( photon.getYPosition(), 0.0 )
-#         self.assertAlmostEqual( photon.getZPosition(), 1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-7 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZDirection(), 1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 5.0 )
-#         self.assertEqual( photon.getEnergy(), 5.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.0 )
-#         self.assertEqual( photon.getTime(), 0.0 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 0.5 // x
-# #   fake_stream[1] = 0.5 // energy
-# #   fake_stream[2] = 0.0 // y
-# #   fake_stream[3] = 0.5 // z
-# #   fake_stream[4] = 0.0 // theta
-# #   fake_stream[5] = 0.0 // mu
-# #   fake_stream[6] = 0.5 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sample( photon )
-
-#         self.assertEqual( photon.getXPosition(), 0.0 )
-#         self.assertEqual( photon.getYPosition(), -1.0 )
-#         self.assertEqual( photon.getZPosition(), 0.0 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZDirection(), -1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 10.0 )
-#         self.assertEqual( photon.getEnergy(), 10.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.5 )
-#         self.assertEqual( photon.getTime(), 0.5 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 1.0-1e-15 // x
-# #   fake_stream[1] = 1.0-1e-15 // energy
-# #   fake_stream[2] = 1.0-1e-15 // y
-# #   fake_stream[3] = 0.0 // z
-# #   fake_stream[4] = 0.5 // theta
-# #   fake_stream[5] = 0.5 // mu
-# #   fake_stream[6] = 1.0-1e-15 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sample( photon )
-
-#         self.assertAlmostEqual( photon.getXPosition(), 1.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getYPosition(), 1.0, 1e-12 )
-#         self.assertEqual( photon.getZPosition(), -1.0 )
-#         self.assertAlmostEqual( photon.getXDirection(), -1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getEnergy(), 20.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getSourceTime(), 1.0, 1e-15 )
-#         self.assertAlmostEqual( photon.getTime(), 1.0, 1e-15 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-
-#         Prng.RandomNumberGenerator.unsetFakeStream()
-
-#     def testSample_cylindrical_spatial_cartesian_directional(self):
-#         "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution getDimensionDistributionTypeName"
-#         particle_distribution = createCylindricalSpatialCartesianDirectionalDist()
-
-# #         # Set the random number generator stream
-# #   std.vector<double> fake_stream( 8 )
-# #   fake_stream[0] = 0.0 // r
-# #   fake_stream[1] = 0.5 // theta
-# #   fake_stream[2] = 0.0 // z
-# #   fake_stream[3] = 0.5 // energy
-# #   fake_stream[4] = 0.5 // u
-# #   fake_stream[5] = 0.5 // v
-# #   fake_stream[6] = 1.0-1e-15 // w
-# #   fake_stream[7] = 0.0 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         photon = MonteCarlo.PhotonState( 0 )
-
-#         particle_distribution.sample( photon )
-
-#         self.assertEqual( photon.getXPosition(), 0.0 )
-#         self.assertEqual( photon.getYPosition(), 0.0 )
-#         self.assertAlmostEqual( photon.getZPosition(), -1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-7 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZDirection(), 1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 5.0 )
-#         self.assertEqual( photon.getEnergy(), 5.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.0 )
-#         self.assertEqual( photon.getTime(), 0.0 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 0.5 // r
-# #   fake_stream[1] = 0.5 // theta
-# #   fake_stream[2] = 0.5 // z
-# #   fake_stream[3] = 0.5 // energy
-# #   fake_stream[4] = 0.5 // u
-# #   fake_stream[5] = 1.0-1e-15 // v
-# #   fake_stream[6] = 0.5 // w
-# #   fake_stream[7] = 0.5 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sample( photon )
-
-#         self.assertAlmostEqual( photon.getXPosition(), -0.7071067811865476, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYPosition(), 1e-12 )
-#         self.assertEqual( photon.getZPosition(), 0.0 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-7 )
-#         self.assertAlmostEqual( photon.getYDirection(), 1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZDirection(), 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 10.0 )
-#         self.assertEqual( photon.getEnergy(), 10.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.5 )
-#         self.assertEqual( photon.getTime(), 0.5 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 1.0-1e-15 // r
-# #   fake_stream[1] = 0.25 // theta
-# #   fake_stream[2] = 1.0-1e-15 // z
-# #   fake_stream[3] = 1.0-1e-15 // energy
-# #   fake_stream[4] = 1.0-1e-15 // u
-# #   fake_stream[5] = 0.5 // v
-# #   fake_stream[6] = 0.5 // w
-# #   fake_stream[7] = 1.0-1e-15 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sample( photon )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getYPosition(), 1.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getZPosition(), 1.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getXDirection(), 1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getEnergy(), 20.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getSourceTime(), 1.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getTime(), 1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-
-#         Prng.RandomNumberGenerator.unsetFakeStream()
-
-#     def testSample_cylindrical_spatial_spherical_directional(self):
-#         "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution getDimensionDistributionTypeName"
-#         particle_distribution = createCylindricalSpatialSphericalDirectionalDist()
-
-# #         # Set the random number generator stream
-# #   std.vector<double> fake_stream( 7 )
-# #   fake_stream[0] = 0.0 // r
-# #   fake_stream[1] = 0.5 // theta
-# #   fake_stream[2] = 0.0 // z
-# #   fake_stream[3] = 0.5 // energy
-# #   fake_stream[4] = 0.0 // theta
-# #   fake_stream[5] = 0.0 // mu
-# #   fake_stream[6] = 0.0 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         photon = MonteCarlo.PhotonState( 0 )
-
-#         particle_distribution.sample( photon )
-
-#         self.assertEqual( photon.getXPosition(), 0.0 )
-#         self.assertEqual( photon.getYPosition(), 0.0 )
-#         self.assertAlmostEqual( photon.getZPosition(), -1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-7 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZDirection(), -1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 5.0 )
-#         self.assertEqual( photon.getEnergy(), 5.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.0 )
-#         self.assertEqual( photon.getTime(), 0.0 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 0.5 // r
-# #   fake_stream[1] = 0.5 // theta
-# #   fake_stream[2] = 0.5 // z
-# #   fake_stream[3] = 0.5 // energy
-# #   fake_stream[4] = 0.0 // theta
-# #   fake_stream[5] = 1.0-1e-15 // mu
-# #   fake_stream[6] = 0.5 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sample( photon )
-
-#         self.assertAlmostEqual( photon.getXPosition(), -0.7071067811865476, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYPosition(), 1e-12 )
-#         self.assertEqual( photon.getZPosition(), 0.0 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-7 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZDirection(), 1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 10.0 )
-#         self.assertEqual( photon.getEnergy(), 10.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.5 )
-#         self.assertEqual( photon.getTime(), 0.5 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 1.0-1e-15 // r
-# #   fake_stream[1] = 0.25 // theta
-# #   fake_stream[2] = 1.0-1e-15 // z
-# #   fake_stream[3] = 1.0-1e-15 // energy
-# #   fake_stream[4] = 1.0-1e-15 // theta
-# #   fake_stream[5] = 0.5 // mu
-# #   fake_stream[6] = 1.0-1e-15 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sample( photon )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getYPosition(), 1.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getZPosition(), 1.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getXDirection(), 1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getEnergy(), 20.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getSourceTime(), 1.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getTime(), 1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-
-#         Prng.RandomNumberGenerator.unsetFakeStream()
-
-#     def testSample_spherical_spatial_cartesian_directional(self):
-#         "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution getDimensionDistributionTypeName"
-#         particle_distribution = createSphericalSpatialCartesianDirectionalDist()
-
-# #         # Set the random number generator stream
-# #   std.vector<double> fake_stream( 8 )
-# #   fake_stream[0] = 1.0-1e-12 // r
-# #   fake_stream[1] = 0.0 // theta
-# #   fake_stream[2] = 0.0 // mu
-# #   fake_stream[3] = 0.5 // energy
-# #   fake_stream[4] = 0.5 // u
-# #   fake_stream[5] = 0.5 // v
-# #   fake_stream[6] = 1.0-1e-15 // w
-# #   fake_stream[7] = 0.0 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         photon = MonteCarlo.PhotonState( 0 )
-
-#         particle_distribution.sample( photon )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZPosition(), -1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZDirection(), 1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 5.0 )
-#         self.assertEqual( photon.getEnergy(), 5.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.0 )
-#         self.assertEqual( photon.getTime(), 0.0 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 0.0 // r
-# #   fake_stream[1] = 0.0 // theta
-# #   fake_stream[2] = 0.0 // mu
-# #   fake_stream[3] = 0.5 // energy
-# #   fake_stream[4] = 0.5 // u
-# #   fake_stream[5] = 1.0-1e-15 // v
-# #   fake_stream[6] = 0.5 // w
-# #   fake_stream[7] = 0.0 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sample( photon )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getYDirection(), 1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZDirection(), 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 5.0 )
-#         self.assertEqual( photon.getEnergy(), 5.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.0 )
-#         self.assertEqual( photon.getTime(), 0.0 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 1.0-1e-15 // r
-# #   fake_stream[1] = 0.5 // theta
-# #   fake_stream[2] = 0.5 // mu
-# #   fake_stream[3] = 0.5 // energy
-# #   fake_stream[4] = 1.0-1e-15 // u
-# #   fake_stream[5] = 0.5 // v
-# #   fake_stream[6] = 0.5 // w
-# #   fake_stream[7] = 0.5 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sample( photon )
-
-#         self.assertAlmostEqual( photon.getXPosition(), -1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getXDirection(), 1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZDirection(), 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 10.0 )
-#         self.assertEqual( photon.getEnergy(), 10.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.5 )
-#         self.assertEqual( photon.getTime(), 0.5 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 1.0-1e-15 // r
-# #   fake_stream[1] = 0.0 // theta
-# #   fake_stream[2] = 1.0-1e-15 // mu
-# #   fake_stream[3] = 1.0-1e-15 // energy
-# #   fake_stream[4] = 1.0-1e-15 // u
-# #   fake_stream[5] = 1.0-1e-15 // v
-# #   fake_stream[6] = 0.5 // w
-# #   fake_stream[7] = 1.0-1e-15 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sample( photon )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-7 )
-# #         self.assertTrue_SMALL( photon.getYPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZPosition(), 1.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getXDirection(), 1.0/sqrt(2.0), 1e-12 )
-#         self.assertAlmostEqual( photon.getYDirection(), 1.0/sqrt(2.0), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getEnergy(), 20.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getSourceTime(), 1.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getTime(), 1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-
-#         Prng.RandomNumberGenerator.unsetFakeStream()
-
-#     def testSample_spherical_spatial_spherical_directional(self):
-#         "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution getDimensionDistributionTypeName"
-#         particle_distribution = createSphericalSpatialSphericalDirectionalDist()
-
-# #         # Set the random number generator stream
-# #   std.vector<double> fake_stream( 7 )
-# #   fake_stream[0] = 1.0-1e-12 // r
-# #   fake_stream[1] = 0.0 // theta
-# #   fake_stream[2] = 0.0 // mu
-# #   fake_stream[3] = 0.5 // energy
-# #   fake_stream[4] = 0.0 // theta
-# #   fake_stream[5] = 0.0 // mu
-# #   fake_stream[6] = 0.0 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         photon = MonteCarlo.PhotonState( 0 )
-
-#         particle_distribution.sample( photon )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZPosition(), -1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZDirection(), -1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 5.0 )
-#         self.assertEqual( photon.getEnergy(), 5.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.0 )
-#         self.assertEqual( photon.getTime(), 0.0 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 0.0 // r
-# #   fake_stream[1] = 0.0 // theta
-# #   fake_stream[2] = 0.0 // mu
-# #   fake_stream[3] = 0.5 // energy
-# #   fake_stream[4] = 0.0 // theta
-# #   fake_stream[5] = 0.5 // mu
-# #   fake_stream[6] = 0.0 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sample( photon )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getXDirection(), 1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZDirection(), 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 5.0 )
-#         self.assertEqual( photon.getEnergy(), 5.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.0 )
-#         self.assertEqual( photon.getTime(), 0.0 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 1.0-1e-15 // r
-# #   fake_stream[1] = 0.5 // theta
-# #   fake_stream[2] = 0.5 // mu
-# #   fake_stream[3] = 0.5 // energy
-# #   fake_stream[4] = 0.75 // theta
-# #   fake_stream[5] = 0.5 // mu
-# #   fake_stream[6] = 0.5 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sample( photon )
-
-#         self.assertAlmostEqual( photon.getXPosition(), -1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getYDirection(), -1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZDirection(), 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 10.0 )
-#         self.assertEqual( photon.getEnergy(), 10.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.5 )
-#         self.assertEqual( photon.getTime(), 0.5 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 1.0-1e-15 // r
-# #   fake_stream[1] = 0.0 // theta
-# #   fake_stream[2] = 1.0-1e-15 // mu
-# #   fake_stream[3] = 1.0-1e-15 // energy
-# #   fake_stream[4] = 0.0 // theta
-# #   fake_stream[5] = 1.0-1e-15 // mu
-# #   fake_stream[6] = 1.0-1e-15 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sample( photon )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-7 )
-# #         self.assertTrue_SMALL( photon.getYPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZPosition(), 1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-7 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZDirection(), 1.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getEnergy(), 20.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getSourceTime(), 1.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getTime(), 1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-
-#         Prng.RandomNumberGenerator.unsetFakeStream()
-
-#     def testSample_point_spatial_mono_directional(self):
-#         "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution sample_point_spatial_mono_directional"
-#         particle_distribution
-
-#         tmp_particle_distribution = StandardParticleDistribution( "test dist" )
-
-#         position = [1.0, 2.0, 3.0]
-#         direction = [0.0, -1/std.sqrt(2.0), 1/std.sqrt(2.0)]
-
-# #     tmp_particle_distribution.setPosition( position.data() )
-# #     tmp_particle_distribution.setDirection( direction.data() )
-
-# #     std.shared_ptr<const Utility.UnivariateDistribution> raw_uniform_dist = Distribution.UniformDistribution( 0.0, 1.0, 1.0 )
-
-# #     std.shared_ptr<MonteCarlo.PhaseSpaceDimensionDistribution>
-# #       energy_dimension_dist = ActiveRegion.IndependentDimensionDistribution<ActiveRegion.ENERGY_DIMENSION>( raw_uniform_dist )
-# #     tmp_particle_distribution.setDimensionDistribution( energy_dimension_dist )
-
-# #     std.shared_ptr<MonteCarlo.PhaseSpaceDimensionDistribution>
-# #       time_dimension_dist = ActiveRegion.IndependentDimensionDistribution<ActiveRegion.TIME_DIMENSION>( raw_uniform_dist )
-# #     tmp_particle_distribution.setDimensionDistribution( time_dimension_dist )
-
-# #     raw_delta_dist = Distribution.DeltaDistribution( 0.5 )
-
-# #     std.shared_ptr<MonteCarlo.PhaseSpaceDimensionDistribution>
-# #       weight_dimension_dist = ActiveRegion.IndependentDimensionDistribution<ActiveRegion.WEIGHT_DIMENSION>( raw_delta_dist )
-# #     tmp_particle_distribution.setDimensionDistribution( weight_dimension_dist )
-
-# #     tmp_particle_distribution.constructDimensionDistributionDependencyTree()
-
-# #     particle_distribution = tmp_particle_distribution
-# #   }
-
-# #         # Set the random number generator stream
-# #   std.vector<double> fake_stream( 7 )
-# #   fake_stream[0] = 0.25 // energy
-# #   fake_stream[1] = 0.5 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         photon = MonteCarlo.PhotonState( 0 )
-
-#         particle_distribution.sample( photon )
-
-#         self.assertEqual( photon.getXPosition(), 1.0 )
-#         self.assertEqual( photon.getYPosition(), 2.0 )
-#         self.assertEqual( photon.getZPosition(), 3.0 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-15 )
-#         self.assertAlmostEqual( photon.getYDirection(),
-#                                 -1/std.sqrt(2.0),
-#                                 1e-15 )
-#         self.assertAlmostEqual( photon.getZDirection(),
-#                                 1/std.sqrt(2.0),
-#                                 1e-15 )
-#         self.assertAlmostEqual( photon.getEnergy(), 0.25, 1e-15 )
-#         self.assertAlmostEqual( photon.getTime(), 0.5, 1e-15 )
-#         self.assertAlmostEqual( photon.getWeight(), 0.5, 1e-15 )
-
-#         Prng.RandomNumberGenerator.unsetFakeStream()
-
-#     def testSampleAndRecordTrials(self):
-#         "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution sampleAndRecordTrials"
-#         particle_distribution = createSphericalSpatialSphericalDirectionalDist()
-
-# #   ParticleDistribution.DimensionCounterMap trials
-
-#         particle_distribution.initializeDimensionCounters( trials )
-
-#         # Set the random number generator stream
-#         fake_stream = [ 1.0-1e-12, 0.0, 0.0, 0.5, 0.0 ,0.0 ,0.0 ]
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         photon = MonteCarlo.PhotonState( 0 )
-
-#         particle_distribution.sampleAndRecordTrials( photon, trials )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZPosition(), -1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZDirection(), -1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 5.0 )
-#         self.assertEqual( photon.getEnergy(), 5.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.0 )
-#         self.assertEqual( photon.getTime(), 0.0 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-#         self.assertEqual( trials[PRIMARY_SPATIAL_DIMENSION], 1 )
-#         self.assertEqual( trials[SECONDARY_SPATIAL_DIMENSION], 1 )
-#         self.assertEqual( trials[TERTIARY_SPATIAL_DIMENSION], 1 )
-#         self.assertEqual( trials[PRIMARY_DIRECTIONAL_DIMENSION], 1 )
-#         self.assertEqual( trials[SECONDARY_DIRECTIONAL_DIMENSION], 1 )
-#         self.assertEqual( trials[TERTIARY_DIRECTIONAL_DIMENSION], 1 )
-#         self.assertEqual( trials[ENERGY_DIMENSION], 1 )
-#         self.assertEqual( trials[TIME_DIMENSION], 1 )
-#         self.assertEqual( trials[WEIGHT_DIMENSION], 1 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 0.0 // r
-# #   fake_stream[1] = 0.0 // theta
-# #   fake_stream[2] = 0.0 // mu
-# #   fake_stream[3] = 0.5 // energy
-# #   fake_stream[4] = 0.0 // theta
-# #   fake_stream[5] = 0.5 // mu
-# #   fake_stream[6] = 0.0 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sampleAndRecordTrials( photon, trials )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getXDirection(), 1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZDirection(), 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 5.0 )
-#         self.assertEqual( photon.getEnergy(), 5.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.0 )
-#         self.assertEqual( photon.getTime(), 0.0 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-#         self.assertEqual( trials[PRIMARY_SPATIAL_DIMENSION], 2 )
-#         self.assertEqual( trials[SECONDARY_SPATIAL_DIMENSION], 2 )
-#         self.assertEqual( trials[TERTIARY_SPATIAL_DIMENSION], 2 )
-#         self.assertEqual( trials[PRIMARY_DIRECTIONAL_DIMENSION], 2 )
-#         self.assertEqual( trials[SECONDARY_DIRECTIONAL_DIMENSION], 2 )
-#         self.assertEqual( trials[TERTIARY_DIRECTIONAL_DIMENSION], 2 )
-#         self.assertEqual( trials[ENERGY_DIMENSION], 2 )
-#         self.assertEqual( trials[TIME_DIMENSION], 2 )
-#         self.assertEqual( trials[WEIGHT_DIMENSION], 2 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 1.0-1e-15 // r
-# #   fake_stream[1] = 0.5 // theta
-# #   fake_stream[2] = 0.5 // mu
-# #   fake_stream[3] = 0.5 // energy
-# #   fake_stream[4] = 0.75 // theta
-# #   fake_stream[5] = 0.5 // mu
-# #   fake_stream[6] = 0.5 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sampleAndRecordTrials( photon, trials )
-
-#         self.assertAlmostEqual( photon.getXPosition(), -1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getYDirection(), -1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZDirection(), 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 10.0 )
-#         self.assertEqual( photon.getEnergy(), 10.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.5 )
-#         self.assertEqual( photon.getTime(), 0.5 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-#         self.assertEqual( trials[PRIMARY_SPATIAL_DIMENSION], 3 )
-#         self.assertEqual( trials[SECONDARY_SPATIAL_DIMENSION], 3 )
-#         self.assertEqual( trials[TERTIARY_SPATIAL_DIMENSION], 3 )
-#         self.assertEqual( trials[PRIMARY_DIRECTIONAL_DIMENSION], 3 )
-#         self.assertEqual( trials[SECONDARY_DIRECTIONAL_DIMENSION], 3 )
-#         self.assertEqual( trials[TERTIARY_DIRECTIONAL_DIMENSION], 3 )
-#         self.assertEqual( trials[ENERGY_DIMENSION], 3 )
-#         self.assertEqual( trials[TIME_DIMENSION], 3 )
-#         self.assertEqual( trials[WEIGHT_DIMENSION], 3 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 1.0-1e-15 // r
-# #   fake_stream[1] = 0.0 // theta
-# #   fake_stream[2] = 1.0-1e-15 // mu
-# #   fake_stream[3] = 1.0-1e-15 // energy
-# #   fake_stream[4] = 0.0 // theta
-# #   fake_stream[5] = 1.0-1e-15 // mu
-# #   fake_stream[6] = 1.0-1e-15 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sampleAndRecordTrials( photon, trials )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-7 )
-# #         self.assertTrue_SMALL( photon.getYPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZPosition(), 1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-7 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZDirection(), 1.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getEnergy(), 20.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getSourceTime(), 1.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getTime(), 1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceWeight(), 0.5 )
-#         self.assertEqual( photon.getWeight(), 0.5 )
-#         self.assertEqual( trials[PRIMARY_SPATIAL_DIMENSION], 4 )
-#         self.assertEqual( trials[SECONDARY_SPATIAL_DIMENSION], 4 )
-#         self.assertEqual( trials[TERTIARY_SPATIAL_DIMENSION], 4 )
-#         self.assertEqual( trials[PRIMARY_DIRECTIONAL_DIMENSION], 4 )
-#         self.assertEqual( trials[SECONDARY_DIRECTIONAL_DIMENSION], 4 )
-#         self.assertEqual( trials[TERTIARY_DIRECTIONAL_DIMENSION], 4 )
-#         self.assertEqual( trials[ENERGY_DIMENSION], 4 )
-#         self.assertEqual( trials[TIME_DIMENSION], 4 )
-#         self.assertEqual( trials[WEIGHT_DIMENSION], 4 )
-
-#         Prng.RandomNumberGenerator.unsetFakeStream()
-
-#     def testSampleWithDimensionValue(self):
-#         "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution sampleWithDimensionValue"
-#         particle_distribution = createSphericalSpatialSphericalDirectionalDist()
-
-# #         # Set the random number generator stream
-# #   std.vector<double> fake_stream( 6 )
-# #   fake_stream[0] = 0.0 // theta
-# #   fake_stream[1] = 1.0-1e-15 // mu
-# #   fake_stream[2] = 1.0-1e-15 // energy
-# #   fake_stream[3] = 0.0 // theta
-# #   fake_stream[4] = 1.0-1e-15 // mu
-# #   fake_stream[5] = 1.0-1e-15 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         photon = MonteCarlo.PhotonState( 0 )
-
-#         particle_distribution.sampleWithDimensionValue( photon, PRIMARY_SPATIAL_DIMENSION, 0.5 )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-7 )
-# #         self.assertTrue_SMALL( photon.getYPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZPosition(), 0.5, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-7 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZDirection(), 1.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getEnergy(), 20.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getSourceTime(), 1.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getTime(), 1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceWeight(), 0.375 )
-#         self.assertEqual( photon.getWeight(), 0.375 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 1.0-1e-12 // r
-# #   fake_stream[1] = 0.5 // mu
-# #   fake_stream[2] = 0.5 // energy
-# #   fake_stream[3] = 0.0 // theta
-# #   fake_stream[4] = 1.0-1e-15 // mu
-# #   fake_stream[5] = 0.0 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sampleWithDimensionValue( photon, SECONDARY_SPATIAL_DIMENSION, numpy.pi/2 )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getYPosition(), 1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-7 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZDirection(), 1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 10.0 )
-#         self.assertEqual( photon.getEnergy(), 10.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.0 )
-#         self.assertEqual( photon.getTime(), 0.0 )
-#         self.assertAlmostEqual( photon.getSourceWeight(), 0.07957747154594767, 1e-12 )
-#         self.assertAlmostEqual( photon.getWeight(), 0.07957747154594767, 1e-12 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 1.0-1e-12 // r
-# #   fake_stream[1] = 0.75 // theta
-# #   fake_stream[2] = 0.5 // energy
-# #   fake_stream[3] = 0.0 // theta
-# #   fake_stream[4] = 1.0-1e-15 // mu
-# #   fake_stream[5] = 0.0 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sampleWithDimensionValue( photon, TERTIARY_SPATIAL_DIMENSION, 0.0 )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getYPosition(), -1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-7 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZDirection(), 1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 10.0 )
-#         self.assertEqual( photon.getEnergy(), 10.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.0 )
-#         self.assertEqual( photon.getTime(), 0.0 )
-#         self.assertEqual( photon.getSourceWeight(), 0.25 )
-#         self.assertEqual( photon.getWeight(), 0.25 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 1.0-1e-12 // r
-# #   fake_stream[1] = 0.75 // theta
-# #   fake_stream[2] = 0.5 // mu
-# #   fake_stream[3] = 0.5 // energy
-# #   fake_stream[4] = 0.5 // mu
-# #   fake_stream[5] = 0.0 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sampleWithDimensionValue( photon, SECONDARY_DIRECTIONAL_DIMENSION, 0.0 )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getYPosition(), -1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getXDirection(), 1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZDirection(), 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 10.0 )
-#         self.assertEqual( photon.getEnergy(), 10.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.0 )
-#         self.assertEqual( photon.getTime(), 0.0 )
-#         self.assertAlmostEqual( photon.getSourceWeight(), 0.07957747154594767, 1e-12 )
-#         self.assertAlmostEqual( photon.getWeight(), 0.07957747154594767, 1e-12 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 1.0-1e-12 // r
-# #   fake_stream[1] = 0.75 // theta
-# #   fake_stream[2] = 0.5 // mu
-# #   fake_stream[3] = 0.5 // energy
-# #   fake_stream[4] = 0.0 // theta
-# #   fake_stream[5] = 0.0 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sampleWithDimensionValue( photon, TERTIARY_DIRECTIONAL_DIMENSION, 1.0 )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getYPosition(), -1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZDirection(), 1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 10.0 )
-#         self.assertEqual( photon.getEnergy(), 10.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.0 )
-#         self.assertEqual( photon.getTime(), 0.0 )
-#         self.assertEqual( photon.getSourceWeight(), 0.25 )
-#         self.assertEqual( photon.getWeight(), 0.25 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 1.0-1e-12 // r
-# #   fake_stream[1] = 0.0 // theta
-# #   fake_stream[2] = 0.0 // mu
-# #   fake_stream[3] = 0.0 // theta
-# #   fake_stream[4] = 0.0 // mu
-# #   fake_stream[5] = 0.0 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sampleWithDimensionValue( photon, ENERGY_DIMENSION, 1.0 )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZPosition(), -1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZDirection(), -1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 1.0 )
-#         self.assertEqual( photon.getEnergy(), 1.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.0 )
-#         self.assertEqual( photon.getTime(), 0.0 )
-#         self.assertEqual( photon.getSourceWeight(), 0.05 )
-#         self.assertEqual( photon.getWeight(), 0.05 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 0.0 // r
-# #   fake_stream[1] = 0.0 // theta
-# #   fake_stream[2] = 0.0 // mu
-# #   fake_stream[3] = 0.0 // theta
-# #   fake_stream[4] = 0.5 // mu
-# #   fake_stream[5] = 0.0 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sampleWithDimensionValue( photon, ENERGY_DIMENSION, 2.0 )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getXDirection(), 1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZDirection(), 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 2.0 )
-#         self.assertEqual( photon.getEnergy(), 2.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.0 )
-#         self.assertEqual( photon.getTime(), 0.0 )
-#         self.assertEqual( photon.getSourceWeight(), 0.05 )
-#         self.assertEqual( photon.getWeight(), 0.05 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 1.0-1e-15 // r
-# #   fake_stream[1] = 0.5 // theta
-# #   fake_stream[2] = 0.5 // mu
-# #   fake_stream[3] = 0.75 // theta
-# #   fake_stream[4] = 0.5 // mu
-# #   fake_stream[5] = 0.5 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sampleWithDimensionValue( photon, ENERGY_DIMENSION, 15.0 )
-
-#         self.assertAlmostEqual( photon.getXPosition(), -1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getYDirection(), -1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZDirection(), 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 15.0 )
-#         self.assertEqual( photon.getEnergy(), 15.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.5 )
-#         self.assertEqual( photon.getTime(), 0.5 )
-#         self.assertEqual( photon.getSourceWeight(), 0.025 )
-#         self.assertEqual( photon.getWeight(), 0.025 )
-
-#         Prng.RandomNumberGenerator.unsetFakeStream()
-
-#     def testSampleWithDimensionValueAndRecordTrials(self):
-#         "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution sampleWithDimensionValueAndRecordTrials"
-#         particle_distribution = createSphericalSpatialSphericalDirectionalDist()
-
-# #   ParticleDistribution.DimensionCounterMap trials
-
-#         particle_distribution.initializeDimensionCounters( trials )
-
-# #         # Set the random number generator stream
-# #   std.vector<double> fake_stream( 6 )
-# #   fake_stream[0] = 0.0 // theta
-# #   fake_stream[1] = 1.0-1e-15 // mu
-# #   fake_stream[2] = 1.0-1e-15 // energy
-# #   fake_stream[3] = 0.0 // theta
-# #   fake_stream[4] = 1.0-1e-15 // mu
-# #   fake_stream[5] = 1.0-1e-15 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         photon = MonteCarlo.PhotonState( 0 )
-
-#         particle_distribution.sampleWithDimensionValueAndRecordTrials( photon, trials, PRIMARY_SPATIAL_DIMENSION, 0.5 )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-7 )
-# #         self.assertTrue_SMALL( photon.getYPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZPosition(), 0.5, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-7 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZDirection(), 1.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getEnergy(), 20.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getSourceTime(), 1.0, 1e-12 )
-#         self.assertAlmostEqual( photon.getTime(), 1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceWeight(), 0.375 )
-#         self.assertEqual( photon.getWeight(), 0.375 )
-#         self.assertEqual( trials[PRIMARY_SPATIAL_DIMENSION], 0 )
-#         self.assertEqual( trials[SECONDARY_SPATIAL_DIMENSION], 1 )
-#         self.assertEqual( trials[TERTIARY_SPATIAL_DIMENSION], 1 )
-#         self.assertEqual( trials[PRIMARY_DIRECTIONAL_DIMENSION], 1 )
-#         self.assertEqual( trials[SECONDARY_DIRECTIONAL_DIMENSION], 1 )
-#         self.assertEqual( trials[TERTIARY_DIRECTIONAL_DIMENSION], 1 )
-#         self.assertEqual( trials[ENERGY_DIMENSION], 1 )
-#         self.assertEqual( trials[TIME_DIMENSION], 1 )
-#         self.assertEqual( trials[WEIGHT_DIMENSION], 1 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 1.0-1e-12 // r
-# #   fake_stream[1] = 0.5 // mu
-# #   fake_stream[2] = 0.5 // energy
-# #   fake_stream[3] = 0.0 // theta
-# #   fake_stream[4] = 1.0-1e-15 // mu
-# #   fake_stream[5] = 0.0 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sampleWithDimensionValueAndRecordTrials( photon, trials, SECONDARY_SPATIAL_DIMENSION, numpy.pi/2 )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getYPosition(), 1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-7 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZDirection(), 1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 10.0 )
-#         self.assertEqual( photon.getEnergy(), 10.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.0 )
-#         self.assertEqual( photon.getTime(), 0.0 )
-#         self.assertAlmostEqual( photon.getSourceWeight(), 0.07957747154594767, 1e-12 )
-#         self.assertAlmostEqual( photon.getWeight(), 0.07957747154594767, 1e-12 )
-#         self.assertEqual( trials[PRIMARY_SPATIAL_DIMENSION], 1 )
-#         self.assertEqual( trials[SECONDARY_SPATIAL_DIMENSION], 1 )
-#         self.assertEqual( trials[TERTIARY_SPATIAL_DIMENSION], 2 )
-#         self.assertEqual( trials[PRIMARY_DIRECTIONAL_DIMENSION], 2 )
-#         self.assertEqual( trials[SECONDARY_DIRECTIONAL_DIMENSION], 2 )
-#         self.assertEqual( trials[TERTIARY_DIRECTIONAL_DIMENSION], 2 )
-#         self.assertEqual( trials[ENERGY_DIMENSION], 2 )
-#         self.assertEqual( trials[TIME_DIMENSION], 2 )
-#         self.assertEqual( trials[WEIGHT_DIMENSION], 2 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 1.0-1e-12 // r
-# #   fake_stream[1] = 0.75 // theta
-# #   fake_stream[2] = 0.5 // energy
-# #   fake_stream[3] = 0.0 // theta
-# #   fake_stream[4] = 1.0-1e-15 // mu
-# #   fake_stream[5] = 0.0 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sampleWithDimensionValueAndRecordTrials( photon, trials, TERTIARY_SPATIAL_DIMENSION, 0.0 )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getYPosition(), -1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-7 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZDirection(), 1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 10.0 )
-#         self.assertEqual( photon.getEnergy(), 10.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.0 )
-#         self.assertEqual( photon.getTime(), 0.0 )
-#         self.assertEqual( photon.getSourceWeight(), 0.25 )
-#         self.assertEqual( photon.getWeight(), 0.25 )
-#         self.assertEqual( trials[PRIMARY_SPATIAL_DIMENSION], 2 )
-#         self.assertEqual( trials[SECONDARY_SPATIAL_DIMENSION], 2 )
-#         self.assertEqual( trials[TERTIARY_SPATIAL_DIMENSION], 2 )
-#         self.assertEqual( trials[PRIMARY_DIRECTIONAL_DIMENSION], 3 )
-#         self.assertEqual( trials[SECONDARY_DIRECTIONAL_DIMENSION], 3 )
-#         self.assertEqual( trials[TERTIARY_DIRECTIONAL_DIMENSION], 3 )
-#         self.assertEqual( trials[ENERGY_DIMENSION], 3 )
-#         self.assertEqual( trials[TIME_DIMENSION], 3 )
-#         self.assertEqual( trials[WEIGHT_DIMENSION], 3 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 1.0-1e-12 // r
-# #   fake_stream[1] = 0.75 // theta
-# #   fake_stream[2] = 0.5 // mu
-# #   fake_stream[3] = 0.5 // energy
-# #   fake_stream[4] = 0.5 // mu
-# #   fake_stream[5] = 0.0 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sampleWithDimensionValueAndRecordTrials( photon, trials, SECONDARY_DIRECTIONAL_DIMENSION, 0.0 )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getYPosition(), -1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getXDirection(), 1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZDirection(), 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 10.0 )
-#         self.assertEqual( photon.getEnergy(), 10.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.0 )
-#         self.assertEqual( photon.getTime(), 0.0 )
-#         self.assertAlmostEqual( photon.getSourceWeight(), 0.07957747154594767, 1e-12 )
-#         self.assertAlmostEqual( photon.getWeight(), 0.07957747154594767, 1e-12 )
-#         self.assertEqual( trials[PRIMARY_SPATIAL_DIMENSION], 3 )
-#         self.assertEqual( trials[SECONDARY_SPATIAL_DIMENSION], 3 )
-#         self.assertEqual( trials[TERTIARY_SPATIAL_DIMENSION], 3 )
-#         self.assertEqual( trials[PRIMARY_DIRECTIONAL_DIMENSION], 4 )
-#         self.assertEqual( trials[SECONDARY_DIRECTIONAL_DIMENSION], 3 )
-#         self.assertEqual( trials[TERTIARY_DIRECTIONAL_DIMENSION], 4 )
-#         self.assertEqual( trials[ENERGY_DIMENSION], 4 )
-#         self.assertEqual( trials[TIME_DIMENSION], 4 )
-#         self.assertEqual( trials[WEIGHT_DIMENSION], 4 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 1.0-1e-12 // r
-# #   fake_stream[1] = 0.75 // theta
-# #   fake_stream[2] = 0.5 // mu
-# #   fake_stream[3] = 0.5 // energy
-# #   fake_stream[4] = 0.0 // theta
-# #   fake_stream[5] = 0.0 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sampleWithDimensionValueAndRecordTrials( photon, trials, TERTIARY_DIRECTIONAL_DIMENSION, 1.0 )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getYPosition(), -1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getZPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZDirection(), 1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 10.0 )
-#         self.assertEqual( photon.getEnergy(), 10.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.0 )
-#         self.assertEqual( photon.getTime(), 0.0 )
-#         self.assertEqual( photon.getSourceWeight(), 0.25 )
-#         self.assertEqual( photon.getWeight(), 0.25 )
-#         self.assertEqual( trials[PRIMARY_SPATIAL_DIMENSION], 4 )
-#         self.assertEqual( trials[SECONDARY_SPATIAL_DIMENSION], 4 )
-#         self.assertEqual( trials[TERTIARY_SPATIAL_DIMENSION], 4 )
-#         self.assertEqual( trials[PRIMARY_DIRECTIONAL_DIMENSION], 5 )
-#         self.assertEqual( trials[SECONDARY_DIRECTIONAL_DIMENSION], 4 )
-#         self.assertEqual( trials[TERTIARY_DIRECTIONAL_DIMENSION], 4 )
-#         self.assertEqual( trials[ENERGY_DIMENSION], 5 )
-#         self.assertEqual( trials[TIME_DIMENSION], 5 )
-#         self.assertEqual( trials[WEIGHT_DIMENSION], 5 )
-
-# #         # Set the random number generator stream
-# #   fake_stream[0] = 1.0-1e-12 // r
-# #   fake_stream[1] = 0.0 // theta
-# #   fake_stream[2] = 0.0 // mu
-# #   fake_stream[3] = 0.0 // theta
-# #   fake_stream[4] = 0.0 // mu
-# #   fake_stream[5] = 0.0 // time
-
-#         Prng.RandomNumberGenerator.setFakeStream( fake_stream )
-
-#         particle_distribution.sampleWithDimensionValueAndRecordTrials( photon, trials, ENERGY_DIMENSION, 1.0 )
-
-# #         self.assertTrue_SMALL( photon.getXPosition(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYPosition(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZPosition(), -1.0, 1e-12 )
-# #         self.assertTrue_SMALL( photon.getXDirection(), 1e-12 )
-# #         self.assertTrue_SMALL( photon.getYDirection(), 1e-12 )
-#         self.assertAlmostEqual( photon.getZDirection(), -1.0, 1e-12 )
-#         self.assertEqual( photon.getSourceEnergy(), 1.0 )
-#         self.assertEqual( photon.getEnergy(), 1.0 )
-#         self.assertEqual( photon.getSourceTime(), 0.0 )
-#         self.assertEqual( photon.getTime(), 0.0 )
-#         self.assertEqual( photon.getSourceWeight(), 0.05 )
-#         self.assertEqual( photon.getWeight(), 0.05 )
-#         self.assertEqual( trials[PRIMARY_SPATIAL_DIMENSION], 5 )
-#         self.assertEqual( trials[SECONDARY_SPATIAL_DIMENSION], 5 )
-#         self.assertEqual( trials[TERTIARY_SPATIAL_DIMENSION], 5 )
-#         self.assertEqual( trials[PRIMARY_DIRECTIONAL_DIMENSION], 6 )
-#         self.assertEqual( trials[SECONDARY_DIRECTIONAL_DIMENSION], 5 )
-#         self.assertEqual( trials[TERTIARY_DIRECTIONAL_DIMENSION], 5 )
-#         self.assertEqual( trials[ENERGY_DIMENSION], 5 )
-#         self.assertEqual( trials[TIME_DIMENSION], 6 )
-#         self.assertEqual( trials[WEIGHT_DIMENSION], 6 )
-
-#         Prng.RandomNumberGenerator.unsetFakeStream()
+    def testEvaluate_cartesian_spatial_cartesian_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution evaluate_cartesian_spatial_cartesian_directional"
+        particle_distribution = createCartesianSpatialCartesianDirectionalDist()
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setPosition( -1.1, -0.5, -0.5 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+        photon.setPosition( -1.0, -0.5, -0.5 )
+        photon.setDirection( 0.0, 1.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0078125 )
+
+        photon.setPosition( -0.5, -0.5, -0.5 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0078125 )
+
+        photon.setPosition( 0.0, -0.5, -0.5 )
+        photon.setDirection( -1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.00390625 )
+
+        photon.setPosition( 0.5, -0.5, -0.5 )
+        photon.setDirection( 0.0, -1.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.00390625 )
+
+        photon.setPosition( 1.0, -0.5, -0.5 )
+        photon.setDirection( 0.0, 0.0, -1.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.00390625 )
+
+        photon.setPosition( 1.1, -0.5, -0.5 )
+        photon.setDirection( 1.0/numpy.sqrt(3.0), 1.0/numpy.sqrt(3.0), 1.0/numpy.sqrt(3.0) )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+    def testEvaluate_cartesian_spatial_spherical_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution evaluate_cartesian_spatial_spherical_directional"
+        particle_distribution = createCartesianSpatialSphericalDirectionalDist()
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setPosition( -1.1, -0.5, -0.5 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+        photon.setPosition( -1.0, -0.5, -0.5 )
+        photon.setDirection( 0.0, 1.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0625 )
+
+        photon.setPosition( -0.5, -0.5, -0.5 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0625 )
+
+        photon.setPosition( 0.0, -0.5, -0.5 )
+        photon.setDirection( -1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.03125 )
+
+        photon.setPosition( 0.5, -0.5, -0.5 )
+        photon.setDirection( 0.0, -1.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.03125 )
+
+        photon.setPosition( 1.0, -0.5, -0.5 )
+        photon.setDirection( 0.0, 0.0, -1.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.03125 )
+
+        photon.setPosition( 1.1, -0.5, -0.5 )
+        photon.setDirection( 1.0/numpy.sqrt(3.0), 1.0/numpy.sqrt(3.0), 1.0/numpy.sqrt(3.0) )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+    def testEvaluate_cylindrical_spatial_cartesian_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution evaluate_cylindrical_spatial_cartesian_directional"
+        particle_distribution = createCylindricalSpatialCartesianDirectionalDist()
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setPosition( 0.0, 0.0, -1.1 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+        photon.setPosition( 0.0, 0.0, -1.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+        photon.setPosition( 0.1, 0.1, -1.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                0.0008838834764831846,
+                                delta=1e-15 )
+
+        photon.setPosition( 0.1, -0.1, 0.0 )
+        photon.setDirection( 0.0, 1.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                0.0004419417382415923,
+                                delta=1e-15 )
+
+        photon.setPosition( -0.1, 0.1, 1.0 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                0.0004419417382415923,
+                                delta=1e-15 )
+
+        photon.setPosition( 0.1, 0.1, 1.1 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+    def testEvaluate_cylindrical_spatial_spherical_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution evaluate_cylindrical_spatial_spherical_directional"
+        particle_distribution = createCylindricalSpatialSphericalDirectionalDist()
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setPosition( 0.0, 0.0, -1.1 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+        photon.setPosition( 0.0, 0.0, -1.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+        photon.setPosition( 0.1, 0.1, -1.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                0.007071067811865477,
+                                delta=1e-15 )
+
+        photon.setPosition( 0.1, -0.1, 0.0 )
+        photon.setDirection( 0.0, 1.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                0.0035355339059327385,
+                                delta=1e-15 )
+
+        photon.setPosition( -0.1, 0.1, 1.0 )
+        photon.setDirection( 1.0/numpy.sqrt(3.0), 1.0/numpy.sqrt(3.0), 1.0/numpy.sqrt(3.0) )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                0.0035355339059327385,
+                                delta=1e-15 )
+
+        photon.setPosition( 0.1, 0.1, 1.1 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+    def testEvaluate_spherical_spatial_cartesian_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution evaluate_spherical_spatial_cartesian_directional"
+        particle_distribution = createSphericalSpatialCartesianDirectionalDist()
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setPosition( 0.0, 0.0, -1.1 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+        photon.setPosition( 0.0, 0.0, -1.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.00625 )
+
+        photon.setPosition( -1.0/numpy.sqrt(3.0), -1.0/numpy.sqrt(3.0), -1.0/numpy.sqrt(3.0) )
+        photon.setDirection( -1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                0.00625,
+                                delta=1e-15 )
+
+        photon.setPosition( 0.0, 0.0, 0.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+        photon.setPosition( 0.1, 0.1, 0.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                6.25e-5,
+                                delta=1e-15 )
+
+        photon.setPosition( 1.0/numpy.sqrt(3.0), 1.0/numpy.sqrt(3.0), 1.0/numpy.sqrt(3.0) )
+        photon.setDirection( 0.0, 1.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                0.003125,
+                                delta=1e-15 )
+
+        photon.setPosition( 0.0, 0.0, 1.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.003125 )
+
+        photon.setPosition( 0.0, 0.0, 1.1 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+    def testEvaluate_spherical_spatial_spherical_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution evaluate_spherical_spatial_spherical_directional"
+        particle_distribution = createSphericalSpatialSphericalDirectionalDist()
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setPosition( 0.0, 0.0, -1.1 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+        photon.setPosition( 0.0, 0.0, -1.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.05 )
+
+        photon.setPosition( -1.0/numpy.sqrt(3.0), -1.0/numpy.sqrt(3.0), -1.0/numpy.sqrt(3.0) )
+        photon.setDirection( -1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                0.05,
+                                delta=1e-15 )
+
+        photon.setPosition( 0.0, 0.0, 0.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+        photon.setPosition( 0.1, 0.1, 0.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                5.0e-4,
+                                delta=1e-15 )
+
+        photon.setPosition( 1.0/numpy.sqrt(3.0), 1.0/numpy.sqrt(3.0), 1.0/numpy.sqrt(3.0) )
+        photon.setDirection( 0.0, 1.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                0.025,
+                                delta=1e-15 )
+
+        photon.setPosition( 0.0, 0.0, 1.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.025 )
+
+        photon.setPosition( 0.0, 0.0, 1.1 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+    def testSample_cartesian_spatial_cartesian_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution sample_cartesian_spatial_cartesian_directional"
+        particle_distribution = createCartesianSpatialCartesianDirectionalDist()
+
+        # Set the random number generator stream
+        fake_stream = [ 0.0, 0.5, 0.5, 1.0-1e-15, 0.5, 0.5, 1.0-1e-15, 0.0 ]
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        photon = MonteCarlo.PhotonState( 0 )
+
+        particle_distribution.sample( photon )
+
+        self.assertEqual( photon.getXPosition(), -1.0 )
+        self.assertEqual( photon.getYPosition(), 0.0 )
+        self.assertAlmostEqual( photon.getZPosition(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 5.0 )
+        self.assertEqual( photon.getEnergy(), 5.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream = [ 0.5, 0.5, 1.0-1e-15, 0.5, 0.5, 0.0, 0.5, 0.5 ]
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertEqual( photon.getXPosition(), 0.0 )
+        self.assertAlmostEqual( photon.getYPosition(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getZPosition(), 0.0 )
+        self.assertTrue( photon.getXDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getYDirection(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 10.0 )
+        self.assertEqual( photon.getEnergy(), 10.0 )
+        self.assertEqual( photon.getSourceTime(), 0.5 )
+        self.assertEqual( photon.getTime(), 0.5 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream = [ 1.0-1e-15, 1.0-1e-15, 0.0, 0.0, 1.0-1e-15, 0.5, 0.5, 1.0-1e-15 ]
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertAlmostEqual( photon.getXPosition(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getYPosition(), -1.0 )
+        self.assertEqual( photon.getZPosition(), -1.0 )
+        self.assertAlmostEqual( photon.getXDirection(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getSourceTime(), 1.0, delta=1e-15 )
+        self.assertAlmostEqual( photon.getTime(), 1.0, delta=1e-15 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSample_cartesian_spatial_spherical_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution sample_cartesian_spatial_spherical_directional"
+        particle_distribution = createCartesianSpatialSphericalDirectionalDist()
+
+        # Set the random number generator stream
+        fake_stream = [None] * ( 7 )
+        fake_stream[0] = 0.0 # x
+        fake_stream[1] = 0.5 # energy
+        fake_stream[2] = 0.5 # y
+        fake_stream[3] = 1.0-1e-15 # z
+        fake_stream[4] = 0.0 # theta
+        fake_stream[5] = 1.0-1e-15 # mu
+        fake_stream[6] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        photon = MonteCarlo.PhotonState( 0 )
+
+        particle_distribution.sample( photon )
+
+        self.assertEqual( photon.getXPosition(), -1.0 )
+        self.assertEqual( photon.getYPosition(), 0.0 )
+        self.assertAlmostEqual( photon.getZPosition(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-7 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 5.0 )
+        self.assertEqual( photon.getEnergy(), 5.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 0.5 # x
+        fake_stream[1] = 0.5 # energy
+        fake_stream[2] = 0.0 # y
+        fake_stream[3] = 0.5 # z
+        fake_stream[4] = 0.0 # theta
+        fake_stream[5] = 0.0 # mu
+        fake_stream[6] = 0.5 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertEqual( photon.getXPosition(), 0.0 )
+        self.assertEqual( photon.getYPosition(), -1.0 )
+        self.assertEqual( photon.getZPosition(), 0.0 )
+        self.assertTrue( photon.getXDirection() < 1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), -1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 10.0 )
+        self.assertEqual( photon.getEnergy(), 10.0 )
+        self.assertEqual( photon.getSourceTime(), 0.5 )
+        self.assertEqual( photon.getTime(), 0.5 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-15 # x
+        fake_stream[1] = 1.0-1e-15 # energy
+        fake_stream[2] = 1.0-1e-15 # y
+        fake_stream[3] = 0.0 # z
+        fake_stream[4] = 0.5 # theta
+        fake_stream[5] = 0.5 # mu
+        fake_stream[6] = 1.0-1e-15 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertAlmostEqual( photon.getXPosition(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getYPosition(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getZPosition(), -1.0 )
+        self.assertAlmostEqual( photon.getXDirection(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getSourceTime(), 1.0, delta=1e-15 )
+        self.assertAlmostEqual( photon.getTime(), 1.0, delta=1e-15 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSample_cylindrical_spatial_cartesian_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution sample_cylindrical_spatial_cartesian_directional"
+        particle_distribution = createCylindricalSpatialCartesianDirectionalDist()
+
+        # Set the random number generator stream
+        fake_stream = [None] * ( 8 )
+        fake_stream[0] = 0.0 # r
+        fake_stream[1] = 0.5 # theta
+        fake_stream[2] = 0.0 # z
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 0.5 # u
+        fake_stream[5] = 0.5 # v
+        fake_stream[6] = 1.0-1e-15 # w
+        fake_stream[7] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        photon = MonteCarlo.PhotonState( 0 )
+
+        particle_distribution.sample( photon )
+
+        self.assertEqual( photon.getXPosition(), 0.0 )
+        self.assertEqual( photon.getYPosition(), 0.0 )
+        self.assertAlmostEqual( photon.getZPosition(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-7 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 5.0 )
+        self.assertEqual( photon.getEnergy(), 5.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 0.5 # r
+        fake_stream[1] = 0.5 # theta
+        fake_stream[2] = 0.5 # z
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 0.5 # u
+        fake_stream[5] = 1.0-1e-15 # v
+        fake_stream[6] = 0.5 # w
+        fake_stream[7] = 0.5 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertAlmostEqual( photon.getXPosition(), -0.7071067811865476, delta=1e-12 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertEqual( photon.getZPosition(), 0.0 )
+        self.assertTrue( photon.getXDirection() < 1e-7 )
+        self.assertAlmostEqual( photon.getYDirection(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 10.0 )
+        self.assertEqual( photon.getEnergy(), 10.0 )
+        self.assertEqual( photon.getSourceTime(), 0.5 )
+        self.assertEqual( photon.getTime(), 0.5 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-15 # r
+        fake_stream[1] = 0.25 # theta
+        fake_stream[2] = 1.0-1e-15 # z
+        fake_stream[3] = 1.0-1e-15 # energy
+        fake_stream[4] = 1.0-1e-15 # u
+        fake_stream[5] = 0.5 # v
+        fake_stream[6] = 0.5 # w
+        fake_stream[7] = 1.0-1e-15 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getYPosition(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getZPosition(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getXDirection(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getSourceTime(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getTime(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSample_cylindrical_spatial_spherical_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution sample_cylindrical_spatial_spherical_directional"
+        particle_distribution = createCylindricalSpatialSphericalDirectionalDist()
+
+        # Set the random number generator stream
+        fake_stream = [None] * ( 7 )
+        fake_stream[0] = 0.0 # r
+        fake_stream[1] = 0.5 # theta
+        fake_stream[2] = 0.0 # z
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 0.0 # theta
+        fake_stream[5] = 0.0 # mu
+        fake_stream[6] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        photon = MonteCarlo.PhotonState( 0 )
+
+        particle_distribution.sample( photon )
+
+        self.assertEqual( photon.getXPosition(), 0.0 )
+        self.assertEqual( photon.getYPosition(), 0.0 )
+        self.assertAlmostEqual( photon.getZPosition(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-7 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), -1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 5.0 )
+        self.assertEqual( photon.getEnergy(), 5.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 0.5 # r
+        fake_stream[1] = 0.5 # theta
+        fake_stream[2] = 0.5 # z
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 0.0 # theta
+        fake_stream[5] = 1.0-1e-15 # mu
+        fake_stream[6] = 0.5 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertAlmostEqual( photon.getXPosition(), -0.7071067811865476, delta=1e-12 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertEqual( photon.getZPosition(), 0.0 )
+        self.assertTrue( photon.getXDirection() < 1e-7 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 10.0 )
+        self.assertEqual( photon.getEnergy(), 10.0 )
+        self.assertEqual( photon.getSourceTime(), 0.5 )
+        self.assertEqual( photon.getTime(), 0.5 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-15 # r
+        fake_stream[1] = 0.25 # theta
+        fake_stream[2] = 1.0-1e-15 # z
+        fake_stream[3] = 1.0-1e-15 # energy
+        fake_stream[4] = 1.0-1e-15 # theta
+        fake_stream[5] = 0.5 # mu
+        fake_stream[6] = 1.0-1e-15 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getYPosition(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getZPosition(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getXDirection(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getSourceTime(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getTime(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSample_spherical_spatial_cartesian_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution sample_spherical_spatial_cartesian_directional"
+        particle_distribution = createSphericalSpatialCartesianDirectionalDist()
+
+        # Set the random number generator stream
+        fake_stream = [None] * ( 8 )
+        fake_stream[0] = 1.0-1e-12 # r
+        fake_stream[1] = 0.0 # theta
+        fake_stream[2] = 0.0 # mu
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 0.5 # u
+        fake_stream[5] = 0.5 # v
+        fake_stream[6] = 1.0-1e-15 # w
+        fake_stream[7] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        photon = MonteCarlo.PhotonState( 0 )
+
+        particle_distribution.sample( photon )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getZPosition(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 5.0 )
+        self.assertEqual( photon.getEnergy(), 5.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 0.0 # r
+        fake_stream[1] = 0.0 # theta
+        fake_stream[2] = 0.0 # mu
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 0.5 # u
+        fake_stream[5] = 1.0-1e-15 # v
+        fake_stream[6] = 0.5 # w
+        fake_stream[7] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertTrue( photon.getZPosition() < 1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getYDirection(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 5.0 )
+        self.assertEqual( photon.getEnergy(), 5.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-15 # r
+        fake_stream[1] = 0.5 # theta
+        fake_stream[2] = 0.5 # mu
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 1.0-1e-15 # u
+        fake_stream[5] = 0.5 # v
+        fake_stream[6] = 0.5 # w
+        fake_stream[7] = 0.5 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertAlmostEqual( photon.getXPosition(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertTrue( photon.getZPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getXDirection(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 10.0 )
+        self.assertEqual( photon.getEnergy(), 10.0 )
+        self.assertEqual( photon.getSourceTime(), 0.5 )
+        self.assertEqual( photon.getTime(), 0.5 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-15 # r
+        fake_stream[1] = 0.0 # theta
+        fake_stream[2] = 1.0-1e-15 # mu
+        fake_stream[3] = 1.0-1e-15 # energy
+        fake_stream[4] = 1.0-1e-15 # u
+        fake_stream[5] = 1.0-1e-15 # v
+        fake_stream[6] = 0.5 # w
+        fake_stream[7] = 1.0-1e-15 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertTrue( photon.getXPosition() < 1e-7 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getZPosition(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getXDirection(), 1.0/numpy.sqrt(2.0), delta=1e-12 )
+        self.assertAlmostEqual( photon.getYDirection(), 1.0/numpy.sqrt(2.0), delta=1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getSourceTime(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getTime(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSample_spherical_spatial_spherical_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution sample_spherical_spatial_spherical_directional"
+        particle_distribution = createSphericalSpatialSphericalDirectionalDist()
+
+        # Set the random number generator stream
+        fake_stream = [None] * ( 7 )
+        fake_stream[0] = 1.0-1e-12 # r
+        fake_stream[1] = 0.0 # theta
+        fake_stream[2] = 0.0 # mu
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 0.0 # theta
+        fake_stream[5] = 0.0 # mu
+        fake_stream[6] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        photon = MonteCarlo.PhotonState( 0 )
+
+        particle_distribution.sample( photon )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getZPosition(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), -1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 5.0 )
+        self.assertEqual( photon.getEnergy(), 5.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 0.0 # r
+        fake_stream[1] = 0.0 # theta
+        fake_stream[2] = 0.0 # mu
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 0.0 # theta
+        fake_stream[5] = 0.5 # mu
+        fake_stream[6] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertTrue( photon.getZPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getXDirection(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 5.0 )
+        self.assertEqual( photon.getEnergy(), 5.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-15 # r
+        fake_stream[1] = 0.5 # theta
+        fake_stream[2] = 0.5 # mu
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 0.75 # theta
+        fake_stream[5] = 0.5 # mu
+        fake_stream[6] = 0.5 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertAlmostEqual( photon.getXPosition(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertTrue( photon.getZPosition() < 1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getYDirection(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 10.0 )
+        self.assertEqual( photon.getEnergy(), 10.0 )
+        self.assertEqual( photon.getSourceTime(), 0.5 )
+        self.assertEqual( photon.getTime(), 0.5 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-15 # r
+        fake_stream[1] = 0.0 # theta
+        fake_stream[2] = 1.0-1e-15 # mu
+        fake_stream[3] = 1.0-1e-15 # energy
+        fake_stream[4] = 0.0 # theta
+        fake_stream[5] = 1.0-1e-15 # mu
+        fake_stream[6] = 1.0-1e-15 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertTrue( photon.getXPosition() < 1e-7 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getZPosition(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-7 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getSourceTime(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getTime(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSample_point_spatial_mono_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution sample_point_spatial_mono_directional"
+        tmp_particle_distribution = ActiveRegion.StandardParticleDistribution( "test dist" )
+
+        position = [1.0, 2.0, 3.0]
+        direction = [0.0, -1/numpy.sqrt(2.0), 1/numpy.sqrt(2.0)]
+
+        tmp_particle_distribution.setPosition( position )
+        tmp_particle_distribution.setDirection( direction )
+
+        raw_uniform_dist = Distribution.UniformDistribution( 0.0, 1.0, 1.0 )
+
+        energy_dimension_dist = ActiveRegion.IndependentEnergyDimensionDistribution( raw_uniform_dist )
+        tmp_particle_distribution.setDimensionDistribution( energy_dimension_dist )
+
+        time_dimension_dist = ActiveRegion.IndependentTimeDimensionDistribution( raw_uniform_dist )
+        tmp_particle_distribution.setDimensionDistribution( time_dimension_dist )
+
+        raw_delta_dist = Distribution.DeltaDistribution( 0.5 )
+
+        weight_dimension_dist = ActiveRegion.IndependentWeightDimensionDistribution( raw_delta_dist )
+        tmp_particle_distribution.setDimensionDistribution( weight_dimension_dist )
+
+        tmp_particle_distribution.constructDimensionDistributionDependencyTree()
+
+        particle_distribution = tmp_particle_distribution
+
+        # Set the random number generator stream
+        fake_stream = [None] * 2
+        fake_stream[0] = 0.25 # energy
+        fake_stream[1] = 0.5 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        photon = MonteCarlo.PhotonState( 0 )
+
+        particle_distribution.sample( photon )
+
+        self.assertEqual( photon.getXPosition(), 1.0 )
+        self.assertEqual( photon.getYPosition(), 2.0 )
+        self.assertEqual( photon.getZPosition(), 3.0 )
+        self.assertTrue( photon.getXDirection() < 1e-15 )
+        self.assertAlmostEqual( photon.getYDirection(),
+                                -1/numpy.sqrt(2.0),
+                                delta=1e-15 )
+        self.assertAlmostEqual( photon.getZDirection(),
+                                1/numpy.sqrt(2.0),
+                                delta=1e-15 )
+        self.assertAlmostEqual( photon.getEnergy(), 0.25, delta=1e-15 )
+        self.assertAlmostEqual( photon.getTime(), 0.5, delta=1e-15 )
+        self.assertAlmostEqual( photon.getWeight(), 0.5, delta=1e-15 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSampleWithDimensionValue(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution sampleWithDimensionValue"
+        particle_distribution = createSphericalSpatialSphericalDirectionalDist()
+
+        # Set the random number generator stream
+        fake_stream = [None] * ( 6 )
+        fake_stream[0] = 0.0 # theta
+        fake_stream[1] = 1.0-1e-15 # mu
+        fake_stream[2] = 1.0-1e-15 # energy
+        fake_stream[3] = 0.0 # theta
+        fake_stream[4] = 1.0-1e-15 # mu
+        fake_stream[5] = 1.0-1e-15 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        photon = MonteCarlo.PhotonState( 0 )
+
+        particle_distribution.sampleWithDimensionValue( photon, ActiveRegion.PRIMARY_SPATIAL_DIMENSION, 0.5 )
+
+        self.assertTrue( photon.getXPosition() < 1e-7 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getZPosition(), 0.5, delta=1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-7 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getSourceTime(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getTime(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceWeight(), 0.375 )
+        self.assertEqual( photon.getWeight(), 0.375 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-12 # r
+        fake_stream[1] = 0.5 # mu
+        fake_stream[2] = 0.5 # energy
+        fake_stream[3] = 0.0 # theta
+        fake_stream[4] = 1.0-1e-15 # mu
+        fake_stream[5] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sampleWithDimensionValue( photon, ActiveRegion.SECONDARY_SPATIAL_DIMENSION, numpy.pi/2 )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getYPosition(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getZPosition() < 1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-7 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 10.0 )
+        self.assertEqual( photon.getEnergy(), 10.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertAlmostEqual( photon.getSourceWeight(), 0.07957747154594767, delta=1e-12 )
+        self.assertAlmostEqual( photon.getWeight(), 0.07957747154594767, delta=1e-12 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-12 # r
+        fake_stream[1] = 0.75 # theta
+        fake_stream[2] = 0.5 # energy
+        fake_stream[3] = 0.0 # theta
+        fake_stream[4] = 1.0-1e-15 # mu
+        fake_stream[5] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sampleWithDimensionValue( photon, ActiveRegion.TERTIARY_SPATIAL_DIMENSION, 0.0 )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getYPosition(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getZPosition() < 1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-7 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 10.0 )
+        self.assertEqual( photon.getEnergy(), 10.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.25 )
+        self.assertEqual( photon.getWeight(), 0.25 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-12 # r
+        fake_stream[1] = 0.75 # theta
+        fake_stream[2] = 0.5 # mu
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 0.5 # mu
+        fake_stream[5] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sampleWithDimensionValue( photon, ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION, 0.0 )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getYPosition(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getZPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getXDirection(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 10.0 )
+        self.assertEqual( photon.getEnergy(), 10.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertAlmostEqual( photon.getSourceWeight(), 0.07957747154594767, delta=1e-12 )
+        self.assertAlmostEqual( photon.getWeight(), 0.07957747154594767, delta=1e-12 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-12 # r
+        fake_stream[1] = 0.75 # theta
+        fake_stream[2] = 0.5 # mu
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 0.0 # theta
+        fake_stream[5] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sampleWithDimensionValue( photon, ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION, 1.0 )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getYPosition(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getZPosition() < 1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 10.0 )
+        self.assertEqual( photon.getEnergy(), 10.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.25 )
+        self.assertEqual( photon.getWeight(), 0.25 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-12 # r
+        fake_stream[1] = 0.0 # theta
+        fake_stream[2] = 0.0 # mu
+        fake_stream[3] = 0.0 # theta
+        fake_stream[4] = 0.0 # mu
+        fake_stream[5] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sampleWithDimensionValue( photon, ActiveRegion.ENERGY_DIMENSION, 1.0 )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getZPosition(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), -1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 1.0 )
+        self.assertEqual( photon.getEnergy(), 1.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.05 )
+        self.assertEqual( photon.getWeight(), 0.05 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 0.0 # r
+        fake_stream[1] = 0.0 # theta
+        fake_stream[2] = 0.0 # mu
+        fake_stream[3] = 0.0 # theta
+        fake_stream[4] = 0.5 # mu
+        fake_stream[5] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sampleWithDimensionValue( photon, ActiveRegion.ENERGY_DIMENSION, 2.0 )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertTrue( photon.getZPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getXDirection(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 2.0 )
+        self.assertEqual( photon.getEnergy(), 2.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.05 )
+        self.assertEqual( photon.getWeight(), 0.05 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-15 # r
+        fake_stream[1] = 0.5 # theta
+        fake_stream[2] = 0.5 # mu
+        fake_stream[3] = 0.75 # theta
+        fake_stream[4] = 0.5 # mu
+        fake_stream[5] = 0.5 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sampleWithDimensionValue( photon, ActiveRegion.ENERGY_DIMENSION, 15.0 )
+
+        self.assertAlmostEqual( photon.getXPosition(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertTrue( photon.getZPosition() < 1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getYDirection(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 15.0 )
+        self.assertEqual( photon.getEnergy(), 15.0 )
+        self.assertEqual( photon.getSourceTime(), 0.5 )
+        self.assertEqual( photon.getTime(), 0.5 )
+        self.assertEqual( photon.getSourceWeight(), 0.025 )
+        self.assertEqual( photon.getWeight(), 0.025 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
 
     def testDefault_dists_cartesian_spatial_cartesian_directional(self):
         "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution default_dists_cartesian_spatial_cartesian_directional"

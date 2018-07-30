@@ -91,8 +91,8 @@ private:
 
 } // end MonteCarlo namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::MassiveParticleState );
-BOOST_CLASS_VERSION( MonteCarlo::MassiveParticleState, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( MassiveParticleState, MonteCarlo );
+BOOST_SERIALIZATION_CLASS_VERSION( MassiveParticleState, MonteCarlo, 0 );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, MassiveParticleState );
 
 #endif // end MONTE_CARLO_MASSIVE_PARTICLE_STATE_HPP
