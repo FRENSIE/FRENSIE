@@ -77,7 +77,7 @@ private:
 
   // Serialize the observer
   template<typename Archive>
-  void serialize( Archive& ar, const unsigned version )
+  void serialize( Archive& ar, const unsigned version );
   
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;

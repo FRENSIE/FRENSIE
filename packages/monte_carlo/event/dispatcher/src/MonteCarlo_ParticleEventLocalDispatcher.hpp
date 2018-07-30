@@ -20,6 +20,7 @@
 #include <boost/serialization/shared_ptr.hpp>
 
 // FRENSIE Includes
+#include "MonteCarlo_ParticleState.hpp"
 #include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_Map.hpp"
@@ -64,6 +65,9 @@ protected:
   // The observers set
   typedef std::set<std::shared_ptr<Observer> > ObserverSet;
 
+  //! Default constructor
+  ParticleEventLocalDispatcher();
+
   // Get the observer map
   ObserverSet& getObserverSet( const ParticleType particle_type );
 
@@ -71,7 +75,7 @@ private:
 
   // Serialize the observer
   template<typename Archive>
-  void serialize( Archive& ar, const unsigned version )
+  void serialize( Archive& ar, const unsigned version );
   
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;

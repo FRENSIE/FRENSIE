@@ -26,9 +26,9 @@ void ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEnding
 
   while( it != observer_set.end() )
   {
-    it->second->updateFromGlobalParticleSubtrackEndingEvent( particle,
-                                                             start_point,
-                                                             end_point );
+    (*it)->updateFromGlobalParticleSubtrackEndingEvent( particle,
+                                                        start_point,
+                                                        end_point );
 
     ++it;
   }

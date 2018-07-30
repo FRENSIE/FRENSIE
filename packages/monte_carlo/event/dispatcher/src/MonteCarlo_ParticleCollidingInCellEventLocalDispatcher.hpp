@@ -42,6 +42,9 @@ public:
 
 private:
 
+  // Default constructor
+  ParticleCollidingInCellEventLocalDispatcher();
+
   // Serialize the observer
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
@@ -54,6 +57,7 @@ private:
 } // end MonteCarlo namespace
 
 BOOST_CLASS_VERSION( MonteCarlo::ParticleCollidingInCellEventLocalDispatcher, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ParticleCollidingInCellEventLocalDispatcher, MonteCarlo );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleCollidingInCellEventLocalDispatcher );
 
 #endif // end MONTE_CARLO_PARTICLE_COLLIDING_IN_CELL_EVENT_LOCAL_DISPATCHER_HPP

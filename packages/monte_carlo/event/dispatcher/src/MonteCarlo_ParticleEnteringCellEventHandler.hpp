@@ -87,10 +87,10 @@ private:
 // dispatcher
 template<typename Observer>
 inline void ParticleEnteringCellEventHandler::registerObserverWithTag(
-                                const std::shared_ptr<Observer>& observer,
-                                const std::set<EntityHandle>& entity_ids,
-                                const std::set<ParticleType>& particle_types,
-                                ParticleEnteringCellEventObserver::EventTag )
+                                  const std::shared_ptr<Observer>& observer,
+                                  const std::set<uint64_t>& entity_ids,
+                                  const std::set<ParticleType>& particle_types,
+                                  ParticleEnteringCellEventObserver::EventTag )
 {
   // Make sure the Observer class has the corrent event tag
   testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleEnteringCellEventObserver::EventTag>::value));
@@ -110,9 +110,9 @@ inline void ParticleEnteringCellEventHandler::registerObserverWithTag(
 // dispatcher
 template<typename Observer>
 inline void ParticleEnteringCellEventHandler::registerObserverWithTag(
-                                const std::shared_ptr<Observer>& observer,
-                                const std::set<EntityHandle>& entity_ids,
-                                ParticleEnteringCellEventObserver::EventTag )
+                                  const std::shared_ptr<Observer>& observer,
+                                  const std::set<uint64_t>& entity_ids,
+                                  ParticleEnteringCellEventObserver::EventTag )
 {
   // Make sure the Observer class has the corrent event tag
   testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleEnteringCellEventObserver::EventTag>::value));
@@ -125,6 +125,13 @@ inline void ParticleEnteringCellEventHandler::registerObserverWithTag(
     d_particle_entering_cell_event_dispatcher.attachObserver( entity_id,
                                                               observer_base );
   }
+}
+
+// Serialize the observer
+template<typename Archive>
+void ParticleEnteringCellEventHandler::serialize( Archive& ar, const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_NVP( d_particle_entering_cell_event_dispatcher );
 }
 
 } // end MonteCarlo namespace

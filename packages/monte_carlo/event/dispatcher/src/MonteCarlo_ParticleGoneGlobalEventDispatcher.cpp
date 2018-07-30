@@ -24,7 +24,7 @@ void ParticleGoneGlobalEventDispatcher::dispatchParticleGoneGlobalEvent(
 
   while( it != observer_set.end() )
   {
-    it->second->updateFromGlobalParticleGoneEvent( particle );
+    (*it)->updateFromGlobalParticleGoneEvent( particle );
 
     ++it;
   }

@@ -21,10 +21,17 @@ void ParticleEnteringCellEventDispatcher::dispatchParticleEnteringCellEvent(
   DispatcherMap::iterator it = this->getDispatcherMap().find( cell_entering );
 
   if( it != this->getDispatcherMap().end() )
+  {
     it->second->dispatchParticleEnteringCellEvent( particle, cell_entering );
+
+    ++it;
+  }
 }
   
 } // end MonteCarlo namespace
+
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::ParticleEnteringCellEventDispatcher );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ParticleEnteringCellEventDispatcher );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleEnteringCellEventDispatcher.cpp

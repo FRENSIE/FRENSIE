@@ -26,6 +26,7 @@ void ParticleLeavingCellEventDispatcher::dispatchParticleLeavingCellEvent(
   
 } // end MonteCarlo namespace
 
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::ParticleLeavingCellEventDispatcher );
 EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ParticleLeavingCellEventDispatcher );
 
 //---------------------------------------------------------------------------//

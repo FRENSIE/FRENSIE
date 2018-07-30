@@ -15,9 +15,9 @@ namespace MonteCarlo{
 
 // Dispatch the particle entering cell event to the observers
 void ParticleCollidingInCellEventDispatcher::dispatchParticleCollidingInCellEvent(
-                      const ParticleState& particle,
-                      const Geometry::ModuleTraits::EntityId cell_of_collision,
-                      const double inverse_total_cross_section )
+                             const ParticleState& particle,
+                             const Geometry::Model::EntityId cell_of_collision,
+                             const double inverse_total_cross_section )
 {
   DispatcherMap::iterator it =
     this->getDispatcherMap().find( cell_of_collision );
@@ -33,6 +33,7 @@ void ParticleCollidingInCellEventDispatcher::dispatchParticleCollidingInCellEven
 
 } // end MonteCarlo namespace
 
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::ParticleCollidingInCellEventDispatcher );
 EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ParticleCollidingInCellEventDispatcher );
 
 //---------------------------------------------------------------------------//

@@ -7,11 +7,16 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_ParticleEnteringCellEventLocalDispatcher.hpp"
 #include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
+// Default constructor
+ParticleEnteringCellEventLocalDispatcher::ParticleEnteringCellEventLocalDispatcher()
+{ /* ... */ }
+  
 // Constructor
 ParticleEnteringCellEventLocalDispatcher::ParticleEnteringCellEventLocalDispatcher(
                                       const Geometry::Model::EntityId cell_id )
@@ -33,7 +38,7 @@ void ParticleEnteringCellEventLocalDispatcher::dispatchParticleEnteringCellEvent
 
   while( it != observer_set.end() )
   {
-    it->second->updateFromParticleEnteringCellEvent( particle, cell_entering );
+    (*it)->updateFromParticleEnteringCellEvent( particle, cell_entering );
 
     ++it;
   }
@@ -41,6 +46,7 @@ void ParticleEnteringCellEventLocalDispatcher::dispatchParticleEnteringCellEvent
 
 } // end MonteCarlo namespace
 
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::ParticleEnteringCellEventLocalDispatcher );
 EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ParticleEnteringCellEventLocalDispatcher );
 
 //---------------------------------------------------------------------------//

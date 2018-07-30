@@ -31,6 +31,7 @@ void ParticleCrossingSurfaceEventDispatcher::dispatchParticleCrossingSurfaceEven
 
 } // end MonteCarlo namespace
 
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::ParticleCrossingSurfaceEventDispatcher );
 EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ParticleCrossingSurfaceEventDispatcher );
 
 //---------------------------------------------------------------------------//

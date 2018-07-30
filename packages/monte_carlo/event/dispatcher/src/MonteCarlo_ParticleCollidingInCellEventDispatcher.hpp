@@ -34,9 +34,9 @@ public:
 
   //! Dispatch the particle colliding in cell event to the observers
   void dispatchParticleCollidingInCellEvent(
-                      const ParticleState& particle,
-	              const Geometry::ModuleTraits::EntityId cell_of_collision,
-                      const double inverse_total_cross_section );
+                             const ParticleState& particle,
+	                     const Geometry::Model::EntityId cell_of_collision,
+                             const double inverse_total_cross_section );
 
 private:
 
@@ -52,6 +52,7 @@ private:
 } // end MonteCarlo namespace
 
 BOOST_CLASS_VERSION( MonteCarlo::ParticleCollidingInCellEventDispatcher, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ParticleCollidingInCellEventDispatcher, MonteCarlo );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleCollidingInCellEventDispatcher );
 
 #endif // end MONTE_CARLO_PARTICLE_COLLIDING_IN_CELL_EVENT_DISPATCHER_HPP

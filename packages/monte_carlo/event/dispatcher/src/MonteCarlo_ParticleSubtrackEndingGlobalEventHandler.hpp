@@ -96,7 +96,6 @@ void ParticleSubtrackEndingGlobalEventHandler::registerGlobalObserverWithTag(
     observer;
 
   d_particle_subtrack_ending_global_event_dispatcher.attachObserver(
-							     observer->getId(),
                                                              particle_types,
 							     observer_base );
 }
@@ -115,8 +114,7 @@ void ParticleSubtrackEndingGlobalEventHandler::registerGlobalObserverWithTag(
     observer;
 
   d_particle_subtrack_ending_global_event_dispatcher.attachObserver(
-							     observer->getId(),
-							     observer_base );
+                                                               observer_base );
 }
 
 // Serialize the observer

@@ -42,8 +42,8 @@ void EventHandler::addEstimator( const std::shared_ptr<EstimatorType>& estimator
 }
 
 // Struct for registering estimator
-template<typename Estimator>
-EventHandler::EstimatorRegistrationHelper<Estimator>::registerEstimator(
+template<typename EstimatorType>
+void EventHandler::EstimatorRegistrationHelper<EstimatorType>::registerEstimator(
                               EventHandler& event_handler,
                               const std::shared_ptr<EstimatorType>& estimator )
 {
@@ -58,7 +58,7 @@ EventHandler::EstimatorRegistrationHelper<Estimator>::registerEstimator(
 
 // Struct for registering estimator
 template<typename T>
-EventHandler::EstimatorRegistrationHelper<MeshTrackLengthFluxEstimator<T> >::registerEstimator(
+void EventHandler::EstimatorRegistrationHelper<MeshTrackLengthFluxEstimator<T> >::registerEstimator(
            EventHandler& event_handler,
            const std::shared_ptr<MeshTrackLengthFluxEstimator<T> >& estimator )
 {
@@ -71,23 +71,6 @@ EventHandler::EstimatorRegistrationHelper<MeshTrackLengthFluxEstimator<T> >::reg
 template<typename Observer>
 void EventHandler::registerObserver( const std::shared_ptr<Observer>& observer,
                                      const std::set<uint64_t>& entity_ids )
-{
-  typedef typename boost::mpl::begin<typename Observer::EventTags>::type
-    BeginEventTagIterator;
-  typedef typename boost::mpl::end<typename Observer::EventTags>::type
-    EndEventTagIterator;
-
-  ObserverRegistrationHelper<BeginEventTagIterator,EndEventTagIterator>::registerObserverWithTag(
-                                                                  *this,
-								  observer,
-								  entity_ids );
-}
-
-// Register an observer with the appropriate dispatcher
-template<typename Observer>
-void EventHandler::registerObserver( const std::shared_ptr<Observer>& observer,
-                                     const std::set<uint64_t>& entity_ids,
-                                     const std::set<ParticleType>& particle_types )
 {
   typedef typename boost::mpl::begin<typename Observer::EventTags>::type
     BeginEventTagIterator;
@@ -279,7 +262,7 @@ void EventHandler::serialize( Archive& ar, const unsigned version )
   // Serialize the local data
   ar & BOOST_SERIALIZATION_NVP( d_estimators );
   ar & BOOST_SERIALIZATION_NVP( d_particle_trackers );
-  ar & BOOST_SERIALIZATION_NVP( d_particle_hisotry_observers );
+  ar & BOOST_SERIALIZATION_NVP( d_particle_history_observers );
 }
 
 } // end MonteCarlo namespace
