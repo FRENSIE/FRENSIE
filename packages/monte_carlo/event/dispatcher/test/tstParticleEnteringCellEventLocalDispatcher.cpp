@@ -93,7 +93,7 @@ FRENSIE_UNIT_TEST( ParticleEnteringCellEventDispatcher, manage_observers )
 //---------------------------------------------------------------------------//
 // Check that a particle entering cell event can be dispatched
 FRENSIE_UNIT_TEST( ParticleEnteringCellEventDispatcher,
-                   dispatchParticleCrossingSurfaceEvent )
+                   dispatchParticleEnteringCellEvent )
 {
   std::shared_ptr<MonteCarlo::ParticleEnteringCellEventLocalDispatcher>
     dispatcher_0( new MonteCarlo::ParticleEnteringCellEventLocalDispatcher( 0 ) );

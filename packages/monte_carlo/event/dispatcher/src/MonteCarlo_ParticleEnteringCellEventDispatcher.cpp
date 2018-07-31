@@ -21,11 +21,7 @@ void ParticleEnteringCellEventDispatcher::dispatchParticleEnteringCellEvent(
   DispatcherMap::iterator it = this->getDispatcherMap().find( cell_entering );
 
   if( it != this->getDispatcherMap().end() )
-  {
     it->second->dispatchParticleEnteringCellEvent( particle, cell_entering );
-
-    ++it;
-  }
 }
   
 } // end MonteCarlo namespace
