@@ -20,8 +20,6 @@ parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
 options,args = parser.parse_args()
 
 from testingHelpers import importPyFrensieModuleFromBuildDir
-Data = importPyFrensieModuleFromBuildDir('Data')
-MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
 Collision = importPyFrensieModuleFromBuildDir('MonteCarlo.Collision')
 
 #-----------------------------------------------------------------------------#

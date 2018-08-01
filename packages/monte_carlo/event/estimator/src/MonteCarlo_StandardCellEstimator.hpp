@@ -48,12 +48,12 @@ protected:
   //! Assign discretization to an estimator dimension
   void assignDiscretization( const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins,
                              const bool range_dimension ) override;
-  
+
 
   //! Assign the particle type to the estimator
   void assignParticleType( const ParticleType particle_type ) override;
 
-  
+
 
 private:
 
@@ -68,8 +68,8 @@ private:
 
 } // end MonteCarlo namespace
 
-BOOST_CLASS_VERSION( MonteCarlo::StandardCellEstimator, 0 );
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::StandardCellEstimator );
+BOOST_SERIALIZATION_CLASS_VERSION( StandardCellEstimator, MonteCarlo, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( StandardCellEstimator, MonteCarlo );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, StandardCellEstimator );
 
 #endif // end MONTE_CARLO_STANDARD_CELL_ESTIMATOR_HPP

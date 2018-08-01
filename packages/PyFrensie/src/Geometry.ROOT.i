@@ -190,6 +190,9 @@ A brief usage tutorial for this class is shown below:
 // Include the RootModel class
 %include "Geometry_RootModel.hpp"
 
+// Turn off the exception handling
+%exception;
+
 //---------------------------------------------------------------------------//
 // end Geometry.ROOT.i
 //---------------------------------------------------------------------------//e

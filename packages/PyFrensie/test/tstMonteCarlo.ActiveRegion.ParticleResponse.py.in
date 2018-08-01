@@ -23,11 +23,8 @@ parser.add_option("-d", "--database", type="string", dest="database",
 options,args = parser.parse_args()
 
 from testingHelpers import importPyFrensieModuleFromBuildDir
-Utility = importPyFrensieModuleFromBuildDir('Utility')
-Prng = importPyFrensieModuleFromBuildDir('Utility.Prng')
 Geometry = importPyFrensieModuleFromBuildDir('Geometry')
 Distribution = importPyFrensieModuleFromBuildDir('Utility.Distribution')
-Coordinate = importPyFrensieModuleFromBuildDir('Utility.Coordinate')
 MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
 Collision = importPyFrensieModuleFromBuildDir('MonteCarlo.Collision')
 ActiveRegion = importPyFrensieModuleFromBuildDir('MonteCarlo.ActiveRegion')
@@ -1110,9 +1107,6 @@ class StandardParticleResponseTestCase(unittest.TestCase):
 # Custom main
 #-----------------------------------------------------------------------------#
 if __name__ == "__main__":
-
-    # Initialize the FRENSIE random number generator
-    Utility.initFrensiePrng()
 
     # Create the testSuite object
     suite = unittest.TestSuite()

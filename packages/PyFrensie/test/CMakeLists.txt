@@ -274,10 +274,12 @@ ADD_TEST(PyFrensie.MonteCarlo.Collision.ScatteringCenterDefinitionDatabase_test 
 PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.MaterialDefinitionDatabase)
 ADD_TEST(PyFrensie.MonteCarlo.Collision.MaterialDefinitionDatabase_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.MaterialDefinitionDatabase.py)
 
-# Add the MonteCarlo.Collision.FilledGeometryModel unit tests
-PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.FilledGeometryModel)
-ADD_TEST(PyFrensie.MonteCarlo.Collision.FilledGeometryModel_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.FilledGeometryModel.py --dagmc_sat_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat --database_path=${COLLISION_DATABASE_XML_FILE})
-ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Collision.FilledGeometryModel ${COLLISION_DATABASE_XML_FILE_TARGET} )
+IF(${FRENSIE_ENABLE_DAGMC})
+  # Add the MonteCarlo.Collision.FilledGeometryModel unit tests
+  PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.FilledGeometryModel)
+  ADD_TEST(PyFrensie.MonteCarlo.Collision.FilledGeometryModel_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.FilledGeometryModel.py --dagmc_sat_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat --database_path=${COLLISION_DATABASE_XML_FILE})
+  ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Collision.FilledGeometryModel ${COLLISION_DATABASE_XML_FILE_TARGET} )
+ENDIF()
 
 # Add the MonteCarlo.ActiveRegion.PhaseSpaceDimension unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.ActiveRegion.PhaseSpaceDimension)
@@ -300,6 +302,45 @@ ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.ActiveRegion.ParticleSource ${COLLISION
 # Add the MonteCarlo.Event.ObserverPhaseSpaceDimensionDiscretization unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.Event.ObserverPhaseSpaceDimensionDiscretization)
 ADD_TEST(PyFrensie.MonteCarlo.Event.ObserverPhaseSpaceDimensionDiscretization_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.ObserverPhaseSpaceDimensionDiscretization.py)
+
+# Add the MonteCarlo.Event.SurfaceCurrentEstimator unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Event.SurfaceCurrentEstimator)
+ADD_TEST(PyFrensie.MonteCarlo.Event.SurfaceCurrentEstimator_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.SurfaceCurrentEstimator.py)
+
+# Add the MonteCarlo.Event.SurfaceFluxEstimator unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Event.SurfaceFluxEstimator)
+ADD_TEST(PyFrensie.MonteCarlo.Event.SurfaceFluxEstimator_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.SurfaceFluxEstimator.py)
+
+# Add the MonteCarlo.Event.CellCollisionFluxEstimator unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CellCollisionFluxEstimator)
+ADD_TEST(PyFrensie.MonteCarlo.Event.CellCollisionFluxEstimator_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellCollisionFluxEstimator.py)
+
+# Add the MonteCarlo.Event.CellTrackLengthFluxEstimator unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CellTrackLengthFluxEstimator)
+ADD_TEST(PyFrensie.MonteCarlo.Event.CellTrackLengthFluxEstimator_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellTrackLengthFluxEstimator.py)
+
+# Add the MonteCarlo.Event.CellPulseHeightEstimator unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CellPulseHeightEstimator)
+ADD_TEST(PyFrensie.MonteCarlo.Event.CellPulseHeightEstimator_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellPulseHeightEstimator.py)
+
+IF(${FRENSIE_ENABLE_DAGMC})
+  PyFrensie_MAKE_TEST(tstMonteCarlo.Event.SurfaceFluxEstimatorDagMC)
+  ADD_TEST(PyFrensie.MonteCarlo.Event.SurfaceFluxEstimatorDagMC_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.SurfaceFluxEstimatorDagMC.py --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat)
+
+  PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CellCollisionFluxEstimatorDagMC)
+  ADD_TEST(PyFrensie.MonteCarlo.Event.CellCollisionFluxEstimatorDagMC_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellCollisionFluxEstimatorDagMC.py --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat)
+
+  PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CellTrackLengthFluxEstimatorDagMC)
+  ADD_TEST(PyFrensie.MonteCarlo.Event.CellTrackLengthFluxEstimatorDagMC_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellTrackLengthFluxEstimatorDagMC.py --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat)
+ENDIF()
+
+IF(${FRENSIE_ENABLE_ROOT})
+  PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CellCollisionFluxEstimatorRoot)
+  ADD_TEST(PyFrensie.MonteCarlo.Event.CellCollisionFluxEstimatorRoot_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellCollisionFluxEstimatorRoot.py --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geom.root)
+
+  PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CellTrackLengthFluxEstimatorRoot)
+  ADD_TEST(PyFrensie.MonteCarlo.Event.CellTrackLengthFluxEstimatorRoot_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellTrackLengthFluxEstimatorRoot.py --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geom.root)
+ENDIF()
 
 # # Add the MonteCarlo.Collision.PhotonKinematics unit tests
 # PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.PhotonKinematics)

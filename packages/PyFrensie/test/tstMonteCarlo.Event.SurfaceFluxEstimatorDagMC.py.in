@@ -1,0 +1,149 @@
+#! ${PYTHON_EXECUTABLE#-----------------------------------------------------------------------------#
+## MonteCarlo.Event.SurfaceFluxEstimatorDagMC class unit tests
+#  \file   tstMonteCarlo.Event.SurfaceFluxEstimatorDagMC.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.Event.SurfaceFluxEstimatorDagMC class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import os
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-f", "--test_cad_file", type="string", dest="test_cad_file",
+                  help="Test CAD file name with path.")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+DagMC = importPyFrensieModuleFromBuildDir('Geometry.DagMC')
+Event = importPyFrensieModuleFromBuildDir('MonteCarlo.Event')
+
+#---------------------------------------------------------------------------#
+# Tests.
+#---------------------------------------------------------------------------#
+#
+# Test the SurfaceFluxEstimatorDagMC class
+class SurfaceFluxEstimatorDagMCTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.ActiveRegion.SurfaceFluxEstimatorDagMC class"
+
+    def setUp(self):
+      # Setup the DagMC Geometry
+      local_properties = DagMC.DagMCModelProperties( options.test_cad_file )
+
+      local_properties.setFacetTolerance( 1e-3 )
+      local_properties.setTerminationCellPropertyName( "graveyard" )
+      local_properties.setMaterialPropertyName( "mat" )
+      local_properties.setDensityPropertyName( "rho" )
+      local_properties.setEstimatorPropertyName( "tally" )
+
+      tmp_model = DagMC.DagMCModel.getInstance()
+
+      tmp_model.initialize( local_properties )
+
+      self.model = tmp_model
+
+    def testConstructor(self):
+        "*Test MonteCarlo.ActiveRegion.SurfaceFluxEstimatorDagMC constructor"
+
+        surface_ids = [46, 53, 55, 57, 58, 83, 86, 89, 92, 425, 434]
+        estimator = Event.WeightMultipliedSurfaceFluxEstimator(
+                   0,
+                   10.0,
+                   surface_ids,
+                   self.model )
+
+        self.assertTrue( estimator.isEntityAssigned( 46 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 46 ),
+                                   2.848516241083349883e+02,
+                                   delta=1e-15 )
+
+        self.assertTrue( estimator.isEntityAssigned( 53 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 53 ),
+                                   9.773235573848069180e+01,
+                                   delta=1e-15 )
+
+        self.assertTrue( estimator.isEntityAssigned( 55 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 55 ),
+                                   1.666729374649003148e+01,
+                                   delta=1e-15 )
+
+        self.assertTrue( estimator.isEntityAssigned( 57 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 57 ),
+                                   2.594277182945700702e+02,
+                                   delta=1e-15 )
+
+        self.assertTrue( estimator.isEntityAssigned( 58 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 58 ),
+                                   3.715087327610179813e+01,
+                                   delta=1e-15 )
+
+        self.assertTrue( estimator.isEntityAssigned( 83 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 83 ),
+                                   6.714270345462136902e+01,
+                                   delta=1e-15 )
+
+        self.assertTrue( estimator.isEntityAssigned( 86 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 86 ),
+                                   3.165649943330208771e-01,
+                                   delta=1e-15 )
+
+        self.assertTrue( estimator.isEntityAssigned( 89 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 89 ),
+                                   3.165650099181220867e-01,
+                                   delta=1e-15 )
+
+        self.assertTrue( estimator.isEntityAssigned( 92 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 92 ),
+                                   3.165650995069881901e-01,
+                                   delta=1e-15 )
+
+        self.assertTrue( estimator.isEntityAssigned( 425 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 425 ),
+                                   8.970075180783169344e+00,
+                                   delta=1e-15 )
+
+        self.assertTrue( estimator.isEntityAssigned( 434 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 434 ),
+                                   4.002588252827990800e+00,
+                                   delta=1e-15 )
+
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(SurfaceFluxEstimatorDagMCTestCase))
+
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Event.SurfaceFluxEstimatorDagMC.py
+#-----------------------------------------------------------------------------#

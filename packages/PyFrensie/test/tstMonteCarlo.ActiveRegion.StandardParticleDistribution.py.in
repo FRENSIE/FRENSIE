@@ -501,7 +501,7 @@ class StandardParticleDistributionTestCase(unittest.TestCase):
         self.assertFalse( particle_distribution.isSpatiallyUniform() )
 
     def testIsSpatiallyUniform_spherical(self):
-        "\*Test MonteCarlo.ActiveRegion.StandardParticleDistribution isSpatiallyUniform_spherical"
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution isSpatiallyUniform_spherical"
         spatial_coord_conversion_policy = Coordinate.BasicSphericalCoordinateConversionPolicy()
         directional_coord_conversion_policy = Coordinate.BasicSphericalCoordinateConversionPolicy()
 

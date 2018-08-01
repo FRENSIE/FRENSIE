@@ -22,10 +22,7 @@ parser.add_option("-f", "--nativefile", type="string", dest="nativefile",
 options,args = parser.parse_args()
 
 from testingHelpers import importPyFrensieModuleFromBuildDir
-MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
 Collision = importPyFrensieModuleFromBuildDir('MonteCarlo.Collision')
-Utility = importPyFrensieModuleFromBuildDir('Utility')
-Prng = importPyFrensieModuleFromBuildDir('Utility.Prng')
 Native = importPyFrensieModuleFromBuildDir('Data.Native')
 
 #-----------------------------------------------------------------------------#
@@ -285,9 +282,6 @@ class AdjointBremsstrahlungReactionTestCase(unittest.TestCase):
 # Custom main
 #-----------------------------------------------------------------------------#
 if __name__ == "__main__":
-
-    # Initialize the FRENSIE random number generator
-    Utility.initFrensiePrng()
 
     # Create the test suite object
     suite = unittest.TestSuite()
