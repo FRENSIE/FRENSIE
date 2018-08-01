@@ -46,13 +46,13 @@ public:
   typedef BaseType::ParticleStateType ParticleStateType;
 
   //! The material handle type
-  typedef BaseType::InternalMaterialHandle InternalMaterialHandle;
+  typedef BaseType::MaterialId MaterialId;
 
   //! The photoatom name map type
   typedef BaseType::ScatteringCenterNameMap ElectroatomNameMap;
 
   //! Constructor
-  ElectronMaterial( const InternalMaterialHandle id,
+  ElectronMaterial( const MaterialId id,
                     const double density,
                     const ElectroatomNameMap& electroatom_name_map,
                     const std::vector<double>& electroatom_fractions,

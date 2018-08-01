@@ -21,7 +21,7 @@ namespace MonteCarlo{
 
 // Constructor
 PositronMaterial::PositronMaterial(
-               const InternalMaterialHandle id,
+               const MaterialId id,
                const double density,
                const PositronatomNameMap& positronatom_name_map,
                const std::vector<double>& positronatom_fractions,

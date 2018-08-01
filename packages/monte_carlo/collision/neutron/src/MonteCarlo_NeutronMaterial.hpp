@@ -45,13 +45,13 @@ public:
   typedef BaseType::ParticleStateType ParticleStateType;
 
   //! The material handle type
-  typedef typename BaseType::InternalMaterialHandle InternalMaterialHandle;
+  typedef typename BaseType::MaterialId MaterialId;
 
   //! The nuclide name map type
   typedef typename BaseType::ScatteringCenterNameMap NuclideNameMap;
 
   //! Constructor
-  NeutronMaterial( const InternalMaterialHandle id,
+  NeutronMaterial( const MaterialId id,
                    const double density,
                    const NuclideNameMap& nuclide_name_map,
                    const std::vector<double>& nuclide_fractions,

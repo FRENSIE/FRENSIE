@@ -157,10 +157,10 @@ void RootModel::createCellIdToUniqueIdMap()
                         "Root contains a cell which has not been "
                         "assigned an id in the input file!" );
 
-    TEST_FOR_EXCEPTION( cell->GetUniqueID() == Model::invalidCellHandle(),
+    TEST_FOR_EXCEPTION( cell->GetUniqueID() == Model::invalidCellId(),
                         InvalidRootGeometry,
                         "Root contains a cell that has a reserved id ("
-                        << Model::invalidCellHandle() <<
+                        << Model::invalidCellId() <<
                         ") in the input file!" );
 
     TEST_FOR_EXCEPTION( d_cell_id_uid_map.find( cell->GetUniqueID() ) !=

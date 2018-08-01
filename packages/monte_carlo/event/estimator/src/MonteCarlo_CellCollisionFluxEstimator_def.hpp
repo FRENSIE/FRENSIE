@@ -26,7 +26,7 @@ CellCollisionFluxEstimator<ContributionMultiplierPolicy>::CellCollisionFluxEstim
 // Constructor
 template<typename ContributionMultiplierPolicy>
 CellCollisionFluxEstimator<ContributionMultiplierPolicy>::CellCollisionFluxEstimator(
-                                      const uint32_t id,
+                                      const Id id,
                                       const double multiplier,
                                       const std::vector<CellIdType>& cell_ids,
                                       const std::vector<double>& cell_volumes )
@@ -37,7 +37,7 @@ CellCollisionFluxEstimator<ContributionMultiplierPolicy>::CellCollisionFluxEstim
 // Constructor (extract cell volumes from model)
 template<typename ContributionMultiplierPolicy>
 CellCollisionFluxEstimator<ContributionMultiplierPolicy>::CellCollisionFluxEstimator(
-                                      const uint32_t id,
+                                      const Id id,
                                       const double multiplier,
                                       const std::vector<CellIdType>& cell_ids,
                                       const Geometry::Model& model )

@@ -39,6 +39,24 @@ std::shared_ptr<const Utility::Mesh> hex_mesh;
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check that the estimator is a mesh type estimator
+FRENSIE_UNIT_TEST_TEMPLATE( HexMeshTrackLengthFluxEstimator,
+                            check_type,
+                            MultiplierPolicies )
+{
+  FETCH_TEMPLATE_PARAM( 0, ContributionMultiplierPolicy );
+
+  std::shared_ptr<MonteCarlo::Estimator> estimator(
+    new MonteCarlo::MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>(
+                                                                  0,
+                                                                  1.0,
+                                                                  hex_mesh ) );
+
+  FRENSIE_CHECK( !estimator->isCellEstimator() );
+  FRENSIE_CHECK( !estimator->isSurfaceEstimator() );
+  FRENSIE_CHECK( estimator->isMeshEstimator() );
+}
+//---------------------------------------------------------------------------//
 // Check that estimator bins can be set
 FRENSIE_UNIT_TEST_TEMPLATE( HexMeshTrackLengthFluxEstimator,
                             setDiscretization,

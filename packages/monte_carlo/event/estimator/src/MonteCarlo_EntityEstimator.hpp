@@ -25,39 +25,39 @@ class EntityEstimator : public Estimator
 protected:
 
   // Typedef for the map of entity ids and esimator moments array
-  typedef std::unordered_map<uint64_t,TwoEstimatorMomentsCollection>
+  typedef std::unordered_map<EntityId,TwoEstimatorMomentsCollection>
   EntityEstimatorMomentsCollectionMap;
 
   // Typedef for the entity norm constants map
-  typedef std::unordered_map<uint64_t,double> EntityNormConstMap;
+  typedef std::unordered_map<EntityId,double> EntityNormConstMap;
 
 public:
 
   //! Constructor (for flux estimators)
-  template<typename EntityId>
-  EntityEstimator( const uint32_t id,
+  template<typename InputEntityId>
+  EntityEstimator( const Id id,
 		   const double multiplier,
-		   const std::vector<EntityId>& entity_ids,
+		   const std::vector<InputEntityId>& entity_ids,
 		   const std::vector<double>& entity_norm_constants );
 
   //! Constructor (for non-flux estimators)
-  template<typename EntityId>
-  EntityEstimator( const uint32_t id,
+  template<typename InputEntityId>
+  EntityEstimator( const Id id,
 		   const double multiplier,
-		   const std::vector<EntityId>& entity_ids );
+		   const std::vector<InputEntityId>& entity_ids );
 
   //! Destructor
   virtual ~EntityEstimator()
   { /* ... */ }
 
   //! Return the entity ids associated with this estimator
-  void getEntityIds( std::set<uint64_t>& entity_ids ) const final override;
+  void getEntityIds( std::set<EntityId>& entity_ids ) const final override;
 
   //! Check if the entity is assigned to this estimator
-  bool isEntityAssigned( const uint64_t entity_id ) const final override;
+  bool isEntityAssigned( const EntityId entity_id ) const final override;
 
   //! Return the normalization constant for an entity
-  double getEntityNormConstant( const uint64_t entity_id ) const final override;
+  double getEntityNormConstant( const EntityId entity_id ) const final override;
 
   //! Return the total normalization constant
   double getTotalNormConstant() const override;
@@ -69,10 +69,10 @@ public:
   Utility::ArrayView<const double> getTotalBinDataSecondMoments() const final override;
 
   //! Get the bin data first moments for an entity
-  Utility::ArrayView<const double> getEntityBinDataFirstMoments( const uint64_t entity_id ) const final override;
+  Utility::ArrayView<const double> getEntityBinDataFirstMoments( const EntityId entity_id ) const final override;
 
   //! Get the bin data second moments for an entity
-  Utility::ArrayView<const double> getEntityBinDataSecondMoments( const uint64_t entity_id ) const final override;
+  Utility::ArrayView<const double> getEntityBinDataSecondMoments( const EntityId entity_id ) const final override;
 
   //! Reset estimator data
   void resetData() override;
@@ -87,7 +87,7 @@ protected:
   EntityEstimator();
 
   //! Constructor with no entities (for mesh estimators)
-  EntityEstimator( const uint32_t id, const double multiplier );
+  EntityEstimator( const Id id, const double multiplier );
 
   //! Assign entities
   virtual void assignEntities( const EntityNormConstMap& entity_norm_data );
@@ -100,7 +100,7 @@ protected:
   void assignResponseFunction( const std::shared_ptr<const ParticleResponse>& response_function ) override;
 
   //! Commit history contribution to a bin of an entity
-  void commitHistoryContributionToBinOfEntity( const uint64_t entity_id,
+  void commitHistoryContributionToBinOfEntity( const EntityId entity_id,
 					       const size_t bin_index,
 					       const double contribution );
 
@@ -116,24 +116,24 @@ protected:
   const Estimator::TwoEstimatorMomentsCollection& getTotalBinData() const;
 
   //! Get the bin data for an entity
-  const Estimator::TwoEstimatorMomentsCollection& getEntityBinData( const uint64_t entity_id ) const;
+  const Estimator::TwoEstimatorMomentsCollection& getEntityBinData( const EntityId entity_id ) const;
 
 private:
 
   // Initialize entity estimator moments map
-  template<typename EntityId>
+  template<typename InputEntityId>
   void initializeEntityEstimatorMomentsMap(
-                                     const std::vector<EntityId>& entity_ids );
+                                const std::vector<InputEntityId>& entity_ids );
 
   // Initialize entity norm constants map
-  template<typename EntityId>
+  template<typename InputEntityId>
   void initializeEntityNormConstantsMap(
-                                     const std::vector<EntityId>& entity_ids );
+                                const std::vector<InputEntityId>& entity_ids );
 
   // Initialize entity norm constants map
-  template<typename EntityId>
+  template<typename InputEntityId>
   void initializeEntityNormConstantsMap(
-                            const std::vector<EntityId>& entity_ids,
+                            const std::vector<InputEntityId>& entity_ids,
                             const std::vector<double>& entity_norm_constants );
 
   // Calculate the total normalization constant

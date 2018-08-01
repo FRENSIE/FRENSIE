@@ -18,7 +18,7 @@ namespace MonteCarlo{
 
 // Constructor
 AdjointElectronMaterial::AdjointElectronMaterial(
-               const InternalMaterialHandle id,
+               const MaterialId id,
                const double density,
                const AdjointElectroatomNameMap& adjoint_electroatom_name_map,
                const std::vector<double>& adjoint_electroatom_fractions,

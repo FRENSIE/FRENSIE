@@ -34,25 +34,34 @@ public:
   EventTags;
 
   //! Constructor (for flux estimators)
-  StandardSurfaceEstimator( const uint32_t id,
+  StandardSurfaceEstimator( const Id id,
                             const double multiplier,
                             const std::vector<SurfaceIdType>& surface_ids,
                             const std::vector<double>& surface_areas );
 
   //! Constructor (for flux estimators)
-  StandardSurfaceEstimator( const uint32_t id,
+  StandardSurfaceEstimator( const Id id,
                             const double multiplier,
                             const std::vector<SurfaceIdType>& surface_ids,
                             const Geometry::Model& model );
 
   //! Constructor (for non-flux estimators)
-  StandardSurfaceEstimator( const uint32_t id,
+  StandardSurfaceEstimator( const Id id,
                             const double multiplier,
                             const std::vector<SurfaceIdType>& surface_ids );
 
   //! Destructor
   virtual ~StandardSurfaceEstimator()
   { /* ... */ }
+
+  //! Check if the estimator is a cell estimator
+  bool isCellEstimator() const final override;
+
+  //! Check if the estimator is a surface estimator
+  bool isSurfaceEstimator() const final override;
+
+  //! Check if the estimator is a mesh estimator
+  bool isMeshEstimator() const final override;
 
 protected:
 

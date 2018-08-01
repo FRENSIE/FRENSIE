@@ -19,7 +19,7 @@ StandardCellEstimator::StandardCellEstimator()
   
 // Constructor
 StandardCellEstimator::StandardCellEstimator(
-                                      const uint32_t id,
+                                      const Id id,
                                       const double multiplier,
                                       const std::vector<CellIdType>& cell_ids,
                                       const std::vector<double>& cell_volumes )
@@ -28,7 +28,7 @@ StandardCellEstimator::StandardCellEstimator(
 
 // Constructor (extract cell volumes from model)
 StandardCellEstimator::StandardCellEstimator(
-                                       const uint32_t id,
+                                       const Id id,
                                        const double multiplier,
                                        const std::vector<CellIdType>& cell_ids,
                                        const Geometry::Model& model )
@@ -58,6 +58,24 @@ StandardCellEstimator::StandardCellEstimator(
   }
 
   this->assignEntities( cell_id_volume_map );
+}
+
+// Check if the estimator is a cell estimator
+bool StandardCellEstimator::isCellEstimator() const
+{
+  return true;
+}
+
+// Check if the estimator is a surface estimator
+bool StandardCellEstimator::isSurfaceEstimator() const
+{
+  return false;
+}
+
+// Check if the estimator is a mesh estimator
+bool StandardCellEstimator::isMeshEstimator() const
+{
+  return false;
 }
   
 // Assign discretization to an estimator dimension

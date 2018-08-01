@@ -14,28 +14,28 @@
 
 namespace Geometry{
 
-// The invalid cell handle
-auto Model::invalidCellHandle() -> EntityId
+// The invalid cell id
+auto Model::invalidCellId() -> EntityId
 {
-  return Navigator::invalidCellHandle();
+  return Navigator::invalidCellId();
 }
 
-// The invalid surface handle
-auto Model::invalidSurfaceHandle() -> EntityId
+// The invalid surface id
+auto Model::invalidSurfaceId() -> EntityId
 {
-  return Navigator::invalidSurfaceHandle();
+  return Navigator::invalidSurfaceId();
 }
 
-// The invalid material handle
-auto Model::invalidMaterialHandle() -> InternalMaterialHandle
+// The invalid material id
+auto Model::invalidMaterialId() -> MaterialId
 {
-  return std::numeric_limits<InternalMaterialHandle>::max();
+  return std::numeric_limits<MaterialId>::max();
 }
 
-// The invalid estimator handle
-auto Model::invalidEstimatorHandle() -> InternalEstimatorHandle
+// The invalid estimator id
+auto Model::invalidEstimatorId() -> EstimatorId
 {
-  return std::numeric_limits<InternalEstimatorHandle>::max();
+  return std::numeric_limits<EstimatorId>::max();
 }
   
 } // end Geometry namespace

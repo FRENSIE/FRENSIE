@@ -32,7 +32,7 @@ public:
 
   //! Constructor
   SurfaceCurrentEstimator(
-                    const uint32_t id,
+                    const Id id,
                     const double multiplier,
                     const std::vector<StandardSurfaceEstimator::SurfaceIdType>&
                     surface_ids );

@@ -28,14 +28,14 @@ Navigator::Navigator( const Navigator& other )
   : d_on_advance_complete( other.d_on_advance_complete )
 { /* ... */ }
 
-// The invalid cell handle
-auto Navigator::invalidCellHandle() -> EntityId
+// The invalid cell id
+auto Navigator::invalidCellId() -> EntityId
 {
   return 0;
 }
 
-// The invalid surface handle
-auto Navigator::invalidSurfaceHandle() -> EntityId
+// The invalid surface id
+auto Navigator::invalidSurfaceId() -> EntityId
 {
   return 0;
 }

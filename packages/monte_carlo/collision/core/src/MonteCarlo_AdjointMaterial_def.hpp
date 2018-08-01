@@ -32,7 +32,7 @@ AdjointMaterial<ScatteringCenter>::s_total_forward_cs_evaluation_functor(
 // Constructor
 template<typename ScatteringCenter>
 AdjointMaterial<ScatteringCenter>::AdjointMaterial(
-                     const InternalMaterialHandle id,
+                     const MaterialId id,
                      const double density,
                      const ScatteringCenterNameMap& scattering_center_name_map,
                      const std::vector<double>& scattering_center_fractions,

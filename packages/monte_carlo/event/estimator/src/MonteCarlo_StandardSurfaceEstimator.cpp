@@ -21,7 +21,7 @@ StandardSurfaceEstimator::StandardSurfaceEstimator()
 
 // Constructor (for flux estimators)
 StandardSurfaceEstimator::StandardSurfaceEstimator(
-                          const uint32_t id,
+                          const Id id,
                           const double multiplier,
                           const std::vector<SurfaceIdType>& surface_ids,
                           const std::vector<double>& surface_areas )
@@ -34,7 +34,7 @@ StandardSurfaceEstimator::StandardSurfaceEstimator(
 
 // Constructor (for flux estimators)
 StandardSurfaceEstimator::StandardSurfaceEstimator(
-                                 const uint32_t id,
+                                 const Id id,
                                  const double multiplier,
                                  const std::vector<SurfaceIdType>& surface_ids,
                                  const Geometry::Model& model )
@@ -77,12 +77,30 @@ StandardSurfaceEstimator::StandardSurfaceEstimator(
 
 // Constructor (for non-flux estimators)
 StandardSurfaceEstimator::StandardSurfaceEstimator(
-                          const uint32_t id,
+                          const Id id,
                           const double multiplier,
                           const std::vector<SurfaceIdType>& surface_ids )
   : StandardEntityEstimator( id, multiplier, surface_ids ),
     ParticleCrossingSurfaceEventObserver()
 { /* ... */ }
+
+// Check if the estimator is a cell estimator
+bool StandardSurfaceEstimator::isCellEstimator() const
+{
+  return false;
+}
+
+// Check if the estimator is a surface estimator
+bool StandardSurfaceEstimator::isSurfaceEstimator() const
+{
+  return true;
+}
+
+// Check if the estimator is a mesh estimator
+bool StandardSurfaceEstimator::isMeshEstimator() const
+{
+  return false;
+}
 
 // Assign the particle type to the estimator
 /*! \details All particle types can contribute to the estimator. Combinations

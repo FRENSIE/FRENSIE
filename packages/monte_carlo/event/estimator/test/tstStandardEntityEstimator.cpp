@@ -35,6 +35,18 @@ public:
   ~TestStandardEntityEstimator()
   { /* ... */ }
 
+  //! Check if the estimator is a cell estimator
+  bool isCellEstimator() const final override
+  { return false; }
+
+  //! Check if the estimator is a surface estimator
+  bool isSurfaceEstimator() const final override
+  { return false; }
+
+  //! Check if the estimator is a mesh estimator
+  bool isMeshEstimator() const final override
+  { return false; }
+
   void printSummary( std::ostream& os ) const final override
   { this->printImplementation( os, "Surface" ); }
 
@@ -367,28 +379,39 @@ FRENSIE_UNIT_TEST( StandardEntityEstimator,
   // Check the entity processed total data
   std::vector<double> entity_total_mean, entity_total_re, entity_total_vov,
     entity_total_fom;
+  std::map<std::string,std::vector<double> > processed_data;
 
   estimator->getEntityTotalProcessedData( 0,
                                           entity_total_mean,
                                           entity_total_re,
                                           entity_total_vov,
                                           entity_total_fom );
+  estimator->getEntityTotalProcessedData( 0, processed_data );
 
   FRENSIE_CHECK_EQUAL( entity_total_mean, std::vector<double>( 2, 160.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["mean"], std::vector<double>( 2, 160.0 ) );
   FRENSIE_CHECK_EQUAL( entity_total_re, std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["re"], std::vector<double>( 2, 0.0 ) );
   FRENSIE_CHECK_EQUAL( entity_total_vov, std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["vov"], std::vector<double>( 2, 0.0 ) );
   FRENSIE_CHECK_EQUAL( entity_total_fom, std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["fom"], std::vector<double>( 2, 0.0 ) );
 
   estimator->getEntityTotalProcessedData( 1,
                                           entity_total_mean,
                                           entity_total_re,
                                           entity_total_vov,
                                           entity_total_fom );
+  estimator->getEntityTotalProcessedData( 1, processed_data );
 
   FRENSIE_CHECK_EQUAL( entity_total_mean, std::vector<double>( 2, 80.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["mean"], std::vector<double>( 2, 80.0 ) );
   FRENSIE_CHECK_EQUAL( entity_total_re, std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["re"], std::vector<double>( 2, 0.0 ) );
   FRENSIE_CHECK_EQUAL( entity_total_vov, std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["vov"], std::vector<double>( 2, 0.0 ) );
   FRENSIE_CHECK_EQUAL( entity_total_fom, std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["fom"], std::vector<double>( 2, 0.0 ) );
 
   // Check the total data moments
   Utility::ArrayView<const double> total_first_moments =
@@ -416,11 +439,16 @@ FRENSIE_UNIT_TEST( StandardEntityEstimator,
   std::vector<double> total_mean, total_re, total_vov, total_fom;
 
   estimator->getTotalProcessedData( total_mean, total_re, total_vov, total_fom );
+  estimator->getTotalProcessedData( processed_data );
 
   FRENSIE_CHECK_EQUAL( total_mean, std::vector<double>( 2, 320.0/3 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["mean"], std::vector<double>( 2, 320.0/3 ) );
   FRENSIE_CHECK_EQUAL( total_re, std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["re"], std::vector<double>( 2, 0.0 ) );
   FRENSIE_CHECK_EQUAL( total_vov, std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["vov"], std::vector<double>( 2, 0.0 ) );
   FRENSIE_CHECK_EQUAL( total_fom, std::vector<double>( 2, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["fom"], std::vector<double>( 2, 0.0 ) );
 }
 
 //---------------------------------------------------------------------------//

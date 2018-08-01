@@ -30,7 +30,7 @@ class StandardEntityEstimator : public EntityEstimator
   typedef std::unordered_map<size_t,double> BinContributionMap;
 
   // Typedef for serial update tracker
-  typedef std::unordered_map<uint64_t,BinContributionMap> SerialUpdateTracker;
+  typedef std::unordered_map<EntityId,BinContributionMap> SerialUpdateTracker;
 
   // Typedef for parallel update tracker
   typedef std::vector<SerialUpdateTracker> ParallelUpdateTracker;
@@ -38,24 +38,24 @@ class StandardEntityEstimator : public EntityEstimator
 protected:
 
   //! Typedef for the map of entity ids and estimator moments array
-  typedef std::unordered_map<uint64_t,Estimator::FourEstimatorMomentsCollection>
+  typedef std::unordered_map<EntityId,Estimator::FourEstimatorMomentsCollection>
   EntityEstimatorMomentsCollectionMap;
 
 public:
 
   //! Constructor (for flux estimators)
-  template<typename EntityId>
+  template<typename InputEntityId>
   StandardEntityEstimator(
-                     const uint32_t id,
+                     const Id id,
                      const double multiplier,
-                     const std::vector<EntityId>& entity_ids,
+                     const std::vector<InputEntityId>& entity_ids,
 		     const std::vector<double>& entity_norm_constants );
 
   //! Constructor (for non-flux estimators)
-  template<typename EntityId>
-  StandardEntityEstimator( const uint32_t id,
+  template<typename InputEntityId>
+  StandardEntityEstimator( const Id id,
 			   const double multiplier,
-			   const std::vector<EntityId>& entity_ids );
+			   const std::vector<InputEntityId>& entity_ids );
 
   //! Destructor
   virtual ~StandardEntityEstimator()
@@ -77,16 +77,16 @@ public:
   Utility::ArrayView<const double> getTotalDataFourthMoments() const final override;
 
   //! Get the total data first moments for an entity
-  Utility::ArrayView<const double> getEntityTotalDataFirstMoments( const uint64_t entity_id ) const final override;
+  Utility::ArrayView<const double> getEntityTotalDataFirstMoments( const EntityId entity_id ) const final override;
 
   //! Get the total data second moments for an entity
-  Utility::ArrayView<const double> getEntityTotalDataSecondMoments( const uint64_t entity_id ) const final override;
+  Utility::ArrayView<const double> getEntityTotalDataSecondMoments( const EntityId entity_id ) const final override;
 
   //! Get the total data third moments for an entity
-  Utility::ArrayView<const double> getEntityTotalDataThirdMoments( const uint64_t entity_id ) const final override;
+  Utility::ArrayView<const double> getEntityTotalDataThirdMoments( const EntityId entity_id ) const final override;
 
   //! Get the total data fourth moments for an entity
-  Utility::ArrayView<const double> getEntityTotalDataFourthMoments( const uint64_t entity_id ) const final override;
+  Utility::ArrayView<const double> getEntityTotalDataFourthMoments( const EntityId entity_id ) const final override;
 
   //! Commit the contribution from the current history to the estimator
   void commitHistoryContribution() final override;
@@ -107,7 +107,7 @@ protected:
   StandardEntityEstimator();
 
   //! Constructor with no entities (for mesh estimators)
-  StandardEntityEstimator( const uint32_t id,
+  StandardEntityEstimator( const Id id,
                            const double multiplier );
 
   //! Assign entities
@@ -123,13 +123,13 @@ protected:
 
   //! Add estimator contribution from a point of the current history
   void addPartialHistoryPointContribution(
-                   const uint64_t entity_id,
+                   const EntityId entity_id,
                    const ObserverParticleStateWrapper& particle_state_wrapper,
                    const double contribution );
 
   //! Add estimator contribution from a range of the current history
   void addPartialHistoryRangeContribution(
-                   const uint64_t entity_id,
+                   const EntityId entity_id,
                    const ObserverParticleStateWrapper& particle_state_wrapper,
                    const double contribution );
 
@@ -138,7 +138,7 @@ protected:
 
   //! Get the total data for an entity
   const Estimator::FourEstimatorMomentsCollection&
-  getEntityTotalData( const uint64_t entity_id ) const;
+  getEntityTotalData( const EntityId entity_id ) const;
 
 private:
 
@@ -147,7 +147,7 @@ private:
 
   // Commit history contr. to the total for a response function of an entity
   void commitHistoryContributionToTotalOfEntity(
-					const uint64_t entity_id,
+					const EntityId entity_id,
 					const size_t response_function_index,
 					const double contribution );
 
@@ -157,12 +157,12 @@ private:
 					const double contribution );
 
   // Initialize the moments maps
-  template<typename EntityId>
-  void initializeMomentsMaps( const std::vector<EntityId>& entity_ids );
+  template<typename InputEntityId>
+  void initializeMomentsMaps( const std::vector<InputEntityId>& entity_ids );
 
   // Add info to update tracker
   void addInfoToUpdateTracker( const size_t thread_id,
-                               const uint64_t entity_id,
+                               const EntityId entity_id,
                                const size_t bin_index,
                                const double contribution );
 

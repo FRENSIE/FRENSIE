@@ -40,7 +40,7 @@ public:
   typedef typename BaseType::ParticleStateType ParticleStateType;
 
   //! The material handle type
-  typedef typename BaseType::InternalMaterialHandle InternalMaterialHandle;
+  typedef typename BaseType::MaterialId MaterialId;
 
   //! The scattering center name map
   typedef typename BaseType::ScatteringCenterNameMap ScatteringCenterNameMap;
@@ -78,7 +78,7 @@ public:
 protected:
 
   //! Constructor
-  AdjointMaterial( const InternalMaterialHandle id,
+  AdjointMaterial( const MaterialId id,
                    const double density,
                    const ScatteringCenterNameMap& scattering_center_name_map,
                    const std::vector<double>& scattering_center_fractions,

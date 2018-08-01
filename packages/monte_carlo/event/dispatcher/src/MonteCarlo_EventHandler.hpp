@@ -24,8 +24,10 @@
 #include "MonteCarlo_ParticleGoneGlobalEventHandler.hpp"
 #include "MonteCarlo_MeshTrackLengthFluxEstimator.hpp"
 #include "MonteCarlo_ParticleTracker.hpp"
+#include "MonteCarlo_FilledGeometryModel.hpp"
 #include "MonteCarlo_ParticleState.hpp"
-#include "Geometry_Model.hpp"
+#include "MonteCarlo_SimulationGeneralProperties.hpp"
+#include "Geometry_AdvancedModel.hpp"
 #include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
@@ -47,8 +49,16 @@ class EventHandler : public ParticleCollidingInCellEventHandler,
 
 public:
 
-  //! Constructor
+  //! Default constructor
   EventHandler();
+  
+  //! Constructor (model)
+  EventHandler( const std::shared_ptr<const Geometry::Model>& model,
+                const MonteCarlo::SimulationGeneralProperties& properties );
+
+  //! Constructor (filled model)
+  EventHandler( const std::shared_ptr<const MonteCarlo::FilledGeometryModel>& model,
+                const MonteCarlo::SimulationGeneralProperties& properties );
 
   //! Destructor
   ~EventHandler()
@@ -68,22 +78,22 @@ public:
   size_t getNumberOfParticleTrackers() const;
 
   //! Check if an estimator with the given id exists
-  bool doesEstimatorExist( const uint32_t estimator_id ) const;
+  bool doesEstimatorExist( const Estimator::Id estimator_id ) const;
 
   //! Return the estimator
-  Estimator& getEstimator( const uint32_t estimator_id );
+  Estimator& getEstimator( const Estimator::Id estimator_id );
 
   //! Return the estimator
-  const Estimator& getEstimator( const uint32_t estimator_id ) const;
+  const Estimator& getEstimator( const Estimator::Id estimator_id ) const;
 
   //! Check if a particle tracker with the given id exists
-  bool doesParticleTrackerExist( const uint32_t particle_tracker_id ) const;
+  bool doesParticleTrackerExist( const ParticleTracker::Id particle_tracker_id ) const;
 
   //! Return the particle tracker
-  ParticleTracker& getParticleTracker( const uint32_t particle_tracker_id );
+  ParticleTracker& getParticleTracker( const ParticleTracker::Id particle_tracker_id );
 
   //! Return the particle tracker
-  const ParticleTracker& getParticleTracker( const uint32_t particle_tracker_id ) const;
+  const ParticleTracker& getParticleTracker( const ParticleTracker::Id particle_tracker_id ) const;
 
   //! Enable support for multiple threads
   void enableThreadSupport( const unsigned num_threads );
@@ -118,8 +128,9 @@ private:
   template<typename T>
   struct EstimatorRegistrationHelper<MeshTrackLengthFluxEstimator<T> >
   {
-    static void registerEstimator( EventHandler& event_handler,
-                                   const std::shared_ptr<MeshTrackLengthFluxEstimator<T> >& estimator );
+    static void registerEstimator(
+          EventHandler& event_handler,
+          const std::shared_ptr<MeshTrackLengthFluxEstimator<T> >& estimator );
   };
 
   // Add the estimator registration helper as a friend class
@@ -131,19 +142,19 @@ private:
   struct ObserverRegistrationHelper
   {
     //! Register the obs. with dispatchers associated with BeginEventTag tag
-    template<typename Observer>
+    template<typename Observer, typename InputEntityId>
     static void registerObserverWithTag(
-                              EventHandler& event_handler,
-			      const std::shared_ptr<Observer>& observer,
-			      const std::set<uint64_t>& entity_ids );
+                                   EventHandler& event_handler,
+                                   const std::shared_ptr<Observer>& observer,
+			           const std::set<InputEntityId>& entity_ids );
 
     //! Register the obs. with dispatchers associated with BeginEventTag tag
-    template<typename Observer>
+    template<typename Observer, typename InputEntityId>
     static void registerObserverWithTag(
-                              EventHandler& event_handler,
-			      const std::shared_ptr<Observer>& observer,
-			      const std::set<uint64_t>& entity_ids,
-                              const std::set<ParticleType>& particle_types );
+                                EventHandler& event_handler,
+                                const std::shared_ptr<Observer>& observer,
+                                const std::set<InputEntityId>& entity_ids,
+                                const std::set<ParticleType>& particle_types );
 
     /*! Register the global observer with the global dispatcher associated with
      * BeginEventTag tag
@@ -168,18 +179,18 @@ private:
   struct ObserverRegistrationHelper<EndEventTagIterator,EndEventTagIterator>
   {
     //! End registration iteration
-    template<typename Observer>
+    template<typename Observer, typename InputEntityId>
     static void registerObserverWithTag(
                               EventHandler& event_handler,
 			      const std::shared_ptr<Observer>& observer,
-			      const std::set<uint64_t>& entity_ids );
+			      const std::set<InputEntityId>& entity_ids );
 
     //! End registration iteration
-    template<typename Observer>
+    template<typename Observer, typename InputEntityId>
     static void registerObserverWithTag(
                               EventHandler& event_handler,
 			      const std::shared_ptr<Observer>& observer,
-			      const std::set<uint64_t>& entity_ids,
+			      const std::set<InputEntityId>& entity_ids,
                               const std::set<ParticleType>& particle_types );
 
     //! End global registration iteration
@@ -201,14 +212,14 @@ private:
   friend class ObserverRegistrationHelper;
 
   // Register an observer with the appropriate dispatcher
-  template<typename Observer>
+  template<typename Observer, typename InputEntityId>
   void registerObserver( const std::shared_ptr<Observer>& observer,
-                         const std::set<uint64_t>& entity_ids );
+                         const std::set<InputEntityId>& entity_ids );
 
   // Register an observer with the appropriate dispatcher
-  template<typename Observer>
+  template<typename Observer, typename InputEntityId>
   void registerObserver( const std::shared_ptr<Observer>& observer,
-                         const std::set<uint64_t>& entity_ids,
+                         const std::set<InputEntityId>& entity_ids,
                          const std::set<ParticleType>& particle_types );
 
   // Register a global observer with the appropriate dispatcher
@@ -231,6 +242,35 @@ private:
   using ParticleSubtrackEndingGlobalEventHandler::registerGlobalObserverWithTag;
   using ParticleGoneGlobalEventHandler::registerGlobalObserverWithTag;
 
+  // Create and register cell estimator
+  void createAndRegisterCellEstimator(
+                                  const Estimator::Id estimator_id,
+                                  const Geometry::EstimatorType estimator_type,
+                                  const Geometry::Model::CellIdArray& cells,
+                                  const Geometry::Model& model,
+                                  std::shared_ptr<Estimator>& estimator_base );
+
+  // Create and register surface estimator
+  void createAndRegisterSurfaceEstimator(
+                     const Estimator::Id estimator_id,
+                     const Geometry::EstimatorType estimator_type,
+                     const Geometry::AdvancedModel::SurfaceIdArray& surfaces,
+                     const Geometry::Model& model,
+                     const MonteCarlo::SimulationGeneralProperties& properties,
+                     std::shared_ptr<Estimator>& estimator_base );
+  
+  // Set the particle type in a created estimator
+  static void setParticleTypes( const Geometry::ParticleType particle_type,
+                                const std::shared_ptr<Estimator>& estimator );
+
+  // Verify that the estimator cell ids are valid
+  void verifyValidEstimatorCellIds( const Estimator::Id estimator_id,
+                                    const std::set<Estimator::EntityId>& cell_ids ) const;
+
+  // Verify that the estimator surface ids are valid
+  void verifyValidEstimatorSurfaceIds( const Estimator::Id estimator_id,
+                                       const std::set<Estimator::EntityId>& surface_ids ) const;
+  
   // Serialize the observer
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version );
@@ -239,13 +279,16 @@ private:
   friend class boost::serialization::access;
 
   // Typedef for the estimators container
-  typedef std::unordered_map<uint32_t,std::shared_ptr<Estimator> > EstimatorIdMap;
+  typedef std::unordered_map<Estimator::Id,std::shared_ptr<Estimator> > EstimatorIdMap;
 
   // Typedef for the particle tracker container
-  typedef std::unordered_map<uint32_t,std::shared_ptr<ParticleTracker> > ParticleTrackerIdMap;
+  typedef std::unordered_map<ParticleTracker::Id,std::shared_ptr<ParticleTracker> > ParticleTrackerIdMap;
 
   // Typedef for the particle history observer array
   typedef std::set<std::shared_ptr<ParticleHistoryObserver> > ParticleHistoryObservers;
+
+  // The geometry model
+  std::shared_ptr<const Geometry::Model> d_model;
 
   // The estimators
   EstimatorIdMap d_estimators;

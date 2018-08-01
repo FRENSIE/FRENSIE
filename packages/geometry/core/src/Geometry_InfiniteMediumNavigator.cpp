@@ -18,7 +18,7 @@ namespace Geometry{
 
 // Default constructor
 InfiniteMediumNavigator::InfiniteMediumNavigator()
-  : InfiniteMediumNavigator( Geometry::Navigator::invalidCellHandle() )
+  : InfiniteMediumNavigator( Geometry::Navigator::invalidCellId() )
 { /* ... */ }
 
 // Constructor
@@ -176,7 +176,7 @@ auto InfiniteMediumNavigator::fireRay(
                                  EntityId* surface_hit ) -> Length
 {
   if( surface_hit != NULL )
-    *surface_hit = Navigator::invalidSurfaceHandle();
+    *surface_hit = Navigator::invalidSurfaceId();
 
   return Utility::QuantityTraits<Length>::inf();
 }

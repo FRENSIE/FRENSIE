@@ -20,7 +20,7 @@ StandardEntityEstimator::StandardEntityEstimator()
 { /* ... */ }
 
 // Constructor with no entities (for mesh estimator)
-StandardEntityEstimator::StandardEntityEstimator( const uint32_t id,
+StandardEntityEstimator::StandardEntityEstimator( const Id id,
                                                   const double multiplier )
   : EntityEstimator( id, multiplier ),
     d_total_estimator_moments( 1 ),
@@ -415,7 +415,7 @@ void StandardEntityEstimator::printImplementation(
  * possibly other multiplier(s) ) but not the response function values.
  */
 void StandardEntityEstimator::addPartialHistoryPointContribution(
-		   const uint64_t entity_id,
+		   const EntityId entity_id,
 		   const ObserverParticleStateWrapper& particle_state_wrapper,
                    const double contribution )
 {
@@ -467,7 +467,7 @@ void StandardEntityEstimator::addPartialHistoryPointContribution(
  * possibly other multiplier(s) ) but not the response function values.
  */
 void StandardEntityEstimator::addPartialHistoryRangeContribution(
-                   const uint64_t entity_id,
+                   const EntityId entity_id,
                    const ObserverParticleStateWrapper& particle_state_wrapper,
                    const double contribution )
 {
@@ -535,7 +535,7 @@ StandardEntityEstimator::getTotalData() const
  * It is needed by mesh estimators for exporting data in .h5m and .vtk formats.
  */
 const Estimator::FourEstimatorMomentsCollection&
-StandardEntityEstimator::getEntityTotalData( const uint64_t entity_id ) const
+StandardEntityEstimator::getEntityTotalData( const EntityId entity_id ) const
 {
   // Make sure the entity is valid
   testPrecondition( d_entity_total_estimator_moments_map.find( entity_id ) !=
@@ -563,7 +563,7 @@ void StandardEntityEstimator::resizeEntityTotalEstimatorMomentsMapCollections()
 
 // Commit hist. contr. to the total for a response function of an entity
 void StandardEntityEstimator::commitHistoryContributionToTotalOfEntity(
-					const uint64_t entity_id,
+					const EntityId entity_id,
 					const size_t response_function_index,
 					const double contribution )
 {
@@ -607,7 +607,7 @@ void StandardEntityEstimator::commitHistoryContributionToTotalOfEstimator(
 // Add info to update tracker
 void StandardEntityEstimator::addInfoToUpdateTracker(
 						    const size_t thread_id,
-						    const uint64_t entity_id,
+						    const EntityId entity_id,
 						    const size_t bin_index,
 						    const double contribution )
 {

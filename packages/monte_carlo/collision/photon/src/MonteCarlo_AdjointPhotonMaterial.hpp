@@ -36,14 +36,14 @@ public:
   typedef BaseType::ReactionEnumTypeSet ReactionEnumTypeSet;
 
   //! The material handle type
-  typedef BaseType::InternalMaterialHandle InternalMaterialHandle;
+  typedef BaseType::MaterialId MaterialId;
 
   //! The adjoint photoatom name map type
   typedef BaseType::ScatteringCenterNameMap AdjointPhotoatomNameMap;
 
   //! Constructor
   AdjointPhotonMaterial(
-                  const InternalMaterialHandle id,
+                  const MaterialId id,
                   const double density,
                   const AdjointPhotoatomNameMap& adjoint_photoatom_name_map,
                   const std::vector<double>& adjoint_photoatom_fractions,

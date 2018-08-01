@@ -18,7 +18,7 @@ namespace Geometry{
 // Constructor
 InfiniteMediumModel::InfiniteMediumModel(
                                const EntityId cell,
-                               const Model::InternalMaterialHandle material_id,
+                               const Model::MaterialId material_id,
                                const Model::Density density )
   : Model(),
     d_cell( cell ),

@@ -42,35 +42,28 @@ FRENSIE_ADD_TEST(ParticleSubtrackEndingGlobalEventDispatcher)
 FRENSIE_ADD_TEST_EXECUTABLE(ParticleGoneGlobalEventDispatcher DEPENDS tstParticleGoneGlobalEventDispatcher.cpp)
 FRENSIE_ADD_TEST(ParticleGoneGlobalEventDispatcher)
 
-# ADD_EXECUTABLE(tstEventHandler
-#   tstEventHandler.cpp)
-# TARGET_LINK_LIBRARIES(tstEventHandler monte_carlo_estimator_native ${MOAB})
-# ADD_TEST(EventHandler_test tstEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
-# SET_PROPERTY(TEST EventHandler_test PROPERTY LABELS monte_carlo_estimator_native)
+FRENSIE_ADD_TEST_EXECUTABLE(EventHandler DEPENDS tstEventHandler.cpp)
+FRENSIE_ADD_TEST(EventHandler)
 
-# IF(${FRENSIE_ENABLE_OPENMP})
-#   ADD_TEST(SharedParallelEventHandler_2_test
-#     tstEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk" --threads=2)
-#   ADD_TEST(SharedParallelEventHandler_4_test
-#     tstEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk" --threads=4)
-#   SET_PROPERTY(TEST SharedParallelEventHandler_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
-#   SET_PROPERTY(TEST SharedParallelEventHandler_4_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
-# ENDIF()
+IF(${FRENSIE_ENABLE_OPENMP})
+  FRENSIE_ADD_TEST(SharedParallelEventHandler_2
+    TEST_EXEC_NAME_ROOT EventHandler
+    EXTRA_ARGS --threads=2
+    OPENMP_TEST)
+  FRENSIE_ADD_TEST(SharedParallelEventHandler_4
+    TEST_EXEC_NAME_ROOT EventHandler
+    EXTRA_ARGS --threads=4
+    OPENMP_TEST)
+ENDIF()
 
-# IF(${FRENSIE_ENABLE_MPI})
-#   Add_EXECUTABLE(tstDistributedEventHandler
-#     tstDistributedEventHandler.cpp)
-#   TARGET_LINK_LIBRARIES(tstDistributedEventHandler monte_carlo_estimator_native ${MOAB})
-#   ADD_TEST(DistributedParallelEventHandler_1_test
-#     ${MPIEXEC} -n 1 tstDistributedEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
-#   ADD_TEST(DistributedParallelEventHandler_2_test
-#     ${MPIEXEC} -n 2 tstDistributedEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
-#   ADD_TEST(DistributedParallelEventHandler_4_test
-#     ${MPIEXEC} -n 4 tstDistributedEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
-#   SET_PROPERTY(TEST DistributedParallelEventHandler_1_test PROPERTY LABELS monte_carlo_estimator_native mpi no_threads)
-#   SET_PROPERTY(TEST DistributedParallelEventHandler_2_test PROPERTY LABELS monte_carlo_estimator_native mpi no_threads)
-#   SET_PROPERTY(TEST DistributedParallelEventHandler_4_test PROPERTY LABELS monte_carlo_estimator_native mpi no_threads)
-# ENDIF()
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(DistributedParallelEventHandler
+    TEST_EXEC_NAME_ROOT EventHandler
+    MPI_PROCS 2)
+  FRENSIE_ADD_TEST(DistributedParallelEventHandler
+    TEST_EXEC_NAME_ROOT EventHandler
+    MPI_PROCS 4)
+ENDIF()
 
 # IF(FRENSIE_ENABLE_DAGMC)
 #   ADD_EXECUTABLE(tstEventHandlerFactory_DagMC

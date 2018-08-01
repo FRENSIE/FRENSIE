@@ -39,6 +39,29 @@ public:
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check that the estimator is a cell type estimator
+FRENSIE_UNIT_TEST( StandardCellEstimator, check_type )
+{
+  std::vector<uint64_t> cell_ids( 2 );
+  cell_ids[0] = 0;
+  cell_ids[1] = 1;
+
+  std::vector<double> cell_norm_consts( 2 );
+  cell_norm_consts[0] = 1.0;
+  cell_norm_consts[1] = 2.0;
+
+  std::shared_ptr<MonteCarlo::Estimator> estimator(
+			   new TestStandardCellEstimator( 0ull,
+							  2.0,
+							  cell_ids,
+							  cell_norm_consts ) );
+
+  FRENSIE_CHECK( estimator->isCellEstimator() );
+  FRENSIE_CHECK( !estimator->isSurfaceEstimator() );
+  FRENSIE_CHECK( !estimator->isMeshEstimator() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that estimator bins can be set
 FRENSIE_UNIT_TEST( StandardCellEstimator, setDiscretization )
 {

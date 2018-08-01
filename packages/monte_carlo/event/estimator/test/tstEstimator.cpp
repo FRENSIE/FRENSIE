@@ -29,6 +29,18 @@ public:
 
   ~TestEstimator();
 
+  //! Check if the estimator is a cell estimator
+  bool isCellEstimator() const final override
+  { return false; }
+
+  //! Check if the estimator is a surface estimator
+  bool isSurfaceEstimator() const final override
+  { return false; }
+
+  //! Check if the estimator is a mesh estimator
+  bool isMeshEstimator() const final override
+  { return false; }
+
   //! Get the entities assigned to the estimator
   void getEntityIds( std::set<uint64_t>& ) const final override;
 

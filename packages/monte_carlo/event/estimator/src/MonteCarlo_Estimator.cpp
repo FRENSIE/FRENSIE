@@ -19,11 +19,11 @@ namespace MonteCarlo{
 
 // Default constructor
 Estimator::Estimator()
-  : d_id( std::numeric_limits<uint32_t>::max() )
+  : d_id( std::numeric_limits<Id>::max() )
 { /* ... */ }
   
 // Constructor
-Estimator::Estimator( const uint32_t id, const double multiplier )
+Estimator::Estimator( const Id id, const double multiplier )
   : d_id( id ),
     d_multiplier( multiplier ),
     d_particle_types(),
@@ -39,7 +39,7 @@ Estimator::Estimator( const uint32_t id, const double multiplier )
 }
 
 // Return the estimator id
-uint32_t Estimator::getId() const
+auto Estimator::getId() const -> Id
 {
   return d_id;
 }
@@ -232,6 +232,23 @@ void Estimator::getTotalBinProcessedData(
   }
 }
 
+// Get the total estimator bin mean and relative error
+/*! \details Make sure that the number of histories have been set
+ * (MonteCarlo::ParticleHistoryObserver::setNumberOfHistories) and that the
+ * elapsed time has been set 
+ * (MonteCarlo::ParticleHistoryObserver::setNumberOfHistories). The map keys
+ * are "mean", "re", and "fom".
+ */
+void Estimator::getTotalBinProcessedData(
+             std::map<std::string,std::vector<double> >& processed_data ) const
+{
+  processed_data.clear();
+  
+  this->getTotalBinProcessedData( processed_data["mean"],
+                                  processed_data["re"],
+                                  processed_data["fom"] );
+}
+
 // Get the bin data mean and relative error for an entity
 /*! \details Make sure that the number of histories have been set
  * (MonteCarlo::ParticleHistoryObserver::setNumberOfHistories) and that the
@@ -239,7 +256,7 @@ void Estimator::getTotalBinProcessedData(
  * (MonteCarlo::ParticleHistoryObserver::setNumberOfHistories).
  */
 void Estimator::getEntityBinProcessedData(
-                                   const uint64_t entity_id,
+                                   const EntityId entity_id,
                                    std::vector<double>& mean,
                                    std::vector<double>& relative_error,
                                    std::vector<double>& figure_of_merit ) const
@@ -267,6 +284,25 @@ void Estimator::getEntityBinProcessedData(
                           relative_error[i],
                           figure_of_merit[i] );
   }
+}
+
+// Get the bin data mean, relative error, and fom for an entity
+/*! \details Make sure that the number of histories have been set
+ * (MonteCarlo::ParticleHistoryObserver::setNumberOfHistories) and that the
+ * elapsed time has been set 
+ * (MonteCarlo::ParticleHistoryObserver::setNumberOfHistories). The map keys
+ * are "mean", "re", and "fom".
+ */
+void Estimator::getEntityBinProcessedData(
+             const EntityId entity_id,
+             std::map<std::string,std::vector<double> >& processed_data ) const
+{
+  processed_data.clear();
+
+  this->getEntityBinProcessedData( entity_id,
+                                   processed_data["mean"],
+                                   processed_data["re"],
+                                   processed_data["fom"] );
 }
 
 // Check if total data is available
@@ -343,6 +379,24 @@ void Estimator::getTotalProcessedData(
   }
 }
 
+// Get the total data mean, relative error, vov and fom
+/*! \details Make sure that the number of histories have been set
+ * (MonteCarlo::ParticleHistoryObserver::setNumberOfHistories) and that the
+ * elapsed time has been set 
+ * (MonteCarlo::ParticleHistoryObserver::setNumberOfHistories). The map keys
+ * are "mean", "re", "vov" and "fom".
+ */
+void Estimator::getTotalProcessedData(
+             std::map<std::string,std::vector<double> >& processed_data ) const
+{
+  processed_data.clear();
+
+  this->getTotalProcessedData( processed_data["mean"],
+                               processed_data["re"],
+                               processed_data["vov"],
+                               processed_data["fom"] );
+}
+
 // Get the total data first moments for an entity
 Utility::ArrayView<const double> Estimator::getEntityTotalDataFirstMoments( const size_t ) const
 {
@@ -374,7 +428,7 @@ Utility::ArrayView<const double> Estimator::getEntityTotalDataFourthMoments( con
  * (MonteCarlo::ParticleHistoryObserver::setNumberOfHistories).
  */
 void Estimator::getEntityTotalProcessedData(
-                                   const uint64_t entity_id,
+                                   const EntityId entity_id,
                                    std::vector<double>& mean,
                                    std::vector<double>& relative_error,
                                    std::vector<double>& variance_of_variance,
@@ -410,6 +464,26 @@ void Estimator::getEntityTotalProcessedData(
                           variance_of_variance[i],
                           figure_of_merit[i] );
   }
+}
+
+// Get the total data mean, relative error, vov and fom for an entity
+/*! \details Make sure that the number of histories have been set
+ * (MonteCarlo::ParticleHistoryObserver::setNumberOfHistories) and that the
+ * elapsed time has been set 
+ * (MonteCarlo::ParticleHistoryObserver::setNumberOfHistories). The map keys
+ * are "mean", "re", "vov" and "fom".
+ */
+void Estimator::getEntityTotalProcessedData(
+             const EntityId entity_id,
+             std::map<std::string,std::vector<double> >& processed_data ) const
+{
+  processed_data.clear();
+
+  this->getEntityTotalProcessedData( entity_id,
+                                     processed_data["mean"],
+                                     processed_data["re"],
+                                     processed_data["vov"],
+                                     processed_data["fom"] );
 }
 
 // Assign discretization to an estimator dimension

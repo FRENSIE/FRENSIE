@@ -27,7 +27,7 @@ CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::CellTrackLengthFluxE
 // Constructor
 template<typename ContributionMultiplierPolicy>
 CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::CellTrackLengthFluxEstimator(
-                               const uint32_t id,
+                               const Id id,
                                const double multiplier,
                                const std::vector<CellIdType>& cell_ids,
 	                       const std::vector<double>& cell_volumes )
@@ -38,7 +38,7 @@ CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::CellTrackLengthFluxE
 // Constructor (extract cell volumes from model)
 template<typename ContributionMultiplierPolicy>
 CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::CellTrackLengthFluxEstimator(
-                               const uint32_t id,
+                               const Id id,
                                const double multiplier,
                                const std::vector<CellIdType>& cell_ids,
 	                       const Geometry::Model& model )

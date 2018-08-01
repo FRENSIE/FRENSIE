@@ -24,7 +24,7 @@ SurfaceFluxEstimator<ContributionMultiplierPolicy>::SurfaceFluxEstimator()
 // Constructor
 template<typename ContributionMultiplierPolicy>
 SurfaceFluxEstimator<ContributionMultiplierPolicy>::SurfaceFluxEstimator(
-                              const uint32_t id,
+                              const Id id,
                               const double multiplier,
                               const std::vector<SurfaceIdType>& surface_ids,
                               const std::vector<double>& surface_areas,
@@ -36,7 +36,7 @@ SurfaceFluxEstimator<ContributionMultiplierPolicy>::SurfaceFluxEstimator(
 // Constructor (extract surface areas from model)
 template<typename ContributionMultiplierPolicy>
 SurfaceFluxEstimator<ContributionMultiplierPolicy>::SurfaceFluxEstimator(
-                        const uint32_t id,
+                        const Id id,
                         const double multiplier,
                         const std::vector<SurfaceIdType>& surface_ids,
                         const Geometry::Model& model,

@@ -219,7 +219,7 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, fireRay )
   FRENSIE_CHECK_EQUAL( distance_to_boundary,
                        Utility::QuantityTraits<Geometry::Navigator::Length>::inf() );
   FRENSIE_CHECK_EQUAL( surface_hit,
-                       Geometry::Navigator::invalidSurfaceHandle() );
+                       Geometry::Navigator::invalidSurfaceId() );
 }
 
 //---------------------------------------------------------------------------//

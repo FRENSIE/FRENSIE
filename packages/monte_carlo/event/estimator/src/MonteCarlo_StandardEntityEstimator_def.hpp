@@ -12,11 +12,11 @@
 namespace MonteCarlo{
 
 // Constructor (for flux estimators)
-template<typename EntityId>
+template<typename InputEntityId>
 StandardEntityEstimator::StandardEntityEstimator(
-                             const uint32_t id,
+                             const Id id,
                              const double multiplier,
-                             const std::vector<EntityId>& entity_ids,
+                             const std::vector<InputEntityId>& entity_ids,
                              const std::vector<double>& entity_norm_constants )
   : EntityEstimator( id, multiplier, entity_ids, entity_norm_constants ),
     d_total_estimator_moments( 1 ),
@@ -26,11 +26,11 @@ StandardEntityEstimator::StandardEntityEstimator(
 }
 
 // Constructor (for non-flux estimators)
-template<typename EntityId>
+template<typename InputEntityId>
 StandardEntityEstimator::StandardEntityEstimator(
-                                      const uint32_t id,
-                                      const double multiplier,
-			              const std::vector<EntityId>& entity_ids )
+                                 const Id id,
+                                 const double multiplier,
+			         const std::vector<InputEntityId>& entity_ids )
   : EntityEstimator( id, multiplier, entity_ids ),
     d_total_estimator_moments( 1 ),
     d_update_tracker( 1 )
@@ -39,9 +39,9 @@ StandardEntityEstimator::StandardEntityEstimator(
 }
 
 // Initialize the moments maps
-template<typename EntityId>
+template<typename InputEntityId>
 void StandardEntityEstimator::initializeMomentsMaps(
-                                      const std::vector<EntityId>& entity_ids )
+                                 const std::vector<InputEntityId>& entity_ids )
 {
   // Set up the entity maps
   for( size_t i = 0; i < entity_ids.size(); ++i )

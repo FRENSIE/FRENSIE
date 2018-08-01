@@ -44,14 +44,6 @@ namespace MonteCarlo{
 class Estimator : public ParticleHistoryObserver
 {
 
-public:
-
-  //! Typedef for the collection of estimator moments
-  typedef Utility::SampleMomentCollection<double,2,1> TwoEstimatorMomentsCollection;
-
-  //! Typedef for the collection of estimator moments
-  typedef Utility::SampleMomentCollection<double,4,3,2,1> FourEstimatorMomentsCollection;
-
 protected:
 
   //! Typedef for Utility::QuantityTraits
@@ -61,20 +53,41 @@ protected:
   typedef ObserverPhaseSpaceDiscretization::DimensionValueMap
   DimensionValueMap;
 
+  //! Typedef for the collection of estimator moments
+  typedef Utility::SampleMomentCollection<double,2,1> TwoEstimatorMomentsCollection;
+
+  //! Typedef for the collection of estimator moments
+  typedef Utility::SampleMomentCollection<double,4,3,2,1> FourEstimatorMomentsCollection;
+
 public:
 
+  //! The estimator id type
+  typedef uint32_t Id;
+
+  //! The entity id type
+  typedef uint64_t EntityId;
+
   //! Constructor
-  Estimator( const uint32_t id, const double multiplier );
+  Estimator( const Id id, const double multiplier );
 
   //! Destructor
   virtual ~Estimator()
   { /* ... */ }
 
   //! Return the estimator id
-  uint32_t getId() const;
+  Id getId() const;
 
   //! Return the estimator constant multiplier
   double getMultiplier() const;
+
+  //! Check if the estimator is a cell estimator
+  virtual bool isCellEstimator() const = 0;
+
+  //! Check if the estimator is a surface estimator
+  virtual bool isSurfaceEstimator() const = 0;
+
+  //! Check if the estimator is a mesh estimator
+  virtual bool isMeshEstimator() const = 0;
 
   //! Set the discretization for a dimension of the phase space
   template<ObserverPhaseSpaceDimension dimension, typename InputDataType>
@@ -111,13 +124,13 @@ public:
   bool isParticleTypeAssigned( const ParticleType particle_type ) const;
 
   //! Get the entities assigned to the estimator
-  virtual void getEntityIds( std::set<uint64_t>& entity_ids ) const = 0;
+  virtual void getEntityIds( std::set<EntityId>& entity_ids ) const = 0;
 
   //! Check if an entity is assigned to this estimator
-  virtual bool isEntityAssigned( const uint64_t entity_id ) const = 0;
+  virtual bool isEntityAssigned( const EntityId entity_id ) const = 0;
 
   //! Return the normalization constant for an entity
-  virtual double getEntityNormConstant( const uint64_t entity_id ) const = 0;
+  virtual double getEntityNormConstant( const EntityId entity_id ) const = 0;
 
   //! Return the total normalization constant
   virtual double getTotalNormConstant() const = 0;
@@ -128,22 +141,31 @@ public:
   //! Get the total estimator bin data second moments
   virtual Utility::ArrayView<const double> getTotalBinDataSecondMoments() const = 0;
 
-  //! Get the total estimator bin mean and relative error
+  //! Get the total estimator bin mean, relative error, and fom
   void getTotalBinProcessedData( std::vector<double>& mean,
                                  std::vector<double>& relative_error,
                                  std::vector<double>& figure_of_merit ) const;
 
+  //! Get the total estimator bin mean, relative error, and fom
+  void getTotalBinProcessedData(
+            std::map<std::string,std::vector<double> >& processed_data ) const;
+
   //! Get the bin data first moments for an entity
-  virtual Utility::ArrayView<const double> getEntityBinDataFirstMoments( const uint64_t entity_id ) const = 0;
+  virtual Utility::ArrayView<const double> getEntityBinDataFirstMoments( const EntityId entity_id ) const = 0;
 
   //! Get the bin data second moments for an entity
-  virtual Utility::ArrayView<const double> getEntityBinDataSecondMoments( const uint64_t entity_id ) const = 0;
+  virtual Utility::ArrayView<const double> getEntityBinDataSecondMoments( const EntityId entity_id ) const = 0;
 
-  //! Get the bin data mean and relative error for an entity
-  void getEntityBinProcessedData( const uint64_t entity_id,
+  //! Get the bin data mean, relative error, and fom for an entity
+  void getEntityBinProcessedData( const EntityId entity_id,
                                   std::vector<double>& mean,
                                   std::vector<double>& relative_error,
                                   std::vector<double>& figure_of_merit ) const;
+
+  //! Get the bin data mean, relative error, and fom for an entity
+  void getEntityBinProcessedData(
+            const EntityId entity_id,
+            std::map<std::string,std::vector<double> >& processed_data ) const;
 
   //! Check if total data is available
   virtual bool isTotalDataAvailable() const;
@@ -166,24 +188,33 @@ public:
                               std::vector<double>& variance_of_variance,
                               std::vector<double>& figure_of_merit ) const;
 
+  //! Get the total data mean, relative error, vov and fom
+  void getTotalProcessedData(
+            std::map<std::string,std::vector<double> >& processed_data ) const;
+
   //! Get the total data first moments for an entity
-  virtual Utility::ArrayView<const double> getEntityTotalDataFirstMoments( const uint64_t entity_id ) const;
+  virtual Utility::ArrayView<const double> getEntityTotalDataFirstMoments( const EntityId entity_id ) const;
 
   //! Get the total data second moments for an entity
-  virtual Utility::ArrayView<const double> getEntityTotalDataSecondMoments( const uint64_t entity_id ) const;
+  virtual Utility::ArrayView<const double> getEntityTotalDataSecondMoments( const EntityId entity_id ) const;
 
   //! Get the total data third moments for an entity
-  virtual Utility::ArrayView<const double> getEntityTotalDataThirdMoments( const uint64_t entity_id ) const;
+  virtual Utility::ArrayView<const double> getEntityTotalDataThirdMoments( const EntityId entity_id ) const;
 
   //! Get the total data fourth moments for an entity
-  virtual Utility::ArrayView<const double> getEntityTotalDataFourthMoments( const uint64_t entity_id ) const;
+  virtual Utility::ArrayView<const double> getEntityTotalDataFourthMoments( const EntityId entity_id ) const;
 
   //! Get the total data mean, relative error, vov and fom for an entity
-  void getEntityTotalProcessedData( const uint64_t entity_id,
+  void getEntityTotalProcessedData( const EntityId entity_id,
                                     std::vector<double>& mean,
                                     std::vector<double>& relative_error,
                                     std::vector<double>& variance_of_variance,
                                     std::vector<double>& figure_of_merit ) const;
+
+  //! Get the total data mean, relative error, vov and fom for an entity
+  void getEntityTotalProcessedData(
+            const EntityId entity_id,
+            std::map<std::string,std::vector<double> >& processed_data ) const;
 
   //! Check if the estimator has uncommitted history contributions
   bool hasUncommittedHistoryContribution( const unsigned thread_id ) const;
@@ -352,7 +383,7 @@ private:
   friend class boost::serialization::access;
 
   // The estimator id
-  UniqueIdManager<Estimator,uint32_t> d_id;
+  UniqueIdManager<Estimator,Id> d_id;
   
   // The constant multiplier for the estimator
   double d_multiplier;

@@ -26,6 +26,32 @@ typedef TestArchiveHelper::TestArchives TestArchives;
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check that the estimator is a cell type estimator
+FRENSIE_UNIT_TEST_TEMPLATE( CellTrackLengthFluxEstimator,
+                            check_type,
+                            MonteCarlo::WeightMultiplier,
+                            MonteCarlo::WeightAndEnergyMultiplier )
+{
+  FETCH_TEMPLATE_PARAM( 0, ContributionMultiplierPolicy );
+  std::shared_ptr<MonteCarlo::Estimator> estimator;
+
+  std::vector<MonteCarlo::StandardCellEstimator::CellIdType>
+    cell_ids( {0, 1} );
+
+  std::vector<double> cell_norm_consts( {1.0, 2.0} );
+
+  estimator.reset( new MonteCarlo::CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>(
+						          0u,
+                                                          10.0,
+                                                          cell_ids,
+						          cell_norm_consts ) );
+
+  FRENSIE_CHECK( estimator->isCellEstimator() );
+  FRENSIE_CHECK( !estimator->isSurfaceEstimator() );
+  FRENSIE_CHECK( !estimator->isMeshEstimator() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a partial history contribution can be added to the estimator
 FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
 		   updateFromParticleSubtrackEndingInCellEvent )

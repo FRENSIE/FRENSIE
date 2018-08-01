@@ -46,8 +46,8 @@ public:
   //! The particle state type
   typedef typename ScatteringCenter::ParticleStateType ParticleStateType;
 
-  //! The material handle type
-  typedef size_t InternalMaterialHandle;
+  //! The material id type
+  typedef uint32_t MaterialId;
 
   //! The scattering center name map
   typedef std::unordered_map<std::string,std::shared_ptr<const ScatteringCenter> > ScatteringCenterNameMap;
@@ -57,10 +57,10 @@ public:
   { /* ... */ }
 
   //! Check if an id is valid
-  static bool isIdValid( const InternalMaterialHandle id );
+  static bool isIdValid( const MaterialId id );
 
   //! Return the material id
-  InternalMaterialHandle getId() const;
+  MaterialId getId() const;
 
   //! Return the number density (atom/b-cm)
   double getNumberDensity() const;
@@ -115,7 +115,7 @@ protected:
   typedef std::function<double(const ScatteringCenter&, const double)> MicroscopicCrossSectionEvaluationFunctor;
 
   //! Constructor
-  Material( const InternalMaterialHandle id,
+  Material( const MaterialId id,
             const double density,
             const ScatteringCenterNameMap& scattering_center_name_map,
             const std::vector<double>& scattering_center_fractions,
@@ -156,7 +156,7 @@ private:
   static MicroscopicCrossSectionEvaluationFunctor s_absorption_cs_evaluation_functor;
 
   // The material id
-  InternalMaterialHandle d_id;
+  MaterialId d_id;
 
   // The number density of the atoms of the material
   double d_number_density;

@@ -36,7 +36,7 @@ Material<ScatteringCenter>::s_absorption_cs_evaluation_functor(
 // Constructor (without photonuclear data)
 template<typename ScatteringCenter>
 Material<ScatteringCenter>::Material(
-		     const InternalMaterialHandle id,
+		     const MaterialId id,
                      const double density,
                      const ScatteringCenterNameMap& scattering_center_name_map,
                      const std::vector<double>& scattering_center_fractions,
@@ -122,14 +122,14 @@ Material<ScatteringCenter>::Material(
 
 // Check if an id is valid
 template<typename ScatteringCenter>
-bool Material<ScatteringCenter>::isIdValid( const InternalMaterialHandle id )
+bool Material<ScatteringCenter>::isIdValid( const MaterialId id )
 {
-  return id < std::numeric_limits<InternalMaterialHandle>::max();
+  return id < std::numeric_limits<MaterialId>::max();
 }
 
 // Return the material id
 template<typename ScatteringCenter>
-auto Material<ScatteringCenter>::getId() const -> InternalMaterialHandle
+auto Material<ScatteringCenter>::getId() const -> MaterialId
 {
   return d_id;
 }

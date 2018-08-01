@@ -37,13 +37,13 @@ public:
   EventTags;
 
   //! Constructor
-  CellTrackLengthFluxEstimator( const uint32_t id,
+  CellTrackLengthFluxEstimator( const Id id,
                                 const double multiplier,
                                 const std::vector<CellIdType>& cell_ids,
                                 const std::vector<double>& cell_volumes );
 
   //! Constructor (extract cell volumes from model)
-  CellTrackLengthFluxEstimator( const uint32_t id,
+  CellTrackLengthFluxEstimator( const Id id,
                                 const double multiplier,
                                 const std::vector<CellIdType>& cell_ids,
                                 const Geometry::Model& model );

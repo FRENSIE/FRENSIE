@@ -41,13 +41,22 @@ public:
   EventTags;
 
   //! Constructor
-  MeshTrackLengthFluxEstimator( const uint32_t id,
+  MeshTrackLengthFluxEstimator( const Id id,
                                 const double multiplier,
                                 const std::shared_ptr<const Utility::Mesh>& mesh );
 
   //! Destructor
   ~MeshTrackLengthFluxEstimator()
   { /* ... */ }
+
+  //! Check if the estimator is a cell estimator
+  bool isCellEstimator() const final override;
+
+  //! Check if the estimator is a surface estimator
+  bool isSurfaceEstimator() const final override;
+
+  //! Check if the estimator is a mesh estimator
+  bool isMeshEstimator() const final override;
 
   //! Add current history estimator contribution
   void updateFromGlobalParticleSubtrackEndingEvent(

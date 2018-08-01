@@ -13,7 +13,7 @@ namespace MonteCarlo{
 
 // Constructor (without photonuclear data)
 PhotonMaterial::PhotonMaterial(
-		           const InternalMaterialHandle id,
+		           const MaterialId id,
 			   const double density,
 			   const PhotoatomNameMap& photoatom_name_map,
 			   const std::vector<double>& photoatom_fractions,

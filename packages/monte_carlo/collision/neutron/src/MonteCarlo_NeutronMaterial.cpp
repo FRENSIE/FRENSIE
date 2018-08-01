@@ -19,7 +19,7 @@ namespace MonteCarlo{
 
 // Constructor
 NeutronMaterial::NeutronMaterial(
-                                const InternalMaterialHandle id,
+                                const MaterialId id,
                                 const double density,
                                 const NuclideNameMap& nuclide_name_map,
                                 const std::vector<double>& nuclide_fractions,
