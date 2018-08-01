@@ -197,23 +197,25 @@ FRENSIE_ADD_TEST(SharedParallelHexMeshTrackLengthFluxEstimator_4
     OPENMP_TEST)
 ENDIF()
 
-FRENSIE_ADD_TEST_EXECUTABLE(TetMeshTrackLengthFluxEstimator DEPENDS tstTetMeshTrackLengthFluxEstimator.cpp)
-FRENSIE_ADD_TEST(TetMeshTrackLengthFluxEstimator
-  EXTRA_ARGS --test_input_mesh_file_name=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk)
+IF(${FRENSIE_ENABLE_MOAB})
+  FRENSIE_ADD_TEST_EXECUTABLE(TetMeshTrackLengthFluxEstimator DEPENDS tstTetMeshTrackLengthFluxEstimator.cpp)
+  FRENSIE_ADD_TEST(TetMeshTrackLengthFluxEstimator
+    EXTRA_ARGS --test_input_mesh_file_name=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk)
 
-IF(${FRENSIE_ENABLE_OPENMP})
-  FRENSIE_ADD_TEST(SharedParallelTetMeshTrackLengthFluxEstimator_2
-    TEST_EXEC_NAME_ROOT TetMeshTrackLengthFluxEstimator
-    EXTRA_ARGS
-      --test_input_mesh_file_name=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk
-      --threads=2
-    OPENMP_TEST)
-FRENSIE_ADD_TEST(SharedParallelTetMeshTrackLengthFluxEstimator_4
-    TEST_EXEC_NAME_ROOT TetMeshTrackLengthFluxEstimator
-    EXTRA_ARGS
-      --test_input_mesh_file_name=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk
-      --threads=4
-    OPENMP_TEST)
+  IF(${FRENSIE_ENABLE_OPENMP})
+    FRENSIE_ADD_TEST(SharedParallelTetMeshTrackLengthFluxEstimator_2
+      TEST_EXEC_NAME_ROOT TetMeshTrackLengthFluxEstimator
+      EXTRA_ARGS
+        --test_input_mesh_file_name=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk
+        --threads=2
+      OPENMP_TEST)
+    FRENSIE_ADD_TEST(SharedParallelTetMeshTrackLengthFluxEstimator_4
+      TEST_EXEC_NAME_ROOT TetMeshTrackLengthFluxEstimator
+      EXTRA_ARGS
+        --test_input_mesh_file_name=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk
+        --threads=4
+        OPENMP_TEST)
+  ENDIF()
 ENDIF()
 
 FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_event_estimator)

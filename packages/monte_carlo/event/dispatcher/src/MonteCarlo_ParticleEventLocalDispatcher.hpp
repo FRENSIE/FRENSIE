@@ -54,6 +54,9 @@ public:
   //! Detach an observer from the dispatcher
   void detachObserver( const std::shared_ptr<Observer>& observer );
 
+  //! Detach all observers
+  void detachAllObservers();
+
   //! Get the entity id corresponding to this particle event dispatcher
   uint64_t getEntityId() const;
 
