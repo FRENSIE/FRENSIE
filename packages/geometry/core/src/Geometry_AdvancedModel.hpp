@@ -33,7 +33,7 @@ public:
   typedef std::tuple<EstimatorType,ParticleType,SurfaceIdArray> SurfaceEstimatorData;
 
   //! surface estimator id data map type
-  typedef std::map<InternalEstimatorHandle,SurfaceEstimatorData> SurfaceEstimatorIdDataMap;
+  typedef std::map<EstimatorId,SurfaceEstimatorData> SurfaceEstimatorIdDataMap;
 
   //! The area unit
   typedef boost::units::cgs::area AreaUnit;

@@ -318,7 +318,7 @@ auto RootNavigator::fireRay( EntityId* surface_hit ) -> Length
   TGeoNode* boundary_node = d_navigator->FindNextBoundary();
 
   if( surface_hit != NULL )
-    *surface_hit = Navigator::invalidSurfaceHandle();
+    *surface_hit = Navigator::invalidSurfaceId();
 
   return Length::from_value( d_navigator->GetStep() );
 }

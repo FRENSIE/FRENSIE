@@ -29,7 +29,7 @@ IF(${FRENSIE_ENABLE_OPENMP})
     OPENMP_TEST)
   FRENSIE_ADD_TEST(SharedParallelEntityEstimator_4
     TEST_EXEC_NAME_ROOT EntityEstimator
-    EXTRA_ARGS --threads=2
+    EXTRA_ARGS --threads=4
     OPENMP_TEST)
 ENDIF()
 

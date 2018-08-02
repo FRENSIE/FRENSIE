@@ -30,12 +30,35 @@ Event = importPyFrensieModuleFromBuildDir('MonteCarlo.Event')
 class CellCollisionFluxEstimatorTestCase(unittest.TestCase):
     "TestCase class for MonteCarlo.Event.CellCollisionFluxEstimator class"
 
+    def testCheck_type(self):
+        "*Test MonteCarlo.Event.CellCollisionFluxEstimator check_type"
+        cell_ids = [0, 1]
+        cell_norm_consts = [1.0, 2.0]
+
+        estimator = Event.WeightMultipliedCellCollisionFluxEstimator(
+                   0,
+                   10.0,
+                   cell_ids,
+                   cell_norm_consts )
+
+        self.assertTrue( estimator.isCellEstimator() )
+        self.assertFalse( estimator.isSurfaceEstimator() )
+        self.assertFalse( estimator.isMeshEstimator() )
+
+        estimator = Event.WeightAndEnergyMultipliedCellCollisionFluxEstimator(
+                   1,
+                   10.0,
+                   cell_ids,
+                   cell_norm_consts )
+
+        self.assertTrue( estimator.isCellEstimator() )
+        self.assertFalse( estimator.isSurfaceEstimator() )
+        self.assertFalse( estimator.isMeshEstimator() )
+
     def testUpdateFromParticleCollidingInCellEvent(self):
         "*Test MonteCarlo.Event.CellCollisionFluxEstimator updateFromParticleCollidingInCellEvent"
         cell_ids = [0, 1]
-
         cell_norm_consts = [1.0, 2.0]
-
 
         estimator_1 = Event.WeightMultipliedCellCollisionFluxEstimator(
                    0,

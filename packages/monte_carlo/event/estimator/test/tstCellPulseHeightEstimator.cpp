@@ -28,6 +28,27 @@ typedef TestArchiveHelper::TestArchives TestArchives;
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check that the estimator is a cell type estimator
+FRENSIE_UNIT_TEST_TEMPLATE( CellPulseHeightEstimator,
+                            check_type,
+                            MultiplierPolicies )
+{
+  FETCH_TEMPLATE_PARAM( 0, ContributionMultiplierPolicy );
+  
+  typedef MonteCarlo::CellPulseHeightEstimator<ContributionMultiplierPolicy>
+    CellPulseHeightEstimator;
+
+  std::shared_ptr<MonteCarlo::Estimator> estimator( new CellPulseHeightEstimator(
+                                                                0ull,
+                                                                10.0,
+							        {0, 1} ) );
+
+  FRENSIE_CHECK( estimator->isCellEstimator() );
+  FRENSIE_CHECK( !estimator->isSurfaceEstimator() );
+  FRENSIE_CHECK( !estimator->isMeshEstimator() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the number of bins can be returned
 FRENSIE_UNIT_TEST_TEMPLATE( CellPulseHeightEstimator,
                             setDiscretization,

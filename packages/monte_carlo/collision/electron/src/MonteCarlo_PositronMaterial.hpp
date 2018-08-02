@@ -42,13 +42,13 @@ public:
   typedef BaseType::ParticleStateType ParticleStateType;
 
   //! The material handle type
-  typedef BaseType::InternalMaterialHandle InternalMaterialHandle;
+  typedef BaseType::MaterialId MaterialId;
 
   //! The photoatom name map type
   typedef BaseType::ScatteringCenterNameMap PositronatomNameMap;
 
   //! Constructor
-  PositronMaterial( const InternalMaterialHandle id,
+  PositronMaterial( const MaterialId id,
                     const double density,
                     const PositronatomNameMap& positronatom_name_map,
                     const std::vector<double>& positronatom_fractions,

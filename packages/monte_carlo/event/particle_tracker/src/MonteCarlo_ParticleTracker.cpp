@@ -19,11 +19,11 @@ namespace MonteCarlo{
 
 // Default constructor
 ParticleTracker::ParticleTracker()
-  : d_id( std::numeric_limits<uint32_t>::max() )
+  : d_id( std::numeric_limits<Id>::max() )
 { /* ... */ }
 
 // Constructor
-ParticleTracker::ParticleTracker( const uint32_t id,
+ParticleTracker::ParticleTracker( const Id id,
                                   const uint64_t number_of_histories )
   : d_id( id ),
     d_histories_to_track(),
@@ -38,7 +38,7 @@ ParticleTracker::ParticleTracker( const uint32_t id,
 }
 
 // Constructor
-ParticleTracker::ParticleTracker( const uint32_t id,
+ParticleTracker::ParticleTracker( const Id id,
                                   const std::set<uint64_t>& history_numbers )
   : d_id( id ),
     d_histories_to_track( history_numbers ),
@@ -50,7 +50,7 @@ ParticleTracker::ParticleTracker( const uint32_t id,
 }
 
 // Return the estimator id
-uint32_t ParticleTracker::getId() const
+auto ParticleTracker::getId() const -> Id
 {
   return d_id;
 }

@@ -49,6 +49,21 @@ def assertSequenceAlmostEqual( lhs_array, rhs_array, tol ):
 class CellPulseHeightEstimatorTestCase(unittest.TestCase):
     "TestCase class for MonteCarlo.Event.CellPulseHeightEstimator class"
 
+    def testCheck_type(self):
+        "*Test MonteCarlo.Event.HexCellPulseHeightEstimator check_type"
+
+        estimator = Event.WeightMultipliedCellPulseHeightEstimator( 0, 10.0, [ 0, 1 ] )
+
+        self.assertTrue( estimator.isCellEstimator() )
+        self.assertFalse( estimator.isSurfaceEstimator() )
+        self.assertFalse( estimator.isMeshEstimator() )
+
+        estimator = Event.WeightAndEnergyMultipliedCellPulseHeightEstimator( 1, 10.0, [ 0, 1 ] )
+
+        self.assertTrue( estimator.isCellEstimator() )
+        self.assertFalse( estimator.isSurfaceEstimator() )
+        self.assertFalse( estimator.isMeshEstimator() )
+
     def testSetDiscretization(self):
         "*Test MonteCarlo.Event.CellPulseHeightEstimator setDiscretization"
         estimator = Event.WeightMultipliedCellPulseHeightEstimator( 0, 10.0, [ 0, 1 ] )

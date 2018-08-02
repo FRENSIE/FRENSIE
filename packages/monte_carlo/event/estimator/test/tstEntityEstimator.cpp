@@ -40,6 +40,18 @@ public:
   ~TestEntityEstimator()
   { /* ... */ }
 
+  //! Check if the estimator is a cell estimator
+  bool isCellEstimator() const final override
+  { return false; }
+
+  //! Check if the estimator is a surface estimator
+  bool isSurfaceEstimator() const final override
+  { return false; }
+
+  //! Check if the estimator is a mesh estimator
+  bool isMeshEstimator() const final override
+  { return false; }
+
   void printSummary( std::ostream& os ) const final override
   { this->printImplementation( os, "Surface" ); }
 
@@ -332,36 +344,57 @@ FRENSIE_UNIT_TEST( EntityEstimator, commitHistoryContributionToBinOfEntity )
 
   // Check the entity bin data mean, re, and fom
   std::vector<double> entity_mean, entity_relative_error, entity_figure_of_merit;
+  std::map<std::string,std::vector<double> > processed_data;
 
   entity_estimator->getEntityBinProcessedData( 0, entity_mean, entity_relative_error, entity_figure_of_merit );
+  entity_estimator->getEntityBinProcessedData( 0, processed_data );
 
   FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, 5.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["mean"], std::vector<double>( 24, 5.0 ) );
   FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["re"], std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["fom"], std::vector<double>( 24, 0.0 ) );
 
   entity_estimator->getEntityBinProcessedData( 1, entity_mean, entity_relative_error, entity_figure_of_merit );
+  entity_estimator->getEntityBinProcessedData( 1, processed_data );
 
   FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, 2.5 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["mean"], std::vector<double>( 24, 2.5 ) );
   FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["re"], std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["fom"], std::vector<double>( 24, 0.0 ) );
 
   entity_estimator->getEntityBinProcessedData( 2, entity_mean, entity_relative_error, entity_figure_of_merit );
+  entity_estimator->getEntityBinProcessedData( 2, processed_data );
 
   FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, 5.0/3 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["mean"], std::vector<double>( 24, 5.0/3 ) );
   FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["re"], std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["fom"], std::vector<double>( 24, 0.0 ) );
 
   entity_estimator->getEntityBinProcessedData( 3, entity_mean, entity_relative_error, entity_figure_of_merit );
+  entity_estimator->getEntityBinProcessedData( 3, processed_data );
 
   FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, 5.0/4 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["mean"], std::vector<double>( 24, 5.0/4 ) );
   FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["re"], std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["fom"], std::vector<double>( 24, 0.0 ) );
 
   entity_estimator->getEntityBinProcessedData( 4, entity_mean, entity_relative_error, entity_figure_of_merit );
+  entity_estimator->getEntityBinProcessedData( 4, processed_data );
 
   FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, 1.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["mean"], std::vector<double>( 24, 1.0 ) );
   FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["re"], std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["fom"], std::vector<double>( 24, 0.0 ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -597,8 +630,10 @@ FRENSIE_UNIT_TEST( EntityEstimator,
 
   // Check the total mean, relative error, and fom
   std::vector<double> mean, relative_error, fom;
+  std::map<std::string,std::vector<double> > processed_data;
 
   entity_estimator->getTotalBinProcessedData( mean, relative_error, fom );
+  entity_estimator->getTotalBinProcessedData( processed_data );
 
   double expected_mean = moment_1*10.0/(histories*15.0);
   double expected_rel_err = moment_2/(moment_1*moment_1) - 1.0/histories;
@@ -614,8 +649,11 @@ FRENSIE_UNIT_TEST( EntityEstimator,
     expected_fom = 1.0/(expected_rel_err*expected_rel_err*1.5);
 
   FRENSIE_CHECK_EQUAL( mean, std::vector<double>( 24, expected_mean ) );
+  FRENSIE_CHECK_EQUAL( processed_data["mean"], std::vector<double>( 24, expected_mean ) );
   FRENSIE_CHECK_EQUAL( relative_error, std::vector<double>( 24, expected_rel_err ) );
+  FRENSIE_CHECK_EQUAL( processed_data["re"], std::vector<double>( 24, expected_rel_err ) );
   FRENSIE_CHECK_EQUAL( fom, std::vector<double>( 24, expected_fom ) );
+  FRENSIE_CHECK_EQUAL( processed_data["fom"], std::vector<double>( 24, expected_fom ) );
 }
 
 //---------------------------------------------------------------------------//

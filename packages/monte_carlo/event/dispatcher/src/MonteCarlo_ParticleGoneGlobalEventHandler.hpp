@@ -92,8 +92,7 @@ void ParticleGoneGlobalEventHandler::registerGlobalObserverWithTag(
 
   std::shared_ptr<ParticleGoneGlobalEventObserver> observer_base = observer;
 
-  d_particle_gone_global_event_dispatcher.attachObserver( observer->getId(),
-                                                          particle_types,
+  d_particle_gone_global_event_dispatcher.attachObserver( particle_types,
                                                           observer_base );
 }
 
@@ -109,8 +108,7 @@ void ParticleGoneGlobalEventHandler::registerGlobalObserverWithTag(
 
   std::shared_ptr<ParticleGoneGlobalEventObserver> observer_base = observer;
 
-  d_particle_gone_global_event_dispatcher.attachObserver( observer->getId(),
-                                                          observer_base );
+  d_particle_gone_global_event_dispatcher.attachObserver( observer_base );
 }
 
 // Serialize the observer

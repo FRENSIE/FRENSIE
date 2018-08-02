@@ -46,6 +46,29 @@ public:
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check that the estimator is a surface type estimator
+FRENSIE_UNIT_TEST( StandardSurfaceEstimator, check_type )
+{
+  std::vector<Geometry::Model::EntityId> surface_ids( 2 );
+  surface_ids[0] = 0;
+  surface_ids[1] = 1;
+
+  std::vector<double> surface_norm_consts( 2 );
+  surface_norm_consts[0] = 1.0;
+  surface_norm_consts[1] = 2.0;
+
+  std::shared_ptr<TestStandardSurfaceEstimator> estimator(
+                     new TestStandardSurfaceEstimator( 0ull,
+                                                       2.0,
+                                                       surface_ids,
+					               surface_norm_consts ) );
+
+  FRENSIE_CHECK( !estimator->isCellEstimator() );
+  FRENSIE_CHECK( estimator->isSurfaceEstimator() );
+  FRENSIE_CHECK( !estimator->isMeshEstimator() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that particle types can be assigned
 FRENSIE_UNIT_TEST( StandardSurfaceEstimator, setParticleType )
 {

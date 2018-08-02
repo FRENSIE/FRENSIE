@@ -30,6 +30,33 @@ Event = importPyFrensieModuleFromBuildDir('MonteCarlo.Event')
 class CellTrackLengthFluxEstimatorTestCase(unittest.TestCase):
     "TestCase class for MonteCarlo.Event.CellTrackLengthFluxEstimator class"
 
+    def testCheck_type(self):
+        "*Test MonteCarlo.Event.CellTrackLengthFluxEstimator check_type"
+
+        cell_ids = [0, 1]
+
+        cell_norm_consts = [1.0, 2.0]
+
+        estimator = Event.WeightMultipliedCellTrackLengthFluxEstimator(
+                   0,
+                   10.0,
+                   cell_ids,
+                   cell_norm_consts )
+
+        self.assertTrue( estimator.isCellEstimator() )
+        self.assertFalse( estimator.isSurfaceEstimator() )
+        self.assertFalse( estimator.isMeshEstimator() )
+
+        estimator = Event.WeightMultipliedCellTrackLengthFluxEstimator(
+                   1,
+                   10.0,
+                   cell_ids,
+                   cell_norm_consts )
+
+        self.assertTrue( estimator.isCellEstimator() )
+        self.assertFalse( estimator.isSurfaceEstimator() )
+        self.assertFalse( estimator.isMeshEstimator() )
+
     def testUpdateFromParticleSubtrackEndingInCellEvent(self):
         "*Test MonteCarlo.Event.CellTrackLengthFluxEstimator updateFromParticleSubtrackEndingInCellEvent"
 

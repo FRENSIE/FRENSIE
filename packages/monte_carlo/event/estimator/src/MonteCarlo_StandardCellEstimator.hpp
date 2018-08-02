@@ -25,13 +25,13 @@ public:
   typedef Geometry::Model::EntityId CellIdType;
 
   //! Constructor
-  StandardCellEstimator( const uint32_t id,
+  StandardCellEstimator( const Id id,
 			 const double multiplier,
 			 const std::vector<CellIdType>& cell_ids,
 			 const std::vector<double>& cell_volumes );
 
   //! Constructor (extract cell volumes from model)
-  StandardCellEstimator( const uint32_t id,
+  StandardCellEstimator( const Id id,
 			 const double multiplier,
 			 const std::vector<CellIdType>& cell_ids,
 			 const Geometry::Model& cell_volumes );
@@ -39,6 +39,15 @@ public:
   //! Destructor
   virtual ~StandardCellEstimator()
   { /* ... */ }
+
+  //! Check if the estimator is a cell estimator
+  bool isCellEstimator() const final override;
+
+  //! Check if the estimator is a surface estimator
+  bool isSurfaceEstimator() const final override;
+
+  //! Check if the estimator is a mesh estimator
+  bool isMeshEstimator() const final override;
 
 protected:
 

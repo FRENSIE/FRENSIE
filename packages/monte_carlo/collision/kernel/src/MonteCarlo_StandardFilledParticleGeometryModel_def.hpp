@@ -88,7 +88,7 @@ void StandardFilledParticleGeometryModel<Material>::loadMaterialsAndFillModel(
     Geometry::Model::EntityId cell_id =
       cell_id_mat_id_it->first;
 
-    typename MaterialType::InternalMaterialHandle material_id =
+    typename MaterialType::MaterialId material_id =
       cell_id_mat_id_it->second;
 
     double density = cell_id_density_map.find( cell_id )->second.value();

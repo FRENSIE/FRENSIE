@@ -263,11 +263,11 @@ public:
   //! Change the internal ray direction
   void changeDirection( const double direction[3] );
 
-  //! The invalid cell handle
-  static EntityId invalidCellHandle();
+  //! The invalid cell id
+  static EntityId invalidCellId();
 
-  //! The invalid surface handle
-  static EntityId invalidSurfaceHandle();
+  //! The invalid surface id
+  static EntityId invalidSurfaceId();
 
   /*! Clone the navigator
    *

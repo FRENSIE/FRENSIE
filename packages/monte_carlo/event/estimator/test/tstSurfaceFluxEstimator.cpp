@@ -25,6 +25,37 @@ typedef TestArchiveHelper::TestArchives TestArchives;
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check that the estimator is a surface type estimator
+FRENSIE_UNIT_TEST_TEMPLATE( SurfaceFluxEstimator,
+                            check_type,
+                            MonteCarlo::WeightMultiplier,
+                            MonteCarlo::WeightAndEnergyMultiplier )
+{
+  FETCH_TEMPLATE_PARAM( 0, ContributionMultiplierPolicy );
+  std::shared_ptr<MonteCarlo::Estimator> estimator;
+
+  std::vector<MonteCarlo::StandardSurfaceEstimator::SurfaceIdType>
+    surface_ids( 2 );
+  surface_ids[0] = 0;
+  surface_ids[1] = 1;
+
+  std::vector<double> surface_areas( 2 );
+  surface_areas[0] = 1.0;
+  surface_areas[1] = 2.0;
+
+  estimator.reset(
+	   new MonteCarlo::SurfaceFluxEstimator<ContributionMultiplierPolicy>(
+							     0u,
+							     10.0,
+							     surface_ids,
+							     surface_areas ) );
+
+  FRENSIE_CHECK( !estimator->isCellEstimator() );
+  FRENSIE_CHECK( estimator->isSurfaceEstimator() );
+  FRENSIE_CHECK( !estimator->isMeshEstimator() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the number of bins can be returned
 FRENSIE_UNIT_TEST_TEMPLATE( SurfaceFluxEstimator,
                             getNumberOfBins,

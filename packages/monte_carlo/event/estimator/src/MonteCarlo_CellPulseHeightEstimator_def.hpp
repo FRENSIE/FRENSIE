@@ -28,7 +28,7 @@ CellPulseHeightEstimator<ContributionMultiplierPolicy>::CellPulseHeightEstimator
 // Constructor
 template<typename ContributionMultiplierPolicy>
 CellPulseHeightEstimator<ContributionMultiplierPolicy>::CellPulseHeightEstimator(
-          const uint32_t id,
+          const Id id,
           const double multiplier,
           const std::vector<CellIdType>& entity_ids )
   : EntityEstimator( id, multiplier, entity_ids ),
@@ -37,6 +37,27 @@ CellPulseHeightEstimator<ContributionMultiplierPolicy>::CellPulseHeightEstimator
     d_update_tracker( 1 ),
     d_dimension_values( 1 )
 { /* ... */ }
+
+// Check if the estimator is a cell estimator
+template<typename ContributionMultiplierPolicy>
+bool CellPulseHeightEstimator<ContributionMultiplierPolicy>::isCellEstimator() const
+{
+  return true;
+}
+
+// Check if the estimator is a surface estimator
+template<typename ContributionMultiplierPolicy>
+bool CellPulseHeightEstimator<ContributionMultiplierPolicy>::isSurfaceEstimator() const
+{
+  return false;
+}
+
+// Check if the estimator is a mesh estimator
+template<typename ContributionMultiplierPolicy>
+bool CellPulseHeightEstimator<ContributionMultiplierPolicy>::isMeshEstimator() const
+{
+  return false;
+}
 
 // Add current history estimator contribution
 /*! \details It is unsafe to call this function directly! This function will

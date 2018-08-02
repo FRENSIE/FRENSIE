@@ -30,6 +30,29 @@ Event = importPyFrensieModuleFromBuildDir('MonteCarlo.Event')
 class SurfaceFluxEstimatorTestCase(unittest.TestCase):
     "TestCase class for MonteCarlo.Event.SurfaceFluxEstimator class"
 
+    def testCheck_type(self):
+        "*Test MonteCarlo.Event.HexSurfaceFluxEstimator check_type"
+
+        surface_ids = [None] * ( 2 )
+        surface_ids[0] = 0
+        surface_ids[1] = 1
+
+        surface_areas = [None] * ( 2 )
+        surface_areas[0] = 1.0
+        surface_areas[1] = 2.0
+
+        estimator = Event.WeightMultipliedSurfaceFluxEstimator( 0, 10.0, surface_ids, surface_areas )
+
+        self.assertFalse( estimator.isCellEstimator() )
+        self.assertTrue( estimator.isSurfaceEstimator() )
+        self.assertFalse( estimator.isMeshEstimator() )
+
+        estimator = Event.WeightAndEnergyMultipliedSurfaceFluxEstimator( 1, 10.0, surface_ids, surface_areas )
+
+        self.assertFalse( estimator.isCellEstimator() )
+        self.assertTrue( estimator.isSurfaceEstimator() )
+        self.assertFalse( estimator.isMeshEstimator() )
+
     def testGetNumberOfBins(self):
         "*Test MonteCarlo.Event.SurfaceFluxEstimator getNumberOfBins"
 

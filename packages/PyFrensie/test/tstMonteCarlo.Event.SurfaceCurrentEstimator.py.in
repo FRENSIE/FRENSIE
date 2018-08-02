@@ -30,6 +30,26 @@ Event = importPyFrensieModuleFromBuildDir('MonteCarlo.Event')
 class SurfaceCurrentEstimatorTestCase(unittest.TestCase):
     "TestCase class for MonteCarlo.Event.SurfaceCurrentEstimator class"
 
+    def testCheck_type(self):
+        "*Test MonteCarlo.Event.HexSurfaceCurrentEstimator check_type"
+
+        surface_ids = [None] * ( 2 )
+        surface_ids[0] = 0
+        surface_ids[1] = 1
+        surface_ids = [0,1]
+
+        estimator = Event.WeightMultipliedSurfaceCurrentEstimator( 0, 10.0, surface_ids )
+
+        self.assertFalse( estimator.isCellEstimator() )
+        self.assertTrue( estimator.isSurfaceEstimator() )
+        self.assertFalse( estimator.isMeshEstimator() )
+
+        estimator = Event.WeightAndEnergyMultipliedSurfaceCurrentEstimator( 1, 10.0, surface_ids )
+
+        self.assertFalse( estimator.isCellEstimator() )
+        self.assertTrue( estimator.isSurfaceEstimator() )
+        self.assertFalse( estimator.isMeshEstimator() )
+
         # Check that the number of bins can be returned
     def testGetNumberOfBins(self):
         "*Test MonteCarlo.Event.SurfaceCurrentEstimator getNumberOfBins"

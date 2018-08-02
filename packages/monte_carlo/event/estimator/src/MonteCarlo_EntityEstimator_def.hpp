@@ -19,11 +19,11 @@ namespace MonteCarlo{
 /*! \details Flux estimators need to divide the first moment by the cell
  * volume or surface area.
  */
-template<typename EntityId>
+template<typename InputEntityId>
 EntityEstimator::EntityEstimator(
-                      const uint32_t id,
+                      const Id id,
                       const double multiplier,
-                      const std::vector<EntityId>& entity_ids,
+                      const std::vector<InputEntityId>& entity_ids,
 		      const std::vector<double>& entity_norm_constants )
   : Estimator( id, multiplier ),
     d_total_norm_constant( 1.0 ),
@@ -53,10 +53,10 @@ EntityEstimator::EntityEstimator(
 /*! \details Non-flux estimators do not need to divide the first moment by the
  * cell volume or surface area.
  */
-template<typename EntityId>
-EntityEstimator::EntityEstimator( const uint32_t id,
+template<typename InputEntityId>
+EntityEstimator::EntityEstimator( const Id id,
                                   const double multiplier,
-                                  const std::vector<EntityId>& entity_ids )
+                                  const std::vector<InputEntityId>& entity_ids )
   : Estimator( id, multiplier ),
     d_total_norm_constant( 1.0 ),
     d_supplied_norm_constants( false ),
@@ -74,9 +74,9 @@ EntityEstimator::EntityEstimator( const uint32_t id,
 }
 
 // Initialize entity estimator moments map
-template<typename EntityId>
+template<typename InputEntityId>
 void EntityEstimator::initializeEntityEstimatorMomentsMap(
-                                      const std::vector<EntityId>& entity_ids )
+                                 const std::vector<InputEntityId>& entity_ids )
 {
   // Make sure there is at least one entity id
   testPrecondition( entity_ids.size() > 0 );
@@ -103,9 +103,9 @@ void EntityEstimator::initializeEntityEstimatorMomentsMap(
 }
 
 // Initialize the entity estimator moments map
-template<typename EntityId>
+template<typename InputEntityId>
 void EntityEstimator::initializeEntityNormConstantsMap(
-                                      const std::vector<EntityId>& entity_ids )
+                                 const std::vector<InputEntityId>& entity_ids )
 {
   // Make sure there is at least one entity id
   testPrecondition( entity_ids.size() > 0 );
@@ -119,9 +119,9 @@ void EntityEstimator::initializeEntityNormConstantsMap(
 }
 
 // Initialize the entity estimator moments map
-template<typename EntityId>
+template<typename InputEntityId>
 void EntityEstimator::initializeEntityNormConstantsMap(
-                             const std::vector<EntityId>& entity_ids,
+                             const std::vector<InputEntityId>& entity_ids,
                              const std::vector<double>& entity_norm_constants )
 {
   // Make sure there is at least one entity id

@@ -24,7 +24,7 @@ public:
 
   //! Constructor
   InfiniteMediumModel( const EntityId cell = 1,
-                       const Model::InternalMaterialHandle material_id = 0,
+                       const Model::MaterialId material_id = 0,
                        const Model::Density density = 0.0*Model::DensityUnit() );
 
   //! Destructor
@@ -94,7 +94,7 @@ private:
   EntityId d_cell;
 
   // The infinite medium material id
-  Model::InternalMaterialHandle d_material_id;
+  Model::MaterialId d_material_id;
 
   // The infinite medium material density
   Model::Density d_density;

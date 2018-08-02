@@ -40,6 +40,9 @@ class ParticleTracker : public ParticleSubtrackEndingGlobalEventObserver,
   
 public:
 
+  //! Typedef for the id type
+  typedef uint32_t Id;
+
   //! Typedef for the particle data array
   // 0 = position,
   // 1 = direction,
@@ -67,15 +70,15 @@ public:
     OverallHistoryMap;
 
   //! Typedef for event tags used for quick dispatcher registering
-  typedef boost::mpl::vector<ParticleSubtrackEndingGlobalEventObserver::EventTag>
+  typedef boost::mpl::vector<ParticleSubtrackEndingGlobalEventObserver::EventTag,ParticleGoneGlobalEventObserver::EventTag>
   EventTags;
 
   //! Constructor
-  ParticleTracker( const uint32_t id,
+  ParticleTracker( const Id id,
                    const uint64_t number_of_histories );
 
   //! Constructor
-  ParticleTracker( const uint32_t id,
+  ParticleTracker( const Id id,
                    const std::set<uint64_t>& history_numbers );
 
   //! Destructor
@@ -83,7 +86,7 @@ public:
   { /* ... */ }
 
   //! Return the estimator id
-  uint32_t getId() const;
+  Id getId() const;
 
   //! Return the histories that will be tracked
   const std::set<uint64_t>& getTrackedHistories() const;
@@ -140,7 +143,7 @@ private:
   friend class boost::serialization::access;
 
   // The estimator id
-  UniqueIdManager<ParticleTracker,uint32_t> d_id;
+  UniqueIdManager<ParticleTracker,Id> d_id;
 
   // The histories to be tracked
   std::set<uint64_t> d_histories_to_track;

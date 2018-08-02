@@ -21,7 +21,7 @@ EntityEstimator::EntityEstimator()
 { /* ... */ }
 
 // Constructor with no entities (for mesh estimators)
-EntityEstimator::EntityEstimator( const uint32_t id,
+EntityEstimator::EntityEstimator( const Id id,
                                   const double multiplier )
   : Estimator( id, multiplier ),
     d_total_norm_constant( 1.0 ),
@@ -30,20 +30,20 @@ EntityEstimator::EntityEstimator( const uint32_t id,
 { /* ... */ }
 
 // Return the entity ids associated with this estimator
-void EntityEstimator::getEntityIds( std::set<uint64_t>& entity_ids ) const
+void EntityEstimator::getEntityIds( std::set<EntityId>& entity_ids ) const
 {
   for( auto&& entity_data : d_entity_norm_constants_map )
     entity_ids.insert( entity_data.first );
 }
 // Check if the entity is assigned to this estimator
-bool EntityEstimator::isEntityAssigned( const uint64_t entity_id ) const
+bool EntityEstimator::isEntityAssigned( const EntityId entity_id ) const
 {
   return d_entity_norm_constants_map.find( entity_id ) !=
     d_entity_norm_constants_map.end();
 }
 
 // Return the normalization constant for an entity
-double EntityEstimator::getEntityNormConstant( const uint64_t entity_id ) const
+double EntityEstimator::getEntityNormConstant( const EntityId entity_id ) const
 {
   // Make sure the entity is assigned to the estimator
   testPrecondition( this->isEntityAssigned( entity_id ) );
@@ -74,7 +74,7 @@ Utility::ArrayView<const double> EntityEstimator::getTotalBinDataSecondMoments()
 }
 
 // Get the bin data first moments for an entity
-Utility::ArrayView<const double> EntityEstimator::getEntityBinDataFirstMoments( const uint64_t entity_id ) const
+Utility::ArrayView<const double> EntityEstimator::getEntityBinDataFirstMoments( const EntityId entity_id ) const
 {
   // Make sure the entity is assigned to the estimator
   testPrecondition( this->isEntityAssigned( entity_id ) );
@@ -87,7 +87,7 @@ Utility::ArrayView<const double> EntityEstimator::getEntityBinDataFirstMoments( 
                              entity_collection.size() );
 }
 // Get the bin data second moments for an entity
-Utility::ArrayView<const double> EntityEstimator::getEntityBinDataSecondMoments( const uint64_t entity_id ) const
+Utility::ArrayView<const double> EntityEstimator::getEntityBinDataSecondMoments( const EntityId entity_id ) const
 {
   // Make sure the entity is assigned to the estimator
   testPrecondition( this->isEntityAssigned( entity_id ) );
@@ -238,7 +238,7 @@ void EntityEstimator::assignResponseFunction(
 
 // Commit history contribution to a bin of an entity
 void EntityEstimator::commitHistoryContributionToBinOfEntity(
-						    const uint64_t entity_id,
+						    const EntityId entity_id,
 						    const size_t bin_index,
 						    const double contribution )
 {
@@ -375,7 +375,7 @@ EntityEstimator::getTotalBinData() const
  * It is needed by mesh estimators for exporting data in .h5m and .vtk formats.
  */
 const Estimator::TwoEstimatorMomentsCollection&
-EntityEstimator::getEntityBinData( const uint64_t entity_id ) const
+EntityEstimator::getEntityBinData( const EntityId entity_id ) const
 {
   // Make sure the entity is valid
   testPrecondition( d_entity_estimator_moments_map.find( entity_id ) !=

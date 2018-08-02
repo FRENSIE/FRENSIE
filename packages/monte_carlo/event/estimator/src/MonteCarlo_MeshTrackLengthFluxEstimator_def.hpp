@@ -23,7 +23,7 @@ MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::MeshTrackLengthFluxE
 // Constructor
 template<typename ContributionMultiplierPolicy>
 MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::MeshTrackLengthFluxEstimator(
-                             const uint32_t id,
+                             const Id id,
                              const double multiplier,
                              const std::shared_ptr<const Utility::Mesh>& mesh )
   : StandardEntityEstimator( id, multiplier ),
@@ -42,6 +42,27 @@ MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::MeshTrackLengthFluxE
   this->assignEntities( entity_volumes );
   
   this->assignUpdateMethod();
+}
+
+// Check if the estimator is a cell estimator
+template<typename ContributionMultiplierPolicy>
+bool MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::isCellEstimator() const
+{
+  return false;
+}
+
+// Check if the estimator is a surface estimator
+template<typename ContributionMultiplierPolicy>
+bool MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::isSurfaceEstimator() const
+{
+  return false;
+}
+
+// Check if the estimator is a mesh estimator
+template<typename ContributionMultiplierPolicy>
+bool MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::isMeshEstimator() const
+{
+  return true;
 }
 
 // Add current history estimator contribution

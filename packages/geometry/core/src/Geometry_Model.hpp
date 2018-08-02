@@ -41,11 +41,11 @@ public:
   //! The entity (cell or surface) id type
   typedef Navigator::EntityId EntityId;
 
-  //! The internal material handle type
-  typedef uint32_t InternalMaterialHandle;
+  //! The material id type
+  typedef uint32_t MaterialId;
 
-  //! The internal estimator handle type
-  typedef uint32_t InternalEstimatorHandle;
+  //! The estimator id type
+  typedef uint32_t EstimatorId;
 
   //! The length unit
   typedef Navigator::LengthUnit LengthUnit;
@@ -71,13 +71,13 @@ public:
   typedef boost::units::quantity<DensityUnit> Density;
 
   //! The material id set type
-  typedef std::set<InternalMaterialHandle> MaterialIdSet;
+  typedef std::set<MaterialId> MaterialIdSet;
 
   //! The cell id set type
   typedef Navigator::CellIdSet CellIdSet;
 
   //! The cell id material id map type
-  typedef std::map<EntityId,InternalMaterialHandle> CellIdMatIdMap;
+  typedef std::map<EntityId,MaterialId> CellIdMatIdMap;
 
   //! The cell id density map type
   typedef std::map<EntityId,Density> CellIdDensityMap;
@@ -89,7 +89,7 @@ public:
   typedef std::tuple<EstimatorType,ParticleType,CellIdArray> CellEstimatorData;
 
   //! The cell estimator id data map type
-  typedef std::map<InternalEstimatorHandle,CellEstimatorData> CellEstimatorIdDataMap;
+  typedef std::map<EstimatorId,CellEstimatorData> CellEstimatorIdDataMap;
 
   //! Constructor
   Model()
@@ -139,17 +139,17 @@ public:
   //! Get the cell volume
   virtual Volume getCellVolume( const EntityId cell ) const = 0;
 
-  //! The invalid cell handle
-  static EntityId invalidCellHandle();
+  //! The invalid cell id
+  static EntityId invalidCellId();
 
-  //! The invalid surface handle
-  static EntityId invalidSurfaceHandle();
+  //! The invalid surface id
+  static EntityId invalidSurfaceId();
 
-  //! The invalid material handle
-  static InternalMaterialHandle invalidMaterialHandle();
+  //! The invalid material id
+  static MaterialId invalidMaterialId();
 
-  //! The invalid estimator handle
-  static InternalEstimatorHandle invalidEstimatorHandle();
+  //! The invalid estimator id
+  static EstimatorId invalidEstimatorId();
 
   //! Create a raw, heap-allocated navigator
   virtual Geometry::Navigator* createNavigatorAdvanced(

@@ -13,7 +13,7 @@ namespace MonteCarlo{
 
 // Constructor
 AdjointPhotonMaterial::AdjointPhotonMaterial(
-                   const InternalMaterialHandle id,
+                   const MaterialId id,
                    const double density,
                    const AdjointPhotoatomNameMap& adjoint_photoatom_name_map,
                    const std::vector<double>& adjoint_photoatom_fractions,
