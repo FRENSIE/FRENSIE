@@ -345,6 +345,62 @@ STLCompliantArray convertPythonToArrayWithoutConversion( PyObject* py_obj )
   return output_array;
 }
 
+
+// Create a Python (NumPy) object from a fixed size array object
+template<typename FixedSizeArray>
+PyObject* convertFixedSizeArrayToPython( const FixedSizeArray& obj )
+{
+  typedef typename std::remove_const<typename FixedSizeArray::value_type>::type ValueType;
+
+  npy_intp dims[] = { obj.size() };
+  int typecode = numpyTypecode( ValueType() );
+
+  PyArrayObject* py_array =
+    (PyArrayObject*)PyArray_SimpleNew( 1, dims, typecode );
+
+  ValueType* data = (ValueType*)PyArray_DATA(py_array);
+
+  // Deep copy the NumPy array
+  for( typename FixedSizeArray::const_iterator it = obj.begin();
+       it != obj.end();
+       ++it )
+  {
+    *(data++) = *it;
+  }
+
+  return (PyObject*)py_array;
+}
+
+// Create a fixed size array object from a Python object
+template<typename FixedSizeArray>
+FixedSizeArray convertPythonToFixedSizeArray( PyObject* py_obj )
+{
+  // An exception will be thrown if this fails
+  int is_new_array = 0;
+
+  FixedSizeArray output_array;
+
+  PyArrayObject* py_array =
+    Details::getNumPyArray<typename FixedSizeArray::value_type>( py_obj, &is_new_array );
+
+  // Make sure the size of the array is correct
+  if( output_array.size() != PyArray_DIM(py_array, 0) )
+  {
+    PyErr_Format( PyExc_TypeError, "Array is the wrong size!" );
+  }
+
+  typename FixedSizeArray::value_type* data =
+    (typename FixedSizeArray::value_type*)PyArray_DATA(py_array);
+
+  for( std::size_t i = 0; i < output_array.size(); ++i )
+    output_array[i] = *(data++);
+
+  if( is_new_array )
+    Py_DECREF(py_array);
+
+  return output_array;
+}
+
 // Create a Python (list of NumPy arrays) object from a 2D array object
 template<typename STLCompliant2DArray>
 inline PyObject* convert2DArrayToPython( const STLCompliant2DArray& obj )
@@ -661,6 +717,54 @@ inline std::tuple<Types...> convertPythonToTuple( PyObject* py_obj )
   ConvertPythonToTupleElementsHelper<Types...>::convert<0>( py_obj, output_tuple );
 
   return output_tuple;
+}
+
+// Create a Python (list of tuples) object from a vector of tuples object
+template<typename... Types>
+inline PyObject* convertVectorTupleToPython( const std::vector<std::tuple<Types...> >& obj )
+{
+  PyObject* py_array_list = PyList_New(0);
+
+  // Create a list of arrays
+  for( unsigned i = 0; i < obj.size(); ++i )
+  {
+    // Create a new Python tuple
+    PyObject* py_tuple_i = PyTuple_New( Utility::TupleSize<std::tuple<Types...> >::value );
+
+    ConvertTupleElementsToPythonHelper<Types...>::template convert<0>( obj[i], py_tuple_i );
+
+    PyList_Append( py_array_list, (PyObject*)py_tuple_i );
+  }
+
+  return py_array_list;
+}
+
+// Create a list of arrays object from a Python object (list of Numpy arrays)
+template<typename... Types>
+inline std::vector<std::tuple<Types...> > convertPythonToVectorTuple( PyObject* py_obj )
+{
+  // An exception will be thrown if this fails
+  int is_list = 0;
+  int is_new_array = 0;
+
+  is_list = PyList_Check(py_obj);
+
+  typename std::vector<std::tuple<Types...> >::size_type dimensions = PyList_Size(py_obj);
+
+  std::vector<std::tuple<Types...> > output_array( dimensions );
+
+  for( typename std::vector<std::tuple<Types...> >::size_type i = 0; i < dimensions; ++i )
+  {
+    PyObject* py_elem = PyList_GetItem( py_obj, i );
+
+    std::tuple<Types...> output_tuple_i;
+
+    ConvertPythonToTupleElementsHelper<Types...>::convert<0>( py_elem, output_tuple_i );
+
+    output_array[i] = output_tuple_i;
+  }
+
+  return output_array;
 }
 
 // Create a Python (dictionary) object from a map object

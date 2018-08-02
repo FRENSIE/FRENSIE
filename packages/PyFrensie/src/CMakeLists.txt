@@ -44,8 +44,11 @@ SET(UTILITY_PACKAGES ${UTILITY_PACKAGES} Distribution)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Coordinate)
 SET(UTILITY_PACKAGES ${UTILITY_PACKAGES} Coordinate)
 
+SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Mesh)
+SET(UTILITY_PACKAGES ${UTILITY_PACKAGES} Mesh)
+
 # SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Interpolation)
-SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist utility_system pyfrensie)
+SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist utility_system utility_mesh pyfrensie)
 
 # # Add the DataGen package
 # SET(DATA_GEN_MODULE_DOCSTRING "is the python interface to the FRENSIE data_gen package.")

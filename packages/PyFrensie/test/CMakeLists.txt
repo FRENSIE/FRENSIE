@@ -50,6 +50,11 @@ PyFrensie_MAKE_TEST(tstUtility.Coordinate.CylindricalCoordinate)
 ADD_TEST(PyFrensie.Utility.Coordinate.CylindricalCoordinate_test ${PYTHON_EXECUTABLE} tstUtility.Coordinate.CylindricalCoordinate.py)
 SET_PROPERTY(TEST PyFrensie.Utility.Coordinate.CylindricalCoordinate_test PROPERTY LABELS pyfrensie)
 
+# Add the Utility.Mesh unit tests
+PyFrensie_MAKE_TEST(tstUtility.Mesh)
+ADD_TEST(PyFrensie.Utility.Mesh_test ${PYTHON_EXECUTABLE} tstUtility.Mesh.py --tet_mesh_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk)
+SET_PROPERTY(TEST PyFrensie.Utility.Mesh_test PROPERTY LABELS pyfrensie)
+
 # Add the Data.AtomProperties unit tests
 PyFrensie_MAKE_TEST(tstData.AtomProperties)
 ADD_TEST(PyFrensie.Data.AtomProperties_test ${PYTHON_EXECUTABLE} tstData.AtomProperties.py)
@@ -323,6 +328,12 @@ ADD_TEST(PyFrensie.MonteCarlo.Event.CellTrackLengthFluxEstimator_test ${PYTHON_E
 PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CellPulseHeightEstimator)
 ADD_TEST(PyFrensie.MonteCarlo.Event.CellPulseHeightEstimator_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellPulseHeightEstimator.py)
 
+# Add the MonteCarlo.Event.MeshTrackLengthFluxEstimator unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Event.MeshTrackLengthFluxEstimator)
+ADD_TEST(PyFrensie.MonteCarlo.Event.MeshTrackLengthFluxEstimator_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.MeshTrackLengthFluxEstimator.py --tet_mesh_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk)
+SET_PROPERTY(TEST PyFrensie.MonteCarlo.Event.MeshTrackLengthFluxEstimator_test PROPERTY LABELS pyfrensie)
+
+# Add the DAGMC Estimator unit tests
 IF(${FRENSIE_ENABLE_DAGMC})
   PyFrensie_MAKE_TEST(tstMonteCarlo.Event.SurfaceFluxEstimatorDagMC)
   ADD_TEST(PyFrensie.MonteCarlo.Event.SurfaceFluxEstimatorDagMC_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.SurfaceFluxEstimatorDagMC.py --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat)
@@ -334,6 +345,7 @@ IF(${FRENSIE_ENABLE_DAGMC})
   ADD_TEST(PyFrensie.MonteCarlo.Event.CellTrackLengthFluxEstimatorDagMC_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellTrackLengthFluxEstimatorDagMC.py --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat)
 ENDIF()
 
+# Add the Root Estimator unit tests
 IF(${FRENSIE_ENABLE_ROOT})
   PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CellCollisionFluxEstimatorRoot)
   ADD_TEST(PyFrensie.MonteCarlo.Event.CellCollisionFluxEstimatorRoot_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellCollisionFluxEstimatorRoot.py --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geom.root)

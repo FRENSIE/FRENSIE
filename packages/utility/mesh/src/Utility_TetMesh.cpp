@@ -82,7 +82,7 @@ public:
   size_t getNumberOfElements() const;
 
   //! Returns the volumes of each mesh element
-  void getElementVolumes( ElementHandleVolumeMap& tet_volumes ) const;
+  void getElementVolumes( ElementHandleVolumeMap& element_volumes ) const;
 
   //! Returns the moab interface pointer (obfuscated)
   void* getMoabInterface() const;
@@ -138,7 +138,7 @@ private:
 
   // Display warnings
   bool d_display_warnings;
-  
+
   // The moab instance that stores all mesh data
   std::unique_ptr<moab::Interface> d_moab_interface;
 
@@ -200,7 +200,7 @@ TetMesh::~TetMesh()
 {
   delete d_impl;
 }
-  
+
 // Constructor
 TetMeshImpl::TetMeshImpl( const std::string& input_mesh_file_name,
                           const bool verbose_construction,
@@ -220,7 +220,7 @@ TetMeshImpl::TetMeshImpl( const std::string& input_mesh_file_name,
   moab::ErrorCode return_value;
 
   moab::Range all_tet_elements;
-  
+
   this->createTetMeshset( all_tet_elements, verbose_construction );
 
   // Construct the extra tet data
@@ -234,7 +234,7 @@ TetMeshImpl::TetMeshImpl( const std::string& input_mesh_file_name,
                         "An invalid tet element was found!" );
 
     moab::EntityHandle tet_handle = *tet_handle_it;
-    
+
     // Add the tet handle to the cached list of element handles
     d_tets.push_back( tet_handle );
 
@@ -285,11 +285,11 @@ void TetMeshImpl::createTetMeshset( moab::Range& all_tet_elements,
                                     const bool verbose_construction )
 {
   moab::ErrorCode return_value;
-  
+
   // Create an empty MOAB meshset
   {
     moab::EntityHandle tmp_tet_meshset;
-  
+
     return_value = d_moab_interface->create_meshset( moab::MESHSET_SET,
                                                      tmp_tet_meshset );
 
@@ -305,11 +305,11 @@ void TetMeshImpl::createTetMeshset( moab::Range& all_tet_elements,
     FRENSIE_LOG_PARTIAL_NOTIFICATION( "Loading tetrahedral mesh from file "
                                       << d_mesh_input_file << " ... " );
   }
-  
+
   // Populate MOAB meshset with data from input file
   {
     moab::EntityHandle tmp_tet_meshset = d_tet_meshset;
-    
+
     return_value = d_moab_interface->load_file( d_mesh_input_file.c_str(),
                                                 &tmp_tet_meshset );
 
@@ -321,7 +321,7 @@ void TetMeshImpl::createTetMeshset( moab::Range& all_tet_elements,
   // Extract the 3D elements from the meshset
   return_value = d_moab_interface->get_entities_by_dimension(
                                           d_tet_meshset, 3, all_tet_elements );
-  
+
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                       Utility::MOABException,
                       moab::ErrorCodeStr[return_value] );
@@ -330,7 +330,7 @@ void TetMeshImpl::createTetMeshset( moab::Range& all_tet_elements,
   {
     // Clear the meshset
     moab::EntityHandle tmp_tet_meshset = d_tet_meshset;
-    
+
     return_value = d_moab_interface->clear_meshset( &tmp_tet_meshset, 1 );
 
     TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
@@ -377,7 +377,7 @@ void TetMeshImpl::createKDTree( moab::Range& all_tet_elements,
                       moab::ErrorCodeStr[return_value] );
 
   all_tet_elements.merge( surface_triangles );
-  
+
   const char settings[]="MESHSET_FLAGS=0x1;TAG_NAME=0";
   moab::FileOptions fileopts(settings);
 
@@ -385,13 +385,13 @@ void TetMeshImpl::createKDTree( moab::Range& all_tet_elements,
   {
     FRENSIE_LOG_PARTIAL_NOTIFICATION( "Constructing kd-tree ... " );
   }
-  
+
   moab::EntityHandle tmp_kd_tree_root;
-  
+
   d_kd_tree->build_tree( all_tet_elements, &tmp_kd_tree_root, &fileopts );
-  
+
   d_kd_tree_root = tmp_kd_tree_root;
-  
+
   if( verbose_construction )
   {
     FRENSIE_LOG_NOTIFICATION( "done." );
@@ -408,7 +408,7 @@ std::string TetMesh::getMeshTypeName() const
 // Get the mesh element type name
 std::string TetMesh::getMeshElementTypeName() const
 {
-  return "Tet"; 
+  return "Tet";
 }
 
 // Get the start iterator of the tet handle list
@@ -416,7 +416,7 @@ auto TetMesh::getStartElementHandleIterator() const -> ElementHandleIterator
 {
   return d_impl->getStartElementHandleIterator();
 }
-  
+
 // Get the start iterator of the tet handle list
 auto TetMeshImpl::getStartElementHandleIterator() const -> ElementHandleIterator
 {
@@ -460,13 +460,13 @@ size_t TetMeshImpl::getNumberOfElements() const
 }
 
 // Returns the volumes of each mesh element
-void TetMesh::getElementVolumes( ElementHandleVolumeMap& tet_volumes ) const
+void TetMesh::getElementVolumes( ElementHandleVolumeMap& element_volumes ) const
 {
-  return d_impl->getElementVolumes( tet_volumes );
+  return d_impl->getElementVolumes( element_volumes );
 }
 
 // Returns the volumes of each mesh element
-void TetMeshImpl::getElementVolumes( ElementHandleVolumeMap& tet_volumes ) const
+void TetMeshImpl::getElementVolumes( ElementHandleVolumeMap& element_volumes ) const
 {
 #ifdef HAVE_FRENSIE_MOAB
   for( auto&& element_handle : d_tets )
@@ -475,7 +475,7 @@ void TetMeshImpl::getElementVolumes( ElementHandleVolumeMap& tet_volumes ) const
 
     // Extract the vertex data for the given tet
     std::vector<moab::EntityHandle> vertex_handles;
-    
+
     d_moab_interface->get_connectivity( &tet_handle, 1, vertex_handles );
 
     std::array<double,3> vertices[4];
@@ -488,7 +488,7 @@ void TetMeshImpl::getElementVolumes( ElementHandleVolumeMap& tet_volumes ) const
     }
 
     // Calculate the volume
-    tet_volumes[element_handle] =
+    element_volumes[element_handle] =
       Utility::calculateTetrahedronVolume( vertices[0].data(),
                                            vertices[1].data(),
                                            vertices[2].data(),
@@ -556,7 +556,7 @@ bool TetMeshImpl::isPointInMesh( const double point[3] ) const
     {
       const std::pair<std::array<double,9>,std::array<double,3> >&
         tet_barycentric_data = d_tet_barycentric_data.find( *tet_handle_it )->second;
-      
+
       if( Utility::isPointInTet( point,
                                  tet_barycentric_data.second.data(),
                                  tet_barycentric_data.first.data(),
@@ -588,7 +588,7 @@ auto TetMeshImpl::whichElementIsPointIn( const double point[3] ) const -> Elemen
 {
   // Make sure that the point is in the mesh
   testPrecondition( this->isPointInMesh( point ) );
-  
+
 #ifdef HAVE_FRENSIE_MOAB
   // Find the kd-tree leaf that contains the point
   moab::AdaptiveKDTreeIter kd_tree_iterator;
@@ -626,7 +626,7 @@ auto TetMeshImpl::whichElementIsPointIn( const double point[3] ) const -> Elemen
   {
     const std::pair<std::array<double,9>,std::array<double,3> >&
       tet_barycentric_data = d_tet_barycentric_data.find( *tet_handle_it )->second;
-    
+
     if( Utility::isPointInTet( point,
                                tet_barycentric_data.second.data(),
                                tet_barycentric_data.first.data(),
@@ -679,7 +679,7 @@ void TetMeshImpl::computeTrackLengths( const double start_point[3],
   double direction[3] = {end_point[0]-start_point[0],
                          end_point[1]-start_point[1],
                          end_point[2]-start_point[2]};
-  
+
   double track_length =
     Utility::normalizeVectorAndReturnMagnitude( direction );
 
@@ -706,7 +706,7 @@ void TetMeshImpl::computeTrackLengths( const double start_point[3],
 
   // Reset the tet element track lengths
   tet_element_track_lengths.clear();
-  
+
   if( ray_tet_intersections.size() > 0 )
   {
     // Sort all intersections of the ray with the tets
@@ -733,14 +733,14 @@ void TetMeshImpl::computeTrackLengths( const double start_point[3],
     for( size_t i = 0; i < ray_tet_intersections.size(); ++i )
     {
       moab::CartVect hit_point;
-      
+
       hit_point[0] = direction[0]*ray_tet_intersections[i]
         + start_point[0];
       hit_point[1] = direction[1]*ray_tet_intersections[i]
         + start_point[1];
       hit_point[2] = direction[2]*ray_tet_intersections[i]
         + start_point[2];
-      
+
       array_of_hit_points.push_back( hit_point );
     }
 
@@ -748,9 +748,9 @@ void TetMeshImpl::computeTrackLengths( const double start_point[3],
     if( ray_tet_intersections.back() < track_length )
     {
       moab::CartVect end_point_cv(end_point[0], end_point[1], end_point[2]);
-      
+
       array_of_hit_points.push_back( end_point_cv );
-      
+
       ray_tet_intersections.push_back( track_length );
     }
 
@@ -880,7 +880,7 @@ void TetMeshImpl::load( Archive& ar, const unsigned version )
 
   // Initialize the moab interface
   d_moab_interface.reset( new moab::Core );
-  
+
   // Reconstruct the tet meshset
   moab::Range all_tet_elements;
 
@@ -903,7 +903,7 @@ void TetMeshImpl::load( Archive& ar, const unsigned version )
   }
 #endif // end HAVE_FRENSIE_MOAB
 }
-  
+
 } // end Utility namespace
 
 BOOST_CLASS_EXPORT_IMPLEMENT( Utility::TetMeshImpl );

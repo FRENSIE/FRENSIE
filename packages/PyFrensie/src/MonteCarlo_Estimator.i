@@ -12,6 +12,10 @@
 #include "Geometry_AdvancedModel.hpp"
 #include "Geometry_InfiniteMediumNavigator.hpp"
 
+#include "Utility_Mesh.hpp"
+#include "Utility_StructuredHexMesh.hpp"
+#include "Utility_TetMesh.hpp"
+
 #include "MonteCarlo_EstimatorContributionMultiplierPolicy.hpp"
 #include "MonteCarlo_ParticleHistoryObserver.hpp"
 #include "MonteCarlo_Estimator.hpp"
@@ -24,6 +28,7 @@
 #include "MonteCarlo_CellPulseHeightEstimator.hpp"
 #include "MonteCarlo_CellTrackLengthFluxEstimator.hpp"
 #include "MonteCarlo_CellCollisionFluxEstimator.hpp"
+#include "MonteCarlo_MeshTrackLengthFluxEstimator.hpp"
 
 using namespace MonteCarlo;
 %}
@@ -35,10 +40,15 @@ using namespace MonteCarlo;
 %include <std_set.i>
 %include <std_vector.i>
 %include <std_except.i>
+
+// Include typemaps support
 %include <typemaps.i>
 
 // Import the Geometry.Geometry__init__.i file
 %import "Geometry.Geometry__init__.i"
+
+// Mesh handling
+%import "Utility.Mesh.i"
 
 // Include the ArrayView support
 %include "PyFrensie_Array.i"
@@ -48,7 +58,6 @@ using namespace MonteCarlo;
 
 // Add a few general typedefs
 typedef unsigned int uint32_t;
-typedef long unsigned int uint64_t;
 
 // Add some general templates
 %template(LongUnsignedVector) std::vector<long unsigned int>;
@@ -276,6 +285,25 @@ typedef long unsigned int uint64_t;
 
 // The weight and energy multiplied cell collision flux estimator
 %post_template_setup_helper( CellCollisionFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier>, WeightAndEnergyMultipliedCellCollisionFluxEstimator )
+
+
+// ---------------------------------------------------------------------------//
+// Add MeshTrackLengthFluxEstimator support
+// ---------------------------------------------------------------------------//
+
+// The weight multiplied cell collision flux estimator
+%pre_template_setup_helper( MeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier>, WeightMultipliedMeshTrackLengthFluxEstimator )
+
+// The weight and energy multiplied cell collision flux estimator
+%pre_template_setup_helper( MeshTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier>, WeightAndEnergyMultipliedMeshTrackLengthFluxEstimator )
+
+%include "MonteCarlo_MeshTrackLengthFluxEstimator.hpp"
+
+// The weight multiplied cell collision flux estimator
+%post_template_setup_helper( MeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier>, WeightMultipliedMeshTrackLengthFluxEstimator )
+
+// The weight and energy multiplied cell collision flux estimator
+%post_template_setup_helper( MeshTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier>, WeightAndEnergyMultipliedMeshTrackLengthFluxEstimator )
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_Estimator.i

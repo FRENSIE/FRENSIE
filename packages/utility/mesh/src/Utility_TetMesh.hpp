@@ -76,7 +76,7 @@ public:
   size_t getNumberOfElements() const final override;
 
   //! Returns the volumes of each mesh element
-  void getElementVolumes( ElementHandleVolumeMap& tet_volumes ) const final override;
+  void getElementVolumes( ElementHandleVolumeMap& element_volumes ) const final override;
 
   //! Check if a point is inside of the mesh
   bool isPointInMesh( const double point[3] ) const final override;
@@ -119,10 +119,10 @@ private:
   // The tet mesh implementation
   TetMeshImpl* d_impl;
 };
-  
+
 } // end Utility namespace
 
-BOOST_CLASS_VERSION( Utility::TetMesh, 0 );
+BOOST_SERIALIZATION_CLASS_VERSION( TetMesh, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( TetMesh, Utility );
 EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST_ALWAYS( Utility, TetMesh );
 

@@ -334,9 +334,6 @@ class BasicCartesianCoordinateConversionPolicyTestCase(unittest.TestCase):
 #-----------------------------------------------------------------------------#
 if __name__ == "__main__":
 
-    # # Initialize the FRENSIE random number generator
-    # Utility.initFrensiePrng()
-
     # Create the test suite object
     suite = unittest.TestSuite()
 
