@@ -19,18 +19,21 @@ void ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEnding
 						 const double start_point[3],
 						 const double end_point[3] )
 {
-  ObserverSet& observer_set =
-    this->getObserverSet( particle.getParticleType() );
-  
-  ObserverSet::iterator it = observer_set.begin();
-
-  while( it != observer_set.end() )
+  if( this->hasObserverSet( particle.getParticleType() ) )
   {
-    (*it)->updateFromGlobalParticleSubtrackEndingEvent( particle,
-                                                        start_point,
-                                                        end_point );
-
-    ++it;
+    ObserverSet& observer_set =
+      this->getObserverSet( particle.getParticleType() );
+  
+    ObserverSet::iterator it = observer_set.begin();
+    
+    while( it != observer_set.end() )
+    {
+      (*it)->updateFromGlobalParticleSubtrackEndingEvent( particle,
+                                                          start_point,
+                                                          end_point );
+      
+      ++it;
+    }
   }
 }
 

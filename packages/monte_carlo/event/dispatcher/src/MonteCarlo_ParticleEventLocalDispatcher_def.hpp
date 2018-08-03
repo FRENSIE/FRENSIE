@@ -90,6 +90,14 @@ size_t ParticleEventLocalDispatcher<Observer>::getNumberOfObservers(
     return 0;
 }
 
+// Check if there is an observer set for the particle type
+template<typename Observer>
+inline bool ParticleEventLocalDispatcher<Observer>::hasObserverSet(
+                                       const ParticleType particle_type ) const
+{
+  return d_observer_sets.find( particle_type ) != d_observer_sets.end();
+}
+
 // Get the observer map
 template<typename Observer>
 inline auto ParticleEventLocalDispatcher<Observer>::getObserverSet(

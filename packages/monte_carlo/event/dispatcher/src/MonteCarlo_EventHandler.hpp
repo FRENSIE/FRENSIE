@@ -24,6 +24,7 @@
 #include "MonteCarlo_ParticleGoneGlobalEventHandler.hpp"
 #include "MonteCarlo_MeshTrackLengthFluxEstimator.hpp"
 #include "MonteCarlo_ParticleTracker.hpp"
+#include "MonteCarlo_ParticleHistorySimulationCompletionCriterion.hpp"
 #include "MonteCarlo_FilledGeometryModel.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
@@ -51,6 +52,9 @@ public:
 
   //! Default constructor
   EventHandler();
+
+  //! Constructor
+  EventHandler( const MonteCarlo::SimulationGeneralProperties& properties );
   
   //! Constructor (model)
   EventHandler( const std::shared_ptr<const Geometry::Model>& model,
@@ -63,6 +67,13 @@ public:
   //! Destructor
   ~EventHandler()
   { /* ... */ }
+
+  //! Set the simulation completion criterion
+  void setSimulationCompletionCriterion( const std::shared_ptr<ParticleHistorySimulationCompletionCriterion>& criterion );
+
+  //! Get the simulation completion criterion
+  const ParticleHistorySimulationCompletionCriterion&
+  getSimulationCompletionCriterion() const;
 
   //! Add an estimator to the handler
   template<typename EstimatorType>
@@ -98,14 +109,20 @@ public:
   //! Enable support for multiple threads
   void enableThreadSupport( const unsigned num_threads );
 
+  //! Update observers from particle simulation started event
+  void updateObserversFromParticleSimulationStartedEvent();
+
+  //! Update observers from particle simulation stopped event
+  void updateObserversFromParticleSimulationStoppedEvent();
+
   //! Commit the history contributions to the observers
   void commitObserverHistoryContributions();
 
   //! Print the observer summaries
-  void printObserverSummaries( std::ostream& os,
-                               const double num_histories,
-                               const double start_time,
-                               const double end_time ) const;
+  void printObserverSummaries( std::ostream& os ) const;
+
+  //! Log the observer summaries
+  void logObserverSummaries() const;
 
   //! Reset observer data
   void resetObserverData();
@@ -114,7 +131,26 @@ public:
   void reduceObserverData( const Utility::Communicator& comm,
                            const int root_process );
 
+  //! Get the number of particle histories that have been committed
+  uint64_t getNumberOfCommittedHistories() const;
+
+  //! Set the elapsed particle simulation time (s)
+  void setElapsedTime( const double start_time, const double end_time );
+
+  //! Set the elapsed particle simulation time (s)
+  void setElapsedTime( const double elapsed_time );
+
+  //! Increment the elapsed particle simulation time (s)
+  void incrementElapsedTime( const double elapsed_time );
+
+  //! Get the elapsed particle simulation time (s)
+  double getElapsedTime() const;
+
 private:
+
+  // Create a default simulation completion criterion
+  static std::shared_ptr<ParticleHistorySimulationCompletionCriterion>
+  createDefaultCompletionCriterion( const MonteCarlo::SimulationGeneralProperties& properties );
 
   // Struct for registering estimator
   template<typename EstimatorType>
@@ -270,10 +306,16 @@ private:
   // Verify that the estimator surface ids are valid
   void verifyValidEstimatorSurfaceIds( const Estimator::Id estimator_id,
                                        const std::set<Estimator::EntityId>& surface_ids ) const;
-  
-  // Serialize the observer
+
+  // Save the data to an archive
   template<typename Archive>
-  void serialize( Archive& ar, const unsigned version );
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the data from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
   
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
@@ -290,6 +332,15 @@ private:
   // The geometry model
   std::shared_ptr<const Geometry::Model> d_model;
 
+  // The simulation completion criterion
+  std::shared_ptr<ParticleHistorySimulationCompletionCriterion> d_simulation_completion_criterion;
+
+  // The number of simulated particle histories
+  uint64_t d_number_of_committed_histories;
+
+  // The elapsed simulation time (s)
+  double d_elapsed_simulation_time;
+
   // The estimators
   EstimatorIdMap d_estimators;
 
@@ -301,6 +352,8 @@ private:
 };
 
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS_VERSION( EventHandler, MonteCarlo, 0 );
 
 //---------------------------------------------------------------------------//
 // Template Includes

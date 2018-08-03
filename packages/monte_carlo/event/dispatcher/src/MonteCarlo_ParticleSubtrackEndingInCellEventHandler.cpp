@@ -33,10 +33,9 @@ ParticleSubtrackEndingInCellEventHandler::getParticleSubtrackEndingInCellEventDi
 
 // Update the observers from a particle subtrack ending in cell event
 void ParticleSubtrackEndingInCellEventHandler::updateObserversFromParticleSubtrackEndingInCellEvent(
-             const ParticleState& particle,
-             const Geometry::Model::EntityId cell_of_subtrack,
-             const double particle_subtrack_length,
-             const double subtrack_start_time )
+                              const ParticleState& particle,
+                              const Geometry::Model::EntityId cell_of_subtrack,
+                              const double particle_subtrack_length )
 {
   d_particle_subtrack_ending_in_cell_event_dispatcher.dispatchParticleSubtrackEndingInCellEvent(
 						    particle,

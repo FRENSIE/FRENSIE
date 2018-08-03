@@ -17,16 +17,19 @@ namespace MonteCarlo{
 void ParticleGoneGlobalEventDispatcher::dispatchParticleGoneGlobalEvent(
                                                 const ParticleState& particle )
 {
-  ObserverSet& observer_set =
-    this->getObserverSet( particle.getParticleType() );
-  
-  ObserverSet::iterator it = observer_set.begin();
-
-  while( it != observer_set.end() )
+  if( this->hasObserverSet( particle.getParticleType() ) )
   {
-    (*it)->updateFromGlobalParticleGoneEvent( particle );
-
-    ++it;
+    ObserverSet& observer_set =
+      this->getObserverSet( particle.getParticleType() );
+    
+    ObserverSet::iterator it = observer_set.begin();
+    
+    while( it != observer_set.end() )
+    {
+      (*it)->updateFromGlobalParticleGoneEvent( particle );
+      
+      ++it;
+    }
   }
 }
   

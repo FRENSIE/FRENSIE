@@ -265,11 +265,11 @@ void EventHandler::ObserverRegistrationHelper<EndEventTagIterator,EndEventTagIte
                                  const std::set<ParticleType>& particle_types )
 { /* ... */ }
 
-// Serialize the observer
+// Save the data to an archive
 template<typename Archive>
-void EventHandler::serialize( Archive& ar, const unsigned version )
+void EventHandler::save( Archive& ar, const unsigned version ) const
 {
-  // Serialize the base class data
+  // Save the base class data
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleCollidingInCellEventHandler );
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleCrossingSurfaceEventHandler );
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleEnteringCellEventHandler );
@@ -278,14 +278,48 @@ void EventHandler::serialize( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleSubtrackEndingGlobalEventHandler );
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleGoneGlobalEventHandler );
 
-  // Serialize the local data
+  // Save the local data
   ar & BOOST_SERIALIZATION_NVP( d_model );
+  ar & BOOST_SERIALIZATION_NVP( d_simulation_completion_criterion );
+  ar & BOOST_SERIALIZATION_NVP( d_number_of_committed_histories );
+  ar & BOOST_SERIALIZATION_NVP( d_elapsed_simulation_time );
   ar & BOOST_SERIALIZATION_NVP( d_estimators );
   ar & BOOST_SERIALIZATION_NVP( d_particle_trackers );
   ar & BOOST_SERIALIZATION_NVP( d_particle_history_observers );
 }
 
+// Load the data to an archive
+template<typename Archive>
+void EventHandler::load( Archive& ar, const unsigned version )
+{
+  // Load the base class data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleCollidingInCellEventHandler );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleCrossingSurfaceEventHandler );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleEnteringCellEventHandler );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleLeavingCellEventHandler );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleSubtrackEndingInCellEventHandler );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleSubtrackEndingGlobalEventHandler );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleGoneGlobalEventHandler );
+
+  // Load the local data
+  ar & BOOST_SERIALIZATION_NVP( d_model );
+  ar & BOOST_SERIALIZATION_NVP( d_simulation_completion_criterion );
+  ar & BOOST_SERIALIZATION_NVP( d_number_of_committed_histories );
+  ar & BOOST_SERIALIZATION_NVP( d_elapsed_simulation_time );
+  ar & BOOST_SERIALIZATION_NVP( d_estimators );
+  ar & BOOST_SERIALIZATION_NVP( d_particle_trackers );
+  ar & BOOST_SERIALIZATION_NVP( d_particle_history_observers );
+
+  if( d_number_of_committed_histories > 0 )
+    ParticleHistoryObserver::setNumberOfHistories( d_number_of_committed_histories );
+
+  if( d_elapsed_simulation_time > 0.0 )
+    ParticleHistoryObserver::setElapsedTime( d_elapsed_simulation_time );
+}
+
 } // end MonteCarlo namespace
+
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, EventHandler );
 
 #endif // end MONTE_CARLO_EVENT_HANDLER_DEF_HPP
 

@@ -65,6 +65,9 @@ protected:
   // The observer map
   typedef typename std::set<std::shared_ptr<Observer> > ObserverSet;
 
+  // Check if there is an observer set for the particle type
+  bool hasObserverSet( const ParticleType particle_type ) const;
+  
   // Get the oberver map
   ObserverSet& getObserverSet( const ParticleType particle_type );
 

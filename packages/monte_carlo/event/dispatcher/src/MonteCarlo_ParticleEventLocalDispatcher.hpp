@@ -71,6 +71,9 @@ protected:
   //! Default constructor
   ParticleEventLocalDispatcher();
 
+  // Check if there is an observer set for the particle type
+  bool hasObserverSet( const ParticleType particle_type ) const;
+
   // Get the observer map
   ObserverSet& getObserverSet( const ParticleType particle_type );
 

@@ -32,18 +32,21 @@ void ParticleSubtrackEndingInCellEventLocalDispatcher::dispatchParticleSubtrackE
   // Make sure the cell being collided with is valid
   testPrecondition( cell_of_subtrack == this->getEntityId() );
 
-  ObserverSet& observer_set =
-    this->getObserverSet( particle.getParticleType() );
-  
-  ObserverSet::iterator it = observer_set.begin();
-
-  while( it != observer_set.end() )
+  if( this->hasObserverSet( particle.getParticleType() ) )
   {
-    (*it)->updateFromParticleSubtrackEndingInCellEvent( particle,
-                                                        cell_of_subtrack,
-                                                        track_length );
-
-    ++it;
+    ObserverSet& observer_set =
+      this->getObserverSet( particle.getParticleType() );
+    
+    ObserverSet::iterator it = observer_set.begin();
+    
+    while( it != observer_set.end() )
+    {
+      (*it)->updateFromParticleSubtrackEndingInCellEvent( particle,
+                                                          cell_of_subtrack,
+                                                          track_length );
+      
+      ++it;
+    }
   }
 }
 

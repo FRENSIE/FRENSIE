@@ -17,6 +17,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleModeType.hpp"
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 
 namespace MonteCarlo{
@@ -48,6 +49,12 @@ public:
 
   //! Return the number of histories to run
   unsigned long long getNumberOfHistories() const;
+
+  //! Set the history simulation wall time (s)
+  void setSimulationWallTime( const double wall_time );
+
+  //! Return the history simulation wall time (s)
+  double getSimulationWallTime() const;
 
   //! Set the angle cosine cutoff value for surface flux estimators
   void setSurfaceFluxEstimatorAngleCosineCutoff( const double cutoff );
@@ -81,9 +88,15 @@ public:
 
 private:
 
-  // Save/load the state to an archive
+  // Save the state to an archive
   template<typename Archive>
-  void serialize( Archive& ar, const unsigned version );
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the state from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
@@ -93,6 +106,9 @@ private:
 
   // The number of histories to run
   unsigned long long d_number_of_histories;
+
+  // The simulation wall time
+  double d_wall_time;
 
   // The angle cosine cutoff value for surface flux estimators
   double d_surface_flux_estimator_angle_cosine_cutoff;
@@ -109,11 +125,50 @@ private:
 
 // Save the state to an archive
 template<typename Archive>
-void SimulationGeneralProperties::serialize( Archive& ar,
-                                               const unsigned version )
+void SimulationGeneralProperties::save( Archive& ar, const unsigned version ) const
 {
   ar & BOOST_SERIALIZATION_NVP( d_particle_mode );
   ar & BOOST_SERIALIZATION_NVP( d_number_of_histories );
+
+  // We cannot safely serialize inf to all arhcive types - create a flag that
+  // records if the simulation wall time is inf
+  const bool __inf_wall_time__ =
+    (d_wall_time == Utility::QuantityTraits<double>::inf());
+
+  ar & BOOST_SERIALIZATION_NVP( __inf_wall_time__ );
+
+  if( __inf_wall_time__ )
+  {
+    double tmp_wall_time = Utility::QuantityTraits<double>::max();
+
+    ar & boost::serialization::make_nvp( "d_wall_time", tmp_wall_time );
+  }
+  else
+  {
+    ar & BOOST_SERIALIZATION_NVP( d_wall_time );
+  }
+  
+  ar & BOOST_SERIALIZATION_NVP( d_surface_flux_estimator_angle_cosine_cutoff );
+  ar & BOOST_SERIALIZATION_NVP( d_display_warnings );
+  ar & BOOST_SERIALIZATION_NVP( d_implicit_capture_mode_on );
+  ar & BOOST_SERIALIZATION_NVP( d_number_of_batches_per_processor );
+}
+
+// Load the state to an archive
+template<typename Archive>
+void SimulationGeneralProperties::load( Archive& ar, const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_NVP( d_particle_mode );
+  ar & BOOST_SERIALIZATION_NVP( d_number_of_histories );
+
+  // Load the wall time
+  bool __inf_wall_time__;
+  ar & BOOST_SERIALIZATION_NVP( __inf_wall_time__ );
+  ar & BOOST_SERIALIZATION_NVP( d_wall_time );
+
+  if( __inf_wall_time__ )
+    d_wall_time = Utility::QuantityTraits<double>::inf();
+
   ar & BOOST_SERIALIZATION_NVP( d_surface_flux_estimator_angle_cosine_cutoff );
   ar & BOOST_SERIALIZATION_NVP( d_display_warnings );
   ar & BOOST_SERIALIZATION_NVP( d_implicit_capture_mode_on );

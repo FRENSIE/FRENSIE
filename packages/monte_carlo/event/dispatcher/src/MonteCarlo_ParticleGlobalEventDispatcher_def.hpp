@@ -76,6 +76,14 @@ void ParticleGlobalEventDispatcher<Observer>::detachAllObservers()
   d_observer_sets.clear();
 }
 
+// Check if there is an observer set for the particle type
+template<typename Observer>
+inline bool ParticleGlobalEventDispatcher<Observer>::hasObserverSet(
+                                       const ParticleType particle_type ) const
+{
+  return d_observer_sets.find( particle_type ) != d_observer_sets.end();
+}
+
 // Get the observer id map
 template<typename Observer>
 inline auto ParticleGlobalEventDispatcher<Observer>::getObserverSet(
