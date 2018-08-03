@@ -38,6 +38,7 @@ using namespace MonteCarlo;
 %include <std_string.i>
 %include <std_shared_ptr.i>
 %include <std_set.i>
+%include <std_map.i>
 %include <std_vector.i>
 %include <std_except.i>
 
@@ -62,6 +63,7 @@ typedef unsigned int uint32_t;
 // Add some general templates
 %template(LongUnsignedVector) std::vector<long unsigned int>;
 %template(IntVector) std::vector<int>;
+%template(StringVectorMap) std::map<std::string,std::vector<double> >;
 
 // Add some general typemaps
 %apply long unsigned int { const Geometry::Model::EntityId };
@@ -135,10 +137,17 @@ typedef unsigned int uint32_t;
 %template(ParticleResponseVector) std::vector< std::shared_ptr< ParticleResponse const >,std::allocator< std::shared_ptr< ParticleResponse const > > >;
 
 // Add a typemap for std::set<uint64_t>& entity_ids
+%typemap(in,numinputs=0) std::map<std::string,std::vector<double> >& processed_data (std::map<std::string,std::vector<double> > temp) "$1 = &temp;"
+
+%typemap(argout) std::map<std::string,std::vector<double> >& processed_data {
+  %append_output(swig::from( *$1 ));
+}
+
+// Add a typemap for std::set<uint64_t>& entity_ids
 %typemap(in,numinputs=0) std::set<uint64_t>& entity_ids (std::set<uint64_t> temp) "$1 = &temp;"
 
 %typemap(argout) std::set<uint64_t>& entity_ids {
-  %append_output(PyFrensie::convertToPython( *$1 ));
+  %append_output(swig::from( *$1 ));
 }
 
 %shared_ptr( MonteCarlo::Estimator )

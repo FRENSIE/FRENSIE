@@ -308,6 +308,10 @@ ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.ActiveRegion.ParticleSource ${COLLISION
 PyFrensie_MAKE_TEST(tstMonteCarlo.Event.ObserverPhaseSpaceDimensionDiscretization)
 ADD_TEST(PyFrensie.MonteCarlo.Event.ObserverPhaseSpaceDimensionDiscretization_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.ObserverPhaseSpaceDimensionDiscretization.py)
 
+# Add the MonteCarlo.Event.StandardEntityEstimator unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Event.StandardEntityEstimator)
+ADD_TEST(PyFrensie.MonteCarlo.Event.StandardEntityEstimator_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.StandardEntityEstimator.py)
+
 # Add the MonteCarlo.Event.SurfaceCurrentEstimator unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.Event.SurfaceCurrentEstimator)
 ADD_TEST(PyFrensie.MonteCarlo.Event.SurfaceCurrentEstimator_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.SurfaceCurrentEstimator.py)

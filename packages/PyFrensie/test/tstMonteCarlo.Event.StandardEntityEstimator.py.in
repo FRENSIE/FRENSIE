@@ -1,0 +1,1568 @@
+#! ${PYTHON_EXECUTABLE#-----------------------------------------------------------------------------#
+## MonteCarlo.Event.StandardEntityEstimator class unit tests
+#  \file   tstMonteCarlo.Event.StandardEntityEstimator.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.Event.StandardEntityEstimator class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import os
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+ActiveRegion = importPyFrensieModuleFromBuildDir('MonteCarlo.ActiveRegion')
+Event = importPyFrensieModuleFromBuildDir('MonteCarlo.Event')
+
+#-----------------------------------------------------------------------------#
+# Testing Functions
+#-----------------------------------------------------------------------------#
+
+# Test if two arrays are almost equal
+def assertSequenceAlmostEqual( lhs_array, rhs_array, tol ):
+  # Test that the array sizes are equal
+  if len(lhs_array) != len(rhs_array):
+    return False
+
+  # Test that the array entries are almost equal
+  for i in range(len(lhs_array)):
+    if numpy.abs(lhs_array[i]) != 0.0:
+      if numpy.abs(lhs_array[i] - rhs_array[i])/numpy.abs(lhs_array[i]) > tol:
+        return False
+    else:
+      if numpy.abs(lhs_array[i] - rhs_array[i]) > tol:
+        return False
+
+  # If everything passes return True
+  return True
+
+# Set the standard entity estimator bins (and response functions)
+def setEstimatorBins( estimator ):
+  # Set the energy bins
+  energy_bin_boundaries = [None]*3
+  energy_bin_boundaries[0] = 0.0
+  energy_bin_boundaries[1] = 0.1
+  energy_bin_boundaries[2] = 1.0
+
+  estimator.setEnergyDiscretization(energy_bin_boundaries)
+
+  # Set the cosine bins
+  cosine_bin_boundaries = [None]*3
+  cosine_bin_boundaries[0] = -1.0
+  cosine_bin_boundaries[1] = 0.0
+  cosine_bin_boundaries[2] = 1.0
+
+  estimator.setCosineDiscretization(cosine_bin_boundaries)
+
+  # Set the collision number bins
+  collision_number_bins = [None]*2
+  collision_number_bins[0] = 0
+  collision_number_bins[1] = 1
+
+  estimator.setCollisionNumberDiscretization( collision_number_bins )
+
+  # Set the response functions
+  response_functions = [None]*2
+  response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
+  response_functions[1] = response_functions[0]
+
+  estimator.setResponseFunctions( response_functions )
+
+# Initialize the surface estimator (int)
+def initializeSurfaceEstimator():
+
+  # Set the entity ids
+  entity_ids = [None]*2
+  entity_ids[0] = 0
+  entity_ids[1] = 1
+
+  # Set the entity normalization constants
+  entity_norm_constants = [None]*2
+  entity_norm_constants[0] = 1.0
+  entity_norm_constants[1] = 2.0
+
+  # Set the estimator multiplier
+  estimator_multiplier = 10.0
+
+  estimator = Event.WeightMultipliedSurfaceFluxEstimator( 0, estimator_multiplier, entity_ids, entity_norm_constants )
+
+  particle_types = [None]*1
+  particle_types[0] = MonteCarlo.PHOTON
+
+  estimator.setParticleTypes( particle_types )
+
+  # Set the energy bins
+  energy_bin_boundaries = [None]*3
+  energy_bin_boundaries[0] = 0.0
+  energy_bin_boundaries[1] = 0.1
+  energy_bin_boundaries[2] = 1.0
+
+  estimator.setEnergyDiscretization(energy_bin_boundaries)
+
+  # Set the cosine bins
+  cosine_bin_boundaries = [None]*3
+  cosine_bin_boundaries[0] = -1.0
+  cosine_bin_boundaries[1] = 0.0
+  cosine_bin_boundaries[2] = 1.0
+
+  estimator.setCosineDiscretization(cosine_bin_boundaries)
+
+  # Set the collision number bins
+  collision_number_bins = [None]*2
+  collision_number_bins[0] = 0
+  collision_number_bins[1] = 1
+
+  estimator.setCollisionNumberDiscretization( collision_number_bins )
+
+  # Set the response functions
+  response_functions = [None]*2
+  response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
+  response_functions[1] = response_functions[0]
+
+  estimator.setResponseFunctions( response_functions )
+
+  # Set the time bins
+  time_bin_boundaries = [None]*3
+  time_bin_boundaries[0] = 1e-6
+  time_bin_boundaries[1] = 1e-5
+  time_bin_boundaries[2] = 1e-4
+
+  time_discretization = Event.ObserverTimeDimensionDiscretization( time_bin_boundaries )
+
+  estimator.setDiscretization( time_discretization )
+
+  return estimator
+
+# Initialize the cell estimator (int)
+def initializeCellEstimator( ranged_time_bins = False ):
+
+  # Set the entity ids
+  entity_ids = [None]*2
+  entity_ids[0] = 0
+  entity_ids[1] = 1
+
+  # Set the entity normalization constants
+  entity_norm_constants = [None]*2
+  entity_norm_constants[0] = 1.0
+  entity_norm_constants[1] = 2.0
+
+  # Set the estimator multiplier
+  estimator_multiplier = 10.0
+
+  estimator = Event.WeightMultipliedCellTrackLengthFluxEstimator( 0, estimator_multiplier, entity_ids, entity_norm_constants )
+
+  particle_types = [None]*1
+  particle_types[0] = MonteCarlo.PHOTON
+
+  estimator.setParticleTypes( particle_types )
+
+  # Set the energy bins
+  energy_bin_boundaries = [None]*3
+  energy_bin_boundaries[0] = 0.0
+  energy_bin_boundaries[1] = 0.1
+  energy_bin_boundaries[2] = 1.0
+
+  estimator.setEnergyDiscretization(energy_bin_boundaries)
+
+  # # Set the cosine bins
+  # cosine_bin_boundaries = [None]*3
+  # cosine_bin_boundaries[0] = -1.0
+  # cosine_bin_boundaries[1] = 0.0
+  # cosine_bin_boundaries[2] = 1.0
+
+  # estimator.setCosineDiscretization(cosine_bin_boundaries)
+
+  # Set the collision number bins
+  collision_number_bins = [None]*2
+  collision_number_bins[0] = 0
+  collision_number_bins[1] = 1
+
+  estimator.setCollisionNumberDiscretization( collision_number_bins )
+
+  # Set the response functions
+  response_functions = [None]*2
+  response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
+  response_functions[1] = response_functions[0]
+
+  estimator.setResponseFunctions( response_functions )
+
+  # Set the time bins
+  time_bin_boundaries = [None]*3
+  time_bin_boundaries[0] = 1e-6
+  time_bin_boundaries[1] = 1e-5
+  time_bin_boundaries[2] = 1.9e-5
+
+  time_discretization = Event.ObserverTimeDimensionDiscretization( time_bin_boundaries )
+
+  estimator.setDiscretization( time_discretization )
+
+  return estimator
+
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the StandardEntityEstimator class
+class StandardEntityEstimatorTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Event.StandardEntityEstimator class"
+
+#-----------------------------------------------------------------------------#
+    # Check that the number of bins can be returned
+    def testGetNumberOfBins(self):
+        "*Test MonteCarlo.Event.StandardEntityEstimator getNumberOfBins"
+        estimator = initializeSurfaceEstimator()
+
+        self.assertEqual( estimator.getNumberOfBins(), 16 )
+
+#-----------------------------------------------------------------------------#
+    # Check that the number of response functions can be returned
+    def testGetNumberOfResponseFunctions(self):
+        "*Test MonteCarlo.Event.StandardEntityEstimator getNumberOfResponseFunctions"
+        estimator = initializeSurfaceEstimator()
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+#-----------------------------------------------------------------------------#
+    # Check that a partial history contribution can be added to the estimator
+    def testAddPartialHistoryPointContribution(self):
+        "*Test MonteCarlo.Event.StandardEntityEstimator addPartialHistoryPointContribution"
+        estimator = initializeSurfaceEstimator()
+
+        self.assertFalse( estimator.hasUncommittedHistoryContribution() )
+
+        # bin 0 (E=0, Mu=0, T=0, Col=0)
+        particle = MonteCarlo.PhotonState( 0 )
+        particle_wrapper = Event.ObserverParticleStateWrapper( particle )
+
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( -0.5 )
+        particle.setTime( 5e-6 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        self.assertTrue( estimator.hasUncommittedHistoryContribution() )
+
+        # bin 1 (E=1, Mu=0, T=0, Col=0)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 2 (E=0, Mu=1, T=0, Col=0)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( 0.5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 3 (E=1, Mu=1, T=0, Col=0)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 4 (E=0, Mu=0, T=1, Col=0)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( -0.5 )
+        particle.setTime( 5e-5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 5 (E=1, Mu=0, T=1, Col=0)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 6 (E=0, Mu=1, T=1, Col=0)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( 0.5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 7 (E=1, Mu=1, T=1, Col=0)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 8 (E=0, Mu=0, T=0, Col=1)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( -0.5 )
+        particle.setTime( 5e-6 )
+        particle.incrementCollisionNumber()
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 9 (E=1, Mu=0, T=0, Col=1)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 10 (E=0, Mu=1, T=0, Col=1)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( 0.5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 11 (E=1, Mu=1, T=0, Col=1)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 12 (E=0, Mu=0, T=1, Col=1)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( -0.5 )
+        particle.setTime( 5e-5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 13 (E=1, Mu=0, T=1, Col=1)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 14 (E=0, Mu=1, T=1, Col=1)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( 0.5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 15 (E=1, Mu=1, T=1, Col=1)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # Commit the contributions
+        estimator.commitHistoryContribution()
+
+        self.assertFalse( estimator.hasUncommittedHistoryContribution() )
+
+        Event.ParticleHistoryObserver.setNumberOfHistories( 1.0 )
+        Event.ParticleHistoryObserver.setElapsedTime( 1.0 )
+
+        # # Check the total bin data moments
+        # total_bin_first_moments = estimator.getTotalBinDataFirstMoments()
+        # total_bin_second_moments = estimator.getTotalBinDataSecondMoments()
+
+        # self.assertSequenceEqual( list(total_bin_first_moments), 16*[ 4e-3 ] )
+        # self.assertSequenceEqual( list(total_bin_second_moments), 16*[ 1.6e-5 ] )
+
+        # # Check the entity bin data moments
+        # entity_bin_first_moments = estimator.getEntityBinDataFirstMoments( 0 )
+        # entity_bin_second_moments = estimator.getEntityBinDataSecondMoments( 0 )
+
+        # self.assertSequenceEqual( list(entity_bin_first_moments), 16*[ 2e-3 ] )
+        # self.assertSequenceEqual( list(entity_bin_second_moments), 16*[ 4e-6 ] )
+
+        # entity_bin_first_moments = estimator.getEntityBinDataFirstMoments( 1 )
+        # entity_bin_second_moments = estimator.getEntityBinDataSecondMoments( 1 )
+
+        # self.assertSequenceEqual( list(entity_bin_first_moments), 16*[ 2e-3 ] )
+        # self.assertSequenceEqual( list(entity_bin_second_moments), 16*[ 4e-6 ] )
+
+        # Check the entity total data moments
+        self.assertTrue( estimator.isTotalDataAvailable() )
+
+        entity_total_first_moments = estimator.getEntityTotalDataFirstMoments( 0 )
+        entity_total_second_moments = estimator.getEntityTotalDataSecondMoments( 0 )
+        entity_total_third_moments = estimator.getEntityTotalDataThirdMoments( 0 )
+        entity_total_fourth_moments = estimator.getEntityTotalDataFourthMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments), [ 16.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments), [ 256.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments), [ 4096.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments), [ 65536.0 ] )
+
+        entity_total_first_moments = estimator.getEntityTotalDataFirstMoments( 1 )
+        entity_total_second_moments = estimator.getEntityTotalDataSecondMoments( 1 )
+        entity_total_third_moments = estimator.getEntityTotalDataThirdMoments( 1 )
+        entity_total_fourth_moments = estimator.getEntityTotalDataFourthMoments( 1 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments), [ 16.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments), [ 256.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments), [ 4096.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments), [ 65536.0 ] )
+
+        # Check the entity processed total data
+        # estimator.getEntityTotalProcessedData( 0, entity_total_mean, entity_total_re, entity_total_vov, entity_total_fom )
+        processed_data = estimator.getEntityTotalProcessedData( 0 )
+        entity_total_mean = processed_data["mean"]
+        entity_total_re = processed_data["re"]
+        entity_total_vov = processed_data["vov"]
+        entity_total_fom = processed_data["fom"]
+
+        self.assertSequenceEqual( list(entity_total_mean), [ 160.0 ] )
+        self.assertSequenceEqual( list(processed_data["mean"]), [ 160.0 ] )
+        self.assertSequenceEqual( list(entity_total_re), [ 0.0 ] )
+        self.assertSequenceEqual( list(processed_data["re"]), [ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_vov), [ 0.0 ] )
+        self.assertSequenceEqual( list(processed_data["vov"]), [ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_fom), [ 0.0 ] )
+        self.assertSequenceEqual( list(processed_data["fom"]), [ 0.0 ] )
+
+        # estimator.getEntityTotalProcessedData( 1, entity_total_mean, entity_total_re, entity_total_vov, entity_total_fom )
+        processed_data = estimator.getEntityTotalProcessedData( 1 )
+        entity_total_mean = processed_data["mean"]
+        entity_total_re = processed_data["re"]
+        entity_total_vov = processed_data["vov"]
+        entity_total_fom = processed_data["fom"]
+
+        self.assertSequenceEqual( list(entity_total_mean), [ 80.0 ] )
+        self.assertSequenceEqual( list(processed_data["mean"]), [ 80.0 ] )
+        self.assertSequenceEqual( list(entity_total_re), [ 0.0 ] )
+        self.assertSequenceEqual( list(processed_data["re"]), [ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_vov), [ 0.0 ] )
+        self.assertSequenceEqual( list(processed_data["vov"]), [ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_fom), [ 0.0 ] )
+        self.assertSequenceEqual( list(processed_data["fom"]), [ 0.0 ] )
+
+        # Check the total data moments
+        total_first_moments = estimator.getTotalDataFirstMoments()
+
+        total_second_moments = estimator.getTotalDataSecondMoments()
+
+        total_third_moments = estimator.getTotalDataThirdMoments()
+
+        total_fourth_moments = estimator.getTotalDataFourthMoments()
+
+        self.assertSequenceEqual( list(total_first_moments), [ 32.0 ] )
+        self.assertSequenceEqual( list(total_second_moments), [ 1024.0 ] )
+        self.assertSequenceEqual( list(total_third_moments), [ 32768.0 ] )
+        self.assertSequenceEqual( list(total_fourth_moments), [ 1048576.0 ] )
+
+        # Check the processed total data
+
+        processed_data = estimator.getTotalProcessedData()
+        total_mean = processed_data["mean"]
+        total_re = processed_data["re"]
+        total_vov = processed_data["vov"]
+        total_fom = processed_data["fom"]
+
+        self.assertSequenceEqual( list(total_mean), [ 320.0/3 ] )
+        self.assertSequenceEqual( list(processed_data["mean"]), [ 320.0/3 ] )
+        self.assertSequenceEqual( list(total_re), [ 0.0 ] )
+        self.assertSequenceEqual( list(processed_data["re"]), [ 0.0 ] )
+        self.assertSequenceEqual( list(total_vov), [ 0.0 ] )
+        self.assertSequenceEqual( list(processed_data["vov"]), [ 0.0 ] )
+        self.assertSequenceEqual( list(total_fom), [ 0.0 ] )
+        self.assertSequenceEqual( list(processed_data["fom"]), [ 0.0 ] )
+
+#-----------------------------------------------------------------------------#
+    # Check that a partial history contribution can be added to the estimator in a thread safe way
+    def testAddPartialHistoryPointContribution_thread_safe(self):
+        "*Test MonteCarlo.Event.StandardEntityEstimator addPartialHistoryPointContribution_thread_safe"
+        estimator = initializeSurfaceEstimator()
+
+        # Enable thread support
+        estimator.enableThreadSupport( 2 )
+
+        threads = 1
+
+        for i in range(threads):
+          self.assertFalse( estimator.hasUncommittedHistoryContribution( i ) )
+
+        #pragma omp parallel num_threads( threads )
+        # bin 0 (E=0, Mu=0, T=0, Col=0)
+        particle = MonteCarlo.PhotonState( 0 )
+        particle_wrapper = Event.ObserverParticleStateWrapper( particle )
+
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( -0.5 )
+        particle.setTime( 5e-6 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        #pragma omp critical
+        self.assertTrue( estimator.hasUncommittedHistoryContribution() )
+
+        #pragma omp parallel num_threads( threads )
+        # bin 1 (E=1, Mu=0, T=0, Col=0)
+        particle = MonteCarlo.PhotonState( 0 )
+        particle_wrapper = Event.ObserverParticleStateWrapper( particle )
+
+        particle.setEnergy( 0.11 )
+        particle_wrapper.setAngleCosine( -0.5 )
+        particle.setTime( 5e-6 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 2 (E=0, Mu=1, T=0, Col=0)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( 0.5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 3 (E=1, Mu=1, T=0, Col=0)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 4 (E=0, Mu=0, T=1, Col=0)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( -0.5 )
+        particle.setTime( 5e-5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 5 (E=1, Mu=0, T=1, Col=0)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 6 (E=0, Mu=1, T=1, Col=0)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( 0.5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 7 (E=1, Mu=1, T=1, Col=0)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 8 (E=0, Mu=0, T=0, Col=1)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( -0.5 )
+        particle.setTime( 5e-6 )
+        particle.incrementCollisionNumber()
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 9 (E=1, Mu=0, T=0, Col=1)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 10 (E=0, Mu=1, T=0, Col=1)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( 0.5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 11 (E=1, Mu=1, T=0, Col=1)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 12 (E=0, Mu=0, T=1, Col=1)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( -0.5 )
+        particle.setTime( 5e-5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 13 (E=1, Mu=0, T=1, Col=1)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 14 (E=0, Mu=1, T=1, Col=1)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( 0.5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 15 (E=1, Mu=1, T=1, Col=1)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # Commit the contributions
+        estimator.commitHistoryContribution()
+
+        for i in range(threads):
+          self.assertFalse( estimator.hasUncommittedHistoryContribution( i ) )
+
+        Event.ParticleHistoryObserver.setNumberOfHistories( threads )
+        Event.ParticleHistoryObserver.setElapsedTime( 1.0 )
+
+        # # Check the total bin data moments
+        # total_bin_first_moments = estimator.getTotalBinDataFirstMoments()
+        # total_bin_second_moments = estimator.getTotalBinDataSecondMoments()
+
+        # self.assertSequenceEqual( list(total_bin_first_moments), 16*[ 2.0*threads ] )
+        # self.assertSequenceEqual( list(total_bin_second_moments), 16*[ 4.0*threads ] )
+
+        # # Check the entity bin data moments
+        # entity_bin_first_moments = estimator.getEntityBinDataFirstMoments( 0 )
+
+        # entity_bin_second_moments = estimator.getEntityBinDataSecondMoments( 0 )
+
+        # self.assertSequenceEqual( list(entity_bin_first_moments), 16*[ threads ] )
+        # self.assertSequenceEqual( list(entity_bin_second_moments), 16*[ threads ] )
+
+        # entity_bin_first_moments = estimator.getEntityBinDataFirstMoments( 1 )
+        # entity_bin_second_moments = estimator.getEntityBinDataSecondMoments( 1 )
+
+        # self.assertSequenceEqual( list(entity_bin_first_moments), 16*[ threads ] )
+        # self.assertSequenceEqual( list(entity_bin_second_moments), 16*[ threads ] )
+
+        # Check the entity total data moments
+        self.assertTrue( estimator.isTotalDataAvailable() )
+
+        entity_total_first_moments = estimator.getEntityTotalDataFirstMoments( 0 )
+        entity_total_second_moments = estimator.getEntityTotalDataSecondMoments( 0 )
+        entity_total_third_moments = estimator.getEntityTotalDataThirdMoments( 0 )
+        entity_total_fourth_moments = estimator.getEntityTotalDataFourthMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments), [ 16.0*threads ] )
+        self.assertSequenceEqual( list(entity_total_second_moments), [ 256.0*threads ] )
+        self.assertSequenceEqual( list(entity_total_third_moments), [ 4096.0*threads ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments), [ 65536.0*threads ] )
+
+        entity_total_first_moments = estimator.getEntityTotalDataFirstMoments( 1 )
+        entity_total_second_moments = estimator.getEntityTotalDataSecondMoments( 1 )
+        entity_total_third_moments = estimator.getEntityTotalDataThirdMoments( 1 )
+        entity_total_fourth_moments = estimator.getEntityTotalDataFourthMoments( 1 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments), [ 16.0*threads ] )
+        self.assertSequenceEqual( list(entity_total_second_moments), [ 256.0*threads ] )
+        self.assertSequenceEqual( list(entity_total_third_moments), [ 4096.0*threads ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments), [ 65536.0*threads ] )
+
+        # Check the entity processed total data
+        processed_data = estimator.getEntityTotalProcessedData( 0 )
+        entity_total_mean = processed_data["mean"]
+        entity_total_re = processed_data["re"]
+        entity_total_vov = processed_data["vov"]
+        entity_total_fom = processed_data["fom"]
+
+        self.assertSequenceEqual( list(entity_total_mean), [ 160.0 ] )
+        self.assertSequenceEqual( list(entity_total_re), [ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_vov), [ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_fom), [ 0.0 ] )
+
+        processed_data = estimator.getEntityTotalProcessedData( 1 )
+        entity_total_mean = processed_data["mean"]
+        entity_total_re = processed_data["re"]
+        entity_total_vov = processed_data["vov"]
+        entity_total_fom = processed_data["fom"]
+
+        self.assertSequenceEqual( list(entity_total_mean), [ 80.0 ] )
+        self.assertSequenceEqual( list(entity_total_re), [ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_vov), [ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_fom), [ 0.0 ] )
+
+        # Check the total data moments
+        total_first_moments = estimator.getTotalDataFirstMoments()
+        total_second_moments = estimator.getTotalDataSecondMoments()
+        total_third_moments = estimator.getTotalDataThirdMoments()
+        total_fourth_moments = estimator.getTotalDataFourthMoments()
+
+        self.assertSequenceEqual( list(total_first_moments), [ 32.0*threads ] )
+        self.assertSequenceEqual( list(total_second_moments), [ 1024.0*threads ] )
+        self.assertSequenceEqual( list(total_third_moments), [ 32768.0*threads ] )
+        self.assertSequenceEqual( list(total_fourth_moments), [ 1048576.0*threads ] )
+
+        # Check the processed total data
+        processed_data = estimator.getTotalProcessedData()
+        total_mean = processed_data["mean"]
+        total_re = processed_data["re"]
+        total_vov = processed_data["vov"]
+        total_fom = processed_data["fom"]
+
+        self.assertSequenceEqual( list(total_mean), [ 320.0/3 ] )
+        self.assertSequenceEqual( list(total_re), [ 0.0 ] )
+        self.assertSequenceEqual( list(total_vov), [ 0.0 ] )
+        self.assertSequenceEqual( list(total_fom), [ 0.0 ] )
+
+#-----------------------------------------------------------------------------#
+    # Check that a partial history contribution can be added to the estimator
+    def testAddPartialHistoryRangeContribution(self):
+        "*Test MonteCarlo.Event.StandardEntityEstimator addPartialHistoryRangeContribution"
+        estimator = initializeCellEstimator( True )
+
+        self.assertFalse( estimator.hasUncommittedHistoryContribution() )
+
+        # bin 0, bin 4 (E=0, Mu=0, T=0 and T=1, Col=0)
+        particle = MonteCarlo.PhotonState( 0 )
+        particle_wrapper = Event.ObserverParticleStateWrapper( particle )
+
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( -0.5 )
+        particle.setTime( 0.0 )
+        particle_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 134906606.10000002 )
+
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 0, 10.0 )
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 1, 10.0 )
+
+        self.assertTrue( estimator.hasUncommittedHistoryContribution() )
+
+        # bin 1, bin 5 (E=1, Mu=0, T=0 and T=1, Col=0)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 0, 10.0 )
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 1, 10.0 )
+
+        # bin 2, bin 6 (E=0, Mu=1, T=0 and T=1, Col=0)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( 0.5 )
+
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 0, 10.0 )
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 1, 10.0 )
+
+        # bin 3, bin 7 (E=1, Mu=1, T=0 and T=1, Col=0)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 0, 10.0 )
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 1, 10.0 )
+
+        # bin 8, bin 12 (E=0, Mu=0, T=0 and T=1, Col=1)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( -0.5 )
+        particle.incrementCollisionNumber()
+
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 0, 10.0 )
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 1, 10.0 )
+
+        # bin 9, bin 13 (E=1, Mu=0, T=0 and T=1, Col=1)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 0, 10.0 )
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 1, 10.0 )
+
+        # bin 10, bin 14 (E=0, Mu=1, T=0 and T=1, Col=1)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( 0.5 )
+
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 0, 10.0 )
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 1, 10.0 )
+
+        # bin 11, bin 15 (E=1, Mu=1, T=0 and T=1, Col=1)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 0, 10.0 )
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 1, 10.0 )
+
+        # Commit the contributions
+        estimator.commitHistoryContribution()
+
+        self.assertFalse( estimator.hasUncommittedHistoryContribution() )
+
+        Event.ParticleHistoryObserver.setNumberOfHistories( 1.0 )
+        Event.ParticleHistoryObserver.setElapsedTime( 1.0 )
+
+        # Check the total bin data moments
+        total_bin_first_moments = estimator.getTotalBinDataFirstMoments()
+        total_bin_second_moments = estimator.getTotalBinDataSecondMoments()
+
+        assertSequenceAlmostEqual( list(total_bin_first_moments), 16*[ 4e-3 ], 1e-15 )
+        assertSequenceAlmostEqual( list(total_bin_second_moments), 16*[ 1.6e-5 ], 1e-15 )
+
+        # Check the entity bin data moments
+        entity_bin_first_moments = estimator.getEntityBinDataFirstMoments( 0 )
+        entity_bin_second_moments = estimator.getEntityBinDataSecondMoments( 0 )
+
+        assertSequenceAlmostEqual( list(entity_bin_first_moments), 16*[ 2e-3 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_bin_second_moments), 16*[ 4e-6 ], 1e-15 )
+
+        entity_bin_first_moments = estimator.getEntityBinDataFirstMoments( 1 )
+        entity_bin_second_moments = estimator.getEntityBinDataSecondMoments( 1 )
+
+        assertSequenceAlmostEqual( list(entity_bin_first_moments), 16*[ 2e-3 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_bin_second_moments), 16*[ 4e-6 ], 1e-15 )
+
+        # Check the entity total data moments
+        self.assertTrue( estimator.isTotalDataAvailable() )
+
+        entity_total_first_moments = estimator.getEntityTotalDataFirstMoments( 0 )
+        entity_total_second_moments = estimator.getEntityTotalDataSecondMoments( 0 )
+        entity_total_third_moments = estimator.getEntityTotalDataThirdMoments( 0 )
+        entity_total_fourth_moments = estimator.getEntityTotalDataFourthMoments( 0 )
+
+        assertSequenceAlmostEqual( list(entity_total_first_moments), 2*[ 0.032 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_second_moments), 2*[ 0.001024 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_third_moments), 2*[ 3.2768e-05 ], 1e-14 )
+        assertSequenceAlmostEqual( list(entity_total_fourth_moments), 2*[ 1.048576e-06 ], 1e-14 )
+
+        entity_total_first_moments = estimator.getEntityTotalDataFirstMoments( 1 )
+        entity_total_second_moments = estimator.getEntityTotalDataSecondMoments( 1 )
+        entity_total_third_moments = estimator.getEntityTotalDataThirdMoments( 1 )
+        entity_total_fourth_moments = estimator.getEntityTotalDataFourthMoments( 1 )
+
+        assertSequenceAlmostEqual( list(entity_total_first_moments), 2*[ 0.032 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_second_moments), 2*[ 0.001024 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_third_moments), 2*[ 3.2768e-05 ], 1e-14 )
+        assertSequenceAlmostEqual( list(entity_total_fourth_moments), 2*[ 1.048576e-06 ], 1e-14 )
+
+        # Check the entity processed total data
+        processed_data = estimator.getEntityTotalProcessedData( 0 )
+        entity_total_mean = processed_data["mean"]
+        entity_total_re = processed_data["re"]
+        entity_total_vov = processed_data["vov"]
+        entity_total_fom = processed_data["fom"]
+
+
+        assertSequenceAlmostEqual( list(entity_total_mean), 2*[ 0.32 ], 1e-15 )
+        self.assertTrue( entity_total_re < 1e-15 )
+        self.assertTrue( entity_total_vov < 1e-15 )
+        self.assertTrue( entity_total_fom < 1e-15 )
+
+        processed_data = estimator.getEntityTotalProcessedData( 1 )
+        entity_total_mean = processed_data["mean"]
+        entity_total_re = processed_data["re"]
+        entity_total_vov = processed_data["vov"]
+        entity_total_fom = processed_data["fom"]
+
+        assertSequenceAlmostEqual( list(entity_total_mean), 2*[ 0.16 ], 1e-15 )
+        self.assertTrue( entity_total_re < 1e-15 )
+        self.assertTrue( entity_total_vov < 1e-15 )
+        self.assertTrue( entity_total_fom < 1e-15 )
+
+        # Check the total data moments
+        total_first_moments = estimator.getTotalDataFirstMoments()
+        total_second_moments = estimator.getTotalDataSecondMoments()
+        total_third_moments = estimator.getTotalDataThirdMoments()
+        total_fourth_moments = estimator.getTotalDataFourthMoments()
+
+        assertSequenceAlmostEqual( list(total_first_moments), 2*[ 0.064 ], 1e-15 )
+        assertSequenceAlmostEqual( list(total_second_moments), 2*[ 0.004096 ], 1e-15 )
+        assertSequenceAlmostEqual( list(total_third_moments), 2*[ 0.000262144 ], 1e-15 )
+        assertSequenceAlmostEqual( list(total_fourth_moments), 2*[ 1.6777216e-05 ], 1e-15 )
+
+        # Check the processed total data
+        processed_data = estimator.getTotalProcessedData()
+        total_mean = processed_data["mean"]
+        total_re = processed_data["re"]
+        total_vov = processed_data["vov"]
+        total_fom = processed_data["fom"]
+
+        assertSequenceAlmostEqual( list(total_mean), 2*[ 0.64/3 ], 1e-15 )
+        self.assertTrue( total_re < 1e-15 )
+        self.assertTrue( total_vov < 1e-15 )
+        self.assertTrue( total_fom < 1e-15 )
+
+#-----------------------------------------------------------------------------#
+    # Check that a partial history contribution can be added to the estimator
+    def testAddPartialHistoryRangeContribution_thread_safe(self):
+        "*Test MonteCarlo.Event.StandardEntityEstimator addPartialHistoryRangeContribution_thread_safe"
+        estimator = initializeCellEstimator( True )
+
+        # Enable thread support
+        estimator.enableThreadSupport( 2 )
+        threads = 2
+
+        for i in range(threads):
+          self.assertFalse( estimator.hasUncommittedHistoryContribution( i ) )
+
+        #pragma omp parallel num_threads( threads )
+        # bin 0, bin 4 (E=0, Mu=0, T=0 and T=1, Col=0)
+        particle = MonteCarlo.PhotonState( 0 )
+        particle_wrapper = Event.ObserverParticleStateWrapper( particle )
+
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( -0.5 )
+        particle.setTime( 0.0 )
+        particle_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 134906606.10000002 )
+
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 0, 10.0 )
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 1, 10.0 )
+
+        #pragma omp critical
+        self.assertTrue( estimator.hasUncommittedHistoryContribution() )
+
+        #pragma omp parallel num_threads( threads )
+        # bin 1, bin 5 (E=1, Mu=0, T=0 and T=1, Col=0)
+        particle = MonteCarlo.PhotonState( 0 )
+        particle_wrapper = Event.ObserverParticleStateWrapper( particle )
+
+        particle.setEnergy( 0.11 )
+        particle_wrapper.setAngleCosine( -0.5 )
+        particle.setTime( 0.0 )
+        particle_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 134906606.10000002 )
+
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 0, 10.0 )
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 1, 10.0 )
+
+        # bin 2, bin 6 (E=0, Mu=1, T=0 and T=1, Col=0)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( 0.5 )
+
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 0, 10.0 )
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 1, 10.0 )
+
+        # bin 3, bin 7 (E=1, Mu=1, T=0 and T=1, Col=0)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 0, 10.0 )
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 1, 10.0 )
+
+        # bin 8, bin 12 (E=0, Mu=0, T=0 and T=1, Col=1)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( -0.5 )
+        particle.incrementCollisionNumber()
+
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 0, 10.0 )
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 1, 10.0 )
+
+        # bin 9, bin 13 (E=1, Mu=0, T=0 and T=1, Col=1)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 0, 10.0 )
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 1, 10.0 )
+
+        # bin 10, bin 14 (E=0, Mu=1, T=0 and T=1, Col=1)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( 0.5 )
+
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 0, 10.0 )
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 1, 10.0 )
+
+        # bin 11, bin 15 (E=1, Mu=1, T=0 and T=1, Col=1)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 0, 10.0 )
+        estimator.updateFromParticleSubtrackEndingInCellEvent( particle, 1, 10.0 )
+
+        # Commit the contributions
+        estimator.commitHistoryContribution()
+
+        for i in range(threads):
+          self.assertFalse( estimator.hasUncommittedHistoryContribution() )
+
+        Event.ParticleHistoryObserver.setNumberOfHistories( threads )
+        Event.ParticleHistoryObserver.setElapsedTime( 1.0 )
+
+        # Check the total bin data moments
+        total_bin_first_moments = estimator.getTotalBinDataFirstMoments()
+
+        total_bin_second_moments = estimator.getTotalBinDataSecondMoments()
+
+        assertSequenceAlmostEqual( list(total_bin_first_moments), 16*[ 4e-3*threads ], 1e-15 )
+        assertSequenceAlmostEqual( list(total_bin_second_moments), 16*[ 1.6e-5*threads ], 1e-15 )
+
+        # Check the entity bin data moments
+        entity_bin_first_moments = estimator.getEntityBinDataFirstMoments( 0 )
+
+        entity_bin_second_moments = estimator.getEntityBinDataSecondMoments( 0 )
+
+        assertSequenceAlmostEqual( list(entity_bin_first_moments), 16*[ 2e-3*threads ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_bin_second_moments), 16*[ 4e-6*threads ], 1e-15 )
+
+        entity_bin_first_moments = estimator.getEntityBinDataFirstMoments( 1 )
+        entity_bin_second_moments = estimator.getEntityBinDataSecondMoments( 1 )
+
+        assertSequenceAlmostEqual( list(entity_bin_first_moments), 16*[ 2e-3*threads ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_bin_second_moments), 16*[ 4e-6*threads ], 1e-15 )
+
+        # Check the entity total data moments
+        self.assertTrue( estimator.isTotalDataAvailable() )
+
+        entity_total_first_moments = estimator.getEntityTotalDataFirstMoments( 0 )
+        entity_total_second_moments = estimator.getEntityTotalDataSecondMoments( 0 )
+        entity_total_third_moments = estimator.getEntityTotalDataThirdMoments( 0 )
+        entity_total_fourth_moments = estimator.getEntityTotalDataFourthMoments( 0 )
+
+        assertSequenceAlmostEqual( list(entity_total_first_moments), 2*[ 0.016*threads ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_second_moments), 2*[ 0.001024*threads ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_third_moments), 2*[ 3.2768e-05*threads ], 1e-14 )
+        assertSequenceAlmostEqual( list(entity_total_fourth_moments), 2*[ 1.048576e-06*threads ], 1e-14 )
+
+        entity_total_first_moments = estimator.getEntityTotalDataFirstMoments( 1 )
+        entity_total_second_moments = estimator.getEntityTotalDataSecondMoments( 1 )
+        entity_total_third_moments = estimator.getEntityTotalDataThirdMoments( 1 )
+        entity_total_fourth_moments = estimator.getEntityTotalDataFourthMoments( 1 )
+
+        assertSequenceAlmostEqual( list(entity_total_first_moments), 2*[ 0.016*threads ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_second_moments), 2*[ 0.001024*threads ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_third_moments), 2*[ 3.2768e-05*threads ], 1e-14 )
+        assertSequenceAlmostEqual( list(entity_total_fourth_moments), 2*[ 1.048576e-06*threads ], 1e-14 )
+
+        # Check the entity processed total data
+
+        processed_data = estimator.getEntityTotalProcessedData( 0 )
+        entity_total_mean = processed_data["mean"]
+        entity_total_re = processed_data["re"]
+        entity_total_vov = processed_data["vov"]
+        entity_total_fom = processed_data["fom"]
+
+        assertSequenceAlmostEqual( list(entity_total_mean), 2*[ 0.32 ], 1e-15 )
+        self.assertTrue( entity_total_re < 1e-6 )
+        self.assertTrue( entity_total_vov < 1e-15 )
+
+        if entity_total_re[0] > 0.0:
+          assertSequenceAlmostEqual( list(entity_total_fom), 2*[ 1.0/(entity_total_re[0]*entity_total_re[0]) ], 1e-15 )
+        else:
+          self.assertTrue( entity_total_fom < 1e-15 )
+
+        processed_data = estimator.getEntityTotalProcessedData( 1 )
+        entity_total_mean = processed_data["mean"]
+        entity_total_re = processed_data["re"]
+        entity_total_vov = processed_data["vov"]
+        entity_total_fom = processed_data["fom"]
+
+        assertSequenceAlmostEqual( list(entity_total_mean), 2*[ 0.16 ], 1e-15 )
+        self.assertTrue( entity_total_re < 1e-6 )
+        self.assertTrue( entity_total_vov < 1e-15 )
+
+        if entity_total_re[0] > 0.0:
+          assertSequenceAlmostEqual( list(entity_total_fom), 2*[ 1.0/(entity_total_re[0]*entity_total_re[0]) ], 1e-15 )
+        else:
+          self.assertTrue( entity_total_fom < 1e-15 )
+
+        # Check the total data moments
+        total_first_moments = estimator.getTotalDataFirstMoments()
+        total_second_moments = estimator.getTotalDataSecondMoments()
+        total_third_moments = estimator.getTotalDataThirdMoments()
+        total_fourth_moments = estimator.getTotalDataFourthMoments()
+
+        assertSequenceAlmostEqual( list(total_first_moments), 2*[ 0.064*threads ], 1e-15 )
+        assertSequenceAlmostEqual( list(total_second_moments), 2*[ 0.004096*threads ], 1e-15 )
+        assertSequenceAlmostEqual( list(total_third_moments), 2*[ 0.000262144*threads ], 1e-15 )
+        assertSequenceAlmostEqual( list(total_fourth_moments), 2*[ 1.6777216e-05*threads ], 1e-15 )
+
+        # Check the processed total data
+        processed_data = estimator.getTotalProcessedData()
+        total_mean = processed_data["mean"]
+        total_re = processed_data["re"]
+        total_vov = processed_data["vov"]
+        total_fom = processed_data["fom"]
+
+        assertSequenceAlmostEqual( list(total_mean), 2*[ 0.64/3 ], 1e-15 )
+        self.assertTrue( total_re < 1e-6 )
+        self.assertTrue( total_vov < 1e-15 )
+
+        if total_re[0] > 0.0:
+          assertSequenceAlmostEqual( list(total_fom), 2*[ 1.0/(total_re[0]*total_re[0]) ], 1e-15 )
+        else:
+          self.assertTrue( total_fom < 1e-15 )
+
+#-----------------------------------------------------------------------------#
+    # Check that a partial history contribution can be added to the estimator
+    def testResetData(self):
+        "*Test MonteCarlo.Event.StandardEntityEstimator resetData"
+        estimator = initializeSurfaceEstimator()
+
+        self.assertFalse( estimator.hasUncommittedHistoryContribution() )
+
+        # bin 0 (E=0, Mu=0, T=0, Col=0)
+        particle = MonteCarlo.PhotonState( 0 )
+        particle_wrapper = Event.ObserverParticleStateWrapper( particle )
+
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( -0.5 )
+        particle.setTime( 5e-6 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        self.assertTrue( estimator.hasUncommittedHistoryContribution() )
+
+        # bin 1 (E=1, Mu=0, T=0, Col=0)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 2 (E=0, Mu=1, T=0, Col=0)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( 0.5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 3 (E=1, Mu=1, T=0, Col=0)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 4 (E=0, Mu=0, T=1, Col=0)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( -0.5 )
+        particle.setTime( 5e-5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 5 (E=1, Mu=0, T=1, Col=0)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 6 (E=0, Mu=1, T=1, Col=0)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( 0.5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 7 (E=1, Mu=1, T=1, Col=0)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 8 (E=0, Mu=0, T=0, Col=1)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( -0.5 )
+        particle.setTime( 5e-6 )
+        particle.incrementCollisionNumber()
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 9 (E=1, Mu=0, T=0, Col=1)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 10 (E=0, Mu=1, T=0, Col=1)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( 0.5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 11 (E=1, Mu=1, T=0, Col=1)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 12 (E=0, Mu=0, T=1, Col=1)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( -0.5 )
+        particle.setTime( 5e-5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 13 (E=1, Mu=0, T=1, Col=1)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 14 (E=0, Mu=1, T=1, Col=1)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( 0.5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 15 (E=1, Mu=1, T=1, Col=1)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # Commit the contributions
+        estimator.commitHistoryContribution()
+
+        self.assertFalse( estimator.hasUncommittedHistoryContribution() )
+
+        # Reset the estimator data
+        estimator.resetData()
+
+        # Make sure all partial contributions have been deleted
+        self.assertFalse( estimator.hasUncommittedHistoryContribution() )
+
+        # Check the total bin data moments
+        total_bin_first_moments = estimator.getTotalBinDataFirstMoments()
+
+        total_bin_second_moments = estimator.getTotalBinDataSecondMoments()
+
+        self.assertSequenceEqual( list(total_bin_first_moments), 16*[ 0.0 ] )
+        self.assertSequenceEqual( list(total_bin_second_moments), 16*[ 0.0 ] )
+
+        # Check the entity bin data moments
+        entity_bin_first_moments = estimator.getEntityBinDataFirstMoments( 0 )
+
+        entity_bin_second_moments = estimator.getEntityBinDataSecondMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments), 16*[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_bin_second_moments), 16*[ 0.0 ] )
+
+        entity_bin_first_moments = estimator.getEntityBinDataFirstMoments( 1 )
+        entity_bin_second_moments = estimator.getEntityBinDataSecondMoments( 1 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments), 16*[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_bin_second_moments), 16*[ 0.0 ] )
+
+        # Check the entity total data moments
+        self.assertTrue( estimator.isTotalDataAvailable() )
+
+        # entity_total_first_moments = estimator.getEntityTotalDataFirstMoments( 0 )
+
+        # entity_total_second_moments = estimator.getEntityTotalDataSecondMoments( 0 )
+
+        # entity_total_third_moments = estimator.getEntityTotalDataThirdMoments( 0 )
+
+        # entity_total_fourth_moments = estimator.getEntityTotalDataFourthMoments( 0 )
+
+        # self.assertSequenceEqual( list(entity_total_first_moments), 16*[ 0.0 ] )
+        # self.assertSequenceEqual( list(entity_total_second_moments), 16*[ 0.0 ] )
+        # self.assertSequenceEqual( list(entity_total_third_moments), 16*[ 0.0 ] )
+        # self.assertSequenceEqual( list(entity_total_fourth_moments), 16*[ 0.0 ] )
+
+        # entity_total_first_moments = estimator.getEntityTotalDataFirstMoments( 1 )
+        # entity_total_second_moments = estimator.getEntityTotalDataSecondMoments( 1 )
+        # entity_total_third_moments = estimator.getEntityTotalDataThirdMoments( 1 )
+        # entity_total_fourth_moments = estimator.getEntityTotalDataFourthMoments( 1 )
+
+        # self.assertSequenceEqual( list(entity_total_first_moments), 16*[ 0.0 ] )
+        # self.assertSequenceEqual( list(entity_total_second_moments), 16*[ 0.0 ] )
+        # self.assertSequenceEqual( list(entity_total_third_moments), 16*[ 0.0 ] )
+        # self.assertSequenceEqual( list(entity_total_fourth_moments), 16*[ 0.0 ] )
+
+        # # Check the total data moments
+        # total_first_moments = estimator.getTotalDataFirstMoments()
+
+        # total_second_moments = estimator.getTotalDataSecondMoments()
+
+        # total_third_moments = estimator.getTotalDataThirdMoments()
+
+        # total_fourth_moments = estimator.getTotalDataFourthMoments()
+
+        # self.assertSequenceEqual( list(total_first_moments), 16*[ 0.0 ] )
+        # self.assertSequenceEqual( list(total_second_moments), 16*[ 0.0 ] )
+        # self.assertSequenceEqual( list(total_third_moments), 16*[ 0.0 ] )
+        # self.assertSequenceEqual( list(total_fourth_moments), 16*[ 0.0 ] )
+
+# #-----------------------------------------------------------------------------#
+#     # Check that the estimator data can be reduced
+#     def testReduceData(self):
+#         "*Test MonteCarlo.Event.StandardEntityEstimator reduceData"
+#         estimator = initializeSurfaceEstimator()
+
+#         # bin 0 (E=0, Mu=0, T=0, Col=0)
+#         particle = MonteCarlo.PhotonState( 0 )
+#         particle_wrapper = Event.ObserverParticleStateWrapper( particle )
+
+#         particle.setEnergy( 1e-2 )
+#         particle_wrapper.setAngleCosine( -0.5 )
+#         particle.setTime( 5e-6 )
+
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+#         # bin 1 (E=1, Mu=0, T=0, Col=0)
+#         particle.setEnergy( 0.11 )
+
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+#         # bin 2 (E=0, Mu=1, T=0, Col=0)
+#         particle.setEnergy( 1e-2 )
+#         particle_wrapper.setAngleCosine( 0.5 )
+
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+#         # bin 3 (E=1, Mu=1, T=0, Col=0)
+#         particle.setEnergy( 0.11 )
+
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+#         # bin 4 (E=0, Mu=0, T=1, Col=0)
+#         particle.setEnergy( 1e-2 )
+#         particle_wrapper.setAngleCosine( -0.5 )
+#         particle.setTime( 5e-5 )
+
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+#         # bin 5 (E=1, Mu=0, T=1, Col=0)
+#         particle.setEnergy( 0.11 )
+
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+#         # bin 6 (E=0, Mu=1, T=1, Col=0)
+#         particle.setEnergy( 1e-2 )
+#         particle_wrapper.setAngleCosine( 0.5 )
+
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+#         # bin 7 (E=1, Mu=1, T=1, Col=0)
+#         particle.setEnergy( 0.11 )
+
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+#         # bin 8 (E=0, Mu=0, T=0, Col=1)
+#         particle.setEnergy( 1e-2 )
+#         particle_wrapper.setAngleCosine( -0.5 )
+#         particle.setTime( 5e-6 )
+#         particle.incrementCollisionNumber()
+
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+#         # bin 9 (E=1, Mu=0, T=0, Col=1)
+#         particle.setEnergy( 0.11 )
+
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+#         # bin 10 (E=0, Mu=1, T=0, Col=1)
+#         particle.setEnergy( 1e-2 )
+#         particle_wrapper.setAngleCosine( 0.5 )
+
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+#         # bin 11 (E=1, Mu=1, T=0, Col=1)
+#         particle.setEnergy( 0.11 )
+
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+#         # bin 12 (E=0, Mu=0, T=1, Col=1)
+#         particle.setEnergy( 1e-2 )
+#         particle_wrapper.setAngleCosine( -0.5 )
+#         particle.setTime( 5e-5 )
+
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+#         # bin 13 (E=1, Mu=0, T=1, Col=1)
+#         particle.setEnergy( 0.11 )
+
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+#         # bin 14 (E=0, Mu=1, T=1, Col=1)
+#         particle.setEnergy( 1e-2 )
+#         particle_wrapper.setAngleCosine( 0.5 )
+
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+#         # bin 15 (E=1, Mu=1, T=1, Col=1)
+#         particle.setEnergy( 0.11 )
+
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+#         estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+#         # Commit the contributions
+#         estimator.commitHistoryContribution()
+
+#         comm = Utility.Communicator.getDefault()
+#         comm.barrier()
+#         estimator.reduceData( comm, 0 )
+#         procs = comm.size()
+
+#         Event.ParticleHistoryObserver.setNumberOfHistories( procs )
+#         Event.ParticleHistoryObserver.setElapsedTime( 1.0 )
+
+#         if comm.rank() == 0:
+#           # Check the total bin data moments
+#           total_bin_first_moments = estimator.getTotalBinDataFirstMoments()
+#           total_bin_second_moments = estimator.getTotalBinDataSecondMoments()
+
+#           self.assertSequenceEqual( list(total_bin_first_moments), 16*[ 2.0*procs ] )
+#           self.assertSequenceEqual( list(total_bin_second_moments), 16*[ 4.0*procs ] )
+
+#           # Check the entity bin data moments
+#           entity_bin_first_moments = estimator.getEntityBinDataFirstMoments( 0 )
+#           entity_bin_second_moments = estimator.getEntityBinDataSecondMoments( 0 )
+
+#           self.assertSequenceEqual( list(entity_bin_first_moments), 16*[ procs ] )
+#           self.assertSequenceEqual( list(entity_bin_second_moments), 16*[ procs ] )
+
+#           entity_bin_first_moments = estimator.getEntityBinDataFirstMoments( 1 )
+#           entity_bin_second_moments = estimator.getEntityBinDataSecondMoments( 1 )
+
+#           self.assertSequenceEqual( list(entity_bin_first_moments), 16*[ procs ] )
+#           self.assertSequenceEqual( list(entity_bin_second_moments), 16*[ procs ] )
+
+#           # Check the entity total data moments
+#           self.assertTrue( estimator.isTotalDataAvailable() )
+
+#           entity_total_first_moments = estimator.getEntityTotalDataFirstMoments( 0 )
+#           entity_total_second_moments = estimator.getEntityTotalDataSecondMoments( 0 )
+#           entity_total_third_moments = estimator.getEntityTotalDataThirdMoments( 0 )
+#           entity_total_fourth_moments = estimator.getEntityTotalDataFourthMoments( 0 )
+
+#           self.assertSequenceEqual( list(entity_total_first_moments), 16*[ 16.0*procs ] )
+#           self.assertSequenceEqual( list(entity_total_second_moments), 16*[ 256.0*procs ] )
+#           self.assertSequenceEqual( list(entity_total_third_moments), 16*[ 4096.0*procs ] )
+#           self.assertSequenceEqual( list(entity_total_fourth_moments), 16*[ 65536.0*procs ] )
+
+#           entity_total_first_moments = estimator.getEntityTotalDataFirstMoments( 1 )
+#           entity_total_second_moments = estimator.getEntityTotalDataSecondMoments( 1 )
+#           entity_total_third_moments = estimator.getEntityTotalDataThirdMoments( 1 )
+#           entity_total_fourth_moments = estimator.getEntityTotalDataFourthMoments( 1 )
+
+#           self.assertSequenceEqual( list(entity_total_first_moments), 16*[ 16.0*procs ] )
+#           self.assertSequenceEqual( list(entity_total_second_moments), 16*[ 256.0*procs ] )
+#           self.assertSequenceEqual( list(entity_total_third_moments), 16*[ 4096.0*procs ] )
+#           self.assertSequenceEqual( list(entity_total_fourth_moments), 16*[ 65536.0*procs ] )
+
+#           # Check the entity processed total data
+        # processed_data = estimator.getEntityTotalProcessedData( 0 )
+        # entity_total_mean = processed_data["mean"]
+        # entity_total_re = processed_data["re"]
+        # entity_total_vov = processed_data["vov"]
+        # entity_total_fom = processed_data["fom"]
+
+#           self.assertSequenceEqual( list(entity_total_mean), 2*[ 160.0 ] )
+#           self.assertSequenceEqual( list(entity_total_re), 2*[ 0.0 ] )
+#           self.assertSequenceEqual( list(entity_total_vov), 2*[ 0.0 ] )
+#           self.assertSequenceEqual( list(entity_total_fom), 2*[ 0.0 ] )
+
+        # processed_data = estimator.getEntityTotalProcessedData( 1 )
+        # entity_total_mean = processed_data["mean"]
+        # entity_total_re = processed_data["re"]
+        # entity_total_vov = processed_data["vov"]
+        # entity_total_fom = processed_data["fom"]
+
+#           self.assertSequenceEqual( list(entity_total_mean), 2*[ 80.0 ] )
+#           self.assertSequenceEqual( list(entity_total_re), 2*[ 0.0 ] )
+#           self.assertSequenceEqual( list(entity_total_vov), 2*[ 0.0 ] )
+#           self.assertSequenceEqual( list(entity_total_fom), 2*[ 0.0 ] )
+
+#           # Check the total data moments
+#           total_first_moments = estimator.getTotalDataFirstMoments()
+#           total_second_moments = estimator.getTotalDataSecondMoments()
+#           total_third_moments = estimator.getTotalDataThirdMoments()
+#           total_fourth_moments = estimator.getTotalDataFourthMoments()
+
+#           self.assertSequenceEqual( list(total_first_moments), 16*[ 32.0*procs ] )
+#           self.assertSequenceEqual( list(total_second_moments), 16*[ 1024.0*procs ] )
+#           self.assertSequenceEqual( list(total_third_moments), 16*[ 32768.0*procs ] )
+#           self.assertSequenceEqual( list(total_fourth_moments), 16*[ 1048576.0*procs ] )
+
+#           # Check the processed total data
+        # processed_data = estimator.getTotalProcessedData()
+        # total_mean = processed_data["mean"]
+        # total_re = processed_data["re"]
+        # total_vov = processed_data["vov"]
+        # total_fom = processed_data["fom"]
+
+#           self.assertSequenceEqual( list(total_mean), 2*[ 320.0/3 ] )
+#           self.assertSequenceEqual( list(total_re), 2*[ 0.0 ] )
+#           self.assertSequenceEqual( list(total_vov), 2*[ 0.0 ] )
+#           self.assertSequenceEqual( list(total_fom), 2*[ 0.0 ] )
+#         else:
+#           # Make sure that estimators on other processes were reset
+#           # Check the total bin data moments
+#           total_bin_first_moments = estimator.getTotalBinDataFirstMoments()
+#           total_bin_second_moments = estimator.getTotalBinDataSecondMoments()
+
+#           self.assertSequenceEqual( list(total_bin_first_moments), 16*[ 0.0 ] )
+#           self.assertSequenceEqual( list(total_bin_second_moments), 16*[ 0.0 ] )
+
+#           # Check the entity bin data moments
+#           entity_bin_first_moments = estimator.getEntityBinDataFirstMoments( 0 )
+#           entity_bin_second_moments = estimator.getEntityBinDataSecondMoments( 0 )
+
+#           self.assertSequenceEqual( list(entity_bin_first_moments), 16*[ 0.0 ] )
+#           self.assertSequenceEqual( list(entity_bin_second_moments), 16*[ 0.0 ] )
+
+#           entity_bin_first_moments = estimator.getEntityBinDataFirstMoments( 1 )
+#           entity_bin_second_moments = estimator.getEntityBinDataSecondMoments( 1 )
+
+#           self.assertSequenceEqual( list(entity_bin_first_moments), 16*[ 0.0 ] )
+#           self.assertSequenceEqual( list(entity_bin_second_moments), 16*[ 0.0 ] )
+
+#           # Check the entity total data moments
+#           self.assertTrue( estimator.isTotalDataAvailable() )
+
+#           entity_total_first_moments = estimator.getEntityTotalDataFirstMoments( 0 )
+#           entity_total_second_moments = estimator.getEntityTotalDataSecondMoments( 0 )
+#           entity_total_third_moments = estimator.getEntityTotalDataThirdMoments( 0 )
+#           entity_total_fourth_moments = estimator.getEntityTotalDataFourthMoments( 0 )
+
+#           self.assertSequenceEqual( list(entity_total_first_moments), 16*[ 0.0 ] )
+#           self.assertSequenceEqual( list(entity_total_second_moments), 16*[ 0.0 ] )
+#           self.assertSequenceEqual( list(entity_total_third_moments), 16*[ 0.0 ] )
+#           self.assertSequenceEqual( list(entity_total_fourth_moments), 16*[ 0.0 ] )
+
+#           entity_total_first_moments = estimator.getEntityTotalDataFirstMoments( 1 )
+#           entity_total_second_moments = estimator.getEntityTotalDataSecondMoments( 1 )
+#           entity_total_third_moments = estimator.getEntityTotalDataThirdMoments( 1 )
+#           entity_total_fourth_moments = estimator.getEntityTotalDataFourthMoments( 1 )
+
+#           self.assertSequenceEqual( list(entity_total_first_moments), 16*[ 0.0 ] )
+#           self.assertSequenceEqual( list(entity_total_second_moments), 16*[ 0.0 ] )
+#           self.assertSequenceEqual( list(entity_total_third_moments), 16*[ 0.0 ] )
+#           self.assertSequenceEqual( list(entity_total_fourth_moments), 16*[ 0.0 ] )
+
+#           # Check the total data moments
+#           total_first_moments = estimator.getTotalDataFirstMoments()
+#           total_second_moments = estimator.getTotalDataSecondMoments()
+#           total_third_moments = estimator.getTotalDataThirdMoments()
+#           total_fourth_moments = estimator.getTotalDataFourthMoments()
+
+#           self.assertSequenceEqual( list(total_first_moments), 16*[ 0.0 ] )
+#           self.assertSequenceEqual( list(total_second_moments), 16*[ 0.0 ] )
+#           self.assertSequenceEqual( list(total_third_moments), 16*[ 0.0 ] )
+#           self.assertSequenceEqual( list(total_fourth_moments), 16*[ 0.0 ] )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(StandardEntityEstimatorTestCase))
+
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Event.StandardEntityEstimator.py
+#-----------------------------------------------------------------------------#

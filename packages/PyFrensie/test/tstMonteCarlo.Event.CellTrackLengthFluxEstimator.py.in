@@ -500,7 +500,6 @@ class CellTrackLengthFluxEstimatorTestCase(unittest.TestCase):
         self.assertSequenceEqual( list(total_third_moments), [ 512.0*threads ] )
         self.assertSequenceEqual( list(total_fourth_moments), [ 4096.0*threads ] )
 
-
 #-----------------------------------------------------------------------------#
 # Custom main
 #-----------------------------------------------------------------------------#
