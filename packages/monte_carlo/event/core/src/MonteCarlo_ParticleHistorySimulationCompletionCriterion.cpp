@@ -8,11 +8,13 @@
 
 // Std Lib Includes
 #include <functional>
+#include <numeric>
 
 // FRENSIE Includes
 #include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_ParticleHistorySimulationCompletionCriterion.hpp"
 #include "Utility_GlobalMPISession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
 namespace MonteCarlo{
@@ -30,7 +32,7 @@ public:
   //! Constructor
   HistoryCountParticleHistorySimulationCompletionCriterion( const uint64_t history_wall )
     : d_history_wall( history_wall ),
-      d_num_completed_histories( 0 ),
+      d_num_completed_histories( 1, 0 ),
       d_count_histories( false )
   { /* ... */ }
 
@@ -38,25 +40,62 @@ public:
   ~HistoryCountParticleHistorySimulationCompletionCriterion()
   { /* ... */ }
 
+  //! Get the number of completed histories
+  uint64_t getNumberOfCompletedHistories() const
+  {
+    // Make sure only the root thread calls this
+    testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
+    
+    return std::accumulate( d_num_completed_histories.begin(),
+                            d_num_completed_histories.end(),
+                            0 );
+  }
+
   //! Check if the simulation is complete
   bool isSimulationComplete() const final override
-  { return d_num_completed_histories >= d_history_wall; }
+  {
+    // Make sure only the root thread calls this
+    testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
+    
+    return this->getNumberOfCompletedHistories() >= d_history_wall;
+  }
 
   //! Start the criterion
   void start() final override
-  { d_count_histories = true; }
+  {
+    // Make sure only the root thread calls this
+    testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
+    
+    d_count_histories = true;
+  }
 
   //! Stop the criterion
   void stop() final override
-  { d_count_histories = false; }
+  {
+    // Make sure only the root thread calls this
+    testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
+    
+    d_count_histories = false;
+  }
 
   //! Clear cached criterion data
   void clearCache() final override
-  { d_num_completed_histories = 0; }
+  {
+    // Make sure only the root thread calls this
+    testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
+    
+    for( size_t i = 0; i < d_num_completed_histories.size(); ++i )
+      d_num_completed_histories[i] = 0;
+  }
 
   //! Enable support for multiple threads
-  void enableThreadSupport( const unsigned ) final override
-  { /* ... */ }
+  void enableThreadSupport( const unsigned threads ) final override
+  {
+    // Make sure only the root thread calls this
+    testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
+    
+    d_num_completed_histories.resize( threads, 0 );
+  }
 
   //! Check if the observer has uncommitted history contributions
   bool hasUncommittedHistoryContribution() const final override
@@ -65,16 +104,22 @@ public:
   //! Commit the contribution from the current history to the observer
   void commitHistoryContribution() final override
   {
+    // Make sure that the thread id is valid
+    testPrecondition( Utility::OpenMPProperties::getThreadId() <
+                      d_num_completed_histories.size() );
+    
     if( d_count_histories )
-    {
-      #pragma omp atomic
-      ++d_num_completed_histories;
-    }
+      ++d_num_completed_histories[Utility::OpenMPProperties::getThreadId()];
   }
 
   //! Reset the observer data
   void resetData() final override
-  { d_num_completed_histories = 0; }
+  {
+    // Make sure only the root thread calls this
+    testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
+    
+    this->clearCache();
+  }
 
   //! Reduce the object data on all processes in comm and collect on root
   void reduceData( const Utility::Communicator& comm,
@@ -85,21 +130,23 @@ public:
       uint64_t reduced_num_completed_histories;
       
       Utility::reduce( comm,
-                       d_num_completed_histories,
+                       this->getNumberOfCompletedHistories(),
                        reduced_num_completed_histories,
                        std::plus<uint64_t>(),
                        root_process );
+
+      this->resetData();
       
-      d_num_completed_histories = reduced_num_completed_histories;
+      d_num_completed_histories.front() = reduced_num_completed_histories;
     }
     else
     {
       Utility::reduce( comm,
-                       d_num_completed_histories,
+                       this->getNumberOfCompletedHistories(),
                        std::plus<uint64_t>(),
                        root_process );
 
-      d_num_completed_histories = 0;
+      this->resetData();
     }
   }
 
@@ -107,30 +154,54 @@ public:
   std::string description() const final override
   {
     return std::string( "completed histories (" ) +
-      Utility::toString( d_num_completed_histories ) + ") >= " +
+      Utility::toString( this->getNumberOfCompletedHistories() ) + ") >= " +
       Utility::toString( d_history_wall );
   }
 
 private:
 
-  // Serialize the completion criterion
+  // Save the completion criterion
   template<typename Archive>
-  void serialize( Archive& ar, const unsigned version )
+  void save( Archive& ar, const unsigned version ) const
   {
-    // Serialize the base class member data
+    // Save the base class member data
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleHistorySimulationCompletionCriterion );
 
-    // Serialize the local member data
-    ar & BOOST_SERIALIZATION_NVP( d_num_completed_histories );
+    // Save the local member data
+    uint64_t num_completed_histories = this->getNumberOfCompletedHistories();
+    
+    ar & BOOST_SERIALIZATION_NVP( num_completed_histories );
     ar & BOOST_SERIALIZATION_NVP( d_history_wall );
-    ar & BOOST_SERIALIZATION_NVP( d_count_histories );
+
+    // Don't save the count histories flag - this must be reactivated
+    // manually by calling start
   }
+
+  // Load the completion criterion
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version )
+  {
+    // Load the base class member data
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleHistorySimulationCompletionCriterion );
+
+    // Load the local member data
+    uint64_t num_completed_histories;
+
+    ar & BOOST_SERIALIZATION_NVP( num_completed_histories );
+
+    d_num_completed_histories.resize( 1 );
+    d_num_completed_histories.front() = num_completed_histories;
+    
+    ar & BOOST_SERIALIZATION_NVP( d_history_wall );
+  }
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
   // The number of completed histories
-  uint64_t d_num_completed_histories;
+  std::vector<uint64_t> d_num_completed_histories;
 
   // The history wall
   uint64_t d_history_wall;
@@ -157,19 +228,39 @@ public:
   
   //! Check if the simulation is complete
   bool isSimulationComplete() const final override
-  { return d_timer->elapsed().count() >= d_wall_time; }
+  {
+    // Make sure that the thread id is valid
+    testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
+    
+    return d_timer->elapsed().count() >= d_wall_time;
+  }
 
   //! Start the criterion
   void start() final override
-  { d_timer->start(); }
+  {
+    // Make sure that the thread id is valid
+    testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
+    
+    d_timer->start();
+  }
 
   //! Stop the criterion
   void stop() final override
-  { d_timer->stop(); }
+  {
+    // Make sure that the thread id is valid
+    testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
+    
+    d_timer->stop();
+  }
 
   //! Clear cached criterion data
   void clearCache() final override
-  { d_timer = Utility::GlobalMPISession::createTimer(); }
+  {
+    // Make sure that the thread id is valid
+    testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
+    
+    d_timer = Utility::GlobalMPISession::createTimer();
+  }  
 
   //! Enable support for multiple threads
   void enableThreadSupport( const unsigned num_threads ) final override
@@ -196,8 +287,8 @@ public:
   std::string description() const final override
   {
     return std::string( "elapsed time (" ) +
-      Utility::toString( d_timer->elapsed().count() ) + ") >= " +
-      Utility::toString( d_wall_time );
+      Utility::toString( d_timer->elapsed().count() ) + "s) >= " +
+      Utility::toString( d_wall_time ) + "s";
   }
 
 private:
@@ -211,6 +302,8 @@ private:
 
     // Save the local member data
     ar & BOOST_SERIALIZATION_NVP( d_wall_time );
+
+    // The timer will not be saved - it must be restarted during the load
   }
 
   // Load the completion criterion

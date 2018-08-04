@@ -35,4 +35,27 @@ FRENSIE_ADD_TEST(ObserverSourceIdDimensionDiscretization)
 FRENSIE_ADD_TEST_EXECUTABLE(ObserverPhaseSpaceDiscretization DEPENDS tstObserverPhaseSpaceDiscretization)
 FRENSIE_ADD_TEST(ObserverPhaseSpaceDiscretization)
 
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleHistorySimulationCompletionCriterion DEPENDS tstParticleHistorySimulationCompletionCriterion.cpp)
+FRENSIE_ADD_TEST(ParticleHistorySimulationCompletionCriterion)
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  FRENSIE_ADD_TEST(SharedParticleHistorySimulationCompletionCriterion_2
+    TEST_EXEC_NAME_ROOT ParticleHistorySimulationCompletionCriterion
+    EXTRA_ARGS --threads=2
+    OPENMP_TEST)
+  FRENSIE_ADD_TEST(SharedParticleHistorySimulationCompletionCriterion_4
+    TEST_EXEC_NAME_ROOT ParticleHistorySimulationCompletionCriterion
+    EXTRA_ARGS --threads=4
+    OPENMP_TEST)
+ENDIF()
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(DistributedParticleHistorySimulationCompletionCriterion
+    TEST_EXEC_NAME_ROOT ParticleHistorySimulationCompletionCriterion
+    MPI_PROCS 2)
+  FRENSIE_ADD_TEST(DistributedParticleHistorySimulationCompletionCriterion
+    TEST_EXEC_NAME_ROOT ParticleHistorySimulationCompletionCriterion
+    MPI_PROCS 4)
+ENDIF()
+
 FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_event_core)
