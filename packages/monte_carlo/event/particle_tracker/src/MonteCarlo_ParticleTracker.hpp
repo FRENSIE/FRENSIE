@@ -62,7 +62,7 @@ public:
     GenerationNumberSubmap;
 
   //! Typedef for the particle type submap
-  typedef std::unordered_map<ParticleType,GenerationNumberSubmap>
+  typedef std::map<ParticleType,GenerationNumberSubmap>
     ParticleTypeSubmap;
 
   //! Typedef for the history map
