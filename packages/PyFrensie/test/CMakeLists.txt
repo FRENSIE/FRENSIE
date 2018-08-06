@@ -358,6 +358,14 @@ IF(${FRENSIE_ENABLE_ROOT})
   ADD_TEST(PyFrensie.MonteCarlo.Event.CellTrackLengthFluxEstimatorRoot_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellTrackLengthFluxEstimatorRoot.py --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geom.root)
 ENDIF()
 
+# Add the MonteCarlo.Event.ParticleTracker unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Event.ParticleTracker)
+ADD_TEST(PyFrensie.MonteCarlo.Event.ParticleTracker_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.ParticleTracker.py)
+
+# Add the MonteCarlo.Event.EventHandler unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Event.EventHandler)
+ADD_TEST(PyFrensie.MonteCarlo.Event.EventHandler_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.EventHandler.py)
+
 # # Add the MonteCarlo.Collision.PhotonKinematics unit tests
 # PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.PhotonKinematics)
 # ADD_TEST(PyFrensie.MonteCarlo.Collision.PhotonKinematics_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.PhotonKinematics.py)

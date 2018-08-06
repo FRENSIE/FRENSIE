@@ -37,7 +37,7 @@ class ParticleTracker : public ParticleSubtrackEndingGlobalEventObserver,
                         public ParticleGoneGlobalEventObserver,
                         public ParticleHistoryObserver
 {
-  
+
 public:
 
   //! Typedef for the id type
@@ -93,9 +93,9 @@ public:
 
   //! Add current history contribution
   void updateFromGlobalParticleSubtrackEndingEvent(
-				    const ParticleState& particle,
+                                    const ParticleState& particle,
                                     const double start_point[3],
-				    const double end_point[3] ) final override;
+                                    const double end_point[3] ) final override;
 
   //! Update the observer
   void updateFromGlobalParticleGoneEvent(
@@ -151,7 +151,7 @@ private:
   // The partial tracked history info
   typedef std::map<const ParticleState*,ParticleDataArray> PartialHistorySubmap;
   std::vector<PartialHistorySubmap> d_partial_history_map;
-  
+
   // The tracked history info
   OverallHistoryMap d_history_number_map;
 };

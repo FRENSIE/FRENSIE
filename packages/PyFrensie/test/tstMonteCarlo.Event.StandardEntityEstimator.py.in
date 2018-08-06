@@ -830,11 +830,10 @@ class StandardEntityEstimatorTestCase(unittest.TestCase):
         entity_total_vov = processed_data["vov"]
         entity_total_fom = processed_data["fom"]
 
-
         assertSequenceAlmostEqual( list(entity_total_mean), 2*[ 0.32 ], 1e-15 )
-        self.assertTrue( entity_total_re < 1e-15 )
-        self.assertTrue( entity_total_vov < 1e-15 )
-        self.assertTrue( entity_total_fom < 1e-15 )
+        self.assertTrue( entity_total_re[0] < 1e-15 )
+        self.assertTrue( entity_total_vov[0] < 1e-15 )
+        self.assertTrue( entity_total_fom[0] < 1e-15 )
 
         processed_data = estimator.getEntityTotalProcessedData( 1 )
         entity_total_mean = processed_data["mean"]
@@ -843,9 +842,9 @@ class StandardEntityEstimatorTestCase(unittest.TestCase):
         entity_total_fom = processed_data["fom"]
 
         assertSequenceAlmostEqual( list(entity_total_mean), 2*[ 0.16 ], 1e-15 )
-        self.assertTrue( entity_total_re < 1e-15 )
-        self.assertTrue( entity_total_vov < 1e-15 )
-        self.assertTrue( entity_total_fom < 1e-15 )
+        self.assertTrue( entity_total_re[0] < 1e-15 )
+        self.assertTrue( entity_total_vov[0] < 1e-15 )
+        self.assertTrue( entity_total_fom[0] < 1e-15 )
 
         # Check the total data moments
         total_first_moments = estimator.getTotalDataFirstMoments()
@@ -866,9 +865,9 @@ class StandardEntityEstimatorTestCase(unittest.TestCase):
         total_fom = processed_data["fom"]
 
         assertSequenceAlmostEqual( list(total_mean), 2*[ 0.64/3 ], 1e-15 )
-        self.assertTrue( total_re < 1e-15 )
-        self.assertTrue( total_vov < 1e-15 )
-        self.assertTrue( total_fom < 1e-15 )
+        self.assertTrue( total_re[0] < 1e-15 )
+        self.assertTrue( total_vov[0] < 1e-15 )
+        self.assertTrue( total_fom[0] < 1e-15 )
 
 #-----------------------------------------------------------------------------#
     # Check that a partial history contribution can be added to the estimator
@@ -1015,13 +1014,13 @@ class StandardEntityEstimatorTestCase(unittest.TestCase):
         entity_total_fom = processed_data["fom"]
 
         assertSequenceAlmostEqual( list(entity_total_mean), 2*[ 0.32 ], 1e-15 )
-        self.assertTrue( entity_total_re < 1e-6 )
-        self.assertTrue( entity_total_vov < 1e-15 )
+        self.assertTrue( entity_total_re[0] < 1e-6 )
+        self.assertTrue( entity_total_vov[0] < 1e-15 )
 
         if entity_total_re[0] > 0.0:
           assertSequenceAlmostEqual( list(entity_total_fom), 2*[ 1.0/(entity_total_re[0]*entity_total_re[0]) ], 1e-15 )
         else:
-          self.assertTrue( entity_total_fom < 1e-15 )
+          self.assertTrue( entity_total_fom[0] < 1e-15 )
 
         processed_data = estimator.getEntityTotalProcessedData( 1 )
         entity_total_mean = processed_data["mean"]
@@ -1030,13 +1029,13 @@ class StandardEntityEstimatorTestCase(unittest.TestCase):
         entity_total_fom = processed_data["fom"]
 
         assertSequenceAlmostEqual( list(entity_total_mean), 2*[ 0.16 ], 1e-15 )
-        self.assertTrue( entity_total_re < 1e-6 )
-        self.assertTrue( entity_total_vov < 1e-15 )
+        self.assertTrue( entity_total_re[0] < 1e-6 )
+        self.assertTrue( entity_total_vov[0] < 1e-15 )
 
         if entity_total_re[0] > 0.0:
           assertSequenceAlmostEqual( list(entity_total_fom), 2*[ 1.0/(entity_total_re[0]*entity_total_re[0]) ], 1e-15 )
         else:
-          self.assertTrue( entity_total_fom < 1e-15 )
+          self.assertTrue( entity_total_fom[0] < 1e-15 )
 
         # Check the total data moments
         total_first_moments = estimator.getTotalDataFirstMoments()
@@ -1057,13 +1056,13 @@ class StandardEntityEstimatorTestCase(unittest.TestCase):
         total_fom = processed_data["fom"]
 
         assertSequenceAlmostEqual( list(total_mean), 2*[ 0.64/3 ], 1e-15 )
-        self.assertTrue( total_re < 1e-6 )
-        self.assertTrue( total_vov < 1e-15 )
+        self.assertTrue( total_re[0] < 1e-6 )
+        self.assertTrue( total_vov[0] < 1e-15 )
 
         if total_re[0] > 0.0:
           assertSequenceAlmostEqual( list(total_fom), 2*[ 1.0/(total_re[0]*total_re[0]) ], 1e-15 )
         else:
-          self.assertTrue( total_fom < 1e-15 )
+          self.assertTrue( total_fom[0] < 1e-15 )
 
 #-----------------------------------------------------------------------------#
     # Check that a partial history contribution can be added to the estimator

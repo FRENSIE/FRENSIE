@@ -12,6 +12,9 @@
 #include "PyFrensie_PythonTypeTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_ToStringTraitsDecl.hpp"
+#include "Geometry_InfiniteMediumModel.hpp"
+#include "Geometry_AdvancedModel.hpp"
+#include "Geometry_InfiniteMediumNavigator.hpp"
 
 #include "MonteCarlo_ParticleType.hpp"
 #include "MonteCarlo_ParticleState.hpp"
@@ -40,6 +43,9 @@ using namespace MonteCarlo;
 
 // Include the serialization helpers for handling macros
 %include "Utility_SerializationHelpers.hpp"
+
+// Import the Geometry.Geometry__init__.i file
+%import "Geometry.Geometry__init__.i"
 
 // Standard exception handling
 %include "exception.i"
