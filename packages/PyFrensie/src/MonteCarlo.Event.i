@@ -65,6 +65,12 @@ monte_carlo/event subpackage.
 // Add Estimator support
 %include "MonteCarlo_Estimator.i"
 
+// Add Estimator support
+%include "MonteCarlo_ParticleTracker.i"
+
+// Add EventHandler support
+%include "MonteCarlo_EventHandler.i"
+
 //---------------------------------------------------------------------------//
 // Turn off the exception handling
 //---------------------------------------------------------------------------//
