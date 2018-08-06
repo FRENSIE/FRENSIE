@@ -31,16 +31,19 @@ void ParticleLeavingCellEventLocalDispatcher::dispatchParticleLeavingCellEvent(
   // Make sure the cell being entered is valid
   testPrecondition( cell_leaving == this->getEntityId() );
 
-  ObserverSet& observer_set =
-    this->getObserverSet( particle.getParticleType() );
-  
-  ObserverSet::iterator it = observer_set.begin();
-
-  while( it != observer_set.end() )
+  if( this->hasObserverSet( particle.getParticleType() ) )
   {
-    (*it)->updateFromParticleLeavingCellEvent( particle, cell_leaving );
-
-    ++it;
+    ObserverSet& observer_set =
+      this->getObserverSet( particle.getParticleType() );
+    
+    ObserverSet::iterator it = observer_set.begin();
+    
+    while( it != observer_set.end() )
+    {
+      (*it)->updateFromParticleLeavingCellEvent( particle, cell_leaving );
+      
+      ++it;
+    }
   }
 }
 

@@ -65,20 +65,4 @@ IF(${FRENSIE_ENABLE_MPI})
     MPI_PROCS 4)
 ENDIF()
 
-# IF(FRENSIE_ENABLE_DAGMC)
-#   ADD_EXECUTABLE(tstEventHandlerFactory_DagMC
-#     tstEventHandlerFactory_DagMC.cpp)
-#   TARGET_LINK_LIBRARIES(tstEventHandlerFactory_DagMC monte_carlo_estimator_native)
-#   ADD_TEST(EventHandlerFactory_DagMC_test tstEventHandlerFactory_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_dagmc.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers.xml")
-#   SET_PROPERTY(TEST EventHandlerFactory_DagMC_test PROPERTY LABELS monte_carlo_estimator_native dagmc)
-# ENDIF()
-
-# IF(FRENSIE_ENABLE_ROOT)
-#   ADD_EXECUTABLE(tstEventHandlerFactory_Root
-#     tstEventHandlerFactory_Root.cpp)
-#   TARGET_LINK_LIBRARIES(tstEventHandlerFactory_Root monte_carlo_estimator_native geometry_root)
-#   ADD_TEST(EventHandlerFactoryRoot_test tstEventHandlerFactory_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers.xml")
-#   SET_PROPERTY(TEST EventHandlerFactoryRoot_test PROPERTY LABELS monte_carlo_estimator_native root)
-# ENDIF()
-
 FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_event_dispatcher)

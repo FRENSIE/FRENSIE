@@ -9,6 +9,7 @@
 // FRENSIE Includes
 #include "FRENSIE_Archives.hpp" // Must be included first
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
@@ -17,6 +18,7 @@ namespace MonteCarlo{
 SimulationGeneralProperties::SimulationGeneralProperties()
   : d_particle_mode( NEUTRON_MODE ),
     d_number_of_histories( 0 ),
+    d_wall_time( Utility::QuantityTraits<double>::inf() ),
     d_surface_flux_estimator_angle_cosine_cutoff( 0.001 ),
     d_display_warnings( true ),
     d_implicit_capture_mode_on( false ),
@@ -47,6 +49,21 @@ void SimulationGeneralProperties::setNumberOfHistories(
 unsigned long long SimulationGeneralProperties::getNumberOfHistories() const
 {
   return d_number_of_histories;
+}
+
+// Set the history simulation wall time
+void SimulationGeneralProperties::setSimulationWallTime( const double wall_time )
+{
+  // Make sure that the wall time is valid
+  testPrecondition( wall_time > 0.0 );
+
+  d_wall_time = wall_time;
+}
+
+// Return the history simulation wall time
+double SimulationGeneralProperties::getSimulationWallTime() const
+{
+  return d_wall_time;
 }
 
 // Set the angle cosine cutoff value for surface flux estimators

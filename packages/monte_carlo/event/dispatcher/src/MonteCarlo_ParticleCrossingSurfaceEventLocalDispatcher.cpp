@@ -32,18 +32,21 @@ void ParticleCrossingSurfaceEventLocalDispatcher::dispatchParticleCrossingSurfac
   // Make sure the surface being crossed is valid
   testPrecondition( surface_crossing == this->getEntityId() );
 
-  ObserverSet& observer_set =
-    this->getObserverSet( particle.getParticleType() );
-  
-  ObserverSet::iterator it = observer_set.begin();
-
-  while( it != observer_set.end() )
+  if( this->hasObserverSet( particle.getParticleType() ) )
   {
-    (*it)->updateFromParticleCrossingSurfaceEvent( particle,
-                                                   surface_crossing,
-                                                   angle_cosine );
-
-    ++it;
+    ObserverSet& observer_set =
+      this->getObserverSet( particle.getParticleType() );
+    
+    ObserverSet::iterator it = observer_set.begin();
+    
+    while( it != observer_set.end() )
+    {
+      (*it)->updateFromParticleCrossingSurfaceEvent( particle,
+                                                     surface_crossing,
+                                                     angle_cosine );
+      
+      ++it;
+    }
   }
 }
 

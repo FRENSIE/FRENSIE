@@ -33,18 +33,21 @@ ParticleCollidingInCellEventLocalDispatcher::dispatchParticleCollidingInCellEven
   // Make sure the cell being collided in is valid
   testPrecondition( cell_of_collision == this->getEntityId() );
 
-  ObserverSet& observer_set =
-    this->getObserverSet( particle.getParticleType() );
-  
-  ObserverSet::iterator it = observer_set.begin();
-
-  while( it != observer_set.end() )
+  if( this->hasObserverSet( particle.getParticleType() ) )
   {
-    (*it)->updateFromParticleCollidingInCellEvent( particle,
-                                                   cell_of_collision,
-                                                   inverse_total_cross_section );
+    ObserverSet& observer_set =
+      this->getObserverSet( particle.getParticleType() );
+  
+    ObserverSet::iterator it = observer_set.begin();
 
-    ++it;
+    while( it != observer_set.end() )
+    {
+      (*it)->updateFromParticleCollidingInCellEvent( particle,
+                                                     cell_of_collision,
+                                                     inverse_total_cross_section );
+
+      ++it;
+    }
   }
 }
 

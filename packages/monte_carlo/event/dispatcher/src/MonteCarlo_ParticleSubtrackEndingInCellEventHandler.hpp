@@ -49,8 +49,7 @@ public:
   void updateObserversFromParticleSubtrackEndingInCellEvent(
                               const ParticleState& particle,
                               const Geometry::Model::EntityId cell_of_subtrack,
-                              const double particle_subtrack_length,
-                              const double subtrack_start_time );
+                              const double particle_subtrack_length );
 
 protected:
 

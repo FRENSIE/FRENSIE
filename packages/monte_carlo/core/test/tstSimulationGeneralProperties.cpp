@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
+#include "Utility_QuantityTraits.hpp"
 #include "ArchiveTestHelpers.hpp"
 
 //---------------------------------------------------------------------------//
@@ -31,6 +32,8 @@ FRENSIE_UNIT_TEST( SimulationGeneralProperties, defaults )
   FRENSIE_CHECK_EQUAL( properties.getParticleMode(),
                        MonteCarlo::NEUTRON_MODE );
   FRENSIE_CHECK_EQUAL( properties.getNumberOfHistories(), 0 );
+  FRENSIE_CHECK_EQUAL( properties.getSimulationWallTime(),
+                       Utility::QuantityTraits<double>::inf() );
   FRENSIE_CHECK_EQUAL( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
                        0.001 );
   FRENSIE_CHECK( properties.displayWarnings() );
@@ -92,6 +95,17 @@ FRENSIE_UNIT_TEST( SimulationGeneralProperties, setNumberOfHistories )
   properties.setNumberOfHistories( 1000000000 );
 
   FRENSIE_CHECK_EQUAL(properties.getNumberOfHistories(), 1000000000 );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the wall time can be set
+FRENSIE_UNIT_TEST( SimulationGeneralProperties, setSimulationWallTime )
+{
+  MonteCarlo::SimulationGeneralProperties properties;
+  
+  properties.setSimulationWallTime( 300.0 );
+
+  FRENSIE_CHECK_EQUAL( properties.getSimulationWallTime(), 300.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -173,6 +187,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationGeneralProperties,
     MonteCarlo::SimulationGeneralProperties custom_properties;
     custom_properties.setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE );
     custom_properties.setNumberOfHistories( 1000000000 );
+    custom_properties.setSimulationWallTime( 300.0 );
     custom_properties.setSurfaceFluxEstimatorAngleCosineCutoff( 0.1 );
     custom_properties.setWarningsOff();
     custom_properties.setImplicitCaptureModeOn();
@@ -197,6 +212,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationGeneralProperties,
   FRENSIE_CHECK_EQUAL( default_properties.getParticleMode(),
                        MonteCarlo::NEUTRON_MODE );
   FRENSIE_CHECK_EQUAL( default_properties.getNumberOfHistories(), 0 );
+  FRENSIE_CHECK_EQUAL( default_properties.getSimulationWallTime(),
+                       Utility::QuantityTraits<double>::inf() );
   FRENSIE_CHECK_EQUAL( default_properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
                        0.001 );
   FRENSIE_CHECK( default_properties.displayWarnings() );
@@ -209,6 +226,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationGeneralProperties,
   FRENSIE_CHECK_EQUAL( custom_properties.getParticleMode(),
                        MonteCarlo::NEUTRON_PHOTON_MODE );
   FRENSIE_CHECK_EQUAL( custom_properties.getNumberOfHistories(), 1000000000 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getSimulationWallTime(), 300.0 );
   FRENSIE_CHECK_EQUAL( custom_properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
                        0.1 );
   FRENSIE_CHECK( !custom_properties.displayWarnings() );
