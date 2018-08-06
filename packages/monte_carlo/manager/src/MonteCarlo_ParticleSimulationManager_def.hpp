@@ -126,12 +126,14 @@ void ParticleSimulationManager<mode>::runSimulation()
                  Utility::OpenMPProperties::getRequestedNumberOfThreads() );
 
   // Set the start time
-  this->setStartTime( Utility::OpenMPProperties::getTime() );
+  EMI::updateObserversFromParticleSimulationStartedEvent();
+  //this->setStartTime( Utility::OpenMPProperties::getTime() );
 
   // Simulate the batch
   this->runSimulationBatch( d_start_history, d_history_number_wall );
 
   // Set the end time
+  EMI::updateObserversFromParticleSImiulationStoppedEvent();
   this->setEndTime( Utility::OpenMPProperties::getTime() );
 
   std::cout << "done." << std::endl;

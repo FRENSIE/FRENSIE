@@ -77,6 +77,96 @@ std::shared_ptr<MonteCarlo::ParticleTracker> particle_tracker;
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check that the simulation completion criterion can be set
+FRENSIE_UNIT_TEST( EventHandler, setSimulationCompletionCriterion )
+{
+  MonteCarlo::EventHandler event_handler;
+
+  event_handler.setSimulationCompletionCriterion( MonteCarlo::ParticleHistorySimulationCompletionCriterion::createHistoryCountCriterion( 10 ) );
+
+  event_handler.updateObserversFromParticleSimulationStartedEvent();
+
+  FRENSIE_CHECK( !event_handler.getSimulationCompletionCriterion().isSimulationComplete() );
+  
+  for( size_t i = 0; i < 5; ++i )
+    event_handler.commitObserverHistoryContributions();
+
+  FRENSIE_CHECK( !event_handler.getSimulationCompletionCriterion().isSimulationComplete() );
+
+  event_handler.updateObserversFromParticleSimulationStoppedEvent();
+
+  for( size_t i = 5; i <= 10; ++i )
+    event_handler.commitObserverHistoryContributions();
+
+  FRENSIE_CHECK( !event_handler.getSimulationCompletionCriterion().isSimulationComplete() );
+
+  event_handler.updateObserversFromParticleSimulationStartedEvent();
+
+  for( size_t i = 5; i <= 10; ++i )
+    event_handler.commitObserverHistoryContributions();
+
+  FRENSIE_CHECK( event_handler.getSimulationCompletionCriterion().isSimulationComplete() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the simulation completion criterion can be set
+FRENSIE_UNIT_TEST( EventHandler, setSimulationCompletionCriterion_props )
+{
+  // Set a history wall
+  MonteCarlo::SimulationGeneralProperties properties;
+  properties.setNumberOfHistories( 10 );
+  
+  std::unique_ptr<MonteCarlo::EventHandler> event_handler(
+                                  new MonteCarlo::EventHandler( properties ) );
+
+  event_handler->updateObserversFromParticleSimulationStartedEvent();
+
+  FRENSIE_CHECK( !event_handler->getSimulationCompletionCriterion().isSimulationComplete() );
+  
+  for( size_t i = 0; i <= 10; ++i )
+    event_handler->commitObserverHistoryContributions();
+
+  FRENSIE_CHECK( event_handler->getSimulationCompletionCriterion().isSimulationComplete() );
+
+  // Set a time wall
+  properties.setNumberOfHistories( 0 );
+  properties.setSimulationWallTime( 0.02 );
+
+  event_handler.reset( new MonteCarlo::EventHandler( properties ) );
+  
+  FRENSIE_CHECK( !event_handler->getSimulationCompletionCriterion().isSimulationComplete() );
+
+  event_handler->updateObserversFromParticleSimulationStartedEvent();
+
+  std::shared_ptr<Utility::Timer> timer =
+    Utility::GlobalMPISession::createTimer();
+
+  timer->start();
+  
+  while( timer->elapsed().count() < 0.02 );
+
+  timer->stop();
+  timer.reset();
+
+  FRENSIE_CHECK( event_handler->getSimulationCompletionCriterion().isSimulationComplete() );
+
+  // Set a mixed criterion
+  properties.setNumberOfHistories( 10 );
+  properties.setSimulationWallTime( 1.0 );
+
+  event_handler.reset( new MonteCarlo::EventHandler( properties ) );
+  
+  FRENSIE_CHECK( !event_handler->getSimulationCompletionCriterion().isSimulationComplete() );
+
+  event_handler->updateObserversFromParticleSimulationStartedEvent();
+
+  for( size_t i = 0; i <= 10; ++i )
+    event_handler->commitObserverHistoryContributions();
+
+  FRENSIE_CHECK( event_handler->getSimulationCompletionCriterion().isSimulationComplete() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that estimators can be added
 FRENSIE_UNIT_TEST( EventHandler, addEstimator )
 {
@@ -462,10 +552,40 @@ FRENSIE_UNIT_TEST( EventHandler, get_dispatcher )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the number of histories can be set
-FRENSIE_UNIT_TEST( EventHandler, setNumberOfHistories )
+// Check that the number of histories can be returned
+FRENSIE_UNIT_TEST( EventHandler, getNumberOfCommittedHistories )
 {
+  MonteCarlo::EventHandler event_handler;
 
+  FRENSIE_CHECK_EQUAL( event_handler.getNumberOfCommittedHistories(), 0 );
+  
+  event_handler.commitObserverHistoryContributions();
+
+  FRENSIE_CHECK_EQUAL( event_handler.getNumberOfCommittedHistories(), 1 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the elapsed simulation time can be returned
+FRENSIE_UNIT_TEST( EventHandler, getElapsedTime )
+{
+  MonteCarlo::EventHandler event_handler;
+
+  FRENSIE_CHECK_EQUAL( event_handler.getElapsedTime(), 0.0 );
+
+  event_handler.updateObserversFromParticleSimulationStartedEvent();
+
+  std::shared_ptr<Utility::Timer> timer =
+    Utility::GlobalMPISession::createTimer();
+
+  timer->start();
+
+  while( timer->elapsed().count() < 0.02 );
+
+  timer->stop();
+
+  event_handler.updateObserversFromParticleSimulationStoppedEvent();
+
+  FRENSIE_CHECK( event_handler.getElapsedTime() >= 0.02 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1720,6 +1840,8 @@ FRENSIE_UNIT_TEST( EventHandler, update_thread_safe )
     event_handler.commitObserverHistoryContributions();
   }
 
+  FRENSIE_CHECK_EQUAL( event_handler.getNumberOfCommittedHistories(), threads );
+
   Utility::ArrayView<const double> first_moments, second_moments;
   first_moments = estimator_1->getEntityBinDataFirstMoments( 1 );
   second_moments = estimator_1->getEntityBinDataSecondMoments( 1 );
@@ -1955,14 +2077,16 @@ FRENSIE_UNIT_TEST( EventHandler, update_thread_safe )
     std::shared_ptr<const Geometry::Model>
       local_model( new Geometry::InfiniteMediumModel( 2 ) );
     
-    MonteCarlo::PhotonState photon( Utility::OpenMPProperties::getThreadId() );
+    MonteCarlo::PhotonState photon( threads + Utility::OpenMPProperties::getThreadId() );
     photon.setWeight( 1.0 );
     photon.setEnergy( 2.0 );
+    photon.setDirection( 1.0, 0.0, 0.0 );
     photon.embedInModel( local_model );
 
-    MonteCarlo::ElectronState electron( Utility::OpenMPProperties::getThreadId() );
+    MonteCarlo::ElectronState electron( threads + Utility::OpenMPProperties::getThreadId() );
     electron.setWeight( 1.0 );
     electron.setEnergy( 2.0 );
+    electron.setDirection( -1.0, 0.0, 0.0 );
     electron.embedInModel( local_model );
 
     double surface_normal[3] = {1.0, 0.0, 0.0};
@@ -1984,6 +2108,7 @@ FRENSIE_UNIT_TEST( EventHandler, update_thread_safe )
 
     event_handler.updateObserversFromParticleCrossingSurfaceEvent( photon, 2, surface_normal );
     event_handler.updateObserversFromParticleCrossingSurfaceEvent( electron, 2, surface_normal );
+    event_handler.updateObserversFromParticleSubtrackEndingGlobalEvent( photon, start_point, end_point );
     event_handler.updateObserversFromParticleSubtrackEndingGlobalEvent( electron, start_point, end_point );
 
     photon.setAsGone();
@@ -1994,27 +2119,841 @@ FRENSIE_UNIT_TEST( EventHandler, update_thread_safe )
 
     event_handler.commitObserverHistoryContributions();
   }
+
+  FRENSIE_CHECK_EQUAL( event_handler.getNumberOfCommittedHistories(), 2*threads );
+
+  first_moments = estimator_1->getEntityBinDataFirstMoments( 1 );
+  second_moments = estimator_1->getEntityBinDataSecondMoments( 1 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
+  
+  first_moments = estimator_1->getEntityBinDataFirstMoments( 2 );
+  second_moments = estimator_1->getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
+  
+  first_moments = estimator_2->getEntityBinDataFirstMoments( 1 );
+  second_moments = estimator_2->getEntityBinDataSecondMoments( 1 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*threads} ) );
+  
+  first_moments = estimator_2->getEntityBinDataFirstMoments( 2 );
+  second_moments = estimator_2->getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*threads} ) );
+
+  first_moments = estimator_3->getEntityBinDataFirstMoments( 1 );
+  second_moments = estimator_3->getEntityBinDataSecondMoments( 1 );
+
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
+  
+  first_moments = estimator_3->getEntityBinDataFirstMoments( 2 );
+  second_moments = estimator_3->getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
+  
+  first_moments = estimator_4->getEntityBinDataFirstMoments( 1 );
+  second_moments = estimator_4->getEntityBinDataSecondMoments( 1 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*threads} ) );
+  
+  first_moments = estimator_5->getEntityBinDataFirstMoments( 2 );
+  second_moments = estimator_5->getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
+
+  first_moments = estimator_5->getEntityBinDataFirstMoments( 1 );
+  second_moments = estimator_5->getEntityBinDataSecondMoments( 1 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
+  
+  first_moments = estimator_5->getEntityBinDataFirstMoments( 2 );
+  second_moments = estimator_5->getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
+  
+  first_moments = estimator_6->getEntityBinDataFirstMoments( 1 );
+  second_moments = estimator_6->getEntityBinDataSecondMoments( 1 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*threads} ) );
+  
+  first_moments = estimator_6->getEntityBinDataFirstMoments( 2 );
+  second_moments = estimator_6->getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*threads} ) );
+
+  first_moments = estimator_7->getEntityBinDataFirstMoments( 1 );
+  second_moments = estimator_7->getEntityBinDataSecondMoments( 1 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
+  
+  first_moments = estimator_7->getEntityBinDataFirstMoments( 2 );
+  second_moments = estimator_7->getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
+  
+  first_moments = estimator_8->getEntityBinDataFirstMoments( 1 );
+  second_moments = estimator_8->getEntityBinDataSecondMoments( 1 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
+  
+  first_moments = estimator_8->getEntityBinDataFirstMoments( 2 );
+  second_moments = estimator_8->getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
+  
+  first_moments = estimator_9->getEntityBinDataFirstMoments( 1 );
+  second_moments = estimator_9->getEntityBinDataSecondMoments( 1 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
+  
+  first_moments = estimator_9->getEntityBinDataFirstMoments( 2 );
+  second_moments = estimator_9->getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
+  
+  first_moments = estimator_10->getEntityBinDataFirstMoments( 1 );
+  second_moments = estimator_10->getEntityBinDataSecondMoments( 1 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
+  
+  first_moments = estimator_10->getEntityBinDataFirstMoments( 2 );
+  second_moments = estimator_10->getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
+  
+  first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 0 );
+  second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 0 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {2.0*threads} ) );
+  
+  first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 1 );
+  second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 1 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 2 );
+  second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 3 );
+  second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 3 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 4 );
+  second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 4 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {2.0*threads} ) );
+  
+  first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 5 );
+  second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 5 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 6 );
+  second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 6 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 7 );
+  second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 7 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 0 );
+  second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 0 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {2.0*threads} ) );
+  
+  first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 1 );
+  second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 1 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 2 );
+  second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 3 );
+  second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 3 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 4 );
+  second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 4 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*threads} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {2.0*threads} ) );
+  
+  first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 5 );
+  second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 5 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 6 );
+  second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 6 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 7 );
+  second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 7 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  particle_tracker->getHistoryData( history_map );
+
+  for( size_t i = threads; i < 2*threads; ++i )
+  {
+    FRENSIE_REQUIRE( history_map.find( i ) != history_map.end() );
+    FRENSIE_REQUIRE( history_map[i].find( MonteCarlo::PHOTON ) !=
+                     history_map[i].end() );
+    FRENSIE_REQUIRE( history_map[i].find( MonteCarlo::ELECTRON ) !=
+                     history_map[i].end() );
+  }
 }
 
 //---------------------------------------------------------------------------//
 // Check if distributed observers can be updated
 FRENSIE_UNIT_TEST( EventHandler, update_distributed )
 {
+  MonteCarlo::EventHandler event_handler;
 
+  event_handler.addEstimator( estimator_1 );
+  event_handler.addEstimator( estimator_2 );
+  event_handler.addEstimator( estimator_3 );
+  event_handler.addEstimator( estimator_4 );
+  event_handler.addEstimator( estimator_5 );
+  event_handler.addEstimator( estimator_6 );
+  event_handler.addEstimator( estimator_7 );
+  event_handler.addEstimator( estimator_8 );
+  event_handler.addEstimator( estimator_9 );
+  event_handler.addEstimator( estimator_10 );
+  event_handler.addEstimator( mesh_estimator_1 );
+  event_handler.addEstimator( mesh_estimator_2 );
+  event_handler.addParticleTracker( particle_tracker );
+
+  event_handler.resetObserverData();
+
+  std::shared_ptr<const Utility::Communicator> comm =
+    Utility::Communicator::getDefault();
+  
+  {
+    std::shared_ptr<const Geometry::Model>
+      local_model( new Geometry::InfiniteMediumModel( 1 ) );
+    
+    MonteCarlo::PhotonState photon( comm->rank() );
+    photon.setWeight( 1.0 );
+    photon.setEnergy( 2.0 );
+    photon.setDirection( 1.0, 0.0, 0.0 );
+    photon.embedInModel( local_model );
+
+    MonteCarlo::ElectronState electron( comm->rank() );
+    electron.setWeight( 1.0 );
+    electron.setEnergy( 2.0 );
+    electron.setDirection( -1.0, 0.0, 0.0 );
+    electron.embedInModel( local_model );
+
+    double surface_normal[3] = {1.0, 0.0, 0.0};
+    double start_point[3] = {0.5, 0.5, 0.0};
+    double end_point[3] = {0.5, 0.5, 2.0};
+
+    event_handler.updateObserversFromParticleCollidingInCellEvent( photon, 1.0 );
+    event_handler.updateObserversFromParticleCollidingInCellEvent( electron, 1.0 );
+    event_handler.updateObserversFromParticleSubtrackEndingInCellEvent( photon, 1, 1.0 );
+    event_handler.updateObserversFromParticleSubtrackEndingInCellEvent( electron, 1, 1.0 );
+    event_handler.updateObserversFromParticleEnteringCellEvent( photon, 1 );
+    event_handler.updateObserversFromParticleEnteringCellEvent( electron, 1 );
+
+    photon.setEnergy( 1.0 );
+    electron.setEnergy( 1.0 );
+
+    event_handler.updateObserversFromParticleLeavingCellEvent( photon, 1 );
+    event_handler.updateObserversFromParticleLeavingCellEvent( electron, 1 );
+
+    event_handler.updateObserversFromParticleCrossingSurfaceEvent( photon, 1, surface_normal );
+    event_handler.updateObserversFromParticleCrossingSurfaceEvent( electron, 1, surface_normal );
+    event_handler.updateObserversFromParticleSubtrackEndingGlobalEvent( photon, start_point, end_point );
+    event_handler.updateObserversFromParticleSubtrackEndingGlobalEvent( electron, start_point, end_point );
+
+    photon.setAsGone();
+    electron.setAsGone();
+
+    event_handler.updateObserversFromParticleGoneGlobalEvent( photon );
+    event_handler.updateObserversFromParticleGoneGlobalEvent( electron );
+
+    event_handler.commitObserverHistoryContributions();
+  }
+
+  event_handler.reduceObserverData( *comm, 0 );
+
+  if( comm->rank() == 0 )
+  {
+    FRENSIE_CHECK_EQUAL( event_handler.getNumberOfCommittedHistories(),
+                         comm->size() );
+
+    Utility::ArrayView<const double> first_moments, second_moments;
+    first_moments = estimator_1->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_1->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()} ) );
+    
+    first_moments = estimator_1->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_1->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_2->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_2->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*comm->size()} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*comm->size()} ) );
+    
+    first_moments = estimator_2->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_2->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_3->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_3->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()} ) );
+    
+    first_moments = estimator_3->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_3->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_4->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_4->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*comm->size()} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*comm->size()} ) );
+    
+    first_moments = estimator_5->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_5->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_5->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_5->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()} ) );
+    
+    first_moments = estimator_5->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_5->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_6->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_6->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*comm->size()} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*comm->size()} ) );
+    
+    first_moments = estimator_6->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_6->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = estimator_7->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_7->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()} ) );
+    
+    first_moments = estimator_7->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_7->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_8->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_8->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()} ) );
+    
+    first_moments = estimator_8->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_8->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_9->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_9->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()} ) );
+    
+    first_moments = estimator_9->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_9->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_10->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_10->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()} ) );
+    
+    first_moments = estimator_10->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_10->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 0 );
+    second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 0 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()} ) );
+    
+    first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 1 );
+    second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 2 );
+    second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 3 );
+    second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 3 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 4 );
+    second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 4 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()} ) );
+    
+    first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 5 );
+    second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 5 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 6 );
+    second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 6 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 7 );
+    second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 7 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 0 );
+    second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 0 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()} ) );
+    
+    first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 1 );
+    second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 2 );
+    second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 3 );
+    second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 3 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 4 );
+    second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 4 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()} ) );
+    
+    first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 5 );
+    second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 5 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 6 );
+    second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 6 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 7 );
+    second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 7 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    MonteCarlo::ParticleTracker::OverallHistoryMap history_map;
+    
+    particle_tracker->getHistoryData( history_map );
+    
+    for( size_t i = 0; i < comm->size(); ++i )
+    {
+      FRENSIE_REQUIRE( history_map.find( i ) != history_map.end() );
+      FRENSIE_REQUIRE( history_map[i].find( MonteCarlo::PHOTON ) !=
+                       history_map[i].end() );
+      FRENSIE_REQUIRE( history_map[i].find( MonteCarlo::ELECTRON ) !=
+                       history_map[i].end() );
+    }
+  }
+  else
+  {
+    FRENSIE_CHECK_EQUAL( event_handler.getNumberOfCommittedHistories(), 0 );
+
+    Utility::ArrayView<const double> first_moments, second_moments;
+    first_moments = estimator_1->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_1->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_1->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_1->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_2->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_2->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_2->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_2->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_3->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_3->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_3->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_3->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_4->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_4->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_5->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_5->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_5->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_5->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_5->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_5->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_6->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_6->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_6->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_6->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = estimator_7->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_7->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_7->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_7->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_8->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_8->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_8->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_8->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_9->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_9->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_9->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_9->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_10->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_10->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = estimator_10->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_10->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 0 );
+    second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 0 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 1 );
+    second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 2 );
+    second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 3 );
+    second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 3 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 4 );
+    second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 4 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 5 );
+    second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 5 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 6 );
+    second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 6 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 7 );
+    second_moments = mesh_estimator_1->getEntityBinDataSecondMoments( 7 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 0 );
+    second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 0 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 1 );
+    second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 1 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 2 );
+    second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 2 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 3 );
+    second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 3 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 4 );
+    second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 4 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 5 );
+    second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 5 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 6 );
+    second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 6 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    first_moments = mesh_estimator_2->getEntityBinDataFirstMoments( 7 );
+    second_moments = mesh_estimator_2->getEntityBinDataSecondMoments( 7 );
+    
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+    
+    MonteCarlo::ParticleTracker::OverallHistoryMap history_map;
+    
+    particle_tracker->getHistoryData( history_map );
+
+    FRENSIE_CHECK( history_map.empty() );
+  }
 }
 
 //---------------------------------------------------------------------------//
 // Check that the observer summaries can be printed
 FRENSIE_UNIT_TEST( EventHandler, printObserverSummaries )
 {
+  MonteCarlo::EventHandler event_handler;
 
+  event_handler.addEstimator( estimator_1 );
+  event_handler.addEstimator( estimator_2 );
+  event_handler.addEstimator( estimator_3 );
+  event_handler.addEstimator( estimator_4 );
+  event_handler.addEstimator( estimator_5 );
+  event_handler.addEstimator( estimator_6 );
+  event_handler.addEstimator( estimator_7 );
+  event_handler.addEstimator( estimator_8 );
+  event_handler.addEstimator( estimator_9 );
+  event_handler.addEstimator( estimator_10 );
+  event_handler.addEstimator( mesh_estimator_1 );
+  event_handler.addEstimator( mesh_estimator_2 );
+  event_handler.addParticleTracker( particle_tracker );
+
+  event_handler.resetObserverData();
+
+  event_handler.updateObserversFromParticleSimulationStartedEvent();
+
+  event_handler.commitObserverHistoryContributions();
+  event_handler.commitObserverHistoryContributions();
+
+  event_handler.updateObserversFromParticleSimulationStoppedEvent();
+  
+  std::ostringstream oss;
+
+  FRENSIE_REQUIRE_NO_THROW( event_handler.printObserverSummaries( oss ) );
+
+  std::cout << oss.str() << std::endl;
 }
 
 //---------------------------------------------------------------------------//
 // Check that the observer summaries can be logged
 FRENSIE_UNIT_TEST( EventHandler, logObserverSummaries )
 {
+  MonteCarlo::EventHandler event_handler;
 
+  event_handler.addEstimator( estimator_1 );
+  event_handler.addEstimator( estimator_2 );
+  event_handler.addEstimator( estimator_3 );
+  event_handler.addEstimator( estimator_4 );
+  event_handler.addEstimator( estimator_5 );
+  event_handler.addEstimator( estimator_6 );
+  event_handler.addEstimator( estimator_7 );
+  event_handler.addEstimator( estimator_8 );
+  event_handler.addEstimator( estimator_9 );
+  event_handler.addEstimator( estimator_10 );
+  event_handler.addEstimator( mesh_estimator_1 );
+  event_handler.addEstimator( mesh_estimator_2 );
+  event_handler.addParticleTracker( particle_tracker );
+
+  event_handler.resetObserverData();
+
+  event_handler.updateObserversFromParticleSimulationStartedEvent();
+
+  event_handler.commitObserverHistoryContributions();
+  event_handler.commitObserverHistoryContributions();
+
+  event_handler.updateObserversFromParticleSimulationStoppedEvent();
+  
+  FRENSIE_REQUIRE_NO_THROW( event_handler.logObserverSummaries() );
 }
 
 //---------------------------------------------------------------------------//
@@ -2035,6 +2974,166 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( EventHandler, archive, TestArchives )
 
     createOArchive( archive_base_name, archive_ostream, oarchive );
 
+    MonteCarlo::EventHandler event_handler;
+
+    event_handler.setSimulationCompletionCriterion( MonteCarlo::ParticleHistorySimulationCompletionCriterion::createHistoryCountCriterion( 1 ) );
+
+    std::shared_ptr<MonteCarlo::WeightMultipliedCellCollisionFluxEstimator>
+      local_estimator_1( new MonteCarlo::WeightMultipliedCellCollisionFluxEstimator(
+                                              100, 1.0, {1, 2}, {1.0, 1.0} ) );
+
+    local_estimator_1->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
+
+    std::shared_ptr<MonteCarlo::WeightMultipliedCellCollisionFluxEstimator>
+      local_estimator_2( new MonteCarlo::WeightMultipliedCellCollisionFluxEstimator(
+                                              101, 1.0, {1, 2}, {1.0, 1.0} ) );
+
+    local_estimator_2->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
+
+    std::shared_ptr<MonteCarlo::WeightMultipliedCellTrackLengthFluxEstimator>
+      local_estimator_3( new MonteCarlo::WeightMultipliedCellTrackLengthFluxEstimator(
+                                              102, 1.0, {1, 2}, {1.0, 1.0} ) );
+
+    local_estimator_3->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
+
+    std::shared_ptr<MonteCarlo::WeightMultipliedCellTrackLengthFluxEstimator>
+      local_estimator_4( new MonteCarlo::WeightMultipliedCellTrackLengthFluxEstimator(
+                                              103, 1.0, {1, 2}, {1.0, 1.0} ) );
+
+    local_estimator_4->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
+
+    std::shared_ptr<MonteCarlo::WeightMultipliedCellPulseHeightEstimator>
+      local_estimator_5( new MonteCarlo::WeightMultipliedCellPulseHeightEstimator(
+                                                          104, 1.0, {1, 2} ) );
+
+    local_estimator_5->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON, MonteCarlo::ELECTRON} ) );
+
+    std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedCellPulseHeightEstimator>
+      local_estimator_6( new MonteCarlo::WeightAndEnergyMultipliedCellPulseHeightEstimator(
+                                                          105, 1.0, {1, 2} ) );
+
+    local_estimator_6->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON, MonteCarlo::ELECTRON} ) );
+
+    std::shared_ptr<MonteCarlo::WeightMultipliedSurfaceFluxEstimator>
+      local_estimator_7( new MonteCarlo::WeightMultipliedSurfaceFluxEstimator(
+                                              106, 1.0, {1, 2}, {1.0, 1.0} ) );
+
+    local_estimator_7->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
+
+    std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedSurfaceFluxEstimator>
+      local_estimator_8( new MonteCarlo::WeightAndEnergyMultipliedSurfaceFluxEstimator(
+                                              107, 1.0, {1, 2}, {1.0, 1.0} ) );
+
+    local_estimator_8->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
+
+    std::shared_ptr<MonteCarlo::WeightMultipliedSurfaceCurrentEstimator>
+      local_estimator_9( new MonteCarlo::WeightMultipliedSurfaceCurrentEstimator(
+                                                          108, 1.0, {1, 2} ) );
+
+    local_estimator_9->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
+
+    std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedSurfaceCurrentEstimator>
+      local_estimator_10( new MonteCarlo::WeightAndEnergyMultipliedSurfaceCurrentEstimator(
+                                                          109, 1.0, {1, 2} ) );
+
+    local_estimator_10->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
+
+    std::shared_ptr<const Utility::Mesh> hex_mesh(
+                           new Utility::StructuredHexMesh( {0.0, 1.0, 2.0},
+                                                           {0.0, 1.0, 2.0},
+                                                           {0.0, 1.0, 2.0} ) );
+    
+    std::shared_ptr<MonteCarlo::WeightMultipliedMeshTrackLengthFluxEstimator>
+      local_mesh_estimator_1( new MonteCarlo::WeightMultipliedMeshTrackLengthFluxEstimator(
+                                                                  110,
+                                                                  1.0,
+                                                                  hex_mesh ) );
+    local_mesh_estimator_1->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
+
+    std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedMeshTrackLengthFluxEstimator>
+      local_mesh_estimator_2( new MonteCarlo::WeightAndEnergyMultipliedMeshTrackLengthFluxEstimator(
+                                                                  111,
+                                                                  1.0,
+                                                                  hex_mesh ) );
+    local_mesh_estimator_2->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
+
+    std::shared_ptr<MonteCarlo::ParticleTracker> local_particle_tracker( 
+                                  new MonteCarlo::ParticleTracker( 10, 100 ) );
+    
+    event_handler.addEstimator( local_estimator_1 );
+    event_handler.addEstimator( local_estimator_2 );
+    event_handler.addEstimator( local_estimator_3 );
+    event_handler.addEstimator( local_estimator_4 );
+    event_handler.addEstimator( local_estimator_5 );
+    event_handler.addEstimator( local_estimator_6 );
+    event_handler.addEstimator( local_estimator_7 );
+    event_handler.addEstimator( local_estimator_8 );
+    event_handler.addEstimator( local_estimator_9 );
+    event_handler.addEstimator( local_estimator_10 );
+    event_handler.addEstimator( local_mesh_estimator_1 );
+    event_handler.addEstimator( local_mesh_estimator_2 );
+    event_handler.addParticleTracker( local_particle_tracker );
+
+    event_handler.updateObserversFromParticleSimulationStartedEvent();
+    
+    std::shared_ptr<Utility::Timer> timer =
+      Utility::GlobalMPISession::createTimer();
+
+    timer->start();
+    
+    while( timer->elapsed().count() < 0.02 );
+
+    timer->stop();
+
+    std::shared_ptr<const Geometry::Model>
+      local_model( new Geometry::InfiniteMediumModel( 1 ) );
+    
+    MonteCarlo::PhotonState photon( 0 );
+    photon.setWeight( 1.0 );
+    photon.setEnergy( 2.0 );
+    photon.setDirection( 1.0, 0.0, 0.0 );
+    photon.embedInModel( local_model );
+
+    MonteCarlo::ElectronState electron( 0 );
+    electron.setWeight( 1.0 );
+    electron.setEnergy( 2.0 );
+    electron.setDirection( -1.0, 0.0, 0.0 );
+    electron.embedInModel( local_model );
+
+    double surface_normal[3] = {1.0, 0.0, 0.0};
+    double start_point[3] = {0.5, 0.5, 0.0};
+    double end_point[3] = {0.5, 0.5, 2.0};
+
+    event_handler.updateObserversFromParticleCollidingInCellEvent( photon, 1.0 );
+    event_handler.updateObserversFromParticleCollidingInCellEvent( electron, 1.0 );
+    event_handler.updateObserversFromParticleSubtrackEndingInCellEvent( photon, 1, 1.0 );
+    event_handler.updateObserversFromParticleSubtrackEndingInCellEvent( electron, 1, 1.0 );
+    event_handler.updateObserversFromParticleEnteringCellEvent( photon, 1 );
+    event_handler.updateObserversFromParticleEnteringCellEvent( electron, 1 );
+
+    photon.setEnergy( 1.0 );
+    electron.setEnergy( 1.0 );
+
+    event_handler.updateObserversFromParticleLeavingCellEvent( photon, 1 );
+    event_handler.updateObserversFromParticleLeavingCellEvent( electron, 1 );
+
+    event_handler.updateObserversFromParticleCrossingSurfaceEvent( photon, 1, surface_normal );
+    event_handler.updateObserversFromParticleCrossingSurfaceEvent( electron, 1, surface_normal );
+    event_handler.updateObserversFromParticleSubtrackEndingGlobalEvent( photon, start_point, end_point );
+    event_handler.updateObserversFromParticleSubtrackEndingGlobalEvent( electron, start_point, end_point );
+
+    photon.setAsGone();
+    electron.setAsGone();
+
+    event_handler.updateObserversFromParticleGoneGlobalEvent( photon );
+    event_handler.updateObserversFromParticleGoneGlobalEvent( electron );
+
+    event_handler.commitObserverHistoryContributions();
+    event_handler.commitObserverHistoryContributions();
+
+    event_handler.updateObserversFromParticleSimulationStoppedEvent();
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( event_handler ) );
   }
 
   // Copy the archive ostream to an istream
@@ -2044,6 +3143,243 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( EventHandler, archive, TestArchives )
   std::unique_ptr<IArchive> iarchive;
 
   createIArchive( archive_istream, iarchive );
+
+  MonteCarlo::EventHandler event_handler;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( event_handler ) );
+
+  iarchive.reset();
+
+  FRENSIE_CHECK_EQUAL( event_handler.getNumberOfCommittedHistories(), 2 );
+  FRENSIE_CHECK( event_handler.getElapsedTime() >= 0.02 );
+  FRENSIE_CHECK( event_handler.getSimulationCompletionCriterion().isSimulationComplete() );
+
+  Utility::ArrayView<const double> first_moments, second_moments;
+  first_moments = event_handler.getEstimator( 100 ).getEntityBinDataFirstMoments( 1 );
+  second_moments = event_handler.getEstimator( 100 ).getEntityBinDataSecondMoments( 1 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+  
+  first_moments = event_handler.getEstimator( 100 ).getEntityBinDataFirstMoments( 2 );
+  second_moments = event_handler.getEstimator( 100 ).getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = event_handler.getEstimator( 101 ).getEntityBinDataFirstMoments( 1 );
+  second_moments = event_handler.getEstimator( 101 ).getEntityBinDataSecondMoments( 1 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+  
+  first_moments = event_handler.getEstimator( 101 ).getEntityBinDataFirstMoments( 2 );
+  second_moments = event_handler.getEstimator( 101 ).getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+  first_moments = event_handler.getEstimator( 102 ).getEntityBinDataFirstMoments( 1 );
+  second_moments = event_handler.getEstimator( 102 ).getEntityBinDataSecondMoments( 1 );
+
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+  
+  first_moments = event_handler.getEstimator( 102 ).getEntityBinDataFirstMoments( 2 );
+  second_moments = event_handler.getEstimator( 102 ).getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = event_handler.getEstimator( 103 ).getEntityBinDataFirstMoments( 1 );
+  second_moments = event_handler.getEstimator( 103 ).getEntityBinDataSecondMoments( 1 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+  
+  first_moments = event_handler.getEstimator( 103 ).getEntityBinDataFirstMoments( 2 );
+  second_moments = event_handler.getEstimator( 103 ).getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+  first_moments = event_handler.getEstimator( 104 ).getEntityBinDataFirstMoments( 1 );
+  second_moments = event_handler.getEstimator( 104 ).getEntityBinDataSecondMoments( 1 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+  
+  first_moments = event_handler.getEstimator( 104 ).getEntityBinDataFirstMoments( 2 );
+  second_moments = event_handler.getEstimator( 104 ).getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = event_handler.getEstimator( 105 ).getEntityBinDataFirstMoments( 1 );
+  second_moments = event_handler.getEstimator( 105 ).getEntityBinDataSecondMoments( 1 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0} ) );
+  
+  first_moments = event_handler.getEstimator( 105 ).getEntityBinDataFirstMoments( 2 );
+  second_moments = event_handler.getEstimator( 105 ).getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+  first_moments = event_handler.getEstimator( 106 ).getEntityBinDataFirstMoments( 1 );
+  second_moments = event_handler.getEstimator( 106 ).getEntityBinDataSecondMoments( 1 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+  
+  first_moments = event_handler.getEstimator( 106 ).getEntityBinDataFirstMoments( 2 );
+  second_moments = event_handler.getEstimator( 106 ).getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = event_handler.getEstimator( 107 ).getEntityBinDataFirstMoments( 1 );
+  second_moments = event_handler.getEstimator( 107 ).getEntityBinDataSecondMoments( 1 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+  
+  first_moments = event_handler.getEstimator( 107 ).getEntityBinDataFirstMoments( 2 );
+  second_moments = event_handler.getEstimator( 107 ).getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = event_handler.getEstimator( 108 ).getEntityBinDataFirstMoments( 1 );
+  second_moments = event_handler.getEstimator( 108 ).getEntityBinDataSecondMoments( 1 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+  
+  first_moments = event_handler.getEstimator( 108 ).getEntityBinDataFirstMoments( 2 );
+  second_moments = event_handler.getEstimator( 108 ).getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = event_handler.getEstimator( 109 ).getEntityBinDataFirstMoments( 1 );
+  second_moments = event_handler.getEstimator( 109 ).getEntityBinDataSecondMoments( 1 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+  
+  first_moments = event_handler.getEstimator( 109 ).getEntityBinDataFirstMoments( 2 );
+  second_moments = event_handler.getEstimator( 109 ).getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = event_handler.getEstimator( 110 ).getEntityBinDataFirstMoments( 0 );
+  second_moments = event_handler.getEstimator( 110 ).getEntityBinDataSecondMoments( 0 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+  
+  first_moments = event_handler.getEstimator( 110 ).getEntityBinDataFirstMoments( 1 );
+  second_moments = event_handler.getEstimator( 110 ).getEntityBinDataSecondMoments( 1 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = event_handler.getEstimator( 110 ).getEntityBinDataFirstMoments( 2 );
+  second_moments = event_handler.getEstimator( 110 ).getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = event_handler.getEstimator( 110 ).getEntityBinDataFirstMoments( 3 );
+  second_moments = event_handler.getEstimator( 110 ).getEntityBinDataSecondMoments( 3 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = event_handler.getEstimator( 110 ).getEntityBinDataFirstMoments( 4 );
+  second_moments = event_handler.getEstimator( 110 ).getEntityBinDataSecondMoments( 4 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+  
+  first_moments = event_handler.getEstimator( 110 ).getEntityBinDataFirstMoments( 5 );
+  second_moments = event_handler.getEstimator( 110 ).getEntityBinDataSecondMoments( 5 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = event_handler.getEstimator( 110 ).getEntityBinDataFirstMoments( 6 );
+  second_moments = event_handler.getEstimator( 110 ).getEntityBinDataSecondMoments( 6 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = event_handler.getEstimator( 110 ).getEntityBinDataFirstMoments( 7 );
+  second_moments = event_handler.getEstimator( 110 ).getEntityBinDataSecondMoments( 7 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = event_handler.getEstimator( 111 ).getEntityBinDataFirstMoments( 0 );
+  second_moments = event_handler.getEstimator( 111 ).getEntityBinDataSecondMoments( 0 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+  
+  first_moments = event_handler.getEstimator( 111 ).getEntityBinDataFirstMoments( 1 );
+  second_moments = event_handler.getEstimator( 111 ).getEntityBinDataSecondMoments( 1 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = event_handler.getEstimator( 111 ).getEntityBinDataFirstMoments( 2 );
+  second_moments = event_handler.getEstimator( 111 ).getEntityBinDataSecondMoments( 2 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = event_handler.getEstimator( 111 ).getEntityBinDataFirstMoments( 3 );
+  second_moments = event_handler.getEstimator( 111 ).getEntityBinDataSecondMoments( 3 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = event_handler.getEstimator( 111 ).getEntityBinDataFirstMoments( 4 );
+  second_moments = event_handler.getEstimator( 111 ).getEntityBinDataSecondMoments( 4 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+  
+  first_moments = event_handler.getEstimator( 111 ).getEntityBinDataFirstMoments( 5 );
+  second_moments = event_handler.getEstimator( 111 ).getEntityBinDataSecondMoments( 5 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = event_handler.getEstimator( 111 ).getEntityBinDataFirstMoments( 6 );
+  second_moments = event_handler.getEstimator( 111 ).getEntityBinDataSecondMoments( 6 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  first_moments = event_handler.getEstimator( 111 ).getEntityBinDataFirstMoments( 7 );
+  second_moments = event_handler.getEstimator( 111 ).getEntityBinDataSecondMoments( 7 );
+  
+  FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+  FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+  
+  MonteCarlo::ParticleTracker::OverallHistoryMap history_map;
+
+  event_handler.getParticleTracker( 10 ).getHistoryData( history_map );
+
+  FRENSIE_REQUIRE( history_map.find( 0 ) != history_map.end() );
+  FRENSIE_REQUIRE( history_map[0].find( MonteCarlo::PHOTON ) !=
+                   history_map[0].end() );
+  FRENSIE_REQUIRE( history_map[0].find( MonteCarlo::ELECTRON ) !=
+                   history_map[0].end() );
 }
 
 //---------------------------------------------------------------------------//

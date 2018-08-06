@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <sstream>
+#include <numeric>
 
 // FRENSIE Includes
 #include "FRENSIE_Archives.hpp"
@@ -29,7 +30,8 @@ namespace MonteCarlo{
 EventHandler::EventHandler()
   : d_model(),
     d_simulation_completion_criterion( ParticleHistorySimulationCompletionCriterion::createWallTimeCriterion( Utility::QuantityTraits<double>::inf() ) ),
-    d_number_of_committed_histories( 0 ),
+    d_number_of_committed_histories( 1, 0 ),
+    d_simulation_timer( Utility::GlobalMPISession::createTimer() ),
     d_elapsed_simulation_time( 0.0 ),
     d_estimators(),
     d_particle_trackers(),
@@ -59,7 +61,8 @@ EventHandler::EventHandler(
                     const MonteCarlo::SimulationGeneralProperties& properties )
   : d_model( model ),
     d_simulation_completion_criterion( EventHandler::createDefaultCompletionCriterion( properties ) ),
-    d_number_of_committed_histories( 0 ),
+    d_number_of_committed_histories( 1, 0 ),
+    d_simulation_timer( Utility::GlobalMPISession::createTimer() ),
     d_elapsed_simulation_time( 0.0 ),
     d_estimators(),
     d_particle_trackers(),
@@ -81,19 +84,12 @@ EventHandler::EventHandler(
       
       while( cell_estimator_data_it != cell_estimator_data_map.end() )
       {
-        std::shared_ptr<Estimator> estimator_base;
-      
         this->createAndRegisterCellEstimator(
                                cell_estimator_data_it->first,
                                Utility::get<0>(cell_estimator_data_it->second),
+                               Utility::get<1>(cell_estimator_data_it->second),
                                Utility::get<2>(cell_estimator_data_it->second),
-                               *d_model,
-                               estimator_base );
-                                            
-
-        // Set the particle type
-        this->setParticleTypes( Utility::get<1>(cell_estimator_data_it->second),
-                                estimator_base );
+                               *d_model );
         
         ++cell_estimator_counter;
         ++cell_estimator_data_it;
@@ -126,20 +122,13 @@ EventHandler::EventHandler(
         
         while( surface_estimator_data_it != surface_estimator_data_map.end() )
         {
-          std::shared_ptr<Estimator> estimator_base;
-          
           this->createAndRegisterSurfaceEstimator(
                             surface_estimator_data_it->first,
                             Utility::get<0>(surface_estimator_data_it->second),
+                            Utility::get<1>(surface_estimator_data_it->second),
                             Utility::get<2>(surface_estimator_data_it->second),
                             *d_model,
-                            properties,
-                            estimator_base );
-
-          // Set the particle type
-          this->setParticleTypes(
-                            Utility::get<1>(surface_estimator_data_it->second),
-                            estimator_base );
+                            properties );
 
           ++surface_estimator_counter;
           ++surface_estimator_data_it;
@@ -192,9 +181,9 @@ EventHandler::createDefaultCompletionCriterion(
 void EventHandler::createAndRegisterCellEstimator(
                                   const uint32_t estimator_id,
                                   const Geometry::EstimatorType estimator_type,
+                                  const Geometry::ParticleType particle_type,
                                   const Geometry::Model::CellIdArray& cells,
-                                  const Geometry::Model& model,
-                                  std::shared_ptr<Estimator>& estimator_base )
+                                  const Geometry::Model& model )
 {
   switch( estimator_type )
   {
@@ -205,10 +194,11 @@ void EventHandler::createAndRegisterCellEstimator(
                                                                   1.0,
                                                                   cells ) );
 
+      // Set the particle type
+      this->setParticleTypes( particle_type, estimator );
+      
       this->addEstimator( estimator );
       
-      estimator_base = estimator;
-
       break;
     }
         
@@ -219,9 +209,11 @@ void EventHandler::createAndRegisterCellEstimator(
                                                                   1.0,
                                                                   cells,
                                                                   model ) );
-      this->addEstimator( estimator );
+
+      // Set the particle type
+      this->setParticleTypes( particle_type, estimator );
       
-      estimator_base = estimator;
+      this->addEstimator( estimator );
 
       break;
     }
@@ -233,9 +225,11 @@ void EventHandler::createAndRegisterCellEstimator(
                                                                   1.0,
                                                                   cells,
                                                                   model ) );
-      this->addEstimator( estimator );
 
-      estimator_base = estimator;
+      // Set the particle type
+      this->setParticleTypes( particle_type, estimator );
+      
+      this->addEstimator( estimator );
 
       break;
     }
@@ -251,12 +245,12 @@ void EventHandler::createAndRegisterCellEstimator(
 
 // Create and register surface estimator
 void EventHandler::createAndRegisterSurfaceEstimator(
-                     const uint32_t estimator_id,
-                     const Geometry::EstimatorType estimator_type,
-                     const Geometry::AdvancedModel::SurfaceIdArray& surfaces,
-                     const Geometry::Model& model,
-                     const MonteCarlo::SimulationGeneralProperties& properties,
-                     std::shared_ptr<Estimator>& estimator_base )
+                    const uint32_t estimator_id,
+                    const Geometry::EstimatorType estimator_type,
+                    const Geometry::ParticleType particle_type,
+                    const Geometry::AdvancedModel::SurfaceIdArray& surfaces,
+                    const Geometry::Model& model,
+                    const MonteCarlo::SimulationGeneralProperties& properties )
 {
   switch( estimator_type )
   {
@@ -266,6 +260,11 @@ void EventHandler::createAndRegisterSurfaceEstimator(
                      new WeightMultipliedSurfaceCurrentEstimator( estimator_id,
                                                                   1.0,
                                                                   surfaces ) );
+
+      // Set the particle type
+      this->setParticleTypes( particle_type, estimator );
+
+      this->addEstimator( estimator );
       
       break;
     }
@@ -279,6 +278,11 @@ void EventHandler::createAndRegisterSurfaceEstimator(
                      surfaces,
                      model,
                      properties.getSurfaceFluxEstimatorAngleCosineCutoff() ) );
+
+      // Set the particle type
+      this->setParticleTypes( particle_type, estimator );
+
+      this->addEstimator( estimator );
       
       break;
     }
@@ -473,18 +477,25 @@ void EventHandler::enableThreadSupport( const unsigned num_threads )
 
     ++it;
   }
+
+  d_number_of_committed_histories.resize( num_threads, 0 );
 }
 
 // Update observers from particle simulation started event
 void EventHandler::updateObserversFromParticleSimulationStartedEvent()
 {
   d_simulation_completion_criterion->start();
+  d_simulation_timer->start();
 }
 
 // Update observers from particle simulation stopped event
 void EventHandler::updateObserversFromParticleSimulationStoppedEvent()
 {
   d_simulation_completion_criterion->stop();
+  d_simulation_timer->stop();
+
+  ParticleHistoryObserver::setElapsedTime( this->getElapsedTime() );
+  ParticleHistoryObserver::setNumberOfHistories( this->getNumberOfCommittedHistories() );
 }
 
 // Commit the estimator history contributions
@@ -500,9 +511,8 @@ void EventHandler::commitObserverHistoryContributions()
 
     ++it;
   }
-
-  #pragma omp atomic
-  ++d_number_of_committed_histories;
+  
+  ++d_number_of_committed_histories[Utility::OpenMPProperties::getThreadId()];
 }
 
 // Log the observer summaries
@@ -521,17 +531,24 @@ void EventHandler::printObserverSummaries( std::ostream& os ) const
   // Make sure only the master thread calls this function
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
-  os << "Observers: " << std::endl;
+  os << "Number of committed histories: "
+     << this->getNumberOfCommittedHistories() << "\n";
+
+  os << "Simulation time: " << this->getElapsedTime() << "\n";
+
+  os << "Observers: \n";
 
   ParticleHistoryObservers::const_iterator it =
     d_particle_history_observers.begin();
 
   while( it != d_particle_history_observers.end() )
   {
-    os << *(*it) << std::endl;
+    os << *(*it) << "\n";
 
     ++it;
   }
+
+  os.flush();
 }
 
 // Reset observer data
@@ -540,6 +557,11 @@ void EventHandler::resetObserverData()
   // Make sure only the master thread calls this function
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
+  // Reset the committed histories
+  d_number_of_committed_histories.resize( 1 );
+  d_number_of_committed_histories.front() = 0;
+
+  // Reset the observers
   ParticleHistoryObservers::iterator it =
     d_particle_history_observers.begin();
 
@@ -558,6 +580,34 @@ void EventHandler::reduceObserverData( const Utility::Communicator& comm,
   // Make sure only the master thread calls this function
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
+  // Reduce the number of committed histories
+  if( comm.rank() == root_process )
+  {
+    uint64_t reduced_num_committed_histories;
+    
+    Utility::reduce( comm,
+                     this->getNumberOfCommittedHistories(),
+                     reduced_num_committed_histories,
+                     std::plus<uint64_t>(),
+                     root_process );
+
+    d_number_of_committed_histories.front() = reduced_num_committed_histories;
+
+    for( size_t i = 1; i < d_number_of_committed_histories.size(); ++i )
+      d_number_of_committed_histories[i] = 0;
+  }
+  else
+  {
+    Utility::reduce( comm,
+                     this->getNumberOfCommittedHistories(),
+                     std::plus<uint64_t>(),
+                     root_process );
+
+    for( size_t i = 0; i < d_number_of_committed_histories.size(); ++i )
+      d_number_of_committed_histories[i] = 0;
+  }
+  
+  // Reduce the observers
   ParticleHistoryObservers::iterator it =
     d_particle_history_observers.begin();
 
@@ -567,84 +617,20 @@ void EventHandler::reduceObserverData( const Utility::Communicator& comm,
 
     ++it;
   }
-
-  // Reduce the number of committed histories
-  if( comm.rank() == root_process )
-  {
-    uint64_t reduced_num_committed_histories;
-    
-    Utility::reduce( comm,
-                     d_number_of_committed_histories,
-                     reduced_num_committed_histories,
-                     std::plus<uint64_t>(),
-                     root_process );
-
-    d_number_of_committed_histories = reduced_num_committed_histories;
-  }
-  else
-  {
-    Utility::reduce( comm,
-                     d_number_of_committed_histories,
-                     std::plus<uint64_t>(),
-                     root_process );
-
-    d_number_of_committed_histories = 0;
-  }
 }
 
 // Get the number of particle histories that have been simulated
 uint64_t EventHandler::getNumberOfCommittedHistories() const
 {
-  return d_number_of_committed_histories;
-}
-
-// Set the elapsed particle simulation time (s)
-void EventHandler::setElapsedTime( const double start_time,
-                                   const double end_time )
-{
-  testPrecondition( start_time < end_time );
-
-  #pragma omp critical (increment_event_handler_elapsed_time)
-  {
-    d_elapsed_simulation_time = end_time - start_time;
-
-    ParticleHistoryObserver::setElapsedTime( d_elapsed_simulation_time );
-    ParticleHistoryObserver::setNumberOfHistories( d_number_of_committed_histories );
-  }
-}
-
-// Set the elapsed particle simulation time (s)
-void EventHandler::setElapsedTime( const double elapsed_time )
-{
-  testPrecondition( elapsed_time > 0.0 );
-
-  #pragma omp critical (increment_event_handler_elapsed_time)
-  {
-    d_elapsed_simulation_time = elapsed_time;
-    
-    ParticleHistoryObserver::setElapsedTime( d_elapsed_simulation_time );
-    ParticleHistoryObserver::setNumberOfHistories( d_number_of_committed_histories );
-  }
-}
-
-// Increment the elapsed particle simulation time (s)
-void EventHandler::incrementElapsedTime( const double elapsed_time )
-{
-  testPrecondition( elapsed_time > 0.0 );
-
-  #pragma omp critical (increment_event_handler_elapsed_time)
-  {
-    d_elapsed_simulation_time += elapsed_time;
-
-    ParticleHistoryObserver::setElapsedTime( d_elapsed_simulation_time );
-    ParticleHistoryObserver::setNumberOfHistories( d_number_of_committed_histories );
-  }
+  return std::accumulate( d_number_of_committed_histories.begin(),
+                          d_number_of_committed_histories.end(),
+                          0 );
 }
 
 // Get the elapsed particle simulation time (s)
 double EventHandler::getElapsedTime() const
 {
-  return d_elapsed_simulation_time;
+  return d_simulation_timer->elapsed().count() + d_elapsed_simulation_time;
 }
 
 // Verify that the estimator cell ids are valid

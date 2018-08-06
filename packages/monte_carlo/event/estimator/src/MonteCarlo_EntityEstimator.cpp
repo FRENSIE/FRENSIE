@@ -334,10 +334,8 @@ void EntityEstimator::printEntityIds( std::ostream& os,
 {
   os << entity_type << " Ids: ";
 
-  typename EntityNormConstMap::const_iterator entity_id, end_entity_id;
-
   for( auto&& entity_data : d_entity_norm_constants_map )
-    os << entity_id->first << " ";
+    os << entity_data.first << " ";
 
   os << "\n";
 }
