@@ -9,9 +9,6 @@
 #ifndef DATA_GEN_MOMENT_PRESERVING_ELECTRON_DATA_GENERATOR_HPP
 #define DATA_GEN_MOMENT_PRESERVING_ELECTRON_DATA_GENERATOR_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "Data_MomentPreservingElectronVolatileDataContainer.hpp"
 

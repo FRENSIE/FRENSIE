@@ -13,9 +13,6 @@
 #include <functional>
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "Utility_TwoDGridGenerator.hpp"
@@ -47,7 +44,7 @@ public:
 
   //! Set the max energy nudge value
   void setMaxEnergyNudgeValue( const double max_energy_nudge_value );
-  
+
   //! Get the nudged max energy
   double getNudgedMaxEnergy() const;
 
@@ -63,7 +60,7 @@ public:
   createCrossSectionEvaluator(
      const std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& adjoint_incoherent_cross_section,
      const double cross_section_evaluation_tol );
-                              
+
 
 protected:
 
@@ -73,13 +70,13 @@ protected:
   //! Initialize the max energy grid at an energy grid point
   void initializeSecondaryGrid( std::vector<double>& max_energy_grid,
                                 const double energy ) const;
-  
+
 private:
 
   // The max table energy (highest energy grid point)
   double d_max_energy;
 
-  // The max table energy nudge value 
+  // The max table energy nudge value
   double d_nudged_max_energy;
 
   // The energy to max energy nudge value

@@ -15,16 +15,10 @@
 #include <boost/bind.hpp>
 #include <boost/unordered_map.hpp>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "DataGen_StandardMomentPreservingElectronDataGenerator.hpp"
 #include "Data_MomentPreservingElectronVolatileDataContainer.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -41,7 +35,7 @@ int number_of_discrete_angles = 3;
 // Tests
 //---------------------------------------------------------------------------//
 // Check that a data container can be populated
-TEUCHOS_UNIT_TEST( StandardMomentPreservingElectronDataGenerator,
+FRENSIE_UNIT_TEST( StandardMomentPreservingElectronDataGenerator,
                    populateMomentPreservingDataContainer_h )
 {
   Data::MomentPreservingElectronVolatileDataContainer data_container;
@@ -51,32 +45,31 @@ TEUCHOS_UNIT_TEST( StandardMomentPreservingElectronDataGenerator,
   std::vector<double> angular_grid =
     data_container.getElasticAngularEnergyGrid();
 
-  TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 1 );
-  TEST_EQUALITY_CONST( angular_grid[0], 1.0e-5 );
-  TEST_EQUALITY_CONST( angular_grid[1], 1.0e-3 );
-  TEST_EQUALITY_CONST( angular_grid[2], 2.0e-3 );
-  TEST_EQUALITY_CONST( angular_grid[3], 4.0e-3 );
-  TEST_EQUALITY_CONST( angular_grid[4], 8.0e-3 );
-  TEST_EQUALITY_CONST( angular_grid[5], 1.6e-2 );
-  TEST_EQUALITY_CONST( angular_grid[6], 3.2e-2 );
-  TEST_EQUALITY_CONST( angular_grid[7], 6.4e-2 );
-  TEST_EQUALITY_CONST( angular_grid[8], 1.28e-1 );
-  TEST_EQUALITY_CONST( angular_grid[9], 2.56e-1 );
-  TEST_EQUALITY_CONST( angular_grid[10], 1.0e+1 );
-  TEST_EQUALITY_CONST( angular_grid[11], 2.125e+1 );
-  TEST_EQUALITY_CONST( angular_grid[12], 3.25e+1 );
-  TEST_EQUALITY_CONST( angular_grid[13], 4.375e+1 );
-  TEST_EQUALITY_CONST( angular_grid[14], 6.625e+1 );
-  TEST_EQUALITY_CONST( angular_grid[15], 1.0e+5 );
-  TEST_EQUALITY_CONST( data_container.getNumberOfDiscreteAngles( 1 ),
+  FRENSIE_CHECK_EQUAL( data_container.getAtomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( angular_grid[0], 1.0e-5 );
+  FRENSIE_CHECK_EQUAL( angular_grid[1], 1.0e-3 );
+  FRENSIE_CHECK_EQUAL( angular_grid[2], 2.0e-3 );
+  FRENSIE_CHECK_EQUAL( angular_grid[3], 4.0e-3 );
+  FRENSIE_CHECK_EQUAL( angular_grid[4], 8.0e-3 );
+  FRENSIE_CHECK_EQUAL( angular_grid[5], 1.6e-2 );
+  FRENSIE_CHECK_EQUAL( angular_grid[6], 3.2e-2 );
+  FRENSIE_CHECK_EQUAL( angular_grid[7], 6.4e-2 );
+  FRENSIE_CHECK_EQUAL( angular_grid[8], 1.28e-1 );
+  FRENSIE_CHECK_EQUAL( angular_grid[9], 2.56e-1 );
+  FRENSIE_CHECK_EQUAL( angular_grid[10], 1.0e+1 );
+  FRENSIE_CHECK_EQUAL( angular_grid[11], 2.125e+1 );
+  FRENSIE_CHECK_EQUAL( angular_grid[12], 3.25e+1 );
+  FRENSIE_CHECK_EQUAL( angular_grid[13], 4.375e+1 );
+  FRENSIE_CHECK_EQUAL( angular_grid[14], 6.625e+1 );
+  FRENSIE_CHECK_EQUAL( angular_grid[15], 1.0e+5 );
+  FRENSIE_CHECK_EQUAL( data_container.getNumberOfDiscreteAngles( 1 ),
                        number_of_discrete_angles+1 );
-  TEST_EQUALITY_CONST( data_container.getMomentPreservingDiscreteAngles(1).size(),
+  FRENSIE_CHECK_EQUAL( data_container.getMomentPreservingDiscreteAngles(1).size(),
                        number_of_discrete_angles+1 );
-  TEST_EQUALITY_CONST( data_container.getMomentPreservingWeights(1).size(),
+  FRENSIE_CHECK_EQUAL( data_container.getMomentPreservingWeights(1).size(),
                        number_of_discrete_angles+1 );
 
-  data_container.exportData( "test_h_moment_preserving.xml",
-                 Utility::ArchivableObject::XML_ARCHIVE );
+  data_container.saveToFile( "test_h_moment_preserving.xml", true );
 }
 
 /*  NOTE: These tests can be added but they are time consuming and the other
@@ -84,7 +77,7 @@ TEUCHOS_UNIT_TEST( StandardMomentPreservingElectronDataGenerator,
  */
 ////---------------------------------------------------------------------------//
 //// Check that a data container can be populated
-//TEUCHOS_UNIT_TEST( StandardMomentPreservingElectronDataGenerator,
+//FRENSIE_UNIT_TEST( StandardMomentPreservingElectronDataGenerator,
 //                   populateMomentPreservingDataContainer_pb )
 //{
 //  Data::MomentPreservingElectronVolatileDataContainer data_container;
@@ -94,35 +87,34 @@ TEUCHOS_UNIT_TEST( StandardMomentPreservingElectronDataGenerator,
 //  std::vector<double> angular_grid =
 //    data_container.getElasticAngularEnergyGrid();
 
-//  TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 82 );
-//  TEST_EQUALITY_CONST( angular_grid[0], 1.0e-5 );
-//  TEST_EQUALITY_CONST( angular_grid[1], 1.0e-3 );
-//  TEST_EQUALITY_CONST( angular_grid[2], 2.0e-3 );
-//  TEST_EQUALITY_CONST( angular_grid[3], 4.0e-3 );
-//  TEST_EQUALITY_CONST( angular_grid[4], 8.0e-3 );
-//  TEST_EQUALITY_CONST( angular_grid[5], 1.6e-2 );
-//  TEST_EQUALITY_CONST( angular_grid[6], 3.2e-2 );
-//  TEST_EQUALITY_CONST( angular_grid[7], 6.4e-2 );
-//  TEST_EQUALITY_CONST( angular_grid[8], 1.28e-1 );
-//  TEST_EQUALITY_CONST( angular_grid[9], 2.56e-1 );
-//  TEST_EQUALITY_CONST( angular_grid[10], 1.0e+1 );
-//  TEST_EQUALITY_CONST( angular_grid[11], 3.25e+1 );
-//  TEST_EQUALITY_CONST( angular_grid[12], 5.5e+1 );
-//  TEST_EQUALITY_CONST( angular_grid[13], 1.0e+5 );
-//  TEST_EQUALITY_CONST( data_container.getNumberOfDiscreteAngles( 1 ),
+//  FRENSIE_CHECK_EQUAL( data_container.getAtomicNumber(), 82 );
+//  FRENSIE_CHECK_EQUAL( angular_grid[0], 1.0e-5 );
+//  FRENSIE_CHECK_EQUAL( angular_grid[1], 1.0e-3 );
+//  FRENSIE_CHECK_EQUAL( angular_grid[2], 2.0e-3 );
+//  FRENSIE_CHECK_EQUAL( angular_grid[3], 4.0e-3 );
+//  FRENSIE_CHECK_EQUAL( angular_grid[4], 8.0e-3 );
+//  FRENSIE_CHECK_EQUAL( angular_grid[5], 1.6e-2 );
+//  FRENSIE_CHECK_EQUAL( angular_grid[6], 3.2e-2 );
+//  FRENSIE_CHECK_EQUAL( angular_grid[7], 6.4e-2 );
+//  FRENSIE_CHECK_EQUAL( angular_grid[8], 1.28e-1 );
+//  FRENSIE_CHECK_EQUAL( angular_grid[9], 2.56e-1 );
+//  FRENSIE_CHECK_EQUAL( angular_grid[10], 1.0e+1 );
+//  FRENSIE_CHECK_EQUAL( angular_grid[11], 3.25e+1 );
+//  FRENSIE_CHECK_EQUAL( angular_grid[12], 5.5e+1 );
+//  FRENSIE_CHECK_EQUAL( angular_grid[13], 1.0e+5 );
+//  FRENSIE_CHECK_EQUAL( data_container.getNumberOfDiscreteAngles( 1 ),
 //                       number_of_discrete_angles+1 );
-//  TEST_EQUALITY_CONST( data_container.getMomentPreservingDiscreteAngles(1).size(),
+//  FRENSIE_CHECK_EQUAL( data_container.getMomentPreservingDiscreteAngles(1).size(),
 //                       number_of_discrete_angles+1 );
-//  TEST_EQUALITY_CONST( data_container.getMomentPreservingWeights(1).size(),
+//  FRENSIE_CHECK_EQUAL( data_container.getMomentPreservingWeights(1).size(),
 //                       number_of_discrete_angles+1 );
 
-//  data_container.exportData( "test_pb_moment_preserving.xml",
-//                 Utility::ArchivableObject::XML_ARCHIVE );
+//  data_container.saveToFile( "test_pb_moment_preserving.xml", true );
 //}
 
 //---------------------------------------------------------------------------//
 // Check that a data container can be populated
-TEUCHOS_UNIT_TEST( StandardMomentPreservingElectronDataGenerator,
+FRENSIE_UNIT_TEST( StandardMomentPreservingElectronDataGenerator,
                    populateMomentPreservingDataContainer_al )
 {
   Data::MomentPreservingElectronVolatileDataContainer data_container;
@@ -132,60 +124,58 @@ TEUCHOS_UNIT_TEST( StandardMomentPreservingElectronDataGenerator,
   std::vector<double> angular_grid =
     data_container.getElasticAngularEnergyGrid();
 
-  TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 13 );
-  TEST_EQUALITY_CONST( angular_grid[0], 1.0e-5 );
-  TEST_EQUALITY_CONST( angular_grid[1], 1.0e-3 );
-  TEST_EQUALITY_CONST( angular_grid[2], 2.0e-3 );
-  TEST_EQUALITY_CONST( angular_grid[3], 4.0e-3 );
-  TEST_EQUALITY_CONST( angular_grid[4], 8.0e-3 );
-  TEST_EQUALITY_CONST( angular_grid[5], 1.6e-2 );
-  TEST_EQUALITY_CONST( angular_grid[6], 3.2e-2 );
-  TEST_EQUALITY_CONST( angular_grid[7], 6.4e-2 );
-  TEST_EQUALITY_CONST( angular_grid[8], 1.28e-1 );
-  TEST_EQUALITY_CONST( angular_grid[9], 2.56e-1 );
-  TEST_EQUALITY_CONST( angular_grid[10], 1.0e+1 );
-  TEST_EQUALITY_CONST( angular_grid[11], 2.125e+1 );
-  TEST_EQUALITY_CONST( angular_grid[12], 3.25e+1 );
-  TEST_EQUALITY_CONST( angular_grid[13], 4.375e+1 );
-  TEST_EQUALITY_CONST( angular_grid[14], 6.625e+1 );
-  TEST_EQUALITY_CONST( angular_grid[15], 1.0e+5 );
+  FRENSIE_CHECK_EQUAL( data_container.getAtomicNumber(), 13 );
+  FRENSIE_CHECK_EQUAL( angular_grid[0], 1.0e-5 );
+  FRENSIE_CHECK_EQUAL( angular_grid[1], 1.0e-3 );
+  FRENSIE_CHECK_EQUAL( angular_grid[2], 2.0e-3 );
+  FRENSIE_CHECK_EQUAL( angular_grid[3], 4.0e-3 );
+  FRENSIE_CHECK_EQUAL( angular_grid[4], 8.0e-3 );
+  FRENSIE_CHECK_EQUAL( angular_grid[5], 1.6e-2 );
+  FRENSIE_CHECK_EQUAL( angular_grid[6], 3.2e-2 );
+  FRENSIE_CHECK_EQUAL( angular_grid[7], 6.4e-2 );
+  FRENSIE_CHECK_EQUAL( angular_grid[8], 1.28e-1 );
+  FRENSIE_CHECK_EQUAL( angular_grid[9], 2.56e-1 );
+  FRENSIE_CHECK_EQUAL( angular_grid[10], 1.0e+1 );
+  FRENSIE_CHECK_EQUAL( angular_grid[11], 2.125e+1 );
+  FRENSIE_CHECK_EQUAL( angular_grid[12], 3.25e+1 );
+  FRENSIE_CHECK_EQUAL( angular_grid[13], 4.375e+1 );
+  FRENSIE_CHECK_EQUAL( angular_grid[14], 6.625e+1 );
+  FRENSIE_CHECK_EQUAL( angular_grid[15], 1.0e+5 );
 
-  TEST_EQUALITY_CONST( data_container.getNumberOfDiscreteAngles( 1 ),
+  FRENSIE_CHECK_EQUAL( data_container.getNumberOfDiscreteAngles( 1 ),
                        2 );
-  TEST_EQUALITY_CONST( data_container.getMomentPreservingDiscreteAngles(1).size(),
+  FRENSIE_CHECK_EQUAL( data_container.getMomentPreservingDiscreteAngles(1).size(),
                        2 );
-  TEST_EQUALITY_CONST( data_container.getMomentPreservingWeights(1).size(),
+  FRENSIE_CHECK_EQUAL( data_container.getMomentPreservingWeights(1).size(),
                        2 );
 
-  data_container.exportData( "test_al_moment_preserving.xml",
-                 Utility::ArchivableObject::XML_ARCHIVE );
+  data_container.saveToFile( "test_al_moment_preserving.xml", true );
 }
 
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-  std::string test_h_native_file_name,
-              test_pb_native_file_name,
-              test_al_native_file_name;
+std::string test_h_native_file_name,
+            test_pb_native_file_name,
+            test_al_native_file_name;
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_h_native_file",
-                   &test_h_native_file_name,
-                   "Test NATIVE H file name" );
-  clp().setOption( "test_pb_native_file",
-                    &test_pb_native_file_name,
-                    "Test NATIVE Pb file name" );
-  clp().setOption( "test_al_native_file",
-                    &test_al_native_file_name,
-                    "Test NATIVE Al file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_h_native_file",
+                                        test_h_native_file_name, "",
+                                        "Test NATIVE H file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_pb_native_file",
+                                        test_pb_native_file_name, "",
+                                        "Test NATIVE Pb file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_al_native_file",
+                                        test_al_native_file_name, "",
+                                        "Test NATIVE Al file name" );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-
   double min_energy = 0.00001;
   double max_energy = 20.0;
   double tabular_evaluation_tol = 1e-7;
@@ -248,7 +238,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   }
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstStandardMomentPreservingElectronDataGenerator.cpp

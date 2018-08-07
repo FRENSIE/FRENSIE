@@ -13,16 +13,13 @@
 #include <utility>
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "DataGen_AdjointElectronPhotonRelaxationDataGenerator.hpp"
 #include "DataGen_AdjointElectronGridGenerator.hpp"
 #include "DataGen_AdjointIncoherentGridGenerator.hpp"
 #include "DataGen_AdjointIncoherentGridGenerator.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 #include "MonteCarlo_IncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_SubshellIncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
@@ -41,7 +38,7 @@ public:
   typedef MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LogLog>
     ElectroionizationReaction;
 
-  typedef MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LogLog> 
+  typedef MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LogLog>
     BremsstrahlungReaction;
 
   typedef DataGen::AdjointElectronGridGenerator<BremsstrahlungReaction, Utility::LinLinLin>
@@ -60,13 +57,13 @@ public:
       const double max_electron_energy,
       std::ostream* os_log = &std::cout,
       std::ostream* os_warn = &std::cerr );
-  
+
   //! Basic Constructor
   StandardAdjointElectronPhotonRelaxationDataGenerator(
       const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>&
       forward_epr_data,
       std::ostream* os_log = &std::cout );
-  
+
   //! Destructor
   virtual ~StandardAdjointElectronPhotonRelaxationDataGenerator()
   { /* ... */ }
@@ -105,7 +102,7 @@ public:
 
   //! Set the adjoint incoherent max energy nudge value
   void setAdjointIncoherentMaxEnergyNudgeValue( const double max_energy_nudge_value );
-  
+
   //! Return the adjoint incoherent max energy nudge value
   double getAdjointIncoherentMaxEnergyNudgeValue() const;
 
@@ -188,16 +185,16 @@ public:
   //! Return the electron TwoDInterpPolicy (LogLogLog by default)
   MonteCarlo::TwoDInterpolationType getElectronTwoDInterpPolicy() const;
 
-  //! Set the electron TwoDSamplingPolicy (Corrleated by default)
-  void setElectronTwoDSamplingPolicy(
-                    const MonteCarlo::TwoDSamplingType two_d_sampling );
+  //! Set the electron TwoDGridPolicy (Corrleated by default)
+  void setElectronTwoDGridPolicy(
+                    const MonteCarlo::TwoDSamplingType two_d_grid );
 
-  //! Return the electron TwoDSamplingPolicy (Corrleated by default)
-  MonteCarlo::TwoDSamplingType getElectronTwoDSamplingPolicy() const;
+  //! Return the electron TwoDGridPolicy (Corrleated by default)
+  MonteCarlo::TwoDSamplingType getElectronTwoDGridPolicy() const;
 
   //! Set the adjoint bremsstrahlung max energy nudge value
   void setAdjointBremsstrahlungMaxEnergyNudgeValue( const double max_energy_nudge_value );
-  
+
   //! Return the adjoint bremsstrahlung max energy nudge value
   double getAdjointBremsstrahlungMaxEnergyNudgeValue() const;
 
@@ -324,7 +321,7 @@ private:
   // Create the cross section on the union energy grid
   void createCrossSectionOnUnionEnergyGrid(
           const std::list<double>& union_energy_grid,
-          const std::shared_ptr<const Utility::OneDDistribution>& cs_evaluator,
+          const std::shared_ptr<const Utility::UnivariateDistribution>& cs_evaluator,
           std::vector<double>& cross_section ) const;
 
   // Create the cross section on the union energy grid
@@ -358,7 +355,7 @@ private:
 
   // Set the adjoint triplet production energy distribution
   void setAdjointTripletProductionEnergyDistribution(
-         Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const;   
+         Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Create the Waller-Hartree incoherent adjoint cs evaluator
   void createWallerHartreeIncoherentAdjointCrossSectionEvaluator(
@@ -366,7 +363,7 @@ private:
 
   // Create the subshell impulse approx incoherent adjoint cs evaluators
   void createSubshellImpulseApproxIncoherentAdjointCrossSectionEvaluators(
-          Teuchos::Array<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >&
+          std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >&
           cs_evaluators ) const;
 
   // Create a subshell impulse approx incoherent adjoint cs evaluators
@@ -386,13 +383,13 @@ private:
   // Update the adjoint photon union energy grid
   void updateAdjointPhotonUnionEnergyGrid(
          std::list<double>& union_energy_grid,
-         const Teuchos::Array<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >&
+         const std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >&
          cs_evaluators ) const;
 
   // Update the adjoint photon union energy grid
   void updateAdjointPhotonUnionEnergyGrid(
         std::list<double>& union_energy_grid,
-        const std::shared_ptr<const Utility::OneDDistribution>&
+        const std::shared_ptr<const Utility::UnivariateDistribution>&
         cs_evaluator ) const;
 
   // Create the cross section on the union energy grid
@@ -421,7 +418,7 @@ private:
 
   // Evaluate the total cross section at an energy and max energy
   double evaluateAdjointPhotonTotalCrossSection(
-          const std::vector<std::shared_ptr<const Utility::OneDDistribution> >&
+          const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >&
           cross_sections,
           const double max_energy ) const;
 
@@ -437,28 +434,28 @@ private:
   // Create the inelastic cross section distribution
   void createForwardInelasticElectronCrossSectionDistribution(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
-    std::shared_ptr<const Utility::OneDDistribution>&
+    std::shared_ptr<const Utility::UnivariateDistribution>&
         forward_inelastic_electron_cross_section_distribution ) const;
 
   // Create the adjoint atomic excitation cross section distribution
   void createAdjointAtomicExcitationCrossSectionDistribution(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
-    const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
-    std::shared_ptr<const Utility::OneDDistribution>&
+    const std::shared_ptr<const std::vector<double> >& forward_electron_energy_grid,
+    const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
+    std::shared_ptr<const Utility::UnivariateDistribution>&
         adjoint_excitation_cross_section_distribution ) const;
 
   // Create the adjoint bremsstrahlung grid generator
   void createAdjointBremsstrahlungGridGenerator(
-    const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
+    const std::shared_ptr<const std::vector<double> >& forward_electron_energy_grid,
+    const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
     std::shared_ptr<BremsstrahlungGridGenerator>&
         adjoint_bremsstrahlung_grid_generator ) const;
 
   // Create the adjoint electroionization subshell grid generator
   void createAdjointElectroionizationSubshellGridGenerator(
-    const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
+    const std::shared_ptr<const std::vector<double> >& forward_electron_energy_grid,
+    const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
     std::shared_ptr<ElectroionizationGridGenerator>&
         adjoint_electroionization_grid_generator,
     const unsigned shell ) const;
@@ -515,8 +512,8 @@ private:
   // The electron TwoDInterpPolicy
   MonteCarlo::TwoDInterpolationType d_electron_two_d_interp;
 
-  // The electron TwoDSamplingPolicy
-  MonteCarlo::TwoDSamplingType d_electron_two_d_sampling;
+  // The electron TwoDGridPolicy
+  MonteCarlo::TwoDSamplingType d_electron_two_d_grid;
 
   // The adjoint bremsstrahlung max energy nudge value
   double d_adjoint_bremsstrahlung_max_energy_nudge_value;

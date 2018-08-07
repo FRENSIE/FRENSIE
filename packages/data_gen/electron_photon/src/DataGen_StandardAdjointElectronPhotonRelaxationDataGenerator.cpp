@@ -73,7 +73,7 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
     d_adjoint_electron_distance_tol( 1e-8 ),
     d_tabular_evaluation_tol( 1e-8 ),
     d_electron_two_d_interp( MonteCarlo::LOGLOGLOG_INTERPOLATION ),
-    d_electron_two_d_sampling( MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING ),
+    d_electron_two_d_grid( MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING ),
     d_adjoint_bremsstrahlung_max_energy_nudge_value( 0.2 ),
     d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value( 1e-7 ),
     d_adjoint_bremsstrahlung_evaluation_tol( 1e-6 ),
@@ -536,17 +536,17 @@ MonteCarlo::TwoDInterpolationType StandardAdjointElectronPhotonRelaxationDataGen
   return d_electron_two_d_interp;
 }
 
-// Set the electron TwoDSamplingPolicy (LogLogLog by default)
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setElectronTwoDSamplingPolicy(
-                    const MonteCarlo::TwoDSamplingType two_d_sampling )
+// Set the electron TwoDGridPolicy (LogLogLog by default)
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setElectronTwoDGridPolicy(
+                    const MonteCarlo::TwoDSamplingType two_d_grid )
 {
-  d_electron_two_d_sampling = two_d_sampling;
+  d_electron_two_d_grid = two_d_grid;
 }
 
-// Return the electron TwoDSamplingPolicy (LogLogLog by default)
-MonteCarlo::TwoDSamplingType StandardAdjointElectronPhotonRelaxationDataGenerator::getElectronTwoDSamplingPolicy() const
+// Return the electron TwoDGridPolicy (LogLogLog by default)
+MonteCarlo::TwoDSamplingType StandardAdjointElectronPhotonRelaxationDataGenerator::getElectronTwoDGridPolicy() const
 {
-  return d_electron_two_d_sampling;
+  return d_electron_two_d_grid;
 }
 
 // Set the adjoint electron grid convergence tolerance
@@ -707,14 +707,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setTableData(
   data_container.setElectronTabularEvaluationTolerance(
     d_tabular_evaluation_tol );
   {
-  std::string interp =
-    MonteCarlo::convertTwoDInterpolationTypeToString( d_electron_two_d_interp );
+  std::string interp = Utility::toString( d_electron_two_d_interp );
   data_container.setElectronTwoDInterpPolicy( interp );
   }
   {
   std::string sampling =
-    MonteCarlo::convertTwoDSamplingTypeToString( d_electron_two_d_sampling );
-  data_container.setElectronTwoDSamplingPolicy( sampling );
+    Utility::toString( d_electron_two_d_grid );
+  data_container.setElectronTwoDGridPolicy( sampling );
   }
 }
 
@@ -868,19 +867,19 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
   (*d_os_log) << " Setting the photon cross section data:" << std::endl;
 
   // Extract the coherent cross section
-  std::shared_ptr<const Utility::OneDDistribution> waller_hartree_coherent_cs(
+  std::shared_ptr<const Utility::UnivariateDistribution> waller_hartree_coherent_cs(
        new Utility::TabularDistribution<Utility::LinLin>(
                 d_forward_epr_data->getPhotonEnergyGrid(),
                 d_forward_epr_data->getWallerHartreeCoherentCrossSection() ) );
 
   // Extract the Waller-Hartree total forward cross section
-  std::shared_ptr<const Utility::OneDDistribution> waller_hartree_total_forward_cs(
+  std::shared_ptr<const Utility::UnivariateDistribution> waller_hartree_total_forward_cs(
        new Utility::TabularDistribution<Utility::LinLin>(
                    d_forward_epr_data->getPhotonEnergyGrid(),
                    d_forward_epr_data->getWallerHartreeTotalCrossSection() ) );
 
   // Extract the impulse approx. total forward cross section
-  std::shared_ptr<const Utility::OneDDistribution> impulse_approx_total_forward_cs(
+  std::shared_ptr<const Utility::UnivariateDistribution> impulse_approx_total_forward_cs(
        new Utility::TabularDistribution<Utility::LinLin>(
                    d_forward_epr_data->getPhotonEnergyGrid(),
                    d_forward_epr_data->getImpulseApproxTotalCrossSection() ) );
@@ -893,7 +892,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
                               waller_hartree_incoherent_adjoint_cs_evaluator );
 
   // Create the impulse approx. incoherent adjoint cross section evaluators
-  Teuchos::Array<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >
+  std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >
     impulse_approx_incoherent_adjoint_cs_evaluators;
 
   this->createSubshellImpulseApproxIncoherentAdjointCrossSectionEvaluators(
@@ -1209,7 +1208,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createWallerHartreeIn
          std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& cs_evaluator ) const
 {
   // Create a scattering function
-  std::shared_ptr<const Utility::UnitAwareOneDDistribution<Utility::Units::InverseCentimeter,void> > raw_scattering_function(
+  std::shared_ptr<const Utility::UnitAwareUnivariateDistribution<Utility::Units::InverseCentimeter,void> > raw_scattering_function(
          new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseCentimeter,void>(
           d_forward_epr_data->getWallerHartreeScatteringFunctionMomentumGrid(),
           d_forward_epr_data->getWallerHartreeScatteringFunction() ) );
@@ -1227,7 +1226,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createWallerHartreeIn
 
 // Create the subshell impulse approx incoherent adjoint cs evaluators
 void StandardAdjointElectronPhotonRelaxationDataGenerator::createSubshellImpulseApproxIncoherentAdjointCrossSectionEvaluators(
-          Teuchos::Array<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >&
+          std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >&
           cs_evaluators ) const
 {
   // Get the subshells
@@ -1239,7 +1238,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createSubshellImpulse
   // Resize the cs_evaluators array
   cs_evaluators.resize( subshells.size() );
 
-  Teuchos::Array<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >::iterator
+  std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >::iterator
     cs_evaluators_it = cs_evaluators.begin();
 
   // Extract and set the occupation numbers and grids
@@ -1262,7 +1261,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createSubshellImpulse
          std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution>& cs_evaluator ) const
 {
   // Create the occupation number
-  std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::MeCMomentum,void> > raw_occupation_number(
+  std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<Utility::Units::MeCMomentum,void> > raw_occupation_number(
     new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::MeCMomentum,void>(
                d_forward_epr_data->getOccupationNumberMomentumGrid( subshell ),
                d_forward_epr_data->getOccupationNumber( subshell ) ) );
@@ -1349,7 +1348,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::updateAdjointPhotonUn
 // Update the adjoint photon union energy grid
 void StandardAdjointElectronPhotonRelaxationDataGenerator::updateAdjointPhotonUnionEnergyGrid(
          std::list<double>& union_energy_grid,
-         const Teuchos::Array<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >&
+         const std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >&
          cs_evaluators ) const
 {
   for( unsigned i = 0u; i < cs_evaluators.size(); ++i )
@@ -1396,12 +1395,12 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::updateAdjointPhotonUn
 // Update the adjoint photon union energy grid
 void StandardAdjointElectronPhotonRelaxationDataGenerator::updateAdjointPhotonUnionEnergyGrid(
                         std::list<double>& union_energy_grid,
-                        const std::shared_ptr<const Utility::OneDDistribution>&
+                        const std::shared_ptr<const Utility::UnivariateDistribution>&
                         cs_evaluator ) const
 {
   // Create a cross section evaluation wrapper
   std::function<double (double)> cs_evaluation_wrapper =
-    std::bind<double>( &Utility::OneDDistribution::evaluate,
+    std::bind<double>( &Utility::UnivariateDistribution::evaluate,
                        std::cref( *cs_evaluator ),
                        std::placeholders::_1 );
 
@@ -1550,7 +1549,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createCrossSectionOnU
 // Create the cross section on the union energy grid
 void StandardAdjointElectronPhotonRelaxationDataGenerator::createCrossSectionOnUnionEnergyGrid(
           const std::list<double>& union_energy_grid,
-          const std::shared_ptr<const Utility::OneDDistribution>& cs_evaluator,
+          const std::shared_ptr<const Utility::UnivariateDistribution>& cs_evaluator,
           std::vector<double>& cross_section ) const
 {
   // Resize the cross section array
@@ -1698,7 +1697,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::calculateAdjointPhoto
 
 // Evaluate the total cross section at an energy and max energy
 double StandardAdjointElectronPhotonRelaxationDataGenerator::evaluateAdjointPhotonTotalCrossSection(
-          const std::vector<std::shared_ptr<const Utility::OneDDistribution> >&
+          const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >&
           cross_sections,
           const double max_energy ) const
 {
@@ -1717,17 +1716,16 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   d_os_log->flush();
 
   // Extract the common electron energy grid
-  Teuchos::ArrayRCP<double> forward_electron_energy_grid;
-  forward_electron_energy_grid.assign(
-    d_forward_epr_data->getElectronEnergyGrid().begin(),
-    d_forward_epr_data->getElectronEnergyGrid().end() );
+  std::shared_ptr<std::vector<double> > forward_electron_energy_grid(
+       new std::vector<double>( d_forward_epr_data->getElectronEnergyGrid() ) );
 
-  Teuchos::RCP<Utility::HashBasedGridSearcher> forward_grid_searcher(
-      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
-                forward_electron_energy_grid,
-                forward_electron_energy_grid[0],
-                forward_electron_energy_grid[forward_electron_energy_grid.size()-1],
-                forward_electron_energy_grid.size()/10 + 1 ) );
+  // Create the hash-based grid searcher
+  std::shared_ptr<Utility::HashBasedGridSearcher<double> > forward_grid_searcher(
+       new Utility::StandardHashBasedGridSearcher<std::vector<double>,false>(
+                         forward_electron_energy_grid,
+                         forward_electron_energy_grid->front(),
+                         forward_electron_energy_grid->back(),
+                         forward_electron_energy_grid->size()/10 + 1 ) );
 
   //---------------------------------------------------------------------------//
   // Create union energy grid and calculate cross sections
@@ -1752,10 +1750,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   // Generate Grid Points For The Elastic Cross Section Data
   //---------------------------------------------------------------------------//
   // Extract the cutoff elastic cross section data
-  Teuchos::ArrayRCP<double> forward_cutoff_elastic_cs;
-  forward_cutoff_elastic_cs.assign(
-    d_forward_epr_data->getCutoffElasticCrossSection().begin(),
-    d_forward_epr_data->getCutoffElasticCrossSection().end() );
+  std::shared_ptr<std::vector<double> > forward_cutoff_elastic_cs(
+       new std::vector<double>( d_forward_epr_data->getCutoffElasticCrossSection() ) );
 
   // Create the reaction
   std::shared_ptr<MonteCarlo::ElectroatomicReaction> cutoff_elastic_reaction(
@@ -1779,10 +1775,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   d_os_log->flush();
 
   // Extract the total elastic cross section data
-  Teuchos::ArrayRCP<double> forward_total_elastic_cs;
-  forward_total_elastic_cs.assign(
-    d_forward_epr_data->getTotalElasticCrossSection().begin(),
-    d_forward_epr_data->getTotalElasticCrossSection().end() );
+  std::shared_ptr<std::vector<double> > forward_total_elastic_cs(
+       new std::vector<double>( d_forward_epr_data->getTotalElasticCrossSection() ) );
 
   // Create the reaction
   std::shared_ptr<MonteCarlo::ElectroatomicReaction> total_elastic_reaction(
@@ -1810,7 +1804,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   //---------------------------------------------------------------------------//
 
   // Create the inelastic cross section distribution
-  std::shared_ptr<const Utility::OneDDistribution>
+  std::shared_ptr<const Utility::UnivariateDistribution>
     forward_inelastic_electron_cross_section;
 
   this->createForwardInelasticElectronCrossSectionDistribution(
@@ -1819,7 +1813,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
   // Bind the distribution
   boost::function<double (double pz)> forward_inelastic_grid_function =
-    boost::bind( &Utility::OneDDistribution::evaluate,
+    boost::bind( &Utility::UnivariateDistribution::evaluate,
                  boost::cref( *forward_inelastic_electron_cross_section ),
                  _1 );
 
@@ -1828,7 +1822,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   //---------------------------------------------------------------------------//
 
   // Create the cross section distribution
-  std::shared_ptr<const Utility::OneDDistribution> adjoint_excitation_cross_section;
+  std::shared_ptr<const Utility::UnivariateDistribution> adjoint_excitation_cross_section;
   this->createAdjointAtomicExcitationCrossSectionDistribution(
           data_container,
           forward_electron_energy_grid,
@@ -1837,7 +1831,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
   // Bind the distribution
   boost::function<double (double pz)> atomic_excitation_grid_function =
-    boost::bind( &Utility::OneDDistribution::evaluate,
+    boost::bind( &Utility::UnivariateDistribution::evaluate,
                  boost::cref( *adjoint_excitation_cross_section ),
                  _1 );
 
@@ -2226,7 +2220,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 void
 StandardAdjointElectronPhotonRelaxationDataGenerator::createForwardInelasticElectronCrossSectionDistribution(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
-    std::shared_ptr<const Utility::OneDDistribution>&
+    std::shared_ptr<const Utility::UnivariateDistribution>&
         forward_inelastic_electron_cross_section_distribution ) const
 {
   // Extract the atomic excitation cross section data
@@ -2299,16 +2293,14 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::createForwardInelasticElec
 // Create the adjoint atomic excitation cross section reaction
 void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicExcitationCrossSectionDistribution(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
-    const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
-    std::shared_ptr<const Utility::OneDDistribution>&
+    const std::shared_ptr<const std::vector<double> >& forward_electron_energy_grid,
+    const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
+    std::shared_ptr<const Utility::UnivariateDistribution>&
       adjoint_excitation_cross_section_distribution ) const
 {
   // Extract the atomic excitation cross section data
-  Teuchos::ArrayRCP<double> atomic_excitation_cross_section;
-  atomic_excitation_cross_section.assign(
-    d_forward_epr_data->getAtomicExcitationCrossSection().begin(),
-    d_forward_epr_data->getAtomicExcitationCrossSection().end() );
+  std::shared_ptr<std::vector<double> > atomic_excitation_cross_section(
+       new std::vector<double>( d_forward_epr_data->getAtomicExcitationCrossSection() ) );
 
   std::shared_ptr<MonteCarlo::ElectroatomicReaction> atomic_excitation_reaction(
     new MonteCarlo::VoidElectroatomicReaction<Utility::LogLog>(
@@ -2422,12 +2414,11 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicEx
   * electron grid generator for bremsstrahlung.
   */
 void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstrahlungGridGenerator(
-    const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
-    std::shared_ptr<BremsstrahlungGridGenerator>&
-        brem_grid_generators ) const
+    const std::shared_ptr<const std::vector<double> >& forward_electron_energy_grid,
+    const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
+    std::shared_ptr<BremsstrahlungGridGenerator>& brem_grid_generators ) const
 {
-  std::shared_ptr<BremsstrahlungReaction> bremsstrahlung_reaction;
+  std::shared_ptr<const BremsstrahlungReaction> bremsstrahlung_reaction;
 
   if( d_electron_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
   {
@@ -2486,14 +2477,14 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
  * to construct the adjoint grid generator for the subshell.
  */
 void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroionizationSubshellGridGenerator(
-    const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
+    const std::shared_ptr<const std::vector<double> >& forward_electron_energy_grid,
+    const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
     std::shared_ptr<ElectroionizationGridGenerator>&
         adjoint_electroionization_grid_generator,
     const unsigned shell ) const
 {
   // Create the subshell reaction
-  std::shared_ptr<ElectroionizationReaction>
+  std::shared_ptr<const ElectroionizationReaction>
     electroionization_subshell_reaction;
 
   if( d_electron_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
