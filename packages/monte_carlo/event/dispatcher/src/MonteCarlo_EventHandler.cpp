@@ -355,14 +355,9 @@ void EventHandler::setSimulationCompletionCriterion(
 {
   if( criterion )
   {
-    // Remove the current criterion from the observer set
-    d_particle_history_observers.erase( d_simulation_completion_criterion );
-
-    // Set the new criterion
     d_simulation_completion_criterion = criterion;
-
-    // Add the new criterion to the observer set
-    d_particle_history_observers.insert( d_simulation_completion_criterion );
+    
+    d_particle_history_observers.front() = criterion;
   }
 }
 
@@ -377,8 +372,15 @@ EventHandler::getSimulationCompletionCriterion() const
 void EventHandler::addParticleTracker(
                      const std::shared_ptr<ParticleTracker>& particle_tracker )
 {
-  if( d_particle_history_observers.find( particle_tracker ) ==
-      d_particle_history_observers.end() )
+  // Make sure the observer is valid
+  testPrecondition( particle_tracker.get() );
+  
+  ParticleHistoryObservers::iterator observer_it =
+    std::find( d_particle_history_observers.begin(),
+               d_particle_history_observers.end(),
+               particle_tracker );
+  
+  if( observer_it == d_particle_history_observers.end() )
   {
     this->registerGlobalObserver( particle_tracker );
 
@@ -386,7 +388,7 @@ void EventHandler::addParticleTracker(
     d_particle_trackers[particle_tracker->getId()] = particle_tracker;
 
     // Add the observer to the set
-    d_particle_history_observers.insert( particle_tracker );
+    d_particle_history_observers.push_back( particle_tracker );
   }
 }
 
@@ -580,42 +582,58 @@ void EventHandler::reduceObserverData( const Utility::Communicator& comm,
   // Make sure only the master thread calls this function
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
-  // Reduce the number of committed histories
-  if( comm.rank() == root_process )
+  if( comm.size() > 1 )
   {
-    uint64_t reduced_num_committed_histories;
+    // Reduce the number of committed histories
+    try{
+      if( comm.rank() == root_process )
+      {
+        uint64_t reduced_num_committed_histories = 0;
+        
+        Utility::reduce( comm,
+                         this->getNumberOfCommittedHistories(),
+                         reduced_num_committed_histories,
+                         std::plus<uint64_t>(),
+                         root_process );
+        
+        d_number_of_committed_histories.front() =
+          reduced_num_committed_histories;
+      
+        for( size_t i = 1; i < d_number_of_committed_histories.size(); ++i )
+          d_number_of_committed_histories[i] = 0;
+      }
+      else
+      {
+        Utility::reduce( comm,
+                         this->getNumberOfCommittedHistories(),
+                         std::plus<uint64_t>(),
+                         root_process );
+        
+        for( size_t i = 0; i < d_number_of_committed_histories.size(); ++i )
+          d_number_of_committed_histories[i] = 0;
+      }
+    }
+    EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                             "Unable to perform mpi reduction in "
+                             "event handler for number of committed "
+                             "histories!" );
     
-    Utility::reduce( comm,
-                     this->getNumberOfCommittedHistories(),
-                     reduced_num_committed_histories,
-                     std::plus<uint64_t>(),
-                     root_process );
-
-    d_number_of_committed_histories.front() = reduced_num_committed_histories;
-
-    for( size_t i = 1; i < d_number_of_committed_histories.size(); ++i )
-      d_number_of_committed_histories[i] = 0;
-  }
-  else
-  {
-    Utility::reduce( comm,
-                     this->getNumberOfCommittedHistories(),
-                     std::plus<uint64_t>(),
-                     root_process );
-
-    for( size_t i = 0; i < d_number_of_committed_histories.size(); ++i )
-      d_number_of_committed_histories[i] = 0;
-  }
+    comm.barrier();
   
-  // Reduce the observers
-  ParticleHistoryObservers::iterator it =
-    d_particle_history_observers.begin();
+    // Reduce the observers
+    ParticleHistoryObservers::iterator it =
+      d_particle_history_observers.begin();
 
-  while( it != d_particle_history_observers.end() )
-  {
-    (*it)->reduceData( comm, root_process );
+    while( it != d_particle_history_observers.end() )
+    {
+      (*it)->reduceData( comm, root_process );
 
-    ++it;
+      comm.barrier();
+
+      ++it;
+    }
+
+    comm.barrier();
   }
 }
 

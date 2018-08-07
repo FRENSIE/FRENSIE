@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "Utility_ExponentiationAlgorithms.hpp"
-#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_DesignByContract.hpp"
 
 namespace Utility{
@@ -129,7 +129,7 @@ struct SampleMomentCollectionDataExtractor<N,SampleMomentCollection<T,M,Ms...>,t
 
 } // end Details namespace
 
-// The sample moment collection
+//! The default sample moment collection
 template<typename T, size_t... Ns>
 class SampleMomentCollection
 {
@@ -333,8 +333,10 @@ template<typename T, size_t N, size_t... Ns>
 template<class Archive>
 void SampleMomentCollection<T,N,Ns...>::save( Archive & ar, const unsigned int version ) const
 {
-  SampleMomentCollection<T,Ns...>::save( ar, version );
+  // Save the base class
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
 
+  // Save the local data
   std::string name = "moment_";
   name += Utility::toString( N );
   
@@ -346,8 +348,10 @@ template<typename T, size_t N, size_t... Ns>
 template<class Archive>
 void SampleMomentCollection<T,N,Ns...>::load( Archive & ar, const unsigned int version )
 {
-  SampleMomentCollection<T,Ns...>::load( ar, version );
+  // Load the base class
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
 
+  // Load the local data
   std::string name = "moment_";
   name += Utility::toString( N );
   
@@ -393,14 +397,20 @@ getMoment( const SampleMomentCollection<T,Ms...>& collection, const size_t i )
 {
   return Details::SampleMomentCollectionDataExtractor<N,SampleMomentCollection<T,Ms...> >::getMoment( collection, i );
 }
-
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SampleMomentCollection<double,1,2> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SampleMomentCollection<double,2,1> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SampleMomentCollection<double,1,2,3,4> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SampleMomentCollection<double,4,3,2,1> ); 
   
 } // end Utility namespace
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::SampleMomentCollection<double,1,2> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, SampleMomentCollection<double,1,2> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::SampleMomentCollection<double,2,1> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, SampleMomentCollection<double,2,1> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::SampleMomentCollection<double,1,2,3,4> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, SampleMomentCollection<double,1,2,3,4> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::SampleMomentCollection<double,4,3,2,1> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, SampleMomentCollection<double,4,3,2,1> );
 
 #endif // end UTILITY_SAMPLE_MOMENT_COLLECTION_DEF_HPP
 

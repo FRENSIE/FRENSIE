@@ -497,7 +497,7 @@ FRENSIE_UNIT_TEST( EntityEstimator,
   double rel_err = moment_2/(moment_1*moment_1) - 1.0/histories;
   
   if( histories > 1 )
-    rel_err *= histories/(histories-1);
+    rel_err *= histories/(histories-1.0);
 
   rel_err = std::sqrt( rel_err );
   
@@ -639,7 +639,7 @@ FRENSIE_UNIT_TEST( EntityEstimator,
   double expected_rel_err = moment_2/(moment_1*moment_1) - 1.0/histories;
 
   if( histories > 1 )
-    expected_rel_err *= histories/(histories-1);
+    expected_rel_err *= histories/(histories-1.0);
 
   expected_rel_err = std::sqrt( expected_rel_err );
   
@@ -648,8 +648,8 @@ FRENSIE_UNIT_TEST( EntityEstimator,
   if( expected_rel_err > 0.0 )
     expected_fom = 1.0/(expected_rel_err*expected_rel_err*1.5);
 
-  FRENSIE_CHECK_EQUAL( mean, std::vector<double>( 24, expected_mean ) );
-  FRENSIE_CHECK_EQUAL( processed_data["mean"], std::vector<double>( 24, expected_mean ) );
+  FRENSIE_CHECK_FLOATING_EQUALITY( mean, std::vector<double>( 24, expected_mean ), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( processed_data["mean"], std::vector<double>( 24, expected_mean ), 1e-15 );
   FRENSIE_CHECK_EQUAL( relative_error, std::vector<double>( 24, expected_rel_err ) );
   FRENSIE_CHECK_EQUAL( processed_data["re"], std::vector<double>( 24, expected_rel_err ) );
   FRENSIE_CHECK_EQUAL( fom, std::vector<double>( 24, expected_fom ) );

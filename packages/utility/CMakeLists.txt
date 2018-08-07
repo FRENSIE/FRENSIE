@@ -24,6 +24,9 @@ INCLUDE_DIRECTORIES(grid/src)
 ADD_SUBDIRECTORY(distribution)
 INCLUDE_DIRECTORIES(distribution/src)
 
+ADD_SUBDIRECTORY(stats)
+INCLUDE_DIRECTORIES(stats/src)
+
 ADD_SUBDIRECTORY(integrator)
 INCLUDE_DIRECTORIES(integrator/src)
 

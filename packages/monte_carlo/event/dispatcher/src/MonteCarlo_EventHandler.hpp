@@ -318,7 +318,7 @@ private:
   typedef std::unordered_map<ParticleTracker::Id,std::shared_ptr<ParticleTracker> > ParticleTrackerIdMap;
 
   // Typedef for the particle history observer array
-  typedef std::set<std::shared_ptr<ParticleHistoryObserver> > ParticleHistoryObservers;
+  typedef std::vector<std::shared_ptr<ParticleHistoryObserver> > ParticleHistoryObservers;
 
   // The geometry model
   std::shared_ptr<const Geometry::Model> d_model;

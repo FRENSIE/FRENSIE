@@ -33,8 +33,12 @@ void EventHandler::addEstimator( const std::shared_ptr<EstimatorType>& estimator
   // Make sure the observer is valid
   testPrecondition( estimator.get() );
 
-  if( d_particle_history_observers.find( estimator ) ==
-      d_particle_history_observers.end() )
+  ParticleHistoryObservers::iterator observer_it =
+    std::find( d_particle_history_observers.begin(),
+               d_particle_history_observers.end(),
+               estimator );
+  
+  if( observer_it == d_particle_history_observers.end() )
   {
     // Make sure that the particle types have been set
     TEST_FOR_EXCEPTION( estimator->getParticleTypes().empty(),
@@ -48,7 +52,7 @@ void EventHandler::addEstimator( const std::shared_ptr<EstimatorType>& estimator
     d_estimators[estimator->getId()] = estimator;
     
     // Add the observer to the set
-    d_particle_history_observers.insert( estimator );
+    d_particle_history_observers.push_back( estimator );
   }
 }
 
