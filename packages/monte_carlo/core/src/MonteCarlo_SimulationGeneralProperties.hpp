@@ -45,10 +45,40 @@ public:
   ParticleModeType getParticleMode() const;
 
   //! Set the number of histories to run
-  void setNumberOfHistories( const unsigned long long histories );
+  void setNumberOfHistories( const uint64_t histories );
 
   //! Return the number of histories to run
-  unsigned long long getNumberOfHistories() const;
+  uint64_t getNumberOfHistories() const;
+
+  //! Set the minimum number of rendezvous per simulation
+  void setMinNumberOfRendezvous( const uint64_t rendezvous );
+
+  //! Return the mimimum number of rendezvous per simulation
+  uint64_t getMinNumberOfRendezvous() const;
+
+  //! Set the maximum rendezvous batch size
+  void setMaxRendezvousBatchSize( const uint64_t max_batch_size );
+
+  //! Get the maximum rendezvous batch size
+  uint64_t getMaxRendezvousBatchSize() const;
+
+  //! Set the minimum number of batches per rendezvous
+  void setMinNumberOfBatchesPerRendezvous( const uint64_t batches );
+
+  //! Get the minimum number of batches per rendezvous
+  uint64_t getMinNumberOfBatchesPerRendezvous() const;
+
+  //! Set the maximum batch size
+  void setMaxBatchSize( const uint64_t max_batch_size );
+
+  //! Get the maximum batch size
+  uint64_t getMaxBatchSize() const;
+
+  //! Set the number of batches for an MPI configuration
+  void setNumberOfBatchesPerProcessor( const unsigned batches_per_processor );
+
+  //! Return the number of batches for an MPI configuration
+  unsigned getNumberOfBatchesPerProcessor() const;
 
   //! Set the history simulation wall time (s)
   void setSimulationWallTime( const double wall_time );
@@ -80,12 +110,6 @@ public:
   //! Return if implicit capture mode has been set
   bool isImplicitCaptureModeOn() const;
 
-  //! Set the number of batches for an MPI configuration
-  void setNumberOfBatchesPerProcessor( const unsigned batches_per_processor );
-
-  //! Return the number of batches for an MPI configuration
-  unsigned getNumberOfBatchesPerProcessor() const;
-
 private:
 
   // Save the state to an archive
@@ -105,7 +129,22 @@ private:
   ParticleModeType d_particle_mode;
 
   // The number of histories to run
-  unsigned long long d_number_of_histories;
+  uint64_t d_number_of_histories;
+
+  // The minimum number of rendezvous per simulation
+  uint64_t d_min_number_of_rendezvous;
+
+  // The maximum rendezvous batch size
+  uint64_t d_max_rendezvous_batch_size;
+
+  // The minimum number of batches per rendezvous
+  uint64_t d_min_number_of_batches_per_rendezvous;
+
+  // The maximum batch size
+  uint64_t d_max_batch_size;
+
+  // The number of batches to run for MPI configuration
+  unsigned d_number_of_batches_per_processor;
 
   // The simulation wall time
   double d_wall_time;
@@ -118,9 +157,6 @@ private:
 
   // The capture mode (true = implicit, false = analogue - default)
   bool d_implicit_capture_mode_on;
-
-  // The number of batches to run for MPI configuration
-  unsigned d_number_of_batches_per_processor;
 };
 
 // Save the state to an archive

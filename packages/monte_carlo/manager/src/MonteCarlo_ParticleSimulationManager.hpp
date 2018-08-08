@@ -2,132 +2,146 @@
 //!
 //! \file   MonteCarlo_ParticleSimulationManager.hpp
 //! \author Alex Robinson
-//! \brief  The particle simulation manager class declaration.
+//! \brief  Particle simulation manager class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FRENSIE_PARTICLE_SIMULATION_MANAGER_HPP
-#define FRENSIE_PARTICLE_SIMULATION_MANAGER_HPP
+#ifndef MONTE_CARLO_PARTICLE_SIMULATION_MANAGER_HPP
+#define MONTE_CARLO_PARTICLE_SIMULATION_MANAGER_HPP
 
 // Std Lib Includes
-#include <functional>
+#include <memory>
+
+// Boost Includes
+#include <boost/filesystem/path.hpp>
+#include <boost/serialization/split_member.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_SourceModuleInterface.hpp"
-#include "MonteCarlo_EventModuleInterface.hpp"
-#include "MonteCarlo_CollisionModuleInterface.hpp"
-#include "MonteCarlo_ParticleState.hpp"
-#include "MonteCarlo_ParticleBank.hpp"
-#include "MonteCarlo_SimulationManager.hpp"
+#include "MonteCarlo_EventHandler.hpp"
+#include "MonteCarlo_WeightWindow.hpp"
+#include "MonteCarlo_ParticleSource.hpp"
+#include "MonteCarlo_FilledGeometryModel.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
-#include "Geometry_Model.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
+#include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
 
-namespace Details{
-
-//! The mode initialization helper class
-template<typename BeginParticleIterator, typename EndParticleIterator>
-struct ModeInitializationHelper;
-  
-} // end Details namespace
-
-//! The generic particle simulation manager class
-template<ParticleModeType mode>
-class ParticleSimulationManager : public SimulationManager
+//! The particle simulation manager base class
+class ParticleSimulationManager : private ArchivableObject<ParticleSimulationManager>
 {
 
 public:
 
   //! Constructor
   ParticleSimulationManager(
-                const std::shared_ptr<const SimulationProperties> properties,
-                const std::shared_ptr<const Geometry::Model>& model,
-		const unsigned long long start_history = 0ull,
-		const unsigned long long previously_completed_histories = 0ull,
-		const double previous_run_time = 0.0 );
+               const std::shared_ptr<const FilledGeometryModel>& model,
+               const std::shared_ptr<ParticleSource>& source,
+               const std::shared_ptr<EventHandler>& event_handler,
+               const std::shared_ptr<const SimulationProperties>& properties,
+               const std::string& simulation_name = "simulation.xml" );
+
+  //! Restart constructor
+  ParticleSimulationManager( const boost::filesystem::path& archived_manager_name );
 
   //! Destructor
   virtual ~ParticleSimulationManager()
   { /* ... */ }
 
+  //! Return the rendezvous batch size
+  uint64_t getRendezvousBatchSize() const;
+
+  //! Return the batch size
+  uint64_t getBatchSize() const;
+
+  //! Return the model
+  const FilledGeometryModel& getModel() const;
+
+  //! Return the source
+  const ParticleSource& getSource() const;
+
+  //! Return the event handler
+  const EventHandler& getEventHandler() const;
+
+  //! Return the event handler
+  EventHandler& getEventHandler();
+
+  //! Return the next history that will be completed
+  uint64_t getNextHistory() const;
+
+  //! Set the weight windows
+  void setWeightWindows(
+                   const std::shared_ptr<const WeightWindow>& weight_windows );
+
+  //! Set the collision forcer
+  void setCollisionForcer(
+              const std::shared_ptr<const CollisionForcer>& collision_forcer );
+
   //! Run the simulation set up by the user
   virtual void runSimulation();
 
-  //! Print the data in all estimators to the desired stream
+  //! Rename the simulation
+  void renameSimulation( const std::string& name );
+
+  //! Print the simulation data to the desired stream
   virtual void printSimulationSummary( std::ostream& os ) const;
 
-  //! Export the simulation data (to an hdf5 file)
-  virtual void exportSimulationData( const std::string& data_file_name,
-                                     std::ostream& os ) const;
+  //! Log the simulation data
+  virtual void logSimulationSummary() const;
 
-  // Signal handler
-  virtual void signalHandler(int signal);
+  //! The signal handler
+  virtual void signalHandler( int signal );
 
 protected:
 
+  //! Set the batch size
+  void setBatchSize( const uint64_t batch_size );
+
   //! Run the simulation batch
-  void runSimulationBatch( const unsigned long long start_history,
-                           const unsigned long long end_history );
+  void runSimulationBatch( const uint64_t batch_start_history,
+                           const uint64_t batch_end_history );
 
-  //! Return the number of histories
-  unsigned long long getNumberOfHistories() const;
+  //! Simulate an unresolved particle
+  virtual void simulateUnresolvedParticle(
+                                        ParticleState& unresolved_particle,
+                                        ParticleBank& bank,
+                                        const bool source_particle ) const = 0;
 
-  //! Return the number of histories completed
-  unsigned long long getNumberOfHistoriesCompleted() const;
-
-  //! Increment the number of histories completed
-  void incrementHistoriesCompleted( const unsigned long long histories = 1ull );
-  //! Set the number of histories completed
-  void setHistoriesCompleted( const unsigned long long histories );
-
-  //! Set the start time
-  void setStartTime( const double start_time );
-
-  //! Set the end time
-  void setEndTime( const double end_time );
-
-  //! Print simulation state info in collision handler
-  void printSimulationStateInfo();
-
-private:
-
-  // Initialize the simulate particle functions
-  void initializeSimulateParticleFunctions();
-
-  // Add simulate particle function for particle type
-  template<typename State>
-  void addSimulateParticleFunction();
-
-  // Simulate an unresolved particle
-  void simulateUnresolvedParticle( ParticleState& unresolved_particle,
-                                   ParticleBank& bank,
-                                   const bool source_particle ) const;
-
-  // Simulate an individual particle
+  //! Simulate a resolved particle
   template<typename State>
   void simulateParticle( ParticleState& unresolved_particle,
                          ParticleBank& bank,
                          const bool source_particle ) const;
 
-  // Simulate an individual particle track of the desired optical path length
+  //! Rendezvous (cache state)
+  virtual void rendezvous();
+
+private:
+
+  // Simulate an unresolved particle track
+  template<typename State>
+  void simulateUnresolvedParticleTrack(
+                                       ParticleState& unresolved_particle,
+                                       ParticleBank& bank,
+                                       const double optical_path,
+                                       const bool starting_from_source ) const;
+
+  // Simulate a resolved particle track
   template<typename State>
   void simulateParticleTrack( State& particle,
                               ParticleBank& bank,
                               const double optical_path,
                               const bool starting_from_source ) const;
 
-  // Simulate an individual particle track of the desired optical path length
+  // Simulate an unresolved particle collision
   template<typename State>
-  void simulateUnresolvedParticleTrack( ParticleState& particle,
-                                        ParticleBank& bank,
-                                        const double optical_path,
-                                        const bool starting_from_source ) const;
-
-  // Simulate a particle collision
-  template<typename State>
-  void simulateUnresolvedParticleCollision( ParticleState& particle,
+  void simulateUnresolvedParticleCollision( ParticleState& unresolved_particle,
                                             ParticleBank& bank ) const;
+
+  // Simulate a resolved particle collision
+  template<typename State>
+  void simulateParticleCollision( State& particle,
+                                  ParticleBank& bank );
 
   // Advance a particle to the cell boundary
   template<typename State>
@@ -145,113 +159,84 @@ private:
                                   const double subtrack_start_time,
                                   const double track_start_time,
                                   const double track_start_position[3] ) const;
-                                      
-  // Add the mode initialization helper as a friend class
-  template<typename T1, typename T2>
-  friend class Details::ModeInitializationHelper;
+
+  // The name that will be used when archiving the object
+  const char* getArchiveName() const final override;
+
+  // Save the data to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the data from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
+  // The name used in archive name-value pairs
+  static const std::string s_archive_name;
+
+  // The simulation name
+  std::string d_simulation_name;
+
+  // The filled geometry model
+  std::shared_ptr<const FilledGeometryModel> d_model;
+
+  // The collision kernel
+  std::unique_ptr<const CollisionKernel> d_collision_kernel;
+
+  // The transport kernel
+  std::unique_ptr<const TransportKernel> d_transport_kernel;
+  
+  // The particle source
+  std::shared_ptr<ParticleSource> d_source;
+
+  // The event handler
+  std::shared_ptr<EventHandler> d_event_handler;
+
+  // The weight windows
+  std::shared_ptr<const WeightWindows> d_weight_windows;
+
+  // The collision forcer
+  std::shared_ptr<const CollisionForcer> d_collision_forcer;
 
   // The simulation properties
   std::shared_ptr<const SimulationProperties> d_properties;
 
-  // The geometry model
-  std::shared_ptr<const Geometry::Model> d_model;
+  // The next history to run
+  uint64_t d_next_history;
 
-  // Starting history
-  unsigned long long d_start_history;
+  // The rendezvous number (counter)
+  uint64_t d_rendezvous_number;
 
-  // Number of particle histories to simulate
-  unsigned long long d_history_number_wall;
+  // The rendezvous batch size
+  uint64_t d_rendezvous_batch_size;
 
-  // Number of histories completed
-  unsigned long long d_histories_completed;
+  // The batch size
+  uint64_t d_batch_size;
 
   // Flag for ending simulation early
   bool d_end_simulation;
-
-  // The previous run time
-  double d_previous_run_time;
-
-  // The simulation start time
-  double d_start_time;
-
-  // The simulation end time
-  double d_end_time;
-
-  // The simulation functions
-  typedef std::function<void(ParticleState&, ParticleBank&, Geometry::Navigator&)>
-  SimulateParticleFunction;
-  
-  typedef std::map<ParticleType,SimulatParticleFunction>
-  SimulateParticleFunctionMap;
-  
-  SimulateParticleFunctionMap d_simulate_particle_function_map;
-
-  // The simulate unresolved particle track functions
-  typedef ParticleEnteringCellEventActor::SimulateParticleForOpticalPath SimulateUnresolvedParticleTrackFunction;
-
-  typedef std::map<ParticleType,SimulateUnresolvedParticleTrackFunction>
-  SimulateUnresolvedParticleTrackFunctionMap;
-
-  SimulateUnresolvedParticleTrackFunctionMap d_simulate_unresolved_particle_track_function_map;
-
-  // The simulate unresolved particle collision functions
-  typedef ParticleCollidingGlobalEventActor::SimulateParticleCollision SimulateUnresolvedParticleCollisionFunction;
-
-  typedef std::map<ParticleType,SimulateUnresolvedParticleCollisionFunction>
-  SimulateUnresolvedParticleCollisionFunctionMap;
-
-  SimulateUnresolvedParticleCollisionFunctionMap d_simulate_unresolved_particle_collision_function_map;
 };
-
-//! Log lost particle details
-#define LOG_LOST_PARTICLE_DETAILS( particle )   \
-  FRENSIE_LOG_TAGGED_WARNING(                                           \
-                   "Lost Particle",                                     \
-                   "history " << particle.getHistoryNumber() <<         \
-                   ", generation " << particle.getGenerationNumber() ); \
-                                                                        \
-  FRENSIE_LOG_TAGGED_NOTIFICATION( "Lost Particle State Dump",          \
-                                   particle )
-
-//! Macro for catching a lost particle and breaking a loop
-#define CATCH_LOST_PARTICLE_AND_BREAK( particle )			\
-  catch( std::runtime_error& exception )				\
-  {									\
-    particle.setAsLost();						\
-                                                                        \
-    FRENSIE_LOG_NESTED_ERROR( exception.what() );                       \
-                                                                        \
-    LOG_LOST_PARTICLE_DETAILS( particle );                              \
-                                                                        \
-    break;								\
-  }
-
-//! Macro for catching a lost source particle
-#define CATCH_LOST_SOURCE_PARTICLE_AND_CONTINUE( bank )			\
-  catch( std::runtime_error& exception )				\
-  {									\
-    bank.top().setAsLost();                                             \
-                                                                        \
-    FRENSIE_LOG_NESTED_ERROR( exception.what() );                       \
-                                                                        \
-    LOG_LOST_PARTICLE_DETAILS( bank.top() )                             \
-                                                                        \
-    bank.pop();								\
-                                                                        \
-    continue;								\
-  }
 
 } // end MonteCarlo namespace
 
+BOOST_SERIALIZATION_CLASS_VERSION( ParticleSimulationManager, MonteCarlo, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ParticleSimulationManager, MonteCarlo );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, ParticleSimulationManager );
+
 //---------------------------------------------------------------------------//
-// Template includes.
+// Template Includes
 //---------------------------------------------------------------------------//
 
 #include "MonteCarlo_ParticleSimulationManager_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end FRENSIE_PARTICLE_SIMULATION_MANAGER_HPP
+#endif // end MONTE_CARLO_PARTICLE_SIMULATION_MANAGER_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleSimulationManager.hpp
