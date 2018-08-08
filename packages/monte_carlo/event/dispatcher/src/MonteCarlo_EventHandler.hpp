@@ -134,15 +134,6 @@ public:
   //! Get the number of particle histories that have been committed
   uint64_t getNumberOfCommittedHistories() const;
 
-  //! Set the elapsed particle simulation time (s)
-  void setElapsedTime( const double start_time, const double end_time );
-
-  //! Set the elapsed particle simulation time (s)
-  void setElapsedTime( const double elapsed_time );
-
-  //! Increment the elapsed particle simulation time (s)
-  void incrementElapsedTime( const double elapsed_time );
-
   //! Get the elapsed particle simulation time (s)
   double getElapsedTime() const;
 
@@ -282,19 +273,19 @@ private:
   void createAndRegisterCellEstimator(
                                   const Estimator::Id estimator_id,
                                   const Geometry::EstimatorType estimator_type,
+                                  const Geometry::ParticleType particle_type,
                                   const Geometry::Model::CellIdArray& cells,
-                                  const Geometry::Model& model,
-                                  std::shared_ptr<Estimator>& estimator_base );
+                                  const Geometry::Model& model );
 
   // Create and register surface estimator
   void createAndRegisterSurfaceEstimator(
-                     const Estimator::Id estimator_id,
-                     const Geometry::EstimatorType estimator_type,
-                     const Geometry::AdvancedModel::SurfaceIdArray& surfaces,
-                     const Geometry::Model& model,
-                     const MonteCarlo::SimulationGeneralProperties& properties,
-                     std::shared_ptr<Estimator>& estimator_base );
-  
+                   const Estimator::Id estimator_id,
+                   const Geometry::EstimatorType estimator_type,
+                   const Geometry::ParticleType particle_type,
+                   const Geometry::AdvancedModel::SurfaceIdArray& surfaces,
+                   const Geometry::Model& model,
+                   const MonteCarlo::SimulationGeneralProperties& properties );
+                     
   // Set the particle type in a created estimator
   static void setParticleTypes( const Geometry::ParticleType particle_type,
                                 const std::shared_ptr<Estimator>& estimator );
@@ -327,7 +318,7 @@ private:
   typedef std::unordered_map<ParticleTracker::Id,std::shared_ptr<ParticleTracker> > ParticleTrackerIdMap;
 
   // Typedef for the particle history observer array
-  typedef std::set<std::shared_ptr<ParticleHistoryObserver> > ParticleHistoryObservers;
+  typedef std::vector<std::shared_ptr<ParticleHistoryObserver> > ParticleHistoryObservers;
 
   // The geometry model
   std::shared_ptr<const Geometry::Model> d_model;
@@ -336,9 +327,12 @@ private:
   std::shared_ptr<ParticleHistorySimulationCompletionCriterion> d_simulation_completion_criterion;
 
   // The number of simulated particle histories
-  uint64_t d_number_of_committed_histories;
+  std::vector<uint64_t> d_number_of_committed_histories;
 
-  // The elapsed simulation time (s)
+  // The simulation timer (s)
+  std::shared_ptr<Utility::Timer> d_simulation_timer;
+
+  // The simulation time
   double d_elapsed_simulation_time;
 
   // The estimators

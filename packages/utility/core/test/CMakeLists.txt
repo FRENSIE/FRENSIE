@@ -431,15 +431,6 @@ FRENSIE_ADD_TEST(FortranFileHelpers
 FRENSIE_ADD_TEST_EXECUTABLE(3DCartesianVectorHelpers DEPENDS tst3DCartesianVectorHelpers.cpp)
 FRENSIE_ADD_TEST(3DCartesianVectorHelpers)
 
-FRENSIE_ADD_TEST_EXECUTABLE(SampleMoment DEPENDS tstSampleMoment.cpp)
-FRENSIE_ADD_TEST(SampleMoment)
-
-FRENSIE_ADD_TEST_EXECUTABLE(SampleMomentCollection DEPENDS tstSampleMomentCollection.cpp)
-FRENSIE_ADD_TEST(SampleMomentCollection)
-
-FRENSIE_ADD_TEST_EXECUTABLE(Measurement DEPENDS tstMeasurement.cpp)
-FRENSIE_ADD_TEST(Measurement)
-
 FRENSIE_ADD_TEST_EXECUTABLE(PropertyTree DEPENDS tstPropertyTree.cpp)
 FRENSIE_ADD_TEST(PropertyTree)
 

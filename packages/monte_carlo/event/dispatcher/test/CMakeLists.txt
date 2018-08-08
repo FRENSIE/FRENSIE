@@ -59,10 +59,20 @@ ENDIF()
 IF(${FRENSIE_ENABLE_MPI})
   FRENSIE_ADD_TEST(DistributedParallelEventHandler
     TEST_EXEC_NAME_ROOT EventHandler
+    EXTRA_ARGS --test_filter=update_distributed
     MPI_PROCS 2)
   FRENSIE_ADD_TEST(DistributedParallelEventHandler
     TEST_EXEC_NAME_ROOT EventHandler
+    EXTRA_ARGS --test_filter=update_distributed
     MPI_PROCS 4)
+ENDIF()
+
+IF(${FRENSIE_ENABLE_DAGMC})
+  FRENSIE_ADD_TEST_EXECUTABLE(EventHandlerDagMC
+    DEPENDS tstEventHandlerDagMC.cpp
+    LIB_DEPENDS geometry_dagmc)
+  FRENSIE_ADD_TEST(EventHandlerDagMC
+    EXTRA_ARGS --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat)
 ENDIF()
 
 FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_event_dispatcher)

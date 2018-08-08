@@ -1,0 +1,3 @@
+FRENSIE_SETUP_PACKAGE(utility_stats
+  NON_MPI_LIBRARIES utility_core utility_archive ${Boost_LIBRARIES}
+  SET_VERBOSE ${CMAKE_VERBOSE_CONFIGURE})

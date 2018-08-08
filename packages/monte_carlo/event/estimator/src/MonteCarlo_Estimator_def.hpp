@@ -88,21 +88,11 @@ void Estimator::reduceCollectionAndReturnReducedMoments(
   reduced_moments.resize( collection.size() );
 
   try{
-    if( comm.rank() == root_process )
-    {
-      Utility::reduce( comm,
-                       Utility::ArrayView<const double>( Utility::getCurrentScores<N>( collection ), collection.size() ),
-                       Utility::arrayView( reduced_moments ),
-                       std::plus<double>(),
-                       root_process );
-    }
-    else
-    {
-      Utility::reduce( comm,
-                       Utility::ArrayView<const double>( Utility::getCurrentScores<N>( collection ), collection.size() ),
-                       std::plus<double>(),
-                       root_process );
-    }
+    Utility::reduce( comm,
+                     Utility::ArrayView<const double>( Utility::getCurrentScores<N>( collection ), collection.size() ),
+                     Utility::arrayView( reduced_moments ),
+                     std::plus<double>(),
+                     root_process );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
                            "Unable to perform mpi reduction over moments of "

@@ -16,6 +16,7 @@
 #include <boost/mpl/begin_end.hpp>
 
 // FRENSIE Includes
+#include "Utility_GlobalMPISession.hpp"
 #include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
@@ -32,8 +33,12 @@ void EventHandler::addEstimator( const std::shared_ptr<EstimatorType>& estimator
   // Make sure the observer is valid
   testPrecondition( estimator.get() );
 
-  if( d_particle_history_observers.find( estimator ) ==
-      d_particle_history_observers.end() )
+  ParticleHistoryObservers::iterator observer_it =
+    std::find( d_particle_history_observers.begin(),
+               d_particle_history_observers.end(),
+               estimator );
+  
+  if( observer_it == d_particle_history_observers.end() )
   {
     // Make sure that the particle types have been set
     TEST_FOR_EXCEPTION( estimator->getParticleTypes().empty(),
@@ -47,7 +52,7 @@ void EventHandler::addEstimator( const std::shared_ptr<EstimatorType>& estimator
     d_estimators[estimator->getId()] = estimator;
     
     // Add the observer to the set
-    d_particle_history_observers.insert( estimator );
+    d_particle_history_observers.push_back( estimator );
   }
 }
 
@@ -281,8 +286,15 @@ void EventHandler::save( Archive& ar, const unsigned version ) const
   // Save the local data
   ar & BOOST_SERIALIZATION_NVP( d_model );
   ar & BOOST_SERIALIZATION_NVP( d_simulation_completion_criterion );
-  ar & BOOST_SERIALIZATION_NVP( d_number_of_committed_histories );
-  ar & BOOST_SERIALIZATION_NVP( d_elapsed_simulation_time );
+
+  uint64_t number_of_committed_histories =
+    this->getNumberOfCommittedHistories();
+  
+  ar & BOOST_SERIALIZATION_NVP( number_of_committed_histories );
+
+  double elapsed_time = this->getElapsedTime();
+  
+  ar & BOOST_SERIALIZATION_NVP( elapsed_time );
   ar & BOOST_SERIALIZATION_NVP( d_estimators );
   ar & BOOST_SERIALIZATION_NVP( d_particle_trackers );
   ar & BOOST_SERIALIZATION_NVP( d_particle_history_observers );
@@ -304,17 +316,27 @@ void EventHandler::load( Archive& ar, const unsigned version )
   // Load the local data
   ar & BOOST_SERIALIZATION_NVP( d_model );
   ar & BOOST_SERIALIZATION_NVP( d_simulation_completion_criterion );
-  ar & BOOST_SERIALIZATION_NVP( d_number_of_committed_histories );
-  ar & BOOST_SERIALIZATION_NVP( d_elapsed_simulation_time );
-  ar & BOOST_SERIALIZATION_NVP( d_estimators );
-  ar & BOOST_SERIALIZATION_NVP( d_particle_trackers );
-  ar & BOOST_SERIALIZATION_NVP( d_particle_history_observers );
 
-  if( d_number_of_committed_histories > 0 )
-    ParticleHistoryObserver::setNumberOfHistories( d_number_of_committed_histories );
+  uint64_t number_of_committed_histories;
+  
+  ar & BOOST_SERIALIZATION_NVP( number_of_committed_histories );
+
+  d_number_of_committed_histories.resize( 1 );
+  d_number_of_committed_histories.front() = number_of_committed_histories;
+
+  if( number_of_committed_histories > 0 )
+    ParticleHistoryObserver::setNumberOfHistories( number_of_committed_histories );
+
+  ar & boost::serialization::make_nvp( "elapsed_time", d_elapsed_simulation_time );  
 
   if( d_elapsed_simulation_time > 0.0 )
     ParticleHistoryObserver::setElapsedTime( d_elapsed_simulation_time );
+
+  d_simulation_timer = Utility::GlobalMPISession::createTimer();
+  
+  ar & BOOST_SERIALIZATION_NVP( d_estimators );
+  ar & BOOST_SERIALIZATION_NVP( d_particle_trackers );
+  ar & BOOST_SERIALIZATION_NVP( d_particle_history_observers );
 }
 
 } // end MonteCarlo namespace

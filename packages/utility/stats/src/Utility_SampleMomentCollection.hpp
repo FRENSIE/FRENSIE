@@ -19,6 +19,7 @@
 // FRENSIE Includes
 #include "Utility_SampleMoment.hpp"
 #include "Utility_Vector.hpp"
+#include "Utility_SerializationHelpers.hpp"
 
 namespace Utility{
 
@@ -49,9 +50,9 @@ class SampleMomentCollection;
 template<typename T, size_t N, size_t... Ns>
 class SampleMomentCollection<T,N,Ns...> : public SampleMomentCollection<T,Ns...>
 {
-
-private:
-
+  // The base type
+  typedef SampleMomentCollection<T,Ns...> BaseType;
+  
   // The underlying container type
   typedef std::vector<typename SampleMoment<N,T>::ValueType> ContainerType;
 
@@ -158,6 +159,14 @@ SampleMoment<N,T> getMoment( const SampleMomentCollection<T,Ms...>& collection,
                              const size_t i );
 
 } // end Utility namespace
+
+#define BOOST_SERIALIZATION_SAMPLE_MOMENT_COLLECTION_VERSION( VERSION ) \
+  BOOST_SERIALIZATION_TEMPLATE_CLASS_VERSION_IMPL(                      \
+    SampleMomentCollection, Utility, VERSION,                             \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename T, size_t... Ns ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( T, Ns... ) )
+
+BOOST_SERIALIZATION_SAMPLE_MOMENT_COLLECTION_VERSION( 0 );
 
 //---------------------------------------------------------------------------//
 // Template Includes.

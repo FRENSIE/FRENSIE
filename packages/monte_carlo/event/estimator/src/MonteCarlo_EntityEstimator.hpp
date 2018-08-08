@@ -9,12 +9,10 @@
 #ifndef MONTE_CARLO_ENTITY_ESTIMATOR_HPP
 #define MONTE_CARLO_ENTITY_ESTIMATOR_HPP
 
-// Std Lib Includes
-#include <unordered_map>
-#include <unordered_set>
-
 // FRENSIE Includes
 #include "MonteCarlo_Estimator.hpp"
+#include "Utility_Map.hpp"
+#include "Utility_Set.hpp"
 
 namespace MonteCarlo{
 

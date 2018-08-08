@@ -125,28 +125,41 @@ public:
   void reduceData( const Utility::Communicator& comm,
                    const int root_process ) final override
   {
-    if( comm.rank() == root_process )
+    if( comm.size() > 1 )
     {
-      uint64_t reduced_num_completed_histories;
+      comm.barrier();
       
-      Utility::reduce( comm,
-                       this->getNumberOfCompletedHistories(),
-                       reduced_num_completed_histories,
-                       std::plus<uint64_t>(),
-                       root_process );
-
-      this->resetData();
+      try{
+        if( comm.rank() == root_process )
+        {
+          uint64_t reduced_num_completed_histories;
+          
+          Utility::reduce( comm,
+                           this->getNumberOfCompletedHistories(),
+                           reduced_num_completed_histories,
+                           std::plus<uint64_t>(),
+                           root_process );
+          
+          this->resetData();
+          
+          d_num_completed_histories.front() = reduced_num_completed_histories;
+        }
+        else
+        {
+          Utility::reduce( comm,
+                           this->getNumberOfCompletedHistories(),
+                           std::plus<uint64_t>(),
+                           root_process );
+          
+          this->resetData();
+        }
+      }
+      EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                               "Unable to perform mpi reduction in "
+                               "history count particle history simulation "
+                               "completion criterion!" );
       
-      d_num_completed_histories.front() = reduced_num_completed_histories;
-    }
-    else
-    {
-      Utility::reduce( comm,
-                       this->getNumberOfCompletedHistories(),
-                       std::plus<uint64_t>(),
-                       root_process );
-
-      this->resetData();
+      comm.barrier();
     }
   }
 

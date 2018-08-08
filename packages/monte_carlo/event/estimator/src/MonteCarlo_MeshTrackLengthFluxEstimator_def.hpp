@@ -212,6 +212,8 @@ void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::printSummary(
           ++num_elements_lte_1pc_re[i];
       }
     }
+
+    ++element_it;
   }
 
   size_t num_mesh_elements = d_mesh->getNumberOfElements();
@@ -340,6 +342,8 @@ void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportAsVtk() c
       entity_total_fom_data[i] =
         std::make_pair( response_function_name,  total_figure_of_merit[i] );
     }
+
+    ++element_it;
   }
 
   std::string output_name( "estimator_" );
