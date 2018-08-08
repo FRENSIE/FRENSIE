@@ -121,25 +121,44 @@ void EntityEstimator::reduceData( const Utility::Communicator& comm,
   // Only do the reduction if there is more than one process
   if( comm.size() > 1 )
   {
-    EntityEstimatorMomentsCollectionMap::iterator entity_data_it =
-      d_entity_estimator_moments_map.begin();
-    
     try{
-      while( entity_data_it != d_entity_estimator_moments_map.end() )
+      // Gather all of the entity data on the root process
+      if( comm.rank() == root_process )
       {
-        this->reduceCollection( comm, root_process, entity_data_it->second );
+        std::vector<EntityEstimatorMomentsCollectionMap>
+          gathered_entity_data( comm.size() );
 
-        comm.barrier();
-        
-        ++entity_data_it;
+        std::vector<Utility::Communicator::Request> gathered_requests;
+
+        for( size_t i = 0; i < comm.size(); ++i )
+        {
+          if( i != root_process )
+          {
+            gathered_requests.push_back(
+                    Utility::ireceive( comm, i, 0, gathered_entity_data[i] ) );
+          }
+        }
+
+        std::vector<Utility::Communicator::Status>
+        gathered_statuses( gathered_requests.size() );
+
+        Utility::wait( gathered_requests, gathered_statuses );
+
+        this->reduceEntityCollections( gathered_entity_data, root_process );
+      }
+      else
+      {
+        Utility::send( comm,
+                       root_process,
+                       0,
+                       d_entity_estimator_moments_map );
       }
     }
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                             "Unable to perform mpi reduction in entity "
-                             "estimator " << this->getId() <<
-                             " for entity " << entity_data_it->first <<
-                             " bin data!" );
-      
+                             "Unable to perform mpi reduction in entity bin "
+                             "estimator " << this->getId() << " for entity "
+                             "bin data!" );
+
     comm.barrier();
     
     // Reduce bin data of total
@@ -148,11 +167,40 @@ void EntityEstimator::reduceData( const Utility::Communicator& comm,
     }
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
                              "Unable to perform mpi reduction in entity "
-                             "estimator " << this->getId() << " for total "
-                             "bin data!" );
-    
-    // Only call the base reduce data if there is more than one process
-    Estimator::reduceData( comm, root_process );
+                             "estimator " << this->getId() << " for total bin "
+                             "data!" );
+  }
+
+  Estimator::reduceData( comm, root_process );
+}
+
+// Reduce the entity moments
+void EntityEstimator::reduceEntityCollections(
+                        const std::vector<EntityEstimatorMomentsCollectionMap>&
+                        other_entity_estimator_moments_maps,
+                        const size_t root_index )
+{
+  // Reduce the data that was on each process
+  for( auto&& entity_data : d_entity_estimator_moments_map )
+  {
+    // Don't double count data on this process (j starts from 1)
+    for( size_t j = 0; j < other_entity_estimator_moments_maps.size(); ++j )
+    {
+      if( j != root_index )
+      {
+        const EntityEstimatorMomentsCollectionMap::value_type&
+          other_entity_data = *other_entity_estimator_moments_maps[j].find( entity_data.first );
+        
+        for( size_t i = 0; i < entity_data.second.size(); ++i )
+        {
+          Utility::getCurrentScore<1>( entity_data.second, i ) +=
+            Utility::getCurrentScore<1>( other_entity_data.second, i );
+          
+          Utility::getCurrentScore<2>( entity_data.second, i ) +=
+            Utility::getCurrentScore<2>( other_entity_data.second, i );
+        }
+      }
+    }
   }
 }
 

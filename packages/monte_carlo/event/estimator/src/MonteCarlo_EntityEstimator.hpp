@@ -143,6 +143,12 @@ private:
   // Resize the estimator total collection
   void resizeEstimatorTotalCollection();
 
+  // Reduce the entity collections
+  void reduceEntityCollections(
+                      const std::vector<EntityEstimatorMomentsCollectionMap>&
+                      other_entity_estimator_moments_maps,
+                      const size_t root_index );
+
   // Print the entity ids assigned to the estimator
   void printEntityIds( std::ostream& os,
 		       const std::string& entity_type ) const;

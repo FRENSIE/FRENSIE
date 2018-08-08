@@ -160,6 +160,12 @@ private:
   template<typename InputEntityId>
   void initializeMomentsMaps( const std::vector<InputEntityId>& entity_ids );
 
+  // Reduce the entity collections
+  void reduceEntityCollections(
+                      const std::vector<EntityEstimatorMomentsCollectionMap>&
+                      other_entity_estimator_moments_maps,
+                      const size_t root_index );
+
   // Add info to update tracker
   void addInfoToUpdateTracker( const size_t thread_id,
                                const EntityId entity_id,
