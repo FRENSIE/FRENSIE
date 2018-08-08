@@ -269,24 +269,43 @@ void StandardEntityEstimator::reduceData( const Utility::Communicator& comm,
   // Only do the reduction if there is more than one process
   if( comm.size() > 1 )
   {
-    EntityEstimatorMomentsCollectionMap::iterator entity_data_it =
-      d_entity_total_estimator_moments_map.begin();
-    
     try{
-      while( entity_data_it != d_entity_total_estimator_moments_map.end() )
+      // Gather all of the total data of each entity
+      if( comm.rank() == root_process )
       {
-        this->reduceCollection( comm, root_process, entity_data_it->second );
+        std::vector<EntityEstimatorMomentsCollectionMap>
+          gathered_entity_data( comm.size() );
 
-        comm.barrier();
+        std::vector<Utility::Communicator::Request> gathered_requests;
 
-        ++entity_data_it;
+        for( size_t i = 0; i < comm.size(); ++i )
+        {
+          if( i != root_process )
+          {
+            gathered_requests.push_back(
+                    Utility::ireceive( comm, i, 0, gathered_entity_data[i] ) );
+          }
+        }
+
+        std::vector<Utility::Communicator::Status>
+        gathered_statuses( gathered_requests.size() );
+
+        Utility::wait( gathered_requests, gathered_statuses );
+
+        this->reduceEntityCollections( gathered_entity_data, root_process );
       }
+      else
+      {
+        Utility::send( comm,
+                       root_process,
+                       0,
+                       d_entity_total_estimator_moments_map );
+      } 
     }
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                             "Unable to perform mpi reduction in standard "
-                             "entity estimator " << this->getId() <<
-                             " for entity " << entity_data_it->first <<
-                             " total data!" );
+                             "Unable to perform mpi reduction in "
+                             "standard entity estimator " << this->getId() <<
+                             " for entity total data!" );
 
     comm.barrier();
     
@@ -302,6 +321,41 @@ void StandardEntityEstimator::reduceData( const Utility::Communicator& comm,
 
   // Reduce the bin data
   EntityEstimator::reduceData( comm, root_process );
+}
+
+// Reduce the entity collections
+void StandardEntityEstimator::reduceEntityCollections(
+                      const std::vector<EntityEstimatorMomentsCollectionMap>&
+                      other_entity_estimator_moments_maps,
+                      const size_t root_index )
+{
+  for( auto&& entity_data : d_entity_total_estimator_moments_map )
+  {
+    // Don't double count data on this process (j starts from 1)
+    for( size_t j = 0; j < other_entity_estimator_moments_maps.size(); ++j )
+    {
+      if( j != root_index )
+      {
+        const EntityEstimatorMomentsCollectionMap::value_type&
+          other_entity_data = *other_entity_estimator_moments_maps[j].find( entity_data.first );
+
+        for( size_t i = 0; i < entity_data.second.size(); ++i )
+        {
+          Utility::getCurrentScore<1>( entity_data.second, i ) +=
+            Utility::getCurrentScore<1>( other_entity_data.second, i );
+          
+          Utility::getCurrentScore<2>( entity_data.second, i ) +=
+            Utility::getCurrentScore<2>( other_entity_data.second, i );
+          
+          Utility::getCurrentScore<3>( entity_data.second, i ) +=
+            Utility::getCurrentScore<3>( other_entity_data.second, i );
+          
+          Utility::getCurrentScore<4>( entity_data.second, i ) +=
+            Utility::getCurrentScore<4>( other_entity_data.second, i );
+        }
+      }
+    }
+  }
 }
 
 // Assign entities
