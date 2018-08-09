@@ -181,13 +181,17 @@ using namespace MonteCarlo;
 
 %include "MonteCarlo_ScatteringCenterDefinitionDatabase.hpp"
 
+//---------------------------------------------------------------------------//
 // Material support
+//---------------------------------------------------------------------------//
 %pythoncode
 %{
 from PyFrensie.MonteCarlo.Material import *
 %}
 
+//---------------------------------------------------------------------------//
 // Geometry Model support
+//---------------------------------------------------------------------------//
 %pythoncode
 %{
 from PyFrensie.MonteCarlo.GeometryModel import *

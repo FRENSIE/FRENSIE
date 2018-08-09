@@ -26,11 +26,13 @@ namespace MonteCarlo{
  * method must be updated.
  */
 enum ElasticElectronDistributionType{
-  COUPLED_DISTRIBUTION = 1,
-  DECOUPLED_DISTRIBUTION = 2,
-  HYBRID_DISTRIBUTION = 3,
-  CUTOFF_DISTRIBUTION = 4,
-  SCREENED_RUTHERFORD_DISTRIBUTION = 5
+  ElasticElectronDistributionType_START = 0,
+  COUPLED_DISTRIBUTION = ElasticElectronDistributionType_START,
+  DECOUPLED_DISTRIBUTION,
+  HYBRID_DISTRIBUTION,
+  CUTOFF_DISTRIBUTION,
+  SCREENED_RUTHERFORD_DISTRIBUTION,
+  ElasticElectronDistributionType_END
 };
 
 /*! The coupled elastic electron sampling method enum.
@@ -39,9 +41,11 @@ enum ElasticElectronDistributionType{
  * and the serialization method must be updated.
  */
 enum CoupledElasticSamplingMethod{
-  ONE_D_UNION = 1,
-  TWO_D_UNION = 2,
-  SIMPLIFIED_UNION = 3
+  CoupledElasticSamplingMethod_START = 0,
+  ONE_D_UNION = CoupledElasticSamplingMethod_START,
+  TWO_D_UNION,
+  SIMPLIFIED_UNION,
+  CoupledElasticSamplingMethod_END
 };
 
 } // end MonteCarlo namespace
@@ -75,7 +79,7 @@ struct ToStringTraits<MonteCarlo::CoupledElasticSamplingMethod>
   //! Place the MonteCarlo::CoupledElasticSamplingMethod in a stream
   static void toStream( std::ostream& os, const MonteCarlo::CoupledElasticSamplingMethod type );
 };
-  
+
 } // end Utility namespace
 
 namespace std{
@@ -165,7 +169,7 @@ void serialize( Archive& archive,
     }
   }
 }
-  
+
 } // end serialization namespace
 
 } // end boost namespace
