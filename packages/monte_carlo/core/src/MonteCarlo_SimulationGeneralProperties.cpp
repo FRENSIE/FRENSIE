@@ -20,9 +20,9 @@ SimulationGeneralProperties::SimulationGeneralProperties()
   : d_particle_mode( NEUTRON_MODE ),
     d_number_of_histories( 0 ),
     d_min_number_of_rendezvous( 1 ),
-    d_max_rendezvous_batch_size( Utility::QuantityTraits<uint64_t>::max() ),
+    d_max_rendezvous_batch_size( 1000000000 ),
     d_min_number_of_batches_per_rendezvous( 1 ),
-    d_max_batch_size( Utility::QuantityTraits<uint64_t>::max() ),
+    d_max_batch_size( d_max_rendezvous_batch_size ),
     d_number_of_batches_per_processor( 1 ),
     d_wall_time( Utility::QuantityTraits<double>::inf() ),
     d_surface_flux_estimator_angle_cosine_cutoff( 0.001 ),
@@ -133,7 +133,7 @@ uint64_t SimulationGeneralProperties::getMaxBatchSize() const
  * size per processor.
  */
 void SimulationGeneralProperties::setNumberOfBatchesPerProcessor(
-                                                       const unsigned batches )
+                                                       const uint64_t batches )
 {
   // There must be at least one batch
   TEST_FOR_EXCEPTION( batches == 0,
@@ -144,7 +144,7 @@ void SimulationGeneralProperties::setNumberOfBatchesPerProcessor(
 }
 
 // Return the number of batches for an MPI configuration
-unsigned SimulationGeneralProperties::getNumberOfBatchesPerProcessor() const
+uint64_t SimulationGeneralProperties::getNumberOfBatchesPerProcessor() const
 {
   return d_number_of_batches_per_processor;
 }

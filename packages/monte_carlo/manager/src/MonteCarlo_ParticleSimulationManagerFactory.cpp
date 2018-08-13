@@ -6,195 +6,325 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Trilinos Includes
-#include <Teuchos_VerboseObject.hpp>
-
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_ParticleSimulationManagerFactory.hpp"
-#include "MonteCarlo_ParticleSimulationManager.hpp"
-#include "MonteCarlo_SimulationPropertiesFactory.hpp"
-#include "Geometry_ModuleInterface.hpp"
-#include "Geometry_Config.hpp"
+#include "MonteCarlo_StandardParticleSimulationManagerFactory.hpp"
+#include "MonteCarlo_BatchedDistributedStandardParticleSimulationManagerFactory.hpp"
+#include "Utility_OpenMPProperties.hpp"
+#include "Utility_GlobalMPISession.hpp"
+#include "Utility_LoggingMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_DesignByContract.hpp"
 
-#ifdef HAVE_FRENSIE_ROOT
-#include "Geometry_RootInstanceFactory.hpp"
-#endif
-
-#ifdef HAVE_FRENSIE_DAGMC
-#include "Geometry_DagMCInstanceFactory.hpp"
-#endif
-
 namespace MonteCarlo{
 
-// Create the requested manager
-std::shared_ptr<SimulationManager>
-ParticleSimulationManagerFactory::createManager(
-	   const Teuchos::ParameterList& simulation_info,
-	   const Teuchos::ParameterList& geom_def,
-	   const Teuchos::ParameterList& source_def,
-	   const Teuchos::ParameterList& response_def,
-	   const Teuchos::ParameterList& observer_def,
-	   const Teuchos::ParameterList& material_def,
-	   const Teuchos::ParameterList& cross_sections_table_info,
-	   const std::string& cross_sections_xml_directory,
-	   const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm )
+// Initialize static member data
+const std::string ParticleSimulationManager::s_archive_name( "manager" );
+
+// Archive constructor
+ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
+                const std::shared_ptr<const FilledGeometryModel>& model,
+                const std::shared_ptr<ParticleSource>& source,
+                const std::shared_ptr<EventHandler>& event_handler,
+                const std::shared_ptr<const WeightWindows>& weight_windows,
+                const std::shared_ptr<const CollisionForcer>& collision_forcer,
+                const std::shared_ptr<SimulationProperties>& properties,
+                const std::string& simulation_name,
+                const std::string& archive_type,
+                const uint64_t next_history,
+                const uint64_t rendezvous_number )
+  : d_simulation_name( simulation_name ),
+    d_archive_type( archive_type ),
+    d_model( model ),
+    d_source( source ),
+    d_event_handler( event_handler ),
+    d_weight_windows( weight_windows ),
+    d_collision_forcer( collision_forcer ),
+    d_properties( properties ),
+    d_next_history( next_history ),
+    d_rendezvous_number( rendezvous_number )
+{ /* ... */ }
+
+// Constructor
+ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
+               const std::shared_ptr<const FilledGeometryModel>& model,
+               const std::shared_ptr<ParticleSource>& source,
+               const std::shared_ptr<EventHandler>& event_handler,
+               const std::shared_ptr<SimulationProperties>& properties,
+               const std::string& simulation_name,
+               const std::string& archive_type,
+               const unsigned threads )
+  : d_simulation_name( simulation_name ),
+    d_archive_type( archive_type ),
+    d_model( model ),
+    d_source( source ),
+    d_event_handler( event_handler ),
+    d_weight_windows( MonteCarlo::WeightWindows::getDefault() ),
+    d_collision_forcer( MonteCarlo::CollisionForcer::getDefault() ),
+    d_properties( properties ),
+    d_next_history( 0 ),
+    d_rendezvous_number( 0 )
 {
-  // Make sure the comm object is valid
-  testPrecondition( !comm.is_null() );
-
-  // Create the output stream
-  Teuchos::RCP<std::ostream> out;
-
-  if( Teuchos::GlobalMPISession::mpiIsInitialized() &&
-      Teuchos::GlobalMPISession::getNProc() > 1 )
-  {
-    Teuchos::RCP<Teuchos::FancyOStream> fancy_out =
-      Teuchos::VerboseObjectBase::getDefaultOStream();
-    fancy_out->setProcRankAndSize( comm->getRank(), comm->getSize() );
-    fancy_out->setOutputToRootOnly( 0 );
-
-    out = fancy_out;
-  }
-  else
-    out.reset( &std::cerr, false );
-
-  // Create the simulation properties
-  std::shared_ptr<const SimulationProperties> properties =
-    SimulationPropertiesFactory::createProperties( simulation_info,
-                                                   out.get() );
-
-  // Determine which geometry handler has been requested
-  TEST_FOR_EXCEPTION( !geom_def.isParameter( "Handler" ),
+  // Make sure that the model pointer is valid
+  testPrecondition( model.get() );
+  // Make sure that the source pointer is valid
+  testPrecondition( source.get() );
+  // Make sure that the event handler is valid
+  testPrecondition( event_handler.get() );
+  // Make sure that the properties pointer is valid
+  testPrecondition( properties.get() );
+  
+  TEST_FOR_EXCEPTION( simulation_name.empty(),
                       std::runtime_error,
-                      "Error: The geometry handler type must be specified in "
-                      "the geometry xml file!" );
+                      "The simulation name cannot be empty!" );
+  TEST_FOR_EXCEPTION( archive_type.empty(),
+                      std::runtime_error,
+                      "The archive type cannot be empty!" );
+  TEST_FOR_EXCEPTION( next_history == std::numeric_limits<uint64_t>::max(),
+                      std::runtime_error,
+                      "No more histories can be simulated (the max history "
+                      "number has been reached)!" );
+  TEST_FOR_EXCEPTION( rendezvous_number == std::numeric_limits<uint64_t>::max(),
+                      std::runtime_error,
+                      "No more histories can be simulated (the max rendezvous "
+                      "number has been)!" );
+  
+  Utility::OpenMPProperties::setNumberOfThreads( threads );
+}
 
-  std::string geom_handler_name = geom_def.get<std::string>( "Handler" );
+// Restart constructor
+ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
+                          const boost::filesystem::path& archived_manager_name,
+                          const unsigned threads )
+{
+  this->loadFromFile( archived_manager_name );
 
-  if( geom_handler_name == "DagMC" )
-  {
-    return ParticleSimulationManagerFactory::createManagerWithDagMC(
-                                                  geom_def,
-                                                  source_def,
-                                                  response_def,
-                                                  observer_def,
-                                                  material_def,
-                                                  cross_sections_table_info,
-                                                  cross_sections_xml_directory,
-                                                  comm,
-                                                  properties,
-                                                  out.get() );
+  // Update the properties
+  Utility::OpenMPProperties::setNumberOfThreads( threads );
+}
 
-  }
-  else if( geom_handler_name == "ROOT" )
+// Restart constructor
+ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
+                          const boost::filesystem::path& archived_manager_name,
+                          const uint64_t number_of_additional_histories,
+                          const unsigned threads )
+{
+  this->loadFromFile( archived_manager_name );
+
+  // Update the properties
+  d_properties->setNumberOfHistories( number_of_additional_histories );
+  Utility::OpenMPProperties::setNumberOfThreads( threads );
+
+  // Update the completion criterion
+  d_event_handler->setSimulationCompletionCriterion( number_of_additional_histories );
+}
+
+// Restart constructor
+ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
+                          const boost::filesystem::path& archived_manager_name,
+                          const uint64_t wall_time,
+                          const unsigned threads )
+{
+  this->loadFromFile( achived_manager_name );
+
+  // Update the properties
+  d_properties->setSimulationWallTime( wall_time );
+  Utility::OpenMPProperties::setNumberOfThreads( threads );
+
+  // Update the completion criterion
+  d_event_handler->setSimulationCompletionCriterion( wall_time );
+}
+
+// Restart constructor
+ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
+                          const boost::filesystem::path& archived_manager_name,
+                          const uint64_t number_of_additional_histories,
+                          const double wall_time,
+                          const unsigned threads )
+{
+  this->loadFromFile( archived_manager_name );
+
+  // Update the properties
+  d_properties->setNumberOfHistories( number_of_additional_histories );
+  d_properties->setSimulationWallTime( wall_time );
+  Utility::OpenMPProperties::setNumberOfThreads( threads );
+
+  // Update the completion criterion
+  d_event_handler->setSimulationCompletionCriterion( number_of_histories,
+                                                     wall_time );
+}
+
+// Set the weight windows that will be used by the manager
+void ParticleSimulationManagerFactory::setWeightWindows(
+                   const std::shared_ptr<const WeightWindows>& weight_windows )
+{
+  if( weight_windows )
   {
-    return ParticleSimulationManagerFactory::createManagerWithRoot(
-                                                  geom_def,
-                                                  source_def,
-                                                  response_def,
-                                                  observer_def,
-                                                  material_def,
-                                                  cross_sections_table_info,
-                                                  cross_sections_xml_directory,
-                                                  comm,
-                                                  properties,
-                                                  out.get() );
-  }
-  else
-  {
-    THROW_EXCEPTION( std::runtime_error,
-                     "Error: The geometry handler type "
-                     << geom_handler_name << " is not supported!" );
+    if( d_next_history > 0 )
+    {
+      FRENSIE_LOG_TAGGED_WARNING( "ParticleSimulationManagerFactory",
+                                  "Setting weight windows after a simulation "
+                                  "has been started is not allowed!" );
+    }
+    else
+      d_weight_windows = weight_windows;
   }
 }
 
-// Initialize the modules using DagMC
-std::shared_ptr<SimulationManager>
-ParticleSimulationManagerFactory::createManagerWithDagMC(
-            const Teuchos::ParameterList& geom_def,
-            const Teuchos::ParameterList& source_def,
-            const Teuchos::ParameterList& response_def,
-            const Teuchos::ParameterList& observer_def,
-            const Teuchos::ParameterList& material_def,
-            const Teuchos::ParameterList& cross_sections_table_info,
-            const std::string& cross_sections_xml_directory,
-            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
-            const std::shared_ptr<const SimulationProperties>& properties,
-            std::ostream* os_warn )
+// Set the collision forcer that will be used by the manager
+void ParticleSimulationManagerFactory::setCollisionForcer(
+               const std::shared_ptr<const CollisionForcer>& collision_forcer )
 {
-#ifdef HAVE_FRENSIE_DAGMC
-  // Initialize DagMC
-  Geometry::DagMCInstanceFactory::initializeDagMC( geom_def, *os_warn );
-
-  // Initialize the geometry handler
-  Geometry::ModuleInterface<Geometry::DagMC>::initialize();
-
-  // Initialize the other handlers
-  ParticleSimulationManagerFactory::initializeNonGeometryModules<Geometry::DagMC>(
-                                                  source_def,
-                                                  response_def,
-                                                  observer_def,
-                                                  material_def,
-                                                  cross_sections_table_info,
-                                                  cross_sections_xml_directory,
-                                                  properties,
-                                                  os_warn );
-  // Create the manager
-  return ParticleSimulationManagerFactory::createManager<Geometry::DagMC,ParticleSource,EventHandler,CollisionHandler>( properties, comm, 0 );
-
-#else
-  THROW_EXCEPTION( InvalidSimulationInfo,
-                   "Error: a DagMC geometry handler was requested without "
-                   "having DagMC enabled! The particle simulation manager "
-                   "cannot be created." );
-#endif // end HAVE_FRENSIE_DAGMC
+  if( collision_forcer )
+  {
+    if( d_next_history > 0 )
+    {
+      FRENSIE_LOG_TAGGED_WARNING( "ParticleSimulationManagerFactory",
+                                  "Setting a collision forcer after a "
+                                  "simulation has been started is not "
+                                  "allowed!" );
+    }
+    else
+      d_collision_forcer = collision_forcer;
+  }
 }
 
-// Initialize the modules with Root
-std::shared_ptr<SimulationManager>
-ParticleSimulationManagerFactory::createManagerWithRoot(
-            const Teuchos::ParameterList& geom_def,
-            const Teuchos::ParameterList& source_def,
-            const Teuchos::ParameterList& response_def,
-            const Teuchos::ParameterList& observer_def,
-            const Teuchos::ParameterList& material_def,
-            const Teuchos::ParameterList& cross_sections_table_info,
-            const std::string& cross_sections_xml_directory,
-            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
-            const std::shared_ptr<const SimulationProperties>& properties,
-            std::ostream* os_warn )
+// Rename the simulation
+void ParticleSimulationManagerFactory::renameSimulation(
+                                              const std::string& name,
+                                              const std::string& archive_type )
 {
-#ifdef HAVE_FRENSIE_ROOT
-  // Initialize Root
-  Geometry::RootInstanceFactory::initializeRoot( geom_def, *os_warn );
+  if( name.size() > 0 )
+    d_simulation_name = name;
+  
+  if( archive_type.size() > 0 )
+    d_archive_type = archive_type;
+}
 
-  // Initialize the geometry handler
-  Geometry::ModuleInterface<Geometry::Root>::initialize();
+namespace Details{
 
-  // Initialize the other handlers
-  ParticleSimulationManagerFactory::initializeNonGeometryModules<Geometry::Root>(
-                                                  source_def,
-                                                  response_def,
-                                                  observer_def,
-                                                  material_def,
-                                                  cross_sections_table_info,
-                                                  cross_sections_xml_directory,
-                                                  properties,
-                                                  os_warn );
-  // Create the manager
-  return ParticleSimulationManagerFactory::createManager<Geometry::Root,ParticleSource,EventHandler,CollisionHandler>( properties, comm, 0 );
+//! The create model helper struct
+struct ParticleSimulationManagerFactoryCreateModelHelper
+{
+  //! Create the manager
+  template<ParticleModeType mode>
+  static void createManager( ParticleSimulationManagerFactory& factory )
+  {
+    if( factory.d_comm->size() > 1 )
+    {
+      factory.d_manager.reset(
+                 new BatchedDistributedStandardParticleSimulationManager<mode>(
+                                                         d_simulation_name,
+                                                         d_archive_type,
+                                                         d_model,
+                                                         d_source,
+                                                         d_event_handler,
+                                                         d_weight_windows,
+                                                         d_collision_forcer,
+                                                         d_properties,
+                                                         d_next_history,
+                                                         d_rendezvous_number,
+                                                         d_comm ) );
+    }
+    else
+    {
+      factory.d_manager.reset( new StandardParticleSimulationManager<mode>(
+                                                       d_simulation_name,
+                                                       d_archive_type,
+                                                       d_model,
+                                                       d_source,
+                                                       d_event_handler,
+                                                       d_weight_windows,
+                                                       d_collision_forcer,
+                                                       d_properties,
+                                                       d_next_history,
+                                                       d_rendezvous_number ) );
+    }
+  }
+};
+  
+} // end Details namespace
 
-#else
-  THROW_EXCEPTION( InvalidSimulationInfo,
-                   "Error: a Root geometry handler was requested without "
-                   "having Root enabled! The particle simulation manager "
-                   "cannot be created." );
-#endif // end HAVE_FRENSIE_ROOT
+// Return the manager
+std::shared_ptr<ParticleSimulationManager>
+ParticleSimulationManagerFactory::getManager()
+{
+  if( !d_simulation_manager )
+  {
+    d_comm = Utility::Communicator::getDefault();
+    
+    switch( d_properties->getParticleMode() )
+    {
+      case NEUTRON_MODE:
+      {
+        Details::ParticleSimulationManagerFactoryCreateModelHelper::createManager<NEUTRON_MODE>( *this );
+        break;
+      }
+      case PHOTON_MODE:
+      {
+        Details::ParticleSimulationManagerFactoryCreateModelHelper::createManager<PHOTON_MODE>( *this );
+        break;
+      }
+      case ELECTRON_MODE:
+      {
+        Details::ParticleSimulationManagerFactoryCreateModelHelper::createManager<ELECTRON_MODE>( *this );
+        break;
+      }
+      case NEUTRON_PHOTON_MODE:
+      {
+        Details::ParticleSimulationManagerFactoryCreateModelHelper::createManager<NEUTRON_PHOTON_MODE>( *this );
+        break;
+      }
+      case PHOTON_ELECTRON_MODE:
+      {
+        Details::ParticleSimulationManagerFactoryCreateModelHelper::createManager<PHOTON_ELECTRON_MODE>( *this );
+        break;
+      }
+      case NEUTRON_PHOTON_ELECTRON_MODE:
+      {
+        Details::ParticleSimulationManagerFactoryCreateModelHelper::createManager<NEUTRON_PHOTON_ELECTRON_MODE>( *this );
+        break;
+      }
+      case ADJOINT_NEUTRON_MODE:
+      {
+        Details::ParticleSimulationManagerFactoryCreateModelHelper::createManager<ADJOINT_NEUTRON_MODE>( *this );
+        break;
+      }
+      case ADJOINT_PHOTON_MODE:
+      {
+        Details::ParticleSimulationManagerFactoryCreateModelHelper::createManager<ADJOINT_PHOTON_MODE>( *this );
+        break;
+      }
+      case ADJOINT_ELECTRON_MODE:
+      {
+        Details::ParticleSimulationManagerFactoryCreateModelHelper::createManager<ADJOINT_ELECTRON_MODE>( *this );
+        break;
+      }
+      default:
+      {
+        THROW_EXCEPTION( std::runtime_error,
+                         "The particle mode type ("
+                         << d_properties->getParticleMode() <<
+                         ") is not supported!" );
+      }
+    }
+  }
+
+  return d_simulation_manager;
+}
+
+
+
+// The name that will be used when archiving the object
+const char* ParticleSimulationManagerFactory::getArchiveName() const
+{
+  return s_archive_name.c_str();
 }
 
 } // end MonteCarlo namespace
+
+EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo::ParticleSimulationManagerFactory );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleSimulationManagerFactory.cpp

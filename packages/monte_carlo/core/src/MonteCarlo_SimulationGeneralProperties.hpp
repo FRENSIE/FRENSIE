@@ -75,10 +75,10 @@ public:
   uint64_t getMaxBatchSize() const;
 
   //! Set the number of batches for an MPI configuration
-  void setNumberOfBatchesPerProcessor( const unsigned batches_per_processor );
+  void setNumberOfBatchesPerProcessor( const uint64_t batches_per_processor );
 
   //! Return the number of batches for an MPI configuration
-  unsigned getNumberOfBatchesPerProcessor() const;
+  uint64_t getNumberOfBatchesPerProcessor() const;
 
   //! Set the history simulation wall time (s)
   void setSimulationWallTime( const double wall_time );
@@ -144,7 +144,7 @@ private:
   uint64_t d_max_batch_size;
 
   // The number of batches to run for MPI configuration
-  unsigned d_number_of_batches_per_processor;
+  uint64_t d_number_of_batches_per_processor;
 
   // The simulation wall time
   double d_wall_time;
