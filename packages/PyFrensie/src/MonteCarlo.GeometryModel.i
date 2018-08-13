@@ -20,7 +20,7 @@ GeometryModel definitions in the monte_carlo/collision subpackage.
 %{
 // FRENSIE Includes
 #include "PyFrensie_PythonTypeTraits.hpp"
-#include "Geometry_InfiniteMediumNavigator.hpp"
+#include "Geometry_Model.hpp"
 #include "Geometry_InfiniteMediumModel.hpp"
 #include "Geometry_AdvancedModel.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
@@ -56,15 +56,15 @@ using namespace MonteCarlo;
 // Simulation properties handling
 %import(module="PyFrensie.MonteCarlo") MonteCarlo_SimulationProperties.i
 
-// Collision definitions handling
-%import MonteCarlo.Collision.i
-// %import(module="PyFrensie.MonteCarlo") MonteCarlo.Collision.i
+// ScatteringCenterDefinition definitions handling
+%import(module="PyFrensie.MonteCarlo.Collision") MonteCarlo_ScatteringCenterDefinition.i
 
 // Material definitions handling
-%import MonteCarlo.Material.i
+%import(module="PyFrensie.MonteCarlo.Material")
+MonteCarlo_MaterialDefinitionDatabase.i
 
-// Geometry properties handling
-%import Geometry.Geometry__init__.i
+// Geometry model handling
+%import(module="PyFrensie.Geometry") Geometry_Model.i
 
 // Array typenames
 %import PyFrensie_Array.i
@@ -106,6 +106,16 @@ using namespace MonteCarlo;
 
 %ignore MonteCarlo::StandardFilledParticleGeometryModel::getMacroscopicTotalForwardCrossSectionQuick;
 %ignore MonteCarlo::StandardFilledParticleGeometryModel::getMacroscopicTotalForwardCrossSection;
+
+// Add typemaps for converting EntityId to and from Python string
+%typemap(in) const Geometry::Model::EntityId ( Geometry::Model::EntityId temp ){
+  temp = PyInt_AsUnsignedLongMask( $input );
+  $1 = temp;
+}
+
+%typemap(typecheck, precedence=70) (const Geometry::Model::EntityId) {
+  $1 = (PyInt_Check($input)) ? 1 : 0;
+}
 
 %import "MonteCarlo_StandardFilledParticleGeometryModel.hpp"
 

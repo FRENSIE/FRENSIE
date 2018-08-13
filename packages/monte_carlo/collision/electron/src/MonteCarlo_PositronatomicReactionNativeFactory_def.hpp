@@ -27,12 +27,14 @@
 namespace MonteCarlo{
 
 // Create the coupled elastic scattering positron-atomic reactions
-template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
+template< typename TwoDInterpPolicy,
+          template<typename> class TwoDGridPolicy,
+          typename ReactionType>
 void PositronatomicReactionNativeFactory::createCoupledElasticReaction(
             const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
             const std::shared_ptr<const std::vector<double> >& energy_grid,
             const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
-            std::shared_ptr<const PositronatomicReaction>& elastic_reaction,
+            std::shared_ptr<const ReactionType>& elastic_reaction,
             const CoupledElasticSamplingMethod& sampling_method,
             const double evaluation_tol )
 {
@@ -73,12 +75,14 @@ void PositronatomicReactionNativeFactory::createCoupledElasticReaction(
 }
 
 // Create the decoupled elastic scattering positron-atomic reactions
-template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
+template< typename TwoDInterpPolicy,
+          template<typename> class TwoDGridPolicy,
+          typename ReactionType>
 void PositronatomicReactionNativeFactory::createDecoupledElasticReaction(
             const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
             const std::shared_ptr<const std::vector<double> >& energy_grid,
             const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
-            std::shared_ptr<const PositronatomicReaction>& elastic_reaction,
+            std::shared_ptr<const ReactionType>& elastic_reaction,
             const double evaluation_tol )
 {
   // Make sure the energy grid is valid
@@ -107,7 +111,7 @@ void PositronatomicReactionNativeFactory::createDecoupledElasticReaction(
   {
     std::shared_ptr<std::vector<double> > tmp_sampling_ratios(
                       new std::vector<double>( total_cross_section->size() ) );
-    
+
     for( size_t i = 0; i < tmp_sampling_ratios->size(); ++i )
     {
       (*tmp_sampling_ratios)[i] =
@@ -143,12 +147,14 @@ void PositronatomicReactionNativeFactory::createDecoupledElasticReaction(
 }
 
 // Create a hybrid elastic scattering positron-atomic reaction
-template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
+template< typename TwoDInterpPolicy,
+          template<typename> class TwoDGridPolicy,
+          typename ReactionType>
 void PositronatomicReactionNativeFactory::createHybridElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
-    std::shared_ptr<const PositronatomicReaction>& elastic_reaction,
+    std::shared_ptr<const ReactionType>& elastic_reaction,
     const double cutoff_angle_cosine,
     const double evaluation_tol )
 {
@@ -254,12 +260,14 @@ void PositronatomicReactionNativeFactory::createHybridElasticReaction(
 }
 
 // Create the cutoff elastic scattering positron-atomic reactions
-template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
+template< typename TwoDInterpPolicy,
+          template<typename> class TwoDGridPolicy,
+          typename ReactionType>
 void PositronatomicReactionNativeFactory::createCutoffElasticReaction(
             const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
             const std::shared_ptr<const std::vector<double> >& energy_grid,
             const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
-            std::shared_ptr<const PositronatomicReaction>& elastic_reaction,
+            std::shared_ptr<const ReactionType>& elastic_reaction,
             const double cutoff_angle_cosine,
             const double evaluation_tol )
 {
@@ -296,12 +304,14 @@ void PositronatomicReactionNativeFactory::createCutoffElasticReaction(
 }
 
 // Create the moment preserving elastic scattering positron-atomic reaction
-template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
+template< typename TwoDInterpPolicy,
+          template<typename> class TwoDGridPolicy,
+          typename ReactionType>
 void PositronatomicReactionNativeFactory::createMomentPreservingElasticReaction(
             const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
             const std::shared_ptr<const std::vector<double> >& energy_grid,
             const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
-            std::shared_ptr<const PositronatomicReaction>& elastic_reaction,
+            std::shared_ptr<const ReactionType>& elastic_reaction,
             const double cutoff_angle_cosine,
             const double evaluation_tol )
 {
@@ -345,9 +355,9 @@ void PositronatomicReactionNativeFactory::createMomentPreservingElasticReaction(
 }
 
 // Create the subshell electroionization positron-atomic reactions
-template<typename ReactionType,
-         typename TwoDInterpPolicy,
-         template<typename> class TwoDGridPolicy>
+template< typename TwoDInterpPolicy,
+          template<typename> class TwoDGridPolicy,
+          typename ReactionType>
 void PositronatomicReactionNativeFactory::createSubshellPositronionizationReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
@@ -395,9 +405,9 @@ void PositronatomicReactionNativeFactory::createSubshellPositronionizationReacti
 }
 
 // Create the subshell electroionization positron-atomic reactions
-template<typename ReactionType,
-         typename TwoDInterpPolicy,
-         template<typename> class TwoDGridPolicy>
+template< typename TwoDInterpPolicy,
+          template<typename> class TwoDGridPolicy,
+          typename ReactionType>
 void PositronatomicReactionNativeFactory::createSubshellPositronionizationReactions(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
@@ -411,14 +421,14 @@ void PositronatomicReactionNativeFactory::createSubshellPositronionizationReacti
   // Extract the subshell information
   std::set<unsigned> subshells = raw_positronatom_data.getSubshells();
 
-  std::shared_ptr<const PositronatomicReaction>
+  std::shared_ptr<const ReactionType>
     electroionization_subshell_reaction;
 
   std::set<unsigned>::iterator shell = subshells.begin();
 
   for( shell; shell != subshells.end(); ++shell )
   {
-    ThisType::createSubshellPositronionizationReaction<PositronatomicReaction,TwoDInterpPolicy,TwoDGridPolicy>(
+    ThisType::createSubshellPositronionizationReaction<TwoDInterpPolicy,TwoDGridPolicy,ReactionType>(
       raw_positronatom_data,
       energy_grid,
       grid_searcher,
@@ -435,9 +445,9 @@ void PositronatomicReactionNativeFactory::createSubshellPositronionizationReacti
 }
 
 // Create a bremsstrahlung positron-atomic reactions
-template<typename ReactionType,
-         typename TwoDInterpPolicy,
-         template<typename> class TwoDGridPolicy>
+template< typename TwoDInterpPolicy,
+          template<typename> class TwoDGridPolicy,
+          typename ReactionType>
 void PositronatomicReactionNativeFactory::createBremsstrahlungReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,

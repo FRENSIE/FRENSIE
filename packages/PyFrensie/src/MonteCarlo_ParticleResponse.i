@@ -37,10 +37,10 @@ using namespace MonteCarlo;
 // Import the ToStringTraitsDecl
 %import "Utility_ToStringTraitsDecl.hpp"
 
-// Collision definitions handling
-// %import MonteCarlo.Collision.i
+// Material definitions handling
+%import MonteCarlo.Material.i
+// GeometryModel definitions handling
 %import MonteCarlo.GeometryModel.i
-// %import(module="PyFrensie.MonteCarlo") MonteCarlo.GeometryModel.i
 
 // Helper macro for extending the class with arithmetic operators
 %define %extend_setup_helper( RESPONSE_FUNCTION )

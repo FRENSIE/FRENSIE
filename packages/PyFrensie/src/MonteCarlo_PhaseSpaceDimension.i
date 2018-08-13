@@ -95,24 +95,6 @@ using namespace MonteCarlo;
 
 %include "MonteCarlo_PhaseSpaceDimension.hpp"
 
-// Add some useful methods to the class
-%extend MonteCarlo::PhaseSpaceDimension
-{
-  // String representation method
-  PyObject* __repr__() const
-  {
-    std::string repr_string = Utility::toString($self);
-    return PyString_FromString( repr_string.c_str() );
-  }
-
-  // String conversion method
-  PyObject* __str__() const
-  {
-    std::string repr_string = Utility::toString($self);
-    return PyString_FromString( repr_string.c_str() );
-  }
-};
-
 // ---------------------------------------------------------------------------//
 // Add PhaseSpaceDimensionClass support
 // ---------------------------------------------------------------------------//

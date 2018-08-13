@@ -12,9 +12,9 @@
 #include "PyFrensie_PythonTypeTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_ToStringTraitsDecl.hpp"
+#include "Geometry_Model.hpp"
 #include "Geometry_InfiniteMediumModel.hpp"
 #include "Geometry_AdvancedModel.hpp"
-#include "Geometry_InfiniteMediumNavigator.hpp"
 
 #include "MonteCarlo_ParticleType.hpp"
 #include "MonteCarlo_ParticleState.hpp"
@@ -44,8 +44,9 @@ using namespace MonteCarlo;
 // Include the serialization helpers for handling macros
 %include "Utility_SerializationHelpers.hpp"
 
-// Import the Geometry.Geometry__init__.i file
-%import "Geometry.Geometry__init__.i"
+// ParticleType handling
+%import(module="PyFrensie.Geometry") Geometry_ParticleType.i
+%import(module="PyFrensie.Geometry") Geometry_Model.i
 
 // Standard exception handling
 %include "exception.i"
@@ -74,6 +75,14 @@ using namespace MonteCarlo;
 
 // Global swig features
 %feature("autodoc", "1");
+
+// Ignore tag structs
+%ignore *::NeutronTag;
+%ignore *::PhotonTag;
+%ignore *::ElectronTag;
+%ignore *::PositronTag;
+%ignore *::AdjointPhotonTag;
+%ignore *::AdjointElectronTag;
 
 // Add a few general typedefs
 typedef unsigned long int uint64_t;

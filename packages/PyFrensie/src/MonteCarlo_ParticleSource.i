@@ -33,8 +33,18 @@ using namespace MonteCarlo;
 // Import the PyFrensie_ArraySharedPtr.i
 %include "PyFrensie_ArraySharedPtr.i"
 
+// Geometry model handling
+%import(module="PyFrensie.Geometry") Geometry_Navigator.hpp
+%import(module="PyFrensie.Geometry") Geometry_Model.i
+%import MonteCarlo_ParticleDistribution.i
+
+// Add a few general typedefs
+typedef unsigned long int uint64_t;
+typedef unsigned int uint32_t;
+
 // Add general template
-%template(EntityIdVector) std::vector<Geometry::Model::EntityId>;
+%template(EntityIdVector) std::vector<long unsigned int>;
+%template(EntityIdSet) std::set<long unsigned int>;
 
 // ---------------------------------------------------------------------------//
 // Add ParticleSourceComponentsupport
@@ -137,12 +147,8 @@ using namespace MonteCarlo;
 // Add ParticleSource support
 // ---------------------------------------------------------------------------//
 
-// Add a typemap for CellIdSet starting_cells
-%typemap(in,numinputs=0) MonteCarlo::ParticleSource::CellIdSet& starting_cells (MonteCarlo::ParticleSource::CellIdSet temp) "$1 = &temp;"
-
-%typemap(argout) MonteCarlo::ParticleSource::CellIdSet& starting_cells {
-  %append_output(PyFrensie::convertToPython( *$1 ));
-}
+// Apply a typemap for CellIdSet starting_cells
+%apply MonteCarlo::ParticleSourceComponent::CellIdSet& starting_cells { MonteCarlo::ParticleSource::CellIdSet& starting_cells }
 
 %shared_ptr( MonteCarlo::ParticleSource);
 %include "MonteCarlo_ParticleSource.hpp"

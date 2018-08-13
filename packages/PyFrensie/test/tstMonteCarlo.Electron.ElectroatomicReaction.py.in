@@ -26,6 +26,7 @@ MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
 Electron = importPyFrensieModuleFromBuildDir('MonteCarlo.Electron')
 Utility = importPyFrensieModuleFromBuildDir('Utility')
 Prng = importPyFrensieModuleFromBuildDir('Utility.Prng')
+Data = importPyFrensieModuleFromBuildDir('Data')
 Native = importPyFrensieModuleFromBuildDir('Data.Native')
 
 #-----------------------------------------------------------------------------#
@@ -40,14 +41,19 @@ class CoupledElasticReactionTestCase(unittest.TestCase):
         method = Electron.SIMPLIFIED_UNION
         self.reaction = Electron.createCoupledElasticReaction_LinLogCorrelated( self.data, method, 1e-7 )
 
-    def testgetThresholdEnergy(self):
+    def testGetReactionType(self):
+        "*Test MonteCarlo.Electron.createCoupledElasticReaction getReactionType method"
+        self.assertEqual( self.reaction.getReactionType(),
+                          Electron.COUPLED_ELASTIC_ELECTROATOMIC_REACTION )
+
+    def testGetThresholdEnergy(self):
         "*Test MonteCarlo.Electron.createCoupledElasticReaction getThresholdEnergy method"
         self.assertTrue( self.reaction.getThresholdEnergy(), 1e-5 )
 
-    def testgetCrossSection(self):
+    def testGetCrossSection(self):
         "*Test MonteCarlo.Electron.createCoupledElasticReaction getCrossSection method"
         energy = 1e-5
-        self.assertAlmostEqual( self.reaction.getCrossSection(energy),
+        self.assertAlmostEqual( self.reaction.getCrossSection(energy, 0),
                                 2.48924e+09,
                                 delta=1e-12*2.48924e+09 )
         energy = 4e-4
@@ -58,6 +64,50 @@ class CoupledElasticReactionTestCase(unittest.TestCase):
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
                                 2.11161e+06,
                                 delta=1e-9*2.11161e+06 )
+
+    def testReact(self):
+        "*Test MonteCarlo.Electron.createCoupledElasticReaction react"
+        electron = MonteCarlo.ElectronState( 0 )
+        electron.setEnergy( 20.0 )
+        electron.setDirection( 0.0, 0.0, 1.0 )
+
+        bank = MonteCarlo.ParticleBank()
+
+        shell_of_interaction = self.reaction.react( electron, bank )
+
+        self.assertEqual( electron.getEnergy(), 20.0 )
+        self.assertTrue( electron.getZDirection() < 2.0 )
+        self.assertTrue( electron.getZDirection() > 0.0 )
+        self.assertTrue( bank.isEmpty() )
+        self.assertEqual( shell_of_interaction, Data.UNKNOWN_SUBSHELL )
+
+        # Set fake stream
+        fake_stream = [None]*3
+        fake_stream[0] = 0.0 # sample mu = -1
+        fake_stream[1] = 0.0 # sample the azimuthal angle
+        fake_stream[2] = 1.0-1e-15 # sample mu = 1.0
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        electron.setDirection( 0.0, 0.0, 1.0 )
+        shell_of_interaction = self.reaction.react( electron, bank )
+
+        self.assertEqual( electron.getEnergy(), 20.0 )
+        self.assertAlmostEqual( electron.getZDirection(),
+                          -1.0,
+                          1e-15 )
+        self.assertTrue( bank.isEmpty() )
+        self.assertEqual( shell_of_interaction, Data.UNKNOWN_SUBSHELL )
+
+        electron.setDirection( 0.0, 0.0, 1.0 )
+        shell_of_interaction = self.reaction.react( electron, bank )
+
+        self.assertEqual( electron.getEnergy(), 20.0 )
+        self.assertAlmostEqual( electron.getZDirection(),
+                          1.0,
+                          1e-15 )
+        self.assertTrue( bank.isEmpty() )
+        self.assertEqual( shell_of_interaction, Data.UNKNOWN_SUBSHELL )
 
 #-----------------------------------------------------------------------------#
 # Test the decoupled electroatomic reaction

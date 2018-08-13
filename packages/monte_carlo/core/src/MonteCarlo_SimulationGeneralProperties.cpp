@@ -29,7 +29,7 @@ SimulationGeneralProperties::SimulationGeneralProperties()
     d_display_warnings( true ),
     d_implicit_capture_mode_on( false )
 { /* ... */ }
-  
+
 // Set the particle mode
 void SimulationGeneralProperties::setParticleMode(
                                          const ParticleModeType particle_mode )
@@ -48,13 +48,13 @@ ParticleModeType SimulationGeneralProperties::getParticleMode() const
  * time is set and batch sizes are set.
  */
 void SimulationGeneralProperties::setNumberOfHistories(
-                                           const unsigned long long histories )
+                                           const uint64_t histories )
 {
   d_number_of_histories = histories;
 }
 
 // Return the number of histories to run
-unsigned long long SimulationGeneralProperties::getNumberOfHistories() const
+uint64_t SimulationGeneralProperties::getNumberOfHistories() const
 {
   return d_number_of_histories;
 }
@@ -65,7 +65,7 @@ void SimulationGeneralProperties::setMinNumberOfRendezvous(
 {
   TEST_FOR_EXCEPTION( rendezvous == 0,
                       std::runtime_error,
-                      "There must be at least on rendezvous!" );
+                      "There must be at least one rendezvous!" );
 
   d_min_number_of_rendezvous = rendezvous;
 }
@@ -139,7 +139,7 @@ void SimulationGeneralProperties::setNumberOfBatchesPerProcessor(
   TEST_FOR_EXCEPTION( batches == 0,
                       std::runtime_error,
                       "There must be at least one batch per processor!" );
-  
+
   d_number_of_batches_per_processor = batches;
 }
 
@@ -156,7 +156,7 @@ void SimulationGeneralProperties::setSimulationWallTime( const double wall_time 
   TEST_FOR_EXCEPTION( wall_time <= 0.0,
                       std::runtime_error,
                       "The wall time must be greater that 0.0 seconds!" );
-  
+
   d_wall_time = wall_time;
 }
 

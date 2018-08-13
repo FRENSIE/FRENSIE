@@ -27,11 +27,11 @@ typedef TestArchiveHelper::TestArchives TestArchives;
 // Check that the elastic electron distribution types can be converted to int
 FRENSIE_UNIT_TEST( ElasticElectronDistributionType, convert_to_int )
 {
-  FRENSIE_CHECK_EQUAL( (unsigned)MonteCarlo::COUPLED_DISTRIBUTION, 1 );
-  FRENSIE_CHECK_EQUAL( (unsigned)MonteCarlo::DECOUPLED_DISTRIBUTION, 2 );
-  FRENSIE_CHECK_EQUAL( (unsigned)MonteCarlo::HYBRID_DISTRIBUTION, 3 );
-  FRENSIE_CHECK_EQUAL( (unsigned)MonteCarlo::CUTOFF_DISTRIBUTION, 4 );
-  FRENSIE_CHECK_EQUAL( (unsigned)MonteCarlo::SCREENED_RUTHERFORD_DISTRIBUTION, 5 );
+  FRENSIE_CHECK_EQUAL( (unsigned)MonteCarlo::COUPLED_DISTRIBUTION, 0 );
+  FRENSIE_CHECK_EQUAL( (unsigned)MonteCarlo::DECOUPLED_DISTRIBUTION, 1 );
+  FRENSIE_CHECK_EQUAL( (unsigned)MonteCarlo::HYBRID_DISTRIBUTION, 2 );
+  FRENSIE_CHECK_EQUAL( (unsigned)MonteCarlo::CUTOFF_DISTRIBUTION, 3 );
+  FRENSIE_CHECK_EQUAL( (unsigned)MonteCarlo::SCREENED_RUTHERFORD_DISTRIBUTION, 4 );
 }
 
 //---------------------------------------------------------------------------//
@@ -40,7 +40,7 @@ FRENSIE_UNIT_TEST( ElasticElectronDistributionType, toString )
 {
   std::string type_string =
     Utility::toString( MonteCarlo::COUPLED_DISTRIBUTION );
-  
+
   FRENSIE_CHECK_EQUAL( type_string, "Coupled Distribution" );
 
   type_string =
@@ -69,7 +69,7 @@ FRENSIE_UNIT_TEST( ElasticElectronDistributionType, toString )
 FRENSIE_UNIT_TEST( CoupledElasticSamplingMethod, toString )
 {
   std::string type_string = Utility::toString( MonteCarlo::ONE_D_UNION );
-  
+
   FRENSIE_CHECK_EQUAL( type_string, "One D Union" );
 
   type_string = Utility::toString( MonteCarlo::TWO_D_UNION );
@@ -184,27 +184,27 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ElasticElectronDistributionType,
   createIArchive( archive_istream, iarchive );
 
   MonteCarlo::ElasticElectronDistributionType type_1;
-  
+
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_1 ) );
   FRENSIE_CHECK_EQUAL( type_1, MonteCarlo::COUPLED_DISTRIBUTION );
 
   MonteCarlo::ElasticElectronDistributionType type_2;
-  
+
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_2 ) );
   FRENSIE_CHECK_EQUAL( type_2, MonteCarlo::DECOUPLED_DISTRIBUTION );
 
   MonteCarlo::ElasticElectronDistributionType type_3;
-  
+
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_3 ) );
   FRENSIE_CHECK_EQUAL( type_3, MonteCarlo::HYBRID_DISTRIBUTION );
 
   MonteCarlo::ElasticElectronDistributionType type_4;
-  
+
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_4 ) );
   FRENSIE_CHECK_EQUAL( type_4, MonteCarlo::CUTOFF_DISTRIBUTION );
 
   MonteCarlo::ElasticElectronDistributionType type_5;
-  
+
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_5 ) );
   FRENSIE_CHECK_EQUAL( type_5, MonteCarlo::SCREENED_RUTHERFORD_DISTRIBUTION );
 }
@@ -252,17 +252,17 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( CoupledElasticSamplingMethod,
   createIArchive( archive_istream, iarchive );
 
   MonteCarlo::CoupledElasticSamplingMethod type_1;
-  
+
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_1 ) );
   FRENSIE_CHECK_EQUAL( type_1, MonteCarlo::ONE_D_UNION );
 
   MonteCarlo::CoupledElasticSamplingMethod type_2;
-  
+
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_2 ) );
   FRENSIE_CHECK_EQUAL( type_2, MonteCarlo::TWO_D_UNION );
 
   MonteCarlo::CoupledElasticSamplingMethod type_3;
-  
+
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_3 ) );
   FRENSIE_CHECK_EQUAL( type_3, MonteCarlo::SIMPLIFIED_UNION );
 }

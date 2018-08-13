@@ -79,7 +79,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
     Electroatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[BREMSSTRAHLUNG_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<ElectroatomicReaction,TwoDInterpPolicy,TwoDGridPolicy>(
+    ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<TwoDInterpPolicy,TwoDGridPolicy>(
                   raw_electroatom_data,
                   energy_grid,
                   grid_searcher,
@@ -106,7 +106,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
   {
     std::vector<std::shared_ptr<const ElectroatomicReaction> > reaction_pointers;
 
-    ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,TwoDInterpPolicy,TwoDGridPolicy>(
+    ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<TwoDInterpPolicy,TwoDGridPolicy>(
                       raw_electroatom_data,
                       energy_grid,
                       grid_searcher,

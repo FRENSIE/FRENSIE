@@ -425,7 +425,7 @@ FRENSIE_UNIT_TEST( PositronatomicReactionNativeFactory,
 {
   std::vector<std::shared_ptr<const MonteCarlo::PositronatomicReaction> > reactions;
 
-  MonteCarlo::PositronatomicReactionNativeFactory::createSubshellPositronionizationReactions<MonteCarlo::PositronatomicReaction,Utility::LinLinLog,Utility::UnitBaseCorrelated>(
+  MonteCarlo::PositronatomicReactionNativeFactory::createSubshellPositronionizationReactions<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
                                *data_container,
                                energy_grid,
                                grid_searcher,
@@ -480,7 +480,7 @@ FRENSIE_UNIT_TEST( PositronatomicReactionNativeFactory,
 {
   photon_distribution_function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
-  MonteCarlo::PositronatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::PositronatomicReaction,Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+  MonteCarlo::PositronatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
                                *data_container,
                                energy_grid,
                                grid_searcher,
@@ -520,7 +520,7 @@ FRENSIE_UNIT_TEST( PositronatomicReactionNativeFactory,
 {
   photon_distribution_function = MonteCarlo::TWOBS_DISTRIBUTION;
 
-  MonteCarlo::PositronatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::PositronatomicReaction,Utility::LogLogLog,Utility::Correlated>(
+  MonteCarlo::PositronatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog,Utility::Correlated>(
                                *data_container,
                                energy_grid,
                                grid_searcher,
@@ -669,7 +669,7 @@ FRENSIE_UNIT_TEST( PositronatomicReactionNativeFactory,
 {
   std::vector<std::shared_ptr<const MonteCarlo::PositronatomicReaction> > reactions;
 
-  MonteCarlo::PositronatomicReactionNativeFactory::createSubshellPositronionizationReactions<MonteCarlo::PositronatomicReaction,Utility::LinLinLin,Utility::Correlated>(
+  MonteCarlo::PositronatomicReactionNativeFactory::createSubshellPositronionizationReactions<Utility::LinLinLin,Utility::Correlated>(
                                *data_container,
                                energy_grid,
                                grid_searcher,
@@ -724,7 +724,7 @@ FRENSIE_UNIT_TEST( PositronatomicReactionNativeFactory,
 {
   photon_distribution_function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
-  MonteCarlo::PositronatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::PositronatomicReaction,Utility::LinLinLin,Utility::UnitBaseCorrelated>(
+  MonteCarlo::PositronatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
                                *data_container,
                                energy_grid,
                                grid_searcher,
@@ -764,7 +764,7 @@ FRENSIE_UNIT_TEST( PositronatomicReactionNativeFactory,
 {
   photon_distribution_function = MonteCarlo::TWOBS_DISTRIBUTION;
 
-  MonteCarlo::PositronatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::PositronatomicReaction,Utility::LinLinLin,Utility::Correlated>(
+  MonteCarlo::PositronatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLin,Utility::Correlated>(
                                *data_container,
                                energy_grid,
                                grid_searcher,

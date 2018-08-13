@@ -2422,7 +2422,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
 
   if( d_electron_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LinLinLog,Utility::UnitBaseCorrelated>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLog,Utility::UnitBaseCorrelated,BremsstrahlungReaction>(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,
@@ -2432,7 +2432,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
   }
   else if( d_electron_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LinLinLin,Utility::UnitBaseCorrelated>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLin,Utility::UnitBaseCorrelated,BremsstrahlungReaction>(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,
@@ -2442,7 +2442,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
   }
   else if( d_electron_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog,Utility::UnitBaseCorrelated,BremsstrahlungReaction>(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,
@@ -2489,7 +2489,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
 
   if( d_electron_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LinLinLog,Utility::UnitBaseCorrelated>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<Utility::LinLinLog,Utility::UnitBaseCorrelated,ElectroionizationReaction>(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,
@@ -2499,7 +2499,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
   }
   else if( d_electron_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LinLinLin,Utility::UnitBaseCorrelated>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<Utility::LinLinLin,Utility::UnitBaseCorrelated,ElectroionizationReaction>(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,
@@ -2509,7 +2509,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
   }
   else if( d_electron_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<Utility::LogLogLog,Utility::UnitBaseCorrelated,ElectroionizationReaction>(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,

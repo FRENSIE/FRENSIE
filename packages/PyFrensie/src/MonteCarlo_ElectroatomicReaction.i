@@ -8,7 +8,13 @@
 
 %{
 // FRENSIE Includes
-#include "MonteCarlo_ElasticElectronDistributionType.hpp"
+#include "MonteCarlo_MasslessParticleState.hpp"
+#include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_AdjointPhotonState.hpp"
+#include "Geometry_InfiniteMediumModel.hpp"
+#include "Geometry_AdvancedModel.hpp"
+
+#include "MonteCarlo_ElectroatomicReactionType.hpp"
 #include "MonteCarlo_Reaction.hpp"
 #include "MonteCarlo_AtomicReaction.hpp"
 #include "MonteCarlo_ElectroatomicReaction.hpp"
@@ -51,6 +57,8 @@ using namespace MonteCarlo;
 // Include typemaps support
 %include <typemaps.i>
 
+// ParticleState handling
+%import(module="PyFrensie.MonteCarlo") MonteCarlo_ParticleState.i
 
 // Import the explicit template instantiation helpers
 %import "Utility_ExplicitTemplateInstantiationMacros.hpp"
@@ -59,21 +67,21 @@ using namespace MonteCarlo;
 %include "MonteCarlo_ElectroatomicReactionHelpers.i"
 %include "MonteCarlo_ElectronTemplateHelpers.i"
 
-// Ignore react
-%ignore *::react( ElectronState&, ParticleBank&, Data::SubshellType& ) const;
-%ignore *::react( ElectronState&, ParticleBank&, Data::SubshellType&, unsigned& ) const;
-%ignore *::react( AdjointElectronState&, ParticleBank&, Data::SubshellType& ) const;
-%ignore *::react( AdjointElectronState&, ParticleBank&, Data::SubshellType&, unsigned& ) const;
-// Ignore getReactionType
-%ignore *::getReactionType() const;
-// Ignore getCrossSection
-%ignore *::getCrossSection( double const, unsigned const) const;
+// Add a typemap for Data::SubshellType& shell_of_interaction
+%typemap(in,numinputs=0) Data::SubshellType& shell_of_interaction (Data::SubshellType temp) "$1 = &temp;"
+
+%typemap(argout) Data::SubshellType& shell_of_interaction {
+  %append_output(PyInt_FromLong( *$1 ));
+}
+
+// Ignore the operator <<()
+%ignore *::operator<<;
 
 //---------------------------------------------------------------------------//
-// Add support for the ElasticElectronDistributionType enum
+// Add support for the ElectroatomicReactionType enum
 //---------------------------------------------------------------------------//
 
-%include "MonteCarlo_ElasticElectronDistributionType.hpp"
+%include "MonteCarlo_ElectroatomicReactionType.hpp"
 
 //---------------------------------------------------------------------------//
 // Add support for the Reaction class
@@ -176,7 +184,7 @@ using namespace MonteCarlo;
 
   // Create an coupled elastic scattering electroatomic reaction
   template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
-  std::shared_ptr<const MonteCarlo::ElectroatomicReaction> createCoupledElasticReaction(
+  std::shared_ptr<const MonteCarlo::CoupledElasticElectroatomicReaction<Utility::LogLog> > createCoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const MonteCarlo::CoupledElasticSamplingMethod& sampling_method,
     const double evaluation_tol )
@@ -193,8 +201,8 @@ using namespace MonteCarlo;
                                 energy_grid->size()/10 ) );
 
     // Create the reaction
-    std::shared_ptr<const MonteCarlo::ElectroatomicReaction> reaction;
-    MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<TwoDInterpPolicy,TwoDGridPolicy>(
+    std::shared_ptr<const MonteCarlo::CoupledElasticElectroatomicReaction<Utility::LogLog> > reaction;
+    MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<TwoDInterpPolicy,TwoDGridPolicy, MonteCarlo::CoupledElasticElectroatomicReaction<Utility::LogLog> >(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
@@ -210,7 +218,7 @@ using namespace MonteCarlo;
 
   // Create a decoupled elastic scattering electroatomic reaction
   template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
-  std::shared_ptr<const MonteCarlo::ElectroatomicReaction>
+  std::shared_ptr<const MonteCarlo::DecoupledElasticElectroatomicReaction<Utility::LogLog> >
   createDecoupledElasticReaction(
       const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
       const double evaluation_tol )
@@ -227,8 +235,8 @@ using namespace MonteCarlo;
                                 energy_grid->size()/10 ) );
 
     // Create the reaction
-    std::shared_ptr<const MonteCarlo::ElectroatomicReaction> reaction;
-    MonteCarlo::ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy,TwoDGridPolicy>(
+  std::shared_ptr<const MonteCarlo::DecoupledElasticElectroatomicReaction<Utility::LogLog> > reaction;
+    MonteCarlo::ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy,TwoDGridPolicy, MonteCarlo::DecoupledElasticElectroatomicReaction<Utility::LogLog> >(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
@@ -371,7 +379,7 @@ using namespace MonteCarlo;
 
     // Create the reaction
     std::shared_ptr<const MonteCarlo::ElectroatomicReaction> reaction;
-    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<MonteCarlo::ElectroatomicReaction,TwoDInterpPolicy,TwoDGridPolicy>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<TwoDInterpPolicy,TwoDGridPolicy>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
@@ -405,7 +413,7 @@ using namespace MonteCarlo;
 
     // Create the reaction
     std::vector<std::shared_ptr<const MonteCarlo::ElectroatomicReaction> > reactions;
-    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<MonteCarlo::ElectroatomicReaction,TwoDInterpPolicy,TwoDGridPolicy>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<TwoDInterpPolicy,TwoDGridPolicy>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
@@ -451,7 +459,7 @@ using namespace MonteCarlo;
 
     // Create the reaction
     std::shared_ptr<const MonteCarlo::ElectroatomicReaction> reaction;
-    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,TwoDInterpPolicy,TwoDGridPolicy>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<TwoDInterpPolicy,TwoDGridPolicy>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
@@ -466,13 +474,30 @@ using namespace MonteCarlo;
   }
 %}
 
+// Wrap the correlated coupled elastic reactions
 %template(createCoupledElasticReaction_LogLogCorrelated) createCoupledElasticReaction<Utility::LogLogCosLog, Utility::Correlated>;
 %template(createCoupledElasticReaction_LinLogCorrelated) createCoupledElasticReaction<Utility::LinLinLog, Utility::Correlated>;
 %template(createCoupledElasticReaction_LinLinCorrelated) createCoupledElasticReaction<Utility::LinLinLin, Utility::Correlated>;
-
+// Wrap the direct coupled elastic reactions
+%template(createCoupledElasticReaction_LogLogDirect) createCoupledElasticReaction<Utility::LogLogCosLog, Utility::Direct>;
+%template(createCoupledElasticReaction_LinLogDirect) createCoupledElasticReaction<Utility::LinLinLog, Utility::Direct>;
+%template(createCoupledElasticReaction_LinLinDirect) createCoupledElasticReaction<Utility::LinLinLin, Utility::Direct>;
+// Wrap the correlated decoupled elastic reactions
 %template(createDecoupledElasticReaction_LogLogCorrelated) createDecoupledElasticReaction<Utility::LogLogCosLog, Utility::Correlated>;
 %template(createDecoupledElasticReaction_LinLogCorrelated) createDecoupledElasticReaction<Utility::LinLinLog, Utility::Correlated>;
 %template(createDecoupledElasticReaction_LinLinCorrelated) createDecoupledElasticReaction<Utility::LinLinLin, Utility::Correlated>;
+// Wrap the direct decoupled elastic reactions
+%template(createDecoupledElasticReaction_LogLogDirect) createDecoupledElasticReaction<Utility::LogLogCosLog, Utility::Direct>;
+%template(createDecoupledElasticReaction_LinLogDirect) createDecoupledElasticReaction<Utility::LinLinLog, Utility::Direct>;
+%template(createDecoupledElasticReaction_LinLinDirect) createDecoupledElasticReaction<Utility::LinLinLin, Utility::Direct>;
+// Wrap the correlated coupled elastic reactions
+%template(createCoupledElasticReaction_LogLogCorrelated) createCoupledElasticReaction<Utility::LogLogCosLog, Utility::Correlated>;
+%template(createCoupledElasticReaction_LinLogCorrelated) createCoupledElasticReaction<Utility::LinLinLog, Utility::Correlated>;
+%template(createCoupledElasticReaction_LinLinCorrelated) createCoupledElasticReaction<Utility::LinLinLin, Utility::Correlated>;
+// Wrap the direct coupled elastic reactions
+%template(createCoupledElasticReaction_LogLogDirect) createCoupledElasticReaction<Utility::LogLogCosLog, Utility::Direct>;
+%template(createCoupledElasticReaction_LinLogDirect) createCoupledElasticReaction<Utility::LinLinLog, Utility::Direct>;
+%template(createCoupledElasticReaction_LinLinDirect) createCoupledElasticReaction<Utility::LinLinLin, Utility::Direct>;
 
 
 

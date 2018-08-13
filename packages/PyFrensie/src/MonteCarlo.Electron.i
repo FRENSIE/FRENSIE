@@ -59,6 +59,12 @@ monte_carlo/collision/electron subpackage.
 %feature("autodoc", "1");
 
 //---------------------------------------------------------------------------//
+// Electron Scattering Distribution support
+//---------------------------------------------------------------------------//
+
+%include MonteCarlo_ElectronScatteringDistribution.i
+
+//---------------------------------------------------------------------------//
 // Electroatomic Reaction support
 //---------------------------------------------------------------------------//
 

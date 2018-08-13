@@ -21,6 +21,7 @@ options,args = parser.parse_args()
 
 from testingHelpers import importPyFrensieModuleFromBuildDir
 MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+Geometry = importPyFrensieModuleFromBuildDir('Geometry')
 
 
 #-----------------------------------------------------------------------------#
@@ -52,6 +53,12 @@ class NeutronStateTestCase(unittest.TestCase):
 
         particle.setSourceCell( 1 )
         self.assertEqual( particle.getSourceCell(), 1 )
+
+    def testGetSourceCell(self):
+        "*Test MonteCarlo.NeutronState embedInModel"
+        particle = MonteCarlo.NeutronState( 1 )
+        local_model = Geometry.InfiniteMediumModel( 1 )
+        particle .embedInModel( local_model )
 
     def testAdvance(self):
         "*Test MonteCarlo.NeutronState advance"

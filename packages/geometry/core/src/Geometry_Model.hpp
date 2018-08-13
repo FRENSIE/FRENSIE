@@ -39,7 +39,7 @@ class Model
 public:
 
   //! The entity (cell or surface) id type
-  typedef Navigator::EntityId EntityId;
+  typedef Geometry::Navigator::EntityId EntityId;
 
   //! The material id type
   typedef uint32_t MaterialId;
@@ -74,7 +74,7 @@ public:
   typedef std::set<MaterialId> MaterialIdSet;
 
   //! The cell id set type
-  typedef Navigator::CellIdSet CellIdSet;
+  typedef Geometry::Navigator::CellIdSet CellIdSet;
 
   //! The cell id material id map type
   typedef std::map<EntityId,MaterialId> CellIdMatIdMap;
