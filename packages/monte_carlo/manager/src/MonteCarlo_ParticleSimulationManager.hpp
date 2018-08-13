@@ -21,6 +21,8 @@
 #include "MonteCarlo_CollisionForcer.hpp"
 #include "MonteCarlo_ParticleSource.hpp"
 #include "MonteCarlo_FilledGeometryModel.hpp"
+#include "MonteCarlo_CollisionKernel.hpp"
+#include "MonteCarlo_TransportKernel.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "Utility_Communicator.hpp"
 
@@ -35,6 +37,12 @@ public:
   //! Destructor
   virtual ~ParticleSimulationManager()
   { /* ... */ }
+
+  //! Return the next history that will be completed
+  uint64_t getNextHistory() const;
+
+  //! Return the number of rendezvous
+  uint64_t getNumberOfRendezvous() const;
 
   //! Return the rendezvous batch size
   uint64_t getRendezvousBatchSize() const;
@@ -53,18 +61,6 @@ public:
 
   //! Return the event handler
   EventHandler& getEventHandler();
-
-  //! Return the next history that will be completed
-  uint64_t getNextHistory() const;
-
-  //! Return the number of rendezvous
-  uint64_t getNumberOfRendezvous() const;
-
-  //! Return the rendezvous batch size
-  uint64_t getRendezvousBatchSize() const;
-
-  //! Return the batch size
-  uint64_t getBatchSize() const;
 
   //! Run the simulation set up by the user
   virtual void runSimulation();
@@ -87,7 +83,7 @@ protected:
                  const std::shared_ptr<const FilledGeometryModel>& model,
                  const std::shared_ptr<ParticleSource>& source,
                  const std::shared_ptr<EventHandler>& event_handler,
-                 const std::shared_ptr<const WeightWindows> weight_windows,
+                 const std::shared_ptr<const WeightWindow> weight_windows,
                  const std::shared_ptr<const CollisionForcer> collision_forcer,
                  const std::shared_ptr<const SimulationProperties>& properties,
                  const uint64_t next_history,
@@ -118,9 +114,24 @@ protected:
                          ParticleBank& bank,
                          const bool source_particle );
 
+  //! Enable thread support
+  void enableThreadSupport();
+
+  //! Reset data
+  void resetData();
+
   //! Reduce distributed data
-  void reduceData( const Utility::communicator& comm,
+  void reduceData( const Utility::Communicator& comm,
                    const int root_process );
+
+  //! Register simulation started event
+  void registerSimulationStartedEvent();
+
+  //! Register simulation stopped event
+  void registerSimulationStoppedEvent();
+
+  //! Check if the simulation is complete
+  bool isSimulationComplete();
 
   //! Rendezvous (cache state)
   virtual void rendezvous();
@@ -147,9 +158,10 @@ private:
 
   // Advance a particle to the cell boundary
   template<typename State>
-  void advanceParticleToCellBoundary( State& particle,
-                                      ParticleBank& bank,
-                                      const double distance_to_surface );
+  void advanceParticleToCellBoundary(
+                              State& particle,
+                              const Geometry::Model::EntityId surface_to_cross,
+                              const double distance_to_surface );
 
   // Advance a particle to a collision site
   template<typename State>
@@ -181,7 +193,7 @@ private:
   std::shared_ptr<EventHandler> d_event_handler;
 
   // The weight windows
-  std::shared_ptr<const WeightWindows> d_weight_windows;
+  std::shared_ptr<const WeightWindow> d_weight_windows;
 
   // The collision forcer
   std::shared_ptr<const CollisionForcer> d_collision_forcer;

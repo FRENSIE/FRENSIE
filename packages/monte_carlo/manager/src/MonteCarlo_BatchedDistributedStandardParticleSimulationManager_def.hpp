@@ -22,7 +22,7 @@ BatchedDistributedStandardParticleSimulationManager<mode>::BatchedDistributedSta
                  const std::shared_ptr<const FilledGeometryModel>& model,
                  const std::shared_ptr<ParticleSource>& source,
                  const std::shared_ptr<EventHandler>& event_handler,
-                 const std::shared_ptr<const WeightWindows> weight_windows,
+                 const std::shared_ptr<const WeightWindow> weight_windows,
                  const std::shared_ptr<const CollisionForcer> collision_forcer,
                  const std::shared_ptr<const SimulationProperties>& properties,
                  const uint64_t next_history,
@@ -61,36 +61,34 @@ BatchedDistributedStandardParticleSimulationManager<mode>::BatchedDistributedSta
 template<ParticleModeType mode>
 void BatchedDistributedStandardParticleSimulationManager<mode>::runSimulation()
 {
+  d_comm->barrier();
+
+  FRENSIE_FLUSH_ALL_LOGS();
+  
   if( d_comm->rank() == 0 )
   {
     FRENSIE_LOG_NOTIFICATION( "Simulation started. " );
     FRENSIE_FLUSH_ALL_LOGS();
   }
 
-  // Set up the random number generator for the number of threads requested
-  Utility::RandomNumberGenerator::createStreams();
+  d_comm->barrier();
 
-  // Enable source thread support
-  d_source->enableThreadSupport( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
-
-  // Enable event handler thread support
-  d_event_handler->enableThreadSupport( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
+  // Enable thread support
+  this->enableThreadSupport();
 
   if( d_comm->rank() == 0 )
     ParticleSimulationManager::rendezvous();
+  
   // Reset data on non-root processes to avoid double counting
   else
-  {
-    d_event_handler->resetObserverData();
-    d_source->resetData();
-  }
+    this->resetData();
 
   d_comm->barrier();
 
   // The simulation has started
-  d_event_handler->updateObserversFromParticleSimulationStartedEvent();
+  this->registerSimulationStartedEvent();
 
-  if( comm->rank() == 0 )
+  if( d_comm->rank() == 0 )
     this->coordinateWorkers();
   else
     this->work();
@@ -98,7 +96,7 @@ void BatchedDistributedStandardParticleSimulationManager<mode>::runSimulation()
   d_comm->barrier();
 
   // The simulation has finished
-  d_event_handler->updateObserversFromParticleSimiulationStoppedEvent();
+  this->registerSimulationStoppedEvent();
 
   if( d_comm->rank() == 0 )
   {
@@ -113,6 +111,8 @@ void BatchedDistributedStandardParticleSimulationManager<mode>::runSimulation()
     
     FRENSIE_FLUSH_ALL_LOGS();
   }
+
+  d_comm->barrier();
 }
 
 // Coorindate workers
@@ -131,7 +131,7 @@ void BatchedDistributedStandardParticleSimulationManager<mode>::coordinateWorker
   while( true )
   {
     if( this->hasEndSimulationRequestBeenMade() ||
-        d_event_handler->isSimulationComplete() )
+        this->isSimulationComplete() )
     {
       this->stopWorkersAndRecordWork( true, batch_number );
 
@@ -149,19 +149,18 @@ void BatchedDistributedStandardParticleSimulationManager<mode>::coordinateWorker
     else if( this->isIdleWorkerPresent( idle_worker_info ) )
     {
       // Set the batch start history
-      batch_info.first = this->getNextHistory() +
-        batch_number*this->getBatchSize();
+      task.first = this->getNextHistory() + batch_number*this->getBatchSize();
       
-      batch_info.second = batch_info.first + this->getBatchSize();
+      task.second = task.first + this->getBatchSize();
 
       // Check if the size of the last batch is correct
       if( batch_number == d_batches_per_rendezvous - 1 )
       {
-        batch_info.second += this->getRendezvousBatchSize() -
+        task.second += this->getRendezvousBatchSize() -
           d_batches_per_rendezvous*this->getBatchSize();
       }
 
-      this->assignWorkToIdleWorkers( idle_worker_info, task );
+      this->assignWorkToIdleWorker( idle_worker_info, task );
 
       // Increment the batch number
       ++batch_number;
@@ -204,10 +203,9 @@ void BatchedDistributedStandardParticleSimulationManager<mode>::stopWorkersAndRe
   }
 
   // Wait for the stop messages to send
-  std::vector<Utility::Communicator::Status>
-    stop_statuses( stop_requests.size() );
+  std::vector<Utility::Communicator::Status> statuses( requests.size() );
 
-  Utility::wait( stop_requests, stop_statuses );
+  Utility::wait( requests, statuses );
 
   // Increment the next history
   if( batch_number == d_batches_per_rendezvous )
@@ -225,7 +223,7 @@ bool BatchedDistributedStandardParticleSimulationManager<mode>::isIdleWorkerPres
 {
   // Probe for an idle worker
   try{
-    idle_worker_info = Utility::iprobe( *d_comm );
+    idle_worker_info = Utility::iprobe<int>( *d_comm );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
                            "Unable to probe for idle worker on root "
@@ -261,6 +259,10 @@ void BatchedDistributedStandardParticleSimulationManager<mode>::assignWorkToIdle
                    idle_worker_info.tag(),
                    task );
   }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                           "Unable to send the work task from the root "
+                           "process to worker process "
+                           << idle_worker_info.source() << "!" );
 }
 
 // Complete assigned work
@@ -306,7 +308,7 @@ void BatchedDistributedStandardParticleSimulationManager<mode>::work()
 
 // Print the simulation data to the desired stream
 template<ParticleModeType mode>
-void BatchedDistributedStandardParticleSimulationManager<mode>::printSimulationSummary( std::ostream& os )
+void BatchedDistributedStandardParticleSimulationManager<mode>::printSimulationSummary( std::ostream& os ) const
 {
   if( d_comm->rank() == 0 )
     ParticleSimulationManager::printSimulationSummary( os );
@@ -345,7 +347,7 @@ void BatchedDistributedStandardParticleSimulationManager<mode>::rendezvous()
   if( d_comm->rank() == 0 )
     ParticleSimulationManager::rendezvous();
 
-  d_comm.barrier();
+  d_comm->barrier();
 }
   
 } // end MonteCarlo namespace

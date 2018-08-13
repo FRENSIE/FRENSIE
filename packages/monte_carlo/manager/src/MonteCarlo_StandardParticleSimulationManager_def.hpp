@@ -15,6 +15,9 @@
 #include <boost/mpl/next_prior.hpp>
 #include <boost/mpl/begin_end.hpp>
 
+// FRENSIE Includes
+#include "MonteCarlo_ParticleModeTypeTraits.hpp"
+
 namespace MonteCarlo{
 
 namespace Details{
@@ -25,13 +28,13 @@ struct ModeInitializationHelper
 {
   //! Initialize simulate particle functors map
   template<typename Manager>
-  static inline void initializeSimulateParticleFunctions(
-                                                       const Manager& manager )
+  static inline void initializeSimulateParticleFunctions( Manager& manager )
   {
-    manager.addSimulateParticleFunction<typename boost::mpl::deref<BeginParticleIterator>::type>();
+    typedef typename boost::mpl::deref<BeginParticleIterator>::type ParticleStateType;
 
-    ModeInitializationHelper<typename boost::mpl::next<BeginParticleIterator>::type,
-                             EndParticleIterator>::initializeSimulateParticleFunctions( manager );
+    manager.template addSimulateParticleFunction<ParticleStateType>();
+
+    ModeInitializationHelper<typename boost::mpl::next<BeginParticleIterator>::type,EndParticleIterator>::initializeSimulateParticleFunctions( manager );
   }
 };
 
@@ -41,8 +44,7 @@ struct ModeInitializationHelper<EndParticleIterator,EndParticleIterator>
 {
   //! Initialize simulate particle functors map
   template<typename Manager>
-  static inline void initializeSimulateParticleFunctions(
-                                                       const Manager& manager )
+  static inline void initializeSimulateParticleFunctions( Manager& manager )
   { /* ... */ }
 };
 
@@ -56,7 +58,7 @@ StandardParticleSimulationManager<mode>::StandardParticleSimulationManager(
                  const std::shared_ptr<const FilledGeometryModel>& model,
                  const std::shared_ptr<ParticleSource>& source,
                  const std::shared_ptr<EventHandler>& event_handler,
-                 const std::shared_ptr<const WeightWindows> weight_windows,
+                 const std::shared_ptr<const WeightWindow> weight_windows,
                  const std::shared_ptr<const CollisionForcer> collision_forcer,
                  const std::shared_ptr<const SimulationProperties>& properties,
                  const uint64_t next_history,
@@ -71,7 +73,9 @@ StandardParticleSimulationManager<mode>::StandardParticleSimulationManager(
                                properties,
                                next_history,
                                rendezvous_number )
-{ /* ... */ }
+{ 
+  Details::ModeInitializationHelper<typename boost::mpl::begin<typename ParticleModeTypeTraits<mode>::ActiveParticles>::type,typename boost::mpl::end<typename ParticleModeTypeTraits<mode>::ActiveParticles>::type>::initializeSimulateParticleFunctions( *this );
+}
 
 // Simulate an unresolved particle
 template<ParticleModeType mode>
@@ -97,11 +101,11 @@ template<typename State>
 void StandardParticleSimulationManager<mode>::addSimulateParticleFunction()
 {
   // Make sure that the state is compatible with the mode
-  testPrecondition( MonteCarlo::isParticleModeCompatible<mode>( State::type ) );
+  testPrecondition( MonteCarlo::isParticleTypeCompatible<mode>( State::type ) );
   
   d_simulate_particle_function_map[State::type] =
-    std::bind<void>( ParticleSimulationManager::simulateParticle<State>,
-                     std::cref( *this )
+    std::bind<void>( &ParticleSimulationManager::simulateParticle<State>,
+                     std::ref( *this ),
                      std::placeholders::_1,
                      std::placeholders::_2,
                      std::placeholders::_3 );

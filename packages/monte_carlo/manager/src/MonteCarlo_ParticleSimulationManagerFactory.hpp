@@ -23,12 +23,12 @@ namespace MonteCarlo{
 
 namespace Details{
 
-struct ParticleSimulationManagerFactoryCreateModelHelper;
+struct ParticleSimulationManagerFactoryCreateHelper;
   
 } // end Details namespace
 
 //! The particle simulation manager factory class
-class ParticleSimulationManagerFactory : private ArchivableObject<ParticleSimulationManagerFactory>
+class ParticleSimulationManagerFactory : private Utility::ArchivableObject<ParticleSimulationManagerFactory>
 {
 
 public:
@@ -57,7 +57,7 @@ public:
   //! Restart constructor
   ParticleSimulationManagerFactory(
                           const boost::filesystem::path& archived_manager_name,
-                          const uint64_t wall_time,
+                          const double wall_time,
                           const unsigned threads = 1 );
 
   //! Restart constructor
@@ -68,7 +68,7 @@ public:
                           const unsigned threads = 1 );
 
   //! Set the weight windows that will be used by the manager
-  void setWeightWindows( const std::shared_ptr<const WeightWindows>& weight_windows );
+  void setWeightWindows( const std::shared_ptr<const WeightWindow>& weight_windows );
 
   //! Set the collision forcer that will be used by the manager
   void setCollisionForcer( const std::shared_ptr<const CollisionForcer>& collision_forcer );
@@ -84,16 +84,16 @@ private:
 
   //! Archive constructor
   ParticleSimulationManagerFactory(
-               const std::shared_ptr<const FilledGeometryModel>& model,
-               const std::shared_ptr<ParticleSource>& source,
-               const std::shared_ptr<EventHandler>& event_handler,
-               const std::shared_ptr<const WeightWindows>& weight_windows,
-               const std::shared_ptr<const CollisionForcer>& collision_forcer,
-               const std::shared_ptr<SimulationProperties>& properties,
-               const std::string& simulation_name,
-               const std::string& archive_type,
-               const uint64_t next_history,
-               const uint64_t rendezvous_number );
+                const std::shared_ptr<const FilledGeometryModel>& model,
+                const std::shared_ptr<ParticleSource>& source,
+                const std::shared_ptr<EventHandler>& event_handler,
+                const std::shared_ptr<const WeightWindow>& weight_windows,
+                const std::shared_ptr<const CollisionForcer>& collision_forcer,
+                const std::shared_ptr<SimulationProperties>& properties,
+                const std::string& simulation_name,
+                const std::string& archive_type,
+                const uint64_t next_history,
+                const uint64_t rendezvous_number );
 
   // The name that will be used when archiving the object
   const char* getArchiveName() const final override;
@@ -109,7 +109,7 @@ private:
   friend class ParticleSimulationManager;
 
   // Declare the create manager helper as a friend
-  friend class ParticleSimulationManagerFactoryCreateModelHelper;
+  friend class Details::ParticleSimulationManagerFactoryCreateHelper;
 
   // The name used in archive name-value pairs
   static const std::string s_archive_name;
@@ -130,7 +130,7 @@ private:
   std::shared_ptr<EventHandler> d_event_handler;
 
   // The weight windows
-  std::shared_ptr<const WeightWindows> d_weight_windows;
+  std::shared_ptr<const WeightWindow> d_weight_windows;
 
   // The collision forcer
   std::shared_ptr<const CollisionForcer> d_collision_forcer;
@@ -169,7 +169,7 @@ void ParticleSimulationManagerFactory::serialize( Archive& ar, const unsigned ve
 } // end MonteCarlo namespace
 
 BOOST_SERIALIZATION_CLASS_VERSION( ParticleSimulationManagerFactory, MonteCarlo, 0 );
-EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, ParticleSimulationManagerFactory );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleSimulationManagerFactory );
 
 //---------------------------------------------------------------------------//
 
