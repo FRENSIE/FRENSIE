@@ -35,7 +35,7 @@ public:
 
   //! Create a mixed criterion (# histories || wall time)
   static std::shared_ptr<ParticleHistorySimulationCompletionCriterion>
-  createMixedCriterion( const uint64_t num_completed_histories,
+  createMixedCriterion( const uint64_t history_wall,
                         const double wall_time );
 
   //! Constructor

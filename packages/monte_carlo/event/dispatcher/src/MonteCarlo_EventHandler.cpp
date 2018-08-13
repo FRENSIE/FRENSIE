@@ -348,7 +348,7 @@ void EventHandler::setParticleTypes(
   }
 }
 
-// Set the simulation completion criterion
+// Set a custom simulation completion criterion
 void EventHandler::setSimulationCompletionCriterion(
            const std::shared_ptr<ParticleHistorySimulationCompletionCriterion>&
            criterion )
@@ -361,11 +361,39 @@ void EventHandler::setSimulationCompletionCriterion(
   }
 }
 
-// Get the simulation completion criterion
-const ParticleHistorySimulationCompletionCriterion&
-EventHandler::getSimulationCompletionCriterion() const
+// Set a simulation completion criterion
+void EventHandler::setSimulationCompletionCriterion( const uint64_t number_of_histories )
 {
-  return *d_simulation_completion_criterion;
+  d_simulation_completion_criterion =
+    ParticleHistorySimulationCompletionCriterion::createHistoryCountCriterion( number_of_histories );
+
+  d_particle_history_observers.front() = d_simulation_completion_criterion;
+}
+
+// Set a simulation completion criterion
+void EventHandler::setSimulationCompletionCriterion( const double wall_time )
+{
+  d_simulation_completion_criterion =
+    ParticleHistorySimulationCompletionCriterion::createWallTimeCriterion( wall_time );
+
+  d_particle_history_observers.front() = d_simulation_completion_criterion;
+}
+
+// Set a simulation completion criterion
+void EventHandler::setSimulationCompletionCriterion(
+                                            const uint64_t number_of_histories,
+                                            const double wall_time )
+{
+  d_simulation_completion_criterion =
+    ParticleHistorySimulationCompletionCriterion::createMixedCriterion( number_of_histories, wall_time );
+
+  d_particle_history_observers.front() = d_simulation_completion_criterion;
+}
+
+// Check if the simulation is complete
+bool EventHandler::isSimulationComplete() const
+{
+  d_simulation_completion_criterion->isSimulationComplete();
 }
 
 // Add a particle tracker to the handler

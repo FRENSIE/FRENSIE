@@ -8,6 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSimulationManager.hpp"
+#include "MonteCarlo_ParticleSimulationManagerFactory.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_OpenMPProperties.hpp"
 #include "Utility_LoggingMacros.hpp"
@@ -15,44 +16,53 @@
 
 namespace MonteCarlo{
 
-// Initialize static member data
-const std::string ParticleSimulationManager::s_archive_name( "manager" );
-
 // Constructor
 ParticleSimulationManager::ParticleSimulationManager(
+                 const std::string& simulation_name,
+                 const std::string& archive_type,
                  const std::shared_ptr<const FilledGeometryModel>& model,
                  const std::shared_ptr<ParticleSource>& source,
                  const std::shared_ptr<EventHandler>& event_handler,
+                 const std::shared_ptr<const WeightWindows> weight_windows,
+                 const std::shared_ptr<const CollisionForcer> collision_forcer,
                  const std::shared_ptr<const SimulationProperties>& properties,
-                 const std::string& simulation_name )
+                 const uint64_t next_history,
+                 const uint64_t rendezvous_number )
   : d_simulation_name( simulation_name ),
+    d_archive_type( archive_type ),
     d_model( model ),
     d_collision_kernel( new CollisionKernel( model, *properties ) ),
     d_transport_kernel( new TransportKernel( model ) ),
     d_source( source ),
     d_event_handler( event_handler ),
-    d_weight_windows( MonteCarlo::WeightWindows::getDefault() ),
-    d_collision_forcer( MonteCarlo::CollisionForcer::getDefault() ),
+    d_weight_windows( weight_windows ),
+    d_collision_forcer( collision_forcer ),
     d_properties( properties ),
-    d_next_history( 0 ),
-    d_rendezvous_number( 0 ),
+    d_next_history( next_history ),
+    d_rendezvous_number( rendezvous_number ),
     d_rendezvous_batch_size( 0 ),
     d_batch_size( 0 ),
     d_end_simulation( false );
 {
   // Make sure that the simulation name is valid
   testPrecondition( simulation_name.size() > 0 );
+  // Make sure that the archive type is valid
+  testPrecondition( archive_type.size() > 0 );
   // Make sure that the model pointer is valid
   testPrecondition( model.get() );
   // Make sure that the source pointer is valid
   testPrecondition( source.get() );
   // Make sure that the event handler is valid
   testPrecondition( event_handler.get() );
+  // Make sure that the weight windows pointer is valid
+  testPrecondition( weight_windows.get() );
+  // Make sure that the collision forcer pointer is valid
+  testPrecondition( collision_forcer.get() );
   // Make sure that the properties pointer is valid
   testPrecondition( properties.get() );
 
   // Calculate the rendezvous batch size
-  uint64_t number_of_histories = d_properties->getMinNumberOfHistories();
+  uint64_t number_of_histories = d_properties->getNumberOfHistories();
 
   if( number_of_histories > 0 )
   {
@@ -62,6 +72,8 @@ ParticleSimulationManager::ParticleSimulationManager(
     if( d_rendezvous_batch_size > d_properties->getMaxRendezvousBatchSize() )
       d_rendezvous_batch_size = d_properties->getMaxRendezvousBatchSize();
   }
+  else
+    d_rendezvous_batch_size = d_properties->getMaxRendezvousBatchSize();
 
   // Calculate the batch size
   d_batch_size =
@@ -69,13 +81,6 @@ ParticleSimulationManager::ParticleSimulationManager(
 
   if( d_batch_size > d_properties->getMaxBatchSize() )
     d_batch_size = d_properties->getMaxBatchSize();
-}
-
-// Restart constructor
-ParticleSimulationManager::ParticleSimulationManager(
-                         const boost::filesystem::path& archived_manager_name )
-{
-  this->loadFromFile( file_name_with_path );
 }
 
 // Return the rendezvous batch size
@@ -96,6 +101,12 @@ void ParticleSimulationManager::setBatchSize( const uint64_t batch_size )
   d_batch_size = batch_size;
 }
 
+// Increment the next history
+void ParticleSimulationManager::incrementNextHistory( const uint64_t increment_size )
+{
+  d_next_history += increment_size;
+}
+  
 // Return the model
 const FilledGeometryModel& ParticleSimulationManager::getModel() const
 {
@@ -126,46 +137,22 @@ uint64_t ParticleSimulationManager::getNextHistory() const
   return d_next_history;
 }
 
-// Set the weight windows
-void ParticleSimulationManager::setWeightWindows(
-                    const std::shared_ptr<const WeightWindow>& weight_windows )
+// Return the number of rendezvous
+uint64_t ParticleSimulationManager::getNumberOfRendezvous() const
 {
-  if( weight_windows )
-  {
-    if( d_next_history > 0 )
-    {
-      FRENSIE_LOG_TAGGED_WARNING( "ParticleSimulationManager",
-                                  "Setting weight windows after a simulation "
-                                  "has been started is not allowed!" );
-    }
-    else
-      d_weight_windows = weight_windows;
-  }
+  return d_rendezvous_number;
 }
 
-// Set the collision forcer
-void ParticleSimulationManager::setCollisionForcer(
-               const std::shared_ptr<const CollisionForcer>& collision_forcer )
+// Return the rendezvous batch size
+uint64_t ParticleSimulationManager::getRendezvousBatchSize() const
 {
-  if( collision_forcer )
-  {
-    if( d_next_history > 0 )
-    {
-      FRENSIE_LOG_TAGGED_WARNING( "ParticleSimulationManager",
-                                  "Setting a collision forcer after a "
-                                  "simulation has been started is not "
-                                  "allowed!" );
-    }
-    else
-      d_collision_forcer = collision_forcer;
-  }
+  return d_rendezvous_batch_size;
 }
 
-// Rename the simulation
-void ParticleSimulationManager::renameSimulation( const std::string& name )
+// Return the batch size
+uint64_t ParticleSimulationManager::getBatchSize() const
 {
-  if( name.size() > 0 )
-    d_simulation_name = name;
+  return d_batch_size;
 }
 
 // Run the simulation set up by the user
@@ -183,6 +170,9 @@ void ParticleSimulationManager::runSimulation()
   // Enable event handler thread support
   d_event_handler->enableThreadSupport( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
 
+  // Conduct the first rendezvous (for caching only)
+  this->rendezvous();
+
   // The simulation has started
   d_event_handler->updateObserversFromParticleSimulationStartedEvent();
 
@@ -194,7 +184,7 @@ void ParticleSimulationManager::runSimulation()
     {
       this->runSimulationBatch( d_next_history, d_next_history+d_batch_size );
 
-      d_next_history += d_batch_size;
+      this->incrementNextHistory( d_batch_size );
     }
     else // end the simulation if requested (from signal handler)
       break;
@@ -219,16 +209,43 @@ void ParticleSimulationManager::runSimulation()
     FRENSIE_LOG_WARNING( "Simulation terminated. " );
   }
   FRENSIE_FLUSH_ALL_LOGS();
+
+  this->rendezvous();
+}
+
+// Reduce distributed data
+void ParticleSimulationManager::reduceData( const Utility::communicator& comm,
+                                            const int root_process )
+{
+  comm.barrier();
+  
+  d_source->reduceData( comm, root_process );
+  d_event_handler->reduceObserverData( comm, root_process );
+
+  comm.barrier();
 }
 
 // Rendezvous (cache state)
 void ParticleSimulationManager::rendezvous()
 {
   std::string archive_name( d_simulation_name );
-  archive_name += "_";
+  archive_name += "_rendezvous_";
   archive_name += Utility::toString( d_rendezvous_number );
+  archive_name += ".";
+  archive_name += d_archive_type;
   
-  this->saveToFile( archive_name, true );
+  ParticleSimulationManagerFactory tmp_factory( d_model,
+                                                d_source,
+                                                d_event_handler,
+                                                d_weight_windows,
+                                                d_collision_forcer,
+                                                d_properties,
+                                                d_simulation_name,
+                                                d_archive_type,
+                                                d_next_history,
+                                                d_rendezvous_number+1 );
+
+  tmp_factory.saveToFile( archive_name, true );
 
   ++d_rendezvous_number;
 }
@@ -314,8 +331,22 @@ void ParticleSimulationManager::signalHandler( int signal )
   
   if( number_of_signals_handled == 1 )
     d_end_simulation = true;
-  else // number_of_signals_handled > 1 
-    exit( 0 );
+
+  this->exitIfRequired( number_of_signals_handled, signal );
+}
+
+// Exit if required based on signal count
+void ParticleSimulationManager::exitIfRequired( const int signal_counter,
+                                                const int signal ) const
+{
+  if( signal_counter > 1 )
+    exit( signal );
+}
+
+// Check if the simulation has been ended by the user
+bool ParticleSimulationManager::hasEndSimulationRequestBeenMade() const
+{
+  return d_end_simulation;
 }
   
 } // end MonteCarlo namespace

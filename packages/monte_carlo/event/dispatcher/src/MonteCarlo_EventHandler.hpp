@@ -68,12 +68,21 @@ public:
   ~EventHandler()
   { /* ... */ }
 
-  //! Set the simulation completion criterion
+  //! Set a custom simulation completion criterion
   void setSimulationCompletionCriterion( const std::shared_ptr<ParticleHistorySimulationCompletionCriterion>& criterion );
 
-  //! Get the simulation completion criterion
-  const ParticleHistorySimulationCompletionCriterion&
-  getSimulationCompletionCriterion() const;
+  //! Set a simulation completion criterion
+  void setSimulationCompletionCriterion( const uint64_t number_of_histories );
+
+  //! Set a simulation completion criterion
+  void setSimulationCompletionCriterion( const double wall_time );
+
+  //! Set a simulation completion criterion
+  void setSimulationCompletionCriterion( const uint64_t number_of_histories,
+                                         const double wall_time );
+
+  //! Check if the simulation is complete
+  bool isSimulationComplete() const;
 
   //! Add an estimator to the handler
   template<typename EstimatorType>

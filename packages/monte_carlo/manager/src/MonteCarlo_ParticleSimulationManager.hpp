@@ -14,35 +14,23 @@
 
 // Boost Includes
 #include <boost/filesystem/path.hpp>
-#include <boost/serialization/split_member.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_EventHandler.hpp"
 #include "MonteCarlo_WeightWindow.hpp"
+#include "MonteCarlo_CollisionForcer.hpp"
 #include "MonteCarlo_ParticleSource.hpp"
 #include "MonteCarlo_FilledGeometryModel.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
-#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
-#include "Utility_SerializationHelpers.hpp"
+#include "Utility_Communicator.hpp"
 
 namespace MonteCarlo{
 
 //! The particle simulation manager base class
-class ParticleSimulationManager : private ArchivableObject<ParticleSimulationManager>
+class ParticleSimulationManager 
 {
 
 public:
-
-  //! Constructor
-  ParticleSimulationManager(
-               const std::shared_ptr<const FilledGeometryModel>& model,
-               const std::shared_ptr<ParticleSource>& source,
-               const std::shared_ptr<EventHandler>& event_handler,
-               const std::shared_ptr<const SimulationProperties>& properties,
-               const std::string& simulation_name = "simulation.xml" );
-
-  //! Restart constructor
-  ParticleSimulationManager( const boost::filesystem::path& archived_manager_name );
 
   //! Destructor
   virtual ~ParticleSimulationManager()
@@ -69,19 +57,17 @@ public:
   //! Return the next history that will be completed
   uint64_t getNextHistory() const;
 
-  //! Set the weight windows
-  void setWeightWindows(
-                   const std::shared_ptr<const WeightWindow>& weight_windows );
+  //! Return the number of rendezvous
+  uint64_t getNumberOfRendezvous() const;
 
-  //! Set the collision forcer
-  void setCollisionForcer(
-              const std::shared_ptr<const CollisionForcer>& collision_forcer );
+  //! Return the rendezvous batch size
+  uint64_t getRendezvousBatchSize() const;
+
+  //! Return the batch size
+  uint64_t getBatchSize() const;
 
   //! Run the simulation set up by the user
   virtual void runSimulation();
-
-  //! Rename the simulation
-  void renameSimulation( const std::string& name );
 
   //! Print the simulation data to the desired stream
   virtual void printSimulationSummary( std::ostream& os ) const;
@@ -94,8 +80,27 @@ public:
 
 protected:
 
+  //! Constructor
+  ParticleSimulationManager(
+                 const std::string& simulation_name,
+                 const std::string& archive_type,
+                 const std::shared_ptr<const FilledGeometryModel>& model,
+                 const std::shared_ptr<ParticleSource>& source,
+                 const std::shared_ptr<EventHandler>& event_handler,
+                 const std::shared_ptr<const WeightWindows> weight_windows,
+                 const std::shared_ptr<const CollisionForcer> collision_forcer,
+                 const std::shared_ptr<const SimulationProperties>& properties,
+                 const uint64_t next_history,
+                 const uint64_t rendezvous_number );
+
   //! Set the batch size
   void setBatchSize( const uint64_t batch_size );
+
+  //! Increment the next history
+  void incrementNextHistory( const uint64_t increment_size );
+
+  //! Check if the simulation has been ended by the user
+  bool hasEndSimulationRequestBeenMade() const;
 
   //! Run the simulation batch
   void runSimulationBatch( const uint64_t batch_start_history,
@@ -105,16 +110,23 @@ protected:
   virtual void simulateUnresolvedParticle(
                                         ParticleState& unresolved_particle,
                                         ParticleBank& bank,
-                                        const bool source_particle ) const = 0;
+                                        const bool source_particle ) = 0;
 
   //! Simulate a resolved particle
   template<typename State>
   void simulateParticle( ParticleState& unresolved_particle,
                          ParticleBank& bank,
-                         const bool source_particle ) const;
+                         const bool source_particle );
+
+  //! Reduce distributed data
+  void reduceData( const Utility::communicator& comm,
+                   const int root_process );
 
   //! Rendezvous (cache state)
   virtual void rendezvous();
+
+  //! Exit if required based on signal count
+  void exitIfRequired( const int signal_counter, const int signal ) const;
 
 private:
 
@@ -124,31 +136,20 @@ private:
                                        ParticleState& unresolved_particle,
                                        ParticleBank& bank,
                                        const double optical_path,
-                                       const bool starting_from_source ) const;
+                                       const bool starting_from_source );
 
   // Simulate a resolved particle track
   template<typename State>
   void simulateParticleTrack( State& particle,
                               ParticleBank& bank,
                               const double optical_path,
-                              const bool starting_from_source ) const;
-
-  // Simulate an unresolved particle collision
-  template<typename State>
-  void simulateUnresolvedParticleCollision( ParticleState& unresolved_particle,
-                                            ParticleBank& bank ) const;
-
-  // Simulate a resolved particle collision
-  template<typename State>
-  void simulateParticleCollision( State& particle,
-                                  ParticleBank& bank );
+                              const bool starting_from_source );
 
   // Advance a particle to the cell boundary
   template<typename State>
   void advanceParticleToCellBoundary( State& particle,
                                       ParticleBank& bank,
-                                      const double distance_to_surface,
-                                      const double subtrack_start_time ) const;
+                                      const double distance_to_surface );
 
   // Advance a particle to a collision site
   template<typename State>
@@ -156,31 +157,13 @@ private:
                                   State& particle,
                                   const double op_to_collision_site,
                                   const double cell_total_macro_cross_section,
-                                  const double subtrack_start_time,
-                                  const double track_start_time,
-                                  const double track_start_position[3] ) const;
-
-  // The name that will be used when archiving the object
-  const char* getArchiveName() const final override;
-
-  // Save the data to an archive
-  template<typename Archive>
-  void save( Archive& ar, const unsigned version ) const;
-
-  // Load the data from an archive
-  template<typename Archive>
-  void load( Archive& ar, const unsigned version );
-
-  BOOST_SERIALIZATION_SPLIT_MEMBER();
-
-  // Declare the boost serialization access object as a friend
-  friend class boost::serialization::access;
-
-  // The name used in archive name-value pairs
-  static const std::string s_archive_name;
+                                  const double track_start_position[3] );
 
   // The simulation name
   std::string d_simulation_name;
+
+  // The archive type
+  std::string d_archive_type;
 
   // The filled geometry model
   std::shared_ptr<const FilledGeometryModel> d_model;
@@ -223,10 +206,6 @@ private:
 };
 
 } // end MonteCarlo namespace
-
-BOOST_SERIALIZATION_CLASS_VERSION( ParticleSimulationManager, MonteCarlo, 0 );
-BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ParticleSimulationManager, MonteCarlo );
-EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, ParticleSimulationManager );
 
 //---------------------------------------------------------------------------//
 // Template Includes

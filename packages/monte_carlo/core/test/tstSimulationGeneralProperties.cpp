@@ -31,9 +31,14 @@ FRENSIE_UNIT_TEST( SimulationGeneralProperties, defaults )
   
   FRENSIE_CHECK_EQUAL( properties.getParticleMode(),
                        MonteCarlo::NEUTRON_MODE );
-  FRENSIE_CHECK_EQUAL( properties.getNumberOfHistories(), 0 );
   FRENSIE_CHECK_EQUAL( properties.getSimulationWallTime(),
                        Utility::QuantityTraits<double>::inf() );
+  FRENSIE_CHECK_EQUAL( properties.getNumberOfHistories(), 0 );
+  FRENSIE_CHECK_EQUAL( properties.getMinNumberOfRendezvous(), 1 );
+  FRENSIE_CHECK_EQUAL( properties.getMaxRendezvousBatchSize(), 1000000000 );
+  FRENSIE_CHECK_EQUAL( properties.getMinNumberOfBatchesPerRendezvous(), 1 );
+  FRENSIE_CHECK_EQUAL( properties.getMaxBatchSize(), 1000000000 );
+  FRENSIE_CHECK_EQUAL( properties.getNumberOfBatchesPerProcessor(), 1 );
   FRENSIE_CHECK_EQUAL( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
                        0.001 );
   FRENSIE_CHECK( properties.displayWarnings() );
@@ -87,6 +92,17 @@ FRENSIE_UNIT_TEST( SimulationGeneralProperties, setParticleMode )
 }
 
 //---------------------------------------------------------------------------//
+// Test that the wall time can be set
+FRENSIE_UNIT_TEST( SimulationGeneralProperties, setSimulationWallTime )
+{
+  MonteCarlo::SimulationGeneralProperties properties;
+  
+  properties.setSimulationWallTime( 300.0 );
+
+  FRENSIE_CHECK_EQUAL( properties.getSimulationWallTime(), 300.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Test that the number of histories to run can be set
 FRENSIE_UNIT_TEST( SimulationGeneralProperties, setNumberOfHistories )
 {
@@ -98,14 +114,59 @@ FRENSIE_UNIT_TEST( SimulationGeneralProperties, setNumberOfHistories )
 }
 
 //---------------------------------------------------------------------------//
-// Test that the wall time can be set
-FRENSIE_UNIT_TEST( SimulationGeneralProperties, setSimulationWallTime )
+// Test that the min number of rendezvous can be set
+FRENSIE_UNIT_TEST( SimulationGeneralProperties, setMinNumberOfRendezvous )
 {
   MonteCarlo::SimulationGeneralProperties properties;
-  
-  properties.setSimulationWallTime( 300.0 );
 
-  FRENSIE_CHECK_EQUAL( properties.getSimulationWallTime(), 300.0 );
+  properties.setMinNumberOfRendezvous( 10 );
+
+  FRENSIE_CHECK_EQUAL( properties.getMinNumberOfRendezvous(), 10 );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the max rendezvous batch size can be set
+FRENSIE_UNIT_TEST( SimulationGeneralProperties, setMaxRendezvousBatchSize )
+{
+  MonteCarlo::SimulationGeneralProperties properties;
+
+  properties.setMaxRendezvousBatchSize( 1000000 );
+
+  FRENSIE_CHECK_EQUAL( properties.getMaxRendezvousBatchSize(), 1000000 );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the min number of batches per rendezvous can be set
+FRENSIE_UNIT_TEST( SimulationGeneralProperties,
+                   setMinNumberOfBatchesPerRendezvous )
+{
+  MonteCarlo::SimulationGeneralProperties properties;
+
+  properties.setMinNumberOfBatchesPerRendezvous( 20 );
+
+  FRENSIE_CHECK_EQUAL( properties.getMinNumberOfBatchesPerRendezvous(), 20 );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the max batch size can be set
+FRENSIE_UNIT_TEST( SimulationGeneralProperties, setMaxBatchSize )
+{
+  MonteCarlo::SimulationGeneralProperties properties;
+
+  properties.setMaxBatchSize( 100000 );
+
+  FRENSIE_CHECK_EQUAL( properties.getMaxBatchSize(), 100000 );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the number of batches per MPI process can be set
+FRENSIE_UNIT_TEST( SimulationGeneralProperties, setNumberOfBatchesPerProcessor )
+{
+  MonteCarlo::SimulationGeneralProperties properties;
+
+  properties.setNumberOfBatchesPerProcessor( 2 );
+
+  FRENSIE_CHECK_EQUAL( properties.getNumberOfBatchesPerProcessor(), 2 );
 }
 
 //---------------------------------------------------------------------------//
@@ -152,17 +213,6 @@ FRENSIE_UNIT_TEST( SimulationGeneralProperties, setImplicitCaptureModeOnOff )
 }
 
 //---------------------------------------------------------------------------//
-// Test that the number of batches per processor can be set
-FRENSIE_UNIT_TEST( SimulationGeneralProperties, setNumberOfBatchesPerProcessor )
-{
-  MonteCarlo::SimulationGeneralProperties properties;
-  
-  properties.setNumberOfBatchesPerProcessor( 25 );
-
-  FRENSIE_CHECK_EQUAL( properties.getNumberOfBatchesPerProcessor(), 25 );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the properties can be archived
 FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationGeneralProperties,
                                    archive,
@@ -186,12 +236,16 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationGeneralProperties,
 
     MonteCarlo::SimulationGeneralProperties custom_properties;
     custom_properties.setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE );
-    custom_properties.setNumberOfHistories( 1000000000 );
     custom_properties.setSimulationWallTime( 300.0 );
+    custom_properties.setNumberOfHistories( 1000000000 );
+    custom_properties.setMinNumberOfRendezvous( 2 );
+    custom_properties.setMaxRendezvousBatchSize( 500000000 );
+    custom_properties.setMinNumberOfBatchesPerRendezvous( 5 );
+    custom_properties.setMaxBatchSize( 100000000 );
+    custom_properties.setNumberOfBatchesPerProcessor( 25 );
     custom_properties.setSurfaceFluxEstimatorAngleCosineCutoff( 0.1 );
     custom_properties.setWarningsOff();
     custom_properties.setImplicitCaptureModeOn();
-    custom_properties.setNumberOfBatchesPerProcessor( 25 );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( default_properties ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( custom_properties ) );
@@ -211,9 +265,16 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationGeneralProperties,
 
   FRENSIE_CHECK_EQUAL( default_properties.getParticleMode(),
                        MonteCarlo::NEUTRON_MODE );
-  FRENSIE_CHECK_EQUAL( default_properties.getNumberOfHistories(), 0 );
   FRENSIE_CHECK_EQUAL( default_properties.getSimulationWallTime(),
                        Utility::QuantityTraits<double>::inf() );
+  FRENSIE_CHECK_EQUAL( default_properties.getNumberOfHistories(), 0 );
+  FRENSIE_CHECK_EQUAL( default_properties.getMinNumberOfRendezvous(), 1 );
+  FRENSIE_CHECK_EQUAL( default_properties.getMaxRendezvousBatchSize(),
+                       1000000000 );
+  FRENSIE_CHECK_EQUAL( default_properties.getMinNumberOfBatchesPerRendezvous(),
+                       1 );
+  FRENSIE_CHECK_EQUAL( default_properties.getMaxBatchSize(), 1000000000 );
+  FRENSIE_CHECK_EQUAL( default_properties.getNumberOfBatchesPerProcessor(), 1 );
   FRENSIE_CHECK_EQUAL( default_properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
                        0.001 );
   FRENSIE_CHECK( default_properties.displayWarnings() );
@@ -225,8 +286,15 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationGeneralProperties,
 
   FRENSIE_CHECK_EQUAL( custom_properties.getParticleMode(),
                        MonteCarlo::NEUTRON_PHOTON_MODE );
-  FRENSIE_CHECK_EQUAL( custom_properties.getNumberOfHistories(), 1000000000 );
   FRENSIE_CHECK_EQUAL( custom_properties.getSimulationWallTime(), 300.0 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getNumberOfHistories(), 1000000000 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getMinNumberOfRendezvous(), 2 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getMaxRendezvousBatchSize(),
+                       500000000 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getMinNumberOfBatchesPerRendezvous(),
+                       5 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getMaxBatchSize(), 100000000 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getNumberOfBatchesPerProcessor(), 25 );
   FRENSIE_CHECK_EQUAL( custom_properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
                        0.1 );
   FRENSIE_CHECK( !custom_properties.displayWarnings() );
