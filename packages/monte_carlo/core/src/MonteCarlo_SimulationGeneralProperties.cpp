@@ -48,13 +48,13 @@ ParticleModeType SimulationGeneralProperties::getParticleMode() const
  * time is set and batch sizes are set.
  */
 void SimulationGeneralProperties::setNumberOfHistories(
-                                           const unsigned long long histories )
+                                                     const uint64_t histories )
 {
   d_number_of_histories = histories;
 }
 
 // Return the number of histories to run
-unsigned long long SimulationGeneralProperties::getNumberOfHistories() const
+uint64_t SimulationGeneralProperties::getNumberOfHistories() const
 {
   return d_number_of_histories;
 }

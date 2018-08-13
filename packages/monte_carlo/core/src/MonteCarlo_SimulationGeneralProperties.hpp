@@ -165,6 +165,11 @@ void SimulationGeneralProperties::save( Archive& ar, const unsigned version ) co
 {
   ar & BOOST_SERIALIZATION_NVP( d_particle_mode );
   ar & BOOST_SERIALIZATION_NVP( d_number_of_histories );
+  ar & BOOST_SERIALIZATION_NVP( d_min_number_of_rendezvous );
+  ar & BOOST_SERIALIZATION_NVP( d_max_rendezvous_batch_size );
+  ar & BOOST_SERIALIZATION_NVP( d_min_number_of_batches_per_rendezvous );
+  ar & BOOST_SERIALIZATION_NVP( d_max_batch_size );
+  ar & BOOST_SERIALIZATION_NVP( d_number_of_batches_per_processor );
 
   // We cannot safely serialize inf to all arhcive types - create a flag that
   // records if the simulation wall time is inf
@@ -183,11 +188,10 @@ void SimulationGeneralProperties::save( Archive& ar, const unsigned version ) co
   {
     ar & BOOST_SERIALIZATION_NVP( d_wall_time );
   }
-  
+
   ar & BOOST_SERIALIZATION_NVP( d_surface_flux_estimator_angle_cosine_cutoff );
   ar & BOOST_SERIALIZATION_NVP( d_display_warnings );
   ar & BOOST_SERIALIZATION_NVP( d_implicit_capture_mode_on );
-  ar & BOOST_SERIALIZATION_NVP( d_number_of_batches_per_processor );
 }
 
 // Load the state to an archive
@@ -196,6 +200,11 @@ void SimulationGeneralProperties::load( Archive& ar, const unsigned version )
 {
   ar & BOOST_SERIALIZATION_NVP( d_particle_mode );
   ar & BOOST_SERIALIZATION_NVP( d_number_of_histories );
+  ar & BOOST_SERIALIZATION_NVP( d_min_number_of_rendezvous );
+  ar & BOOST_SERIALIZATION_NVP( d_max_rendezvous_batch_size );
+  ar & BOOST_SERIALIZATION_NVP( d_min_number_of_batches_per_rendezvous );
+  ar & BOOST_SERIALIZATION_NVP( d_max_batch_size );
+  ar & BOOST_SERIALIZATION_NVP( d_number_of_batches_per_processor );
 
   // Load the wall time
   bool __inf_wall_time__;
@@ -208,7 +217,6 @@ void SimulationGeneralProperties::load( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_NVP( d_surface_flux_estimator_angle_cosine_cutoff );
   ar & BOOST_SERIALIZATION_NVP( d_display_warnings );
   ar & BOOST_SERIALIZATION_NVP( d_implicit_capture_mode_on );
-  ar & BOOST_SERIALIZATION_NVP( d_number_of_batches_per_processor );
 }
 
 } // end MonteCarlo namespace
