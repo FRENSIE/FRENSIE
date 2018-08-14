@@ -92,6 +92,8 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
                       "The archive type cannot be empty!" );
   
   Utility::OpenMPProperties::setNumberOfThreads( threads );
+
+  
 }
 
 // Restart constructor
@@ -162,7 +164,7 @@ void ParticleSimulationManagerFactory::setWeightWindows(
 {
   if( weight_windows )
   {
-    if( d_next_history > 0 )
+    if( d_next_history > 0 || d_simulation_manager )
     {
       FRENSIE_LOG_TAGGED_WARNING( "ParticleSimulationManagerFactory",
                                   "Setting weight windows after a simulation "
@@ -179,7 +181,7 @@ void ParticleSimulationManagerFactory::setCollisionForcer(
 {
   if( collision_forcer )
   {
-    if( d_next_history > 0 )
+    if( d_next_history > 0 || d_simulation_manager )
     {
       FRENSIE_LOG_TAGGED_WARNING( "ParticleSimulationManagerFactory",
                                   "Setting a collision forcer after a "
@@ -196,11 +198,38 @@ void ParticleSimulationManagerFactory::renameSimulation(
                                               const std::string& name,
                                               const std::string& archive_type )
 {
-  if( name.size() > 0 )
-    d_simulation_name = name;
+  if( d_simulation_manager )
+  {
+    FRENSIE_LOG_TAGGED_WARNING( "ParticleSimulationManagerFactory",
+                                "Renaming a simulation after the manager has "
+                                "been created is not allowed!" );
+  }
+  else
+  {
+    if( name.size() > 0 )
+      d_simulation_name = name;
   
-  if( archive_type.size() > 0 )
-    d_archive_type = archive_type;
+    if( archive_type.size() > 0 )
+      d_archive_type = archive_type;
+  }
+}
+
+// Change the simulation archive type
+void ParticleSimulationManagerFactory::changeSimulationArchiveType(
+                                              const std::string& archive_type )
+{
+  if( d_simulation_manager )
+  {
+    FRENSIE_LOG_TAGGED_WARNING( "ParticleSimulationManagerFactory",
+                                "Changing the simulation archive type after "
+                                "the manager has been created is not "
+                                "allowed!" ); 
+  }
+  else
+  {
+    if( archive_type.size() > 0 )
+      d_archive_type = archive_type;
+  }
 }
 
 namespace Details{

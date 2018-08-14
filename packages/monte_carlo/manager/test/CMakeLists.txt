@@ -1,0 +1,6 @@
+FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_manager)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleSimulationManagerFactory DEPENDS tstParticleSimulationManagerFactory.cpp)
+FRENSIE_ADD_TEST(ParticleSimulationManagerFactory)
+
+FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_manager)
