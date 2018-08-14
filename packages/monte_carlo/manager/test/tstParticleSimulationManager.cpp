@@ -389,7 +389,58 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
 // Check that a particle simulation manager can rename the simulation
 FRENSIE_UNIT_TEST( ParticleSimulationManager, renameSimulation )
 {
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
 
+  {
+    std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+    properties->setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE );
+    properties->setNumberOfHistories( 5 );
+
+    std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        data_directory,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+  
+    std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+    {
+      std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+        source_component( new MonteCarlo::StandardNeutronSourceComponent(
+                                                     0,
+                                                     1.0,
+                                                     unfilled_model,
+                                                     particle_distribution ) );
+
+      source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+    }
+  
+    std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
+
+    std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+    factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties,
+                                                              "test_sim",
+                                                              "xml",
+                                                              threads ) );
+  
+    manager = factory->getManager();
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "test_sim" );
+
+  manager->setSimulationName( "test_sim_2" );
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "test_sim_2" );
 }
 
 //---------------------------------------------------------------------------//
@@ -397,7 +448,222 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, renameSimulation )
 // type
 FRENSIE_UNIT_TEST( ParticleSimulationManager, changeSimulationArchiveType )
 {
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
 
+  {
+    std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+    properties->setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE );
+    properties->setNumberOfHistories( 5 );
+
+    std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        data_directory,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+  
+    std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+    {
+      std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+        source_component( new MonteCarlo::StandardNeutronSourceComponent(
+                                                     0,
+                                                     1.0,
+                                                     unfilled_model,
+                                                     particle_distribution ) );
+
+      source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+    }
+  
+    std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
+
+    std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+    factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties,
+                                                              "test_sim",
+                                                              "xml",
+                                                              threads ) );
+  
+    manager = factory->getManager();
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "xml" );
+
+  manager->setSimulationArchiveType( "txt" );
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "txt" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the geometry model can be returned
+FRENSIE_UNIT_TEST( ParticleSimulationManager, getModel )
+{
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
+
+  std::shared_ptr<const MonteCarlo::FilledGeometryModel> model;
+
+  {
+    std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+    properties->setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE );
+    properties->setNumberOfHistories( 5 );
+
+    model.reset( new MonteCarlo::FilledGeometryModel(
+                                        data_directory,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+  
+    std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+    {
+      std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+        source_component( new MonteCarlo::StandardNeutronSourceComponent(
+                                                     0,
+                                                     1.0,
+                                                     unfilled_model,
+                                                     particle_distribution ) );
+
+      source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+    }
+  
+    std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
+
+    std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+    factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties,
+                                                              "test_sim",
+                                                              "xml",
+                                                              threads ) );
+  
+    manager = factory->getManager();
+  }
+
+  FRENSIE_CHECK( &manager->getModel() == model.get() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the source can be returned
+FRENSIE_UNIT_TEST( ParticleSimulationManager, getSource )
+{
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
+
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
+
+  {
+    std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+    properties->setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE );
+    properties->setNumberOfHistories( 5 );
+
+    std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        data_directory,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+  
+    {
+      std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+        source_component( new MonteCarlo::StandardNeutronSourceComponent(
+                                                     0,
+                                                     1.0,
+                                                     unfilled_model,
+                                                     particle_distribution ) );
+
+      source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+    }
+  
+    std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
+
+    std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+    factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties,
+                                                              "test_sim",
+                                                              "xml",
+                                                              threads ) );
+  
+    manager = factory->getManager();
+  }
+
+  FRENSIE_CHECK( &manager->getSource() == source.get() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the event handler can be returned
+FRENSIE_UNIT_TEST( ParticleSimulationManager, getEventHandler )
+{
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
+
+  std::shared_ptr<MonteCarlo::EventHandler> event_handler;
+
+  {
+    std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+    properties->setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE );
+    properties->setNumberOfHistories( 5 );
+
+    std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        data_directory,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+
+    std::shared_ptr<MonteCarlo::ParticleSource> source;
+    
+    {
+      std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+        source_component( new MonteCarlo::StandardNeutronSourceComponent(
+                                                     0,
+                                                     1.0,
+                                                     unfilled_model,
+                                                     particle_distribution ) );
+
+      source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+    }
+  
+    event_handler.reset( new MonteCarlo::EventHandler( *properties ) );
+
+    std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+    factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties,
+                                                              "test_sim",
+                                                              "xml",
+                                                              threads ) );
+  
+    manager = factory->getManager();
+  }
+
+  FRENSIE_CHECK( &manager->getEventHandler() == event_handler.get() );
 }
 
 //---------------------------------------------------------------------------//
