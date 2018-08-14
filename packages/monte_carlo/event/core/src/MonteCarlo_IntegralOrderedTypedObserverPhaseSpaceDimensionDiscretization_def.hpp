@@ -18,12 +18,12 @@ namespace MonteCarlo{
 
 // Default constructor
 template<ObserverPhaseSpaceDimension dimension>
-IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization()
+IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization()
 { /* ... */ }
-  
+
 // Constructor
 template<ObserverPhaseSpaceDimension dimension>
-IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization(
+IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization(
                              const BinBoundaryArray& dimension_bin_boundaries )
   : OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>( dimension_bin_boundaries )
 {
@@ -33,14 +33,14 @@ IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename
 
 // Return the number of bins in the discretization
 template<ObserverPhaseSpaceDimension dimension>
-size_t IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::getNumberOfBins() const
+size_t IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::getNumberOfBins() const
 {
   return this->getBinBoundaries().size();
 }
 
 // Print the boundaries of a bin
 template<ObserverPhaseSpaceDimension dimension>
-void IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::printBoundariesOfBin(
+void IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::printBoundariesOfBin(
                                                  std::ostream& os,
                                                  const size_t bin_index ) const
 {
@@ -59,7 +59,7 @@ void IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typ
 
 // Check if the value is contained in the discretization
 template<ObserverPhaseSpaceDimension dimension>
-bool IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::isValueInDiscretization(
+bool IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::isValueInDiscretization(
                                          const DimensionValueType value ) const
 {
   return value <= this->getBinBoundaries().back();
@@ -67,19 +67,19 @@ bool IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typ
 
 // Check if the value range intersects the discretization
 template<ObserverPhaseSpaceDimension dimension>
-bool IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::doesRangeIntersectDiscretization(
+bool IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::doesRangeIntersectDiscretization(
                                      const DimensionValueType range_start,
                                      const DimensionValueType range_end ) const
 {
   // Make sure that the range is valid
   testPrecondition( range_start <= range_end );
-  
+
   return range_start <= this->getBinBoundaries().back();
 }
 
 // Calculate the index of the bin  that the value falls in
 template<ObserverPhaseSpaceDimension dimension>
-size_t IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::calculateBinIndexOfValue(
+size_t IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateBinIndexOfValue(
                                          const DimensionValueType value ) const
 {
   // Make sure the value is in the discretization
@@ -93,7 +93,7 @@ size_t IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,t
 
 // Calculate the size of a bin
 template<ObserverPhaseSpaceDimension dimension>
-double IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::calculateBinSize(
+double IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateBinSize(
                                                  const size_t bin_index ) const
 {
   // Make sure that the bin index is valid
@@ -110,7 +110,7 @@ double IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,t
 
 // Calculate the size of a bin intersection
 template<ObserverPhaseSpaceDimension dimension>
-double IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::calculateBinIntersectionSize(
+double IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateBinIntersectionSize(
                                      const size_t bin_index,
                                      const DimensionValueType range_start,
                                      const DimensionValueType range_end ) const
@@ -145,7 +145,7 @@ double IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,t
  * range. Therefore the range size equals (range_end - range_start) + 1.
  */
 template<ObserverPhaseSpaceDimension dimension>
-double IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::calculateRangeSize(
+double IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateRangeSize(
                                      const DimensionValueType range_start,
                                      const DimensionValueType range_end ) const
 {
@@ -155,12 +155,12 @@ double IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,t
 // Serialize the discretization
 template<ObserverPhaseSpaceDimension dimension>
 template<typename Archive>
-void IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::serialize( Archive& ar, const unsigned version )
+void IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::serialize( Archive& ar, const unsigned version )
 {
   // Serialize the base class data
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
 }
-  
+
 } // end MonteCarlo namespace
 
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>,

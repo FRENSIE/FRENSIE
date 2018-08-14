@@ -352,7 +352,7 @@ private:
   //       from the model being deleted while the particle is still embedded
   //       in it.
   std::shared_ptr<const Geometry::Model> d_model;
-  
+
   // The navigator used by the particle
   std::unique_ptr<Geometry::Navigator> d_navigator;
 };
@@ -382,9 +382,9 @@ inline ParticleState::energyType ParticleState::getEnergy() const
 }
 
 // Get the navigator used by the particle
-/*! \details Do not call setOnAdvanceCompleteMethod or 
- * clearOnAdvanceCompleteMethod on the returned navigator. A callback is set 
- * by the particle state to ensure that the particle time is updated after an 
+/*! \details Do not call setOnAdvanceCompleteMethod or
+ * clearOnAdvanceCompleteMethod on the returned navigator. A callback is set
+ * by the particle state to ensure that the particle time is updated after an
  * advance method is called.
  */
 inline Geometry::Navigator& ParticleState::navigator()
@@ -400,8 +400,8 @@ inline const Geometry::Navigator& ParticleState::navigator() const
 
 } // end MonteCarlo namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleState );
-BOOST_CLASS_VERSION( MonteCarlo::ParticleState, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( ParticleState, MonteCarlo );
+BOOST_SERIALIZATION_CLASS_VERSION( ParticleState, MonteCarlo, 0 );
 EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, ParticleState );
 
 //---------------------------------------------------------------------------//

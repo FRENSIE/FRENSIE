@@ -49,7 +49,7 @@ OccupationNumberEvaluator::createEvaluator(
   testPrecondition( norm_constant_precision < 1.0 );
 
   // Create the raw compton profile
-  std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<GridMomentumUnit,GridInverseMomentumUnit> > raw_compton_profile(
+  std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<GridMomentumUnit,GridInverseMomentumUnit> > raw_compton_profile(
      new Utility::UnitAwareTabularDistribution<InterpPolicy,GridMomentumUnit,GridInverseMomentumUnit>(
                                                 electron_momentum_projections,
                                                 compton_profile ) );
@@ -62,7 +62,7 @@ OccupationNumberEvaluator::createEvaluator(
                     new OccupationNumberEvaluator( unit_aware_compton_profile,
                                                    norm_constant_precision ) );
 }
-  
+
 } // end DataGen namespace
 
 #endif // DATA_GEN_OCCUPATION_NUMBER_EVALUATOR_DEF_HPP

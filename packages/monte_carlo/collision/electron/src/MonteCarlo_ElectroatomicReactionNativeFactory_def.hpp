@@ -27,12 +27,14 @@
 namespace MonteCarlo{
 
 // Create the coupled elastic scattering electroatomic reactions
-template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
+template< typename TwoDInterpPolicy,
+          template<typename> class TwoDGridPolicy,
+          typename ReactionType>
 void ElectroatomicReactionNativeFactory::createCoupledElasticReaction(
             const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
             const std::shared_ptr<const std::vector<double> >& energy_grid,
             const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
-            std::shared_ptr<const ElectroatomicReaction>& elastic_reaction,
+            std::shared_ptr<const ReactionType>& elastic_reaction,
             const CoupledElasticSamplingMethod& sampling_method,
             const double evaluation_tol )
 {
@@ -77,12 +79,14 @@ void ElectroatomicReactionNativeFactory::createCoupledElasticReaction(
 }
 
 // Create the decoupled elastic scattering electroatomic reactions
-template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
+template< typename TwoDInterpPolicy,
+          template<typename> class TwoDGridPolicy,
+          typename ReactionType>
 void ElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
             const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
             const std::shared_ptr<const std::vector<double> >& energy_grid,
             const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
-            std::shared_ptr<const ElectroatomicReaction>& elastic_reaction,
+            std::shared_ptr<const ReactionType>& elastic_reaction,
             const double evaluation_tol )
 {
   // Make sure the energy grid is valid
@@ -109,14 +113,6 @@ void ElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
   size_t threshold_energy_index =
     raw_electroatom_data.getTotalElasticCrossSectionThresholdEnergyIndex();
 
-  // Calculate sampling ratios
-  std::shared_ptr<std::vector<double> >
-    sampling_ratios( new std::vector<double>( total_cross_section->size() ) );
-  for( unsigned i = 0; i < sampling_ratios->size(); ++i )
-  {
-    (*sampling_ratios)[i] =
-      (*cutoff_cross_section)[i]/(*total_cross_section)[i];
-  }
 
   // Create the tabular cutoff elastic scattering distribution
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution> tabular_distribution;
@@ -136,7 +132,7 @@ void ElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
     new DecoupledElasticElectroatomicReaction<Utility::LogLog>(
                                         energy_grid,
                                         total_cross_section,
-                                        sampling_ratios,
+                                        cutoff_cross_section,
                                         threshold_energy_index,
                                         grid_searcher,
                                         tabular_distribution,
@@ -144,12 +140,14 @@ void ElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
 }
 
 // Create a hybrid elastic scattering electroatomic reaction
-template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
+template< typename TwoDInterpPolicy,
+          template<typename> class TwoDGridPolicy,
+          typename ReactionType>
 void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
-    std::shared_ptr<const ElectroatomicReaction>& elastic_reaction,
+    std::shared_ptr<const ReactionType>& elastic_reaction,
     const double cutoff_angle_cosine,
     const double evaluation_tol )
 {
@@ -253,12 +251,14 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
 }
 
 // Create the cutoff elastic scattering electroatomic reactions
-template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
+template< typename TwoDInterpPolicy,
+          template<typename> class TwoDGridPolicy,
+          typename ReactionType>
 void ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
             const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
             const std::shared_ptr<const std::vector<double> >& energy_grid,
             const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
-            std::shared_ptr<const ElectroatomicReaction>& elastic_reaction,
+            std::shared_ptr<const ReactionType>& elastic_reaction,
             const double cutoff_angle_cosine,
             const double evaluation_tol )
 {
@@ -297,12 +297,14 @@ void ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
 }
 
 // Create the moment preserving elastic scattering electroatomic reaction
-template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
+template< typename TwoDInterpPolicy,
+          template<typename> class TwoDGridPolicy,
+          typename ReactionType>
 void ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
             const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
             const std::shared_ptr<const std::vector<double> >& energy_grid,
             const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
-            std::shared_ptr<const ElectroatomicReaction>& elastic_reaction,
+            std::shared_ptr<const ReactionType>& elastic_reaction,
             const double cutoff_angle_cosine,
             const double evaluation_tol )
 {
@@ -343,9 +345,9 @@ void ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
 }
 
 // Create the subshell electroionization electroatomic reactions
-template<typename ReactionType,
-         typename TwoDInterpPolicy,
-         template<typename> class TwoDGridPolicy>
+template< typename TwoDInterpPolicy,
+          template<typename> class TwoDGridPolicy,
+          typename ReactionType>
 void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
@@ -395,9 +397,9 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
 }
 
 // Create the subshell electroionization electroatomic reactions
-template<typename ReactionType,
-         typename TwoDInterpPolicy,
-         template<typename> class TwoDGridPolicy>
+template< typename TwoDInterpPolicy,
+          template<typename> class TwoDGridPolicy,
+          typename ReactionType>
 void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
@@ -417,7 +419,7 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
 
   for( shell; shell != subshells.end(); ++shell )
   {
-    ThisType::createSubshellElectroionizationReaction<ElectroatomicReaction,TwoDInterpPolicy,TwoDGridPolicy>(
+    ThisType::createSubshellElectroionizationReaction<TwoDInterpPolicy,TwoDGridPolicy,ElectroatomicReaction>(
       raw_electroatom_data,
       energy_grid,
       grid_searcher,
@@ -434,9 +436,9 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
 }
 
 // Create a bremsstrahlung electroatomic reactions
-template<typename ReactionType,
-         typename TwoDInterpPolicy,
-         template<typename> class TwoDGridPolicy>
+template< typename TwoDInterpPolicy,
+          template<typename> class TwoDGridPolicy,
+          typename ReactionType>
 void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,

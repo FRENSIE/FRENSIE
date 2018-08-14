@@ -175,6 +175,9 @@ A brief usage tutorial for this class is shown below:
 // Include the DagMCModel class
 %include "Geometry_DagMCModel.hpp"
 
+// Turn off the exception handling
+%exception;
+
 //---------------------------------------------------------------------------//
 // end Geometry.DagMC.i
 //---------------------------------------------------------------------------//e

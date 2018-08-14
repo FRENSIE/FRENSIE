@@ -76,11 +76,11 @@ void ParticleResponse::serialize( Archive& ar, const unsigned version )
 {
   ar & BOOST_SERIALIZATION_NVP( d_name );
 }
-  
+
 } // end MonteCarlo namespace
 
 BOOST_SERIALIZATION_CLASS_VERSION( ParticleResponse, MonteCarlo, 0 );
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleResponse );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( ParticleResponse, MonteCarlo );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleResponse );
 
 namespace Utility{
@@ -96,7 +96,7 @@ struct TypeNameTraits<MonteCarlo::ParticleResponse>
   static inline std::string name()
   { return "ParticleResponse"; }
 };
-  
+
 } // end Utility namespace
 
 #endif // end MONTE_CARLO_PARTICLE_RESPONSE_HPP

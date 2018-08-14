@@ -38,7 +38,8 @@ PyFrensie.Data module (see PyFrensie.Data.__init__.py).
 sys.path.pop(0)
 %}
 
-// Add support for specific coordinate types
+// Add support for different Data classes
+%include "Data_SubshellType.i"
 %include "Data_AtomProperties.i"
 %include "Data_NuclideProperties.i"
 %include "Data_ScatteringCenterPropertiesDatabase.i"

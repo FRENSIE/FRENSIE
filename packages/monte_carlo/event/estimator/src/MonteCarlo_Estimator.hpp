@@ -228,7 +228,7 @@ public:
   //! Reduce estimator data on all processes and collect on the root process
   void reduceData( const Utility::Communicator& comm,
                    const int root_process ) override;
-  
+
   //! Log a summary of the data
   void logSummary() const final override;
 
@@ -250,10 +250,10 @@ protected:
   //! Get the particle types that can contribute to the estimator
   size_t getNumberOfAssignedParticleTypes() const;
 
-  //! Set the has uncommited history contribution flag
+  //! Set the has uncommitted history contribution flag
   void setHasUncommittedHistoryContribution( const unsigned thread_id );
 
-  //! Unset the has uncommited history contribution flag
+  //! Unset the has uncommitted history contribution flag
   void unsetHasUncommittedHistoryContribution( const unsigned thread_id );
 
   //! Reduce a single collection
@@ -378,13 +378,13 @@ private:
   void load( Archive& ar, const unsigned version );
 
   BOOST_SERIALIZATION_SPLIT_MEMBER();
-  
+
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
   // The estimator id
   UniqueIdManager<Estimator,Id> d_id;
-  
+
   // The constant multiplier for the estimator
   double d_multiplier;
 
@@ -406,8 +406,8 @@ private:
 
 } // end MonteCarlo namespace
 
-BOOST_CLASS_VERSION( MonteCarlo::Estimator, 0 );
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::Estimator );
+BOOST_SERIALIZATION_CLASS_VERSION( Estimator, MonteCarlo, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( Estimator, MonteCarlo );
 EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, Estimator );
 
 namespace Utility{
@@ -423,7 +423,7 @@ struct TypeNameTraits<MonteCarlo::Estimator>
   static inline std::string name()
   { return "Estimator"; }
 };
-  
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

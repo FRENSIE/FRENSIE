@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_AdjointMateria.hpp
+//! \file   MonteCarlo_AdjointMaterial.hpp
 //! \author Alex Robinson
 //! \brief  Adjoint material base class declaration
 //!
@@ -104,7 +104,7 @@ private:
   // The critical line energies
   std::vector<double> d_critical_line_energies;
 };
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

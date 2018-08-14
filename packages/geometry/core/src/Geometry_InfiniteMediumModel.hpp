@@ -41,7 +41,7 @@ public:
   void getMaterialIds( MaterialIdSet& material_ids ) const override;
 
   //! Get the cells
-  void getCells( CellIdSet& cells,
+  void getCells( CellIdSet& cell_set,
                  const bool include_void_cells,
                  const bool include_termination_cells ) const override;
 
@@ -106,7 +106,7 @@ void InfiniteMediumModel::save( Archive& ar, const unsigned version ) const
 {
   // Save the base class first
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Model );
-  
+
   // Save the local member data
   ar & BOOST_SERIALIZATION_NVP( d_cell );
   ar & BOOST_SERIALIZATION_NVP( d_material_id );
@@ -119,13 +119,13 @@ void InfiniteMediumModel::load( Archive& ar, const unsigned version )
 {
   // Load the base class first
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Model );
-  
+
   // Load the local member data
   ar & BOOST_SERIALIZATION_NVP( d_cell );
   ar & BOOST_SERIALIZATION_NVP( d_material_id );
   ar & BOOST_SERIALIZATION_NVP( d_density );
 }
-  
+
 } // end Geometry namespace
 
 BOOST_SERIALIZATION_CLASS_VERSION( InfiniteMediumModel, Geometry, 0 );

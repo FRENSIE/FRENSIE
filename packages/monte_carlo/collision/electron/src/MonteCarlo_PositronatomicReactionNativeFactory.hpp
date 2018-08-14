@@ -53,44 +53,48 @@ public:
 
   //! Create an coupled elastic scattering positron-atomic reaction
   template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
-            template<typename> class TwoDGridPolicy = Utility::Correlated>
+            template<typename> class TwoDGridPolicy = Utility::Correlated,
+            typename ReactionType = PositronatomicReaction>
   static void createCoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
-    std::shared_ptr<const PositronatomicReaction>& elastic_reaction,
+    std::shared_ptr<const ReactionType>& elastic_reaction,
     const CoupledElasticSamplingMethod& sampling_method,
     const double evaluation_tol );
 
   //! Create a hybrid elastic scattering positron-atomic reaction
   template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
-            template<typename> class TwoDGridPolicy = Utility::Correlated>
+            template<typename> class TwoDGridPolicy = Utility::Correlated,
+            typename ReactionType = PositronatomicReaction>
   static void createHybridElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
-    std::shared_ptr<const PositronatomicReaction>& elastic_reaction,
+    std::shared_ptr<const ReactionType>& elastic_reaction,
     const double cutoff_angle_cosine,
     const double evaluation_tol );
 
   //! Create a decoupled elastic scattering positron-atomic reaction
   template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
-            template<typename> class TwoDGridPolicy = Utility::Correlated>
+            template<typename> class TwoDGridPolicy = Utility::Correlated,
+            typename ReactionType = PositronatomicReaction>
   static void createDecoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
-    std::shared_ptr<const PositronatomicReaction>& elastic_reaction,
+    std::shared_ptr<const ReactionType>& elastic_reaction,
     const double evaluation_tol );
 
   //! Create an cutoff elastic scattering positron-atomic reaction
   template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
-            template<typename> class TwoDGridPolicy = Utility::Correlated>
+            template<typename> class TwoDGridPolicy = Utility::Correlated,
+            typename ReactionType = PositronatomicReaction>
   static void createCutoffElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
-    std::shared_ptr<const PositronatomicReaction>& elastic_reaction,
+    std::shared_ptr<const ReactionType>& elastic_reaction,
     const double cutoff_angle_cosine,
     const double evaluation_tol );
 
@@ -103,12 +107,13 @@ public:
 
   //! Create the moment preserving elastic scattering positron-atomic reaction
   template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
-            template<typename> class TwoDGridPolicy = Utility::Correlated>
+            template<typename> class TwoDGridPolicy = Utility::Correlated,
+            typename ReactionType = PositronatomicReaction>
   static void createMomentPreservingElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
-    std::shared_ptr<const PositronatomicReaction>& elastic_reaction,
+    std::shared_ptr<const ReactionType>& elastic_reaction,
     const double cutoff_angle_cosine,
     const double evaluation_tol );
 
@@ -120,9 +125,9 @@ public:
     std::shared_ptr<const PositronatomicReaction>& atomic_excitation_reaction );
 
   //! Create the subshell electroionization positron-atomic reaction
-  template< typename ReactionType = PositronatomicReaction,
-            typename TwoDInterpPolicy = Utility::LogLogLog,
-            template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
+  template< typename TwoDInterpPolicy = Utility::LogLogLog,
+            template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated,
+            typename ReactionType = PositronatomicReaction>
   static void createSubshellPositronionizationReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
@@ -132,9 +137,9 @@ public:
     const double evaluation_tol );
 
   //! Create the subshell electroionization positron-atomic reactions
-  template< typename ReactionType = PositronatomicReaction,
-            typename TwoDInterpPolicy = Utility::LogLogLog,
-            template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
+  template< typename TwoDInterpPolicy = Utility::LogLogLog,
+            template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated,
+            typename ReactionType = PositronatomicReaction>
   static void createSubshellPositronionizationReactions(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
@@ -144,9 +149,9 @@ public:
     const double evaluation_tol );
 
   //! Create the bremsstrahlung positron-atomic reaction
-  template< typename ReactionType = PositronatomicReaction,
-            typename TwoDInterpPolicy = Utility::LogLogLog,
-            template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
+  template< typename TwoDInterpPolicy = Utility::LogLogLog,
+            template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated,
+            typename ReactionType = PositronatomicReaction>
   static void createBremsstrahlungReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,

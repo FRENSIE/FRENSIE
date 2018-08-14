@@ -33,13 +33,11 @@ AdjointPairProductionEnergyDistributionNormConstantEvaluator::createEvaluator(
   testPrecondition( pair_production_cross_section.size() +
                     threshold_energy_index == energy_grid.size() );
 
-  Teuchos::ArrayRCP<double> energy_grid_copy;
-  energy_grid_copy.assign( energy_grid.begin(), energy_grid.end() );
+  std::shared_ptr<std::vector<double> > energy_grid_copy(
+       new std::vector<double>( energy_grid ) );
 
-  Teuchos::ArrayRCP<double> pair_production_cross_section_copy;
-  pair_production_cross_section_copy.assign(
-                                         pair_production_cross_section.begin(),
-                                         pair_production_cross_section.end() );
+  std::shared_ptr<std::vector<double> > pair_production_cross_section_copy(
+       new std::vector<double>( pair_production_cross_section ) );
 
   std::unique_ptr<const MonteCarlo::PhotoatomicReaction> pair_production_cs(
         new MonteCarlo::PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>(

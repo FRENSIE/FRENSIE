@@ -27,7 +27,7 @@ class RootModel;
 /*! The Root ray tracer
  * \details Ray tracing can be done in two ways: With Geometry::Ray objects or
  * with internal rays, which are completely hidden from the user. The
- * ray tracing performance of internal rays will almost always be better than 
+ * ray tracing performance of internal rays will almost always be better than
  * the ray tracing performance of Geometry::Ray objects.
  */
 class RootNavigator : public Navigator
@@ -77,8 +77,8 @@ public:
                  const double x_direction,
                  const double y_direction,
                  const double z_direction ) override;
-                      
-                       
+
+
   //! Initialize (or reset) an internal Root ray
   void setState( const Length x_position,
                  const Length y_position,
@@ -144,7 +144,7 @@ private:
 
   // Create internal ray
   static TGeoNavigator* createInternalRay( TGeoManager* manager );
-  
+
   // Free internal ray
   void freeInternalRay();
 
@@ -169,7 +169,7 @@ inline void RootNavigator::deepCopy( T* copy_array, const T* orig_array )
   copy_array[1] = orig_array[1];
   copy_array[2] = orig_array[2];
 }
-  
+
 } // end Geometry namespace
 
 #endif // end GEOMETRY_ROOT_NAVIGATOR_HPP

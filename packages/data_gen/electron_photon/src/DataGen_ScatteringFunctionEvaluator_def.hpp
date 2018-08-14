@@ -33,7 +33,7 @@ ScatteringFunctionEvaluator::createEvaluator(
                                                       argument_grid.end() ) );
 
   // Create the raw scattering function
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<GridArgumentUnit,void> >
+  std::shared_ptr<Utility::UnitAwareUnivariateDistribution<GridArgumentUnit,void> >
     raw_scattering_function( new Utility::UnitAwareTabularDistribution<InterpPolicy,GridArgumentUnit,void>(
                                                 argument_grid,
                                                 scattering_function_values ) );
@@ -45,7 +45,7 @@ ScatteringFunctionEvaluator::createEvaluator(
   return std::shared_ptr<ScatteringFunctionEvaluator>(
                       new ScatteringFunctionEvaluator( scattering_function ) );
 }
-  
+
 } // end DataGen namespace
 
 #endif // end DATA_GEN_SCATTERING_FUNCTION_EVALUATOR_DEF_HPP

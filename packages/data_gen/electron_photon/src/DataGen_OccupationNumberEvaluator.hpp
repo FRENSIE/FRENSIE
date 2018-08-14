@@ -13,9 +13,6 @@
 #include <memory>
 #include <functional>
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ComptonProfile.hpp"
 

@@ -19,25 +19,29 @@
 
 namespace MonteCarlo{
 
-/*! \brief The hashed floating point ordered typed observer phase space 
+/*! \brief The hashed floating point ordered typed observer phase space
  * dimension discretization class.
- * 
+ *
  * This is a dummy class that will cause a compilation error if the dimension
  * value type associated with a dimension is not a floating point type.
  */
 template<ObserverPhaseSpaceDimension dimension, typename Enabled = void>
-class HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization
+class HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretizationHelper
 { /* ... */ };
 
-/*! \brief The hashed floating point ordered typed observer phase space 
+/*! \brief The hashed floating point ordered typed observer phase space
  * dimension discretization class.
  *
- * This class specialization will only be used if the dimension value type 
+ * This class specialization will only be used if the dimension value type
  * associated with a dimension is a floating point type. If a dimension is used
  * that doesn't meet this requirement a compilation error will occur.
  */
 template<ObserverPhaseSpaceDimension dimension>
-class HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type> : public FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>
+class HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization :
+#if !defined SWIG
+public HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretizationHelper<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>,
+#endif // !defined SWIG
+public FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>
 {
   // Typedef for the base type
   typedef FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension> BaseType;
@@ -46,7 +50,7 @@ protected:
 
   //! Typedef for the dimension value type
   typedef typename BaseType::DimensionValueType DimensionValueType;
-  
+
 public:
 
   //! Typedef for bin index array
@@ -54,7 +58,7 @@ public:
 
   //! Typedef for bin index and weight pair
   typedef typename BaseType::BinIndexWeightPair BinIndexWeightPair;
-  
+
   //! Typedef for bin index and weight pair array
   typedef typename BaseType::BinIndexWeightPairArray BinIndexWeightPairArray;
 
@@ -96,7 +100,7 @@ private:
   std::unique_ptr<Utility::HashBasedGridSearcher<DimensionValueType> >
   d_grid_searcher;
 };
-  
+
 } // end MonteCarlo namespace
 
 #define BOOST_SERIALIZATION_HASHED_FLOATING_POINT_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_VERSION( version ) \

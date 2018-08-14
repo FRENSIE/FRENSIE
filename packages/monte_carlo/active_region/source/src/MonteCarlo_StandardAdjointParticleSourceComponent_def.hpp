@@ -72,7 +72,7 @@ StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>
 }
 
 // Constructor
-/*! \details The critical line energies will be extracted from the 
+/*! \details The critical line energies will be extracted from the
  * filled geometry model.
  */
 template<typename ParticleStateType,typename ProbeParticleStateType>
@@ -89,7 +89,26 @@ StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>
 { /* ... */ }
 
 // Constructor (with rejection cells )
-/*! \details The critical line energies will be extracted from the 
+/*! \details The critical line energies will be extracted from the
+ * filled geometry model.
+ */
+template<typename ParticleStateType,typename ProbeParticleStateType>
+StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::StandardAdjointParticleSourceComponent(
+     const uint32_t id,
+     const double selection_weight,
+     const std::vector<Geometry::Model::EntityId>& rejection_cells,
+     const std::shared_ptr<const FilledGeometryModel>& model,
+     const std::shared_ptr<const ParticleDistribution>& particle_distribution )
+  : StandardAdjointParticleSourceComponent( id,
+                                            selection_weight,
+                                            CellIdSet( rejection_cells.begin(),
+                                                       rejection_cells.end() ),
+                                            model,
+                                            particle_distribution )
+{ /* ... */ }
+
+// Constructor (with rejection cells )
+/*! \details The critical line energies will be extracted from the
  * filled geometry model.
  */
 template<typename ParticleStateType,typename ProbeParticleStateType>
@@ -111,7 +130,7 @@ StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>
 }
 
 // Set the critical line energies
-/*! \details The critical line energies will be extracted from the 
+/*! \details The critical line energies will be extracted from the
  * filled geometry model.
  */
 template<typename ParticleStateType,typename ProbeParticleStateType>
@@ -139,7 +158,7 @@ void StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleState
   }
 }
 
-// Return the number of particle states that will be sampled for the 
+// Return the number of particle states that will be sampled for the
 // given history number
 template<typename ParticleStateType,typename ProbeParticleStateType>
 unsigned long long StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::getNumberOfParticleStateSamples(
@@ -157,10 +176,10 @@ std::shared_ptr<ParticleState> StandardAdjointParticleSourceComponent<ParticleSt
   // Make sure that the history state id is valid
   testPrecondition( history_state_id <
                     this->getNumberOfParticleStateSamples( history ) );
-  
+
   if( history_state_id == 0 )
     return BaseType::initializeParticleState( history, history_state_id );
-  else // history_state_id > 0 
+  else // history_state_id > 0
   {
     // Initialize the probe particle
     return std::shared_ptr<ParticleState>( new ProbeParticleStateType( history ) );
@@ -168,11 +187,11 @@ std::shared_ptr<ParticleState> StandardAdjointParticleSourceComponent<ParticleSt
 }
 
 // Sample a particle state from the source
-/*! \details Probe particles are currently sampled completely independently 
- * from the parent particle. It is quite possible that there is a more 
- * efficient way to generate probe particles but given that a particle 
- * distribution can be defined in a very general way it is not obvious how to 
- * do this. 
+/*! \details Probe particles are currently sampled completely independently
+ * from the parent particle. It is quite possible that there is a more
+ * efficient way to generate probe particles but given that a particle
+ * distribution can be defined in a very general way it is not obvious how to
+ * do this.
  */
 template<typename ParticleStateType,typename ProbeParticleStateType>
 bool StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>::sampleParticleStateImpl(
@@ -191,7 +210,7 @@ bool StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleState
 
     // Increment the dimension sample counters
     this->incrementDimensionCounters( this->getDimensionSampleCounterMap(), true );
-    
+
     return true;
   }
 }
@@ -221,7 +240,7 @@ void StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleState
 
   this->setCriticalLineEnergySamplingFunctions();
 }
-  
+
 } // end MonteCarlo namespace
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardAdjointPhotonSourceComponent, MonteCarlo )

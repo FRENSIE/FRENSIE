@@ -3,7 +3,7 @@
 //! \file   Utility_StructuredHexMesh.cpp
 //! \author Philip Britt
 //! \brief  Hexahedron mesh storage class
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 //std includes
@@ -35,7 +35,7 @@ const double StructuredHexMesh::s_tol = 1e-12;
 // Default constructor
 StructuredHexMesh::StructuredHexMesh()
 { /* ... */ }
-  
+
 // Constructor
 StructuredHexMesh::StructuredHexMesh( const std::vector<double>& x_planes,
                                       const std::vector<double>& y_planes,
@@ -64,7 +64,7 @@ StructuredHexMesh::StructuredHexMesh( const std::vector<double>& x_planes,
       for( size_t i = 0; i < d_x_planes.size()-1; ++i )
       {
         size_t index = this->findIndex( i, j, k);
-        
+
         d_hex_elements[index] = index;
       }
     }
@@ -91,17 +91,17 @@ std::string StructuredHexMesh::getMeshElementTypeName() const
 
 // Returns the volumes of the hex elements for the estimator class.
 void StructuredHexMesh::getElementVolumes(
-                                    ElementHandleVolumeMap& hex_volumes ) const
+                                    ElementHandleVolumeMap& element_volumes ) const
 {
-  hex_volumes.clear();
-  
+  element_volumes.clear();
+
   for( PlaneIndex k = 0; k < d_z_planes.size() - 1; ++k)
   {
     for( PlaneIndex j = 0; j < d_y_planes.size() - 1; ++j)
     {
       for( PlaneIndex i = 0; i < d_x_planes.size() - 1; ++i)
       {
-        hex_volumes[ this->findIndex(i, j, k) ] = 
+        element_volumes[ this->findIndex(i, j, k) ] =
           (d_x_planes[i + 1] - d_x_planes[i])*
           (d_y_planes[j + 1] - d_y_planes[j])*
           (d_z_planes[k + 1] - d_z_planes[k]);
@@ -124,7 +124,7 @@ bool StructuredHexMesh::isPointInMesh( const double point[3] ) const
       }
     }
   }
-  
+
   return false;
 }
 
@@ -133,19 +133,19 @@ auto StructuredHexMesh::whichElementIsPointIn( const double point[3] ) const -> 
 {
   // Make sure that the point is in the mesh
   testPrecondition( this->isPointInMesh(point) );
-  
+
   size_t x_index = Search::binaryLowerBoundIndex( d_x_planes.begin(),
                                                   d_x_planes.end(),
                                                   point[X_DIMENSION] );
 
   // Take care of when the point is exactly on the last x plane. The search
   // will return the last x plane if this is true which does not correspond to
-  // any of the hex elements. Instead, move it back one 
+  // any of the hex elements. Instead, move it back one
   if( x_index == d_x_planes.size() - 1)
   {
     x_index = d_x_planes.size() - 2;
   }
-  
+
   size_t y_index = Search::binaryLowerBoundIndex( d_y_planes.begin(),
                                                   d_y_planes.end(),
                                                   point[Y_DIMENSION] );
@@ -153,7 +153,7 @@ auto StructuredHexMesh::whichElementIsPointIn( const double point[3] ) const -> 
   {
     y_index = d_y_planes.size() - 2;
   }
-  
+
   size_t z_index = Search::binaryLowerBoundIndex( d_z_planes.begin(),
                                                   d_z_planes.end(),
                                                   point[Z_DIMENSION] );
@@ -161,18 +161,18 @@ auto StructuredHexMesh::whichElementIsPointIn( const double point[3] ) const -> 
   {
     z_index = d_z_planes.size() - 2;
   }
-  
+
   return this->findIndex( x_index, y_index, z_index );
 }
 
 // Returns an array of pairs of hex IDs and partial track lengths along a given line segment
-void StructuredHexMesh::computeTrackLengths( 
+void StructuredHexMesh::computeTrackLengths(
                const double start_point[3],
                const double end_point[3],
                ElementHandleTrackLengthArray& hex_element_track_lengths ) const
 {
   hex_element_track_lengths.clear();
-  
+
   if( !(start_point[X_DIMENSION] == end_point[X_DIMENSION] &&
         start_point[Y_DIMENSION] == end_point[Y_DIMENSION] &&
         start_point[Z_DIMENSION] == end_point[Z_DIMENSION]) )
@@ -185,8 +185,8 @@ void StructuredHexMesh::computeTrackLengths(
     double track_length =
       Utility::normalizeVectorAndReturnMagnitude( direction );
 
-    double current_point[3] { start_point[X_DIMENSION], 
-                              start_point[Y_DIMENSION], 
+    double current_point[3] { start_point[X_DIMENSION],
+                              start_point[Y_DIMENSION],
                               start_point[Z_DIMENSION] };
 
     // Test if point starts in mesh. If not, figure out if it interacts with mesh
@@ -195,23 +195,23 @@ void StructuredHexMesh::computeTrackLengths(
       // First member of pair is whether the mesh was intersected,
       // second member of pair is the distance to the intersection
       std::tuple<bool,Dimension,double> ray_intersection_tuple;
-      
+
       this->doesRayIntersectMesh( current_point,
                                   direction,
                                   track_length,
                                   ray_intersection_tuple );
-      
+
       if( std::get<0>( ray_intersection_tuple ) )
       {
-        this->pushPoint( current_point, 
+        this->pushPoint( current_point,
                          direction,
                          std::get<2>( ray_intersection_tuple ) );
-        
+
         PlaneIndex hex_plane_indices[3];
         this->setHexPlaneIndices( std::get<1>( ray_intersection_tuple ),
                                   current_point,
                                   hex_plane_indices );
-        
+
         this->traceThroughMesh( current_point,
                                 direction,
                                 track_length - std::get<2>( ray_intersection_tuple ),
@@ -221,7 +221,7 @@ void StructuredHexMesh::computeTrackLengths(
     }
     else
     {
-      PlaneIndex hex_plane_indices[3]; 
+      PlaneIndex hex_plane_indices[3];
       this->setHexPlaneIndices( current_point, hex_plane_indices );
 
       this->traceThroughMesh( current_point,
@@ -239,7 +239,7 @@ void StructuredHexMesh::computeTrackLengths(
  */
 auto StructuredHexMesh::getStartElementHandleIterator() const -> ElementHandleIterator
 {
-  return d_hex_elements.begin(); 
+  return d_hex_elements.begin();
 }
 
 // Get the end iterator of the hex element list.
@@ -280,7 +280,7 @@ double StructuredHexMesh::getXPlaneLocation( PlaneIndex i ) const
 {
   //Make sure plane index is valid
   testPrecondition( i < d_x_planes.size() && i >= 0);
-  
+
   return d_x_planes[i];
 }
 
@@ -289,16 +289,16 @@ double StructuredHexMesh::getYPlaneLocation( PlaneIndex i ) const
 {
   // Make sure plane index is valid
   testPrecondition( i < d_y_planes.size() && i >= 0);
-  
+
   return d_y_planes[i];
 }
 
 // Get the location of a specific plane on the z axis.
-double StructuredHexMesh::getZPlaneLocation( PlaneIndex i)const 
+double StructuredHexMesh::getZPlaneLocation( PlaneIndex i)const
 {
   // Make sure plane index is valid
   testPrecondition( i < d_z_planes.size() && i >= 0);
-  
+
   return d_z_planes[i];
 }
 
@@ -316,7 +316,7 @@ void StructuredHexMesh::getHexPlaneIndices(
 
   size_t x_size = (d_x_planes.size() - 1);
   size_t y_size = (d_y_planes.size() - 1);
-  
+
   hex_parameter_indices[2] = h/(x_size*y_size);
   hex_parameter_indices[1] = (h - hex_parameter_indices[2] * x_size * Y_DIMENSION) / x_size;
   hex_parameter_indices[0] = h - hex_parameter_indices[1] * x_size
@@ -342,13 +342,13 @@ StructuredHexMesh::doesRayIntersectMesh(
   Utility::get<0>( intersection_data ) = false;
   Utility::get<1>( intersection_data ) = X_DIMENSION;
   Utility::get<2>( intersection_data ) = 0.0;
-  
+
   std::vector<std::pair<Dimension,double> > bounding_plane_distance_set;
-  
+
   this->findBoundingInteractionPlaneDistances( point,
                                                direction,
                                                bounding_plane_distance_set );
-  
+
   // Check whether there are any possible bounding planes to intersect with
   if( bounding_plane_distance_set.size() > 0 )
   {
@@ -357,13 +357,13 @@ StructuredHexMesh::doesRayIntersectMesh(
       // If the distance is greater than the track length, skip it
       if( bounding_plane_distance_set[i].second >= track_length )
         continue;
-      
+
       double new_point[3] { point[X_DIMENSION],
                             point[Y_DIMENSION],
                             point[Z_DIMENSION] };
-      
+
       // Push point up to plane intersection point
-      this->pushPoint( new_point, 
+      this->pushPoint( new_point,
                        direction,
                        bounding_plane_distance_set[i].second );
 
@@ -371,13 +371,13 @@ StructuredHexMesh::doesRayIntersectMesh(
       if( this->isPointOnMeshSurface( new_point, bounding_plane_distance_set[i].first ) )
       {
         Utility::get<0>( intersection_data ) = true;
-        
+
         Utility::get<1>( intersection_data ) =
           bounding_plane_distance_set[i].first;
-        
+
         Utility::get<2>( intersection_data ) =
           bounding_plane_distance_set[i].second;
-        
+
         break;
       }
     }
@@ -397,12 +397,12 @@ void StructuredHexMesh::traceThroughMesh(
                                direction,
                                hex_plane_indices,
                                interaction_planes );
-  
+
   double iteration_distance = 0;
-  
+
   size_t incrementer[3];
   this->setIncrementer( incrementer, direction );
-  
+
   bool continue_tracing = true;
 
   while(continue_tracing)
@@ -413,7 +413,7 @@ void StructuredHexMesh::traceThroughMesh(
                                     interaction_planes,
                                     intersection_distance );
     double partial_track_length;
-    
+
     // Check if track length is exhausted
     if( track_length <= iteration_distance + intersection_distance.second )
     {
@@ -424,13 +424,13 @@ void StructuredHexMesh::traceThroughMesh(
     {
       partial_track_length = intersection_distance.second;
     }
-    
+
     // Push back a new pair for the indices
     hex_element_track_lengths.push_back(
        std::make_tuple( this->findIndex( hex_plane_indices ),
                         std::array<double,3>( {point[0], point[1], point[2]} ),
                         partial_track_length ) );
-    
+
     // Check if the particle left the mesh
     if( this->didParticleLeaveMesh( intersection_distance.first,
                                     interaction_planes ) )
@@ -444,21 +444,21 @@ void StructuredHexMesh::traceThroughMesh(
     {
       // Otherwise, push point up to new location
       this->pushPoint(point, direction, partial_track_length);
-      
+
       // Increase iteration_distance to new value
       iteration_distance += partial_track_length;
-      
+
       // Increment indices and perform calculation again.
       hex_plane_indices[intersection_distance.first] +=
         incrementer[intersection_distance.first];
-      
+
       for( size_t i = 0; i < interaction_planes.size() ; ++i )
       {
         if(interaction_planes[i].first == intersection_distance.first)
         {
           interaction_planes[i].second +=
             incrementer[interaction_planes[i].first];
-          
+
           break;
         }
       }
@@ -475,7 +475,7 @@ void StructuredHexMesh::findInteractionPlanes(
 {
   // Make sure that the point is in the mesh
   testPrecondition( this->isPointInMesh( point ) );
-  
+
   for( size_t i = X_DIMENSION; i <= Z_DIMENSION; ++i)
   {
     if( direction[i] < 0 )
@@ -506,7 +506,7 @@ void StructuredHexMesh::findIntersectionDistance(
   intersection_distance.second = std::numeric_limits<double>::infinity();
 
   double possible_distance;
-  
+
   for( size_t i = 0; i < interaction_planes.size(); ++i )
   {
     if(interaction_planes[i].first == X_DIMENSION)
@@ -584,14 +584,14 @@ void StructuredHexMesh::setHexPlaneIndices(
 {
   // Make sure that the point is in the mesh
   testPrecondition( this->isPointInMesh(current_point) );
-  
-  hex_plane_indices[X_DIMENSION] = 
+
+  hex_plane_indices[X_DIMENSION] =
     this->setHexPlaneIndex( current_point[X_DIMENSION], d_x_planes, X_DIMENSION );
-  hex_plane_indices[Y_DIMENSION] = 
+  hex_plane_indices[Y_DIMENSION] =
     this->setHexPlaneIndex( current_point[Y_DIMENSION], d_y_planes, Y_DIMENSION );
-  hex_plane_indices[Z_DIMENSION] = 
+  hex_plane_indices[Z_DIMENSION] =
     this->setHexPlaneIndex( current_point[Z_DIMENSION], d_z_planes, Z_DIMENSION );
-  
+
   testPostcondition( hex_plane_indices[X_DIMENSION] >= 0 && hex_plane_indices[X_DIMENSION] <= d_x_planes.size()-2);
   testPostcondition( hex_plane_indices[Y_DIMENSION] >= 0 && hex_plane_indices[Y_DIMENSION] <= d_y_planes.size()-2);
   testPostcondition( hex_plane_indices[Z_DIMENSION] >= 0 && hex_plane_indices[Z_DIMENSION] <= d_z_planes.size()-2);
@@ -610,7 +610,7 @@ void StructuredHexMesh::setHexPlaneIndices(
       Check which bounding plane of that intersection was intersected. If not the
       first plane, then it must have been the other.
     */
-       
+
     if( current_point[X_DIMENSION] <= d_x_planes.front() + s_tol &&
         current_point[X_DIMENSION] >= d_x_planes.front() - s_tol )
     {
@@ -622,7 +622,7 @@ void StructuredHexMesh::setHexPlaneIndices(
     }
     hex_plane_indices[Y_DIMENSION] =
       this->setHexPlaneIndex( current_point[Y_DIMENSION], d_y_planes, Y_DIMENSION);
-    hex_plane_indices[Z_DIMENSION] = 
+    hex_plane_indices[Z_DIMENSION] =
       this->setHexPlaneIndex( current_point[Z_DIMENSION], d_z_planes, Z_DIMENSION);
   }
   else if( intersection_dimension == Y_DIMENSION )
@@ -636,11 +636,11 @@ void StructuredHexMesh::setHexPlaneIndices(
     {
       hex_plane_indices[Y_DIMENSION] = d_y_planes.size() - 2;
     }
-    hex_plane_indices[X_DIMENSION] = 
+    hex_plane_indices[X_DIMENSION] =
       this->setHexPlaneIndex( current_point[X_DIMENSION], d_x_planes, X_DIMENSION);
-    hex_plane_indices[Z_DIMENSION] = 
+    hex_plane_indices[Z_DIMENSION] =
       this->setHexPlaneIndex( current_point[Z_DIMENSION], d_z_planes, Z_DIMENSION);
-  
+
   }
   else if( intersection_dimension == Z_DIMENSION )
   {
@@ -653,9 +653,9 @@ void StructuredHexMesh::setHexPlaneIndices(
     {
       hex_plane_indices[Z_DIMENSION] = d_z_planes.size() - 2;
     }
-    hex_plane_indices[X_DIMENSION] = 
+    hex_plane_indices[X_DIMENSION] =
       this->setHexPlaneIndex( current_point[X_DIMENSION], d_x_planes, X_DIMENSION);
-    hex_plane_indices[Y_DIMENSION] = 
+    hex_plane_indices[Y_DIMENSION] =
       this->setHexPlaneIndex( current_point[Y_DIMENSION], d_y_planes, Y_DIMENSION);
   }
 
@@ -666,12 +666,12 @@ void StructuredHexMesh::setHexPlaneIndices(
 
 // Set individual hex plane indices for particle.
 auto StructuredHexMesh::setHexPlaneIndex(
-                         const double position_component, 
+                         const double position_component,
                          const std::vector<double>& plane_set,
                          const Dimension plane_dimension  ) const -> PlaneIndex
 {
   PlaneIndex hex_plane_index;
-  
+
   if( position_component == plane_set.back() )
   {
     hex_plane_index = plane_set.size() - 2;
@@ -682,7 +682,7 @@ auto StructuredHexMesh::setHexPlaneIndex(
                                                      plane_set.end(),
                                                      position_component );
   }
-  
+
   return hex_plane_index;
 }
 
@@ -693,19 +693,19 @@ void StructuredHexMesh::findBoundingInteractionPlaneDistances(
   std::vector<std::pair<Dimension,double> >& bounding_intersection_data ) const
 {
   this->checkPlaneSet( d_x_planes,
-                       point[X_DIMENSION], 
+                       point[X_DIMENSION],
                        direction[X_DIMENSION],
                        bounding_intersection_data,
                        X_DIMENSION );
-  
-  this->checkPlaneSet( d_y_planes, 
-                       point[Y_DIMENSION], 
+
+  this->checkPlaneSet( d_y_planes,
+                       point[Y_DIMENSION],
                        direction[Y_DIMENSION],
                        bounding_intersection_data,
                        Y_DIMENSION );
-  
-  this->checkPlaneSet( d_z_planes, 
-                       point[Z_DIMENSION], 
+
+  this->checkPlaneSet( d_z_planes,
+                       point[Z_DIMENSION],
                        direction[Z_DIMENSION],
                        bounding_intersection_data,
                        Z_DIMENSION );
@@ -720,15 +720,15 @@ void StructuredHexMesh::checkPlaneSet(
                    const Dimension plane_dimension ) const
 {
   if( position_component < plane_set.front() && direction_component > 0 )
-  { 
-    boundary_planes.push_back( std::make_pair(plane_dimension, 
+  {
+    boundary_planes.push_back( std::make_pair(plane_dimension,
                                               (plane_set.front() - position_component)/direction_component) );
   }
   else if( position_component > plane_set.back() && direction_component < 0 )
   {
-    boundary_planes.push_back( std::make_pair( plane_dimension, 
+    boundary_planes.push_back( std::make_pair( plane_dimension,
                                                (plane_set.back() - position_component)/direction_component ) );
-  } 
+  }
 }
 
 // Returns whether or not a particle actually hit the mesh surface
@@ -737,7 +737,7 @@ bool StructuredHexMesh::isPointOnMeshSurface(
                                   const Dimension dimension_intersected ) const
 {
   bool point_on_mesh = false;
-  
+
   if(dimension_intersected == X_DIMENSION)
   {
     if(this->checkWithinBoundingPlane( point[Y_DIMENSION], d_y_planes ) )
@@ -766,7 +766,7 @@ bool StructuredHexMesh::isPointOnMeshSurface(
       {
         point_on_mesh = true;
       }
-    } 
+    }
   }
   return point_on_mesh;
 }
@@ -804,7 +804,7 @@ bool StructuredHexMesh::didParticleLeaveMesh(
                            interaction_planes ) const
 {
   bool exit_mesh = false;
-  
+
   for( size_t i = 0; i < interaction_planes.size(); ++i )
   {
     if( intersection_dimension == interaction_planes[i].first &&
@@ -835,7 +835,7 @@ bool StructuredHexMesh::didParticleLeaveMesh(
       }
     }
   }
-  
+
   return exit_mesh;
 }
 
@@ -882,15 +882,15 @@ void StructuredHexMesh::exportData( const std::string& output_file_name,
   // structured hex mesh
   size_t size_of_coordinates =
     x_coordinates_size * y_coordinates_size * z_coordinates_size;
-  
+
   // This array can get very large, so allocate on the heap instead of the
   // stack.
   double* coordinates = new double[size_of_coordinates*3];
 
   // Construct array for moab.
-  /* 
-     An array of interleaved (XYZXYZ) coordinate vectors formed from the plane 
-     intersection points must be constructed in order for MOAB to correctly 
+  /*
+     An array of interleaved (XYZXYZ) coordinate vectors formed from the plane
+     intersection points must be constructed in order for MOAB to correctly
      construct the mesh. Note the order of the indices being looped over; the
      indices must be in exactly this order in order for moab to correctly
      construct the mesh. Otherwise, it will connect the points with the edges
@@ -898,7 +898,7 @@ void StructuredHexMesh::exportData( const std::string& output_file_name,
      also requires every single point of the mesh to be constructed, which means
      that plane locations must be repeated in the sequence.
   */
-  
+
   size_t l = 0;
   for( size_t k = 0; k < z_coordinates_size; ++k)
   {
@@ -924,18 +924,18 @@ void StructuredHexMesh::exportData( const std::string& output_file_name,
                                     coordinates,
                                     size_of_coordinates*3,
                                     box );
-    
+
     TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
                         Utility::MOABException,
                         moab::ErrorCodeStr[rval] );
-    
+
   }
   delete[] coordinates;
 
   // Create the meshset
   moab::EntityHandle meshset = box->box_set();
 
-  size_t hex_parameter_indices[3]; 
+  size_t hex_parameter_indices[3];
 
   this->exportDataImpl( output_file_name,
                         tag_root_names,
@@ -949,7 +949,7 @@ void StructuredHexMesh::exportData( const std::string& output_file_name,
                                                    hex_parameter_indices[1],
                                                    hex_parameter_indices[2] );
                         } );
-  
+
   // Tidy up
   delete box;
   delete scdiface;

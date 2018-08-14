@@ -24,6 +24,18 @@ bool ParticleResponseFunction::doesDescriptionRequireParentheses() const
   return false;
 }
 
+// Return a shared ptr of the object
+std::shared_ptr<ParticleResponseFunction> ParticleResponseFunction::getShared()
+{
+  return shared_from_this();
+}
+
+// Return a shared ptr of the object (const)
+std::shared_ptr<const ParticleResponseFunction> ParticleResponseFunction::getShared() const
+{
+  return shared_from_this();
+}
+
 // Evaluate the response function at the desired phase space point
 double ParticleResponseFunction::operator()(
                                           const ParticleState& particle ) const
@@ -68,7 +80,7 @@ private:
   // Serialize the particle response function
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  { 
+  {
     // Serialize the base class member data
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleResponseFunction );
 
@@ -118,7 +130,7 @@ public:
   std::string description() const final override
   {
     std::string description_string;
-    
+
     if( d_lhs->doesDescriptionRequireParentheses() )
       description_string += "(";
 
@@ -152,7 +164,7 @@ private:
   // Serialize the particle response function
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  { 
+  {
     // Serialize the base class member data
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleResponseFunction );
 
@@ -383,7 +395,7 @@ std::shared_ptr<const MonteCarlo::ParticleResponseFunction> operator*(
   // Make sure that both response function pointers are valid
   testPrecondition( lhs.get() );
   testPrecondition( rhs.get() );
-  
+
   return std::make_shared<MonteCarlo::MultiplicationParticleResponseFunction>( lhs, rhs );
 }
 

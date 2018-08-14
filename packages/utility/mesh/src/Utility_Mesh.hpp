@@ -69,7 +69,7 @@ public:
 
   //! Get the end iterator of the mesh element list
   virtual ElementHandleIterator getEndElementHandleIterator() const = 0;
-  
+
   //! Get the number of mesh elements
   virtual size_t getNumberOfElements() const = 0;
 
@@ -87,7 +87,7 @@ public:
               const double start_point[3],
               const double end_point[3],
               ElementHandleTrackLengthArray& element_track_lengths ) const = 0;
-  
+
   //! Export the mesh to a file (type determined by suffix - e.g. mesh.vtk)
   virtual void exportData( const std::string& output_file_name,
                            const TagNameSet& tag_root_names,
@@ -117,11 +117,11 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 };
-  
+
 } // end Utility namespace
 
-BOOST_CLASS_VERSION( Utility::Mesh, 0 );
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( Utility::Mesh );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( Mesh, Utility );
+BOOST_SERIALIZATION_CLASS_VERSION( Mesh, Utility, 0 );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( Utility, Mesh );
 
 #endif // end UTILITY_MESH_HPP

@@ -17,12 +17,12 @@ namespace MonteCarlo{
 
 // Default constructor
 template<ObserverPhaseSpaceDimension dimension>
-UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::UnorderedTypedObserverPhaseSpaceDimensionDiscretization()
+UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::UnorderedTypedObserverPhaseSpaceDimensionDiscretization()
 { /* ... */ }
-  
+
 // Constructor
 template<ObserverPhaseSpaceDimension dimension>
-UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::UnorderedTypedObserverPhaseSpaceDimensionDiscretization(
+UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::UnorderedTypedObserverPhaseSpaceDimensionDiscretization(
                                             const BinSetArray& dimension_bins )
   : d_dimension_bins( dimension_bins )
 {
@@ -41,14 +41,14 @@ UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::
 
 // Return the number of bins in the discretization
 template<ObserverPhaseSpaceDimension dimension>
-size_t UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::getNumberOfBins() const
+size_t UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::getNumberOfBins() const
 {
   return d_dimension_bins.size();
 }
 
 // Print the boundaries of a bin
 template<ObserverPhaseSpaceDimension dimension>
-void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::printBoundariesOfBin(
+void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::printBoundariesOfBin(
                                                std::ostream& os,
                                                const size_t bin_index ) const
 {
@@ -65,7 +65,7 @@ void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename 
   while( bin_values_it != bin_values_end )
   {
     os << *bin_values_it;
-    
+
     ++bin_values_it;
 
     if( bin_values_it != bin_values_end )
@@ -77,7 +77,7 @@ void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename 
 
 // Print the dimension discretization
 template<ObserverPhaseSpaceDimension dimension>
-void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::print(
+void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::print(
                                                        std::ostream& os ) const
 {
   os << this->getDimensionName() << " Bins: ";
@@ -87,14 +87,14 @@ void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename 
     os << "{";
 
     typename BinSet::const_iterator bin_values_it, bin_values_end;
-    
+
     bin_values_it = d_dimension_bins[i].begin();
     bin_values_end = d_dimension_bins[i].end();
 
     while( bin_values_it != bin_values_end )
     {
       os << *bin_values_it;
-        
+
       ++bin_values_it;
 
       if( bin_values_it != bin_values_end )
@@ -109,7 +109,7 @@ void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename 
 
 // Check if the value is contained in the discretization
 template<ObserverPhaseSpaceDimension dimension>
-inline bool UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::isValueInDiscretization(
+inline bool UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::isValueInDiscretization(
                                          const DimensionValueType value ) const
 {
   return d_merged_bin_set.find( value ) != d_merged_bin_set.end();
@@ -120,7 +120,7 @@ inline bool UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,ty
  * start value and the end value.
  */
 template<ObserverPhaseSpaceDimension dimension>
-inline bool UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::doesRangeIntersectDiscretization(
+inline bool UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::doesRangeIntersectDiscretization(
                                      const DimensionValueType range_start,
                                      const DimensionValueType range_end ) const
 {
@@ -133,7 +133,7 @@ inline bool UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,ty
  * N is the number of bins.
  */
 template<ObserverPhaseSpaceDimension dimension>
-inline void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::calculateBinIndicesOfValue(
+inline void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateBinIndicesOfValue(
                                              const DimensionValueType value,
                                              BinIndexArray& bin_indices ) const
 {
@@ -143,7 +143,7 @@ inline void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,ty
   std::set<size_t> bin_index_set;
 
   this->calculateSetOfBinIndicesOfValue( value, bin_index_set );
-  
+
   // Set the bin indices
   bin_indices.assign( bin_index_set.begin(), bin_index_set.end() );
 }
@@ -153,7 +153,7 @@ inline void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,ty
  * N is the number of bins. The weight will always be 1.0.
  */
 template<ObserverPhaseSpaceDimension dimension>
-void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::calculateBinIndicesOfValue(
+void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateBinIndicesOfValue(
                        const DimensionValueType value,
                        BinIndexWeightPairArray& bin_indices_and_weights ) const
 {
@@ -163,7 +163,7 @@ void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename 
   std::set<size_t> bin_index_set;
 
   this->calculateSetOfBinIndicesOfValue( value, bin_index_set );
-  
+
   // Set the bin indices
   bin_indices_and_weights.resize( bin_index_set.size() );
 
@@ -175,7 +175,7 @@ void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename 
   {
     bin_indices_and_weights_it->first = *bin_index_set_it;
     bin_indices_and_weights_it->second = 1.0;
-    
+
     ++bin_index_set_it;
     ++bin_indices_and_weights_it;
   }
@@ -183,14 +183,14 @@ void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename 
 
 // Calculate the index of bins that the range falls in
 template<ObserverPhaseSpaceDimension dimension>
-inline void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::calculateBinIndicesOfRange(
+inline void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateBinIndicesOfRange(
                        const DimensionValueType range_start,
                        const DimensionValueType range_end,
                        BinIndexWeightPairArray& bin_indices_and_weights ) const
 {
   // Make sure that the range intersects the discretization
   testPrecondition( this->doesRangeIntersectDiscretization( range_start, range_end ) );
-  
+
   std::set<size_t> bin_indices;
 
   if( this->isValueInDiscretization( range_start ) )
@@ -217,7 +217,7 @@ inline void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,ty
 
 // Calculate the set of bin indices that the value falls in
 template<ObserverPhaseSpaceDimension dimension>
-inline void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::calculateSetOfBinIndicesOfValue(
+inline void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateSetOfBinIndicesOfValue(
                                         const DimensionValueType value,
                                         std::set<size_t>& bin_index_set ) const
 {
@@ -235,7 +235,7 @@ inline void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,ty
 // Serialize the discretization
 template<ObserverPhaseSpaceDimension dimension>
 template<typename Archive>
-void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::serialize( Archive& ar, const unsigned version )
+void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::serialize( Archive& ar, const unsigned version )
 {
   // Serialize the base class data
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );

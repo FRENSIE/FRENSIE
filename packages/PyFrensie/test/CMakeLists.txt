@@ -50,6 +50,11 @@ PyFrensie_MAKE_TEST(tstUtility.Coordinate.CylindricalCoordinate)
 ADD_TEST(PyFrensie.Utility.Coordinate.CylindricalCoordinate_test ${PYTHON_EXECUTABLE} tstUtility.Coordinate.CylindricalCoordinate.py)
 SET_PROPERTY(TEST PyFrensie.Utility.Coordinate.CylindricalCoordinate_test PROPERTY LABELS pyfrensie)
 
+# Add the Utility.Mesh unit tests
+PyFrensie_MAKE_TEST(tstUtility.Mesh)
+ADD_TEST(PyFrensie.Utility.Mesh_test ${PYTHON_EXECUTABLE} tstUtility.Mesh.py --tet_mesh_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk)
+SET_PROPERTY(TEST PyFrensie.Utility.Mesh_test PROPERTY LABELS pyfrensie)
+
 # Add the Data.AtomProperties unit tests
 PyFrensie_MAKE_TEST(tstData.AtomProperties)
 ADD_TEST(PyFrensie.Data.AtomProperties_test ${PYTHON_EXECUTABLE} tstData.AtomProperties.py)
@@ -226,6 +231,14 @@ IF(FRENSIE_ENABLE_DAGMC OR FRENSIE_ENABLE_ROOT)
   ENDIF()
 ENDIF()
 
+# Add the MonteCarlo.ParticleState unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.ParticleState)
+ADD_TEST(PyFrensie.MonteCarlo.ParticleState_test ${PYTHON_EXECUTABLE} tstMonteCarlo.ParticleState.py)
+
+# Add the MonteCarlo.ParticleBank unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.ParticleBank)
+ADD_TEST(PyFrensie.MonteCarlo.ParticleBank_test ${PYTHON_EXECUTABLE} tstMonteCarlo.ParticleBank.py)
+
 # Add the MonteCarlo.SimulationGeneralProperties unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.SimulationGeneralProperties)
 ADD_TEST(PyFrensie.MonteCarlo.SimulationGeneralProperties_test ${PYTHON_EXECUTABLE} tstMonteCarlo.SimulationGeneralProperties.py)
@@ -266,45 +279,119 @@ ADD_TEST(PyFrensie.MonteCarlo.Collision.ScatteringCenterDefinitionDatabase_test 
 PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.MaterialDefinitionDatabase)
 ADD_TEST(PyFrensie.MonteCarlo.Collision.MaterialDefinitionDatabase_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.MaterialDefinitionDatabase.py)
 
-# Add the MonteCarlo.Collision.FilledGeometryModel unit tests
-PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.FilledGeometryModel)
-ADD_TEST(PyFrensie.MonteCarlo.Collision.FilledGeometryModel_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.FilledGeometryModel.py --dagmc_sat_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat --database_path=${CMAKE_CURRENT_BINARY_DIR}/../../monte_carlo/collision/database.xml)
+IF(${FRENSIE_ENABLE_DAGMC})
+  # Add the MonteCarlo.Collision.FilledGeometryModel unit tests
+  PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.FilledGeometryModel)
+  ADD_TEST(PyFrensie.MonteCarlo.Collision.FilledGeometryModel_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.FilledGeometryModel.py --dagmc_sat_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat --database_path=${COLLISION_DATABASE_XML_FILE})
+  ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Collision.FilledGeometryModel ${COLLISION_DATABASE_XML_FILE_TARGET} )
+ENDIF()
 
 # Add the MonteCarlo.ActiveRegion.PhaseSpaceDimension unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.ActiveRegion.PhaseSpaceDimension)
 ADD_TEST(PyFrensie.MonteCarlo.ActiveRegion.PhaseSpaceDimension_test ${PYTHON_EXECUTABLE} tstMonteCarlo.ActiveRegion.PhaseSpaceDimension.py)
 
-# Add the MonteCarlo.ActiveRegion.ParticleDistribution unit tests
+# Add the MonteCarlo.ActiveRegion.StandardParticleDistribution unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.ActiveRegion.StandardParticleDistribution)
 ADD_TEST(PyFrensie.MonteCarlo.ActiveRegion.StandardParticleDistribution_test ${PYTHON_EXECUTABLE} tstMonteCarlo.ActiveRegion.StandardParticleDistribution.py)
+
+# Add the MonteCarlo.ActiveRegion.ParticleResponse unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.ActiveRegion.ParticleResponse)
+ADD_TEST(PyFrensie.MonteCarlo.ActiveRegion.ParticleResponse_test ${PYTHON_EXECUTABLE} tstMonteCarlo.ActiveRegion.ParticleResponse.py --database=${COLLISION_DATABASE_XML_FILE})
+ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.ActiveRegion.ParticleResponse ${COLLISION_DATABASE_XML_FILE_TARGET} )
+
+# Add the MonteCarlo.ActiveRegion.ParticleSource unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.ActiveRegion.ParticleSource)
+ADD_TEST(PyFrensie.MonteCarlo.ActiveRegion.ParticleSource_test ${PYTHON_EXECUTABLE} tstMonteCarlo.ActiveRegion.ParticleSource.py --database=${COLLISION_DATABASE_XML_FILE})
+ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.ActiveRegion.ParticleSource ${COLLISION_DATABASE_XML_FILE_TARGET} )
+
+# Add the MonteCarlo.Event.ObserverPhaseSpaceDimensionDiscretization unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Event.ObserverPhaseSpaceDimensionDiscretization)
+ADD_TEST(PyFrensie.MonteCarlo.Event.ObserverPhaseSpaceDimensionDiscretization_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.ObserverPhaseSpaceDimensionDiscretization.py)
+
+# Add the MonteCarlo.Event.StandardEntityEstimator unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Event.StandardEntityEstimator)
+ADD_TEST(PyFrensie.MonteCarlo.Event.StandardEntityEstimator_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.StandardEntityEstimator.py)
+
+# Add the MonteCarlo.Event.SurfaceCurrentEstimator unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Event.SurfaceCurrentEstimator)
+ADD_TEST(PyFrensie.MonteCarlo.Event.SurfaceCurrentEstimator_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.SurfaceCurrentEstimator.py)
+
+# Add the MonteCarlo.Event.SurfaceFluxEstimator unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Event.SurfaceFluxEstimator)
+ADD_TEST(PyFrensie.MonteCarlo.Event.SurfaceFluxEstimator_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.SurfaceFluxEstimator.py)
+
+# Add the MonteCarlo.Event.CellCollisionFluxEstimator unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CellCollisionFluxEstimator)
+ADD_TEST(PyFrensie.MonteCarlo.Event.CellCollisionFluxEstimator_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellCollisionFluxEstimator.py)
+
+# Add the MonteCarlo.Event.CellTrackLengthFluxEstimator unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CellTrackLengthFluxEstimator)
+ADD_TEST(PyFrensie.MonteCarlo.Event.CellTrackLengthFluxEstimator_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellTrackLengthFluxEstimator.py)
+
+# Add the MonteCarlo.Event.CellPulseHeightEstimator unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CellPulseHeightEstimator)
+ADD_TEST(PyFrensie.MonteCarlo.Event.CellPulseHeightEstimator_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellPulseHeightEstimator.py)
+
+# Add the MonteCarlo.Event.MeshTrackLengthFluxEstimator unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Event.MeshTrackLengthFluxEstimator)
+ADD_TEST(PyFrensie.MonteCarlo.Event.MeshTrackLengthFluxEstimator_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.MeshTrackLengthFluxEstimator.py --tet_mesh_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk)
+SET_PROPERTY(TEST PyFrensie.MonteCarlo.Event.MeshTrackLengthFluxEstimator_test PROPERTY LABELS pyfrensie)
+
+# Add the DAGMC Estimator unit tests
+IF(${FRENSIE_ENABLE_DAGMC})
+  PyFrensie_MAKE_TEST(tstMonteCarlo.Event.SurfaceFluxEstimatorDagMC)
+  ADD_TEST(PyFrensie.MonteCarlo.Event.SurfaceFluxEstimatorDagMC_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.SurfaceFluxEstimatorDagMC.py --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat)
+
+  PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CellCollisionFluxEstimatorDagMC)
+  ADD_TEST(PyFrensie.MonteCarlo.Event.CellCollisionFluxEstimatorDagMC_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellCollisionFluxEstimatorDagMC.py --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat)
+
+  PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CellTrackLengthFluxEstimatorDagMC)
+  ADD_TEST(PyFrensie.MonteCarlo.Event.CellTrackLengthFluxEstimatorDagMC_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellTrackLengthFluxEstimatorDagMC.py --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat)
+ENDIF()
+
+# Add the Root Estimator unit tests
+IF(${FRENSIE_ENABLE_ROOT})
+  PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CellCollisionFluxEstimatorRoot)
+  ADD_TEST(PyFrensie.MonteCarlo.Event.CellCollisionFluxEstimatorRoot_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellCollisionFluxEstimatorRoot.py --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geom.root)
+
+  PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CellTrackLengthFluxEstimatorRoot)
+  ADD_TEST(PyFrensie.MonteCarlo.Event.CellTrackLengthFluxEstimatorRoot_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellTrackLengthFluxEstimatorRoot.py --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geom.root)
+ENDIF()
+
+# Add the MonteCarlo.Event.ParticleTracker unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Event.ParticleTracker)
+ADD_TEST(PyFrensie.MonteCarlo.Event.ParticleTracker_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.ParticleTracker.py)
+
+# Add the MonteCarlo.Event.EventHandler unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Event.EventHandler)
+ADD_TEST(PyFrensie.MonteCarlo.Event.EventHandler_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.EventHandler.py)
 
 # # Add the MonteCarlo.Collision.PhotonKinematics unit tests
 # PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.PhotonKinematics)
 # ADD_TEST(PyFrensie.MonteCarlo.Collision.PhotonKinematics_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.PhotonKinematics.py)
 
-# # Add the MonteCarlo.Collision.ElectronScatteringNativeDistribution unit tests
-# PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.ElectronScatteringNativeDistribution)
-# ADD_TEST(PyFrensie.MonteCarlo.Collision.ElectronScatteringNativeDistribution_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.ElectronScatteringNativeDistribution.py --nativefile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml)
-# SET_PROPERTY(TEST PyFrensie.MonteCarlo.Collision.ElectronScatteringNativeDistribution_test PROPERTY LABELS pyfrensie electron )
+# Add the MonteCarlo.Electron.ElectronScatteringNativeDistribution unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Electron.ElectronScatteringNativeDistribution)
+ADD_TEST(PyFrensie.MonteCarlo.Electron.ElectronScatteringNativeDistribution_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Electron.ElectronScatteringNativeDistribution.py --nativefile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml)
+SET_PROPERTY(TEST PyFrensie.MonteCarlo.Electron.ElectronScatteringNativeDistribution_test PROPERTY LABELS pyfrensie electron )
 
-# # Add the MonteCarlo.Collision.ElectronScatteringACEDistribution unit tests
-# PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.ElectronScatteringACEDistribution)
-# ADD_TEST(PyFrensie.MonteCarlo.Collision.ElectronScatteringACEDistribution_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.ElectronScatteringACEDistribution.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr14_ace_file.txt --tablename=1000.14p)
-# SET_PROPERTY(TEST PyFrensie.MonteCarlo.Collision.ElectronScatteringACEDistribution_test PROPERTY LABELS pyfrensie electron )
+# # Add the MonteCarlo.Electron.ElectronScatteringACEDistribution unit tests
+# PyFrensie_MAKE_TEST(tstMonteCarlo.Electron.ElectronScatteringACEDistribution)
+# ADD_TEST(PyFrensie.MonteCarlo.Electron.ElectronScatteringACEDistribution_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Electron.ElectronScatteringACEDistribution.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr14_ace_file.txt --tablename=1000.14p)
+# SET_PROPERTY(TEST PyFrensie.MonteCarlo.Electron.ElectronScatteringACEDistribution_test PROPERTY LABELS pyfrensie electron )
 
-# # Add the MonteCarlo.Collision.AdjointElectronScatteringDistribution unit tests
-# PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.AdjointElectronScatteringDistribution)
-# ADD_TEST(PyFrensie.MonteCarlo.Collision.AdjointElectronScatteringDistribution_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.AdjointElectronScatteringDistribution.py --adjointfile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml)
-# SET_PROPERTY(TEST PyFrensie.MonteCarlo.Collision.AdjointElectronScatteringDistribution_test PROPERTY LABELS pyfrensie electron adjoint)
+# # Add the MonteCarlo.Electron.AdjointElectronScatteringDistribution unit tests
+# PyFrensie_MAKE_TEST(tstMonteCarlo.Electron.AdjointElectronScatteringDistribution)
+# ADD_TEST(PyFrensie.MonteCarlo.Electron.AdjointElectronScatteringDistribution_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Electron.AdjointElectronScatteringDistribution.py --adjointfile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml)
+# SET_PROPERTY(TEST PyFrensie.MonteCarlo.Electron.AdjointElectronScatteringDistribution_test PROPERTY LABELS pyfrensie electron adjoint)
 
-# # Add the MonteCarlo.Collision.ElectroatomicReaction unit tests
-# PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.ElectroatomicReaction)
-# ADD_TEST(PyFrensie.MonteCarlo.Collision.ElectroatomicReaction_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.ElectroatomicReaction.py --nativefile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml )
-# SET_PROPERTY(TEST PyFrensie.MonteCarlo.Collision.ElectroatomicReaction_test PROPERTY LABELS pyfrensie electron )
+# Add the MonteCarlo.Electron.ElectroatomicReaction unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Electron.ElectroatomicReaction)
+ADD_TEST(PyFrensie.MonteCarlo.Electron.ElectroatomicReaction_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Electron.ElectroatomicReaction.py --nativefile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml )
 
-# # Add the adjoint MonteCarlo.Collision.ElectroatomicReaction unit tests
-# PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.AdjointElectroatomicReaction)
-# ADD_TEST(PyFrensie.MonteCarlo.Collision.AdjointElectroatomicReaction_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.AdjointElectroatomicReaction.py --nativefile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml )
-# SET_PROPERTY(TEST PyFrensie.MonteCarlo.Collision.AdjointElectroatomicReaction_test PROPERTY LABELS pyfrensie electron )
+# # Add the adjoint MonteCarlo.Electron.AdjointElectroatomicReaction unit tests
+# PyFrensie_MAKE_TEST(tstMonteCarlo.Electron.AdjointElectroatomicReaction)
+# ADD_TEST(PyFrensie.MonteCarlo.Electron.AdjointElectroatomicReaction_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Electron.AdjointElectroatomicReaction.py --nativefile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml )
+# SET_PROPERTY(TEST PyFrensie.MonteCarlo.Electron.AdjointElectroatomicReaction_test PROPERTY LABELS pyfrensie electron )
 
 

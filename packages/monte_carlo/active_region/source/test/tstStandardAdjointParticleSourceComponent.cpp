@@ -86,7 +86,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
 {
   FETCH_TEMPLATE_PARAM( 0, ParticleStateType );
   FETCH_TEMPLATE_PARAM( 1, ProbeParticleStateType );
-  
+
   // Construct a source component
   std::unique_ptr<const MonteCarlo::ParticleSourceComponent>
     source_component( new MonteCarlo::StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>( 0, 1.0, ModelHelper<ParticleStateType>::model(), particle_distribution ) );
@@ -96,7 +96,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
 
   MonteCarlo::ParticleSourceComponent::CellIdSet starting_cells;
   source_component->getStartingCells( starting_cells );
-  
+
   FRENSIE_CHECK( starting_cells.empty() );
 }
 
@@ -118,7 +118,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
 
   MonteCarlo::ParticleSourceComponent::CellIdSet starting_cells;
   source_component->getStartingCells( starting_cells );
-  
+
   FRENSIE_REQUIRE( !starting_cells.empty() );
   FRENSIE_CHECK( starting_cells.count( 1 ) );
 }
@@ -134,7 +134,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
 
   constexpr const MonteCarlo::ParticleType particle_type =
     ParticleStateType::type;
-  
+
   // Construct a source component
   std::unique_ptr<MonteCarlo::ParticleSourceComponent>
     source_component;
@@ -151,15 +151,15 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
   MonteCarlo::ParticleBank bank;
 
   // Set the random number generator stream
-  std::vector<double> fake_stream( 19 );
+  std::vector<double> fake_stream( 13 );
   fake_stream[0] = 0.0; // x
-  fake_stream[1] = 0.5; // energy 
+  fake_stream[1] = 0.5; // energy
   fake_stream[2] = 0.5; // y
   fake_stream[3] = 1.0-1e-15; // z
   fake_stream[4] = 0.0; // theta
   fake_stream[5] = 1.0-1e-15; // mu
   fake_stream[6] = 0.0; // time
-  
+
   fake_stream[7] = 0.5; // x
   fake_stream[8] = 0.5; // y
   fake_stream[9] = 0.5; // z
@@ -172,7 +172,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
   source_component->sampleParticleState( bank, 0ull );
 
   FRENSIE_REQUIRE_EQUAL( bank.size(), 2 );
-  
+
   FRENSIE_CHECK_EQUAL( bank.top().getHistoryNumber(), 0ull );
   FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), particle_type );
   FRENSIE_CHECK_EQUAL( bank.top().getXPosition(), -1.0 );
@@ -213,7 +213,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
   FRENSIE_CHECK_EQUAL( bank.top().getCell(), 1 );
   FRENSIE_CHECK_EQUAL( bank.top().getSourceWeight(), 0.05 );
   FRENSIE_CHECK_EQUAL( bank.top().getWeight(), 0.05 );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -225,7 +225,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
 {
   FETCH_TEMPLATE_PARAM( 0, ParticleStateType );
   FETCH_TEMPLATE_PARAM( 1, ProbeParticleStateType );
-  
+
   // Construct a source component
   std::unique_ptr<MonteCarlo::ParticleSourceComponent>
     source_component( new MonteCarlo::StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>( 0, 1.0, ModelHelper<ParticleStateType>::model(), particle_distribution ) );
@@ -265,35 +265,35 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), trials );
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), samples );
   FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 1.0 );
-  
+
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), trials );
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), samples );
   FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 1.0 );
-  
+
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), trials );
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), samples );
   FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 1.0 );
-  
+
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), trials );
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), samples );
   FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 1.0 );
-  
+
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), trials );
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), samples );
   FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 1.0 );
-  
+
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), trials );
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), samples );
   FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 1.0 );
-  
+
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::ENERGY_DIMENSION ), energy_dimension_trials );
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::ENERGY_DIMENSION ), energy_dimension_samples );
   FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::ENERGY_DIMENSION ), 1.0 );
-  
+
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::TIME_DIMENSION ), trials );
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::TIME_DIMENSION ), samples );
   FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::TIME_DIMENSION ), 1.0 );
-  
+
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::WEIGHT_DIMENSION ), trials );
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::WEIGHT_DIMENSION ), samples );
   FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::WEIGHT_DIMENSION ), 1.0 );
@@ -307,7 +307,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
 {
   FETCH_TEMPLATE_PARAM( 0, ParticleStateType );
   FETCH_TEMPLATE_PARAM( 1, ProbeParticleStateType );
-  
+
   // Construct a source component
   std::unique_ptr<MonteCarlo::ParticleSourceComponent>
     source_component( new MonteCarlo::StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>( 0, 1.0, ModelHelper<ParticleStateType>::model(), particle_distribution ) );
@@ -333,7 +333,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
 {
   FETCH_TEMPLATE_PARAM( 0, ParticleStateType );
   FETCH_TEMPLATE_PARAM( 1, ProbeParticleStateType );
-  
+
   // Construct a source component
   std::unique_ptr<MonteCarlo::ParticleSourceComponent>
     source_component( new MonteCarlo::StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>( 0, 1.0, ModelHelper<ParticleStateType>::model(), particle_distribution ) );
@@ -354,7 +354,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
 {
   FETCH_TEMPLATE_PARAM( 0, ParticleStateType );
   FETCH_TEMPLATE_PARAM( 1, ProbeParticleStateType );
-  
+
   // Construct a source component
   std::unique_ptr<MonteCarlo::ParticleSourceComponent>
     source_component( new MonteCarlo::StandardAdjointParticleSourceComponent<ParticleStateType,ProbeParticleStateType>( 0, 1.0, ModelHelper<ParticleStateType>::model(), particle_distribution ) );
@@ -373,35 +373,35 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 0 );
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 0 );
   FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 1.0 );
-  
+
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 0 );
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 0 );
   FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 1.0 );
-  
+
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 0 );
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 0 );
   FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 1.0 );
-  
+
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 0 );
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 0 );
   FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 1.0 );
-  
+
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 0 );
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 0 );
   FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 1.0 );
-  
+
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 0 );
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 0 );
   FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 1.0 );
-  
+
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::ENERGY_DIMENSION ), 0 );
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::ENERGY_DIMENSION ), 0 );
   FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::ENERGY_DIMENSION ), 1.0 );
-  
+
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::TIME_DIMENSION ), 0 );
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::TIME_DIMENSION ), 0 );
   FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::TIME_DIMENSION ), 1.0 );
-  
+
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionTrials( MonteCarlo::WEIGHT_DIMENSION ), 0 );
   FRENSIE_CHECK_EQUAL( source_component->getNumberOfDimensionSamples( MonteCarlo::WEIGHT_DIMENSION ), 0 );
   FRENSIE_CHECK_EQUAL( source_component->getDimensionSamplingEfficiency( MonteCarlo::WEIGHT_DIMENSION ), 1.0 );
@@ -454,7 +454,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
   createIArchive( archive_istream, iarchive );
 
   std::shared_ptr<const MonteCarlo::FilledGeometryModel> model;
-  
+
   std::shared_ptr<MonteCarlo::ParticleSourceComponent>
     adjoint_photon_source_component, adjoint_electron_source_component;
 
@@ -468,39 +468,39 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfTrials(), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfSamples(), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getSamplingEfficiency(), 1.0 );
-    
+
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getDimensionSamplingEfficiency( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 1.0 );
-    
+
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getDimensionSamplingEfficiency( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 1.0 );
-    
+
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getDimensionSamplingEfficiency( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 1.0 );
-    
+
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getDimensionSamplingEfficiency( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 1.0 );
-    
+
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getDimensionSamplingEfficiency( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 1.0 );
-    
+
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getDimensionSamplingEfficiency( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 1.0 );
-    
+
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::ENERGY_DIMENSION ), 1000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::ENERGY_DIMENSION ), 1000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getDimensionSamplingEfficiency( MonteCarlo::ENERGY_DIMENSION ), 1.0 );
-    
+
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::TIME_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::TIME_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getDimensionSamplingEfficiency( MonteCarlo::TIME_DIMENSION ), 1.0 );
-    
+
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionTrials( MonteCarlo::WEIGHT_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getNumberOfDimensionSamples( MonteCarlo::WEIGHT_DIMENSION ), 2000 );
     FRENSIE_CHECK_EQUAL( adjoint_photon_source_component->getDimensionSamplingEfficiency( MonteCarlo::WEIGHT_DIMENSION ), 1.0 );
@@ -510,20 +510,20 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
     // Set the random number generator stream
     std::vector<double> fake_stream( 19 );
     fake_stream[0] = 0.0; // x
-    fake_stream[1] = 0.5; // energy 
+    fake_stream[1] = 0.5; // energy
     fake_stream[2] = 0.5; // y
     fake_stream[3] = 1.0-1e-15; // z
     fake_stream[4] = 0.0; // theta
     fake_stream[5] = 1.0-1e-15; // mu
     fake_stream[6] = 0.0; // time
-    
+
     fake_stream[7] = 0.5; // x
     fake_stream[8] = 0.5; // y
     fake_stream[9] = 0.5; // z
     fake_stream[10] = 0.5; // theta
     fake_stream[11] = 0.5; // mu
     fake_stream[12] = 0.5; // time
-    
+
     fake_stream[13] = 0.0; // x
     fake_stream[14] = 1.0-1e-15; // y
     fake_stream[15] = 0.0; // z
@@ -578,7 +578,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
     FRENSIE_CHECK_EQUAL( bank.top().getCell(), 1 );
     FRENSIE_CHECK_EQUAL( bank.top().getSourceWeight(), 0.05 );
     FRENSIE_CHECK_EQUAL( bank.top().getWeight(), 0.05 );
-  
+
     Utility::RandomNumberGenerator::unsetFakeStream();
   }
 
@@ -586,39 +586,39 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getNumberOfTrials(), 0 );
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getNumberOfSamples(), 0 );
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getSamplingEfficiency(), 1.0 );
-    
+
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getNumberOfDimensionTrials( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 0 );
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getNumberOfDimensionSamples( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 0 );
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getDimensionSamplingEfficiency( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 1.0 );
-    
+
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getNumberOfDimensionTrials( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 0 );
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getNumberOfDimensionSamples( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 0 );
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getDimensionSamplingEfficiency( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 1.0 );
-    
+
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getNumberOfDimensionTrials( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 0 );
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getNumberOfDimensionSamples( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 0 );
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getDimensionSamplingEfficiency( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 1.0 );
-    
+
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getNumberOfDimensionTrials( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 0 );
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getNumberOfDimensionSamples( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 0 );
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getDimensionSamplingEfficiency( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 1.0 );
-    
+
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getNumberOfDimensionTrials( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 0 );
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getNumberOfDimensionSamples( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 0 );
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getDimensionSamplingEfficiency( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 1.0 );
-    
+
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getNumberOfDimensionTrials( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 0 );
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getNumberOfDimensionSamples( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 0 );
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getDimensionSamplingEfficiency( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 1.0 );
-    
+
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getNumberOfDimensionTrials( MonteCarlo::ENERGY_DIMENSION ), 0 );
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getNumberOfDimensionSamples( MonteCarlo::ENERGY_DIMENSION ), 0 );
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getDimensionSamplingEfficiency( MonteCarlo::ENERGY_DIMENSION ), 1.0 );
-    
+
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getNumberOfDimensionTrials( MonteCarlo::TIME_DIMENSION ), 0 );
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getNumberOfDimensionSamples( MonteCarlo::TIME_DIMENSION ), 0 );
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getDimensionSamplingEfficiency( MonteCarlo::TIME_DIMENSION ), 1.0 );
-    
+
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getNumberOfDimensionTrials( MonteCarlo::WEIGHT_DIMENSION ), 0 );
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getNumberOfDimensionSamples( MonteCarlo::WEIGHT_DIMENSION ), 0 );
     FRENSIE_CHECK_EQUAL( adjoint_electron_source_component->getDimensionSamplingEfficiency( MonteCarlo::WEIGHT_DIMENSION ), 1.0 );
@@ -628,7 +628,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAdjointParticleSourceComponent,
     // Set the random number generator stream
     std::vector<double> fake_stream( 7 );
     fake_stream[0] = 0.0; // x
-    fake_stream[1] = 0.5; // energy 
+    fake_stream[1] = 0.5; // energy
     fake_stream[2] = 0.5; // y
     fake_stream[3] = 1.0-1e-15; // z
     fake_stream[4] = 0.0; // theta
@@ -685,7 +685,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Determine the database directory
     boost::filesystem::path database_path =
       test_scattering_center_database_name;
-    
+
     boost::filesystem::path data_directory = database_path.parent_path();
 
     // Load the database
@@ -705,7 +705,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     h_definition.setAdjointPhotoatomicDataProperties(
           h_properties.getSharedAdjointPhotoatomicDataProperties(
                 Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 0 ) );
-    
+
     h_definition.setAdjointElectroatomicDataProperties(
           h_properties.getSharedAdjointElectroatomicDataProperties(
               Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 0 ) );
@@ -713,7 +713,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Set the material definitions
     std::shared_ptr<MonteCarlo::MaterialDefinitionDatabase>
       material_definition_database( new MonteCarlo::MaterialDefinitionDatabase );
-    
+
     material_definition_database->addDefinition( "H1 @ 293.6K", 2,
                                                  {"H1 @ 293.6K"}, {1.0} );
 
@@ -764,7 +764,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
   std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
     directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
-  
+
     tmp_particle_distribution.reset(
                                   new MonteCarlo::StandardParticleDistribution(
                                        "source distribution",
@@ -820,7 +820,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     particle_distribution = tmp_particle_distribution;
   }
-    
+
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 }

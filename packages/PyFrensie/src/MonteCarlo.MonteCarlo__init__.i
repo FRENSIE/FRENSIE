@@ -38,6 +38,9 @@ PyFrensie.MonteCarlo module (see PyFrensie.MonteCarlo.__init__.py)
 sys.path.pop(0)
 %}
 
+// Add support for the particle state classes
+%include "MonteCarlo_ParticleState.i"
+
 // Add support for the simulation properties classes
 %include "MonteCarlo_SimulationProperties.i"
 

@@ -24,7 +24,6 @@ from testingHelpers import importPyFrensieModuleFromBuildDir
 Data = importPyFrensieModuleFromBuildDir('Data')
 Native = importPyFrensieModuleFromBuildDir('Data.Native')
 ACE = importPyFrensieModuleFromBuildDir('Data.ACE')
-MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
 Collision = importPyFrensieModuleFromBuildDir('MonteCarlo.Collision')
 
 #-----------------------------------------------------------------------------#

@@ -19,27 +19,27 @@ namespace MonteCarlo{
 
 // Default constructor
 template<ObserverPhaseSpaceDimension dimension>
-FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization()
+FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization()
   : BaseType()
 { /* ... */ }
 
 // Constructor (with number of hash grid bins specified)
 template<ObserverPhaseSpaceDimension dimension>
-FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization(
+FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization(
                              const BinBoundaryArray& dimension_bin_boundaries )
   : BaseType( dimension_bin_boundaries )
 { /* ... */ }
 
 // Return the number of bins in the discretization
 template<ObserverPhaseSpaceDimension dimension>
-size_t FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::getNumberOfBins() const
+size_t FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::getNumberOfBins() const
 {
   return this->getBinBoundaries().size() - 1;
 }
 
 // Print the boundaries of a bin
 template<ObserverPhaseSpaceDimension dimension>
-void FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::printBoundariesOfBin(
+void FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::printBoundariesOfBin(
                                                  std::ostream& os,
                                                  const size_t bin_index ) const
 {
@@ -59,7 +59,7 @@ void FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimensio
 
 // Check if the value is contained in the discretization
 template<ObserverPhaseSpaceDimension dimension>
-bool FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::isValueInDiscretization(
+bool FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::isValueInDiscretization(
                                          const DimensionValueType value ) const
 {
   return value >= this->getBinBoundaries().front() &&
@@ -68,7 +68,7 @@ bool FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimensio
 
 // Check if the value range intersects the discretization
 template<ObserverPhaseSpaceDimension dimension>
-bool FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::doesRangeIntersectDiscretization(
+bool FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::doesRangeIntersectDiscretization(
                                      const DimensionValueType range_start,
                                      const DimensionValueType range_end ) const
 {
@@ -90,7 +90,7 @@ bool FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimensio
 
 // Calculate the index of the bin  that the value falls in
 template<ObserverPhaseSpaceDimension dimension>
-size_t FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::calculateBinIndexOfValue(
+size_t FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateBinIndexOfValue(
                                          const DimensionValueType value ) const
 {
   // Make sure the value is in the discretization
@@ -109,7 +109,7 @@ size_t FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimens
 
 // Calculate the size of a bin
 template<ObserverPhaseSpaceDimension dimension>
-double FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::calculateBinSize(
+double FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateBinSize(
                                                  const size_t bin_index ) const
 {
   // Make sure that the bin index is valid
@@ -121,7 +121,7 @@ double FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimens
 
 // Calculate the size of a bin intersection
 template<ObserverPhaseSpaceDimension dimension>
-double FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::calculateBinIntersectionSize(
+double FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateBinIntersectionSize(
                                      const size_t bin_index,
                                      const DimensionValueType range_start,
                                      const DimensionValueType range_end ) const
@@ -149,7 +149,7 @@ double FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimens
 
 // Calculate the size of a range
 template<ObserverPhaseSpaceDimension dimension>
-double FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::calculateRangeSize(
+double FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateRangeSize(
                                      const DimensionValueType range_start,
                                      const DimensionValueType range_end ) const
 {
@@ -159,12 +159,12 @@ double FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimens
 // Serialize the discretization
 template<ObserverPhaseSpaceDimension dimension>
 template<typename Archive>
-void FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>::serialize( Archive& ar, const unsigned version )
+void FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::serialize( Archive& ar, const unsigned version )
 {
   // Serialize the base class data
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
 }
-  
+
 } // end MonteCarlo namespace
 
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION>,

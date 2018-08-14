@@ -206,15 +206,6 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     std::shared_ptr<const std::vector<double> > total_cross_section(
        new std::vector<double>( data_container.getTotalElasticCrossSection() ) );
 
-    // Calculate the sampling ratios
-    std::shared_ptr<std::vector<double> > sampling_ratios(
-                      new std::vector<double>( total_cross_section->size() ) );
-    for ( unsigned i = 0; i < sampling_ratios->size(); ++i )
-    {
-      (*sampling_ratios)[i] =
-        (*cutoff_cross_section)[i]/(*total_cross_section)[i];
-    }
-
     // Create cutoff distribution
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_elastic_distribution;
@@ -236,7 +227,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
       new MonteCarlo::DecoupledElasticElectroatomicReaction<Utility::LinLin>(
             energy_grid,
             total_cross_section,
-            sampling_ratios,
+            cutoff_cross_section,
             data_container.getTotalElasticCrossSectionThresholdEnergyIndex(),
             cutoff_elastic_distribution,
             sr_elastic_distribution ) );
@@ -246,7 +237,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   Utility::RandomNumberGenerator::createStreams();
 }
 
-FRENSIE_CUSTOM_UNIT_TEST_SETUP_END(); 
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstDecoupledElasticElectroatomicReaction.cpp

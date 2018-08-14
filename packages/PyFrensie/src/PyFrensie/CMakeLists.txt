@@ -64,21 +64,33 @@ ENDIF()
 # Add a new target
 ADD_CUSTOM_TARGET(Local_Python_Modules ALL)
 
+# Create the top python modules
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/__init__.py.in
+  ${CMAKE_CURRENT_BINARY_DIR}/__init__.py)
+ADD_CUSTOM_COMMAND(TARGET Local_Python_Modules
+  COMMAND ${PYTHON_EXECUTABLE} -c "import py_compile; py_compile.compile('__init__.py')"
+  COMMENT "Byte compiling __init__.py"
+  VERBATIM)
+INSTALL(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/__init__.py
+  ${CMAKE_CURRENT_BINARY_DIR}/__init__.pyc
+  DESTINATION ${PyFrensie_INSTALL_DIR})
+
 # Define the local python modules
-SET(LOCAL_MODULES __init__ Utility/__init__ Geometry/__init__ Data/__init__ MonteCarlo/__init__)
+SET(LOCAL_MODULES Utility Geometry Data MonteCarlo)
 
 # Create the local python modules
 FOREACH(MODULE ${LOCAL_MODULES})
 
-  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/${MODULE}.py.in
-    ${CMAKE_CURRENT_BINARY_DIR}/${MODULE}.py)
+  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/${MODULE}/__init__.py.in
+    ${CMAKE_CURRENT_BINARY_DIR}/${MODULE}/__init__.py)
   ADD_CUSTOM_COMMAND(TARGET Local_Python_Modules
-    COMMAND ${PYTHON_EXECUTABLE} -c "import py_compile; py_compile.compile('${MODULE}.py')"
-    COMMENT "Byte compiling ${MODULE}.py"
+    COMMAND ${PYTHON_EXECUTABLE} -c "import py_compile; py_compile.compile('${MODULE}/__init__.py')"
+    COMMENT "Byte compiling ${MODULE}/__init__.py"
     VERBATIM)
   INSTALL(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/${MODULE}.py
-    ${CMAKE_CURRENT_BINARY_DIR}/${MODULE}.pyc
-    DESTINATION ${PyFrensie_INSTALL_DIR})
+    ${CMAKE_CURRENT_BINARY_DIR}/${MODULE}/__init__.py
+    ${CMAKE_CURRENT_BINARY_DIR}/${MODULE}/__init__.pyc
+    DESTINATION ${PyFrensie_INSTALL_DIR}/${MODULE})
 
 ENDFOREACH()

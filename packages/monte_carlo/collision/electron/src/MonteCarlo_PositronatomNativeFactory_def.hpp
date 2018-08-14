@@ -80,7 +80,7 @@ void PositronatomNativeFactory::createPositronatomCore(
     Positronatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[BREMSSTRAHLUNG_POSITRONATOMIC_REACTION];
 
-    PositronatomicReactionNativeFactory::createBremsstrahlungReaction<PositronatomicReaction,TwoDInterpPolicy,TwoDGridPolicy>(
+    PositronatomicReactionNativeFactory::createBremsstrahlungReaction<TwoDInterpPolicy,TwoDGridPolicy>(
                   raw_positronatom_data,
                   energy_grid,
                   grid_searcher,
@@ -107,7 +107,7 @@ void PositronatomNativeFactory::createPositronatomCore(
   {
     std::vector<std::shared_ptr<const PositronatomicReaction> > reaction_pointers;
 
-    PositronatomicReactionNativeFactory::createSubshellPositronionizationReactions<PositronatomicReaction,TwoDInterpPolicy,TwoDGridPolicy>(
+    PositronatomicReactionNativeFactory::createSubshellPositronionizationReactions<TwoDInterpPolicy,TwoDGridPolicy>(
                       raw_positronatom_data,
                       energy_grid,
                       grid_searcher,

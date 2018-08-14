@@ -1,73 +1,81 @@
-ADD_EXECUTABLE(tstFormFactorEvaluator tstFormFactorEvaluator.cpp)
-TARGET_LINK_LIBRARIES(tstFormFactorEvaluator data_gen_electron_photon)
-ADD_TEST(FormFactorEvaluator_test tstFormFactorEvaluator --test_pb_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_pb_ace_table="82000.12p")
-SET_PROPERTY(TEST FormFactorEvaluator_test PROPERTY LABELS photon data_gen_electron_photon)
+FRENSIE_INITIALIZE_PACKAGE_TESTS(data_gen_electron_photon)
 
-ADD_EXECUTABLE(tstScatteringFunctionEvaluator tstScatteringFunctionEvaluator.cpp)
-TARGET_LINK_LIBRARIES(tstScatteringFunctionEvaluator data_gen_electron_photon)
-ADD_TEST(ScatteringFunctionEvaluator_test tstScatteringFunctionEvaluator --test_pb_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_pb_ace_table="82000.12p")
-SET_PROPERTY(TEST ScatteringFunctionEvaluator_test PROPERTY LABELS data_gen_electron_photon)
+# Add FormFactorEvaluator
+FRENSIE_ADD_TEST_EXECUTABLE(FormFactorEvaluator DEPENDS tstFormFactorEvaluator.cpp)
+FRENSIE_ADD_TEST(FormFactorEvaluator
+  EXTRA_ARGS
+  --test_pb_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_pb_ace_table=82000.12p)
 
-ADD_EXECUTABLE(tstOccupationNumberEvaluator tstOccupationNumberEvaluator.cpp)
-TARGET_LINK_LIBRARIES(tstOccupationNumberEvaluator data_gen_electron_photon)
-ADD_TEST(OccupationNumberEvaluator_test tstOccupationNumberEvaluator --test_h_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_pb_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_pb_ace_table="82000.12p")
-SET_PROPERTY(TEST OccupationNumberEvaluator_test PROPERTY LABELS data_gen_electron_photon)
+# Add ScatteringFunctionEvaluator
+FRENSIE_ADD_TEST_EXECUTABLE(ScatteringFunctionEvaluator DEPENDS tstScatteringFunctionEvaluator.cpp)
+FRENSIE_ADD_TEST(ScatteringFunctionEvaluator
+  EXTRA_ARGS
+  --test_pb_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_pb_ace_table=82000.12p)
 
-ADD_EXECUTABLE(tstAdjointElectronGridGenerator
-  tstAdjointElectronGridGenerator.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointElectronGridGenerator data_gen_electron_photon)
-ADD_TEST(AdjointElectronGridGenerator_test
-  tstAdjointElectronGridGenerator  --test_native_h_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml")
-SET_PROPERTY(TEST AdjointElectronGridGenerator_test PROPERTY LABELS data_gen_electron_photon adjoint electron)
+# Add OccupationNumberEvaluator
+FRENSIE_ADD_TEST_EXECUTABLE(OccupationNumberEvaluator DEPENDS tstOccupationNumberEvaluator.cpp)
+FRENSIE_ADD_TEST(OccupationNumberEvaluator
+  EXTRA_ARGS
+  --test_h_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt
+  --test_h_ace_table=1000.12p
+  --test_pb_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_pb_ace_table=82000.12p)
 
-ADD_EXECUTABLE(tstAdjointPairProductionEnergyDistributionNormConstantEvaluator
-  tstAdjointPairProductionEnergyDistributionNormConstantEvaluator.cpp)
-TARGET_LINK_LIBRARIES(tstAdjointPairProductionEnergyDistributionNormConstantEvaluator data_gen_electron_photon)
-ADD_TEST(AdjointPairProductionEnergyDistributionNormConstantEvaluator_test tstAdjointPairProductionEnergyDistributionNormConstantEvaluator --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST AdjointPairProductionEnergyDistributionNormConstantEvaluator_test PROPERTY LABELS data_gen_electron_photon)
+# Add AdjointElectronGridGenerator
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointElectronGridGenerator DEPENDS tstAdjointElectronGridGenerator.cpp)
+FRENSIE_ADD_TEST(AdjointElectronGridGenerator
+  EXTRA_ARGS
+  --test_native_h_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml)
 
-ADD_EXECUTABLE(tstAdjointIncoherentCrossSectionHelpers
-  tstAdjointIncoherentCrossSectionHelpers.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointIncoherentCrossSectionHelpers data_gen_electron_photon)
-ADD_TEST(AdjointIncoherentCrossSectionHelpers_test tstAdjointIncoherentCrossSectionHelpers)
-SET_PROPERTY(TEST AdjointIncoherentCrossSectionHelpers_test PROPERTY LABELS data_gen_electron_photon adjoint photon)
+# Add AdjointPairProductionEnergyDistributionNormConstantEvaluator
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointPairProductionEnergyDistributionNormConstantEvaluator DEPENDS tstAdjointPairProductionEnergyDistributionNormConstantEvaluator.cpp)
+FRENSIE_ADD_TEST(AdjointPairProductionEnergyDistributionNormConstantEvaluator
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
 
-ADD_EXECUTABLE(tstAdjointIncoherentGridGenerator
-  tstAdjointIncoherentGridGenerator.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointIncoherentGridGenerator data_gen_electron_photon)
-ADD_TEST(AdjointIncoherentGridGenerator_test
-  tstAdjointIncoherentGridGenerator  --test_native_h_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml" --test_native_pb_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST AdjointIncoherentGridGenerator_test PROPERTY LABELS data_gen_electron_photon adjoint photon)
+# Add AdjointIncoherentCrossSectionHelpers
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointIncoherentCrossSectionHelpers DEPENDS tstAdjointIncoherentCrossSectionHelpers.cpp)
+FRENSIE_ADD_TEST(AdjointIncoherentCrossSectionHelpers)
 
-ADD_EXECUTABLE(tstElasticElectronMomentsEvaluator
-  tstElasticElectronMomentsEvaluator.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstElasticElectronMomentsEvaluator data_gen_electron_photon)
-ADD_TEST(ElasticElectronMomentsEvaluator_test tstElasticElectronMomentsEvaluator --test_native_pb_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" --test_native_al_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml")
-SET_PROPERTY(TEST ElasticElectronMomentsEvaluator_test PROPERTY LABELS data_gen_electron_photon electron)
+# Add AdjointIncoherentGridGenerator
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointIncoherentGridGenerator DEPENDS tstAdjointIncoherentGridGenerator.cpp)
+FRENSIE_ADD_TEST(AdjointIncoherentGridGenerator
+  EXTRA_ARGS
+  --test_native_h_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml
+  --test_native_pb_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
 
-ADD_EXECUTABLE(tstStandardMomentPreservingElectronDataGenerator
-  tstStandardMomentPreservingElectronDataGenerator.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstStandardMomentPreservingElectronDataGenerator data_gen_electron_photon)
-ADD_TEST(StandardMomentPreservingElectronDataGenerator_test tstStandardMomentPreservingElectronDataGenerator --test_h_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml" --test_pb_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" --test_al_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml")
-SET_PROPERTY(TEST StandardMomentPreservingElectronDataGenerator_test PROPERTY LABELS data_gen_electron_photon electron)
+# Add ElasticElectronMomentsEvaluator
+FRENSIE_ADD_TEST_EXECUTABLE(ElasticElectronMomentsEvaluator DEPENDS tstElasticElectronMomentsEvaluator.cpp)
+FRENSIE_ADD_TEST(ElasticElectronMomentsEvaluator
+  EXTRA_ARGS
+  --test_native_pb_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml
+  --test_native_al_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml)
 
-ADD_EXECUTABLE(tstStandardElectronPhotonRelaxationDataGenerator
-    tstStandardElectronPhotonRelaxationDataGenerator.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstStandardElectronPhotonRelaxationDataGenerator data_gen_electron_photon)
-ADD_TEST(StandardElectronPhotonRelaxationDataGenerator_test tstStandardElectronPhotonRelaxationDataGenerator --test_h_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_h_endl_file="${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_endl_native.xml" --test_c_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_c_epr_ace_file.txt" --test_c_ace_table="6000.12p" --test_c_endl_file="${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_c_endl_native.xml")
-SET_PROPERTY(TEST StandardElectronPhotonRelaxationDataGenerator_test PROPERTY LABELS data_gen_electron_photon electron photon relaxation)
+# Add StandardMomentPreservingElectronDataGenerator
+FRENSIE_ADD_TEST_EXECUTABLE(StandardMomentPreservingElectronDataGenerator DEPENDS tstStandardMomentPreservingElectronDataGenerator.cpp)
+FRENSIE_ADD_TEST(StandardMomentPreservingElectronDataGenerator
+  EXTRA_ARGS
+  --test_h_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml
+  --test_pb_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml
+  --test_al_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml)
 
-ADD_EXECUTABLE(tstStandardAdjointElectronPhotonRelaxationDataGenerator
-    tstStandardAdjointElectronPhotonRelaxationDataGenerator.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstStandardAdjointElectronPhotonRelaxationDataGenerator data_gen_electron_photon)
-ADD_TEST(StandardAdjointElectronPhotonRelaxationDataGenerator_test tstStandardAdjointElectronPhotonRelaxationDataGenerator --test_h_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml")
-SET_PROPERTY(TEST StandardAdjointElectronPhotonRelaxationDataGenerator_test PROPERTY LABELS data_gen_electron_photon adjoint electron photon relaxation)
+# Add StandardElectronPhotonRelaxationDataGenerator
+FRENSIE_ADD_TEST_EXECUTABLE(StandardElectronPhotonRelaxationDataGenerator DEPENDS tstStandardElectronPhotonRelaxationDataGenerator.cpp)
+FRENSIE_ADD_TEST(StandardElectronPhotonRelaxationDataGenerator
+  EXTRA_ARGS
+  --test_h_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt
+  --test_h_ace_table=1000.12p
+  --test_h_endl_file=${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_endl_native.xml
+  --test_c_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_c_epr_ace_file.txt
+  --test_c_ace_table=6000.12p
+  --test_c_endl_file=${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_c_endl_native.xml)
 
+# Add StandardAdjointElectronPhotonRelaxationDataGenerator
+FRENSIE_ADD_TEST_EXECUTABLE(StandardAdjointElectronPhotonRelaxationDataGenerator DEPENDS tstStandardAdjointElectronPhotonRelaxationDataGenerator.cpp)
+FRENSIE_ADD_TEST(StandardAdjointElectronPhotonRelaxationDataGenerator
+  EXTRA_ARGS
+  --test_h_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml)
 
+FRENSIE_FINALIZE_PACKAGE_TESTS(data_gen_electron_photon)

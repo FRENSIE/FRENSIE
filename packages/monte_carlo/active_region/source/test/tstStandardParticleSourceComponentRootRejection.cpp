@@ -150,7 +150,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( StandardParticleSource,
 // Check that a particle state can be sampled from a source with rejection
 // cells
 FRENSIE_UNIT_TEST_TEMPLATE( StandardParticleSource,
-                            samplParticleState_rejection_cells_larger,
+                            sampleParticleState_rejection_cells_larger,
                             TestParticleStateTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, ParticleStateType );
@@ -250,7 +250,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( StandardParticleSource,
 // Check that a particle state can be sampled from a source with rejection
 // cells
 FRENSIE_UNIT_TEST_TEMPLATE( StandardParticleSource,
-                            samplParticleState_rejection_cells_smaller,
+                            sampleParticleState_rejection_cells_smaller,
                             TestParticleStateTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, ParticleStateType );
@@ -355,7 +355,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
   std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
     directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
-  
+
     tmp_particle_distribution.reset(
                                   new MonteCarlo::StandardParticleDistribution(
                                        "source distribution",
@@ -397,13 +397,13 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     {
       std::vector<double> primary_grid( {-1.0, 0.0, 1.0} );
       std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> > secondary_dists( 3 );
-      
+
       // Create the secondary distribution in the first bin
       secondary_dists[0].reset( new Utility::UniformDistribution( 0.0, 10.0, 0.5 ) );
-            
+
       // Create the secondary distribution in the second bin
       secondary_dists[1].reset( new Utility::UniformDistribution( 0.0, 20.0, 0.25 ) );
-      
+
       // Create the secondary distribution in the third bin
       secondary_dists[2] = secondary_dists[1];
 
@@ -411,16 +411,16 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
         raw_dependent_distribution( new Utility::HistogramFullyTabularBasicBivariateDistribution( primary_grid, secondary_dists ) );
 
       raw_dependent_distribution->limitToPrimaryIndepLimits();
-      
+
       energy_dimension_dist.reset( new MonteCarlo::TertiarySpatialDependentEnergyDimensionDistribution( raw_dependent_distribution ) );
     }
-    
+
     tmp_particle_distribution->setDimensionDistribution( energy_dimension_dist );
     tmp_particle_distribution->constructDimensionDistributionDependencyTree();
-    
+
     particle_distribution = tmp_particle_distribution;
   }
-                                                      
+
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 }

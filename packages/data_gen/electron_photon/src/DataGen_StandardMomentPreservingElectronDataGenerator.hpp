@@ -12,14 +12,11 @@
 // Std Lib Includes
 #include <utility>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "DataGen_MomentPreservingElectronDataGenerator.hpp"
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 #include "MonteCarlo_TwoDInterpolationType.hpp"
 
 namespace DataGen{

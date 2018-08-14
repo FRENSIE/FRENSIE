@@ -34,7 +34,7 @@ public:
 
   //! Typedef for bin index and weight pair
   typedef typename BaseType::BinIndexWeightPair BinIndexWeightPair;
-  
+
   //! Typedef for bin index and weight pair array
   typedef typename BaseType::BinIndexWeightPairArray BinIndexWeightPairArray;
 
@@ -115,7 +115,7 @@ private:
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( Dim ) )
 
 BOOST_SERIALIZATION_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_VERSION( 0 );
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::OrderedTypedObserverPhaseSpaceDimensionDiscretization );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( OrderedTypedObserverPhaseSpaceDimensionDiscretization, MonteCarlo );
 
 //---------------------------------------------------------------------------//
 // Template Includes

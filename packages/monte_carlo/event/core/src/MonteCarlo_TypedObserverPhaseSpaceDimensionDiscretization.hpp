@@ -36,7 +36,7 @@ public:
 
   //! Typedef for bin index and weight pair
   typedef ObserverPhaseSpaceDimensionDiscretization::BinIndexWeightPair BinIndexWeightPair;
-  
+
   //! Typedef for bin index and weight pair array
   typedef ObserverPhaseSpaceDimensionDiscretization::BinIndexWeightPairArray BinIndexWeightPairArray;
 
@@ -120,7 +120,7 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 };
-  
+
 } // end MonteCarlo namespace
 
 #define BOOST_SERIALIZATION_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_VERSION( version ) \
@@ -130,7 +130,7 @@ private:
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( Dim ) )
 
 BOOST_SERIALIZATION_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_VERSION( 0 );
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::TypedObserverPhaseSpaceDimensionDiscretization );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( TypedObserverPhaseSpaceDimensionDiscretization, MonteCarlo );
 
 //---------------------------------------------------------------------------//
 // Template Includes.

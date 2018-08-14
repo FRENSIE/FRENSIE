@@ -23,7 +23,7 @@ namespace MonteCarlo{
 class StandardSurfaceEstimator : public StandardEntityEstimator,
 				 public ParticleCrossingSurfaceEventObserver
 {
-  
+
 public:
 
   //! Typedef for the surface id type
@@ -91,8 +91,8 @@ void StandardSurfaceEstimator::serialize( Archive& ar, const unsigned version )
 
 } // end MonteCarlo namespace
 
-BOOST_CLASS_VERSION( MonteCarlo::StandardSurfaceEstimator, 0 );
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::StandardSurfaceEstimator );
+BOOST_SERIALIZATION_CLASS_VERSION( StandardSurfaceEstimator, MonteCarlo, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( StandardSurfaceEstimator, MonteCarlo );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, StandardSurfaceEstimator );
 
 #endif // end MONTE_CARLO_STANDARD_SURFACE_ESTIMATOR_HPP

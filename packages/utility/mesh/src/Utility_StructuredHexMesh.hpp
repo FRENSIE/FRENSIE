@@ -23,7 +23,7 @@
 #include "Utility_Map.hpp"
 
 namespace Utility{
-  
+
 /*! The structured hexahedral mesh class
  * \details This class stores the mesh itself and can be used to acquire
  * important information from the mesh (e.g. intersections of a line segment
@@ -101,7 +101,7 @@ public:
                            size_t hex_parameter_indices[3] ) const;
 
   //! Returns the volumes of the hex elements for the estimator class.
-  void getElementVolumes( ElementHandleVolumeMap& hex_volumes ) const final override;
+  void getElementVolumes( ElementHandleVolumeMap& element_volumes ) const final override;
 
   //! Returns a bool that says whether or not a point is in the mesh.
   bool isPointInMesh( const double point[3] ) const final override;
@@ -122,12 +122,12 @@ public:
 
   //! Export the mesh to a file
   using Mesh::exportData;
-  
+
 private:
 
   // Default constructor
   StructuredHexMesh();
-  
+
   // Enumeration type converting dimensions to integers
   enum Dimension: size_t{ X_DIMENSION = 0,
                           Y_DIMENSION = 1,
@@ -183,7 +183,7 @@ private:
                            PlaneIndex hex_plane_indices[3] )const;
 
   // Set individual hex plane indicies for particle.
-  PlaneIndex setHexPlaneIndex( const double position_component, 
+  PlaneIndex setHexPlaneIndex( const double position_component,
                                const std::vector<double>& plane_set,
                                const Dimension plane_dimension  ) const;
 
@@ -208,13 +208,13 @@ private:
   // function for checking each individual plane to see if it is within bounds
   bool checkWithinBoundingPlane( const double position_component,
                                  const std::vector<double>& plane_set )const;
-  
+
   // determines if the particle has exited the mesh
   bool didParticleLeaveMesh(
                            const Dimension intersection_dimension,
                            const std::vector<std::pair<Dimension,PlaneIndex> >&
-                           interaction_planes ) const; 
-                                                        
+                           interaction_planes ) const;
+
   // sets the incrementer for mesh iteration
   void setIncrementer( const double direction[3],
                        int incrementer[3] ) const;
@@ -250,7 +250,7 @@ private:
   std::vector<double> d_x_planes;
   std::vector<double> d_y_planes;
   std::vector<double> d_z_planes;
-  
+
   // The hex elements (ids)
   std::vector<ElementHandle> d_hex_elements;
 };
@@ -285,7 +285,7 @@ void StructuredHexMesh::load( Archive& ar, const unsigned version )
 
 } // end Utility namespace
 
-BOOST_CLASS_VERSION( Utility::StructuredHexMesh, 0 );
+BOOST_SERIALIZATION_CLASS_VERSION( StructuredHexMesh, Utility, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StructuredHexMesh, Utility );
 EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, StructuredHexMesh );
 

@@ -32,8 +32,8 @@ StandardENDLDataGenerator::StandardENDLDataGenerator(
 
 // Populate the ENDL data container
 void StandardENDLDataGenerator::populateENDLDataContainer(
-			   Data::ENDLVolatileDataContainer&
-			   data_container ) const
+               Data::ENDLVolatileDataContainer&
+               data_container ) const
 {
   // Set the atomic number
   this->setAtomicNumber( data_container );
@@ -50,8 +50,8 @@ void StandardENDLDataGenerator::populateENDLDataContainer(
 
 // Populate the EADL data container
 void StandardENDLDataGenerator::populateEADLDataContainer(
-			   Data::ENDLVolatileDataContainer&
-			   data_container ) const
+               Data::ENDLVolatileDataContainer&
+               data_container ) const
 {
   // Set the relaxation data
   std::cout << std::endl << "Setting the relaxation data..." << std::endl;
@@ -62,8 +62,8 @@ void StandardENDLDataGenerator::populateEADLDataContainer(
 
 // Populate the EPDL data container
 void StandardENDLDataGenerator::populateEPDLDataContainer(
-			   Data::ENDLVolatileDataContainer&
-			   data_container ) const
+               Data::ENDLVolatileDataContainer&
+               data_container ) const
 {
   // Set the photon data
   std::cout << std::endl << "Setting the photon data: " << std::endl;
@@ -73,8 +73,8 @@ void StandardENDLDataGenerator::populateEPDLDataContainer(
 
 // Populate the EEDL data container
 void StandardENDLDataGenerator::populateEEDLDataContainer(
-			   Data::ENDLVolatileDataContainer&
-			   data_container ) const
+               Data::ENDLVolatileDataContainer&
+               data_container ) const
 {
   // Set the electron data
   std::cout << std::endl << "Setting the electron data: " << std::endl;
@@ -85,15 +85,15 @@ void StandardENDLDataGenerator::populateEEDLDataContainer(
 
 // Set the relaxation data
 void StandardENDLDataGenerator::setRelaxationData(
-			   Data::ENDLVolatileDataContainer&
-			   data_container ) const
+               Data::ENDLVolatileDataContainer&
+               data_container ) const
 {
   // Check if file exists
   if ( (bool)fileExistsUsingFortran( d_eadl_file_name.c_str(),
                                      d_eadl_file_name.size() ) )
   {
     // Open eadl file
-    Teuchos::RCP<Data::ENDLFileHandler> eadl_file_handler(
+    std::shared_ptr<Data::ENDLFileHandler> eadl_file_handler(
       new Data::ENDLFileHandler( d_eadl_file_name ) );
 
     // Information in first header of the EADL file
@@ -126,7 +126,7 @@ void StandardENDLDataGenerator::setRelaxationData(
       // Check that the EADL file is still valid (eof has not been reached)
       if( eadl_file_handler->endOfFile() )
       {
-	    continue;
+        continue;
       }
 
       testPostcondition( atomic_number_in_table ==
@@ -424,8 +424,8 @@ void StandardENDLDataGenerator::setRelaxationData(
       default:
         // Unknown reaction type found
       {
-	  bool known_reaction_type = false;
-	  std::cout << known_reaction_type <<
+      bool known_reaction_type = false;
+      std::cout << known_reaction_type <<
       " Fatal Error: An unknown reaction type was encountered while processing the EADL file.";
       std::cout.flush();
       }
@@ -445,15 +445,15 @@ void StandardENDLDataGenerator::setRelaxationData(
 
 // Set the photon data
 void StandardENDLDataGenerator::setPhotonData(
-			   Data::ENDLVolatileDataContainer&
-			   data_container ) const
+               Data::ENDLVolatileDataContainer&
+               data_container ) const
 {
   // Check if file exists
   if ( (bool)fileExistsUsingFortran( d_epdl_file_name.c_str(),
                                      d_epdl_file_name.size() ) )
   {
     // Open epdl file
-    Teuchos::RCP<Data::ENDLFileHandler> epdl_file_handler(
+    std::shared_ptr<Data::ENDLFileHandler> epdl_file_handler(
       new Data::ENDLFileHandler( d_epdl_file_name ) );
 
     // Information in first header of the EPDL file
@@ -484,7 +484,7 @@ void StandardENDLDataGenerator::setPhotonData(
       // Check that the EPDL file is still valid (eof has not been reached)
       if( epdl_file_handler->endOfFile() )
       {
-	    continue;
+        continue;
       }
 
       testPostcondition( atomic_number_in_table ==
@@ -880,8 +880,8 @@ void StandardENDLDataGenerator::setPhotonData(
       default:
         // Unknown reaction type found
       {
-	  bool known_reaction_type = false;
-	  std::cout << known_reaction_type <<
+      bool known_reaction_type = false;
+      std::cout << known_reaction_type <<
       " Fatal Error: An unknown reaction type was encountered while processing the EPDL file.";
       std::cout.flush();
       }
@@ -920,7 +920,7 @@ void StandardENDLDataGenerator::setElectronData(
                                      d_eedl_file_name.size() ) )
     {
     // Open eedl file
-    Teuchos::RCP<Data::ENDLFileHandler> eedl_file_handler(
+    std::shared_ptr<Data::ENDLFileHandler> eedl_file_handler(
       new Data::ENDLFileHandler( d_eedl_file_name ) );
 
     // Information in first header of the EEDL file
@@ -956,7 +956,7 @@ void StandardENDLDataGenerator::setElectronData(
       // Check that the EEDL file is still valid (eof has not been reached)
       if( eedl_file_handler->endOfFile() )
       {
-	    continue;
+        continue;
       }
 
       testPostcondition( atomic_number_in_table ==
@@ -1325,8 +1325,8 @@ void StandardENDLDataGenerator::setElectronData(
       default:
         // Unknown reaction type found
         {
-	  bool known_reaction_type = false;
-	  std::cout << known_reaction_type <<
+      bool known_reaction_type = false;
+      std::cout << known_reaction_type <<
       " Fatal Error: An unknown reaction type was encountered while processing the EEDL file.";
       std::cout.flush();
         }
@@ -1342,15 +1342,6 @@ void StandardENDLDataGenerator::setElectronData(
     {
       data_container.setSubshells( endf_subshells );
     }
-
-  /*
-    // Set the screened Rutherford cross section data
-    setScreenedRutherfordData( cutoff_elastic_cross_section,
-                               total_elastic_cross_section,
-                               elastic_angular_energy_grid,
-                               elastic_pdf,
-                               data_container );
-  */
   }
   else
   {
@@ -1359,73 +1350,6 @@ void StandardENDLDataGenerator::setElectronData(
   }
 }
 
-/*
-// Set the screened rutherford data
-void StandardENDLDataGenerator::setScreenedRutherfordData(
-    const Teuchos::RCP<const Utility::OneDDistribution>&
-        cutoff_elastic_cross_section,
-    const Teuchos::RCP<const Utility::OneDDistribution>&
-        total_elastic_cross_section,
-    const std::vector<double>& elastic_angular_energy_grid,
-    const std::map<double,std::vector<double> >& elastic_pdf,
-    Data::ENDLVolatileDataContainer& data_container ) const
-{
-  // Calculate Moliere's screening constant and the screened rutherford normalization constant
-  std::vector<double> moliere_screening_constant,
-                      screened_rutherford_normalization_constant;
-
-  // iterate through all angular energy bins
-  for ( int i = 0; i < elastic_angular_energy_grid.size(); ++i )
-  {
-    // get the angular energy bin
-    double energy = elastic_angular_energy_grid[i];
-
-    // get the screened rutherford cross section
-    double sr_cross_section =
-        ( total_elastic_cross_section->evaluate( energy ) -
-        cutoff_elastic_cross_section->evaluate( energy ) );
-
-    if ( sr_cross_section == 0.0 )
-    {
-    /* in order to not calculate negative the screened Rutherford cross section
-     * must be greater than ( cutoff_pdf*cutoff_angle ). It should also be small
-     * enough to give a negligible contribution to the overall cross section.
-     * This can be accomplished by setting eta slightly greater then the cutoff
-     * angle.
-     *//*
-    // get the pdf value at the cutoff angle for the given energy
-    double cutoff_pdf = elastic_pdf.find( energy )->second.front();
-
-    // calculate Moliere's screening constant
-    moliere_screening_constant.push_back( 1.01*d_cutoff_angle );
-
-    // calculate the screened rutherford normalization constant
-    screened_rutherford_normalization_constant.push_back( cutoff_pdf*
-        ( 2.01*d_cutoff_angle )*( 2.01*d_cutoff_angle ) );
-    }
-    else
-    {
-    // get the pdf value at the cutoff angle for the given energy
-    double cutoff_pdf = elastic_pdf.find( energy )->second.front();
-
-    // calculate Moliere's screening constant
-    moliere_screening_constant.push_back( d_cutoff_angle/(
-        sr_cross_section/( d_cutoff_angle*cutoff_pdf ) - 1.0 ) );
-
-    // calculate the screened rutherford normalization constant
-    screened_rutherford_normalization_constant.push_back( cutoff_pdf*(
-        ( d_cutoff_angle + moliere_screening_constant.back() )*
-        ( d_cutoff_angle + moliere_screening_constant.back() ) ) );
-    }
-  }
-  // Set Moliere's screening constant
-  data_container.setMoliereScreeningConstant( moliere_screening_constant );
-
-  // Set the screened rutherford normalization constant
-  data_container.setScreenedRutherfordNormalizationConstant(
-    screened_rutherford_normalization_constant );
-}
-*/
 } // end DataGen namespace
 
 //---------------------------------------------------------------------------//

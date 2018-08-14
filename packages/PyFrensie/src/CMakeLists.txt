@@ -44,8 +44,11 @@ SET(UTILITY_PACKAGES ${UTILITY_PACKAGES} Distribution)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Coordinate)
 SET(UTILITY_PACKAGES ${UTILITY_PACKAGES} Coordinate)
 
+SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Mesh)
+SET(UTILITY_PACKAGES ${UTILITY_PACKAGES} Mesh)
+
 # SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Interpolation)
-SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist utility_system pyfrensie)
+SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist utility_system utility_mesh pyfrensie)
 
 # # Add the DataGen package
 # SET(DATA_GEN_MODULE_DOCSTRING "is the python interface to the FRENSIE data_gen package.")
@@ -127,11 +130,17 @@ SET(MONTE_CARLO_PACKAGES ${MONTE_CARLO_PACKAGES} GeometryModel)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.Collision)
 SET(MONTE_CARLO_PACKAGES ${MONTE_CARLO_PACKAGES} Collision)
 
+SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.Electron)
+SET(MONTE_CARLO_PACKAGES ${MONTE_CARLO_PACKAGES} Electron)
+
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.ActiveRegion)
 SET(MONTE_CARLO_PACKAGES ${MONTE_CARLO_PACKAGES} ActiveRegion)
 
+SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.Event)
+SET(MONTE_CARLO_PACKAGES ${MONTE_CARLO_PACKAGES} Event)
 
-SET(MONTE_CARLO_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} monte_carlo_core monte_carlo_collision_core monte_carlo_collision_neutron monte_carlo_collision_photon monte_carlo_collision_electron monte_carlo_collision_kernel monte_carlo_active_region_core pyfrensie)
+
+SET(MONTE_CARLO_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} monte_carlo_core monte_carlo_collision_core monte_carlo_collision_neutron monte_carlo_collision_photon monte_carlo_collision_electron monte_carlo_collision_kernel monte_carlo_active_region_core monte_carlo_active_region_response monte_carlo_active_region_source monte_carlo_event_core monte_carlo_event_estimator monte_carlo_event_particle_tracker monte_carlo_event_dispatcher pyfrensie)
 
 # Add the PyFrensie subdirectory
 ADD_SUBDIRECTORY(PyFrensie)

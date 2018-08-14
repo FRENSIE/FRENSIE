@@ -73,6 +73,7 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
 FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createDecoupledElasticReaction_LogLogCosLog )
 {
+  std::shared_ptr<const MonteCarlo::DecoupledElasticElectroatomicReaction<Utility::LogLog>> reaction;
   MonteCarlo::ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LogLogCosLog,Utility::Correlated>(
                 *data_container,
                 energy_grid,
@@ -87,16 +88,31 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
 
   // Test that the stored cross section is correct
   double energy = 1e-5;
+  double cutoff_cs = 2.48924e9;
+
   double cross_section = reaction->getCrossSection( energy );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.48924e+09, 1e-12 );
 
+  double sampling_ratio = reaction->getSamplingRatio( energy );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sampling_ratio, cutoff_cs/cross_section, 1e-12 );
+
   energy = 4e-4;
+  cutoff_cs = 4.436635458458e8;
+
   cross_section = reaction->getCrossSection( energy );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.43663545845802366734e+08, 1e-12 );
 
+  sampling_ratio = reaction->getSamplingRatio( energy );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sampling_ratio, cutoff_cs/cross_section, 1e-12 );
+
   energy = 1e5;
+  cutoff_cs = 8.83051e-2;
+
   cross_section = reaction->getCrossSection( energy );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.11161e+06, 1e-12 );
+
+  sampling_ratio = reaction->getSamplingRatio( energy );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sampling_ratio, cutoff_cs/cross_section, 1e-12 );
 
   // Clear the reaction
   reaction.reset();
@@ -425,7 +441,7 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
 {
   std::vector<std::shared_ptr<const MonteCarlo::ElectroatomicReaction> > reactions;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<MonteCarlo::ElectroatomicReaction,Utility::LinLinLog,Utility::UnitBaseCorrelated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
                                *data_container,
                                energy_grid,
                                grid_searcher,
@@ -480,7 +496,7 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
 {
   photon_distribution_function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
                                *data_container,
                                energy_grid,
                                grid_searcher,
@@ -520,7 +536,7 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
 {
   photon_distribution_function = MonteCarlo::TWOBS_DISTRIBUTION;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::LogLogLog,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog,Utility::Correlated>(
                                *data_container,
                                energy_grid,
                                grid_searcher,
@@ -669,7 +685,7 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
 {
   std::vector<std::shared_ptr<const MonteCarlo::ElectroatomicReaction> > reactions;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<MonteCarlo::ElectroatomicReaction,Utility::LinLinLin,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLin,Utility::Correlated>(
                                *data_container,
                                energy_grid,
                                grid_searcher,
@@ -724,7 +740,7 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
 {
   photon_distribution_function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::LinLinLin,Utility::UnitBaseCorrelated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
                                *data_container,
                                energy_grid,
                                grid_searcher,
@@ -764,7 +780,7 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
 {
   photon_distribution_function = MonteCarlo::TWOBS_DISTRIBUTION;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::LinLinLin,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLin,Utility::Correlated>(
                                *data_container,
                                energy_grid,
                                grid_searcher,
