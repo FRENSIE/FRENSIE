@@ -9,8 +9,8 @@
 // FRENSIE Includes
 #include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_ParticleSimulationManagerFactory.hpp"
-#include "MonteCarlo_StandardParticleSimulationManagerFactory.hpp"
-#include "MonteCarlo_BatchedDistributedStandardParticleSimulationManagerFactory.hpp"
+#include "MonteCarlo_StandardParticleSimulationManager.hpp"
+#include "MonteCarlo_BatchedDistributedStandardParticleSimulationManager.hpp"
 #include "Utility_OpenMPProperties.hpp"
 #include "Utility_GlobalMPISession.hpp"
 #include "Utility_LoggingMacros.hpp"
@@ -20,14 +20,14 @@
 namespace MonteCarlo{
 
 // Initialize static member data
-const std::string ParticleSimulationManager::s_archive_name( "manager" );
+const std::string ParticleSimulationManagerFactory::s_archive_name( "manager" );
 
 // Archive constructor
 ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
                 const std::shared_ptr<const FilledGeometryModel>& model,
                 const std::shared_ptr<ParticleSource>& source,
                 const std::shared_ptr<EventHandler>& event_handler,
-                const std::shared_ptr<const WeightWindows>& weight_windows,
+                const std::shared_ptr<const WeightWindow>& weight_windows,
                 const std::shared_ptr<const CollisionForcer>& collision_forcer,
                 const std::shared_ptr<SimulationProperties>& properties,
                 const std::string& simulation_name,
@@ -44,7 +44,16 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
     d_properties( properties ),
     d_next_history( next_history ),
     d_rendezvous_number( rendezvous_number )
-{ /* ... */ }
+{ 
+  TEST_FOR_EXCEPTION( next_history == std::numeric_limits<uint64_t>::max(),
+                      std::runtime_error,
+                      "No more histories can be simulated (the max history "
+                      "number has been reached)!" );
+  TEST_FOR_EXCEPTION( rendezvous_number == std::numeric_limits<uint64_t>::max(),
+                      std::runtime_error,
+                      "No more histories can be simulated (the max rendezvous "
+                      "number has been)!" );
+}
 
 // Constructor
 ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
@@ -60,7 +69,7 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
     d_model( model ),
     d_source( source ),
     d_event_handler( event_handler ),
-    d_weight_windows( MonteCarlo::WeightWindows::getDefault() ),
+    d_weight_windows( MonteCarlo::WeightWindow::getDefault() ),
     d_collision_forcer( MonteCarlo::CollisionForcer::getDefault() ),
     d_properties( properties ),
     d_next_history( 0 ),
@@ -81,14 +90,6 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
   TEST_FOR_EXCEPTION( archive_type.empty(),
                       std::runtime_error,
                       "The archive type cannot be empty!" );
-  TEST_FOR_EXCEPTION( next_history == std::numeric_limits<uint64_t>::max(),
-                      std::runtime_error,
-                      "No more histories can be simulated (the max history "
-                      "number has been reached)!" );
-  TEST_FOR_EXCEPTION( rendezvous_number == std::numeric_limits<uint64_t>::max(),
-                      std::runtime_error,
-                      "No more histories can be simulated (the max rendezvous "
-                      "number has been)!" );
   
   Utility::OpenMPProperties::setNumberOfThreads( threads );
 }
@@ -123,10 +124,10 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
 // Restart constructor
 ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
                           const boost::filesystem::path& archived_manager_name,
-                          const uint64_t wall_time,
+                          const double wall_time,
                           const unsigned threads )
 {
-  this->loadFromFile( achived_manager_name );
+  this->loadFromFile( archived_manager_name );
 
   // Update the properties
   d_properties->setSimulationWallTime( wall_time );
@@ -151,13 +152,13 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
   Utility::OpenMPProperties::setNumberOfThreads( threads );
 
   // Update the completion criterion
-  d_event_handler->setSimulationCompletionCriterion( number_of_histories,
+  d_event_handler->setSimulationCompletionCriterion( number_of_additional_histories,
                                                      wall_time );
 }
 
 // Set the weight windows that will be used by the manager
 void ParticleSimulationManagerFactory::setWeightWindows(
-                   const std::shared_ptr<const WeightWindows>& weight_windows )
+                    const std::shared_ptr<const WeightWindow>& weight_windows )
 {
   if( weight_windows )
   {
@@ -205,7 +206,7 @@ void ParticleSimulationManagerFactory::renameSimulation(
 namespace Details{
 
 //! The create model helper struct
-struct ParticleSimulationManagerFactoryCreateModelHelper
+struct ParticleSimulationManagerFactoryCreateHelper
 {
   //! Create the manager
   template<ParticleModeType mode>
@@ -213,33 +214,34 @@ struct ParticleSimulationManagerFactoryCreateModelHelper
   {
     if( factory.d_comm->size() > 1 )
     {
-      factory.d_manager.reset(
+      factory.d_simulation_manager.reset(
                  new BatchedDistributedStandardParticleSimulationManager<mode>(
-                                                         d_simulation_name,
-                                                         d_archive_type,
-                                                         d_model,
-                                                         d_source,
-                                                         d_event_handler,
-                                                         d_weight_windows,
-                                                         d_collision_forcer,
-                                                         d_properties,
-                                                         d_next_history,
-                                                         d_rendezvous_number,
-                                                         d_comm ) );
+                                                   factory.d_simulation_name,
+                                                   factory.d_archive_type,
+                                                   factory.d_model,
+                                                   factory.d_source,
+                                                   factory.d_event_handler,
+                                                   factory.d_weight_windows,
+                                                   factory.d_collision_forcer,
+                                                   factory.d_properties,
+                                                   factory.d_next_history,
+                                                   factory.d_rendezvous_number,
+                                                   factory.d_comm ) );
     }
     else
     {
-      factory.d_manager.reset( new StandardParticleSimulationManager<mode>(
-                                                       d_simulation_name,
-                                                       d_archive_type,
-                                                       d_model,
-                                                       d_source,
-                                                       d_event_handler,
-                                                       d_weight_windows,
-                                                       d_collision_forcer,
-                                                       d_properties,
-                                                       d_next_history,
-                                                       d_rendezvous_number ) );
+      factory.d_simulation_manager.reset(
+                 new StandardParticleSimulationManager<mode>(
+                                               factory.d_simulation_name,
+                                               factory.d_archive_type,
+                                               factory.d_model,
+                                               factory.d_source,
+                                               factory.d_event_handler,
+                                               factory.d_weight_windows,
+                                               factory.d_collision_forcer,
+                                               factory.d_properties,
+                                               factory.d_next_history,
+                                               factory.d_rendezvous_number ) );
     }
   }
 };
@@ -258,47 +260,47 @@ ParticleSimulationManagerFactory::getManager()
     {
       case NEUTRON_MODE:
       {
-        Details::ParticleSimulationManagerFactoryCreateModelHelper::createManager<NEUTRON_MODE>( *this );
+        Details::ParticleSimulationManagerFactoryCreateHelper::createManager<NEUTRON_MODE>( *this );
         break;
       }
       case PHOTON_MODE:
       {
-        Details::ParticleSimulationManagerFactoryCreateModelHelper::createManager<PHOTON_MODE>( *this );
+        Details::ParticleSimulationManagerFactoryCreateHelper::createManager<PHOTON_MODE>( *this );
         break;
       }
       case ELECTRON_MODE:
       {
-        Details::ParticleSimulationManagerFactoryCreateModelHelper::createManager<ELECTRON_MODE>( *this );
+        Details::ParticleSimulationManagerFactoryCreateHelper::createManager<ELECTRON_MODE>( *this );
         break;
       }
       case NEUTRON_PHOTON_MODE:
       {
-        Details::ParticleSimulationManagerFactoryCreateModelHelper::createManager<NEUTRON_PHOTON_MODE>( *this );
+        Details::ParticleSimulationManagerFactoryCreateHelper::createManager<NEUTRON_PHOTON_MODE>( *this );
         break;
       }
       case PHOTON_ELECTRON_MODE:
       {
-        Details::ParticleSimulationManagerFactoryCreateModelHelper::createManager<PHOTON_ELECTRON_MODE>( *this );
+        Details::ParticleSimulationManagerFactoryCreateHelper::createManager<PHOTON_ELECTRON_MODE>( *this );
         break;
       }
       case NEUTRON_PHOTON_ELECTRON_MODE:
       {
-        Details::ParticleSimulationManagerFactoryCreateModelHelper::createManager<NEUTRON_PHOTON_ELECTRON_MODE>( *this );
+        Details::ParticleSimulationManagerFactoryCreateHelper::createManager<NEUTRON_PHOTON_ELECTRON_MODE>( *this );
         break;
       }
       case ADJOINT_NEUTRON_MODE:
       {
-        Details::ParticleSimulationManagerFactoryCreateModelHelper::createManager<ADJOINT_NEUTRON_MODE>( *this );
+        Details::ParticleSimulationManagerFactoryCreateHelper::createManager<ADJOINT_NEUTRON_MODE>( *this );
         break;
       }
       case ADJOINT_PHOTON_MODE:
       {
-        Details::ParticleSimulationManagerFactoryCreateModelHelper::createManager<ADJOINT_PHOTON_MODE>( *this );
+        Details::ParticleSimulationManagerFactoryCreateHelper::createManager<ADJOINT_PHOTON_MODE>( *this );
         break;
       }
       case ADJOINT_ELECTRON_MODE:
       {
-        Details::ParticleSimulationManagerFactoryCreateModelHelper::createManager<ADJOINT_ELECTRON_MODE>( *this );
+        Details::ParticleSimulationManagerFactoryCreateHelper::createManager<ADJOINT_ELECTRON_MODE>( *this );
         break;
       }
       default:
@@ -324,7 +326,7 @@ const char* ParticleSimulationManagerFactory::getArchiveName() const
 
 } // end MonteCarlo namespace
 
-EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo::ParticleSimulationManagerFactory );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ParticleSimulationManagerFactory );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleSimulationManagerFactory.cpp

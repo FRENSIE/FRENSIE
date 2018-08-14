@@ -37,7 +37,7 @@ public:
                  const std::shared_ptr<const FilledGeometryModel>& model,
                  const std::shared_ptr<ParticleSource>& source,
                  const std::shared_ptr<EventHandler>& event_handler,
-                 const std::shared_ptr<const WeightWindows> weight_windows,
+                 const std::shared_ptr<const WeightWindow> weight_windows,
                  const std::shared_ptr<const CollisionForcer> collision_forcer,
                  const std::shared_ptr<const SimulationProperties>& properties,
                  const uint64_t next_history,
@@ -60,11 +60,15 @@ private:
   template<typename State>
   void addSimulateParticleFunction();
 
+  // Add the mode initialization helper class as a friend
+  template<typename T, typename U>
+  friend class Details::ModeInitializationHelper;
+
   // The simulation functions
   typedef std::function<void(ParticleState&, ParticleBank&, const bool)>
   SimulateParticleFunction;
 
-  typedef std::map<ParticleType,SimulationParticleFunction>
+  typedef std::map<ParticleType,SimulateParticleFunction>
   SimulateParticleFunctionMap;
 
   SimulateParticleFunctionMap d_simulate_particle_function_map;

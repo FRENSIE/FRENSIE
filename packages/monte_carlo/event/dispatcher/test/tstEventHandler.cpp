@@ -86,26 +86,26 @@ FRENSIE_UNIT_TEST( EventHandler, setSimulationCompletionCriterion )
 
   event_handler.updateObserversFromParticleSimulationStartedEvent();
 
-  FRENSIE_CHECK( !event_handler.getSimulationCompletionCriterion().isSimulationComplete() );
+  FRENSIE_CHECK( !event_handler.isSimulationComplete() );
   
   for( size_t i = 0; i < 5; ++i )
     event_handler.commitObserverHistoryContributions();
 
-  FRENSIE_CHECK( !event_handler.getSimulationCompletionCriterion().isSimulationComplete() );
+  FRENSIE_CHECK( !event_handler.isSimulationComplete() );
 
   event_handler.updateObserversFromParticleSimulationStoppedEvent();
 
   for( size_t i = 5; i <= 10; ++i )
     event_handler.commitObserverHistoryContributions();
 
-  FRENSIE_CHECK( !event_handler.getSimulationCompletionCriterion().isSimulationComplete() );
+  FRENSIE_CHECK( !event_handler.isSimulationComplete() );
 
   event_handler.updateObserversFromParticleSimulationStartedEvent();
 
   for( size_t i = 5; i <= 10; ++i )
     event_handler.commitObserverHistoryContributions();
 
-  FRENSIE_CHECK( event_handler.getSimulationCompletionCriterion().isSimulationComplete() );
+  FRENSIE_CHECK( event_handler.isSimulationComplete() );
 }
 
 //---------------------------------------------------------------------------//
@@ -121,12 +121,12 @@ FRENSIE_UNIT_TEST( EventHandler, setSimulationCompletionCriterion_props )
 
   event_handler->updateObserversFromParticleSimulationStartedEvent();
 
-  FRENSIE_CHECK( !event_handler->getSimulationCompletionCriterion().isSimulationComplete() );
+  FRENSIE_CHECK( !event_handler->isSimulationComplete() );
   
   for( size_t i = 0; i <= 10; ++i )
     event_handler->commitObserverHistoryContributions();
 
-  FRENSIE_CHECK( event_handler->getSimulationCompletionCriterion().isSimulationComplete() );
+  FRENSIE_CHECK( event_handler->isSimulationComplete() );
 
   // Set a time wall
   properties.setNumberOfHistories( 0 );
@@ -134,7 +134,7 @@ FRENSIE_UNIT_TEST( EventHandler, setSimulationCompletionCriterion_props )
 
   event_handler.reset( new MonteCarlo::EventHandler( properties ) );
   
-  FRENSIE_CHECK( !event_handler->getSimulationCompletionCriterion().isSimulationComplete() );
+  FRENSIE_CHECK( !event_handler->isSimulationComplete() );
 
   event_handler->updateObserversFromParticleSimulationStartedEvent();
 
@@ -148,7 +148,7 @@ FRENSIE_UNIT_TEST( EventHandler, setSimulationCompletionCriterion_props )
   timer->stop();
   timer.reset();
 
-  FRENSIE_CHECK( event_handler->getSimulationCompletionCriterion().isSimulationComplete() );
+  FRENSIE_CHECK( event_handler->isSimulationComplete() );
 
   // Set a mixed criterion
   properties.setNumberOfHistories( 10 );
@@ -156,14 +156,14 @@ FRENSIE_UNIT_TEST( EventHandler, setSimulationCompletionCriterion_props )
 
   event_handler.reset( new MonteCarlo::EventHandler( properties ) );
   
-  FRENSIE_CHECK( !event_handler->getSimulationCompletionCriterion().isSimulationComplete() );
+  FRENSIE_CHECK( !event_handler->isSimulationComplete() );
 
   event_handler->updateObserversFromParticleSimulationStartedEvent();
 
   for( size_t i = 0; i <= 10; ++i )
     event_handler->commitObserverHistoryContributions();
 
-  FRENSIE_CHECK( event_handler->getSimulationCompletionCriterion().isSimulationComplete() );
+  FRENSIE_CHECK( event_handler->isSimulationComplete() );
 }
 
 //---------------------------------------------------------------------------//
@@ -3162,7 +3162,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( EventHandler, archive, TestArchives )
     
     FRENSIE_CHECK_EQUAL( event_handler.getNumberOfCommittedHistories(), 2 );
     FRENSIE_CHECK( event_handler.getElapsedTime() >= 0.02 );
-    FRENSIE_CHECK( event_handler.getSimulationCompletionCriterion().isSimulationComplete() );
+    FRENSIE_CHECK( event_handler.isSimulationComplete() );
     
     Utility::ArrayView<const double> first_moments, second_moments;
     first_moments = event_handler.getEstimator( 100 ).getEntityBinDataFirstMoments( 1 );

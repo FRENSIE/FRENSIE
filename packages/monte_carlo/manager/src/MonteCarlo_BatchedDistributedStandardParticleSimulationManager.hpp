@@ -17,7 +17,7 @@ namespace MonteCarlo{
 
 //! The batched distributed standard particle simulation manager
 template<ParticleModeType mode>
-class BatchedDistributedStandardParticleManager : public StandardParticleSimulationManager<mode>
+class BatchedDistributedStandardParticleSimulationManager : public StandardParticleSimulationManager<mode>
 {
 
 public:
@@ -29,7 +29,7 @@ public:
                  const std::shared_ptr<const FilledGeometryModel>& model,
                  const std::shared_ptr<ParticleSource>& source,
                  const std::shared_ptr<EventHandler>& event_handler,
-                 const std::shared_ptr<const WeightWindows> weight_windows,
+                 const std::shared_ptr<const WeightWindow> weight_windows,
                  const std::shared_ptr<const CollisionForcer> collision_forcer,
                  const std::shared_ptr<const SimulationProperties>& properties,
                  const uint64_t next_history,
