@@ -143,6 +143,34 @@ EventHandler& ParticleSimulationManager::getEventHandler()
   return *d_event_handler;
 }
 
+// Get the simulation name
+const std::string& ParticleSimulationManager::getSimulationName() const
+{
+  return d_simulation_name;
+}
+
+// Set the simulation name
+void ParticleSimulationManager::setSimulationName( const std::string& new_name )
+{
+  if( new_name.size() > 0 )
+    d_simulation_name = new_name;
+}
+
+// Get the simulation archive type
+const std::string& ParticleSimulationManager::getSimulationArchiveType() const
+{
+  return d_archive_type;
+}
+
+// Set the simulation archive type
+/*! \details Acceptable values are "xml", "txt", "bin", "h5fa".
+ */
+void ParticleSimulationManager::setSimulationArchiveType( const std::string& archive_type )
+{
+  if( archive_type.size() > 0 )
+    d_archive_type = archive_type;
+}
+
 // Run the simulation set up by the user
 void ParticleSimulationManager::runSimulation()
 {

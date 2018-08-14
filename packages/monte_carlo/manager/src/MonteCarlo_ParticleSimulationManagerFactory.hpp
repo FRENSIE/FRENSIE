@@ -73,13 +73,6 @@ public:
   //! Set the collision forcer that will be used by the manager
   void setCollisionForcer( const std::shared_ptr<const CollisionForcer>& collision_forcer );
 
-  //! Rename the simulation
-  void renameSimulation( const std::string& name,
-                         const std::string& archive_type = "" );
-
-  //! Change the simulation archive type
-  void changeSimulationArchiveType( const std::string& archive_type );
-
   //! Return the manager
   std::shared_ptr<ParticleSimulationManager> getManager();
 

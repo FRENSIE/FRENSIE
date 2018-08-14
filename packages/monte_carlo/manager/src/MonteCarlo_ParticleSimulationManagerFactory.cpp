@@ -193,45 +193,6 @@ void ParticleSimulationManagerFactory::setCollisionForcer(
   }
 }
 
-// Rename the simulation
-void ParticleSimulationManagerFactory::renameSimulation(
-                                              const std::string& name,
-                                              const std::string& archive_type )
-{
-  if( d_simulation_manager )
-  {
-    FRENSIE_LOG_TAGGED_WARNING( "ParticleSimulationManagerFactory",
-                                "Renaming a simulation after the manager has "
-                                "been created is not allowed!" );
-  }
-  else
-  {
-    if( name.size() > 0 )
-      d_simulation_name = name;
-  
-    if( archive_type.size() > 0 )
-      d_archive_type = archive_type;
-  }
-}
-
-// Change the simulation archive type
-void ParticleSimulationManagerFactory::changeSimulationArchiveType(
-                                              const std::string& archive_type )
-{
-  if( d_simulation_manager )
-  {
-    FRENSIE_LOG_TAGGED_WARNING( "ParticleSimulationManagerFactory",
-                                "Changing the simulation archive type after "
-                                "the manager has been created is not "
-                                "allowed!" ); 
-  }
-  else
-  {
-    if( archive_type.size() > 0 )
-      d_archive_type = archive_type;
-  }
-}
-
 namespace Details{
 
 //! The create model helper struct

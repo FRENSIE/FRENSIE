@@ -57,11 +57,11 @@ IF(${FRENSIE_ENABLE_OPENMP})
 ENDIF()
 
 IF(${FRENSIE_ENABLE_MPI})
-  FRENSIE_ADD_TEST(DistributedParallelEventHandler
+  FRENSIE_ADD_TEST(DistributedParallelEventHandler_2
     TEST_EXEC_NAME_ROOT EventHandler
     EXTRA_ARGS --test_filter=update_distributed
     MPI_PROCS 2)
-  FRENSIE_ADD_TEST(DistributedParallelEventHandler
+  FRENSIE_ADD_TEST(DistributedParallelEventHandler_4
     TEST_EXEC_NAME_ROOT EventHandler
     EXTRA_ARGS --test_filter=update_distributed
     MPI_PROCS 4)

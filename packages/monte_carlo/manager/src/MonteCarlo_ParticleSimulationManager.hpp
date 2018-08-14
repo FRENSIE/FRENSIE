@@ -62,6 +62,18 @@ public:
   //! Return the event handler
   EventHandler& getEventHandler();
 
+  //! Get the simulation name
+  const std::string& getSimulationName() const;
+
+  //! Set the simulation name
+  void setSimulationName( const std::string& new_name );
+
+  //! Get the simulation archive type
+  const std::string& getSimulationArchiveType() const;
+
+  //! Set the simulation archive type
+  void setSimulationArchiveType( const std::string& archive_type );
+
   //! Run the simulation set up by the user
   virtual void runSimulation();
 

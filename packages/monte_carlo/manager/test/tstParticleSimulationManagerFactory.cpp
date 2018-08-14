@@ -12,6 +12,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSimulationManagerFactory.hpp"
+#include "MonteCarlo_StandardParticleSimulationManager.hpp"
+#include "MonteCarlo_BatchedDistributedStandardParticleSimulationManager.hpp"
 #include "MonteCarlo_StandardParticleSource.hpp"
 #include "MonteCarlo_StandardParticleSourceComponent.hpp"
 #include "MonteCarlo_StandardParticleDistribution.hpp"
@@ -49,6 +51,8 @@ std::shared_ptr<const MonteCarlo::ParticleDistribution> particle_distribution;
 
 std::shared_ptr<const MonteCarlo::WeightWindow> weight_windows;
 std::shared_ptr<const MonteCarlo::CollisionForcer> collision_forcer;
+
+int threads;
 
 //---------------------------------------------------------------------------//
 // Check that a particle simulation manager factory can be constructed
@@ -91,8 +95,57 @@ FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory, constructor_neutron_mode )
                                                               source,
                                                               event_handler,
                                                               properties ) ) );
+
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
   
-  
+  FRENSIE_REQUIRE_NO_THROW( manager = factory->getManager() );
+
+  if( Utility::GlobalMPISession::size() == 1 )
+  {
+    std::shared_ptr<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::NEUTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::NEUTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+  else
+  {
+    std::shared_ptr<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::NEUTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::NEUTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "simulation" );
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "xml" );
+  FRENSIE_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), 1 );
+
+  FRENSIE_REQUIRE_NO_THROW( factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties,
+                                                              "test_sim",
+                                                              "h5fa",
+                                                              threads ) ) );
+
+  FRENSIE_REQUIRE_NO_THROW( manager = factory->getManager() );
+
+  if( Utility::GlobalMPISession::size() == 1 )
+  {
+    std::shared_ptr<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::NEUTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::NEUTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+  else
+  {
+    std::shared_ptr<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::NEUTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::NEUTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "test_sim" );
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "h5fa" );
+  FRENSIE_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), threads );
+
+  Utility::OpenMPProperties::setNumberOfThreads( 1 );
 }
 
 //---------------------------------------------------------------------------//
@@ -173,7 +226,6 @@ FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory,
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 std::string test_scattering_center_database_name;
-int threads;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
@@ -203,6 +255,10 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     const Data::NuclideProperties& h1_properties =
       database.getNuclideProperties( 1001 );
+
+    // Set the sattering center definitions
+    scattering_center_definition_database.reset(
+                          new MonteCarlo::ScatteringCenterDefinitionDatabase );
 
     MonteCarlo::ScatteringCenterDefinition& h_definition =
       scattering_center_definition_database->createDefinition( "H1 @ 293.6K", 1001 );
@@ -241,8 +297,8 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
             new Geometry::InfiniteMediumModel( 1, 1, -1.0/cubic_centimeter ) );
 
   {
-    std::shared_ptr<MonteCarlo::ParticleDistribution>
-      tmp_particle_distribution( new MonteCarlo::StandardParticleDistribution() );
+    std::shared_ptr<MonteCarlo::StandardParticleDistribution>
+      tmp_particle_distribution( new MonteCarlo::StandardParticleDistribution( "test dist" ) );
     tmp_particle_distribution->constructDimensionDistributionDependencyTree();
     
     particle_distribution = tmp_particle_distribution;
