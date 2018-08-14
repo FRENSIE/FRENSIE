@@ -92,8 +92,6 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
                       "The archive type cannot be empty!" );
   
   Utility::OpenMPProperties::setNumberOfThreads( threads );
-
-  
 }
 
 // Restart constructor

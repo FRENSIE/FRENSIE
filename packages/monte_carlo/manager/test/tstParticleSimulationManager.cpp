@@ -667,10 +667,66 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, getEventHandler )
 }
 
 //---------------------------------------------------------------------------//
+// Check that a simulation can be run
+FRENSIE_UNIT_TEST( ParticleSimulationManager, runSimulation )
+{
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
+
+  {
+    std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+    properties->setParticleMode( MonteCarlo::PHOTON_MODE );
+    properties->setNumberOfHistories( 5 );
+
+    std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        data_directory,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+  
+    std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+    {
+      std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+        source_component( new MonteCarlo::StandardPhotonSourceComponent(
+                                                     0,
+                                                     1.0,
+                                                     unfilled_model,
+                                                     particle_distribution ) );
+
+      source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+    }
+  
+    std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
+
+    std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+    factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties,
+                                                              "test_sim",
+                                                              "xml",
+                                                              threads ) );
+  
+    manager = factory->getManager();
+  }
+
+  FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
+
+  FRENSIE_CHECK_EQUAL( manager->getNextHistory(), 5 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a particle simulation can be archived
 FRENSIE_UNIT_TEST( ParticleSimulationManager, restart_basic )
 {
-
+  
 }
 
 //---------------------------------------------------------------------------//

@@ -28,7 +28,7 @@ struct ParticleSimulationManagerFactoryCreateHelper;
 } // end Details namespace
 
 //! The particle simulation manager factory class
-class ParticleSimulationManagerFactory : private Utility::ArchivableObject<ParticleSimulationManagerFactory>
+class ParticleSimulationManagerFactory : public Utility::ArchivableObject<ParticleSimulationManagerFactory>
 {
 
 public:
