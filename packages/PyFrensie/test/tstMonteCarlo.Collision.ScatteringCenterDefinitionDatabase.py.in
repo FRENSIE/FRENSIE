@@ -43,9 +43,9 @@ class ScatteringCenterDefinitionDatabaseTestCase(unittest.TestCase):
         self.assertTrue(  database.doesDefinitionExist( "H1 @ 293.1K" ) )
 
         with self.assertRaises(RuntimeError):
-            database.createDefinition( "H" )
+            database.createDefinition( "H", Data.ZAID(1000) )
         with self.assertRaises(RuntimeError):
-            database.createDefinition( "H1 @ 293.1K" )
+            database.createDefinition( "H1 @ 293.1K", Data.ZAID(1001) )
 
     def testCreateDefinitionAlias(self):
         "*Test MonteCarlo.Collision.ScatteringCenterDefinitionDatabase createDefinitionAlias"
