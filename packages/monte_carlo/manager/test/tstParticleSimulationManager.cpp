@@ -851,13 +851,13 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_basic )
 
   FRENSIE_REQUIRE_NO_THROW( factory.reset( new MonteCarlo::ParticleSimulationManagerFactory( archive_name ) ) );
 
-  // std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
-  //   factory.getManager();
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
+    factory->getManager();
 
-  // FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
+  FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
 
-  // FRENSIE_CHECK( manager->getNextHistory() > next_history );
-  // FRENSIE_CHECK( manager->getNumberOfRendezvous() > rendezvous_number );
+  FRENSIE_CHECK( manager->getNextHistory() > next_history );
+  FRENSIE_CHECK( manager->getNumberOfRendezvous() > rendezvous_number );
 }
 
 FRENSIE_DATA_UNIT_TEST_INST( ParticleSimulationManager, restart_basic )
