@@ -92,15 +92,6 @@ public:
   //! Return the angle cosine cutoff value for surface flux estimators
   double getSurfaceFluxEstimatorAngleCosineCutoff() const;
 
-  //! Turn on warnings (on by default)
-  void setWarningsOn();
-
-  //! Turn off warnings (on by default)
-  void setWarningsOff();
-
-  //! Return if warnings should be printed
-  bool displayWarnings() const;
-
   //! Set implicit capture mode to on (off by default)
   void setImplicitCaptureModeOn();
 
@@ -152,9 +143,6 @@ private:
   // The angle cosine cutoff value for surface flux estimators
   double d_surface_flux_estimator_angle_cosine_cutoff;
 
-  // The warning message flag
-  bool d_display_warnings;
-
   // The capture mode (true = implicit, false = analogue - default)
   bool d_implicit_capture_mode_on;
 };
@@ -190,7 +178,6 @@ void SimulationGeneralProperties::save( Archive& ar, const unsigned version ) co
   }
 
   ar & BOOST_SERIALIZATION_NVP( d_surface_flux_estimator_angle_cosine_cutoff );
-  ar & BOOST_SERIALIZATION_NVP( d_display_warnings );
   ar & BOOST_SERIALIZATION_NVP( d_implicit_capture_mode_on );
 }
 
@@ -215,7 +202,6 @@ void SimulationGeneralProperties::load( Archive& ar, const unsigned version )
     d_wall_time = Utility::QuantityTraits<double>::inf();
 
   ar & BOOST_SERIALIZATION_NVP( d_surface_flux_estimator_angle_cosine_cutoff );
-  ar & BOOST_SERIALIZATION_NVP( d_display_warnings );
   ar & BOOST_SERIALIZATION_NVP( d_implicit_capture_mode_on );
 }
 

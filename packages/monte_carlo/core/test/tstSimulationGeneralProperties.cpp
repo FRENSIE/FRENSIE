@@ -41,7 +41,6 @@ FRENSIE_UNIT_TEST( SimulationGeneralProperties, defaults )
   FRENSIE_CHECK_EQUAL( properties.getNumberOfBatchesPerProcessor(), 1 );
   FRENSIE_CHECK_EQUAL( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
                        0.001 );
-  FRENSIE_CHECK( properties.displayWarnings() );
   FRENSIE_CHECK( !properties.isImplicitCaptureModeOn() );
 }
 
@@ -183,21 +182,6 @@ FRENSIE_UNIT_TEST( SimulationGeneralProperties,
 }
 
 //---------------------------------------------------------------------------//
-// Test that warnings can be disabled/enabled
-FRENSIE_UNIT_TEST( SimulationGeneralProperties, setWarningsOnOff )
-{
-  MonteCarlo::SimulationGeneralProperties properties;
-  
-  properties.setWarningsOff();
-
-  FRENSIE_CHECK( !properties.displayWarnings() );
-
-  properties.setWarningsOn();
-
-  FRENSIE_CHECK( properties.displayWarnings() );
-}
-
-//---------------------------------------------------------------------------//
 // Test that implicit capture mode can be turned on/off
 FRENSIE_UNIT_TEST( SimulationGeneralProperties, setImplicitCaptureModeOnOff )
 {
@@ -244,7 +228,6 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationGeneralProperties,
     custom_properties.setMaxBatchSize( 100000000 );
     custom_properties.setNumberOfBatchesPerProcessor( 25 );
     custom_properties.setSurfaceFluxEstimatorAngleCosineCutoff( 0.1 );
-    custom_properties.setWarningsOff();
     custom_properties.setImplicitCaptureModeOn();
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( default_properties ) );
@@ -277,7 +260,6 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationGeneralProperties,
   FRENSIE_CHECK_EQUAL( default_properties.getNumberOfBatchesPerProcessor(), 1 );
   FRENSIE_CHECK_EQUAL( default_properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
                        0.001 );
-  FRENSIE_CHECK( default_properties.displayWarnings() );
   FRENSIE_CHECK( !default_properties.isImplicitCaptureModeOn() );
 
   MonteCarlo::SimulationGeneralProperties custom_properties;
@@ -297,7 +279,6 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationGeneralProperties,
   FRENSIE_CHECK_EQUAL( custom_properties.getNumberOfBatchesPerProcessor(), 25 );
   FRENSIE_CHECK_EQUAL( custom_properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
                        0.1 );
-  FRENSIE_CHECK( !custom_properties.displayWarnings() );
   FRENSIE_CHECK( custom_properties.isImplicitCaptureModeOn() );
 }
 
