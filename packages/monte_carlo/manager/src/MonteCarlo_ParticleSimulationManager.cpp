@@ -288,7 +288,7 @@ void ParticleSimulationManager::rendezvous()
                  d_event_handler,
                  d_weight_windows,
                  d_collision_forcer,
-                 std::const_pointer_cast<SimulationProperties>(d_properties),
+                 d_properties,
                  d_simulation_name,
                  d_archive_type,
                  d_next_history,

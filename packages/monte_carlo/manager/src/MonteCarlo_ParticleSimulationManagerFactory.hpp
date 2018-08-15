@@ -38,7 +38,7 @@ public:
                const std::shared_ptr<const FilledGeometryModel>& model,
                const std::shared_ptr<ParticleSource>& source,
                const std::shared_ptr<EventHandler>& event_handler,
-               const std::shared_ptr<SimulationProperties>& properties,
+               const std::shared_ptr<const SimulationProperties>& properties,
                const std::string& simulation_name = "simulation",
                const std::string& archive_type = "xml",
                const unsigned threads = 1 );
@@ -85,7 +85,7 @@ private:
                 const std::shared_ptr<EventHandler>& event_handler,
                 const std::shared_ptr<const WeightWindow>& weight_windows,
                 const std::shared_ptr<const CollisionForcer>& collision_forcer,
-                const std::shared_ptr<SimulationProperties>& properties,
+                const std::shared_ptr<const SimulationProperties>& properties,
                 const std::string& simulation_name,
                 const std::string& archive_type,
                 const uint64_t next_history,
@@ -132,7 +132,7 @@ private:
   std::shared_ptr<const CollisionForcer> d_collision_forcer;
 
   // The simulation properties
-  std::shared_ptr<SimulationProperties> d_properties;
+  std::shared_ptr<const SimulationProperties> d_properties;
 
   // The next history to run
   uint64_t d_next_history;
@@ -152,6 +152,7 @@ template<typename Archive>
 void ParticleSimulationManagerFactory::serialize( Archive& ar, const unsigned version )
 {
   ar & BOOST_SERIALIZATION_NVP( d_simulation_name );
+  ar & BOOST_SERIALIZATION_NVP( d_archive_type );
   ar & BOOST_SERIALIZATION_NVP( d_model );
   ar & BOOST_SERIALIZATION_NVP( d_source );
   ar & BOOST_SERIALIZATION_NVP( d_event_handler );

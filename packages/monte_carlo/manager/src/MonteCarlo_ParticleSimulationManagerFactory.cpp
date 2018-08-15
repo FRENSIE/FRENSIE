@@ -29,7 +29,7 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
                 const std::shared_ptr<EventHandler>& event_handler,
                 const std::shared_ptr<const WeightWindow>& weight_windows,
                 const std::shared_ptr<const CollisionForcer>& collision_forcer,
-                const std::shared_ptr<SimulationProperties>& properties,
+                const std::shared_ptr<const SimulationProperties>& properties,
                 const std::string& simulation_name,
                 const std::string& archive_type,
                 const uint64_t next_history,
@@ -60,7 +60,7 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
                const std::shared_ptr<const FilledGeometryModel>& model,
                const std::shared_ptr<ParticleSource>& source,
                const std::shared_ptr<EventHandler>& event_handler,
-               const std::shared_ptr<SimulationProperties>& properties,
+               const std::shared_ptr<const SimulationProperties>& properties,
                const std::string& simulation_name,
                const std::string& archive_type,
                const unsigned threads )
@@ -114,7 +114,7 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
   this->loadFromFile( archived_manager_name );
 
   // Update the properties
-  d_properties->setNumberOfHistories( number_of_additional_histories );
+  const_cast<SimulationProperties&>( *d_properties ).setNumberOfHistories( number_of_additional_histories );
   Utility::OpenMPProperties::setNumberOfThreads( threads );
 
   // Update the completion criterion
@@ -130,7 +130,7 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
   this->loadFromFile( archived_manager_name );
 
   // Update the properties
-  d_properties->setSimulationWallTime( wall_time );
+  const_cast<SimulationProperties&>( *d_properties ).setSimulationWallTime( wall_time );
   Utility::OpenMPProperties::setNumberOfThreads( threads );
 
   // Update the completion criterion
@@ -147,8 +147,8 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
   this->loadFromFile( archived_manager_name );
 
   // Update the properties
-  d_properties->setNumberOfHistories( number_of_additional_histories );
-  d_properties->setSimulationWallTime( wall_time );
+  const_cast<SimulationProperties&>( *d_properties ).setNumberOfHistories( number_of_additional_histories );
+  const_cast<SimulationProperties&>( *d_properties ).setSimulationWallTime( wall_time );
   Utility::OpenMPProperties::setNumberOfThreads( threads );
 
   // Update the completion criterion
