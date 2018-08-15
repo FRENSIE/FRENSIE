@@ -46,10 +46,16 @@ void InfiniteMediumModel::getMaterialIds( MaterialIdSet& material_ids ) const
 
 // Get the cells
 void InfiniteMediumModel::getCells( CellIdSet& cell_set,
-                                    const bool,
+                                    const bool include_void_cells,
                                     const bool ) const
 {
-  cell_set.insert( d_cell );
+  if( d_density == 0.0*Model::DensityUnit() )
+  {
+    if( include_void_cells )
+      cell_set.insert( d_cell );
+  }
+  else
+    cell_set.insert( d_cell );
 }
 
 // Get the cell material ids
@@ -90,7 +96,13 @@ bool InfiniteMediumModel::isTerminationCell( const EntityId ) const
 // Check if a cell is void
 bool InfiniteMediumModel::isVoidCell( const EntityId cell ) const
 {
-  false;
+  if( cell == d_cell )
+  {
+    if( d_density == 0.0*Model::DensityUnit() )
+      return true;
+    else
+      return false;
+  }
 }
 
 // Get the cell volume

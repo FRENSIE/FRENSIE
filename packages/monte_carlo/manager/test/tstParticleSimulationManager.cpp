@@ -783,7 +783,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, runSimulation_wall_time )
 }
 
 //---------------------------------------------------------------------------//
-// Check that a particle simulation can be archived
+// Check that a particle simulation can be restarted
 FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_basic )
 {
   FETCH_FROM_TABLE( std::string, archive_type );
@@ -872,21 +872,21 @@ FRENSIE_DATA_UNIT_TEST_INST( ParticleSimulationManager, restart_basic )
 }
 
 // //---------------------------------------------------------------------------//
-// // Check that a particle simulation manager can be archived
+// // Check that a particle simulation manager can be restarted
 // FRENSIE_UNIT_TEST( ParticleSimulationManager, restart_add_histories )
 // {
 
 // }
 
 // //---------------------------------------------------------------------------//
-// // Check that a particle simulation manager can be archived
+// // Check that a particle simulation manager can be restarted
 // FRENSIE_UNIT_TEST( ParticleSimulationManager, restart_new_wall_time )
 // {
 
 // }
 
 // //---------------------------------------------------------------------------//
-// // Check that a particle simulation manager can be archived
+// // Check that a particle simulation manager can be restarted
 // FRENSIE_UNIT_TEST( ParticleSimulationManager,
 //                    restart_add_histories_new_wall_time )
 // {
