@@ -23,6 +23,7 @@
 #include "Utility_GlobalMPISession.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
 #include "ArchiveTestHelpers.hpp"
+#include "FRENSIE_config.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Types
@@ -783,8 +784,11 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, runSimulation_wall_time )
 
 //---------------------------------------------------------------------------//
 // Check that a particle simulation can be archived
-FRENSIE_UNIT_TEST( ParticleSimulationManager, restart_basic )
+FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_basic )
 {
+  FETCH_FROM_TABLE( std::string, archive_type );
+  FETCH_FROM_TABLE( uint32_t, source_id );
+  
   uint64_t next_history;
   uint64_t rendezvous_number;
   
@@ -809,7 +813,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, restart_basic )
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
         source_component( new MonteCarlo::StandardPhotonSourceComponent(
-                                                     0,
+                                                     source_id,
                                                      1.0,
                                                      unfilled_model,
                                                      particle_distribution ) );
@@ -820,15 +824,13 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, restart_basic )
     std::shared_ptr<MonteCarlo::EventHandler> event_handler(
                                  new MonteCarlo::EventHandler( *properties ) );
 
-    std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
-
-    factory.reset(
+    std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory(
             new MonteCarlo::ParticleSimulationManagerFactory( model,
                                                               source,
                                                               event_handler,
                                                               properties,
                                                               "test_sim",
-                                                              "txt",
+                                                              archive_type,
                                                               threads ) );
   
     std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
@@ -842,9 +844,12 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, restart_basic )
 
   std::string archive_name( "test_sim_rendezvous_" );
   archive_name += Utility::toString( rendezvous_number - 1 );
-  archive_name += ".txt";
+  archive_name += ".";
+  archive_name += archive_type;
 
-  MonteCarlo::ParticleSimulationManagerFactory factory( archive_name );
+  std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+  FRENSIE_REQUIRE_NO_THROW( factory.reset( new MonteCarlo::ParticleSimulationManagerFactory( archive_name ) ) );
 
   // std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
   //   factory.getManager();
@@ -855,27 +860,38 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, restart_basic )
   // FRENSIE_CHECK( manager->getNumberOfRendezvous() > rendezvous_number );
 }
 
-//---------------------------------------------------------------------------//
-// Check that a particle simulation manager can be archived
-FRENSIE_UNIT_TEST( ParticleSimulationManager, restart_add_histories )
+FRENSIE_DATA_UNIT_TEST_INST( ParticleSimulationManager, restart_basic )
 {
-
+  COLUMNS()         << "archive_type" << "source_id" ;
+  NEW_ROW( "xml" )  <<    "xml"       <<    0;
+  NEW_ROW( "txt" )  <<    "txt"       <<    1;
+  NEW_ROW( "bin" )  <<    "bin"       <<    2;
+#ifdef HAVE_FRENSIE_HDF5
+  NEW_ROW( "h5fa" ) <<    "h5fa"      <<    3;
+#endif
 }
 
-//---------------------------------------------------------------------------//
-// Check that a particle simulation manager can be archived
-FRENSIE_UNIT_TEST( ParticleSimulationManager, restart_new_wall_time )
-{
+// //---------------------------------------------------------------------------//
+// // Check that a particle simulation manager can be archived
+// FRENSIE_UNIT_TEST( ParticleSimulationManager, restart_add_histories )
+// {
 
-}
+// }
 
-//---------------------------------------------------------------------------//
-// Check that a particle simulation manager can be archived
-FRENSIE_UNIT_TEST( ParticleSimulationManager,
-                   restart_add_histories_new_wall_time )
-{
+// //---------------------------------------------------------------------------//
+// // Check that a particle simulation manager can be archived
+// FRENSIE_UNIT_TEST( ParticleSimulationManager, restart_new_wall_time )
+// {
 
-}
+// }
+
+// //---------------------------------------------------------------------------//
+// // Check that a particle simulation manager can be archived
+// FRENSIE_UNIT_TEST( ParticleSimulationManager,
+//                    restart_add_histories_new_wall_time )
+// {
+
+// }
 
 //---------------------------------------------------------------------------//
 // Custom setup
@@ -956,7 +972,6 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   {
     std::shared_ptr<MonteCarlo::StandardParticleDistribution>
       tmp_particle_distribution( new MonteCarlo::StandardParticleDistribution( "test dist" ) );
-    tmp_particle_distribution->constructDimensionDistributionDependencyTree();
     
     particle_distribution = tmp_particle_distribution;
   }                              
