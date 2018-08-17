@@ -62,17 +62,21 @@ public:
   //! Return the event handler
   EventHandler& getEventHandler();
 
+  //! Set the simulation name
+  void setSimulationName( const std::string& new_name );
+  
   //! Get the simulation name
   const std::string& getSimulationName() const;
 
-  //! Set the simulation name
-  void setSimulationName( const std::string& new_name );
-
+  //! Set the simulation archive type
+  void setSimulationArchiveType( const std::string& archive_type );
+  
   //! Get the simulation archive type
   const std::string& getSimulationArchiveType() const;
 
-  //! Set the simulation archive type
-  void setSimulationArchiveType( const std::string& archive_type );
+  //! Set the simulation name and archive type
+  void setSimulationNameAndArchiveType( const std::string& new_name,
+                                        const std::string& archive_type );
 
   //! Run the simulation set up by the user
   virtual void runSimulation();
@@ -182,6 +186,9 @@ private:
                                   const double op_to_collision_site,
                                   const double cell_total_macro_cross_section,
                                   const double track_start_position[3] );
+
+  // Conduct a basic rendezvous
+  void basicRendezvous() const;
 
   // The simulation name
   std::string d_simulation_name;

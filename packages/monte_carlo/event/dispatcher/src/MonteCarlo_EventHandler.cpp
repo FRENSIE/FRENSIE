@@ -356,27 +356,21 @@ void EventHandler::setSimulationCompletionCriterion(
   if( criterion )
   {
     d_simulation_completion_criterion = criterion;
-    
-    d_particle_history_observers.front() = criterion;
+
+    this->updateSimulationCompletionCriterionObserver( d_simulation_completion_criterion );
   }
 }
 
 // Set a simulation completion criterion
 void EventHandler::setSimulationCompletionCriterion( const uint64_t number_of_histories )
 {
-  d_simulation_completion_criterion =
-    ParticleHistorySimulationCompletionCriterion::createHistoryCountCriterion( number_of_histories );
-
-  d_particle_history_observers.front() = d_simulation_completion_criterion;
+  this->setSimulationCompletionCriterion( ParticleHistorySimulationCompletionCriterion::createHistoryCountCriterion( number_of_histories ) );
 }
 
 // Set a simulation completion criterion
 void EventHandler::setSimulationCompletionCriterion( const double wall_time )
 {
-  d_simulation_completion_criterion =
-    ParticleHistorySimulationCompletionCriterion::createWallTimeCriterion( wall_time );
-
-  d_particle_history_observers.front() = d_simulation_completion_criterion;
+  this->setSimulationCompletionCriterion( ParticleHistorySimulationCompletionCriterion::createWallTimeCriterion( wall_time ) );
 }
 
 // Set a simulation completion criterion
@@ -384,10 +378,23 @@ void EventHandler::setSimulationCompletionCriterion(
                                             const uint64_t number_of_histories,
                                             const double wall_time )
 {
-  d_simulation_completion_criterion =
-    ParticleHistorySimulationCompletionCriterion::createMixedCriterion( number_of_histories, wall_time );
+  this->setSimulationCompletionCriterion( ParticleHistorySimulationCompletionCriterion::createMixedCriterion( number_of_histories, wall_time ) );
+}
 
-  d_particle_history_observers.front() = d_simulation_completion_criterion;
+// Set a simulation completion criterion
+void EventHandler::setSimulationCompletionCriterion(
+                    const MonteCarlo::SimulationGeneralProperties& properties )
+{
+  this->setSimulationCompletionCriterion( this->createDefaultCompletionCriterion( properties ) );
+}
+
+// Update the simulation completion criterion observer
+void EventHandler::updateSimulationCompletionCriterionObserver( const std::shared_ptr<ParticleHistorySimulationCompletionCriterion>& observer )
+{
+  // Make sure that the observer is valid
+  testPrecondition( observer.get() );
+  
+  d_particle_history_observers.front() = observer;
 }
 
 // Check if the simulation is complete

@@ -150,10 +150,14 @@ const std::string& ParticleSimulationManager::getSimulationName() const
 }
 
 // Set the simulation name
+/*! \details A simulation archive will be generated with the the new name.
+ */
 void ParticleSimulationManager::setSimulationName( const std::string& new_name )
 {
   if( new_name.size() > 0 )
     d_simulation_name = new_name;
+
+  this->basicRendezvous();
 }
 
 // Get the simulation archive type
@@ -163,12 +167,32 @@ const std::string& ParticleSimulationManager::getSimulationArchiveType() const
 }
 
 // Set the simulation archive type
-/*! \details Acceptable values are "xml", "txt", "bin", "h5fa".
+/*! \details Acceptable values are "xml", "txt", "bin", "h5fa". A simulation 
+ * archive of the new type will be generated.
  */
 void ParticleSimulationManager::setSimulationArchiveType( const std::string& archive_type )
 {
   if( archive_type.size() > 0 )
     d_archive_type = archive_type;
+
+  this->basicRendezvous();
+}
+
+// Set the simulation name and archive type
+/*! \details Acceptable values for the archive type are "xml", "txt", "bin", 
+ * "h5fa". A simulation archive with the new name and type will be generated.
+ */
+void ParticleSimulationManager::setSimulationNameAndArchiveType(
+                                              const std::string& new_name,
+                                              const std::string& archive_type )
+{
+  if( new_name.size() > 0 )
+    d_simulation_name = new_name;
+  
+  if( archive_type.size() > 0 )
+    d_archive_type = archive_type;
+
+  this->basicRendezvous();
 }
 
 // Run the simulation set up by the user
@@ -276,6 +300,14 @@ bool ParticleSimulationManager::isSimulationComplete()
 // Rendezvous (cache state)
 void ParticleSimulationManager::rendezvous()
 {
+  this->basicRendezvous();
+
+  ++d_rendezvous_number;
+}
+
+// Conduct a basic rendezvous
+void ParticleSimulationManager::basicRendezvous() const
+{
   std::string archive_name( d_simulation_name );
   archive_name += "_rendezvous_";
   archive_name += Utility::toString( d_rendezvous_number );
@@ -295,8 +327,6 @@ void ParticleSimulationManager::rendezvous()
                  d_rendezvous_number+1 );
 
   tmp_factory.saveToFile( archive_name, true );
-
-  ++d_rendezvous_number;
 }
 
 // Print the simulation data to the desired stream

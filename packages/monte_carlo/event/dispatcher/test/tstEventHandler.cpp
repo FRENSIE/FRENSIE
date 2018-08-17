@@ -110,7 +110,8 @@ FRENSIE_UNIT_TEST( EventHandler, setSimulationCompletionCriterion )
 
 //---------------------------------------------------------------------------//
 // Check that the simulation completion criterion can be set
-FRENSIE_UNIT_TEST( EventHandler, setSimulationCompletionCriterion_props )
+FRENSIE_UNIT_TEST( EventHandler,
+                   setSimulationCompletionCriterion_constructor_props )
 {
   // Set a history wall
   MonteCarlo::SimulationGeneralProperties properties;
@@ -155,6 +156,66 @@ FRENSIE_UNIT_TEST( EventHandler, setSimulationCompletionCriterion_props )
   properties.setSimulationWallTime( 1.0 );
 
   event_handler.reset( new MonteCarlo::EventHandler( properties ) );
+  
+  FRENSIE_CHECK( !event_handler->isSimulationComplete() );
+
+  event_handler->updateObserversFromParticleSimulationStartedEvent();
+
+  for( size_t i = 0; i <= 10; ++i )
+    event_handler->commitObserverHistoryContributions();
+
+  FRENSIE_CHECK( event_handler->isSimulationComplete() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the simulation completion criterion can be set
+FRENSIE_UNIT_TEST( EventHandler, setSimulationCompletionCriterion_props )
+{
+  // Set a history wall
+  MonteCarlo::SimulationGeneralProperties properties;
+  properties.setNumberOfHistories( 10 );
+  
+  std::unique_ptr<MonteCarlo::EventHandler>
+    event_handler( new MonteCarlo::EventHandler );
+  
+  event_handler->setSimulationCompletionCriterion( properties );
+
+  event_handler->updateObserversFromParticleSimulationStartedEvent();
+
+  FRENSIE_CHECK( !event_handler->isSimulationComplete() );
+  
+  for( size_t i = 0; i <= 10; ++i )
+    event_handler->commitObserverHistoryContributions();
+
+  FRENSIE_CHECK( event_handler->isSimulationComplete() );
+
+  // Set a time wall
+  properties.setNumberOfHistories( 0 );
+  properties.setSimulationWallTime( 0.02 );
+
+  event_handler->setSimulationCompletionCriterion( properties );
+  
+  FRENSIE_CHECK( !event_handler->isSimulationComplete() );
+
+  event_handler->updateObserversFromParticleSimulationStartedEvent();
+
+  std::shared_ptr<Utility::Timer> timer =
+    Utility::GlobalMPISession::createTimer();
+
+  timer->start();
+  
+  while( timer->elapsed().count() < 0.02 );
+
+  timer->stop();
+  timer.reset();
+
+  FRENSIE_CHECK( event_handler->isSimulationComplete() );
+
+  // Set a mixed criterion
+  properties.setNumberOfHistories( 10 );
+  properties.setSimulationWallTime( 1.0 );
+
+  event_handler->setSimulationCompletionCriterion( properties );
   
   FRENSIE_CHECK( !event_handler->isSimulationComplete() );
 

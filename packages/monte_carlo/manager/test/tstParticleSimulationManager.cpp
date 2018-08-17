@@ -10,6 +10,9 @@
 #include <iostream>
 #include <memory>
 
+// Boost Includes
+#include <boost/filesystem.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSimulationManagerFactory.hpp"
 #include "MonteCarlo_StandardParticleSimulationManager.hpp"
@@ -388,7 +391,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
 
 //---------------------------------------------------------------------------//
 // Check that a particle simulation manager can rename the simulation
-FRENSIE_UNIT_TEST( ParticleSimulationManager, renameSimulation )
+FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationName )
 {
   std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
 
@@ -442,12 +445,13 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, renameSimulation )
   manager->setSimulationName( "test_sim_2" );
 
   FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "test_sim_2" );
+  FRENSIE_CHECK( boost::filesystem::exists( "test_sim_2_rendezvous_0.xml" ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a particle simulation manager can change the archive
 // type
-FRENSIE_UNIT_TEST( ParticleSimulationManager, changeSimulationArchiveType )
+FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationArchiveType )
 {
   std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
 
@@ -501,6 +505,68 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, changeSimulationArchiveType )
   manager->setSimulationArchiveType( "txt" );
 
   FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "txt" );
+  FRENSIE_CHECK( boost::filesystem::exists( "test_sim_rendezvous_0.txt" ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the simulation name and archive can be changed simultaneously
+FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationNameAndArchiveType )
+{
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
+
+  {
+    std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+    properties->setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE );
+    properties->setNumberOfHistories( 5 );
+
+    std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        data_directory,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+  
+    std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+    {
+      std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+        source_component( new MonteCarlo::StandardNeutronSourceComponent(
+                                                     0,
+                                                     1.0,
+                                                     unfilled_model,
+                                                     particle_distribution ) );
+
+      source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+    }
+  
+    std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
+
+    std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+    factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties,
+                                                              "test_sim",
+                                                              "xml",
+                                                              threads ) );
+  
+    manager = factory->getManager();
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "test_sim" );
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "xml" );
+
+  manager->setSimulationNameAndArchiveType( "test_sim_2", "txt" );
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "test_sim_2" );
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "txt" );
+  FRENSIE_CHECK( boost::filesystem::exists( "test_sim_2_rendezvous_0.txt" ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -849,7 +915,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_basic )
 
   std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
 
-  FRENSIE_REQUIRE_NO_THROW( factory.reset( new MonteCarlo::ParticleSimulationManagerFactory( archive_name ) ) );
+  FRENSIE_REQUIRE_NO_THROW( factory.reset( new MonteCarlo::ParticleSimulationManagerFactory( archive_name, (unsigned)threads ) ) );
 
   std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
     factory->getManager();
@@ -871,27 +937,374 @@ FRENSIE_DATA_UNIT_TEST_INST( ParticleSimulationManager, restart_basic )
 #endif
 }
 
-// //---------------------------------------------------------------------------//
-// // Check that a particle simulation manager can be restarted
-// FRENSIE_UNIT_TEST( ParticleSimulationManager, restart_add_histories )
-// {
+//---------------------------------------------------------------------------//
+// Check that a particle simulation manager can be restarted
+FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_add_histories )
+{
+  FETCH_FROM_TABLE( std::string, archive_type );
+  FETCH_FROM_TABLE( uint32_t, source_id );
+  
+  uint64_t next_history;
+  uint64_t rendezvous_number;
+  
+  {
+    std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+    properties->setParticleMode( MonteCarlo::PHOTON_MODE );
+    properties->setSimulationWallTime( 0.25 );
+    properties->setMaxRendezvousBatchSize( 10 );
 
-// }
+    std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        data_directory,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+  
+    std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+    {
+      std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+        source_component( new MonteCarlo::StandardPhotonSourceComponent(
+                                                     source_id,
+                                                     1.0,
+                                                     unfilled_model,
+                                                     particle_distribution ) );
 
-// //---------------------------------------------------------------------------//
-// // Check that a particle simulation manager can be restarted
-// FRENSIE_UNIT_TEST( ParticleSimulationManager, restart_new_wall_time )
-// {
+      source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+    }
+  
+    std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
 
-// }
+    std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties,
+                                                              "test_sim",
+                                                              archive_type,
+                                                              threads ) );
+  
+    std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
+      factory->getManager();
 
-// //---------------------------------------------------------------------------//
-// // Check that a particle simulation manager can be restarted
-// FRENSIE_UNIT_TEST( ParticleSimulationManager,
-//                    restart_add_histories_new_wall_time )
-// {
+    FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
 
-// }
+    next_history = manager->getNextHistory();
+    rendezvous_number = manager->getNumberOfRendezvous();
+  }
+
+  std::string archive_name( "test_sim_rendezvous_" );
+  archive_name += Utility::toString( rendezvous_number - 1 );
+  archive_name += ".";
+  archive_name += archive_type;
+
+  std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+  FRENSIE_REQUIRE_NO_THROW( factory.reset( new MonteCarlo::ParticleSimulationManagerFactory( archive_name, (uint64_t)5, (unsigned)threads ) ) );
+
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
+    factory->getManager();
+
+  FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
+
+  FRENSIE_CHECK_EQUAL( manager->getNextHistory(), next_history+5 );
+  FRENSIE_CHECK( manager->getNumberOfRendezvous() > rendezvous_number );
+}
+
+FRENSIE_DATA_UNIT_TEST_INST( ParticleSimulationManager, restart_add_histories )
+{
+  COLUMNS()         << "archive_type" << "source_id" ;
+  NEW_ROW( "xml" )  <<    "xml"       <<    0;
+  NEW_ROW( "txt" )  <<    "txt"       <<    1;
+  NEW_ROW( "bin" )  <<    "bin"       <<    2;
+#ifdef HAVE_FRENSIE_HDF5
+  NEW_ROW( "h5fa" ) <<    "h5fa"      <<    3;
+#endif
+}
+
+//---------------------------------------------------------------------------//
+// Check that a particle simulation manager can be restarted
+FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_new_wall_time )
+{
+  FETCH_FROM_TABLE( std::string, archive_type );
+  FETCH_FROM_TABLE( uint32_t, source_id );
+  
+  uint64_t next_history;
+  uint64_t rendezvous_number;
+  
+  {
+    std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+    properties->setParticleMode( MonteCarlo::PHOTON_MODE );
+    properties->setSimulationWallTime( 0.25 );
+    properties->setMaxRendezvousBatchSize( 10 );
+
+    std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        data_directory,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+  
+    std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+    {
+      std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+        source_component( new MonteCarlo::StandardPhotonSourceComponent(
+                                                     source_id,
+                                                     1.0,
+                                                     unfilled_model,
+                                                     particle_distribution ) );
+
+      source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+    }
+  
+    std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
+
+    std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties,
+                                                              "test_sim",
+                                                              archive_type,
+                                                              threads ) );
+  
+    std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
+      factory->getManager();
+
+    FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
+
+    next_history = manager->getNextHistory();
+    rendezvous_number = manager->getNumberOfRendezvous();
+  }
+
+  std::string archive_name( "test_sim_rendezvous_" );
+  archive_name += Utility::toString( rendezvous_number - 1 );
+  archive_name += ".";
+  archive_name += archive_type;
+
+  std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+  FRENSIE_REQUIRE_NO_THROW( factory.reset( new MonteCarlo::ParticleSimulationManagerFactory( archive_name, 0.1, (unsigned)threads ) ) );
+
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
+    factory->getManager();
+
+  FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
+
+  FRENSIE_CHECK( manager->getNextHistory() > next_history );
+  FRENSIE_CHECK( manager->getNumberOfRendezvous() > rendezvous_number );
+}
+
+FRENSIE_DATA_UNIT_TEST_INST( ParticleSimulationManager, restart_new_wall_time )
+{
+  COLUMNS()         << "archive_type" << "source_id" ;
+  NEW_ROW( "xml" )  <<    "xml"       <<    0;
+  NEW_ROW( "txt" )  <<    "txt"       <<    1;
+  NEW_ROW( "bin" )  <<    "bin"       <<    2;
+#ifdef HAVE_FRENSIE_HDF5
+  NEW_ROW( "h5fa" ) <<    "h5fa"      <<    3;
+#endif
+}
+
+//---------------------------------------------------------------------------//
+// Check that a particle simulation manager can be restarted
+FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager,
+                             restart_add_histories_new_wall_time )
+{
+  FETCH_FROM_TABLE( std::string, archive_type );
+  FETCH_FROM_TABLE( uint32_t, source_id );
+  
+  uint64_t next_history;
+  uint64_t rendezvous_number;
+  
+  {
+    std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+    properties->setParticleMode( MonteCarlo::PHOTON_MODE );
+    properties->setSimulationWallTime( 0.25 );
+    properties->setMaxRendezvousBatchSize( 10 );
+
+    std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        data_directory,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+  
+    std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+    {
+      std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+        source_component( new MonteCarlo::StandardPhotonSourceComponent(
+                                                     source_id,
+                                                     1.0,
+                                                     unfilled_model,
+                                                     particle_distribution ) );
+
+      source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+    }
+  
+    std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
+
+    std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties,
+                                                              "test_sim",
+                                                              archive_type,
+                                                              threads ) );
+  
+    std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
+      factory->getManager();
+
+    FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
+
+    next_history = manager->getNextHistory();
+    rendezvous_number = manager->getNumberOfRendezvous();
+  }
+
+  std::string archive_name( "test_sim_rendezvous_" );
+  archive_name += Utility::toString( rendezvous_number - 1 );
+  archive_name += ".";
+  archive_name += archive_type;
+
+  std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+  FRENSIE_REQUIRE_NO_THROW( factory.reset( new MonteCarlo::ParticleSimulationManagerFactory( archive_name, (uint64_t)5, 0.1, (unsigned)threads ) ) );
+
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
+    factory->getManager();
+
+  FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
+
+  FRENSIE_CHECK_EQUAL( manager->getNextHistory(), next_history+5 );
+  FRENSIE_CHECK( manager->getNumberOfRendezvous() > rendezvous_number );
+}
+
+FRENSIE_DATA_UNIT_TEST_INST( ParticleSimulationManager,
+                             restart_add_histories_new_wall_time )
+{
+  COLUMNS()         << "archive_type" << "source_id" ;
+  NEW_ROW( "xml" )  <<    "xml"       <<    0;
+  NEW_ROW( "txt" )  <<    "txt"       <<    1;
+  NEW_ROW( "bin" )  <<    "bin"       <<    2;
+#ifdef HAVE_FRENSIE_HDF5
+  NEW_ROW( "h5fa" ) <<    "h5fa"      <<    3;
+#endif
+}
+
+//---------------------------------------------------------------------------//
+// Check that a particle simulation manager can be restarted
+FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager,
+                             restart_updated_props )
+{
+  FETCH_FROM_TABLE( std::string, archive_type );
+  FETCH_FROM_TABLE( uint32_t, source_id );
+  
+  uint64_t next_history;
+  uint64_t rendezvous_number;
+  
+  {
+    std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+    properties->setParticleMode( MonteCarlo::PHOTON_MODE );
+    properties->setSimulationWallTime( 0.25 );
+    properties->setMaxRendezvousBatchSize( 10 );
+
+    std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        data_directory,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+  
+    std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+    {
+      std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+        source_component( new MonteCarlo::StandardPhotonSourceComponent(
+                                                     source_id,
+                                                     1.0,
+                                                     unfilled_model,
+                                                     particle_distribution ) );
+
+      source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+    }
+  
+    std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
+
+    std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties,
+                                                              "test_sim",
+                                                              archive_type,
+                                                              threads ) );
+  
+    std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
+      factory->getManager();
+
+    FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
+
+    next_history = manager->getNextHistory();
+    rendezvous_number = manager->getNumberOfRendezvous();
+  }
+
+  std::string archive_name( "test_sim_rendezvous_" );
+  archive_name += Utility::toString( rendezvous_number - 1 );
+  archive_name += ".";
+  archive_name += archive_type;
+
+  MonteCarlo::SimulationGeneralProperties updated_properties;
+  updated_properties.setNumberOfHistories( 16 );
+  updated_properties.setMinNumberOfRendezvous( 2 );
+  updated_properties.setMaxRendezvousBatchSize( 100 );
+  updated_properties.setMinNumberOfBatchesPerRendezvous( 2 );
+  updated_properties.setMaxBatchSize( 10 );
+  updated_properties.setSimulationWallTime( 1.0 );
+
+  std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+  FRENSIE_REQUIRE_NO_THROW( factory.reset( new MonteCarlo::ParticleSimulationManagerFactory( archive_name, updated_properties, (unsigned)threads ) ) );
+
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
+    factory->getManager();
+
+  FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
+
+  FRENSIE_CHECK_EQUAL( manager->getNextHistory(), next_history+16 );
+  FRENSIE_CHECK( manager->getNumberOfRendezvous() > rendezvous_number );
+  FRENSIE_CHECK_EQUAL( manager->getRendezvousBatchSize(), 8 );
+  FRENSIE_CHECK_EQUAL( manager->getBatchSize(), 4 );
+}
+
+FRENSIE_DATA_UNIT_TEST_INST( ParticleSimulationManager, restart_updated_props )
+{
+  COLUMNS()         << "archive_type" << "source_id" ;
+  NEW_ROW( "xml" )  <<    "xml"       <<    0;
+  NEW_ROW( "txt" )  <<    "txt"       <<    1;
+  NEW_ROW( "bin" )  <<    "bin"       <<    2;
+#ifdef HAVE_FRENSIE_HDF5
+  NEW_ROW( "h5fa" ) <<    "h5fa"      <<    3;
+#endif
+}
 
 //---------------------------------------------------------------------------//
 // Custom setup

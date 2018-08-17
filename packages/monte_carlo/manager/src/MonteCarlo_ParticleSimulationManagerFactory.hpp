@@ -67,6 +67,12 @@ public:
                           const double wall_time,
                           const unsigned threads = 1 );
 
+  //! Restart constructor
+  ParticleSimulationManagerFactory(
+                      const boost::filesystem::path& archived_manager_name,
+                      const SimulationGeneralProperties& updated_general_props,
+                      const unsigned threads = 1 );    
+
   //! Set the weight windows that will be used by the manager
   void setWeightWindows( const std::shared_ptr<const WeightWindow>& weight_windows );
 
