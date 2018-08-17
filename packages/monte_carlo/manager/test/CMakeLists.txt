@@ -40,4 +40,32 @@ FRENSIE_ADD_TEST(ParticleSimulationManager
   EXTRA_ARGS
   --test_database=${COLLISION_DATABASE_XML_FILE})
 
+IF(${FRENSIE_ENABLE_OPENMP})
+  FRENSIE_ADD_TEST(SharedParallelParticleSimulationManager_2
+    TEST_EXEC_NAME_ROOT ParticleSimulationManager
+    EXTRA_ARGS
+    --test_database=${COLLISION_DATABASE_XML_FILE}
+    --threads=2
+    OPENMP_TEST)
+  FRENSIE_ADD_TEST(SharedParallelParticleSimulationManager_4
+    TEST_EXEC_NAME_ROOT ParticleSimulationManager
+    EXTRA_ARGS
+    --test_database=${COLLISION_DATABASE_XML_FILE}
+    --threads=4
+    OPENMP_TEST)
+ENDIF()
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST_EXECUTABLE(DistributedParticleSimulationManager
+    DEPENDS tstDistributedParticleSimulationManager.cpp
+    TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+  FRENSIE_ADD_TEST(DistributedParticleSimulationManager
+    EXTRA_ARGS --test_database=${COLLISION_DATABASE_XML_FILE}
+    MPI_PROCS 2)
+  FRENSIE_ADD_TEST(DistributedParticleSimulationManager
+    EXTRA_ARGS --test_database=${COLLISION_DATABASE_XML_FILE}
+    MPI_PROCS 4)
+ENDIF()
+  
+
 FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_manager)

@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <csignal>
+
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSimulationManager.hpp"
 #include "MonteCarlo_ParticleSimulationManagerFactory.hpp"
@@ -240,7 +243,7 @@ void ParticleSimulationManager::runSimulation()
   }
   else
   {
-    FRENSIE_LOG_WARNING( "Simulation terminated. " );
+    FRENSIE_LOG_NOTIFICATION( "Simulation terminated. " );
   }
   FRENSIE_FLUSH_ALL_LOGS();
 
@@ -393,19 +396,29 @@ void ParticleSimulationManager::runSimulationBatch(
 // The signal handler
 /*! \details The first signal will cause the simulation to finish. The
  * second signal will cause the simulation to end without caching its state.
+ * Only the SIGINT signal can currently cause the simulation to finish.
  */
 void ParticleSimulationManager::signalHandler( int signal )
 {
-  static int number_of_signals_handled = 0;
+  if( this->isSignalTypeHandled( signal ) )
+  {
+    static int number_of_signals_handled = 0;
 
-  ++number_of_signals_handled;
-  
-  FRENSIE_LOG_WARNING( "Terminating simulation..." );
-  
-  if( number_of_signals_handled == 1 )
-    d_end_simulation = true;
+    ++number_of_signals_handled;
+    
+    FRENSIE_LOG_NOTIFICATION( "Terminating simulation..." );
+    
+    if( number_of_signals_handled == 1 )
+      d_end_simulation = true;
+    
+    this->exitIfRequired( number_of_signals_handled, signal );
+  }
+}
 
-  this->exitIfRequired( number_of_signals_handled, signal );
+// Check if a signal type is handled by the manager
+bool ParticleSimulationManager::isSignalTypeHandled( const int signal )
+{
+  return signal == SIGINT;
 }
 
 // Exit if required based on signal count

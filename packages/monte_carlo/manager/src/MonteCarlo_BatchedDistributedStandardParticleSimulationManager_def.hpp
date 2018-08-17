@@ -54,6 +54,12 @@ BatchedDistributedStandardParticleSimulationManager<mode>::BatchedDistributedSta
   uint64_t batch_size =
     this->getRendezvousBatchSize()/d_batches_per_rendezvous;
 
+  TEST_FOR_EXCEPTION( batch_size == 0,
+                      std::runtime_error,
+                      "A batch size of 0 has been calculated! The batch size "
+                      "properties must be changed so that a batch size of at "
+                      "least 1 is calculated." );
+
   this->setBatchSize( batch_size );
 }
 
@@ -323,20 +329,13 @@ void BatchedDistributedStandardParticleSimulationManager<mode>::logSimulationSum
 }
 
 // The signal handler
+/*! \details The signal handler will do nothing when MPI is used. This is due
+ * to the way that the mpiexec program handles signals and signal propagation
+ * (see the OpenMPI docs)
+ */
 template<ParticleModeType mode>
 void BatchedDistributedStandardParticleSimulationManager<mode>::signalHandler( int signal )
-{
-  if( d_comm->size() == 0 )
-    ParticleSimulationManager::signalHandler( signal );
-  else
-  {
-    static int number_of_signals_handled = 0;
-
-    ++number_of_signals_handled;
-
-    this->exitIfRequired( number_of_signals_handled, signal );
-  }
-}
+{ /* ... */ }
 
 // Rendezvous (cache state)
 template<ParticleModeType mode>

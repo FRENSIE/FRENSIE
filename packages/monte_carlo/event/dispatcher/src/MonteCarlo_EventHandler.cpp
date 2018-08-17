@@ -571,7 +571,7 @@ void EventHandler::printObserverSummaries( std::ostream& os ) const
   os << "Number of committed histories: "
      << this->getNumberOfCommittedHistories() << "\n";
 
-  os << "Simulation time: " << this->getElapsedTime() << "\n";
+  os << "Simulation time (s): " << this->getElapsedTime() << "\n";
 
   os << "Observers: \n";
 
