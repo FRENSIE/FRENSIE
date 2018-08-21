@@ -60,7 +60,7 @@ void ParticleSimulationManager::simulateParticle(
                                             const bool source_particle )
 {
   // Make sure that the particle is embedded in the model
-  testPrecondition( !unresolved_particle.isEmbeddedInModel( *d_model ) );
+  testPrecondition( unresolved_particle.isEmbeddedInModel( *d_model ) );
 
   // Resolve the particle state
   State& particle = dynamic_cast<State&>( unresolved_particle );

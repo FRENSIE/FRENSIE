@@ -29,7 +29,7 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
                 const std::shared_ptr<EventHandler>& event_handler,
                 const std::shared_ptr<const WeightWindow>& weight_windows,
                 const std::shared_ptr<const CollisionForcer>& collision_forcer,
-                const std::shared_ptr<SimulationProperties>& properties,
+                const std::shared_ptr<const SimulationProperties>& properties,
                 const std::string& simulation_name,
                 const std::string& archive_type,
                 const uint64_t next_history,
@@ -60,7 +60,7 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
                const std::shared_ptr<const FilledGeometryModel>& model,
                const std::shared_ptr<ParticleSource>& source,
                const std::shared_ptr<EventHandler>& event_handler,
-               const std::shared_ptr<SimulationProperties>& properties,
+               const std::shared_ptr<const SimulationProperties>& properties,
                const std::string& simulation_name,
                const std::string& archive_type,
                const unsigned threads )
@@ -92,8 +92,6 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
                       "The archive type cannot be empty!" );
   
   Utility::OpenMPProperties::setNumberOfThreads( threads );
-
-  
 }
 
 // Restart constructor
@@ -108,6 +106,8 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
 }
 
 // Restart constructor
+/*! \details All rendezvous and batch size properties will be unchanged.
+ */
 ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
                           const boost::filesystem::path& archived_manager_name,
                           const uint64_t number_of_additional_histories,
@@ -116,7 +116,7 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
   this->loadFromFile( archived_manager_name );
 
   // Update the properties
-  d_properties->setNumberOfHistories( number_of_additional_histories );
+  const_cast<SimulationProperties&>( *d_properties ).setNumberOfHistories( number_of_additional_histories );
   Utility::OpenMPProperties::setNumberOfThreads( threads );
 
   // Update the completion criterion
@@ -132,7 +132,7 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
   this->loadFromFile( archived_manager_name );
 
   // Update the properties
-  d_properties->setSimulationWallTime( wall_time );
+  const_cast<SimulationProperties&>( *d_properties ).setSimulationWallTime( wall_time );
   Utility::OpenMPProperties::setNumberOfThreads( threads );
 
   // Update the completion criterion
@@ -140,6 +140,8 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
 }
 
 // Restart constructor
+/*! \details All rendezvous and batch size properties will be unchanged.
+ */
 ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
                           const boost::filesystem::path& archived_manager_name,
                           const uint64_t number_of_additional_histories,
@@ -149,13 +151,47 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
   this->loadFromFile( archived_manager_name );
 
   // Update the properties
-  d_properties->setNumberOfHistories( number_of_additional_histories );
-  d_properties->setSimulationWallTime( wall_time );
+  const_cast<SimulationProperties&>( *d_properties ).setNumberOfHistories( number_of_additional_histories );
+  const_cast<SimulationProperties&>( *d_properties ).setSimulationWallTime( wall_time );
   Utility::OpenMPProperties::setNumberOfThreads( threads );
 
   // Update the completion criterion
   d_event_handler->setSimulationCompletionCriterion( number_of_additional_histories,
                                                      wall_time );
+}
+
+// Restart constructor
+/*! \details The following simulation general properties will be used to
+ * restart the simulation:
+ * <ul>
+ *  <li>MonteCarlo::SimulationGeneralProperties::getNumberOfHistories()</li>
+ *  <li>MonteCarlo::SimulationGeneralProperties::getMinNumberOfRendezvous()</li>
+ *  <li>MonteCarlo::SimulationGeneralProperties::getMaxRendezvousBatchSize()</li>
+ *  <li>MonteCarlo::SimulationGeneralProperties::getMinNumberOfBatchersPerRendezvous()</li>
+ *  <li>MonteCarlo::SimulationGeneralProperties::getMaxBatchSize()</li>
+ *  <li>MonteCarlo::SimulationGeneralProperties::getNumberOfBatchesPerProcessor()</li>
+ *  <li>MonteCarlo::SimulationGeneralProperties::getSimulationWallTime()</li>
+ * </ul>
+ */
+ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
+                      const boost::filesystem::path& archived_manager_name,
+                      const SimulationGeneralProperties& updated_general_props,
+                      const unsigned threads )
+{
+  this->loadFromFile( archived_manager_name );
+
+  // Update the properties
+  const_cast<SimulationProperties&>( *d_properties ).setNumberOfHistories( updated_general_props.getNumberOfHistories() );
+  const_cast<SimulationProperties&>( *d_properties ).setMinNumberOfRendezvous( updated_general_props.getMinNumberOfRendezvous() );
+  const_cast<SimulationProperties&>( *d_properties ).setMaxRendezvousBatchSize( updated_general_props.getMaxRendezvousBatchSize() );
+  const_cast<SimulationProperties&>( *d_properties ).setMinNumberOfBatchesPerRendezvous( updated_general_props.getMinNumberOfBatchesPerRendezvous() );
+  const_cast<SimulationProperties&>( *d_properties ).setMaxBatchSize( updated_general_props.getMaxBatchSize() );
+  const_cast<SimulationProperties&>( *d_properties ).setNumberOfBatchesPerProcessor( updated_general_props.getNumberOfBatchesPerProcessor() );
+  const_cast<SimulationProperties&>( *d_properties ).setSimulationWallTime( updated_general_props.getSimulationWallTime() );
+  Utility::OpenMPProperties::setNumberOfThreads( threads );
+
+  // Update the completion criterion
+  d_event_handler->setSimulationCompletionCriterion( updated_general_props );
 }
 
 // Set the weight windows that will be used by the manager

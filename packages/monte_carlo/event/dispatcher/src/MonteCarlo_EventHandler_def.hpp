@@ -283,8 +283,7 @@ void EventHandler::save( Archive& ar, const unsigned version ) const
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleSubtrackEndingGlobalEventHandler );
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleGoneGlobalEventHandler );
 
-  // Save the local data
-  ar & BOOST_SERIALIZATION_NVP( d_model );
+  // Save the local data (ignore the model)
   ar & BOOST_SERIALIZATION_NVP( d_simulation_completion_criterion );
 
   uint64_t number_of_committed_histories =
@@ -313,8 +312,7 @@ void EventHandler::load( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleSubtrackEndingGlobalEventHandler );
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleGoneGlobalEventHandler );
 
-  // Load the local data
-  ar & BOOST_SERIALIZATION_NVP( d_model );
+  // Load the local data (ignore the model)
   ar & BOOST_SERIALIZATION_NVP( d_simulation_completion_criterion );
 
   uint64_t number_of_committed_histories;

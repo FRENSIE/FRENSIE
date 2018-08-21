@@ -29,6 +29,7 @@
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 
 namespace Geometry{
 
@@ -205,6 +206,7 @@ inline std::shared_ptr<Geometry::Navigator> Model::createNavigator(
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( Model, Geometry );
 BOOST_SERIALIZATION_CLASS_VERSION( Model, Geometry, 0 );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Geometry, Model );
 
 #endif // end GEOMETRY_MODEL_HPP
 

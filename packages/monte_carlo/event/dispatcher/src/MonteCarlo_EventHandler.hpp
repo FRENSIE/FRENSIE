@@ -81,6 +81,9 @@ public:
   void setSimulationCompletionCriterion( const uint64_t number_of_histories,
                                          const double wall_time );
 
+  //! Set a simulation completion criterion
+  void setSimulationCompletionCriterion( const MonteCarlo::SimulationGeneralProperties& properties );
+
   //! Check if the simulation is complete
   bool isSimulationComplete() const;
 
@@ -151,6 +154,9 @@ private:
   // Create a default simulation completion criterion
   static std::shared_ptr<ParticleHistorySimulationCompletionCriterion>
   createDefaultCompletionCriterion( const MonteCarlo::SimulationGeneralProperties& properties );
+
+  // Update the simulation completion criterion observer
+  void updateSimulationCompletionCriterionObserver( const std::shared_ptr<ParticleHistorySimulationCompletionCriterion>& observer );
 
   // Struct for registering estimator
   template<typename EstimatorType>

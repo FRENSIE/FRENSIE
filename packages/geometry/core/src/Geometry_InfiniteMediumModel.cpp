@@ -45,13 +45,16 @@ void InfiniteMediumModel::getMaterialIds( MaterialIdSet& material_ids ) const
 }
 
 // Get the cells
-/*! \details By default there will only be a single cell with an id of 1.
- */
 void InfiniteMediumModel::getCells( CellIdSet& cell_set,
                                     const bool include_void_cells,
                                     const bool ) const
 {
-  if( include_void_cells )
+  if( d_density == 0.0*Model::DensityUnit() )
+  {
+    if( include_void_cells )
+      cell_set.insert( d_cell );
+  }
+  else
     cell_set.insert( d_cell );
 }
 
@@ -91,14 +94,15 @@ bool InfiniteMediumModel::isTerminationCell( const EntityId ) const
 }
 
 // Check if a cell is void
-/*! \details By default there will only be a single void cell with an id of 1.
- */
 bool InfiniteMediumModel::isVoidCell( const EntityId cell ) const
 {
   if( cell == d_cell )
-    return true;
-  else
-    return false;
+  {
+    if( d_density == 0.0*Model::DensityUnit() )
+      return true;
+    else
+      return false;
+  }
 }
 
 // Get the cell volume

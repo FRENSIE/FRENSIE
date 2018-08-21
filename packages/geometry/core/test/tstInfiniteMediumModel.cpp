@@ -64,6 +64,18 @@ FRENSIE_UNIT_TEST( InfiniteMediumModel, getCells )
 
   cells.clear();
   
+  {
+    Geometry::InfiniteMediumModel
+      tmp_model( 1, 1, 1.0*Geometry::Model::DensityUnit() );
+
+    tmp_model.getCells( cells, false, true );
+
+    FRENSIE_CHECK_EQUAL( cells.size(), 1 );
+    FRENSIE_CHECK( cells.count( 1 ) );
+
+    cells.clear();
+  }
+  
   // Get all cells except the void and termination cells
   model.getCells( cells, false, false );
 
@@ -156,9 +168,13 @@ FRENSIE_UNIT_TEST( InfiniteMediumModel, isTerminationCell )
 // Check if the cell is a void cell
 FRENSIE_UNIT_TEST( InfiniteMediumModel, isVoidCell )
 {
-  Geometry::InfiniteMediumModel model( 3 );
+  Geometry::InfiniteMediumModel model_a( 3 );
   
-  FRENSIE_CHECK( model.isVoidCell( 3 ) );
+  FRENSIE_CHECK( model_a.isVoidCell( 3 ) );
+
+  Geometry::InfiniteMediumModel model_b( 4, 1, 1.0*Geometry::Model::DensityUnit() );
+
+  FRENSIE_CHECK( !model_b.isVoidCell( 4 ) );
 }
 
 //---------------------------------------------------------------------------//

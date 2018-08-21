@@ -16,12 +16,12 @@
 #include "MonteCarlo_BatchedDistributedStandardParticleSimulationManager.hpp"
 #include "MonteCarlo_StandardParticleSource.hpp"
 #include "MonteCarlo_StandardParticleSourceComponent.hpp"
+#include "MonteCarlo_StandardAdjointParticleSourceComponent.hpp"
 #include "MonteCarlo_StandardParticleDistribution.hpp"
 #include "Data_ScatteringCenterPropertiesDatabase.hpp"
 #include "Geometry_InfiniteMediumModel.hpp"
 #include "Utility_GlobalMPISession.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
-#include "ArchiveTestHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Types
@@ -30,8 +30,6 @@
 using boost::units::si::kelvin;
 using boost::units::cgs::cubic_centimeter;
 using Utility::Units::MeV;
-
-typedef TestArchiveHelper::TestArchives TestArchives;
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -149,12 +147,737 @@ FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory, constructor_neutron_mode )
 }
 
 //---------------------------------------------------------------------------//
+// Check that a particle simulation manager factory can be constructed
+FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory, constructor_photon_mode )
+{
+  std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+  properties->setParticleMode( MonteCarlo::PHOTON_MODE );
+  properties->setNumberOfHistories( 5 );
+
+  std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        data_directory,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+  
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+  {
+    std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+      source_component( new MonteCarlo::StandardPhotonSourceComponent(
+                                                     0,
+                                                     1.0,
+                                                     unfilled_model,
+                                                     particle_distribution ) );
+
+    source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+  }
+  
+  std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
+
+  std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+  FRENSIE_REQUIRE_NO_THROW( factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties ) ) );
+
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
+  
+  FRENSIE_REQUIRE_NO_THROW( manager = factory->getManager() );
+
+  if( Utility::GlobalMPISession::size() == 1 )
+  {
+    std::shared_ptr<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::PHOTON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::PHOTON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+  else
+  {
+    std::shared_ptr<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::PHOTON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::PHOTON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "simulation" );
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "xml" );
+  FRENSIE_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), 1 );
+
+  FRENSIE_REQUIRE_NO_THROW( factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties,
+                                                              "test_sim",
+                                                              "h5fa",
+                                                              threads ) ) );
+
+  FRENSIE_REQUIRE_NO_THROW( manager = factory->getManager() );
+
+  if( Utility::GlobalMPISession::size() == 1 )
+  {
+    std::shared_ptr<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::PHOTON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::PHOTON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+  else
+  {
+    std::shared_ptr<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::PHOTON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::PHOTON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "test_sim" );
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "h5fa" );
+  FRENSIE_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), threads );
+
+  Utility::OpenMPProperties::setNumberOfThreads( 1 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a particle simulation manager factory can be constructed
+FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory, constructor_electron_mode )
+{
+  std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+  properties->setParticleMode( MonteCarlo::ELECTRON_MODE );
+  properties->setNumberOfHistories( 5 );
+
+  std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        data_directory,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+  
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+  {
+    std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+      source_component( new MonteCarlo::StandardElectronSourceComponent(
+                                                     0,
+                                                     1.0,
+                                                     unfilled_model,
+                                                     particle_distribution ) );
+
+    source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+  }
+  
+  std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
+
+  std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+  FRENSIE_REQUIRE_NO_THROW( factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties ) ) );
+
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
+  
+  FRENSIE_REQUIRE_NO_THROW( manager = factory->getManager() );
+
+  if( Utility::GlobalMPISession::size() == 1 )
+  {
+    std::shared_ptr<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::ELECTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::ELECTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+  else
+  {
+    std::shared_ptr<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::ELECTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::ELECTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "simulation" );
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "xml" );
+  FRENSIE_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), 1 );
+
+  FRENSIE_REQUIRE_NO_THROW( factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties,
+                                                              "test_sim",
+                                                              "h5fa",
+                                                              threads ) ) );
+
+  FRENSIE_REQUIRE_NO_THROW( manager = factory->getManager() );
+
+  if( Utility::GlobalMPISession::size() == 1 )
+  {
+    std::shared_ptr<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::ELECTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::ELECTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+  else
+  {
+    std::shared_ptr<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::ELECTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::ELECTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "test_sim" );
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "h5fa" );
+  FRENSIE_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), threads );
+
+  Utility::OpenMPProperties::setNumberOfThreads( 1 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a particle simulation manager factory can be constructed
+FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory,
+                   constructor_neutron_photon_mode )
+{
+  std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+  properties->setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE );
+  properties->setNumberOfHistories( 5 );
+
+  std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        data_directory,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+  
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+  {
+    std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+      source_component( new MonteCarlo::StandardNeutronSourceComponent(
+                                                     0,
+                                                     1.0,
+                                                     unfilled_model,
+                                                     particle_distribution ) );
+
+    source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+  }
+  
+  std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
+
+  std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+  FRENSIE_REQUIRE_NO_THROW( factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties ) ) );
+
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
+  
+  FRENSIE_REQUIRE_NO_THROW( manager = factory->getManager() );
+
+  if( Utility::GlobalMPISession::size() == 1 )
+  {
+    std::shared_ptr<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::NEUTRON_PHOTON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::NEUTRON_PHOTON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+  else
+  {
+    std::shared_ptr<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::NEUTRON_PHOTON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::NEUTRON_PHOTON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "simulation" );
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "xml" );
+  FRENSIE_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), 1 );
+
+  FRENSIE_REQUIRE_NO_THROW( factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties,
+                                                              "test_sim",
+                                                              "h5fa",
+                                                              threads ) ) );
+
+  FRENSIE_REQUIRE_NO_THROW( manager = factory->getManager() );
+
+  if( Utility::GlobalMPISession::size() == 1 )
+  {
+    std::shared_ptr<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::NEUTRON_PHOTON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::NEUTRON_PHOTON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+  else
+  {
+    std::shared_ptr<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::NEUTRON_PHOTON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::NEUTRON_PHOTON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "test_sim" );
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "h5fa" );
+  FRENSIE_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), threads );
+
+  Utility::OpenMPProperties::setNumberOfThreads( 1 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a particle simulation manager factory can be constructed
+FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory,
+                   constructor_photon_electron_mode )
+{
+  std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+  properties->setParticleMode( MonteCarlo::PHOTON_ELECTRON_MODE );
+  properties->setNumberOfHistories( 5 );
+
+  std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        data_directory,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+  
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+  {
+    std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+      source_component( new MonteCarlo::StandardPhotonSourceComponent(
+                                                     0,
+                                                     1.0,
+                                                     unfilled_model,
+                                                     particle_distribution ) );
+
+    source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+  }
+  
+  std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
+
+  std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+  FRENSIE_REQUIRE_NO_THROW( factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties ) ) );
+
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
+  
+  FRENSIE_REQUIRE_NO_THROW( manager = factory->getManager() );
+
+  if( Utility::GlobalMPISession::size() == 1 )
+  {
+    std::shared_ptr<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::PHOTON_ELECTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::PHOTON_ELECTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+  else
+  {
+    std::shared_ptr<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::PHOTON_ELECTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::PHOTON_ELECTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "simulation" );
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "xml" );
+  FRENSIE_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), 1 );
+
+  FRENSIE_REQUIRE_NO_THROW( factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties,
+                                                              "test_sim",
+                                                              "h5fa",
+                                                              threads ) ) );
+
+  FRENSIE_REQUIRE_NO_THROW( manager = factory->getManager() );
+
+  if( Utility::GlobalMPISession::size() == 1 )
+  {
+    std::shared_ptr<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::PHOTON_ELECTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::PHOTON_ELECTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+  else
+  {
+    std::shared_ptr<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::PHOTON_ELECTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::PHOTON_ELECTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "test_sim" );
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "h5fa" );
+  FRENSIE_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), threads );
+
+  Utility::OpenMPProperties::setNumberOfThreads( 1 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a particle simulation manager factory can be constructed
+FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory,
+                   constructor_neutron_photon_electron_mode )
+{
+  std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+  properties->setParticleMode( MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE );
+  properties->setNumberOfHistories( 5 );
+
+  std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        data_directory,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+  
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+  {
+    std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+      source_component( new MonteCarlo::StandardNeutronSourceComponent(
+                                                     0,
+                                                     1.0,
+                                                     unfilled_model,
+                                                     particle_distribution ) );
+
+    source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+  }
+  
+  std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
+
+  std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+  FRENSIE_REQUIRE_NO_THROW( factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties ) ) );
+
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
+  
+  FRENSIE_REQUIRE_NO_THROW( manager = factory->getManager() );
+
+  if( Utility::GlobalMPISession::size() == 1 )
+  {
+    std::shared_ptr<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+  else
+  {
+    std::shared_ptr<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "simulation" );
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "xml" );
+  FRENSIE_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), 1 );
+
+  FRENSIE_REQUIRE_NO_THROW( factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties,
+                                                              "test_sim",
+                                                              "h5fa",
+                                                              threads ) ) );
+
+  FRENSIE_REQUIRE_NO_THROW( manager = factory->getManager() );
+
+  if( Utility::GlobalMPISession::size() == 1 )
+  {
+    std::shared_ptr<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+  else
+  {
+    std::shared_ptr<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "test_sim" );
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "h5fa" );
+  FRENSIE_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), threads );
+
+  Utility::OpenMPProperties::setNumberOfThreads( 1 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a particle simulation manager factory can be constructed
+FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory,
+                   constructor_adjoint_photon_mode )
+{
+  std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+  properties->setParticleMode( MonteCarlo::ADJOINT_PHOTON_MODE );
+  properties->setNumberOfHistories( 5 );
+
+  std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        data_directory,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+  
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+  {
+    std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+      source_component( new MonteCarlo::StandardAdjointPhotonSourceComponent(
+                                                     0,
+                                                     1.0,
+                                                     model,
+                                                     particle_distribution ) );
+
+    source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+  }
+  
+  std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
+
+  std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+  FRENSIE_REQUIRE_NO_THROW( factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties ) ) );
+
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
+  
+  FRENSIE_REQUIRE_NO_THROW( manager = factory->getManager() );
+
+  if( Utility::GlobalMPISession::size() == 1 )
+  {
+    std::shared_ptr<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::ADJOINT_PHOTON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::ADJOINT_PHOTON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+  else
+  {
+    std::shared_ptr<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::ADJOINT_PHOTON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::ADJOINT_PHOTON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "simulation" );
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "xml" );
+  FRENSIE_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), 1 );
+
+  FRENSIE_REQUIRE_NO_THROW( factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties,
+                                                              "test_sim",
+                                                              "h5fa",
+                                                              threads ) ) );
+
+  FRENSIE_REQUIRE_NO_THROW( manager = factory->getManager() );
+
+  if( Utility::GlobalMPISession::size() == 1 )
+  {
+    std::shared_ptr<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::ADJOINT_PHOTON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::ADJOINT_PHOTON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+  else
+  {
+    std::shared_ptr<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::ADJOINT_PHOTON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::ADJOINT_PHOTON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "test_sim" );
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "h5fa" );
+  FRENSIE_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), threads );
+
+  Utility::OpenMPProperties::setNumberOfThreads( 1 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a particle simulation manager factory can be constructed
+FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory,
+                   constructor_adjoint_electron_mode )
+{
+  std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+  properties->setParticleMode( MonteCarlo::ADJOINT_ELECTRON_MODE );
+  properties->setNumberOfHistories( 5 );
+
+  std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        data_directory,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+  
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+  {
+    std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+      source_component( new MonteCarlo::StandardAdjointElectronSourceComponent(
+                                                     0,
+                                                     1.0,
+                                                     model,
+                                                     particle_distribution ) );
+
+    source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+  }
+  
+  std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
+
+  std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+  FRENSIE_REQUIRE_NO_THROW( factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties ) ) );
+
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
+  
+  FRENSIE_REQUIRE_NO_THROW( manager = factory->getManager() );
+
+  if( Utility::GlobalMPISession::size() == 1 )
+  {
+    std::shared_ptr<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::ADJOINT_ELECTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::ADJOINT_ELECTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+  else
+  {
+    std::shared_ptr<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::ADJOINT_ELECTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::ADJOINT_ELECTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "simulation" );
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "xml" );
+  FRENSIE_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), 1 );
+
+  FRENSIE_REQUIRE_NO_THROW( factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties,
+                                                              "test_sim",
+                                                              "h5fa",
+                                                              threads ) ) );
+
+  FRENSIE_REQUIRE_NO_THROW( manager = factory->getManager() );
+
+  if( Utility::GlobalMPISession::size() == 1 )
+  {
+    std::shared_ptr<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::ADJOINT_ELECTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::ADJOINT_ELECTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+  else
+  {
+    std::shared_ptr<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::ADJOINT_ELECTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::ADJOINT_ELECTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "test_sim" );
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "h5fa" );
+  FRENSIE_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), threads );
+
+  Utility::OpenMPProperties::setNumberOfThreads( 1 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a particle simulation manager factory can be constructed and
 // weight windows can be set
 FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory,
                    constructor_set_weight_windows )
 {
+  std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+  properties->setParticleMode( MonteCarlo::NEUTRON_MODE );
+  properties->setNumberOfHistories( 5 );
 
+  std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        data_directory,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+  
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+  {
+    std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+      source_component( new MonteCarlo::StandardNeutronSourceComponent(
+                                                     0,
+                                                     1.0,
+                                                     unfilled_model,
+                                                     particle_distribution ) );
+
+    source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+  }
+  
+  std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
+
+  std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+  FRENSIE_REQUIRE_NO_THROW( factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties ) ) );
+
+  factory->setWeightWindows( weight_windows );
+
+  FRENSIE_CHECK_EQUAL( weight_windows.use_count(), 2 );
+
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
+  
+  FRENSIE_REQUIRE_NO_THROW( manager = factory->getManager() );
+
+  if( Utility::GlobalMPISession::size() == 1 )
+  {
+    std::shared_ptr<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::NEUTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::NEUTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+  else
+  {
+    std::shared_ptr<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::NEUTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::NEUTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "simulation" );
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "xml" );
+  FRENSIE_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), 1 );
+  FRENSIE_CHECK_EQUAL( weight_windows.use_count(), 3 );
 }
 
 //---------------------------------------------------------------------------//
@@ -163,7 +886,69 @@ FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory,
 FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory,
                    constructor_set_collision_forcer )
 {
+  std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+  properties->setParticleMode( MonteCarlo::NEUTRON_MODE );
+  properties->setNumberOfHistories( 5 );
 
+  std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        data_directory,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+  
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+  {
+    std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+      source_component( new MonteCarlo::StandardNeutronSourceComponent(
+                                                     0,
+                                                     1.0,
+                                                     unfilled_model,
+                                                     particle_distribution ) );
+
+    source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+  }
+  
+  std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
+
+  std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+  FRENSIE_REQUIRE_NO_THROW( factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties ) ) );
+
+  factory->setCollisionForcer( collision_forcer );
+
+  FRENSIE_CHECK_EQUAL( collision_forcer.use_count(), 2 );
+
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
+  
+  FRENSIE_REQUIRE_NO_THROW( manager = factory->getManager() );
+
+  if( Utility::GlobalMPISession::size() == 1 )
+  {
+    std::shared_ptr<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::NEUTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::NEUTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+  else
+  {
+    std::shared_ptr<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::NEUTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::NEUTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "simulation" );
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "xml" );
+  FRENSIE_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), 1 );
+  FRENSIE_CHECK_EQUAL( collision_forcer.use_count(), 3 );
 }
 
 //---------------------------------------------------------------------------//
@@ -172,52 +957,72 @@ FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory,
 FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory,
                    constructor_set_weight_windows_collision_forcer )
 {
+  std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+  properties->setParticleMode( MonteCarlo::NEUTRON_MODE );
+  properties->setNumberOfHistories( 5 );
 
-}
+  std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        data_directory,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+  
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+  {
+    std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+      source_component( new MonteCarlo::StandardNeutronSourceComponent(
+                                                     0,
+                                                     1.0,
+                                                     unfilled_model,
+                                                     particle_distribution ) );
 
-//---------------------------------------------------------------------------//
-// Check that a particle simulation manager factory can be archived
-FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory, restart_basic )
-{
+    source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+  }
+  
+  std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
 
-}
+  std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
 
-//---------------------------------------------------------------------------//
-// Check that a particle simulation manager factory can be archived
-FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory, restart_add_histories )
-{
+  FRENSIE_REQUIRE_NO_THROW( factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties ) ) );
 
-}
+  factory->setWeightWindows( weight_windows );
+  factory->setCollisionForcer( collision_forcer );
 
-//---------------------------------------------------------------------------//
-// Check that a particle simulation manager factory can be archived
-FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory, restart_new_wall_time )
-{
+  FRENSIE_CHECK_EQUAL( weight_windows.use_count(), 2 );
+  FRENSIE_CHECK_EQUAL( collision_forcer.use_count(), 2 );
 
-}
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
+  
+  FRENSIE_REQUIRE_NO_THROW( manager = factory->getManager() );
 
-//---------------------------------------------------------------------------//
-// Check that a particle simulation manager factory can be archived
-FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory,
-                   restart_add_histories_new_wall_time )
-{
+  if( Utility::GlobalMPISession::size() == 1 )
+  {
+    std::shared_ptr<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::NEUTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::StandardParticleSimulationManager<MonteCarlo::NEUTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
+  else
+  {
+    std::shared_ptr<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::NEUTRON_MODE> > true_manager = std::dynamic_pointer_cast<MonteCarlo::BatchedDistributedStandardParticleSimulationManager<MonteCarlo::NEUTRON_MODE> >( manager );
+    
+    FRENSIE_CHECK( true_manager.get() != NULL );
+  }
 
-}
-
-//---------------------------------------------------------------------------//
-// Check that a particle simulation manager factory can rename the simulation
-FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory, renameSimulation )
-{
-
-}
-
-//---------------------------------------------------------------------------//
-// Check that a particle simulation manager factory can change the archive
-// type
-FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory,
-                   changeSimulationArchiveType )
-{
-
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "simulation" );
+  FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "xml" );
+  FRENSIE_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), 1 );
+  FRENSIE_CHECK_EQUAL( weight_windows.use_count(), 3 );
+  FRENSIE_CHECK_EQUAL( collision_forcer.use_count(), 3 );
 }
 
 //---------------------------------------------------------------------------//
