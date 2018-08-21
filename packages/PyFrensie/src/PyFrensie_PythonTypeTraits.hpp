@@ -56,6 +56,12 @@ bool isValidSet( PyObject* py_obj );
 template<typename KeyType, typename ValueType>
 bool isValidDictionary( PyObject* py_obj );
 
+// Create a Python object from a char** object
+PyObject* convertArgvToPython( const char** obj );
+
+// Create a char** object from a Python object
+char** convertPythonToArgv( PyObject* py_obj );
+
 // Create a Python (NumPy) object from an array object
 template<typename STLCompliantArray>
 PyObject* convertArrayToPython( const STLCompliantArray& obj );
@@ -302,7 +308,7 @@ struct PythonTypeTraits<std::string>
 template<>
 struct PythonTypeTraits<char*>
 {
-  // Create a Python object from a char* object
+  //! Create a Python object from a char* object
   static inline PyObject* convertToPython( const char* obj )
   { return PyString_FromString( obj ); }
 
@@ -313,6 +319,30 @@ struct PythonTypeTraits<char*>
   //! Check if a Python object can be converted to the desired type
   static inline bool isConvertable( PyObject* py_obj )
   { return PyString_Check( py_obj ); }
+};
+
+
+/*! \brief The specialization of PyFrensie::PythonTypeTraits for argv (char**)
+ * \ingroup python_type_traits
+ * \details When the convertFromPython function is used for a char** in a
+ * typemap(in), it requires the additional defining of a %typemap(freearg) to
+ * clean up the char** array malloc'd before the function call
+ * (e.g. %typemap(freearg) char** { free((char *) $1); })
+ */
+template<>
+struct PythonTypeTraits<char**>
+{
+  //! Create a Python object from a char** object
+  static inline PyObject* convertToPython( const char** obj )
+  { return Details::convertArgvToPython( obj ); }
+
+  //! Create a char** object from a Python object
+  static inline char** convertFromPython( PyObject* py_obj )
+  { return Details::convertPythonToArgv( py_obj ); }
+
+  //! Check if a Python object can be converted to the desired type
+  static inline bool isConvertable( PyObject* py_obj )
+  { return PyList_Check( py_obj ); }
 };
 
 /*! \brief The partial specialization of PyFrensie::PythonTypeTraits for

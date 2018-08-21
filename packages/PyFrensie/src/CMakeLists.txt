@@ -32,6 +32,9 @@ SET(UTILITY_MODULE_INIT_PACKAGE Utility__init__)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Prng)
 SET(UTILITY_PACKAGES ${UTILITY_PACKAGES} Prng)
 
+SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.GlobalMPISession)
+SET(UTILITY_PACKAGES ${UTILITY_PACKAGES} GlobalMPISession)
+
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.UnivariateDistribution)
 SET(UTILITY_PACKAGES ${UTILITY_PACKAGES} UnivariateDistribution)
 
