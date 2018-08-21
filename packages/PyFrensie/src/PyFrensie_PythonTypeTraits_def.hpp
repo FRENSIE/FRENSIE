@@ -273,23 +273,6 @@ inline bool isValidDictionary( PyObject* py_obj )
     return false;
 }
 
-// Create a Python object from a char** object
-PyObject* convertArgvToPython( const char** obj )
-{
-  PyObject* py_string_list = PyList_New(0);
-
-  // Create a list of arrays
-  for( unsigned i = 0; i < obj.size(); ++i )
-  {
-    // Create a new Python tuple
-    PyObject* py_tuple_i = PyString_FromString( obj[i].c_str() );
-
-    PyList_Append( py_string_list, (PyObject*)py_tuple_i );
-  }
-
-  return py_string_list;
-}
-
 // Create a char** object from a Python object
 char** convertPythonToArgv( PyObject* py_obj )
 {

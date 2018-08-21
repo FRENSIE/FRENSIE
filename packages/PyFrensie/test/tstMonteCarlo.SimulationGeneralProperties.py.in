@@ -34,9 +34,14 @@ class SimulationGeneralPropertiesTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationGeneralProperties()
 
         self.assertEqual( properties.getParticleMode(), MonteCarlo.NEUTRON_MODE )
+        self.assertEqual( properties.getSimulationWallTime(), float('Inf') )
         self.assertEqual( properties.getNumberOfHistories(), 0 )
+        self.assertEqual( properties.getMinNumberOfRendezvous(), 1 )
+        self.assertEqual( properties.getMaxRendezvousBatchSize(), 1000000000 )
+        self.assertEqual( properties.getMinNumberOfBatchesPerRendezvous(), 1 )
+        self.assertEqual( properties.getMaxBatchSize(), 1000000000 )
+        self.assertEqual( properties.getNumberOfBatchesPerProcessor(), 1 )
         self.assertEqual( properties.getSurfaceFluxEstimatorAngleCosineCutoff(), 0.001 )
-        self.assertTrue( properties.displayWarnings() )
         self.assertFalse( properties.isImplicitCaptureModeOn() )
 
     def testSetParticleMode(self):
@@ -74,6 +79,14 @@ class SimulationGeneralPropertiesTestCase(unittest.TestCase):
         self.assertEqual( properties.getParticleMode(),
                           MonteCarlo.ADJOINT_ELECTRON_MODE )
 
+    def testSetSimulationWallTime(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setSimulationWallTime"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        properties.setSimulationWallTime( 300.0 )
+
+        self.assertEqual( properties.getSimulationWallTime(), 300.0 )
+
     def testSetNumberOfHistories(self):
         "*Test MonteCarlo.SimulationGeneralProperties setNumberOfHistories"
         properties = MonteCarlo.SimulationGeneralProperties()
@@ -89,15 +102,47 @@ class SimulationGeneralPropertiesTestCase(unittest.TestCase):
         self.assertEqual( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
                           0.1 )
 
-    def testSetWarningsOnOff(self):
-        "*Test MonteCarlo.SimulationGeneralProperties displayWarnings"
+    def testSetMinNumberOfRendezvous(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setMinNumberOfRendezvous"
         properties = MonteCarlo.SimulationGeneralProperties()
 
-        properties.setWarningsOff()
-        self.assertFalse( properties.displayWarnings() )
+        properties.setMinNumberOfRendezvous( 10 )
+        self.assertEqual( properties.getMinNumberOfRendezvous(), 10 )
 
-        properties.setWarningsOn()
-        self.assertTrue( properties.displayWarnings() )
+    def testSetMaxRendezvousBatchSize(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setMaxRendezvousBatchSize"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        properties.setMaxRendezvousBatchSize( 1000000 )
+        self.assertEqual( properties.getMaxRendezvousBatchSize(), 1000000 )
+
+    def testSetMinNumberOfBatchesPerRendezvous(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setMinNumberOfBatchesPerRendezvous"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        properties.setMinNumberOfBatchesPerRendezvous( 20 )
+        self.assertEqual( properties.getMinNumberOfBatchesPerRendezvous(), 20 )
+
+    def testSetMaxBatchSize(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setMaxBatchSize"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        properties.setMaxBatchSize( 100000 )
+        self.assertEqual( properties.getMaxBatchSize(), 100000 )
+
+    def testSetNumberOfBatchesPerProcessor(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setNumberOfBatchesPerProcessor"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        properties.setNumberOfBatchesPerProcessor( 2 )
+        self.assertEqual( properties.getNumberOfBatchesPerProcessor(), 2 )
+
+    def testSetSurfaceFluxEstimatorAngleCosineCutoff(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setSurfaceFluxEstimatorAngleCosineCutoff"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        properties.setSurfaceFluxEstimatorAngleCosineCutoff( 0.1 )
+        self.assertEqual( properties.getSurfaceFluxEstimatorAngleCosineCutoff(), 0.1 )
 
     def testSetImplicitCaptureModeOnOff(self):
         "*Test MonteCarlo.SimulationGeneralProperties setImplicitCaptureModeOnOff"

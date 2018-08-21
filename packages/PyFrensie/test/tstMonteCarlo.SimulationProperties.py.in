@@ -38,7 +38,6 @@ class SimulationPropertiesTestCase(unittest.TestCase):
                           MonteCarlo.NEUTRON_MODE )
         self.assertEqual( properties.getNumberOfHistories(), 0 )
         self.assertEqual( properties.getSurfaceFluxEstimatorAngleCosineCutoff(), 0.001 )
-        self.assertTrue( properties.displayWarnings() )
         self.assertFalse(properties.isImplicitCaptureModeOn() )
 
         # Neutron properties

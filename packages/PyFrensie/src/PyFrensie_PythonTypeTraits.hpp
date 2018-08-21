@@ -56,9 +56,6 @@ bool isValidSet( PyObject* py_obj );
 template<typename KeyType, typename ValueType>
 bool isValidDictionary( PyObject* py_obj );
 
-// Create a Python object from a char** object
-PyObject* convertArgvToPython( const char** obj );
-
 // Create a char** object from a Python object
 char** convertPythonToArgv( PyObject* py_obj );
 
@@ -332,10 +329,6 @@ struct PythonTypeTraits<char*>
 template<>
 struct PythonTypeTraits<char**>
 {
-  //! Create a Python object from a char** object
-  static inline PyObject* convertToPython( const char** obj )
-  { return Details::convertArgvToPython( obj ); }
-
   //! Create a char** object from a Python object
   static inline char** convertFromPython( PyObject* py_obj )
   { return Details::convertPythonToArgv( py_obj ); }
