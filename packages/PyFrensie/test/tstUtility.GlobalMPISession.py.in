@@ -32,17 +32,18 @@ class GlobalMPISessionTestCase(unittest.TestCase):
     "TestCase class for Utility.GlobalMPISession class"
 
     def setUp(self):
-        argc = 1
-        argv = ["tstUtility.GlobalMPISession.py", "--report_level=detailed"]
-        self.mpi_session = MPI.GlobalMPISession( argc, argv )
+        self.mpi_session = MPI.GlobalMPISession( len(sys.argv), sys.argv )
 
 #-----------------------------------------------------------------------------#
     # Check if MPI is used
     def testIsMPIUsed(self):
         "*Test Utility.GlobalMPISession isMPIUsed"
-        self.assertTrue( self.mpi_session.isMPIUsed() )
-        self.assertTrue( MPI.GlobalMPISession.isMPIUsed() )
-
+        if MPI.__pyfrensie_mpi_enabled__:
+            self.assertTrue( self.mpi_session.isMPIUsed() )
+            self.assertTrue( MPI.GlobalMPISession.isMPIUsed() )
+        else:
+            self.assertFalse( self.mpi_session.isMPIUsed() )
+            self.assertFalse( MPI.GlobalMPISession.isMPIUsed() )
 
 #-----------------------------------------------------------------------------#
     # Check that an output stream can be initialized
@@ -369,7 +370,8 @@ class GlobalMPISessionTestCase(unittest.TestCase):
               else:
                 self.assertEqual( data[i], 0 )
         else:
-            self.assertFalse( len(data) > 0 )
+            self.assertEqual( len(data), 1 )
+            self.assertEqual( data[0], local_data )
 
 #-----------------------------------------------------------------------------#
 # Custom main

@@ -20,6 +20,8 @@ GlobalMPISession proxy class.
         autodoc   = "1",
         docstring = %utility_global_mpi_session_docstring) GlobalMPISession
 
+%include "PyFrensie_MPI_Setup.i"
+
 %{
 #include <fstream>
 #include "Utility_LoggingMacros.hpp"

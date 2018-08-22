@@ -35,10 +35,7 @@ class GlobalMPISessionInitTestCase(unittest.TestCase):
         "*Test Utility.GlobalMPISessionInit initialize_finalize"
         self.assertFalse( MPI.GlobalMPISession.initialized() )
         self.assertFalse( MPI.GlobalMPISession.finalized() )
-        argc = 2
-        argv_1 = "constructor_type="+str(options.constructor_type)
-        argv = ["tstUtility.GlobalMPISessionInit.py", argv_1, "--report_level=detailed"]
-
+        
         constructor_type = str(options.constructor_type)
 
         if constructor_type == "default":
@@ -48,7 +45,7 @@ class GlobalMPISessionInitTestCase(unittest.TestCase):
           self.assertFalse( MPI.GlobalMPISession.finalized() )
           session = None
         elif constructor_type == "advanced":
-          session = MPI.GlobalMPISession( argc, argv )
+          session = MPI.GlobalMPISession( len(sys.argv), sys.argv )
 
           self.assertTrue( MPI.GlobalMPISession.initialized() )
           self.assertFalse( MPI.GlobalMPISession.finalized() )
@@ -67,7 +64,7 @@ class GlobalMPISessionInitTestCase(unittest.TestCase):
                             MPI.SingleThreading() )
           session = None
         elif constructor_type == "advanced_single":
-          session = MPI.GlobalMPISession( argc, argv, MPI.cvar.GlobalMPISession_SingleThreading )
+          session = MPI.GlobalMPISession( len(sys.argv), sys.argv, MPI.cvar.GlobalMPISession_SingleThreading )
           session.barrier()
 
           self.assertTrue( MPI.GlobalMPISession.initialized() )
@@ -91,7 +88,7 @@ class GlobalMPISessionInitTestCase(unittest.TestCase):
                             MPI.FunneledThreading() )
           session = None
         elif constructor_type == "advanced_funneled":
-          session = MPI.GlobalMPISession( argc, argv, MPI.cvar.GlobalMPISession_FunneledThreading )
+          session = MPI.GlobalMPISession( len(sys.argv), sys.argv, MPI.cvar.GlobalMPISession_FunneledThreading )
           session.barrier()
 
           self.assertTrue( MPI.GlobalMPISession.initialized() )
@@ -115,7 +112,7 @@ class GlobalMPISessionInitTestCase(unittest.TestCase):
                             MPI.SerializedThreading() )
           session = None
         elif constructor_type == "advanced_serialized":
-          session = MPI.GlobalMPISession( argc, argv, MPI.cvar.GlobalMPISession_SerializedThreading )
+          session = MPI.GlobalMPISession( len(sys.argv), sys.argv, MPI.cvar.GlobalMPISession_SerializedThreading )
           session.barrier()
 
           self.assertTrue( MPI.GlobalMPISession.initialized() )
@@ -143,7 +140,7 @@ class GlobalMPISessionInitTestCase(unittest.TestCase):
                            MPI.SerializedThreading() )
           session = None
         elif constructor_type == "advanced_multiple":
-          session = MPI.GlobalMPISession( argc, argv, MPI.cvar.GlobalMPISession_MultipleThreading )
+          session = MPI.GlobalMPISession( len(sys.argv), sys.argv, MPI.cvar.GlobalMPISession_MultipleThreading )
           session.barrier()
 
           self.assertTrue( MPI.GlobalMPISession.initialized() )
