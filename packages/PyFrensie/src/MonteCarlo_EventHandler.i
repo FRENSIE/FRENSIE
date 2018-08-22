@@ -53,6 +53,8 @@ using namespace MonteCarlo;
 // Add EventHandler support
 // ---------------------------------------------------------------------------//
 
+%shared_ptr(MonteCarlo::EventHandler)
+
 // Define the updateObserversFromParticle from the base classes
 %extend MonteCarlo::EventHandler
 {

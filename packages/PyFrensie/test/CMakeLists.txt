@@ -412,6 +412,24 @@ ADD_TEST(PyFrensie.MonteCarlo.Event.ParticleTracker_test ${PYTHON_EXECUTABLE} ts
 PyFrensie_MAKE_TEST(tstMonteCarlo.Event.EventHandler)
 ADD_TEST(PyFrensie.MonteCarlo.Event.EventHandler_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.EventHandler.py)
 
+# Add the MonteCarlo.Manager.ParticleSimulationManagerFactory unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Manager.ParticleSimulationManagerFactory)
+ADD_TEST(PyFrensie.MonteCarlo.Manager.ParticleSimulationManagerFactory_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Manager.ParticleSimulationManagerFactory.py --database_path=${COLLISION_DATABASE_XML_FILE} --threads=1 )
+ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Manager.ParticleSimulationManagerFactory ${COLLISION_DATABASE_XML_FILE_TARGET} )
+
+IF(HAVE_FRENSIE_MPI)
+  ADD_TEST(PyFrensie.MonteCarlo.Manager.ParticleSimulationManagerFactory_2_test ${MPIEXEC} -n 2 ${PYTHON_EXECUTABLE} tstMonteCarlo.Manager.ParticleSimulationManagerFactory.py --database_path=${COLLISION_DATABASE_XML_FILE} --threads=2 )
+  ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Manager.ParticleSimulationManagerFactory ${COLLISION_DATABASE_XML_FILE_TARGET} )
+
+  ADD_TEST(PyFrensie.MonteCarlo.Manager.ParticleSimulationManagerFactory_4_test ${MPIEXEC} -n 4 ${PYTHON_EXECUTABLE} tstMonteCarlo.Manager.ParticleSimulationManagerFactory.py --database_path=${COLLISION_DATABASE_XML_FILE} --threads=4 )
+  ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Manager.ParticleSimulationManagerFactory ${COLLISION_DATABASE_XML_FILE_TARGET} )
+ENDIF()
+
+# Add the MonteCarlo.Manager.ParticleSimulationManager unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Manager.ParticleSimulationManager)
+ADD_TEST(PyFrensie.MonteCarlo.Manager.ParticleSimulationManager_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Manager.ParticleSimulationManager.py --database_path=${COLLISION_DATABASE_XML_FILE})
+ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Manager.ParticleSimulationManager ${COLLISION_DATABASE_XML_FILE_TARGET} )
+
 # # Add the MonteCarlo.Collision.PhotonKinematics unit tests
 # PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.PhotonKinematics)
 # ADD_TEST(PyFrensie.MonteCarlo.Collision.PhotonKinematics_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.PhotonKinematics.py)
