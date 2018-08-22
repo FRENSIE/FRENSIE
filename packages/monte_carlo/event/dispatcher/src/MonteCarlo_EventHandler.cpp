@@ -51,9 +51,9 @@ EventHandler::EventHandler(
   : EventHandler( (std::shared_ptr<const Geometry::Model>)(*model),
                   properties )
 { /* ... */ }
-  
+
 // Constructor (model)
-/*! \details The model will be stored and used to check the validity of 
+/*! \details The model will be stored and used to check the validity of
  * estimator entities when an estimator is added.
  */
 EventHandler::EventHandler(
@@ -76,12 +76,12 @@ EventHandler::EventHandler(
       Geometry::Model::CellEstimatorIdDataMap cell_estimator_data_map;
 
       model->getCellEstimatorData( cell_estimator_data_map );
-      
+
       Geometry::Model::CellEstimatorIdDataMap::const_iterator
         cell_estimator_data_it = cell_estimator_data_map.begin();
-      
+
       uint32_t cell_estimator_counter = 0;
-      
+
       while( cell_estimator_data_it != cell_estimator_data_map.end() )
       {
         this->createAndRegisterCellEstimator(
@@ -90,7 +90,7 @@ EventHandler::EventHandler(
                                Utility::get<1>(cell_estimator_data_it->second),
                                Utility::get<2>(cell_estimator_data_it->second),
                                *d_model );
-        
+
         ++cell_estimator_counter;
         ++cell_estimator_data_it;
       }
@@ -100,26 +100,26 @@ EventHandler::EventHandler(
         FRENSIE_LOG_NOTIFICATION( "Created " << cell_estimator_counter <<
                                   " cell estimators from geometry model data." );
       }
-    }                            
+    }
 
     // Get the surface estimator data from the model
     if( model->isAdvanced() )
     {
       const Geometry::AdvancedModel& advanced_model =
         dynamic_cast<const Geometry::AdvancedModel&>( *model );
-      
+
       if( advanced_model.hasSurfaceEstimatorData() )
       {
         Geometry::AdvancedModel::SurfaceEstimatorIdDataMap
           surface_estimator_data_map;
-        
+
         advanced_model.getSurfaceEstimatorData( surface_estimator_data_map );
-        
+
         Geometry::AdvancedModel::SurfaceEstimatorIdDataMap::const_iterator
           surface_estimator_data_it = surface_estimator_data_map.begin();
-        
+
         uint32_t surface_estimator_counter = 0;
-        
+
         while( surface_estimator_data_it != surface_estimator_data_map.end() )
         {
           this->createAndRegisterSurfaceEstimator(
@@ -196,12 +196,12 @@ void EventHandler::createAndRegisterCellEstimator(
 
       // Set the particle type
       this->setParticleTypes( particle_type, estimator );
-      
+
       this->addEstimator( estimator );
-      
+
       break;
     }
-        
+
     case Geometry::CELL_TRACK_LENGTH_FLUX_ESTIMATOR:
     {
       std::shared_ptr<WeightMultipliedCellTrackLengthFluxEstimator> estimator(
@@ -212,7 +212,7 @@ void EventHandler::createAndRegisterCellEstimator(
 
       // Set the particle type
       this->setParticleTypes( particle_type, estimator );
-      
+
       this->addEstimator( estimator );
 
       break;
@@ -228,7 +228,7 @@ void EventHandler::createAndRegisterCellEstimator(
 
       // Set the particle type
       this->setParticleTypes( particle_type, estimator );
-      
+
       this->addEstimator( estimator );
 
       break;
@@ -265,10 +265,10 @@ void EventHandler::createAndRegisterSurfaceEstimator(
       this->setParticleTypes( particle_type, estimator );
 
       this->addEstimator( estimator );
-      
+
       break;
     }
-        
+
     case Geometry::SURFACE_FLUX_ESTIMATOR:
     {
       std::shared_ptr<WeightMultipliedSurfaceFluxEstimator> estimator(
@@ -283,7 +283,7 @@ void EventHandler::createAndRegisterSurfaceEstimator(
       this->setParticleTypes( particle_type, estimator );
 
       this->addEstimator( estimator );
-      
+
       break;
     }
 
@@ -308,13 +308,13 @@ void EventHandler::setParticleTypes(
       estimator->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::NEUTRON} ) );
       break;
     }
-        
+
     case Geometry::PHOTON:
     {
       estimator->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
       break;
     }
-    
+
     case Geometry::ELECTRON:
     {
       estimator->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
@@ -326,7 +326,7 @@ void EventHandler::setParticleTypes(
       estimator->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ADJOINT_NEUTRON} ) );
       break;
     }
-        
+
     case Geometry::ADJOINT_PHOTON:
     {
       estimator->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ADJOINT_PHOTON} ) );
@@ -393,14 +393,14 @@ void EventHandler::updateSimulationCompletionCriterionObserver( const std::share
 {
   // Make sure that the observer is valid
   testPrecondition( observer.get() );
-  
+
   d_particle_history_observers.front() = observer;
 }
 
 // Check if the simulation is complete
 bool EventHandler::isSimulationComplete() const
 {
-  d_simulation_completion_criterion->isSimulationComplete();
+  return d_simulation_completion_criterion->isSimulationComplete();
 }
 
 // Add a particle tracker to the handler
@@ -409,12 +409,12 @@ void EventHandler::addParticleTracker(
 {
   // Make sure the observer is valid
   testPrecondition( particle_tracker.get() );
-  
+
   ParticleHistoryObservers::iterator observer_it =
     std::find( d_particle_history_observers.begin(),
                d_particle_history_observers.end(),
                particle_tracker );
-  
+
   if( observer_it == d_particle_history_observers.end() )
   {
     this->registerGlobalObserver( particle_tracker );
@@ -548,7 +548,7 @@ void EventHandler::commitObserverHistoryContributions()
 
     ++it;
   }
-  
+
   ++d_number_of_committed_histories[Utility::OpenMPProperties::getThreadId()];
 }
 
@@ -624,16 +624,16 @@ void EventHandler::reduceObserverData( const Utility::Communicator& comm,
       if( comm.rank() == root_process )
       {
         uint64_t reduced_num_committed_histories = 0;
-        
+
         Utility::reduce( comm,
                          this->getNumberOfCommittedHistories(),
                          reduced_num_committed_histories,
                          std::plus<uint64_t>(),
                          root_process );
-        
+
         d_number_of_committed_histories.front() =
           reduced_num_committed_histories;
-      
+
         for( size_t i = 1; i < d_number_of_committed_histories.size(); ++i )
           d_number_of_committed_histories[i] = 0;
       }
@@ -643,7 +643,7 @@ void EventHandler::reduceObserverData( const Utility::Communicator& comm,
                          this->getNumberOfCommittedHistories(),
                          std::plus<uint64_t>(),
                          root_process );
-        
+
         for( size_t i = 0; i < d_number_of_committed_histories.size(); ++i )
           d_number_of_committed_histories[i] = 0;
       }
@@ -652,9 +652,9 @@ void EventHandler::reduceObserverData( const Utility::Communicator& comm,
                              "Unable to perform mpi reduction in "
                              "event handler for number of committed "
                              "histories!" );
-    
+
     comm.barrier();
-  
+
     // Reduce the observers
     ParticleHistoryObservers::iterator it =
       d_particle_history_observers.begin();
