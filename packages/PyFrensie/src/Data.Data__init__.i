@@ -43,6 +43,7 @@ sys.path.pop(0)
 %include "Data_AtomProperties.i"
 %include "Data_NuclideProperties.i"
 %include "Data_ScatteringCenterPropertiesDatabase.i"
+ //%include "Data_Xsdir.i"
 
 //---------------------------------------------------------------------------//
 // end Data.Data__init__.i
