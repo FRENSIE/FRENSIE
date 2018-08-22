@@ -31,7 +31,7 @@ IF(FRENSIE_ENABLE_DAGMC)
 ENDIF()
 
 ADD_SUBDIRECTORY(data)
-INCLUDE_DIRECTORIES(data/core/src data/ace/src data/endf/src data/endl/src data/native/src data/database/src)
+INCLUDE_DIRECTORIES(data/core/src data/ace/src data/endf/src data/endl/src data/native/src data/database/src data/xsdir/src)
 
 # Create the database generator for the test data
 ADD_EXECUTABLE(database_generator ${GLOBAL_TOOLS_TEST_DATA_SOURCE_DIR}/database_generator.cpp)

@@ -5,6 +5,10 @@ EXECUTE_PROCESS(COMMAND ${SWIG_EXECUTABLE} -python -external-runtime
   OUTPUT_FILE ${SWIG_RUNTIME})
 LIST(APPEND HEADERS ${CMAKE_CURRENT_BINARY_DIR}/${SWIG_RUNTIME})
 
+# Configure the PyFrensie_MPI_Setup.i file
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/PyFrensie_MPI_Setup.i.in
+  ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie_MPI_Setup.i)
+
 # Set the PyTrilinos package headers and sources
 FRENSIE_SETUP_PACKAGE(pyfrensie
   MPI_LIBRARIES ${MPI_CXX_LIBRARIES}

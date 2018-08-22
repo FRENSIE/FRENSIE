@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+#ifndef DATA_SCATTERING_CENTER_PROPERTIES_DATABASE_HPP
+#define DATA_SCATTERING_CENTER_PROPERTIES_DATABASE_HPP
+
 // FRENSIE Includes
 #include "Data_ScatteringCenterPropertiesDatabaseImpl.hpp"
 #include "Data_ACEPhotoatomicDataProperties.hpp"
@@ -83,6 +86,8 @@ BOOST_SERIALIZATION_CLASS_VERSION( ScatteringCenterPropertiesDatabase, Data, 0 )
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ScatteringCenterPropertiesDatabase, Data );
 
 EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Data, ScatteringCenterPropertiesDatabase );
+
+#endif // end DATA_SCATTERING_CENTER_PROPERTIES_DATABASE_HPP
 
 //---------------------------------------------------------------------------//
 // end Data_ScatteringCenterPropertiesDatabase.hpp

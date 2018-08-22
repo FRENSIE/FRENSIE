@@ -79,12 +79,6 @@ using namespace Utility;
 // Add a few general typedefs
 typedef unsigned long int uint64_t;
 
-// Add a few general templates
-%template(DoubleVector) std::vector<double>;
-%template(ElementHandleVector) std::vector<Utility::Mesh::ElementHandle>;
-%template(ElementHandleVolumeMapORDERED) std::map<Utility::Mesh::ElementHandle,double>;
-%template(ElementHandleVolumeMap) std::unordered_map<Utility::Mesh::ElementHandle,double>;
-
 // Add typemaps for converting double[3] to and from Python array
 %typemap(in) const double[3] (std::array<double,3ul> temp){
   temp = PyFrensie::convertFromPython<std::array<double,3ul> >( $input );
@@ -105,6 +99,8 @@ typedef unsigned long int uint64_t;
 %ignore *::getStartElementHandleIterator();
 %ignore *::getEndElementHandleIterator();
 %ignore *::exportData();
+
+
 
 // Add a typemap for ElementHandleVolumeMap& element_volumes
 %typemap(in,numinputs=0) Utility::Mesh::ElementHandleVolumeMap& element_volumes (Utility::Mesh::ElementHandleVolumeMap temp) "$1 = &temp;"
@@ -142,6 +138,12 @@ typedef unsigned long int uint64_t;
 
 %shared_ptr(Utility::Mesh)
 %include "Utility_Mesh.hpp"
+
+// Add a few general templates
+%template(DoubleVector) std::vector<double>;
+%template(ElementHandleVector) std::vector<Utility::Mesh::ElementHandle>;
+// %template(ElementHandleVolumeMapORDERED) std::map<Utility::Mesh::ElementHandle,double>;
+// %template(ElementHandleVolumeMap) std::unordered_map<Utility::Mesh::ElementHandle,double>;
 
 // ---------------------------------------------------------------------------//
 // Add StructuredHexMesh support
