@@ -34,12 +34,13 @@ class SimulationGeneralPropertiesTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationGeneralProperties()
 
         self.assertEqual( properties.getParticleMode(), MonteCarlo.NEUTRON_MODE )
-        self.assertEqual( properties.getSimulationWallTime(), float('inf') )
+        self.assertEqual( properties.getSimulationWallTime(), float('Inf') )
         self.assertEqual( properties.getNumberOfHistories(), 0 )
         self.assertEqual( properties.getMinNumberOfRendezvous(), 1 )
         self.assertEqual( properties.getMaxRendezvousBatchSize(), 1000000000 )
         self.assertEqual( properties.getMinNumberOfBatchesPerRendezvous(), 1 )
         self.assertEqual( properties.getMaxBatchSize(), 1000000000 )
+        self.assertEqual( properties.getNumberOfBatchesPerProcessor(), 1 )
         self.assertEqual( properties.getSurfaceFluxEstimatorAngleCosineCutoff(), 0.001 )
         self.assertFalse( properties.isImplicitCaptureModeOn() )
 

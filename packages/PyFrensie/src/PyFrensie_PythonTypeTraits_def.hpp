@@ -273,6 +273,39 @@ inline bool isValidDictionary( PyObject* py_obj )
     return false;
 }
 
+// Create a char** object from a Python object
+char** convertPythonToArgv( PyObject* py_obj )
+{
+  char ** temp;
+
+  // Check if is a list
+  if (PyList_Check(py_obj))
+  {
+    int size = PyList_Size(py_obj);
+    int i = 0;
+    temp = (char **) malloc((size+1)*sizeof(char *));
+    for (i = 0; i < size; i++)
+    {
+      PyObject *o = PyList_GetItem(py_obj,i);
+      if (PyString_Check(o))
+        temp[i] = PyString_AsString(PyList_GetItem(py_obj,i));
+      else
+      {
+        PyErr_SetString(PyExc_TypeError,"list must contain strings");
+        free(temp);
+        return NULL;
+      }
+    }
+    temp[i] = 0;
+    return temp;
+  }
+  else
+  {
+    PyErr_SetString(PyExc_TypeError,"not a list");
+    return NULL;
+  }
+}
+
 // Create a Python (NumPy) object from a STLCompliantArray object
 template<typename STLCompliantArray>
 inline PyObject* convertArrayToPython( const STLCompliantArray& obj )

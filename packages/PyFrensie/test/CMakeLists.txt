@@ -24,6 +24,52 @@ ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/testutil.py
 ADD_CUSTOM_TARGET(testingHelpers ALL
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/testutil.py)
 
+IF(HAVE_FRENSIE_MPI)
+  # Add the Utility_GlobalMPISession unit tests
+  PyFrensie_MAKE_TEST(tstUtility.GlobalMPISessionInit)
+  ADD_TEST(PyFrensie.Utility.GlobalMPISessionInit_default_test ${MPIEXEC} -n 4 ${PYTHON_EXECUTABLE} tstUtility.GlobalMPISessionInit.py --constructor_type=default)
+  SET_PROPERTY(TEST PyFrensie.Utility.GlobalMPISessionInit_default_test PROPERTY LABELS pyfrensie)
+
+  ADD_TEST(PyFrensie.Utility.GlobalMPISessionInit_advanced_test ${MPIEXEC} -n 4 ${PYTHON_EXECUTABLE} tstUtility.GlobalMPISessionInit.py --constructor_type=advanced)
+  SET_PROPERTY(TEST PyFrensie.Utility.GlobalMPISessionInit_advanced_test PROPERTY LABELS pyfrensie)
+
+  ADD_TEST(PyFrensie.Utility.GlobalMPISessionInit_basic_single_test ${MPIEXEC} -n 4 ${PYTHON_EXECUTABLE} tstUtility.GlobalMPISessionInit.py --constructor_type=basic_single)
+  SET_PROPERTY(TEST PyFrensie.Utility.GlobalMPISessionInit_basic_single_test PROPERTY LABELS pyfrensie)
+
+  ADD_TEST(PyFrensie.Utility.GlobalMPISessionInit_advanced_single_test ${MPIEXEC} -n 4 ${PYTHON_EXECUTABLE} tstUtility.GlobalMPISessionInit.py --constructor_type=advanced_single)
+  SET_PROPERTY(TEST PyFrensie.Utility.GlobalMPISessionInit_advanced_single_test PROPERTY LABELS pyfrensie)
+
+  ADD_TEST(PyFrensie.Utility.GlobalMPISessionInit_basic_funneled_test ${MPIEXEC} -n 4 ${PYTHON_EXECUTABLE} tstUtility.GlobalMPISessionInit.py --constructor_type=basic_funneled)
+  SET_PROPERTY(TEST PyFrensie.Utility.GlobalMPISessionInit_basic_funneled_test PROPERTY LABELS pyfrensie)
+
+  ADD_TEST(PyFrensie.Utility.GlobalMPISessionInit_advanced_funneled_test ${MPIEXEC} -n 4 ${PYTHON_EXECUTABLE} tstUtility.GlobalMPISessionInit.py --constructor_type=advanced_funneled)
+  SET_PROPERTY(TEST PyFrensie.Utility.GlobalMPISessionInit_advanced_funneled_test PROPERTY LABELS pyfrensie)
+
+  ADD_TEST(PyFrensie.Utility.GlobalMPISessionInit_basic_serialized_test ${MPIEXEC} -n 4 ${PYTHON_EXECUTABLE} tstUtility.GlobalMPISessionInit.py --constructor_type=basic_serialized)
+  SET_PROPERTY(TEST PyFrensie.Utility.GlobalMPISessionInit_basic_serialized_test PROPERTY LABELS pyfrensie)
+
+  ADD_TEST(PyFrensie.Utility.GlobalMPISessionInit_advanced_serialized_test ${MPIEXEC} -n 4 ${PYTHON_EXECUTABLE} tstUtility.GlobalMPISessionInit.py --constructor_type=advanced_serialized)
+  SET_PROPERTY(TEST PyFrensie.Utility.GlobalMPISessionInit_advanced_serialized_test PROPERTY LABELS pyfrensie)
+
+  ADD_TEST(PyFrensie.Utility.GlobalMPISessionInit_basic_multiple_test ${MPIEXEC} -n 4 ${PYTHON_EXECUTABLE} tstUtility.GlobalMPISessionInit.py --constructor_type=basic_multiple)
+  SET_PROPERTY(TEST PyFrensie.Utility.GlobalMPISessionInit_basic_multiple_test PROPERTY LABELS pyfrensie)
+
+  ADD_TEST(PyFrensie.Utility.GlobalMPISessionInit_advanced_multiple_test ${MPIEXEC} -n 4 ${PYTHON_EXECUTABLE} tstUtility.GlobalMPISessionInit.py --constructor_type=advanced_multiple)
+  SET_PROPERTY(TEST PyFrensie.Utility.GlobalMPISessionInit_advanced_multiple_test PROPERTY LABELS pyfrensie)
+
+  PyFrensie_MAKE_TEST(tstUtility.GlobalMPISession)
+  ADD_TEST(PyFrensie.Utility.GlobalMPISession2_test ${MPIEXEC} -n 2 ${PYTHON_EXECUTABLE} tstUtility.GlobalMPISession.py )
+  SET_PROPERTY(TEST PyFrensie.Utility.GlobalMPISession2_test PROPERTY LABELS pyfrensie)
+
+  ADD_TEST(PyFrensie.Utility.GlobalMPISession4_test ${MPIEXEC} -n 4 ${PYTHON_EXECUTABLE} tstUtility.GlobalMPISession.py )
+  SET_PROPERTY(TEST PyFrensie.Utility.GlobalMPISession4_test PROPERTY LABELS pyfrensie)
+
+ELSE()
+  PyFrensie_MAKE_TEST(tstUtility.GlobalMPISessionInit)
+  ADD_TEST(PyFrensie.Utility.GlobalMPISessionInit_default_test ${PYTHON_EXECUTABLE} tstUtility.GlobalMPISessionInit.py --constructor_type=default)
+  SET_PROPERTY(TEST PyFrensie.Utility.GlobalMPISessionInit_default_test PROPERTY LABELS pyfrensie)
+ENDIF()
+
 # Add the Utility.Prng unit tests
 PyFrensie_MAKE_TEST(tstUtility.Prng)
 ADD_TEST(PyFrensie.Utility.Prng_test ${PYTHON_EXECUTABLE} tstUtility.Prng.py)

@@ -61,12 +61,12 @@ void ObserverPhaseSpaceDiscretization::assignDiscretizationToDimension(
     std::map<ObserverPhaseSpaceDimension,std::pair<std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>,bool> > discretized_dimensions;
 
     d_impl->getDiscretizedDimensions( discretized_dimensions );
-    
+
     d_impl.reset( new DetailedObserverPhaseSpaceDiscretizationImpl );
-    
+
     const decltype(discretized_dimensions)::mapped_type&
       discretized_dimension_data = discretized_dimensions.begin()->second;
-    
+
     d_impl->assignDiscretizationToDimension( discretized_dimension_data.first,
                                              discretized_dimension_data.second );
     d_impl->assignDiscretizationToDimension( discretization, range_dimension );
@@ -74,7 +74,7 @@ void ObserverPhaseSpaceDiscretization::assignDiscretizationToDimension(
   else
     d_impl->assignDiscretizationToDimension( discretization, range_dimension );
 }
-  
+
 // Return the dimensions that have been discretized
 void ObserverPhaseSpaceDiscretization::getDiscretizedDimensions(
           std::set<ObserverPhaseSpaceDimension>& discretized_dimensions ) const
@@ -142,9 +142,9 @@ void ObserverPhaseSpaceDiscretization::print(
 bool ObserverPhaseSpaceDiscretization::isPointInDiscretization(
                               const DimensionValueMap& dimension_values ) const
 {
-  d_impl->isPointInDiscretization( dimension_values );
+  return d_impl->isPointInDiscretization( dimension_values );
 }
-  
+
 // Check if the point is in the phase space discretization
 bool ObserverPhaseSpaceDiscretization::isPointInDiscretization(
             const ObserverParticleStateWrapper& particle_state_wrapper ) const
@@ -183,7 +183,7 @@ void ObserverPhaseSpaceDiscretization::calculateBinIndicesAndWeightsOfRange(
   d_impl->calculateBinIndicesAndWeightsOfRange( particle_state_wrapper,
                                                 bin_indices_and_weights );
 }
-  
+
 } // end MonteCarlo namespace
 
 EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ObserverPhaseSpaceDiscretization );
