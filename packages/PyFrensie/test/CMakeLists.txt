@@ -1,4 +1,5 @@
 # Configure the test files
+SET(ROOT_GEOM_TEST_TARGET pyfrensie_test_root_geometry)
 ADD_SUBDIRECTORY(test_files)
 
 # Configure the PyTrilinos utilities (used for setting up unit files)
@@ -259,6 +260,7 @@ IF(${FRENSIE_ENABLE_DAGMC} OR ${FRENSIE_ENABLE_ROOT})
   ENDIF()
 
   IF(${FRENSIE_ENABLE_ROOT})
+    ADD_DEPENDENCIES(PyFrensie_tstGeometry.Model ${ROOT_GEOM_TEST_TARGET})
     ADD_TEST(PyFrensie.Geometry.Model_Root_test ${PYTHON_EXECUTABLE} tstGeometry.Model.py --root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geom.root)
     SET_PROPERTY(TEST PyFrensie.Geometry.Model_Root_test PROPERTY LABLES pyfrensie root)
   ENDIF()
@@ -274,6 +276,7 @@ IF(${FRENSIE_ENABLE_DAGMC} OR ${FRENSIE_ENABLE_ROOT})
   ENDIF()
 
   IF(${FRENSIE_ENABLE_ROOT})
+    ADD_DEPENDENCIES(PyFrensie_tstGeometry.Navigator ${ROOT_GEOM_TEST_TARGET})
     ADD_TEST(PyFrensie.Geometry.Navigator_Root_test ${PYTHON_EXECUTABLE} tstGeometry.Navigator.py --root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geom.root)
     SET_PROPERTY(TEST PyFrensie.Geometry.Navigator_Root_test PROPERTY LABLES pyfrensie root)
   ENDIF()
@@ -428,9 +431,11 @@ ENDIF()
 # Add the Root Estimator unit tests
 IF(${FRENSIE_ENABLE_ROOT})
   PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CellCollisionFluxEstimatorRoot)
+  ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Event.CellCollisionFluxEstimatorRoot ${ROOT_GEOM_TEST_TARGET})
   ADD_TEST(PyFrensie.MonteCarlo.Event.CellCollisionFluxEstimatorRoot_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellCollisionFluxEstimatorRoot.py --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geom.root)
 
   PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CellTrackLengthFluxEstimatorRoot)
+  ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Event.CellTrackLengthFluxEstimatorRoot ${ROOT_GEOM_TEST_TARGET})
   ADD_TEST(PyFrensie.MonteCarlo.Event.CellTrackLengthFluxEstimatorRoot_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellTrackLengthFluxEstimatorRoot.py --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geom.root)
 ENDIF()
 
