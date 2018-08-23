@@ -11,7 +11,7 @@
 %pythonbegin
 %{
 # If MPI has been enabled in FRENSIE, the libmpi.so library must be imported
-# before the Utility.GlobalMPISession library to ensure proper initialization
+# before the Utility.MPI library to ensure proper initialization
   __pyfrensie_mpi_enabled__ = "${FRENSIE_ENABLE_MPI}".lower().find("on") >= 0
   if __pyfrensie_mpi_enabled__:
       import ctypes

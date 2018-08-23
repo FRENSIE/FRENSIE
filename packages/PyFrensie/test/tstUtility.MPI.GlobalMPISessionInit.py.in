@@ -1,9 +1,9 @@
 #! ${PYTHON_EXECUTABLE}
 #-----------------------------------------------------------------------------#
-## Utility.GlobalMPISessionInit module unit tests
-#  \file   tstUtility.GlobalMPISessionInit.py
+## Utility.MPI.GlobalMPISessionInit module unit tests
+#  \file   tstUtility.MPI.GlobalMPISessionInit.py
 #  \author Alex Robinson
-#  \brief  Unit tests for the Utility.GlobalMPISessionInit module
+#  \brief  Unit tests for the Utility.MPI.GlobalMPISessionInit module
 #-----------------------------------------------------------------------------#
 
 # System imports
@@ -13,7 +13,7 @@ from optparse import *
 import numpy
 
 from testingHelpers import importPyFrensieModuleFromBuildDir
-MPI = importPyFrensieModuleFromBuildDir('Utility.GlobalMPISession')
+MPI = importPyFrensieModuleFromBuildDir('Utility.MPI')
 
 # Parse the command-line arguments
 parser = OptionParser()
@@ -28,14 +28,14 @@ options,args = parser.parse_args()
 #-----------------------------------------------------------------------------#
 # Test the GlobalMPISessionInit
 class GlobalMPISessionInitTestCase(unittest.TestCase):
-    "TestCase class for Utility.GlobalMPISession class"
+    "TestCase class for Utility.MPI.GlobalMPISession class"
 
     # Check that the mpi session can be initialized and finalized correctly
     def testInitialize_finalize(self):
-        "*Test Utility.GlobalMPISessionInit initialize_finalize"
+        "*Test Utility.MPI.GlobalMPISessionInit initialize_finalize"
         self.assertFalse( MPI.GlobalMPISession.initialized() )
         self.assertFalse( MPI.GlobalMPISession.finalized() )
-        
+
         constructor_type = str(options.constructor_type)
 
         if constructor_type == "default":
@@ -174,7 +174,7 @@ if __name__ == "__main__":
 
     print >>sys.stderr, \
         "\n********************\n" + \
-        "Testing Utility.GlobalMPISession \n" + \
+        "Testing Utility.MPI.GlobalMPISession \n" + \
         "********************\n"
     result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
 
@@ -190,5 +190,5 @@ if __name__ == "__main__":
     sys.exit(errs_plus_fails)
 
 #-----------------------------------------------------------------------------#
-# end tstUtility.GlobalMPISessionInit.py
+# end tstUtility.MPI.GlobalMPISessionInit.py
 #-----------------------------------------------------------------------------#

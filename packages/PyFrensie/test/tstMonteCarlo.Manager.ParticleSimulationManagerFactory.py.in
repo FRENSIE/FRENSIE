@@ -26,7 +26,7 @@ options,args = parser.parse_args()
 
 from testingHelpers import importPyFrensieModuleFromBuildDir
 Geometry = importPyFrensieModuleFromBuildDir('Geometry')
-MPI = importPyFrensieModuleFromBuildDir('Utility.GlobalMPISession')
+MPI = importPyFrensieModuleFromBuildDir('Utility.MPI')
 MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
 Collision = importPyFrensieModuleFromBuildDir('MonteCarlo.Collision')
 ActiveRegion = importPyFrensieModuleFromBuildDir('MonteCarlo.ActiveRegion')
@@ -43,12 +43,9 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        # Initialize the FRENSIE global MPI Session
-        argc = 2
-        argv = ["tstMonteCarlo.Manager.ParticleSimulationManagerFactory.py", "default", "--report_level=detailed"]
-        cls.session = MPI.GlobalMPISession( argc, argv )
+        # Set the number of requested threads
+        cls.threads = options.threads
 
-        cls.threads = 1
         database_path = options.database_path
         cls.data_directory = os.path.dirname(database_path)
         database = Data.ScatteringCenterPropertiesDatabase(database_path)
@@ -91,6 +88,12 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
         cls.particle_distribution = tmp_particle_distribution
 
+    def setUp(self):
+        # Initialize the FRENSIE global MPI Session
+        argc = 2
+        argv = ["tstMonteCarlo.Manager.ParticleSimulationManagerFactory.py", "default", "--report_level=detailed"]
+        self.session = MPI.GlobalMPISession( argc, argv )
+
 #-----------------------------------------------------------------------------#
 # Tests.
 #-----------------------------------------------------------------------------#
@@ -109,59 +112,38 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
                                 self.unfilled_model,
                                 False )
 
-#   {
         source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
 
         source = ActiveRegion.StandardParticleSource( source_component )
-#   }
-
         event_handler = Event.EventHandler( properties )
 
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
-
-
         manager = factory.getManager()
 
-        # if MPI.GlobalMPISession.size() == 1:
-#   {
-#     std.shared_ptr<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.NEUTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.NEUTRON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
-#   else
-#   {
-#     std.shared_ptr<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.NEUTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.NEUTRON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertEqual( self.threads, 1 )
+          self.assertTrue( Manager.isStandardNeutronSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardNeutronSimulationManager( manager ) )
 
         self.assertEqual( manager.getSimulationName(), "simulation" )
         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
-        # self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
 
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
 
         manager = factory.getManager()
 
-        # if MPI.GlobalMPISession.size() == 1:
-#   {
-#     std.shared_ptr<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.NEUTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.NEUTRON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
-#   else
-#   {
-#     std.shared_ptr<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.NEUTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.NEUTRON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardNeutronSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardNeutronSimulationManager( manager ) )
 
         self.assertEqual( manager.getSimulationName(), "test_sim" )
         self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
-        # self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
+        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
 
-#   Utility.OpenMPProperties.setNumberOfThreads( 1 )
-# }
+        MPI.OpenMPProperties.setNumberOfThreads( 1 )
 
 #-----------------------------------------------------------------------------#
     # Check that a particle simulation manager factory can be constructed
@@ -179,60 +161,37 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
                                 self.unfilled_model,
                                 False )
 
-
-#   {
         source_component = [ActiveRegion.StandardPhotonSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
 
         source = ActiveRegion.StandardParticleSource( source_component )
-#   }
-
         event_handler = Event.EventHandler( properties )
 
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
-
-
         manager = factory.getManager()
 
-        # if MPI.GlobalMPISession.size() == 1:
-#   {
-#     std.shared_ptr<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.PHOTON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.PHOTON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
-#   else
-#   {
-#     std.shared_ptr<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.PHOTON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.PHOTON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardPhotonSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardPhotonSimulationManager( manager ) )
 
         self.assertEqual( manager.getSimulationName(), "simulation" )
         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
-        # self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
 
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
 
         manager = factory.getManager()
 
-        # if MPI.GlobalMPISession.size() == 1:
-#   {
-#     std.shared_ptr<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.PHOTON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.PHOTON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
-#   else
-#   {
-#     std.shared_ptr<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.PHOTON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.PHOTON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardPhotonSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardPhotonSimulationManager( manager ) )
 
         self.assertEqual( manager.getSimulationName(), "test_sim" )
         self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
-        # self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
 
-#   Utility.OpenMPProperties.setNumberOfThreads( 1 )
-# }
+        MPI.OpenMPProperties.setNumberOfThreads( 1 )
 
 #-----------------------------------------------------------------------------#
     # Check that a particle simulation manager factory can be constructed
@@ -250,60 +209,37 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
                                 self.unfilled_model,
                                 False )
 
-
-#   {
         source_component = [ActiveRegion.StandardElectronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
 
         source = ActiveRegion.StandardParticleSource( source_component )
-#   }
-
         event_handler = Event.EventHandler( properties )
 
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
-
-
         manager = factory.getManager()
 
-        # if MPI.GlobalMPISession.size() == 1:
-#   {
-#     std.shared_ptr<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.ELECTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.ELECTRON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
-#   else
-#   {
-#     std.shared_ptr<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.ELECTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.ELECTRON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardElectronSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardElectronSimulationManager( manager ) )
 
         self.assertEqual( manager.getSimulationName(), "simulation" )
         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
-        # self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
 
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
 
         manager = factory.getManager()
 
-        # if MPI.GlobalMPISession.size() == 1:
-#   {
-#     std.shared_ptr<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.ELECTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.ELECTRON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
-#   else
-#   {
-#     std.shared_ptr<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.ELECTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.ELECTRON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardElectronSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardElectronSimulationManager( manager ) )
 
         self.assertEqual( manager.getSimulationName(), "test_sim" )
         self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
-        # self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
 
-#   Utility.OpenMPProperties.setNumberOfThreads( 1 )
-# }
+        MPI.OpenMPProperties.setNumberOfThreads( 1 )
 
 #-----------------------------------------------------------------------------#
     # Check that a particle simulation manager factory can be constructed
@@ -321,60 +257,37 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
                                 self.unfilled_model,
                                 False )
 
-
-#   {
         source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
 
         source = ActiveRegion.StandardParticleSource( source_component )
-#   }
-
         event_handler = Event.EventHandler( properties )
 
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
-
-
         manager = factory.getManager()
 
-        # if MPI.GlobalMPISession.size() == 1:
-#   {
-#     std.shared_ptr<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.NEUTRON_PHOTON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.NEUTRON_PHOTON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
-#   else
-#   {
-#     std.shared_ptr<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.NEUTRON_PHOTON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.NEUTRON_PHOTON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardNeutronPhotonSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardNeutronPhotonSimulationManager( manager ) )
 
         self.assertEqual( manager.getSimulationName(), "simulation" )
         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
-        # self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
 
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
 
         manager = factory.getManager()
 
-        # if MPI.GlobalMPISession.size() == 1:
-#   {
-#     std.shared_ptr<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.NEUTRON_PHOTON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.NEUTRON_PHOTON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
-#   else
-#   {
-#     std.shared_ptr<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.NEUTRON_PHOTON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.NEUTRON_PHOTON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardNeutronPhotonSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardNeutronPhotonSimulationManager( manager ) )
 
         self.assertEqual( manager.getSimulationName(), "test_sim" )
         self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
-        # self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
 
-#   Utility.OpenMPProperties.setNumberOfThreads( 1 )
-# }
+        MPI.OpenMPProperties.setNumberOfThreads( 1 )
 
 #-----------------------------------------------------------------------------#
     # Check that a particle simulation manager factory can be constructed
@@ -392,61 +305,37 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
                                 self.unfilled_model,
                                 False )
 
-
-#   {
         source_component = [ActiveRegion.StandardPhotonSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
 
         source = ActiveRegion.StandardParticleSource( source_component )
-#   }
-
         event_handler = Event.EventHandler( properties )
 
-
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
-
-
         manager = factory.getManager()
 
-        # if MPI.GlobalMPISession.size() == 1:
-#   {
-#     std.shared_ptr<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.PHOTON_ELECTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.PHOTON_ELECTRON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
-#   else
-#   {
-#     std.shared_ptr<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.PHOTON_ELECTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.PHOTON_ELECTRON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardPhotonElectronSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardPhotonElectronSimulationManager( manager ) )
 
         self.assertEqual( manager.getSimulationName(), "simulation" )
         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
-        # self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
 
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
 
         manager = factory.getManager()
 
-        # if MPI.GlobalMPISession.size() == 1:
-#   {
-#     std.shared_ptr<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.PHOTON_ELECTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.PHOTON_ELECTRON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
-#   else
-#   {
-#     std.shared_ptr<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.PHOTON_ELECTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.PHOTON_ELECTRON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardPhotonElectronSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardPhotonElectronSimulationManager( manager ) )
 
         self.assertEqual( manager.getSimulationName(), "test_sim" )
         self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
-        # self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
 
-#   Utility.OpenMPProperties.setNumberOfThreads( 1 )
-# }
+        MPI.OpenMPProperties.setNumberOfThreads( 1 )
 
 #-----------------------------------------------------------------------------#
     # Check that a particle simulation manager factory can be constructed
@@ -464,62 +353,37 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
                                 self.unfilled_model,
                                 False )
 
-
-#   {
         source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
 
         source = ActiveRegion.StandardParticleSource( source_component )
-#   }
-
         event_handler = Event.EventHandler( properties )
 
-
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
-
-
         manager = factory.getManager()
 
-        # if MPI.GlobalMPISession.size() == 1:
-#   {
-#     std.shared_ptr<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
-#   else
-#   {
-#     std.shared_ptr<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardNeutronPhotonElectronSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardNeutronPhotonElectronSimulationManager( manager ) )
 
         self.assertEqual( manager.getSimulationName(), "simulation" )
         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
-        print MPI.GlobalMPISession.thread_level()
-        self.assertEqual( MPI.GlobalMPISession.thread_level(), 1 )
+        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
 
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
 
         manager = factory.getManager()
 
-        # if MPI.GlobalMPISession.size() == 1:
-#   {
-#     std.shared_ptr<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
-#   else
-#   {
-#     std.shared_ptr<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardNeutronPhotonElectronSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardNeutronPhotonElectronSimulationManager( manager ) )
 
         self.assertEqual( manager.getSimulationName(), "test_sim" )
         self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
-        # self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
 
-#   Utility.OpenMPProperties.setNumberOfThreads( 1 )
-# }
+        MPI.OpenMPProperties.setNumberOfThreads( 1 )
 
 #-----------------------------------------------------------------------------#
     # Check that a particle simulation manager factory can be constructed
@@ -537,61 +401,37 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
                                 self.unfilled_model,
                                 False )
 
-
-#   {
         source_component = [ActiveRegion.StandardAdjointPhotonSourceComponent( 0, 1.0, model, self.particle_distribution )]
 
         source = ActiveRegion.StandardParticleSource( source_component )
-#   }
-
         event_handler = Event.EventHandler( properties )
 
-
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
-
-
         manager = factory.getManager()
 
-        # if MPI.GlobalMPISession.size() == 1:
-#   {
-#     std.shared_ptr<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.ADJOINT_PHOTON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.ADJOINT_PHOTON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
-#   else
-#   {
-#     std.shared_ptr<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.ADJOINT_PHOTON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.ADJOINT_PHOTON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardAdjointPhotonSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardAdjointPhotonSimulationManager( manager ) )
 
         self.assertEqual( manager.getSimulationName(), "simulation" )
         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
-        # self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
 
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
 
         manager = factory.getManager()
 
-        # if MPI.GlobalMPISession.size() == 1:
-#   {
-#     std.shared_ptr<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.ADJOINT_PHOTON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.ADJOINT_PHOTON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
-#   else
-#   {
-#     std.shared_ptr<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.ADJOINT_PHOTON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.ADJOINT_PHOTON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardAdjointPhotonSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardAdjointPhotonSimulationManager( manager ) )
 
         self.assertEqual( manager.getSimulationName(), "test_sim" )
         self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
-        # self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
 
-#   Utility.OpenMPProperties.setNumberOfThreads( 1 )
-# }
+        MPI.OpenMPProperties.setNumberOfThreads( 1 )
 
 #-----------------------------------------------------------------------------#
     # Check that a particle simulation manager factory can be constructed
@@ -609,61 +449,38 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
                                 self.unfilled_model,
                                 False )
 
-
-#   {
         source_component = [ActiveRegion.StandardAdjointElectronSourceComponent( 0, 1.0, model, self.particle_distribution )]
 
         source = ActiveRegion.StandardParticleSource( source_component )
-#   }
-
         event_handler = Event.EventHandler( properties )
-
 
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
 
-
         manager = factory.getManager()
 
-        # if MPI.GlobalMPISession.size() == 1:
-#   {
-#     std.shared_ptr<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.ADJOINT_ELECTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.ADJOINT_ELECTRON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
-#   else
-#   {
-#     std.shared_ptr<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.ADJOINT_ELECTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.ADJOINT_ELECTRON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardAdjointElectronSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardAdjointElectronSimulationManager( manager ) )
 
         self.assertEqual( manager.getSimulationName(), "simulation" )
         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
-        # self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
 
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
 
         manager = factory.getManager()
 
-        # if MPI.GlobalMPISession.size() == 1:
-#   {
-#     std.shared_ptr<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.ADJOINT_ELECTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.ADJOINT_ELECTRON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
-#   else
-#   {
-#     std.shared_ptr<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.ADJOINT_ELECTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.ADJOINT_ELECTRON_MODE> >( manager )
-
-#     FRENSIE_CHECK( true_manager.get() != NULL )
-#   }
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardAdjointElectronSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardAdjointElectronSimulationManager( manager ) )
 
         self.assertEqual( manager.getSimulationName(), "test_sim" )
         self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
-        # self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
 
-#   Utility.OpenMPProperties.setNumberOfThreads( 1 )
-# }
+        MPI.OpenMPProperties.setNumberOfThreads( 1 )
 
 # #-----------------------------------------------------------------------------#
 #     # Check that a particle simulation manager factory can be constructed and
@@ -682,43 +499,27 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 #                                 self.unfilled_model,
 #                                 False )
 
-
-# #   {
 #         source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
 
 #         source = ActiveRegion.StandardParticleSource( source_component )
-# #   }
-
 #         event_handler = Event.EventHandler( properties )
 
-
 #         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
-
-# #   factory.setWeightWindows( weight_windows )
+#         factory.setWeightWindows( weight_windows )
 
 #         self.assertEqual( weight_windows.use_count(), 2 )
 
-
 #         manager = factory.getManager()
 
-#         # if MPI.GlobalMPISession.size() == 1:
-# #   {
-# #     std.shared_ptr<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.NEUTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.NEUTRON_MODE> >( manager )
-
-# #     FRENSIE_CHECK( true_manager.get() != NULL )
-# #   }
-# #   else
-# #   {
-# #     std.shared_ptr<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.NEUTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.NEUTRON_MODE> >( manager )
-
-# #     FRENSIE_CHECK( true_manager.get() != NULL )
-# #   }
+#         if MPI.GlobalMPISession.size() == 1:
+#           self.assertTrue( Manager.isStandardNeutronSimulationManager( manager ) )
+#         else:
+#           self.assertTrue( Manager.isBatchedDistributedStandardNeutronSimulationManager( manager ) )
 
 #         self.assertEqual( manager.getSimulationName(), "simulation" )
 #         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
-#         # self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+#         self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
 #         self.assertEqual( weight_windows.use_count(), 3 )
-# # }
 
 # #-----------------------------------------------------------------------------#
 #     # Check that a particle simulation manager factory can be constructed and
@@ -737,43 +538,27 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 #                                 self.unfilled_model,
 #                                 False )
 
-
-# #   {
 #         source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
 
 #         source = ActiveRegion.StandardParticleSource( source_component )
-# #   }
-
 #         event_handler = Event.EventHandler( properties )
 
-
 #         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
-
-# #   factory.setCollisionForcer( collision_forcer )
+#         factory.setCollisionForcer( collision_forcer )
 
 #         self.assertEqual( collision_forcer.use_count(), 2 )
 
-
 #         manager = factory.getManager()
 
-#         # if MPI.GlobalMPISession.size() == 1:
-# #   {
-# #     std.shared_ptr<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.NEUTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.NEUTRON_MODE> >( manager )
-
-# #     FRENSIE_CHECK( true_manager.get() != NULL )
-# #   }
-# #   else
-# #   {
-# #     std.shared_ptr<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.NEUTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.NEUTRON_MODE> >( manager )
-
-# #     FRENSIE_CHECK( true_manager.get() != NULL )
-# #   }
+#         if MPI.GlobalMPISession.size() == 1:
+#           self.assertTrue( Manager.isStandardNeutronSimulationManager( manager ) )
+#         else:
+#           self.assertTrue( Manager.isBatchedDistributedStandardNeutronSimulationManager( manager ) )
 
 #         self.assertEqual( manager.getSimulationName(), "simulation" )
 #         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
-#         # self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+#         self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
 #         self.assertEqual( collision_forcer.use_count(), 3 )
-# # }
 
 # #-----------------------------------------------------------------------------#
 #     # Check that a particle simulation manager factory can be constructed and
@@ -792,47 +577,30 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 #                                 self.unfilled_model,
 #                                 False )
 
-
-# #   {
 #         source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
 
 #         source = ActiveRegion.StandardParticleSource( source_component )
-# #   }
-
 #         event_handler = Event.EventHandler( properties )
 
-
 #         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
-
-# #   factory.setWeightWindows( weight_windows )
-# #   factory.setCollisionForcer( collision_forcer )
+#         factory.setWeightWindows( weight_windows )
+#         factory.setCollisionForcer( collision_forcer )
 
 #         self.assertEqual( weight_windows.use_count(), 2 )
 #         self.assertEqual( collision_forcer.use_count(), 2 )
 
-
 #         manager = factory.getManager()
 
-#         # if MPI.GlobalMPISession.size() == 1:
-# #   {
-# #     std.shared_ptr<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.NEUTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.StandardParticleSimulationManager<MonteCarlo.NEUTRON_MODE> >( manager )
-
-# #     FRENSIE_CHECK( true_manager.get() != NULL )
-# #   }
-# #   else
-# #   {
-# #     std.shared_ptr<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.NEUTRON_MODE> > true_manager = std.dynamic_pointer_cast<MonteCarlo.BatchedDistributedStandardParticleSimulationManager<MonteCarlo.NEUTRON_MODE> >( manager )
-
-# #     FRENSIE_CHECK( true_manager.get() != NULL )
-# #   }
+#         if MPI.GlobalMPISession.size() == 1:
+#           self.assertTrue( Manager.isStandardNeutronSimulationManager( manager ) )
+#         else:
+#           self.assertTrue( Manager.isBatchedDistributedStandardNeutronSimulationManager( manager ) )
 
 #         self.assertEqual( manager.getSimulationName(), "simulation" )
 #         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
-#         # self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+#         self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
 #         self.assertEqual( weight_windows.use_count(), 3 )
 #         self.assertEqual( collision_forcer.use_count(), 3 )
-# # }
-
 
 #-----------------------------------------------------------------------------#
 # Custom main

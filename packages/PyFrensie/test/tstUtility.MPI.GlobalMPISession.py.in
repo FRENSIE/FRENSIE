@@ -1,9 +1,9 @@
 #! ${PYTHON_EXECUTABLE}
 #-----------------------------------------------------------------------------#
-## Utility.GlobalMPISession module unit tests
-#  \file   tstUtility.GlobalMPISession.py
+## Utility.MPI.GlobalMPISession module unit tests
+#  \file   tstUtility.MPI.GlobalMPISession.py
 #  \author Alex Robinson
-#  \brief  Unit tests for the Utility.GlobalMPISession module
+#  \brief  Unit tests for the Utility.MPI.GlobalMPISession module
 #-----------------------------------------------------------------------------#
 
 # System imports
@@ -14,7 +14,7 @@ from optparse import *
 import numpy
 
 from testingHelpers import importPyFrensieModuleFromBuildDir
-MPI = importPyFrensieModuleFromBuildDir('Utility.GlobalMPISession')
+MPI = importPyFrensieModuleFromBuildDir('Utility.MPI')
 
 # Parse the command-line arguments
 parser = OptionParser()
@@ -29,7 +29,7 @@ options,args = parser.parse_args()
 #-----------------------------------------------------------------------------#
 # Test the GlobalMPISession
 class GlobalMPISessionTestCase(unittest.TestCase):
-    "TestCase class for Utility.GlobalMPISession class"
+    "TestCase class for Utility.MPI.GlobalMPISession class"
 
     def setUp(self):
         self.mpi_session = MPI.GlobalMPISession( len(sys.argv), sys.argv )
@@ -37,7 +37,7 @@ class GlobalMPISessionTestCase(unittest.TestCase):
 #-----------------------------------------------------------------------------#
     # Check if MPI is used
     def testIsMPIUsed(self):
-        "*Test Utility.GlobalMPISession isMPIUsed"
+        "*Test Utility.MPI.GlobalMPISession isMPIUsed"
         if MPI.__pyfrensie_mpi_enabled__:
             self.assertTrue( self.mpi_session.isMPIUsed() )
             self.assertTrue( MPI.GlobalMPISession.isMPIUsed() )
@@ -48,7 +48,7 @@ class GlobalMPISessionTestCase(unittest.TestCase):
 #-----------------------------------------------------------------------------#
     # Check that an output stream can be initialized
     def testInitializeOutputStream(self):
-        "*Test Utility.GlobalMPISession initializeOutputStream"
+        "*Test Utility.MPI.GlobalMPISession initializeOutputStream"
         # Allow all procs to output to the stream
         filename = "test_"+str( MPI.GlobalMPISession.rank() )+".txt"
         message = "Hello from " + str(MPI.GlobalMPISession.rank())
@@ -123,7 +123,7 @@ class GlobalMPISessionTestCase(unittest.TestCase):
 #-----------------------------------------------------------------------------#
     # Check that the error log can be initialized
     def testInitializeErrorLog(self):
-        "*Test Utility.GlobalMPISession initializeErrorLog"
+        "*Test Utility.MPI.GlobalMPISession initializeErrorLog"
         # Make sure that all sinks have been removed from the log
         MPI.removeAllLogs()
 
@@ -166,7 +166,7 @@ class GlobalMPISessionTestCase(unittest.TestCase):
 #-----------------------------------------------------------------------------#
     # Check that the warning log can be initialized
     def testInitializeWarningLog(self):
-        "*Test Utility.GlobalMPISession initializeWarningLog"
+        "*Test Utility.MPI.GlobalMPISession initializeWarningLog"
         # Make sure that all sinks have been removed from the log
         MPI.removeAllLogs()
 
@@ -209,7 +209,7 @@ class GlobalMPISessionTestCase(unittest.TestCase):
 #-----------------------------------------------------------------------------#
     # Check that the notification log can be initialized
     def testInitializeNotificationLog(self):
-        "*Test Utility.GlobalMPISession initializeNotificationLog"
+        "*Test Utility.MPI.GlobalMPISession initializeNotificationLog"
         # Make sure that all sinks have been removed from the log
         MPI.removeAllLogs()
 
@@ -252,7 +252,7 @@ class GlobalMPISessionTestCase(unittest.TestCase):
 #-----------------------------------------------------------------------------#
     # Check that a set of integers can be summed on all processes
     def testSum_int(self):
-        "*Test Utility.GlobalMPISession sum_int"
+        "*Test Utility.MPI.GlobalMPISession sum_int"
         local_int = 1
 
         global_int_sum = MPI.GlobalMPISession.sum( local_int )
@@ -262,7 +262,7 @@ class GlobalMPISessionTestCase(unittest.TestCase):
 #-----------------------------------------------------------------------------#
     # Check that a set of doubles can be summed on all processes
     def testSum_double(self):
-        "*Test Utility.GlobalMPISession sum_double"
+        "*Test Utility.MPI.GlobalMPISession sum_double"
         local_double = 0.5
 
         global_double_sum = MPI.GlobalMPISession.sum( local_double )
@@ -272,7 +272,7 @@ class GlobalMPISessionTestCase(unittest.TestCase):
 #-----------------------------------------------------------------------------#
     # Check that a boolean can be checked as True on all procs
     def testIsGloballyTrue(self):
-        "*Test Utility.GlobalMPISession isGloballyTrue"
+        "*Test Utility.MPI.GlobalMPISession isGloballyTrue"
         local_bool = True
 
         self.assertTrue( MPI.GlobalMPISession.isGloballyTrue( local_bool ) )
@@ -289,7 +289,7 @@ class GlobalMPISessionTestCase(unittest.TestCase):
 #-----------------------------------------------------------------------------#
     # Check that a boolean can be checked as False on all procs
     def testIsGloballyFalse(self):
-        "*Test Utility.GlobalMPISession isGloballyFalse"
+        "*Test Utility.MPI.GlobalMPISession isGloballyFalse"
         local_bool = False
 
         self.assertTrue( MPI.GlobalMPISession.isGloballyFalse( local_bool ) )
@@ -306,7 +306,7 @@ class GlobalMPISessionTestCase(unittest.TestCase):
 #-----------------------------------------------------------------------------#
     # Check that messages can be gathered on a specific process
     def testGatherMessages(self):
-        "*Test Utility.GlobalMPISession gatherMessages"
+        "*Test Utility.MPI.GlobalMPISession gatherMessages"
         oss = str(MPI.GlobalMPISession.rank())  + "/" + str(MPI.GlobalMPISession.size() )
 
         messages = MPI.GlobalMPISession.gatherMessages( 0, oss )
@@ -338,7 +338,7 @@ class GlobalMPISessionTestCase(unittest.TestCase):
 #-----------------------------------------------------------------------------#
     # Check that bools can be gathered on a specific process
     def testGatherData(self):
-        "*Test Utility.GlobalMPISession gatherData"
+        "*Test Utility.MPI.GlobalMPISession gatherData"
 
         if MPI.GlobalMPISession.rank()%2 == 0:
           local_data = 1
@@ -386,7 +386,7 @@ if __name__ == "__main__":
 
     print >>sys.stderr, \
         "\n********************\n" + \
-        "Testing Utility.GlobalMPISession \n" + \
+        "Testing Utility.MPI.GlobalMPISession \n" + \
         "********************\n"
     result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
 
@@ -402,5 +402,5 @@ if __name__ == "__main__":
     sys.exit(errs_plus_fails)
 
 #-----------------------------------------------------------------------------#
-# end tstUtility.GlobalMPISession.py
+# end tstUtility.MPI.GlobalMPISession.py
 #-----------------------------------------------------------------------------#
