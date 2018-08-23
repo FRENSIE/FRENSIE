@@ -1,4 +1,5 @@
 # Configure the test files
+SET(ROOT_GEOM_TEST_TARGET pyfrensie_test_root_geometry)
 ADD_SUBDIRECTORY(test_files)
 
 # Configure the PyTrilinos utilities (used for setting up unit files)
@@ -122,12 +123,14 @@ ADD_TEST(PyFrensie.Data.ScatteringCenterPropertiesDatabase_test ${PYTHON_EXECUTA
 SET_PROPERTY(TEST PyFrensie.Data.ScatteringCenterPropertiesDatabase_test PROPERTY LABELS pyfrensie )
 
 IF(HAVE_FRENSIE_HDF5)
-  ADD_TEST(PyFrensie.Data.ScatteringCenterPropertiesDatabase_test ${PYTHON_EXECUTABLE} tstData.ScatteringCenterPropertiesDatabase.py)
+  ADD_TEST(PyFrensie.Data.ScatteringCenterPropertiesDatabase_test ${PYTHON_EXECUTABLE} tstData.ScatteringCenterPropertiesDatabase.py --hdf5)
   SET_PROPERTY(TEST PyFrensie.Data.ScatteringCenterPropertiesDatabase_test PROPERTY LABELS pyfrensie hdf5)
-ELSE()
-  ADD_TEST(PyFrensie.Data.ScatteringCenterPropertiesDatabase_test ${PYTHON_EXECUTABLE} tstData.ScatteringCenterPropertiesDatabase.py)
-  SET_PROPERTY(TEST PyFrensie.Data.ScatteringCenterPropertiesDatabase_test PROPERTY LABELS pyfrensie)
 ENDIF()
+
+# Add the Data.Xsdir unit tests
+PyFrensie_MAKE_TEST(tstData.Xsdir)
+ADD_TEST(PyFrensie.Data.Xsdir_test ${PYTHON_EXECUTABLE} tstData.Xsdir.py --test_xsdir_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_xsdir)
+SET_PROPERTY(TEST PyFrensie.Data.Xsdir_test PROPERTY LABELS pyfrensie)
 
 # Add the Data.ACE.ACEElectroatomicDataProperties unit tests
 PyFrensie_MAKE_TEST(tstData.ACE.ACEElectroatomicDataProperties)
@@ -233,45 +236,47 @@ ADD_TEST(PyFrensie.Geometry.Ray_test ${PYTHON_EXECUTABLE} tstGeometry.Ray.py)
 SET_PROPERTY(TEST PyFrensie.Geometry.Ray_test PROPERTY LABELS pyfrensie)
 
 # Add the Geometry.ModelProperties unit tests
-IF(FRENSIE_ENABLE_DAGMC OR FRENSIE_ENABLE_ROOT)
+IF(${FRENSIE_ENABLE_DAGMC} OR ${FRENSIE_ENABLE_ROOT})
   PyFrensie_MAKE_TEST(tstGeometry.ModelProperties)
 
-  IF(FRENSIE_ENABLE_DAGMC)
+  IF(${FRENSIE_ENABLE_DAGMC})
     ADD_TEST(PyFrensie.Geometry.ModelProperties_DagMC_test ${PYTHON_EXECUTABLE} tstGeometry.ModelProperties.py --dagmc_sat_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat)
     SET_PROPERTY(TEST PyFrensie.Geometry.ModelProperties_DagMC_test PROPERTY LABELS pyfrensie dagmc)
   ENDIF()
 
-  IF(FRENSIE_ENABLE_ROOT)
+  IF(${FRENSIE_ENABLE_ROOT})
     ADD_TEST(PyFrensie.Geometry.ModelProperties_Root_test ${PYTHON_EXECUTABLE} tstGeometry.ModelProperties.py --root_file=${CMAKE_CURRENT_BINARY_DIR}}/test_files/test_root_geom.root)
     SET_PROPERTY(TEST PyFrensie.Geometry.ModelProperties_Root_test PROPERTY LABLES pyfrensie root)
   ENDIF()
 ENDIF()
 
 # Add the Geometry.Model unit tests
-IF(FRENSIE_ENABLE_DAGMC OR FRENSIE_ENABLE_ROOT)
+IF(${FRENSIE_ENABLE_DAGMC} OR ${FRENSIE_ENABLE_ROOT})
   PyFrensie_MAKE_TEST(tstGeometry.Model)
 
-  IF(FRENSIE_ENABLE_DAGMC)
+  IF(${FRENSIE_ENABLE_DAGMC})
     ADD_TEST(PyFrensie.Geometry.Model_DagMC_test ${PYTHON_EXECUTABLE} tstGeometry.Model.py --dagmc_sat_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat)
     SET_PROPERTY(TEST PyFrensie.Geometry.Model_DagMC_test PROPERTY LABELS pyfrensie dagmc)
   ENDIF()
 
-  IF(FRENSIE_ENABLE_ROOT)
+  IF(${FRENSIE_ENABLE_ROOT})
+    ADD_DEPENDENCIES(PyFrensie_tstGeometry.Model ${ROOT_GEOM_TEST_TARGET})
     ADD_TEST(PyFrensie.Geometry.Model_Root_test ${PYTHON_EXECUTABLE} tstGeometry.Model.py --root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geom.root)
     SET_PROPERTY(TEST PyFrensie.Geometry.Model_Root_test PROPERTY LABLES pyfrensie root)
   ENDIF()
 ENDIF()
 
 # Add the Geometry.Navigator unit tests
-IF(FRENSIE_ENABLE_DAGMC OR FRENSIE_ENABLE_ROOT)
+IF(${FRENSIE_ENABLE_DAGMC} OR ${FRENSIE_ENABLE_ROOT})
   PyFrensie_MAKE_TEST(tstGeometry.Navigator)
 
-  IF(FRENSIE_ENABLE_DAGMC)
+  IF(${FRENSIE_ENABLE_DAGMC})
     ADD_TEST(PyFrensie.Geometry.Navigator_DagMC_test ${PYTHON_EXECUTABLE} tstGeometry.Navigator.py --dagmc_sat_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat)
     SET_PROPERTY(TEST PyFrensie.Geometry.Navigator_DagMC_test PROPERTY LABELS pyfrensie dagmc)
   ENDIF()
 
-  IF(FRENSIE_ENABLE_ROOT)
+  IF(${FRENSIE_ENABLE_ROOT})
+    ADD_DEPENDENCIES(PyFrensie_tstGeometry.Navigator ${ROOT_GEOM_TEST_TARGET})
     ADD_TEST(PyFrensie.Geometry.Navigator_Root_test ${PYTHON_EXECUTABLE} tstGeometry.Navigator.py --root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geom.root)
     SET_PROPERTY(TEST PyFrensie.Geometry.Navigator_Root_test PROPERTY LABLES pyfrensie root)
   ENDIF()
@@ -398,9 +403,11 @@ ENDIF()
 # Add the Root Estimator unit tests
 IF(${FRENSIE_ENABLE_ROOT})
   PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CellCollisionFluxEstimatorRoot)
+  ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Event.CellCollisionFluxEstimatorRoot ${ROOT_GEOM_TEST_TARGET})
   ADD_TEST(PyFrensie.MonteCarlo.Event.CellCollisionFluxEstimatorRoot_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellCollisionFluxEstimatorRoot.py --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geom.root)
 
   PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CellTrackLengthFluxEstimatorRoot)
+  ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Event.CellTrackLengthFluxEstimatorRoot ${ROOT_GEOM_TEST_TARGET})
   ADD_TEST(PyFrensie.MonteCarlo.Event.CellTrackLengthFluxEstimatorRoot_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellTrackLengthFluxEstimatorRoot.py --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geom.root)
 ENDIF()
 

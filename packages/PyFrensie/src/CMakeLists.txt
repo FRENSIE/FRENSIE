@@ -90,7 +90,7 @@ SET(DATA_PACKAGES ${DATA_PACKAGES} ENDL)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.Native)
 SET(DATA_PACKAGES ${DATA_PACKAGES} Native)
 
-SET(DATA_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_core data_database data_ace data_endl data_native pyfrensie)
+SET(DATA_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_core data_database data_ace data_endl data_native data_xsdir pyfrensie)
 
 # Add the Geometry package
 SET(GEOMETRY_MODULE_DOCSTRING "is the python interface to the FRENSIE geometry package")

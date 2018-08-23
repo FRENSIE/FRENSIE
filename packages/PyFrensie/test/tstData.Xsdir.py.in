@@ -1,0 +1,412 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Data.Xsdir class unit tests
+#  \file   tstData.Xsdir.py
+#  \author Alex Robinson
+#  \brief  Unit tests for the Data.Xsdir class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-d", "--test_xsdir_file", type="string", dest="test_xsdir_file",
+                  help="Test xsdir file name with path.")
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Data = importPyFrensieModuleFromBuildDir('Data')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the ScatteringCenterPropertiesDatabase class
+class XsdirTestCase(unittest.TestCase):
+    "TestCase class for Data.Xsdir class"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.xsdir = Data.Xsdir( options.test_xsdir_file )
+
+    def testShowEntriesWithTableData(self):
+        "*Test Data.Xsdir showEntriesWithTableData"
+        self.xsdir.showEntriesWithTableData( True )
+        print "--------"
+        self.xsdir.showEntriesWithTableData()
+
+    def testGetEntriesWithTableData(self):
+        "*Test Data.Xsdir getEntriesWithTableData"
+        entries = self.xsdir.getEntriesWithTableData( True )
+
+        self.assertEqual( len(entries), 54 )
+        self.assertEqual( entries[0], "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08" )
+        self.assertEqual( entries[24], " 13027.24y 26.750000 531dos 0 1 1 1165" )
+        self.assertEqual( entries[52], " 90000.04p    230.045000  mcplib04 0 1   163774    10565 0 0 0.00000E+00" )
+
+        entries = self.xsdir.getEntriesWithTableData()
+
+        self.assertEqual( len(entries), 55 )
+        self.assertEqual( entries[0], "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08" )
+        self.assertEqual( entries[24], " 3006.70c 5.963400 endf70a 0 0 57247 35859 0 0 2.5301E-08" )
+        self.assertEqual( entries[25], " 13027.24y 26.750000 531dos 0 1 1 1165" )
+        self.assertEqual( entries[53], " 90000.04p    230.045000  mcplib04 0 1   163774    10565 0 0 0.00000E+00" )
+
+    def testShowEntriesWithTableTypeKey(self):
+        "*Test Data.Xsdir showEntriesWithTableTypeKey"
+        self.xsdir.showEntriesWithTableTypeKey( 'c', True )
+        print "-------"
+        self.xsdir.showEntriesWithTableTypeKey( 'c' )
+
+    def testGetEntriesWithTableTypeKey(self):
+        "*Test Data.Xsdir getEntriesWithTableTypeKey"
+        entries = self.xsdir.getEntriesWithTableTypeKey( 'c', True )
+
+        self.assertEqual( len(entries), 25 )
+        self.assertEqual( entries[0], "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08" )
+        self.assertEqual( entries[23], " 2004.72c 3.968219 endf70a 0 1 52917 5669 0 0 7.7556E-08" )
+
+        entries = self.xsdir.getEntriesWithTableTypeKey( 'c' )
+        
+        self.assertEqual( len(entries), 26 )
+        self.assertEqual( entries[0], "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08" )
+        self.assertEqual( entries[24], " 3006.70c 5.963400 endf70a 0 0 57247 35859 0 0 2.5301E-08" )
+
+        entries = self.xsdir.getEntriesWithTableTypeKey( 'y' )
+
+        self.assertEqual( len(entries), 5 )
+        self.assertEqual( entries[0], " 13027.24y 26.750000 531dos 0 1 1 1165" )
+        self.assertEqual( entries[3], " 5010.24y 9.926900 531dos 0 1 543 769" )
+
+        entries = self.xsdir.getEntriesWithTableTypeKey( 'p' )
+
+        self.assertEqual( len(entries), 6 )
+        self.assertEqual( entries[0], "  1000.12p      0.999242 eprdata12 0 1        1    12025 0 0 0.00000E+00" )
+        self.assertEqual( entries[1], "  2000.12p      3.968220 eprdata12 0 1     3020    11828 0 0 0.00000E+00" )
+        self.assertEqual( entries[2], " 88000.04p    224.084000  mcplib04 0 1   158629    10346 0 0 0.00000E+00" )
+        self.assertEqual( entries[3], " 89000.04p    225.050000  mcplib04 0 1   161228    10133 0 0 0.00000E+00" )
+        self.assertEqual( entries[4], " 90000.04p    230.045000  mcplib04 0 1   163774    10565 0 0 0.00000E+00" )
+
+        entries = self.xsdir.getEntriesWithTableTypeKey( 'h' )
+
+        self.assertEqual( len(entries), 6 )
+        self.assertEqual( entries[0], " 1001.70h 0.999170 endf70prot 0 1 1 15895" )
+        self.assertEqual( entries[4], " 3006.70h 5.961817 endf70prot 0 1 12568 22458" )
+
+        entries = self.xsdir.getEntriesWithTableTypeKey( 'u' )
+
+        self.assertEqual( len(entries), 5 )
+        self.assertEqual( entries[0], "  1002.24u     1.996300 la150u 0 1 216233   3686  0 0 0.000E+00" )
+        self.assertEqual( entries[3], "  6012.70u 11.896910 endf7u 0 1 9396 50395" )
+
+        entries = self.xsdir.getEntriesWithTableTypeKey( 't' )
+
+        self.assertEqual( len(entries), 3 )
+        self.assertEqual( entries[0], " be.20t 8.934780 be.20t 0 1 1 1384889 0 0 2.530E-08" )
+        self.assertEqual( entries[1], " be.21t 8.934780 be.21t 0 1 1 1379711 0 0 3.447E-08" )
+
+        entries = self.xsdir.getEntriesWithTableTypeKey( 'd' )
+
+        self.assertEqual( len(entries), 7 )
+        self.assertEqual( entries[0], " 94242.50d 239.979000 dre5 0 1 142492 12463 0 0 2.53E-08" )
+        self.assertEqual( entries[5], " 96244.50d 241.966000 dre5 0 1 155585 9509 0 0 2.53E-08" )
+
+        entries = self.xsdir.getEntriesWithTableTypeKey( 'e' )
+
+        self.assertEqual( len(entries), 4 )
+        self.assertEqual( entries[0], " 61000.01e 143.667877 el 0 1 7921 478" )
+        self.assertEqual( entries[2], " 63000.01e 150.657141 el 0 1 8185 478" )
+
+    def testShowEntriesWithTableTypeKeyAndVersion(self):
+        "*Test Data.Xsdir showEntriesWithTableTypeKeyAndVersion"
+        self.xsdir.showEntriesWithTableTypeKeyAndVersion( 80, 'c', True )
+        print "-------"
+        self.xsdir.showEntriesWithTableTypeKeyAndVersion( 80, 'c' )
+
+    def testGetEntriesWithTableTypeKeyAndVersion(self):
+        "*Test Data.Xsdir getEntriesWithTableTypeKeyAndVersion"
+        entries = self.xsdir.getEntriesWithTableTypeKeyAndVersion( 80, 'c' )
+
+        self.assertEqual( len(entries), 5 )
+        self.assertEqual( entries[0], "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08" )
+        self.assertEqual( entries[1], "1002.80c 1.9968 h2.710nc 0 1 4 10452 0 0 2.5301E-08" )
+        self.assertEqual( entries[2], "2003.80c 2.989032 He/He3.710nc 0 1 4 10004 0 0 2.5301E-08" )
+        self.assertEqual( entries[3], "2004.80c 3.968219 He/He4.710nc 0 1 4 10421 0 0 2.5301E-08" )
+
+        entries = self.xsdir.getEntriesWithTableTypeKeyAndVersion( 7, 'c', True )
+
+        self.assertEqual( len(entries), 13 )
+        self.assertEqual( entries[0], " 1001.70c 0.999167 endf70a 0 1 1 8177 0 0 2.5301E-08" )
+        self.assertEqual( entries[11], " 2004.72c 3.968219 endf70a 0 1 52917 5669 0 0 7.7556E-08" )
+
+        entries = self.xsdir.getEntriesWithTableTypeKeyAndVersion( 20, 't' )
+
+        self.assertEqual( len(entries), 2 )
+        self.assertEqual( entries[0], " be.20t 8.934780 be.20t 0 1 1 1384889 0 0 2.530E-08" );
+
+        entries = self.xsdir.getEntriesWithTableTypeKeyAndVersion( 2, 't' )
+
+        self.assertEqual( len(entries), 3 )
+        self.assertEqual( entries[0], " be.20t 8.934780 be.20t 0 1 1 1384889 0 0 2.530E-08" );
+        self.assertEqual( entries[1], " be.21t 8.934780 be.21t 0 1 1 1379711 0 0 3.447E-08" );
+
+        entries = self.xsdir.getEntriesWithTableTypeKeyAndVersion( 12, 'p' )
+
+        self.assertEqual( len(entries), 3 )
+        self.assertEqual( entries[0], "  1000.12p      0.999242 eprdata12 0 1        1    12025 0 0 0.00000E+00" )
+        self.assertEqual( entries[1], "  2000.12p      3.968220 eprdata12 0 1     3020    11828 0 0 0.00000E+00" )
+
+        entries = self.xsdir.getEntriesWithTableTypeKeyAndVersion( 4, 'p' )
+
+        self.assertEqual( len(entries), 4 )
+        self.assertEqual( entries[0], " 88000.04p    224.084000  mcplib04 0 1   158629    10346 0 0 0.00000E+00" )
+        self.assertEqual( entries[1], " 89000.04p    225.050000  mcplib04 0 1   161228    10133 0 0 0.00000E+00" )
+        self.assertEqual( entries[2], " 90000.04p    230.045000  mcplib04 0 1   163774    10565 0 0 0.00000E+00" )
+
+    def testShowEntriesWithZAID(self):
+        "*Test Data.Xsdir showEntriesWithZAID"
+        self.xsdir.showEntriesWithZAID( Data.ZAID(1001), True )
+        print "-------"
+        self.xsdir.showEntriesWithZAID( Data.ZAID(1001) )
+
+    def testGetEntriesWithZAID(self):
+        "*Test Data.Xsdir getEntriesWithZAID"
+        entries = self.xsdir.getEntriesWithZAID( Data.ZAID(1001), True )
+
+        self.assertEqual( len(entries), 8 )
+        self.assertEqual( entries[0], "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08" )
+        self.assertEqual( entries[6], " 1001.70h 0.999170 endf70prot 0 1 1 15895" )
+
+        entries = self.xsdir.getEntriesWithZAID( Data.ZAID(4009) )
+
+        self.assertEqual( len(entries), 3 )
+        self.assertEqual( entries[0], " be.20t 8.934780 be.20t 0 1 1 1384889 0 0 2.530E-08" )
+        self.assertEqual( entries[1], " be.21t 8.934780 be.21t 0 1 1 1379711 0 0 3.447E-08" )
+
+    def testShowEntriesWithBasicTableName(self):
+        "*Test Data.Xsdir showEntriesWithBasicTableName"
+        self.xsdir.showEntriesWithBasicTableName( "1001", True )
+        print "-------"
+        self.xsdir.showEntriesWithBasicTableName( "be" )
+
+    def testGetEntriesWithBasicTableName(self):
+        "*Test Data.Xsdir getEntriesWithBasicTableName"
+        entries = self.xsdir.getEntriesWithBasicTableName( "1001", True )
+
+        self.assertEqual( len(entries), 8 )
+        self.assertEqual( entries[0], "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08" )
+        self.assertEqual( entries[6], " 1001.70h 0.999170 endf70prot 0 1 1 15895" )
+        
+        entries = self.xsdir.getEntriesWithBasicTableName( "be" )
+        
+        self.assertEqual( len(entries), 3 )
+        self.assertEqual( entries[0], " be.20t 8.934780 be.20t 0 1 1 1384889 0 0 2.530E-08" )
+        self.assertEqual( entries[1], " be.21t 8.934780 be.21t 0 1 1 1379711 0 0 3.447E-08" )
+
+    def testShowEntriesWithZAIDAndTableTypeKey(self):
+        "*Test Data.Xsdir showEntriesWithZAIDAndTableTypeKey"
+        self.xsdir.showEntriesWithZAIDAndTableTypeKey( Data.ZAID(1001), 'c', True )
+        print "-------"
+        self.xsdir.showEntriesWithZAIDAndTableTypeKey( Data.ZAID(4009), 't' )
+
+    def testGetEntriesWithZAIDAndTableTypeKey(self):
+        "*Test Data.Xsdir getEntriesWithZAID"
+        entries = self.xsdir.getEntriesWithZAIDAndTableTypeKey( Data.ZAID(1001), 'c', True )
+
+        self.assertEqual( len(entries), 7 )
+        self.assertEqual( entries[0], "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08" )
+        self.assertEqual( entries[5], " 1001.72c 0.999167 endf70a 0 1 4115 8177 0 0 7.7556E-08" )
+
+        entries = self.xsdir.getEntriesWithZAIDAndTableTypeKey( Data.ZAID(4009), 't' )
+
+        self.assertEqual( len(entries), 3 )
+        self.assertEqual( entries[0], " be.20t 8.934780 be.20t 0 1 1 1384889 0 0 2.530E-08" )
+        self.assertEqual( entries[1], " be.21t 8.934780 be.21t 0 1 1 1379711 0 0 3.447E-08" )
+
+    def testShowEntriesWithZAIDAndTableEvaluationTemp(self):
+        "*Test Data.Xsdir showEntriesWithZAIDAndTableEvaluationTemp"
+        self.xsdir.showEntriesWithZAIDAndTableEvaluationTemp( Data.ZAID(1001), 2.5301E-08, True )
+        print "-------"
+        self.xsdir.showEntriesWithZAIDAndTableEvaluationTemp( Data.ZAID(4009), 2.5301E-08 )
+
+    def testGetEntriesWithZAIDAndTableEvaluationTemp(self):
+        "*Test Data.Xsdir getEntriesWithZAID"
+        entries = self.xsdir.getEntriesWithZAIDAndTableEvaluationTemp( Data.ZAID(1001), 2.5301E-08, True )
+
+        self.assertEqual( len(entries), 3 )
+        self.assertEqual( entries[0], "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08" )
+        self.assertEqual( entries[1], " 1001.70c 0.999167 endf70a 0 1 1 8177 0 0 2.5301E-08" )
+
+        entries = self.xsdir.getEntriesWithZAIDAndTableEvaluationTemp( Data.ZAID(4009), 3.447E-08 )
+
+        self.assertEqual( len(entries), 2 )
+        self.assertEqual( entries[0], " be.21t 8.934780 be.21t 0 1 1 1379711 0 0 3.447E-08" )
+
+    def testExportData(self):
+        "*Test Data.Xsdir exportData"
+        database = Data.ScatteringCenterPropertiesDatabase()
+
+        self.xsdir.exportData( database )
+
+        self.assertTrue( database.doAtomPropertiesExist( Data.H_ATOM ) )
+        self.assertTrue( database.getAtomProperties( Data.H_ATOM ).photoatomicDataAvailable( Data.PhotoatomicDataProperties.ACE_EPR_FILE ) )
+        self.assertTrue( database.getAtomProperties( Data.H_ATOM ).photoatomicDataAvailable( Data.PhotoatomicDataProperties.ACE_EPR_FILE, 12 ) )
+        self.assertTrue( database.getAtomProperties( Data.H_ATOM ).electroatomicDataAvailable( Data.ElectroatomicDataProperties.ACE_EPR_FILE ) )
+        self.assertTrue( database.getAtomProperties( Data.H_ATOM ).electroatomicDataAvailable( Data.ElectroatomicDataProperties.ACE_EPR_FILE, 12 ) )
+
+        self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(1001) ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(1001) ).nuclearDataAvailable( Data.NuclearDataProperties.ACE_FILE ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(1001) ).nuclearDataAvailable( Data.NuclearDataProperties.ACE_FILE, 8 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(1001) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 8, 2.5301E-08 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(1001) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 8, 5.1704E-08 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(1001) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 8, 7.7556E-08 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(1001) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 7, 2.5301E-08 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(1001) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 7, 5.1704E-08 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(1001) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 7, 7.7556E-08 ) )
+        
+        self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(1002) ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(1002) ).nuclearDataAvailable( Data.NuclearDataProperties.ACE_FILE ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(1002) ).nuclearDataAvailable( Data.NuclearDataProperties.ACE_FILE, 8 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(1002) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 8, 2.5301E-08 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(1002) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 8, 5.1704E-08 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(1002) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 8, 7.7556E-08 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(1002) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 7, 2.5301E-08 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(1002) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 7, 5.1704E-08 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(1002) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 7, 7.7556E-08 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(1002) ).photonuclearDataAvailable( Data.PhotonuclearDataProperties.ACE_FILE ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(1002) ).photonuclearDataAvailable( Data.PhotonuclearDataProperties.ACE_FILE, 24 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(1002) ).photonuclearDataAvailable( Data.PhotonuclearDataProperties.ACE_FILE, 70 ) )
+
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(1003) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(1004) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(1005) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(1006) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(1007) ) )
+
+        self.assertTrue( database.doAtomPropertiesExist( Data.He_ATOM ) )
+        self.assertTrue( database.getAtomProperties( Data.He_ATOM ).photoatomicDataAvailable( Data.PhotoatomicDataProperties.ACE_EPR_FILE ) )
+        self.assertTrue( database.getAtomProperties( Data.He_ATOM ).photoatomicDataAvailable( Data.PhotoatomicDataProperties.ACE_EPR_FILE, 12 ) )
+        self.assertTrue( database.getAtomProperties( Data.He_ATOM ).electroatomicDataAvailable( Data.ElectroatomicDataProperties.ACE_EPR_FILE ) )
+        self.assertTrue( database.getAtomProperties( Data.He_ATOM ).electroatomicDataAvailable( Data.ElectroatomicDataProperties.ACE_EPR_FILE, 12 ) )
+
+        self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(2003) ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(2003) ).nuclearDataAvailable( Data.NuclearDataProperties.ACE_FILE ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(2003) ).nuclearDataAvailable( Data.NuclearDataProperties.ACE_FILE, 8 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(2003) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 8, 2.5301E-08 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(2003) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 8, 5.1704E-08 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(2003) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 8, 7.7556E-08 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(2003) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 7, 2.5301E-08 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(2003) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 7, 5.1704E-08 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(2003) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 7, 7.7556E-08 ) )
+
+        self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(2004) ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(2004) ).nuclearDataAvailable( Data.NuclearDataProperties.ACE_FILE ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(2004) ).nuclearDataAvailable( Data.NuclearDataProperties.ACE_FILE, 8 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(2004) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 8, 2.5301E-08 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(2004) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 8, 5.1704E-08 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(2004) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 8, 7.7556E-08 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(2004) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 7, 2.5301E-08 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(2004) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 7, 5.1704E-08 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(2004) ).nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 7, 7.7556E-08 ) )
+
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(3006) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(4005) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(4006) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(4007) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(4008) ) )
+
+        self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(4009) ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(4009) ).thermalNuclearDataAvailable( "be" ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(4009) ).thermalNuclearDataAvailable( "be", Data.ThermalNuclearDataProperties.MCNP6_ACE_FILE ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(4009) ).thermalNuclearDataAvailable( "be", Data.ThermalNuclearDataProperties.MCNP6_ACE_FILE, 2 ) )
+
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(4010) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(4011) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(4012) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(4013) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(4014) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(4015) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(4016) ) )
+
+        self.assertFalse( database.doAtomPropertiesExist( Data.ZAID(6000) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(6008) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(6009) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(6010) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(6011) ) )
+
+        self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(6012) ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(6012) ).photonuclearDataAvailable( Data.PhotonuclearDataProperties.ACE_FILE ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(6012) ).photonuclearDataAvailable( Data.PhotonuclearDataProperties.ACE_FILE, 24 ) )
+        self.assertTrue( database.getNuclideProperties( Data.ZAID(6012) ).photonuclearDataAvailable( Data.PhotonuclearDataProperties.ACE_FILE, 70 ) )
+
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(6013) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(6014) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(6015) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(6016) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(6017) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(6018) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(6019) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(6020) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(6021) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(6022) ) )
+
+        self.assertTrue( database.doAtomPropertiesExist( Data.Pm_ATOM ) )
+        self.assertTrue( database.getAtomProperties( Data.Pm_ATOM ).electroatomicDataAvailable( Data.ElectroatomicDataProperties.ACE_FILE ) )
+        self.assertTrue( database.getAtomProperties( Data.Pm_ATOM ).electroatomicDataAvailable( Data.ElectroatomicDataProperties.ACE_FILE, 1 ) )
+
+        self.assertTrue( database.doAtomPropertiesExist( Data.Sm_ATOM ) )
+        self.assertTrue( database.getAtomProperties( Data.Sm_ATOM ).electroatomicDataAvailable( Data.ElectroatomicDataProperties.ACE_FILE ) )
+        self.assertTrue( database.getAtomProperties( Data.Sm_ATOM ).electroatomicDataAvailable( Data.ElectroatomicDataProperties.ACE_FILE, 1 ) )
+
+        self.assertTrue( database.doAtomPropertiesExist( Data.Eu_ATOM ) )
+        self.assertTrue( database.getAtomProperties( Data.Eu_ATOM ).electroatomicDataAvailable( Data.ElectroatomicDataProperties.ACE_FILE ) )
+        self.assertTrue( database.getAtomProperties( Data.Eu_ATOM ).electroatomicDataAvailable( Data.ElectroatomicDataProperties.ACE_FILE, 1 ) )
+
+        self.assertTrue( database.doAtomPropertiesExist( Data.Ra_ATOM ) )
+        self.assertTrue( database.getAtomProperties( Data.Ra_ATOM ).photoatomicDataAvailable( Data.PhotoatomicDataProperties.ACE_FILE ) )
+        self.assertTrue( database.getAtomProperties( Data.Ra_ATOM ).photoatomicDataAvailable( Data.PhotoatomicDataProperties.ACE_FILE, 4 ) )
+
+        self.assertTrue( database.doAtomPropertiesExist( Data.Ac_ATOM ) )
+        self.assertTrue( database.getAtomProperties( Data.Ac_ATOM ).photoatomicDataAvailable( Data.PhotoatomicDataProperties.ACE_FILE ) )
+        self.assertTrue( database.getAtomProperties( Data.Ac_ATOM ).photoatomicDataAvailable( Data.PhotoatomicDataProperties.ACE_FILE, 4 ) )
+
+        self.assertTrue( database.doAtomPropertiesExist( Data.Th_ATOM ) )
+        self.assertTrue( database.getAtomProperties( Data.Th_ATOM ).photoatomicDataAvailable( Data.PhotoatomicDataProperties.ACE_FILE ) )
+        self.assertTrue( database.getAtomProperties( Data.Th_ATOM ).photoatomicDataAvailable( Data.PhotoatomicDataProperties.ACE_FILE, 4 ) )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(XsdirTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing Data.Xsdir \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstData.Xsdir.py
+#-----------------------------------------------------------------------------#
