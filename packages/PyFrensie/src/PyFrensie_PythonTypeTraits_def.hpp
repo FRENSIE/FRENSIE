@@ -181,8 +181,6 @@ inline bool isValidList( PyObject* py_obj )
   {
     if( PyList_Size( py_obj ) > 0 )
     {
-      PyObject* tmp_py_obj = PyList_New(0);
-
       valid = true;
 
       // Break down the list and check each element
