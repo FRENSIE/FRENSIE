@@ -135,15 +135,13 @@ FRENSIE_UNIT_TEST( AdjointIncoherentGridGenerator,
 
   // Check the evaluated cross section
   FRENSIE_CHECK_EQUAL( cross_section.size(), 43 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section.front(),
-                                  2.54954928358413249e-08,
-                                  1e-6 );
+  FRENSIE_CHECK_EQUAL( cross_section.front(), 0.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section.back(),
-                                  0.701697560627866257,
-                                  1e-6 );
+                                   0.701697560627866257,
+                                   1e-6 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section[cross_section.size()-2],
-                                  0.701697560627866257,
-                                  1e-6 );
+                                   0.701697560627866257,
+                                   1e-6 );
 
   max_energy_grid.clear();
   cross_section.clear();
@@ -160,12 +158,10 @@ FRENSIE_UNIT_TEST( AdjointIncoherentGridGenerator,
 
   // Check the evaluated cross section
   FRENSIE_CHECK_EQUAL( cross_section.size(), 64 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section.front(),
-                                  2.54954930897518544e-09,
-                                  1e-6 );
+  FRENSIE_CHECK_EQUAL( cross_section.front(), 0.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section.back(),
-                                  0.397416434130255625,
-                                  1e-6 );
+                                   0.397416434130255625,
+                                   1e-6 );
 }
 
 //---------------------------------------------------------------------------//
