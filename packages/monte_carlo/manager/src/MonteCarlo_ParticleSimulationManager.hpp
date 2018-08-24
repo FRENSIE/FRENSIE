@@ -26,10 +26,12 @@
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "Utility_Communicator.hpp"
 
+extern "C" void __custom_signal_handler__( int signal );
+
 namespace MonteCarlo{
 
 //! The particle simulation manager base class
-class ParticleSimulationManager 
+class ParticleSimulationManager : public std::enable_shared_from_this<ParticleSimulationManager> 
 {
 
 public:
@@ -81,14 +83,14 @@ public:
   //! Run the simulation set up by the user
   virtual void runSimulation();
 
+  //! Run the simulation set up by the user with the ability to interrupt
+  virtual void runInterruptibleSimulation();
+
   //! Print the simulation data to the desired stream
   virtual void printSimulationSummary( std::ostream& os ) const;
 
   //! Log the simulation data
   virtual void logSimulationSummary() const;
-
-  //! The signal handler
-  virtual void signalHandler( int signal );
 
 protected:
 
@@ -152,6 +154,9 @@ protected:
   //! Rendezvous (cache state)
   virtual void rendezvous();
 
+  //! The signal handler
+  virtual void signalHandler( int signal );
+
   //! Check if a signal type is handled by the manager
   static bool isSignalTypeHandled( const int signal );
 
@@ -192,6 +197,9 @@ private:
 
   // Conduct a basic rendezvous
   void basicRendezvous() const;
+
+  // Declare the custom signal handler as a friend
+  friend void ::__custom_signal_handler__( int );
 
   // The simulation name
   std::string d_simulation_name;

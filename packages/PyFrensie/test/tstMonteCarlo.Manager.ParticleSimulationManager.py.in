@@ -8,6 +8,7 @@
 
 # System imports
 import sys
+import signal
 import unittest
 from optparse import *
 import numpy
@@ -30,6 +31,7 @@ options,args = parser.parse_args()
 
 from testingHelpers import importPyFrensieModuleFromBuildDir
 Geometry = importPyFrensieModuleFromBuildDir('Geometry')
+Utility = importPyFrensieModuleFromBuildDir('Utility')
 MPI = importPyFrensieModuleFromBuildDir('Utility.MPI')
 MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
 Collision = importPyFrensieModuleFromBuildDir('MonteCarlo.Collision')
@@ -37,16 +39,6 @@ ActiveRegion = importPyFrensieModuleFromBuildDir('MonteCarlo.ActiveRegion')
 Event = importPyFrensieModuleFromBuildDir('MonteCarlo.Event')
 Manager = importPyFrensieModuleFromBuildDir('MonteCarlo.Manager')
 Data = importPyFrensieModuleFromBuildDir('Data')
-
-#-----------------------------------------------------------------------------#
-# Testing functions
-#-----------------------------------------------------------------------------#
-# void (*default_signal_handler)( int )
-
-# extern "C" void custom_signal_handler( int signal(self):
-        # "*Test MonteCarlo.Manager.ParticleSimulationManager getThresholdEnergy"
-#   if( global_manager )
-#     global_manager.signalHandler( signal )
 
 #-----------------------------------------------------------------------------#
 # Tests.
@@ -105,9 +97,7 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
 
     def setUp(self):
         # Initialize the FRENSIE global MPI Session
-        argc = 2
-        argv = ["tstMonteCarlo.Manager.ParticleSimulationManager.py"]
-        self.session = MPI.GlobalMPISession( argc, argv )
+        self.session = MPI.GlobalMPISession( len(sys.argv), sys.argv )
 
 #-----------------------------------------------------------------------------#
     # Check that history details can be returned
@@ -635,6 +625,47 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
         self.assertTrue( manager.getNextHistory() > 0 )
         self.assertTrue( manager.getNumberOfRendezvous() > 0 )
 
+    #-----------------------------------------------------------------------------#
+    # Check that a particle simulation manager can run an interruptible simulation
+    def testRunInterruptibleSimulation(self):
+        "*Test MonteCarlo.Manager.ParticleSimulationManager runInterruptibleSimulation"
+        if Utility.OpenMPProperties.isOpenMPUsed():
+            properties = MonteCarlo.SimulationProperties()
+            properties.setParticleMode( MonteCarlo.PHOTON_MODE )
+            properties.setMaxRendezvousBatchSize( 100 )
+            properties.setMaxBatchSize( 10 )
+            
+            model = Collision.FilledGeometryModel(
+                                self.data_directory,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+
+            source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+            source = ActiveRegion.StandardParticleSource( source_component )
+            
+            event_handler = Event.EventHandler( properties )
+            
+            
+            factory = Manager.ParticleSimulationManagerFactory( model,
+                                                                source,
+                                                                event_handler,
+                                                                properties,
+                                                                "test_sim",
+                                                                "xml",
+                                                                self.threads )
+
+            manager = factory.getManager()
+
+            manager.runInterruptibleSimulationForDuration( 0.2 )
+
+            self.assertTrue( manager.getNextHistory() > 0 )
+            self.assertTrue( manager.getNumberOfRendezvous() > 0 )
+
 #-----------------------------------------------------------------------------#
     # Check that a particle simulation summary can be printed
     def testPrintSimulationSummary(self):
@@ -702,73 +733,6 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
         manager = factory.getManager()
         manager.runSimulation()
         manager.logSimulationSummary()
-
-# #-----------------------------------------------------------------------------#
-#     # Check that a particle simulation manager can handle a signal
-# # #ifdef HAVE_FRENSIE_OPENMP
-#     def testSignalHandler(self):
-#         "*Test MonteCarlo.Manager.ParticleSimulationManager signalHandler"
-#         properties = MonteCarlo.SimulationProperties()
-#         properties.setParticleMode( MonteCarlo.PHOTON_MODE )
-#         properties.setMaxRendezvousBatchSize( 100 )
-#         properties.setMaxBatchSize( 10 )
-
-#         model = Collision.FilledGeometryModel(
-#                                 self.data_directory,
-#                                 self.scattering_center_definition_database,
-#                                 self.material_definition_database,
-#                                 properties,
-#                                 self.unfilled_model,
-#                                 False )
-
-
-#         source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
-
-#         source = ActiveRegion.StandardParticleSource( source_component )
-
-#         event_handler = Event.EventHandler( properties )
-
-
-#         factory = Manager.ParticleSimulationManagerFactory( model,
-#                                                             source,
-#                                                             event_handler,
-#                                                             properties,
-#                                                             "test_sim",
-#                                                             "xml",
-#                                                             self.threads )
-
-#         manager = factory.getManager()
-
-# #   // Set the signal handler
-# #   global_manager = manager
-
-# #   default_signal_handler = std.signal( SIGINT, custom_signal_handler )
-
-# #   #pragma omp parallel num_self.threads( 2 )
-# #     if( Utility.OpenMPProperties.getThreadId() == 0 )
-# #       manager.runSimulation()
-# #     else
-# #       std.shared_ptr<Utility.Timer> timer =
-# #         Utility.OpenMPProperties.createTimer()
-
-# #       timer.start()
-
-# #       while( timer.elapsed().count() < 0.2 )
-
-# #       timer.stop()
-# #       timer.reset()
-
-# #       // Terminate the simulation (it is set up to run indefinitely unless it
-# #       // receives an interput signal)
-# #       std.raise( SIGINT )
-
-#         self.assertTrue( manager.getNextHistory() > 0 )
-#         self.assertTrue( manager.getNumberOfRendezvous() > 0 )
-
-# #   // Restore the default signal handler
-# #   std.signal( SIGINT, default_signal_handler )
-# #   global_manager.reset()
-# # #endif // end HAVE_FRENSIE_OPEMP
 
 class ParametrizedTestCase(unittest.TestCase):
     """ TestCase classes that want to be parametrized should

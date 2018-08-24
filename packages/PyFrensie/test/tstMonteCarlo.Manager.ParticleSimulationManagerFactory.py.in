@@ -26,6 +26,7 @@ options,args = parser.parse_args()
 
 from testingHelpers import importPyFrensieModuleFromBuildDir
 Geometry = importPyFrensieModuleFromBuildDir('Geometry')
+Utility = importPyFrensieModuleFromBuildDir('Utility')
 MPI = importPyFrensieModuleFromBuildDir('Utility.MPI')
 MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
 Collision = importPyFrensieModuleFromBuildDir('MonteCarlo.Collision')
@@ -90,9 +91,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
     def setUp(self):
         # Initialize the FRENSIE global MPI Session
-        argc = 2
-        argv = ["tstMonteCarlo.Manager.ParticleSimulationManagerFactory.py", "default", "--report_level=detailed"]
-        self.session = MPI.GlobalMPISession( argc, argv )
+        self.session = MPI.GlobalMPISession( len(sys.argv), sys.argv )
 
 #-----------------------------------------------------------------------------#
 # Tests.
@@ -128,7 +127,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
         self.assertEqual( manager.getSimulationName(), "simulation" )
         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
-        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
 
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
 
@@ -141,9 +140,9 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
         self.assertEqual( manager.getSimulationName(), "test_sim" )
         self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
-        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
 
-        MPI.OpenMPProperties.setNumberOfThreads( 1 )
+        Utility.OpenMPProperties.setNumberOfThreads( 1 )
 
 #-----------------------------------------------------------------------------#
     # Check that a particle simulation manager factory can be constructed
@@ -176,7 +175,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
         self.assertEqual( manager.getSimulationName(), "simulation" )
         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
-        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
 
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
 
@@ -189,9 +188,9 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
         self.assertEqual( manager.getSimulationName(), "test_sim" )
         self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
-        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
 
-        MPI.OpenMPProperties.setNumberOfThreads( 1 )
+        Utility.OpenMPProperties.setNumberOfThreads( 1 )
 
 #-----------------------------------------------------------------------------#
     # Check that a particle simulation manager factory can be constructed
@@ -224,7 +223,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
         self.assertEqual( manager.getSimulationName(), "simulation" )
         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
-        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
 
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
 
@@ -237,9 +236,9 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
         self.assertEqual( manager.getSimulationName(), "test_sim" )
         self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
-        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
 
-        MPI.OpenMPProperties.setNumberOfThreads( 1 )
+        Utility.OpenMPProperties.setNumberOfThreads( 1 )
 
 #-----------------------------------------------------------------------------#
     # Check that a particle simulation manager factory can be constructed
@@ -272,7 +271,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
         self.assertEqual( manager.getSimulationName(), "simulation" )
         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
-        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
 
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
 
@@ -285,9 +284,9 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
         self.assertEqual( manager.getSimulationName(), "test_sim" )
         self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
-        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
 
-        MPI.OpenMPProperties.setNumberOfThreads( 1 )
+        Utility.OpenMPProperties.setNumberOfThreads( 1 )
 
 #-----------------------------------------------------------------------------#
     # Check that a particle simulation manager factory can be constructed
@@ -320,7 +319,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
         self.assertEqual( manager.getSimulationName(), "simulation" )
         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
-        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
 
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
 
@@ -333,9 +332,9 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
         self.assertEqual( manager.getSimulationName(), "test_sim" )
         self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
-        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
 
-        MPI.OpenMPProperties.setNumberOfThreads( 1 )
+        Utility.OpenMPProperties.setNumberOfThreads( 1 )
 
 #-----------------------------------------------------------------------------#
     # Check that a particle simulation manager factory can be constructed
@@ -368,7 +367,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
         self.assertEqual( manager.getSimulationName(), "simulation" )
         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
-        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
 
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
 
@@ -381,9 +380,9 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
         self.assertEqual( manager.getSimulationName(), "test_sim" )
         self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
-        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
 
-        MPI.OpenMPProperties.setNumberOfThreads( 1 )
+        Utility.OpenMPProperties.setNumberOfThreads( 1 )
 
 #-----------------------------------------------------------------------------#
     # Check that a particle simulation manager factory can be constructed
@@ -416,7 +415,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
         self.assertEqual( manager.getSimulationName(), "simulation" )
         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
-        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
 
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
 
@@ -429,9 +428,9 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
         self.assertEqual( manager.getSimulationName(), "test_sim" )
         self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
-        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
 
-        MPI.OpenMPProperties.setNumberOfThreads( 1 )
+        Utility.OpenMPProperties.setNumberOfThreads( 1 )
 
 #-----------------------------------------------------------------------------#
     # Check that a particle simulation manager factory can be constructed
@@ -465,7 +464,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
         self.assertEqual( manager.getSimulationName(), "simulation" )
         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
-        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
 
         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
 
@@ -478,9 +477,9 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
         self.assertEqual( manager.getSimulationName(), "test_sim" )
         self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
-        self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
 
-        MPI.OpenMPProperties.setNumberOfThreads( 1 )
+        Utility.OpenMPProperties.setNumberOfThreads( 1 )
 
 # #-----------------------------------------------------------------------------#
 #     # Check that a particle simulation manager factory can be constructed and
@@ -518,7 +517,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
 #         self.assertEqual( manager.getSimulationName(), "simulation" )
 #         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
-#         self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+#         self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
 #         self.assertEqual( weight_windows.use_count(), 3 )
 
 # #-----------------------------------------------------------------------------#
@@ -557,7 +556,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
 #         self.assertEqual( manager.getSimulationName(), "simulation" )
 #         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
-#         self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+#         self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
 #         self.assertEqual( collision_forcer.use_count(), 3 )
 
 # #-----------------------------------------------------------------------------#
@@ -598,7 +597,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
 #         self.assertEqual( manager.getSimulationName(), "simulation" )
 #         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
-#         self.assertEqual( MPI.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+#         self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
 #         self.assertEqual( weight_windows.use_count(), 3 )
 #         self.assertEqual( collision_forcer.use_count(), 3 )
 

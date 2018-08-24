@@ -61,6 +61,9 @@ void initFrensiePrng()
 }
 %}
 
+// Add support for the OpenMPProperties class wrapper
+%include "Utility_OpenMPProperties.i"
+
 //---------------------------------------------------------------------------//
 // end Utility.Utility__init__.i
 //---------------------------------------------------------------------------//

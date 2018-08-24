@@ -58,13 +58,13 @@ std::shared_ptr<MonteCarlo::ParticleSimulationManager> global_manager;
 //---------------------------------------------------------------------------//
 // Testing functions
 //---------------------------------------------------------------------------//
-void (*default_signal_handler)( int );
+// void (*default_signal_handler)( int );
 
-extern "C" void custom_signal_handler( int signal )
-{
-  if( global_manager )
-    global_manager->signalHandler( signal );
-}
+// extern "C" void custom_signal_handler( int signal )
+// {
+//   if( global_manager )
+//     global_manager->signalHandler( signal );
+// }
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -861,6 +861,86 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, runSimulation_wall_time )
 }
 
 //---------------------------------------------------------------------------//
+// Check that a particle simulation manager can handle a signal
+#ifdef HAVE_FRENSIE_OPENMP
+FRENSIE_UNIT_TEST( ParticleSimulationManager, runInterruptibleSimulation )
+{
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
+
+  {
+    std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+    properties->setParticleMode( MonteCarlo::PHOTON_MODE );
+    properties->setMaxRendezvousBatchSize( 100 );
+    properties->setMaxBatchSize( 10 );
+
+    std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        data_directory,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+  
+    std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+    {
+      std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+        source_component( new MonteCarlo::StandardNeutronSourceComponent(
+                                                     0,
+                                                     1.0,
+                                                     unfilled_model,
+                                                     particle_distribution ) );
+
+      source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+    }
+  
+    std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
+
+    std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+    factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties,
+                                                              "test_sim",
+                                                              "xml",
+                                                              threads ) );
+  
+    manager = factory->getManager();
+  }
+
+  #pragma omp parallel num_threads( 2 )
+  {
+    if( Utility::OpenMPProperties::getThreadId() == 0 )
+      manager->runInterruptibleSimulation();
+    else
+    {
+      std::shared_ptr<Utility::Timer> timer =
+        Utility::OpenMPProperties::createTimer();
+
+      timer->start();
+
+      while( timer->elapsed().count() < 0.2 );
+      
+      timer->stop();
+      timer.reset();
+
+      // Terminate the simulation (it is set up to run indefinitely unless it
+      // receives an interput signal)
+      std::raise( SIGINT );
+    }
+  }
+  
+  FRENSIE_CHECK( manager->getNextHistory() > 0 );
+  FRENSIE_CHECK( manager->getNumberOfRendezvous() > 0 );
+}
+#endif // end HAVE_FRENSIE_OPEMP
+
+//---------------------------------------------------------------------------//
 // Check that a particle simulation summary can be printed
 FRENSIE_UNIT_TEST( ParticleSimulationManager, printSimulationSummary )
 {
@@ -971,95 +1051,6 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, logSimulationSummary )
 
   FRENSIE_REQUIRE_NO_THROW( manager->logSimulationSummary() );
 }
-
-//---------------------------------------------------------------------------//
-// Check that a particle simulation manager can handle a signal
-#ifdef HAVE_FRENSIE_OPENMP
-FRENSIE_UNIT_TEST( ParticleSimulationManager, signalHandler )
-{
-  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
-
-  {
-    std::shared_ptr<MonteCarlo::SimulationProperties> properties(
-                                        new MonteCarlo::SimulationProperties );
-    properties->setParticleMode( MonteCarlo::PHOTON_MODE );
-    properties->setMaxRendezvousBatchSize( 100 );
-    properties->setMaxBatchSize( 10 );
-
-    std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
-                               new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
-                                        scattering_center_definition_database,
-                                        material_definition_database,
-                                        properties,
-                                        unfilled_model,
-                                        false ) );
-  
-    std::shared_ptr<MonteCarlo::ParticleSource> source;
-  
-    {
-      std::shared_ptr<MonteCarlo::ParticleSourceComponent>
-        source_component( new MonteCarlo::StandardNeutronSourceComponent(
-                                                     0,
-                                                     1.0,
-                                                     unfilled_model,
-                                                     particle_distribution ) );
-
-      source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
-    }
-  
-    std::shared_ptr<MonteCarlo::EventHandler> event_handler(
-                                 new MonteCarlo::EventHandler( *properties ) );
-
-    std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
-
-    factory.reset(
-            new MonteCarlo::ParticleSimulationManagerFactory( model,
-                                                              source,
-                                                              event_handler,
-                                                              properties,
-                                                              "test_sim",
-                                                              "xml",
-                                                              threads ) );
-  
-    manager = factory->getManager();
-  }
-
-  // Set the signal handler
-  global_manager = manager;
-
-  default_signal_handler = std::signal( SIGINT, custom_signal_handler );
-
-  #pragma omp parallel num_threads( 2 )
-  {
-    if( Utility::OpenMPProperties::getThreadId() == 0 )
-      manager->runSimulation();
-    else
-    {
-      std::shared_ptr<Utility::Timer> timer =
-        Utility::OpenMPProperties::createTimer();
-
-      timer->start();
-
-      while( timer->elapsed().count() < 0.2 );
-      
-      timer->stop();
-      timer.reset();
-
-      // Terminate the simulation (it is set up to run indefinitely unless it
-      // receives an interput signal)
-      std::raise( SIGINT );
-    }
-  }
-  
-  FRENSIE_CHECK( manager->getNextHistory() > 0 );
-  FRENSIE_CHECK( manager->getNumberOfRendezvous() > 0 );
-
-  // Restore the default signal handler
-  std::signal( SIGINT, default_signal_handler );
-  global_manager.reset();
-}
-#endif // end HAVE_FRENSIE_OPEMP
 
 //---------------------------------------------------------------------------//
 // Check that a particle simulation can be restarted

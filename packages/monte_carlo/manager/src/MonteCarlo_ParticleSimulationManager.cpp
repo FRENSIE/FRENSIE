@@ -17,6 +17,24 @@
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_DesignByContract.hpp"
 
+// The registered managers (these must be global so that the custom signal
+// handler can access them)
+std::set<std::shared_ptr<MonteCarlo::ParticleSimulationManager> > __registered_managers__;
+
+// The default signal handler (cache so that it can be restored later)
+void (*__default_signal_handler__)( int );
+
+// The custom signal handler that will forward signals to the registered
+// managers
+extern "C" void __custom_signal_handler__( int signal )
+{
+  for( auto&& registered_manager : __registered_managers__ )
+  {
+    if( registered_manager )
+      registered_manager->signalHandler( signal );
+  }
+}
+
 namespace MonteCarlo{
 
 // Constructor
@@ -250,6 +268,36 @@ void ParticleSimulationManager::runSimulation()
   this->rendezvous();
 }
 
+// Run the simulation set up by the user with the ability to interrupt
+/*! \details Sending a SIGINT signal (usually Ctrl+C) will cause the
+ * simulation to be terminated once the current batch is completed. Sending
+ * a second SIGINT signal before the simulation has been terminated will 
+ * cause the program to exit immediately.
+ */ 
+void ParticleSimulationManager::runInterruptibleSimulation()
+{
+  #pragma omp critical (register_manager)
+  {
+    if( __registered_managers__.empty() )
+    {
+      __default_signal_handler__ =
+        std::signal( SIGINT, __custom_signal_handler__ );
+    }
+        
+    __registered_managers__.insert( this->shared_from_this() );
+  }
+
+  this->runSimulation();
+
+  #pragma omp critical (register_manager)
+  {
+    __registered_managers__.erase( this->shared_from_this() );
+    
+    if( __registered_managers__.empty() )
+      std::signal( SIGINT, __default_signal_handler__ );
+  }
+}
+
 // Enable thread support
 void ParticleSimulationManager::enableThreadSupport()
 {
@@ -316,6 +364,12 @@ void ParticleSimulationManager::basicRendezvous() const
   archive_name += Utility::toString( d_rendezvous_number );
   archive_name += ".";
   archive_name += d_archive_type;
+
+  FRENSIE_LOG_NOTIFICATION( "Rendezvous "
+                            << d_rendezvous_number << ": "
+                            << d_next_history );
+
+  FRENSIE_FLUSH_ALL_LOGS();
   
   ParticleSimulationManagerFactory
     tmp_factory( d_model,

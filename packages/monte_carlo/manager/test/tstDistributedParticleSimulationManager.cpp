@@ -52,19 +52,6 @@ std::shared_ptr<const MonteCarlo::ParticleDistribution> particle_distribution;
 
 int threads;
 
-std::shared_ptr<MonteCarlo::ParticleSimulationManager> global_manager;
-
-//---------------------------------------------------------------------------//
-// Testing functions
-//---------------------------------------------------------------------------//
-void (*default_signal_handler)( int );
-
-extern "C" void custom_signal_handler( int signal )
-{
-  if( global_manager )
-    global_manager->signalHandler( signal );
-}
-
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//

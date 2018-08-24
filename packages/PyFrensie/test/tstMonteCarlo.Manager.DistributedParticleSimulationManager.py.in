@@ -105,9 +105,7 @@ class DistributedParticleSimulationManagerTestCase(unittest.TestCase):
 
     def setUp(self):
         # Initialize the FRENSIE global MPI Session
-        argc = 2
-        argv = ["tstMonteCarlo.Manager.DistributedParticleSimulationManager.py"]
-        self.session = MPI.GlobalMPISession( argc, argv )
+        self.session = MPI.GlobalMPISession( len(sys.argv), sys.argv )
 
 #-----------------------------------------------------------------------------#
     # Check that history details can be returned

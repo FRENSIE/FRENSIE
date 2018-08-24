@@ -7,6 +7,12 @@
 //---------------------------------------------------------------------------//
 
 %{
+// Std Lib Includes
+#include <csignal>
+#include <functional>
+#include <thread>
+#include <set>
+  
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSimulationManagerFactory.hpp"
 #include "MonteCarlo_StandardParticleSimulationManager.hpp"
@@ -18,6 +24,8 @@
 #include "MonteCarlo_EventHandler.hpp"
 #include "MonteCarlo_ParticleSource.hpp"
 #include "Utility_Communicator.hpp"
+#include "Utility_GlobalMPISession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 
 using namespace MonteCarlo;
 %}
@@ -74,6 +82,41 @@ typedef unsigned long int uint64_t;
 // ---------------------------------------------------------------------------//
 // Add ParticleSimulationManager support
 // ---------------------------------------------------------------------------//
+
+%{
+  void delayedInterrupt( const double duration_in_sec )
+  {
+    std::shared_ptr<Utility::Timer> timer =
+      Utility::OpenMPProperties::createTimer();
+
+    timer->start();
+    
+    while( timer->elapsed().count() < duration_in_sec );
+    
+    timer->stop();
+    timer.reset();
+    
+    // Terminate the simulation (it is set up to run indefinitely unless it
+    // receives an interput signal)
+    std::raise( SIGINT );
+  }
+%}
+
+%extend MonteCarlo::ParticleSimulationManager
+{
+  /*! \brief Run a simulation that can be interrupted by the user (used for
+   *  testing purposes to check SIGINT signal handling)
+   */
+  void runInterruptibleSimulationForDuration( const double duration_in_sec )
+  {
+    
+    std::thread t1( std::bind<void>( &MonteCarlo::ParticleSimulationManager::runInterruptibleSimulation, std::ref(*$self) ) );
+    std::thread t2( ::delayedInterrupt, duration_in_sec );
+    
+    t1.join();
+    t2.join();
+  }
+}
 
 %shared_ptr(MonteCarlo::ParticleSimulationManager);
 

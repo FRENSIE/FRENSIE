@@ -63,6 +63,18 @@ BatchedDistributedStandardParticleSimulationManager<mode>::BatchedDistributedSta
   this->setBatchSize( batch_size );
 }
 
+// Run the simulation set up by the user with the ability to interrupt
+/*! \details Distributed simulations cannot be interrupted. The
+ * runSimulation method will be called after issuing a warning.
+ */
+template<ParticleModeType mode>
+void BatchedDistributedStandardParticleSimulationManager<mode>::runInterruptibleSimulation()
+{
+  FRENSIE_LOG_WARNING( "Distributed simulations cannot be interrupted!" );
+
+  this->runSimulation();
+}
+
 // Run the simulation set up by the user
 template<ParticleModeType mode>
 void BatchedDistributedStandardParticleSimulationManager<mode>::runSimulation()

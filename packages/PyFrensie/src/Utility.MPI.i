@@ -63,9 +63,6 @@ using namespace Utility;
   }
 }
 
-// Add support for the OpenMPProperties class wrapper
-%include "Utility_OpenMPProperties.i"
-
 // Add support for the GlobalMPISession class wrapper
 %include "MonteCarlo_GlobalMPISession.i"
 
