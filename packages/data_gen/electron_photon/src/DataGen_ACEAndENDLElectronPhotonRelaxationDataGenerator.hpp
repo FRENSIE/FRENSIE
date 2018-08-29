@@ -1,13 +1,14 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   DataGen_StandardElectronPhotonRelaxationDataGenerator.hpp
+//! \file   DataGen_ACEAndENDLElectronPhotonRelaxationDataGenerator.hpp
 //! \author Alex Robinson, Luke Kersting
-//! \brief  The standard electron-photon-relaxation data generator class decl.
+//! \brief  The ACE and ENDL electron-photon-relaxation data generator class
+//!         declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_GEN_STANDARD_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
-#define DATA_GEN_STANDARD_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
+#ifndef DATA_GEN_ACE_AND_ENDL_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
+#define DATA_GEN_ACE_AND_ENDL_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
 
 // Std Lib Includes
 #include <utility>
@@ -28,31 +29,28 @@
 
 namespace DataGen{
 
-//! The standard electron-photon-relaxation data generator class
-class StandardElectronPhotonRelaxationDataGenerator : public ElectronPhotonRelaxationDataGenerator
+//! The ACE and ENDL electron-photon-relaxation data generator class
+class ACEAndENDLElectronPhotonRelaxationDataGenerator : public ElectronPhotonRelaxationDataGenerator
 {
 
 public:
 
   //! Constructor
-  StandardElectronPhotonRelaxationDataGenerator(
+  ACEAndENDLElectronPhotonRelaxationDataGenerator(
      const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
      const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container,
      const double min_photon_energy,
      const double max_photon_energy,
      const double min_electron_energy,
-     const double max_electron_energy,
-     std::ostream* os_log = &std::cout,
-     std::ostream* os_warn = &std::cerr );
+     const double max_electron_energy );
 
   //! Basic Constructor
-  StandardElectronPhotonRelaxationDataGenerator(
-     const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
-     const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container,
-     std::ostream* os_log = &std::cout );
-
+  ACEAndENDLElectronPhotonRelaxationDataGenerator(
+   const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
+   const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container );
+   
   //! Destructor
-  ~StandardElectronPhotonRelaxationDataGenerator()
+  ~ACEAndENDLElectronPhotonRelaxationDataGenerator()
   { /* ... */ }
 
   //! Set the occupation number evaluation tolerance
@@ -118,8 +116,7 @@ public:
   MonteCarlo::TwoDSamplingType getElectronTwoDGridPolicy() const;
 
   //! Populate the electron-photon-relaxation data container
-  void populateEPRDataContainer(
-   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+  void populateEPRDataContainer( Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const final override;
 
   //! Repopulate the electron elastic data
   static void repopulateElectronElasticData(
@@ -128,8 +125,7 @@ public:
     const double cutoff_angle_cosine = 0.9,
     const double tabular_evaluation_tol = 1e-7,
     const unsigned number_of_moment_preserving_angles = 1,
-    const MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LOGLOGLOG_INTERPOLATION,
-    std::ostream& os_log = std::cout );
+    const MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LOGLOGLOG_INTERPOLATION );
 
   //! Repopulate the electron moment preserving data
   static void repopulateMomentPreservingData(
@@ -137,8 +133,7 @@ public:
     const double cutoff_angle_cosine = 0.9,
     const double tabular_evaluation_tol = 1e-7,
     const unsigned number_of_moment_preserving_angles = 1,
-    const MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LOGLOGLOG_INTERPOLATION,
-    std::ostream& os_log = std::cout );
+    const MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LOGLOGLOG_INTERPOLATION );
 
 protected:
 
@@ -328,9 +323,6 @@ private:
   // The ENDL data
   std::shared_ptr<const Data::ENDLDataContainer> d_endl_data_container;
 
-  // The log stream
-  std::ostream* d_os_log;
-
   // The FullyTabularTwoDDistribution evaluation tolerance
   double d_tabular_evaluation_tol;
 
@@ -361,7 +353,7 @@ private:
 };
 
 // The if a value is not equal to zero
-inline bool StandardElectronPhotonRelaxationDataGenerator::notEqualZero(
+inline bool ACEAndENDLElectronPhotonRelaxationDataGenerator::notEqualZero(
                                                            const double value )
 {
   return value != 0.0;
@@ -373,12 +365,12 @@ inline bool StandardElectronPhotonRelaxationDataGenerator::notEqualZero(
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "DataGen_StandardElectronPhotonRelaxationDataGenerator_def.hpp"
+#include "DataGen_ACEAndENDLElectronPhotonRelaxationDataGenerator_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end DATA_GEN_STANDARD_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
+#endif // end DATA_GEN_ACE_AND_ENDL_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
 
 //---------------------------------------------------------------------------//
-// end DataGen_StandardElectronPhotonRelaxationDataGenerator.hpp
+// end DataGen_ACEAndENDLElectronPhotonRelaxationDataGenerator.hpp
 //---------------------------------------------------------------------------//

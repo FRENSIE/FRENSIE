@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstStandardElectronPhotonRelaxationDataGenerator.cpp
+//! \file   tstACEAndENDLElectronPhotonRelaxationDataGenerator.cpp
 //! \author Alex Robinson, Luke Kerstings
-//! \brief  Standard electron-photon-relaxation data generator unit tests
+//! \brief  ACE and ENDL electron-photon-relaxation data generator unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -15,7 +15,7 @@
 #include <boost/unordered_map.hpp>
 
 // FRENSIE Includes
-#include "DataGen_StandardElectronPhotonRelaxationDataGenerator.hpp"
+#include "DataGen_ACEAndENDLElectronPhotonRelaxationDataGenerator.hpp"
 #include "Data_ElectronPhotonRelaxationVolatileDataContainer.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_ENDLDataContainer.hpp"
@@ -36,10 +36,10 @@ std::shared_ptr<Data::ENDLDataContainer>
 // Tests
 //---------------------------------------------------------------------------//
 // Check that a data generator can be constructed
-FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    basic_constructor )
 {
-  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator generator(
                                                        h_xss_data_extractor,
                                                        h_endl_data_container );
 
@@ -74,9 +74,9 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 //---------------------------------------------------------------------------//
 // Check that a data generator can be constructed
-FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator, constructor )
+FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator, constructor )
 {
-  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator generator(
                                                        c_xss_data_extractor,
                                                        c_endl_data_container,
                                                        1e-3,
@@ -115,10 +115,10 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator, constructor )
 
 //---------------------------------------------------------------------------//
 // Check that the default grid convergence tolerance can be set
-FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    setDefaultPhotonGridConvergenceTolerance )
 {
-  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator generator(
                                                        h_xss_data_extractor,
                                                        h_endl_data_container );
 
@@ -129,10 +129,10 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 //---------------------------------------------------------------------------//
 // Check that the default grid absolute difference tolerance can be set
-FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    setDefaultPhotonGridAbsoluteDifferenceTolerance )
 {
-  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator generator(
                                                        h_xss_data_extractor,
                                                        h_endl_data_container );
 
@@ -143,10 +143,10 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 //---------------------------------------------------------------------------//
 // Check that the default grid distance tolerance can be set
-FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    setDefaultPhotonGridDistanceTolerance )
 {
-  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator generator(
                                                        h_xss_data_extractor,
                                                        h_endl_data_container );
 
@@ -156,10 +156,10 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 //---------------------------------------------------------------------------//
 // Check that the default grid convergence tolerance can be set
-FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    setDefaultElectronGridConvergenceTolerance )
 {
-  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator generator(
                                                        h_xss_data_extractor,
                                                        h_endl_data_container );
 
@@ -170,10 +170,10 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 //---------------------------------------------------------------------------//
 // Check that the default grid absolute difference tolerance can be set
-FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    setDefaultElectronGridAbsoluteDifferenceTolerance )
 {
-  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator generator(
                                                        h_xss_data_extractor,
                                                        h_endl_data_container );
 
@@ -184,10 +184,10 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 //---------------------------------------------------------------------------//
 // Check that the default grid distance tolerance can be set
-FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    setDefaultElectronGridDistanceTolerance )
 {
-  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator generator(
                                                        h_xss_data_extractor,
                                                        h_endl_data_container );
 
@@ -197,10 +197,10 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 //---------------------------------------------------------------------------//
 // Check that the occupation number evaluation tolerance can be set
-FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    setOccupationNumberEvaluationTolerance )
 {
-  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator generator(
                                                        h_xss_data_extractor,
                                                        h_endl_data_container );
 
@@ -211,10 +211,10 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 //---------------------------------------------------------------------------//
 // Check that the incoherent evaluation tolerance can be set
-FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    setSubshellIncoherentEvaluationTolerance )
 {
-  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator generator(
                                                        h_xss_data_extractor,
                                                        h_endl_data_container );
 
@@ -225,10 +225,10 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 //---------------------------------------------------------------------------//
 // Check that the photon threshold energy nudge factor can be set
-FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    setPhotonThresholdEnergyNudgeFactor )
 {
-  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator generator(
                                                        h_xss_data_extractor,
                                                        h_endl_data_container );
 
@@ -238,10 +238,10 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 //---------------------------------------------------------------------------//
 // Check that the electron total elastic integrated cross section mode can be set
-FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    setElectronTotalElasticIntegratedCrossSectionMode )
 {
-  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator generator(
                                                        h_xss_data_extractor,
                                                        h_endl_data_container );
 
@@ -254,10 +254,10 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 //---------------------------------------------------------------------------//
 // Check that the cutoff angle cosine can be set
-FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    setCutoffAngleCosine )
 {
-  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator generator(
                                                        h_xss_data_extractor,
                                                        h_endl_data_container );
 
@@ -267,10 +267,10 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 //---------------------------------------------------------------------------//
 // Check that the number of moment preserving angles can be set
-FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    setNumberOfMomentPreservingAngles )
 {
-  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator generator(
                                                        h_xss_data_extractor,
                                                        h_endl_data_container );
 
@@ -280,10 +280,10 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 //---------------------------------------------------------------------------//
 // Check that the cutoff angle cosine can be set
-FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    setTabularEvaluationTolerance )
 {
-  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator generator(
                                                        h_xss_data_extractor,
                                                        h_endl_data_container );
 
@@ -294,10 +294,10 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 //---------------------------------------------------------------------------//
 // Check that the electron TwoDInterpPolicy can be set
-FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    setElectronTwoDInterpPolicy )
 {
-  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator generator(
                                                        h_xss_data_extractor,
                                                        h_endl_data_container );
 
@@ -315,10 +315,10 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 //---------------------------------------------------------------------------//
 // Check that the electron TwoDGridPolicy can be set
-FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    setElectronTwoDGridPolicy )
 {
-  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator generator(
                                                        h_xss_data_extractor,
                                                        h_endl_data_container );
 
@@ -344,15 +344,15 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 //---------------------------------------------------------------------------//
 // Check that a data container can be populated
-FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    populateEPRDataContainer_h_lin )
 {
   std::shared_ptr<const DataGen::ElectronPhotonRelaxationDataGenerator>
     data_generator;
 
   {
-    DataGen::StandardElectronPhotonRelaxationDataGenerator*
-      raw_data_generator = new DataGen::StandardElectronPhotonRelaxationDataGenerator(
+    DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator*
+      raw_data_generator = new DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator(
                 h_xss_data_extractor,
                 h_endl_data_container,
                 0.001,
@@ -917,15 +917,15 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 //---------------------------------------------------------------------------//
 // Check that a data container can be populated
-FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    populateEPRDataContainer_h )
 {
   std::shared_ptr<const DataGen::ElectronPhotonRelaxationDataGenerator>
     data_generator;
 
   {
-    DataGen::StandardElectronPhotonRelaxationDataGenerator*
-      raw_data_generator = new DataGen::StandardElectronPhotonRelaxationDataGenerator(
+    DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator*
+      raw_data_generator = new DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator(
                 h_xss_data_extractor,
                 h_endl_data_container,
                 0.001,
@@ -1496,7 +1496,7 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 //---------------------------------------------------------------------------//
 // Check that a data container can be populated
-FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    repopulateMomentPreservingData_h )
 {
   Data::ElectronPhotonRelaxationVolatileDataContainer
@@ -1509,7 +1509,7 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   unsigned number_of_discrete_angles = 0;
   MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LINLINLOG_INTERPOLATION;
 
-  DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
     data_container,
     cutoff_angle_cosine,
     tabular_evaluation_tol,
@@ -1521,7 +1521,7 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   cutoff_angle_cosine = 0.9;
   number_of_discrete_angles = 2;
 
-  DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
     data_container,
     cutoff_angle_cosine,
     tabular_evaluation_tol,
@@ -2066,7 +2066,7 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 //---------------------------------------------------------------------------//
 // Check that a data container can be populated
-FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    repopulateElectronElasticData_h )
 {
   Data::ElectronPhotonRelaxationVolatileDataContainer
@@ -2080,7 +2080,7 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   unsigned number_of_discrete_angles = 0;
   MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LINLINLIN_INTERPOLATION;
 
-  DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
     data_container,
     max_energy,
     cutoff_angle_cosine,
@@ -2095,7 +2095,7 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   number_of_discrete_angles = 2;
   two_d_interp = MonteCarlo::LOGLOGLOG_INTERPOLATION;
 
-  DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
     data_container,
     max_energy,
     cutoff_angle_cosine,
@@ -2635,15 +2635,15 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
  */
 // //---------------------------------------------------------------------------//
 // // Check that a data container can be populated
-// FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+// FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
 //                    populateEPRDataContainer_c )
 // {
 //   std::shared_ptr<const DataGen::ElectronPhotonRelaxationDataGenerator>
 //    data_generator;
 
 //  {
-//    DataGen::StandardElectronPhotonRelaxationDataGenerator*
-//      raw_data_generator = new DataGen::StandardElectronPhotonRelaxationDataGenerator(
+//    DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator*
+//      raw_data_generator = new DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator(
 //                c_xss_data_extractor,
 //                c_endl_data_container,
 //                0.001,
@@ -3442,7 +3442,7 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 // //---------------------------------------------------------------------------//
 // // Check that a data container can be repopulated with moment preserving data
-// FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+// FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
 //                   repopulateMomentPreservingData_c )
 // {
 //   Data::ElectronPhotonRelaxationVolatileDataContainer
@@ -3453,7 +3453,7 @@ FRENSIE_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //   unsigned number_of_discrete_angles = 2;
 //   MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LINLINLIN_INTERPOLATION;
 
-//   DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+//   DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
 //     data_container,
 //     cutoff_angle_cosine,
 //     tabular_evaluation_tol,
@@ -4160,5 +4160,5 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstStandardElectronPhotonRelaxationDataGenerator.cpp
+// end tstACEAndENDLElectronPhotonRelaxationDataGenerator.cpp
 //---------------------------------------------------------------------------//

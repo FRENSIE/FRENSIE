@@ -33,25 +33,20 @@ public:
       const double min_photon_energy,
       const double max_photon_energy,
       const double min_electron_energy,
-      const double max_electron_energy,
-      std::ostream* os_log = &std::cout,
-      std::ostream* os_warn = &std::cerr )
+      const double max_electron_energy )
     : DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator(
-        forward_epr_data,
-        min_photon_energy,
-        max_photon_energy,
-        min_electron_energy,
-        max_electron_energy,
-        os_log,
-        os_warn )
+                                                          forward_epr_data,
+                                                          min_photon_energy,
+                                                          max_photon_energy,
+                                                          min_electron_energy,
+                                                          max_electron_energy )
   { /* ... */ }
 
   TestStandardAdjointElectronPhotonRelaxationDataGenerator(
-      const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>& forward_epr_data,
-      std::ostream* os_log = &std::cout )
+      const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>&
+      forward_epr_data )
     : DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator(
-        forward_epr_data,
-        os_log )
+                                                             forward_epr_data )
   { /* ... */ }
 
   ~TestStandardAdjointElectronPhotonRelaxationDataGenerator()

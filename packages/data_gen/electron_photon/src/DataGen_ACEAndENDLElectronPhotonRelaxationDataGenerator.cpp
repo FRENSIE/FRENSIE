@@ -1,8 +1,9 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   DataGen_StandardElectronPhotonRelaxationDataGenerator.hpp
+//! \file   DataGen_ACEAndENDLElectronPhotonRelaxationDataGenerator.hpp
 //! \author Alex Robinson
-//! \brief  The standard electron-photon-relaxation data generator class def.
+//! \brief  The ACE and ENDL electron-photon-relaxation data generator class
+//!         definition
 //!
 //---------------------------------------------------------------------------//
 
@@ -11,7 +12,7 @@
 #include <boost/bind.hpp>
 
 // FRENSIE Includes
-#include "DataGen_StandardElectronPhotonRelaxationDataGenerator.hpp"
+#include "DataGen_ACEAndENDLElectronPhotonRelaxationDataGenerator.hpp"
 #include "DataGen_MomentPreservingElectronDataGenerator.hpp"
 #include "DataGen_FormFactorEvaluator.hpp"
 #include "DataGen_ScatteringFunctionEvaluator.hpp"
@@ -28,20 +29,19 @@
 #include "Utility_StaticOutputFormatter.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_LoggingMacros.hpp"
 #include "Utility_DesignByContract.hpp"
 
 namespace DataGen{
 
 // Constructor
-StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationDataGenerator(
+ACEAndENDLElectronPhotonRelaxationDataGenerator::ACEAndENDLElectronPhotonRelaxationDataGenerator(
      const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
      const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container,
      const double min_photon_energy,
      const double max_photon_energy,
      const double min_electron_energy,
-     const double max_electron_energy,
-     std::ostream* os_log,
-     std::ostream* os_warn )
+     const double max_electron_energy )
   : ElectronPhotonRelaxationDataGenerator( ace_epr_data->extractAtomicNumber(),
                                            min_photon_energy,
                                            max_photon_energy,
@@ -49,7 +49,6 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
                                            max_electron_energy ),
     d_ace_epr_data( ace_epr_data ),
     d_endl_data_container( endl_data_container ),
-    d_os_log( os_log ),
     d_occupation_number_evaluation_tolerance( 1e-3 ),
     d_subshell_incoherent_evaluation_tolerance( 1e-3 ),
     d_photon_threshold_energy_nudge_factor( 1.0001 ),
@@ -64,10 +63,6 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
   testPrecondition( ace_epr_data.get() );
   // Make sure the endl data is valid
   testPrecondition( endl_data_container.get() );
-  // Make sure the log stream is valid
-  testPrecondition( os_log );
-  // Make sure the warning stream is valid
-  testPrecondition( os_warn );
 
   // Check if the data tables are compatible
   TEST_FOR_EXCEPTION( ace_epr_data->extractAtomicNumber() !=
@@ -86,11 +81,10 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
   {
     this->setMinPhotonEnergy( table_min_photon_energy );
 
-    (*os_warn) << Utility::BoldMagenta( "Warning: " )
-               << "the min photon energy requested is below the "
-               << "ACE table min photon energy! The ACE table's min photon "
-               << "energy (" << table_min_photon_energy << ") will be used "
-               << "instead." << std::endl;
+    FRENSIE_LOG_WARNING( "the min photon energy requested is below the "
+                         << "ACE table min photon energy! The ACE table's min "
+                         << "photon energy (" << table_min_photon_energy
+                         << ") will be used instead." );
   }
 
   // Check if the max photon energy is above the ace table max energy
@@ -101,11 +95,10 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
   {
     this->setMaxPhotonEnergy( table_max_photon_energy );
 
-    (*os_warn) << Utility::BoldMagenta( "Warning: " )
-               << "the max photon energy requested is above the "
-               << "ACE table max photon energy! The ACE table's max photon "
-               << "energy (" << table_max_photon_energy << ") will be used "
-               << "instead." << std::endl;
+    FRENSIE_LOG_WARNING( "the max photon energy requested is above the "
+                         << "ACE table max photon energy! The ACE table's max "
+                         << "photon energy (" << table_max_photon_energy
+                         << ") will be used instead." );
   }
 
   // Check if the min electron energy is below the endl table min energy
@@ -116,11 +109,11 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
   {
     this->setMinElectronEnergy( table_min_electron_energy );
 
-    (*os_warn) << Utility::BoldMagenta( "Warning: " )
-               << "the min electron energy requested is below the "
-               << "ENDL table min electron energy! The ENDL table's min "
-               << "electron energy (" << table_min_electron_energy << ") "
-               << "will be used instead." << std::endl;
+    FRENSIE_LOG_WARNING( "the min electron energy requested is below the "
+                         << "ENDL table min electron energy! The ENDL "
+                         << "table's min " << "electron energy ("
+                         << table_min_electron_energy
+                         << ") will be used instead." );
   }
 
   // Check if the max electron energy is above the endl table max energy
@@ -131,32 +124,29 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
   {
     this->setMaxElectronEnergy( table_max_electron_energy );
 
-    (*os_warn) << Utility::BoldMagenta( "Warning: " )
-               << "the max electron energy requested is above the "
-               << "ENDL table max electron energy! The ENDL table's max "
-               << "electron energy (" << table_max_electron_energy << ") "
-               << "will be used instead." << std::endl;
+    FRENSIE_LOG_WARNING( "the max electron energy requested is above the "
+                         << "ENDL table max electron energy! The ENDL table's "
+                         << "max electron energy ("
+                         << table_max_electron_energy
+                         << ") will be used instead." );
   }
 }
 
 // Basic constructor
-StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationDataGenerator(
-     const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
-     const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container,
-     std::ostream* os_log )
-  : StandardElectronPhotonRelaxationDataGenerator(
+ACEAndENDLElectronPhotonRelaxationDataGenerator::ACEAndENDLElectronPhotonRelaxationDataGenerator(
+    const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
+    const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container )
+  : ACEAndENDLElectronPhotonRelaxationDataGenerator(
                         ace_epr_data,
                         endl_data_container,
                         exp( ace_epr_data->extractPhotonEnergyGrid().front() ),
                         exp( ace_epr_data->extractPhotonEnergyGrid().back() ),
                         endl_data_container->getElasticEnergyGrid().front(),
-                        endl_data_container->getElasticEnergyGrid().back(),
-                        os_log,
-                        &std::cerr )
+                        endl_data_container->getElasticEnergyGrid().back() )
 { /* ... */ }
 
 // Set the occupation number evaluation tolerance
-void StandardElectronPhotonRelaxationDataGenerator::setOccupationNumberEvaluationTolerance(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setOccupationNumberEvaluationTolerance(
                                             const double evaluation_tolerance )
 {
   // Make sure the evaluation tolerance is valid
@@ -167,13 +157,13 @@ void StandardElectronPhotonRelaxationDataGenerator::setOccupationNumberEvaluatio
 }
 
 // Get the occupation number evaluation tolerance
-double StandardElectronPhotonRelaxationDataGenerator::getOccupationNumberEvaluationTolerance() const
+double ACEAndENDLElectronPhotonRelaxationDataGenerator::getOccupationNumberEvaluationTolerance() const
 {
   return d_occupation_number_evaluation_tolerance;
 }
 
 // Set the subshell incoherent evaluation tolerance
-void StandardElectronPhotonRelaxationDataGenerator::setSubshellIncoherentEvaluationTolerance(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setSubshellIncoherentEvaluationTolerance(
                                             const double evaluation_tolerance )
 {
   // Make sure the evaluation tolerance is valid
@@ -184,13 +174,13 @@ void StandardElectronPhotonRelaxationDataGenerator::setSubshellIncoherentEvaluat
 }
 
 // Get the subshell incoherent evaluation tolerance
-double StandardElectronPhotonRelaxationDataGenerator::getSubshellIncoherentEvaluationTolerance() const
+double ACEAndENDLElectronPhotonRelaxationDataGenerator::getSubshellIncoherentEvaluationTolerance() const
 {
   return d_subshell_incoherent_evaluation_tolerance;
 }
 
 // Set the photon threshold energy nudge factor
-void StandardElectronPhotonRelaxationDataGenerator::setPhotonThresholdEnergyNudgeFactor(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setPhotonThresholdEnergyNudgeFactor(
                                                     const double nudge_factor )
 {
   // Make sure the nudge factor is valid
@@ -200,31 +190,31 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonThresholdEnergyNudg
 }
 
 // Get the photon threshold energy nudge factor
-double StandardElectronPhotonRelaxationDataGenerator::getPhotonThresholdEnergyNudgeFactor() const
+double ACEAndENDLElectronPhotonRelaxationDataGenerator::getPhotonThresholdEnergyNudgeFactor() const
 {
   return d_photon_threshold_energy_nudge_factor;
 }
 
 // Set electron total elastic integrated cross section mode to off (on by default)
-void StandardElectronPhotonRelaxationDataGenerator::setElectronTotalElasticIntegratedCrossSectionModeOff()
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setElectronTotalElasticIntegratedCrossSectionModeOff()
 {
   d_integrated_total_elastic_cross_section_mode_on = false;
 }
 
 // Set electron total elastic integrated cross section mode to on (on by default)
-void StandardElectronPhotonRelaxationDataGenerator::setElectronTotalElasticIntegratedCrossSectionModeOn()
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setElectronTotalElasticIntegratedCrossSectionModeOn()
 {
   d_integrated_total_elastic_cross_section_mode_on = true;
 }
 
 // Return if electron total elastic integrated cross section mode to on (on by default)
-bool StandardElectronPhotonRelaxationDataGenerator::isElectronTotalElasticIntegratedCrossSectionModeOn() const
+bool ACEAndENDLElectronPhotonRelaxationDataGenerator::isElectronTotalElasticIntegratedCrossSectionModeOn() const
 {
   return d_integrated_total_elastic_cross_section_mode_on;
 }
 
 // Set the cutoff angle cosine
-void StandardElectronPhotonRelaxationDataGenerator::setCutoffAngleCosine(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setCutoffAngleCosine(
                                              const double cutoff_angle_cosine )
 {
   // Make sure the cutoff angle cosine is valid
@@ -235,26 +225,26 @@ void StandardElectronPhotonRelaxationDataGenerator::setCutoffAngleCosine(
 }
 
 // Get the cutoff angle cosine
-double StandardElectronPhotonRelaxationDataGenerator::getCutoffAngleCosine() const
+double ACEAndENDLElectronPhotonRelaxationDataGenerator::getCutoffAngleCosine() const
 {
   return d_cutoff_angle_cosine;
 }
 
 // Set the number of moment preserving angles
-void StandardElectronPhotonRelaxationDataGenerator::setNumberOfMomentPreservingAngles(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setNumberOfMomentPreservingAngles(
                                               const unsigned number_of_angles )
 {
   d_number_of_moment_preserving_angles = number_of_angles;
 }
 
 // Get the number of moment preserving angles
-double StandardElectronPhotonRelaxationDataGenerator::getNumberOfMomentPreservingAngles() const
+double ACEAndENDLElectronPhotonRelaxationDataGenerator::getNumberOfMomentPreservingAngles() const
 {
   return d_number_of_moment_preserving_angles;
 }
 
 // Set the FullyTabularTwoDDistribution evaluation tolerance
-void StandardElectronPhotonRelaxationDataGenerator::setTabularEvaluationTolerance(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setTabularEvaluationTolerance(
     const double evaluation_tolerance )
 {
   // Make sure the evaluation tolerance is valid
@@ -265,7 +255,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setTabularEvaluationToleranc
 }
 
 // Get the FullyTabularTwoDDistribution evaluation tolerance
-double StandardElectronPhotonRelaxationDataGenerator::getTabularEvaluationTolerance() const
+double ACEAndENDLElectronPhotonRelaxationDataGenerator::getTabularEvaluationTolerance() const
 {
   return d_tabular_evaluation_tol;
 }
@@ -275,33 +265,33 @@ double StandardElectronPhotonRelaxationDataGenerator::getTabularEvaluationTolera
  * is Log (e.g. Lin-Log-Lin, Log-Log-Log, etc) the elastic 2D interpolation uses the LogCos
  * equivelent (e.g. Lin-LogCos-Lin, Log-LogCos-Log, etc).
  */
-void StandardElectronPhotonRelaxationDataGenerator::setElectronTwoDInterpPolicy(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setElectronTwoDInterpPolicy(
     MonteCarlo::TwoDInterpolationType two_d_interp )
 {
   d_two_d_interp = two_d_interp;
 }
 
 // Return the electron TwoDInterpPolicy
-MonteCarlo::TwoDInterpolationType StandardElectronPhotonRelaxationDataGenerator::getElectronTwoDInterpPolicy() const
+MonteCarlo::TwoDInterpolationType ACEAndENDLElectronPhotonRelaxationDataGenerator::getElectronTwoDInterpPolicy() const
 {
   return d_two_d_interp;
 }
 
 // Set the electron TwoDGridPolicy (UnitBaseCorrelated by default)
-void StandardElectronPhotonRelaxationDataGenerator::setElectronTwoDGridPolicy(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setElectronTwoDGridPolicy(
     MonteCarlo::TwoDSamplingType two_d_grid )
 {
   d_two_d_grid = two_d_grid;
 }
 
 // Return the electron TwoDGridPolicy
-MonteCarlo::TwoDSamplingType StandardElectronPhotonRelaxationDataGenerator::getElectronTwoDGridPolicy() const
+MonteCarlo::TwoDSamplingType ACEAndENDLElectronPhotonRelaxationDataGenerator::getElectronTwoDGridPolicy() const
 {
   return d_two_d_grid;
 }
 
 // Populate the electron-photon-relaxation data container
-void StandardElectronPhotonRelaxationDataGenerator::populateEPRDataContainer(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::populateEPRDataContainer(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const
 {
   // Set the table data
@@ -330,34 +320,36 @@ void StandardElectronPhotonRelaxationDataGenerator::populateEPRDataContainer(
     d_tabular_evaluation_tol );
 
   // Set the relaxation data
-  (*d_os_log) << std::endl << Utility::Bold( "Setting the relaxation data" )
-              << "...";
-  d_os_log->flush();
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( Utility::Bold( "Setting the relaxation data" ) << "..." );
+  FRENSIE_FLUSH_ALL_LOGS();
+  
   this->setRelaxationData( data_container );
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
   // Set the photon data
-  (*d_os_log) << Utility::Bold( "Setting the photon data: " )
-              << std::endl;
+  FRENSIE_LOG_NOTIFICATION( Utility::Bold( "Setting the photon data: " ) );
+
   this->setPhotonData( data_container );
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
   // Set the electron data
-  (*d_os_log) << Utility::Bold("Setting the electron data: " ) << std::endl;
+  FRENSIE_LOG_NOTIFICATION( Utility::Bold("Setting the electron data: " ) );
+  
   this->setElectronData( data_container );
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 }
 
 // Repopulate the electron elastic data
-void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
-    const double max_electron_energy,
-    const double cutoff_angle_cosine,
-    const double tabular_evaluation_tol,
-    const unsigned number_of_moment_preserving_angles,
-    const MonteCarlo::TwoDInterpolationType two_d_interp,
-    std::ostream& os_log )
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
+           Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
+           const double max_electron_energy,
+           const double cutoff_angle_cosine,
+           const double tabular_evaluation_tol,
+           const unsigned number_of_moment_preserving_angles,
+           const MonteCarlo::TwoDInterpolationType two_d_interp )
 {
   testPrecondition( max_electron_energy > 0.0 );
   testPrecondition( cutoff_angle_cosine <= 1.0 );
@@ -454,23 +446,21 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDat
   }
 
   // Repopulate moment preserving data
-  StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+  ACEAndENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
     data_container,
     cutoff_angle_cosine,
     tabular_evaluation_tol,
     number_of_moment_preserving_angles,
-    two_d_interp,
-    os_log );
+    two_d_interp );
 }
 
 // Repopulate the electron moment preserving data
-void StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
     const double cutoff_angle_cosine,
     const double tabular_evaluation_tol,
     const unsigned number_of_moment_preserving_angles,
-    const MonteCarlo::TwoDInterpolationType two_d_interp,
-    std::ostream& os_log )
+    const MonteCarlo::TwoDInterpolationType two_d_interp )
 {
   testPrecondition( cutoff_angle_cosine <= 1.0 );
   testPrecondition( cutoff_angle_cosine >= -1.0 );
@@ -486,10 +476,8 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingDa
   std::vector<double> angular_energy_grid(
     data_container.getElasticAngularEnergyGrid() );
 
-  os_log << std::endl
-         << Utility::Bold( "Setting the moment preserving electron data" )
-         << "...";
-  os_log.flush();
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( Utility::Bold( "Setting the moment preserving electron data ... " ) );
+  FRENSIE_FLUSH_ALL_LOGS();
 
   // Clear the old moment preservinf data
   data_container.clearMomentPreservingData();
@@ -498,41 +486,40 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingDa
   if ( cutoff_angle_cosine > 0.999999 ||
        number_of_moment_preserving_angles < 1 )
   {
-    os_log << Utility::BoldYellow( "done." ) << std::endl;
+    FRENSIE_LOG_NOTIFICATION( Utility::BoldYellow( "done." ) );
 
     if( cutoff_angle_cosine > 0.999999 )
     {
-      os_log << Utility::BoldCyan( "  Note: " )
-             << "Moment preserving data was not generated because the"
-             << std::endl
-             << "        cutoff angle cosine is greater than 0.999999 (mu"
-             << "=" << cutoff_angle_cosine << ")."
-             << std::endl;
+      FRENSIE_LOG_NOTIFICATION( "\n" << Utility::BoldCyan( "  Note: " )
+                                << "Moment preserving data was not generated "
+                                << "because the cutoff angle cosine is "
+                                << "greater than 0.999999 (mu = "
+                                << cutoff_angle_cosine << ")." );
     }
 
     if( number_of_moment_preserving_angles < 1 )
     {
-      os_log << Utility::BoldCyan( "  Note: " )
-             << "Moment preserving data was not generated because the"
-             << std::endl
-             << "        number of moment preserving angles is less "
-             << "than 1." << std::endl;
+      FRENSIE_LOG_NOTIFICATION( "\n" << Utility::BoldCyan( "  Note: " )
+                                << "Moment preserving data was not generated "
+                                << "because the number of moment preserving "
+                                << "angles is less than 1." );
     }
   }
   // Set the moment preserving data
   else
   {
-    StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
+    ACEAndENDLElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
       angular_energy_grid,
       tabular_evaluation_tol,
       two_d_interp,
       data_container );
-    os_log << Utility::BoldGreen( "done." ) << std::endl;
+
+    FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
   }
 }
 
 // Set the relaxation data
-void StandardElectronPhotonRelaxationDataGenerator::setRelaxationData(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setRelaxationData(
                            Data::ElectronPhotonRelaxationVolatileDataContainer&
                            data_container ) const
 {
@@ -591,7 +578,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setRelaxationData(
 }
 
 // Set the transition data
-void StandardElectronPhotonRelaxationDataGenerator::setTransitionData(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setTransitionData(
                           const unsigned subshell,
                           const unsigned transitions,
                           const unsigned subshell_data_start_index,
@@ -647,7 +634,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setTransitionData(
 }
 
 // Set the Compton profile data
-void StandardElectronPhotonRelaxationDataGenerator::setComptonProfileData(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setComptonProfileData(
                            Data::ElectronPhotonRelaxationVolatileDataContainer&
                            data_container ) const
 {
@@ -716,7 +703,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setComptonProfileData(
 }
 
 // Set the Occupation number data
-void StandardElectronPhotonRelaxationDataGenerator::setOccupationNumberData(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setOccupationNumberData(
                            Data::ElectronPhotonRelaxationVolatileDataContainer&
                            data_container ) const
 {
@@ -790,7 +777,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setOccupationNumberData(
 }
 
 // Set the Waller-Hartree scattering function data
-void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeScatteringFunctionData(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setWallerHartreeScatteringFunctionData(
                            Data::ElectronPhotonRelaxationVolatileDataContainer&
                            data_container ) const
 {
@@ -858,7 +845,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeScatteringFu
 }
 
 // Set the Waller-Hartree atomic form factor data
-void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFactorData(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFactorData(
                            Data::ElectronPhotonRelaxationVolatileDataContainer&
                            data_container ) const
 {
@@ -940,7 +927,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFa
 }
 
 // Set the Waller-Hartree atomic form factor data
-void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFactorData(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFactorData(
                        const std::function<double(double)>& evaluation_wrapper,
                        std::list<double>& recoil_momentum_grid,
                        const double initial_grid_value,
@@ -982,41 +969,50 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFa
 }
 
 // Set the photon data
-void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setPhotonData(
                            Data::ElectronPhotonRelaxationVolatileDataContainer&
                            data_container ) const
 {
   // Set the Compton profile data
-  (*d_os_log) << " Setting the " << Utility::Italicized( "Compton profile" )
-              << " data...";
-  d_os_log->flush();
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( " Setting the " <<
+                                    Utility::Italicized( "Compton profile" ) <<
+                                    " data ... " );
+
   this->setComptonProfileData( data_container );
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
   // Set the occupation number data
-  (*d_os_log) << " Setting the " << Utility::Italicized( "occupation number" )
-              << " data...";
-  d_os_log->flush();
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( " Setting the " <<
+                                    Utility::Italicized( "occupation number" )
+                                    << " data ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
+  
   this->setOccupationNumberData( data_container );
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
   // Set the Waller-Hartree scattering function data
-  (*d_os_log) << " Setting the "
-              << Utility::Italicized( "Waller-Hartree scattering function" )
-              << " data...";
-  d_os_log->flush();
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( " Setting the " <<
+                                    Utility::Italicized( "Waller-Hartree scattering function" )
+                                    << " data ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
+
   this->setWallerHartreeScatteringFunctionData( data_container );
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
   // Set the Waller-Hartree atomic form factor data
-  (*d_os_log) << " Setting the "
-              << Utility::Italicized( "Waller-Hartree atomic form factor" )
-              << " data...";
-  d_os_log->flush();
-  this->setWallerHartreeAtomicFormFactorData( data_container );
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( " Setting the " <<
+                                    Utility::Italicized( "Waller-Hartree atomic form factor" )
+                                    << " data ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
 
-  (*d_os_log) << " Setting the photon cross section data:" << std::endl;
+  this->setWallerHartreeAtomicFormFactorData( data_container );
+
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
+  FRENSIE_LOG_NOTIFICATION( " Setting the photon cross section data:" );
+  FRENSIE_FLUSH_ALL_LOGS();
 
   // Extract the heating numbers
   std::shared_ptr<const Utility::UnivariateDistribution> heating_numbers;
@@ -1084,8 +1080,10 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
                                      impulse_approx_incoherent_cs_evaluators );
 
   // Create the union energy grid
-  (*d_os_log) << "   Creating " << Utility::Italicized( "union energy grid" );
-  d_os_log->flush();
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Creating " <<
+                                    Utility::Italicized( "union energy grid " ) );
+  FRENSIE_FLUSH_ALL_LOGS();
+  
   std::list<double> union_energy_grid;
 
   this->initializePhotonUnionEnergyGrid( data_container, union_energy_grid );
@@ -1104,8 +1102,9 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
                            "Error: Could not generate an optimized photon "
                            "energy grid for the heating numbers with the "
                            "provided convergence parameters!" );
-  (*d_os_log) << ".";
-  d_os_log->flush();
+
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
+  FRENSIE_FLUSH_ALL_LOGS();
 
   grid_function = boost::bind( &Utility::UnivariateDistribution::evaluate,
                                boost::cref( *waller_hartree_incoherent_cs ),
@@ -1120,8 +1119,9 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
                            "energy grid for the Waller-Hartree incoherent "
                            "cross section with the provided convergence "
                            "parameters!" );
-  (*d_os_log) << ".";
-  d_os_log->flush();
+  
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
+  FRENSIE_FLUSH_ALL_LOGS();
 
   grid_function = boost::bind( &Utility::UnivariateDistribution::evaluate,
                                boost::cref( *waller_hartree_coherent_cs ),
@@ -1136,8 +1136,9 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
                            "energy grid for the Waller-Hartree coherent "
                            "cross section with the provided convergence "
                            "parameters!" );
-  (*d_os_log) << ".";
-  d_os_log->flush();
+
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
+  FRENSIE_FLUSH_ALL_LOGS();
 
   grid_function = boost::bind( &Utility::UnivariateDistribution::evaluate,
                                boost::cref( *pair_production_cs ),
@@ -1151,8 +1152,9 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
                            "Error: Could not generate an optimized photon "
                            "energy grid for the pair production cross section "
                            "with the provided convergence parameters!" );
-  (*d_os_log) << ".";
-  d_os_log->flush();
+
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
+  FRENSIE_FLUSH_ALL_LOGS();
 
   grid_function = boost::bind( &Utility::UnivariateDistribution::evaluate,
                                boost::cref( *triplet_production_cs ),
@@ -1168,8 +1170,8 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
                            "section with the provided convergence "
                            "parameters!" );
 
-  (*d_os_log) << ".";
-  d_os_log->flush();
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
+  FRENSIE_FLUSH_ALL_LOGS();
 
   for( unsigned i = 0; i < subshell_photoelectric_effect_css.size(); ++i )
   {
@@ -1189,8 +1191,9 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
                                 subshell_photoelectric_effect_css[i].first ) <<
                              " photoelectric cross section with the provided "
                              "convergence parameters!" );
-    (*d_os_log) << ".";
-    d_os_log->flush();
+
+    FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
+    FRENSIE_FLUSH_ALL_LOGS();
   }
 
   for( unsigned i = 0; i < impulse_approx_incoherent_cs_evaluators.size(); ++i)
@@ -1213,12 +1216,13 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
                           impulse_approx_incoherent_cs_evaluators[i].first ) <<
                           " impulse approx. cross section with the "
                           "provided convergence parameters!" );
-    (*d_os_log) << ".";
-    d_os_log->flush();
+
+    FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
+    FRENSIE_FLUSH_ALL_LOGS();
   }
 
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
-  d_os_log->flush();
+  FRENSIE_LOG_NOTIFICATION( " done." );
+  FRENSIE_FLUSH_ALL_LOGS();
 
   // Set the union energy grid
   std::vector<double> energy_grid;
@@ -1231,9 +1235,11 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
   std::vector<double> cross_section;
   unsigned threshold;
 
-  (*d_os_log) << "   Setting the "
-              << Utility::Italicized( "average heating numbers" ) << "...";
-  d_os_log->flush();
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " << 
+                                    Utility::Italicized( "average heating numbers" )
+                                    << " ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
+
   this->createCrossSectionOnUnionEnergyGrid( union_energy_grid,
                                              heating_numbers,
                                              cross_section,
@@ -1242,12 +1248,14 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
                                              false );
 
   data_container.setAveragePhotonHeatingNumbers( cross_section );
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
-  (*d_os_log) << "   Setting the "
-              << Utility::Italicized( "Waller-Hartree incoherent " )
-              << "cross section...";
-  d_os_log->flush();
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
+
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
+                                    Utility::Italicized( "Waller-Hartree incoherent " )
+                                    << "cross section ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
+  
   this->createCrossSectionOnUnionEnergyGrid( union_energy_grid,
                                              waller_hartree_incoherent_cs,
                                              cross_section,
@@ -1258,12 +1266,14 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
   data_container.setWallerHartreeIncoherentCrossSection( cross_section );
   data_container.setWallerHartreeIncoherentCrossSectionThresholdEnergyIndex(
                                                                    threshold );
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
-  (*d_os_log) << "   Setting the "
-              << Utility::Italicized( "Waller-Hartree coherent " )
-              << "cross section...";
-  d_os_log->flush();
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
+
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
+                                    Utility::Italicized( "Waller-Hartree coherent " )
+                                    << "cross section ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
+
   this->createCrossSectionOnUnionEnergyGrid( union_energy_grid,
                                              waller_hartree_coherent_cs,
                                              cross_section,
@@ -1274,12 +1284,14 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
   data_container.setWallerHartreeCoherentCrossSection( cross_section );
   data_container.setWallerHartreeCoherentCrossSectionThresholdEnergyIndex(
                                                                    threshold );
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
-  (*d_os_log) << "   Setting the "
-              << Utility::Italicized( "pair production " )
-              << "cross section...";
-  d_os_log->flush();
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
+
+  FRENSIE_LOG_PARTIAL_NOTIFICATION("   Setting the " <<
+                                   Utility::Italicized( "pair production " )
+                                   << "cross section ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
+
   this->createCrossSectionOnUnionEnergyGrid(
                      union_energy_grid,
                      pair_production_cs,
@@ -1291,12 +1303,14 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
   data_container.setPairProductionCrossSection( cross_section );
   data_container.setPairProductionCrossSectionThresholdEnergyIndex(
                                                                    threshold );
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
-  (*d_os_log) << "   Setting the "
-              << Utility::Italicized( "triplet production " )
-              << "cross section...";
-  d_os_log->flush();
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
+
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
+                                    Utility::Italicized( "triplet production " )
+                                    << "cross section ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
+  
   this->createCrossSectionOnUnionEnergyGrid(
                      union_energy_grid,
                      triplet_production_cs,
@@ -1309,16 +1323,16 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
   data_container.setTripletProductionCrossSectionThresholdEnergyIndex(
                                                                    threshold );
 
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
   for( unsigned i = 0; i < subshell_photoelectric_effect_css.size(); ++i )
   {
-    (*d_os_log) << "   Setting " << Utility::Italicized( "subshell " )
-                << Utility::Italicized(Data::convertENDFDesignatorToSubshellEnum(
-                                 subshell_photoelectric_effect_css[i].first ) )
-                << Utility::Italicized( " photoelectric " )
-                << "cross section...";
-    d_os_log->flush();
+    FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting " <<
+                                      Utility::Italicized( "subshell " )
+                                      << Utility::Italicized(Data::convertENDFDesignatorToSubshellEnum( subshell_photoelectric_effect_css[i].first ) )
+                                      << Utility::Italicized( " photoelectric " )
+                                      << "cross section ... " );
+    FRENSIE_FLUSH_ALL_LOGS();
 
     this->createCrossSectionOnUnionEnergyGrid(
                             union_energy_grid,
@@ -1335,17 +1349,19 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
     data_container.setSubshellPhotoelectricCrossSectionThresholdEnergyIndex(
                                     subshell_photoelectric_effect_css[i].first,
                                     threshold );
-    (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+
+    FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
   }
 
   for( unsigned i = 0; i < impulse_approx_incoherent_cs_evaluators.size(); ++i)
   {
-    (*d_os_log) << "   Setting " << Utility::Italicized( "subshell " )
-                << Utility::Italicized(Data::convertENDFDesignatorToSubshellEnum(
-                           impulse_approx_incoherent_cs_evaluators[i].first ) )
-                << Utility::Italicized(" impulse approx incoherent " )
-                << "cross section...";
-    d_os_log->flush();
+    FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting " <<
+                                      Utility::Italicized( "subshell " )
+                                      << Utility::Italicized(Data::convertENDFDesignatorToSubshellEnum( impulse_approx_incoherent_cs_evaluators[i].first ) )
+                                      << Utility::Italicized(" impulse approx incoherent " )
+                                      << "cross section ... " );
+    FRENSIE_FLUSH_ALL_LOGS();
+    
     this->createCrossSectionOnUnionEnergyGrid(
                              union_energy_grid,
                              impulse_approx_incoherent_cs_evaluators[i].second,
@@ -1358,51 +1374,59 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
     data_container.setImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(
                               impulse_approx_incoherent_cs_evaluators[i].first,
                               threshold );
-    (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+
+    FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
   }
 
-  (*d_os_log) << "   Setting the "
-              << Utility::Italicized( "total photoelectric " )
-              << "cross section...";
-  d_os_log->flush();
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
+                                    Utility::Italicized( "total photoelectric " )
+                                    << "cross section ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
+  
   this->calculateTotalPhotoelectricCrossSection( data_container );
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
-  (*d_os_log) << "   Setting the "
-              << Utility::Italicized( "impulse approx total incoherent " )
-              << "cross section...";
-  d_os_log->flush();
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
+
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
+                                    Utility::Italicized( "impulse approx total incoherent " )
+                                    << "cross section ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
+  
   this->calculateImpulseApproxTotalIncoherentCrossSection( data_container );
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
-  (*d_os_log) << "   Setting the "
-              << Utility::Italicized( "Waller-Hartree total " )
-              << "cross section...";
-  d_os_log->flush();
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
+
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
+                                    Utility::Italicized( "Waller-Hartree total " )
+                                    << "cross section ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
+  
   this->calculatePhotonTotalCrossSection( data_container, true );
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
-  (*d_os_log) << "   Setting the "
-              << Utility::Italicized( "impulse approx total " )
-              << "cross section...";
-  d_os_log->flush();
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
+
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " << 
+                                    Utility::Italicized( "impulse approx total " )
+                                    << "cross section ... " );
+  
   this->calculatePhotonTotalCrossSection( data_container, false );
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 }
 
 
 // Set the electron data
-void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setElectronData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const
 {
 
 //---------------------------------------------------------------------------//
 // Set Elastic Data
 //---------------------------------------------------------------------------//
-  (*d_os_log) << " Setting the "
-              << Utility::Italicized( "elastic cutoff " )
-              << "data...";
-  d_os_log->flush();
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( " Setting the " << 
+                                    Utility::Italicized( "elastic cutoff " )
+                                    << "data ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
 
   // Set the cutoff elastic scattering interpolation policy
   data_container.setCutoffElasticInterpPolicy( "Lin-Lin" );
@@ -1489,7 +1513,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
   data_container.setCutoffElasticPDF( elastic_pdf );
   data_container.setCutoffElasticAngles( elastic_angle );
 
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
 //---------------------------------------------------------------------------//
 // Set Electron Cross Section Data Data
@@ -1497,59 +1521,59 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
 /*! \details The cross section data is needed for calculating the
  *  moment preserving data and must be set first.
  */
-  (*d_os_log) << " Setting the electron cross section data:" << std::endl;
-  d_os_log->flush();
-  setElectronCrossSectionsData( data_container );
+  FRENSIE_LOG_NOTIFICATION( " Setting the electron cross section data:" );
+  FRENSIE_FLUSH_ALL_LOGS();
+  
+  this->setElectronCrossSectionsData( data_container );
 
-  (*d_os_log) << " Setting the "
-              << Utility::Italicized( "elastic moment preserving " )
-              << "data...";
-  d_os_log->flush();
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( " Setting the " <<
+                                    Utility::Italicized( "elastic moment preserving " )
+                                    << "data ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
 
   // Check if moment preserving data can be generated
   if ( d_cutoff_angle_cosine > 0.999999 ||
        d_number_of_moment_preserving_angles < 1 )
   {
-    (*d_os_log) << Utility::BoldYellow( "done." ) << std::endl;
+    FRENSIE_LOG_NOTIFICATION( Utility::BoldYellow( "done." ) );
 
     if( d_cutoff_angle_cosine > 0.999999 )
     {
-      (*d_os_log) << Utility::BoldCyan( "  Note: " )
-                  << "Moment preserving data was not generated because the"
-                  << std::endl
-                  << "        cutoff angle cosine is greater than 0.999999 (mu"
-                  << "=" << d_cutoff_angle_cosine << ")."
-                  << std::endl;
+      FRENSIE_LOG_NOTIFICATION( Utility::BoldCyan( "  Note: " )
+                                << "Moment preserving data was not generated "
+                                << "because the cutoff angle cosine is "
+                                << "greater than 0.999999 (mu="
+                                << d_cutoff_angle_cosine << ")." );
     }
 
     if( d_number_of_moment_preserving_angles < 1 )
     {
-      (*d_os_log) << Utility::BoldCyan( "  Note: " )
-                  << "Moment preserving data was not generated because the"
-                  << std::endl
-                  << "        number of moment preserving angles is less "
-                  << "than 1." << std::endl;
+      FRENSIE_LOG_NOTIFICATION( Utility::BoldCyan( "  Note: " )
+                                << "Moment preserving data was not "
+                                << "generated because the number of moment "
+                                << "preserving angles is less than 1." );
     }
   }
   // Set the moment preserving data
   else
   {
-    StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
+    ACEAndENDLElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         angular_energy_grid,
         d_tabular_evaluation_tol,
         d_two_d_interp,
         data_container );
-    (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+    
+    FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
   }
 
 //---------------------------------------------------------------------------//
 // Set Electroionization Data
 //---------------------------------------------------------------------------//
-  (*d_os_log) << " Setting the "
-              << Utility::Italicized( "electroionization " )
-              << "data...";
-  d_os_log->flush();
-
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( " Setting the " <<
+                                    Utility::Italicized( "electroionization " )
+                                    << "data ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
+  
   std::set<unsigned>::iterator shell = data_container.getSubshells().begin();
 
   // Set the interpolation policy
@@ -1570,16 +1594,17 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
         *shell,
         d_endl_data_container->getElectroionizationRecoilPDF( *shell ) );
   }
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
 //---------------------------------------------------------------------------//
 // Set Bremsstrahlung Data
 //---------------------------------------------------------------------------//
-  (*d_os_log) << " Setting the "
-              << Utility::Italicized( "bremsstrahlung " )
-              << "data...";
-  d_os_log->flush();
-
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( " Setting the " <<
+                                    Utility::Italicized( "bremsstrahlung " )
+                                    << "data ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
+  
   // Set the interpolation policy
   data_container.setBremsstrahlungPhotonInterpPolicy( "Lin-Lin" );
 
@@ -1592,15 +1617,15 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
   data_container.setBremsstrahlungPhotonPDF(
     d_endl_data_container->getBremsstrahlungPhotonPDF() );
 
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
 //---------------------------------------------------------------------------//
 // Set Atomic Excitation Data
 //---------------------------------------------------------------------------//
-  (*d_os_log) << " Setting the "
-              << Utility::Italicized( "atomic excitation " )
-              << "data...";
-  d_os_log->flush();
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( " Setting the " <<
+                                    Utility::Italicized( "atomic excitation " )
+                                    << "data ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
 
   // Set the interpolation policy
   data_container.setAtomicExcitationEnergyLossInterpPolicy( "Lin-Lin" );
@@ -1611,12 +1636,11 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
   data_container.setAtomicExcitationEnergyLoss(
     d_endl_data_container->getAtomicExcitationEnergyLoss() );
 
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 }
 
-
 // Set the electron cross section union energy grid
-void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const
 {
   // cross sections in the file
@@ -1641,7 +1665,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
     d_endl_data_container->getCutoffElasticCrossSection() ) );
 
   // merge raw energy grid with the union energy grid
-  mergeElectronUnionEnergyGrid( raw_energy_grid, union_energy_grid );
+  this->mergeElectronUnionEnergyGrid( raw_energy_grid, union_energy_grid );
 
   // Calculate the electron total elastic cross section
   this->calculateElectronTotalElasticCrossSection(
@@ -1667,7 +1691,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
         d_endl_data_container->getElectroionizationCrossSectionEnergyGrid(*shell);
 
     // merge raw energy grid with the union energy grid
-    mergeElectronUnionEnergyGrid( raw_energy_grid, union_energy_grid );
+    this->mergeElectronUnionEnergyGrid( raw_energy_grid, union_energy_grid );
 
     /*! \details There is conflicting documentation on the proper interpolation
      *  of the electroionization cross section data. The endl data file interp flag
@@ -1698,7 +1722,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
     d_endl_data_container->getBremsstrahlungCrossSection() ) );
 
   // merge raw energy grid with the union energy grid
-  mergeElectronUnionEnergyGrid( raw_energy_grid, union_energy_grid );
+  this->mergeElectronUnionEnergyGrid( raw_energy_grid, union_energy_grid );
 
 //---------------------------------------------------------------------------//
 // Get Atomic Excitation Data Cross Section Data
@@ -1712,16 +1736,16 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
               atomic_excitation_cross_section );
 
   // merge raw energy grid with the union energy grid
-  mergeElectronUnionEnergyGrid( raw_energy_grid, union_energy_grid );
+  this->mergeElectronUnionEnergyGrid( raw_energy_grid, union_energy_grid );
 
 //---------------------------------------------------------------------------//
 // Create union energy grid and calculate cross sections
 //---------------------------------------------------------------------------//
 
   // Create the union energy grid
-  (*d_os_log) << "   Creating " << Utility::Italicized( "union energy grid" );
-  d_os_log->flush();
-
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Creating " <<
+                                    Utility::Italicized( "union energy grid " ) );
+  FRENSIE_FLUSH_ALL_LOGS();
 
   // Calculate the union energy grid
   boost::function<double (double pz)> grid_function =
@@ -1738,8 +1762,8 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
                            "energy grid for the cutoff elastic cross section "
                            "with the provided convergence parameters!" );
 
-  (*d_os_log) << ".";
-  d_os_log->flush();
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
+  FRENSIE_FLUSH_ALL_LOGS();
 
   grid_function = boost::bind(
         &Utility::UnivariateDistribution::evaluate,
@@ -1754,8 +1778,9 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
                            "Error: Could not generate an optimized electron "
                            "energy grid for the total elastic cross section "
                            "with the provided convergence parameters!" );
-  (*d_os_log) << ".";
-  d_os_log->flush();
+
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
+  FRENSIE_FLUSH_ALL_LOGS();
 
   grid_function = boost::bind( &Utility::UnivariateDistribution::evaluate,
                                boost::cref( *bremsstrahlung_cross_section ),
@@ -1769,8 +1794,9 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
                            "Error: Could not generate an optimized electron "
                            "energy grid for the bremsstrahlung cross section "
                            "with the provided convergence parameters!" );
-  (*d_os_log) << ".";
-  d_os_log->flush();
+
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
+  FRENSIE_FLUSH_ALL_LOGS();
 
   grid_function = boost::bind( &Utility::UnivariateDistribution::evaluate,
                                boost::cref( *atomic_excitation_cross_section ),
@@ -1788,9 +1814,10 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
                            "energy grid for the atomic excitation cross "
                            "section with the provided convergence "
                            "parameters!" );
-  (*d_os_log) << ".";
-  d_os_log->flush();
 
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
+  FRENSIE_FLUSH_ALL_LOGS();
+  
   for( unsigned i = 0; i < electroionization_cross_section.size(); ++i )
   {
     grid_function = boost::bind(
@@ -1813,11 +1840,12 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
                                   electroionization_cross_section[i].first ) <<
                           " electroionization cross section with the "
                           "provided convergence parameters!" );
-    (*d_os_log) << ".";
-    d_os_log->flush();
+
+    FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
+    FRENSIE_FLUSH_ALL_LOGS();
   }
 
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( " done." ) );
 
   // Set the union energy grid
   std::vector<double> energy_grid;
@@ -1834,15 +1862,15 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
   unsigned threshold;
 
   {
-  // Set Elastic cross section data
-  std::vector<double> cutoff_cross_section, total_cross_section;
+    // Set Elastic cross section data
+    std::vector<double> cutoff_cross_section, total_cross_section;
 
-  (*d_os_log) << "   Setting the "
-              << Utility::Italicized( "cutoff elastic " )
-              << "cross section...";
-  d_os_log->flush();
-
-  this->createCrossSectionOnUnionEnergyGrid(
+    FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
+                                      Utility::Italicized( "cutoff elastic " )
+                                      << "cross section ... " );
+    FRENSIE_FLUSH_ALL_LOGS();
+    
+    this->createCrossSectionOnUnionEnergyGrid(
                      union_energy_grid,
                      cutoff_elastic_cross_section,
                      cutoff_cross_section,
@@ -1850,17 +1878,17 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
                      cutoff_elastic_cross_section->getLowerBoundOfIndepVar(),
                      false );
 
-  data_container.setCutoffElasticCrossSection( cutoff_cross_section );
-  data_container.setCutoffElasticCrossSectionThresholdEnergyIndex( threshold );
-
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
-
-  (*d_os_log) << "   Setting the "
-              << Utility::Italicized( "screened Rutherford elastic " )
-              << "cross section...";
-  d_os_log->flush();
-
-  this->createCrossSectionOnUnionEnergyGrid(
+    data_container.setCutoffElasticCrossSection( cutoff_cross_section );
+    data_container.setCutoffElasticCrossSectionThresholdEnergyIndex( threshold );
+    
+    FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
+    
+    FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
+                                      Utility::Italicized( "screened Rutherford elastic " )
+                                      << "cross section ... " );
+    FRENSIE_FLUSH_ALL_LOGS();
+    
+    this->createCrossSectionOnUnionEnergyGrid(
                       union_energy_grid,
                       total_elastic_cross_section,
                       total_cross_section,
@@ -1868,41 +1896,42 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
                       total_elastic_cross_section->getLowerBoundOfIndepVar(),
                       false );
 
-  data_container.setTotalElasticCrossSection( total_cross_section );
-  data_container.setTotalElasticCrossSectionThresholdEnergyIndex( threshold );
-
-  std::vector<double> raw_cross_section( total_cross_section.size() );
-  for ( int i = 0; i < total_cross_section.size(); ++i )
-  {
-    raw_cross_section[i] = total_cross_section[i] - cutoff_cross_section[i];
-
-    // Calculate the relative difference between the total and cutoff cross sections
-    double relative_difference = raw_cross_section[i]/total_cross_section[i];
-
-    // Check for roundoff error and reduce to zero if needed
-    if ( relative_difference < 1.0e-6 )
+    data_container.setTotalElasticCrossSection( total_cross_section );
+    data_container.setTotalElasticCrossSectionThresholdEnergyIndex( threshold );
+    
+    std::vector<double> raw_cross_section( total_cross_section.size() );
+    for( int i = 0; i < total_cross_section.size(); ++i )
     {
-      raw_cross_section[i] = 0.0;
+      raw_cross_section[i] = total_cross_section[i] - cutoff_cross_section[i];
 
-      // Update threshold index
-      threshold = i+1;
+      // Calculate the relative difference between the total and cutoff cross sections
+      double relative_difference = raw_cross_section[i]/total_cross_section[i];
+      
+      // Check for roundoff error and reduce to zero if needed
+      if( relative_difference < 1.0e-6 )
+      {
+        raw_cross_section[i] = 0.0;
+          
+        // Update threshold index
+        threshold = i+1;
+      }
     }
+
+    std::vector<double>::iterator start = raw_cross_section.begin();
+    std::advance( start, threshold );
+    
+    cross_section.assign( start, raw_cross_section.end() );
+    
+    data_container.setScreenedRutherfordElasticCrossSection( cross_section );
+    data_container.setScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(
+                                                                                threshold );
+    FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
   }
 
-  std::vector<double>::iterator start = raw_cross_section.begin();
-  std::advance( start, threshold );
-
-  cross_section.assign( start, raw_cross_section.end() );
-
-  data_container.setScreenedRutherfordElasticCrossSection( cross_section );
-  data_container.setScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(
-    threshold );
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
-  }
-
-  (*d_os_log) << "   Setting the " << Utility::Italicized( "bremsstrahlung " )
-              << "cross section...";
-  d_os_log->flush();
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
+                                    Utility::Italicized( "bremsstrahlung " )
+                                    << "cross section ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
 
   this->createCrossSectionOnUnionEnergyGrid(
                      union_energy_grid,
@@ -1914,12 +1943,13 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
 
   data_container.setBremsstrahlungCrossSection( cross_section );
   data_container.setBremsstrahlungCrossSectionThresholdEnergyIndex( threshold );
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
-  (*d_os_log) << "   Setting the "
-              << Utility::Italicized( "atomic excitation " )
-              << "cross section...";
-  d_os_log->flush();
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
+
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
+                                    Utility::Italicized( "atomic excitation " )
+                                    << "cross section ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
 
   this->createCrossSectionOnUnionEnergyGrid(
                   union_energy_grid,
@@ -1933,16 +1963,16 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
   data_container.setAtomicExcitationCrossSectionThresholdEnergyIndex(
                                                                    threshold );
 
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
   for( unsigned i = 0; i < electroionization_cross_section.size(); ++i )
   {
-    (*d_os_log) << "   Setting " << Utility::Italicized( "subshell " )
-                << Utility::Italicized(Data::convertENDFDesignatorToSubshellEnum(
-                    electroionization_cross_section[i].first ) )
-                << Utility::Italicized( " electroionization " )
-                << "cross section...";
-    d_os_log->flush();
+    FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting " <<
+                                      Utility::Italicized( "subshell " )
+                                      << Utility::Italicized(Data::convertENDFDesignatorToSubshellEnum( electroionization_cross_section[i].first ) )
+                                      << Utility::Italicized( " electroionization " )
+                                      << "cross section ... " );
+    FRENSIE_FLUSH_ALL_LOGS();
 
     this->createCrossSectionOnUnionEnergyGrid(
                     union_energy_grid,
@@ -1959,19 +1989,22 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
     data_container.setElectroionizationCrossSectionThresholdEnergyIndex(
                                     electroionization_cross_section[i].first,
                                     threshold );
-    (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+    
+    FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
   }
 
-  (*d_os_log) << "   Setting the "
-              << Utility::Italicized( "Total Electron " )
-              << "cross section...";
-  d_os_log->flush();
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
+                                    Utility::Italicized( "Total Electron " )
+                                    << "cross section ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
+
   this->calculateElectronTotalCrossSection( data_container );
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 }
 
 // Set the moment preserving data
-void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
     const std::vector<double>& angular_energy_grid,
     const double tabular_evaluation_tol,
     const MonteCarlo::TwoDInterpolationType two_d_interp,
@@ -2069,7 +2102,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
   // iterate through all angular energy bins
   for ( unsigned i = 0; i < angular_energy_grid.size(); ++i )
   {
-    StandardElectronPhotonRelaxationDataGenerator::calculateDiscreteAnglesAndWeights(
+    ACEAndENDLElectronPhotonRelaxationDataGenerator::calculateDiscreteAnglesAndWeights(
         moments_evaluator,
         angular_energy_grid[i],
         data_container.getNumberOfMomentPreservingAngles(),
@@ -2091,7 +2124,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
 }
 
 // Extract the half Compton profile from the ACE table
-void StandardElectronPhotonRelaxationDataGenerator::extractHalfComptonProfile(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::extractHalfComptonProfile(
                                       const unsigned subshell,
                                       std::vector<double>& half_momentum_grid,
                                       std::vector<double>& half_profile ) const
@@ -2146,7 +2179,7 @@ void StandardElectronPhotonRelaxationDataGenerator::extractHalfComptonProfile(
 }
 
 // Extract the subshell photoelectric effect cross section
-void StandardElectronPhotonRelaxationDataGenerator::extractSubshellPhotoelectricCrossSections(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::extractSubshellPhotoelectricCrossSections(
           std::vector<std::pair<unsigned,std::shared_ptr<const Utility::UnivariateDistribution> > >& cross_sections ) const
 {
   Utility::ArrayView<const double> subshell_ordering =
@@ -2176,7 +2209,7 @@ void StandardElectronPhotonRelaxationDataGenerator::extractSubshellPhotoelectric
 }
 
 // Create the subshell impulse approx incoherent cross section evaluators
-void StandardElectronPhotonRelaxationDataGenerator::createSubshellImpulseApproxIncoherentCrossSectionEvaluators(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::createSubshellImpulseApproxIncoherentCrossSectionEvaluators(
      const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
      std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution> > >& evaluators ) const
 {
@@ -2210,7 +2243,7 @@ void StandardElectronPhotonRelaxationDataGenerator::createSubshellImpulseApproxI
 }
 
 // Initialize the photon union energy grid
-void StandardElectronPhotonRelaxationDataGenerator::initializePhotonUnionEnergyGrid(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::initializePhotonUnionEnergyGrid(
      const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
      std::list<double>& union_energy_grid ) const
 {
@@ -2270,7 +2303,7 @@ void StandardElectronPhotonRelaxationDataGenerator::initializePhotonUnionEnergyG
 }
 
 // Initialize the electron union energy grid
-void StandardElectronPhotonRelaxationDataGenerator::initializeElectronUnionEnergyGrid(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::initializeElectronUnionEnergyGrid(
      const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
      std::list<double>& union_energy_grid ) const
 {
@@ -2292,7 +2325,7 @@ void StandardElectronPhotonRelaxationDataGenerator::initializeElectronUnionEnerg
 }
 
 // Add binding energies to union energy grid
-void StandardElectronPhotonRelaxationDataGenerator::addBindingEnergiesToUnionEnergyGrid(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::addBindingEnergiesToUnionEnergyGrid(
      const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
      const double min_energy,
      const double max_energy,
@@ -2350,7 +2383,7 @@ void StandardElectronPhotonRelaxationDataGenerator::addBindingEnergiesToUnionEne
 }
 
 // Merge a secondary energy grid with the electron union energy grid
-void StandardElectronPhotonRelaxationDataGenerator::mergeElectronUnionEnergyGrid(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::mergeElectronUnionEnergyGrid(
      const std::vector<double>& energy_grid,
      std::list<double>& union_energy_grid ) const
 {
@@ -2379,7 +2412,7 @@ void StandardElectronPhotonRelaxationDataGenerator::mergeElectronUnionEnergyGrid
 }
 
 // Create the cross section on the union energy grid
-void StandardElectronPhotonRelaxationDataGenerator::createCrossSectionOnUnionEnergyGrid(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::createCrossSectionOnUnionEnergyGrid(
    const std::list<double>& union_energy_grid,
    const std::shared_ptr<const Utility::UnivariateDistribution>& original_cross_section,
    std::vector<double>& cross_section,
@@ -2472,7 +2505,7 @@ void StandardElectronPhotonRelaxationDataGenerator::createCrossSectionOnUnionEne
 }
 
 // Create the cross section on the union energy grid
-void StandardElectronPhotonRelaxationDataGenerator::createCrossSectionOnUnionEnergyGrid(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::createCrossSectionOnUnionEnergyGrid(
              const std::list<double>& union_energy_grid,
              const std::shared_ptr<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>&
              original_cross_section,
@@ -2504,7 +2537,7 @@ void StandardElectronPhotonRelaxationDataGenerator::createCrossSectionOnUnionEne
 }
 
 // Populate a cross section using the raw cross section
-void StandardElectronPhotonRelaxationDataGenerator::populateCrossSection(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::populateCrossSection(
                                   const std::vector<double>& raw_cross_section,
                                   std::vector<double>& cross_section,
                                   unsigned& threshold_index,
@@ -2528,7 +2561,7 @@ void StandardElectronPhotonRelaxationDataGenerator::populateCrossSection(
 }
 
 // Calculate the total photoelectric cross section
-void StandardElectronPhotonRelaxationDataGenerator::calculateTotalPhotoelectricCrossSection(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::calculateTotalPhotoelectricCrossSection(
                            Data::ElectronPhotonRelaxationVolatileDataContainer&
                            data_container ) const
 {
@@ -2571,7 +2604,7 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateTotalPhotoelectricC
 }
 
 // Calculate the total impulse approx. incoherent cross section
-void StandardElectronPhotonRelaxationDataGenerator::calculateImpulseApproxTotalIncoherentCrossSection(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::calculateImpulseApproxTotalIncoherentCrossSection(
                            Data::ElectronPhotonRelaxationVolatileDataContainer&
                            data_container ) const
 {
@@ -2614,7 +2647,7 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateImpulseApproxTotalI
 }
 
 // Calculate the photon total cross section
-void StandardElectronPhotonRelaxationDataGenerator::calculatePhotonTotalCrossSection(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::calculatePhotonTotalCrossSection(
            Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
            const bool use_waller_hartree_incoherent_cs ) const
 {
@@ -2670,7 +2703,7 @@ void StandardElectronPhotonRelaxationDataGenerator::calculatePhotonTotalCrossSec
 }
 
 // Calculate the electron total cross section
-void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalCrossSection(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::calculateElectronTotalCrossSection(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const
 {
   const std::vector<double>& energy_grid =
@@ -2712,7 +2745,7 @@ data_container.setTotalElectronCrossSection( total_cross_section );
 }
 
 // Add cross section to total cross section
-void StandardElectronPhotonRelaxationDataGenerator::addCrossSectionToTotalCrossSection(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::addCrossSectionToTotalCrossSection(
                                const std::vector<double>& energy_grid,
                                const std::vector<double>& cross_section,
                                std::vector<double>& total_cross_section ) const
@@ -2724,7 +2757,7 @@ void StandardElectronPhotonRelaxationDataGenerator::addCrossSectionToTotalCrossS
 }
 
 // Calculate the elastic angular distribution for the angle cosine
-void StandardElectronPhotonRelaxationDataGenerator::calculateElasticAngleCosine(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::calculateElasticAngleCosine(
     const std::vector<double>& raw_elastic_angle,
     const std::vector<double>& raw_elastic_pdf,
     std::vector<double>& elastic_angle,
@@ -2746,7 +2779,7 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElasticAngleCosine(
 }
 
 // Calculate the elastic moment preserving discrete angle cosines and weights
-void StandardElectronPhotonRelaxationDataGenerator::calculateDiscreteAnglesAndWeights(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::calculateDiscreteAnglesAndWeights(
     const std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
     const double& energy,
     const int& number_of_moment_preserving_angles,
@@ -2796,7 +2829,7 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateDiscreteAnglesAndWe
  * The two versions of the cross section will usually be of the same magnitude,
  * but will not agree due to the course 2D grid and roundoff error.
  */
-void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasticCrossSection(
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasticCrossSection(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
     std::shared_ptr<const Utility::UnivariateDistribution>& total_elastic_cross_section,
     const std::vector<double>& raw_energy_grid ) const
@@ -2886,5 +2919,5 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasti
 } // end DataGen namespace
 
 //---------------------------------------------------------------------------//
-// end DataGen_StandardElectronPhotonRelaxationDataGenerator.cpp
+// end DataGen_ACEAndENDLElectronPhotonRelaxationDataGenerator.cpp
 //---------------------------------------------------------------------------//

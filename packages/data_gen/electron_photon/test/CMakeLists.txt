@@ -61,9 +61,9 @@ FRENSIE_ADD_TEST(StandardMomentPreservingElectronDataGenerator
   --test_pb_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml
   --test_al_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml)
 
-# Add StandardElectronPhotonRelaxationDataGenerator
-FRENSIE_ADD_TEST_EXECUTABLE(StandardElectronPhotonRelaxationDataGenerator DEPENDS tstStandardElectronPhotonRelaxationDataGenerator.cpp)
-FRENSIE_ADD_TEST(StandardElectronPhotonRelaxationDataGenerator
+# Add ACEAndENDLElectronPhotonRelaxationDataGenerator
+FRENSIE_ADD_TEST_EXECUTABLE(ACEAndENDLElectronPhotonRelaxationDataGenerator DEPENDS tstACEAndENDLElectronPhotonRelaxationDataGenerator.cpp)
+FRENSIE_ADD_TEST(ACEAndENDLElectronPhotonRelaxationDataGenerator
   EXTRA_ARGS
   --test_h_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt
   --test_h_ace_table=1000.12p
