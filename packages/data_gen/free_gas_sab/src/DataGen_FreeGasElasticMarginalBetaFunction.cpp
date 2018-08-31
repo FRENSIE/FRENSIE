@@ -130,16 +130,7 @@ double FreeGasElasticMarginalBetaFunction::evaluateCDF( const double beta )
 void FreeGasElasticMarginalBetaFunction::updateCachedValues()
 {
   d_beta_min = Utility::calculateBetaMin( d_E, d_kT );
-  double beta_max = 0;
-
-  if ( d_E >= 1e-5 )
-  {
-    beta_max = 0;
-  }
-  else
-  {
-    beta_max = (1e-5-d_E)/d_kT;
-  }
+  double beta_max = 500/d_A;
   
   // Calculate the norm constant
   double norm_constant_error;

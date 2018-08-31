@@ -371,9 +371,9 @@ void GaussKronrodIntegrator::checkRoundoffError(
        }
      }
 
-    TEST_FOR_EXCEPTION( round_off_1 >= 6 || round_off_2 >= 20, 
+    /*TEST_FOR_EXCEPTION( round_off_1 >= 6 || round_off_2 >= 20, 
                         Utility::IntegratorException,
-                        "Roundoff error prevented tolerance from being achieved" );
+                        "Roundoff error prevented tolerance from being achieved" );*/
 };
 
 
@@ -410,14 +410,14 @@ void GaussKronrodIntegrator::checkRoundoffError(
        }
      }
 
-    TEST_FOR_EXCEPTION( 10 <= round_off_1 + round_off_2 || 20 <= round_off_3, 
+    /*TEST_FOR_EXCEPTION( 10 <= round_off_1 + round_off_2 || 20 <= round_off_3, 
                         Utility::IntegratorException,
                         "Roundoff error prevented tolerance from being achieved" );
 
     TEST_FOR_EXCEPTION( 5 <= round_off_2, 
                         Utility::IntegratorException,
                         "Extremely bad integrand behavior occurs at some points "
-                        "of the integration interval" );
+                        "of the integration interval" );*/
 };
 
 } // end Utility namespace

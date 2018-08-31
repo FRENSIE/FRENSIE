@@ -120,9 +120,19 @@ double FreeGasElasticSAlphaBetaFunction::evaluateIntegrand(
       double relative_energy = neutron_kinetic_energy_multiplier*
 	relative_velocity*relative_velocity;
       
+      double xs_multiplier = 0;
+      if ( relative_energy > 1e-11 )
+      {
+        xs_multiplier = d_zero_temp_elastic_cross_section->evaluate( relative_energy );
+      }
+      else
+      {
+        xs_multiplier = d_zero_temp_elastic_cross_section->evaluate( 1e-11 );
+      }
+
       // Calculate the first term of the integrand
       double term_1 = sqrt(alpha)*
-	d_zero_temp_elastic_cross_section->evaluate( relative_energy )*
+	xs_multiplier*
 	d_cm_scattering_distribution->evaluatePDF( E, mu_cm )/
 	((1.0-mu_cm)*(1.0-mu_cm));
       

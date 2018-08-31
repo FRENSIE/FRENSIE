@@ -30,9 +30,8 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<DataGen::FreeGasElasticCrossSectionGenerator> free_gas_generator;
-std::vector<double> E = {1e-11,2e-11,5e-11,1e-10,2e-10,5e-10,1e-9,2e-9,5e-9,1e-8,2e-8,5e-8,1e-7,2e-7,5e-7,1e-6};//,2e-6,5e-6};
-//std::vector<double> E = {2.5301e-9,2.5301e-8,2.5301e-7};
-//std::vector<double> E = {2.5301e-7};
+std::vector<double> E = {1e-11,2e-11,5e-11,1e-10,2e-10,5e-10,1e-9,2e-9,5e-9,1e-8,2e-8};//,5e-8,1e-7,2e-7,5e-7,1e-6,2e-6,5e-6};
+double kT = 8.617328149741e-11;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -96,8 +95,7 @@ int main( int argc, char** argv )
     return parse_return;
   }
 
-  double kT = 2.53010e-8;
-  double A = 0.99167;
+  double A = 0.999167; //0.999167;
   double beta_num = 11;
   double alpha_num = 101;
   double beta_max_multiplier = -1;
