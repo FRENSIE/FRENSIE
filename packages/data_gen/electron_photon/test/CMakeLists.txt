@@ -23,6 +23,10 @@ FRENSIE_ADD_TEST(OccupationNumberEvaluator
   --test_pb_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
   --test_pb_ace_table=82000.12p)
 
+# Add DefaultComptonProfileGenerator
+FRENSIE_ADD_TEST_EXECUTABLE(DefaultComptonProfileGenerator DEPENDS tstDefaultComptonProfileGenerator.cpp)
+FRENSIE_ADD_TEST(DefaultComptonProfileGenerator)
+
 # Add AdjointElectronGridGenerator
 FRENSIE_ADD_TEST_EXECUTABLE(AdjointElectronGridGenerator DEPENDS tstAdjointElectronGridGenerator.cpp)
 FRENSIE_ADD_TEST(AdjointElectronGridGenerator
