@@ -173,7 +173,7 @@ void ParticleSimulationManager::simulateParticleTrack(
     CATCH_LOST_PARTICLE_AND_BREAK( particle );
 
     // Get the total cross section for the cell
-    if( d_model->isCellVoid<State>( particle.getCell() ) )
+    if( !d_model->isCellVoid<State>( particle.getCell() ) )
     {
       cell_total_macro_cross_section =
         d_model->getMacroscopicTotalCrossSectionQuick( particle );
