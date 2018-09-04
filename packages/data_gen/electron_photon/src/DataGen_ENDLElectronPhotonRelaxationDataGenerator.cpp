@@ -144,7 +144,7 @@ ENDLElectronPhotonRelaxationDataGenerator::ENDLElectronPhotonRelaxationDataGener
                           const std::shared_ptr<const Data::ENDLDataContainer>&
                           endl_data_container )
   : ENDLElectronPhotonRelaxationDataGenerator( endl_data_container,
-                                               0.0,
+                                               1e-3,
                                                1.0,
                                                endl_data_container->getElasticEnergyGrid().front(),
                                                endl_data_container->getElasticEnergyGrid().back(),
@@ -939,8 +939,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFactor
     recoil_momentum_grid.push_back( raw_recoil_momentum.back() );
 
     // Create a form factor evaluator
-    std::shared_ptr<FormFactorEvaluator> evaluator =
-      FormFactorEvaluator::createEvaluator<Utility::LogLog,Utility::Units::InverseCentimeter>(
+    evaluator = DataGen::FormFactorEvaluator::createEvaluator<Utility::LogLog,Utility::Units::InverseCentimeter>(
                                                            raw_recoil_momentum,
                                                            raw_form_factor );
   }
