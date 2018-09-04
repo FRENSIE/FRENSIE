@@ -60,11 +60,10 @@ Geometry::MODEL::isVoidCell;
 %feature("autodoc", "getCellVolume(MODEL self, cell_id(int) ) -> Volume(float)" )
 Geometry::MODEL::getCellVolume;
 
-%feature("autodoc", "createNavigatorAdvanced(MODEL self) -> *Navigator" )
-Geometry::MODEL::createNavigatorAdvanced;
-
 %feature("autodoc", "createNavigator(MODEL self) -> std::shared_ptr<Navigator>" )
 Geometry::MODEL::createNavigator;
+
+%ignore *::createNavigatorAdvanced;
 
 // Allow shared pointers of MODEL objects
 %shared_ptr(Geometry::MODEL);

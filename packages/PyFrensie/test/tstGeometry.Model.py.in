@@ -594,12 +594,6 @@ if inspect.ismodule( DagMC ):
             self.assertTrue(self.model.isReflectingSurface( 408 ) )
             self.assertTrue( not self.model.isReflectingSurface( 1 ) )
             
-        def testCreateNavigatorAdvanced(self):
-            "*Test Geometry.Model createNavigatorAdvanced"
-
-            navigator = self.model.createNavigatorAdvanced()
-            self.assertTrue(navigator)
-
         def testCreateNavigator(self):
             "*Test Geometry.Model createNavigator"
             navigator = self.model.createNavigator()
@@ -733,12 +727,6 @@ if inspect.ismodule( ROOT ):
             self.assertAlmostEqual( self.model.getCellVolume( 1 ), 934.550153050213, delta=1e-6 )
             self.assertAlmostEqual( self.model.getCellVolume( 2 ), 65.4498469497874, delta=1e-6 )
             self.assertAlmostEqual( self.model.getCellVolume( 3 ), 1744.0, delta=1e-6 )
-
-        def testCreateNavigatorAdvanced(self):
-            "*Test Geometry.Model createNavigatorAdvanced"
-            
-            navigator = self.model.createNavigatorAdvanced()
-            self.assertTrue(navigator)
             
         def testCreateNavigator(self):
             "*Test Geometry.Model createNavigator"
