@@ -1,4 +1,5 @@
-#! ${PYTHON_EXECUTABLE#-----------------------------------------------------------------------------#
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
 ## MonteCarlo.ParticleState class unit tests
 #  \file   tstMonteCarlo.ParticleState.py
 #  \author Luke Kersting
