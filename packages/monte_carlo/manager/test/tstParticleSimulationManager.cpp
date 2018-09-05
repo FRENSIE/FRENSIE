@@ -799,7 +799,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, runSimulation_history_wall )
   FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
 
   FRENSIE_CHECK_EQUAL( manager->getNextHistory(), 5 );
-  FRENSIE_CHECK_EQUAL( manager->getNumberOfRendezvous(), 3 );
+  FRENSIE_CHECK_EQUAL( manager->getNumberOfRendezvous(), 2 );
 }
 
 //---------------------------------------------------------------------------//

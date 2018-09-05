@@ -553,6 +553,19 @@ FRENSIE_UNIT_TEST( DagMCNavigator, ray_trace )
                                    1.27*cgs::centimeter,
                                    1e-6 );
   FRENSIE_CHECK_EQUAL( surface_hit, 248 );
+
+  // Special case: change ray direction - ray intersects same surface
+  navigator->changeDirection( -2.571015391079360581e-04,
+                              -1.645567034813260362e-04,
+                              -9.999999534099438536e-01 );
+
+  // Fire the ray
+  distance_to_surface_hit = navigator->fireRay( &surface_hit );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_surface_hit,
+                                   1.27*cgs::centimeter,
+                                   1e-6 );
+  FRENSIE_CHECK_EQUAL( surface_hit, 248 );
 }
 
 //---------------------------------------------------------------------------//

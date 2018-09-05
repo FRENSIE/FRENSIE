@@ -428,6 +428,19 @@ inline std::string Navigator::arrayToString( const T* data )
   return Utility::toString( Utility::ArrayView<const T>( data, data+3 ) );
 }
 
+/*! The geometry error
+ * \details This error can be used to record geometry gaps/tacking errors
+ */
+class GeometryError : public std::runtime_error
+{
+
+public:
+
+  GeometryError( const std::string& what )
+    : std::runtime_error( what )
+  { /* ... */ }
+};
+
 } // end Geometry namespace
 
 #endif // end GEOMETRY_NAVIGATOR_HPP

@@ -262,10 +262,10 @@ void ParticleSimulationManager::runSimulation()
   else
   {
     FRENSIE_LOG_NOTIFICATION( "Simulation terminated. " );
+
+    this->rendezvous();
   }
   FRENSIE_FLUSH_ALL_LOGS();
-
-  this->rendezvous();
 }
 
 // Run the simulation set up by the user with the ability to interrupt
@@ -423,7 +423,7 @@ void ParticleSimulationManager::runSimulationBatch(
       try{
         d_source->sampleParticleState( source_bank, history );
       }
-      catch( const std::runtime_error& exception )
+      catch( const Geometry::GeometryError& exception )
       {
         LOG_LOST_PARTICLE_DETAILS( source_bank.top() );
         
@@ -431,9 +431,17 @@ void ParticleSimulationManager::runSimulationBatch(
         
         continue;
       }
+      catch( const std::runtime_error& exception )
+      {
+        FRENSIE_LOG_NESTED_ERROR( exception.what() );
+
+        continue;
+      }
       // The source has likely been constructed incorrectly
       catch( const std::logic_error& exception )
-      {        
+      {
+        FRENSIE_LOG_ERROR( "There is an issue with the source!" );
+        
         FRENSIE_LOG_NESTED_ERROR( exception.what() );
 
         std::exit( 1 );

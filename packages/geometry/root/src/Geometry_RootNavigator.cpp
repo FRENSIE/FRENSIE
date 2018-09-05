@@ -210,7 +210,7 @@ TGeoNode* RootNavigator::findNodeContainingRay(
 
   // Make sure the node is valid
   TEST_FOR_EXCEPTION( node_containing_point == NULL,
-                      std::runtime_error,
+                      RootGeometryError,
                       "Could not find the node that contains the ray! "
                       "Here are the details...\n"
                       "  Position: "

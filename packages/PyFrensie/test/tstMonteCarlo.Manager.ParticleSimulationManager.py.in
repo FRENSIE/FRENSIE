@@ -586,7 +586,7 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
         manager.runSimulation()
 
         self.assertEqual( manager.getNextHistory(), 5 )
-        self.assertEqual( manager.getNumberOfRendezvous(), 3 )
+        self.assertEqual( manager.getNumberOfRendezvous(), 2 )
 
 #-----------------------------------------------------------------------------#
     # Check that a simulation can be run
