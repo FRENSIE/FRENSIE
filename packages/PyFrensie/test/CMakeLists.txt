@@ -30,6 +30,11 @@ PyFrensie_MAKE_TEST(tstUtility.Logging)
 ADD_TEST(PyFrensie.Utility.Logging_test tstUtility.Logging.py)
 SET_PROPERTY(TEST PyFrensie.Utility.Logging_test PROPERTY LABELS pyfrensie)
 
+# Add the Utility arrayFromString unit tests
+PyFrensie_MAKE_TEST(tstUtility.ArrayFromString)
+ADD_TEST(PyFrensie.Utility.ArrayFromString_test tstUtility.ArrayFromString.py)
+SET_PROPERTY(TEST PyFrensie.Utility.ArrayFromString_test PROPERTY LABELS pyfrensie)
+
 IF(HAVE_FRENSIE_MPI)
   # Add the Utility_GlobalMPISession unit tests
   PyFrensie_MAKE_TEST(tstUtility.MPI.GlobalMPISessionInit)

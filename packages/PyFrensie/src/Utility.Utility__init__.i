@@ -50,8 +50,11 @@ _Utility__init__.initializeSynchronousLogs()
   
 #define NO_IMPORT_ARRAY
 #include "numpy_include.h"
+
+#include "PyFrensie_PythonTypeTraits.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_LoggingMacros.hpp"
+#include "Utility_Vector.hpp"
 %}
 
 // C++ STL support
@@ -136,6 +139,20 @@ instead of calling 'Utility.Prng.RandomNumberGenerator.createStreams()'.
   void logNotification( std::string notification_message )
   {
     FRENSIE_LOG_NOTIFICATION( notification_message );
+  }
+
+  //! Create a list of ints from a string
+  PyObject* intArrayFromString( const std::string& list_string )
+  {
+    return PyFrensie::convertToPython(
+                    Utility::fromString<std::vector<int> >( list_string ) );
+  }
+
+  //! Create a list of doubles from a string
+  PyObject* doubleArrayFromString( const std::string& list_string )
+  {
+    return PyFrensie::convertToPython(
+                    Utility::fromString<std::vector<double> >( list_string ) );
   }
 %}
 

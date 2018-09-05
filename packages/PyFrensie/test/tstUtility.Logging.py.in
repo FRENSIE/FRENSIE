@@ -1,9 +1,9 @@
 #! ${PYTHON_EXECUTABLE}
 #-----------------------------------------------------------------------------#
 ## Utility.Prng module unit tests
-#  \file   tstUtility.Prng.py
+#  \file   tstUtility.Logging.py
 #  \author Alex Robinson
-#  \brief  Unit tests for the Utility.Prng module
+#  \brief  Unit tests for the Utility module
 #-----------------------------------------------------------------------------#
 
 # System imports
@@ -24,7 +24,7 @@ options,args = parser.parse_args()
 #-----------------------------------------------------------------------------#
 # Tests.
 #-----------------------------------------------------------------------------#
-# Test the 
+# Test the logging methods
 class Logging(unittest.TestCase):
     "TestCase class for Utility logging methods"
 
