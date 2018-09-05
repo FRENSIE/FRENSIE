@@ -67,10 +67,15 @@ _Utility__init__.initializeSynchronousLogs()
   }
 
   //! FUNCTION_NAME with file
-  void FUNCTION_NAME( const std::string& filename )
+  void FUNCTION_NAME( const std::string& filename,
+                      const bool append = false )
   {
-    boost::shared_ptr<std::ostream> file =
-      boost::make_shared<std::ofstream>( filename );
+    boost::shared_ptr<std::ostream> file;
+
+    if( append )
+      file = boost::make_shared<std::ofstream>( filename, std::ofstream::app );
+    else
+      file = boost::make_shared<std::ofstream>( filename );
     
     MACRO_NAME( file );
   }
