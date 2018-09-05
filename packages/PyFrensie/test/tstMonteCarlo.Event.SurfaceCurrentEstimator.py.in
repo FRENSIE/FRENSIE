@@ -1,4 +1,5 @@
-#! ${PYTHON_EXECUTABLE#-----------------------------------------------------------------------------#
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
 ## MonteCarlo.Event.SurfaceCurrentEstimator class unit tests
 #  \file   tstMonteCarlo.Event.SurfaceCurrentEstimator.py
 #  \author Luke Kersting
@@ -156,7 +157,7 @@ class SurfaceCurrentEstimatorTestCase(unittest.TestCase):
         surface_ids[1] = 1
         estimator_1 = Event.WeightMultipliedSurfaceCurrentEstimator( 0, 10.0, surface_ids )
         estimator_1_base = estimator_1
-        estimator_2 = Event.WeightAndEnergyMultipliedSurfaceCurrentEstimator( 1, 10.0, surface_ids )
+        estimator_2 = Event.WeightAndEnergyMultipliedSurfaceCurrentEstimator( 1, 1.0, surface_ids )
         estimator_2_base = estimator_2
 
         # Set the energy bins
@@ -403,6 +404,31 @@ class SurfaceCurrentEstimatorTestCase(unittest.TestCase):
         self.assertSequenceEqual( list(entity_bin_first_moments), [1.0]*16 )
         self.assertSequenceEqual( list(entity_bin_second_moments), [1.0]*16 )
 
+        # Check the processed entity bin data
+        processed_data = estimator_1_base.getEntityBinProcessedData( 0 )
+
+        self.assertSequenceEqual( list(processed_data['fom']), [0.0]*16 )
+        self.assertSequenceEqual( list(processed_data['re']), [0.0]*16 )
+        self.assertSequenceEqual( list(processed_data['mean']), [10.0]*16 )
+
+        processed_data = estimator_1_base.getEntityBinProcessedData( 1 )
+
+        self.assertSequenceEqual( list(processed_data['fom']), [0.0]*16 )
+        self.assertSequenceEqual( list(processed_data['re']), [0.0]*16 )
+        self.assertSequenceEqual( list(processed_data['mean']), [10.0]*16 )
+
+        processed_data = estimator_2_base.getEntityBinProcessedData( 0 )
+
+        self.assertSequenceEqual( list(processed_data['fom']), [0.0]*16 )
+        self.assertSequenceEqual( list(processed_data['re']), [0.0]*16 )
+        self.assertSequenceEqual( list(processed_data['mean']), [1.0]*16 )
+
+        processed_data = estimator_2_base.getEntityBinProcessedData( 1 )
+
+        self.assertSequenceEqual( list(processed_data['fom']), [0.0]*16 )
+        self.assertSequenceEqual( list(processed_data['re']), [0.0]*16 )
+        self.assertSequenceEqual( list(processed_data['mean']), [1.0]*16 )
+
         # Check the total bin data moments
         total_bin_first_moments = estimator_1_base.getTotalBinDataFirstMoments()
         total_bin_second_moments = estimator_1_base.getTotalBinDataSecondMoments()
@@ -415,6 +441,19 @@ class SurfaceCurrentEstimatorTestCase(unittest.TestCase):
 
         self.assertSequenceEqual( list(total_bin_first_moments), [2.0]*16 )
         self.assertSequenceEqual( list(total_bin_second_moments), [4.0]*16 )
+
+        # Check the total bin processed data
+        processed_data = estimator_1_base.getTotalBinProcessedData()
+
+        self.assertSequenceEqual( list(processed_data['fom']), [0.0]*16 )
+        self.assertSequenceEqual( list(processed_data['re']), [0.0]*16 )
+        self.assertSequenceEqual( list(processed_data['mean']), [20.0]*16 )
+
+        processed_data = estimator_2_base.getTotalBinProcessedData()
+
+        self.assertSequenceEqual( list(processed_data['fom']), [0.0]*16 )
+        self.assertSequenceEqual( list(processed_data['re']), [0.0]*16 )
+        self.assertSequenceEqual( list(processed_data['mean']), [2.0]*16 )
 
         # Check the entity total data moments
         entity_total_first_moments = estimator_1_base.getEntityTotalDataFirstMoments( 0 )
@@ -457,6 +496,35 @@ class SurfaceCurrentEstimatorTestCase(unittest.TestCase):
         self.assertSequenceEqual( list(entity_total_third_moments), [ 4096.0 ] )
         self.assertSequenceEqual( list(entity_total_fourth_moments), [ 65536.0 ] )
 
+        # Check the entity total processed data
+        processed_data = estimator_1_base.getEntityTotalProcessedData( 0 )
+
+        self.assertSequenceEqual( list(processed_data['fom']), [0.0] )
+        self.assertSequenceEqual( list(processed_data['re']), [0.0] )
+        self.assertSequenceEqual( list(processed_data['vov']), [0.0] )
+        self.assertSequenceEqual( list(processed_data['mean']), [160.0] )
+
+        processed_data = estimator_1_base.getEntityTotalProcessedData( 1 )
+
+        self.assertSequenceEqual( list(processed_data['fom']), [0.0] )
+        self.assertSequenceEqual( list(processed_data['re']), [0.0] )
+        self.assertSequenceEqual( list(processed_data['vov']), [0.0] )
+        self.assertSequenceEqual( list(processed_data['mean']), [160.0] )
+
+        processed_data = estimator_2_base.getEntityTotalProcessedData( 0 )
+
+        self.assertSequenceEqual( list(processed_data['fom']), [0.0] )
+        self.assertSequenceEqual( list(processed_data['re']), [0.0] )
+        self.assertSequenceEqual( list(processed_data['vov']), [0.0] )
+        self.assertSequenceEqual( list(processed_data['mean']), [16.0] )
+
+        processed_data = estimator_2_base.getEntityTotalProcessedData( 1 )
+
+        self.assertSequenceEqual( list(processed_data['fom']), [0.0] )
+        self.assertSequenceEqual( list(processed_data['re']), [0.0] )
+        self.assertSequenceEqual( list(processed_data['vov']), [0.0] )
+        self.assertSequenceEqual( list(processed_data['mean']), [16.0] )
+
         # Check the total data moments
         total_first_moments = estimator_1_base.getTotalDataFirstMoments()
         total_second_moments = estimator_1_base.getTotalDataSecondMoments()
@@ -477,6 +545,21 @@ class SurfaceCurrentEstimatorTestCase(unittest.TestCase):
         self.assertSequenceEqual( list(total_second_moments), [ 1024.0 ] )
         self.assertSequenceEqual( list(total_third_moments), [ 32768.0 ] )
         self.assertSequenceEqual( list(total_fourth_moments), [ 1048576.0 ] )
+
+        # Check the entity total processed data
+        processed_data = estimator_1_base.getTotalProcessedData()
+
+        self.assertSequenceEqual( list(processed_data['fom']), [0.0] )
+        self.assertSequenceEqual( list(processed_data['re']), [0.0] )
+        self.assertSequenceEqual( list(processed_data['vov']), [0.0] )
+        self.assertSequenceEqual( list(processed_data['mean']), [320.0] )
+
+        processed_data = estimator_2_base.getTotalProcessedData()
+
+        self.assertSequenceEqual( list(processed_data['fom']), [0.0] )
+        self.assertSequenceEqual( list(processed_data['re']), [0.0] )
+        self.assertSequenceEqual( list(processed_data['vov']), [0.0] )
+        self.assertSequenceEqual( list(processed_data['mean']), [32.0] )
 
 #---------------------------------------------------------------------------#
 # Check that a partial history contribution can be added to the estimator
