@@ -36,13 +36,56 @@ PyFrensie.Utility module (see PyFrensie.Utility.__init__.py)
 # Remove the local current directory from the sys path (added to help
 # import code - see comment above)
 sys.path.pop(0)
+
+# Set up the random number generator
+_Utility__init__.initFrensiePrng()
+
+# Set up the default logs
+_Utility__init__.initializeSynchronousLogs()
 %}
 
 %{
+#include <iostream>
+#include <fstream>
+  
 #define NO_IMPORT_ARRAY
 #include "numpy_include.h"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_LoggingMacros.hpp"
 %}
+
+// C++ STL support
+%include <std_string.i>
+
+%define %default_log_initializers( FUNCTION_NAME, MACRO_NAME )
+
+%inline %{
+  //! FUNCTION_NAME with cout
+  void FUNCTION_NAME()
+  {
+    MACRO_NAME( boost::shared_ptr<std::ostream>( &std::cout, boost::null_deleter() ) );
+  }
+
+  //! FUNCTION_NAME with file
+  void FUNCTION_NAME( const std::string& filename )
+  {
+    boost::shared_ptr<std::ostream> file =
+      boost::make_shared<std::ofstream>( filename );
+    
+    MACRO_NAME( file );
+  }
+%}
+
+%enddef
+
+%default_log_initializers( initializeSynchronousLogs, FRENSIE_SETUP_STANDARD_SYNCHRONOUS_LOGS )
+%default_log_initializers( initializeAsynchronousLogs, FRENSIE_SETUP_STANDARD_ASYNCHRONOUS_LOGS )
+%default_log_initializers( initializeSynchronousErrorLog, FRENSIE_SETUP_SYNCHRONOUS_ERROR_LOG )
+%default_log_initializers( initializeAsynchronousErrorLog, FRENSIE_SETUP_ASYNCHRONOUS_ERROR_LOG )
+%default_log_initializers( initializeSynchronousWarningLog, FRENSIE_SETUP_SYNCHRONOUS_WARNING_LOG )
+%default_log_initializers( initializeAsynchronousWarningLog, FRENSIE_SETUP_ASYNCHRONOUS_WARNING_LOG )
+%default_log_initializers( initializeSynchronousNotificationLog, FRENSIE_SETUP_SYNCHRONOUS_NOTIFICATION_LOG )
+%default_log_initializers( initializeAsynchronousNotificationLog, FRENSIE_SETUP_ASYNCHRONOUS_NOTIFICATION_LOG )
 
 // Add the shortcut for initializing the random number generator
 %feature("autodoc")
@@ -53,12 +96,42 @@ instead of calling 'Utility.Prng.RandomNumberGenerator.createStreams()'.
 "
 
 %inline %{
-//! Initialize the random number generator
-void initFrensiePrng()
-{
-  // Initialize the random number generator
-  Utility::RandomNumberGenerator::createStreams();
-}
+  //! Initialize the random number generator
+  void initFrensiePrng()
+  {
+    // Initialize the random number generator
+    Utility::RandomNumberGenerator::createStreams();
+  }
+
+  //! Remove all FRENSIE logs
+  void removeAllLogs()
+  {
+    FRENSIE_REMOVE_ALL_LOGS();
+  }
+
+  //! Flush all FRENSIE logs
+  void flushAllLogs()
+  {
+    FRENSIE_FLUSH_ALL_LOGS();
+  }
+
+  //! Log an error
+  void logError( std::string error_message )
+  {
+    FRENSIE_LOG_ERROR( error_message );
+  }
+
+  //! Log a warning
+  void logWarning( std::string warning_message )
+  {
+    FRENSIE_LOG_WARNING( warning_message );
+  }
+
+  //! Log a notification
+  void logNotification( std::string notification_message )
+  {
+    FRENSIE_LOG_NOTIFICATION( notification_message );
+  }
 %}
 
 // Add support for the OpenMPProperties class wrapper

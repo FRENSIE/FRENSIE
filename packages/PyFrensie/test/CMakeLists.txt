@@ -25,6 +25,11 @@ ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/testutil.py
 ADD_CUSTOM_TARGET(testingHelpers ALL
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/testutil.py)
 
+# Add the Utility logging unit tests
+PyFrensie_MAKE_TEST(tstUtility.Logging)
+ADD_TEST(PyFrensie.Utility.Logging_test tstUtility.Logging.py)
+SET_PROPERTY(TEST PyFrensie.Utility.Logging_test PROPERTY LABELS pyfrensie)
+
 IF(HAVE_FRENSIE_MPI)
   # Add the Utility_GlobalMPISession unit tests
   PyFrensie_MAKE_TEST(tstUtility.MPI.GlobalMPISessionInit)

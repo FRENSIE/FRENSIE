@@ -74,12 +74,14 @@ public:
             const moab::EntityHandle current_cell_handle );
 
   //! change the direction
-  void changeDirection( const double direction[3] );
+  void changeDirection( const double direction[3],
+                        const bool reflection = false );
 
   //! change the direction
   void changeDirection( const double x_direction,
                         const double y_direction,
-                        const double z_direction );
+                        const double z_direction,
+                        const bool reflection = false );
 
   //! Get the position
   const double* getPosition() const;

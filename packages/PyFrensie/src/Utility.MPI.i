@@ -64,36 +64,7 @@ using namespace Utility;
 }
 
 // Add support for the GlobalMPISession class wrapper
-%include "MonteCarlo_GlobalMPISession.i"
-
-// Add inline support for some Logging Macros
-%inline %{
-  #include "Utility_LoggingMacros.hpp"
-  void removeAllLogs()
-  {
-    FRENSIE_REMOVE_ALL_LOGS();
-  }
-
-  void flushAllLogs()
-  {
-    FRENSIE_FLUSH_ALL_LOGS();
-  }
-
-  void LogError( std::string error_message )
-  {
-    FRENSIE_LOG_ERROR( error_message );
-  }
-
-  void LogWarning( std::string warning_message )
-  {
-    FRENSIE_LOG_WARNING( warning_message );
-  }
-
-  void LogNotification( std::string notification_message )
-  {
-    FRENSIE_LOG_NOTIFICATION( notification_message );
-  }
-%}
+%include "Utility_GlobalMPISession.i"
 
 //---------------------------------------------------------------------------//
 // Turn off the exception handling

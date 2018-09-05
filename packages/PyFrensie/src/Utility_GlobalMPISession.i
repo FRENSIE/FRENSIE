@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_GlobalMPISession.i
+//! \file   Utility_GlobalMPISession.i
 //! \author Luke Kersting
 //! \brief  The GlobalMPISession class interface file
 //!
@@ -201,5 +201,5 @@ using namespace Utility;
 %exception;
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_GlobalMPISession.i
+// end Utility_GlobalMPISession.i
 //---------------------------------------------------------------------------//

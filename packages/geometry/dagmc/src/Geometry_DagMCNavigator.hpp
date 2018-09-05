@@ -194,6 +194,12 @@ private:
                                const double z_direction,
                                const moab::EntityHandle current_cell_handle );
 
+  // Change the direction of the ray
+  void changeDirection( const double x_direction,
+                        const double y_direction,
+                        const double z_direction,
+                        const bool reflection );
+
   // The boundary tolerance
   static const double s_boundary_tol;
 

@@ -14,6 +14,7 @@ from optparse import *
 import numpy
 
 from testingHelpers import importPyFrensieModuleFromBuildDir
+Utility = importPyFrensieModuleFromBuildDir('Utility')
 MPI = importPyFrensieModuleFromBuildDir('Utility.MPI')
 
 # Parse the command-line arguments
@@ -125,7 +126,7 @@ class GlobalMPISessionTestCase(unittest.TestCase):
     def testInitializeErrorLog(self):
         "*Test Utility.MPI.GlobalMPISession initializeErrorLog"
         # Make sure that all sinks have been removed from the log
-        MPI.removeAllLogs()
+        Utility.removeAllLogs()
 
         # Setup the default error log
         filename = "test_"+str( MPI.GlobalMPISession.rank() )+".txt"
@@ -134,8 +135,8 @@ class GlobalMPISessionTestCase(unittest.TestCase):
         self.mpi_session.initializeErrorLog( filename )
 
         # Log an error
-        MPI.LogError( message )
-        MPI.flushAllLogs()
+        Utility.logError( message )
+        Utility.flushAllLogs()
 
         f = open(filename,"r+")
         self.assertTrue( message in f.read() )
@@ -144,14 +145,14 @@ class GlobalMPISessionTestCase(unittest.TestCase):
         f.truncate()
 
         # Remove the logs
-        MPI.removeAllLogs()
+        Utility.removeAllLogs()
 
         # Setup error logging on the root process only
         self.mpi_session.initializeErrorLog( filename, 0, True )
 
         # Log an error
-        MPI.LogError( message )
-        MPI.flushAllLogs()
+        Utility.logError( message )
+        Utility.flushAllLogs()
 
         self.mpi_session.barrier()
 
@@ -168,7 +169,7 @@ class GlobalMPISessionTestCase(unittest.TestCase):
     def testInitializeWarningLog(self):
         "*Test Utility.MPI.GlobalMPISession initializeWarningLog"
         # Make sure that all sinks have been removed from the log
-        MPI.removeAllLogs()
+        Utility.removeAllLogs()
 
         # Setup the default warning log
         filename = "test_"+str( MPI.GlobalMPISession.rank() )+".txt"
@@ -177,8 +178,8 @@ class GlobalMPISessionTestCase(unittest.TestCase):
         self.mpi_session.initializeWarningLog( filename )
 
         # Log a warning
-        MPI.LogWarning( message )
-        MPI.flushAllLogs()
+        Utility.logWarning( message )
+        Utility.flushAllLogs()
 
         f = open(filename,"r+")
         self.assertTrue( message in f.read() )
@@ -187,14 +188,14 @@ class GlobalMPISessionTestCase(unittest.TestCase):
         f.truncate()
 
         # Remove the logs
-        MPI.removeAllLogs()
+        Utility.removeAllLogs()
 
         # Setup warning logging on the root process only
         self.mpi_session.initializeWarningLog( filename, 0, True )
 
         # Log a warning
-        MPI.LogWarning( message )
-        MPI.flushAllLogs()
+        Utility.logWarning( message )
+        Utility.flushAllLogs()
 
         self.mpi_session.barrier()
 
@@ -211,7 +212,7 @@ class GlobalMPISessionTestCase(unittest.TestCase):
     def testInitializeNotificationLog(self):
         "*Test Utility.MPI.GlobalMPISession initializeNotificationLog"
         # Make sure that all sinks have been removed from the log
-        MPI.removeAllLogs()
+        Utility.removeAllLogs()
 
         # Setup the default notification log
         filename = "test_"+str( MPI.GlobalMPISession.rank() )+".txt"
@@ -220,8 +221,8 @@ class GlobalMPISessionTestCase(unittest.TestCase):
         self.mpi_session.initializeNotificationLog( filename )
 
         # Log a notification
-        MPI.LogNotification( message )
-        MPI.flushAllLogs()
+        Utility.logNotification( message )
+        Utility.flushAllLogs()
 
         f = open(filename,"r+")
         self.assertTrue( message in f.read() )
@@ -230,14 +231,14 @@ class GlobalMPISessionTestCase(unittest.TestCase):
         f.truncate()
 
         # Remove the logs
-        MPI.removeAllLogs()
+        Utility.removeAllLogs()
 
         # Setup notification logging on the root process only
         self.mpi_session.initializeNotificationLog( filename, 0, True )
 
         # Log a notification
-        MPI.LogNotification( message )
-        MPI.flushAllLogs()
+        Utility.logNotification( message )
+        Utility.flushAllLogs()
 
         self.mpi_session.barrier()
 
