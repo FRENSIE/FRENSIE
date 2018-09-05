@@ -90,7 +90,9 @@ void StandardParticleSimulationManager<mode>::simulateUnresolvedParticle(
   // Only simulate the particle if there is a simulation function associated
   // with the type
   if( simulation_function_it != d_simulate_particle_function_map.end() )
+  {
     simulation_function_it->second( unresolved_particle, bank, source_particle );
+  }
   else
     unresolved_particle.setAsGone();
 }
