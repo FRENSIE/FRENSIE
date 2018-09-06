@@ -7,9 +7,10 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_SimulationAdjointPhotonProperties.hpp"
 #include "Utility_SortAlgorithms.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -106,7 +107,7 @@ IncoherentAdjointModelType SimulationAdjointPhotonProperties::getIncoherentAdjoi
  * the critical line energies as the line energies may become invalid!
  */
 void SimulationAdjointPhotonProperties::setCriticalAdjointPhotonLineEnergies(
-                         const Teuchos::Array<double>& critical_line_energies )
+                         const std::vector<double>& critical_line_energies )
 {
   // Make sure there is at least one energy
   testPrecondition( critical_line_energies.size() > 0 );
@@ -124,13 +125,17 @@ void SimulationAdjointPhotonProperties::setCriticalAdjointPhotonLineEnergies(
 }
 
 // Get the critical line energies
-const Teuchos::Array<double>&
+const std::vector<double>&
 SimulationAdjointPhotonProperties::getCriticalAdjointPhotonLineEnergies() const
 {
   return d_critical_line_energies;
 }
 
+EXPLICIT_CLASS_SERIALIZE_INST( SimulationAdjointPhotonProperties );
+
 } // end MonteCarlo namespace
+
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::SimulationAdjointPhotonProperties );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SimulationAdjointPhotonProperties.cpp

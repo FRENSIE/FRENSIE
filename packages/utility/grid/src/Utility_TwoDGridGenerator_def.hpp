@@ -16,14 +16,14 @@
 #include <iterator>
 #include <sstream>
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_SortAlgorithms.hpp"
-#include "Utility_ComparePolicy.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_ComparisonPolicy.hpp"
+#include "Utility_LoggingMacros.hpp"
+#include "Utility_QuantityTraits.hpp"
+#include "Utility_DesignByContract.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace Utility{
 
@@ -38,8 +38,6 @@ TwoDGridGenerator<TwoDInterpPolicy>::TwoDGridGenerator(
     d_distance_tol( distance_tol ),
     d_verbose_mode_on( false ),
     d_throw_exceptions( false ),
-    d_os_log( &std::cout ),
-    d_os_warn( &std::cerr ),
     d_secondary_grid_generator( convergence_tol,
                                 absolute_diff_tol,
                                 distance_tol )
@@ -57,15 +55,9 @@ TwoDGridGenerator<TwoDInterpPolicy>::TwoDGridGenerator(
 
 // Set verbose mode to on
 template<typename TwoDInterpPolicy>
-void TwoDGridGenerator<TwoDInterpPolicy>::setVerboseModeOn(
-                                                         std::ostream* os_log )
+void TwoDGridGenerator<TwoDInterpPolicy>::setVerboseModeOn()
 {
-  // Make sure the log stream is valid
-  testPrecondition( os_log != NULL );
-
   d_verbose_mode_on = true;
-
-  d_os_log = os_log;
 }
 
 // Set verbose mode to off (default)
@@ -103,17 +95,11 @@ void TwoDGridGenerator<TwoDInterpPolicy>::throwExceptionOnDirtyConvergence()
  * has not truly converged.
  */
 template<typename TwoDInterpPolicy>
-void TwoDGridGenerator<TwoDInterpPolicy>::warnOnDirtyConvergence(
-                                                        std::ostream* os_warn )
+void TwoDGridGenerator<TwoDInterpPolicy>::warnOnDirtyConvergence()
 {
-  // Make sure the warning stream is valid
-  testPrecondition( os_warn != NULL );
-
   d_throw_exceptions = false;
 
-  d_os_warn = os_warn;
-
-  d_secondary_grid_generator.warnOnDirtyConvergence( os_warn );
+  d_secondary_grid_generator.warnOnDirtyConvergence();
 }
 
 // Check if an exception will be thrown on dirty convergence
@@ -477,8 +463,7 @@ bool TwoDGridGenerator<TwoDInterpPolicy>::hasGridConverged(
 
   bool converged = true;
 
-  double distance =
-    Utility::Policy::relError( primary_value_0, primary_value_1 );
+  double distance = Utility::RelativeErrorComparisonPolicy::calculateRelativeError( primary_value_0, primary_value_1 );
 
   // Check if the distance tolerance was hit - dirty convergence
   if( distance <= d_distance_tol )
@@ -492,13 +477,11 @@ bool TwoDGridGenerator<TwoDInterpPolicy>::hasGridConverged(
 
     if( d_throw_exceptions )
     {
-      THROW_EXCEPTION( std::runtime_error,
-                       "Error: " << oss.str() );
+      THROW_EXCEPTION( std::runtime_error, oss.str() );
     }
     else
     {
-      d_os_warn->precision( 18 );
-      (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+      FRENSIE_LOG_TAGGED_WARNING( "2D Grid Generator", oss.str() );
     }
   }
   // The distance tolerance has not been hit - continue checking convergence
@@ -610,12 +593,11 @@ bool TwoDGridGenerator<TwoDInterpPolicy>::hasGridConvergedAtSecondaryPoint(
                                                   evaluated_function_1.end() );
 
   double relative_error =
-    Utility::Policy::relError( exact_function_value,
-                               interp_function_value );
-
-  double abs_diff = Teuchos::ScalarTraits<double>::magnitude(
-                                exact_function_value - interp_function_value );
-
+    Utility::RelativeErrorComparisonPolicy::calculateRelativeError( exact_function_value, interp_function_value );
+  
+  double abs_diff =
+    Utility::CloseComparisonPolicy::calculateDistance( exact_function_value, interp_function_value );
+  
   // Not converged
   if( relative_error > d_convergence_tol &&
       abs_diff > d_absolute_diff_tol )
@@ -637,12 +619,11 @@ bool TwoDGridGenerator<TwoDInterpPolicy>::hasGridConvergedAtSecondaryPoint(
 
     if( d_throw_exceptions )
     {
-      THROW_EXCEPTION( std::runtime_error, "Error: " << oss.str() );
+      THROW_EXCEPTION( std::runtime_error, oss.str() );
     }
     else
     {
-      d_os_warn->precision( 18 );
-      (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+      FRENSIE_LOG_TAGGED_WARNING( "2D Grid Generator", oss.str() );
     }
   }
   // else - clean convergence
@@ -689,9 +670,9 @@ inline void TwoDGridGenerator<TwoDInterpPolicy>::logAddedPrimaryGridPoint(
 {
   if( d_verbose_mode_on )
   {
-    d_os_log->precision( 18 );
-    (*d_os_log) << "Added " << primary_grid_point << " ("
-                << primary_grid_point_id << ")" << std::endl;
+    FRENSIE_LOG_TAGGED_NOTIFICATION( "2D Grid Generator",
+                                     "Added " << primary_grid_point << " ("
+                                     << primary_grid_point_id << ")" );
   }
 }
 
@@ -708,18 +689,26 @@ inline void TwoDGridGenerator<TwoDInterpPolicy>::logSecondaryGridCheck(
 {
   if( d_verbose_mode_on )
   {
-    d_os_log->precision( 18 );
-    (*d_os_log) << "   Secondary convergence ("
+    FRENSIE_LOG_TAGGED_NOTIFICATION( "2D Grid Generator",
+               "Secondary convergence ("
                 << (converged ? "passed" : "FAILED" ) << "): "
                 << "f(x=" << primary_point << ",y=" << secondary_point << ")= "
                 << exact_function_value << " "
                 << (converged ? "~=" : "!=") << " "
                 << "Interp(x in [" << primary_grid_point_0 << ","
-                << primary_grid_point_1 << "],y)= " << interp_function_value
-                << std::endl;
+                << primary_grid_point_1 << "],y)= " << interp_function_value );
   }
 }
 
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TwoDGridGenerator<Utility::LinLinLin> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TwoDGridGenerator<Utility::LinLinLog> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TwoDGridGenerator<Utility::LinLogLin> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TwoDGridGenerator<Utility::LinLogLog> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TwoDGridGenerator<Utility::LogLinLin> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TwoDGridGenerator<Utility::LogLinLog> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TwoDGridGenerator<Utility::LogLogLin> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TwoDGridGenerator<Utility::LogLogLog> );
+  
 } // end Utility namespace
 
 #endif // end UTILITY_TWO_D_GRID_GENERATOR_DEF_HPP

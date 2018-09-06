@@ -9,29 +9,15 @@
 #ifndef UTILITY_EXPONENTIAL_DISTRIBUTION_DEF_HPP
 #define UTILITY_EXPONENTIAL_DISTRIBUTION_DEF_HPP
 
-// Std Lib Includes
-#include <limits>
-
-// Trilinos Includes
-#include <Teuchos_Utils.hpp>
-
 // FRENSIE Includes
-#include "Utility_ExponentialDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_ArrayString.hpp"
-#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_DesignByContract.hpp"
+
+BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_IMPLEMENT( UnitAwareExponentialDistribution );
 
 namespace Utility{
-
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareExponentialDistribution<void,void> );
-
-// Default constructor
-template<typename IndependentUnit, typename DependentUnit>
-UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExponentialDistribution()
-{ /* ... */ }
 
 // Constructor
 /*! \details This constructor will explicitly cast the input quantities to
@@ -53,20 +39,16 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExpone
     d_lower_limit( lower_limit ),
     d_upper_limit( upper_limit )
 {
-  // Make sure the multipliers are valid
-  remember( typedef QuantityTraits<InputIndepQuantity> InputIQT );
-  remember( typedef QuantityTraits<InputInverseIndepQuantity> InputIIQT );
-  remember( typedef QuantityTraits<InputDepQuantity> InputDQT );
-  testPrecondition( !InputDQT::isnaninf( constant_multiplier ) );
-  testPrecondition( !InputIIQT::isnaninf( exponent_multiplier ) );
-  // Make sure that the exponent multiplier is positive
-  testPrecondition( exponent_multiplier > InputIIQT::zero() );
-  // Make sure the limits are valid
-  testPrecondition( lower_limit >= InputIQT::zero() );
-  testPrecondition( upper_limit > lower_limit );
-
+  // Verify that the shape parameters are valid
+  this->verifyValidShapeParameters( d_constant_multiplier,
+                                    d_exponent_multiplier,
+                                    d_lower_limit,
+                                    d_upper_limit );
+  
   // Initialize the distribution
   this->initialize();
+
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -84,21 +66,10 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExpone
     d_lower_limit( dist_instance.d_lower_limit ),
     d_upper_limit( dist_instance.d_upper_limit )
 {
-  remember( typedef QuantityTraits<typename UnitAwareExponentialDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity> InputIQT );
-  remember( typedef QuantityTraits<typename UnitAwareExponentialDistribution<InputIndepUnit,InputDepUnit>::InverseIndepQuantity> InputIIQT );
-  remember( typedef QuantityTraits<typename UnitAwareExponentialDistribution<InputIndepUnit,InputDepUnit>::DepQuantity> InputDQT );
-  // Make sure the multipliers are valid
-  testPrecondition( !InputDQT::isnaninf(dist_instance.d_constant_multiplier) );
-  testPrecondition( !InputIIQT::isnaninf(dist_instance.d_exponent_multiplier));
-  // Make sure that the exponent multiplier is positive
-  testPrecondition( dist_instance.d_exponent_multiplier > InputIIQT::zero() );
-  // Make sure the limits are valid
-  testPrecondition( dist_instance.d_lower_limit >= InputIQT::zero() );
-  testPrecondition( dist_instance.d_upper_limit >
-		    dist_instance.d_lower_limit );
-
   // Initialize the distribution
   this->initialize();
+
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -109,20 +80,10 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExpone
     d_lower_limit( IQT::initializeQuantity( unitless_dist_instance.d_lower_limit ) ),
     d_upper_limit( IQT::initializeQuantity( unitless_dist_instance.d_upper_limit ) )
 {
-  // Make sure the multipliers are valid
-  testPrecondition( !QT::isnaninf(
-			      unitless_dist_instance.d_constant_multiplier ) );
-  testPrecondition( !QT::isnaninf(
-			      unitless_dist_instance.d_exponent_multiplier ) );
-  // Make sure that the exponent multiplier is positive
-  testPrecondition( unitless_dist_instance.d_exponent_multiplier > QT::zero());
-  // Make sure the limits are valid
-  testPrecondition( unitless_dist_instance.d_lower_limit >= QT::zero() );
-  testPrecondition( unitless_dist_instance.d_upper_limit >
-		    unitless_dist_instance.d_lower_limit );
-
   // Initialize the distribution
   this->initialize();
+
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
@@ -145,16 +106,6 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>&
 UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::operator=(
  const UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>& dist_instance )
 {
-  // Make sure the multipliers are valid
-  testPrecondition( !DQT::isnaninf(dist_instance.d_constant_multiplier) );
-  testPrecondition( !IIQT::isnaninf(dist_instance.d_exponent_multiplier));
-  // Make sure that the exponent multiplier is positive
-  testPrecondition( dist_instance.d_exponent_multiplier > IIQT::zero() );
-  // Make sure the limits are valid
-  testPrecondition( dist_instance.d_lower_limit >= IQT::zero() );
-  testPrecondition( dist_instance.d_upper_limit >
-		    dist_instance.d_lower_limit );
-
   if( this != &dist_instance )
   {
     d_constant_multiplier = dist_instance.d_constant_multiplier;
@@ -268,7 +219,7 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::sample() const
 // Return a random sample and record the number of trials
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
+UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( DistributionTraits::Counter& trials ) const
 {
   ++trials;
 
@@ -293,7 +244,7 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::getLowerBoundOf
 
 // Return the distribution type
 template<typename IndependentUnit, typename DependentUnit>
-OneDDistributionType
+UnivariateDistributionType
 UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return ThisType::distribution_type;
@@ -312,152 +263,87 @@ template<typename IndependentUnit, typename DependentUnit>
 void
 UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  os << "{" << getRawQuantity( d_exponent_multiplier )
-     << "," << getRawQuantity( d_constant_multiplier )
-     << "," << getRawQuantity( d_lower_limit )
-     << ",";
-
-  if( d_upper_limit < IQT::inf() )
-    os << getRawQuantity( d_upper_limit );
-  else
-    os << "inf";
-
-  os << "}";
+  this->toStreamWithLimitsDistImpl( os,
+                                    std::make_pair( "exponent multiplier", d_exponent_multiplier ),
+                                    std::make_pair( "multiplier", d_constant_multiplier ) );
 }
 
-// Method for initializing the object from an input stream
+// Save the distribution to an archive
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::fromStream( std::istream& is )
+template<typename Archive>
+void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
 {
-  // Read in the distribution representation
-  std::string dist_rep;
-  std::getline( is, dist_rep, '}' );
-  dist_rep += '}';
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
 
-  // Parse special characters
-  try{
-    ArrayString::locateAndReplacePi( dist_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the exponential distribution cannot be "
-			      "constructed because the representation is not "
-			      "valid (see details below)!\n" );
+  // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_constant_multiplier );
+  ar & BOOST_SERIALIZATION_NVP( d_exponent_multiplier );
+  ar & BOOST_SERIALIZATION_NVP( d_lower_limit );
 
-  Teuchos::Array<std::string> distribution;
-  try{
-    distribution = Teuchos::fromStringToArray<std::string>( dist_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the exponential distribution cannot be "
-			      "constructed because the representation is not "
-			      "valid (see details below)!\n" );
-
-  TEST_FOR_EXCEPTION( distribution.size() < 1 || distribution.size() > 4,
-		      InvalidDistributionStringRepresentation,
-		      "Error: the exponential distribution cannot be "
-		      "constructed because the representation is not valid "
-		      "(either two, three or four values may be specified)!" );
-
-  // Extract the exponent multiplier
+  // We cannot safely serialize inf to all archive types - create flag that
+  // records if the upper limit is inf
+  const bool __upper_limit_is_inf__ = (d_upper_limit == IQT::inf());
+  
+  ar & BOOST_SERIALIZATION_NVP( __upper_limit_is_inf__ );
+  
+  if( __upper_limit_is_inf__ )
   {
-    std::istringstream iss( distribution[0] );
-    double raw_exponent_multiplier;
-
-    Teuchos::extractDataFromISS( iss, raw_exponent_multiplier );
-
-    d_exponent_multiplier = IIQT::initializeQuantity( raw_exponent_multiplier);
-
-    TEST_FOR_EXCEPTION( IIQT::isnaninf( d_exponent_multiplier ),
-			InvalidDistributionStringRepresentation,
-			"Error: the exponential distribution cannot be "
-			"constructed because of an invalid exponent "
-			"multiplier " << d_exponent_multiplier );
-  }
-
-  // Extract the constant multiplier
-  if( distribution.size() > 1 )
-  {
-    std::istringstream iss( distribution[1] );
-    double raw_constant_multiplier;
-
-    Teuchos::extractDataFromISS( iss, raw_constant_multiplier );
-
-    d_constant_multiplier = DQT::initializeQuantity( raw_constant_multiplier );
-
-    TEST_FOR_EXCEPTION( DQT::isnaninf( d_constant_multiplier ),
-			InvalidDistributionStringRepresentation,
-			"Error: the exponential distribution cannot be "
-			"constructed because of an invalid constant "
-			"multiplier " << d_constant_multiplier );
+    IndepQuantity tmp_upper_limit = IQT::max();
+    ar & boost::serialization::make_nvp( "d_upper_limit", tmp_upper_limit );
   }
   else
-    d_constant_multiplier = DQT::one();
-
-  // Extract the lower limit
-  if( distribution.size() > 2 )
   {
-    std::istringstream iss( distribution[2] );
-    double raw_lower_limit;
-
-    Teuchos::extractDataFromISS( iss, raw_lower_limit );
-
-    d_lower_limit = IQT::initializeQuantity( raw_lower_limit );
-
-    TEST_FOR_EXCEPTION( d_lower_limit < IQT::zero(),
-			InvalidDistributionStringRepresentation,
-			"Error: The exponential distribution cannot be "
-			"constructed because of an invalid lower limit "
-			<< d_lower_limit );
+    ar & BOOST_SERIALIZATION_NVP( d_upper_limit );
   }
-  else
-    d_lower_limit = IQT::zero();
+}
 
-  // Extract the upper limit
-  if( distribution.size() > 3 )
-  {
-    if( distribution[3].compare( "inf" ) == 0 )
-      d_upper_limit = IQT::inf();
-    else
-    {
-      TEST_FOR_EXCEPTION( distribution[3].find_first_not_of( "0123456789.e" )<
-			  distribution[3].size(),
-			  InvalidDistributionStringRepresentation,
-			  "Error: the exponential distribution cannot be "
-			  "constructed because of an invalid max independent "
-			  " value " << distribution[3] );
+// Load the distribution from an archive
+template<typename IndependentUnit, typename DependentUnit>
+template<typename Archive>
+void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
 
-      std::istringstream iss( distribution[3] );
-      double raw_upper_limit;
+  // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_constant_multiplier );
+  ar & BOOST_SERIALIZATION_NVP( d_exponent_multiplier );
+  ar & BOOST_SERIALIZATION_NVP( d_lower_limit );
 
-      Teuchos::extractDataFromISS( iss, raw_upper_limit );
+  // Load the upper limit inf flag
+  bool __upper_limit_is_inf__;
+  ar & BOOST_SERIALIZATION_NVP( __upper_limit_is_inf__ );
+  
+  ar & BOOST_SERIALIZATION_NVP( d_upper_limit );
 
-      d_upper_limit = IQT::initializeQuantity( raw_upper_limit );
-
-      TEST_FOR_EXCEPTION( d_upper_limit <= d_lower_limit,
-			  InvalidDistributionStringRepresentation,
-			  "Error: The exponential distribution cannot be "
-			  "constructed because of an invalid upper limit "
-			  << d_upper_limit << " <= " << d_lower_limit );
-    }
-  }
-  else
+  // Restore the inf value of the upper limit
+  if( __upper_limit_is_inf__ )
     d_upper_limit = IQT::inf();
 
-  // Initialize the distribution
   this->initialize();
 }
 
 // Method for testing if two objects are equivalent
 template<typename IndependentUnit, typename DependentUnit>
-bool UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::isEqual(
- const UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>& other ) const
+bool UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::operator==(
+                          const UnitAwareExponentialDistribution& other ) const
 {
   return d_constant_multiplier == other.d_constant_multiplier &&
     d_exponent_multiplier == other.d_exponent_multiplier &&
     d_lower_limit == other.d_lower_limit &&
     d_upper_limit == other.d_upper_limit;
+}
+
+// Method for testing if two objects are equivalent
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::operator!=(
+                          const UnitAwareExponentialDistribution& other ) const
+{
+  return d_constant_multiplier != other.d_constant_multiplier ||
+    d_exponent_multiplier != other.d_exponent_multiplier ||
+    d_lower_limit != other.d_lower_limit ||
+    d_upper_limit != other.d_upper_limit;
 }
 
 // Initialize the distribution
@@ -476,6 +362,56 @@ void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::initialize
     d_exp_lower_limit = 1.0;
 }
 
+// Verify that the shape parameters are valid
+template<typename IndependentUnit, typename DependentUnit>
+template<typename InputIndepQuantity,
+         typename InputInverseIndepQuantity,
+         typename InputDepQuantity>
+void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::verifyValidShapeParameters(
+                          const InputDepQuantity& const_multiplier,
+                          const InputInverseIndepQuantity& exponent_multiplier,
+                          const InputIndepQuantity& lower_limit,
+                          const InputIndepQuantity& upper_limit )
+{
+  typedef Utility::QuantityTraits<InputDepQuantity> InputDQT;
+  
+  TEST_FOR_EXCEPTION( InputDQT::isnaninf( const_multiplier ),
+                      Utility::BadUnivariateDistributionParameter,
+                      "The exponential distribution cannot be "
+                      "constructed because the multiplier is invalid!" );
+
+  TEST_FOR_EXCEPTION( const_multiplier == InputDQT::zero(),
+                      Utility::BadUnivariateDistributionParameter,
+                      "The exponential distribution cannot be "
+                      "constructed because the multiplier is invalid!" );
+
+  typedef Utility::QuantityTraits<InputInverseIndepQuantity> InputIIQT;
+  
+  TEST_FOR_EXCEPTION( InputIIQT::isnaninf( exponent_multiplier ),
+                      Utility::BadUnivariateDistributionParameter,
+                      "The exponential distribution cannot be "
+                      "constructed because the exponent multiplier is "
+                      "invalid!" );
+  
+  TEST_FOR_EXCEPTION( exponent_multiplier <= InputIIQT::zero(),
+                      Utility::BadUnivariateDistributionParameter,
+                      "The exponential distribution cannot be "
+                      "constructed because the exponent multiplier is "
+                      "invalid!" );
+
+  typedef Utility::QuantityTraits<InputIndepQuantity> InputIQT;
+
+  TEST_FOR_EXCEPTION( lower_limit < InputIQT::zero(),
+                      Utility::BadUnivariateDistributionParameter,
+                      "The exponential distribution cannot be "
+                      "constructed because the lower limit is invalid!" );
+
+  TEST_FOR_EXCEPTION( upper_limit <= lower_limit,
+                      Utility::BadUnivariateDistributionParameter,
+                      "The exponential distribution cannot be "
+                      "constructed because the upper limit is invalid!" );
+}
+
 // Test if the dependent variable can be zero within the indep bounds
 /*! \details If the upper limit is Inf then it is possible for the 
  * distribution to return 0.0 from one of the evaluate methods. However, 
@@ -490,6 +426,9 @@ bool UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::canDepVarB
 }
 
 } // end Utility namespace
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareExponentialDistribution<void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareExponentialDistribution<void,void> );
 
 #endif // end UTILITY_EXPONENTIAL_DISTRIBUTION_DEF_HPP
 

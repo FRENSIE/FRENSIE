@@ -16,9 +16,9 @@
 // FRENSIE Includes
 #include "DataGen_FreeGasElasticScatteringKernelFactor.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_KinematicHelpers.hpp"
-#include "Utility_ComparePolicy.hpp"
-#include "Utility_ContractException.hpp"
+#include "MonteCarlo_KinematicHelpers.hpp"
+#include "Utility_ComparisonPolicy.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace DataGen{
 
@@ -33,9 +33,9 @@ double FreeGasElasticScatteringKernelFactor::min_exp_arg =
 
 // Constructor
 FreeGasElasticScatteringKernelFactor::FreeGasElasticScatteringKernelFactor(
-	  const Teuchos::RCP<Utility::OneDDistribution>&
+	  const std::shared_ptr<Utility::UnivariateDistribution>&
 	  zero_temp_elastic_cross_section,
-          const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
+          const std::shared_ptr<MonteCarlo::NuclearScatteringAngularDistribution>&
 	  cm_scattering_distribution,
 	  const double A,
 	  const double kT,
@@ -52,16 +52,16 @@ FreeGasElasticScatteringKernelFactor::FreeGasElasticScatteringKernelFactor(
     d_E( E )
 {
   // Make sure the distributions are valid
-  testPrecondition( !zero_temp_elastic_cross_section.is_null() );
-  testPrecondition( !cm_scattering_distribution.is_null() );
+  testPrecondition( zero_temp_elastic_cross_section.use_count() > 0 );
+  testPrecondition( cm_scattering_distribution.use_count() > 0 );
   // Make sure the values are valid
   testPrecondition( A > 0.0 );
   testPrecondition( kT > 0.0 );
   testPrecondition( E > 0.0 );
-  testPrecondition( beta >= Utility::calculateBetaMin( E, d_kT ) );
-  remember( double alpha_min = Utility::calculateAlphaMin(E,beta,A,kT) );
+  testPrecondition( beta >= MonteCarlo::calculateBetaMin( E, d_kT ) );
+  remember( double alpha_min = MonteCarlo::calculateAlphaMin(E,beta,A,kT) );
   testPrecondition( alpha >= alpha_min );
-  remember( double alpha_max = Utility::calculateAlphaMax(E,beta,d_A,d_kT) );
+  remember( double alpha_max = MonteCarlo::calculateAlphaMax(E,beta,d_A,d_kT) );
   testPrecondition( alpha <= alpha_max );
 
   calculateCachedValues();
@@ -145,7 +145,7 @@ double FreeGasElasticScatteringKernelFactor::operator()(
     }
 
     // Make sure the return value is valid
-    testPostcondition(!Teuchos::ScalarTraits<double>::isnaninf(term_1*term_2));
+    testPostcondition(!Utility::QuantityTraits<double>::isnaninf(term_1*term_2));
 
     return term_1*term_2;
   }
@@ -166,7 +166,7 @@ double FreeGasElasticScatteringKernelFactor::getIntegratedValue(
 				    error_estimate );
 
   // Make sure the value is valid
-  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( integrated_value ) );
+  testPostcondition( !Utility::QuantityTraits<double>::isnaninf( integrated_value ) );
 
   return integrated_value;
 }
@@ -235,7 +235,7 @@ void FreeGasElasticScatteringKernelFactor::findLimits(
     double upper_bound = center_value;
     double new_bound;
 
-    while( Utility::Policy::relError(upper_bound, lower_bound ) > tol  )
+    while( Utility::RelativeErrorComparisonPolicy::calculateRelativeError(upper_bound, lower_bound ) > tol  )
     {
       new_bound = (upper_bound + lower_bound)/2;
 
@@ -251,7 +251,7 @@ void FreeGasElasticScatteringKernelFactor::findLimits(
     lower_bound = center_value;
     upper_bound = 1.0;
 
-    while( Utility::Policy::relError(upper_bound, lower_bound) > tol )
+    while( Utility::RelativeErrorComparisonPolicy::calculateRelativeError(upper_bound, lower_bound) > tol )
     {
       new_bound = (upper_bound + lower_bound)/2;
 

@@ -13,9 +13,18 @@
 #include <string>
 #include <iostream>
 
+// FRENSIE Includes
+#include "Utility_ToStringTraits.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_SerializationHelpers.hpp"
+
 namespace MonteCarlo{
 
-//! The two d interpolation types
+/*! The two d interpolation types
+ *
+ * When adding a new type the ToStringTraits methods and the serialization
+ * method must be updated.
+ */
 enum TwoDInterpolationType{
   LINLINLIN_INTERPOLATION = 1,
   LINLINLOG_INTERPOLATION = 2,
@@ -27,21 +36,81 @@ enum TwoDInterpolationType{
   LOGLOGLOG_INTERPOLATION = 8,
 };
 
-//! Convert the TwoDInterpolationType to a string
-std::string convertTwoDInterpolationTypeToString( const TwoDInterpolationType type );
+} // end MonteCarlo namespace
 
-//! Convert string to TwoDInterpolationType
-TwoDInterpolationType convertStringToTwoDInterpolationType( const std::string raw_policy );
+namespace Utility{
+
+/*! \brief Specialization of Utility::ToStringTraits for 
+ * MonteCarlo::TwoDInterpolationType
+ * \ingroup to_string_traits
+ */
+template<>
+struct ToStringTraits<MonteCarlo::TwoDInterpolationType>
+{
+  //! Convert a MonteCarlo::TwoDInterpolationType to a string
+  static std::string toString( const MonteCarlo::TwoDInterpolationType type );
+
+  //! Place the MonteCarlo::TwoDInterpolationType in a stream
+  static void toStream( std::ostream& os, const MonteCarlo::TwoDInterpolationType type );
+};
+  
+} // end Utility namespace
+
+namespace std{
 
 //! Stream operator for printing TwoDInterpolationType enums
 inline std::ostream& operator<<( std::ostream& os,
-                                 const TwoDInterpolationType type )
+                                 const MonteCarlo::TwoDInterpolationType type )
 {
-  os << convertTwoDInterpolationTypeToString( type );
+  os << Utility::toString( type );
 
   return os;
 }
-} // end MonteCarlo namespace
+  
+} // end std namespace
+
+namespace boost{
+
+namespace serialization{
+
+//! Serialize the MonteCarlo::TwoDInterpolationType enum
+template<typename Archive>
+void serialize( Archive& archive,
+                MonteCarlo::TwoDInterpolationType& type,
+                const unsigned version )
+{
+  if( Archive::is_saving::value )
+    archive & (int)type;
+  else
+  {
+    int raw_type;
+
+    archive & raw_type;
+
+    switch( raw_type )
+    {
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::LINLINLIN_INTERPOLATION, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::LINLINLOG_INTERPOLATION, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::LINLOGLIN_INTERPOLATION, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::LOGLINLIN_INTERPOLATION, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::LOGLOGLIN_INTERPOLATION, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::LOGLINLOG_INTERPOLATION, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::LINLOGLOG_INTERPOLATION, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::LOGLOGLOG_INTERPOLATION, int, type );
+      default:
+      {
+        THROW_EXCEPTION( std::logic_error,
+                         "Cannot convert the deserialized raw two-d "
+                         "interpolation type to its corresponding enum "
+                         "value!" );
+      }
+    }
+  }
+}
+  
+} // end serialization namespace
+
+} // end boost namespace
 
 #endif // end MONTECARLO_TWO_D_INTERPOLATION_TYPE_HPP
 

@@ -13,11 +13,13 @@
 #include <limits>
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_IntegratorException.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_GaussKronrodQuadratureSetTraits.hpp"
+#include "Utility_LoggingMacros.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace Utility{
 
@@ -30,7 +32,6 @@ GaussKronrodIntegrator<T>::GaussKronrodIntegrator(
   : d_relative_error_tol( relative_error_tol ),
     d_absolute_error_tol( absolute_error_tol ),
     d_subinterval_limit( subinterval_limit ),
-    d_os_warn( &std::cerr ),
     d_throw_exceptions(false),
     d_estimate_roundoff(true)
 {
@@ -76,14 +77,9 @@ bool GaussKronrodIntegrator<T>::isExceptionThrownOnDirtyIntegration() const
  * tolerance ask for was not reached.
  */
 template<typename T>
-void GaussKronrodIntegrator<T>::warnOnDirtyIntegration( std::ostream* os_warn )
+void GaussKronrodIntegrator<T>::warnOnDirtyIntegration()
 {
-  // Make sure the warning stream is valid
-  testPrecondition( os_warn != NULL );
-
   d_throw_exceptions = false;
-
-  d_os_warn = os_warn;
 }
 
 // Use heuristic roundoff error estimator (default)
@@ -175,7 +171,7 @@ void GaussKronrodIntegrator<T>::rescaleAbsoluteError(
 //! \details The error list will be correctly sorted except bin_1 and bin_2
 template<typename T>
 void GaussKronrodIntegrator<T>::sortBins(
-        Teuchos::Array<int>& bin_order,
+        std::vector<int>& bin_order,
         BinArray& bin_array,
         const ExtrapolatedBinTraits<T>& bin_1,
         const ExtrapolatedBinTraits<T>& bin_2,
@@ -215,7 +211,7 @@ void GaussKronrodIntegrator<T>::sortBins(
   }
 
   // remove old interval from list
-  bin_order.remove( nr_max );
+  bin_order.erase( bin_order.begin()+nr_max );
 
   /*
    *  This part of the routine is only executed if, due to a
@@ -246,7 +242,7 @@ void GaussKronrodIntegrator<T>::sortBins(
    *  in descending order. This number depends on the number of
    *  subdivisions still allowed.
    */
-  Teuchos::Array<int>::iterator max_bin;
+  std::vector<int>::iterator max_bin;
 
   if ( (d_subinterval_limit/2+2) < bin_order.size()-1 )
     max_bin = bin_order.begin() + ( d_subinterval_limit - bin_order.size() );
@@ -255,7 +251,7 @@ void GaussKronrodIntegrator<T>::sortBins(
     max_bin = bin_order.end();
   }
 
-  Teuchos::Array<int>::iterator large_bin = bin_order.begin()+start_bin;
+  std::vector<int>::iterator large_bin = bin_order.begin()+start_bin;
   while ( large_bin != max_bin && larger_error < bin_array[*large_bin].error )
   {
     large_bin++;
@@ -264,7 +260,7 @@ void GaussKronrodIntegrator<T>::sortBins(
   max_bin;
 
   //  Insert smaller_bin_error by traversing the list bottom-up.
-  Teuchos::Array<int>::iterator small_bin = max_bin;
+  std::vector<int>::iterator small_bin = max_bin;
   while ( small_bin != large_bin &&
           bin_array[bin_order[*small_bin]].error < smaller_error )
   {
@@ -499,13 +495,11 @@ void GaussKronrodIntegrator<T>::checkRoundoffError(
 
       if ( d_throw_exceptions )
       {
-        THROW_EXCEPTION( Utility::IntegratorException,
-                         "Error: " << oss.str() );
+        THROW_EXCEPTION( Utility::IntegratorException, oss.str() );
       }
       else
       {
-        d_os_warn->precision( 18 );
-        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        FRENSIE_LOG_TAGGED_WARNING( "Gauss-Kronrod", oss.str() );
       }
     }
 
@@ -520,13 +514,11 @@ void GaussKronrodIntegrator<T>::checkRoundoffError(
 
       if ( d_throw_exceptions )
       {
-        THROW_EXCEPTION( Utility::IntegratorException,
-                         "Error: " << oss.str() );
+        THROW_EXCEPTION( Utility::IntegratorException, oss.str() );
       }
       else
       {
-        d_os_warn->precision( 18 );
-        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        FRENSIE_LOG_TAGGED_WARNING( "Gauss-Kronrod", oss.str() );
       }
     }
 };
@@ -591,13 +583,11 @@ void GaussKronrodIntegrator<T>::checkRoundoffError(
 
       if ( d_throw_exceptions )
       {
-        THROW_EXCEPTION( Utility::IntegratorException,
-                         "Error: " << oss.str() );
+        THROW_EXCEPTION( Utility::IntegratorException, oss.str() );
       }
       else
       {
-        d_os_warn->precision( 18 );
-        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        FRENSIE_LOG_TAGGED_WARNING( "Gauss-Kronrod", oss.str() );
       }
     }
 
@@ -612,13 +602,11 @@ void GaussKronrodIntegrator<T>::checkRoundoffError(
 
       if ( d_throw_exceptions )
       {
-        THROW_EXCEPTION( Utility::IntegratorException,
-                         "Error: " << oss.str() );
+        THROW_EXCEPTION( Utility::IntegratorException, oss.str() );
       }
       else
       {
-        d_os_warn->precision( 18 );
-        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        FRENSIE_LOG_TAGGED_WARNING( "Gauss-Kronrod", oss.str() );
       }
     }
 
@@ -633,13 +621,11 @@ void GaussKronrodIntegrator<T>::checkRoundoffError(
 
       if ( d_throw_exceptions )
       {
-        THROW_EXCEPTION( Utility::IntegratorException,
-                         "Error: " << oss.str() );
+        THROW_EXCEPTION( Utility::IntegratorException, oss.str() );
       }
       else
       {
-        d_os_warn->precision( 18 );
-        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        FRENSIE_LOG_TAGGED_WARNING( "Gauss-Kronrod", oss.str() );
       }
     }
   }
@@ -709,13 +695,11 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
 
     if ( d_throw_exceptions )
     {
-      THROW_EXCEPTION( Utility::IntegratorException,
-                        "Error: " << oss.str() );
+      THROW_EXCEPTION( Utility::IntegratorException, oss.str() );
     }
     else
     {
-      d_os_warn->precision( 18 );
-      (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+      FRENSIE_LOG_TAGGED_WARNING( "Gauss-Kronrod", oss.str() );
     }
   }
 
@@ -793,13 +777,11 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
 
       if ( d_throw_exceptions )
       {
-        THROW_EXCEPTION( Utility::IntegratorException,
-                         "Error: " << oss.str() );
+        THROW_EXCEPTION( Utility::IntegratorException, oss.str() );
       }
       else
       {
-        d_os_warn->precision( 18 );
-        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        FRENSIE_LOG_TAGGED_WARNING( "Gauss-Kronrod", oss.str() );
       }
       break;
     }
@@ -819,13 +801,11 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
 
       if ( d_throw_exceptions )
       {
-        THROW_EXCEPTION( Utility::IntegratorException,
-                         "Error: " << oss.str() );
+        THROW_EXCEPTION( Utility::IntegratorException, oss.str() );
       }
       else
       {
-        d_os_warn->precision( 18 );
-        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        FRENSIE_LOG_TAGGED_WARNING( "Gauss-Kronrod", oss.str() );
       }
       break;
     }
@@ -899,13 +879,11 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
 
     if ( d_throw_exceptions )
     {
-      THROW_EXCEPTION( Utility::IntegratorException,
-                        "Error: " << oss.str() );
+      THROW_EXCEPTION( Utility::IntegratorException, oss.str() );
     }
     else
     {
-      d_os_warn->precision( 18 );
-      (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+      FRENSIE_LOG_TAGGED_WARNING( "Gauss-Kronrod", oss.str() );
     }
   }
 
@@ -983,13 +961,11 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
 
       if ( d_throw_exceptions )
       {
-        THROW_EXCEPTION( Utility::IntegratorException,
-                          "Error: " << oss.str() );
+        THROW_EXCEPTION( Utility::IntegratorException, oss.str() );
       }
       else
       {
-        d_os_warn->precision( 18 );
-        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        FRENSIE_LOG_TAGGED_WARNING( "Gauss-Kronrod", oss.str() );
         break;
       }
     }
@@ -1008,13 +984,11 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
 
       if ( d_throw_exceptions )
       {
-        THROW_EXCEPTION( Utility::IntegratorException,
-                          "Error: " << oss.str() );
+        THROW_EXCEPTION( Utility::IntegratorException, oss.str() );
       }
       else
       {
-        d_os_warn->precision( 18 );
-        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        FRENSIE_LOG_TAGGED_WARNING( "Gauss-Kronrod", oss.str() );
         break;
       }
     }
@@ -1036,7 +1010,7 @@ template<typename T>
 template<typename FunctorType, typename Functor>
 void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
     Functor& integrand,
-    const Teuchos::ArrayView<T>& points_of_interest,
+    const Utility::ArrayView<T>& points_of_interest,
     T& result,
     T& absolute_error ) const
 {/*
@@ -1095,7 +1069,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
     }
   }
   // initialize bin_order array
-  Teuchos::Array<int> bin_order( number_of_intervals );
+  std::vector<int> bin_order( number_of_intervals );
 
   // Compute error approximations for integrals between the points of interest
   for ( unsigned i = 0; i < number_of_intervals; ++i )
@@ -1126,13 +1100,11 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
 
     if ( d_throw_exceptions )
     {
-      THROW_EXCEPTION( Utility::IntegratorException,
-                        "Error: " << oss.str() );
+      THROW_EXCEPTION( Utility::IntegratorException, oss.str() );
     }
     else
     {
-      d_os_warn->precision( 18 );
-      (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+      FRENSIE_LOG_TAGGED_WARNING( "Gauss-Kronrod", oss.str() );
     }
   }
 
@@ -1148,7 +1120,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
 
   TEST_FOR_EXCEPTION( d_subinterval_limit == 1,
                       Utility::IntegratorException,
-                      "a maximum of one iteration was insufficient" );
+                      "A maximum of one iteration was insufficient" );
 
   // initialize
   bin_extrapolated_result[0] = total_area;
@@ -1242,13 +1214,11 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
 
       if ( d_throw_exceptions )
       {
-        THROW_EXCEPTION( Utility::IntegratorException,
-                          "Error: " << oss.str() );
+        THROW_EXCEPTION( Utility::IntegratorException, oss.str() );
       }
       else
       {
-        d_os_warn->precision( 18 );
-        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        FRENSIE_LOG_TAGGED_WARNING( "Gauss-Kronrod", oss.str() );
         break;
       }
     }
@@ -1267,13 +1237,11 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
 
       if ( d_throw_exceptions )
       {
-        THROW_EXCEPTION( Utility::IntegratorException,
-                          "Error: " << oss.str() );
+        THROW_EXCEPTION( Utility::IntegratorException, oss.str() );
       }
       else
       {
-        d_os_warn->precision( 18 );
-        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        FRENSIE_LOG_TAGGED_WARNING( "Gauss-Kronrod", oss.str() );
         break;
       }
     }
@@ -1368,13 +1336,11 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
 
       if ( d_throw_exceptions )
       {
-        THROW_EXCEPTION( Utility::IntegratorException,
-                          "Error: " << oss.str() );
+        THROW_EXCEPTION( Utility::IntegratorException, oss.str() );
       }
       else
       {
-        d_os_warn->precision( 18 );
-        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        FRENSIE_LOG_TAGGED_WARNING( "Gauss-Kronrod", oss.str() );
         break;
       }
     }
@@ -1437,18 +1403,13 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
 
     if ( d_throw_exceptions )
     {
-      THROW_EXCEPTION( Utility::IntegratorException,
-                        "Error: " << oss.str() );
+      THROW_EXCEPTION( Utility::IntegratorException, oss.str() );
     }
     else
     {
-      d_os_warn->precision( 18 );
-      (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+      FRENSIE_LOG_TAGGED_WARNING( "Gauss-Kronrod", oss.str() );
     }
   }
-
-
-
 
   // Test on divergence.
   if ( ksgn == (-1) &&
@@ -1461,7 +1422,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
                       result/total_area > 100.0 ||
                       total_error > fabs( total_area ),
                       Utility::IntegratorException,
-                      "the input is invalid, because d_absolute_error_tol < 0 "
+                      "The input is invalid, because d_absolute_error_tol < 0 "
                       "and d_relative_error_tol < 0." );
 
   return;
@@ -1481,7 +1442,7 @@ template<typename FunctorType, typename ParameterType, typename Functor>
 void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
     Functor& integrand,
     ParameterType integrand_parameter,
-    const Teuchos::ArrayView<T>& points_of_interest,
+    const Utility::ArrayView<T>& points_of_interest,
     T& result,
     T& absolute_error ) const
 {
@@ -1541,7 +1502,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
     }
   }
   // initialize bin_order array
-  Teuchos::Array<int> bin_order( number_of_intervals );
+  std::vector<int> bin_order( number_of_intervals );
 
   // Compute error approximations for integrals between the points of interest
   for ( int i = 0; i < number_of_intervals; ++i )
@@ -1572,13 +1533,11 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
 
     if ( d_throw_exceptions )
     {
-      THROW_EXCEPTION( Utility::IntegratorException,
-                        "Error: " << oss.str() );
+      THROW_EXCEPTION( Utility::IntegratorException, oss.str() );
     }
     else
     {
-      d_os_warn->precision( 18 );
-      (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+      FRENSIE_LOG_TAGGED_WARNING( "Gauss-Kronrod", oss.str() );
     }
   }
 
@@ -1689,13 +1648,11 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
 
       if ( d_throw_exceptions )
       {
-        THROW_EXCEPTION( Utility::IntegratorException,
-                          "Error: " << oss.str() );
+        THROW_EXCEPTION( Utility::IntegratorException, oss.str() );
       }
       else
       {
-        d_os_warn->precision( 18 );
-        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        FRENSIE_LOG_TAGGED_WARNING( "Gauss-Kronrod", oss.str() );
         break;
       }
     }
@@ -1714,13 +1671,11 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
 
       if ( d_throw_exceptions )
       {
-        THROW_EXCEPTION( Utility::IntegratorException,
-                          "Error: " << oss.str() );
+        THROW_EXCEPTION( Utility::IntegratorException, oss.str() );
       }
       else
       {
-        d_os_warn->precision( 18 );
-        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        FRENSIE_LOG_TAGGED_WARNING( "Gauss-Kronrod", oss.str() );
         break;
       }
     }
@@ -1815,13 +1770,11 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
 
       if ( d_throw_exceptions )
       {
-        THROW_EXCEPTION( Utility::IntegratorException,
-                          "Error: " << oss.str() );
+        THROW_EXCEPTION( Utility::IntegratorException, oss.str() );
       }
       else
       {
-        d_os_warn->precision( 18 );
-        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        FRENSIE_LOG_TAGGED_WARNING( "Gauss-Kronrod", oss.str() );
         break;
       }
     }
@@ -1883,13 +1836,11 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
 
     if ( d_throw_exceptions )
     {
-      THROW_EXCEPTION( Utility::IntegratorException,
-                        "Error: " << oss.str() );
+      THROW_EXCEPTION( Utility::IntegratorException, oss.str() );
     }
     else
     {
-      d_os_warn->precision( 18 );
-      (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+      FRENSIE_LOG_TAGGED_WARNING( "Gauss-Kronrod", oss.str() );
     }
   }
 
@@ -2357,6 +2308,9 @@ T GaussKronrodIntegrator<T>::getMax( T variable_1, T variable_2 ) const
     return variable_1;
   }
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( GaussKronrodIntegrator<double> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( GaussKronrodIntegrator<long double> );
 
 } // end Utility namespace
 

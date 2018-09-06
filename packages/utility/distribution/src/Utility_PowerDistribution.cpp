@@ -7,15 +7,14 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "Utility_PowerDistribution.hpp"
 
-namespace Utility{
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwarePowerDistribution<1,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwarePowerDistribution<1,void,void> );
 
-// Explicit instantiation
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwarePowerDistribution<1,void,void> );
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwarePowerDistribution<2,void,void> );
-  
-} // end Utility namespace
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwarePowerDistribution<2,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwarePowerDistribution<2,void,void> );
 
 //---------------------------------------------------------------------------//
 // end Utility_PowerDistribution.cpp

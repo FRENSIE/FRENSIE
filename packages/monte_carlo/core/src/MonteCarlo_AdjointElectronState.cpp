@@ -7,9 +7,9 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_AdjointElectronState.hpp"
-#include "Utility_ArchiveHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -49,7 +49,6 @@ AdjointElectronState::AdjointElectronState(
                           increment_generation_number,
                           reset_collision_number )
 { /* ... */ }
-
 
 // Probe constructor
 AdjointElectronState::AdjointElectronState(
@@ -93,16 +92,17 @@ double AdjointElectronState::getRestMassEnergy() const
 }
 
 // Print the adjoint electron state
-void AdjointElectronState::print( std::ostream& os ) const
+void AdjointElectronState::toStream( std::ostream& os ) const
 {
   os << "Particle Type: Adjoint Electron" << std::endl;
 
   this->printImplementation<AdjointElectronState>( os );
 }
 
-} // end MonteCarl namespace
+EXPLICIT_CLASS_SERIALIZE_INST( AdjointElectronState );
 
-UTILITY_CLASS_EXPORT_IMPLEMENT_SERIALIZE( MonteCarlo::AdjointElectronState );
+} // end MonteCarlo namespace
+
 BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::AdjointElectronState );
 
 //---------------------------------------------------------------------------//

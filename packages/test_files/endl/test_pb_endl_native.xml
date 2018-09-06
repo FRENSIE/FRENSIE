@@ -3,7 +3,8 @@
 <boost_serialization signature="serialization::archive" version="11">
 <N4Data25ENDLVolatileDataContainerE class_id="0" tracking_level="0" version="0">
 	<atomic_number>82</atomic_number>
-	<subshells>
+        <atomic_weight>2.07200000000000000e+02</atomic_weight>
+        <subshells>
 		<count>24</count>
 		<item_version>0</item_version>
 		<item>1</item>

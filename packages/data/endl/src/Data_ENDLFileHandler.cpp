@@ -11,9 +11,9 @@
 
 // FRENSIE Includes
 #include "Data_ENDLFileHandler.hpp"
-#include "Utility_ContractException.hpp"
-#include "Utility_ExceptionTestMacros.hpp"
 #include "Data_ENDLHelperWrappers.hpp"
+#include "Utility_DesignByContract.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace Data{
 
@@ -71,7 +71,7 @@ void ENDLFileHandler::openENDLFile( const std::string& file_name )
 						       file_name.size() );
   TEST_FOR_EXCEPTION( !endl_file_exists,
 		      std::runtime_error,
-		      "Fatal Error: ENDL file " + file_name +
+		      "ENDL file " + file_name +
 		      " does not exists." );
 
   // Check that the file can be opened
@@ -79,7 +79,7 @@ void ENDLFileHandler::openENDLFile( const std::string& file_name )
 							        file_name.size() );
   TEST_FOR_EXCEPTION( !endl_file_is_readable,
 		      std::runtime_error,
-		      "Fatal Error: ENDL file " + file_name +
+		      "ENDL file " + file_name +
 		      " exists but is not readable." );
 
   // Open the file

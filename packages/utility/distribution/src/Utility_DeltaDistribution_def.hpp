@@ -13,34 +13,15 @@
 #include <limits>
 
 // FRENSIE Includes
-#include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
-#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
+
+BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_IMPLEMENT( UnitAwareDeltaDistribution );
 
 namespace Utility{
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareDeltaDistribution<void,void> );
-
-// Default constructor
-template<typename IndependentUnit, typename DependentUnit>
-UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::UnitAwareDeltaDistribution()
-{ /* ... */ }
-
-// Basic Constructor
-template<typename IndependentUnit, typename DependentUnit>
-template<typename InputIndepQuantity>
-UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::UnitAwareDeltaDistribution( const InputIndepQuantity location )
-  : d_location( location ),
-    d_multiplier( DQT::one() )
-{
-  // Make sure that the point is valid
-  testPrecondition( !QuantityTraits<InputIndepQuantity>::isnaninf(location) );
-}
-
-// Advanced Constructor
+// Constructor
 template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
 UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::UnitAwareDeltaDistribution(
@@ -49,11 +30,9 @@ UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::UnitAwareDeltaDistrib
   : d_location( location ),
     d_multiplier( multiplier )
 {
-  // Make sure that the point is valid
-  testPrecondition( !QuantityTraits<InputIndepQuantity>::isnaninf( location ));
-  // Make sure the multiplier is valid
-  testPrecondition( !QuantityTraits<InputDepQuantity>::isnaninf( multiplier ));
-  testPrecondition( multiplier != QuantityTraits<InputDepQuantity>::zero() );
+  this->verifyValidShapeParameters( d_location, d_multiplier );
+
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -72,13 +51,9 @@ UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::UnitAwareDeltaDistrib
   : d_location( dist_instance.d_location ),
     d_multiplier( dist_instance.d_multiplier )
 {
-  remember( typedef QuantityTraits<typename UnitAwareDeltaDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity> InputIQT );
-  remember( typedef QuantityTraits<typename UnitAwareDeltaDistribution<InputIndepUnit,InputDepUnit>::DepQuantity> InputDQT );
-  // Make sure that the point is valid
-  testPrecondition( !InputIQT::isnaninf( dist_instance.d_location ) );
-  // Make sure that the multiplier is valid
-  testPrecondition( !InputDQT::isnaninf( dist_instance.d_multiplier ) );
-  testPrecondition( dist_instance.d_multiplier != InputDQT::zero() );
+  this->verifyValidShapeParameters( d_location, d_multiplier );
+
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -88,11 +63,9 @@ const UnitAwareDeltaDistribution<void,void>& unitless_dist_instance, int )
   : d_location( IQT::initializeQuantity( unitless_dist_instance.d_location ) ),
     d_multiplier( DQT::initializeQuantity( unitless_dist_instance.d_multiplier ) )
 {
-  // Make sure that the point is valid
-  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_location ) );
-  // Make sure that the multiplier is valid
-  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_multiplier ) );
-  testPrecondition( unitless_dist_instance.d_multiplier != 0.0 );
+  this->verifyValidShapeParameters( d_location, d_multiplier );
+
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
@@ -179,7 +152,7 @@ UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::sample() const
 // Return a random sample from the corresponding CDF and record the number of trials
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
+UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( DistributionTraits::Counter& trials ) const
 {
   ++trials;
 
@@ -190,7 +163,7 @@ UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::sampleAndRecordBinIndex(
-					    unsigned& sampled_bin_index ) const
+					      size_t& sampled_bin_index ) const
 {
   sampled_bin_index = 0;
 
@@ -255,7 +228,7 @@ UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::getLowerBoundOfIndepV
 
 // Return the distribution type
 template<typename IndependentUnit, typename DependentUnit>
-OneDDistributionType UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
+UnivariateDistributionType UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return ThisType::distribution_type;
 }
@@ -275,84 +248,75 @@ bool UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::isContinuous() c
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  os << "{" << getRawQuantity( d_location );
-
-  if( d_multiplier != DQT::one() )
-    os << "," << getRawQuantity( d_multiplier ) << "}";
-  else
-    os << "}";
+  this->toStreamDistImpl( os,
+                          std::make_pair( "location", d_location ),
+                          std::make_pair( "multiplier", d_multiplier ) );
 }
 
-// Method for initializing the object from an input stream
+// Save the distribution to an archive
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromStream( std::istream& is )
+template<typename Archive>
+void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
 {
-  // Read in the distribution representation
-  std::string dist_rep;
-  std::getline( is, dist_rep, '}' );
-  dist_rep += '}';
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
 
-  // Parse special characters
-  try{
-    ArrayString::locateAndReplacePi( dist_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the delta distribution cannot be "
-			      "constructed because the representation is not "
-			      "valid (see details below)!\n" );
-
-  Teuchos::Array<double> distribution;
-  try{
-    distribution = Teuchos::fromStringToArray<double>( dist_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the delta distribution cannot be "
-			      "constructed because the representation is not "
-			      "valid (see details below)!\n" );
-
-  TEST_FOR_EXCEPTION( distribution.size() < 1 || distribution.size() > 2,
-		      InvalidDistributionStringRepresentation,
-		      "Error: the delta distribution cannot be constructed "
-		      "because the representation is not valid (only one or"
-		      "two values can be specified)!" );
-
-  setQuantity( d_location, distribution[0] );
-
-  TEST_FOR_EXCEPTION( QT::isnaninf( distribution[0] ),
-		      InvalidDistributionStringRepresentation,
-		      "Error: the delta distribution cannot be constructed "
-		      "because of an invalid location (" << distribution[0] <<
-		      ")!" );
-
-  if( distribution.size() > 1 )
-  {
-    setQuantity( d_multiplier, distribution[1] );
-
-    TEST_FOR_EXCEPTION( QT::isnaninf( distribution[1] ),
-			InvalidDistributionStringRepresentation,
-			"Error: the delta distribution cannot be constructed "
-			"because of an invalid multiplier ("
-			<< distribution[1] << ")!" );
-
-    TEST_FOR_EXCEPTION( distribution[1] == 0.0,
-			InvalidDistributionStringRepresentation,
-			"Error: the delta distribution cannot be constructed "
-			"because of an invalid multiplier ("
-			<< distribution[1] << ")!" );
-  }
-  else
-    d_multiplier = DQT::one();
+  // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_location );
+  ar & BOOST_SERIALIZATION_NVP( d_multiplier );
 }
 
-// Method for testing if two objects are equivalent
+// Load the distribution from an archive
 template<typename IndependentUnit, typename DependentUnit>
-bool UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::isEqual(
+template<typename Archive>
+void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_location );
+  ar & BOOST_SERIALIZATION_NVP( d_multiplier );
+}
+
+// Verify that the shape parameters are valid
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::verifyValidShapeParameters(
+                                                const IndepQuantity& location,
+                                                const DepQuantity& multiplier )
+{
+  TEST_FOR_EXCEPTION( IQT::isnaninf( location ),
+		      Utility::BadUnivariateDistributionParameter,
+		      "The delta distribution cannot be constructed "
+		      "because of an invalid location!" );
+  
+  TEST_FOR_EXCEPTION( DQT::isnaninf( multiplier ),
+                      Utility::BadUnivariateDistributionParameter,
+                      "The delta distribution cannot be constructed "
+                      "because of an invalid multiplier!" );
+
+  TEST_FOR_EXCEPTION( multiplier == DQT::zero(),
+                      Utility::BadUnivariateDistributionParameter,
+                      "The delta distribution cannot be constructed "
+                      "because of an invalid multiplier!" );
+}
+
+// Equality comparison operator
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::operator==(
  const UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>& other ) const
 {
   return d_location == other.d_location &&
     d_multiplier == other.d_multiplier;
+}
+
+// Inequality comparison operator
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::operator!=(
+ const UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>& other ) const
+{
+  return d_location != other.d_location ||
+    d_multiplier != other.d_multiplier;
 }
 
 // Test if the dependent variable can be zero within the indep bounds
@@ -363,6 +327,9 @@ bool UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroI
 }
 
 } // end Utility namespace
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareDeltaDistribution<void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareDeltaDistribution<void,void> );
 
 #endif // end UTILITY_DELTA_DISTRIBUTION_DEF_HPP
 

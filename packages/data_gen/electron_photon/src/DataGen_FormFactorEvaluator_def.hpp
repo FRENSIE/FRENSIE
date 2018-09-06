@@ -13,7 +13,7 @@
 #include "MonteCarlo_StandardFormFactor.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_SortAlgorithms.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace DataGen{
 
@@ -38,7 +38,7 @@ FormFactorEvaluator::createEvaluator(
                                                   form_factor_values.end() ) );
 
   // Create the raw form factor
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<GridArgumentUnit,void> >
+  std::shared_ptr<Utility::UnitAwareUnivariateDistribution<GridArgumentUnit,void> >
     raw_form_factor( new Utility::UnitAwareTabularDistribution<InterpPolicy,GridArgumentUnit,void>(
                                                         argument_grid,
                                                         form_factor_values ) );

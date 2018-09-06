@@ -6,13 +6,11 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "DataGen_AdjointIncoherentCrossSectionHelpers.hpp"
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace DataGen{
 
@@ -20,7 +18,7 @@ namespace DataGen{
 double getEnergyOfMaxCrossSection( const double max_energy )
 {
   // Make sure the max energy is valid
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( max_energy ) );
+  testPrecondition( !Utility::QuantityTraits<double>::isnaninf( max_energy ) );
   testPrecondition( max_energy > 0.0 );
 
   return max_energy/(1.0 + 2.0*max_energy/Utility::PhysicalConstants::electron_rest_mass_energy);
@@ -38,7 +36,7 @@ double getMaxEnergyResultingInMaxCrossSectionValueAtEnergy(
 						          const double energy )
 {
   // Make sure the energy is valid
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( energy ) );
+  testPrecondition( !Utility::QuantityTraits<double>::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
   testPrecondition( energy <
 		    Utility::PhysicalConstants::electron_rest_mass_energy/2.0);

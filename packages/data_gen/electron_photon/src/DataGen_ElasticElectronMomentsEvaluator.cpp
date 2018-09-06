@@ -13,7 +13,7 @@
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "Utility_LegendrePolynomial.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
@@ -42,9 +42,8 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
   d_elastic_traits.reset( new ElasticTraits( data_container.getAtomicNumber() ) );
 
   // Extract the common energy grid used for this atom
-  Teuchos::ArrayRCP<double> incoming_energy_grid;
-  incoming_energy_grid.assign( data_container.getElectronEnergyGrid().begin(),
-                               data_container.getElectronEnergyGrid().end() );
+  std::shared_ptr<std::vector<double> > incoming_energy_grid(
+       new std::vector<double>( data_container.getElectronEnergyGrid() ) );
 
   // Create the coupled elastic distribution (combined Cutoff and Screened Rutherford)
   if ( two_d_grid == MonteCarlo::UNIT_BASE_GRID ||
@@ -52,7 +51,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
   {
     if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Direct<Utility::LogLogCosLog<true> > >(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog<true>,Utility::Direct>(
       d_coupled_distribution,
       data_container,
       MonteCarlo::TWO_D_UNION,
@@ -60,7 +59,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     }
     else if( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Direct<Utility::LinLinLin> >(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLin,Utility::Direct>(
       d_coupled_distribution,
       data_container,
       MonteCarlo::TWO_D_UNION,
@@ -68,7 +67,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     }
     else if( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Direct<Utility::LinLinLog> >(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Direct>(
       d_coupled_distribution,
       data_container,
       MonteCarlo::TWO_D_UNION,
@@ -80,7 +79,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
   {
     if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Correlated<Utility::LogLogCosLog<true> > >(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog<true>,Utility::Correlated>(
       d_coupled_distribution,
       data_container,
       MonteCarlo::MODIFIED_TWO_D_UNION,
@@ -88,7 +87,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     }
     else if( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Correlated<Utility::LinLinLin> >(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLin,Utility::Correlated>(
       d_coupled_distribution,
       data_container,
       MonteCarlo::MODIFIED_TWO_D_UNION,
@@ -96,7 +95,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     }
     else if( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Correlated<Utility::LinLinLog> >(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
       d_coupled_distribution,
       data_container,
       MonteCarlo::MODIFIED_TWO_D_UNION,
@@ -106,15 +105,13 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
 
   // Construct the hash-based grid searcher for this atom
   d_grid_searcher.reset(
-     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
+     new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
          incoming_energy_grid,
          100u ) );
 
   // Cutoff elastic cross section
-  Teuchos::ArrayRCP<double> cutoff_cross_section;
-  cutoff_cross_section.assign(
-    data_container.getCutoffElasticCrossSection().begin(),
-    data_container.getCutoffElasticCrossSection().end() );
+  std::shared_ptr<std::vector<double> > cutoff_cross_section(
+       new std::vector<double>( data_container.getCutoffElasticCrossSection() ) );
 
   // Create the cutoff reaction
   d_cutoff_reaction.reset(
@@ -125,10 +122,8 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
       d_grid_searcher ) );
 
   // Total elastic cross section
-  Teuchos::ArrayRCP<double> total_elastic_cross_section;
-  total_elastic_cross_section.assign(
-    data_container.getTotalElasticCrossSection().begin(),
-    data_container.getTotalElasticCrossSection().end() );
+  std::shared_ptr<std::vector<double> > total_elastic_cross_section(
+       new std::vector<double>( data_container.getTotalElasticCrossSection() ) );
 
   d_screened_rutherford_threshold_energy_index =
     data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
@@ -145,10 +140,10 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
 // Constructor (without data container)
 ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,
-    const Teuchos::ArrayRCP<double>& incoming_energy_grid,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    const Teuchos::ArrayRCP<double>& cutoff_cross_section,
-    const Teuchos::ArrayRCP<double>& total_elastic_cross_section,
+    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >& grid_searcher,
+    const std::shared_ptr<const std::vector<double> >& cutoff_cross_section,
+    const std::shared_ptr<const std::vector<double> >& total_elastic_cross_section,
     const unsigned screened_rutherford_threshold_energy_index,
     const std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
         coupled_distribution,

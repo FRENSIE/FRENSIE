@@ -9,76 +9,38 @@
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentAdjointModelType.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
-namespace MonteCarlo{
-
-// Convert incoherent adjoint model name to an IncoherentAdjointModelType enum
-IncoherentAdjointModelType convertStringToIncoherentAdjointModelTypeEnum(
-                             const std::string& incoherent_adjoint_model_name )
+namespace Utility{
+  
+// Convert a MonteCarlo:: to a string
+std::string ToStringTraits<MonteCarlo::IncoherentAdjointModelType>::toString( const MonteCarlo::IncoherentAdjointModelType type )
 {
-  if( incoherent_adjoint_model_name == "Klein-Nishina Adjoint Model" )
-    return KN_INCOHERENT_ADJOINT_MODEL;
-  else if( incoherent_adjoint_model_name == "Waller-Hartree Adjoint Model" )
-    return WH_INCOHERENT_ADJOINT_MODEL;
-  else if( incoherent_adjoint_model_name == "Impulse Adjoint Model" )
-    return IMPULSE_INCOHERENT_ADJOINT_MODEL;
-  else if( incoherent_adjoint_model_name ==
-           "Doppler Broadened Impulse Adjoint Model" )
-    return DB_IMPULSE_INCOHERENT_ADJOINT_MODEL;
-  else
+  switch( type )
   {
-    THROW_EXCEPTION( std::logic_error,
-                     "Error: incoherent adjoint model type name "
-                     << incoherent_adjoint_model_name << " is unknown!" );
-  }
-}
-
-// Convert unsigned to IncoherentAdjointModelType enum
-IncoherentAdjointModelType convertUnsignedToIncoherentAdjointModelTypeEnum(
-                                 const unsigned incoherent_adjoint_model_type )
-{
-  switch( incoherent_adjoint_model_type )
-  {
-  case 0:
-    return KN_INCOHERENT_ADJOINT_MODEL;
-  case 1:
-    return WH_INCOHERENT_ADJOINT_MODEL;
-  case 2:
-    return IMPULSE_INCOHERENT_ADJOINT_MODEL;
-  case 3:
-    return DB_IMPULSE_INCOHERENT_ADJOINT_MODEL;
-  default:
-    THROW_EXCEPTION( std::logic_error,
-                     "Error: unsigned integer "
-                     << incoherent_adjoint_model_type <<
-                     " does not correspond to an incoherent adjoint model "
-                     "type!" );
-  }
-}
-
-// Convert a IncoherentAdjointModelType to a string
-std::string convertIncoherentAdjointModelTypeToString(
-                    const IncoherentAdjointModelType incoherent_adjoint_model )
-{
-  switch( incoherent_adjoint_model )
-  {
-  case KN_INCOHERENT_ADJOINT_MODEL:
+  case MonteCarlo::KN_INCOHERENT_ADJOINT_MODEL:
     return "Klein-Nishina Adjoint Model";
-  case WH_INCOHERENT_ADJOINT_MODEL:
+  case MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL:
     return "Waller-Hartree Adjoint Model" ;
-  case IMPULSE_INCOHERENT_ADJOINT_MODEL:
+  case MonteCarlo::IMPULSE_INCOHERENT_ADJOINT_MODEL:
     return "Impulse Adjoint Model";
-  case DB_IMPULSE_INCOHERENT_ADJOINT_MODEL:
+  case MonteCarlo::DB_IMPULSE_INCOHERENT_ADJOINT_MODEL:
     return "Doppler Broadened Impulse Adjoint Model";
   default:
+  {
     THROW_EXCEPTION( std::logic_error,
-                     "Error: unkown incoherent adjoint model "
-                     "encountered!" );
+                     "Unkown incoherent adjoint model encountered!" );
+  }
   }
 }
+
+// Place the MonteCarlo:: in a stream
+void ToStringTraits<MonteCarlo::IncoherentAdjointModelType>::toStream( std::ostream& os, const MonteCarlo::IncoherentAdjointModelType type )
+{
+  os << ToStringTraits<MonteCarlo::IncoherentAdjointModelType>::toString( type );
+}
   
-} // end MonteCarlo namespace
+} // end Utility namespace
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_IncoherentAdjointModelType.cpp

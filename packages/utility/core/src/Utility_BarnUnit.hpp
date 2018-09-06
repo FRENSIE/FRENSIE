@@ -31,12 +31,12 @@ namespace boost{
 
 namespace units{
 
-std::string name_string( const Utility::Units::Barn& )
+inline std::string name_string( const Utility::Units::Barn& )
 {
   return "Barn";
 }
 
-std::string symbol_string( const Utility::Units::Barn& )
+inline std::string symbol_string( const Utility::Units::Barn& )
 {
   return "b";
 }

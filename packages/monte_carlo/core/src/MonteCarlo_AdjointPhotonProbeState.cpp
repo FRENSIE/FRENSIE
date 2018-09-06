@@ -7,9 +7,9 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_AdjointPhotonProbeState.hpp"
-#include "Utility_ArchiveHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -22,7 +22,7 @@ AdjointPhotonProbeState::AdjointPhotonProbeState()
 // Constructor
 AdjointPhotonProbeState::AdjointPhotonProbeState(
 		       const ParticleState::historyNumberType history_number )
-  : AdjointPhotonState( history_number, ADJOINT_PHOTON_PROBE, 0 ),
+  : AdjointPhotonState( history_number, ADJOINT_PHOTON, 0 ),
     d_active( false )
 { /* ... */ }
 
@@ -32,7 +32,7 @@ AdjointPhotonProbeState::AdjointPhotonProbeState(
 				      const bool increment_generation_number,
 				      const bool reset_collision_number )
   : AdjointPhotonState( existing_base_state,
-			ADJOINT_PHOTON_PROBE,
+			ADJOINT_PHOTON,
 			0,
 			increment_generation_number,
 			reset_collision_number ),
@@ -45,7 +45,7 @@ AdjointPhotonProbeState::AdjointPhotonProbeState(
 			    const bool increment_generation_number,
 			    const bool reset_collision_number )
   : AdjointPhotonState( existing_base_state,
-			ADJOINT_PHOTON_PROBE,
+			ADJOINT_PHOTON,
 			0,
 			increment_generation_number,
 			reset_collision_number ),
@@ -93,7 +93,7 @@ AdjointPhotonProbeState* AdjointPhotonProbeState::clone() const
 }
 
 // Print the adjoint photon state
-void AdjointPhotonProbeState::print( std::ostream& os ) const
+void AdjointPhotonProbeState::toStream( std::ostream& os ) const
 {
   os << "Particle Type: ";
 
@@ -107,9 +107,10 @@ void AdjointPhotonProbeState::print( std::ostream& os ) const
   this->printImplementation<AdjointPhotonProbeState>( os );
 }
 
+EXPLICIT_CLASS_SERIALIZE_INST( AdjointPhotonProbeState );
+
 } // end MonteCarlo namespace
 
-UTILITY_CLASS_EXPORT_IMPLEMENT_SERIALIZE( MonteCarlo::AdjointPhotonProbeState);
 BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::AdjointPhotonProbeState );
 
 //---------------------------------------------------------------------------//

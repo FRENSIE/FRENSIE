@@ -6,20 +6,11 @@
 //!
 //---------------------------------------------------------------------------//
 
-%{
-#include "PyFrensie_DistributionHelpers.hpp"
-%}
-
 // Include std::string support
 %include <std_string.i>
 
-
-// Import the PyFrensie utility
-%import "PyFrensie_DistributionHelpers.hpp"
-
-
 //---------------------------------------------------------------------------//
-// Helper macro for setting up a basic OneDDistribution class python interface
+// Helper macro for setting up a basic electron distribution class python interface
 //---------------------------------------------------------------------------//
 %define %electron_distribution_interface_setup( DISTRIBUTION )
 

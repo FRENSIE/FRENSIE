@@ -9,8 +9,8 @@
 #ifndef GEOMETRY_DAGMC_RAY_HPP
 #define GEOMETRY_DAGMC_RAY_HPP
 
-// Boost Includes
-#include <boost/scoped_ptr.hpp>
+// Std Lib Includes
+#include <memory>
 
 // Moab Includes
 #include <DagMC.hpp>
@@ -37,6 +37,15 @@ public:
             const double direction[3],
             const moab::EntityHandle cell_handle );
 
+  //! Constructor
+  DagMCRay( const double x_position,
+            const double y_position,
+            const double z_position,
+            const double x_direction,
+            const double y_direction,
+            const double z_direction,
+            const moab::EntityHandle cell_handle );
+
   // Copy constructor
   DagMCRay( const DagMCRay& ray );
 
@@ -54,6 +63,15 @@ public:
   void set( const double position[3],
             const double direction[3],
             const moab::EntityHandle cell_handle );
+
+  //! Set the ray (minimum data required)
+  void set( const double x_position,
+            const double y_position,
+            const double z_position,
+            const double x_direction,
+            const double y_direction,
+            const double z_direction,
+            const moab::EntityHandle current_cell_handle );
 
   //! change the direction
   void changeDirection( const double direction[3] );
@@ -104,7 +122,7 @@ public:
 private:
 
   // The basic ray
-  boost::scoped_ptr<Ray> d_basic_ray;
+  std::unique_ptr<Ray> d_basic_ray;
 
   // The current cell handle
   moab::EntityHandle d_cell_handle;

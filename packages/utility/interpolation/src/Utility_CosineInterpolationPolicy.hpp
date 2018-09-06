@@ -194,7 +194,7 @@ struct LogCosLog : public InterpolationHelper<LogCosLog<use_nudge> >
 
 /*! \brief Policy struct for interpolating data tables that require log-log
  * cosine interpolation between evaluated points.
- * \details The unprocessedindependent variable is always assumed to be an angle
+ * \details The unprocessed independent variable is always assumed to be an angle
  * cosine. Since the angle cosine goes below zero a direct log interpolation
  * cannot be performed on it. Instead a log interpolation will be performed
  * on the change in the angle cosine (eg: 1 - mu + nudge ) instead of the cosine
@@ -521,6 +521,17 @@ struct InverseInterpPolicy<LinLogCos<true> >
   //! The inverse cosine interpolation policy
   typedef LogCosLin<true> InterpPolicy;
 };
+
+// use_nudge = true
+TYPE_NAME_TRAITS_QUICK_DECL( LogCosLog<true> );
+TYPE_NAME_TRAITS_QUICK_DECL( LogLogCos<true> );
+TYPE_NAME_TRAITS_QUICK_DECL( LogCosLin<true> );
+TYPE_NAME_TRAITS_QUICK_DECL( LinLogCos<true> );
+// use_nudge = true
+TYPE_NAME_TRAITS_QUICK_DECL( LogCosLog<false> );
+TYPE_NAME_TRAITS_QUICK_DECL( LogLogCos<false> );
+TYPE_NAME_TRAITS_QUICK_DECL( LogCosLin<false> );
+TYPE_NAME_TRAITS_QUICK_DECL( LinLogCos<false> );
 
 } // end Utility namespace
 

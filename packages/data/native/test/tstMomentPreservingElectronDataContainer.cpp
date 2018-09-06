@@ -10,15 +10,10 @@
 #include <string>
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-
 // FRENSIE Includes
 #include "Data_MomentPreservingElectronVolatileDataContainer.hpp"
 #include "Data_MomentPreservingElectronDataContainer.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
-
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -30,16 +25,16 @@ Data::MomentPreservingElectronVolatileDataContainer mp_data_container;
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the atomic number can be set
-TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer, setAtomicNumber )
+FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer, setAtomicNumber )
 {
   mp_data_container.setAtomicNumber( 1u );
 
-  TEST_EQUALITY_CONST( mp_data_container.getAtomicNumber(), 1u );
+  FRENSIE_CHECK_EQUAL( mp_data_container.getAtomicNumber(), 1u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the subshells can be set
-TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
+FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
                    setElasticAngularEnergyGrid )
 {
   std::vector<double> angular_energy_grid(1), grid(1);
@@ -49,22 +44,22 @@ TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
                                     angular_energy_grid );
 
   grid = mp_data_container.getElasticAngularEnergyGrid();
-  TEST_EQUALITY_CONST( grid[0], 1.0 );
+  FRENSIE_CHECK_EQUAL( grid[0], 1.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of discrete angles can be set
-TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
+FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
                    setNumberOfDiscreteAngles )
 {
   mp_data_container.setNumberOfDiscreteAngles( 0, 3 );
 
-  TEST_EQUALITY_CONST( mp_data_container.getNumberOfDiscreteAngles(0), 3 );
+  FRENSIE_CHECK_EQUAL( mp_data_container.getNumberOfDiscreteAngles(0), 3 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the moment preserving discrete angles can be set
-TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
+FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
                    setMomentPreservingDiscreteAngles )
 {
   std::vector<double> discrete_angles( 3 );
@@ -75,13 +70,13 @@ TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
   mp_data_container.setMomentPreservingDiscreteAngles( 0,
                                                             discrete_angles );
 
-  TEST_COMPARE_ARRAYS( mp_data_container.getMomentPreservingDiscreteAngles(0),
+  FRENSIE_CHECK_EQUAL( mp_data_container.getMomentPreservingDiscreteAngles(0),
                        discrete_angles );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the moment preserving weights can be set
-TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
+FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
                    setMomentPreservingWeights )
 {
   std::vector<double> weights( 3 );
@@ -91,111 +86,79 @@ TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
 
   mp_data_container.setMomentPreservingWeights( 0, weights );
 
-  TEST_COMPARE_ARRAYS( mp_data_container.getMomentPreservingWeights(0),
+  FRENSIE_CHECK_EQUAL( mp_data_container.getMomentPreservingWeights(0),
                        weights );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the data can be exported and imported
-TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
+FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
                    export_importData_ascii )
 {
-  const std::string test_ascii_file_name(
-                    "test_mp_data_container.txt" );
+  const std::string test_ascii_file_name( "test_mp_data_container.txt" );
 
-  mp_data_container.exportData( test_ascii_file_name,
-				 Utility::ArchivableObject::ASCII_ARCHIVE );
+  mp_data_container.saveToFile( test_ascii_file_name, true );
 
   const Data::MomentPreservingElectronDataContainer
-    mp_data_container_copy( test_ascii_file_name,
-			     Utility::ArchivableObject::ASCII_ARCHIVE );
+    mp_data_container_copy( test_ascii_file_name );
 
-  TEST_EQUALITY_CONST( mp_data_container_copy.getAtomicNumber(), 1 );
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL( mp_data_container_copy.getAtomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL(
     mp_data_container_copy.getElasticAngularEnergyGrid().front(),
     1.0 );
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
     mp_data_container_copy.getNumberOfDiscreteAngles(0), 3 );
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
     mp_data_container_copy.getMomentPreservingDiscreteAngles(0).size(), 3 );
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
     mp_data_container_copy.getMomentPreservingWeights(0).size(), 3 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the data can be exported and imported
-TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
+FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
                    export_importData_binary )
 {
-  const std::string test_binary_file_name(
-                    "test_mp_data_container.bin" );
+  const std::string test_binary_file_name( "test_mp_data_container.bin" );
 
-  mp_data_container.exportData( test_binary_file_name,
-				 Utility::ArchivableObject::BINARY_ARCHIVE );
+  mp_data_container.saveToFile( test_binary_file_name, true );
 
   const Data::MomentPreservingElectronDataContainer
-    mp_data_container_copy( test_binary_file_name,
-			     Utility::ArchivableObject::BINARY_ARCHIVE );
+    mp_data_container_copy( test_binary_file_name );
 
-  TEST_EQUALITY_CONST( mp_data_container_copy.getAtomicNumber(), 1 );
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL( mp_data_container_copy.getAtomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL(
     mp_data_container_copy.getElasticAngularEnergyGrid().front(),
     1.0 );
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
     mp_data_container_copy.getNumberOfDiscreteAngles(0), 3 );
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
     mp_data_container_copy.getMomentPreservingDiscreteAngles(0).size(), 3 );
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
     mp_data_container_copy.getMomentPreservingWeights(0).size(), 3 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the data can be exported and imported
-TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
+FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
                    export_importData_xml )
 {
-  const std::string test_xml_file_name(
-                    "test_mp_data_container.xml" );
+  const std::string test_xml_file_name( "test_mp_data_container.xml" );
 
-  mp_data_container.exportData( test_xml_file_name,
-				 Utility::ArchivableObject::XML_ARCHIVE );
+  mp_data_container.saveToFile( test_xml_file_name, true );
 
   const Data::MomentPreservingElectronDataContainer
-    mp_data_container_copy( test_xml_file_name,
-			     Utility::ArchivableObject::XML_ARCHIVE );
+    mp_data_container_copy( test_xml_file_name );
 
-  TEST_EQUALITY_CONST( mp_data_container_copy.getAtomicNumber(), 1 );
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL( mp_data_container_copy.getAtomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL(
     mp_data_container_copy.getElasticAngularEnergyGrid().front(),
     1.0 );
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
     mp_data_container_copy.getNumberOfDiscreteAngles(0), 3 );
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
     mp_data_container_copy.getMomentPreservingDiscreteAngles(0).size(), 3 );
-  TEST_EQUALITY_CONST(
-    mp_data_container_copy.getMomentPreservingWeights(0).size(), 3 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the data can be packed into a string and unpacked from a string
-TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
-                   pack_unpackDataFromString )
-{
-  std::string packed_data = mp_data_container.packDataInString();
-
-  Data::MomentPreservingElectronVolatileDataContainer mp_data_container_copy;
-
-  mp_data_container_copy.unpackDataFromString( packed_data );
-
-  TEST_EQUALITY_CONST( mp_data_container_copy.getAtomicNumber(), 1 );
-  TEST_EQUALITY_CONST(
-    mp_data_container_copy.getElasticAngularEnergyGrid().front(),
-    1.0 );
-  TEST_EQUALITY_CONST(
-    mp_data_container_copy.getNumberOfDiscreteAngles(0), 3 );
-  TEST_EQUALITY_CONST(
-    mp_data_container_copy.getMomentPreservingDiscreteAngles(0).size(), 3 );
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
     mp_data_container_copy.getMomentPreservingWeights(0).size(), 3 );
 }
 

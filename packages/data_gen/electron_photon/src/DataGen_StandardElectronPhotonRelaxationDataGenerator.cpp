@@ -28,7 +28,7 @@
 #include "Utility_StaticOutputFormatter.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace DataGen{
 
@@ -319,13 +319,11 @@ void StandardElectronPhotonRelaxationDataGenerator::populateEPRDataContainer(
   data_container.setNumberOfMomentPreservingAngles(
     d_number_of_moment_preserving_angles );
   {
-  std::string interp =
-    MonteCarlo::convertTwoDInterpolationTypeToString( d_two_d_interp );
+  std::string interp = Utility::toString( d_two_d_interp );
   data_container.setElectronTwoDInterpPolicy( interp );
   }
   {
-  std::string grid_type =
-    MonteCarlo::convertTwoDGridTypeToString( d_two_d_grid );
+  std::string grid_type = Utility::toString( d_two_d_grid );
   data_container.setElectronTwoDGridPolicy( grid_type );
   }
   data_container.setElectronTabularEvaluationTolerance(
@@ -398,7 +396,7 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDat
       {
         if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
         {
-          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Direct<Utility::LogLogCosLog<true> > >(
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogCosLog<true>,Utility::Direct>(
             angles,
             pdf,
             elastic_angle,
@@ -409,7 +407,7 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDat
         }
         else if ( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
         {
-          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Direct<Utility::LinLinLin> >(
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Direct>(
             angles,
             pdf,
             elastic_angle,
@@ -420,7 +418,7 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDat
         }
         else if ( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
         {
-          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Direct<Utility::LinLinLog> >(
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Direct>(
             angles,
             pdf,
             elastic_angle,
@@ -442,7 +440,7 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDat
       {
         if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
         {
-          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Correlated<Utility::LogLogCosLog<true> > >(
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogCosLog<true>,Utility::Correlated>(
             angles,
             pdf,
             elastic_angle,
@@ -453,7 +451,7 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDat
         }
         else if ( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
         {
-          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Correlated<Utility::LinLinLin> >(
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
             angles,
             pdf,
             elastic_angle,
@@ -464,7 +462,7 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDat
         }
         else if ( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
         {
-          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Correlated<Utility::LinLinLog> >(
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
             angles,
             pdf,
             elastic_angle,
@@ -546,8 +544,7 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingDa
   data_container.setCutoffAngleCosine( cutoff_angle_cosine );
   data_container.setNumberOfMomentPreservingAngles(
     number_of_moment_preserving_angles );
-  data_container.setElectronTwoDInterpPolicy(
-    MonteCarlo::convertTwoDInterpolationTypeToString( two_d_interp ) );
+  data_container.setElectronTwoDInterpPolicy( Utility::toString( two_d_interp ) );
 
   std::vector<double> angular_energy_grid(
     data_container.getElasticAngularEnergyGrid() );
@@ -603,7 +600,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setRelaxationData(
                            data_container ) const
 {
   // Extract the subshell ENDF designators
-  Teuchos::ArrayView<const double> subshell_designators =
+  Utility::ArrayView<const double> subshell_designators =
     d_ace_epr_data->extractSubshellENDFDesignators();
 
   // Assign the set of all subshells
@@ -617,19 +614,19 @@ void StandardElectronPhotonRelaxationDataGenerator::setRelaxationData(
   }
 
   // Extract the subshell occupancies
-  Teuchos::ArrayView<const double> subshell_occupancies =
+  Utility::ArrayView<const double> subshell_occupancies =
     d_ace_epr_data->extractSubshellOccupancies();
 
   // Extract the subshell binding energies
-  Teuchos::ArrayView<const double> subshell_binding_energies =
+  Utility::ArrayView<const double> subshell_binding_energies =
     d_ace_epr_data->extractSubshellBindingEnergies();
 
   // Extract the number of subshell vacancy transitions
-  Teuchos::ArrayView<const double> subshell_vacancy_transitions =
+  Utility::ArrayView<const double> subshell_vacancy_transitions =
     d_ace_epr_data->extractSubshellVacancyTransitionPaths();
 
   // Extract the relo block
-  Teuchos::ArrayView<const double> relo_block =
+  Utility::ArrayView<const double> relo_block =
     d_ace_epr_data->extractRELOBlock();
 
   // Assign the subshell data
@@ -668,7 +665,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setTransitionData(
   testPrecondition( transitions > 0 );
 
   // Extract the xprob block
-  Teuchos::ArrayView<const double> xprob_block =
+  Utility::ArrayView<const double> xprob_block =
     d_ace_epr_data->extractXPROBBlock();
 
   std::vector<std::pair<unsigned,unsigned> > relaxation_vacancies(
@@ -866,15 +863,15 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeScatteringFu
   std::list<double> recoil_momentum_grid;
 
   {
-    Teuchos::ArrayView<const double> jince_block =
+    Utility::ArrayView<const double> jince_block =
       d_ace_epr_data->extractJINCEBlock();
 
     unsigned scatt_func_size = jince_block.size()/2;
 
-    Teuchos::ArrayView<const double> raw_recoil_momentum(
+    Utility::ArrayView<const double> raw_recoil_momentum(
                                          jince_block( 1, scatt_func_size-1 ) );
 
-    Teuchos::ArrayView<const double> raw_scattering_function_values(
+    Utility::ArrayView<const double> raw_scattering_function_values(
                          jince_block( scatt_func_size+1, scatt_func_size-1 ) );
 
     // Convert the initial and final grid values from inverse Angstrom to
@@ -930,15 +927,15 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFa
 {
   // Generate the form factor
   {
-    Teuchos::ArrayView<const double> jcohe_block =
+    Utility::ArrayView<const double> jcohe_block =
       d_ace_epr_data->extractJCOHEBlock();
 
     unsigned form_factor_size = jcohe_block.size()/3;
 
-    Teuchos::ArrayView<const double> raw_recoil_momentum(
+    Utility::ArrayView<const double> raw_recoil_momentum(
                                         jcohe_block( 1, form_factor_size-1 ) );
 
-    Teuchos::ArrayView<const double> raw_form_factor(
+    Utility::ArrayView<const double> raw_form_factor(
                      jcohe_block( 2*form_factor_size+1, form_factor_size-1 ) );
 
     // Create a form factor evaluator
@@ -1085,7 +1082,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
   (*d_os_log) << " Setting the photon cross section data:" << std::endl;
 
   // Extract the heating numbers
-  std::shared_ptr<const Utility::OneDDistribution> heating_numbers;
+  std::shared_ptr<const Utility::UnivariateDistribution> heating_numbers;
 
   this->extractPhotonCrossSection<Utility::LinLog>(
                                      d_ace_epr_data->extractPhotonEnergyGrid(),
@@ -1093,7 +1090,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
                                      heating_numbers );
 
   // Extract the Waller-Hartree incoherent cross section
-  std::shared_ptr<const Utility::OneDDistribution> waller_hartree_incoherent_cs;
+  std::shared_ptr<const Utility::UnivariateDistribution> waller_hartree_incoherent_cs;
 
   this->extractPhotonCrossSection<Utility::LogLog>(
                                d_ace_epr_data->extractPhotonEnergyGrid(),
@@ -1101,7 +1098,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
                                waller_hartree_incoherent_cs );
 
   // Extract the Waller-Hartree coherent cross section
-  std::shared_ptr<const Utility::OneDDistribution> waller_hartree_coherent_cs;
+  std::shared_ptr<const Utility::UnivariateDistribution> waller_hartree_coherent_cs;
 
   this->extractPhotonCrossSection<Utility::LogLog>(
                                  d_ace_epr_data->extractPhotonEnergyGrid(),
@@ -1109,32 +1106,40 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
                                  waller_hartree_coherent_cs );
 
   // Extract the pair production cross section
-  std::shared_ptr<const Utility::OneDDistribution> pair_production_cs;
+  std::shared_ptr<const Utility::UnivariateDistribution> pair_production_cs;
+  {
+    Utility::ArrayView<const double> pp_energy_grid( d_endl_data_container->getPairProductionCrossSectionEnergyGrid() );
+    Utility::ArrayView<const double> pp_cross_section( d_endl_data_container->getPairProductionCrossSection() );
 
-  this->extractPhotonCrossSection<Utility::LogLog>(
-              d_endl_data_container->getPairProductionCrossSectionEnergyGrid(),
-              d_endl_data_container->getPairProductionCrossSection(),
-              pair_production_cs,
-              false );
+    this->extractPhotonCrossSection<Utility::LogLog>(
+                pp_energy_grid,
+                pp_cross_section,
+                pair_production_cs,
+                false );
+  }
 
   // Extract the triplet production cross section
-  std::shared_ptr<const Utility::OneDDistribution> triplet_production_cs;
+  std::shared_ptr<const Utility::UnivariateDistribution> triplet_production_cs;
+  {
+    Utility::ArrayView<const double> tp_energy_grid( d_endl_data_container->getTripletProductionCrossSectionEnergyGrid() );
+    Utility::ArrayView<const double> tp_cross_section( d_endl_data_container->getTripletProductionCrossSection() );
 
-  this->extractPhotonCrossSection<Utility::LogLog>(
-           d_endl_data_container->getTripletProductionCrossSectionEnergyGrid(),
-           d_endl_data_container->getTripletProductionCrossSection(),
-           triplet_production_cs,
-           false );
+    this->extractPhotonCrossSection<Utility::LogLog>(
+            tp_energy_grid,
+            tp_cross_section,
+            triplet_production_cs,
+            false );
+  }
 
   // Extract the subshell photoelectric effect cross sections
-  std::vector<std::pair<unsigned,std::shared_ptr<const Utility::OneDDistribution> > >
+  std::vector<std::pair<unsigned,std::shared_ptr<const Utility::UnivariateDistribution> > >
     subshell_photoelectric_effect_css;
 
   this->extractSubshellPhotoelectricCrossSections(
                                            subshell_photoelectric_effect_css );
 
   // Create the impulse approx. incoherent cross section evaluators
-  Teuchos::Array<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution> > >
+  std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution> > >
     impulse_approx_incoherent_cs_evaluators;
 
   this->createSubshellImpulseApproxIncoherentCrossSectionEvaluators(
@@ -1150,7 +1155,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
 
   // Calculate the union energy grid
   boost::function<double (double pz)> grid_function =
-    boost::bind( &Utility::OneDDistribution::evaluate,
+    boost::bind( &Utility::UnivariateDistribution::evaluate,
                  boost::cref( *heating_numbers ),
                  _1 );
 
@@ -1165,7 +1170,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
   (*d_os_log) << ".";
   d_os_log->flush();
 
-  grid_function = boost::bind( &Utility::OneDDistribution::evaluate,
+  grid_function = boost::bind( &Utility::UnivariateDistribution::evaluate,
                                boost::cref( *waller_hartree_incoherent_cs ),
                                _1 );
 
@@ -1181,7 +1186,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
   (*d_os_log) << ".";
   d_os_log->flush();
 
-  grid_function = boost::bind( &Utility::OneDDistribution::evaluate,
+  grid_function = boost::bind( &Utility::UnivariateDistribution::evaluate,
                                boost::cref( *waller_hartree_coherent_cs ),
                                _1 );
 
@@ -1197,7 +1202,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
   (*d_os_log) << ".";
   d_os_log->flush();
 
-  grid_function = boost::bind( &Utility::OneDDistribution::evaluate,
+  grid_function = boost::bind( &Utility::UnivariateDistribution::evaluate,
                                boost::cref( *pair_production_cs ),
                                _1 );
 
@@ -1212,7 +1217,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
   (*d_os_log) << ".";
   d_os_log->flush();
 
-  grid_function = boost::bind( &Utility::OneDDistribution::evaluate,
+  grid_function = boost::bind( &Utility::UnivariateDistribution::evaluate,
                                boost::cref( *triplet_production_cs ),
                                _1 );
 
@@ -1232,7 +1237,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
   for( unsigned i = 0; i < subshell_photoelectric_effect_css.size(); ++i )
   {
     grid_function = boost::bind(
-                   &Utility::OneDDistribution::evaluate,
+                   &Utility::UnivariateDistribution::evaluate,
                    boost::cref( *subshell_photoelectric_effect_css[i].second ),
                    _1 );
 
@@ -1503,7 +1508,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
       {
         if ( d_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
         {
-          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Direct<Utility::LogLogCosLog<true> > >(
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogCosLog<true>,Utility::Direct>(
             elastic_angle[this->getMaxElectronEnergy()],
             elastic_pdf[this->getMaxElectronEnergy()] ,
             elastic_angle,
@@ -1514,7 +1519,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
         }
         else if ( d_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
         {
-          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Direct<Utility::LinLinLin> >(
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Direct>(
             elastic_angle[this->getMaxElectronEnergy()],
             elastic_pdf[this->getMaxElectronEnergy()] ,
             elastic_angle,
@@ -1525,7 +1530,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
         }
         else if ( d_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
         {
-          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Direct<Utility::LinLinLog> >(
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Direct>(
             elastic_angle[this->getMaxElectronEnergy()],
             elastic_pdf[this->getMaxElectronEnergy()] ,
             elastic_angle,
@@ -1547,7 +1552,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
       {
         if ( d_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
         {
-          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Correlated<Utility::LogLogCosLog<true> > >(
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogCosLog<true>,Utility::Correlated>(
             elastic_angle[this->getMaxElectronEnergy()],
             elastic_pdf[this->getMaxElectronEnergy()] ,
             elastic_angle,
@@ -1558,7 +1563,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
         }
         else if ( d_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
         {
-          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Correlated<Utility::LinLinLin> >(
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
             elastic_angle[this->getMaxElectronEnergy()],
             elastic_pdf[this->getMaxElectronEnergy()] ,
             elastic_angle,
@@ -1569,7 +1574,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
         }
         else if ( d_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
         {
-          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::Correlated<Utility::LinLinLog> >(
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated >(
             elastic_angle[this->getMaxElectronEnergy()],
             elastic_pdf[this->getMaxElectronEnergy()] ,
             elastic_angle,
@@ -1741,7 +1746,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const
 {
   // cross sections in the file
-  std::shared_ptr<const Utility::OneDDistribution>
+  std::shared_ptr<const Utility::UnivariateDistribution>
         bremsstrahlung_cross_section, atomic_excitation_cross_section,
         cutoff_elastic_cross_section, total_elastic_cross_section;
 
@@ -1776,7 +1781,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
 
   std::set<unsigned>::iterator shell = data_container.getSubshells().begin();
 
-  std::vector<std::pair<unsigned,std::shared_ptr<const Utility::OneDDistribution> > >
+  std::vector<std::pair<unsigned,std::shared_ptr<const Utility::UnivariateDistribution> > >
     electroionization_cross_section( data_container.getSubshells().size() );
 
   unsigned i = 0;
@@ -1846,7 +1851,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
 
   // Calculate the union energy grid
   boost::function<double (double pz)> grid_function =
-    boost::bind( &Utility::OneDDistribution::evaluate,
+    boost::bind( &Utility::UnivariateDistribution::evaluate,
                  boost::cref( *cutoff_elastic_cross_section ),
                  _1 );
 
@@ -1863,7 +1868,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
   d_os_log->flush();
 
   grid_function = boost::bind(
-        &Utility::OneDDistribution::evaluate,
+        &Utility::UnivariateDistribution::evaluate,
         boost::cref( *total_elastic_cross_section ),
         _1 );
 
@@ -1878,7 +1883,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
   (*d_os_log) << ".";
   d_os_log->flush();
 
-  grid_function = boost::bind( &Utility::OneDDistribution::evaluate,
+  grid_function = boost::bind( &Utility::UnivariateDistribution::evaluate,
                                boost::cref( *bremsstrahlung_cross_section ),
                                _1 );
 
@@ -1893,7 +1898,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
   (*d_os_log) << ".";
   d_os_log->flush();
 
-  grid_function = boost::bind( &Utility::OneDDistribution::evaluate,
+  grid_function = boost::bind( &Utility::UnivariateDistribution::evaluate,
                                boost::cref( *atomic_excitation_cross_section ),
                                _1 );
 
@@ -1915,7 +1920,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
   for( unsigned i = 0; i < electroionization_cross_section.size(); ++i )
   {
     grid_function = boost::bind(
-                   &Utility::OneDDistribution::evaluate,
+                   &Utility::UnivariateDistribution::evaluate,
                    boost::cref( *electroionization_cross_section[i].second ),
                    _1 );
 
@@ -2107,21 +2112,16 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         coupled_distribution;
 
   // Get the cutoff and total elastic cross sections and the energy grid
-  Teuchos::ArrayRCP<double> cutoff_cross_section, total_cross_section, energy_grid;
-
-  cutoff_cross_section.assign(
-        data_container.getCutoffElasticCrossSection().begin(),
-        data_container.getCutoffElasticCrossSection().end() );
-  total_cross_section.assign(
-        data_container.getTotalElasticCrossSection().begin(),
-        data_container.getTotalElasticCrossSection().end() );
-  energy_grid.assign(
-        data_container.getElectronEnergyGrid().begin(),
-        data_container.getElectronEnergyGrid().end() );
+  std::shared_ptr<std::vector<double> > cutoff_cross_section(
+       new std::vector<double>( data_container.getCutoffElasticCrossSection() ) );
+  std::shared_ptr<std::vector<double> > total_cross_section(
+       new std::vector<double>( data_container.getTotalElasticCrossSection() ) );
+  std::shared_ptr<std::vector<double> > energy_grid(
+       new std::vector<double>( data_container.getElectronEnergyGrid() ) );
 
   if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Correlated<Utility::LogLogCosLog<true> > >(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog<true>,Utility::Correlated>(
         coupled_distribution,
         cutoff_cross_section,
         total_cross_section,
@@ -2135,7 +2135,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
   }
   else if ( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Correlated<Utility::LinLinLin> >(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLin,Utility::Correlated>(
         coupled_distribution,
         cutoff_cross_section,
         total_cross_section,
@@ -2149,7 +2149,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
   }
   else if ( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Correlated<Utility::LinLinLog> >(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
         coupled_distribution,
         cutoff_cross_section,
         total_cross_section,
@@ -2163,14 +2163,14 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
   }
 
   // Construct the hash-based grid searcher for this atom
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
+  std::shared_ptr<Utility::HashBasedGridSearcher<double> > grid_searcher(
+     new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
              energy_grid,
              100u ) );
 
   // Create the elastic traits
-  std::shared_ptr<Utility::ElasticElectronTraits> elastic_traits(
-    new Utility::ElasticElectronTraits( data_container.getAtomicNumber() ) );
+  std::shared_ptr<MonteCarlo::ElasticElectronTraits> elastic_traits(
+    new MonteCarlo::ElasticElectronTraits( data_container.getAtomicNumber() ) );
 
   // Create the moment evaluator of the elastic scattering distribution
   std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator> moments_evaluator;
@@ -2223,14 +2223,14 @@ void StandardElectronPhotonRelaxationDataGenerator::extractHalfComptonProfile(
                                       std::vector<double>& half_profile ) const
 {
   // Extract the raw Compton profile data
-  Teuchos::ArrayView<const double> lswd_block =
+  Utility::ArrayView<const double> lswd_block =
     d_ace_epr_data->extractLSWDBlock();
 
-  Teuchos::ArrayView<const double> swd_block =
+  Utility::ArrayView<const double> swd_block =
     d_ace_epr_data->extractSWDBlock();
 
   // Create the Compton profile subshell converter for this
-  std::shared_ptr<MonteCarlo::ComptonProfileSubshellConverter> converter;
+  std::shared_ptr<const MonteCarlo::ComptonProfileSubshellConverter> converter;
 
   MonteCarlo::ComptonProfileSubshellConverterFactory::createConverter(
                                                      converter,
@@ -2245,10 +2245,10 @@ void StandardElectronPhotonRelaxationDataGenerator::extractHalfComptonProfile(
   unsigned grid_size = swd_block[profile_index];
 
   // Extract the profile
-  Teuchos::ArrayView<const double> raw_compton_profile_momentum_grid =
+  Utility::ArrayView<const double> raw_compton_profile_momentum_grid =
     swd_block( profile_index + 1, grid_size );
 
-  Teuchos::ArrayView<const double> raw_compton_profile =
+  Utility::ArrayView<const double> raw_compton_profile =
     swd_block( profile_index + 1 + grid_size, grid_size );
 
   // Make sure the ACE data has the expected properties
@@ -2273,15 +2273,15 @@ void StandardElectronPhotonRelaxationDataGenerator::extractHalfComptonProfile(
 
 // Extract the subshell photoelectric effect cross section
 void StandardElectronPhotonRelaxationDataGenerator::extractSubshellPhotoelectricCrossSections(
-          std::vector<std::pair<unsigned,std::shared_ptr<const Utility::OneDDistribution> > >& cross_sections ) const
+          std::vector<std::pair<unsigned,std::shared_ptr<const Utility::UnivariateDistribution> > >& cross_sections ) const
 {
-  Teuchos::ArrayView<const double> subshell_ordering =
+  Utility::ArrayView<const double> subshell_ordering =
     d_ace_epr_data->extractSubshellENDFDesignators();
 
-  Teuchos::ArrayView<const double> energy_grid =
+  Utility::ArrayView<const double> energy_grid =
       d_ace_epr_data->extractPhotonEnergyGrid();
 
-  Teuchos::ArrayView<const double> raw_subshell_pe_cross_sections =
+  Utility::ArrayView<const double> raw_subshell_pe_cross_sections =
     d_ace_epr_data->extractSPHELBlock();
 
   cross_sections.resize( subshell_ordering.size() );
@@ -2290,7 +2290,7 @@ void StandardElectronPhotonRelaxationDataGenerator::extractSubshellPhotoelectric
   {
     cross_sections[i].first = (unsigned)subshell_ordering[i];
 
-    Teuchos::ArrayView<const double> raw_subshell_pe_cross_section =
+    Utility::ArrayView<const double> raw_subshell_pe_cross_section =
       raw_subshell_pe_cross_sections( i*energy_grid.size(),
                                       energy_grid.size() );
 
@@ -2304,9 +2304,9 @@ void StandardElectronPhotonRelaxationDataGenerator::extractSubshellPhotoelectric
 // Create the subshell impulse approx incoherent cross section evaluators
 void StandardElectronPhotonRelaxationDataGenerator::createSubshellImpulseApproxIncoherentCrossSectionEvaluators(
      const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
-     Teuchos::Array<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution> > >& evaluators ) const
+     std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution> > >& evaluators ) const
 {
-  Teuchos::ArrayView<const double> subshell_ordering =
+  Utility::ArrayView<const double> subshell_ordering =
     d_ace_epr_data->extractSubshellENDFDesignators();
 
   evaluators.resize( subshell_ordering.size() );
@@ -2323,7 +2323,7 @@ void StandardElectronPhotonRelaxationDataGenerator::createSubshellImpulseApproxI
     const std::vector<double>& occupation_number =
       data_container.getOccupationNumber( subshell );
 
-    Teuchos::RCP<const Utility::OneDDistribution> occupation_number_dist(
+    std::shared_ptr<const Utility::UnivariateDistribution> occupation_number_dist(
        new Utility::TabularDistribution<Utility::LinLin>( momentum_grid,
                                                           occupation_number ) );
 
@@ -2507,7 +2507,7 @@ void StandardElectronPhotonRelaxationDataGenerator::mergeElectronUnionEnergyGrid
 // Create the cross section on the union energy grid
 void StandardElectronPhotonRelaxationDataGenerator::createCrossSectionOnUnionEnergyGrid(
    const std::list<double>& union_energy_grid,
-   const std::shared_ptr<const Utility::OneDDistribution>& original_cross_section,
+   const std::shared_ptr<const Utility::UnivariateDistribution>& original_cross_section,
    std::vector<double>& cross_section,
    unsigned& threshold_index,
    const double true_threshold_energy,
@@ -2516,7 +2516,7 @@ void StandardElectronPhotonRelaxationDataGenerator::createCrossSectionOnUnionEne
   // Make the threshold region cross section (this step is not necessary if
   // the true threshold energy == the threshold energy present in the cross
   // section distribution)
-  std::shared_ptr<const Utility::OneDDistribution>
+  std::shared_ptr<const Utility::UnivariateDistribution>
     threshold_region_cross_section;
 
   // Get the cross sections current (possibly fictitious) threshold energy
@@ -2924,7 +2924,7 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateDiscreteAnglesAndWe
  */
 void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasticCrossSection(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
-    std::shared_ptr<const Utility::OneDDistribution>& total_elastic_cross_section,
+    std::shared_ptr<const Utility::UnivariateDistribution>& total_elastic_cross_section,
     const std::vector<double>& raw_energy_grid ) const
 {
   // Check to see if the ENDL or integrated cross section is wanted
@@ -2943,38 +2943,38 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasti
 
     if ( d_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LogLogCosLog<false> > >(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog<false>,Utility::Correlated>(
             cutoff_endl_distribution,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),
             data_container.getElasticAngularEnergyGrid(),
-            Utility::ElasticElectronTraits::mu_peak,
+            MonteCarlo::ElasticElectronTraits::mu_peak,
             d_tabular_evaluation_tol );
     }
     else if ( d_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LinLinLin> >(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin,Utility::Correlated>(
             cutoff_endl_distribution,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),
             data_container.getElasticAngularEnergyGrid(),
-            Utility::ElasticElectronTraits::mu_peak,
+            MonteCarlo::ElasticElectronTraits::mu_peak,
             d_tabular_evaluation_tol );
     }
     else if ( d_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LinLinLog> >(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
             cutoff_endl_distribution,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),
             data_container.getElasticAngularEnergyGrid(),
-            Utility::ElasticElectronTraits::mu_peak,
+            MonteCarlo::ElasticElectronTraits::mu_peak,
             d_tabular_evaluation_tol );
     }
 
     // Create the elastic traits
-    std::shared_ptr<Utility::ElasticElectronTraits> elastic_traits(
-      new Utility::ElasticElectronTraits( data_container.getAtomicNumber() ) );
+    std::shared_ptr<MonteCarlo::ElasticElectronTraits> elastic_traits(
+      new MonteCarlo::ElasticElectronTraits( data_container.getAtomicNumber() ) );
 
     std::vector<double> raw_elastic_cross_section =
         d_endl_data_container->getCutoffElasticCrossSection();
@@ -2987,15 +2987,15 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasti
 
       // Get the cutoff pdf
       double cutoff_pdf = cutoff_endl_distribution->evaluate(
-                            energy, Utility::ElasticElectronTraits::mu_peak );
+                            energy, MonteCarlo::ElasticElectronTraits::mu_peak );
 
       // Get Moliere's Screening Constant
       double eta = elastic_traits->evaluateMoliereScreeningConstant( energy );
 
       // Calculate the integrated PDF value at the cutoff angle cosine
       double integrated_pdf =
-        cutoff_pdf*Utility::ElasticElectronTraits::delta_mu_peak*
-            ( Utility::ElasticElectronTraits::delta_mu_peak + eta )/( eta );
+        cutoff_pdf*MonteCarlo::ElasticElectronTraits::delta_mu_peak*
+            ( MonteCarlo::ElasticElectronTraits::delta_mu_peak + eta )/( eta );
 
       // Evaluate the total coupled cross section at the incoming energy
       raw_elastic_cross_section[n] *= ( 1.0 +  integrated_pdf );

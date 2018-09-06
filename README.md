@@ -229,8 +229,8 @@ are described.
 4. run `tar -xvf boost_1_56_0.tar.gz`
 5. move to the boost_1_56_0 directory (e.g. software/boost/boost_1_56_0)
 6. run `./bootstrap.sh --prefix=absolute-path-to_software/boost`
-7. run `./b2  --prefix=absolute-path-to_software/boost -s NO_BZIP2=1 link=shared runtime-link=shared cxxflags="-D_GLIBCXX_USE_CXX11_ABI=0"`
-8. run `./b2 install`
+7. if MPI has been built, open project-conf.jam in your preferred text editor and add the following line: `using mpi ;`
+8. run `./b2 -j n --prefix=absolute-path-to_software/boost -s NO_BZIP2=1 link=shared runtime-link=shared cxxflags="-D_GLIBCXX_USE_CXX11_ABI=0" install`, where n is the number of threads to use while building
 9. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/boost/lib:$LD_LIBRARY_PATH`
 10. run `exec bash`
 

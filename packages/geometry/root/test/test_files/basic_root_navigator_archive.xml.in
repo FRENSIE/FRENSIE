@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE boost_serialization>
+<boost_serialization signature="serialization::archive" version="15">
+<navigator class_id="0" tracking_level="0" version="1">
+  <px class_id="1" class_name="RootNavigator" tracking_level="1" version="0" object_id="_0">
+    <Navigator class_id="2" tracking_level="0" version="0"></Navigator>
+    <d_root_model class_id="3" tracking_level="0" version="1">
+      <px class_id="4" tracking_level="1" version="0" object_id="_1">
+	<Model class_id="5" tracking_level="0" version="0"></Model>
+	<d_model_properties class_id="6" tracking_level="0" version="0">
+	  <tx class_id="7" tracking_level="1" version="0" object_id="_2">
+	    <d_file_name>${CMAKE_CURRENT_BINARY_DIR}/basic_root_geometry.root</d_file_name>
+	    <d_material_property_name>mat</d_material_property_name>
+	    <d_void_material_name>void</d_void_material_name>
+	    <d_terminal_material_name>graveyard</d_terminal_material_name>
+	  </tx>
+	</d_model_properties>
+      </px>
+    </d_root_model>
+    <d_internal_ray_set>1</d_internal_ray_set>
+    <current_cell>2</current_cell>
+    <current_position>
+      <item>0.00000000000000000e+00</item>
+      <item>0.00000000000000000e+00</item>
+      <item>0.00000000000000000e+00</item>
+    </current_position>
+    <current_direction>
+      <item>0.00000000000000000e+00</item>
+      <item>0.00000000000000000e+00</item>
+      <item>1.00000000000000000e+00</item>
+    </current_direction>
+  </px>
+</navigator>
+</boost_serialization>

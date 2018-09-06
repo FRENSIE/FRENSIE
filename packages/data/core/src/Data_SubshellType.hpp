@@ -13,6 +13,10 @@
 #include <string>
 #include <iostream>
 
+// FRENSIE Includes
+#include "Utility_ToStringTraits.hpp"
+#include "Utility_TypeTraits.hpp"
+
 namespace Data{
 
 /*! Subshell identifiers
@@ -75,19 +79,49 @@ SubshellType convertEADLDesignatorToSubshellEnum(
 unsigned convertEADLDesignatorToENDFDesignator(
 					      const unsigned eadl_designator );
 
-//! Convert a Subshell enumeration to a string
-std::string convertSubshellEnumToString( const SubshellType subshell );
+} // end Data namespace
+
+namespace Utility{
+
+/*! Specialization of Utility::ToStringTraits for Data::SubshellType
+ * \ingroup to_string_traits
+ */
+template<>
+struct ToStringTraits<Data::SubshellType>
+{
+  //! Convert a Data::SubshellType to a string
+  static std::string toString( const Data::SubshellType obj );
+
+  //! Place the Data::SubshellType in a stream
+  static void toStream( std::ostream& os, const Data::SubshellType obj );
+};
+
+/*! Specialization of Utility::IsHashable for Data::SubshellType
+ * \ingroup type_traits
+ */
+template<>
+struct IsHashable<Data::SubshellType> : public std::true_type
+{ /* ... */ };
+
+} // end Utility namespace
+
+namespace std{
 
 //! Stream operator for printing Subshell enums
 inline std::ostream& operator<<( std::ostream& os,
-				 const SubshellType subshell )
+				 const Data::SubshellType subshell )
 {
-  os << convertSubshellEnumToString( subshell );
+  Utility::ToStringTraits<Data::SubshellType>::toStream( os, subshell );
+
   return os;
 }
 
+//! Specialization of std::hash for Data::SubshellType
+template<>
+struct hash<Data::SubshellType> : public hash<unsigned>
+{ /* ... */ };
 
-} // end Data namespace
+} // end std namespace
 
 #endif // end DATA_SUBSHELL_TYPE_HPP
 

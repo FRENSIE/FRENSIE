@@ -7,15 +7,12 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp" // Must include first
 #include "Utility_WattDistribution.hpp"
 
-namespace Utility{
-
-// Explicit instantiation
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareWattDistribution<void,void> );
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareWattDistribution<void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareWattDistribution<void,void> );
   
-} // end Utility namespace
-
 //---------------------------------------------------------------------------//
 // end Utility_WattDistribution.cpp
 //---------------------------------------------------------------------------//

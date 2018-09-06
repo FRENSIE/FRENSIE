@@ -10,21 +10,20 @@
 #include <iostream>
 #include <memory>
 
-// Boost Includes
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/shared_ptr.hpp>
-
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_PositronState.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types.
+//---------------------------------------------------------------------------//
+
+typedef TestArchiveHelper::TestArchives TestArchives;
 
 //---------------------------------------------------------------------------//
 // Testing functions
@@ -39,12 +38,12 @@ bool compareHistoryNumbers( const MonteCarlo::ParticleState& state_a,
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that particles can be pushed to the particle bank
-TEUCHOS_UNIT_TEST( ParticleBank, push )
+FRENSIE_UNIT_TEST( ParticleBank, push )
 {
   MonteCarlo::ParticleBank bank;
 
-  TEST_ASSERT( bank.isEmpty() );
-  TEST_EQUALITY_CONST( bank.size(), 0 );
+  FRENSIE_CHECK( bank.isEmpty() );
+  FRENSIE_CHECK_EQUAL( bank.size(), 0 );
 
   {
     MonteCarlo::PhotonState photon( 0ull );
@@ -52,8 +51,8 @@ TEUCHOS_UNIT_TEST( ParticleBank, push )
     bank.push( photon );
   }
 
-  TEST_ASSERT( !bank.isEmpty() );
-  TEST_EQUALITY_CONST( bank.size(), 1 );
+  FRENSIE_CHECK( !bank.isEmpty() );
+  FRENSIE_CHECK_EQUAL( bank.size(), 1 );
 
   {
     MonteCarlo::NeutronState neutron( 0ull );
@@ -61,17 +60,17 @@ TEUCHOS_UNIT_TEST( ParticleBank, push )
     bank.push( neutron );
   }
 
-  TEST_ASSERT( !bank.isEmpty() );
-  TEST_EQUALITY_CONST( bank.size(), 2 );
+  FRENSIE_CHECK( !bank.isEmpty() );
+  FRENSIE_CHECK_EQUAL( bank.size(), 2 );
 
   {
     MonteCarlo::NeutronState neutron( 1ull );
 
-    bank.push( neutron, MonteCarlo::N__N_ELASTIC_REACTION );
+    bank.push( neutron, 0 );
   }
 
-  TEST_ASSERT( !bank.isEmpty() );
-  TEST_EQUALITY_CONST( bank.size(), 3 );
+  FRENSIE_CHECK( !bank.isEmpty() );
+  FRENSIE_CHECK_EQUAL( bank.size(), 3 );
 
   {
     MonteCarlo::ElectronState electron( 2ull );
@@ -79,8 +78,8 @@ TEUCHOS_UNIT_TEST( ParticleBank, push )
     bank.push( electron );
   }
 
-  TEST_ASSERT( !bank.isEmpty() );
-  TEST_EQUALITY_CONST( bank.size(), 4 );
+  FRENSIE_CHECK( !bank.isEmpty() );
+  FRENSIE_CHECK_EQUAL( bank.size(), 4 );
 
   {
     MonteCarlo::PositronState positron( 3ull );
@@ -88,28 +87,28 @@ TEUCHOS_UNIT_TEST( ParticleBank, push )
     bank.push( positron );
   }
 
-  TEST_ASSERT( !bank.isEmpty() );
-  TEST_EQUALITY_CONST( bank.size(), 5 );
+  FRENSIE_CHECK( !bank.isEmpty() );
+  FRENSIE_CHECK_EQUAL( bank.size(), 5 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that particle smart pointers can be pushed to the bank
-TEUCHOS_UNIT_TEST( ParticleBank, push_smart_ptr )
+FRENSIE_UNIT_TEST( ParticleBank, push_smart_ptr )
 {
   MonteCarlo::ParticleBank bank;
 
-  TEST_ASSERT( bank.isEmpty() );
-  TEST_EQUALITY_CONST( bank.size(), 0 );
+  FRENSIE_CHECK( bank.isEmpty() );
+  FRENSIE_CHECK_EQUAL( bank.size(), 0 );
 
   {
-    Teuchos::RCP<MonteCarlo::ParticleState> photon(
+    std::shared_ptr<MonteCarlo::ParticleState> photon(
 					 new MonteCarlo::PhotonState( 0ull ) );
 
     bank.push( photon );
   }
 
-  TEST_ASSERT( !bank.isEmpty() );
-  TEST_EQUALITY_CONST( bank.size(), 1 );
+  FRENSIE_CHECK( !bank.isEmpty() );
+  FRENSIE_CHECK_EQUAL( bank.size(), 1 );
 
   {
     boost::shared_ptr<MonteCarlo::NeutronState> neutron(
@@ -118,18 +117,18 @@ TEUCHOS_UNIT_TEST( ParticleBank, push_smart_ptr )
     bank.push( neutron );
   }
 
-  TEST_ASSERT( !bank.isEmpty() );
-  TEST_EQUALITY_CONST( bank.size(), 2 );
+  FRENSIE_CHECK( !bank.isEmpty() );
+  FRENSIE_CHECK_EQUAL( bank.size(), 2 );
 
   {
     std::shared_ptr<MonteCarlo::NeutronState> neutron(
 					new MonteCarlo::NeutronState( 1ull ) );
 
-    bank.push( neutron, MonteCarlo::N__N_ELASTIC_REACTION );
+    bank.push( neutron, 1 );
   }
 
-  TEST_ASSERT( !bank.isEmpty() );
-  TEST_EQUALITY_CONST( bank.size(), 3 );
+  FRENSIE_CHECK( !bank.isEmpty() );
+  FRENSIE_CHECK_EQUAL( bank.size(), 3 );
 
   {
     std::shared_ptr<MonteCarlo::ElectronState> electron(
@@ -138,8 +137,8 @@ TEUCHOS_UNIT_TEST( ParticleBank, push_smart_ptr )
     bank.push( electron );
   }
 
-  TEST_ASSERT( !bank.isEmpty() );
-  TEST_EQUALITY_CONST( bank.size(), 4 );
+  FRENSIE_CHECK( !bank.isEmpty() );
+  FRENSIE_CHECK_EQUAL( bank.size(), 4 );
 
   {
     std::shared_ptr<MonteCarlo::PositronState> positron(
@@ -148,13 +147,13 @@ TEUCHOS_UNIT_TEST( ParticleBank, push_smart_ptr )
     bank.push( positron );
   }
 
-  TEST_ASSERT( !bank.isEmpty() );
-  TEST_EQUALITY_CONST( bank.size(), 5 );
+  FRENSIE_CHECK( !bank.isEmpty() );
+  FRENSIE_CHECK_EQUAL( bank.size(), 5 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that that the top element of the bank can be accessed
-TEUCHOS_UNIT_TEST( ParticleBank, top )
+FRENSIE_UNIT_TEST( ParticleBank, top )
 {
   MonteCarlo::ParticleBank bank;
 
@@ -164,16 +163,16 @@ TEUCHOS_UNIT_TEST( ParticleBank, top )
 
   MonteCarlo::ParticleState& base_particle = particle;
 
-  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 1ull );
+  FRENSIE_CHECK_EQUAL( bank.top().getHistoryNumber(), 1ull );
 
   const MonteCarlo::ParticleBank& const_bank = bank;
 
-  TEST_EQUALITY( const_bank.top().getHistoryNumber(), 1ull );
+  FRENSIE_CHECK_EQUAL( const_bank.top().getHistoryNumber(), 1ull );
 }
 
 //---------------------------------------------------------------------------//
 // Check that particles can be removed from the bank
-TEUCHOS_UNIT_TEST( ParticleBank, pop )
+FRENSIE_UNIT_TEST( ParticleBank, pop )
 {
   MonteCarlo::ParticleBank bank;
 
@@ -181,16 +180,16 @@ TEUCHOS_UNIT_TEST( ParticleBank, pop )
 
   bank.push( particle );
 
-  TEST_ASSERT( !bank.isEmpty() );
+  FRENSIE_CHECK( !bank.isEmpty() );
 
   bank.pop();
 
-  TEST_ASSERT( bank.isEmpty() );
+  FRENSIE_CHECK( bank.isEmpty() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the top particle can be removed from the bank and stored
-TEUCHOS_UNIT_TEST( ParticleBank, pop_store )
+FRENSIE_UNIT_TEST( ParticleBank, pop_store )
 {
   MonteCarlo::ParticleBank bank;
 
@@ -214,44 +213,44 @@ TEUCHOS_UNIT_TEST( ParticleBank, pop_store )
     bank.push( particle );
   }
 
-  TEST_EQUALITY_CONST( bank.size(), 4 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 4 );
 
   std::shared_ptr<MonteCarlo::ParticleState> particle_1;
 
   bank.pop( particle_1 );
 
-  TEST_EQUALITY_CONST( particle_1->getHistoryNumber(), 0ull );
-  TEST_EQUALITY_CONST( particle_1->getParticleType(), MonteCarlo::PHOTON );
-  TEST_EQUALITY_CONST( bank.size(), 3 );
+  FRENSIE_CHECK_EQUAL( particle_1->getHistoryNumber(), 0ull );
+  FRENSIE_CHECK_EQUAL( particle_1->getParticleType(), MonteCarlo::PHOTON );
+  FRENSIE_CHECK_EQUAL( bank.size(), 3 );
 
   boost::shared_ptr<MonteCarlo::ParticleState> particle_2;
 
   bank.pop( particle_2 );
 
-  TEST_EQUALITY_CONST( particle_2->getHistoryNumber(), 1ull );
-  TEST_EQUALITY_CONST( particle_2->getParticleType(), MonteCarlo::NEUTRON );
-  TEST_EQUALITY_CONST( bank.size(), 2 );
+  FRENSIE_CHECK_EQUAL( particle_2->getHistoryNumber(), 1ull );
+  FRENSIE_CHECK_EQUAL( particle_2->getParticleType(), MonteCarlo::NEUTRON );
+  FRENSIE_CHECK_EQUAL( bank.size(), 2 );
 
-  Teuchos::RCP<MonteCarlo::ParticleState> particle_3;
+  std::shared_ptr<MonteCarlo::ParticleState> particle_3;
 
   bank.pop( particle_3 );
 
-  TEST_EQUALITY_CONST( particle_3->getHistoryNumber(), 2ull );
-  TEST_EQUALITY_CONST( particle_3->getParticleType(), MonteCarlo::ELECTRON );
-  TEST_EQUALITY_CONST( bank.size(), 1 );
+  FRENSIE_CHECK_EQUAL( particle_3->getHistoryNumber(), 2ull );
+  FRENSIE_CHECK_EQUAL( particle_3->getParticleType(), MonteCarlo::ELECTRON );
+  FRENSIE_CHECK_EQUAL( bank.size(), 1 );
 
-  Teuchos::RCP<MonteCarlo::ParticleState> particle_4;
+  std::shared_ptr<MonteCarlo::ParticleState> particle_4;
 
   bank.pop( particle_4 );
 
-  TEST_EQUALITY_CONST( particle_4->getHistoryNumber(), 3ull );
-  TEST_EQUALITY_CONST( particle_4->getParticleType(), MonteCarlo::POSITRON );
-  TEST_EQUALITY_CONST( bank.size(), 0 );
+  FRENSIE_CHECK_EQUAL( particle_4->getHistoryNumber(), 3ull );
+  FRENSIE_CHECK_EQUAL( particle_4->getParticleType(), MonteCarlo::POSITRON );
+  FRENSIE_CHECK_EQUAL( bank.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the bank can be sorted
-TEUCHOS_UNIT_TEST( ParticleBank, sort )
+FRENSIE_UNIT_TEST( ParticleBank, sort )
 {
   MonteCarlo::ParticleBank bank;
 
@@ -279,32 +278,32 @@ TEUCHOS_UNIT_TEST( ParticleBank, sort )
     bank.push( positron );
   }
 
-  TEST_ASSERT( !bank.isSorted( compareHistoryNumbers ) );
+  FRENSIE_CHECK( !bank.isSorted( compareHistoryNumbers ) );
 
   bank.sort( compareHistoryNumbers );
 
-  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 0ull );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::POSITRON );
+  FRENSIE_CHECK_EQUAL( bank.top().getHistoryNumber(), 0ull );
+  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), MonteCarlo::POSITRON );
 
   bank.pop();
 
-  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 1ull );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
+  FRENSIE_CHECK_EQUAL( bank.top().getHistoryNumber(), 1ull );
+  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), MonteCarlo::PHOTON );
 
   bank.pop();
 
-  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 2ull );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::NEUTRON );
+  FRENSIE_CHECK_EQUAL( bank.top().getHistoryNumber(), 2ull );
+  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), MonteCarlo::NEUTRON );
 
   bank.pop();
 
-  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 3ull );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
+  FRENSIE_CHECK_EQUAL( bank.top().getHistoryNumber(), 3ull );
+  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), MonteCarlo::ELECTRON );
 }
 
 //---------------------------------------------------------------------------//
 // Check that banks can be merged
-TEUCHOS_UNIT_TEST( ParticleBank, merge )
+FRENSIE_UNIT_TEST( ParticleBank, merge )
 {
   MonteCarlo::ParticleBank bank_a, bank_b;
 
@@ -361,60 +360,60 @@ TEUCHOS_UNIT_TEST( ParticleBank, merge )
 
   bank_a.merge( bank_b, compareHistoryNumbers );
 
-  TEST_ASSERT( bank_a.isSorted( compareHistoryNumbers ) );
-  TEST_EQUALITY_CONST( bank_a.size(), 8 );
-  TEST_EQUALITY_CONST( bank_b.size(), 0 );
+  FRENSIE_CHECK( bank_a.isSorted( compareHistoryNumbers ) );
+  FRENSIE_CHECK_EQUAL( bank_a.size(), 8 );
+  FRENSIE_CHECK_EQUAL( bank_b.size(), 0 );
 
-  TEST_EQUALITY_CONST( bank_a.top().getHistoryNumber(), 0ull );
-  TEST_EQUALITY_CONST( bank_a.top().getParticleType(),
+  FRENSIE_CHECK_EQUAL( bank_a.top().getHistoryNumber(), 0ull );
+  FRENSIE_CHECK_EQUAL( bank_a.top().getParticleType(),
 		       MonteCarlo::ELECTRON );
 
   bank_a.pop();
 
-  TEST_EQUALITY_CONST( bank_a.top().getHistoryNumber(), 1ull );
-  TEST_EQUALITY_CONST( bank_a.top().getParticleType(),
+  FRENSIE_CHECK_EQUAL( bank_a.top().getHistoryNumber(), 1ull );
+  FRENSIE_CHECK_EQUAL( bank_a.top().getParticleType(),
 		       MonteCarlo::NEUTRON );
 
   bank_a.pop();
 
-  TEST_EQUALITY_CONST( bank_a.top().getHistoryNumber(), 2ull );
-  TEST_EQUALITY_CONST( bank_a.top().getParticleType(),
+  FRENSIE_CHECK_EQUAL( bank_a.top().getHistoryNumber(), 2ull );
+  FRENSIE_CHECK_EQUAL( bank_a.top().getParticleType(),
 		       MonteCarlo::PHOTON );
 
   bank_a.pop();
 
-  TEST_EQUALITY_CONST( bank_a.top().getHistoryNumber(), 3ull );
-  TEST_EQUALITY_CONST( bank_a.top().getParticleType(),
+  FRENSIE_CHECK_EQUAL( bank_a.top().getHistoryNumber(), 3ull );
+  FRENSIE_CHECK_EQUAL( bank_a.top().getParticleType(),
 		       MonteCarlo::PHOTON );
 
   bank_a.pop();
 
-  TEST_EQUALITY_CONST( bank_a.top().getHistoryNumber(), 4ull );
-  TEST_EQUALITY_CONST( bank_a.top().getParticleType(),
+  FRENSIE_CHECK_EQUAL( bank_a.top().getHistoryNumber(), 4ull );
+  FRENSIE_CHECK_EQUAL( bank_a.top().getParticleType(),
 		       MonteCarlo::NEUTRON );
 
   bank_a.pop();
 
-  TEST_EQUALITY_CONST( bank_a.top().getHistoryNumber(), 5ull );
-  TEST_EQUALITY_CONST( bank_a.top().getParticleType(),
+  FRENSIE_CHECK_EQUAL( bank_a.top().getHistoryNumber(), 5ull );
+  FRENSIE_CHECK_EQUAL( bank_a.top().getParticleType(),
 		       MonteCarlo::ELECTRON );
 
   bank_a.pop();
 
-  TEST_EQUALITY_CONST( bank_a.top().getHistoryNumber(), 6ull );
-  TEST_EQUALITY_CONST( bank_a.top().getParticleType(),
+  FRENSIE_CHECK_EQUAL( bank_a.top().getHistoryNumber(), 6ull );
+  FRENSIE_CHECK_EQUAL( bank_a.top().getParticleType(),
 		       MonteCarlo::POSITRON );
 
   bank_a.pop();
 
-  TEST_EQUALITY_CONST( bank_a.top().getHistoryNumber(), 7ull );
-  TEST_EQUALITY_CONST( bank_a.top().getParticleType(),
+  FRENSIE_CHECK_EQUAL( bank_a.top().getHistoryNumber(), 7ull );
+  FRENSIE_CHECK_EQUAL( bank_a.top().getParticleType(),
 		       MonteCarlo::POSITRON );
 }
 
 //---------------------------------------------------------------------------//
 // Check that banks can be spliced
-TEUCHOS_UNIT_TEST( ParticleBank, splice )
+FRENSIE_UNIT_TEST( ParticleBank, splice )
 {
   MonteCarlo::ParticleBank bank_a, bank_b;
 
@@ -460,62 +459,74 @@ TEUCHOS_UNIT_TEST( ParticleBank, splice )
 
   bank_a.splice( bank_b );
 
-  TEST_EQUALITY_CONST( bank_a.size(), 8 );
-  TEST_EQUALITY_CONST( bank_b.size(), 0 );
+  FRENSIE_CHECK_EQUAL( bank_a.size(), 8 );
+  FRENSIE_CHECK_EQUAL( bank_b.size(), 0 );
 
-  TEST_EQUALITY_CONST( bank_a.top().getHistoryNumber(), 2ull );
-  TEST_EQUALITY_CONST( bank_a.top().getParticleType(),
+  FRENSIE_CHECK_EQUAL( bank_a.top().getHistoryNumber(), 2ull );
+  FRENSIE_CHECK_EQUAL( bank_a.top().getParticleType(),
 		       MonteCarlo::PHOTON );
 
   bank_a.pop();
 
-  TEST_EQUALITY_CONST( bank_a.top().getHistoryNumber(), 4ull );
-  TEST_EQUALITY_CONST( bank_a.top().getParticleType(),
+  FRENSIE_CHECK_EQUAL( bank_a.top().getHistoryNumber(), 4ull );
+  FRENSIE_CHECK_EQUAL( bank_a.top().getParticleType(),
 		       MonteCarlo::NEUTRON );
 
   bank_a.pop();
 
-  TEST_EQUALITY_CONST( bank_a.top().getHistoryNumber(), 0ull );
-  TEST_EQUALITY_CONST( bank_a.top().getParticleType(),
+  FRENSIE_CHECK_EQUAL( bank_a.top().getHistoryNumber(), 0ull );
+  FRENSIE_CHECK_EQUAL( bank_a.top().getParticleType(),
 		       MonteCarlo::ELECTRON );
 
   bank_a.pop();
 
-  TEST_EQUALITY_CONST( bank_a.top().getHistoryNumber(), 6ull );
-  TEST_EQUALITY_CONST( bank_a.top().getParticleType(),
+  FRENSIE_CHECK_EQUAL( bank_a.top().getHistoryNumber(), 6ull );
+  FRENSIE_CHECK_EQUAL( bank_a.top().getParticleType(),
 		       MonteCarlo::POSITRON );
 
   bank_a.pop();
 
-  TEST_EQUALITY_CONST( bank_a.top().getHistoryNumber(), 3ull );
-  TEST_EQUALITY_CONST( bank_a.top().getParticleType(),
+  FRENSIE_CHECK_EQUAL( bank_a.top().getHistoryNumber(), 3ull );
+  FRENSIE_CHECK_EQUAL( bank_a.top().getParticleType(),
 		       MonteCarlo::PHOTON );
 
   bank_a.pop();
 
-  TEST_EQUALITY_CONST( bank_a.top().getHistoryNumber(), 1ull );
-  TEST_EQUALITY_CONST( bank_a.top().getParticleType(),
+  FRENSIE_CHECK_EQUAL( bank_a.top().getHistoryNumber(), 1ull );
+  FRENSIE_CHECK_EQUAL( bank_a.top().getParticleType(),
 		       MonteCarlo::NEUTRON );
 
   bank_a.pop();
 
-  TEST_EQUALITY_CONST( bank_a.top().getHistoryNumber(), 5ull );
-  TEST_EQUALITY_CONST( bank_a.top().getParticleType(),
+  FRENSIE_CHECK_EQUAL( bank_a.top().getHistoryNumber(), 5ull );
+  FRENSIE_CHECK_EQUAL( bank_a.top().getParticleType(),
 		       MonteCarlo::ELECTRON );
 
   bank_a.pop();
 
-  TEST_EQUALITY_CONST( bank_a.top().getHistoryNumber(), 7ull );
-  TEST_EQUALITY_CONST( bank_a.top().getParticleType(),
+  FRENSIE_CHECK_EQUAL( bank_a.top().getHistoryNumber(), 7ull );
+  FRENSIE_CHECK_EQUAL( bank_a.top().getParticleType(),
 		       MonteCarlo::POSITRON );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the bank can be archived
-TEUCHOS_UNIT_TEST( ParticleBank, archive )
+// Check that a particle bank can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleBank, archive, TestArchives )
 {
-  // Create a bank, fill it with some particles and archive it
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_particle_bank" );
+  std::ostringstream archive_ostream;
+
   {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
     MonteCarlo::ParticleBank bank;
 
     MonteCarlo::PhotonState photon( 0ull );
@@ -530,37 +541,38 @@ TEUCHOS_UNIT_TEST( ParticleBank, archive )
     MonteCarlo::PositronState positron( 3ull );
     bank.push( positron );
 
-    std::ofstream ofs( "test_particle_bank_archive.xml" );
-
-    boost::archive::xml_oarchive ar(ofs);
-    ar << BOOST_SERIALIZATION_NVP( bank );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( bank ) );
   }
 
-  // Load the archived bank
-  MonteCarlo::ParticleBank loaded_bank;
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
 
-  std::ifstream ifs( "test_particle_bank_archive.xml" );
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
 
-  boost::archive::xml_iarchive ar(ifs);
-  ar >> boost::serialization::make_nvp( "bank", loaded_bank );
+  createIArchive( archive_istream, iarchive );
 
-  TEST_EQUALITY_CONST( loaded_bank.size(), 4 );
-  TEST_EQUALITY_CONST( loaded_bank.top().getParticleType(),
+  MonteCarlo::ParticleBank bank;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( bank ) );
+
+  FRENSIE_CHECK_EQUAL( bank.size(), 4 );
+  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(),
                        MonteCarlo::PHOTON );
 
-  loaded_bank.pop();
+  bank.pop();
 
-  TEST_EQUALITY_CONST( loaded_bank.top().getParticleType(),
+  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(),
                        MonteCarlo::NEUTRON );
 
-  loaded_bank.pop();
+  bank.pop();
 
-  TEST_EQUALITY_CONST( loaded_bank.top().getParticleType(),
+  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(),
                        MonteCarlo::ELECTRON );
 
-  loaded_bank.pop();
+  bank.pop();
 
-  TEST_EQUALITY_CONST( loaded_bank.top().getParticleType(),
+  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(),
                        MonteCarlo::POSITRON );
 }
 

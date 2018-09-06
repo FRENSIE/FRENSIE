@@ -7,14 +7,11 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp" // Must include first
 #include "Utility_EvaporationDistribution.hpp"
 
-namespace Utility{
-
-// Explicit instantiation
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareEvaporationDistribution<void,void> );
-
-} // end Utility namespac
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareEvaporationDistribution<void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareEvaporationDistribution<void,void> );
 
 //---------------------------------------------------------------------------//
 // end Utility_EvaporationDistribution.cpp

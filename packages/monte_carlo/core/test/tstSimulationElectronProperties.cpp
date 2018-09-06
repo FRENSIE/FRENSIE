@@ -9,281 +9,286 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_SimulationElectronProperties.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "MonteCarlo_TwoDInterpolationType.hpp"
 #include "MonteCarlo_TwoDGridType.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+typedef TestArchiveHelper::TestArchives TestArchives;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Test the simulation properties defaults
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, defaults )
+FRENSIE_UNIT_TEST( SimulationElectronProperties, defaults )
 {
   MonteCarlo::SimulationElectronProperties properties;
 
-  TEST_EQUALITY_CONST( properties.getMinElectronEnergy(), 1.5e-5 );
-  TEST_EQUALITY_CONST( properties.getMaxElectronEnergy(), 20.0 );
-  TEST_EQUALITY_CONST( properties.getElectronEvaluationTolerance(), 1e-7 );
-  TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(),
+  FRENSIE_CHECK_EQUAL( properties.getMinElectronEnergy(), 1.5e-5 );
+  FRENSIE_CHECK_EQUAL( properties.getMaxElectronEnergy(), 20.0 );
+  FRENSIE_CHECK_EQUAL( properties.getElectronEvaluationTolerance(), 1e-7 );
+  FRENSIE_CHECK_EQUAL( properties.getElectronTwoDInterpPolicy(),
                        MonteCarlo::LOGLOGLOG_INTERPOLATION );
-  TEST_EQUALITY_CONST( properties.getElectronTwoDGridPolicy(),
+  FRENSIE_CHECK_EQUAL( properties.getElectronTwoDGridPolicy(),
                        MonteCarlo::UNIT_BASE_CORRELATED_GRID );
-  TEST_ASSERT( properties.isAtomicRelaxationModeOn() );
-  TEST_ASSERT( properties.isElasticModeOn() );
-  TEST_EQUALITY_CONST( properties.getElasticElectronDistributionMode(),
+  FRENSIE_CHECK( properties.isAtomicRelaxationModeOn() );
+  FRENSIE_CHECK( properties.isElasticModeOn() );
+  FRENSIE_CHECK_EQUAL( properties.getElasticElectronDistributionMode(),
                        MonteCarlo::DECOUPLED_DISTRIBUTION );
-  TEST_EQUALITY_CONST( properties.getCoupledElasticSamplingMode(),
+  FRENSIE_CHECK_EQUAL( properties.getCoupledElasticSamplingMode(),
                        MonteCarlo::TWO_D_UNION );
-  TEST_EQUALITY_CONST( properties.getElasticCutoffAngleCosine(), 1.0 );
-  TEST_ASSERT( properties.isElectroionizationModeOn() );
-  TEST_ASSERT( properties.isBremsstrahlungModeOn() );
-  TEST_EQUALITY_CONST( properties.getBremsstrahlungAngularDistributionFunction(),
+  FRENSIE_CHECK_EQUAL( properties.getElasticCutoffAngleCosine(), 1.0 );
+  FRENSIE_CHECK( properties.isElectroionizationModeOn() );
+  FRENSIE_CHECK( properties.isBremsstrahlungModeOn() );
+  FRENSIE_CHECK_EQUAL( properties.getBremsstrahlungAngularDistributionFunction(),
                        MonteCarlo::TWOBS_DISTRIBUTION );
-  TEST_ASSERT( properties.isAtomicExcitationModeOn() );
+  FRENSIE_CHECK( properties.isAtomicExcitationModeOn() );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the min electron energy can be set
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setMinElectronEnergy )
+FRENSIE_UNIT_TEST( SimulationElectronProperties, setMinElectronEnergy )
 {
   MonteCarlo::SimulationElectronProperties properties;
 
   properties.setMinElectronEnergy( 1e-2 );
 
-  TEST_EQUALITY_CONST( properties.getMinElectronEnergy(), 1e-2 );
+  FRENSIE_CHECK_EQUAL( properties.getMinElectronEnergy(), 1e-2 );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the max electron energy can be set
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setMaxElectronEnergy )
+FRENSIE_UNIT_TEST( SimulationElectronProperties, setMaxElectronEnergy )
 {
   MonteCarlo::SimulationElectronProperties properties;
 
   properties.setMaxElectronEnergy( 15.0 );
 
-  TEST_EQUALITY_CONST( properties.getMaxElectronEnergy(), 15.0 );
+  FRENSIE_CHECK_EQUAL( properties.getMaxElectronEnergy(), 15.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the electron evaluation tolerance can be set
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElectronEvaluationTolerance )
+FRENSIE_UNIT_TEST( SimulationElectronProperties, setElectronEvaluationTolerance )
 {
   MonteCarlo::SimulationElectronProperties properties;
 
   properties.setElectronEvaluationTolerance( 1e-4 );
 
-  TEST_EQUALITY( properties.getElectronEvaluationTolerance(), 1e-4 );
+  FRENSIE_CHECK_EQUAL( properties.getElectronEvaluationTolerance(), 1e-4 );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the electron 2D interpolation policy can be set
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElectronTwoDInterpPolicy )
+FRENSIE_UNIT_TEST( SimulationElectronProperties, setElectronTwoDInterpPolicy )
 {
   MonteCarlo::SimulationElectronProperties properties;
 
-  TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(),
+  FRENSIE_CHECK_EQUAL( properties.getElectronTwoDInterpPolicy(),
                        MonteCarlo::LOGLOGLOG_INTERPOLATION );
 
   MonteCarlo::TwoDInterpolationType interp;
 
   interp = MonteCarlo::LINLINLIN_INTERPOLATION;
   properties.setElectronTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(), interp );
+  FRENSIE_CHECK_EQUAL( properties.getElectronTwoDInterpPolicy(), interp );
 
   interp = MonteCarlo::LINLINLOG_INTERPOLATION;
   properties.setElectronTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(), interp );
+  FRENSIE_CHECK_EQUAL( properties.getElectronTwoDInterpPolicy(), interp );
 
   interp = MonteCarlo::LINLOGLIN_INTERPOLATION;
   properties.setElectronTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(), interp );
+  FRENSIE_CHECK_EQUAL( properties.getElectronTwoDInterpPolicy(), interp );
 
   interp = MonteCarlo::LOGLINLIN_INTERPOLATION;
   properties.setElectronTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(), interp );
+  FRENSIE_CHECK_EQUAL( properties.getElectronTwoDInterpPolicy(), interp );
 
   interp = MonteCarlo::LINLOGLOG_INTERPOLATION;
   properties.setElectronTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(), interp );
+  FRENSIE_CHECK_EQUAL( properties.getElectronTwoDInterpPolicy(), interp );
 
   interp = MonteCarlo::LOGLINLOG_INTERPOLATION;
   properties.setElectronTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(), interp );
+  FRENSIE_CHECK_EQUAL( properties.getElectronTwoDInterpPolicy(), interp );
 
   interp = MonteCarlo::LOGLOGLIN_INTERPOLATION;
   properties.setElectronTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(), interp );
+  FRENSIE_CHECK_EQUAL( properties.getElectronTwoDInterpPolicy(), interp );
 
   interp = MonteCarlo::LOGLOGLOG_INTERPOLATION;
   properties.setElectronTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(), interp );
+  FRENSIE_CHECK_EQUAL( properties.getElectronTwoDInterpPolicy(), interp );
 }
 
 //---------------------------------------------------------------------------//
-// Test that the electron 2D grid policy can be set
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElectronTwoDGridPolicy )
+// Test that the electron 2D sampling policy can be set
+FRENSIE_UNIT_TEST( SimulationElectronProperties, setElectronTwoDGridPolicy )
 {
   MonteCarlo::SimulationElectronProperties properties;
 
-  TEST_EQUALITY_CONST( properties.getElectronTwoDGridPolicy(),
+  FRENSIE_CHECK_EQUAL( properties.getElectronTwoDGridPolicy(),
                        MonteCarlo::UNIT_BASE_CORRELATED_GRID );
 
   MonteCarlo::TwoDGridType type = MonteCarlo::CORRELATED_GRID;
   properties.setElectronTwoDGridPolicy( type );
-  TEST_EQUALITY_CONST( properties.getElectronTwoDGridPolicy(), type );
+  FRENSIE_CHECK_EQUAL( properties.getElectronTwoDGridPolicy(), type );
 
   type = MonteCarlo::DIRECT_GRID;
   properties.setElectronTwoDGridPolicy( type );
-  TEST_EQUALITY_CONST( properties.getElectronTwoDGridPolicy(), type );
+  FRENSIE_CHECK_EQUAL( properties.getElectronTwoDGridPolicy(), type );
 
   type = MonteCarlo::UNIT_BASE_GRID;
   properties.setElectronTwoDGridPolicy( type );
-  TEST_EQUALITY_CONST( properties.getElectronTwoDGridPolicy(), type );
+  FRENSIE_CHECK_EQUAL( properties.getElectronTwoDGridPolicy(), type );
 
   type = MonteCarlo::UNIT_BASE_CORRELATED_GRID;
   properties.setElectronTwoDGridPolicy( type );
-  TEST_EQUALITY_CONST( properties.getElectronTwoDGridPolicy(), type );
+  FRENSIE_CHECK_EQUAL( properties.getElectronTwoDGridPolicy(), type );
 }
 
 //---------------------------------------------------------------------------//
 // Test that atomic relaxation mode can be turned off
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setAtomicRelaxationModeOffOn )
+FRENSIE_UNIT_TEST( SimulationElectronProperties, setAtomicRelaxationModeOffOn )
 {
   MonteCarlo::SimulationElectronProperties properties;
 
   properties.setAtomicRelaxationModeOff();
 
-  TEST_ASSERT( !properties.isAtomicRelaxationModeOn() );
+  FRENSIE_CHECK( !properties.isAtomicRelaxationModeOn() );
 
   properties.setAtomicRelaxationModeOn();
 
-  TEST_ASSERT( properties.isAtomicRelaxationModeOn() );
+  FRENSIE_CHECK( properties.isAtomicRelaxationModeOn() );
 }
 
 //---------------------------------------------------------------------------//
 // Test that elastic mode can be turned off
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElasticModeOffOn )
+FRENSIE_UNIT_TEST( SimulationElectronProperties, setElasticModeOffOn )
 {
   MonteCarlo::SimulationElectronProperties properties;
 
   properties.setElasticModeOff();
 
-  TEST_ASSERT( !properties.isElasticModeOn() );
+  FRENSIE_CHECK( !properties.isElasticModeOn() );
 
   properties.setElasticModeOn();
 
-  TEST_ASSERT( properties.isElasticModeOn() );
+  FRENSIE_CHECK( properties.isElasticModeOn() );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the elastic distribution mode can be set
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElasticElectronDistributionMode )
+FRENSIE_UNIT_TEST( SimulationElectronProperties, setElasticElectronDistributionMode )
 {
   MonteCarlo::SimulationElectronProperties properties;
 
-  TEST_EQUALITY_CONST( properties.getElasticElectronDistributionMode(),
+  FRENSIE_CHECK_EQUAL( properties.getElasticElectronDistributionMode(),
                        MonteCarlo::DECOUPLED_DISTRIBUTION );
 
   MonteCarlo::ElasticElectronDistributionType mode;
 
   mode = MonteCarlo::COUPLED_DISTRIBUTION;
   properties.setElasticElectronDistributionMode( mode );
-  TEST_EQUALITY_CONST( properties.getElasticElectronDistributionMode(),
+  FRENSIE_CHECK_EQUAL( properties.getElasticElectronDistributionMode(),
                        mode );
 
   mode = MonteCarlo::HYBRID_DISTRIBUTION;
   properties.setElasticElectronDistributionMode( mode );
-  TEST_EQUALITY_CONST( properties.getElasticElectronDistributionMode(),
+  FRENSIE_CHECK_EQUAL( properties.getElasticElectronDistributionMode(),
                        mode );
 
   mode = MonteCarlo::CUTOFF_DISTRIBUTION;
   properties.setElasticElectronDistributionMode( mode );
-  TEST_EQUALITY_CONST( properties.getElasticElectronDistributionMode(),
+  FRENSIE_CHECK_EQUAL( properties.getElasticElectronDistributionMode(),
                        mode );
 
   mode = MonteCarlo::SCREENED_RUTHERFORD_DISTRIBUTION;
   properties.setElasticElectronDistributionMode( mode );
-  TEST_EQUALITY_CONST( properties.getElasticElectronDistributionMode(),
+  FRENSIE_CHECK_EQUAL( properties.getElasticElectronDistributionMode(),
                        mode );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the coupled elastic sampling mode can be set
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setCoupledElasticSamplingMode )
+FRENSIE_UNIT_TEST( SimulationElectronProperties, setCoupledElasticSamplingMode )
 {
   MonteCarlo::SimulationElectronProperties properties;
 
-  TEST_EQUALITY_CONST( properties.getCoupledElasticSamplingMode(),
+  FRENSIE_CHECK_EQUAL( properties.getCoupledElasticSamplingMode(),
                        MonteCarlo::TWO_D_UNION );
 
   MonteCarlo::CoupledElasticSamplingMethod mode;
 
   mode = MonteCarlo::ONE_D_UNION;
   properties.setCoupledElasticSamplingMode( mode );
-  TEST_EQUALITY_CONST( properties.getCoupledElasticSamplingMode(),
+  FRENSIE_CHECK_EQUAL( properties.getCoupledElasticSamplingMode(),
                        mode );
 
   mode = MonteCarlo::TWO_D_UNION;
   properties.setCoupledElasticSamplingMode( mode );
-  TEST_EQUALITY_CONST( properties.getCoupledElasticSamplingMode(),
+  FRENSIE_CHECK_EQUAL( properties.getCoupledElasticSamplingMode(),
                        mode );
 
   mode = MonteCarlo::MODIFIED_TWO_D_UNION;
   properties.setCoupledElasticSamplingMode( mode );
-  TEST_EQUALITY_CONST( properties.getCoupledElasticSamplingMode(),
+  FRENSIE_CHECK_EQUAL( properties.getCoupledElasticSamplingMode(),
                        mode );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the elastic cutoff angle cosine can be set
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElasticCutoffAngleCosine )
+FRENSIE_UNIT_TEST( SimulationElectronProperties, setElasticCutoffAngleCosine )
 {
   MonteCarlo::SimulationElectronProperties properties;
 
   properties.setElasticCutoffAngleCosine( 0.9 );
 
-  TEST_EQUALITY( properties.getElasticCutoffAngleCosine(), 0.9 );
+  FRENSIE_CHECK_EQUAL( properties.getElasticCutoffAngleCosine(), 0.9 );
 }
 
 //---------------------------------------------------------------------------//
 // Test that electroionization mode can be turned off
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElectroionizationModeOffOn )
+FRENSIE_UNIT_TEST( SimulationElectronProperties, setElectroionizationModeOffOn )
 {
   MonteCarlo::SimulationElectronProperties properties;
 
   properties.setElectroionizationModeOff();
 
-  TEST_ASSERT( !properties.isElectroionizationModeOn() );
+  FRENSIE_CHECK( !properties.isElectroionizationModeOn() );
 
   properties.setElectroionizationModeOn();
 
-  TEST_ASSERT( properties.isElectroionizationModeOn() );
+  FRENSIE_CHECK( properties.isElectroionizationModeOn() );
 }
 
 //---------------------------------------------------------------------------//
 // Test that bremsstrahlung mode can be turned off
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setBremsstrahlungModeOffOn )
+FRENSIE_UNIT_TEST( SimulationElectronProperties, setBremsstrahlungModeOffOn )
 {
   MonteCarlo::SimulationElectronProperties properties;
 
   properties.setBremsstrahlungModeOff();
 
-  TEST_ASSERT( !properties.isBremsstrahlungModeOn() );
+  FRENSIE_CHECK( !properties.isBremsstrahlungModeOn() );
 
   properties.setBremsstrahlungModeOn();
 
-  TEST_ASSERT( properties.isBremsstrahlungModeOn() );
+  FRENSIE_CHECK( properties.isBremsstrahlungModeOn() );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the bremsstrahlung angular distribution function can be turned to Dipole
-TEUCHOS_UNIT_TEST( SimulationElectronProperties,
+FRENSIE_UNIT_TEST( SimulationElectronProperties,
                    setBremsstrahlungAngularDistributionFunction_Dipole )
 {
   MonteCarlo::SimulationElectronProperties properties;
@@ -293,14 +298,14 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties,
 
   properties.setBremsstrahlungAngularDistributionFunction( function );
 
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
                      properties.getBremsstrahlungAngularDistributionFunction(),
                      MonteCarlo::DIPOLE_DISTRIBUTION );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the bremsstrahlung angular distribution function can be turned to Tabular
-TEUCHOS_UNIT_TEST( SimulationElectronProperties,
+FRENSIE_UNIT_TEST( SimulationElectronProperties,
                    setBremsstrahlungAngularDistributionFunction_Tabular )
 {
   MonteCarlo::SimulationElectronProperties properties;
@@ -310,24 +315,123 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties,
 
   properties.setBremsstrahlungAngularDistributionFunction( function );
 
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
                      properties.getBremsstrahlungAngularDistributionFunction(),
                      MonteCarlo::TABULAR_DISTRIBUTION );
 }
 
 //---------------------------------------------------------------------------//
 // Test that atomic excitation mode can be turned off
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setAtomicExcitationModeOffOn )
+FRENSIE_UNIT_TEST( SimulationElectronProperties, setAtomicExcitationModeOffOn )
 {
   MonteCarlo::SimulationElectronProperties properties;
 
   properties.setAtomicExcitationModeOff();
 
-  TEST_ASSERT( !properties.isAtomicExcitationModeOn() );
+  FRENSIE_CHECK( !properties.isAtomicExcitationModeOn() );
 
   properties.setAtomicExcitationModeOn();
 
-  TEST_ASSERT( properties.isAtomicExcitationModeOn() );
+  FRENSIE_CHECK( properties.isAtomicExcitationModeOn() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the properties can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationElectronProperties,
+                                   archive,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_simulation_electron_props" );
+  std::ostringstream archive_ostream;
+
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    MonteCarlo::SimulationElectronProperties default_properties;
+
+    MonteCarlo::SimulationElectronProperties custom_properties;
+    custom_properties.setMinElectronEnergy( 1e-2 );
+    custom_properties.setMaxElectronEnergy( 15.0 );
+    custom_properties.setElectronEvaluationTolerance( 1e-4 );
+    custom_properties.setElectronTwoDInterpPolicy( MonteCarlo::LINLINLIN_INTERPOLATION );
+    custom_properties.setElectronTwoDGridPolicy( MonteCarlo::DIRECT_GRID );
+    custom_properties.setAtomicRelaxationModeOff();
+    custom_properties.setElasticModeOff();
+    custom_properties.setElasticElectronDistributionMode( MonteCarlo::COUPLED_DISTRIBUTION );
+    custom_properties.setCoupledElasticSamplingMode( MonteCarlo::ONE_D_UNION );
+    custom_properties.setElasticCutoffAngleCosine( 0.9 );
+    custom_properties.setElectroionizationModeOff();
+    custom_properties.setBremsstrahlungModeOff();
+    custom_properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
+    custom_properties.setAtomicExcitationModeOff();
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( default_properties ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( custom_properties ) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  MonteCarlo::SimulationElectronProperties default_properties;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( default_properties ) );
+
+  FRENSIE_CHECK_EQUAL( default_properties.getMinElectronEnergy(), 1.5e-5 );
+  FRENSIE_CHECK_EQUAL( default_properties.getMaxElectronEnergy(), 20.0 );
+  FRENSIE_CHECK_EQUAL( default_properties.getElectronEvaluationTolerance(), 1e-7 );
+  FRENSIE_CHECK_EQUAL( default_properties.getElectronTwoDInterpPolicy(),
+                       MonteCarlo::LOGLOGLOG_INTERPOLATION );
+  FRENSIE_CHECK_EQUAL( default_properties.getElectronTwoDGridPolicy(),
+                       MonteCarlo::UNIT_BASE_CORRELATED_GRID );
+  FRENSIE_CHECK( default_properties.isAtomicRelaxationModeOn() );
+  FRENSIE_CHECK( default_properties.isElasticModeOn() );
+  FRENSIE_CHECK_EQUAL( default_properties.getElasticElectronDistributionMode(),
+                       MonteCarlo::DECOUPLED_DISTRIBUTION );
+  FRENSIE_CHECK_EQUAL( default_properties.getCoupledElasticSamplingMode(),
+                       MonteCarlo::TWO_D_UNION );
+  FRENSIE_CHECK_EQUAL( default_properties.getElasticCutoffAngleCosine(), 1.0 );
+  FRENSIE_CHECK( default_properties.isElectroionizationModeOn() );
+  FRENSIE_CHECK( default_properties.isBremsstrahlungModeOn() );
+  FRENSIE_CHECK_EQUAL( default_properties.getBremsstrahlungAngularDistributionFunction(),
+                       MonteCarlo::TWOBS_DISTRIBUTION );
+  FRENSIE_CHECK( default_properties.isAtomicExcitationModeOn() );
+
+  MonteCarlo::SimulationElectronProperties custom_properties;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( custom_properties ) );
+
+  FRENSIE_CHECK_EQUAL( custom_properties.getMinElectronEnergy(), 1e-2 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getMaxElectronEnergy(), 15.0 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getElectronEvaluationTolerance(), 1e-4 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getElectronTwoDInterpPolicy(),
+                       MonteCarlo::LINLINLIN_INTERPOLATION );
+  FRENSIE_CHECK_EQUAL( custom_properties.getElectronTwoDGridPolicy(),
+                       MonteCarlo::DIRECT_GRID )
+  FRENSIE_CHECK( !custom_properties.isAtomicRelaxationModeOn() );
+  FRENSIE_CHECK( !custom_properties.isElasticModeOn() );
+  FRENSIE_CHECK_EQUAL( custom_properties.getElasticElectronDistributionMode(),
+                       MonteCarlo::COUPLED_DISTRIBUTION );
+  FRENSIE_CHECK_EQUAL( custom_properties.getCoupledElasticSamplingMode(),
+                       MonteCarlo::ONE_D_UNION );
+  FRENSIE_CHECK_EQUAL( custom_properties.getElasticCutoffAngleCosine(), 0.9 );
+  FRENSIE_CHECK( !custom_properties.isElectroionizationModeOn() );
+  FRENSIE_CHECK( !custom_properties.isBremsstrahlungModeOn() );
+  FRENSIE_CHECK_EQUAL( custom_properties.getBremsstrahlungAngularDistributionFunction(),
+                       MonteCarlo::DIPOLE_DISTRIBUTION );
+  FRENSIE_CHECK( !custom_properties.isAtomicExcitationModeOn() );
 }
 
 //---------------------------------------------------------------------------//

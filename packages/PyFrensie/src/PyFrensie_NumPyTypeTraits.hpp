@@ -9,11 +9,10 @@
 #ifndef PYFRENSIE_NUMPY_TYPE_TRAITS_HPP
 #define PYFRENSIE_NUMPY_TYPE_TRAITS_HPP
 
-// Trilinos Includes
-#include <numpy_include.hpp>
-
 // FRENSIE Includes
 #include "PyFrensie_NumPyTypeTraitsDecl.hpp"
+#define NO_IMPORT_ARRAY
+#include <numpy_include.h>
 
 namespace PyFrensie{
 

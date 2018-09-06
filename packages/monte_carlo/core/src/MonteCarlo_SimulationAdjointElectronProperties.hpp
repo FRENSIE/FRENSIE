@@ -9,9 +9,16 @@
 #ifndef MONTE_CARLO_SIMULATION_ADJOINT_ELECTRON_PROPERTIES_HPP
 #define MONTE_CARLO_SIMULATION_ADJOINT_ELECTRON_PROPERTIES_HPP
 
+// Boost Includes
+#include <boost/serialization/shared_ptr.hpp>
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/export.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "MonteCarlo_ElasticElectronDistributionType.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -104,14 +111,14 @@ public:
 
   //! Set the adjoint elastic distribution mode ( Decoupled by default )
   void setAdjointElasticElectronDistributionMode(
-                        ElasticElectronDistributionType distribution_mode );
+                        const ElasticElectronDistributionType distribution_mode );
 
   //! Return the elastic distribution mode
   ElasticElectronDistributionType getAdjointElasticElectronDistributionMode() const;
 
   //! Set the adjoint coupled elastic sampling mode ( Two D Union by default )
   void setAdjointCoupledElasticSamplingMode(
-                        CoupledElasticSamplingMethod sampling_method );
+                        const CoupledElasticSamplingMethod sampling_method );
 
   //! Return the adjoint coupled elastic sampling mode
   CoupledElasticSamplingMethod getAdjointCoupledElasticSamplingMode() const;
@@ -123,6 +130,13 @@ public:
   unsigned getNumberOfAdjointElectronHashGridBins() const;
 
 private:
+
+  // Save the state to an archive
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version );
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
   // The absolute mimimum adjoint electron energy (MeV)
   static const double s_absolute_min_adjoint_electron_energy;
@@ -168,7 +182,34 @@ private:
   unsigned d_num_adjoint_electron_hash_grid_bins;
 };
 
+// Save/load the state to an archive
+template<typename Archive>
+void SimulationAdjointElectronProperties::serialize( Archive& ar,
+                                                     const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_NVP( d_min_adjoint_electron_energy );
+  ar & BOOST_SERIALIZATION_NVP( d_max_adjoint_electron_energy );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_elastic_mode_on );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_electroionization_mode_on );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_bremsstrahlung_mode_on );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_atomic_excitation_mode_on );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_evaluation_tol );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_bremsstrahlung_angular_distribution_function );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_elastic_cutoff_angle_cosine );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_elastic_distribution_mode );
+  ar & BOOST_SERIALIZATION_NVP( d_coupled_elastic_sampling_method );
+  ar & BOOST_SERIALIZATION_NVP( d_num_adjoint_electron_hash_grid_bins );
+}
+
 } // end MonteCarlo namespace
+
+#if !defined SWIG
+
+BOOST_CLASS_VERSION( MonteCarlo::SimulationAdjointElectronProperties, 0 );
+BOOST_CLASS_EXPORT_KEY2( MonteCarlo::SimulationAdjointElectronProperties, "SimulationAdjointElectronProperties" );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SimulationAdjointElectronProperties );
+
+#endif // end !defined SWIG
 
 #endif // end MONTE_CARLO_SIMULATION_ADJOINT_ELECTRON_PROPERTIES_HPP
 

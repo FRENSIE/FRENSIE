@@ -16,8 +16,8 @@
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_CosineInterpolationPolicy.hpp"
 #include "Utility_Tuple.hpp"
-#include "Utility_TupleMemberTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
+#include "Utility_TypeNameTraits.hpp"
 
 namespace Utility{
 
@@ -232,8 +232,8 @@ public:
                            const ZYUpperFunctor& evaluate_z_with_y_1_functor );
 
   //! Conduct the interpolation between two grids
-  template<TupleMember YIndepMember,
-	   TupleMember DepMember,
+  template<size_t YIndepMember,
+	   size_t DepMember,
 	   typename YIterator,
 	   typename ZIterator,
 	   typename T>
@@ -251,8 +251,8 @@ public:
 			ZIterator end_dep_grid_1 );
 
   //! Conduct the interpolation between two grids
-  template<TupleMember YIndepMember,
-	   TupleMember DepMember,
+  template<size_t YIndepMember,
+	   size_t DepMember,
 	   typename Iterator,
 	   typename T >
   static T interpolate( const T indep_var_x_0,
@@ -302,8 +302,8 @@ public:
     const double fuzzy_boundary_tol = 1e-3 );
 
   //! Conduct unit base interpolation between two grids
-  template<TupleMember YIndepMember,
-	   TupleMember DepMember,
+  template<size_t YIndepMember,
+	   size_t DepMember,
 	   typename YIterator,
 	   typename ZIterator,
 	   typename T >
@@ -322,8 +322,8 @@ public:
                 const double fuzzy_boundary_tol = 1e-3 );
 
   //! Conduct the interpolation between two grids
-  template<TupleMember YIndepMember,
-	   TupleMember DepMember,
+  template<size_t YIndepMember,
+	   size_t DepMember,
 	   typename Iterator,
 	   typename T>
   static T interpolateUnitBase( const T indep_var_x_0,
@@ -353,8 +353,8 @@ public:
                 const double fuzzy_boundary_tol = 1e-3 );
 
   //! Conduct the interpolation between two processed grids
-  template<TupleMember YIndepMember,
-	   TupleMember DepMember,
+  template<size_t YIndepMember,
+	   size_t DepMember,
 	   typename T,
 	   typename YIterator,
 	   typename ZIterator>
@@ -372,8 +372,8 @@ public:
 				 ZIterator end_processed_dep_grid_1 );
 
   //! Conduct the interpolation between two processed grids
-  template<TupleMember YIndepMember,
-	   TupleMember DepMember,
+  template<size_t YIndepMember,
+	   size_t DepMember,
 	   typename T,
 	   typename Iterator>
   static T interpolateProcessed( const T processed_indep_var_x_0,
@@ -401,8 +401,8 @@ public:
 				 ZIterator end_processed_dep_grid_1 );
 
   //! Conduct unit base interpolation between two processed grids
-  template<TupleMember YIndepMember,
-	   TupleMember DepMember,
+  template<size_t YIndepMember,
+	   size_t DepMember,
 	   typename T,
 	   typename YIterator,
 	   typename ZIterator>
@@ -421,8 +421,8 @@ public:
 				      ZIterator end_processed_dep_grid_1 );
 
   //! Conduct unit base interpolation between two processed grids
-  template<TupleMember YIndepMember,
-	   TupleMember DepMember,
+  template<size_t YIndepMember,
+	   size_t DepMember,
 	   typename T,
 	   typename Iterator>
   static T interpolateProcessedUnitBase(
@@ -465,8 +465,8 @@ private:
                                      const double tol = 1e-3 );
 
   // Interpolate on the specified y grid
-  template<TupleMember YIndepMember,
-	   TupleMember DepMember,
+  template<size_t YIndepMember,
+	   size_t DepMember,
 	   typename YIterator,
 	   typename ZIterator,
 	   typename T>
@@ -477,8 +477,8 @@ private:
                                ZIterator end_dep_grid );
 
   // Interpolate on the specified processed y grid
-  template<TupleMember YIndepMember,
-	   TupleMember DepMember,
+  template<size_t YIndepMember,
+	   size_t DepMember,
 	   typename YIterator,
 	   typename ZIterator,
 	   typename T>
@@ -649,6 +649,25 @@ struct LogLogCosLog : public TwoDInterpolationPolicyImpl<LogLogCos<use_nudge>,Lo
   //! The name of the policy
   static const std::string name();
 };
+
+TYPE_NAME_TRAITS_QUICK_DECL( LinLinLin );
+TYPE_NAME_TRAITS_QUICK_DECL( LinLogLin );
+TYPE_NAME_TRAITS_QUICK_DECL( LinLinLog );
+TYPE_NAME_TRAITS_QUICK_DECL( LinLogLog );
+TYPE_NAME_TRAITS_QUICK_DECL( LogLinLin );
+TYPE_NAME_TRAITS_QUICK_DECL( LogLogLin );
+TYPE_NAME_TRAITS_QUICK_DECL( LogLinLog );
+TYPE_NAME_TRAITS_QUICK_DECL( LogLogLog );
+// use_nudge = true
+TYPE_NAME_TRAITS_QUICK_DECL( LinLogCosLin<true> );
+TYPE_NAME_TRAITS_QUICK_DECL( LinLogCosLog<true> );
+TYPE_NAME_TRAITS_QUICK_DECL( LogLogCosLin<true> );
+TYPE_NAME_TRAITS_QUICK_DECL( LogLogCosLog<true> );
+// use_nudge = true
+TYPE_NAME_TRAITS_QUICK_DECL( LinLogCosLin<false> );
+TYPE_NAME_TRAITS_QUICK_DECL( LinLogCosLog<false> );
+TYPE_NAME_TRAITS_QUICK_DECL( LogLogCosLin<false> );
+TYPE_NAME_TRAITS_QUICK_DECL( LogLogCosLog<false> );
 
 } // end Utility namespace
 

@@ -8,7 +8,7 @@
 
 // FRENSIE Includes
 #include "Geometry_FastDagMCCellHandler.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 
@@ -24,7 +24,7 @@ FastDagMCCellHandler::FastDagMCCellHandler( const moab::DagMC* dagmc_instance )
 
   while( cell_it != this->end() )
   {
-    ModuleTraits::InternalCellHandle cell_id =
+    EntityId cell_id =
       const_cast<moab::DagMC*>( dagmc_instance )->get_entity_id( *cell_it );
 
     d_cell_id_handle_map.insert(
@@ -35,8 +35,8 @@ FastDagMCCellHandler::FastDagMCCellHandler( const moab::DagMC* dagmc_instance )
 }
 
 // Get the cell id from a cell handle
-ModuleTraits::InternalCellHandle FastDagMCCellHandler::getCellId(
-                                  const moab::EntityHandle cell_handle ) const
+auto FastDagMCCellHandler::getCellId(
+             const moab::EntityHandle cell_handle ) const -> EntityId
 {
   // Make sure the cell handle exists
   testPrecondition( this->doesCellHandleExist( cell_handle ) );
@@ -46,7 +46,7 @@ ModuleTraits::InternalCellHandle FastDagMCCellHandler::getCellId(
 
 // Get the cell handle from a cell id
 moab::EntityHandle FastDagMCCellHandler::getCellHandle(
-                        const ModuleTraits::InternalCellHandle cell_id ) const
+                                       const EntityId cell_id ) const
 {
   // Make sure the cell id exists
   testPrecondition( this->doesCellExist( cell_id ) );
@@ -57,7 +57,7 @@ moab::EntityHandle FastDagMCCellHandler::getCellHandle(
 
 // Check if the cell exists
 bool FastDagMCCellHandler::doesCellExist(
-                         const ModuleTraits::InternalCellHandle cell_id ) const
+                                       const EntityId cell_id ) const
 {
   return d_cell_id_handle_map.left.find( cell_id ) !=
     d_cell_id_handle_map.left.end();

@@ -15,12 +15,16 @@
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_SearchAlgorithms.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 
 namespace Utility{
 
+// Calculate the Y independent lower bound between bin boundaries
+/*! \details The lower bound will be the minimum of the two boundary 
+ * lower bounds.
+ */
 template<typename _TwoDInterpPolicy>
 template<typename YIndepType,
          typename XIndepType,
@@ -46,6 +50,9 @@ auto Direct<_TwoDInterpPolicy>::calculateLowerBound(
 }
 
 // Calculate the Y independent upper bound between bin boundaries
+/*! \details The upper bound will be the maximum of the two boundary
+ * upper bounds.
+ */
 template<typename _TwoDInterpPolicy>
 template<typename YIndepType,
          typename XIndepType,
@@ -73,7 +80,7 @@ auto Direct<_TwoDInterpPolicy>::calculateUpperBound(
 // Evaluate the PDF between bin boundaries using the desired evaluation method
 //! \details The EvaluationMethod must evalute using a Cosine variable.
 template<typename _TwoDInterpPolicy>
-template<typename BaseOneDDistributionType,
+template<typename BaseUnivariateDistributionType,
          typename XIndepType,
          typename YIndepType,
          typename ReturnType,
@@ -93,7 +100,7 @@ ReturnType Direct<_TwoDInterpPolicy>::evaluatePDFCos(
                                   const double error_tol,
                                   unsigned max_number_of_iterations )
 {
-  return Direct<TwoDInterpPolicy>::evaluatePDF<BaseOneDDistributionType,
+  return Direct<TwoDInterpPolicy>::evaluatePDF<BaseUnivariateDistributionType,
                                                XIndepType, YIndepType,
                                                ReturnType, YZIterator, EvaluationMethod,
                                                YBoundsFunctor>(
@@ -115,7 +122,7 @@ ReturnType Direct<_TwoDInterpPolicy>::evaluatePDFCos(
  *  function.
  */
 template<typename _TwoDInterpPolicy>
-template<typename BaseOneDDistributionType,
+template<typename BaseUnivariateDistributionType,
          typename XIndepType,
          typename YIndepType,
          typename ReturnType,
@@ -175,7 +182,7 @@ ReturnType Direct<_TwoDInterpPolicy>::evaluatePDF(
 // Evaluate the CDF between bin boundaries using the desired evaluation method
 //! \details The EvaluationMethod must evalute using a Cosine variable.
 template<typename _TwoDInterpPolicy>
-template<typename BaseOneDDistributionType,
+template<typename BaseUnivariateDistributionType,
          typename XIndepType,
          typename YIndepType,
          typename YZIterator,
@@ -194,7 +201,7 @@ double Direct<_TwoDInterpPolicy>::evaluateCDFCos(
                                   const double error_tol,
                                   unsigned max_number_of_iterations )
 {
-  return Direct<TwoDInterpPolicy>::evaluateCDF<BaseOneDDistributionType,
+  return Direct<TwoDInterpPolicy>::evaluateCDF<BaseUnivariateDistributionType,
                                                XIndepType, YIndepType, YZIterator,
                                                EvaluationMethod, YBoundsFunctor>(
                                               x_indep_value,
@@ -214,7 +221,7 @@ double Direct<_TwoDInterpPolicy>::evaluateCDFCos(
 /*! \details The CDF is evaluated from a direct interpolation of the PDF.
  */
 template<typename _TwoDInterpPolicy>
-template<typename BaseOneDDistributionType,
+template<typename BaseUnivariateDistributionType,
          typename XIndepType,
          typename YIndepType,
          typename YZIterator,
@@ -233,7 +240,7 @@ double Direct<_TwoDInterpPolicy>::evaluateCDF(
                                   const double error_tol,
                                   unsigned max_number_of_iterations )
 {
-  return Direct<TwoDInterpPolicy>::evaluatePDF<BaseOneDDistributionType,
+  return Direct<TwoDInterpPolicy>::evaluatePDF<BaseUnivariateDistributionType,
                                                XIndepType, YIndepType,
                                                double, YZIterator, EvaluationMethod,
                                                YBoundsFunctor>(
@@ -322,7 +329,7 @@ YIndepType Direct<_TwoDInterpPolicy>::sampleCos(
 
 // Sample between bin boundaries using the desired subrange sampling functor
 /* \details The SampleFunctor must be of the form that it takes a subrange
- * sampling function from a OneDDistribution and the max indep variable.
+ * sampling function from a UnivariateDistribution and the max indep variable.
  * A direct statistical sampling procedure is used which samples
  * from one of the distributions on the bin boundaries.
  * Statistical sampling does not sample the true intermediate distribution and
@@ -525,7 +532,7 @@ auto UnitBase<_TwoDInterpPolicy>::calculateUpperBound(
 // Evaluate the PDF between bin boundaries using the desired evaluation method
 //! \details The EvaluationMethod must evalute using a Cosine variable.
 template<typename _TwoDInterpPolicy>
-template<typename BaseOneDDistributionType,
+template<typename BaseUnivariateDistributionType,
          typename XIndepType,
          typename YIndepType,
          typename ReturnType,
@@ -545,7 +552,7 @@ ReturnType UnitBase<_TwoDInterpPolicy>::evaluatePDFCos(
                                   const double error_tol,
                                   unsigned max_number_of_iterations )
 {
-  return Direct<TwoDInterpPolicy>::template evaluatePDF<BaseOneDDistributionType,
+  return Direct<TwoDInterpPolicy>::template evaluatePDF<BaseUnivariateDistributionType,
                                                         XIndepType, YIndepType,
                                                         ReturnType, YZIterator,
                                                         EvaluationMethod,
@@ -568,7 +575,7 @@ ReturnType UnitBase<_TwoDInterpPolicy>::evaluatePDFCos(
  *  function.
  */
 template<typename _TwoDInterpPolicy>
-template<typename BaseOneDDistributionType,
+template<typename BaseUnivariateDistributionType,
          typename XIndepType,
          typename YIndepType,
          typename ReturnType,
@@ -620,7 +627,7 @@ ReturnType UnitBase<_TwoDInterpPolicy>::evaluatePDF(
 // Evaluate the CDF between bin boundaries using the desired evaluation method
 //! \details The EvaluationMethod must evalute using a Cosine variable.
 template<typename _TwoDInterpPolicy>
-template<typename BaseOneDDistributionType,
+template<typename BaseUnivariateDistributionType,
          typename XIndepType,
          typename YIndepType,
          typename YZIterator,
@@ -639,7 +646,7 @@ double UnitBase<_TwoDInterpPolicy>::evaluateCDFCos(
                                   const double error_tol,
                                   unsigned max_number_of_iterations )
 {
-  return Direct<TwoDInterpPolicy>::template evaluateCDF<BaseOneDDistributionType,
+  return Direct<TwoDInterpPolicy>::template evaluateCDF<BaseUnivariateDistributionType,
                                                         XIndepType, YIndepType, YZIterator,
                                                         EvaluationMethod, YBoundsFunctor>(
                                               x_indep_value,
@@ -659,7 +666,7 @@ double UnitBase<_TwoDInterpPolicy>::evaluateCDFCos(
 /*! \details The CDF is evaluated from a unit-base interpolation of the PDF.
  */
 template<typename _TwoDInterpPolicy>
-template<typename BaseOneDDistributionType,
+template<typename BaseUnivariateDistributionType,
          typename XIndepType,
          typename YIndepType,
          typename YZIterator,
@@ -859,7 +866,7 @@ YIndepType UnitBase<_TwoDInterpPolicy>::sampleCos(
 
 // Sample between bin boundaries using the desired subrange sampling functor
 /* \details The SampleFunctor must be of the form that it takes a subrange
- * sampling function from a OneDDistribution and the max indep variable.
+ * sampling function from a UnivariateDistribution and the max indep variable.
  * A unit-base statistical sampling procedure is used which samples
  * from one of the distributions on the bin boundaries and then scales the
  * sample so that it preserves intermediate grid limits. Certain methods require
@@ -964,7 +971,7 @@ YIndepType UnitBase<_TwoDInterpPolicy>::sampleInSubrange(
  * Statistical sampling does not sample the true intermediate distribution and
  * will not match the unit-base evaluated PDF and CDF distributions. The
  * expected value of a sample, however, will be a sample from the true
- * distribution.
+ * distribution. This method is an implementation of ACE law 4.
  */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
@@ -1135,16 +1142,16 @@ namespace Details{
 
 /*! The helper struct used to calculate the secondary independent value
  *
- * Specialization of this class for different OneDDistribution classes is
- * required. Using a OneDDistribution class that does not have a specialization
+ * Specialization of this class for different UnivariateDistribution classes is
+ * required. Using a UnivariateDistribution class that does not have a specialization
  * (and is therefore assumed to be unsupported) will result in the following
  * compile time error message: "...::thisInterpPolicyIsNotSupported()".
  */
-template<typename BaseOneDDistributionType>
+template<typename BaseUnivariateDistributionType>
 struct CorrelatedEvaluatePDFSecondaryIndepHelper
 {
   //! Typedef for this type
-  typedef CorrelatedEvaluatePDFSecondaryIndepHelper<BaseOneDDistributionType> ThisType;
+  typedef CorrelatedEvaluatePDFSecondaryIndepHelper<BaseUnivariateDistributionType> ThisType;
 
   //! Calculate the secondary independent values
   template<typename TwoDInterpPolicy,
@@ -1163,7 +1170,7 @@ struct CorrelatedEvaluatePDFSecondaryIndepHelper
                                              const unsigned max_number_of_iterations,
                                              YIndepType& lower_y_value,
                                              YIndepType& upper_y_value )
-  { BaseOneDDistributionType::thisDistTypeIsNotCompatibleWithCorrelatedEvaluation(); }
+  { BaseUnivariateDistributionType::thisDistTypeIsNotCompatibleWithCorrelatedEvaluation(); }
 
   // Estimate the interpolated CDF and the corresponding lower and upper y
   // indep values
@@ -1183,18 +1190,18 @@ struct CorrelatedEvaluatePDFSecondaryIndepHelper
               const double rel_error_tol = 1e-7,
               const double error_tol = 1e-15,
               unsigned max_number_of_iterations = 500u )
-  { BaseOneDDistributionType::thisDistTypeIsNotCompatibleWithCorrelatedEvaluation(); }
+  { BaseUnivariateDistributionType::thisDistTypeIsNotCompatibleWithCorrelatedEvaluation(); }
 };
 
 /*! \brief Partial specialization of the
  * Utility::Details::CorrelatedEvaluatePDFSecondaryIndepHelper class for
- * Utility::UnitAwareTabularOneDDistribution
+ * Utility::UnitAwareTabularUnivariateDistribution
  */
 template<typename _T, typename _U>
-struct CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> >
+struct CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularUnivariateDistribution<_T,_U> >
 {
   //! Typdef for this type
-  typedef CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> > ThisType;
+  typedef CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularUnivariateDistribution<_T,_U> > ThisType;
 
   //! Calculate the secondary independent values
   template<typename TwoDInterpPolicy,
@@ -1241,7 +1248,7 @@ template<typename TwoDInterpPolicy,
          typename YZIterator,
          typename EvaluationMethod,
          typename T>
-void CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> >::calculateSecondaryIndepValues(
+void CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularUnivariateDistribution<_T,_U> >::calculateSecondaryIndepValues(
                                        const EvaluationMethod& evaluate,
                                        const YIndepType& y_indep_value,
                                        const YZIterator& lower_bin_boundary,
@@ -1259,9 +1266,9 @@ void CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDist
   {
     // Evaluate the cdf at the upper and lower bin boundaries
     double bin_eval_0 =
-      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::evaluateCDF)( y_indep_value );
+      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::evaluateCDF)( y_indep_value );
     double bin_eval_1 =
-      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::evaluateCDF)( y_indep_value );
+      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::evaluateCDF)( y_indep_value );
 
     if ( bin_eval_0 <= bin_eval_1 )
     {
@@ -1297,7 +1304,7 @@ template<typename TwoDInterpPolicy,
          typename YIndepType,
          typename YZIterator,
          typename T>
-double CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> >::estimateCDF(
+double CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularUnivariateDistribution<_T,_U> >::estimateCDF(
                                           double& lower_cdf_est,
                                           double& upper_cdf_est,
                                           YIndepType& y_indep_value_0,
@@ -1334,9 +1341,9 @@ double CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDi
 
     // Get the sampled values at the upper and lower bin for the estimated_cdf
     y_indep_value_0 =
-      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
+      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
     y_indep_value_1 =
-      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
+      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
 
     // Interpolate using the templated TwoDInterpPolicy::YXInterpPolicy
     YIndepType est_y_indep_value =
@@ -1562,7 +1569,7 @@ struct CorrelatedEvaluatePDFCosHelper<Utility::LogCosLog<true> > : public Correl
  *  error tolerance in order to get the proper interpolation parameters.
  */
 template<typename _TwoDInterpPolicy>
-template<typename BaseOneDDistributionType,
+template<typename BaseUnivariateDistributionType,
          typename XIndepType,
          typename YIndepType,
          typename ReturnType,
@@ -1628,7 +1635,7 @@ ReturnType Correlated<_TwoDInterpPolicy>::evaluatePDFCos(
     }
     else // Between min and max y values
     {
-      Details::CorrelatedEvaluatePDFSecondaryIndepHelper<BaseOneDDistributionType>::template calculateSecondaryIndepValues<TwoDInterpPolicy>(
+      Details::CorrelatedEvaluatePDFSecondaryIndepHelper<BaseUnivariateDistributionType>::template calculateSecondaryIndepValues<TwoDInterpPolicy>(
                                                       evaluate,
                                                       y_indep_value,
                                                       lower_bin_boundary,
@@ -1788,7 +1795,7 @@ struct CorrelatedEvaluatePDFHelper<Utility::LogCosLin<true> > : public Correlate
  *  interpolation parameters.
  */
 template<typename _TwoDInterpPolicy>
-template<typename BaseOneDDistributionType,
+template<typename BaseUnivariateDistributionType,
          typename XIndepType,
          typename YIndepType,
          typename ReturnType,
@@ -1864,7 +1871,7 @@ ReturnType Correlated<_TwoDInterpPolicy>::evaluatePDF(
     }
     else // Between min and max y values
     {
-      Details::CorrelatedEvaluatePDFSecondaryIndepHelper<BaseOneDDistributionType>::template calculateSecondaryIndepValues<TwoDInterpPolicy>(
+      Details::CorrelatedEvaluatePDFSecondaryIndepHelper<BaseUnivariateDistributionType>::template calculateSecondaryIndepValues<TwoDInterpPolicy>(
                                                       evaluate,
                                                       y_indep_value,
                                                       lower_bin_boundary,
@@ -1903,7 +1910,7 @@ ReturnType Correlated<_TwoDInterpPolicy>::evaluatePDF(
  *  parameters.
  */
 template<typename _TwoDInterpPolicy>
-template<typename BaseOneDDistributionType,
+template<typename BaseUnivariateDistributionType,
          typename XIndepType,
          typename YIndepType,
          typename YZIterator,
@@ -1962,9 +1969,9 @@ double Correlated<_TwoDInterpPolicy>::evaluateCDFCos(
       {
         // Evaluate the cdf at the upper and lower bin boundaries
         double bin_eval_0 =
-          ((*lower_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( y_indep_value );
+          ((*lower_bin_boundary->second).*&BaseUnivariateDistributionType::evaluateCDF)( y_indep_value );
         double bin_eval_1 =
-          ((*upper_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( y_indep_value );
+          ((*upper_bin_boundary->second).*&BaseUnivariateDistributionType::evaluateCDF)( y_indep_value );
 
         if ( bin_eval_0 <= bin_eval_1 )
         {
@@ -1981,7 +1988,7 @@ double Correlated<_TwoDInterpPolicy>::evaluateCDFCos(
       YIndepType lower_y_value, upper_y_value;
 
       double est_cdf =
-        Details::CorrelatedEvaluatePDFSecondaryIndepHelper<BaseOneDDistributionType>::template estimateCDF<TwoDInterpPolicy>(
+        Details::CorrelatedEvaluatePDFSecondaryIndepHelper<BaseUnivariateDistributionType>::template estimateCDF<TwoDInterpPolicy>(
                                         lower_cdf_bound,
                                         upper_cdf_bound,
                                         lower_y_value,
@@ -2005,7 +2012,7 @@ double Correlated<_TwoDInterpPolicy>::evaluateCDFCos(
  *  interpolation parameters.
  */
 template<typename _TwoDInterpPolicy>
-template<typename BaseOneDDistributionType,
+template<typename BaseUnivariateDistributionType,
          typename XIndepType,
          typename YIndepType,
          typename YZIterator,
@@ -2074,9 +2081,9 @@ double Correlated<_TwoDInterpPolicy>::evaluateCDF(
       {
         // Evaluate the cdf at the upper and lower bin boundaries
         double bin_eval_0 =
-          ((*lower_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( y_indep_value );
+          ((*lower_bin_boundary->second).*&BaseUnivariateDistributionType::evaluateCDF)( y_indep_value );
         double bin_eval_1 =
-          ((*upper_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( y_indep_value );
+          ((*upper_bin_boundary->second).*&BaseUnivariateDistributionType::evaluateCDF)( y_indep_value );
 
         if ( bin_eval_0 <= bin_eval_1 )
         {
@@ -2092,7 +2099,7 @@ double Correlated<_TwoDInterpPolicy>::evaluateCDF(
 
       YIndepType lower_y_value, upper_y_value;
       double est_cdf =
-        Details::CorrelatedEvaluatePDFSecondaryIndepHelper<BaseOneDDistributionType>::template estimateCDF<TwoDInterpPolicy>(
+        Details::CorrelatedEvaluatePDFSecondaryIndepHelper<BaseUnivariateDistributionType>::template estimateCDF<TwoDInterpPolicy>(
                                         lower_cdf_bound,
                                         upper_cdf_bound,
                                         lower_y_value,
@@ -2111,7 +2118,13 @@ double Correlated<_TwoDInterpPolicy>::evaluateCDF(
 }
 
 // Sample between bin boundaries using the desired sampling functor
-//! \details A direct correlated routine is used to sample the distribution.
+/*! \details A direct correlated routine is used to sample the distribution.
+ * In order for this method to calculate a sample accurately the same random
+ * number must be used to sample from the distribution on the lower and upper
+ * bounds. The sample functor must therefore wrap the 
+ * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
+ * similar methods that takes a random number. 
+ */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
          typename YIndepType,
@@ -2144,6 +2157,11 @@ YIndepType Correlated<_TwoDInterpPolicy>::sample(
 // Sample between bin boundaries using the desired sampling functor
 /*! \details The SampleFunctor must return a Cosine variable.
  * A direct correlated routine is used to sample the distribution.
+ * In order for this method to calculate a sample accurately the same random
+ * number must be used to sample from the distribution on the lower and upper
+ * bounds. The sample functor must therefore wrap the 
+ * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
+ * similar methods that takes a random number. 
  */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
@@ -2170,9 +2188,11 @@ YIndepType Correlated<_TwoDInterpPolicy>::sampleCos(
 }
 
 // Sample between bin boundaries using the desired subrange sampling functor
-/* \details The SampleFunctor must be of the form that it takes a subrange
- * sampling function from a OneDDistribution and the max indep variable. A
- * direct correlated routine is used to sample the distribution.
+/* \details A direct correlated routine is used to sample the distribution.
+ * In order for this method to calculate a sample accurately the same random
+ * number must be used to sample from the distribution on the lower and upper
+ * bounds. The sample functor must therefore wrap the 
+ * Utility::TabularUnivariateDist::sampleWithRandomNumberInSubrange routine.
  */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
@@ -2252,7 +2272,13 @@ YIndepType Correlated<_TwoDInterpPolicy>::sampleInSubrange(
 }
 
 // Sample between bin boundaries using the desired sampling functor
-//! \details A direct correlated routine is used to sample the distribution.
+/*! \details A direct correlated routine is used to sample the distribution.
+ * In order for this method to calculate a sample accurately the same random
+ * number must be used to sample from the distribution on the lower and upper
+ * bounds. The sample functor must therefore wrap the 
+ * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
+ * similar methods that takes a random number. 
+ */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
          typename YIndepType,
@@ -2314,6 +2340,11 @@ YIndepType Correlated<_TwoDInterpPolicy>::sampleDetailed(
 // Sample between bin boundaries using the desired sampling functor
 /*! \details The SampleFunctor must return a Cosine variable.
  * A direct correlated routine is used to sample the distribution.
+ * In order for this method to calculate a sample accurately the same random
+ * number must be used to sample from the distribution on the lower and upper
+ * bounds. The sample functor must therefore wrap the 
+ * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
+ * similar methods that takes a random number. 
  */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
@@ -2391,7 +2422,7 @@ auto UnitBaseCorrelated<_TwoDInterpPolicy>::calculateUpperBound(
  *  to evaluate instead.
  */
 template<typename _TwoDInterpPolicy>
-template<typename BaseOneDDistributionType,
+template<typename BaseUnivariateDistributionType,
          typename XIndepType,
          typename YIndepType,
          typename ReturnType,
@@ -2412,7 +2443,7 @@ ReturnType UnitBaseCorrelated<_TwoDInterpPolicy>::evaluatePDFCos(
                                   unsigned max_number_of_iterations )
 {
   return Correlated<TwoDInterpPolicy>::template evaluatePDFCos<
-                                                      BaseOneDDistributionType,
+                                                      BaseUnivariateDistributionType,
                                                       XIndepType,
                                                       YIndepType,
                                                       ReturnType,
@@ -2436,14 +2467,14 @@ namespace Details{
 
 /*! The helper struct used to calculate the secondary independent value
  *
- * Specialization of this class for different OneDDistribution classes is
+ * Specialization of this class for different UnivariateDistribution classes is
  * required.
  */
-template<typename BaseOneDDistributionType>
+template<typename BaseUnivariateDistributionType>
 struct UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper
 {
   //! Typdef for this type
-  typedef UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<BaseOneDDistributionType> ThisType;
+  typedef UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<BaseUnivariateDistributionType> ThisType;
 
   //! Calculate the secondary independent values
   template<typename TwoDInterpPolicy,
@@ -2469,7 +2500,7 @@ struct UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper
              YIndepType& lower_y_value,
              YIndepType& upper_y_value )
   {
-    BaseOneDDistributionType::thisDistTypeIsNotCompatibleWithUnitBaseCorrelatedEvaluation();
+    BaseUnivariateDistributionType::thisDistTypeIsNotCompatibleWithUnitBaseCorrelatedEvaluation();
   }
 
   // Estimate the interpolated CDF and the corresponding lower and upper y
@@ -2493,19 +2524,19 @@ struct UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper
              const double error_tol = 1e-15,
              unsigned max_number_of_iterations = 500u )
   {
-    BaseOneDDistributionType::thisDistTypeIsNotCompatibleWithUnitBaseCorrelatedEvaluation();
+    BaseUnivariateDistributionType::thisDistTypeIsNotCompatibleWithUnitBaseCorrelatedEvaluation();
   }
 };
 
 /*! \brief Partial specialization of the
  * Utility::Details::UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper class
- * for Utility::UnitAwareTabularOneDDistribution
+ * for Utility::UnitAwareTabularUnivariateDistribution
  */
 template<typename _T, typename _U>
-struct UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> >
+struct UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularUnivariateDistribution<_T,_U> >
 {
   //! Typdef for this type
-  typedef UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> > ThisType;
+  typedef UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularUnivariateDistribution<_T,_U> > ThisType;
 
   //! Calculate the secondary independent values
   template<typename TwoDInterpPolicy,
@@ -2560,7 +2591,7 @@ template<typename TwoDInterpPolicy,
          typename YZIterator,
          typename EvaluationMethod,
          typename T>
-void UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> >::calculateSecondaryIndepValues(
+void UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularUnivariateDistribution<_T,_U> >::calculateSecondaryIndepValues(
              const EvaluationMethod& evaluate,
              const YIndepType& min_y_indep_value,
              const YIndepType& max_y_indep_value,
@@ -2612,9 +2643,9 @@ void UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabular
 
     // Evaluate the cdf at the upper and lower bin boundaries
     double bin_eval_0 =
-      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::evaluateCDF)( y_indep_value_0 );
+      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::evaluateCDF)( y_indep_value_0 );
     double bin_eval_1 =
-      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::evaluateCDF)( y_indep_value_1 );
+      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::evaluateCDF)( y_indep_value_1 );
 
     if ( bin_eval_0 <= bin_eval_1 )
     {
@@ -2650,7 +2681,7 @@ template<typename TwoDInterpPolicy,
          typename YIndepType,
          typename YZIterator,
          typename T>
-double UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> >::estimateCDF(
+double UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularUnivariateDistribution<_T,_U> >::estimateCDF(
              double& lower_cdf_est,
              double& upper_cdf_est,
              YIndepType& y_indep_value_0,
@@ -2689,9 +2720,9 @@ double UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabul
 
     // Get the sampled values at the upper and lower bin for the estimated_cdf
     y_indep_value_0 =
-      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
+      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
     y_indep_value_1 =
-      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
+      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
 
     // Calculate the unit base variable on the intermediate grid corresponding to the
     // raw samples on the lower and upper boundaries
@@ -2953,7 +2984,7 @@ struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LogCosLin<true> > : public U
  *  the proper interpolation parameters.
  */
 template<typename _TwoDInterpPolicy>
-template<typename BaseOneDDistributionType,
+template<typename BaseUnivariateDistributionType,
          typename XIndepType,
          typename YIndepType,
          typename ReturnType,
@@ -3039,7 +3070,7 @@ ReturnType UnitBaseCorrelated<_TwoDInterpPolicy>::evaluatePDF(
     }
     else // Between min and max y values
     {
-      Details::UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<BaseOneDDistributionType>::template calculateSecondaryIndepValues<TwoDInterpPolicy>(
+      Details::UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<BaseUnivariateDistributionType>::template calculateSecondaryIndepValues<TwoDInterpPolicy>(
                                                       evaluate,
                                                       min_y_indep_value,
                                                       max_y_indep_value,
@@ -3093,7 +3124,7 @@ ReturnType UnitBaseCorrelated<_TwoDInterpPolicy>::evaluatePDF(
  *  to evaluate instead.
  */
 template<typename _TwoDInterpPolicy>
-template<typename BaseOneDDistributionType,
+template<typename BaseUnivariateDistributionType,
          typename XIndepType,
          typename YIndepType,
          typename YZIterator,
@@ -3112,7 +3143,7 @@ double UnitBaseCorrelated<_TwoDInterpPolicy>::evaluateCDFCos(
                                   const double error_tol,
                                   unsigned max_number_of_iterations )
 {
-  return Correlated<TwoDInterpPolicy>::template evaluateCDFCos<BaseOneDDistributionType,
+  return Correlated<TwoDInterpPolicy>::template evaluateCDFCos<BaseUnivariateDistributionType,
                                                                XIndepType,
                                                                YIndepType,
                                                                YZIterator,
@@ -3137,7 +3168,7 @@ double UnitBaseCorrelated<_TwoDInterpPolicy>::evaluateCDFCos(
  *  the proper interpolation parameters.
  */
 template<typename _TwoDInterpPolicy>
-template<typename BaseOneDDistributionType,
+template<typename BaseUnivariateDistributionType,
          typename XIndepType,
          typename YIndepType,
          typename YZIterator,
@@ -3242,9 +3273,9 @@ double UnitBaseCorrelated<_TwoDInterpPolicy>::evaluateCDF(
 
         // Evaluate the cdf at the upper and lower bin boundaries
         double bin_eval_0 =
-          ((*lower_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( y_indep_value_0 );
+          ((*lower_bin_boundary->second).*&BaseUnivariateDistributionType::evaluateCDF)( y_indep_value_0 );
         double bin_eval_1 =
-          ((*upper_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( y_indep_value_1 );
+          ((*upper_bin_boundary->second).*&BaseUnivariateDistributionType::evaluateCDF)( y_indep_value_1 );
 
         if ( bin_eval_0 <= bin_eval_1 )
         {
@@ -3259,7 +3290,8 @@ double UnitBaseCorrelated<_TwoDInterpPolicy>::evaluateCDF(
       }
 
       YIndepType lower_y_value, upper_y_value;
-      return Details::UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<BaseOneDDistributionType>::template estimateCDF<TwoDInterpPolicy>(
+
+      return Details::UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<BaseUnivariateDistributionType>::template estimateCDF<TwoDInterpPolicy>(
                                                     lower_cdf_bound,
                                                     upper_cdf_bound,
                                                     lower_y_value,
@@ -3278,6 +3310,12 @@ double UnitBaseCorrelated<_TwoDInterpPolicy>::evaluateCDF(
 }
 
 // Sample between bin boundaries using the desired sampling functor
+/*! \details In order for this method to calculate a sample accurately the same
+ * random number must be used to sample from the distribution on the lower and
+ * upper bounds. The sample functor must therefore wrap the 
+ * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
+ * similar methods that takes a random number. 
+ */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
          typename YIndepType,
@@ -3307,7 +3345,13 @@ YIndepType UnitBaseCorrelated<_TwoDInterpPolicy>::sample(
             dummy_raw_sample );
 }
 
-//! Sample between bin boundaries using the desired sampling functor
+// Sample between bin boundaries using the desired sampling functor
+/*! \details In order for this method to calculate a sample accurately the same
+ * random number must be used to sample from the distribution on the lower and
+ * upper bounds. The sample functor must therefore wrap the 
+ * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
+ * similar methods that takes a random number. 
+ */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
          typename YIndepType,
@@ -3333,8 +3377,11 @@ YIndepType UnitBaseCorrelated<_TwoDInterpPolicy>::sampleCos(
 }
 
 // Sample between bin boundaries using the desired subrange sampling functor
-/* \details The SampleFunctor must be of the form that it takes a subrange
- * sampling function from a OneDDistribution and the max indep variable.
+/* \details A direct correlated routine is used to sample the distribution.
+ * In order for this method to calculate a sample accurately the same random
+ * number must be used to sample from the distribution on the lower and upper
+ * bounds. The sample functor must therefore wrap the 
+ * Utility::TabularUnivariateDist::sampleWithRandomNumberInSubrange routine.
  */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
@@ -3435,6 +3482,12 @@ YIndepType UnitBaseCorrelated<_TwoDInterpPolicy>::sampleInSubrange(
 }
 
 // Sample between bin boundaries using the desired sampling functor
+/*! \details In order for this method to calculate a sample accurately the same
+ * random number must be used to sample from the distribution on the lower and
+ * upper bounds. The sample functor must therefore wrap the 
+ * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
+ * similar methods that takes a random number. 
+ */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
          typename YIndepType,
@@ -3537,6 +3590,12 @@ YIndepType UnitBaseCorrelated<_TwoDInterpPolicy>::sampleDetailed(
 }
 
 // Sample between bin boundaries using the desired sampling functor
+/*! \details In order for this method to calculate a sample accurately the same
+ * random number must be used to sample from the distribution on the lower and
+ * upper bounds. The sample functor must therefore wrap the 
+ * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
+ * similar methods that takes a random number. 
+ */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
          typename YIndepType,
@@ -3565,6 +3624,12 @@ inline const std::string UnitBaseCorrelated<_TwoDInterpPolicy>::name()
 {
   return "Unit-base Correlated";
 }
+
+TWO_D_GRID_POLICY_TYPE_NAME_TRAITS_QUICK_DECL( Direct );
+TWO_D_GRID_POLICY_TYPE_NAME_TRAITS_QUICK_DECL( UnitBase );
+TWO_D_GRID_POLICY_TYPE_NAME_TRAITS_QUICK_DECL( CumulativePoints );
+TWO_D_GRID_POLICY_TYPE_NAME_TRAITS_QUICK_DECL( Correlated );
+TWO_D_GRID_POLICY_TYPE_NAME_TRAITS_QUICK_DECL( UnitBaseCorrelated );
 
 } // end Utility namespace
 

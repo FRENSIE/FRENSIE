@@ -7,19 +7,19 @@
 #-----------------------------------------------------------------------------#
 
 # System imports
-import numpy
 import sys
 import unittest
 from optparse import *
+import numpy
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Prng = importPyFrensieModuleFromBuildDir('Utility.Prng')
 
 # Parse the command-line arguments
 parser = OptionParser()
 parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
                   help="set the verbosity level [default 2]")
 options,args = parser.parse_args()
-
-from testingHelpers import importPyFrensieModuleFromBuildDir
-Prng = importPyFrensieModuleFromBuildDir('Utility.Prng')
 
 #-----------------------------------------------------------------------------#
 # Tests.
@@ -99,7 +99,7 @@ class RandomNumberGeneratorTestCase(unittest.TestCase):
 
     def testFakeStream(self):
         "*Test Utility.Prng.RandomNumberGenerator setFakeStream/unsetFakeStream methods"
-        self.rng.setFakeStream( [0.25, 0.5, 0.75] )
+        self.rng.setFakeStream( [0.25, 0.5, 0.75], 0 )
         self.assertTrue(self.rng.getRandomNumber() == 0.25)
         self.assertTrue(self.rng.getRandomNumber() == 0.5)
         self.assertTrue(self.rng.getRandomNumber() == 0.75)

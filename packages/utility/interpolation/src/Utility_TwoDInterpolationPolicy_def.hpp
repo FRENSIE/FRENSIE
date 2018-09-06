@@ -15,7 +15,8 @@
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_SearchAlgorithms.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_TypeTraits.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Utility{
 
@@ -124,12 +125,12 @@ inline typename ZYLowerFunctor::result_type TwoDInterpolationPolicyImpl<ZYInterp
                             const ZYUpperFunctor& evaluate_z_with_y_1_functor )
 {
   // The interpolation type on the Z variable must be consistent
-  testStaticPrecondition( (boost::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
+  testStaticPrecondition( (std::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
   // All types must be a floating point type
-  testStaticPrecondition( (QuantityTraits<FirstIndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<SecondIndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<typename ZYLowerFunctor::result_type>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<typename ZYUpperFunctor::result_type>::is_floating_point::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<FirstIndepType>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<SecondIndepType>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<typename ZYLowerFunctor::result_type>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<typename ZYUpperFunctor::result_type>::RawType>::value) );
   // Make sure the first independent variables are valid
   testPrecondition( !QuantityTraits<FirstIndepType>::isnaninf(indep_var_x_0) );
   testPrecondition( !QuantityTraits<FirstIndepType>::isnaninf(indep_var_x_1) );
@@ -177,11 +178,11 @@ inline typename ZYLowerFunctor::result_type TwoDInterpolationPolicyImpl<ZYInterp
  * policy does not do extrapolation.
  */
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<TupleMember YIndepMember,
-     TupleMember DepMember,
-     typename YIterator,
-     typename ZIterator,
-     typename T >
+template<size_t YIndepMember,
+	 size_t DepMember,
+	 typename YIterator,
+	 typename ZIterator,
+	 typename T >
 inline T
 TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate(
                         const T indep_var_x_0,
@@ -198,17 +199,17 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate(
                         ZIterator end_dep_grid_1 )
 {
   // The interpolation type on the Z variable must be consistent
-  testStaticPrecondition( (boost::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
+  testStaticPrecondition( (std::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
   // T must be a floating point type
-  testStaticPrecondition( (boost::is_floating_point<T>::value) );
+  testStaticPrecondition( (std::is_floating_point<T>::value) );
   // The y iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleMemberTraits<typename std::iterator_traits<YIterator>::value_type,YIndepMember>::tupleMemberType,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<YIndepMember,typename std::iterator_traits<YIterator>::value_type>::type,T>::value) );
   // The z iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleMemberTraits<typename std::iterator_traits<ZIterator>::value_type,DepMember>::tupleMemberType,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<DepMember,typename std::iterator_traits<ZIterator>::value_type>::type,T>::value) );
   // Make sure the first independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_x_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_x_1 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_x ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( indep_var_x_0 ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( indep_var_x_1 ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( indep_var_x ) );
   testPrecondition( ThisType::isFirstIndepVarInValidRange( indep_var_x_0 ) );
   testPrecondition( indep_var_x_0 < indep_var_x_1 );
   testPrecondition( indep_var_x >= indep_var_x_0 );
@@ -218,23 +219,23 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate(
   testPrecondition( Sort::isSortedAscending<YIndepMember>(start_indep_y_grid_0,
                               end_indep_y_grid_0));
   testPrecondition( ThisType::isSecondIndepVarInValidRange(
-                get<YIndepMember>( *start_indep_y_grid_0 ) ) );
+				Utility::get<YIndepMember>( *start_indep_y_grid_0 ) ) );
   testPrecondition( start_indep_y_grid_1 != end_indep_y_grid_1 );
   testPrecondition( Sort::isSortedAscending<YIndepMember>(start_indep_y_grid_1,
                               end_indep_y_grid_1));
   testPrecondition( ThisType::isSecondIndepVarInValidRange(
-                get<YIndepMember>( *start_indep_y_grid_1 ) ) );
+				Utility::get<YIndepMember>( *start_indep_y_grid_1 ) ) );
   // Make sure the right type of interpolation is being used
   // Note: if this fails - use unit base interpolation
-  testPrecondition( indep_var_y >= get<YIndepMember>( *start_indep_y_grid_0 ));
+  testPrecondition( indep_var_y >= Utility::get<YIndepMember>( *start_indep_y_grid_0 ));
   remember( YIterator true_end_indep_y_grid_0 = end_indep_y_grid_0 );
   remember( --true_end_indep_y_grid_0 );
-  testPrecondition(indep_var_y <= get<YIndepMember>(*true_end_indep_y_grid_0));
-  testPrecondition( indep_var_y >= get<YIndepMember>( *start_indep_y_grid_0 ));
+  testPrecondition(indep_var_y <= Utility::get<YIndepMember>(*true_end_indep_y_grid_0));
+  testPrecondition( indep_var_y >= Utility::get<YIndepMember>( *start_indep_y_grid_0 ));
   remember( YIterator true_end_indep_y_grid_1 = end_indep_y_grid_1 );
   remember( --true_end_indep_y_grid_1 );
-  testPrecondition(indep_var_y <= get<YIndepMember>(*true_end_indep_y_grid_1));
-  testPrecondition( indep_var_y >= get<YIndepMember>( *start_indep_y_grid_1 ));
+  testPrecondition(indep_var_y <= Utility::get<YIndepMember>(*true_end_indep_y_grid_1));
+  testPrecondition( indep_var_y >= Utility::get<YIndepMember>( *start_indep_y_grid_1 ));
   // Make sure the dependent variables are valid
   testPrecondition( start_dep_grid_0 != end_dep_grid_0 );
   testPrecondition( start_dep_grid_1 != end_dep_grid_1 );
@@ -273,10 +274,10 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate(
  * policy does not do extrapolation.
  */
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<TupleMember YIndepMember,
-     TupleMember DepMember,
-     typename Iterator,
-     typename T >
+template<size_t YIndepMember,
+	 size_t DepMember,
+	 typename Iterator,
+	 typename T >
 inline T
 TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate(
                         const T indep_var_x_0,
@@ -327,7 +328,7 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate(
                         ZIterator end_dep_grid_1 )
 {
   // Make sure no tuples are being used
-  testStaticPrecondition( (boost::is_floating_point<typename std::iterator_traits<YIterator>::value_type>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename std::iterator_traits<YIterator>::value_type>::value) );
 
   return ThisType::interpolate<FIRST,FIRST>( indep_var_x_0,
                                              indep_var_x_1,
@@ -376,12 +377,12 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
     const double fuzzy_boundary_tol )
 {
   // The interpolation type on the Z variable must be consistent
-  testStaticPrecondition( (boost::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
+  testStaticPrecondition( (std::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
   // All types must be a floating point type
-  testStaticPrecondition( (QuantityTraits<FirstIndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<SecondIndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<typename ZYLowerFunctor::result_type>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<typename ZYUpperFunctor::result_type>::is_floating_point::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<FirstIndepType>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<SecondIndepType>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<typename ZYLowerFunctor::result_type>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<typename ZYUpperFunctor::result_type>::RawType>::value) );
   // Make sure the first independent variables are valid
   testPrecondition( !QuantityTraits<FirstIndepType>::isnaninf(indep_var_x_0) );
   testPrecondition( !QuantityTraits<FirstIndepType>::isnaninf(indep_var_x_1) );
@@ -535,11 +536,11 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
  * a value of 0.0 will be returned from this method.
  */
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<TupleMember YIndepMember,
-     TupleMember DepMember,
-     typename YIterator,
-     typename ZIterator,
-     typename T>
+template<size_t YIndepMember,
+	 size_t DepMember,
+	 typename YIterator,
+	 typename ZIterator,
+	 typename T>
 inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
                                 const T indep_var_x_0,
                                 const T indep_var_x_1,
@@ -556,24 +557,24 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
                                 const double fuzzy_boundary_tol )
 {
   // The interpolation type on the Z variable must be consistent
-  testStaticPrecondition( (boost::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
+  testStaticPrecondition( (std::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
   // T must be a floating point type
-  testStaticPrecondition( (boost::is_floating_point<T>::value) );
+  testStaticPrecondition( (std::is_floating_point<T>::value) );
   // The y iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleMemberTraits<typename std::iterator_traits<YIterator>::value_type,YIndepMember>::tupleMemberType,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<YIndepMember,typename std::iterator_traits<YIterator>::value_type>::type,T>::value) );
   // The z iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleMemberTraits<typename std::iterator_traits<ZIterator>::value_type,DepMember>::tupleMemberType,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<DepMember,typename std::iterator_traits<ZIterator>::value_type>::type,T>::value) );
   // Make sure the second independent variables are valid
   testPrecondition( start_indep_y_grid_0 != end_indep_y_grid_0 );
   testPrecondition( Sort::isSortedAscending<YIndepMember>(start_indep_y_grid_0,
                               end_indep_y_grid_0));
   testPrecondition( ThisType::isSecondIndepVarInValidRange(
-                get<YIndepMember>( *start_indep_y_grid_0 ) ) );
+				Utility::get<YIndepMember>( *start_indep_y_grid_0 ) ) );
   testPrecondition( start_indep_y_grid_1 != end_indep_y_grid_1 );
   testPrecondition( Sort::isSortedAscending<YIndepMember>(start_indep_y_grid_1,
                               end_indep_y_grid_1));
   testPrecondition( ThisType::isSecondIndepVarInValidRange(
-                get<YIndepMember>( *start_indep_y_grid_1 ) ) );
+				Utility::get<YIndepMember>( *start_indep_y_grid_1 ) ) );
   // Make sure the dependent variables are valid
   testPrecondition( start_dep_grid_0 != end_dep_grid_0 );
   testPrecondition( start_dep_grid_1 != end_dep_grid_1 );
@@ -611,10 +612,10 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
                                  indep_var_x_1,
                                  indep_var_x,
                                  indep_var_y,
-                                 get<YIndepMember>( *start_indep_y_grid_0 ),
-                                 get<YIndepMember>( *true_end_indep_y_grid_0 ),
-                                 get<YIndepMember>( *start_indep_y_grid_1 ),
-                                 get<YIndepMember>( *true_end_indep_y_grid_1 ),
+                                 Utility::get<YIndepMember>( *start_indep_y_grid_0 ),
+                                 Utility::get<YIndepMember>( *true_end_indep_y_grid_0 ),
+                                 Utility::get<YIndepMember>( *start_indep_y_grid_1 ),
+                                 Utility::get<YIndepMember>( *true_end_indep_y_grid_1 ),
                                  interpolate_grid_0_functor,
                                  interpolate_grid_1_functor,
                                  fuzzy_boundary_tol );
@@ -625,10 +626,10 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
  * a value of 0.0 will be returned from this method.
  */
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<TupleMember YIndepMember,
-     TupleMember DepMember,
-     typename Iterator,
-     typename T>
+template<size_t YIndepMember,
+	 size_t DepMember,
+	 typename Iterator,
+	 typename T>
 inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,
                      ZXInterpPolicy>::interpolateUnitBase(
                      const T indep_var_x_0,
@@ -682,7 +683,7 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,
                      const double fuzzy_boundary_tol )
 {
   // Make sure no tuples are being used
-  testStaticPrecondition( (boost::is_floating_point<typename std::iterator_traits<YIterator>::value_type>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename std::iterator_traits<YIterator>::value_type>::value) );
 
   return ThisType::interpolateUnitBase<FIRST,FIRST>( indep_var_x_0,
                                                      indep_var_x_1,
@@ -704,11 +705,11 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,
  * policy does not do extrapolation.
  */
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<TupleMember YIndepMember,
-     TupleMember DepMember,
-     typename T,
-     typename YIterator,
-     typename ZIterator>
+template<size_t YIndepMember,
+	 size_t DepMember,
+	 typename T,
+	 typename YIterator,
+	 typename ZIterator>
 inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateProcessed(
                       const T processed_indep_var_x_0,
                       const T processed_indep_var_x_1,
@@ -724,20 +725,20 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
                       ZIterator end_processed_dep_grid_1 )
 {
   // The interpolation type on the Z variable must be consistent
-  testStaticPrecondition( (boost::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
+  testStaticPrecondition( (std::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
   // T must be a floating point type
-  testStaticPrecondition( (boost::is_floating_point<T>::value) );
+  testStaticPrecondition( (std::is_floating_point<T>::value) );
   // The y iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleMemberTraits<typename std::iterator_traits<YIterator>::value_type,YIndepMember>::tupleMemberType,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<YIndepMember,typename std::iterator_traits<YIterator>::value_type>::type,T>::value) );
   // The z iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleMemberTraits<typename std::iterator_traits<ZIterator>::value_type,DepMember>::tupleMemberType,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<DepMember,typename std::iterator_traits<ZIterator>::value_type>::type,T>::value) );
   // Make sure the first independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
-                           processed_indep_var_x_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
-                           processed_indep_var_x_1 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
-                           processed_indep_var_x ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
+						   processed_indep_var_x_0 ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
+						   processed_indep_var_x_1 ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
+						   processed_indep_var_x ) );
   testPrecondition( processed_indep_var_x_0 < processed_indep_var_x_1 );
   testPrecondition( processed_indep_var_x >= processed_indep_var_x_0 );
   testPrecondition( processed_indep_var_x <= processed_indep_var_x_1 );
@@ -755,21 +756,21 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
   // Make sure the right type of interpolation is being used
   // Note: if this fails - use unit base interpolation
   testPrecondition( processed_indep_var_y >=
-                    get<YIndepMember>( *start_processed_indep_y_grid_0 ) );
+		    Utility::get<YIndepMember>( *start_processed_indep_y_grid_0 ) );
   remember( YIterator true_end_processed_indep_y_grid_0 =
                       end_processed_indep_y_grid_0 );
   remember( --true_end_processed_indep_y_grid_0 );
   testPrecondition( processed_indep_var_y <=
-                    get<YIndepMember>( *true_end_processed_indep_y_grid_0 ) );
+		    Utility::get<YIndepMember>( *true_end_processed_indep_y_grid_0 ) );
   testPrecondition( processed_indep_var_y >=
-                    get<YIndepMember>( *start_processed_indep_y_grid_1 ) );
+		    Utility::get<YIndepMember>( *start_processed_indep_y_grid_1 ) );
   remember( YIterator true_end_processed_indep_y_grid_1 =
                       end_processed_indep_y_grid_1 );
   remember( --true_end_processed_indep_y_grid_1 );
   testPrecondition( processed_indep_var_y <=
-                    get<YIndepMember>( *true_end_processed_indep_y_grid_1 ) );
+		    Utility::get<YIndepMember>( *true_end_processed_indep_y_grid_1 ) );
   testPrecondition( processed_indep_var_y >=
-                    get<YIndepMember>( *start_processed_indep_y_grid_1 ) );
+		    Utility::get<YIndepMember>( *start_processed_indep_y_grid_1 ) );
   // Make sure the dependent variables are valid
   testPrecondition( start_processed_dep_grid_0 != end_processed_dep_grid_0 );
   testPrecondition( start_processed_dep_grid_1 != end_processed_dep_grid_1 );
@@ -815,10 +816,10 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
  * policy does not do extrapolation.
  */
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<TupleMember YIndepMember,
-     TupleMember DepMember,
-     typename T,
-     typename Iterator>
+template<size_t YIndepMember,
+	 size_t DepMember,
+	 typename T,
+	 typename Iterator>
 inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateProcessed(
                            const T processed_indep_var_x_0,
                            const T processed_indep_var_x_1,
@@ -868,7 +869,7 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
                         ZIterator end_processed_dep_grid_1 )
 {
   // Make sure no tuples are being used
-  testStaticPrecondition( (boost::is_floating_point<typename std::iterator_traits<YIterator>::value_type>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename std::iterator_traits<YIterator>::value_type>::value) );
 
   return ThisType::interpolateProcessed<FIRST,FIRST>(
                         processed_indep_var_x_0,
@@ -890,11 +891,11 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
  * a value of 0.0 will be returned from this method.
  */
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<TupleMember YIndepMember,
-     TupleMember DepMember,
-     typename T,
-     typename YIterator,
-     typename ZIterator>
+template<size_t YIndepMember,
+	 size_t DepMember,
+	 typename T,
+	 typename YIterator,
+	 typename ZIterator>
 inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateProcessedUnitBase(
                       const T processed_indep_var_x_0,
                       const T processed_indep_var_x_1,
@@ -910,20 +911,20 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
                       ZIterator end_processed_dep_grid_1 )
 {
   // The interpolation type on the Z variable must be consistent
-  testStaticPrecondition( (boost::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
+  testStaticPrecondition( (std::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
   // T must be a floating point type
-  testStaticPrecondition( (boost::is_floating_point<T>::value) );
+  testStaticPrecondition( (std::is_floating_point<T>::value) );
   // The y iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleMemberTraits<typename std::iterator_traits<YIterator>::value_type,YIndepMember>::tupleMemberType,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<YIndepMember,typename std::iterator_traits<YIterator>::value_type>::type,T>::value) );
   // The z iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleMemberTraits<typename std::iterator_traits<ZIterator>::value_type,DepMember>::tupleMemberType,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<DepMember,typename std::iterator_traits<ZIterator>::value_type>::type,T>::value) );
   // Make sure the first independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
-                           processed_indep_var_x_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
-                           processed_indep_var_x_1 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
-                             processed_indep_var_x ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
+						   processed_indep_var_x_0 ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
+						   processed_indep_var_x_1 ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
+						     processed_indep_var_x ) );
   testPrecondition( processed_indep_var_x_0 < processed_indep_var_x_1 );
   testPrecondition( processed_indep_var_x >= processed_indep_var_x_0 );
   testPrecondition( processed_indep_var_x <= processed_indep_var_x_1 );
@@ -961,13 +962,13 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 
   // Calculate the length of the first y grid
   const T L0 = ZYInterpPolicy::calculateUnitBaseGridLengthProcessed(
-                     get<YIndepMember>( *start_processed_indep_y_grid_0 ),
-                     get<YIndepMember>( *true_end_processed_indep_y_grid_0 ) );
+                     Utility::get<YIndepMember>( *start_processed_indep_y_grid_0 ),
+                     Utility::get<YIndepMember>( *true_end_processed_indep_y_grid_0 ) );
 
   // Calculate the length of the first y grid
   const T L1 = ZYInterpPolicy::calculateUnitBaseGridLengthProcessed(
-                     get<YIndepMember>( *start_processed_indep_y_grid_1 ),
-                     get<YIndepMember>( *true_end_processed_indep_y_grid_1 ) );
+                     Utility::get<YIndepMember>( *start_processed_indep_y_grid_1 ),
+                     Utility::get<YIndepMember>( *true_end_processed_indep_y_grid_1 ) );
 
   const T Lx = ThisType::calculateIntermediateGridLengthProcessed(
                         processed_indep_var_x_0,
@@ -978,11 +979,11 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 
   // Calculate the intermediate y min
   const T processed_y_x_min = calculateIntermediateProcessedGridLimit(
-            processed_indep_var_x_0,
-            processed_indep_var_x_1,
-            processed_indep_var_x,
-            get<YIndepMember>( *start_processed_indep_y_grid_0 ),
-            get<YIndepMember>( *start_processed_indep_y_grid_1 ) );
+			processed_indep_var_x_0,
+			processed_indep_var_x_1,
+			processed_indep_var_x,
+			Utility::get<YIndepMember>( *start_processed_indep_y_grid_0 ),
+			Utility::get<YIndepMember>( *start_processed_indep_y_grid_1 ) );
 
   // Calculate the unit base independent variable
   const T eta =
@@ -991,15 +992,16 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
                                                         Lx );
 
   // Calculate the y value on the first grid
-  T processed_indep_var_y_0 = ZYInterpPolicy::calculateProcessedIndepVar(
-              eta,
-              get<YIndepMember>( *start_processed_indep_y_grid_0 ),
-              L0 );
+  T processed_indep_var_y_0 = ZYInterpPolicy::calculateProcessedIndepVar( 
+			  eta,
+			  Utility::get<YIndepMember>( *start_processed_indep_y_grid_0 ),
+			  L0 );
+  
   // Calculate the y value on the second grid
   T processed_indep_var_y_1 = ZYInterpPolicy::calculateProcessedIndepVar(
-              eta,
-              get<YIndepMember>( *start_processed_indep_y_grid_1 ),
-              L1 );
+			  eta,
+			  Utility::get<YIndepMember>( *start_processed_indep_y_grid_1 ),
+			  L1 );
 
   // Conduct the ZY interpolation on the first y grid
   T processed_dep_var_0 =
@@ -1039,10 +1041,10 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
  * a value of 0.0 will be returned from this method.
  */
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<TupleMember YIndepMember,
-     TupleMember DepMember,
-     typename T,
-     typename Iterator>
+template<size_t YIndepMember,
+	 size_t DepMember,
+	 typename T,
+	 typename Iterator>
 inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateProcessedUnitBase(
                       const T processed_indep_var_x_0,
                       const T processed_indep_var_x_1,
@@ -1092,7 +1094,7 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
                       ZIterator end_processed_dep_grid_1 )
 {
   // Make sure no tuples are being used
-  testStaticPrecondition( (boost::is_floating_point<typename std::iterator_traits<YIterator>::value_type>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename std::iterator_traits<YIterator>::value_type>::value) );
 
   return ThisType::interpolateProcessedUnitBase<FIRST,FIRST>(
                         processed_indep_var_x_0,
@@ -1227,18 +1229,18 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::calculateIn
                         const T grid_1_length )
 {
   // Make sure the first independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
-                           processed_indep_var_x_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
-                           processed_indep_var_x_1 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
-                             processed_indep_var_x ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
+						   processed_indep_var_x_0 ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
+						   processed_indep_var_x_1 ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
+						     processed_indep_var_x ) );
   testPrecondition( processed_indep_var_x_0 < processed_indep_var_x_1 );
   testPrecondition( processed_indep_var_x >= processed_indep_var_x_0 );
   testPrecondition( processed_indep_var_x <= processed_indep_var_x_1 );
   // Make sure the grid lengths are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( grid_0_length ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( grid_1_length ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( grid_0_length ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( grid_1_length ) );
   testPrecondition( grid_0_length >= 0.0 );
   testPrecondition( grid_1_length >= 0.0 );
   testPrecondition( grid_0_length + grid_1_length > 0.0 );
@@ -1263,20 +1265,20 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::calculateIn
                         const T processed_grid_1_y_limit )
 {
   // Make sure the first independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
-                           processed_indep_var_x_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
-                           processed_indep_var_x_1 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
-                             processed_indep_var_x ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
+						   processed_indep_var_x_0 ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
+						   processed_indep_var_x_1 ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
+						     processed_indep_var_x ) );
   testPrecondition( processed_indep_var_x_0 < processed_indep_var_x_1 );
   testPrecondition( processed_indep_var_x >= processed_indep_var_x_0 );
   testPrecondition( processed_indep_var_x <= processed_indep_var_x_1 );
   // Make sure the grid min values are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
-                          processed_grid_0_y_limit ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
-                          processed_grid_1_y_limit ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
+						  processed_grid_0_y_limit ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
+						  processed_grid_1_y_limit ) );
 
   T processed_slope = (processed_grid_1_y_limit - processed_grid_0_y_limit)/
     (processed_indep_var_x_1 - processed_indep_var_x_0);
@@ -1289,11 +1291,11 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::calculateIn
 
 // Interpolate on the specified y grid
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<TupleMember YIndepMember,
-     TupleMember DepMember,
-     typename YIterator,
-     typename ZIterator,
-     typename T>
+template<size_t YIndepMember,
+	 size_t DepMember,
+	 typename YIterator,
+	 typename ZIterator,
+	 typename T>
 inline T
 TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateOnYGrid(
                           const T indep_var_y,
@@ -1303,23 +1305,23 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateOnYGrid(
                           ZIterator end_dep_grid )
 {
   // The interpolation type on the Z variable must be consistent
-  testStaticPrecondition( (boost::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
+  testStaticPrecondition( (std::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
   // T must be a floating point type
-  testStaticPrecondition( (boost::is_floating_point<T>::value) );
+  testStaticPrecondition( (std::is_floating_point<T>::value) );
   // The y iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleMemberTraits<typename std::iterator_traits<YIterator>::value_type,YIndepMember>::tupleMemberType,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<YIndepMember,typename std::iterator_traits<YIterator>::value_type>::type,T>::value) );
   // The z iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleMemberTraits<typename std::iterator_traits<ZIterator>::value_type,DepMember>::tupleMemberType,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<DepMember,typename std::iterator_traits<ZIterator>::value_type>::type,T>::value) );
   // Make sure the second independent variables are valid
   testPrecondition( start_indep_y_grid != end_indep_y_grid );
   testPrecondition( Sort::isSortedAscending<YIndepMember>( start_indep_y_grid,
                                                            end_indep_y_grid ));
   testPrecondition( ThisType::isSecondIndepVarInValidRange(
-                                  get<YIndepMember>( *start_indep_y_grid ) ) );
+				Utility::get<YIndepMember>( *start_indep_y_grid ) ) );
   remember( YIterator true_end_indep_y_grid_test = end_indep_y_grid );
   remember( --true_end_indep_y_grid_test );
   testPrecondition( indep_var_y <= ThisType::calculateFuzzyUpperBound(
-                            get<YIndepMember>(*true_end_indep_y_grid_test) ) );
+                            Utility::get<YIndepMember>(*true_end_indep_y_grid_test) ) );
   // Make sure the dependent variables are valid
   testPrecondition( start_dep_grid != end_dep_grid );
   testPrecondition( std::distance( start_indep_y_grid, end_indep_y_grid )==
@@ -1331,7 +1333,7 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateOnYGrid(
 
   T dep_var;
 
-  if( indep_var_y < get<YIndepMember>( *true_end_indep_y_grid ) )
+  if( indep_var_y < Utility::get<YIndepMember>( *true_end_indep_y_grid ) )
   {
     YIterator lower_y_bin_boundary =
       Search::binaryLowerBound<YIndepMember>( start_indep_y_grid,
@@ -1349,26 +1351,26 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateOnYGrid(
     ++upper_dep_bin_boundary;
 
     dep_var = ZYInterpPolicy::interpolate(
-                                   get<YIndepMember>( *lower_y_bin_boundary ),
-                                   get<YIndepMember>( *upper_y_bin_boundary ),
+				   Utility::get<YIndepMember>( *lower_y_bin_boundary ),
+                                   Utility::get<YIndepMember>( *upper_y_bin_boundary ),
                                    indep_var_y,
-                                   get<DepMember>( *lower_dep_bin_boundary ),
-                                   get<DepMember>( *upper_dep_bin_boundary ) );
+                                   Utility::get<DepMember>( *lower_dep_bin_boundary ),
+                                   Utility::get<DepMember>( *upper_dep_bin_boundary ) );
   }
-  else if( indep_var_y == get<YIndepMember>( *true_end_indep_y_grid ) )
+  else if( indep_var_y == Utility::get<YIndepMember>( *true_end_indep_y_grid ) )
   {
     ZIterator true_end_dep_grid = end_dep_grid;
     --true_end_dep_grid;
 
-    dep_var = get<DepMember>( *true_end_dep_grid );
+    dep_var = Utility::get<DepMember>( *true_end_dep_grid );
   }
   // indep_var_y > end && indep_var_y <= fuzzy_end
-  else if( indep_var_y > get<YIndepMember>( *true_end_indep_y_grid ) )
+  else if( indep_var_y > Utility::get<YIndepMember>( *true_end_indep_y_grid ) )
   {
     ZIterator true_end_dep_grid = end_dep_grid;
     --true_end_dep_grid;
 
-    dep_var = get<DepMember>( *true_end_dep_grid );
+    dep_var = Utility::get<DepMember>( *true_end_dep_grid );
   }
 
   return dep_var;
@@ -1376,11 +1378,11 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateOnYGrid(
 
 // Interpolate on the specified processed y grid
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<TupleMember YIndepMember,
-     TupleMember DepMember,
-     typename YIterator,
-     typename ZIterator,
-     typename T>
+template<size_t YIndepMember,
+	 size_t DepMember,
+	 typename YIterator,
+	 typename ZIterator,
+	 typename T>
 inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateAndProcessOnProcessedYGrid(
                     const T processed_indep_var_y,
                     YIterator start_processed_indep_y_grid,
@@ -1389,25 +1391,28 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
                     ZIterator end_processed_dep_grid )
 {
   // The interpolation type on the Z variable must be consistent
-  testStaticPrecondition( (boost::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
+  testStaticPrecondition( (std::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
   // T must be a floating point type
-  testStaticPrecondition( (boost::is_floating_point<T>::value) );
+  testStaticPrecondition( (std::is_floating_point<T>::value) );
   // The y iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleMemberTraits<typename std::iterator_traits<YIterator>::value_type,YIndepMember>::tupleMemberType,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<YIndepMember,typename std::iterator_traits<YIterator>::value_type>::type,T>::value) );
   // The z iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleMemberTraits<typename std::iterator_traits<ZIterator>::value_type,DepMember>::tupleMemberType,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<DepMember,typename std::iterator_traits<ZIterator>::value_type>::type,T>::value) );
   // Make sure the second independent variables are valid
   testPrecondition( start_processed_indep_y_grid !=
                     end_processed_indep_y_grid );
   testPrecondition( Sort::isSortedAscending<YIndepMember>(
                         start_processed_indep_y_grid,
                         end_processed_indep_y_grid ) );
+  testPrecondition( processed_indep_var_y >=
+              ThisType::calculateFuzzyLowerBound(
+                 Utility::get<YIndepMember>(*start_processed_indep_y_grid) ) );
   remember( YIterator true_end_processed_indep_y_grid_test =
                       end_processed_indep_y_grid );
   remember( --true_end_processed_indep_y_grid_test );
   testPrecondition( processed_indep_var_y <=
-                    ThisType::calculateFuzzyUpperBound(
-                    get<YIndepMember>(*true_end_processed_indep_y_grid_test) ) );
+              ThisType::calculateFuzzyUpperBound(
+                 Utility::get<YIndepMember>(*true_end_processed_indep_y_grid_test)  ) );
   // Make sure the dependent variables are valid
   testPrecondition( start_processed_dep_grid != end_processed_dep_grid );
   testPrecondition( std::distance( start_processed_indep_y_grid,
@@ -1422,7 +1427,9 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
   T processed_dep_var;
 
   if( processed_indep_var_y <
-      get<YIndepMember>( *true_end_processed_indep_y_grid ) )
+      Utility::get<YIndepMember>( *true_end_processed_indep_y_grid ) &&
+      processed_indep_var_y >=
+      Utility::get<YIndepMember>( *start_processed_indep_y_grid ) )
   {
     YIterator lower_y_bin_boundary =
       Search::binaryLowerBound<YIndepMember>( start_processed_indep_y_grid,
@@ -1440,31 +1447,39 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
     ZIterator upper_dep_bin_boundary = lower_dep_bin_boundary;
     ++upper_dep_bin_boundary;
 
-    T processed_slope = (get<DepMember>( *upper_dep_bin_boundary ) -
-                        get<DepMember>( *lower_dep_bin_boundary ))/
-                        (get<YIndepMember>( *upper_y_bin_boundary ) -
-                        get<YIndepMember>( *lower_y_bin_boundary ) );
+    T processed_slope = (Utility::get<DepMember>( *upper_dep_bin_boundary ) -
+			 Utility::get<DepMember>( *lower_dep_bin_boundary ))/
+      (Utility::get<YIndepMember>( *upper_y_bin_boundary ) -
+       Utility::get<YIndepMember>( *lower_y_bin_boundary ) );
 
     processed_dep_var = ZYInterpPolicy::interpolateAndProcess(
-                        get<YIndepMember>( *lower_y_bin_boundary ),
-                        processed_indep_var_y,
-                        get<DepMember>( *lower_dep_bin_boundary ),
-                        processed_slope );
+				  Utility::get<YIndepMember>( *lower_y_bin_boundary ),
+				  processed_indep_var_y,
+				  Utility::get<DepMember>( *lower_dep_bin_boundary ),
+				  processed_slope );
   }
-  else if( processed_indep_var_y == get<YIndepMember>( *true_end_processed_indep_y_grid ) )
+  else if( processed_indep_var_y == Utility::get<YIndepMember>( *true_end_processed_indep_y_grid ) )
   {
     ZIterator true_end_processed_dep_grid = end_processed_dep_grid;
     --true_end_processed_dep_grid;
 
-    processed_dep_var = get<DepMember>( *true_end_processed_dep_grid );
+    processed_dep_var = Utility::get<DepMember>( *true_end_processed_dep_grid );
   }
-  else if( processed_indep_var_y <= ThisType::calculateFuzzyUpperBound(
-                      get<YIndepMember>( *true_end_processed_indep_y_grid ) ) )
+  else
   {
-    ZIterator true_end_processed_dep_grid = end_processed_dep_grid;
-    --true_end_processed_dep_grid;
+    if( processed_indep_var_y <
+        Utility::get<YIndepMember>( *start_processed_indep_y_grid ) )
+    {
+      processed_dep_var = Utility::get<DepMember>( *start_processed_dep_grid );
+    }
+    else
+    {
+      ZIterator true_end_processed_dep_grid = end_processed_dep_grid;
+      --true_end_processed_dep_grid;
 
-    processed_dep_var = get<DepMember>( *true_end_processed_dep_grid );
+      processed_dep_var =
+        Utility::get<DepMember>( *true_end_processed_dep_grid );
+    }
   }
 
   return processed_dep_var;
@@ -1473,49 +1488,49 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 // The name of the policy
 inline const std::string LinLinLin::name()
 {
-  return "LinLinLin";
+  return Utility::typeName<LinLinLin>();
 }
 
 // The name of the policy
 inline const std::string LinLogLin::name()
 {
-  return "LinLogLin";
+  return Utility::typeName<LinLogLin>();
 }
 
 // The name of the policy
 inline const std::string LinLinLog::name()
 {
-  return "LinLinLog";
+  return Utility::typeName<LinLinLog>();
 }
 
 // The name of the policy
 inline const std::string LinLogLog::name()
 {
-  return "LinLogLog";
+  return Utility::typeName<LinLogLog>();
 }
 
 // The name of the policy
 inline const std::string LogLinLin::name()
 {
-  return "LogLinLin";
+  return Utility::typeName<LogLinLin>();
 }
 
 // The name of the policy
 inline const std::string LogLogLin::name()
 {
-  return "LogLogLin";
+  return Utility::typeName<LogLogLin>();
 }
 
 // The name of the policy
 inline const std::string LogLinLog::name()
 {
-  return "LogLinLog";
+  return Utility::typeName<LogLinLog>();
 }
 
 // The name of the policy
 inline const std::string LogLogLog::name()
 {
-  return "LogLogLog";
+  return Utility::typeName<LogLogLog>();
 }
 
 // The name of the policy

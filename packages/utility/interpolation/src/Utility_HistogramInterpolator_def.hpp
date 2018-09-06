@@ -10,7 +10,7 @@
 #define UTILITY_HISTOGRAM_INTERPOLATOR_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Utility{
 
@@ -34,8 +34,8 @@ template<typename IndependentUnit, typename DependentUnit, typename T>
 HistogramUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::HistogramUnitAwareInterpolator()
 {
   // T must be a floating point type
-  testStaticPrecondition( (IQT::is_floating_point::value) );
-  testStaticPrecondition( (DQT::is_floating_point::value) );
+  testStaticPrecondition( (std::is_floating_point<typename IQT::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename DQT::RawType>::value) );
 }
 
 // Get the interpolation type

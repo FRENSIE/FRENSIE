@@ -11,20 +11,12 @@
 
 // FRENSIE Includes
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
-#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
+
+BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_IMPLEMENT( UnitAwareUniformDistribution );
 
 namespace Utility{
-
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareUniformDistribution<void,void> );
-
-// Default constructor
-template<typename IndependentUnit, typename DependentUnit>
-UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::UnitAwareUniformDistribution()
-{ /* ... */ }
 
 // Constructor
 /*! \details A quantity with a different unit can be used as an input. This
@@ -41,18 +33,15 @@ UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::UnitAwareUniformDis
     d_dependent_value( dependent_value ),
     d_pdf_value()
 {
-  // Make sure that the values are valid
-  testPrecondition( !QuantityTraits<InputIndepQuantity>::isnaninf(
-						     min_independent_value ) );
-  testPrecondition( !QuantityTraits<InputIndepQuantity>::isnaninf(
-						     max_independent_value ) );
-  testPrecondition( !QuantityTraits<InputDepQuantity>::isnaninf(
-							   dependent_value ) );
-  // Make sure that the max value is greater than the min value
-  testPrecondition( max_independent_value > min_independent_value );
-
+  // Verify that shape parameters are valid
+  this->verifyValidShapeParameters( d_min_independent_value,
+                                    d_max_independent_value,
+                                    d_dependent_value );
+  
   // Calculate the pdf value
   this->calculatePDFValue();
+
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -72,18 +61,10 @@ UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::UnitAwareUniformDis
     d_dependent_value( dist_instance.d_dependent_value ),
     d_pdf_value()
 {
-  // Make sure that the values are valid
-  remember( typedef QuantityTraits<typename UnitAwareUniformDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity> InputIQT );
-  remember( typedef QuantityTraits<typename UnitAwareUniformDistribution<InputIndepUnit,InputDepUnit>::DepQuantity> InputDQT );
-  testPrecondition( !InputIQT::isnaninf( dist_instance.d_min_independent_value ) );
-  testPrecondition( !InputIQT::isnaninf( dist_instance.d_max_independent_value ) );
-  testPrecondition( !InputDQT::isnaninf( dist_instance.d_dependent_value ) );
-  // Make sure that the max value is greater than the min value
-  testPrecondition( dist_instance.d_max_independent_value >
-		    dist_instance.d_min_independent_value );
-
   // Calculate the pdf value
   this->calculatePDFValue();
+
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -94,16 +75,10 @@ UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::UnitAwareUniformDis
     d_dependent_value( DQT::initializeQuantity( unitless_dist_instance.d_dependent_value ) ),
     d_pdf_value()
 {
-  // Make sure the values are valid
-  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_min_independent_value ) );
-  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_max_independent_value ) );
-  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_dependent_value ));
-  // Make sure that the max value is greater than the min value
-  testPrecondition( unitless_dist_instance.d_max_independent_value >
-		    unitless_dist_instance.d_min_independent_value );
-
   // Calculate the pdf value
   this->calculatePDFValue();
+
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
@@ -124,10 +99,6 @@ template<typename IndependentUnit, typename DependentUnit>
 UnitAwareUniformDistribution<IndependentUnit,DependentUnit>& UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::operator=(
        const UnitAwareUniformDistribution<IndependentUnit,DependentUnit>& dist_instance )
 {
-  // Make sure that the distribution is valid
-  testPrecondition( dist_instance.d_max_independent_value >
-		    dist_instance.d_min_independent_value );
-
   if( this != &dist_instance )
   {
     d_min_independent_value = dist_instance.d_min_independent_value;
@@ -206,7 +177,7 @@ UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sample(
 // Return a random sample from the corresponding CDF and record the number of trials
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
+UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( DistributionTraits::Counter& trials ) const
 {
   return ThisType::sampleAndRecordTrials( d_min_independent_value,
 					  d_max_independent_value,
@@ -219,7 +190,7 @@ inline typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::Ind
 UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials(
  const typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity min_independent_value,
  const typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_independent_value,
- unsigned& trials )
+ DistributionTraits::Counter& trials )
 {
   // Make sure that the max value is greater than the min value
   testPrecondition( max_independent_value > min_independent_value );
@@ -285,7 +256,7 @@ UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNum
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sampleAndRecordBinIndex(
-					    unsigned& sampled_bin_index ) const
+					    size_t& sampled_bin_index ) const
 {
   sampled_bin_index = 0u;
 
@@ -325,7 +296,7 @@ UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::getLowerBoundOfInde
 
 // Return the distribution type
 template<typename IndependentUnit, typename DependentUnit>
-OneDDistributionType UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
+UnivariateDistributionType UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return UnitAwareUniformDistribution::distribution_type;
 }
@@ -341,92 +312,75 @@ bool UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::isContinuous()
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  os << "{" << getRawQuantity( d_min_independent_value )
-     << "," << getRawQuantity( d_max_independent_value )
-     << "," << getRawQuantity( d_dependent_value )
-     << "}";
+  this->toStreamWithLimitsDistImpl( os,
+                                    std::make_pair( "dependent value", d_dependent_value ) );
 }
 
-// Method for initializing the object from an input stream
+// Save the distribution to an archive
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromStream( std::istream& is )
+template<typename Archive>
+void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
 {
-  // Read in the distribution representation
-  std::string dist_rep;
-  std::getline( is, dist_rep, '}' );
-  dist_rep += '}';
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
 
-  // Parse special characters
-  try{
-    ArrayString::locateAndReplacePi( dist_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the exponential distribution cannot be "
-			      "constructed because the representation is not "
-			      "valid (only three values may be specified)!" );
+  // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_min_independent_value );
+  ar & BOOST_SERIALIZATION_NVP( d_max_independent_value );
+  ar & BOOST_SERIALIZATION_NVP( d_dependent_value );
+  ar & BOOST_SERIALIZATION_NVP( d_pdf_value );
+}
 
-  Teuchos::Array<double> distribution;
-  try{
-    distribution = Teuchos::fromStringToArray<double>( dist_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the uniform distribution cannot be "
-			      "constructed because the representation is not "
-			      "valid (see details below)!\n" );
+// Load the distribution from an archive
+template<typename IndependentUnit, typename DependentUnit>
+template<typename Archive>
+void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
 
-  TEST_FOR_EXCEPTION( distribution.size() < 2 || distribution.size() > 3,
-		      InvalidDistributionStringRepresentation,
-		      "Error: the exponential distribution cannot be "
-		      "constructed because the representation is not valid "
-		      "(only three values may be specified)!" );
+  // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_min_independent_value );
+  ar & BOOST_SERIALIZATION_NVP( d_max_independent_value );
+  ar & BOOST_SERIALIZATION_NVP( d_dependent_value );
+  ar & BOOST_SERIALIZATION_NVP( d_pdf_value );
+}
 
-  setQuantity( d_min_independent_value, distribution[0] );
-
-  TEST_FOR_EXCEPTION( IQT::isnaninf( d_min_independent_value ),
-		      InvalidDistributionStringRepresentation,
-		      "Error: the uniform distribution cannot be "
+// Verify that the distribution values are valid
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::verifyValidShapeParameters(
+                                          const IndepQuantity& min_indep_value,
+                                          const IndepQuantity& max_indep_value,
+                                          const DepQuantity& multiplier )
+{
+  TEST_FOR_EXCEPTION( IQT::isnaninf( min_indep_value ),
+		      Utility::BadUnivariateDistributionParameter,
+		      "The uniform distribution cannot be "
 		      "constructed because of an invalid min "
-		      "independent value " <<
-		      d_min_independent_value );
-
-  setQuantity( d_max_independent_value, distribution[1] );
-
-  TEST_FOR_EXCEPTION( IQT::isnaninf( d_max_independent_value ),
-		      InvalidDistributionStringRepresentation,
-		      "Error: the uniform distribution cannot be "
+		      "independent value!" );
+  
+  TEST_FOR_EXCEPTION( IQT::isnaninf( max_indep_value ),
+		      Utility::BadUnivariateDistributionParameter,
+		      "The uniform distribution cannot be "
 		      "constructed because of an invalid max "
-		      "independent value " <<
-		      d_max_independent_value );
+		      "independent value!" );
+  
+  TEST_FOR_EXCEPTION( max_indep_value <= min_indep_value,
+		      Utility::BadUnivariateDistributionParameter,
+		      "The uniform distribution cannot be constructed because "
+                      "of invalid independent values!" );
 
-  TEST_FOR_EXCEPTION( d_max_independent_value <= d_min_independent_value,
-		      InvalidDistributionStringRepresentation,
-		      "Error: the uniform distribution cannot be "
-		      "constructed because of invalid independent values!" );
-
-  if( distribution.size() == 3 )
-    setQuantity( d_dependent_value, distribution[2] );
-  else
-    setQuantity( d_dependent_value, 1.0 );
-
-  TEST_FOR_EXCEPTION( DQT::isnaninf( d_dependent_value ),
-		      InvalidDistributionStringRepresentation,
-		      "Error: the uniform distribution cannot be "
+  TEST_FOR_EXCEPTION( DQT::isnaninf( multiplier ),
+		      Utility::BadUnivariateDistributionParameter,
+		      "The uniform distribution cannot be "
 		      "constructed because of an invalid dependent "
-		      "value " << d_dependent_value );
+		      "value!" );
 
-  this->calculatePDFValue();
-}
-
-// Method for testing if two objects are equivalent
-template<typename IndependentUnit, typename DependentUnit>
-bool UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::isEqual( const UnitAwareUniformDistribution<IndependentUnit,DependentUnit>& other ) const
-{
-  return d_min_independent_value == other.d_min_independent_value &&
-    d_max_independent_value == other.d_max_independent_value &&
-    d_dependent_value == other.d_dependent_value &&
-    d_pdf_value == other.d_pdf_value;
+  TEST_FOR_EXCEPTION( multiplier <= DQT::zero(),
+		      Utility::BadUnivariateDistributionParameter,
+		      "The uniform distribution cannot be "
+		      "constructed because of an invalid dependent "
+		      "value!" );
 }
 
 // Calculate the PDF value
@@ -443,7 +397,28 @@ bool UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::canDepVarBeZer
   return false;
 }
 
+// Equality comparison operator
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::operator==( const UnitAwareUniformDistribution& other ) const
+{
+  return d_min_independent_value == other.d_min_independent_value &&
+    d_max_independent_value == other.d_max_independent_value &&
+    d_dependent_value == other.d_dependent_value;
+}
+
+// Inequality comparison operator
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::operator!=( const UnitAwareUniformDistribution& other ) const
+{
+  return d_min_independent_value != other.d_min_independent_value ||
+    d_max_independent_value != other.d_max_independent_value ||
+    d_dependent_value != other.d_dependent_value;
+}
+
 } // end Utility namespace
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareUniformDistribution<void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareUniformDistribution<void,void> );
 
 #endif // end UTILITY_UNIFORM_DISTRIBUTION_DEF_HPP
 

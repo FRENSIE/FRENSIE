@@ -15,11 +15,9 @@
 // Boost Includes
 #include <boost/mpl/or.hpp>
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_QuantityTraits.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Utility{
 
@@ -40,8 +38,8 @@ inline DepCosineType LogCosLog<use_nudge>::interpolate( const IndepType indep_va
                                           const DepCosineType raw_dep_var_1 )
 {
   // The IndepType must be a floating point type
-  testStaticPrecondition( (QuantityTraits<IndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepCosineType>::is_floating_point::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<IndepType>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<DepCosineType>::RawType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
@@ -74,8 +72,8 @@ inline DepCosineType LogCosLog<use_nudge>::interpolate( const T beta,
                                           const DepCosineType raw_dep_var_1 )
 {
   // The IndepType must be a floating point type
-  testStaticPrecondition( (QuantityTraits<T>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepCosineType>::is_floating_point::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<T>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<DepCosineType>::RawType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( beta >= QuantityTraits<T>::zero() );
   testPrecondition( beta <= QuantityTraits<T>::one() );
@@ -102,8 +100,8 @@ LogCosLog<use_nudge>::interpolateAndProcess( const IndepType indep_var_0,
                                   const DepCosineType raw_dep_var_1 )
 {
   // T must be a floating point type
-  testStaticPrecondition( (QuantityTraits<IndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepCosineType>::is_floating_point::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<IndepType>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<DepCosineType>::RawType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
@@ -446,8 +444,8 @@ inline DepType LogLogCos<use_nudge>::interpolate( const IndepCosineType raw_inde
                                        const DepType dep_var_1 )
 {
   // The IndepCosineType must be a floating point type
-  testStaticPrecondition( (QuantityTraits<IndepCosineType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<IndepCosineType>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<DepType>::RawType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var_1 ) );
@@ -487,15 +485,15 @@ T InterpolationHelper<LogLogCos<false> >::interpolate( const T processed_indep_v
                                                const T processed_slope )
 {
   // T must be a floating point type
-  testStaticPrecondition( (boost::is_floating_point<T>::value) );
+  testStaticPrecondition( (std::is_floating_point<T>::value) );
   // Make sure the processed independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_indep_var_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_indep_var ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( processed_indep_var_0 ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( processed_indep_var ) );
   testPrecondition( processed_indep_var <= processed_indep_var_0 );
   // Make sure the processed dependent variable is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_dep_var_0 ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( processed_dep_var_0 ) );
   // Make sure that the slope is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( processed_slope ) );
 
   return LogLogCos<false>::recoverProcessedDepVar(
                processed_dep_var_0 +
@@ -518,13 +516,13 @@ T InterpolationHelper<LogLogCos<true> >::interpolate( const T processed_indep_va
   // T must be a floating point type
   testStaticPrecondition( (boost::is_floating_point<T>::value) );
   // Make sure the processed independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_indep_var_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_indep_var ) );
+  testPrecondition( !QuantityTraits<T>::isnaninf( processed_indep_var_0 ) );
+  testPrecondition( !QuantityTraits<T>::isnaninf( processed_indep_var ) );
   testPrecondition( processed_indep_var <= processed_indep_var_0 );
   // Make sure the processed dependent variable is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_dep_var_0 ) );
+  testPrecondition( !QuantityTraits<T>::isnaninf( processed_dep_var_0 ) );
   // Make sure that the slope is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
+  testPrecondition( !QuantityTraits<T>::isnaninf( processed_slope ) );
 
   return LogLogCos<true>::recoverProcessedDepVar(
                processed_dep_var_0 +
@@ -539,8 +537,8 @@ inline DepType LogLogCos<use_nudge>::interpolate( const T beta,
                                        const DepType dep_var_1 )
 {
   // T must be a floating point type
-  testStaticPrecondition( (QuantityTraits<T>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<T>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<DepType>::RawType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( beta >= QuantityTraits<T>::zero() );
   testPrecondition( beta <= QuantityTraits<T>::one() );
@@ -564,8 +562,8 @@ LogLogCos<use_nudge>::interpolateAndProcess( const IndepCosineType raw_indep_var
                                   const DepType dep_var_1 )
 {
   // T must be a floating point type
-  testStaticPrecondition( (QuantityTraits<IndepCosineType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<IndepCosineType>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<DepType>::RawType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var_1 ) );
@@ -691,8 +689,8 @@ inline DepCosineType LogCosLin<use_nudge>::interpolate( const IndepType indep_va
                                           const DepCosineType raw_dep_var_1 )
 {
   // T must be a floating point type
-  testStaticPrecondition( (QuantityTraits<IndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepCosineType>::is_floating_point::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<IndepType>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<DepCosineType>::RawType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
@@ -724,8 +722,8 @@ inline DepCosineType LogCosLin<use_nudge>::interpolate( const T beta,
                                           const DepCosineType raw_dep_var_1 )
 {
   // The IndepType must be a floating point type
-  testStaticPrecondition( (QuantityTraits<T>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepCosineType>::is_floating_point::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<T>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<DepCosineType>::RawType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( beta >= QuantityTraits<T>::zero() );
   testPrecondition( beta <= QuantityTraits<T>::one() );
@@ -752,8 +750,8 @@ LogCosLin<use_nudge>::interpolateAndProcess( const IndepType indep_var_0,
                                   const DepCosineType raw_dep_var_1 )
 {
   // T must be a floating point type
-  testStaticPrecondition( (QuantityTraits<IndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepCosineType>::is_floating_point::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<IndepType>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<DepCosineType>::RawType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
@@ -1096,8 +1094,8 @@ inline DepType LinLogCos<use_nudge>::interpolate( const IndepCosineType raw_inde
                                        const DepType dep_var_1 )
 {
   // T must be a floating point type
-  testStaticPrecondition( (QuantityTraits<IndepCosineType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<IndepCosineType>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<DepType>::RawType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var_1 ) );
@@ -1139,15 +1137,15 @@ T InterpolationHelper<LinLogCos<false> >::interpolate( const T processed_indep_v
                                                const T processed_slope )
 {
   // T must be a floating point type
-  testStaticPrecondition( (boost::is_floating_point<T>::value) );
+  testStaticPrecondition( (std::is_floating_point<T>::value) );
   // Make sure the processed independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_indep_var_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_indep_var ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( processed_indep_var_0 ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( processed_indep_var ) );
   testPrecondition( processed_indep_var <= processed_indep_var_0 );
   // Make sure the processed dependent variable is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_dep_var_0 ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( processed_dep_var_0 ) );
   // Make sure that the slope is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( processed_slope ) );
 
   return LinLogCos<false>::recoverProcessedDepVar(
                processed_dep_var_0 +
@@ -1170,13 +1168,13 @@ T InterpolationHelper<LinLogCos<true> >::interpolate( const T processed_indep_va
   // T must be a floating point type
   testStaticPrecondition( (boost::is_floating_point<T>::value) );
   // Make sure the processed independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_indep_var_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_indep_var ) );
+  testPrecondition( !QuantityTraits<T>::isnaninf( processed_indep_var_0 ) );
+  testPrecondition( !QuantityTraits<T>::isnaninf( processed_indep_var ) );
   testPrecondition( processed_indep_var <= processed_indep_var_0 );
   // Make sure the processed dependent variable is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_dep_var_0 ) );
+  testPrecondition( !QuantityTraits<T>::isnaninf( processed_dep_var_0 ) );
   // Make sure that the slope is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
+  testPrecondition( !QuantityTraits<T>::isnaninf( processed_slope ) );
 
   return LinLogCos<true>::recoverProcessedDepVar(
                processed_dep_var_0 +
@@ -1191,8 +1189,8 @@ inline DepType LinLogCos<use_nudge>::interpolate( const T beta,
                                        const DepType dep_var_1 )
 {
   // T must be a floating point type
-  testStaticPrecondition( (QuantityTraits<T>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<T>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<DepType>::RawType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( beta >= QuantityTraits<T>::zero() );
   testPrecondition( beta <= QuantityTraits<T>::one() );

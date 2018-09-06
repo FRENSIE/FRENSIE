@@ -8,13 +8,13 @@
 
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Data{
 
 // Test preconditions for energy grids
 template<typename Array>
-inline bool EnergyGridValid( const Array& energy_grid )
+inline bool energyGridValid( const Array& energy_grid )
 {
   return( energy_grid.size() > 1 &&
           Utility::Sort::isSortedAscending( energy_grid.begin(),
@@ -24,7 +24,7 @@ inline bool EnergyGridValid( const Array& energy_grid )
 
 // Test preconditions for values in array greater than zero
 template<typename Array>
-inline bool ValuesGreaterThanZero( const Array& values )
+inline bool valuesGreaterThanZero( const Array& values )
 {
   return std::find_if( values.begin(),
                        values.end(),
@@ -33,7 +33,7 @@ inline bool ValuesGreaterThanZero( const Array& values )
 
 // Test preconditions for values in array greater than zero
 template<typename Array>
-inline bool ValuesGreaterThanOrEqualToZero( const Array& values )
+inline bool valuesGreaterThanOrEqualToZero( const Array& values )
 {
   return std::find_if( values.begin(),
                        values.end(),
@@ -42,7 +42,7 @@ inline bool ValuesGreaterThanOrEqualToZero( const Array& values )
 
 // Test preconditions for values in array less than one
 template<typename Array>
-inline bool ValuesLessThanOne( const Array& values )
+inline bool valuesLessThanOne( const Array& values )
 {
   return std::find_if( values.begin(),
                        values.end(),
@@ -51,7 +51,7 @@ inline bool ValuesLessThanOne( const Array& values )
 
 // Test preconditions for values in array less than one
 template<typename Array>
-inline bool ValuesLessThanOrEqualToOne( const Array& values )
+inline bool valuesLessThanOrEqualToOne( const Array& values )
 {
   return std::find_if( values.begin(),
                        values.end(),

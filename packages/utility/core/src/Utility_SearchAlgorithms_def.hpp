@@ -14,9 +14,8 @@
 #include <iterator>
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_SearchAlgorithms.hpp"
-#include "Utility_TupleMemberTraits.hpp"
 
 namespace Utility{
 
@@ -51,12 +50,12 @@ namespace Search{
  * \post The returned iterator must be valid (not equal to the initial end
  * iterator).
  */
-template<TupleMember member,
+template<size_t member,
 	 typename Iterator>
 inline Iterator binaryLowerBound(
     Iterator start,
     Iterator end,
-    const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
+    const typename TupleElement<member,typename std::iterator_traits<Iterator>::value_type>::type value )
 {
   // The iterators must be random access iterators (support +/- ops)
   //testStaticPrecondition((boost::is_same<typename std::iterator_traits<Iterator>::iterator_category,std::random_access_iterator_tag>::value));
@@ -66,8 +65,8 @@ inline Iterator binaryLowerBound(
   testPrecondition( (start != end) );
 
   // The value used for the search must be within the limits of the sorted data
-  testPrecondition( (value >= get<member>( *start )) );
-  testPrecondition( (value <= get<member>( *(true_end) )) );
+  testPrecondition( (value >= Utility::get<member>( *start )) );
+  testPrecondition( (value <= Utility::get<member>( *(true_end) )) );
 
   // Remember the end iterator for the Postcondition check
   remember( Iterator invalid = end );
@@ -82,7 +81,7 @@ inline Iterator binaryLowerBound(
     mid_point = start;
     std::advance( mid_point, distance/2 );
 
-    if( value >= get<member>( *mid_point ) )
+    if( value >= Utility::get<member>( *mid_point ) )
       start = mid_point;
     else
       end = mid_point;
@@ -107,7 +106,7 @@ inline Iterator binaryLowerBound( Iterator start,
 				  Iterator end,
 				  const typename std::iterator_traits<Iterator>::value_type value )
 {
-  return binaryLowerBound<FIRST>( start, end, value );
+  return binaryLowerBound<0>( start, end, value );
 }
 
 // Binary search on a container and return the lower bound container index
@@ -138,11 +137,11 @@ inline Iterator binaryLowerBound( Iterator start,
  * \post The returned iterator must be valid (not equal to the initial end
  * iterator).
  */
-template<TupleMember member, typename Iterator>
+template<size_t member, typename Iterator>
 inline typename std::iterator_traits<Iterator>::difference_type
 binaryLowerBoundIndex( Iterator start,
 		       Iterator end,
-		       const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
+		       const typename TupleElement<member,typename std::iterator_traits<Iterator>::value_type>::type value )
 {
   // Make sure the container size can fit in an unsigned integer
   Iterator start_copy = start;
@@ -164,14 +163,14 @@ binaryLowerBoundIndex( Iterator start,
 		       Iterator end,
 		       const typename std::iterator_traits<Iterator>::value_type value )
 {
-  return binaryLowerBoundIndex<FIRST>( start, end, value );
+  return binaryLowerBoundIndex<0>( start, end, value );
 }
 
 // Binary search on a container and return the upper bound iterator
 /*! \details This function allows one to search a container of data and find
- * the lower bin boundary where the value of interest falls in. The
+ * the upper bin boundary where the value of interest falls in. The
  * container is accessed with iterators and an iterator to the element
- * representing the lower bin boundary is returned. To get the correct upper
+ * representing the upper bin boundary is returned. To get the correct upper
  * bound an extra test must be done to ensure that the correct bin has been
  * found.
  * \tparam member The tuple (either Utility::Pair, Utility::Trip or
@@ -184,7 +183,7 @@ binaryLowerBoundIndex( Iterator start,
  * \param[in] end An iterator pointing to the last element of the container of
  * interest.
  * \param[in] value The value whose location in the container must be found.
- * \return An iterator to the element of the container representing the lower
+ * \return An iterator to the element of the container representing the upper
  * bin boundary of the bin where the value of interest falls.
  * \pre
  * <ul>
@@ -196,10 +195,10 @@ binaryLowerBoundIndex( Iterator start,
  * \post The returned iterator must be valid (not equal to the initial end
  * iterator).
  */
-template<TupleMember member, typename Iterator>
+template<size_t member, typename Iterator>
 inline Iterator binaryUpperBound( Iterator start,
 				  Iterator end,
-				  const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
+				  const typename TupleElement<member,typename std::iterator_traits<Iterator>::value_type>::type value )
 {
   // The iterators must be random access iterators (support +/- ops)
   //testStaticPrecondition((boost::is_same<typename std::iterator_traits<Iterator>::iterator_category,std::random_access_iterator_tag>::value));
@@ -208,7 +207,7 @@ inline Iterator binaryUpperBound( Iterator start,
   // The iterators must be from a valid container (size > 0)
   testPrecondition( (start != end) );
   // The value used for the search must be within the limits of the data
-  testPrecondition( (value <= get<member>( *(true_end) ) ) );
+  testPrecondition( (value <= Utility::get<member>( *(true_end) ) ) );
 
   // Remember the end iterator for the Postcondition check
   remember( Iterator invalid = end );
@@ -223,7 +222,7 @@ inline Iterator binaryUpperBound( Iterator start,
     mid_point = start;
     std::advance( mid_point, distance/2 );
 
-    if( value >= get<member>( *mid_point ) )
+    if( value >= Utility::get<member>( *mid_point ) )
       start = mid_point;
     else
       end = mid_point;
@@ -235,7 +234,7 @@ inline Iterator binaryUpperBound( Iterator start,
   // the value falls in
   if( distance == 1 )
   {
-    if( value > get<member>( *(start) ) )
+    if( value > Utility::get<member>( *(start) ) )
       start = end;
   }
 
@@ -256,14 +255,14 @@ inline Iterator binaryUpperBound( Iterator start,
 				  Iterator end,
 				  const typename std::iterator_traits<Iterator>::value_type value )
 {
-  return binaryUpperBound<FIRST>( start, end, value );
+  return binaryUpperBound<0>( start, end, value );
 }
 
 // Binary search on a container and return the upper bound index
 /*! \details This function allows one to search a container of data and find
- * the lower bin boundary where the value of interest falls in. The
+ * the upper bin boundary where the value of interest falls in. The
  * container is accessed with iterators and an iterator to the element
- * representing the lower bin boundary is returned. To get the correct upper
+ * representing the upper bin boundary is returned. To get the correct upper
  * bound an extra test must be done to ensure that the correct bin has been
  * found.
  * \tparam member The tuple (either Utility::Pair, Utility::Trip or
@@ -276,7 +275,7 @@ inline Iterator binaryUpperBound( Iterator start,
  * \param[in] end An iterator pointing to the last element of the container of
  * interest.
  * \param[in] value The value whose location in the container must be found.
- * \return An iterator to the element of the container representing the lower
+ * \return An iterator to the element of the container representing the upper
  * bin boundary of the bin where the value of interest falls.
  * \pre
  * <ul>
@@ -288,11 +287,11 @@ inline Iterator binaryUpperBound( Iterator start,
  * \post The returned iterator must be valid (not equal to the initial end
  * iterator).
  */
-template<TupleMember member, typename Iterator>
+template<size_t member, typename Iterator>
 inline typename std::iterator_traits<Iterator>::difference_type
 binaryUpperBoundIndex( Iterator start,
 		       Iterator end,
-		       const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
+		       const typename TupleElement<member,typename std::iterator_traits<Iterator>::value_type>::type value )
 {
   // Make sure the container size can fit in an unsigned integer
   Iterator start_copy = start;
@@ -314,7 +313,7 @@ binaryUpperBoundIndex( Iterator start,
 		       Iterator end,
 		       const typename std::iterator_traits<Iterator>::value_type value )
 {
-  return binaryUpperBoundIndex<FIRST>( start, end, value );
+  return binaryUpperBoundIndex<0>( start, end, value );
 }
 
 } // end Search namespace

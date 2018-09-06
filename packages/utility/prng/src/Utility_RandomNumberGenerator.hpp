@@ -18,8 +18,8 @@
 
 // FRENSIE includes
 #include "Utility_LinearCongruentialGenerator.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_OpenMPProperties.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Utility{
 
@@ -70,12 +70,12 @@ template<typename ScalarType>
 inline ScalarType RandomNumberGenerator::getRandomNumber()
 {
   // Make sure the generator has been set up correctly
-  testPrecondition( GlobalOpenMPSession::getThreadId() < generator.size() );
+  testPrecondition( OpenMPProperties::getThreadId() < generator.size() );
   // Make sure that the generator has been initialized
-  testPrecondition( !generator.is_null( GlobalOpenMPSession::getThreadId() ) );
+  testPrecondition( !generator.is_null( OpenMPProperties::getThreadId() ) );
 
   return static_cast<ScalarType>(
-	     generator[GlobalOpenMPSession::getThreadId()].getRandomNumber() );
+	     generator[OpenMPProperties::getThreadId()].getRandomNumber() );
 }
 
 // Return a random double in interval [0,1)
@@ -83,11 +83,11 @@ template<>
 inline double RandomNumberGenerator::getRandomNumber<double>()
 {
   // Make sure the generator has been set up correctly
-  testPrecondition( GlobalOpenMPSession::getThreadId() < generator.size() );
+  testPrecondition( OpenMPProperties::getThreadId() < generator.size() );
   // Make sure that the generator has been initialized
-  testPrecondition( !generator.is_null( GlobalOpenMPSession::getThreadId() ) );
+  testPrecondition( !generator.is_null( OpenMPProperties::getThreadId() ) );
 
-  return generator[GlobalOpenMPSession::getThreadId()].getRandomNumber();
+  return generator[OpenMPProperties::getThreadId()].getRandomNumber();
 }
 
 // Return a random long long unsigned integer in [0,2^64)
@@ -96,13 +96,13 @@ inline unsigned long long
 RandomNumberGenerator::getRandomNumber<unsigned long long>()
 {
   // Make sure the generator has been set up correctly
-  testPrecondition( GlobalOpenMPSession::getThreadId() < generator.size() );
+  testPrecondition( OpenMPProperties::getThreadId() < generator.size() );
   // Make sure that the generator has been initialized
-  testPrecondition( !generator.is_null( GlobalOpenMPSession::getThreadId() ) );
+  testPrecondition( !generator.is_null( OpenMPProperties::getThreadId() ) );
 
-  generator[GlobalOpenMPSession::getThreadId()].getRandomNumber();
+  generator[OpenMPProperties::getThreadId()].getRandomNumber();
 
-  return generator[GlobalOpenMPSession::getThreadId()].getGeneratorState();
+  return generator[OpenMPProperties::getThreadId()].getGeneratorState();
 }
 
 } // end Utility namespace

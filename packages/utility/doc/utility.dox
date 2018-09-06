@@ -1,5 +1,12 @@
 // This file is used to add material to the utility package page
 
+/*! \defgroup exception_macros Exception Catch Macros
+ *
+ * These macros are design to catch certain types of exceptions, log
+ * error messages with some meta-data (e.g. file name, line number, etc.) and 
+ * optionally exit the program.
+ */
+
 /*! \page utility Utility Package
  *
  * \tableofcontents
@@ -39,11 +46,7 @@
  *  <li>Fortran file ops (Utility::FortranFileHelperWrappers)</li>
  *  <li>physical constant encapsulation (Utility::PhysicalConstants)</li>
  *  <li>tuple object creation (Utility::Tuple)</li>
- *  <li>unit testing helpers (Utility::TestingHelpers)</li>
- *  <li>Teuchos Unit Test Harness extension 
- *      (Utility_UnitTestHarnessExtensions.hpp)</li>
- *  <li>kinematic equations (Utility::KinematicHelpers)</li>
- *  <li>omp helper functions (Utility::GlobalOpenMPSession)</li>
+ *  <li>omp helper functions (Utility::OpenMPProperties)</li>
  *  <li>exception testing (Utility::ExceptionTestMacros)</li>
  *  <li>exception catching (Utility::ExceptionCatchMacros)</li>
  *  <li>direction helper functions (Utility::DirectionHelpers)</li>

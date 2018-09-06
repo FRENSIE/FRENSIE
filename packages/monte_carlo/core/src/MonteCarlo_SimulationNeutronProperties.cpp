@@ -7,8 +7,9 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp" // Must be included first
 #include "MonteCarlo_SimulationNeutronProperties.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -20,9 +21,10 @@ const double SimulationNeutronProperties::s_absolute_max_neutron_energy = 20.0;
 
 // Constructor
 SimulationNeutronProperties::SimulationNeutronProperties()
-  : d_free_gas_threshold( 400.0 ),
-    d_min_neutron_energy( s_absolute_min_neutron_energy ),
+  : d_min_neutron_energy( s_absolute_min_neutron_energy ),
     d_max_neutron_energy( s_absolute_max_neutron_energy ),
+    d_num_neutron_hash_grid_bins( 1000 ),
+    d_free_gas_threshold( 400.0 ),
     d_unresolved_resonance_probability_table_mode_on( true )
 { /* ... */ }
 
@@ -70,6 +72,19 @@ double SimulationNeutronProperties::getAbsoluteMaxNeutronEnergy()
   return s_absolute_max_neutron_energy;
 }
 
+// Set the number of neutron hash grid bins
+void SimulationNeutronProperties::setNumberOfNeutronHashGridBins(
+                                                          const unsigned bins )
+{
+  d_num_neutron_hash_grid_bins = bins;
+}
+
+// Get the number of neutron hash grid bins
+unsigned SimulationNeutronProperties::getNumberOfNeutronHashGridBins() const
+{
+  return d_num_neutron_hash_grid_bins;
+}
+
 // Set the free gas thermal treatment temperature threshold
 /*! \details The value given is the number of times above the material
  * temperature that the energy of a neutron can be before the free gas
@@ -107,7 +122,11 @@ bool SimulationNeutronProperties::isUnresolvedResonanceProbabilityTableModeOn() 
   return d_unresolved_resonance_probability_table_mode_on;
 }
 
+EXPLICIT_CLASS_SERIALIZE_INST( SimulationNeutronProperties );
+
 } // end MonteCarlo namespace
+
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::SimulationNeutronProperties );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SimulationNeutronProperties.cpp

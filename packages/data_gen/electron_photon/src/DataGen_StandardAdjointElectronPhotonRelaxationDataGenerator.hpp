@@ -13,16 +13,13 @@
 #include <utility>
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "DataGen_AdjointElectronPhotonRelaxationDataGenerator.hpp"
 #include "DataGen_AdjointElectronGridGenerator.hpp"
 #include "DataGen_AdjointIncoherentGridGenerator.hpp"
 #include "DataGen_AdjointIncoherentGridGenerator.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 #include "MonteCarlo_IncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_SubshellIncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
@@ -324,7 +321,7 @@ private:
   // Create the cross section on the union energy grid
   void createCrossSectionOnUnionEnergyGrid(
           const std::list<double>& union_energy_grid,
-          const std::shared_ptr<const Utility::OneDDistribution>& cs_evaluator,
+          const std::shared_ptr<const Utility::UnivariateDistribution>& cs_evaluator,
           std::vector<double>& cross_section ) const;
 
   // Create the cross section on the union energy grid
@@ -366,7 +363,7 @@ private:
 
   // Create the subshell impulse approx incoherent adjoint cs evaluators
   void createSubshellImpulseApproxIncoherentAdjointCrossSectionEvaluators(
-          Teuchos::Array<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >&
+          std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >&
           cs_evaluators ) const;
 
   // Create a subshell impulse approx incoherent adjoint cs evaluators
@@ -386,13 +383,13 @@ private:
   // Update the adjoint photon union energy grid
   void updateAdjointPhotonUnionEnergyGrid(
          std::list<double>& union_energy_grid,
-         const Teuchos::Array<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >&
+         const std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >&
          cs_evaluators ) const;
 
   // Update the adjoint photon union energy grid
   void updateAdjointPhotonUnionEnergyGrid(
         std::list<double>& union_energy_grid,
-        const std::shared_ptr<const Utility::OneDDistribution>&
+        const std::shared_ptr<const Utility::UnivariateDistribution>&
         cs_evaluator ) const;
 
   // Create the cross section on the union energy grid
@@ -421,7 +418,7 @@ private:
 
   // Evaluate the total cross section at an energy and max energy
   double evaluateAdjointPhotonTotalCrossSection(
-          const std::vector<std::shared_ptr<const Utility::OneDDistribution> >&
+          const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >&
           cross_sections,
           const double max_energy ) const;
 
@@ -437,28 +434,28 @@ private:
   // Create the inelastic cross section distribution
   void createForwardInelasticElectronCrossSectionDistribution(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
-    std::shared_ptr<const Utility::OneDDistribution>&
+    std::shared_ptr<const Utility::UnivariateDistribution>&
         forward_inelastic_electron_cross_section_distribution ) const;
 
   // Create the adjoint atomic excitation cross section distribution
   void createAdjointAtomicExcitationCrossSectionDistribution(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
-    const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
-    std::shared_ptr<const Utility::OneDDistribution>&
+    const std::shared_ptr<const std::vector<double> >& forward_electron_energy_grid,
+    const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
+    std::shared_ptr<const Utility::UnivariateDistribution>&
         adjoint_excitation_cross_section_distribution ) const;
 
   // Create the adjoint bremsstrahlung grid generator
   void createAdjointBremsstrahlungGridGenerator(
-    const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
+    const std::shared_ptr<const std::vector<double> >& forward_electron_energy_grid,
+    const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
     std::shared_ptr<BremsstrahlungGridGenerator>&
         adjoint_bremsstrahlung_grid_generator ) const;
 
   // Create the adjoint electroionization subshell grid generator
   void createAdjointElectroionizationSubshellGridGenerator(
-    const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
+    const std::shared_ptr<const std::vector<double> >& forward_electron_energy_grid,
+    const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
     std::shared_ptr<ElectroionizationGridGenerator>&
         adjoint_electroionization_grid_generator,
     const unsigned shell ) const;

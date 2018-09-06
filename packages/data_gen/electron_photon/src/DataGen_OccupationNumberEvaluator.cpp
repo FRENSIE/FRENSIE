@@ -10,13 +10,11 @@
 #include <limits>
 #include <functional>
 
-// Teuchos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "DataGen_OccupationNumberEvaluator.hpp"
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace DataGen{
 
@@ -56,7 +54,7 @@ double OccupationNumberEvaluator::evaluateComptonProfile(
 			      const double electron_momentum_projection ) const
 {
   // Make sure the electron momentum projection is valid
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf(
+  testPrecondition( !Utility::QuantityTraits<double>::isnaninf(
 					      electron_momentum_projection ) );
 
   return d_compton_profile->evaluate( electron_momentum_projection*Utility::Units::mec_momentum ).value()/
@@ -73,15 +71,15 @@ OccupationNumberEvaluator::getComptonProfileEvaluationWrapper() const
 }
 
 // Evaluate the occupation number at a given electron momentum projection
-/*! \details The electron momentum projection must be in me*c units. The 
- * returned occupation number is unitless. 
+/*! \details The electron momentum projection must be in me*c units. The
+ * returned occupation number is unitless.
  */
 double OccupationNumberEvaluator::evaluateOccupationNumber(
 				     const double electron_momentum_projection,
 				     const double precision ) const
 {
   // Make sure the electron momentum projection is valid
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf(
+  testPrecondition( !Utility::QuantityTraits<double>::isnaninf(
 					      electron_momentum_projection ) );
 
   long double occupation_number;
@@ -138,7 +136,7 @@ OccupationNumberEvaluator::getOccupationNumberEvaluationWrapper(
                             std::placeholders::_1,
                             precision );
 }
-  
+
 } // end DataGen namespace
 
 //---------------------------------------------------------------------------//

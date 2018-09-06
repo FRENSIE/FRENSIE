@@ -7,14 +7,11 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp" // Must be included first
 #include "Utility_ExponentialDistribution.hpp"
 
-namespace Utility{
-
-// Explicit instantiation
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareExponentialDistribution<void,void> );
-  
-} // end Utility namespace
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareExponentialDistribution<void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareExponentialDistribution<void,void> );
 
 //---------------------------------------------------------------------------//
 // end Utility_ExponentialDistribution.cpp

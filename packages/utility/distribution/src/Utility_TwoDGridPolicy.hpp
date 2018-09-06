@@ -15,8 +15,8 @@
 // FRENSIE Includes
 #include "Utility_TwoDInterpolationPolicy.hpp"
 #include "Utility_Tuple.hpp"
-#include "Utility_TupleMemberTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
+#include "Utility_TypeNameTraits.hpp"
 
 namespace Utility{
 
@@ -53,7 +53,7 @@ struct Direct
                       const YZIterator& upper_bin_boundary );
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
-  template<typename BaseOneDDistributionType,
+  template<typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -74,7 +74,7 @@ struct Direct
                       unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
-  template<typename BaseOneDDistributionType,
+  template<typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -95,7 +95,7 @@ struct Direct
               unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
-  template<typename BaseOneDDistributionType,
+  template<typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -115,7 +115,7 @@ struct Direct
               unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
-  template<typename BaseOneDDistributionType,
+  template<typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -242,7 +242,7 @@ struct UnitBase
                       const YZIterator& upper_bin_boundary );
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
-  template<typename BaseOneDDistributionType,
+  template<typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -263,7 +263,7 @@ struct UnitBase
                       unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
-  template<typename BaseOneDDistributionType,
+  template<typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -284,7 +284,7 @@ struct UnitBase
               unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
-  template<typename BaseOneDDistributionType,
+  template<typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -304,7 +304,7 @@ struct UnitBase
               unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
-  template<typename BaseOneDDistributionType,
+  template<typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -432,7 +432,7 @@ struct CumulativePoints
                       const YZIterator& upper_bin_boundary );
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
-  template<typename BaseOneDDistributionType,
+  template<typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -453,7 +453,7 @@ struct CumulativePoints
                       unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
-  template<typename BaseOneDDistributionType,
+  template<typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -474,7 +474,7 @@ struct CumulativePoints
               unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
-  template<typename BaseOneDDistributionType,
+  template<typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -494,7 +494,7 @@ struct CumulativePoints
               unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
-  template<typename BaseOneDDistributionType,
+  template<typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -624,7 +624,7 @@ struct Correlated
                       const YZIterator& upper_bin_boundary );
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
-  template<typename BaseOneDDistributionType,
+  template<typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -645,7 +645,7 @@ struct Correlated
                       unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
-  template<typename BaseOneDDistributionType,
+  template<typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -666,7 +666,7 @@ struct Correlated
               unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
-  template<typename BaseOneDDistributionType,
+  template<typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -686,7 +686,7 @@ struct Correlated
               unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
-  template<typename BaseOneDDistributionType,
+  template<typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -804,7 +804,7 @@ struct UnitBaseCorrelated
                       const YZIterator& upper_bin_boundary );
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
-  template<typename BaseOneDDistributionType,
+  template<typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -825,7 +825,7 @@ struct UnitBaseCorrelated
                       unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
-  template<typename BaseOneDDistributionType,
+  template<typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -846,7 +846,7 @@ struct UnitBaseCorrelated
               unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
-  template<typename BaseOneDDistributionType,
+  template<typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -866,7 +866,7 @@ struct UnitBaseCorrelated
               unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
-  template<typename BaseOneDDistributionType,
+  template<typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -955,6 +955,22 @@ struct UnitBaseCorrelated
 };
 
 } // end Utility namespace
+
+/*! Partial specialization of Utility::TypeNameTraits for Utility::Direct
+ * \ingroup type_name_traits
+ */
+#define TWO_D_GRID_POLICY_TYPE_NAME_TRAITS_QUICK_DECL( GridPolicy ) \
+  template<typename _TwoDInterpPolicy>                              \
+  struct TypeNameTraits<GridPolicy<_TwoDInterpPolicy> >             \
+  {                                                                 \
+    typedef std::true_type IsSpecialized;                           \
+                                                                    \
+    static inline std::string name()                                \
+    {                                                               \
+      return std::string(#GridPolicy) + "<" +                       \
+        Utility::typeName<_TwoDInterpPolicy>() + ">";               \
+    }                                                               \
+  }
 
 //---------------------------------------------------------------------------//
 // Template Includes

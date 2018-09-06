@@ -13,9 +13,6 @@
 #include <utility>
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "DataGen_ElectronPhotonRelaxationDataGenerator.hpp"
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
@@ -25,7 +22,8 @@
 #include "MonteCarlo_TwoDGridType.hpp"
 #include "Data_ENDLDataContainer.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_ArrayView.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
 
 namespace DataGen{
@@ -214,9 +212,9 @@ private:
   // Extract the average photon heating numbers
   template<typename InterpPolicy>
   void extractPhotonCrossSection(
-          Teuchos::ArrayView<const double> raw_energy_grid,
-          Teuchos::ArrayView<const double> raw_cross_section,
-          std::shared_ptr<const Utility::OneDDistribution>& cross_section,
+          Utility::ArrayView<const double> raw_energy_grid,
+          Utility::ArrayView<const double> raw_cross_section,
+          std::shared_ptr<const Utility::UnivariateDistribution>& cross_section,
           const bool processed_raw_data = true ) const;
 
   // Extract electron cross sections
@@ -224,15 +222,15 @@ private:
   void extractElectronCrossSection(
         const std::vector<double>& raw_energy_grid,
         const std::vector<double>& raw_cross_section,
-        std::shared_ptr<const Utility::OneDDistribution>& cross_section ) const;
+        std::shared_ptr<const Utility::UnivariateDistribution>& cross_section ) const;
 
   // Extract the subshell photoelectric cross sections
-  void extractSubshellPhotoelectricCrossSections( std::vector<std::pair<unsigned,std::shared_ptr<const Utility::OneDDistribution> > >& cross_sections ) const;
+  void extractSubshellPhotoelectricCrossSections( std::vector<std::pair<unsigned,std::shared_ptr<const Utility::UnivariateDistribution> > >& cross_sections ) const;
 
   // Create the subshell impulse approx incoherent cross section evaluators
   void createSubshellImpulseApproxIncoherentCrossSectionEvaluators(
      const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
-     Teuchos::Array<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution> > >& evaluators ) const;
+     std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution> > >& evaluators ) const;
 
   // Initialize the photon union energy grid
   void initializePhotonUnionEnergyGrid(
@@ -255,7 +253,7 @@ private:
   // Create the cross section on the union energy grid
   void createCrossSectionOnUnionEnergyGrid(
    const std::list<double>& union_energy_grid,
-   const std::shared_ptr<const Utility::OneDDistribution>& original_cross_section,
+   const std::shared_ptr<const Utility::UnivariateDistribution>& original_cross_section,
    std::vector<double>& cross_section,
    unsigned& threshold_index,
    const double true_threshold_energy,
@@ -322,7 +320,7 @@ private:
   // Calculate the electron total elastic cross section
   void calculateElectronTotalElasticCrossSection(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
-    std::shared_ptr<const Utility::OneDDistribution>& total_elastic_cross_section,
+    std::shared_ptr<const Utility::UnivariateDistribution>& total_elastic_cross_section,
     const std::vector<double>& raw_energy_grid ) const;
 
   // The ACE data

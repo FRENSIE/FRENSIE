@@ -1,0 +1,360 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Utility.Coordinate.CylindricalSpatialCoordinate class unit tests
+#  \file   tstUtility.Coordinate.CylindricalSpatialCoordinate.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the Utility.Coordinate.CylindricalSpatialCoordinate classes
+#-----------------------------------------------------------------------------#
+
+# System imports
+import sys
+import unittest
+from optparse import *
+import numpy as nm
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Utility = importPyFrensieModuleFromBuildDir('Utility')
+Coordinate = importPyFrensieModuleFromBuildDir('Utility.Coordinate')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the Translation Cylindrical Spatial Coordinate Conversion Policy
+class TranslationCylindricalSpatialCoordinateConversionPolicyTestCase(unittest.TestCase):
+    "TestCase class for Utility.Coordinate.TranslationCylindricalSpatialCoordinateConversionPolicy class"
+
+    def setUp(self):
+        self.policy= Coordinate.TranslationCylindricalSpatialCoordinateConversionPolicy( [1.0, 2.0, 3.0] )
+
+    def testConstructor(self):
+        "*Test Utility.Coordinate.TranslationCylindricalSpatialCoordinateConversionPolicy constructor"
+        self.assertTrue(isinstance(self.policy, Coordinate.TranslationCylindricalSpatialCoordinateConversionPolicy) )
+        with self.assertRaises(TypeError):
+            Coordinate.TranslationCylindricalSpatialCoordinateConversionPolicy( [2.0, 1.0] )
+
+    def testGetLocalSpatialCoordinateSystemType(self):
+        "*Test Utility.Coordinate.TranslationCylindricalSpatialCoordinateConversionPolicy getLocalSpatialCoordinateSystemType"
+        self.assertTrue( self.policy.getLocalSpatialCoordinateSystemType() == Coordinate.CYLINDRICAL_SPATIAL_COORDINATE_SYSTEM )
+
+    def testIsPrimarySpatialCoordinateValid(self):
+        "*Test Utility.Coordinate.TranslationCylindricalSpatialCoordinateConversionPolicy isPrimarySpatialCoordinateValid"
+        self.assertTrue( self.policy.isPrimarySpatialCoordinateValid( 1.0 ) )
+
+    def testIsSecondarySpatialCoordinateValid(self):
+        "*Test Utility.Coordinate.TranslationCylindricalSpatialCoordinateConversionPolicy isSecondarySpatialCoordinateValid"
+        self.assertTrue( self.policy.isSecondarySpatialCoordinateValid( 1.0 ) )
+
+    def testIsTertiarySpatialCoordinateValid(self):
+        "*Test Utility.Coordinate.TranslationCylindricalSpatialCoordinateConversionPolicy isTertiarySpatialCoordinateValid"
+        self.assertTrue( self.policy.isTertiarySpatialCoordinateValid( 1.0 ) )
+
+    def testConvertToCartesianSpatialCoordinates(self):
+        "*Test Utility.Coordinate.TranslationCylindricalSpatialCoordinateConversionPolicy convertToCartesianSpatialCoordinates"
+        x_spatial_coord, y_spatial_coord, z_spatial_coord = self.policy.convertToCartesianSpatialCoordinates( 0.0, 0.0, 0.0 )
+        self.assertTrue( x_spatial_coord == 1.0 )
+        self.assertTrue( y_spatial_coord == 2.0 )
+        self.assertTrue( z_spatial_coord == 3.0 )
+
+        spatial_coords = self.policy.convertToCartesianSpatialCoordinates( ( 0.0, 0.0, 0.0 ) )
+        self.assertTrue( spatial_coords[0] == 1.0 )
+        self.assertTrue( spatial_coords[1] == 2.0 )
+        self.assertTrue( spatial_coords[2] == 3.0 )
+
+    def testConvertFromCartesianSpatialCoordinates(self):
+        "*Test Utility.Coordinate.TranslationCylindricalSpatialCoordinateConversionPolicy convertFromCartesianSpatialCoordinates"
+        primary_spatial_coord, secondary_spatial_coord, tertiary_spatial_coord = self.policy.convertFromCartesianSpatialCoordinates( 1.0, 2.0, 3.0 )
+        self.assertTrue( primary_spatial_coord == 0.0 )
+        self.assertTrue( secondary_spatial_coord == 0.0 )
+        self.assertTrue( tertiary_spatial_coord == 0.0 )
+
+        spatial_coords = self.policy.convertFromCartesianSpatialCoordinates( ( 1.0, 2.0, 3.0 ) )
+        self.assertTrue( spatial_coords[0] == 0.0 )
+        self.assertTrue( spatial_coords[1] == 0.0 )
+        self.assertTrue( spatial_coords[2] == 0.0 )
+
+#-----------------------------------------------------------------------------#
+# Test the General Cylindrical Spatial Coordinate Conversion Policy
+class GeneralCylindricalSpatialCoordinateConversionPolicyTestCase(unittest.TestCase):
+    "TestCase class for Utility.Coordinate.GeneralCylindricalSpatialCoordinateConversionPolicy class"
+
+    def setUp(self):
+        self.policy= Coordinate.GeneralCylindricalSpatialCoordinateConversionPolicy( [1.0, 2.0, 3.0], [2.0, 1.0, 2.0])
+
+    def testConstructor(self):
+        "*Test Utility.Coordinate.GeneralCylindricalSpatialCoordinateConversionPolicy constructor"
+        self.assertTrue(isinstance(self.policy, Coordinate.GeneralCylindricalSpatialCoordinateConversionPolicy) )
+        with self.assertRaises(TypeError):
+            Coordinate.GeneralCylindricalSpatialCoordinateConversionPolicy( [2.0, 1.0], [2.0, 1.0, 2.0])
+        with self.assertRaises(TypeError):
+            Coordinate.GeneralCylindricalSpatialCoordinateConversionPolicy( [2.0, 1.0, 2.0], [2.0, 1.0])
+
+    def testGetLocalSpatialCoordinateSystemType(self):
+        "*Test Utility.Coordinate.GeneralCylindricalSpatialCoordinateConversionPolicy getLocalSpatialCoordinateSystemType"
+        self.assertTrue( self.policy.getLocalSpatialCoordinateSystemType() == Coordinate.CYLINDRICAL_SPATIAL_COORDINATE_SYSTEM )
+
+    def testIsPrimarySpatialCoordinateValid(self):
+        "*Test Utility.Coordinate.GeneralCylindricalSpatialCoordinateConversionPolicy isPrimarySpatialCoordinateValid"
+        self.assertTrue( self.policy.isPrimarySpatialCoordinateValid( 1.0 ) )
+
+    def testIsSecondarySpatialCoordinateValid(self):
+        "*Test Utility.Coordinate.GeneralCylindricalSpatialCoordinateConversionPolicy isSecondarySpatialCoordinateValid"
+        self.assertTrue( self.policy.isSecondarySpatialCoordinateValid( 1.0 ) )
+
+    def testIsTertiarySpatialCoordinateValid(self):
+        "*Test Utility.Coordinate.GeneralCylindricalSpatialCoordinateConversionPolicy isTertiarySpatialCoordinateValid"
+        self.assertTrue( self.policy.isTertiarySpatialCoordinateValid( 1.0 ) )
+
+    def testConvertToCartesianSpatialCoordinates(self):
+        "*Test Utility.Coordinate.GeneralCylindricalSpatialCoordinateConversionPolicy convertToCartesianSpatialCoordinates"
+        x_spatial_coord, y_spatial_coord, z_spatial_coord = self.policy.convertToCartesianSpatialCoordinates( 0.0, 0.0, 0.0 )
+        self.assertTrue( x_spatial_coord == 1.0 )
+        self.assertTrue( y_spatial_coord == 2.0 )
+        self.assertTrue( z_spatial_coord == 3.0 )
+
+        spatial_coords = self.policy.convertToCartesianSpatialCoordinates( ( 0.0, 0.0, 0.0 ) )
+        self.assertTrue( spatial_coords[0] == 1.0 )
+        self.assertTrue( spatial_coords[1] == 2.0 )
+        self.assertTrue( spatial_coords[2] == 3.0 )
+
+    def testConvertFromCartesianSpatialCoordinates(self):
+        "*Test Utility.Coordinate.GeneralCylindricalSpatialCoordinateConversionPolicy convertFromCartesianSpatialCoordinates"
+        primary_spatial_coord, secondary_spatial_coord, tertiary_spatial_coord = self.policy.convertFromCartesianSpatialCoordinates( 1.0, 2.0, 3.0 )
+        self.assertTrue( primary_spatial_coord == 0.0 )
+        self.assertTrue( secondary_spatial_coord == 0.0 )
+        self.assertTrue( tertiary_spatial_coord == 0.0 )
+
+        spatial_coords = self.policy.convertFromCartesianSpatialCoordinates( ( 1.0, 2.0, 3.0 ) )
+        self.assertTrue( spatial_coords[0] == 0.0 )
+        self.assertTrue( spatial_coords[1] == 0.0 )
+        self.assertTrue( spatial_coords[2] == 0.0 )
+
+#-----------------------------------------------------------------------------#
+# Test the Rotation Cylindrical Coordinate Conversion Policy
+class RotationCylindricalSpatialCoordinateConversionPolicyTestCase(unittest.TestCase):
+    "TestCase class for Utility.Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy class"
+
+    def setUp(self):
+        self.policy= Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy([1.0, 1.0, 1.0])
+
+    def testConstructor(self):
+        "*Test Utility.Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy constructor"
+        self.assertTrue(isinstance(self.policy, Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy) )
+        with self.assertRaises(TypeError):
+            Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy( [2.0, 1.0])
+
+    def testGetLocalSpatialCoordinateSystemType(self):
+        "*Test Utility.Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy getLocalSpatialCoordinateSystemType"
+        self.assertTrue( self.policy.getLocalSpatialCoordinateSystemType() == Coordinate.CYLINDRICAL_SPATIAL_COORDINATE_SYSTEM )
+
+    def testIsPrimarySpatialCoordinateValid(self):
+        "*Test Utility.Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy isPrimarySpatialCoordinateValid"
+        self.assertTrue( self.policy.isPrimarySpatialCoordinateValid( 1.0 ) )
+
+    def testIsSecondarySpatialCoordinateValid(self):
+        "*Test Utility.Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy isSecondarySpatialCoordinateValid"
+        self.assertTrue( self.policy.isSecondarySpatialCoordinateValid( 1.0 ) )
+
+    def testIsTertiarySpatialCoordinateValid(self):
+        "*Test Utility.Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy isTertiarySpatialCoordinateValid"
+        self.assertTrue( self.policy.isTertiarySpatialCoordinateValid( 1.0 ) )
+
+    def testConvertToCartesianSpatialCoordinates(self):
+        "*Test Utility.Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy convertToCartesianSpatialCoordinates"
+        x_spatial_coord, y_spatial_coord, z_spatial_coord = self.policy.convertToCartesianSpatialCoordinates( 0.0, 0.0, 2.0 )
+        self.assertAlmostEqual( x_spatial_coord, 2.0/nm.sqrt(3.0), delta=1e-15*2.0/nm.sqrt(3.0) )
+        self.assertAlmostEqual( y_spatial_coord, 2.0/nm.sqrt(3.0), delta=1e-15*2.0/nm.sqrt(3.0) )
+        self.assertAlmostEqual( z_spatial_coord, 2.0/nm.sqrt(3.0), delta=1e-15*2.0/nm.sqrt(3.0) )
+
+        spatial_coords = self.policy.convertToCartesianSpatialCoordinates( ( 0.0, 0.0, 2.0 ) )
+        self.assertAlmostEqual( spatial_coords[0], 2.0/nm.sqrt(3.0), delta=1e-15*2.0/nm.sqrt(3.0) )
+        self.assertAlmostEqual( spatial_coords[1], 2.0/nm.sqrt(3.0), delta=1e-15*2.0/nm.sqrt(3.0) )
+        self.assertAlmostEqual( spatial_coords[2], 2.0/nm.sqrt(3.0), delta=1e-15*2.0/nm.sqrt(3.0) )
+
+    def testConvertFromCartesianSpatialCoordinates(self):
+        "*Test Utility.Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy convertFromCartesianSpatialCoordinates"
+        primary_spatial_coord, secondary_spatial_coord, tertiary_spatial_coord = self.policy.convertFromCartesianSpatialCoordinates( 2.0/nm.sqrt(6.0), 2.0/nm.sqrt(6.0), -nm.sqrt(8.0/3.0) )
+        self.assertAlmostEqual( primary_spatial_coord, 2.0, delta=1e-15*2.0 )
+        self.assertTrue( secondary_spatial_coord == 0.0 )
+        self.assertTrue( tertiary_spatial_coord == 0.0 )
+
+        spatial_coords = self.policy.convertFromCartesianSpatialCoordinates( ( 2.0/nm.sqrt(6.0), 2.0/nm.sqrt(6.0), -nm.sqrt(8.0/3.0) ) )
+        self.assertAlmostEqual( spatial_coords[0], 2.0, delta=1e-15*2.0 )
+        self.assertTrue( spatial_coords[1] == 0.0 )
+        self.assertTrue( spatial_coords[2] == 0.0 )
+
+    def testGetLocalDirectionalCoordinateSystemType(self):
+        "*Test Utility.Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy getLocalDirectionalCoordinateSystemType"
+        with self.assertRaises(AttributeError):
+            self.policy.getLocalDirectionalCoordinateSystemType()
+
+    def testIsPrimaryDirectionalCoordinateValid(self):
+        "*Test Utility.Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy isPrimaryDirectionalCoordinateValid"
+        with self.assertRaises(AttributeError):
+            self.policy.isPrimaryDirectionalCoordinateValid( 0.0 )
+
+    def testIsSecondaryDirectionalCoordinateValid(self):
+        "*Test Utility.Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy isSecondaryDirectionalCoordinateValid"
+        with self.assertRaises(AttributeError):
+            self.policy.isSecondaryDirectionalCoordinateValid( 0.0 )
+
+    def testIsTertiaryDirectionalCoordinateValid(self):
+        "*Test Utility.Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy isTertiaryDirectionalCoordinateValid"
+        with self.assertRaises(AttributeError):
+            self.policy.isTertiaryDirectionalCoordinateValid( 0.0 )
+
+    def testNormalizeLocalDirectionalCoordinates(self):
+        "*Test Utility.Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy normalizeLocalDirectionalCoordinates"
+        with self.assertRaises(AttributeError):
+            self.policy.normalizeLocalDirectionalCoordinates( 0.0, 0.0, 0.0 )
+
+    def testNormalizeCartesianDirectionalCoordinates(self):
+        "*Test Utility.Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy normalizeCartesianDirectionalCoordinates"
+        with self.assertRaises(AttributeError):
+            self.policy.normalizeCartesianDirectionalCoordinates( 0.0, 0.0, 0.0 )
+
+    def testConvertToCartesianDirectionalCoordinates(self):
+        "*Test Utility.Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy convertToCartesianDirectionalCoordinates"
+        with self.assertRaises(AttributeError):
+            self.policy.convertToCartesianDirectionalCoordinates( 0.0, 0.0, 0.0 )
+
+    def testConvertFromCartesianDirectionalCoordinates(self):
+        "*Test Utility.Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy convertFromCartesianDirectionalCoordinates"
+        with self.assertRaises(AttributeError):
+            self.policy.convertFromCartesianDirectionalCoordinates( 0.0, 0.0, 0.0 )
+
+#-----------------------------------------------------------------------------#
+# Test the Basic Cylindrical Coordinate Conversion Policy
+class BasicCylindricalSpatialCoordinateConversionPolicyTestCase(unittest.TestCase):
+    "TestCase class for Utility.Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy class"
+
+    def setUp(self):
+        self.policy= Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy()
+
+    def testConstructor(self):
+        "*Test Utility.Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy constructor"
+        self.assertTrue(isinstance(self.policy, Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy) )
+
+    def testGetLocalSpatialCoordinateSystemType(self):
+        "*Test Utility.Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy getLocalSpatialCoordinateSystemType"
+        self.assertTrue( self.policy.getLocalSpatialCoordinateSystemType() == Coordinate.CYLINDRICAL_SPATIAL_COORDINATE_SYSTEM )
+
+    def testIsPrimarySpatialCoordinateValid(self):
+        "*Test Utility.Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy isPrimarySpatialCoordinateValid"
+        self.assertTrue( self.policy.isPrimarySpatialCoordinateValid( 1.0 ) )
+
+    def testIsSecondarySpatialCoordinateValid(self):
+        "*Test Utility.Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy isSecondarySpatialCoordinateValid"
+        self.assertTrue( self.policy.isSecondarySpatialCoordinateValid( 1.0 ) )
+
+    def testIsTertiarySpatialCoordinateValid(self):
+        "*Test Utility.Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy isTertiarySpatialCoordinateValid"
+        self.assertTrue( self.policy.isTertiarySpatialCoordinateValid( 1.0 ) )
+
+    def testConvertToCartesianSpatialCoordinates(self):
+        "*Test Utility.Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy convertToCartesianSpatialCoordinates"
+        x_spatial_coord, y_spatial_coord, z_spatial_coord = self.policy.convertToCartesianSpatialCoordinates( 0.0, 0.0, 2.0 )
+        self.assertTrue( x_spatial_coord == 0.0 )
+        self.assertTrue( y_spatial_coord == 0.0 )
+        self.assertTrue( z_spatial_coord == 2.0 )
+
+        spatial_coords = self.policy.convertToCartesianSpatialCoordinates( (0.0, 0.0, 2.0) )
+        self.assertTrue( spatial_coords[0] == 0.0 )
+        self.assertTrue( spatial_coords[1] == 0.0 )
+        self.assertTrue( spatial_coords[2] == 2.0 )
+
+    def testConvertFromCartesianSpatialCoordinates(self):
+        "*Test Utility.Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy convertFromCartesianSpatialCoordinates"
+        primary_spatial_coord, secondary_spatial_coord, tertiary_spatial_coord = self.policy.convertFromCartesianSpatialCoordinates( 0.0, 0.0, 2.0 )
+        self.assertTrue( primary_spatial_coord == 0.0 )
+        self.assertTrue( secondary_spatial_coord == 0.0 )
+        self.assertTrue( tertiary_spatial_coord == 2.0 )
+
+        spatial_coords = self.policy.convertFromCartesianSpatialCoordinates( (0.0, 0.0, 2.0) )
+        self.assertTrue( spatial_coords[0] == 0.0 )
+        self.assertTrue( spatial_coords[1] == 0.0 )
+        self.assertTrue( spatial_coords[2] == 2.0 )
+
+    def testGetLocalDirectionalCoordinateSystemType(self):
+        "*Test Utility.Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy getLocalDirectionalCoordinateSystemType"
+        with self.assertRaises(AttributeError):
+            self.policy.getLocalDirectionalCoordinateSystemType()
+
+    def testIsPrimaryDirectionalCoordinateValid(self):
+        "*Test Utility.Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy isPrimaryDirectionalCoordinateValid"
+        with self.assertRaises(AttributeError):
+            self.policy.isPrimaryDirectionalCoordinateValid( 0.0 )
+
+    def testIsSecondaryDirectionalCoordinateValid(self):
+        "*Test Utility.Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy isSecondaryDirectionalCoordinateValid"
+        with self.assertRaises(AttributeError):
+            self.policy.isSecondaryDirectionalCoordinateValid( 0.0 )
+
+    def testIsTertiaryDirectionalCoordinateValid(self):
+        "*Test Utility.Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy isTertiaryDirectionalCoordinateValid"
+        with self.assertRaises(AttributeError):
+            self.policy.isTertiaryDirectionalCoordinateValid( 0.0 )
+
+    def testNormalizeLocalDirectionalCoordinates(self):
+        "*Test Utility.Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy normalizeLocalDirectionalCoordinates"
+        with self.assertRaises(AttributeError):
+            self.policy.normalizeLocalDirectionalCoordinates( 0.0, 0.0, 0.0 )
+
+    def testNormalizeCartesianDirectionalCoordinates(self):
+        "*Test Utility.Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy normalizeCartesianDirectionalCoordinates"
+        with self.assertRaises(AttributeError):
+            self.policy.normalizeCartesianDirectionalCoordinates( 0.0, 0.0, 0.0 )
+
+    def testConvertToCartesianDirectionalCoordinates(self):
+        "*Test Utility.Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy convertToCartesianDirectionalCoordinates"
+        with self.assertRaises(AttributeError):
+            self.policy.convertToCartesianDirectionalCoordinates( 0.0, 0.0, 0.0 )
+
+    def testConvertFromCartesianDirectionalCoordinates(self):
+        "*Test Utility.Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy convertFromCartesianDirectionalCoordinates"
+        with self.assertRaises(AttributeError):
+            self.policy.convertFromCartesianDirectionalCoordinates( 0.0, 0.0, 0.0 )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # # Initialize the FRENSIE random number generator
+    # Utility.initFrensiePrng()
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(TranslationCylindricalSpatialCoordinateConversionPolicyTestCase))
+    suite.addTest(unittest.makeSuite(GeneralCylindricalSpatialCoordinateConversionPolicyTestCase))
+    suite.addTest(unittest.makeSuite(RotationCylindricalSpatialCoordinateConversionPolicyTestCase))
+    suite.addTest(unittest.makeSuite(BasicCylindricalSpatialCoordinateConversionPolicyTestCase))
+
+
+    print >>sys.stderr, \
+        "\n****************************\n" + \
+        "Testing Utility.Coordinate \n" + \
+        "****************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstUtility.Coordinate.CylindricalSpatialCoordinate.py
+#-----------------------------------------------------------------------------#

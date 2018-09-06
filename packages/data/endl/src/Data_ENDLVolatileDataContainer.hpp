@@ -24,12 +24,11 @@ public:
   ENDLVolatileDataContainer();
 
   //! Constructor (from saved archive)
-  ENDLVolatileDataContainer(
-		   const std::string& archive_name,
-		   const Utility::ArchivableObject::ArchiveType archive_type );
+  ENDLVolatileDataContainer( const boost::filesystem::path& file_name_with_path );
 
   // Add the setter member functions to the public interface
   using ENDLDataContainer::setAtomicNumber;
+  using ENDLDataContainer::setAtomicWeight;
 
 //---------------------------------------------------------------------------//
 // SET RELAXATION DATA
@@ -177,17 +176,11 @@ public:
   using ENDLDataContainer::setBremsstrahlungAverageElectronIncidentEnergy;
   using ENDLDataContainer::setBremsstrahlungAverageElectronEnergy;
 //---------------------------------------------------------------------------//
-// SET ATOMIC EXCITAION DATA
+// SET ATOMIC EXCITATION DATA
 //---------------------------------------------------------------------------//
   using ENDLDataContainer::setAtomicExcitationEnergyGrid;
   using ENDLDataContainer::setAtomicExcitationCrossSection;
   using ENDLDataContainer::setAtomicExcitationEnergyLoss;
-
-  // Add the export member function to the public interface
-  using ENDLDataContainer::exportData;
-
-  // Add the packDataInString member function to the public interface
-  using ENDLDataContainer::packDataInString;
 };
 
 } // end Data namespace

@@ -9,8 +9,13 @@
 #ifndef MONTE_CARLO_ELECTRON_STATE_HPP
 #define MONTE_CARLO_ELECTRON_STATE_HPP
 
+// Boost Includes
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_MassiveParticleState.hpp"
+#include "Utility_QuantityTraits.hpp"
+#include "Utility_TypeNameTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -20,8 +25,8 @@ class ElectronState : public MonteCarlo::MassiveParticleState
 
 private:
 
-  // Typedef for ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
@@ -61,16 +66,14 @@ public:
   ElectronState* clone() const;
 
   //! Print the electron state
-  void print( std::ostream& os ) const;
+  void toStream( std::ostream& os ) const;
 
 private:
 
   // Save the state to an archive
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MassiveParticleState);
-  }
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MassiveParticleState); }
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
@@ -78,8 +81,10 @@ private:
 
 } // end MonteCarlo namespace
 
-BOOST_CLASS_VERSION( MonteCarlo::ElectronState, 0 );
-BOOST_CLASS_EXPORT_KEY2( MonteCarlo::ElectronState, "ElectronState" );
+BOOST_SERIALIZATION_CLASS_VERSION( ElectronState, MonteCarlo, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ElectronState, MonteCarlo );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ElectronState );
+TYPE_NAME_TRAITS_QUICK_DECL2( ElectronState, MonteCarlo );
 
 #endif // end MonteCarlo_ELECTRON_STATE_HPP
 

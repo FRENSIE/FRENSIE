@@ -10,38 +10,41 @@
 #define DATA_ELECTRON_PHOTON_RELAXATION_DATA_CONTAINER_HPP
 
 // Std Lib Includes
-#include <vector>
-#include <set>
-#include <map>
-#include <utility>
 #include <string>
 
 // Boost Includes
+#include <boost/filesystem/path.hpp>
 #include <boost/serialization/split_member.hpp>
 
 // FRENSIE Includes
-#include "Utility_StandardArchivableObject.hpp"
-#include "Utility_StandardSerializableObject.hpp"
+#include "Utility_ArchivableObject.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_Map.hpp"
+#include "Utility_Set.hpp"
+#include "Utility_Tuple.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
+#include "Utility_SerializationHelpers.hpp"
 
 namespace Data{
 
 /*! The electron-photon-relaxation data container
  * \details Linear-linear interpolation should be used for all data.
  */
-class ElectronPhotonRelaxationDataContainer : public Utility::StandardArchivableObject<ElectronPhotonRelaxationDataContainer,false>, public Utility::StandardSerializableObject<ElectronPhotonRelaxationDataContainer,false>
+class ElectronPhotonRelaxationDataContainer : public Utility::ArchivableObject<ElectronPhotonRelaxationDataContainer>
 {
 
 public:
 
   //! Constructor (from saved archive)
   ElectronPhotonRelaxationDataContainer(
-                  const std::string& archive_name,
-                  const Utility::ArchivableObject::ArchiveType archive_type =
-                  Utility::ArchivableObject::XML_ARCHIVE );
+                          const boost::filesystem::path& file_name_with_path );
 
   //! Destructor
   virtual ~ElectronPhotonRelaxationDataContainer()
   { /* ... */ }
+
+  //! The database name used in an archive
+  const char* getArchiveName() const override;
 
 //---------------------------------------------------------------------------//
 // GET NOTES
@@ -56,6 +59,9 @@ public:
 
   //! Return the atomic number
   unsigned getAtomicNumber() const;
+
+  //! Return the atomic weight
+  double getAtomicWeight() const;
 
   //! Return the minimum photon energy
   double getMinPhotonEnergy() const;
@@ -407,6 +413,9 @@ protected:
 
   //! Set the atomic number
   void setAtomicNumber( const unsigned atomic_number );
+
+  //! Set the atomic weight
+  void setAtomicWeight( const double atomic_weight );
 
   //! Set the minimum photon energy
   void setMinPhotonEnergy( const double min_photon_energy );
@@ -818,6 +827,9 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
+  // The name used in archive name-value pairs
+  static const std::string s_archive_name;
+
 //---------------------------------------------------------------------------//
 // NOTES
 //---------------------------------------------------------------------------//
@@ -831,6 +843,9 @@ private:
 
   // The atomic number
   unsigned d_atomic_number;
+
+  // The atomic weight
+  double d_atomic_weight;
 
   // The minimum photon energy
   double d_min_photon_energy;
@@ -957,7 +972,7 @@ private:
   std::map<unsigned,std::vector<double> >
   d_impulse_approx_subshell_incoherent_cross_sections;
 
-  // The impulse approx. subshell incoherent photon cross section threshold indices
+  // The impulse approx. subshell incoherent photon cross section thresh. indices
   std::map<unsigned,unsigned>
   d_impulse_approx_subshell_incoherent_cross_section_threshold_indices;
 
@@ -1115,6 +1130,11 @@ private:
 };
 
 } // end Data namespace
+
+BOOST_SERIALIZATION_CLASS_VERSION( ElectronPhotonRelaxationDataContainer, Data, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ElectronPhotonRelaxationDataContainer, Data );
+
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Data, ElectronPhotonRelaxationDataContainer );
 
 //---------------------------------------------------------------------------//
 // Template Includes

@@ -7,23 +7,33 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp" // Must include first
 #include "Utility_TabularCDFDistribution.hpp"
 
-namespace Utility{
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLin,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLin,void,void> );
 
-  // Explicit instantiation
-  EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LinLin,void,void> );
-  EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LogLog,void,void> );
-  EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LinLog,void,void> );
-  EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LogLin,void,void> );
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLog,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLog,void,void> );
 
-  // Explicit cosine instantiation
-  EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LogLogCos<false>,void,void> );
-  EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LinLogCos<false>,void,void> );
-  EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LogLogCos<true>,void,void> );
-  EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LinLogCos<true>,void,void> );
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLog,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLog,void,void> );
 
-} // end Utility namespace
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLin,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLin,void,void> );
+
+// Explicit cosine instantiation
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos<false>,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos<false>,void,void> );
+
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLogCos<false>,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLogCos<false>,void,void> );
+
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos<true>,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos<true>,void,void> );
+
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLogCos<true>,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLogCos<true>,void,void> );
 
 //---------------------------------------------------------------------------//
 // end Utility_TabularCDFDistribution.cpp

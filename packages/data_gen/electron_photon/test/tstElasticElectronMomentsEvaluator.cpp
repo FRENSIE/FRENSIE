@@ -9,15 +9,10 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
@@ -35,10 +30,10 @@ public:
 
   TestElasticElectronMomentsEvaluator(
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,
-    const Teuchos::ArrayRCP<double>& incoming_energy_grid,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    const Teuchos::ArrayRCP<double>& cutoff_cross_section,
-    const Teuchos::ArrayRCP<double>& total_elastic_cross_section,
+    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >& grid_searcher,
+    const std::shared_ptr<const std::vector<double> >& cutoff_cross_section,
+    const std::shared_ptr<const std::vector<double> >& total_elastic_cross_section,
     const unsigned screened_rutherford_threshold_energy_index,
     const std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
         coupled_distribution,
@@ -88,7 +83,7 @@ bool notEqualZero( double value )
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the legendre expanded screened rutherford pdf can be evaluated
-TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
+FRENSIE_UNIT_TEST( ElasticElectronMomentsEvaluator,
                    evaluateLegendreExpandedRutherford )
 {
   int n = 4;
@@ -99,7 +94,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   double pdf = 5.00000250000125046057e-01;
   double legendre_expansion = 0.99999000002250015839;
 
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
 
   eta = 2.68213671998009;
@@ -107,21 +102,21 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
     pb_evaluator->evaluateLegendreExpandedRutherford( 1.0, 1.0e-4, eta, n );
   pdf = 9.94523849754938460421e-01; legendre_expansion = 1.0;
 
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
 
   expanded_pdf =
     pb_evaluator->evaluateLegendreExpandedRutherford( 1.0, 5.5e-4, eta, n );
   pdf = 3.71440503761483808987; legendre_expansion = 1.0;
 
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
 
   expanded_pdf =
     pb_evaluator->evaluateLegendreExpandedRutherford( 1.0, 1.0e-3, eta, n );
   pdf = 9.07844807222122796020e+01; legendre_expansion = 1.0;
 
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
 
   eta = 4.14887699806239e-14;
@@ -129,7 +124,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
     pb_evaluator->evaluateLegendreExpandedRutherford( 0.999999, 1.0e5, eta, n );
   pdf = 4.12490369163295705901e-02; legendre_expansion = 0.99999000002250015839;
 
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-10 );
 
 
 n = 2;
@@ -139,12 +134,12 @@ n = 2;
     pb_evaluator->evaluateLegendreExpandedRutherford( 1.0, 1.0e-5, eta, n );
   pdf = 5.00000250398027534793e-01; legendre_expansion = 1.0;
 
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the legendre expanded screened rutherford pdf can be evaluated
-TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
+FRENSIE_UNIT_TEST( ElasticElectronMomentsEvaluator,
                    evaluateLegendreExpandedRutherford_linlinlin )
 {
   int n = 4;
@@ -155,7 +150,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   double pdf = 5.00000250000125046057e-01;
   double legendre_expansion = 0.99999000002250015839;
 
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
 
   eta = 2.68213671998009;
@@ -163,19 +158,19 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
     pb_lin_evaluator->evaluateLegendreExpandedRutherford( 1.0, 1.0e-4, eta, n );
   pdf = 5.49697935897833889207e-01; legendre_expansion = 1.0;
 
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedRutherford( 1.0, 5.5e-4, eta, n );
   pdf = 1.09277911944359495955; legendre_expansion = 1.0;
 
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedRutherford( 1.0, 1.0e-3, eta, n );
   pdf = 9.07844807222122796020e+01; legendre_expansion = 1.0;
 
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
 
   eta = 4.14887699806239e-14;
@@ -183,7 +178,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
     pb_lin_evaluator->evaluateLegendreExpandedRutherford( 0.999999, 1.0e5, eta, n );
   pdf =  4.12490369163295705901e-02; legendre_expansion = 0.99999000002250015839;
 
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-10 );
 
 
 n = 2;
@@ -193,12 +188,12 @@ n = 2;
     pb_evaluator->evaluateLegendreExpandedRutherford( 1.0, 1.0e-5, eta, n );
   pdf = 5.00000250398027534793e-01; legendre_expansion = 1.0;
 
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the legendre expanded differential cross section can be evaluated
-TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
+FRENSIE_UNIT_TEST( ElasticElectronMomentsEvaluator,
                    evaluateLegendreExpandedPDF )
 {
   int n = 4;
@@ -206,55 +201,55 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   double expanded_pdf = pb_evaluator->evaluateLegendreExpandedPDF( 0.999999, 1.0e-5, n );
   double pdf = 5.00000250000125046057e-01;
   double legendre_expansion = 0.99999000002250015839;
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf = pb_evaluator->evaluateLegendreExpandedPDF( -1.0, 1.0e-4, n );
   pdf = 5.44146428818567340358e-01;
   legendre_expansion = 1.0;
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf = pb_evaluator->evaluateLegendreExpandedPDF( 0.999999, 1.0e-4, n );
   pdf = 9.94523108164633629080e-01;
   legendre_expansion = 0.99999000002250015839;
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf = pb_evaluator->evaluateLegendreExpandedPDF( 0.999999, 5.5e-4, n );
   pdf = 3.71440226788059302265e+00;
   legendre_expansion = 0.99999000002250015839;
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf = pb_evaluator->evaluateLegendreExpandedPDF( -1.0, 1.0e-3, n );
   pdf = 5.96843085640717530005e-01;
   legendre_expansion = 1.0;
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf = pb_evaluator->evaluateLegendreExpandedPDF( 0.999999, 1.0e-3, n );
   pdf = 9.07844130266102666837e+01;
   legendre_expansion = 0.99999000002250015839;
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf = pb_evaluator->evaluateLegendreExpandedPDF( 0.9999979, 1.0e5, n );
   pdf = 9.35600825114045117625e-03;
   legendre_expansion = 0.99997900009922502385;
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-10 );
 
 n = 2;
 
   expanded_pdf = pb_evaluator->evaluateLegendreExpandedPDF( -1.0, 1.0e-5, n );
   pdf = 5.00000250000125046057e-01;
   legendre_expansion = 1.0;
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf = pb_evaluator->evaluateLegendreExpandedPDF( 0.999999, 1.0e-5, n );
   pdf =  5.00000250000125046057e-01;
   legendre_expansion = 0.99999700000149993606;
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 }
 
 
 //---------------------------------------------------------------------------//
 // Check that the legendre expanded differential cross section can be evaluated
-TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
+FRENSIE_UNIT_TEST( ElasticElectronMomentsEvaluator,
                    evaluateLegendreExpandedPDF_lin )
 {
   int n = 4;
@@ -264,28 +259,28 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   double pdf = 5.00000250000125046057e-01;
   double legendre_expansion = 0.99999000002250015839;
 
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedPDF( -1.0, 1.0e-4, n );
   pdf = 5.07486059346235807155e-01;
   legendre_expansion = 1.0;
 
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedPDF( 0.999999, 1.0e-4, n );
   pdf = 5.49697526002525749256e-01;
   legendre_expansion = 0.99999000002250015839;
 
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedPDF( 0.999999, 5.5e-4, n );
   pdf = 1.09277830458691727067e+00;
   legendre_expansion = 0.99999000002250015839;
 
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedPDF( -1.0, 1.0e-3, n );
@@ -293,7 +288,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   pdf = 5.96843085640717530005e-01;
   legendre_expansion = 1.0;
 
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedPDF( 0.999999, 1.0e-3, n );
@@ -301,7 +296,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   pdf = 9.07844130266102666837e+01;
   legendre_expansion = 0.99999000002250015839;
 
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
 
   expanded_pdf =
@@ -310,7 +305,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   pdf =  9.35600825114045117625e-03;
   legendre_expansion = 0.99997900009922502385;
 
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-10 );
 
 n = 2;
 
@@ -320,7 +315,7 @@ n = 2;
   pdf = 5.00000250000125046057e-01;
   legendre_expansion = 1.0;
 
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedPDF( 0.999999, 1.0e-5, n );
@@ -328,12 +323,12 @@ n = 2;
   pdf = 5.00000250000125046057e-01;
   legendre_expansion = 0.99999700000149993606;
 
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the screened rutherford moments can be evaluated
-TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
+FRENSIE_UNIT_TEST( ElasticElectronMomentsEvaluator,
                    evaluateScreenedRutherfordPDFMomentByRecursion )
 {
   unsigned n = 2;
@@ -357,7 +352,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
         eta,
         0 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[0].convert_to<double>(),
                                   tol );
 
@@ -367,7 +362,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
         eta,
         1 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[1].convert_to<double>(),
                                   tol );
 
@@ -377,7 +372,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
         eta,
         2 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[2].convert_to<double>(),
                                   tol );
 
@@ -397,7 +392,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
         eta,
         0 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[0].convert_to<double>(),
                                   tol );
 
@@ -407,7 +402,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
         eta,
         1 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[1].convert_to<double>(),
                                   tol );
 
@@ -417,7 +412,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
         eta,
         2 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[2].convert_to<double>(),
                                   tol );
 
@@ -436,7 +431,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
         eta,
         0 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[0].convert_to<double>(),
                                   tol );
 
@@ -446,7 +441,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
         eta,
         1 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[1].convert_to<double>(),
                                   tol );
 
@@ -456,7 +451,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
         eta,
         2 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[2].convert_to<double>(),
                                   tol );
 
@@ -475,7 +470,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
         eta,
         0 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[0].convert_to<double>(),
                                   tol );
 
@@ -485,7 +480,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
         eta,
         1 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[1].convert_to<double>(),
                                   tol );
 
@@ -495,14 +490,14 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
         eta,
         2 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[2].convert_to<double>(),
                                   tol );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the screened rutherford moments can be evaluated
-TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
+FRENSIE_UNIT_TEST( ElasticElectronMomentsEvaluator,
                    evaluateScreenedRutherfordPDFMomentByNumericalIntegration )
 {
   double energy = 1.0e5;
@@ -524,7 +519,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
         tol,
         100 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[0].convert_to<double>(),
                                   tol );
 
@@ -536,7 +531,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
         tol,
         100 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[1].convert_to<double>(),
                                   tol );
 
@@ -548,7 +543,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
         tol,
         100 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[2].convert_to<double>(),
                                   tol );
 
@@ -571,7 +566,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 //        tol,
 //        100 );
 
-//  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+//  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
 //                                  moments[0].convert_to<double>(),
 //                                  tol );
 
@@ -583,7 +578,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 //        tol,
 //        100 );
 
-//  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+//  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
 //                                  moments[1].convert_to<double>(),
 //                                  tol );
 
@@ -595,7 +590,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 //        tol,
 //        100 );
 
-//  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+//  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
 //                                  moments[2].convert_to<double>(),
 //                                  tol );
 
@@ -614,7 +609,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 //        tol,
 //        100 );
 
-//  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+//  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
 //                                  moments[0].convert_to<double>(),
 //                                  tol );
 
@@ -626,7 +621,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 //        tol,
 //        100 );
 
-//  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+//  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
 //                                  moments[1].convert_to<double>(),
 //                                  tol );
 
@@ -638,7 +633,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 //        tol,
 //        100 );
 
-//  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+//  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
 //                                  moments[2].convert_to<double>(),
 //                                  tol );
 
@@ -657,7 +652,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
         tol,
         100 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[0].convert_to<double>(),
                                   tol );
 
@@ -669,7 +664,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
         tol,
         100 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[1].convert_to<double>(),
                                   tol );
 
@@ -681,14 +676,14 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
         tol,
         100 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[2].convert_to<double>(),
                                   tol );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the screened rutherford moments can be evaluated
-TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
+FRENSIE_UNIT_TEST( ElasticElectronMomentsEvaluator,
                    evaluateScreenedRutherfordPDFMoment )
 {
   unsigned n = 2;
@@ -706,7 +701,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                          energy,
                                          0 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[0].convert_to<double>(),
                                   tol );
 
@@ -715,7 +710,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                          energy,
                                          1 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[1].convert_to<double>(),
                                   tol );
 
@@ -724,7 +719,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                          energy,
                                          2 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[2].convert_to<double>(),
                                   tol );
 
@@ -741,7 +736,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                          energy,
                                          0 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[0].convert_to<double>(),
                                   tol );
 
@@ -750,7 +745,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                          energy,
                                          1 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[1].convert_to<double>(),
                                   tol );
 
@@ -759,7 +754,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                          energy,
                                          2 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[2].convert_to<double>(),
                                   tol );
 
@@ -775,7 +770,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                          energy,
                                          0 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[0].convert_to<double>(),
                                   tol );
 
@@ -784,7 +779,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                          energy,
                                          1 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[1].convert_to<double>(),
                                   tol );
 
@@ -793,14 +788,14 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                          energy,
                                          2 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[2].convert_to<double>(),
                                   tol );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the screened rutherford moments can be evaluated
-TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
+FRENSIE_UNIT_TEST( ElasticElectronMomentsEvaluator,
                    evaluateScreenedRutherfordMoment )
 {
   unsigned n = 6;
@@ -824,7 +819,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                       energy,
                                       0 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[0].convert_to<double>(),
                                   tol );
 
@@ -833,7 +828,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                       energy,
                                       1 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[1].convert_to<double>(),
                                   tol );
 
@@ -842,7 +837,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                       energy,
                                       2 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[2].convert_to<double>(),
                                   tol );
 
@@ -851,7 +846,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                       energy,
                                       3 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[3].convert_to<double>(),
                                   tol );
 
@@ -860,7 +855,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                       energy,
                                       4 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[4].convert_to<double>(),
                                   tol );
 
@@ -869,7 +864,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                       energy,
                                       5 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[5].convert_to<double>(),
                                   tol );
 
@@ -878,7 +873,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                       energy,
                                       n );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[6].convert_to<double>(),
                                   tol );
 
@@ -893,7 +888,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                       energy,
                                       0 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[0].convert_to<double>(),
                                   tol );
 
@@ -903,7 +898,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                       energy,
                                       0 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[0].convert_to<double>(),
                                   tol );
 
@@ -920,7 +915,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                                   energy,
                                                   0 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[0].convert_to<double>(),
                                   tol );
 
@@ -928,7 +923,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                                   energy,
                                                   1 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[1].convert_to<double>(),
                                   tol );
 
@@ -936,7 +931,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                                   energy,
                                                   2 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[2].convert_to<double>(),
                                   tol );
 
@@ -954,7 +949,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                       energy,
                                       0 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[0].convert_to<double>(),
                                   tol );
 
@@ -963,7 +958,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                       energy,
                                       1 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[1].convert_to<double>(),
                                   tol );
 
@@ -972,7 +967,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                       energy,
                                       2 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[2].convert_to<double>(),
                                   tol );
 
@@ -989,7 +984,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                       energy,
                                       0 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[0].convert_to<double>(),
                                   tol );
 
@@ -998,7 +993,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                       energy,
                                       1 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[1].convert_to<double>(),
                                   tol );
 
@@ -1007,7 +1002,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                       energy,
                                       2 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( rutherford_moment.convert_to<double>(),
                                   moments[2].convert_to<double>(),
                                   tol );
 
@@ -1015,7 +1010,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 
 //---------------------------------------------------------------------------//
 // Check that the moments can be evaluated
-TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
+FRENSIE_UNIT_TEST( ElasticElectronMomentsEvaluator,
                    evaluateCutoffPDFMoment )
 {
   unsigned n = 2;
@@ -1043,7 +1038,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                         energy,
                         0 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( cutoff_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( cutoff_moment.convert_to<double>(),
                                   moments[0].convert_to<double>(),
                                   tol );
 
@@ -1054,7 +1049,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                         energy,
                         1 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( cutoff_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( cutoff_moment.convert_to<double>(),
                                   moments[1].convert_to<double>(),
                                   tol );
 
@@ -1065,14 +1060,14 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                         energy,
                         2 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( cutoff_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( cutoff_moment.convert_to<double>(),
                                   moments[2].convert_to<double>(),
                                   tol );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the moments can be evaluated
-TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
+FRENSIE_UNIT_TEST( ElasticElectronMomentsEvaluator,
                    evaluateCutoffMoment )
 {
   unsigned n = 2;
@@ -1102,7 +1097,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                         energy,
                         0 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( cutoff_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( cutoff_moment.convert_to<double>(),
                                   moments[0].convert_to<double>(),
                                   tol );
 
@@ -1113,7 +1108,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                         energy,
                         1 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( cutoff_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( cutoff_moment.convert_to<double>(),
                                   moments[1].convert_to<double>(),
                                   tol );
 
@@ -1124,7 +1119,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                         energy,
                         2 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( cutoff_moment.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( cutoff_moment.convert_to<double>(),
                                   moments[2].convert_to<double>(),
                                   tol );
 }
@@ -1132,7 +1127,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 
 //---------------------------------------------------------------------------//
 // Check that the moments can be evaluated
-TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
+FRENSIE_UNIT_TEST( ElasticElectronMomentsEvaluator,
                    evaluateElasticMoment )
 {
   double precision = 1e-10;
@@ -1156,7 +1151,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   double cutoff_cross_section = 2.48924e9;
   double sr_cross_section = 0.0;
 
-  UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
                                   1.0,
                                   tol );
 
@@ -1167,7 +1162,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   cutoff_cross_section = 2.90281e8;
   sr_cross_section = 0.0;
 
-  UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
                                   1.0,
                                   tol );
 
@@ -1177,7 +1172,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   cutoff_cross_section = 2.51776896157372e5;
   sr_cross_section = 1.89076556817226e6;
 
-  UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
                                   1.0,
                                   tol );
 }
@@ -1185,21 +1180,21 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-  std::string test_native_pb_file_name, test_native_al_file_name;
+std::string test_native_pb_file_name, test_native_al_file_name;
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_native_pb_file",
-                   &test_native_pb_file_name,
-                   "Test Native Pb file name" );
-  clp().setOption( "test_native_al_file",
-                   &test_native_al_file_name,
-                   "Test Native Al file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_pb_file",
+                                        test_native_pb_file_name, "",
+                                        "Test Native Pb file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_al_file",
+                                        test_native_al_file_name, "",
+                                        "Test Native Al file name" );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   double cutoff_angle_cosine = 0.9;
   double tabular_evaluation_tol = 1e-15;
@@ -1210,45 +1205,34 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                                                    test_native_al_file_name ) );
 
   // Construct the hash-based grid searcher for this atom
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.assign( al_data->getElectronEnergyGrid().begin(),
-                      al_data->getElectronEnergyGrid().end() );
+  std::shared_ptr<std::vector<double> > energy_grid(
+       new std::vector<double>( al_data->getElectronEnergyGrid() ) );
 
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
+  std::shared_ptr<Utility::HashBasedGridSearcher<double> > grid_searcher(
+     new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                                  energy_grid,
                                  100u ) );
 
   // Get the cutoff cross section
-  Teuchos::ArrayRCP<double> cutoff_cross_section;
-  cutoff_cross_section.assign(
-    al_data->getCutoffElasticCrossSection().begin(),
-    al_data->getCutoffElasticCrossSection().end() );
+  std::shared_ptr<std::vector<double> > cutoff_cross_section(
+       new std::vector<double>( al_data->getCutoffElasticCrossSection() ) );
 
   // Get the total elastic cross section
-  Teuchos::ArrayRCP<double> total_elastic_cross_section;
-  total_elastic_cross_section.assign(
-    al_data->getTotalElasticCrossSection().begin(),
-    al_data->getTotalElasticCrossSection().end() );
-
-  // Get the total cross section
-  Teuchos::ArrayRCP<double> total_cross_section;
-  total_cross_section.assign(
-    al_data->getTotalElasticCrossSection().begin(),
-    al_data->getTotalElasticCrossSection().end() );
+  std::shared_ptr<std::vector<double> > total_elastic_cross_section(
+       new std::vector<double>( al_data->getTotalElasticCrossSection() ) );
 
   // Create the elastic traits
-  std::shared_ptr<Utility::ElasticElectronTraits> elastic_traits(
-        new Utility::ElasticElectronTraits( al_data->getAtomicNumber() ) );
+  std::shared_ptr<MonteCarlo::ElasticElectronTraits> elastic_traits(
+        new MonteCarlo::ElasticElectronTraits( al_data->getAtomicNumber() ) );
 
   // Create the coupled elastic distributions (combined Cutoff and Screened Rutherford)
   std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
     coupled_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Correlated<Utility::LinLinLog> >(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
         coupled_distribution,
         cutoff_cross_section,
-        total_cross_section,
+        total_elastic_cross_section,
         energy_grid,
         al_data->getCutoffElasticAngles(),
         al_data->getCutoffElasticPDF(),
@@ -1297,7 +1281,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   }
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstElasticElectronMomentsEvaluator.cpp

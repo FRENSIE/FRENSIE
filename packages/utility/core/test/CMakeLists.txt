@@ -1,324 +1,452 @@
-# This test cannot use the FRENSIE_STD_UNIT_TEST_MAIN because it is one
-# of the dependencies
-ADD_EXECUTABLE(tstStaticOutputFormatter
-  tstStaticOutputFormatter.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstStaticOutputFormatter utility_core)
-ADD_TEST(StaticOutputFormatter_test tstStaticOutputFormatter)
-SET_PROPERTY(TEST StaticOutputFormatter_test PROPERTY LABELS utility_core)
+FRENSIE_INITIALIZE_PACKAGE_TESTS(utility_core BOOST_TEST_LIB ${BOOST_TEST_LIBRARY})
 
-# This test cannout use the FRENSIE_STD_UNIT_TEST_MAIN because it is one
-# of the dependencies
-ADD_EXECUTABLE(tstDynamicOutputFormatter
-  tstDynamicOutputFormatter.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstDynamicOutputFormatter utility_core)
-ADD_TEST(DynamicOutputFormatter_test tstDynamicOutputFormatter)
-SET_PROPERTY(TEST DynamicOutputFormatter_test PROPERTY LABELS utility_core)
+##---------------------------------------------------------------------------##
+# Before the FRENSIE unit test framework can be used we must test all of the
+# dependencies using another test framework. These first tests will all use
+# the Boost unit test framework.
+##---------------------------------------------------------------------------##
+FRENSIE_ADD_TEST_EXECUTABLE(ElectronVoltUnit DEPENDS tstElectronVoltUnit.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(ElectronVoltUnit VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstAssertion
-  tstAssertion.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAssertion utility_core)
-ADD_TEST(Assertion_test tstAssertion)
-SET_PROPERTY(TEST Assertion_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(AngstromUnit DEPENDS tstAngstromUnit.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(AngstromUnit VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstContractException
-  tstContractException.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstContractException utility_core)
-ADD_TEST(ContractException_test tstContractException)
-SET_PROPERTY(TEST ContractException_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(BarnUnit DEPENDS tstBarnUnit.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(BarnUnit VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstElectronVoltUnit
-  tstElectronVoltUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstElectronVoltUnit utility_core)
-ADD_TEST(ElectronVoltUnit_test tstElectronVoltUnit)
-SET_PROPERTY(TEST ElectronVoltUnit_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(InverseAngstromUnit DEPENDS tstInverseAngstromUnit.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(InverseAngstromUnit VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstAngstromUnit
-  tstAngstromUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAngstromUnit utility_core)
-ADD_TEST(AngstromUnit_test tstAngstromUnit)
-SET_PROPERTY(TEST AngstromUnit_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(InverseCentimeterUnit DEPENDS tstInverseCentimeterUnit.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(InverseCentimeterUnit VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstBarnUnit
-  tstBarnUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstBarnUnit utility_core)
-ADD_TEST(BarnUnit_test tstBarnUnit)
-SET_PROPERTY(TEST BarnUnit_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(InverseLengthConversion DEPENDS tstInverseLengthConversion BOOST_TEST)
+FRENSIE_ADD_TEST(InverseLengthConversion VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstInverseAngstromUnit
-  tstInverseAngstromUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstInverseAngstromUnit utility_core)
-ADD_TEST(InverseAngstromUnit_test tstInverseAngstromUnit)
-SET_PROPERTY(TEST InverseAngstromUnit_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(InverseSquareAngstromUnit DEPENDS tstInverseSquareAngstromUnit.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(InverseSquareAngstromUnit VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstInverseCentimeterUnit
-  tstInverseCentimeterUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstInverseCentimeterUnit utility_core)
-ADD_TEST(InverseCentimeterUnit_test tstInverseCentimeterUnit)
-SET_PROPERTY(TEST InverseCentimeterUnit_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(InverseSquareCentimeterUnit DEPENDS tstInverseSquareCentimeterUnit.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(InverseSquareCentimeterUnit VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstInverseLengthConversion
-  tstInverseLengthConversion.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstInverseLengthConversion utility_core)
-ADD_TEST(InverseLengthConversion_test tstInverseLengthConversion)
-SET_PROPERTY(TEST InverseLengthConversion_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(InverseAreaConversion DEPENDS tstInverseAreaConversion.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(InverseAreaConversion VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstInverseSquareAngstromUnit
-  tstInverseSquareAngstromUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstInverseSquareAngstromUnit utility_core)
-ADD_TEST(InverseSquareAngstromUnit_test tstInverseSquareAngstromUnit)
-SET_PROPERTY(TEST InverseSquareAngstromUnit_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(AtomUnit DEPENDS tstAtomUnit.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(AtomUnit VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstInverseSquareCentimeterUnit
-  tstInverseSquareCentimeterUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstInverseSquareCentimeterUnit utility_core)
-ADD_TEST(InverseSquareCentimeterUnit_test tstInverseSquareCentimeterUnit)
-SET_PROPERTY(TEST InverseSquareCentimeterUnit_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(ShakeUnit DEPENDS tstShakeUnit.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(ShakeUnit VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstInverseAreaConversion
-  tstInverseAreaConversion.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstInverseAreaConversion utility_core)
-ADD_TEST(InverseAreaConversion_test tstInverseAreaConversion)
-SET_PROPERTY(TEST InverseAreaConversion_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(AtomicMomentumUnit DEPENDS tstAtomicMomentumUnit.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(AtomicMomentumUnit VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstAtomUnit
-  tstAtomUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAtomUnit utility_core)
-ADD_TEST(AtomUnit_test tstAtomUnit)
-SET_PROPERTY(TEST AtomUnit_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(MeCMomentumUnit DEPENDS tstMeCMomentumUnit.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(MeCMomentumUnit VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstShakeUnit
-  tstShakeUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstShakeUnit utility_core)
-ADD_TEST(ShakeUnit_test tstShakeUnit)
-SET_PROPERTY(TEST ShakeUnit_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(MomentumConversion DEPENDS tstMomentumConversion.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(MomentumConversion VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstAtomicMomentumUnit
-  tstAtomicMomentumUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAtomicMomentumUnit utility_core)
-ADD_TEST(AtomicMomentumUnit_test tstAtomicMomentumUnit)
-SET_PROPERTY(TEST AtomicMomentumUnit_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(InverseAtomicMomentumUnit DEPENDS tstInverseAtomicMomentumUnit.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(InverseAtomicMomentumUnit VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstMeCMomentumUnit
-  tstMeCMomentumUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstMeCMomentumUnit utility_core)
-ADD_TEST(MeCMomentumUnit_test tstMeCMomentumUnit)
-SET_PROPERTY(TEST MeCMomentumUnit_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(InverseMeCMomentumUnit DEPENDS tstInverseMeCMomentumUnit.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(InverseMeCMomentumUnit VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstMomentumConversion
-  tstMomentumConversion.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstMomentumConversion utility_core)
-ADD_TEST(MomentumConversion_test tstMomentumConversion)
-SET_PROPERTY(TEST MomentumConversion_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(InverseMomentumConversion DEPENDS tstInverseMomentumConversion.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(InverseMomentumConversion VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstInverseAtomicMomentumUnit
-  tstInverseAtomicMomentumUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstInverseAtomicMomentumUnit utility_core)
-ADD_TEST(InverseAtomicMomentumUnit_test tstInverseAtomicMomentumUnit)
-SET_PROPERTY(TEST InverseAtomicMomentumUnit_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(AtomicMassUnit DEPENDS tstAtomicMassUnit.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(AtomicMassUnit VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstInverseMeCMomentumUnit
-  tstInverseMeCMomentumUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstInverseMeCMomentumUnit utility_core)
-ADD_TEST(InverseMeCMomentumUnit_test tstInverseMeCMomentumUnit)
-SET_PROPERTY(TEST InverseMeCMomentumUnit_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(UnitTraits DEPENDS tstUnitTraits.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(UnitTraits VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstInverseMomentumConversion
-  tstInverseMomentumConversion.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstInverseMomentumConversion utility_core)
-ADD_TEST(InverseMomentumConversion_test tstInverseMomentumConversion)
-SET_PROPERTY(TEST InverseMomentumConversion_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(QuantityTraits DEPENDS tstQuantityTraits.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(QuantityTraits VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstAtomicMassUnit
-  tstAtomicMassUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAtomicMassUnit utility_core)
-ADD_TEST(AtomicMassUnit_test tstAtomicMassUnit)
-SET_PROPERTY(TEST AtomicMassUnit_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(TypeTraits DEPENDS tstTypeTraits.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(TypeTraits VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstSerialCommHelpers
-  tstSerialCommHelpers.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSerialCommHelpers utility_core)
-ADD_TEST(SerialCommHelpers_test tstSerialCommHelpers)
-SET_PROPERTY(TEST SerialCommHelpers_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(ToStringTraits DEPENDS tstToStringTraits.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(ToStringTraits VERBOSE_TEST_OUTPUT)
 
+FRENSIE_ADD_TEST_EXECUTABLE(FromStringTraits DEPENDS tstFromStringTraits.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(FromStringTraits VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(TypeNameTraits DEPENDS tstTypeNameTraits.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(TypeNameTraits VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(LogRecordType DEPENDS tstLogRecordType.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(LogRecordType VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(IteratorTypeTraits DEPENDS tstIteratorTypeTraits.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(IteratorTypeTraits VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(StaticOutputFormatter DEPENDS tstStaticOutputFormatter.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(StaticOutputFormatter VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(StaticOutputFormatterFactory DEPENDS tstStaticOutputFormatterFactory.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(StaticOutputFormatterFactory VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(DynamicOutputFormatter DEPENDS tstDynamicOutputFormatter.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(DynamicOutputFormatter VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(DynamicOutputFormatterFactory DEPENDS tstDynamicOutputFormatterFactory.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(DynamicOutputFormatterFactory VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(LoggingMacros DEPENDS tstLoggingMacros.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(LoggingMacros VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ExceptionCatchMacros DEPENDS tstExceptionCatchMacros.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(ExceptionCatchMacros VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(DesignByContract DEPENDS tstDesignByContract.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(DesignByContract VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ComparisonPolicy DEPENDS tstComparisonPolicy.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(ComparisonPolicy VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ComparisonTraits DEPENDS tstComparisonTraits.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(ComparisonTraits VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(Tuple DEPENDS tstTuple.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(Tuple VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(View DEPENDS tstView.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(View VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ArrayView DEPENDS tstArrayView.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(ArrayView VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(Array DEPENDS tstArray.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(Array VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(Vector DEPENDS tstVector.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(Vector VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(List DEPENDS tstList.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(List VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(Deque DEPENDS tstDeque.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(Deque VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(Set DEPENDS tstSet.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(Set VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(Map DEPENDS tstMap.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(Map VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(Variant DEPENDS tstVariant.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(Variant VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(StandardTimer DEPENDS tstStandardTimer.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(StandardTimer VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(OpenMPProperties DEPENDS tstOpenMPProperties BOOST_TEST)
+
+FRENSIE_ADD_TEST_EXECUTABLE(GlobalMPISessionInit DEPENDS tstGlobalMPISessionInit.cpp BOOST_TEST)
+
+SET(GlobalMPISessionInitProcs 1)
 IF(${FRENSIE_ENABLE_MPI})
-  ADD_EXECUTABLE(tstMpiCommHelpers
-    tstMpiCommHelpers.cpp
-    ${FRENSIE_STD_UNIT_TEST_MAIN})
-  TARGET_LINK_LIBRARIES(tstMpiCommHelpers utility_core)
-  ADD_TEST(MpiCommHelpers_2_test ${MPIEXEC} -n 2 tstMpiCommHelpers)
-  ADD_TEST(MpiCommHelpers_4_test ${MPIEXEC} -n 4 tstMpiCommHelpers)
-  SET_PROPERTY(TEST MpiCommHelpers_2_test PROPERTY LABELS utility_core mpi no_threads)
-  SET_PROPERTY(TEST MpiCommHelpers_4_test PROPERTY LABELS utility_core mpi no_threads)
+  SET(GlobalMPISessionInitProcs 4)
 ENDIF()
 
-ADD_EXECUTABLE(tstSortAlgorithms
-  tstSortAlgorithms.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSortAlgorithms utility_core)
-ADD_TEST(SortAlgorithms_test tstSortAlgorithms)
-SET_PROPERTY(TEST SortAlgorithms_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST(GlobalMPISessionInit
+  MPI_PROCS ${GlobalMPISessionInitProcs}
+  EXTRA_ARGS constructor_type=default
+  VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstSearchAlgorithms
-  tstSearchAlgorithms.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSearchAlgorithms utility_core)
-ADD_TEST(SearchAlgorithms_test tstSearchAlgorithms)
-SET_PROPERTY(TEST SearchAlgorithms_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST(GlobalMPISessionAdvancedInit
+  TEST_EXEC_NAME_ROOT GlobalMPISessionInit
+  MPI_PROCS ${GlobalMPISessionInitProcs}
+  EXTRA_ARGS constructor_type=advanced
+  VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstExponentiationAlgorithms
-  tstExponentiationAlgorithms.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstExponentiationAlgorithms utility_core)
-ADD_TEST(ExponentiationAlgorithms_test tstExponentiationAlgorithms)
-SET_PROPERTY(TEST ExponentiationAlgorithms_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST(GlobalMPISessionBasicSingleThreadingInit
+  TEST_EXEC_NAME_ROOT GlobalMPISessionInit
+  MPI_PROCS ${GlobalMPISessionInitProcs}
+  EXTRA_ARGS constructor_type=basic_single
+  VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstSetOperationFunctor
-  tstSetOperationFunctor.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSetOperationFunctor utility_core)
-ADD_TEST(SetOperationFunctor_test tstSetOperationFunctor)
-SET_PROPERTY(TEST SetOperationFunctor_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST(GlobalMPISessionAdvancedSingleThreadingInit
+  TEST_EXEC_NAME_ROOT GlobalMPISessionInit
+  MPI_PROCS ${GlobalMPISessionInitProcs}
+  EXTRA_ARGS constructor_type=advanced_single
+  VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstDirectionHelpers
-  tstDirectionHelpers.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstDirectionHelpers utility_core)
-ADD_TEST(DirectionHelpers_test tstDirectionHelpers)
-SET_PROPERTY(TEST DirectionHelpers_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST(GlobalMPISessionBasicFunneledThreadingInit
+  TEST_EXEC_NAME_ROOT GlobalMPISessionInit
+  MPI_PROCS ${GlobalMPISessionInitProcs}
+  EXTRA_ARGS constructor_type=basic_funneled
+  VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstCylindricalCoordinateHelpers
-  tstCylindricalCoordinateHelpers.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstCylindricalCoordinateHelpers utility_core)
-ADD_TEST(CylindricalCoordinateHelpers_test tstCylindricalCoordinateHelpers)
-SET_PROPERTY(TEST CylindricalCoordinateHelpers_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST(GlobalMPISessionAdvancedFunneledThreadingInit
+  TEST_EXEC_NAME_ROOT GlobalMPISessionInit
+  MPI_PROCS ${GlobalMPISessionInitProcs}
+  EXTRA_ARGS constructor_type=advanced_funneled
+  VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstSphericalCoordinateHelpers
-  tstSphericalCoordinateHelpers.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSphericalCoordinateHelpers utility_core)
-ADD_TEST(SphericalCoordinateHelpers_test tstSphericalCoordinateHelpers)
-SET_PROPERTY(TEST SphericalCoordinateHelpers_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST(GlobalMPISessionBasicSerializedThreadingInit
+  TEST_EXEC_NAME_ROOT GlobalMPISessionInit
+  MPI_PROCS ${GlobalMPISessionInitProcs}
+  EXTRA_ARGS constructor_type=basic_serialized
+  VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstDataProcessor
-  tstDataProcessor.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstDataProcessor utility_core)
-ADD_TEST(DataProcessor_test tstDataProcessor)
-SET_PROPERTY(TEST DataProcessor_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST(GlobalMPISessionAdvancedSerializedThreadingInit
+  TEST_EXEC_NAME_ROOT GlobalMPISessionInit
+  MPI_PROCS ${GlobalMPISessionInitProcs}
+  EXTRA_ARGS constructor_type=advanced_serialized
+  VERBOSE_TEST_OUTPUT)
 
-ADD_EXECUTABLE(tstFortranStringHelpers
+FRENSIE_ADD_TEST(GlobalMPISessionBasicMultipleThreadingInit
+  TEST_EXEC_NAME_ROOT GlobalMPISessionInit
+  MPI_PROCS ${GlobalMPISessionInitProcs}
+  EXTRA_ARGS constructor_type=basic_multiple
+  VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST(GlobalMPISessionAdvancedMultipleThreadingInit
+  TEST_EXEC_NAME_ROOT GlobalMPISessionInit
+  MPI_PROCS ${GlobalMPISessionInitProcs}
+  EXTRA_ARGS constructor_type=advanced_multiple
+  VERBOSE_TEST_OUTPUT)
+
+UNSET(GlobalMPISessionInitProcs)
+
+FRENSIE_ADD_TEST_EXECUTABLE(GlobalMPISession DEPENDS tstGlobalMPISession.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(GlobalMPISession VERBOSE_TEST_OUTPUT)
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(GlobalMPISession MPI_PROCS 2 VERBOSE_TEST_OUTPUT)
+  FRENSIE_ADD_TEST(GlobalMPISession MPI_PROCS 4 VERBOSE_TEST_OUTPUT)
+ENDIF()
+
+FRENSIE_ADD_TEST_EXECUTABLE(UnitTest DEPENDS tstUnitTest.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(UnitTest VERBOSE_TEST_OUTPUT)
+
+FRENSIE_ADD_TEST_EXECUTABLE(UnitTestDataTable DEPENDS tstUnitTestDataTable.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(UnitTestDataTable)
+
+FRENSIE_ADD_TEST_EXECUTABLE(DataUnitTest DEPENDS tstDataUnitTest.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(DataUnitTest)
+
+FRENSIE_ADD_TEST_EXECUTABLE(DataUnitTestWrapper DEPENDS tstDataUnitTestWrapper.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(DataUnitTestWrapper)
+
+FRENSIE_ADD_TEST_EXECUTABLE(TemplateUnitTest DEPENDS tstTemplateUnitTest.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(TemplateUnitTest)
+
+FRENSIE_ADD_TEST_EXECUTABLE(TemplateUnitTestWrapper DEPENDS tstTemplateUnitTestWrapper.cpp BOOST_TEST)
+FRENSIE_ADD_TEST(TemplateUnitTestWrapper)
+
+FRENSIE_ADD_TEST_EXECUTABLE(FRENSIEUnitTestHarnessDefaultInit DEPENDS tstFRENSIEUnitTestHarnessDefaultInit.cpp)
+FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessDefaultInit)
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessDefaultInit MPI_PROCS 2 VERBOSE_TEST_OUTPUT)
+  FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessDefaultInit MPI_PROCS 4 VERBOSE_TEST_OUTPUT)
+ENDIF()
+
+FRENSIE_ADD_TEST_EXECUTABLE(FRENSIEUnitTestHarnessCustomInit DEPENDS tstFRENSIEUnitTestHarnessCustomInit.cpp)
+FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit
+  EXTRA_ARGS --number_of_tests=46 --number_of_checks=76)
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit MPI_PROCS 2
+    EXTRA_ARGS --number_of_tests=46 --number_of_checks=76)
+ENDIF()
+
+# Check that no tests are run if the -h flag is passed
+FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_h_flag
+  TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+  EXTRA_ARGS -h --number_of_tests=0 --number_of_checks=0)
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_h_flag
+    MPI_PROCS 2
+    TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+    EXTRA_ARGS -h --number_of_tests=0 --number_of_checks=0)
+ENDIF()
+
+# Check that no tests are run if the --help flag is passed
+FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_help_flag
+  TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+  EXTRA_ARGS --help --number_of_tests=0 --number_of_checks=0)
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_help_flag
+    MPI_PROCS 2
+    TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+    EXTRA_ARGS --help --number_of_tests=0 --number_of_checks=0)
+ENDIF()
+
+# Check that no tests are run if the -g flag is passed
+FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_g_flag
+  TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+  EXTRA_ARGS -g --number_of_tests=0 --number_of_checks=0)
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_g_flag
+    MPI_PROCS 2
+    TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+    EXTRA_ARGS -g --number_of_tests=0 --number_of_checks=0)
+ENDIF()
+
+# Check that no tests are run if the --show_groups flag is passed
+FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_show_groups_flag
+  TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+  EXTRA_ARGS --show_groups --number_of_tests=0 --number_of_checks=0)
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_show_groups_flag
+    MPI_PROCS 2
+    TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+    EXTRA_ARGS --show_groups --number_of_tests=0 --number_of_checks=0)
+ENDIF()
+
+# Check that no tests are run if the -t flag is passed
+FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_t_flag
+  TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+  EXTRA_ARGS -t --number_of_tests=0 --number_of_checks=0)
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_t_flag
+    MPI_PROCS 2
+    TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+    EXTRA_ARGS -t --number_of_tests=0 --number_of_checks=0)
+ENDIF()
+
+# Check that no tests are run if the --show_tests flag is passed
+FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_show_tests_flag
+  TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+  EXTRA_ARGS --show_tests --number_of_tests=0 --number_of_checks=0)
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_show_tests_flag
+    MPI_PROCS 2
+    TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+    EXTRA_ARGS --show_tests --number_of_tests=0 --number_of_checks=0)
+ENDIF()
+
+# Check that no tests are run if the -d flag is passed
+FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_d_flag
+  TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+  EXTRA_ARGS -d --number_of_tests=0 --number_of_checks=0)
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_d_flag
+    MPI_PROCS 2
+    TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+    EXTRA_ARGS -d --number_of_tests=0 --number_of_checks=0)
+ENDIF()
+
+# Check that no tests are run if the --show_data flag is passed
+FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_show_data_flag
+  TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+  EXTRA_ARGS --show_data --number_of_tests=0 --number_of_checks=0)
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_show_data_flag
+    MPI_PROCS 2
+    TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+    EXTRA_ARGS --show_data --number_of_tests=0 --number_of_checks=0)
+ENDIF()
+
+# Check that the test group can be filtered
+FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_group_filter
+  TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+  EXTRA_ARGS --group_filter=CHECK --number_of_tests=34 --number_of_checks=53)
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_group_filter
+    MPI_PROCS 2
+    TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+    EXTRA_ARGS --group_filter=CHECK --number_of_tests=34 --number_of_checks=53)
+ENDIF()
+
+# Check that the tests can be filtered
+FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_test_filter
+  TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+  EXTRA_ARGS --test_filter=EQUAL --number_of_tests=8 --number_of_checks=16)
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_test_filter
+    MPI_PROCS 2
+    TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+    EXTRA_ARGS --test_filter=EQUAL --number_of_tests=8 --number_of_checks=16)
+ENDIF()
+
+# Check that the data can be filtered
+FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_data_filter
+  TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+  EXTRA_ARGS --data_filter=zero_input --number_of_tests=1 --number_of_checks=1)
+
+IF(${FRENIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_data_filter
+    MPI_PROCS 2
+    TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+    EXTRA_ARGS --data_filter=zero_input --number_of_tests=1 --number_of_checks=1)
+ENDIF()
+
+# Check that multiple filters can be applied
+FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_multiple_filter
+  TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+  EXTRA_ARGS --group_filter=REQUIRE --test_filter=SMALL --number_of_tests=1 --number_of_checks=3)
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(FRENSIEUnitTestHarnessCustomInit_multiple_filter
+    MPI_PROCS 2
+    TEST_EXEC_NAME_ROOT FRENSIEUnitTestHarnessCustomInit
+    EXTRA_ARGS --group_filter=REQUIRE --test_filter=SMALL --number_of_tests=1 --number_of_checks=3)
+ENDIF()
+
+##---------------------------------------------------------------------------##
+# All FRENSIE unit test framework dependencies have been tested. All tests
+# beyond this point can use the FRENSIE unit tests framework.
+##---------------------------------------------------------------------------##
+FRENSIE_ADD_TEST_EXECUTABLE(SortAlgorithms DEPENDS tstSortAlgorithms.cpp)
+FRENSIE_ADD_TEST(SortAlgorithms)
+
+FRENSIE_ADD_TEST_EXECUTABLE(SearchAlgorithms DEPENDS tstSearchAlgorithms.cpp)
+FRENSIE_ADD_TEST(SearchAlgorithms)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ExponentiationAlgorithms DEPENDS tstExponentiationAlgorithms.cpp)
+FRENSIE_ADD_TEST(ExponentiationAlgorithms)
+
+FRENSIE_ADD_TEST_EXECUTABLE(SetOperationFunctor DEPENDS tstSetOperationFunctor.cpp)
+FRENSIE_ADD_TEST(SetOperationFunctor)
+
+FRENSIE_ADD_TEST_EXECUTABLE(DataProcessor DEPENDS tstDataProcessor.cpp)
+FRENSIE_ADD_TEST(DataProcessor)
+
+FRENSIE_ADD_TEST_EXECUTABLE(FortranStringHelpers DEPENDS
   tstFortranStringHelpers.cpp
-  string_conversion.F90
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstFortranStringHelpers utility_core)
-ADD_TEST(FortranStringHelpers_test tstFortranStringHelpers)
-SET_PROPERTY(TEST FortranStringHelpers_test PROPERTY LABELS utility_core)
+  string_conversion.F90)
+FRENSIE_ADD_TEST(FortranStringHelpers)
 
-ADD_EXECUTABLE(tstFortranFileHelpers
-  tstFortranFileHelpers.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstFortranFileHelpers utility_core)
-ADD_TEST(FortranFileHelpers_test tstFortranFileHelpers
---test_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/check_file.txt")
-SET_PROPERTY(TEST FortranFileHelpers_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(FortranFileHelpers DEPENDS tstFortranFileHelpers.cpp)
+FRENSIE_ADD_TEST(FortranFileHelpers
+  EXTRA_ARGS --test_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/check_file.txt)
 
-ADD_EXECUTABLE(tstKinematicHelpers
-  tstKinematicHelpers.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstKinematicHelpers utility_core)
-ADD_TEST(KinematicHelpers_test tstKinematicHelpers)
-SET_PROPERTY(TEST KinematicHelpers_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(3DCartesianVectorHelpers DEPENDS tst3DCartesianVectorHelpers.cpp)
+FRENSIE_ADD_TEST(3DCartesianVectorHelpers)
 
-ADD_EXECUTABLE(tstLegendrePolynomial
-  tstLegendrePolynomial.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstLegendrePolynomial utility_core)
-ADD_TEST(LegendrePolynomial_test tstLegendrePolynomial)
-SET_PROPERTY(TEST LegendrePolynomial_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(PropertyTree DEPENDS tstPropertyTree.cpp)
+FRENSIE_ADD_TEST(PropertyTree)
 
-ADD_EXECUTABLE(tstGaussLegendreQuadratureSet
-  tstGaussLegendreQuadratureSet.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstGaussLegendreQuadratureSet utility_core)
-ADD_TEST(GaussLegendreQuadratureSet_test tstGaussLegendreQuadratureSet)
-SET_PROPERTY(TEST GaussLegendreQuadratureSet_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(HDF5File DEPENDS tstHDF5File.cpp)
+FRENSIE_ADD_TEST(HDF5File)
 
-ADD_EXECUTABLE(tstSloanRadauQuadrature
-  tstSloanRadauQuadrature.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSloanRadauQuadrature utility_core)
-ADD_TEST(SloanRadauQuadrature_test tstSloanRadauQuadrature)
-SET_PROPERTY(TEST SloanRadauQuadrature_test PROPERTY LABELS utility_core)
+IF(${FRENSIE_ENABLE_HDF5})
+FRENSIE_ADD_TEST_EXECUTABLE(HDF5FileDataSetHelpers DEPENDS tstHDF5FileDataSetHelpers.cpp)
+FRENSIE_ADD_TEST(HDF5FileDataSetHelpers)
 
-ADD_EXECUTABLE(tstTetrahedronHelpers
-  tstTetrahedronHelpers.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstTetrahedronHelpers utility_core)
-ADD_TEST(TetrahedronHelpers_test tstTetrahedronHelpers)
-SET_PROPERTY(TEST TetrahedronHelpers_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(HDF5FileDataSetAttributeHelpers DEPENDS tstHDF5FileDataSetAttributeHelpers.cpp)
+FRENSIE_ADD_TEST(HDF5FileDataSetAttributeHelpers)
 
-ADD_EXECUTABLE(tstArrayString
-  tstArrayString.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstArrayString utility_core)
-ADD_TEST(ArrayString_test tstArrayString --test_array_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_arrays.xml")
-SET_PROPERTY(TEST ArrayString_test PROPERTY LABELS utility_core)
+FRENSIE_ADD_TEST_EXECUTABLE(HDF5FileGroupAttributeHelpers DEPENDS tstHDF5FileGroupAttributeHelpers.cpp)
+FRENSIE_ADD_TEST(HDF5FileGroupAttributeHelpers)
+ENDIF()
 
-ADD_EXECUTABLE(tstMeasurement
-  tstMeasurement.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstMeasurement utility_core)
-ADD_TEST(Measurement_test tstMeasurement)
-SET_PROPERTY(TEST Measurement_test PROPERTY LABELS utility_core)
+FRENSIE_FINALIZE_PACKAGE_TESTS(utility_core)
 
-ADD_EXECUTABLE(tstActiveCounter
-  tstActiveCounter.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstActiveCounter utility_core)
-ADD_TEST(ActiveCounter_test tstActiveCounter)
-SET_PROPERTY(TEST ActiveCounter_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstInactiveCounter
-  tstInactiveCounter.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstInactiveCounter utility_core)
-ADD_TEST(InactiveCounter_test tstInactiveCounter)
-SET_PROPERTY(TEST InactiveCounter_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstIncrementPolicy
-  tstIncrementPolicy.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstIncrementPolicy utility_core)
-ADD_TEST(IncrementPolicy_test tstIncrementPolicy)
-SET_PROPERTY(TEST IncrementPolicy_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstStructuredHexMesh
-  tstStructuredHexMesh.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstStructuredHexMesh utility_core)
-ADD_TEST(StructuredHexMesh_test tstStructuredHexMesh)
-SET_PROPERTY(TEST StructuredHexMesh_test PROPERTY LABELS utility_core)

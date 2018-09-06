@@ -15,12 +15,12 @@
 #include <list>
 
 // FRENSIE Includes
-#include "Utility_PrintableObject.hpp"
+#include "Utility_OStreamableObject.hpp"
 
 namespace Utility{
 
 //! The output formatter class
-class OutputFormatter : public PrintableObject
+class OutputFormatter : public OStreamableObject
 {
 
 public:
@@ -33,10 +33,10 @@ public:
   { /* ... */ }
 
   //! Place the formatted string in the output stream
-  void print( std::ostream& os ) const;
+  void toStream( std::ostream& os ) const;
 
   //! Place the string in the output stream
-  void print( std::ostream& os, const bool use_formatted_output ) const;
+  void toStream( std::ostream& os, const bool use_formatted_output ) const;
 
   //! Get the formatted string
   const std::string& getFormattedOutput() const;

@@ -7,10 +7,11 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp" // Must include first
 #include "MonteCarlo_MassiveParticleState.hpp"
+#include "MonteCarlo_KinematicHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_KinematicHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -42,7 +43,7 @@ MassiveParticleState::MassiveParticleState(
 		   new_charge,
 		   increment_generation_number,
 		   reset_collision_number ),
-    d_speed( Utility::calculateRelativisticSpeed(
+    d_speed( MonteCarlo::calculateRelativisticSpeed(
 					    new_rest_mass_energy,
 					    existing_base_state.getEnergy() ) )
 {
@@ -72,7 +73,7 @@ MassiveParticleState::MassiveParticleState(
     d_speed = existing_state.d_speed;
   else
   {
-    Utility::calculateRelativisticSpeed( new_rest_mass_energy,
+    MonteCarlo::calculateRelativisticSpeed( new_rest_mass_energy,
 					 this->getEnergy() );
   }
 }
@@ -84,7 +85,7 @@ void MassiveParticleState::setEnergy( const ParticleState::energyType energy )
 {
   ParticleState::setEnergy( energy );
 
-  d_speed = Utility::calculateRelativisticSpeed( this->getRestMassEnergy(),
+  d_speed = MonteCarlo::calculateRelativisticSpeed( this->getRestMassEnergy(),
 						 energy );
 }
 
@@ -100,13 +101,13 @@ double MassiveParticleState::getSpeed() const
 void MassiveParticleState::setSpeed( const double speed )
 {
   // Make sure the speed is valid
-  testPrecondition( !ST::isnaninf( speed ) );
+  testPrecondition( !QT::isnaninf( speed ) );
   testPrecondition( speed > 0.0 );
   testPrecondition( speed < Utility::PhysicalConstants::speed_of_light );
 
   d_speed = speed;
 
-  ParticleState::setEnergy( Utility::calculateRelativisticKineticEnergy(
+  ParticleState::setEnergy( MonteCarlo::calculateRelativisticKineticEnergy(
 						     this->getRestMassEnergy(),
 						     d_speed ) );
 }
@@ -120,6 +121,8 @@ MassiveParticleState::calculateTraversalTime( const double distance ) const
 
   return distance/d_speed;
 }
+
+EXPLICIT_CLASS_SERIALIZE_INST( MassiveParticleState );
 
 } // end MonteCarlo namespace
 

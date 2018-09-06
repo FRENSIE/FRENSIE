@@ -2,11 +2,10 @@
 ## Initialize the FRENSIE Project
 ##---------------------------------------------------------------------------##
 # Define the minimum required version of CMake
-CMAKE_MINIMUM_REQUIRED(VERSION 3.0.1 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.9.3 FATAL_ERROR)
 
 # Add the custom modules to the module path
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
-  "${CMAKE_DIR}/share/cmake-3.0/Modules"
   ${PROJECT_SOURCE_DIR}/cmake)
 
 # Define the project name
@@ -15,14 +14,20 @@ INCLUDE(ProjectName)
 # Define the project version
 INCLUDE(Version)
 
+# Include cmake macros (ones that aren't automatically available)
+INCLUDE(${CMAKE_ROOT}/Modules/CMakeDependentOption.cmake)
+
 # Include the macros that have been defined for this project
 INCLUDE(Macros)
+
+# Capture the command line and add to cache
+CAPTURE_COMMAND_LINE()
 
 # Enforce an out-of-source build
 ENFORCE_OUT_OF_SOURCE_BUILD()
 
 # Enable C++11 standard support
-ENABLE_CXX11_STANDARD_SUPPORT()
+ENABLE_CXX_STANDARD_SUPPORT( 14 )
 
 # Load the patch files
 SET(DAGMC_THREAD_SAFE_PATCH
@@ -46,6 +51,7 @@ SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 ## Command Line Options
 ##---------------------------------------------------------------------------##
 OPTION(FRENSIE_ENABLE_DBC "Enable Design-by-Contract checks in FRENSIE" ON)
+OPTION(FRENSIE_ENABLE_DETAILED_LOGGING "Enable detailed logging in FRENSIE" OFF)
 OPTION(FRENSIE_ENABLE_EXPLICIT_TEMPLATE_INST "Enable explicit template instantiation to speed up build times and reduce build memory overhead" ON)
 OPTION(FRENSIE_ENABLE_COLOR_OUTPUT "Enable color output from FRENSIE" ON)
 OPTION(FRENSIE_ENABLE_PROFILING "Enable profiling with FRENSIE" OFF)
@@ -54,7 +60,10 @@ OPTION(FRENSIE_ENABLE_OPENMP "Enable shared-memory parallelism in FRENSIE" ON)
 OPTION(FRENSIE_ENABLE_MPI "Enable distributed-memory parallelism in FRENSIE" OFF)
 OPTION(FRENSIE_ENABLE_PYTHON "Enable python interfaces in FRENSIE" OFF)
 OPTION(FRENSIE_ENABLE_ROOT "Enable the Root geometry interfaces in FRENSIE" OFF)
-OPTION(FRENSIE_ENABLE_DAGMC "Enable the DagMC geometry interfaces in FRENSIE" OFF)
+OPTION(FRENSIE_ENABLE_HDF5 "Enable the HDF5 file interfaces in FRENSIE" OFF)
+OPTION(FRENSIE_ENABLE_MOAB "Enable the Moab mesh interfaces in FRENSIE" OFF)
+CMAKE_DEPENDENT_OPTION(FRENSIE_ENABLE_DAGMC "Enable the DagMC geometry interfaces in FRENSIE (MOAB required)" OFF
+  "FRENSIE_ENABLE_MOAB" OFF)
 OPTION(FRENSIE_ENABLE_DASHBOARD_CLIENT "Enable dashboard client support" OFF)
 OPTION(FRENSIE_ENABLE_MANUAL "Enable the manual in FRENSIE" ON)
 
@@ -66,6 +75,13 @@ IF(FRENSIE_ENABLE_DBC)
   SET(HAVE_FRENSIE_DBC "1")
 ELSE()
   SET(HAVE_FRENSIE_DBC "0")
+ENDIF()
+
+# Add detailed logging support if requested
+IF(FRENSIE_ENABLE_DETAILED_LOGGING)
+  SET(HAVE_FRENSIE_DETAILED_LOGGING "1")
+ELSE()
+  SET(HAVE_FRENSIE_DETAILED_LOGGING "0")
 ENDIF()
 
 # Add explicit template instantiation support if requested
@@ -88,18 +104,7 @@ IF(FRENSIE_ENABLE_OPENMP)
   ENABLE_OPENMP_SUPPORT()
 ENDIF()
 
-# Parse the DBC configure file so it can be used in the source files
 SET(CMAKEDEFINE \#cmakedefine)
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/config.hpp.in ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp.in)
-CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp.in ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp)
-
-# Add the CMAKE_BINARY_DIR to the include path to access config file
-INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
-
-# Add the config file to the install target
-INSTALL(FILES ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/include
-  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
 
 ##---------------------------------------------------------------------------##
 ## Enable Color Output Support
@@ -160,7 +165,10 @@ ENDIF()
 ##---------------------------------------------------------------------------##
 # If the HDF5 package is in a non-standard location, set the HDF5_PREFIX
 # variable.
-ENABLE_HDF5_SUPPORT()
+IF(FRENSIE_ENABLE_HDF5)
+  SET(HAVE_FRENSIE_HDF5 "1")
+  ENABLE_HDF5_SUPPORT()
+ENDIF()
 
 ##---------------------------------------------------------------------------##
 ## Configure MOAB Support
@@ -168,16 +176,10 @@ ENABLE_HDF5_SUPPORT()
 # If the MOAB package is in a non-standard location, set the MOAB_PREFIX
 # variable. If FRENSIE_ENABLE_DAGMC is set to ON, the DagMC library will
 # be found.
-ENABLE_MOAB_SUPPORT()
-
-##---------------------------------------------------------------------------##
-## Configure Trilinos Support
-##---------------------------------------------------------------------------##
-# If the Trilinos package is in a non-standard location, set the
-# TRILINOS_PREFIX variable. If the Trilinos source directory is not located
-# in the TRILINOS_PREFIX directory, the TRILINOS_SOURCE variable can also be
-# set.
-ENABLE_TRILINOS_SUPPORT()
+IF(FRENSIE_ENABLE_MOAB)
+  SET(HAVE_FRENSIE_MOAB "1")
+  ENABLE_MOAB_SUPPORT()
+ENDIF()
 
 ##---------------------------------------------------------------------------##
 ## Configure Boost Support
@@ -185,14 +187,7 @@ ENABLE_TRILINOS_SUPPORT()
 # If the Boost package is in a non-standard location, set the BOOST_PREFIX
 # variable. The boost subpackages that must be found can be passed to
 # the ENABLE_BOOST_SUPPORT macro.
-ENABLE_BOOST_SUPPORT(serialization)
-
-# NOTE: Boost still uses the std::auto_ptr class, which is now depricated.
-#       The newer GNU C++ compilers will generate a large number of warning
-#       messages regarding this usage of the std::auto_ptr class. To avoid
-#       these warning messages that are not direcly related to FRENSIE we
-#       will simply turn them off
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+ENABLE_BOOST_SUPPORT()
 
 ##---------------------------------------------------------------------------##
 ## Configure Root Support
@@ -202,6 +197,21 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
 IF(FRENSIE_ENABLE_ROOT)
   ENABLE_ROOT_SUPPORT()
 ENDIF()
+
+##---------------------------------------------------------------------------##
+## Parse the FRENSIE config file
+##---------------------------------------------------------------------------##
+
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/config.hpp.in ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp.in)
+CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp.in ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp)
+
+# Add the CMAKE_BINARY_DIR to the include path to access config file
+INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
+
+# Add the config file to the install target
+INSTALL(FILES ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/include
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
 
 ##---------------------------------------------------------------------------##
 ## Configure Dashboard Client Support
@@ -248,12 +258,13 @@ ADD_UNINSTALL_TARGET()
 
 ##---------------------------------------------------------------------------##
 ## Set Up the Project Directory Hierarchy
+##---------------------------------------------------------------------------##
 
 ADD_SUBDIRECTORY(scripts)
 
 ADD_SUBDIRECTORY(packages)
 
-ADD_SUBDIRECTORY(tools)
+##ADD_SUBDIRECTORY(tools)
 
 SET(GLOBAL_TOOLS_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/tools)
 

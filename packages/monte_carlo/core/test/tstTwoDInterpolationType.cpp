@@ -10,343 +10,197 @@
 #include <iostream>
 #include <sstream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_TwoDInterpolationType.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+typedef TestArchiveHelper::TestArchives TestArchives;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that the 2D interpolation types can be converted to int
-TEUCHOS_UNIT_TEST( TwoDInterpolationType, convert_to_int )
-{
-  TEST_EQUALITY_CONST( (unsigned)MonteCarlo::LINLINLIN_INTERPOLATION, 1 );
-  TEST_EQUALITY_CONST( (unsigned)MonteCarlo::LINLINLOG_INTERPOLATION, 2 );
-  TEST_EQUALITY_CONST( (unsigned)MonteCarlo::LINLOGLIN_INTERPOLATION, 3 );
-  TEST_EQUALITY_CONST( (unsigned)MonteCarlo::LOGLINLIN_INTERPOLATION, 4 );
-  TEST_EQUALITY_CONST( (unsigned)MonteCarlo::LOGLOGLIN_INTERPOLATION, 5 );
-  TEST_EQUALITY_CONST( (unsigned)MonteCarlo::LOGLINLOG_INTERPOLATION, 6 );
-  TEST_EQUALITY_CONST( (unsigned)MonteCarlo::LINLOGLOG_INTERPOLATION, 7 );
-  TEST_EQUALITY_CONST( (unsigned)MonteCarlo::LOGLOGLOG_INTERPOLATION, 8 );
-}
-
-//---------------------------------------------------------------------------//
 // Check that an 2D interpolation type can be converted to a string
-TEUCHOS_UNIT_TEST( TwoDInterpolationType, convertTwoDInterpolationTypeToString )
+FRENSIE_UNIT_TEST( TwoDInterpolationType, toString )
 {
   std::string type_string =
-    MonteCarlo::convertTwoDInterpolationTypeToString( MonteCarlo::LINLINLIN_INTERPOLATION );
-  TEST_EQUALITY_CONST( type_string, "Lin-Lin-Lin" );
+    Utility::toString( MonteCarlo::LINLINLIN_INTERPOLATION );
+  FRENSIE_CHECK_EQUAL( type_string, "Lin-Lin-Lin" );
 
   type_string =
-    MonteCarlo::convertTwoDInterpolationTypeToString( MonteCarlo::LINLINLOG_INTERPOLATION );
-  TEST_EQUALITY_CONST( type_string, "Lin-Lin-Log" );
+    Utility::toString( MonteCarlo::LINLINLOG_INTERPOLATION );
+  FRENSIE_CHECK_EQUAL( type_string, "Lin-Lin-Log" );
 
   type_string =
-    MonteCarlo::convertTwoDInterpolationTypeToString( MonteCarlo::LINLOGLIN_INTERPOLATION );
-  TEST_EQUALITY_CONST( type_string, "Lin-Log-Lin" );
+    Utility::toString( MonteCarlo::LINLOGLIN_INTERPOLATION );
+  FRENSIE_CHECK_EQUAL( type_string, "Lin-Log-Lin" );
 
   type_string =
-    MonteCarlo::convertTwoDInterpolationTypeToString( MonteCarlo::LOGLINLIN_INTERPOLATION );
-  TEST_EQUALITY_CONST( type_string, "Log-Lin-Lin" );
+    Utility::toString( MonteCarlo::LOGLINLIN_INTERPOLATION );
+  FRENSIE_CHECK_EQUAL( type_string, "Log-Lin-Lin" );
 
   type_string =
-    MonteCarlo::convertTwoDInterpolationTypeToString( MonteCarlo::LOGLOGLIN_INTERPOLATION );
-  TEST_EQUALITY_CONST( type_string, "Log-Log-Lin" );
+    Utility::toString( MonteCarlo::LOGLOGLIN_INTERPOLATION );
+  FRENSIE_CHECK_EQUAL( type_string, "Log-Log-Lin" );
 
   type_string =
-    MonteCarlo::convertTwoDInterpolationTypeToString( MonteCarlo::LOGLINLOG_INTERPOLATION );
-  TEST_EQUALITY_CONST( type_string, "Log-Lin-Log" );
+    Utility::toString( MonteCarlo::LOGLINLOG_INTERPOLATION );
+  FRENSIE_CHECK_EQUAL( type_string, "Log-Lin-Log" );
 
   type_string =
-    MonteCarlo::convertTwoDInterpolationTypeToString( MonteCarlo::LINLOGLOG_INTERPOLATION );
-  TEST_EQUALITY_CONST( type_string, "Lin-Log-Log" );
+    Utility::toString( MonteCarlo::LINLOGLOG_INTERPOLATION );
+  FRENSIE_CHECK_EQUAL( type_string, "Lin-Log-Log" );
 
   type_string =
-    MonteCarlo::convertTwoDInterpolationTypeToString( MonteCarlo::LOGLOGLOG_INTERPOLATION );
-  TEST_EQUALITY_CONST( type_string, "Log-Log-Log" );
+    Utility::toString( MonteCarlo::LOGLOGLOG_INTERPOLATION );
+  FRENSIE_CHECK_EQUAL( type_string, "Log-Log-Log" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a 2D interpolation type can be sent to a stream
-TEUCHOS_UNIT_TEST( TwoDInterpolationType, stream_operator )
+FRENSIE_UNIT_TEST( TwoDInterpolationType, stream_operator )
 {
   std::stringstream ss;
 
   ss << MonteCarlo::LINLINLIN_INTERPOLATION;
-  TEST_EQUALITY_CONST( ss.str(), "Lin-Lin-Lin" );
+  FRENSIE_CHECK_EQUAL( ss.str(), "Lin-Lin-Lin" );
 
   ss.str( "" );
   ss << MonteCarlo::LINLINLOG_INTERPOLATION;
-  TEST_EQUALITY_CONST( ss.str(), "Lin-Lin-Log" );
+  FRENSIE_CHECK_EQUAL( ss.str(), "Lin-Lin-Log" );
 
   ss.str( "" );
   ss << MonteCarlo::LINLOGLIN_INTERPOLATION;
-  TEST_EQUALITY_CONST( ss.str(), "Lin-Log-Lin" );
+  FRENSIE_CHECK_EQUAL( ss.str(), "Lin-Log-Lin" );
 
   ss.str( "" );
   ss << MonteCarlo::LOGLINLIN_INTERPOLATION;
-  TEST_EQUALITY_CONST( ss.str(), "Log-Lin-Lin" );
+  FRENSIE_CHECK_EQUAL( ss.str(), "Log-Lin-Lin" );
 
   ss.str( "" );
   ss << MonteCarlo::LOGLOGLIN_INTERPOLATION;
-  TEST_EQUALITY_CONST( ss.str(), "Log-Log-Lin" );
+  FRENSIE_CHECK_EQUAL( ss.str(), "Log-Log-Lin" );
 
   ss.str( "" );
   ss << MonteCarlo::LOGLINLOG_INTERPOLATION;
-  TEST_EQUALITY_CONST( ss.str(), "Log-Lin-Log" );
+  FRENSIE_CHECK_EQUAL( ss.str(), "Log-Lin-Log" );
 
   ss.str( "" );
   ss << MonteCarlo::LINLOGLOG_INTERPOLATION;
-  TEST_EQUALITY_CONST( ss.str(), "Lin-Log-Log" );
+  FRENSIE_CHECK_EQUAL( ss.str(), "Lin-Log-Log" );
 
   ss.str( "" );
   ss << MonteCarlo::LOGLOGLOG_INTERPOLATION;
-  TEST_EQUALITY_CONST( ss.str(), "Log-Log-Log" );
+  FRENSIE_CHECK_EQUAL( ss.str(), "Log-Log-Log" );
 }
 
 //---------------------------------------------------------------------------//
-// Check that a string can be converted to a TwoDInterpolationType
-TEUCHOS_UNIT_TEST( TwoDInterpolationType,
-                   convertStringToTwoDInterpolationType_LinLinLin )
+// Check that an elastic electron distribution type can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( TwoDInterpolationType,
+                                   archive,
+                                   TestArchives )
 {
-  MonteCarlo::TwoDInterpolationType interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LinLinLin" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLINLIN_INTERPOLATION );
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
 
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "linlinlin" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLINLIN_INTERPOLATION );
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
 
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LINLINLIN" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLINLIN_INTERPOLATION );
+  std::string archive_base_name( "test_two_d_interp_type" );
+  std::ostringstream archive_ostream;
 
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "Lin-Lin-Lin" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLINLIN_INTERPOLATION );
+  {
+    std::unique_ptr<OArchive> oarchive;
 
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "lin-lin-lin" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLINLIN_INTERPOLATION );
+    createOArchive( archive_base_name, archive_ostream, oarchive );
 
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LIN-LIN-LIN" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLINLIN_INTERPOLATION );
+    MonteCarlo::TwoDInterpolationType type_1 =
+      MonteCarlo::LINLINLIN_INTERPOLATION;
+
+    MonteCarlo::TwoDInterpolationType type_2 =
+      MonteCarlo::LINLINLOG_INTERPOLATION;
+
+    MonteCarlo::TwoDInterpolationType type_3 =
+      MonteCarlo::LINLOGLIN_INTERPOLATION;
+
+    MonteCarlo::TwoDInterpolationType type_4 =
+      MonteCarlo::LOGLINLIN_INTERPOLATION;
+
+    MonteCarlo::TwoDInterpolationType type_5 =
+      MonteCarlo::LOGLOGLIN_INTERPOLATION;
+
+    MonteCarlo::TwoDInterpolationType type_6 =
+      MonteCarlo::LOGLINLOG_INTERPOLATION;
+
+    MonteCarlo::TwoDInterpolationType type_7 =
+      MonteCarlo::LINLOGLOG_INTERPOLATION;
+
+    MonteCarlo::TwoDInterpolationType type_8 =
+      MonteCarlo::LOGLOGLOG_INTERPOLATION;
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_1 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_2 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_3 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_4 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_5 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_6 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_7 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_8 ) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  MonteCarlo::TwoDInterpolationType type_1;
+  
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_1 ) );
+  FRENSIE_CHECK_EQUAL( type_1, MonteCarlo::LINLINLIN_INTERPOLATION );
+
+  MonteCarlo::TwoDInterpolationType type_2;
+  
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_2 ) );
+  FRENSIE_CHECK_EQUAL( type_2, MonteCarlo::LINLINLOG_INTERPOLATION );
+
+  MonteCarlo::TwoDInterpolationType type_3;
+  
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_3 ) );
+  FRENSIE_CHECK_EQUAL( type_3, MonteCarlo::LINLOGLIN_INTERPOLATION );
+
+  MonteCarlo::TwoDInterpolationType type_4;
+  
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_4 ) );
+  FRENSIE_CHECK_EQUAL( type_4, MonteCarlo::LOGLINLIN_INTERPOLATION );
+
+  MonteCarlo::TwoDInterpolationType type_5;
+  
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_5 ) );
+  FRENSIE_CHECK_EQUAL( type_5, MonteCarlo::LOGLOGLIN_INTERPOLATION );
+
+  MonteCarlo::TwoDInterpolationType type_6;
+  
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_6 ) );
+  FRENSIE_CHECK_EQUAL( type_6, MonteCarlo::LOGLINLOG_INTERPOLATION );
+
+  MonteCarlo::TwoDInterpolationType type_7;
+  
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_7 ) );
+  FRENSIE_CHECK_EQUAL( type_7, MonteCarlo::LINLOGLOG_INTERPOLATION );
+
+  MonteCarlo::TwoDInterpolationType type_8;
+  
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_8 ) );
+  FRENSIE_CHECK_EQUAL( type_8, MonteCarlo::LOGLOGLOG_INTERPOLATION );
 }
 
-//---------------------------------------------------------------------------//
-// Check that a string can be converted to a TwoDInterpolationType
-TEUCHOS_UNIT_TEST( TwoDInterpolationType,
-                   convertStringToTwoDInterpolationType_LinLinLog )
-{
-  MonteCarlo::TwoDInterpolationType interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LinLinLog" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLINLOG_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "linlinlog" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLINLOG_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LINLINLOG" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLINLOG_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "Lin-Lin-Log" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLINLOG_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "lin-lin-log" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLINLOG_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LIN-LIN-LOG" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLINLOG_INTERPOLATION );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a string can be converted to a TwoDInterpolationType
-TEUCHOS_UNIT_TEST( TwoDInterpolationType,
-                   convertStringToTwoDInterpolationType_LinLogLin )
-{
-  MonteCarlo::TwoDInterpolationType interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LinLogLin" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLOGLIN_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "linloglin" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLOGLIN_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LINLOGLIN" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLOGLIN_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "Lin-Log-Lin" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLOGLIN_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "lin-log-lin" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLOGLIN_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LIN-LOG-LIN" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLOGLIN_INTERPOLATION );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a string can be converted to a TwoDInterpolationType
-TEUCHOS_UNIT_TEST( TwoDInterpolationType,
-                   convertStringToTwoDInterpolationType_LogLinLin )
-{
-  MonteCarlo::TwoDInterpolationType interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LogLinLin" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLINLIN_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "loglinlin" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLINLIN_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LOGLINLIN" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLINLIN_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "Log-Lin-Lin" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLINLIN_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "log-lin-lin" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLINLIN_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LOG-LIN-LIN" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLINLIN_INTERPOLATION );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a string can be converted to a TwoDInterpolationType
-TEUCHOS_UNIT_TEST( TwoDInterpolationType,
-                   convertStringToTwoDInterpolationType_LogLogLin )
-{
-  MonteCarlo::TwoDInterpolationType interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LogLogLin" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLOGLIN_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "logloglin" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLOGLIN_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LOGLOGLIN" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLOGLIN_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "Log-Log-Lin" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLOGLIN_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "log-log-lin" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLOGLIN_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LOG-LOG-LIN" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLOGLIN_INTERPOLATION );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a string can be converted to a TwoDInterpolationType
-TEUCHOS_UNIT_TEST( TwoDInterpolationType,
-                   convertStringToTwoDInterpolationType_LogLinLog )
-{
-  MonteCarlo::TwoDInterpolationType interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LogLinLog" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLINLOG_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "loglinlog" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLINLOG_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LOGLINLOG" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLINLOG_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "Log-Lin-Log" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLINLOG_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "log-lin-log" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLINLOG_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LOG-LIN-LOG" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLINLOG_INTERPOLATION );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a string can be converted to a TwoDInterpolationType
-TEUCHOS_UNIT_TEST( TwoDInterpolationType,
-                   convertStringToTwoDInterpolationType_LinLogLog )
-{
-  MonteCarlo::TwoDInterpolationType interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LinLogLog" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLOGLOG_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "linloglog" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLOGLOG_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LINLOGLOG" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLOGLOG_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "Lin-Log-Log" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLOGLOG_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "lin-log-log" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLOGLOG_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LIN-LOG-LOG" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LINLOGLOG_INTERPOLATION );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a string can be converted to a TwoDInterpolationType
-TEUCHOS_UNIT_TEST( TwoDInterpolationType,
-                   convertStringToTwoDInterpolationType_LogLogLog )
-{
-  MonteCarlo::TwoDInterpolationType interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LogLogLog" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLOGLOG_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "logloglog" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLOGLOG_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LOGLOGLOG" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLOGLOG_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "Log-Log-Log" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLOGLOG_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "log-log-log" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLOGLOG_INTERPOLATION );
-
-  interp =
-    MonteCarlo::convertStringToTwoDInterpolationType( "LOG-LOG-LOG" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::LOGLOGLOG_INTERPOLATION );
-}
 //---------------------------------------------------------------------------//
 // end tstTwoDInterpolationType.cpp
 //---------------------------------------------------------------------------//

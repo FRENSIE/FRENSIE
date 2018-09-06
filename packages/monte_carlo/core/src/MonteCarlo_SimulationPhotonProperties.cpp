@@ -7,9 +7,10 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_SimulationPhotonProperties.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -183,7 +184,11 @@ bool SimulationPhotonProperties::isPhotonuclearInteractionModeOn() const
   return d_photonuclear_interaction_mode_on;
 }
 
+EXPLICIT_CLASS_SERIALIZE_INST( SimulationPhotonProperties );
+
 } // end MonteCarlo namespace
+
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::SimulationPhotonProperties );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SimulationPhotonProperties.cpp

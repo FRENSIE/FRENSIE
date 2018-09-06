@@ -9,40 +9,35 @@
 #ifndef MONTE_CARLO_PARTICLE_STATE_HPP
 #define MONTE_CARLO_PARTICLE_STATE_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Boost Includes
+#include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/assume_abstract.hpp>
 #include <boost/serialization/export.hpp>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ParticleType.hpp"
-#include "Geometry_Ray.hpp"
-#include "Geometry_ModuleTraits.hpp"
-#include "Utility_PrintableObject.hpp"
+#include "Geometry_Navigator.hpp"
+#include "Geometry_Model.hpp"
+#include "Utility_OStreamableObject.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The particle state class
-class ParticleState : public Utility::PrintableObject
+class ParticleState : public Utility::OStreamableObject
 {
 
 public:
 
   //! Typedef for history number type
-  typedef unsigned long long historyNumberType;
-
-  //! Typedef for position type
-  typedef double positionType;
-
-  //! Typedef for direction type
-  typedef double directionType;
+  typedef uint64_t historyNumberType;
 
   //! Typedef for energy type
   typedef double energyType;
@@ -64,8 +59,8 @@ public:
 
 private:
 
-  // Typedef for ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
@@ -104,17 +99,20 @@ public:
   //! Return the particle type
   ParticleType getParticleType() const;
 
+  //! Return the id of the source that created the particle (history)
+  size_t getSourceId() const;
+
+  //! Set the id of the source that created the particle (history)
+  void setSourceId( const size_t id );
+
   //! Return the cell handle for the cell where the particle (history) started
-  Geometry::ModuleTraits::InternalCellHandle getSourceCell() const;
+  Geometry::Model::EntityId getSourceCell() const;
 
   //! Set the cell where the particle (history) started
-  void setSourceCell( const Geometry::ModuleTraits::InternalCellHandle cell );
+  void setSourceCell( const Geometry::Model::EntityId cell );
 
   //! Return the cell handle for the cell containing the particle
-  Geometry::ModuleTraits::InternalCellHandle getCell() const;
-
-  //! Set the cell containing the particle
-  void setCell( const Geometry::ModuleTraits::InternalCellHandle cell );
+  Geometry::Model::EntityId getCell() const;
 
   //! Return the x position of the particle
   double getXPosition() const;
@@ -161,7 +159,7 @@ public:
 			const double azimuthal_angle );
 
   //! Advance the particle along its direction by the requested distance
-  void advance( const double distance );
+  void advance( double distance );
 
   //! Return the source (starting) energy of the particle (history) (MeV)
   energyType getSourceEnergy() const;
@@ -235,8 +233,38 @@ public:
   //! Set the particle as gone
   void setAsGone();
 
-  //! Spawn a ray that can be used for ray tracing
-  const Geometry::Ray& ray() const;
+  //! Check if the particle state is still valid
+  operator bool() const;
+
+  //! Embed the particle in the desired model
+  void embedInModel( const std::shared_ptr<const Geometry::Model>& model );
+
+  //! Embed the particle in the desired model
+  void embedInModel( const std::shared_ptr<const Geometry::Model>& model,
+                     const Geometry::Model::EntityId cell );
+
+  //! Embed the particle in the desired model at the desired position
+  void embedInModel( const std::shared_ptr<const Geometry::Model>& model,
+                     const double position[3],
+                     const double direction[3] );
+
+  //! Embed the particle in the desired model at the desired position
+  void embedInModel( const std::shared_ptr<const Geometry::Model>& model,
+                     const double position[3],
+                     const double direction[3],
+                     const Geometry::Model::EntityId cell );
+
+  //! Extract the particle from the model
+  void extractFromModel();
+
+  //! Check if a particle is embedded in the model of interest
+  bool isEmbeddedInModel( const Geometry::Model& model ) const;
+
+  //! Get the navigator used by the particle
+  Geometry::Navigator& navigator();
+
+  //! Get the navigator used by the particle
+  const Geometry::Navigator& navigator() const;
 
 protected:
 
@@ -254,6 +282,12 @@ private:
 
   //! Assignment operator
   ParticleState& operator=( const ParticleState& state );
+
+  // Increase the particle time due to a traversal
+  void increaseParticleTime( const Geometry::Navigator::Length distance_traversed );
+
+  // Create the navigator AdvanceComplete callback method
+  Geometry::Navigator::AdvanceCompleteCallback createAdvanceCompleteCallback();
 
   // Save the state to an archive
   template<typename Archive>
@@ -274,11 +308,8 @@ private:
   // The particle type
   ParticleType d_particle_type;
 
-  // Position of the particle
-  positionType d_position[3];
-
-  // Direction of the particle
-  directionType d_direction[3];
+  // The source id
+  size_t d_source_id;
 
   // Source (starting) energy of the particle (history) (MeV)
   energyType d_source_energy;
@@ -308,10 +339,7 @@ private:
   weightType d_weight;
 
   // The source (starting) cell of the particle (history)
-  Geometry::ModuleTraits::InternalCellHandle d_source_cell;
-
-  // The current cell handle
-  Geometry::ModuleTraits::InternalCellHandle d_cell;
+  Geometry::Model::EntityId d_source_cell;
 
   // Lost particle boolean
   bool d_lost;
@@ -319,8 +347,14 @@ private:
   // Finished history boolean
   bool d_gone;
 
-  // Ray for ray tracing
-  Geometry::Ray d_ray;
+  // The model that the particle is embedded in
+  // Note: This must be stored to avoid persistence issues that could arrise
+  //       from the model being deleted while the particle is still embedded
+  //       in it.
+  std::shared_ptr<const Geometry::Model> d_model;
+
+  // The navigator used by the particle
+  std::unique_ptr<Geometry::Navigator> d_navigator;
 };
 
 // Set the position of the particle
@@ -347,16 +381,28 @@ inline ParticleState::energyType ParticleState::getEnergy() const
   return d_energy;
 }
 
-// Spawn a ray that can be used for ray tracing
-inline const Geometry::Ray& ParticleState::ray() const
+// Get the navigator used by the particle
+/*! \details Do not call setOnAdvanceCompleteMethod or
+ * clearOnAdvanceCompleteMethod on the returned navigator. A callback is set
+ * by the particle state to ensure that the particle time is updated after an
+ * advance method is called.
+ */
+inline Geometry::Navigator& ParticleState::navigator()
 {
-  return d_ray;
+  return *d_navigator;
+}
+
+// Get the navigator used by the particle
+inline const Geometry::Navigator& ParticleState::navigator() const
+{
+  return *d_navigator;
 }
 
 } // end MonteCarlo namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleState );
-BOOST_CLASS_VERSION( MonteCarlo::ParticleState, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( ParticleState, MonteCarlo );
+BOOST_SERIALIZATION_CLASS_VERSION( ParticleState, MonteCarlo, 0 );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, ParticleState );
 
 //---------------------------------------------------------------------------//
 // Template includes

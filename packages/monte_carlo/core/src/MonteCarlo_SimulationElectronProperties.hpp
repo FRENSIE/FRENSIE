@@ -9,12 +9,19 @@
 #ifndef MONTE_CARLO_SIMULATION_ELECTRON_PROPERTIES_HPP
 #define MONTE_CARLO_SIMULATION_ELECTRON_PROPERTIES_HPP
 
+// Boost Includes
+#include <boost/serialization/shared_ptr.hpp>
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/export.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_ParticleModeType.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "MonteCarlo_TwoDInterpolationType.hpp"
 #include "MonteCarlo_TwoDGridType.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -59,7 +66,7 @@ public:
   double getElectronEvaluationTolerance() const;
 
   //! Set the electron 2D interpolation policy (LogLogLog by default)
-  void setElectronTwoDInterpPolicy( TwoDInterpolationType interp_type );
+  void setElectronTwoDInterpPolicy( const TwoDInterpolationType interp_type );
 
   //! Return the electron 2D interpolation policy
   TwoDInterpolationType getElectronTwoDInterpPolicy() const;
@@ -97,7 +104,7 @@ public:
   bool isElasticModeOn() const;
 
   //! Set the elastic distribution mode ( Decoupled by default )
-  void setElasticElectronDistributionMode( ElasticElectronDistributionType distribution_mode );
+  void setElasticElectronDistributionMode( const ElasticElectronDistributionType distribution_mode );
 
   //! Return the elastic distribution mode
   ElasticElectronDistributionType getElasticElectronDistributionMode() const;
@@ -156,6 +163,13 @@ public:
   bool isAtomicExcitationModeOn() const;
 
 private:
+
+  // Save the state to an archive
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version );
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
   // The absolute minimum electron energy
   static const double s_absolute_min_electron_energy;
@@ -219,7 +233,40 @@ private:
   bool d_atomic_excitation_mode_on;
 };
 
+// Save/load the state to an archive
+template<typename Archive>
+void SimulationElectronProperties::serialize( Archive& ar,
+                                              const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_NVP( d_min_electron_energy );
+  ar & BOOST_SERIALIZATION_NVP( d_max_electron_energy );
+  ar & BOOST_SERIALIZATION_NVP( d_evaluation_tol );
+  ar & BOOST_SERIALIZATION_NVP( d_electron_interpolation_type );
+  ar & BOOST_SERIALIZATION_NVP( d_electron_grid_type );
+  ar & BOOST_SERIALIZATION_NVP( d_num_electron_hash_grid_bins );
+  ar & BOOST_SERIALIZATION_NVP( d_atomic_relaxation_mode_on );
+  ar & BOOST_SERIALIZATION_NVP( d_elastic_mode_on );
+  ar & BOOST_SERIALIZATION_NVP( d_elastic_interpolation_type );
+  ar & BOOST_SERIALIZATION_NVP( d_elastic_distribution_mode );
+  ar & BOOST_SERIALIZATION_NVP( d_coupled_elastic_sampling_method );
+  ar & BOOST_SERIALIZATION_NVP( d_elastic_cutoff_angle_cosine );
+  ar & BOOST_SERIALIZATION_NVP( d_electroionization_mode_on );
+  ar & BOOST_SERIALIZATION_NVP( d_electroionization_interpolation_type );
+  ar & BOOST_SERIALIZATION_NVP( d_bremsstrahlung_mode_on );
+  ar & BOOST_SERIALIZATION_NVP( d_bremsstrahlung_interpolation_type );
+  ar & BOOST_SERIALIZATION_NVP( d_bremsstrahlung_angular_distribution_function );
+  ar & BOOST_SERIALIZATION_NVP( d_atomic_excitation_mode_on );
+}
+
 } // end MonteCarlo namespace
+
+#if !defined SWIG
+
+BOOST_CLASS_VERSION( MonteCarlo::SimulationElectronProperties, 0 );
+BOOST_CLASS_EXPORT_KEY2( MonteCarlo::SimulationElectronProperties, "SimulationElectronProperties" );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SimulationElectronProperties );
+
+#endif // end !defined SWIG
 
 #endif // end MONTE_CARLO_SIMULATION_ELECTRON_PROPERTIES_HPP
 

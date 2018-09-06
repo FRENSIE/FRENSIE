@@ -10,6 +10,13 @@ MACRO(ENABLE_SWIG_SUPPORT)
 
   # Find the SWIG package available on this system
   FIND_PACKAGE(SWIG 3.0.8 REQUIRED)
+  
+  # Find the python package available on this system
+  FIND_PACKAGE(PythonInterp 2.7 REQUIRED)
+  FIND_PACKAGE(PythonLibs 2.7 REQUIRED)
+
+  # Find the numpy package available on this system
+  FIND_PACKAGE(NumPy 1.8 REQUIRED)
 
   IF(CMAKE_VERBOSE_CONFIGURE)
     MESSAGE("Found SWIG! Here are the details: ")

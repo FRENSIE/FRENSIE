@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "Utility_InterpolationType.hpp"
 #include "Utility_QuantityTraits.hpp"
+#include "Utility_TypeNameTraits.hpp"
 
 namespace Utility{
 
@@ -112,6 +113,9 @@ public:
   // //! Convert to the cosine variable from a shifted cosine variable
   // template<typename T, bool use_nudge = false>
   // static T convertToCosineVar( const T shifted_cosine );
+
+  //! The name of the policy
+  static std::string name();
 };
 
 /*! \brief Policy struct for interpolating data tables that require log-log
@@ -185,9 +189,6 @@ struct LogLog : public InterpolationHelper<LogLog>
   //! Test if the dependent value is in a valid range (doesn't check nan/inf)
   template<typename T>
   static bool isDepVarInValidRange( const T dep_var );
-
-  //! The name of the policy
-  static const std::string name();
 };
 
 /*! \brief Policy struct for interpolating data tables that require log-lin
@@ -261,9 +262,6 @@ struct LogLin : public InterpolationHelper<LogLin>
   //! Test if the dependent value is in a valid range (doesn't check nan/inf)
   template<typename T>
   static bool isDepVarInValidRange( const T dep_var );
-
-  //! The name of the policy
-  static const std::string name();
 };
 
 /*! \brief Policy struct for interpolating data tables that require lin-log
@@ -337,9 +335,6 @@ struct LinLog : public InterpolationHelper<LinLog>
   //! Test if the dependent value is in a valid range (doesn't check nan/inf)
   template<typename T>
   static bool isDepVarInValidRange( const T dep_var );
-
-  //! The name of the policy
-  static const std::string name();
 };
 
 /*! \brief Policy struct for interpolating data tables that require lin-lin
@@ -413,10 +408,36 @@ struct LinLin : public InterpolationHelper<LinLin>
   //! Recover the processed dependent value
   template<typename T>
   static T recoverProcessedDepVar( const T processed_dep_var );
-
-  //! The name of the policy
-  static const std::string name();
 };
+
+TYPE_NAME_TRAITS_QUICK_DECL( LinLin );
+TYPE_NAME_TRAITS_QUICK_DECL( LinLog );
+TYPE_NAME_TRAITS_QUICK_DECL( LogLin );
+TYPE_NAME_TRAITS_QUICK_DECL( LogLog );
+
+//! Helper class used to create an interpolation policy from tags
+template<typename DepVarProcessingTag, typename IndepVarProcessingTag>
+struct InterpPolicyCreationHelper;
+
+//! Specialization of Utility::InterpPolicyCreationHelper for LinLin tags
+template<>
+struct InterpPolicyCreationHelper<LinDepVarProcessingTag,LinIndepVarProcessingTag>
+{ typedef LinLin Policy; };
+
+//! Specialization of Utility::InterpPolicyCreationHelper for LinLog tags
+template<>
+struct InterpPolicyCreationHelper<LinDepVarProcessingTag,LogIndepVarProcessingTag>
+{ typedef LinLog Policy; };
+
+//! Specialization of Utility::InterpPolicyCreationHelper for LogLin tags
+template<>
+struct InterpPolicyCreationHelper<LogDepVarProcessingTag,LinIndepVarProcessingTag>
+{ typedef LogLin Policy; };
+
+//! Specialization of Utility::InterpPolicyCreationHelper for LogLog tags
+template<>
+struct InterpPolicyCreationHelper<LogDepVarProcessingTag,LogIndepVarProcessingTag>
+{ typedef LogLog Policy; };
 
 //! Helper class used to invert the interpolation policy
 template<typename ParentInterpolationType>

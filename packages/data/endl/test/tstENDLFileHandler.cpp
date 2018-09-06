@@ -10,14 +10,9 @@
 #include <string>
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "Data_ENDLFileHandler.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Test File Names.
@@ -340,7 +335,7 @@ public:
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can open a file when constructed
-TEUCHOS_UNIT_TEST( ENDLFileHandler, constructor )
+FRENSIE_UNIT_TEST( ENDLFileHandler, constructor )
 {
   // If DBC is turned on, the constructor will throw an exception and exit
   // if this file does not exist. No Testing Macro is needed.
@@ -351,7 +346,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, constructor )
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can open a file after being constructed
-TEUCHOS_UNIT_TEST( ENDLFileHandler, openENDLFile )
+FRENSIE_UNIT_TEST( ENDLFileHandler, openENDLFile )
 {
   Data::ENDLFileHandler endl_file_handler;
 
@@ -364,7 +359,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, openENDLFile )
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can read the first header of a table
-TEUCHOS_UNIT_TEST( ENDLFileHandler, readFirstTableHeader )
+FRENSIE_UNIT_TEST( ENDLFileHandler, readFirstTableHeader )
 {
   Data::ENDLFileHandler endl_file_handler( first_header_test_file, epics_file_type );
 
@@ -382,16 +377,16 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, readFirstTableHeader )
 					    interpolation_flag );
 
   // Test that the values read from the header match their expected values
-  TEST_ASSERT( endl_file_handler.validFile() );
+  FRENSIE_CHECK( endl_file_handler.validFile() );
 
-  TEST_EQUALITY( atomic_number, atomic_number_true );
+  FRENSIE_CHECK_EQUAL( atomic_number, atomic_number_true );
 
-  TEST_EQUALITY( outgoing_particle_designator,
+  FRENSIE_CHECK_EQUAL( outgoing_particle_designator,
 		 outgoing_particle_designator_true );
 
-  TEST_FLOATING_EQUALITY( atomic_mass, atomic_mass_true, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( atomic_mass, atomic_mass_true, 1e-12 );
 
-  TEST_EQUALITY( interpolation_flag, interpolation_flag_true );
+  FRENSIE_CHECK_EQUAL( interpolation_flag, interpolation_flag_true );
 
   // Close the test header file
   endl_file_handler.closeENDLFile();
@@ -399,7 +394,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, readFirstTableHeader )
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can read the second header of a table
-TEUCHOS_UNIT_TEST( ENDLFileHandler, readSecondTableHeader )
+FRENSIE_UNIT_TEST( ENDLFileHandler, readSecondTableHeader )
 {
   Data::ENDLFileHandler endl_file_handler( second_header_test_file, epics_file_type );
 
@@ -412,9 +407,9 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, readSecondTableHeader )
 					     electron_shell );
 
   // Test that the values read from the header match their expected values
-  TEST_EQUALITY( reaction_type, reaction_type_true );
+  FRENSIE_CHECK_EQUAL( reaction_type, reaction_type_true );
 
-  TEST_EQUALITY( electron_shell, electron_shell_true );
+  FRENSIE_CHECK_EQUAL( electron_shell, electron_shell_true );
 
   // Close the test header file
   endl_file_handler.closeENDLFile();
@@ -423,7 +418,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, readSecondTableHeader )
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can read the first header and
 // second header of a table consecutively
-TEUCHOS_UNIT_TEST( ENDLFileHandler, read_full_header_test )
+FRENSIE_UNIT_TEST( ENDLFileHandler, read_full_header_test )
 {
   Data::ENDLFileHandler endl_file_handler( full_header_test_file, epics_file_type );
 
@@ -447,18 +442,18 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, read_full_header_test )
 					     electron_shell );
 
   // Test that the values read from the header match their expected values
-  TEST_EQUALITY( atomic_number, atomic_number_true );
+  FRENSIE_CHECK_EQUAL( atomic_number, atomic_number_true );
 
-  TEST_EQUALITY( outgoing_particle_designator,
+  FRENSIE_CHECK_EQUAL( outgoing_particle_designator,
 		 outgoing_particle_designator_true );
 
-  TEST_FLOATING_EQUALITY( atomic_mass, atomic_mass_true, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( atomic_mass, atomic_mass_true, 1e-12 );
 
-  TEST_EQUALITY( interpolation_flag, interpolation_flag_true );
+  FRENSIE_CHECK_EQUAL( interpolation_flag, interpolation_flag_true );
 
-  TEST_EQUALITY( reaction_type, reaction_type_true );
+  FRENSIE_CHECK_EQUAL( reaction_type, reaction_type_true );
 
-  TEST_EQUALITY( electron_shell, electron_shell_true );
+  FRENSIE_CHECK_EQUAL( electron_shell, electron_shell_true );
 
   // Close the test header file
   endl_file_handler.closeENDLFile();
@@ -466,7 +461,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, read_full_header_test )
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can skip a table
-TEUCHOS_UNIT_TEST( ENDLFileHandler, skipTable )
+FRENSIE_UNIT_TEST( ENDLFileHandler, skipTable )
 {
   Data::ENDLFileHandler endl_file_handler( two_column_table_test_file, epics_file_type );
 
@@ -493,7 +488,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, skipTable )
 					    outgoing_particle_designator,
 					    atomic_mass,
 					    interpolation_flag );
-  TEST_ASSERT( endl_file_handler.endOfFile() );
+  FRENSIE_CHECK( endl_file_handler.endOfFile() );
 
   // Close the test table file
   endl_file_handler.closeENDLFile();
@@ -501,7 +496,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, skipTable )
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can process a two column table
-TEUCHOS_UNIT_TEST( ENDLFileHandler, processTwoColumnTable )
+FRENSIE_UNIT_TEST( ENDLFileHandler, processTwoColumnTable )
 {
   Data::ENDLFileHandler endl_file_handler( two_column_table_test_file, epics_file_type );
 
@@ -526,8 +521,8 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, processTwoColumnTable )
 
   processTwoColumnTestingArray( indep_true, dep_true );
 
-  UTILITY_TEST_COMPARE_ARRAYS( indep, indep_true );
-  UTILITY_TEST_COMPARE_ARRAYS( dep, dep_true );
+  FRENSIE_CHECK_EQUAL( indep, indep_true );
+  FRENSIE_CHECK_EQUAL( dep, dep_true );
 
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -535,7 +530,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, processTwoColumnTable )
 					    outgoing_particle_designator,
 					    atomic_mass,
 					    interpolation_flag );
-  TEST_ASSERT( endl_file_handler.endOfFile() );
+  FRENSIE_CHECK( endl_file_handler.endOfFile() );
 
   // Close the test table file
   endl_file_handler.closeENDLFile();
@@ -543,7 +538,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, processTwoColumnTable )
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can process a three column table
-TEUCHOS_UNIT_TEST( ENDLFileHandler, processThreeColumnTable )
+FRENSIE_UNIT_TEST( ENDLFileHandler, processThreeColumnTable )
 {
   Data::ENDLFileHandler endl_file_handler( three_column_table_test_file, epics_file_type );
 
@@ -575,9 +570,9 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, processThreeColumnTable )
     column_two_true,
     column_three_true );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( column_one, column_one_true, tol );
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( column_two, column_two_true, tol );
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( column_three, column_three_true, tol );
+  FRENSIE_CHECK_FLOATING_EQUALITY( column_one, column_one_true, tol );
+  FRENSIE_CHECK_FLOATING_EQUALITY( column_two, column_two_true, tol );
+  FRENSIE_CHECK_FLOATING_EQUALITY( column_three, column_three_true, tol );
 
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -585,7 +580,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, processThreeColumnTable )
 					    outgoing_particle_designator,
 					    atomic_mass,
 					    interpolation_flag );
-  TEST_ASSERT( endl_file_handler.endOfFile() );
+  FRENSIE_CHECK( endl_file_handler.endOfFile() );
 
   // Close the test table file
   endl_file_handler.closeENDLFile();
@@ -593,7 +588,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, processThreeColumnTable )
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can process a four column table
-TEUCHOS_UNIT_TEST( ENDLFileHandler, processFourColumnTable )
+FRENSIE_UNIT_TEST( ENDLFileHandler, processFourColumnTable )
 {
   Data::ENDLFileHandler endl_file_handler( four_column_table_test_file, epics_file_type );
 
@@ -627,10 +622,10 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, processFourColumnTable )
     column_three_true,
     column_four_true );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( column_one, column_one_true, tol );
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( column_two, column_two_true, tol );
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( column_three, column_three_true, tol );
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( column_four, column_four_true, tol );
+  FRENSIE_CHECK_FLOATING_EQUALITY( column_one, column_one_true, tol );
+  FRENSIE_CHECK_FLOATING_EQUALITY( column_two, column_two_true, tol );
+  FRENSIE_CHECK_FLOATING_EQUALITY( column_three, column_three_true, tol );
+  FRENSIE_CHECK_FLOATING_EQUALITY( column_four, column_four_true, tol );
 
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -638,7 +633,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, processFourColumnTable )
 					    outgoing_particle_designator,
 					    atomic_mass,
 					    interpolation_flag );
-  TEST_ASSERT( endl_file_handler.endOfFile() );
+  FRENSIE_CHECK( endl_file_handler.endOfFile() );
 
   // Close the test table file
   endl_file_handler.closeENDLFile();
@@ -646,7 +641,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, processFourColumnTable )
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can map a two column table
-TEUCHOS_UNIT_TEST( ENDLFileHandler, mapTwoColumnTable )
+FRENSIE_UNIT_TEST( ENDLFileHandler, mapTwoColumnTable )
 {
   Data::ENDLFileHandler endl_file_handler( two_column_table_test_file, epics_file_type );
 
@@ -672,13 +667,13 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, mapTwoColumnTable )
 
   mapTwoColumnTestingArray( indep_true, dep_true );
 
-  UTILITY_TEST_COMPARE_ARRAYS( indep, indep_true );
+  FRENSIE_CHECK_EQUAL( indep, indep_true );
 
   std::vector<unsigned>::iterator i = indep.begin();
 
   for ( i; i != indep.end(); ++i )
   {
-    TEST_EQUALITY( dep[*i], dep_true[*i] );
+    FRENSIE_CHECK_EQUAL( dep[*i], dep_true[*i] );
   }
 
   // Check that the entire table was read - attempting to read the first
@@ -687,7 +682,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, mapTwoColumnTable )
 					    outgoing_particle_designator,
 					    atomic_mass,
 					    interpolation_flag );
-  TEST_ASSERT( endl_file_handler.endOfFile() );
+  FRENSIE_CHECK( endl_file_handler.endOfFile() );
 
   // Close the test table file
   endl_file_handler.closeENDLFile();
@@ -695,7 +690,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, mapTwoColumnTable )
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can map a three column table
-TEUCHOS_UNIT_TEST( ENDLFileHandler, mapThreeColumnTable )
+FRENSIE_UNIT_TEST( ENDLFileHandler, mapThreeColumnTable )
 {
   Data::ENDLFileHandler endl_file_handler( three_column_table_test_file, epics_file_type );
 
@@ -721,14 +716,14 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, mapThreeColumnTable )
 
   mapThreeColumnTestingArray( bin_true, indep_true, dep_true );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( bin, bin_true, tol );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bin, bin_true, tol );
 
   std::vector<unsigned>::iterator i = bin.begin();
 
   for ( i; i != bin.end(); ++i )
   {
-    TEST_EQUALITY_CONST( indep[*i], indep_true[*i] );
-    TEST_EQUALITY_CONST( dep[*i], dep_true[*i] );
+    FRENSIE_CHECK_EQUAL( indep[*i], indep_true[*i] );
+    FRENSIE_CHECK_EQUAL( dep[*i], dep_true[*i] );
   }
 
   // Check that the entire table was read - attempting to read the first
@@ -737,7 +732,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, mapThreeColumnTable )
 					    outgoing_particle_designator,
 					    atomic_mass,
 					    interpolation_flag );
-  TEST_ASSERT( endl_file_handler.endOfFile() );
+  FRENSIE_CHECK( endl_file_handler.endOfFile() );
 
   // Close the test table file
   endl_file_handler.closeENDLFile();
@@ -745,7 +740,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, mapThreeColumnTable )
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can map a three column table of vectors
-TEUCHOS_UNIT_TEST( ENDLFileHandler, mapThreeColumnTable_vector )
+FRENSIE_UNIT_TEST( ENDLFileHandler, mapThreeColumnTable_vector )
 {
   Data::ENDLFileHandler endl_file_handler(
     three_column_table_test_file_vector,
@@ -773,14 +768,14 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, mapThreeColumnTable_vector )
 
   mapThreeColumnTestingArray( bin_true, indep_true, dep_true );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( bin, bin_true, tol );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bin, bin_true, tol );
 
   std::vector<double>::iterator i = bin.begin();
 
   for ( i; i != bin.end(); ++i )
   {
-    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( indep[*i], indep_true[*i], tol );
-    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( dep[*i], dep_true[*i], tol );
+    FRENSIE_CHECK_FLOATING_EQUALITY( indep[*i], indep_true[*i], tol );
+    FRENSIE_CHECK_FLOATING_EQUALITY( dep[*i], dep_true[*i], tol );
   }
 
   // Check that the entire table was read - attempting to read the first
@@ -789,7 +784,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, mapThreeColumnTable_vector )
 					    outgoing_particle_designator,
 					    atomic_mass,
 					    interpolation_flag );
-  TEST_ASSERT( endl_file_handler.endOfFile() );
+  FRENSIE_CHECK( endl_file_handler.endOfFile() );
 
   // Close the test table file
   endl_file_handler.closeENDLFile();
@@ -797,7 +792,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, mapThreeColumnTable_vector )
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can map a four column table
-TEUCHOS_UNIT_TEST( ENDLFileHandler, mapFourColumnTable )
+FRENSIE_UNIT_TEST( ENDLFileHandler, mapFourColumnTable )
 {
   Data::ENDLFileHandler endl_file_handler( four_column_table_test_file, epics_file_type );
 
@@ -824,7 +819,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, mapFourColumnTable )
 
   mapFourColumnTestingArray( bin_true, secondary_bin_true, indep_true, dep_true );
 
-  UTILITY_TEST_COMPARE_ARRAYS( bin, bin_true );
+  FRENSIE_CHECK_EQUAL( bin, bin_true );
 
   std::vector<unsigned>::iterator i = bin.begin();
 
@@ -838,9 +833,9 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, mapFourColumnTable )
 
     for ( j; j != secondary_bin[*i].end(); ++j )
     {
-      TEST_EQUALITY_CONST( *j, *m );
-      TEST_EQUALITY_CONST( indep[*i][*j], indep_true[*i][*j] );
-      TEST_EQUALITY_CONST( dep[*i][*j], dep_true[*i][*j] );
+      FRENSIE_CHECK_EQUAL( *j, *m );
+      FRENSIE_CHECK_EQUAL( indep[*i][*j], indep_true[*i][*j] );
+      FRENSIE_CHECK_EQUAL( dep[*i][*j], dep_true[*i][*j] );
       m++;
     }
   }
@@ -851,7 +846,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, mapFourColumnTable )
 					    outgoing_particle_designator,
 					    atomic_mass,
 					    interpolation_flag );
-  TEST_ASSERT( endl_file_handler.endOfFile() );
+  FRENSIE_CHECK( endl_file_handler.endOfFile() );
 
   // Close the test table file
   endl_file_handler.closeENDLFile();
@@ -859,7 +854,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, mapFourColumnTable )
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can skip a table and then skip a second table
-TEUCHOS_UNIT_TEST( ENDLFileHandler, skip_skip_test )
+FRENSIE_UNIT_TEST( ENDLFileHandler, skip_skip_test )
 {
   Data::ENDLFileHandler endl_file_handler( two_two_column_tables_test_file, epics_file_type );
 
@@ -889,13 +884,13 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, skip_skip_test )
   endl_file_handler.readSecondTableHeader( reaction_type_2,
 					     electron_shell_2 );
   // Check that the header info from both tables matches
-  TEST_EQUALITY( atomic_number_1, atomic_number_2 );
-  TEST_EQUALITY( outgoing_particle_designator_1,
+  FRENSIE_CHECK_EQUAL( atomic_number_1, atomic_number_2 );
+  FRENSIE_CHECK_EQUAL( outgoing_particle_designator_1,
 		 outgoing_particle_designator_2 );
-  TEST_EQUALITY( atomic_mass_1, atomic_mass_2 );
-  TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
-  TEST_EQUALITY( reaction_type_1, reaction_type_2 );
-  TEST_EQUALITY( electron_shell_1, electron_shell_2 );
+  FRENSIE_CHECK_EQUAL( atomic_mass_1, atomic_mass_2 );
+  FRENSIE_CHECK_EQUAL( interpolation_flag_1, interpolation_flag_2 );
+  FRENSIE_CHECK_EQUAL( reaction_type_1, reaction_type_2 );
+  FRENSIE_CHECK_EQUAL( electron_shell_1, electron_shell_2 );
 
   // Skip the second table
   endl_file_handler.skipTable();
@@ -906,7 +901,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, skip_skip_test )
 					    outgoing_particle_designator_1,
 					    atomic_mass_1,
 					    interpolation_flag_1 );
-  TEST_ASSERT( endl_file_handler.endOfFile() );
+  FRENSIE_CHECK( endl_file_handler.endOfFile() );
 
   // Close the test table file
   endl_file_handler.closeENDLFile();
@@ -915,7 +910,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, skip_skip_test )
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can skip a table and then
 // process a two column table
-TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_skip_process_test )
+FRENSIE_UNIT_TEST( ENDLFileHandler, two_column_table_skip_process_test )
 {
   Data::ENDLFileHandler endl_file_handler( two_two_column_tables_test_file, epics_file_type );
 
@@ -946,13 +941,13 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_skip_process_test )
 					     electron_shell_2 );
 
   // Check that the header info from both tables matches
-  TEST_EQUALITY( atomic_number_1, atomic_number_2 );
-  TEST_EQUALITY( outgoing_particle_designator_1,
+  FRENSIE_CHECK_EQUAL( atomic_number_1, atomic_number_2 );
+  FRENSIE_CHECK_EQUAL( outgoing_particle_designator_1,
 		 outgoing_particle_designator_2 );
-  TEST_EQUALITY( atomic_mass_1, atomic_mass_2 );
-  TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
-  TEST_EQUALITY( reaction_type_1, reaction_type_2 );
-  TEST_EQUALITY( electron_shell_1, electron_shell_2 );
+  FRENSIE_CHECK_EQUAL( atomic_mass_1, atomic_mass_2 );
+  FRENSIE_CHECK_EQUAL( interpolation_flag_1, interpolation_flag_2 );
+  FRENSIE_CHECK_EQUAL( reaction_type_1, reaction_type_2 );
+  FRENSIE_CHECK_EQUAL( electron_shell_1, electron_shell_2 );
 
   std::vector<double> column_1, column_2;
 
@@ -965,7 +960,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_skip_process_test )
 					    outgoing_particle_designator_1,
 					    atomic_mass_1,
 					    interpolation_flag_1 );
-  TEST_ASSERT( endl_file_handler.endOfFile() );
+  FRENSIE_CHECK( endl_file_handler.endOfFile() );
 
   // Close the test table file
   endl_file_handler.closeENDLFile();
@@ -974,7 +969,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_skip_process_test )
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can process a two column table and then
 // skip a table
-TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_process_skip_test )
+FRENSIE_UNIT_TEST( ENDLFileHandler, two_column_table_process_skip_test )
 {
   Data::ENDLFileHandler endl_file_handler( two_two_column_tables_test_file, epics_file_type );
 
@@ -1010,13 +1005,13 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_process_skip_test )
   endl_file_handler.skipTable();
 
   // Check that the header info from both tables matches
-  TEST_EQUALITY( atomic_number_1, atomic_number_2 );
-  TEST_EQUALITY( outgoing_particle_designator_1,
+  FRENSIE_CHECK_EQUAL( atomic_number_1, atomic_number_2 );
+  FRENSIE_CHECK_EQUAL( outgoing_particle_designator_1,
 		 outgoing_particle_designator_2 );
-  TEST_EQUALITY( atomic_mass_1, atomic_mass_2 );
-  TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
-  TEST_EQUALITY( reaction_type_1, reaction_type_2 );
-  TEST_EQUALITY( electron_shell_1, electron_shell_2 );
+  FRENSIE_CHECK_EQUAL( atomic_mass_1, atomic_mass_2 );
+  FRENSIE_CHECK_EQUAL( interpolation_flag_1, interpolation_flag_2 );
+  FRENSIE_CHECK_EQUAL( reaction_type_1, reaction_type_2 );
+  FRENSIE_CHECK_EQUAL( electron_shell_1, electron_shell_2 );
 
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -1024,7 +1019,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_process_skip_test )
 					    outgoing_particle_designator_1,
 					    atomic_mass_1,
 					    interpolation_flag_1 );
-  TEST_ASSERT( endl_file_handler.endOfFile() );
+  FRENSIE_CHECK( endl_file_handler.endOfFile() );
 
   // Close the test table file
   endl_file_handler.closeENDLFile();
@@ -1033,7 +1028,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_process_skip_test )
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can process a two column table and then
 // process a two column table
-TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_process_process_test )
+FRENSIE_UNIT_TEST( ENDLFileHandler, two_column_table_process_process_test )
 {
   Data::ENDLFileHandler endl_file_handler( two_two_column_tables_test_file, epics_file_type );
 
@@ -1069,15 +1064,15 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_process_process_test )
   endl_file_handler.processTwoColumnTable( column_21, column_22 );
 
   // Check that the header info from both tables matches
-  TEST_EQUALITY( atomic_number_1, atomic_number_2 );
-  TEST_EQUALITY( outgoing_particle_designator_1,
+  FRENSIE_CHECK_EQUAL( atomic_number_1, atomic_number_2 );
+  FRENSIE_CHECK_EQUAL( outgoing_particle_designator_1,
 		 outgoing_particle_designator_2 );
-  TEST_EQUALITY( atomic_mass_1, atomic_mass_2 );
-  TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
-  TEST_EQUALITY( reaction_type_1, reaction_type_2 );
-  TEST_EQUALITY( electron_shell_1, electron_shell_2 );
-  UTILITY_TEST_COMPARE_ARRAYS( column_21, column_11 );
-  UTILITY_TEST_COMPARE_ARRAYS( column_22, column_12 );
+  FRENSIE_CHECK_EQUAL( atomic_mass_1, atomic_mass_2 );
+  FRENSIE_CHECK_EQUAL( interpolation_flag_1, interpolation_flag_2 );
+  FRENSIE_CHECK_EQUAL( reaction_type_1, reaction_type_2 );
+  FRENSIE_CHECK_EQUAL( electron_shell_1, electron_shell_2 );
+  FRENSIE_CHECK_EQUAL( column_21, column_11 );
+  FRENSIE_CHECK_EQUAL( column_22, column_12 );
 
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -1085,7 +1080,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_process_process_test )
 					    outgoing_particle_designator_1,
 					    atomic_mass_1,
 					    interpolation_flag_1 );
-  TEST_ASSERT( endl_file_handler.endOfFile() );
+  FRENSIE_CHECK( endl_file_handler.endOfFile() );
 
   // Close the test table file
   endl_file_handler.closeENDLFile();
@@ -1094,7 +1089,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_process_process_test )
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can skip a three column table and then
 // process a three column table
-TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_skip_process_test )
+FRENSIE_UNIT_TEST( ENDLFileHandler, three_column_table_skip_process_test )
 {
   Data::ENDLFileHandler endl_file_handler( two_three_column_tables_test_file, epics_file_type );
 
@@ -1132,13 +1127,13 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_skip_process_test )
 
 
   // Check that the header info from both tables matches
-  TEST_EQUALITY( atomic_number_1, atomic_number_2 );
-  TEST_EQUALITY( outgoing_particle_designator_1,
+  FRENSIE_CHECK_EQUAL( atomic_number_1, atomic_number_2 );
+  FRENSIE_CHECK_EQUAL( outgoing_particle_designator_1,
 		 outgoing_particle_designator_2 );
-  TEST_EQUALITY( atomic_mass_1, atomic_mass_2 );
-  TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
-  TEST_EQUALITY( reaction_type_1, reaction_type_2 );
-  TEST_EQUALITY( electron_shell_1, electron_shell_2 );
+  FRENSIE_CHECK_EQUAL( atomic_mass_1, atomic_mass_2 );
+  FRENSIE_CHECK_EQUAL( interpolation_flag_1, interpolation_flag_2 );
+  FRENSIE_CHECK_EQUAL( reaction_type_1, reaction_type_2 );
+  FRENSIE_CHECK_EQUAL( electron_shell_1, electron_shell_2 );
 
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -1146,7 +1141,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_skip_process_test )
 					    outgoing_particle_designator_1,
 					    atomic_mass_1,
 					    interpolation_flag_1 );
-  TEST_ASSERT( endl_file_handler.endOfFile() );
+  FRENSIE_CHECK( endl_file_handler.endOfFile() );
 
   // Close the test table file
   endl_file_handler.closeENDLFile();
@@ -1155,7 +1150,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_skip_process_test )
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can process a three column table and then
 // skip a three column table
-TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_process_skip_test )
+FRENSIE_UNIT_TEST( ENDLFileHandler, three_column_table_process_skip_test )
 {
   Data::ENDLFileHandler endl_file_handler( two_three_column_tables_test_file, epics_file_type );
 
@@ -1192,13 +1187,13 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_process_skip_test )
   endl_file_handler.skipTable();
 
   // Check that the header info from both tables matches
-  TEST_EQUALITY( atomic_number_1, atomic_number_2 );
-  TEST_EQUALITY( outgoing_particle_designator_1,
+  FRENSIE_CHECK_EQUAL( atomic_number_1, atomic_number_2 );
+  FRENSIE_CHECK_EQUAL( outgoing_particle_designator_1,
 		 outgoing_particle_designator_2 );
-  TEST_EQUALITY( atomic_mass_1, atomic_mass_2 );
-  TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
-  TEST_EQUALITY( reaction_type_1, reaction_type_2 );
-  TEST_EQUALITY( electron_shell_1, electron_shell_2 );
+  FRENSIE_CHECK_EQUAL( atomic_mass_1, atomic_mass_2 );
+  FRENSIE_CHECK_EQUAL( interpolation_flag_1, interpolation_flag_2 );
+  FRENSIE_CHECK_EQUAL( reaction_type_1, reaction_type_2 );
+  FRENSIE_CHECK_EQUAL( electron_shell_1, electron_shell_2 );
 
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -1206,7 +1201,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_process_skip_test )
 					    outgoing_particle_designator_1,
 					    atomic_mass_1,
 					    interpolation_flag_1 );
-  TEST_ASSERT( endl_file_handler.endOfFile() );
+  FRENSIE_CHECK( endl_file_handler.endOfFile() );
 
   // Close the test table file
   endl_file_handler.closeENDLFile();
@@ -1215,7 +1210,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_process_skip_test )
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can process a three column table and then
 // process a three column table
-TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_process_process_test )
+FRENSIE_UNIT_TEST( ENDLFileHandler, three_column_table_process_process_test )
 {
   Data::ENDLFileHandler endl_file_handler( two_three_column_tables_test_file, epics_file_type );
 
@@ -1255,14 +1250,14 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_process_process_test )
   endl_file_handler.mapThreeColumnTable( column_21, column_22, column_23 );
 
   // Check that the header info from both tables matches
-  TEST_EQUALITY( atomic_number_1, atomic_number_2 );
-  TEST_EQUALITY( outgoing_particle_designator_1,
+  FRENSIE_CHECK_EQUAL( atomic_number_1, atomic_number_2 );
+  FRENSIE_CHECK_EQUAL( outgoing_particle_designator_1,
 		 outgoing_particle_designator_2 );
-  TEST_EQUALITY( atomic_mass_1, atomic_mass_2 );
-  TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
-  TEST_EQUALITY( reaction_type_1, reaction_type_2 );
-  TEST_EQUALITY( electron_shell_1, electron_shell_2 );
-  UTILITY_TEST_COMPARE_ARRAYS( column_21, column_11 );
+  FRENSIE_CHECK_EQUAL( atomic_mass_1, atomic_mass_2 );
+  FRENSIE_CHECK_EQUAL( interpolation_flag_1, interpolation_flag_2 );
+  FRENSIE_CHECK_EQUAL( reaction_type_1, reaction_type_2 );
+  FRENSIE_CHECK_EQUAL( electron_shell_1, electron_shell_2 );
+  FRENSIE_CHECK_EQUAL( column_21, column_11 );
 
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -1270,7 +1265,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_process_process_test )
 					    outgoing_particle_designator_1,
 					    atomic_mass_1,
 					    interpolation_flag_1 );
-  TEST_ASSERT( endl_file_handler.endOfFile() );
+  FRENSIE_CHECK( endl_file_handler.endOfFile() );
 
   // Close the test table file
   endl_file_handler.closeENDLFile();
@@ -1280,7 +1275,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_process_process_test )
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can skip a four column table and then
 // process a four column table
-TEUCHOS_UNIT_TEST( ENDLFileHandler, four_column_table_skip_process_test )
+FRENSIE_UNIT_TEST( ENDLFileHandler, four_column_table_skip_process_test )
 {
   Data::ENDLFileHandler endl_file_handler( two_four_column_tables_test_file, epics_file_type );
 
@@ -1317,13 +1312,13 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, four_column_table_skip_process_test )
 
 
   // Check that the header info from both tables matches
-  TEST_EQUALITY( atomic_number_1, atomic_number_2 );
-  TEST_EQUALITY( outgoing_particle_designator_1,
+  FRENSIE_CHECK_EQUAL( atomic_number_1, atomic_number_2 );
+  FRENSIE_CHECK_EQUAL( outgoing_particle_designator_1,
 		 outgoing_particle_designator_2 );
-  TEST_EQUALITY( atomic_mass_1, atomic_mass_2 );
-  TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
-  TEST_EQUALITY( reaction_type_1, reaction_type_2 );
-  TEST_EQUALITY( electron_shell_1, electron_shell_2 );
+  FRENSIE_CHECK_EQUAL( atomic_mass_1, atomic_mass_2 );
+  FRENSIE_CHECK_EQUAL( interpolation_flag_1, interpolation_flag_2 );
+  FRENSIE_CHECK_EQUAL( reaction_type_1, reaction_type_2 );
+  FRENSIE_CHECK_EQUAL( electron_shell_1, electron_shell_2 );
 
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -1331,7 +1326,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, four_column_table_skip_process_test )
 					    outgoing_particle_designator_1,
 					    atomic_mass_1,
 					    interpolation_flag_1 );
-  TEST_ASSERT( endl_file_handler.endOfFile() );
+  FRENSIE_CHECK( endl_file_handler.endOfFile() );
 
   // Close the test table file
   endl_file_handler.closeENDLFile();
@@ -1340,7 +1335,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, four_column_table_skip_process_test )
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can process a four column table and then
 // skip a four column table
-TEUCHOS_UNIT_TEST( ENDLFileHandler, four_column_table_process_skip_test )
+FRENSIE_UNIT_TEST( ENDLFileHandler, four_column_table_process_skip_test )
 {
   Data::ENDLFileHandler endl_file_handler( two_four_column_tables_test_file, epics_file_type );
 
@@ -1376,13 +1371,13 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, four_column_table_process_skip_test )
   endl_file_handler.skipTable();
 
   // Check that the header info from both tables matches
-  TEST_EQUALITY( atomic_number_1, atomic_number_2 );
-  TEST_EQUALITY( outgoing_particle_designator_1,
+  FRENSIE_CHECK_EQUAL( atomic_number_1, atomic_number_2 );
+  FRENSIE_CHECK_EQUAL( outgoing_particle_designator_1,
 		 outgoing_particle_designator_2 );
-  TEST_EQUALITY( atomic_mass_1, atomic_mass_2 );
-  TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
-  TEST_EQUALITY( reaction_type_1, reaction_type_2 );
-  TEST_EQUALITY( electron_shell_1, electron_shell_2 );
+  FRENSIE_CHECK_EQUAL( atomic_mass_1, atomic_mass_2 );
+  FRENSIE_CHECK_EQUAL( interpolation_flag_1, interpolation_flag_2 );
+  FRENSIE_CHECK_EQUAL( reaction_type_1, reaction_type_2 );
+  FRENSIE_CHECK_EQUAL( electron_shell_1, electron_shell_2 );
 
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -1390,7 +1385,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, four_column_table_process_skip_test )
 					    outgoing_particle_designator_1,
 					    atomic_mass_1,
 					    interpolation_flag_1 );
-  TEST_ASSERT( endl_file_handler.endOfFile() );
+  FRENSIE_CHECK( endl_file_handler.endOfFile() );
 
   // Close the test table file
   endl_file_handler.closeENDLFile();
@@ -1399,7 +1394,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, four_column_table_process_skip_test )
 //---------------------------------------------------------------------------//
 // Check that the ENDLFileHandler can process a four column table and then
 // process a four column table
-TEUCHOS_UNIT_TEST( ENDLFileHandler, four_column_table_process_process_test )
+FRENSIE_UNIT_TEST( ENDLFileHandler, four_column_table_process_process_test )
 {
   Data::ENDLFileHandler endl_file_handler( two_four_column_tables_test_file, epics_file_type );
 
@@ -1437,14 +1432,14 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, four_column_table_process_process_test )
   endl_file_handler.processFourColumnTable( column_21, column_22, column_23, column_24 );
 
   // Check that the header info from both tables matches
-  TEST_EQUALITY( atomic_number_1, atomic_number_2 );
-  TEST_EQUALITY( outgoing_particle_designator_1,
+  FRENSIE_CHECK_EQUAL( atomic_number_1, atomic_number_2 );
+  FRENSIE_CHECK_EQUAL( outgoing_particle_designator_1,
 		 outgoing_particle_designator_2 );
-  TEST_EQUALITY( atomic_mass_1, atomic_mass_2 );
-  TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
-  TEST_EQUALITY( reaction_type_1, reaction_type_2 );
-  TEST_EQUALITY( electron_shell_1, electron_shell_2 );
-  UTILITY_TEST_COMPARE_ARRAYS( column_21, column_11 );
+  FRENSIE_CHECK_EQUAL( atomic_mass_1, atomic_mass_2 );
+  FRENSIE_CHECK_EQUAL( interpolation_flag_1, interpolation_flag_2 );
+  FRENSIE_CHECK_EQUAL( reaction_type_1, reaction_type_2 );
+  FRENSIE_CHECK_EQUAL( electron_shell_1, electron_shell_2 );
+  FRENSIE_CHECK_EQUAL( column_21, column_11 );
 
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -1452,53 +1447,52 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, four_column_table_process_process_test )
 					    outgoing_particle_designator_1,
 					    atomic_mass_1,
 					    interpolation_flag_1 );
-  TEST_ASSERT( endl_file_handler.endOfFile() );
+  FRENSIE_CHECK( endl_file_handler.endOfFile() );
 
   // Close the test table file
   endl_file_handler.closeENDLFile();
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char* argv[] )
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "first_header_test_file",
-		 &first_header_test_file,
-		 "First header test file name" );
-  clp.setOption( "second_header_test_file",
-		 &second_header_test_file,
-		 "Second header test file name" );
-  clp.setOption( "full_header_test_file",
-		 &full_header_test_file,
-		 "Full header test file name" );
-  clp.setOption( "two_column_table_test_file",
-		 &two_column_table_test_file,
-		 "Two column table test file name" );
-  clp.setOption( "three_column_table_test_file",
-		 &three_column_table_test_file,
-		 "Three column table test file name" );
-  clp.setOption( "three_column_table_test_file_vector",
-		 &three_column_table_test_file_vector,
-		 "Three column table test file vector name" );
-  clp.setOption( "four_column_table_test_file",
-		 &four_column_table_test_file,
-		 "Four column table test file name" );
-  clp.setOption( "two_two_column_tables_test_file",
-		 &two_two_column_tables_test_file,
-		 "Two two column tables test file name" );
-  clp.setOption( "two_three_column_tables_test_file",
-		 &two_three_column_tables_test_file,
-		 "Two three column tables test file name" );
-  clp.setOption( "two_four_column_tables_test_file",
-		 &two_four_column_tables_test_file,
-		 "Two four column tables test file name" );
-
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "first_header_test_file",
+                                        first_header_test_file, "",
+                                        "First header test file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "second_header_test_file",
+                                        second_header_test_file, "",
+                                        "Second header test file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "full_header_test_file",
+                                        full_header_test_file, "",
+                                        "Full header test file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "two_column_table_test_file",
+                                        two_column_table_test_file, "",
+                                        "Two column table test file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "three_column_table_test_file",
+                                        three_column_table_test_file, "",
+                                        "Three column table test file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "three_column_table_test_file_vector",
+                                        three_column_table_test_file_vector, "",
+                                        "Three column table test file vector name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "four_column_table_test_file",
+                                        four_column_table_test_file, "",
+                                        "Four column table test file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "two_two_column_tables_test_file",
+                                        two_two_column_tables_test_file, "",
+                                        "Two two column tables test file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "two_three_column_tables_test_file",
+                                        two_three_column_tables_test_file, "",
+                                        "Two three column tables test file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "two_four_column_tables_test_file",
+                                        two_four_column_tables_test_file, "",
+                                        "Two four column tables test file name" );
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstENDLFileHandler.cpp

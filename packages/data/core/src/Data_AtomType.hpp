@@ -13,6 +13,9 @@
 #include <string>
 #include <iostream>
 
+// FRENSIE Includes
+#include "Utility_ToStringTraits.hpp"
+
 namespace Data{
 
 /*! Atom identifiers
@@ -124,21 +127,37 @@ enum AtomType{
 //! Convert an atomic number to an AtomType enumeration
 AtomType convertAtomicNumberToAtomTypeEnum( const unsigned atomic_number );
 
-//! Convert an atomic number to a string
-std::string convertAtomicNumberToString( const unsigned atomic_number );
+} // end Data namespace
 
-//! Convert an AtomType enumeration to a string
-std::string convertAtomTypeEnumToString( const AtomType atom );
+namespace Utility{
 
-//! Stream operator for printing Atom enums
-inline std::ostream& operator<<( std::ostream& os,
-				 const AtomType atom )
+/*! Specialization of Utility::ToStringTraits for Data::AtomType
+ * \ingroup to_string_traits
+ */
+template<>
+struct ToStringTraits<Data::AtomType>
 {
-  os << convertAtomTypeEnumToString( atom );
+  //! Convert a Data::AtomType to a string
+  static std::string toString( const Data::AtomType obj );
+
+  //! Place the Data::AtomType in a stream
+  static void toStream( std::ostream& os, const Data::AtomType obj );
+};
+  
+} // end Utility namespace
+
+namespace std{
+
+//! Stream operator for printing Data::AtomType enums
+inline std::ostream& operator<<( std::ostream& os,
+				 const Data::AtomType atom )
+{
+  Utility::toStream( os, atom );
+  
   return os;
 }
 
-} // end Data namespace
+} // end std namespace
 
 #endif // end DATA_ATOM_TYPE_HPP
 

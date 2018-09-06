@@ -7,9 +7,10 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_MasslessParticleState.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -52,6 +53,8 @@ MasslessParticleState::calculateTraversalTime( const double distance ) const
 {
   return distance/Utility::PhysicalConstants::speed_of_light;
 }
+
+EXPLICIT_CLASS_SERIALIZE_INST( MasslessParticleState );
 
 } // end MonteCarlo namespace
 

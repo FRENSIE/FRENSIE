@@ -24,6 +24,6 @@ extern "C" {
 #endif // end DATA_ENDF_FISSION_YIELDS_HELPER_WRAPPER_HPP
 
 //---------------------------------------------------------------------------//
-// end Data_ENDFFisionYieldsHelperWrappers.hpp
+// end Data_ENDFFissionYieldsHelperWrappers.hpp
 //---------------------------------------------------------------------------//
 

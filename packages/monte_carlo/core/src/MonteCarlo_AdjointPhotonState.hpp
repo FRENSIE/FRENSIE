@@ -9,8 +9,12 @@
 #ifndef MONTE_CARLO_ADJOINT_PHOTON_STATE_HPP
 #define MONTE_CARLO_ADJOINT_PHOTON_STATE_HPP
 
+// Boost Includes
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_MasslessParticleState.hpp"
+#include "Utility_TypeNameTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -56,7 +60,7 @@ public:
   virtual AdjointPhotonState* clone() const;
 
   //! Print the adjoint photon state
-  virtual void print( std::ostream& os ) const;
+  virtual void toStream( std::ostream& os ) const;
 
 protected:
 
@@ -77,9 +81,7 @@ private:
   // Save the state to an archive
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MasslessParticleState);
-  }
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MasslessParticleState); }
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
@@ -87,9 +89,10 @@ private:
 
 } // end MonteCarlo namespace
 
-BOOST_CLASS_VERSION( MonteCarlo::AdjointPhotonState, 0 );
-BOOST_CLASS_EXPORT_KEY2( MonteCarlo::AdjointPhotonState,
-			 "AdjointPhotonState" );
+BOOST_SERIALIZATION_CLASS_VERSION( AdjointPhotonState, MonteCarlo, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( AdjointPhotonState, MonteCarlo );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, AdjointPhotonState );
+TYPE_NAME_TRAITS_QUICK_DECL2( AdjointPhotonState, MonteCarlo );
 
 #endif // end MONTE_CARLO_ADJOINT_PHOTON_STATE_HPP
 

@@ -29,13 +29,19 @@ Prng.RandomNumberGenerator proxy class.
 // Std Lib Includes
 #include <sstream>
 
+#define NO_IMPORT_ARRAY
+#include "numpy_include.h"
+
 // Frensie Includes
-#include "PyFrensie_ArrayConversionHelpers.hpp"
+#include "PyFrensie_PythonTypeTraits.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 %}
 
-// Include the Teuchos::ArrayRCP support
+// Include the vector support
 %include "PyFrensie_Array.i"
+
+// Include macros to find initialized numpy
+%include "numpy.i"
 
 // Standard exception handling
 %include "exception.i"
@@ -187,7 +193,7 @@ that the original random number stream state will be reset as well.
 // the fake stream
 %typemap(in) const std::vector<double>& fake_stream (std::vector<double> temp)
 {
-  PyFrensie::copyNumPyToVectorWithCheck( $input, temp );
+  temp = PyFrensie::convertFromPython<std::vector<double> >( $input );
 
   $1 = &temp;
 }
@@ -197,7 +203,7 @@ that the original random number stream state will be reset as well.
 // SWIG_TYPECHECK_DOUBLE_ARRAY (1050) for the std::vector<double>&. You will
 // get a Python error when calling the overloaded method in Python without this
 // typecheck
-%typemap(typecheck, precedence=1050) (const std::vector<double>&) {
+%typemap(typecheck, precedence=1090) (const std::vector<double>&) {
   $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
 }
 
@@ -207,7 +213,9 @@ that the original random number stream state will be reset as well.
 // Instantiate the getRandomNumber template method
 %template(getRandomNumber) Utility::RandomNumberGenerator::getRandomNumber<double>;
 
+//---------------------------------------------------------------------------//
 // Turn off the exception handling
+//---------------------------------------------------------------------------//
 %exception;
 
 //---------------------------------------------------------------------------//

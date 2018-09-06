@@ -25,14 +25,14 @@ public:
 
   //! Constructor (from saved archive)
   AdjointElectronPhotonRelaxationVolatileDataContainer(
-           const std::string& archive_name,
-           const Utility::ArchivableObject::ArchiveType archive_type );
+                          const boost::filesystem::path& file_name_with_path );
 
   // Add the setter member functions to the public interface
   using AdjointElectronPhotonRelaxationDataContainer::setNotes;
 
   // Basic table functions
   using AdjointElectronPhotonRelaxationDataContainer::setAtomicNumber;
+  using AdjointElectronPhotonRelaxationDataContainer::setAtomicWeight;
   using AdjointElectronPhotonRelaxationDataContainer::setMinPhotonEnergy;
   using AdjointElectronPhotonRelaxationDataContainer::setMaxPhotonEnergy;
   using AdjointElectronPhotonRelaxationDataContainer::setMinElectronEnergy;
@@ -158,12 +158,6 @@ public:
   using AdjointElectronPhotonRelaxationDataContainer::setAdjointAtomicExcitationCrossSectionThresholdEnergyIndex;
   using AdjointElectronPhotonRelaxationDataContainer::setForwardInelasticElectronCrossSection;
   using AdjointElectronPhotonRelaxationDataContainer::setForwardInelasticElectronCrossSectionThresholdEnergyIndex;
-
-  // Add the export member function to the public interface
-  using AdjointElectronPhotonRelaxationDataContainer::exportData;
-
-  // Add the packDataInString member function to the public interface
-  using AdjointElectronPhotonRelaxationDataContainer::packDataInString;
 };
 
 } // end Data namespace

@@ -6,16 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-%{
-#include "PyFrensie_DistributionHelpers.hpp"
-%}
-
 // Include std::string support
 %include <std_string.i>
-
-
-// Import the PyFrensie utility
-%import "PyFrensie_DistributionHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Helper macro for setting up a basic Electroatomic Reaction class python interface

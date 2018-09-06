@@ -1,0 +1,149 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Data.ACEThermalNuclearDataProperties class unit tests
+#  \file   tstData.ACE.ACEThermalNuclearDataProperties.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the Data.ACE.ACEThermalNuclearDataProperties class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Data = importPyFrensieModuleFromBuildDir('Data')
+ACE = importPyFrensieModuleFromBuildDir('Data.ACE')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the ACEThermalNuclearDataProperties class
+class ACEThermalNuclearDataPropertiesTestCase(unittest.TestCase):
+    "TestCase class for Data.ACE.ACEThermalNuclearDataProperties class"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.properties = ACE.ACEThermalNuclearDataProperties(
+                    (Data.ZAID(1001), Data.ZAID(6000), Data.ZAID(6012)),
+                    2.5301e-8,
+                    "sab_data/benz.txt",
+                    10,
+                    "benz.12t" )
+
+    def testConstructor(self):
+        "*Test Data.ACEThermalNuclearDataProperties constructor"
+        with self.assertRaises(ValueError):
+            ACE.ACEThermalNuclearDataProperties(
+                    (Data.ZAID(1001), Data.ZAID(6000), Data.ZAID(6012)),
+                    -1.0,
+                    "sab_data/benz.txt",
+                    10,
+                    "benz.12t" )
+
+    def testName(self):
+        "*Test Data.ACEThermalNuclearDataProperties name"
+        self.assertEqual( self.properties.name(), "benz" )
+
+    def testHasDataForZAID(self):
+        "*Test Data.ACEThermalNuclearDataProperties hasDataForZAID"
+        self.assertTrue( self.properties.hasDataForZAID(Data.ZAID(1001) ) )
+        self.assertFalse( self.properties.hasDataForZAID(Data.ZAID(1002) ) )
+        self.assertTrue( self.properties.hasDataForZAID(Data.ZAID(6000) ) )
+        self.assertTrue( self.properties.hasDataForZAID(Data.ZAID(6012) ) )
+        self.assertFalse( self.properties.hasDataForZAID(Data.ZAID(6014) ) )
+
+    def testZaids(self):
+        "*Test Data.ACEThermalNuclearDataProperties zaids"
+        self.assertEqual( self.properties.zaids(), (Data.ZAID(1001), Data.ZAID(6000), Data.ZAID(6012)) )
+
+    def testFileType(self):
+        "*Test Data.ACEThermalNuclearDataProperties fileType"
+        self.assertEqual( self.properties.fileType(),
+                          Data.NuclearDataProperties.ACE_FILE )
+
+    def testEvaluationTemperatureInMeV(self):
+        "*Test Data.ACEThermalNuclearDataProperties evaluationTemperatureInMeV"
+        self.assertEqual( self.properties.evaluationTemperatureInMeV(),
+                          2.5301e-8)
+
+    def testEvaluationTemperature(self):
+        "*Test Data.ACEThermalNuclearDataProperties evaluationTemperature"
+        self.assertAlmostEqual( self.properties.evaluationTemperature(),
+                                293.6059397103837227,
+                                1e-15 )
+
+    def testFilePath(self):
+        "*Test Data.ACEThermalNuclearDataProperties filePath"
+        self.assertEqual( self.properties.filePath(),
+                          "sab_data/benz.txt" )
+
+    def testFileStartLine(self):
+        "*Test Data.ACEThermalNuclearDataProperties fileStartLine"
+        self.assertEqual( self.properties.fileStartLine(), 10 )
+
+    def testFileMajorVersion(self):
+        "*Test Data.ACEThermalNuclearDataProperties fileMajorVersion"
+        self.assertEqual( self.properties.fileMajorVersion(), 1 )
+
+    def testFileVersion(self):
+        "*Test Data.ACEThermalNuclearDataProperties fileVersion"
+        self.assertEqual( self.properties.fileVersion(), 12 )
+
+    def testTableName(self):
+        "*Test Data.ACEThermalNuclearDataProperties tableName"
+        self.assertEqual( self.properties.tableName(), "benz.12t" )
+
+    def testClone(self):
+        "*Test Data.ACEThermalNuclearDataProperties clone"
+        properties_clone = self.properties.clone()
+
+        self.assertTrue( properties_clone )
+        # self.assertEqual( properties_clone.atomicWeightRatio(), 1.0 )
+        self.assertEqual( properties_clone.filePath(),
+                          "sab_data/benz.txt" )
+        self.assertEqual( properties_clone.fileStartLine(), 10 )
+        self.assertEqual( properties_clone.fileMajorVersion(), 1 )
+        self.assertEqual( properties_clone.fileVersion(), 12 )
+        self.assertEqual( properties_clone.tableName(), "benz.12t" )
+
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test Suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(ACEThermalNuclearDataPropertiesTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing Data.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstData.ACEThermalNuclearDataProperties.py
+#-----------------------------------------------------------------------------#

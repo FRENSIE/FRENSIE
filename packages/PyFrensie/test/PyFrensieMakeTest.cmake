@@ -2,7 +2,7 @@
 ## Macro for making a PyFrensie python test
 ##---------------------------------------------------------------------------##
 MACRO(PyFrensie_MAKE_TEST TEST_NAME)
-
+  
   ADD_CUSTOM_COMMAND(OUTPUT ${TEST_NAME}.py
     COMMAND ${CMAKE_CURRENT_BINARY_DIR}/copyWithCMakeSubstitutions.py
             ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}.py.in

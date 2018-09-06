@@ -31,6 +31,7 @@ void AdjointElectronPhotonRelaxationDataContainer::save( Archive& ar,
 
   // Basic Table Data
   DATA_MAKE_NVP_DEFAULT( ar, atomic_number );
+  DATA_MAKE_NVP_DEFAULT( ar, atomic_weight );
   DATA_MAKE_NVP_DEFAULT( ar, min_photon_energy );
   DATA_MAKE_NVP_DEFAULT( ar, max_photon_energy );
   DATA_MAKE_NVP_DEFAULT( ar, min_electron_energy );
@@ -158,6 +159,7 @@ void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
 
   // Basic Table Data
   DATA_MAKE_NVP_DEFAULT( ar, atomic_number );
+  DATA_MAKE_NVP_DEFAULT( ar, atomic_weight );
   DATA_MAKE_NVP_DEFAULT( ar, min_photon_energy );
   DATA_MAKE_NVP_DEFAULT( ar, max_photon_energy );
   DATA_MAKE_NVP_DEFAULT( ar, min_electron_energy );

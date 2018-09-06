@@ -12,9 +12,6 @@
 // Boost Includes
 #include <boost/multiprecision/cpp_dec_float.hpp>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
@@ -38,7 +35,7 @@ public:
   Integrator;
 
   // Typedef for elastic electron traits
-  typedef Utility::ElasticElectronTraits ElasticTraits;
+  typedef MonteCarlo::ElasticElectronTraits ElasticTraits;
 
   //! Constructor
   ElasticElectronMomentsEvaluator(
@@ -51,10 +48,11 @@ public:
   //! Constructor (without data container)
   ElasticElectronMomentsEvaluator(
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,
-    const Teuchos::ArrayRCP<double>& incoming_energy_grid,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    const Teuchos::ArrayRCP<double>& cutoff_cross_section,
-    const Teuchos::ArrayRCP<double>& total_elastic_cross_section,
+    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+     grid_searcher,
+    const std::shared_ptr<const std::vector<double> >& cutoff_cross_section,
+    const std::shared_ptr<const std::vector<double> >& total_elastic_cross_section,
     const unsigned screened_rutherford_threshold_energy_index,
     const std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
         coupled_distribution,
@@ -159,7 +157,7 @@ private:
 
 
   // Grid searcher for the energy grid
-  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double> > d_grid_searcher;
 
   // The screened rutherford elastic threshold_energy_index
   unsigned d_screened_rutherford_threshold_energy_index;

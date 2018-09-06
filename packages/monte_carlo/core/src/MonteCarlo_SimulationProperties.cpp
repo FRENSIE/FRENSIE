@@ -7,9 +7,10 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -67,8 +68,12 @@ bool SimulationProperties::isAtomicRelaxationModeOn(
                      "and electrons!" );
   }
 }
+
+EXPLICIT_CLASS_SERIALIZE_INST( SimulationProperties );
   
 } // end MonteCarlo namespace
+
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::SimulationProperties );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SimulationProperties.cpp

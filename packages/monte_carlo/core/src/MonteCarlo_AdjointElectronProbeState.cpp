@@ -7,9 +7,9 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_AdjointElectronProbeState.hpp"
-#include "Utility_ArchiveHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -22,7 +22,7 @@ AdjointElectronProbeState::AdjointElectronProbeState()
 // Constructor
 AdjointElectronProbeState::AdjointElectronProbeState(
                        const ParticleState::historyNumberType history_number )
-  : AdjointElectronState( history_number, ADJOINT_ELECTRON_PROBE, -1 ),
+  : AdjointElectronState( history_number, ADJOINT_ELECTRON, -1 ),
     d_active( false )
 { /* ... */ }
 
@@ -32,7 +32,7 @@ AdjointElectronProbeState::AdjointElectronProbeState(
                                       const bool increment_generation_number,
                                       const bool reset_collision_number )
   : AdjointElectronState( existing_base_state,
-                          ADJOINT_ELECTRON_PROBE,
+                          ADJOINT_ELECTRON,
                           -1,
                           increment_generation_number,
                           reset_collision_number ),
@@ -45,7 +45,7 @@ AdjointElectronProbeState::AdjointElectronProbeState(
                             const bool increment_generation_number,
                             const bool reset_collision_number )
   : AdjointElectronState( existing_base_state,
-                          ADJOINT_ELECTRON_PROBE,
+                          ADJOINT_ELECTRON,
                           -1,
                           increment_generation_number,
                           reset_collision_number ),
@@ -95,7 +95,7 @@ AdjointElectronProbeState* AdjointElectronProbeState::clone() const
 
 
 // Print the adjoint electron state
-void AdjointElectronProbeState::print( std::ostream& os ) const
+void AdjointElectronProbeState::toStream( std::ostream& os ) const
 {
   os << "Particle Type: ";
 
@@ -109,7 +109,11 @@ void AdjointElectronProbeState::print( std::ostream& os ) const
   this->printImplementation<AdjointElectronProbeState>( os );
 }
 
+EXPLICIT_CLASS_SERIALIZE_INST( AdjointElectronProbeState );
+
 } // end MonteCarlo namespace
+
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::AdjointElectronProbeState );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_AdjointElectronProbeState.cpp

@@ -11,9 +11,11 @@
 
 // Boost Includes
 #include <boost/units/quantity.hpp>
+#include <boost/units/systems/cgs.hpp>
 #include <boost/units/systems/cgs/velocity.hpp>
 #include <boost/units/systems/cgs/time.hpp>
 #include <boost/units/systems/cgs/length.hpp>
+#include <boost/units/systems/si.hpp>
 #include <boost/units/systems/si/temperature.hpp>
 
 // FRENSIE Includes

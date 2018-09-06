@@ -7,10 +7,10 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_PositronState.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_ArchiveHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -62,16 +62,17 @@ PositronState* PositronState::clone() const
 }
 
 // Print the positron state
-void PositronState::print( std::ostream& os ) const
+void PositronState::toStream( std::ostream& os ) const
 {
   os << "Particle Type: Positron" << std::endl;
 
   this->printImplementation<PositronState>( os );
 }
 
+EXPLICIT_CLASS_SERIALIZE_INST( PositronState );
+
 } // end MonteCarlo namespace
 
-UTILITY_CLASS_EXPORT_IMPLEMENT_SERIALIZE( MonteCarlo::PositronState );
 BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::PositronState );
 
 //---------------------------------------------------------------------------//

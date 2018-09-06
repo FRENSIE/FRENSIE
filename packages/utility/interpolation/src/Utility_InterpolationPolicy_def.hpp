@@ -15,11 +15,10 @@
 // Boost Includes
 #include <boost/mpl/or.hpp>
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_QuantityTraits.hpp"
+#include "Utility_IsFloatingPoint.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Utility{
 
@@ -33,18 +32,18 @@ T InterpolationHelper<ParentInterpolationType>::interpolate(
                                                  const T processed_slope )
 {
   // T must be a floating point type
-  testStaticPrecondition( (boost::is_floating_point<T>::value) );
+  testStaticPrecondition( (std::is_floating_point<T>::value) );
   // Make sure the processed independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						     processed_indep_var_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						       processed_indep_var ) );
   testPrecondition( processed_indep_var_0 <= processed_indep_var );
   // Make sure the processed dependent variable is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						       processed_dep_var_0 ) );
   // Make sure that the slope is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( processed_slope ) );
 
   return ParentInterpolationType::recoverProcessedDepVar(
                processed_dep_var_0 +
@@ -61,18 +60,18 @@ T InterpolationHelper<ParentInterpolationType>::interpolateAndProcess(
                                                  const T processed_slope )
 {
   // T must be a floating point type
-  testStaticPrecondition( (boost::is_floating_point<T>::value) );
+  testStaticPrecondition( (std::is_floating_point<T>::value) );
   // Make sure the processed independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						     processed_indep_var_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						       processed_indep_var ) );
   testPrecondition( processed_indep_var_0 <= processed_indep_var );
   // Make sure the processed dependent variable is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						       processed_dep_var_0 ) );
   // Make sure that the slope is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( processed_slope ) );
 
   return processed_dep_var_0 +
     processed_slope*(processed_indep_var - processed_indep_var_0);
@@ -337,6 +336,13 @@ inline T InterpolationHelper<ParentInterpolationType>::calculateFuzzyUpperBound(
 //   return delta_cosine + QuantityTraits<T>::one();
 // }
 
+// The name of the policy
+template<typename ParentInterpolationType>
+inline std::string InterpolationHelper<ParentInterpolationType>::name()
+{
+  return Utility::typeName<ParentInterpolationType>();
+}
+
 // Get the interpolation type
 inline InterpolationType LogLog::getInterpolationType()
 {
@@ -352,8 +358,8 @@ inline DepType LogLog::interpolate( const IndepType indep_var_0,
 				    const DepType dep_var_1 )
 {
   // The IndepType must be a floating point type
-  testStaticPrecondition( (QuantityTraits<IndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<IndepType>::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<DepType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
@@ -382,8 +388,8 @@ inline DepType LogLog::interpolate( const T beta,
                                     const DepType dep_var_1 )
 {
   // The IndepType must be a floating point type
-  testStaticPrecondition( (QuantityTraits<T>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<T>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<DepType>::RawType>::value ) );
   // Make sure the independent variables are valid
   testPrecondition( beta >= QuantityTraits<T>::zero() );
   testPrecondition( beta <= QuantityTraits<T>::one() );
@@ -406,8 +412,8 @@ LogLog::interpolateAndProcess( const IndepType indep_var_0,
 			       const DepType dep_var_1 )
 {
   // T must be a floating point type
-  testStaticPrecondition( (QuantityTraits<IndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<IndepType>::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<DepType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
@@ -481,12 +487,6 @@ inline bool LogLog::isDepVarInValidRange( const T dep_var )
   return dep_var > QuantityTraits<T>::zero();
 }
 
-// The name of the policy
-inline const std::string LogLog::name()
-{
-  return "LogLog";
-}
-
 // Get the interpolation type
 inline InterpolationType LogLin::getInterpolationType()
 {
@@ -502,8 +502,8 @@ inline DepType LogLin::interpolate( const IndepType indep_var_0,
 				    const DepType dep_var_1 )
 {
   // T must be a floating point type
-  testStaticPrecondition( (QuantityTraits<IndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<IndepType>::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<DepType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
@@ -530,8 +530,8 @@ inline DepType LogLin::interpolate( const T beta,
                                     const DepType dep_var_1 )
 {
   // The IndepType must be a floating point type
-  testStaticPrecondition( (QuantityTraits<T>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<T>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<DepType>::RawType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( beta >= QuantityTraits<T>::zero() );
   testPrecondition( beta <= QuantityTraits<T>::one() );
@@ -554,8 +554,8 @@ LogLin::interpolateAndProcess( const IndepType indep_var_0,
 			       const DepType dep_var_1 )
 {
   // T must be a floating point type
-  testStaticPrecondition( (QuantityTraits<IndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<IndepType>::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<DepType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
@@ -629,12 +629,6 @@ inline bool LogLin::isDepVarInValidRange( const T dep_var )
   return dep_var > QuantityTraits<T>::zero();
 }
 
-// The name of the policy
-inline const std::string LogLin::name()
-{
-  return "LogLin";
-}
-
 // Get the interpolation type
 inline InterpolationType LinLog::getInterpolationType()
 {
@@ -650,8 +644,8 @@ inline DepType LinLog::interpolate( const IndepType indep_var_0,
 				    const DepType dep_var_1 )
 {
   // T must be a floating point type
-  testStaticPrecondition( (QuantityTraits<IndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<IndepType>::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<DepType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
@@ -681,8 +675,8 @@ inline DepType LinLog::interpolate( const T beta,
                                     const DepType dep_var_1 )
 {
   // The IndepType must be a floating point type
-  testStaticPrecondition( (QuantityTraits<T>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<T>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<DepType>::RawType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( beta >= QuantityTraits<T>::zero() );
   testPrecondition( beta <= QuantityTraits<T>::one() );
@@ -764,12 +758,6 @@ inline bool LinLog::isDepVarInValidRange( const T dep_var )
   return true;
 }
 
-// The name of the policy
-inline const std::string LinLog::name()
-{
-  return "LinLog";
-}
-
 // Get the interpolation type
 inline InterpolationType LinLin::getInterpolationType()
 {
@@ -785,8 +773,8 @@ inline DepType LinLin::interpolate( const IndepType indep_var_0,
 				    const DepType dep_var_1 )
 {
   // T must be a floating point type
-  testStaticPrecondition( (QuantityTraits<IndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<IndepType>::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<DepType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
@@ -816,8 +804,8 @@ inline DepType LinLin::interpolate( const T beta,
                                     const DepType dep_var_1 )
 {
   // The IndepType must be a floating point type
-  testStaticPrecondition( (QuantityTraits<T>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<T>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<DepType>::RawType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( beta >= QuantityTraits<T>::zero() );
   testPrecondition( beta <= QuantityTraits<T>::one() );
@@ -897,12 +885,6 @@ inline bool LinLin::isDepVarInValidRange( const T dep_var )
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
 
   return true;
-}
-
-// The name of the policy
-inline const std::string LinLin::name()
-{
-  return "LinLin";
 }
 
 } // end Utility namespace

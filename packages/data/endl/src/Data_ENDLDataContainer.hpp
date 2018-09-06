@@ -10,39 +10,44 @@
 #define DATA_ENDL_DATA_CONTAINER_HPP
 
 // Std Lib Includes
-#include <vector>
-#include <set>
-#include <map>
-#include <utility>
 #include <string>
 
 // Boost Includes
+#include <boost/filesystem/path.hpp>
 #include <boost/serialization/split_member.hpp>
 
 // FRENSIE Includes
-#include "Utility_StandardArchivableObject.hpp"
-#include "Utility_StandardSerializableObject.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
+#include "Utility_ArchivableObject.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_Map.hpp"
+#include "Utility_Set.hpp"
+#include "Utility_Tuple.hpp"
+#include "Utility_SerializationHelpers.hpp"
 
 namespace Data{
 
-//! The endl container
-class ENDLDataContainer : public Utility::StandardArchivableObject<ENDLDataContainer,false>, public Utility::StandardSerializableObject<ENDLDataContainer,false>
+//! The eadl container
+class ENDLDataContainer : public Utility::ArchivableObject<ENDLDataContainer>
 {
 
 public:
 
   //! Constructor (from saved archive)
-  ENDLDataContainer(
-    const std::string& archive_name,
-    const Utility::ArchivableObject::ArchiveType archive_type =
-        Utility::ArchivableObject::XML_ARCHIVE );
+  ENDLDataContainer( const boost::filesystem::path& file_name_with_path );
 
   //! Destructor
   virtual ~ENDLDataContainer()
   { /* ... */ }
 
+  //! The database name used in an archive
+  const char* getArchiveName() const override;
+
   //! Return the atomic number
   unsigned getAtomicNumber() const;
+
+  //! Return the atomic weight
+  double getAtomicWeight() const;
 
 //---------------------------------------------------------------------------//
 // GET RELAXATION DATA
@@ -449,6 +454,9 @@ protected:
 
   //! Set the atomic number
   void setAtomicNumber( const unsigned atomic_number );
+
+  //! Set the atomic weight
+  void setAtomicWeight( const double atomic_weight );
 
 //---------------------------------------------------------------------------//
 // SET RELAXATION DATA
@@ -953,8 +961,14 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
+  // The name used in archive name-value pairs
+  static const std::string s_archive_name;
+
   // The atomic number
   unsigned d_atomic_number;
+
+  // The atomic weight
+  double d_atomic_weight;
 
 //---------------------------------------------------------------------------//
 // RELAXATION DATA
@@ -1315,6 +1329,11 @@ private:
 };
 
 } // end Data namespace
+
+BOOST_SERIALIZATION_CLASS_VERSION( ENDLDataContainer, Data, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ENDLDataContainer, Data );
+
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Data, ENDLDataContainer );
 
 //---------------------------------------------------------------------------//
 // Template Includes

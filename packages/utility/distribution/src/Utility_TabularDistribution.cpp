@@ -7,17 +7,20 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp" // Must include first
 #include "Utility_TabularDistribution.hpp"
 
-namespace Utility{
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularDistribution<Utility::LinLin,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularDistribution<Utility::LinLin,void,void> );
 
-// Explicit instantiation
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularDistribution<LinLin,void,void> );
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularDistribution<LinLog,void,void> );
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularDistribution<LogLin,void,void> );
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularDistribution<LogLog,void,void> );
-  
-} // end Utility namespace
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularDistribution<Utility::LinLog,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularDistribution<Utility::LinLog,void,void> );
+
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularDistribution<Utility::LogLin,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularDistribution<Utility::LogLin,void,void> );
+
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularDistribution<Utility::LogLog,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularDistribution<Utility::LogLog,void,void> );
 
 //---------------------------------------------------------------------------//
 // end Utility_TabularDistribution.cpp

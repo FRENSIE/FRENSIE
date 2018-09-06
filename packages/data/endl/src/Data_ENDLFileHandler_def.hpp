@@ -16,7 +16,7 @@
 #include "Data_ENDLFileHandler.hpp"
 #include "Data_ENDLHelperWrappers.hpp"
 #include "Data_SubshellType.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
 namespace Data{
@@ -205,7 +205,7 @@ void ENDLFileHandler::mapThreeColumnTable(
       indep.second.push_back( column_two[i] );
       dep.second.push_back( column_three[i] );
     }
-    // Continue inserting idep and dep variables for this energy bin
+    // Continue inserting indep and dep variables for this energy bin
     else
     {
       indep.second.push_back( column_two[i] );

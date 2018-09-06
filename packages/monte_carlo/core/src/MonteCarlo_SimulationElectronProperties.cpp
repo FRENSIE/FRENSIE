@@ -7,8 +7,9 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_SimulationElectronProperties.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -107,7 +108,7 @@ double SimulationElectronProperties::getElectronEvaluationTolerance() const
 
 // Set the electron 2D interpolation policy (LogLogLog by default)
 void SimulationElectronProperties::setElectronTwoDInterpPolicy(
-    TwoDInterpolationType interp_type )
+    const TwoDInterpolationType interp_type )
 {
   d_electron_interpolation_type = interp_type;
 }
@@ -187,7 +188,7 @@ bool SimulationElectronProperties::isElasticModeOn() const
 
 // Set the elastic distribution mode ( Decoupled by default )
 void SimulationElectronProperties::setElasticElectronDistributionMode(
-    ElasticElectronDistributionType distribution_mode )
+    const ElasticElectronDistributionType distribution_mode )
 {
   d_elastic_distribution_mode = distribution_mode;
 }
@@ -201,7 +202,7 @@ SimulationElectronProperties::getElasticElectronDistributionMode() const
 
 // Set the coupled elastic sampling mode ( Two D Union by default )
 void SimulationElectronProperties::setCoupledElasticSamplingMode(
-    CoupledElasticSamplingMethod sampling_method )
+    const CoupledElasticSamplingMethod sampling_method )
 {
   d_coupled_elastic_sampling_method = sampling_method;
 }
@@ -294,7 +295,11 @@ bool SimulationElectronProperties::isAtomicExcitationModeOn() const
   return d_atomic_excitation_mode_on;
 }
 
+EXPLICIT_CLASS_SERIALIZE_INST( SimulationElectronProperties );
+
 } // end MonteCarlo namespace
+
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::SimulationElectronProperties );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SimulationElectronProperties.cpp

@@ -1,0 +1,27 @@
+SRC FILES
+
+Core:
+1) Removed all but RCP and any from included teuchos objects
+2) Replaced Teuchos::any with boost::any. Plan on using shared_ptr for RCP, but must check where it's used to make sure.
+3) Replaced everything except for the Teuchos::TwoDArray object in MonteCarlo_UnorderedTypedObserverPhasedSpaceDimensionDiscretization.hpp file.
+4) All core src files should be Teuchos free.
+
+Dispatcher:
+1) Removed all in #include but Teuchos::Parameterlist due to impending redesign of factory classes.
+2) Commented out factory classes that use Teuchos::Parameterlist and replaced all other teuchos objects with appropriate objects
+3) All core src files should be Teuchos free.
+
+Estimator: 
+1) Removed everything in #include except Teuchos::Parameterlist due to impending redesign of factory classes.
+2) Removed all Teuchos references except for Parameterlist and Teuchos::ReduceAll. Not sure how to do the ReduceAll to allReduce yet.
+3) All Teuchos references have been removed.
+
+Particle_Tracker:
+1) Removed everything in #include and all references in code except for teuchos commands that communicate with different threads in MPI and ParameterLists. Not sure how to change communicator methods yet.
+2) Removed all references to Teuchos except for ParameterLists.
+
+TEST FILES
+
+Core:
+
+All references to Teuchos removed

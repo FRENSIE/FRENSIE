@@ -7,9 +7,9 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_AdjointPhotonState.hpp"
-#include "Utility_ArchiveHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -83,16 +83,17 @@ AdjointPhotonState* AdjointPhotonState::clone() const
 }
 
 // Print the adjoint photon state
-void AdjointPhotonState::print( std::ostream& os ) const
+void AdjointPhotonState::toStream( std::ostream& os ) const
 {
   os << "Particle Type: Adjoint Photon" << std::endl;
 
   this->printImplementation<AdjointPhotonState>( os );
 }
 
+EXPLICIT_CLASS_SERIALIZE_INST( AdjointPhotonState );
+
 } // end MonteCarlo namespace
 
-UTILITY_CLASS_EXPORT_IMPLEMENT_SERIALIZE( MonteCarlo::AdjointPhotonState );
 BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::AdjointPhotonState );
 
 //---------------------------------------------------------------------------//

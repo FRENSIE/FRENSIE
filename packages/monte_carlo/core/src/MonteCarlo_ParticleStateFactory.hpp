@@ -26,8 +26,9 @@ public:
   //! Create a default particle state with the requested type an history num.
   template<typename SmartPointer>
   static void createState( SmartPointer& particle,
-                           const ParticleType type,
-                           const ParticleState::historyNumberType history );
+			   const ParticleType type,
+			   const ParticleState::historyNumberType history,
+                           const bool probe = false );
 
 private:
 

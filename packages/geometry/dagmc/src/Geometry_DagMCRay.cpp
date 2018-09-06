@@ -8,8 +8,8 @@
 
 // FRENSIE Includes
 #include "Geometry_DagMCRay.hpp"
-#include "Utility_DirectionHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 
@@ -30,10 +30,8 @@ DagMCRay::DagMCRay( const Ray& ray, moab::EntityHandle cell_handle )
     d_intersection_distance( -1.0 ),
     d_intersection_surface_handle( 0 )
 {
-  // Make sure the position and direction are valid
-  testPrecondition( Utility::isNotNanOrInf( d_basic_ray->getPosition() ) );
   // Make sure the direction is valid
-  testPrecondition( Utility::validDirection( d_basic_ray->getDirection() ) );
+  testPrecondition( Utility::isUnitVector( d_basic_ray->getDirection() ) );
   // Make sure the cell handle is valid
   testPrecondition( cell_handle != 0 );
 }
@@ -48,10 +46,29 @@ DagMCRay::DagMCRay( const double position[3],
     d_intersection_distance( -1.0 ),
     d_intersection_surface_handle( 0 )
 {
-  // Make sure the position and direction are valid
-  testPrecondition( Utility::isNotNanOrInf( d_basic_ray->getPosition() ) );
   // Make sure the direction is valid
-  testPrecondition( Utility::validDirection( d_basic_ray->getDirection() ) );
+  testPrecondition( Utility::isUnitVector( direction ) );
+  // Make sure the cell handle is valid
+  testPrecondition( cell_handle != 0 );
+}
+
+// Constructor
+DagMCRay::DagMCRay( const double x_position,
+                    const double y_position,
+                    const double z_position,
+                    const double x_direction,
+                    const double y_direction,
+                    const double z_direction,
+                    const moab::EntityHandle cell_handle )
+  : d_basic_ray( new Ray( x_position, y_position, z_position,
+                          x_direction, y_direction, z_direction ) ),
+    d_cell_handle( cell_handle ),
+    d_history(),
+    d_intersection_distance( -1.0 ),
+    d_intersection_surface_handle( 0 )
+{
+  // Make sure the direction is valid
+  testPrecondition( Utility::isUnitVector( x_direction, y_direction, z_direction ) );
   // Make sure the cell handle is valid
   testPrecondition( cell_handle != 0 );
 }
@@ -106,15 +123,35 @@ void DagMCRay::set( const double position[3],
                     const double direction[3],
                     const moab::EntityHandle cell_handle )
 {
-  // Make sure the position and direction are valid
-  testPrecondition( Utility::isNotNanOrInf( position ) );
   // Make sure the direction is valid
-  testPrecondition( Utility::validDirection( direction ) );
+  testPrecondition( Utility::isUnitVector( direction ) );
+  // Make sure the cell is valid
+  testPrecondition( cell_handle != 0 );
+
+  this->set( position[0], position[1], position[2],
+             direction[0], direction[1], direction[2],
+             cell_handle );
+}
+
+// Set the ray (minimum data required)
+/*! \details All other data will be cleared.
+ */
+void DagMCRay::set( const double x_position,
+                    const double y_position,
+                    const double z_position,
+                    const double x_direction,
+                    const double y_direction,
+                    const double z_direction,
+                    const moab::EntityHandle cell_handle )
+{
+  // Make sure the direction is valid
+  testPrecondition( Utility::isUnitVector( x_direction, y_direction, z_direction ) );
   // Make sure the cell is valid
   testPrecondition( cell_handle != 0 );
 
   // Set the basic ray
-  d_basic_ray.reset( new Ray( position, direction ) );
+  d_basic_ray.reset( new Ray( x_position, y_position, z_position,
+                              x_direction, y_direction, z_direction ) );
 
   // Set the cell handle
   d_cell_handle = cell_handle;
@@ -149,7 +186,7 @@ void DagMCRay::changeDirection( const double x_direction,
 
   // Reset the extra data
   this->resetIntersectionSurfaceData();
-  d_history.reset();
+  d_history.reset_to_last_intersection();
 }
 
 // Get the position

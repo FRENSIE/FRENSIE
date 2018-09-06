@@ -15,9 +15,6 @@
 // Boost Includes
 #include <boost/function.hpp>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "DataGen_FreeGasElasticSAlphaBetaFunction.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
@@ -33,9 +30,9 @@ public:
 
   //! Constructor
   FreeGasElasticMarginalBetaFunction(
-	      const Teuchos::RCP<Utility::OneDDistribution>&
+	      const std::shared_ptr<Utility::UnivariateDistribution>&
 	      zero_temp_elastic_cross_section,
-              const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
+              const std::shared_ptr<MonteCarlo::NuclearScatteringAngularDistribution>&
 	      cm_scattering_distribution,
 	      const double A,
 	      const double kT,
@@ -94,7 +91,7 @@ private:
   double d_norm_constant;
 
   // Cached CDF values (first = beta, second = CDF)
-  std::list<Utility::Pair<double,double> > d_cached_cdf_values;
+  std::list<std::pair<double,double> > d_cached_cdf_values;
 };
 
 } // end DataGen namespace

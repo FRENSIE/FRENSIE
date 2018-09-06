@@ -33,20 +33,13 @@ public:
   template<typename T>
   StaticOutputFormatter( const T& raw_string_contents );
 
-  //! String constructor
-  StaticOutputFormatter( const std::string& raw_string_contents );
-
-  //! C-string constructor
-  StaticOutputFormatter( const char* raw_string_contents );
-
-  //! Double constructor
-  StaticOutputFormatter( const double& raw_string_contents,
-                           const unsigned precision = 18u );
-
   //! Destructor
   ~StaticOutputFormatter()
   { /* ... */ }
 };
+
+//! Default formatter
+typedef StaticOutputFormatter<DefaultTextFormat,DefaultTextColor,DefaultTextBackgroundColor> Default;
 
 //! Bold formatter
 typedef StaticOutputFormatter<BoldTextFormat,DefaultTextColor,DefaultTextBackgroundColor> Bold;
@@ -57,17 +50,32 @@ typedef StaticOutputFormatter<ItalicizedTextFormat,DefaultTextColor,DefaultTextB
 //! Underlined formatter
 typedef StaticOutputFormatter<UnderlinedTextFormat,DefaultTextColor,DefaultTextBackgroundColor> Underlined;
 
+//! Red formatter
+typedef StaticOutputFormatter<DefaultTextFormat,RedTextColor,DefaultTextBackgroundColor> Red;
+
 //! Bold-red formatter
 typedef StaticOutputFormatter<BoldTextFormat,RedTextColor,DefaultTextBackgroundColor> BoldRed;
+
+//! Green formatter
+typedef StaticOutputFormatter<DefaultTextFormat,GreenTextColor,DefaultTextBackgroundColor> Green;
 
 //! Bold-green formatter
 typedef StaticOutputFormatter<BoldTextFormat,GreenTextColor,DefaultTextBackgroundColor> BoldGreen;
 
+//! Yellow formatter
+typedef StaticOutputFormatter<DefaultTextFormat,YellowTextColor,DefaultTextBackgroundColor> Yellow;
+
 //! Bold-yellow formatter
 typedef StaticOutputFormatter<BoldTextFormat,YellowTextColor,DefaultTextBackgroundColor> BoldYellow;
 
+//! Cyan formatter
+typedef StaticOutputFormatter<DefaultTextFormat,CyanTextColor,DefaultTextBackgroundColor> Cyan;  
+
 //! Bold-cyan formatter
 typedef StaticOutputFormatter<BoldTextFormat,CyanTextColor,DefaultTextBackgroundColor> BoldCyan;
+
+//! Magenta formatter
+typedef StaticOutputFormatter<DefaultTextFormat,MagentaTextColor,DefaultTextBackgroundColor> Magenta;
 
 //! Bold-magenta formatter
 typedef StaticOutputFormatter<BoldTextFormat,MagentaTextColor,DefaultTextBackgroundColor> BoldMagenta;

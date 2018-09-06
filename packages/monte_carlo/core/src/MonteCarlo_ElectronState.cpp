@@ -7,10 +7,10 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp" // Must include first
 #include "MonteCarlo_ElectronState.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_ArchiveHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -62,16 +62,17 @@ ElectronState* ElectronState::clone() const
 }
 
 // Print the electron state
-void ElectronState::print( std::ostream& os ) const
+void ElectronState::toStream( std::ostream& os ) const
 {
   os << "Particle Type: Electron" << std::endl;
 
   this->printImplementation<ElectronState>( os );
 }
 
+EXPLICIT_CLASS_SERIALIZE_INST( ElectronState );
+
 } // end MonteCarlo namespace
 
-UTILITY_CLASS_EXPORT_IMPLEMENT_SERIALIZE( MonteCarlo::ElectronState );
 BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::ElectronState );
 
 //---------------------------------------------------------------------------//

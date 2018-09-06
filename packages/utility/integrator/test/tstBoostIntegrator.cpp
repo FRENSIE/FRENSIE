@@ -17,16 +17,17 @@
 #include <boost/math/tools/precision.hpp>
 #include <boost/numeric/odeint.hpp>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
+// FRENSIE Includes
+#include "Utility_UnitTestHarnessWithMain.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
 
 typedef boost::multiprecision::cpp_dec_float_50 long_float;
 
-typedef std::vector< double > state_type;
+typedef std::vector<double> state_type;
 
-//---------------------------------------------------------------------------//
-// Testing Functors
-//---------------------------------------------------------------------------//
 struct X2Functor
 {
   void operator()( const state_type& x, state_type& y, const double t ) const
@@ -79,25 +80,36 @@ struct X3Functor
   }
 };
 
+namespace Utility{
+
+TYPE_NAME_TRAITS_QUICK_DECL( boost::multiprecision::cpp_dec_float_50 );
+TYPE_NAME_TRAITS_QUICK_DECL( X2Functor );
+TYPE_NAME_TRAITS_QUICK_DECL( X3Functor );
+  
+} // end Utility namespace
+
+typedef std::tuple<X2Functor,X3Functor> TestFunctors;
+
+typedef std::vector< double > state_type;
+
+//---------------------------------------------------------------------------//
+// Testing Functions
+//---------------------------------------------------------------------------//
+
 // Observer, prints time and state when called (during integration)
 void my_observer( const state_type& x, const double t )
 {    std::cout  << t << "   " << x[0] << std::endl;   }
 
 //---------------------------------------------------------------------------//
-// Instantiation macros.
-//---------------------------------------------------------------------------//
-#define UNIT_TEST_INSTANTIATION( type, name ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, X2Functor ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, X3Functor )
-
-//---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that functions can be integrated over [0,1]
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( BoostIntegrator,
-                                   integrate,
-                                   Functor )
+FRENSIE_UNIT_TEST_TEMPLATE( BoostIntegrator,
+                            integrate,
+                            TestFunctors )
 {
+  FETCH_TEMPLATE_PARAM( 0, Functor );
+  
   state_type x0(1);
   x0[0] = 0.0;
   double t0 = 0.0;
@@ -109,19 +121,18 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( BoostIntegrator,
   int steps = boost::numeric::odeint::integrate(
     functor_instance, x0, t0, t1, dt );
 
-  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
   std::cout << "steps = " << steps << std::endl;
 }
 
-UNIT_TEST_INSTANTIATION( BoostIntegrator, integrate );
-
-
 //---------------------------------------------------------------------------//
 // Check that functions can be integrated over [0,1]
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( BoostIntegrator,
-                                   integrate_const,
-                                   Functor )
+FRENSIE_UNIT_TEST_TEMPLATE( BoostIntegrator,
+                            integrate_const,
+                            TestFunctors )
 {
+  FETCH_TEMPLATE_PARAM( 0, Functor );
+  
   state_type x0(1);
   x0[0] = 0.0;
   double t0 = 0.0;
@@ -133,7 +144,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( BoostIntegrator,
   int steps = boost::numeric::odeint::integrate_const(
     boost::numeric::odeint::runge_kutta4<state_type>(), functor_instance, x0, t0, t1, dt );
 
-  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
   std::cout << "steps = " << steps << std::endl;
 
   x0[0] = 0.0;
@@ -141,7 +152,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( BoostIntegrator,
   steps = boost::numeric::odeint::integrate_const(
     boost::numeric::odeint::euler<state_type>(), functor_instance, x0, t0, t1, dt );
 
-  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 0.5 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 0.5 );
   std::cout << "steps = " << steps << std::endl;
 
   x0[0] = 0.0;
@@ -149,21 +160,21 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( BoostIntegrator,
   steps = boost::numeric::odeint::integrate_const(
     boost::numeric::odeint::runge_kutta_cash_karp54<state_type>(), functor_instance, x0, t0, t1, dt );
 
-  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
   std::cout << "steps = " << steps << std::endl;
 
   x0[0] = 0.0;
   steps = boost::numeric::odeint::integrate_const(
     boost::numeric::odeint::runge_kutta_dopri5<state_type>(), functor_instance, x0, t0, t1, dt );
 
-  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
   std::cout << "steps = " << steps << std::endl;
 
   x0[0] = 0.0;
   steps = boost::numeric::odeint::integrate_const(
     boost::numeric::odeint::runge_kutta_fehlberg78<state_type>(), functor_instance, x0, t0, t1, dt );
 
-  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
   std::cout << "steps = " << steps << std::endl;
 
   x0[0] = 0.0;
@@ -171,18 +182,18 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( BoostIntegrator,
   steps = boost::numeric::odeint::integrate_const(
     boost::numeric::odeint::modified_midpoint<state_type>(), functor_instance, x0, t0, t1, dt );
 
-  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 0.01 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 0.01 );
   std::cout << "steps = " << steps << std::endl;
 }
 
-UNIT_TEST_INSTANTIATION( BoostIntegrator, integrate_const );
-
 //---------------------------------------------------------------------------//
 // Check that functions can be integrated over [0,1]
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( BoostIntegrator,
-                                   integrate_n_steps,
-                                   Functor )
+FRENSIE_UNIT_TEST_TEMPLATE( BoostIntegrator,
+                            integrate_n_steps,
+                            TestFunctors )
 {
+  FETCH_TEMPLATE_PARAM( 0, Functor );
+  
   state_type x0(1);
   x0[0] = 0.0;
   double t0 = 0.0;
@@ -195,59 +206,59 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( BoostIntegrator,
   int end_time = boost::numeric::odeint::integrate_n_steps(
     boost::numeric::odeint::runge_kutta4<state_type>(), functor_instance, x0, t0, dt, n );
 
-  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
   std::cout << "end time = " << end_time << std::endl;
   
   x0[0] = 0.0;
   end_time = boost::numeric::odeint::integrate_n_steps(
     boost::numeric::odeint::euler<state_type>(), functor_instance, x0, t0, dt, n );
 
-  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 0.5 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 0.5 );
   std::cout << "end time = " << end_time << std::endl;
   
   x0[0] = 0.0;
   end_time = boost::numeric::odeint::integrate_n_steps(
     boost::numeric::odeint::runge_kutta_cash_karp54<state_type>(), functor_instance, x0, t0, dt, n );
 
-  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
   std::cout << "end time = " << end_time << std::endl;
   
   x0[0] = 0.0;
   end_time = boost::numeric::odeint::integrate_n_steps(
     boost::numeric::odeint::runge_kutta_dopri5<state_type>(), functor_instance, x0, t0, dt, n );
 
-  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
   std::cout << "end time = " << end_time << std::endl;
   
   x0[0] = 0.0;
   end_time = boost::numeric::odeint::integrate_n_steps(
     boost::numeric::odeint::runge_kutta_fehlberg78<state_type>(), functor_instance, x0, t0, dt, n );
 
-  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
   std::cout << "end time = " << end_time << std::endl;
   
   x0[0] = 0.0;
   end_time = boost::numeric::odeint::integrate_n_steps(
     boost::numeric::odeint::modified_midpoint<state_type>(), functor_instance, x0, t0, dt, n );
 
-  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 0.01 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 0.01 );
   std::cout << "end time = " << end_time << std::endl;
 /*
   x0[0] = 0.0;
   boost::numeric::odeint::integrate_n_steps(
     boost::numeric::odeint::rosenbrock4<state_type>(), functor_instance, x0, t0, dt, n );
 
-  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );*/
+  FRENSIE_CHECK_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );*/
 }
-
-UNIT_TEST_INSTANTIATION( BoostIntegrator, integrate_n_steps );
 
 //---------------------------------------------------------------------------//
 // Check that functions can be integrated over [0,1]
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( BoostIntegrator,
-                                   integrate_adaptive,
-                                   Functor )
+FRENSIE_UNIT_TEST_TEMPLATE( BoostIntegrator,
+                            integrate_adaptive,
+                            TestFunctors )
 {
+  FETCH_TEMPLATE_PARAM( 0, Functor );
+  
   state_type x0(1);
   x0[0] = 0.0;
   double t0 = 0.0;
@@ -259,14 +270,14 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( BoostIntegrator,
   int steps =  boost::numeric::odeint::integrate_adaptive(
     boost::numeric::odeint::runge_kutta4<state_type>(), functor_instance, x0, t0, t1, dt );
 
-  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
   std::cout << "steps = " << steps << std::endl;
   
   x0[0] = 0.0;
   steps = boost::numeric::odeint::integrate_adaptive(
     boost::numeric::odeint::euler<state_type>(), functor_instance, x0, t0, t1, dt );
 
-  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 0.5 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 0.5 );
   std::cout << "steps = " << steps << std::endl;
   
   x0[0] = 0.0;
@@ -274,7 +285,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( BoostIntegrator,
   steps = boost::numeric::odeint::integrate_adaptive(
     stepper, functor_instance, x0, t0, t1, dt );
 
-  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
   std::cout << "steps = " << steps << std::endl;
   
   x0[0] = 0.0;
@@ -282,7 +293,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( BoostIntegrator,
   steps = boost::numeric::odeint::integrate_adaptive(
     rkd5, functor_instance, x0, t0, t1, dt );
 
-  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
   std::cout << "steps = " << steps << std::endl;
   
   x0[0] = 0.0;
@@ -290,14 +301,14 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( BoostIntegrator,
   steps = boost::numeric::odeint::integrate_adaptive(
     rkf78, functor_instance, x0, t0, t1, dt );
 
-  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
   std::cout << "steps = " << steps << std::endl;
   
   x0[0] = 0.0;
   steps = boost::numeric::odeint::integrate_adaptive(
     boost::numeric::odeint::modified_midpoint<state_type>(), functor_instance, x0, t0, t1, dt );
 
-  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 0.01 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 0.01 );
   std::cout << "steps = " << steps << std::endl;
 
   boost::numeric::odeint::bulirsch_stoer< state_type > bs;
@@ -308,11 +319,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( BoostIntegrator,
   steps = boost::numeric::odeint::integrate_adaptive(
     bs, functor_instance, x0, t1/2, t1, dt );
 
-  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Functor::getIntegratedValue(), x0[0], 1e-10 );
   std::cout << "steps = " << steps << std::endl;
 }
-
-UNIT_TEST_INSTANTIATION( BoostIntegrator, integrate_adaptive );
 
 //---------------------------------------------------------------------------//
 // end tstGaussKronrodIntegrator.cpp

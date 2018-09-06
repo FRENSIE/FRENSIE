@@ -7,10 +7,12 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp" // Must be included first
 #include "MonteCarlo_PhotonState.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_ArchiveHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -53,16 +55,17 @@ PhotonState* PhotonState::clone() const
 }
 
 // Print the photon state
-void PhotonState::print( std::ostream& os ) const
+void PhotonState::toStream( std::ostream& os ) const
 {
   os << "Particle Type: Photon" << std::endl;
 
   this->printImplementation<PhotonState>( os );
 }
 
+EXPLICIT_CLASS_SERIALIZE_INST( PhotonState );
+
 } // end MonteCarlo namespace
 
-UTILITY_CLASS_EXPORT_IMPLEMENT_SERIALIZE( MonteCarlo::PhotonState );
 BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::PhotonState );
 
 //---------------------------------------------------------------------------//

@@ -9,8 +9,14 @@
 #ifndef MONTE_CARLO_SIMULATION_NEUTRON_PROPERTIES_HPP
 #define MONTE_CARLO_SIMULATION_NEUTRON_PROPERTIES_HPP
 
+// Boost Includes
+#include <boost/serialization/shared_ptr.hpp>
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/export.hpp>
+
 // FRENSIE Includes
-#include "MonteCarlo_ParticleModeType.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -48,6 +54,12 @@ public:
   //! Return the absolute maximum neutron
   static double getAbsoluteMaxNeutronEnergy();
 
+  //! Set the number of neutron hash grid bins
+  void setNumberOfNeutronHashGridBins( const unsigned bins );
+
+  //! Get the number of neutron hash grid bins
+  unsigned getNumberOfNeutronHashGridBins() const;
+
   //! Set the free gas thermal treatment temperature threshold
   void setFreeGasThreshold( const double threshold );
 
@@ -62,8 +74,15 @@ public:
 
   //! Return if unresolved resonance probability table mode is on
   bool isUnresolvedResonanceProbabilityTableModeOn() const;
-  
+
 private:
+
+  // Save/load the state to an archive
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version );
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
   // The absolute minimum neutron energy (MeV)
   static const double s_absolute_min_neutron_energy;
@@ -77,6 +96,9 @@ private:
   // The maximum neutron energy (MeV)
   double d_max_neutron_energy;
 
+  // The number of neutron hash grid bins
+  unsigned d_num_neutron_hash_grid_bins;
+
   // The free gas thermal treatment temperature threshold
   // Note: free gas thermal treatment used when energy<threshold*kT (and A > 1)
   double d_free_gas_threshold;
@@ -86,7 +108,27 @@ private:
   bool d_unresolved_resonance_probability_table_mode_on;
 };
 
+// Save/load the state to an archive
+template<typename Archive>
+void SimulationNeutronProperties::serialize( Archive& ar,
+                                             const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_NVP( d_min_neutron_energy );
+  ar & BOOST_SERIALIZATION_NVP( d_max_neutron_energy );
+  ar & BOOST_SERIALIZATION_NVP( d_num_neutron_hash_grid_bins );
+  ar & BOOST_SERIALIZATION_NVP( d_free_gas_threshold );
+  ar & BOOST_SERIALIZATION_NVP( d_unresolved_resonance_probability_table_mode_on );
+}
+
 } // end MonteCarlo namespace
+
+#if !defined SWIG
+
+BOOST_CLASS_VERSION( MonteCarlo::SimulationNeutronProperties, 0 );
+BOOST_CLASS_EXPORT_KEY2( MonteCarlo::SimulationNeutronProperties, "SimulationNeutronProperties" );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SimulationNeutronProperties );
+
+#endif // end !defined SWIG
 
 #endif // end MONTE_CARLO_SIMULATION_NEUTRON_PROPERTIES_HPP
 
