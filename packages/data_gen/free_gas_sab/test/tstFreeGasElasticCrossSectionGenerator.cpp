@@ -30,7 +30,7 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<DataGen::FreeGasElasticCrossSectionGenerator> free_gas_generator;
-std::vector<double> E = {1e1};//{1e-11,2e-11,5e-11,1e-10,2e-10,5e-10,1e-9,2e-9,5e-9,1e-8,2e-8,5e-8,1e-7,2e-7,5e-7,1e-6,2e-6,5e-6,1e1};
+std::vector<double> E = {1e-11,2e-11,5e-11,1e-10,2e-10,5e-10,1e-9,2e-9,5e-9,1e-8,2e-8,5e-8,1e-7,2e-7,5e-7,1e-6,2e-6,5e-6,1e1};
 double kT = 2.53010e-8;
 double A = 0.999167;
 

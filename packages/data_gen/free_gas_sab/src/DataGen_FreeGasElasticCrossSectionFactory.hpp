@@ -45,7 +45,7 @@ public:
       const std::string& file_name,
 	  const std::string& table_name,
 	  const unsigned table_start_line,
-	  const bool is_ascii );
+	  const bool is_ascii = true );
 
   //! Destructor
   ~FreeGasElasticCrossSectionFactory()
@@ -53,15 +53,23 @@ public:
 
   // Accessor for zero-temperature elastic cross section
   void getZeroTemperatureElasticCrossSection( 
-      Teuchos::RCP<Utility::OneDDistribution>& zero_temp_cross_section );
+      Teuchos::Array<double>& zero_temperature_cross_section );
+
+  // Accessor for energy array
+  void getEnergyArray(
+      Teuchos::Array<double>& energy_array );
+
+  // Accessor for unmodified elastic cross section 
+  void getUnmodifiedElasticCrossSection(
+      Teuchos::Array<double>& unmodified_cross_section );
 
 private: 
   
   // Extract the cross section from the specified 
-  void extractCrossSectionFromACE( );
+  void extractCrossSectionFromACE();
 
   // Convert cross section to zero-temperature cross section
-  void convertCrossSectionToZeroTemperature( );
+  void convertCrossSectionToZeroTemperature();
 
 // Variables 
 

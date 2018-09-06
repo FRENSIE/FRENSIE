@@ -34,16 +34,27 @@ FreeGasElasticCrossSectionFactory::FreeGasElasticCrossSectionFactory(
 
 // Accessor for zero-temperature elastic cross section
 void FreeGasElasticCrossSectionFactory::getZeroTemperatureElasticCrossSection( 
-      Teuchos::RCP<Utility::OneDDistribution>& zero_temp_cross_section )
+      Teuchos::Array<double>& zero_temperature_cross_section )
 {
-  zero_temp_cross_section.reset( 
-    new Utility::TabularDistribution<Utility::LinLin>( 
-        d_energy_array,
-        d_zero_temperature_cross_section ) );
+  zero_temperature_cross_section = d_zero_temperature_cross_section;
 }
-  
+
+// Accessor for energy array
+void FreeGasElasticCrossSectionFactory::getEnergyArray(
+      Teuchos::Array<double>& energy_array )
+{
+  energy_array = d_energy_array;
+}
+
+// Accessor for unmodified elastic cross section 
+void FreeGasElasticCrossSectionFactory::getUnmodifiedElasticCrossSection(
+      Teuchos::Array<double>& unmodified_cross_section )
+{
+  unmodified_cross_section = d_unmodified_elastic_cross_section;
+}
+
 // Extract the cross section from the specified 
-void FreeGasElasticCrossSectionFactory::extractCrossSectionFromACE( )
+void FreeGasElasticCrossSectionFactory::extractCrossSectionFromACE()
 {
   // Construct the ACE file handler
   Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
@@ -78,7 +89,7 @@ void FreeGasElasticCrossSectionFactory::extractCrossSectionFromACE( )
 }
 
 // Convert cross section to zero-temperature cross section
-void FreeGasElasticCrossSectionFactory::convertCrossSectionToZeroTemperature( )
+void FreeGasElasticCrossSectionFactory::convertCrossSectionToZeroTemperature()
 {
   Teuchos::Array<double> zero_temperature_cross_section;
   zero_temperature_cross_section = d_unmodified_elastic_cross_section;
