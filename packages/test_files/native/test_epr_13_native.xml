@@ -16,9 +16,12 @@
 	<cutoff_angle_cosine>9.00000000000000022e-01</cutoff_angle_cosine>
 	<number_of_moment_preserving_angles>2.00000000000000000e+00</number_of_moment_preserving_angles>
 	<electron_tabular_evaluation_tol>1.00000000000000008e-15</electron_tabular_evaluation_tol>
-	<grid_convergence_tol>1.00000000000000002e-03</grid_convergence_tol>
-	<grid_absolute_diff_tol>9.99999999999999970e-61</grid_absolute_diff_tol>
-	<grid_distance_tol>1.00000000000000007e-18</grid_distance_tol>
+	<photon_grid_convergence_tol>1.00000000000000002e-03</photon_grid_convergence_tol>
+	<photon_grid_absolute_diff_tol>9.99999999999999970e-61</photon_grid_absolute_diff_tol>
+	<photon_grid_distance_tol>1.00000000000000007e-18</photon_grid_distance_tol>
+        <electron_grid_convergence_tol>1.00000000000000002e-03</electron_grid_convergence_tol>
+	<electron_grid_absolute_diff_tol>9.99999999999999970e-61</electron_grid_absolute_diff_tol>
+	<electron_grid_distance_tol>1.00000000000000007e-18</electron_grid_distance_tol>
 	<subshells>
 		<count>7</count>
 		<item_version>0</item_version>

@@ -104,11 +104,31 @@ ACEAndENDLElectronPhotonRelaxationDataGenerator::ACEAndENDLElectronPhotonRelaxat
                         endl_data_container->getElasticEnergyGrid().back() )
 { /* ... */ }
 
-// Set the relaxation data
-void ACEAndENDLElectronPhotonRelaxationDataGenerator::setRelaxationData(
-                           Data::ElectronPhotonRelaxationVolatileDataContainer&
-                           data_container ) const
+// Constructor (existing data container)
+ACEAndENDLElectronPhotonRelaxationDataGenerator::ACEAndENDLElectronPhotonRelaxationDataGenerator(
+     const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
+     const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container,
+     const boost::filesystem::path& file_name_with_path )
+  : ENDLElectronPhotonRelaxationDataGenerator( endl_data_container,
+                                               file_name_with_path ),
+    d_ace_epr_data( ace_epr_data )
 {
+  // Check if the data tables are compatible
+  TEST_FOR_EXCEPTION( ace_epr_data->extractAtomicNumber() !=
+                      this->getENDLDataContainer().getAtomicNumber(),
+                      std::runtime_error,
+                      "The ACE and ENDL data tables are not compatible "
+                      "(Z-ACE=" << ace_epr_data->extractAtomicNumber() <<
+                      "(Z-ENDL=" << this->getENDLDataContainer().getAtomicNumber() <<
+                      ")!" );
+}
+
+// Set the relaxation data
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setRelaxationData()
+{
+  Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
+    this->getVolatileDataContainer();
+  
   // Extract the subshell ENDF designators
   Utility::ArrayView<const double> subshell_designators =
     d_ace_epr_data->extractSubshellENDFDesignators();
@@ -157,19 +177,16 @@ void ACEAndENDLElectronPhotonRelaxationDataGenerator::setRelaxationData(
 
       this->setTransitionData( subshell_designators[i],
                                transitions,
-                               (unsigned)relo_block[i],
-                               data_container );
+                               (unsigned)relo_block[i] );
     }
   }
 }
 
 // Set the transition data
 void ACEAndENDLElectronPhotonRelaxationDataGenerator::setTransitionData(
-                          const unsigned subshell,
-                          const unsigned transitions,
-                          const unsigned subshell_data_start_index,
-                          Data::ElectronPhotonRelaxationVolatileDataContainer&
-                          data_container ) const
+                                     const unsigned subshell,
+                                     const unsigned transitions,
+                                     const unsigned subshell_data_start_index )
 {
   // Make sure the number of transitions is valid
   testPrecondition( transitions > 0 );
@@ -208,6 +225,9 @@ void ACEAndENDLElectronPhotonRelaxationDataGenerator::setTransitionData(
       relaxation_probabilities[j] = relaxation_cdf[j];
   }
 
+  Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
+    this->getVolatileDataContainer();
+
   data_container.setSubshellRelaxationVacancies( subshell,
                                                  relaxation_vacancies );
 
@@ -220,10 +240,11 @@ void ACEAndENDLElectronPhotonRelaxationDataGenerator::setTransitionData(
 }
 
 // Set the Compton profile data
-void ACEAndENDLElectronPhotonRelaxationDataGenerator::setComptonProfileData(
-                           Data::ElectronPhotonRelaxationVolatileDataContainer&
-                           data_container ) const
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setComptonProfileData()
 {
+  Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
+    this->getVolatileDataContainer();
+  
   const std::set<unsigned>& subshells = data_container.getSubshells();
 
   std::set<unsigned>::const_iterator subshell = subshells.begin();
@@ -289,10 +310,11 @@ void ACEAndENDLElectronPhotonRelaxationDataGenerator::setComptonProfileData(
 }
 
 // Set the Waller-Hartree scattering function data
-void ACEAndENDLElectronPhotonRelaxationDataGenerator::setWallerHartreeScatteringFunctionData(
-                           Data::ElectronPhotonRelaxationVolatileDataContainer&
-                           data_container ) const
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setWallerHartreeScatteringFunctionData()
 {
+  Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
+    this->getVolatileDataContainer();
+  
   // Create the evaluator, initial recoil momentum grid
   std::shared_ptr<const ScatteringFunctionEvaluator> evaluator;
 
@@ -357,10 +379,11 @@ void ACEAndENDLElectronPhotonRelaxationDataGenerator::setWallerHartreeScattering
 }
 
 // Set the Waller-Hartree atomic form factor data
-void ACEAndENDLElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFactorData(
-                           Data::ElectronPhotonRelaxationVolatileDataContainer&
-                           data_container ) const
+void ACEAndENDLElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFactorData()
 {
+  Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
+    this->getVolatileDataContainer();
+  
   // Generate the form factor
   {
     Utility::ArrayView<const double> jcohe_block =
@@ -394,11 +417,10 @@ void ACEAndENDLElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicForm
     // Convert the initial grid value from inverse Angstrom to inverse cm
     // before passing it into this method
     this->setWallerHartreeAtomicFormFactorData(
-                                           evaluation_wrapper,
-                                           recoil_momentum_grid,
-                                           jcohe_block.front()*1e8,
-                                           jcohe_block[2*form_factor_size],
-                                           data_container );
+                                             evaluation_wrapper,
+                                             recoil_momentum_grid,
+                                             jcohe_block.front()*1e8,
+                                             jcohe_block[2*form_factor_size] );
   }
 
   // Generate the squared form factor from the newly generated form factor
@@ -443,9 +465,7 @@ void ACEAndENDLElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicForm
                        const std::function<double(double)>& evaluation_wrapper,
                        std::list<double>& recoil_momentum_grid,
                        const double initial_grid_value,
-                       const double initial_form_factor_value,
-                       Data::ElectronPhotonRelaxationVolatileDataContainer&
-                       data_container ) const
+                       const double initial_form_factor_value )
 {
   // Generate the new optimized recoil momentum grid
   std::list<double> form_factor;
@@ -474,6 +494,9 @@ void ACEAndENDLElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicForm
 
   refined_form_factor.assign( form_factor.begin(),
                               form_factor.end() );
+
+  Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
+    this->getVolatileDataContainer();
 
   data_container.setWallerHartreeAtomicFormFactorMomentumGrid(
                                                      refined_recoil_momentum );

@@ -42,9 +42,12 @@ public:
   using ElectronPhotonRelaxationDataContainer::setCutoffAngleCosine;
   using ElectronPhotonRelaxationDataContainer::setNumberOfMomentPreservingAngles;
   using ElectronPhotonRelaxationDataContainer::setElectronTabularEvaluationTolerance;
-  using ElectronPhotonRelaxationDataContainer::setGridConvergenceTolerance;
-  using ElectronPhotonRelaxationDataContainer::setGridAbsoluteDifferenceTolerance;
-  using ElectronPhotonRelaxationDataContainer::setGridDistanceTolerance;
+  using ElectronPhotonRelaxationDataContainer::setPhotonGridConvergenceTolerance;
+  using ElectronPhotonRelaxationDataContainer::setPhotonGridAbsoluteDifferenceTolerance;
+  using ElectronPhotonRelaxationDataContainer::setPhotonGridDistanceTolerance;
+  using ElectronPhotonRelaxationDataContainer::setElectronGridConvergenceTolerance;
+  using ElectronPhotonRelaxationDataContainer::setElectronGridAbsoluteDifferenceTolerance;
+  using ElectronPhotonRelaxationDataContainer::setElectronGridDistanceTolerance;
 
   // Relaxation functions
   using ElectronPhotonRelaxationDataContainer::setSubshells;

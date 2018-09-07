@@ -131,24 +131,40 @@ double ElectronPhotonRelaxationDataContainer::getElectronTabularEvaluationTolera
   return d_electron_tabular_evaluation_tol;
 }
 
-// Return the union energy grid convergence tolerance
-double
-ElectronPhotonRelaxationDataContainer::getGridConvergenceTolerance() const
+// Return the photon union energy grid convergence tolerance
+double ElectronPhotonRelaxationDataContainer::getPhotonGridConvergenceTolerance() const
 {
-  return d_grid_convergence_tol;
+  return d_photon_grid_convergence_tol;
 }
 
-// Return the union energy grid absolute difference tolerance
-double
-ElectronPhotonRelaxationDataContainer::getGridAbsoluteDifferenceTolerance() const
+// Return the photon union energy grid absolute difference tolerance
+double ElectronPhotonRelaxationDataContainer::getPhotonGridAbsoluteDifferenceTolerance() const
 {
-  return d_grid_absolute_diff_tol;
+  return d_photon_grid_absolute_diff_tol;
 }
 
-// Return the union energy grid distance tolerance
-double ElectronPhotonRelaxationDataContainer::getGridDistanceTolerance() const
+// Return the photon union energy grid distance tolerance
+double ElectronPhotonRelaxationDataContainer::getPhotonGridDistanceTolerance() const
 {
-  return d_grid_distance_tol;
+  return d_photon_grid_distance_tol;
+}
+
+// Return the electron union energy grid convergence tolerance
+double ElectronPhotonRelaxationDataContainer::getElectronGridConvergenceTolerance() const
+{
+  return d_electron_grid_convergence_tol;
+}
+
+// Return the electron union energy grid absolute difference tolerance
+double ElectronPhotonRelaxationDataContainer::getElectronGridAbsoluteDifferenceTolerance() const
+{
+  return d_electron_grid_absolute_diff_tol;
+}
+
+// Return the electron union energy grid distance tolerance
+double ElectronPhotonRelaxationDataContainer::getElectronGridDistanceTolerance() const
+{
+  return d_electron_grid_distance_tol;
 }
 
 //---------------------------------------------------------------------------//
@@ -1008,34 +1024,64 @@ void ElectronPhotonRelaxationDataContainer::setElectronTabularEvaluationToleranc
   d_electron_tabular_evaluation_tol = electron_tabular_evaluation_tol;
 }
 
-// Set the union energy grid convergence tolerance
-void ElectronPhotonRelaxationDataContainer::setGridConvergenceTolerance(
+// Set the photon union energy grid convergence tolerance
+void ElectronPhotonRelaxationDataContainer::setPhotonGridConvergenceTolerance(
     const double grid_convergence_tol )
 {
   // Make sure the tolerance is valid
   testPrecondition( grid_convergence_tol >= 0.0 );
 
-  d_grid_convergence_tol = grid_convergence_tol;
+  d_photon_grid_convergence_tol = grid_convergence_tol;
 }
 
-// Set the union energy grid absolute difference tolerance
-void ElectronPhotonRelaxationDataContainer::setGridAbsoluteDifferenceTolerance(
+// Set the photon union energy grid absolute difference tolerance
+void ElectronPhotonRelaxationDataContainer::setPhotonGridAbsoluteDifferenceTolerance(
     const double grid_absolute_diff_tol )
 {
   // Make sure the tolerance is valid
   testPrecondition( grid_absolute_diff_tol >= 0.0 );
 
-  d_grid_absolute_diff_tol = grid_absolute_diff_tol;
+  d_photon_grid_absolute_diff_tol = grid_absolute_diff_tol;
 }
 
-// Set the union energy grid distance tolerance
-void ElectronPhotonRelaxationDataContainer::setGridDistanceTolerance(
+// Set the photon union energy grid distance tolerance
+void ElectronPhotonRelaxationDataContainer::setPhotonGridDistanceTolerance(
     const double grid_distance_tol )
 {
   // Make sure the tolerance is valid
   testPrecondition( grid_distance_tol >= 0.0 );
 
-  d_grid_distance_tol = grid_distance_tol;
+  d_photon_grid_distance_tol = grid_distance_tol;
+}
+
+// Set the electron union energy grid convergence tolerance
+void ElectronPhotonRelaxationDataContainer::setElectronGridConvergenceTolerance(
+    const double grid_convergence_tol )
+{
+  // Make sure the tolerance is valid
+  testPrecondition( grid_convergence_tol >= 0.0 );
+
+  d_electron_grid_convergence_tol = grid_convergence_tol;
+}
+
+// Set the electron union energy grid absolute difference tolerance
+void ElectronPhotonRelaxationDataContainer::setElectronGridAbsoluteDifferenceTolerance(
+    const double grid_absolute_diff_tol )
+{
+  // Make sure the tolerance is valid
+  testPrecondition( grid_absolute_diff_tol >= 0.0 );
+
+  d_electron_grid_absolute_diff_tol = grid_absolute_diff_tol;
+}
+
+// Set the electron union energy grid distance tolerance
+void ElectronPhotonRelaxationDataContainer::setElectronGridDistanceTolerance(
+    const double grid_distance_tol )
+{
+  // Make sure the tolerance is valid
+  testPrecondition( grid_distance_tol >= 0.0 );
+
+  d_electron_grid_distance_tol = grid_distance_tol;
 }
 
 //---------------------------------------------------------------------------//
