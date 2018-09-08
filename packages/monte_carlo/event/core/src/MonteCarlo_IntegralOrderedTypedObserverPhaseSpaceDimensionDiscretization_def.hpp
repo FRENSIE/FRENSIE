@@ -10,6 +10,9 @@
 #ifndef MONTE_CARLO_INTEGRAL_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_DEF_HPP
 #define MONTE_CARLO_INTEGRAL_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_DEF_HPP
 
+// Std Lib Includes
+#include <type_traits>
+
 // FRENSIE Includes
 #include "Utility_DesignByContract.hpp"
 #include "Utility_SearchAlgorithms.hpp"
@@ -19,7 +22,10 @@ namespace MonteCarlo{
 // Default constructor
 template<ObserverPhaseSpaceDimension dimension>
 IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization()
-{ /* ... */ }
+{ 
+  // Make sure that the dimension type is a floating point type
+  testStaticPrecondition((std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value));
+}
 
 // Constructor
 template<ObserverPhaseSpaceDimension dimension>
@@ -29,6 +35,9 @@ IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::Integr
 {
   // Make sure that there is at least one bin
   testPrecondition( dimension_bin_boundaries.size() >= 1 );
+
+  // Make sure that the dimension type is a floating point type
+  testStaticPrecondition((std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value));
 }
 
 // Return the number of bins in the discretization

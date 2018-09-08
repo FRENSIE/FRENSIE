@@ -39,6 +39,16 @@ public:
   //! Load the archived object
   void loadFromFile( const boost::filesystem::path& archive_name_with_path );
 
+protected:
+
+  //! Reset the bpis pointer
+  template<typename T>
+  const boost::archive::detail::basic_pointer_iserializer* resetBpisPointer( const std::string& extension ) const;
+
+  //! Restore the bpis pointer
+  template<typename T>
+  void restoreBpisPointer( const std::string& extension, const boost::archive::detail::basic_pointer_iserializer* bpis ) const;
+
 private:
 
   // Archive the object using the required archive

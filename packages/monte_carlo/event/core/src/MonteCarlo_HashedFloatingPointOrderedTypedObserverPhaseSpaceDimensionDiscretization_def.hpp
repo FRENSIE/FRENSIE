@@ -10,6 +10,9 @@
 #ifndef MONTE_CARLO_HASHED_FLOATING_POINT_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_DEF_HPP
 #define MONTE_CARLO_HASHED_FLOATING_POINT_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_DEF_HPP
 
+// Std Lib Includes
+#include <type_traits>
+
 // FRENSIE Includes
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_SearchAlgorithms.hpp"
@@ -21,7 +24,10 @@ namespace MonteCarlo{
 template<ObserverPhaseSpaceDimension dimension>
 HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization()
   : BaseType()
-{ /* ... */ }
+{ 
+  // Make sure that the dimension type is a floating point type
+  testStaticPrecondition((std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value));
+}
 
 // Constructor (with number of hash grid bins specified)
 template<ObserverPhaseSpaceDimension dimension>
@@ -30,7 +36,10 @@ HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimensi
   : HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization(
                                         dimension_bin_boundaries,
                                         dimension_bin_boundaries.size()/10+1 )
-{ /* ... */ }
+{ 
+  // Make sure that the dimension type is a floating point type
+  testStaticPrecondition((std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value));
+}
 
 // Constructor (with number of hash grid bins specified)
 template<ObserverPhaseSpaceDimension dimension>
@@ -39,7 +48,10 @@ HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimensi
                               const unsigned hash_grid_bins )
   : BaseType( dimension_bin_boundaries ),
     d_grid_searcher( new Utility::StandardHashBasedGridSearcher<BinBoundaryArray,false>( dimension_bin_boundaries, hash_grid_bins ) )
-{ /* ... */ }
+{ 
+  // Make sure that the dimension type is a floating point type
+  testStaticPrecondition((std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value));
+}
 
 // Calculate the index of the bin  that the value falls in
 template<ObserverPhaseSpaceDimension dimension>
