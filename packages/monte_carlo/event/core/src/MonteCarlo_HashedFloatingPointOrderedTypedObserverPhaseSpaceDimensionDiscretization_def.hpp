@@ -47,7 +47,7 @@ HashedFloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimensi
                               const BinBoundaryArray& dimension_bin_boundaries,
                               const unsigned hash_grid_bins )
   : BaseType( dimension_bin_boundaries ),
-    d_grid_searcher( new Utility::StandardHashBasedGridSearcher<BinBoundaryArray,false>( dimension_bin_boundaries, hash_grid_bins ) )
+    d_grid_searcher( new Utility::StandardHashBasedGridSearcher<BinBoundaryArray,false>( this->getSharedBoundaries(), hash_grid_bins ) )
 { 
   // Make sure that the dimension type is a floating point type
   testStaticPrecondition((std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value));

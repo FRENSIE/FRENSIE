@@ -853,6 +853,7 @@ class ParticleSimulationManagerRestartTestCase(ParametrizedTestCase):
         
         estimator_2.setParticleTypes( [MonteCarlo.PHOTON] )
         estimator_2.setEnergyDiscretization( [0.001, 0.01, 0.1, 1.0, 10.0] )
+        estimator_2.setCollisionNumberDiscretization( [0, 1, 10] )
 
         event_handler.addEstimator( estimator_2 )
 
