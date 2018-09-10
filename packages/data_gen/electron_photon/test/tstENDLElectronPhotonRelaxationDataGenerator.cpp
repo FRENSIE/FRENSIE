@@ -2037,6 +2037,9 @@ FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
   FRENSIE_CHECK_EQUAL( cross_section.size(), 343 );
 
   data_container.saveToFile( "test_h_epr.xml", true );
+
+  Data::ElectronPhotonRelaxationDataContainer
+    data_container_copy( "test_h_epr.xml" );
 }
 
 //---------------------------------------------------------------------------//
@@ -2606,7 +2609,10 @@ FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
 
   FRENSIE_CHECK_EQUAL( cross_section.size(), 343 );
 
-  data_container.saveToFile( "test_h_epr.xml", true );
+  data_container.saveToFile( "test_h_epr.txt", true );
+
+  Data::ElectronPhotonRelaxationDataContainer
+    data_container_copy( "test_h_epr.txt" );
 }
 
 //---------------------------------------------------------------------------//

@@ -26,6 +26,16 @@ namespace Utility{
 template<typename DerivedType>
 void IArchivableObject<DerivedType>::loadFromFile( const boost::filesystem::path& archive_name_with_path )
 {
+  this->loadFromFileImpl( archive_name_with_path );
+}
+  
+// Load the archived object (implementation)
+/*! \details The file extension will be used to determine the archive type
+ * (e.g. .xml, .txt, .bin, .h5fa)
+ */
+template<typename DerivedType>
+void IArchivableObject<DerivedType>::loadFromFileImpl( const boost::filesystem::path& archive_name_with_path )
+{
   // Verify that the archive exists
   TEST_FOR_EXCEPTION( !boost::filesystem::exists( archive_name_with_path ),
                       std::runtime_error,

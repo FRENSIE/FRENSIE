@@ -16,6 +16,16 @@
 // Boost Includes
 #include <boost/filesystem/path.hpp>
 
+namespace boost{
+namespace archive{
+namespace detail{
+
+class basic_pointer_iserializer;
+  
+}
+}
+}
+
 namespace Utility{
 
 //! The input archivable object base class
@@ -40,6 +50,9 @@ public:
   void loadFromFile( const boost::filesystem::path& archive_name_with_path );
 
 protected:
+
+  //! Load the archived object (implementation)
+  virtual void loadFromFileImpl( const boost::filesystem::path& archive_name_with_path );
 
   //! Reset the bpis pointer
   template<typename T>

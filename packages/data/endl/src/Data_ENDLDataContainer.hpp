@@ -30,6 +30,8 @@ namespace Data{
 //! The eadl container
 class ENDLDataContainer : public Utility::ArchivableObject<ENDLDataContainer>
 {
+  // The base type
+  typedef Utility::ArchivableObject<ENDLDataContainer> BaseType;
 
 public:
 
@@ -451,6 +453,13 @@ protected:
   //! Default constructor
   ENDLDataContainer()
   { /* ... */ }
+
+  //! Load the archived object (implementation)
+  void loadFromFileImpl( const boost::filesystem::path& archive_name_with_path ) final override;
+
+  //! Archive the object (implementation)
+  void saveToFileImpl( const boost::filesystem::path& archive_name_with_path,
+                       const bool overwrite ) const final override;
 
   //! Set the atomic number
   void setAtomicNumber( const unsigned atomic_number );

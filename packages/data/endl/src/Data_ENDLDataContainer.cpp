@@ -13,6 +13,7 @@
 #include <typeinfo>
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "Data_ENDLDataContainer.hpp"
 #include "Data_DataContainerHelpers.hpp"
 #include "Utility_SortAlgorithms.hpp"
@@ -27,7 +28,14 @@ const std::string ENDLDataContainer::s_archive_name( "container" );
 ENDLDataContainer::ENDLDataContainer(
                            const boost::filesystem::path& file_name_with_path )
 {
-  std::string extension = file_name_with_path.extension().string();
+  this->loadFromFile( file_name_with_path );
+}
+
+// Load the archived object (implementation)
+void ENDLDataContainer::loadFromFileImpl(
+                        const boost::filesystem::path& archive_name_with_path )
+{
+  std::string extension = archive_name_with_path.extension().string();
 
   // The bpis pointer must be NULL. Depending on the libraries that have been
   // loaded (e.g. utility_grid) the bpis might be initialized to a non-NULL
@@ -36,11 +44,32 @@ ENDLDataContainer::ENDLDataContainer(
     this->resetBpisPointer<std::vector<double> >( extension );
   
   // Import the data in the archive
-  this->loadFromFile( file_name_with_path );
+  BaseType::loadFromFileImpl( archive_name_with_path );
 
   // The bpis pointer must be restored to its original value so that libraries
   // that expect it to be non-NULL behave correctly
   this->restoreBpisPointer<std::vector<double> >( extension, bpis );
+}
+
+// Archive the object (implementation)
+void ENDLDataContainer::saveToFileImpl(
+                         const boost::filesystem::path& archive_name_with_path,
+                         const bool overwrite ) const
+{
+  std::string extension = archive_name_with_path.extension().string();
+
+  // The bpos pointer must be NULL. Depending on the libraries that have been
+  // loaded (e.g. utility_grid) the bpos might be initialized to a non-NULL
+  // value
+  const boost::archive::detail::basic_pointer_oserializer* bpos =
+    this->resetBposPointer<std::vector<double> >( extension );
+  
+  // Import the data in the archive
+  BaseType::saveToFileImpl( archive_name_with_path, overwrite );
+
+  // The bpos pointer must be restored to its original value so that libraries
+  // that expect it to be non-NULL behave correctly
+  this->restoreBposPointer<std::vector<double> >( extension, bpos );
 }
 
 // The database name used in an archive
