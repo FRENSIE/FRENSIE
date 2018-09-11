@@ -64,14 +64,14 @@ void RootModel::initialize( const RootModelProperties& model_properties,
     d_model_properties.reset( new RootModelProperties( model_properties ) );
 
     FRENSIE_LOG_PARTIAL_NOTIFICATION( "Loading model "
-                                      << d_model_properties->getModelFileName() <<
+                                      << d_model_properties->getModelFileNameWithPath() <<
                                       " ... " );
     try{
       this->loadRootGeometry( root_init_verbosity );
     }
     EXCEPTION_CATCH_RETHROW( InvalidRootGeometry,
                              "Unable to load Root geometry file "
-                             << d_model_properties->getModelFileName() <<
+                             << d_model_properties->getModelFileNameWithPath() <<
                              "!" );
 
     // Create the cell id to unique id map
@@ -94,7 +94,7 @@ void RootModel::initialize( const RootModelProperties& model_properties,
   else
   {
     FRENSIE_LOG_ROOT_WARNING( "Cannot load requested model ("
-                              << model_properties.getModelFileName() <<
+                              << model_properties.getModelFileNameWithPath() <<
                               ") because a model has already been loaded!" );
   }
 }
@@ -110,17 +110,17 @@ void RootModel::loadRootGeometry( const int root_init_verbosity )
 
   try{
     d_manager =
-      TGeoManager::Import( d_model_properties->getModelFileName().c_str() );
+      TGeoManager::Import( d_model_properties->getModelFileNameWithPath().c_str() );
   }
   EXCEPTION_CATCH_RETHROW( InvalidRootGeometry,
                            "Root could not import file "
-                           << d_model_properties->getModelFileName() << "!" );
+                           << d_model_properties->getModelFileNameWithPath() << "!" );
 
   // Make sure the import was successful
   TEST_FOR_EXCEPTION( d_manager == NULL,
                       InvalidRootGeometry,
                       "Root could not import file "
-                      << d_model_properties->getModelFileName() << "!" );
+                      << d_model_properties->getModelFileNameWithPath() << "!" );
 
   // Lock the geometry so no other geometries can be imported
   TGeoManager::LockGeometry();
@@ -526,7 +526,7 @@ void RootModel::handleRootError( int level,
 // Get the model name
 std::string RootModel::getName() const
 {
-  return d_model_properties->getModelFileName();
+  return d_model_properties->getModelFileNameWithPath();
 }
 
 // Get the manager

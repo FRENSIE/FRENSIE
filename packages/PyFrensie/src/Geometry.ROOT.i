@@ -93,6 +93,16 @@ using namespace Geometry;
 // Add a few general typemaps
 %apply std::vector<std::string>& OUTPUT { std::vector<std::string>& properties };
 
+// Add typemaps for converting file_path to and from Python string
+%typemap(in) const boost::filesystem::path& ( boost::filesystem::path temp ){
+  temp = PyFrensie::convertFromPython<std::string>( $input );
+  $1 = &temp;
+}
+
+%typemap(typecheck, precedence=1140) (const boost::filesystem::path&) {
+  $1 = (PyString_Check($input)) ? 1 : 0;
+}
+
 //---------------------------------------------------------------------------//
 // Add support for the RootModelProperties class
 //---------------------------------------------------------------------------//

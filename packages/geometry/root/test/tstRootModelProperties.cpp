@@ -32,15 +32,32 @@ FRENSIE_UNIT_TEST( RootModelProperties, default_properties )
   FRENSIE_CHECK_EQUAL( default_properties.getMaterialPropertyName(), "material" );
   FRENSIE_CHECK_EQUAL( default_properties.getVoidMaterialName(), "void" );
   FRENSIE_CHECK_EQUAL( default_properties.getTerminalMaterialName(), "graveyard" );
+
+  FRENSIE_CHECK_EQUAL( Geometry::RootModelProperties::getDefaultFilePath(), "" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the file name can be returned
-FRENSIE_UNIT_TEST( RootModelProperties, getModelFileName )
+FRENSIE_UNIT_TEST( RootModelProperties, constructor )
 {
-  const Geometry::RootModelProperties properties( "dummy.c" );
+  std::unique_ptr<const Geometry::RootModelProperties>
+    properties( new Geometry::RootModelProperties( "dummy.c" ) );
 
-  FRENSIE_CHECK_EQUAL( properties.getModelFileName(), "dummy.c" );
+  FRENSIE_CHECK_EQUAL( properties->getModelFileName(), "dummy.c" );
+  FRENSIE_CHECK_EQUAL( properties->getModelFilePath(), "" );
+  FRENSIE_CHECK_EQUAL( properties->getModelFileNameWithPath(), "dummy.c" );
+
+  properties.reset( new Geometry::RootModelProperties( "test_dir/dummy.c" ) );
+
+  FRENSIE_CHECK_EQUAL( properties->getModelFileName(), "dummy.c" );
+  FRENSIE_CHECK_EQUAL( properties->getModelFilePath(), "test_dir" );
+  FRENSIE_CHECK_EQUAL( properties->getModelFileNameWithPath(), "test_dir/dummy.c" );
+
+  properties.reset( new Geometry::RootModelProperties( "/home/test_dir/dummy.c" ) );
+
+  FRENSIE_CHECK_EQUAL( properties->getModelFileName(), "dummy.c" );
+  FRENSIE_CHECK_EQUAL( properties->getModelFilePath(), "/home/test_dir" );
+  FRENSIE_CHECK_EQUAL( properties->getModelFileNameWithPath(), "/home/test_dir/dummy.c" );
 }
 
 //---------------------------------------------------------------------------//
