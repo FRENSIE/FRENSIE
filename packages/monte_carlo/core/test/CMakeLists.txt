@@ -29,7 +29,7 @@ IF(FRENSIE_ENABLE_DAGMC)
     DEPENDS tstDagMCParticleState.cpp
     LIB_DEPENDS geometry_dagmc)
   FRENSIE_ADD_TEST(DagMCParticleState
-    EXTRA_ARGS --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat)
+    EXTRA_ARGS --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.h5m)
 ENDIF()
 
 FRENSIE_ADD_TEST_EXECUTABLE(PhotonState DEPENDS tstPhotonState.cpp)

@@ -113,7 +113,7 @@ A brief useage tutorial for this class is shown below:
 
    import PyFrensie.Geometry, numpy
    model = PyFrensie.Geometry.DagMC.DagMCModel.getInstance()
-   properties = PyFrensie.Geometry.DagMC.DagMCModelProperties( 'my_geom.sat' )
+   properties = PyFrensie.Geometry.DagMC.DagMCModelProperties( 'my_geom.h5m' )
    model.initialize( properties )
 
    navigator = model.createNavigator()
@@ -151,7 +151,7 @@ A brief useage tutorial for this class is shown below:
 %feature("docstring")
 Geometry::DagMCModel
 "
-The DagMCModel class stores a geometric model, from a CAD (.sat).
+The DagMCModel class stores a geometric model, from a CAD (.h5m).
 It can be used for querying properties of the geometry
 and for creating navigators, which can be used to traverse the geometry.
 A brief usage tutorial for this class is shown below:
@@ -159,7 +159,7 @@ A brief usage tutorial for this class is shown below:
    import PyFrensie.Geometry, numpy
 
    model = PyFrensie.Geometry.DagMC.DagMCModel.getInstance()
-   properties = PyFrensie.Geometry.DagMC.DagMCModelProperties( 'my_geom.sat' )
+   properties = PyFrensie.Geometry.DagMC.DagMCModelProperties( 'my_geom.h5m' )
    model.initialize( properties )
 
    cells = model.getCells( True, True )
