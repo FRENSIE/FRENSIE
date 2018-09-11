@@ -46,11 +46,19 @@ if inspect.ismodule( DagMC ):
 
         @classmethod
         def setUpClass(cls):
-            cls.properties = DagMC.DagMCModelProperties( "dummy.sat" )
+            cls.properties = DagMC.DagMCModelProperties( "test_dir/dummy.sat" )
             
         def testGetModelFileName(self):
             "*Test Geometry.ModelProperties getModelFileName"
             self.assertEqual( self.properties.getModelFileName(), "dummy.sat")
+
+        def testGetModelFilePath(self):
+            "*Test Geometry.ModelProperties getModelFilePath"
+            self.assertEqual( self.properties.getModelFilePath(), "test_dir" )
+
+        def testGetModelFileNameWithPath(self):
+            "*Test Geometry.ModelProperties getModelFileNameWithPath"
+            self.assertEqual( self.properties.getModelFileNameWithPath(), "test_dir/dummy.sat" )
         
         def testSetFacetTolerance(self):
             "*Test Geometry.ModelProperties setFacetTolerance"

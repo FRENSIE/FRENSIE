@@ -117,17 +117,25 @@ FRENSIE_UNIT_TEST( DagMCModel, iarchive )
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 std::string test_dagmc_model_archive_name;
+std::string reset_path;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_archive_file",
                                         test_dagmc_model_archive_name, "",
                                         "Test dagmc model xml archive name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "reset_path",
+                                        reset_path, "",
+                                        "The path that will be used to "
+                                        "instead of the archived model path" );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   archive_istream.reset( new std::ifstream( test_dagmc_model_archive_name ) );
+
+  if( !reset_path.empty() )
+    Geometry::DagMCModelProperties::setDefaultFilePath( reset_path );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
