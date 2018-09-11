@@ -51,7 +51,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, getPointLocation )
 
   FRENSIE_CHECK_EQUAL( location, Geometry::POINT_INSIDE_CELL );
 
-  ray.reset( new Geometry::Navigator::Ray( -42.647*cgs::centimeter,
+  ray.reset( new Geometry::Navigator::Ray( -42.647999*cgs::centimeter,
                                            -40.0*cgs::centimeter,
                                            59.0*cgs::centimeter,
                                            -1.0, 0.0, 0.0 ) );
@@ -60,7 +60,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, getPointLocation )
 
   FRENSIE_CHECK_EQUAL( location, Geometry::POINT_INSIDE_CELL );
 
-  ray.reset( new Geometry::Navigator::Ray( -42.648*cgs::centimeter,
+  ray.reset( new Geometry::Navigator::Ray( -42.648001*cgs::centimeter,
                                            -40.0*cgs::centimeter,
                                            59.0*cgs::centimeter,
                                            -1.0, 0.0, 0.0 ) );
@@ -324,7 +324,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, fireRay )
     navigator->fireRay( &surface_hit );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_surface_hit,
-                                   1.959999084*cgs::centimeter,
+                                   1.96*cgs::centimeter,
                                    1e-9 );
   FRENSIE_CHECK_EQUAL( surface_hit, 242 );
 }
@@ -343,7 +343,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, advanceBySubstep )
                        0.0, 0.0, 1.0,
                        53 );
 
-  navigator->advanceBySubstep( 0.959999084*cgs::centimeter );
+  navigator->advanceBySubstep( 0.96*cgs::centimeter );
 
   // Find the cell that contains the ray
   Geometry::Navigator::EntityId cell = navigator->getCurrentCell();
@@ -448,7 +448,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, advance_with_callback )
   navigator->advanceToCellBoundary();
 
   FRENSIE_CHECK_FLOATING_EQUALITY( distance_traveled,
-                                   1.959999084472656250*cgs::centimeter,
+                                   1.96*cgs::centimeter,
                                    1e-15 );
 }
 
@@ -506,7 +506,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, ray_trace )
     navigator->fireRay( &surface_hit );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_surface_hit,
-                                   1.959999084*cgs::centimeter,
+                                   1.96*cgs::centimeter,
                                    1e-9 );
   FRENSIE_CHECK_EQUAL( surface_hit, 242 );
 

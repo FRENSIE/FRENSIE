@@ -30,7 +30,7 @@
  * \section geometry_dagmc_sec The Geometry DagMC Subpackage
  * The dagmc subpackage provides the Geometry::DagMC handler class. It is
  * essentially a wrapper around the moab::DagMC tool that allows one to
- * ray trace on and query properties of a CAD (.sat) file. The
+ * ray trace on and query properties of a CAD (.h5m) file. The
  * Geometry::DagMC handler class allows one to check if cells and/or surfaces
  * exist, get cell volumes and/or surface areas, get estimator properties and
  * estimator entity associations, get the material ids assigned to cells,

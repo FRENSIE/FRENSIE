@@ -8,7 +8,7 @@
 		</AdvancedModel>
 		<d_model_properties class_id="4" tracking_level="0" version="0">
 			<tx class_id="5" tracking_level="1" version="0" object_id="_1">
-				<d_file_name>${CMAKE_CURRENT_SOURCE_DIR}/test_geom.sat</d_file_name>
+				<d_file_name>${CMAKE_CURRENT_SOURCE_DIR}/test_geom.h5m</d_file_name>
 				<d_facet_tolerance>1.00000000000000002e-03</d_facet_tolerance>
 				<d_fast_id_lookup>0</d_fast_id_lookup>
 				<d_termination_cell_property>graveyard</d_termination_cell_property>

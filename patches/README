@@ -1,9 +1,9 @@
 Patches:
-	1.) DagMC_cpp_patch
+	1.) GeomQueryTool_cpp_patch
 
-1.) FRENSIE can be built with DagMC enabled. Unfortunately the moab::DagMC
-    object is not thread safe as of moab version 4.6.3. This patch file
-    must be applied to make DagMC thread safe. Because the DagMC.cpp file
-    must be patched this patch file must be applied before FRENSIE is
-    built. The build system will check if the patch has been applied and
-    report an error if it has not.
+1.) FRENSIE can be built with GeomQueryTool enabled. Unfortunately the
+    moab::GeomQueryTool object is not thread safe as of moab version 5.0.0. This
+    patch file must be applied to make GeomQueryTool thread safe. Because the
+    GeomQueryTool.cpp file must be patched this patch file must be applied
+    before FRENSIE is built. The build system will check if the patch has been
+    applied and report an error if it has not.
