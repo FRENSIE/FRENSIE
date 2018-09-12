@@ -690,6 +690,7 @@ private:
   static void setNuclearPropertiesImpl(
                        PropertiesMap& properties,
                        const std::shared_ptr<const Properties>& new_properties,
+                       const Data::ZAID& nuclide_zaid,
                        const std::string& type_name );
 
   // Set the nuclear properties

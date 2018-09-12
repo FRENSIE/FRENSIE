@@ -31,20 +31,20 @@ ZAID::ZAID( const char* zaid_string )
 
 // Raw ZAID constructor
 ZAID::ZAID( const unsigned raw_zaid )
-  : d_atom_type( Data::convertAtomicNumberToAtomTypeEnum( raw_zaid/1000u ) ),
-    d_atomic_mass_number( raw_zaid%1000u ),
-    d_isomer_number( 0 )
+  : d_atom_type( Data::convertAtomicNumberToAtomTypeEnum( (raw_zaid%1000000u)/1000u ) ),
+    d_atomic_mass_number( (raw_zaid%1000000u)%1000u ),
+    d_isomer_number( raw_zaid/1000000u )
 {
-  // Check if there is an isomer number
-  if( d_atomic_mass_number > 800 )
+  // Check if there is an embedded isomer number
+  if( d_atomic_mass_number > 800u )
   {
-    d_atomic_mass_number %= 800;
+    d_atomic_mass_number %= 800u;
 
     d_isomer_number = 2;
   }
-  else if( d_atomic_mass_number > 400 )
+  else if( d_atomic_mass_number > 400u )
   {
-    d_atomic_mass_number %= 400;
+    d_atomic_mass_number %= 400u;
 
     d_isomer_number = 1;
   }

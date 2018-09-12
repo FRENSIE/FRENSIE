@@ -26,7 +26,19 @@ ScatteringCenterPropertiesDatabase::ScatteringCenterPropertiesDatabase()
 ScatteringCenterPropertiesDatabase::ScatteringCenterPropertiesDatabase(
                        const boost::filesystem::path& database_name_with_path )
 {
-  std::string extension = database_name_with_path.extension().string();
+  this->loadFromFile( database_name_with_path );
+}
+
+// The database name used in an archive
+const char* ScatteringCenterPropertiesDatabase::getArchiveName() const
+{
+  return s_archive_name.c_str();
+}
+
+// Load the archived object (implementation)
+void ScatteringCenterPropertiesDatabase::loadFromFileImpl( const boost::filesystem::path& archive_name_with_path )
+{
+  std::string extension = archive_name_with_path.extension().string();
 
   // The bpis pointer must be NULL. Depending on the libraries that have been
   // loaded (e.g. utility_grid) the bpis might be initialized to a non-NULL
@@ -34,17 +46,32 @@ ScatteringCenterPropertiesDatabase::ScatteringCenterPropertiesDatabase(
   const boost::archive::detail::basic_pointer_iserializer* bpis =
     this->resetBpisPointer<std::vector<double> >( extension );
   
-  this->loadFromFile( database_name_with_path );
+  // Import the data in the archive
+  BaseArchivableObjectType::loadFromFileImpl( archive_name_with_path );
 
   // The bpis pointer must be restored to its original value so that libraries
   // that expect it to be non-NULL behave correctly
   this->restoreBpisPointer<std::vector<double> >( extension, bpis );
 }
 
-// The database name used in an archive
-const char* ScatteringCenterPropertiesDatabase::getArchiveName() const
+// Archive the object (implementation)
+void ScatteringCenterPropertiesDatabase::saveToFileImpl( const boost::filesystem::path& archive_name_with_path,
+                                                         const bool overwrite ) const
 {
-  return s_archive_name.c_str();
+  std::string extension = archive_name_with_path.extension().string();
+
+  // The bpos pointer must be NULL. Depending on the libraries that have been
+  // loaded (e.g. utility_grid) the bpos might be initialized to a non-NULL
+  // value
+  const boost::archive::detail::basic_pointer_oserializer* bpos =
+    this->resetBposPointer<std::vector<double> >( extension );
+  
+  // Import the data in the archive
+  BaseArchivableObjectType::saveToFileImpl( archive_name_with_path, overwrite );
+
+  // The bpos pointer must be restored to its original value so that libraries
+  // that expect it to be non-NULL behave correctly
+  this->restoreBposPointer<std::vector<double> >( extension, bpos );
 }
 
 EXPLICIT_CLASS_SAVE_LOAD_INST( ScatteringCenterPropertiesDatabase );

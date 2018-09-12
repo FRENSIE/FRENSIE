@@ -622,6 +622,7 @@ template<typename Properties, typename PropertiesMap>
 void NuclideProperties::setNuclearPropertiesImpl(
                        PropertiesMap& properties,
                        const std::shared_ptr<const Properties>& new_properties,
+                       const Data::ZAID& nuclide_zaid,
                        const std::string& type_name )
 {
   Energy evaluation_temp = new_properties->evaluationTemperatureInMeV();
@@ -658,7 +659,8 @@ void NuclideProperties::setNuclearPropertiesImpl(
                                     " and evaluation temperature "
                                     << evaluation_temp << 
                                     " are already present! The old "
-                                    "properties will be overwritten." );
+                                    "properties will be overwritten ("
+                                    << nuclide_zaid << ")." );
         
         Utility::get<1>( *temp_grid_it ) = new_properties;
       }
@@ -694,6 +696,7 @@ void NuclideProperties::setNuclearProperties(
 
     NuclideProperties::setNuclearPropertiesImpl( properties,
                                                  new_properties,
+                                                 expected_zaid,
                                                  type_name );
   }
 }
@@ -717,6 +720,7 @@ void NuclideProperties::setThermalNuclearProperties(
     NuclideProperties::setNuclearPropertiesImpl(
                                     properties[new_properties->name()],
                                     new_properties,
+                                    expected_zaid,
                                     new_properties->name() + " " + type_name );
   }
 }

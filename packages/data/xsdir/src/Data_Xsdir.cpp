@@ -346,7 +346,7 @@ void Xsdir::processXsdirFile( const boost::filesystem::path& xsdir_file_path,
   while( !xsdir_file.eof() )
   {
     std::getline( xsdir_file, xsdir_line );
-
+    
     Xsdir::splitLineIntoEntryTokens( xsdir_line, entry_tokens );
 
     // Process the line if it passes through the filter
@@ -369,7 +369,7 @@ void Xsdir::parseEntryTokensAndInitializeDataPropertiesObject(
   this->quickExtractZaidsAndAtomicWeightRatiosFromEntryTokens(
                                               entry_tokens,
                                               zaids_and_atomic_weight_ratios );
-
+  
   for( size_t i = 0; i < zaids_and_atomic_weight_ratios.size(); ++i )
   {
     const Data::ZAID& zaid =
@@ -475,7 +475,7 @@ void Xsdir::parseEntryTokensAndCreateDataPropertiesObject(
 
   if( log_parsed_entries )
   {
-    FRENSIE_LOG_TAGGED_NOTIFICATION( "Xsdir", "Parsed table " << this->quickExtractTableNameFromEntryTokens( entry_tokens ) << " data." );
+    FRENSIE_LOG_NOTIFICATION( "  Parsed table " << this->quickExtractTableNameFromEntryTokens( entry_tokens ) << " data." );
   }
 }
 
@@ -1223,6 +1223,9 @@ bool Xsdir::filterEntryLineByTableTypeKeysNotInSet( const std::set<char>& keys,
 void Xsdir::exportData( ScatteringCenterPropertiesDatabase& database ) const
 {
   // Initialize the database entries
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "Initializing atom and nuclide properties ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
+  
   LineProcessorFunction line_processor_function =
     std::bind<void>( &Xsdir::parseEntryTokensAndInitializeDataPropertiesObject,
                      std::cref( *this ),
@@ -1240,7 +1243,12 @@ void Xsdir::exportData( ScatteringCenterPropertiesDatabase& database ) const
                             
   }
 
+  FRENSIE_LOG_NOTIFICATION( "done." );
+
   // Populate the database with the table data in the xsdir file
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "Populating database entries ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
+  
   line_processor_function =
     std::bind<void>( &Xsdir::parseEntryTokensAndCreateDataPropertiesObject,
                      std::cref( *this ),
@@ -1265,8 +1273,15 @@ void Xsdir::exportData( ScatteringCenterPropertiesDatabase& database ) const
                             line_processor_function );
   }
 
+  FRENSIE_LOG_NOTIFICATION( "done." );
+
   // Clean up the database
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "Cleaning up database ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
+  
   database.removeEmptyProperties( true );
+
+  FRENSIE_LOG_NOTIFICATION( "done." );
 }
 
 } // end Data namespace

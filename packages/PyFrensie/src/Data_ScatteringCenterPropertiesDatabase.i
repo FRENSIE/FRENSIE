@@ -71,9 +71,8 @@ using namespace Data;
 
 %extend Data::ScatteringCenterPropertiesDatabase
 {
-  void Data::ScatteringCenterPropertiesDatabase::saveToFile(
-    const boost::filesystem::path& archive_name_with_path,
-    const bool overwrite ) const
+  void saveToFile( const boost::filesystem::path& archive_name_with_path,
+                   const bool overwrite = false ) const
   {
     $self->saveToFile( archive_name_with_path, overwrite );
 
