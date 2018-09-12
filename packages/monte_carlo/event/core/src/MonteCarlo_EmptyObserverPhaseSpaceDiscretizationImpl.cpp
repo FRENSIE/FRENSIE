@@ -22,6 +22,15 @@ void EmptyObserverPhaseSpaceDiscretizationImpl::assignDiscretizationToDimension(
   testPrecondition( false );
 }
 
+// Get a dimension discretization
+const ObserverPhaseSpaceDimensionDiscretization&
+EmptyObserverPhaseSpaceDiscretizationImpl::getDimensionDiscretization(
+                            const ObserverPhaseSpaceDimension dimension ) const
+{
+  THROW_EXCEPTION( std::runtime_error,
+                   "Dimension " << dimension << " has no discretization!" );
+}
+
 // Check if a dimension has a discretization
 bool EmptyObserverPhaseSpaceDiscretizationImpl::doesDimensionHaveDiscretization(
                             const ObserverPhaseSpaceDimension dimension ) const

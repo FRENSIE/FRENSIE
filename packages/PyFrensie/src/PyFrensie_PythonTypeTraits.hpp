@@ -87,13 +87,13 @@ PyObject* convert2DArrayToPython( const STLCompliant2DArray& obj );
 template<typename STLCompliant2DArray>
 STLCompliant2DArray convertPythonTo2DArray( PyObject* py_obj );
 
-// // Create a Python (list of NumPy arrays) object from a vector of sets object
-// template<typename STLCompliantVectorSet>
-// PyObject* convertVectorSetToPython( const STLCompliantVectorSet& obj );
+// Create a Python (list of NumPy arrays) object from a vector of sets object
+template<typename STLCompliantVectorSet>
+PyObject* convertVectorSetToPython( const STLCompliantVectorSet& obj );
 
-// // Create a list of arrays object from a Python object (list of Numpy arrays)
-// template<typename STLCompliantVectorSet>
-// STLCompliantVectorSet convertPythonToVectorSet( PyObject* py_obj );
+// Create a list of arrays object from a Python object (list of Numpy arrays)
+template<typename STLCompliantVectorSet>
+STLCompliantVectorSet convertPythonToVectorSet( PyObject* py_obj );
 
 // Create a Python (set) object from a set object
 template<typename STLCompliantSet>
@@ -451,7 +451,7 @@ struct PythonTypeTraits<std::vector<std::string> >
  * \ingroup python_type_traits
  */
 template<typename T>
-struct PythonTypeTraits<std::vector<T> >
+struct PythonTypeTraits<std::vector<T>, typename std::enable_if<std::is_arithmetic<T>::value>::type>
 {
   //! Create a Python (NumPy) object from a std::vector<T> object
   static inline PyObject* convertToPython( const std::vector<T>& obj )
@@ -506,25 +506,25 @@ struct PythonTypeTraits<std::vector<std::vector<T> > >
   { return Details::isValidList<std::vector<T> >( py_obj ); }
 };
 
-// /*! \brief The partial specialization of PyFrensie::PythonTypeTraits for
-//  * std::vector<std::set<T> >
-//  * \ingroup python_type_traits
-//  */
-// template<typename T>
-// struct PythonTypeTraits<std::vector<std::set<T> > >
-// {
-//   //! Create a Python (NumPy) object from a std::vector<std::set<T> > object
-//   static inline PyObject* convertToPython( const std::vector<std::set<T> >& obj )
-//   { return Details::convertVectorSetToPython( obj ); }
+/*! \brief The partial specialization of PyFrensie::PythonTypeTraits for
+ * std::vector<std::set<T> >
+ * \ingroup python_type_traits
+ */
+template<typename T>
+struct PythonTypeTraits<std::vector<std::set<T> > >
+{
+  //! Create a Python (NumPy) object from a std::vector<std::set<T> > object
+  static inline PyObject* convertToPython( const std::vector<std::set<T> >& obj )
+  { return Details::convertVectorSetToPython( obj ); }
 
-//   //! Create a std::vector<std::set<T> > object from a Python object
-//   static inline std::vector<std::set<T> > convertFromPython( PyObject* py_obj )
-//   { return Details::convertPythonToVectorSet<std::vector<std::set<T> > >( py_obj ); }
+  //! Create a std::vector<std::set<T> > object from a Python object
+  static inline std::vector<std::set<T> > convertFromPython( PyObject* py_obj )
+  { return Details::convertPythonToVectorSet<std::vector<std::set<T> > >( py_obj ); }
 
-//   //! Check if a Python object can be converted to the desired type
-//   static inline bool isConvertable( PyObject* py_obj )
-//   { return Details::isValidList<std::vector<T> >( py_obj ); }
-// };
+  //! Check if a Python object can be converted to the desired type
+  static inline bool isConvertable( PyObject* py_obj )
+  { return Details::isValidList<std::vector<std::set<T> > >( py_obj ); }
+};
 
 /*! \brief The partial specialization of PyFrensie::PythonTypeTraits for
  * std::vector<std::tuple<T> >

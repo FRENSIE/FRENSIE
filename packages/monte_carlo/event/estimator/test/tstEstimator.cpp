@@ -136,6 +136,8 @@ FRENSIE_UNIT_TEST( Estimator, setDiscretization_raw_data )
   {
     TestEstimator estimator( 0, 1.0 );
 
+    FRENSIE_CHECK( !estimator.doesDimensionHaveDiscretization( MonteCarlo::OBSERVER_ENERGY_DIMENSION ) );
+
     std::vector<double> energy_bin_boundaries( 7 );
     energy_bin_boundaries[0] = 0.0;
     energy_bin_boundaries[1] = 1e-1;
@@ -147,12 +149,21 @@ FRENSIE_UNIT_TEST( Estimator, setDiscretization_raw_data )
 
     estimator.setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>( energy_bin_boundaries);
 
+    FRENSIE_CHECK( estimator.doesDimensionHaveDiscretization( MonteCarlo::OBSERVER_ENERGY_DIMENSION ) );
     FRENSIE_CHECK_EQUAL( estimator.getNumberOfBins( MonteCarlo::OBSERVER_ENERGY_DIMENSION ),
                          6u );
+
+    std::vector<double> energy_bin_boundaries_copy;
+
+    estimator.getDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>( energy_bin_boundaries_copy );
+
+    FRENSIE_CHECK_EQUAL( energy_bin_boundaries, energy_bin_boundaries_copy );
   }
 
   {
     TestEstimator estimator( 0, 1.0 );
+
+    FRENSIE_CHECK( !estimator.doesDimensionHaveDiscretization( MonteCarlo::OBSERVER_COSINE_DIMENSION ) );
 
     std::vector<double> cosine_bin_boundaries( 4 );
     cosine_bin_boundaries[0] = -1.0;
@@ -161,9 +172,16 @@ FRENSIE_UNIT_TEST( Estimator, setDiscretization_raw_data )
     cosine_bin_boundaries[3] = 1.0;
     
     estimator.setDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION>( cosine_bin_boundaries );
-    
+
+    FRENSIE_CHECK( estimator.doesDimensionHaveDiscretization( MonteCarlo::OBSERVER_COSINE_DIMENSION ) );
     FRENSIE_CHECK_EQUAL( estimator.getNumberOfBins( MonteCarlo::OBSERVER_COSINE_DIMENSION ),
                          3u );
+
+    std::vector<double> cosine_bin_boundaries_copy;
+
+    estimator.getDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION>( cosine_bin_boundaries_copy );
+
+    FRENSIE_CHECK_EQUAL( cosine_bin_boundaries, cosine_bin_boundaries_copy );
   }
 
   {
@@ -177,8 +195,14 @@ FRENSIE_UNIT_TEST( Estimator, setDiscretization_raw_data )
     
     estimator.setDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION>( time_bin_boundaries );
 
-  FRENSIE_CHECK_EQUAL( estimator.getNumberOfBins( MonteCarlo::OBSERVER_TIME_DIMENSION ),
-		       3u );
+    FRENSIE_CHECK_EQUAL( estimator.getNumberOfBins( MonteCarlo::OBSERVER_TIME_DIMENSION ),
+                         3u );
+
+    std::vector<double> time_bin_boundaries_copy;
+
+    estimator.getDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION>( time_bin_boundaries_copy );
+
+    FRENSIE_CHECK_EQUAL( time_bin_boundaries, time_bin_boundaries_copy );
   }
 
   {
@@ -194,6 +218,34 @@ FRENSIE_UNIT_TEST( Estimator, setDiscretization_raw_data )
 						       collision_number_bins );
 
     FRENSIE_CHECK_EQUAL( estimator.getNumberOfBins( MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION ), 4u );
+
+    std::vector<unsigned> collision_number_bins_copy;
+
+    estimator.getDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>(
+                                                  collision_number_bins_copy );
+
+    FRENSIE_CHECK_EQUAL( collision_number_bins, collision_number_bins_copy );
+  }
+
+  {
+    TestEstimator estimator( 0, 1.0 );
+
+    std::vector<std::set<size_t> > source_id_bins( 3 );
+    source_id_bins[0].insert( 0 );
+    source_id_bins[0].insert( 1 );
+    source_id_bins[1].insert( 1 );
+    source_id_bins[2].insert( 0 );
+    source_id_bins[2].insert( 2 );
+
+    estimator.setDiscretization<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION>( source_id_bins );
+
+    FRENSIE_CHECK_EQUAL( estimator.getNumberOfBins( MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION ), 3 );
+
+    std::vector<std::set<size_t> > source_id_bins_copy;
+
+    estimator.getDiscretization<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION>( source_id_bins_copy );
+
+    FRENSIE_CHECK_EQUAL( source_id_bins, source_id_bins_copy );
   }
 }
 

@@ -75,6 +75,14 @@ void ObserverPhaseSpaceDiscretization::assignDiscretizationToDimension(
     d_impl->assignDiscretizationToDimension( discretization, range_dimension );
 }
 
+// Get a dimension discretization
+const ObserverPhaseSpaceDimensionDiscretization&
+ObserverPhaseSpaceDiscretization::getDimensionDiscretization(
+                            const ObserverPhaseSpaceDimension dimension ) const
+{
+  return d_impl->getDimensionDiscretization( dimension );
+}
+
 // Return the dimensions that have been discretized
 void ObserverPhaseSpaceDiscretization::getDiscretizedDimensions(
           std::set<ObserverPhaseSpaceDimension>& discretized_dimensions ) const

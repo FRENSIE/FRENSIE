@@ -1,4 +1,5 @@
-#! ${PYTHON_EXECUTABLE#-----------------------------------------------------------------------------#
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
 ## MonteCarlo.Event.StandardEntityEstimator class unit tests
 #  \file   tstMonteCarlo.Event.StandardEntityEstimator.py
 #  \author Luke Kersting
@@ -223,6 +224,33 @@ class StandardEntityEstimatorTestCase(unittest.TestCase):
         estimator = initializeSurfaceEstimator()
 
         self.assertEqual( estimator.getNumberOfBins(), 16 )
+
+#-----------------------------------------------------------------------------#
+    # Check that the number of response functions can be returned
+    def testGetDimensionDiscretization(self):
+      "*Test MonteCarlo.Event.StandardEntityEstimator getDimensionDiscretization"
+      estimator = initializeSurfaceEstimator()
+
+      self.assertTrue( estimator.doesDimensionHaveDiscretization( Event.OBSERVER_ENERGY_DIMENSION ) )
+      self.assertTrue( estimator.doesDimensionHaveDiscretization( Event.OBSERVER_COSINE_DIMENSION ) )
+      self.assertTrue( estimator.doesDimensionHaveDiscretization( Event.OBSERVER_COLLISION_NUMBER_DIMENSION ) )
+      self.assertTrue( estimator.doesDimensionHaveDiscretization( Event.OBSERVER_TIME_DIMENSION ) )
+
+      energy_bins = estimator.getEnergyDiscretization()
+
+      self.assertSequenceEqual( list(energy_bins), [0.0, 0.1, 1.0] )
+      
+      cosine_bins = estimator.getCosineDiscretization()
+
+      self.assertSequenceEqual( list(cosine_bins), [-1.0, 0.0, 1.0] )
+      
+      collision_number_bins = estimator.getCollisionNumberDiscretization()
+
+      self.assertSequenceEqual( list(collision_number_bins), [0, 1] )
+      
+      time_bins = estimator.getTimeDiscretization()
+
+      self.assertSequenceEqual( list(time_bins), [1e-6, 1e-5, 1e-4] )
 
 #-----------------------------------------------------------------------------#
     # Check that the number of response functions can be returned

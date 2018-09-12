@@ -38,6 +38,22 @@ void Estimator::setDiscretization( const InputDataType& bin_data )
   this->setDiscretization( dimension_discretization );
 }
 
+// Get the discretization for a dimension of the phase space
+/*! \details This method will extract the discretization data from a 
+ * previously set dimension discretization.
+ */
+template<ObserverPhaseSpaceDimension dimension, typename InputDataType>
+void Estimator::getDiscretization( InputDataType& bin_data )
+{
+  // Make sure the DimensionType matches the type associated with the dimension
+  testStaticPrecondition((boost::is_same<typename DefaultTypedObserverPhaseSpaceDimensionDiscretization<dimension>::InputDataType,InputDataType>::value));
+
+  const ObserverPhaseSpaceDimensionDiscretization& base_discretization =
+    d_phase_space_discretization.getDimensionDiscretization( dimension );
+
+  bin_data = dynamic_cast<const DefaultTypedObserverPhaseSpaceDimensionDiscretization<dimension>&>( base_discretization ).getBinBoundaries();
+}
+
 // Check if the point is in the estimator phase space
 /*! \details The PointType should be either EstimatorParticleStateWrapper or
  * ObserverPhaseSpaceDiscretization::DimensionValueMap.

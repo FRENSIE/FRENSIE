@@ -55,13 +55,13 @@ public:
   //! Print the dimension discretization
   void print( std::ostream& os ) const override;
 
+  //! Return the boundaries array
+  const BinBoundaryArray& getBinBoundaries() const;
+
 protected:
 
   //! Default constructor
   OrderedTypedObserverPhaseSpaceDimensionDiscretization();
-
-  //! Return the boundaries array
-  const BinBoundaryArray& getBinBoundaries() const;
 
   //! Return the shared boundaries array
   std::shared_ptr<const BinBoundaryArray> getSharedBoundaries() const;

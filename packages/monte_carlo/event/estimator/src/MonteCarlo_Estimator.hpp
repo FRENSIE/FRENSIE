@@ -96,6 +96,13 @@ public:
   //! Set the discretization for a dimension of the phase space
   void setDiscretization( const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins );
 
+  //! Check if a discretization has been set for a dimension of the phase space
+  bool doesDimensionHaveDiscretization( const ObserverPhaseSpaceDimension dimension ) const;
+
+  //! Get the discretization for a dimension of the phase space
+  template<ObserverPhaseSpaceDimension dimension, typename InputDataType>
+  void getDiscretization( InputDataType& bin_data );
+
   //! Return the number of bins for a dimension of the phase space
   size_t getNumberOfBins( const ObserverPhaseSpaceDimension dimension ) const;
 
