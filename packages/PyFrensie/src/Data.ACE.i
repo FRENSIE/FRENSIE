@@ -50,6 +50,7 @@ using namespace Data;
 %include <stl.i>
 %include <std_string.i>
 %include <std_except.i>
+%include <std_shared_ptr.i>
 
 // Include the ArrayView support
 %include "PyFrensie_Array.i"
@@ -312,6 +313,8 @@ shown below:
   matplotlib.pyplot.loglog( neutron_data_extractor.extractPhotonEnergyGrid(), neutron_data_extractor.extractPairProductionCrossSection() )
   matplotlib.pyplot.show()
 "
+
+%shared_ptr( Data::XSSEPRDataExtractor )
 
 // Include XSSEPRDataExtractor
 %include "Data_XSSEPRDataExtractor.hpp"

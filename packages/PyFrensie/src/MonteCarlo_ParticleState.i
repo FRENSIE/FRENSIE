@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_ParticleState.i
 //! \author Luke Kersting
-//! \brief  The SParticleState classes interface file
+//! \brief  The ParticleState classes interface file
 //!
 //---------------------------------------------------------------------------//
 

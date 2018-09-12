@@ -500,3 +500,8 @@ IF(HAVE_FRENSIE_HDF5)
   UNSET(HAVE_HDF5_FLAG)
 ENDIF()
 
+PyFrensie_MAKE_TEST(tstDataGen.ElectronPhoton.ElectronPhotonRelaxationDataGenerator)
+ADD_TEST(PyFrensie.DataGen.ElectronPhoton.ElectronPhotonRelaxationDataGenerator --test_h_endl_file=${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_endl_native.xml --test_h_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt)
+
+
+
