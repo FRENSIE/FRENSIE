@@ -21,7 +21,7 @@ data.
         docstring = %data_gen_electron_photon_docstring) ElectronPhoton
 
 %{
-// PyTrilinos Includes
+// PyFrensie Includes
 #define NO_IMPORT_ARRAY
 #include "numpy_include.h"
 %}

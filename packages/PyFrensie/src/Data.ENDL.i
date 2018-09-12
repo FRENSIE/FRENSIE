@@ -130,6 +130,12 @@ tutorial for this class is shown below:
 
 %extend Data::ENDLDataContainer
 {
+  // Save the container to a file
+  void saveToFile( const std::string& filename, const bool overwrite = false )
+  {
+    $self->saveToFile( filename, overwrite );
+  }
+  
   // String conversion method
   PyObject* __str__() const
   {

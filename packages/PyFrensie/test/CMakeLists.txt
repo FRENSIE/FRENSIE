@@ -503,5 +503,7 @@ ENDIF()
 PyFrensie_MAKE_TEST(tstDataGen.ElectronPhoton.ElectronPhotonRelaxationDataGenerator)
 ADD_TEST(PyFrensie.DataGen.ElectronPhoton.ElectronPhotonRelaxationDataGenerator --test_h_endl_file=${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_endl_native.xml --test_h_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt)
 
+PyFrensie_MAKE_TEST(tstDataGen.ENDL.StandardENDLDataGenerator)
+ADD_TEST(PyFrensie.DataGen.ENDL.StandardENDLDataGenerator --test_h_eadl_file=${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_eadl_endl_file.txt --test_h_epdl_file=${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_epdl_endl_file.txt --test_h_eedl_file=${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_eedl_endl_file.txt)
 
 

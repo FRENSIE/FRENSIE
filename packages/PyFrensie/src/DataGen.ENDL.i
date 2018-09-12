@@ -1,30 +1,33 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   DataGen_ElectronPhotonRelaxationDataGenerator.i
+//! \file   DataGen.ENDL.i
 //! \author Alex Robinson
-//! \brief  The ElectronPhotonRelaxationDataGenerator class's interface file
+//! \brief  The DataGen.ENDL sub-module swig interface file
 //!
 //---------------------------------------------------------------------------//
 
+%define %data_gen_endl_docstring
+"
+PyFrensie.DataGen.ENDL is the python interface to the FRENSIE
+data_gen/endl subpackage.
+
+The purpose of ENDL is to provide tools for generating ENDL data.
+"
+%enddef
+
+%module(package   = "PyFrensie.DataGen",
+        autodoc   = "1",
+        docstring = %data_gen_endl_docstring) ENDL
+
 %{
+#define NO_IMPORT_ARRAY
+#include "numpy_include.h"
+
 // FRENSIE Includes
 #include "PyFrensie_PythonTypeTraits.hpp"
-#include "DataGen_ElectronPhotonRelaxationDataGenerator.hpp"
-#include "DataGen_ENDLElectronPhotonRelaxationDataGenerator.hpp"
-#include "DataGen_ACEAndENDLElectronPhotonRelaxationDataGenerator.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
-#include "Data_ACEPhotoatomicDataProperties.hpp"
-#include "Data_ACEElectroatomicDataProperties.hpp"
-#include "Data_ACENuclearDataProperties.hpp"
-#include "Data_ACEThermalNuclearDataProperties.hpp"
-#include "Data_ACEPhotonuclearDataProperties.hpp"
+#include "DataGen_StandardENDLDataGenerator.hpp"
 #include "Data_ENDLPhotoatomicDataProperties.hpp"
 #include "Data_ENDLElectroatomicDataProperties.hpp"
-#include "Data_NativeEPRPhotoatomicDataProperties.hpp"
-#include "Data_NativeEPRAdjointPhotoatomicDataProperties.hpp"
-#include "Data_NativeEPRElectroatomicDataProperties.hpp"
-#include "Data_NativeEPRAdjointElectroatomicDataProperties.hpp"
-#include "Data_NativeMomentPreservingElectroatomicDataProperties.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_DesignByContract.hpp"
 %}
@@ -37,9 +40,6 @@
 %include <typemaps.i>
 
 %import "Data.ENDL.i"
-%import "Data.ACE.i"
-%import "Data.Native.i"
-%import(module="PyFrensie.MonteCarlo") MonteCarlo_SimulationProperties.i
 
 // Standard exception handling
 %include "exception.i"
@@ -80,29 +80,27 @@
 }
 
 //---------------------------------------------------------------------------//
-// Helper macro for setting up an ElectronPhotonRelaxationDataGenerator
-// interface
+// Helper macro for setting up an ENDLDataGenerator interface
 //---------------------------------------------------------------------------//
-%define %epr_generator_interface_setup_helper( GENERATOR )
+%define %endl_generator_interface_setup_helper( GENERATOR )
 
 %feature("docstring") DataGen::GENERATOR
-"The GENERATOR class is used to populate an "
-"ElectronPhotonRelaxationDataContainer."
+"The GENERATOR class is used to populate an ENDLDataContainer."
 
- // Add some useful methods to the GENERATOR class
+// Add some useful methods to the GENERATOR class
 %extend DataGen::GENERATOR
 {
   // String conversion method
   PyObject* __str__() const
   {
-    return PyFrensie::convertToPython( Utility::toString( $self->getAtomicNumber() ) );
+    return PyFrensie::convertToPython( Utility::toString( $self->getDataContainer().getAtomicNumber() ) );
   }
 
   // String representation method
   PyObject* __repr__() const
   {
     std::string string_rep( "GENERATOR(" );
-    string_rep += Utility::toString( $self->getAtomicNumber() );
+    string_rep += Utility::toString( $self->getDataContainer().getAtomicNumber() );
     string_rep += ")";
 
     return PyFrensie::convertToPython( string_rep );
@@ -112,27 +110,20 @@
 %enddef
 
 //---------------------------------------------------------------------------//
-// Add support for the ElectronPhotonRelaxationDataGenerator base class
+// Add support for the ENDLDataGenerator base class
 //---------------------------------------------------------------------------//
-%epr_generator_interface_setup_helper( ElectronPhotonRelaxationDataGenerator )
+%endl_generator_interface_setup_helper( ENDLDataGenerator )
 
-%include "DataGen_ElectronPhotonRelaxationDataGenerator.hpp"
-
-//---------------------------------------------------------------------------//
-// Add support for the ENDLElectronPhotonRelaxationDataGenerator class
-//---------------------------------------------------------------------------//
-%epr_generator_interface_setup_helper( ENDLElectronPhotonRelaxationDataGenerator )
-
-%include "DataGen_ENDLElectronPhotonRelaxationDataGenerator.hpp"
+%include "DataGen_ENDLDataGenerator.hpp"
 
 //---------------------------------------------------------------------------//
-// Add support for the ACEAndENDLElectronPhotonRelaxationDataGenerator class
-//---------------------------------------------------------------------------//
-%epr_generator_interface_setup_helper( ACEAndENDLElectronPhotonRelaxationDataGenerator )
-
-%include "DataGen_ACEAndENDLElectronPhotonRelaxationDataGenerator.hpp"
-
-//---------------------------------------------------------------------------//
-// end DataGen_ElectronPhotonRelaxationDataGenerator.i
+// Add support for the StandardENDLDataGenerator class
 //---------------------------------------------------------------------------//
 
+%endl_generator_interface_setup_helper( StandardENDLDataGenerator )
+
+%include "DataGen_StandardENDLDataGenerator.hpp"
+
+//---------------------------------------------------------------------------//
+// end DataGen.ENDL.i
+//---------------------------------------------------------------------------//

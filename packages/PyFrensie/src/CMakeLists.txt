@@ -90,7 +90,10 @@ SET(DATA_GEN_MODULE_INIT_PACKAGE DataGen__init__)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} DataGen.ElectronPhoton)
 SET(DATA_GEN_PACKAGES ${DATA_GEN_PACKAGES} ElectronPhoton)
 
-SET(DATA_GEN_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_gen_electron_photon pyfrensie)
+SET(PyFrensie_MODULES ${PyFrensie_MODULES} DataGen.ENDL)
+SET(DATA_GEN_PACKAGES ${DATA_GEN_PACKAGES} ENDL)
+
+SET(DATA_GEN_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_gen_electron_photon data_gen_endl pyfrensie)
 
 # Add the Geometry package
 SET(GEOMETRY_MODULE_DOCSTRING "is the python interface to the FRENSIE geometry package")
