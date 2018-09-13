@@ -24,6 +24,7 @@ parser.add_option("-r", "--root_file", type="string", dest="root_file", default=
 options,args = parser.parse_args()
 
 from testingHelpers import importPyFrensieModuleFromBuildDir
+Utility = importPyFrensieModuleFromBuildDir('Utility')
 Geometry = importPyFrensieModuleFromBuildDir('Geometry')
 
 try:
@@ -61,7 +62,7 @@ if inspect.ismodule( DagMC ):
         def testGetModelProperties(self):
             "*Test Geometry.Model getModelProperties"
             cached_properties = self.model.getModelProperties()
-            self.assertEqual( cached_properties.getModelFileName(),
+            self.assertEqual( cached_properties.getModelFileNameWithPath(),
                               options.dagmc_sat_file )
 
         def testHasCellEstimatorData(self):
@@ -615,7 +616,8 @@ if inspect.ismodule( ROOT ):
         def testGetModelPropertie(self):
             "*Test Geometry.Model getModelPropertie"
             properties = self.model.getModelProperties()
-            self.assertEqual( properties.getModelFileName(), options.root_file )
+            self.assertEqual( properties.getModelFileNameWithPath(),
+                              options.root_file )
             self.assertEqual( properties.getMaterialPropertyName(), "mat" )
             self.assertEqual( properties.getVoidMaterialName(), "void" )
             self.assertEqual( properties.getTerminalMaterialName(), "graveyard" )
