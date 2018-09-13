@@ -57,20 +57,6 @@ SET(UTILITY_PACKAGES ${UTILITY_PACKAGES} Mesh)
 # SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Interpolation)
 SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist utility_system utility_mesh pyfrensie)
 
-# # Add the DataGen package
-# SET(DATA_GEN_MODULE_DOCSTRING "is the python interface to the FRENSIE data_gen package.")
-# SET(DATA_GEN_PACKAGES "")
-
-# SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} DataGen)
-# SET(PyFrensie_MODULES ${PyFrensie_MODULES} DataGen.DataGen.__init__)
-# SET(DATA_GEN_PACKAGES ${DATA_GEN_PACKAGES} DataGen__init__)
-# SET(DATA_GEN_MODULE_INIT_PACKAGE DataGen__init__)
-
-# SET(PyFrensie_MODULES ${PyFrensie_MODULES} DataGen.ElectronPhoton)
-# SET(DATA_GEN_PACKAGES ${DATA_GEN_PACKAGES} ElectronPhoton)
-
-# SET(DATA_GEN_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_gen_electron_photon pyfrensie)
-
 # Add the Data package
 SET(DATA_MODULE_DOCSTRING "is the python interface to the FRENSIE data package.")
 SET(DATA_PACKAGES "")
@@ -91,6 +77,23 @@ SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.Native)
 SET(DATA_PACKAGES ${DATA_PACKAGES} Native)
 
 SET(DATA_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_core data_database data_ace data_endl data_native data_xsdir pyfrensie)
+
+# Add the DataGen package
+SET(DATA_GEN_MODULE_DOCSTRING "is the python interface to the FRENSIE data_gen package.")
+SET(DATA_GEN_PACKAGES "")
+
+SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} DataGen)
+SET(PyFrensie_MODULES ${PyFrensie_MODULES} DataGen.DataGen__init__)
+SET(DATA_GEN_PACKAGES ${DATA_GEN_PACKAGES} DataGen__init__)
+SET(DATA_GEN_MODULE_INIT_PACKAGE DataGen__init__)
+
+SET(PyFrensie_MODULES ${PyFrensie_MODULES} DataGen.ElectronPhoton)
+SET(DATA_GEN_PACKAGES ${DATA_GEN_PACKAGES} ElectronPhoton)
+
+SET(PyFrensie_MODULES ${PyFrensie_MODULES} DataGen.ENDL)
+SET(DATA_GEN_PACKAGES ${DATA_GEN_PACKAGES} ENDL)
+
+SET(DATA_GEN_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_gen_electron_photon data_gen_endl pyfrensie)
 
 # Add the Geometry package
 SET(GEOMETRY_MODULE_DOCSTRING "is the python interface to the FRENSIE geometry package")

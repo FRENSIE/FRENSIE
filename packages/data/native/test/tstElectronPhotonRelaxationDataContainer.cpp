@@ -171,35 +171,68 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the grid convergence tolerance can be set
+// Check that the photon grid convergence tolerance can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-                   setGridConvergenceTolerance )
+                   setPhotonGridConvergenceTolerance )
 {
-  epr_data_container.setGridConvergenceTolerance( 0.001 );
+  epr_data_container.setPhotonGridConvergenceTolerance( 0.001 );
 
-  FRENSIE_CHECK_EQUAL( epr_data_container.getGridConvergenceTolerance(),
+  FRENSIE_CHECK_EQUAL( epr_data_container.getPhotonGridConvergenceTolerance(),
                        0.001 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the grid absolute difference tolerance can be set
+// Check that the photon grid absolute difference tolerance can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-                   setGridAbsoluteDifferenceTolerance )
+                   setPhotonGridAbsoluteDifferenceTolerance )
 {
-  epr_data_container.setGridAbsoluteDifferenceTolerance( 1e-42 );
+  epr_data_container.setPhotonGridAbsoluteDifferenceTolerance( 1e-42 );
 
-  FRENSIE_CHECK_EQUAL( epr_data_container.getGridAbsoluteDifferenceTolerance(),
+  FRENSIE_CHECK_EQUAL( epr_data_container.getPhotonGridAbsoluteDifferenceTolerance(),
                        1e-42 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the grid distance tolerance can be set
+// Check that the photon grid distance tolerance can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-                   setGridDistanceTolerance )
+                   setPhotonGridDistanceTolerance )
 {
-  epr_data_container.setGridDistanceTolerance( 1e-15 );
+  epr_data_container.setPhotonGridDistanceTolerance( 1e-15 );
 
-  FRENSIE_CHECK_EQUAL( epr_data_container.getGridDistanceTolerance(),
+  FRENSIE_CHECK_EQUAL( epr_data_container.getPhotonGridDistanceTolerance(),
+                       1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electron grid convergence tolerance can be set
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setElectronGridConvergenceTolerance )
+{
+  epr_data_container.setElectronGridConvergenceTolerance( 0.001 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getElectronGridConvergenceTolerance(),
+                       0.001 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electron grid absolute difference tolerance can be set
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setElectronGridAbsoluteDifferenceTolerance )
+{
+  epr_data_container.setElectronGridAbsoluteDifferenceTolerance( 1e-42 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getElectronGridAbsoluteDifferenceTolerance(),
+                       1e-42 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electron grid distance tolerance can be set
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setElectronGridDistanceTolerance )
+{
+  epr_data_container.setElectronGridDistanceTolerance( 1e-15 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getElectronGridDistanceTolerance(),
                        1e-15 );
 }
 
@@ -1513,11 +1546,17 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        0.9 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getNumberOfMomentPreservingAngles(),
                        1 );
-  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getGridConvergenceTolerance(),
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getPhotonGridConvergenceTolerance(),
                        0.001 );
-  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getGridAbsoluteDifferenceTolerance(),
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getPhotonGridAbsoluteDifferenceTolerance(),
                        1e-42 );
-  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getGridDistanceTolerance(),
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getPhotonGridDistanceTolerance(),
+                       1e-15 );
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getElectronGridConvergenceTolerance(),
+                       0.001 );
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getElectronGridAbsoluteDifferenceTolerance(),
+                       1e-42 );
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getElectronGridDistanceTolerance(),
                        1e-15 );
 
   // Relaxation Tests
@@ -1738,11 +1777,17 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        0.9 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getNumberOfMomentPreservingAngles(),
                        1 );
-  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getGridConvergenceTolerance(),
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getPhotonGridConvergenceTolerance(),
                        0.001 );
-  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getGridAbsoluteDifferenceTolerance(),
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getPhotonGridAbsoluteDifferenceTolerance(),
                        1e-42 );
-  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getGridDistanceTolerance(),
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getPhotonGridDistanceTolerance(),
+                       1e-15 );
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getElectronGridConvergenceTolerance(),
+                       0.001 );
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getElectronGridAbsoluteDifferenceTolerance(),
+                       1e-42 );
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getElectronGridDistanceTolerance(),
                        1e-15 );
 
   // Relaxation Tests

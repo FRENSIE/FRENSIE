@@ -17,14 +17,19 @@
 
 namespace Geometry{
 
+// Initialize static member data
+boost::filesystem::path DagMCModelProperties::s_default_path( "" );
+
 // Default constructor
 DagMCModelProperties::DagMCModelProperties()
   : DagMCModelProperties( "dummy" )
 { /* ... */ }
 
 // Constructor
-DagMCModelProperties::DagMCModelProperties( const std::string& filename )
-  : d_file_name( filename ),
+DagMCModelProperties::DagMCModelProperties(
+                                      const boost::filesystem::path& filename )
+  : d_file_name( filename.filename().string() ),
+    d_file_path( filename.parent_path().make_preferred() ),
     d_facet_tolerance( 1e-3 ),
     d_fast_id_lookup( false ),
     d_termination_cell_property( "termination.cell" ),
@@ -48,10 +53,39 @@ DagMCModelProperties::DagMCModelProperties( const std::string& filename )
   testPrecondition( filename.size() > 0 );
 }
 
+// Set the default file path
+/*! \details This method should be called before loading the properties from
+ * an archive.
+ */
+void DagMCModelProperties::setDefaultFilePath(
+                                     const boost::filesystem::path& file_path )
+{
+  s_default_path = file_path;
+  s_default_path.make_preferred();
+}
+
+// Get the default file path
+std::string DagMCModelProperties::getDefaultFilePath()
+{
+  return s_default_path.string();
+}
+
 // Get the model file name
 const std::string& DagMCModelProperties::getModelFileName() const
 {
   return d_file_name;
+}
+
+// Get the model file path
+std::string DagMCModelProperties::getModelFilePath() const
+{
+  return d_file_path.string();
+}
+
+// Get the model file name with path
+std::string DagMCModelProperties::getModelFileNameWithPath() const
+{
+  return (d_file_path / d_file_name).string();
 }
 
 // Set the face tolerance for the model

@@ -57,15 +57,32 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, default_properties )
   FRENSIE_CHECK_EQUAL( default_properties.getAdjointPhotonName(), "p*" );
   FRENSIE_CHECK_EQUAL( default_properties.getAdjointNeutronName(), "n*" );
   FRENSIE_CHECK_EQUAL( default_properties.getAdjointElectronName(), "e*" );
+
+  FRENSIE_CHECK_EQUAL( Geometry::DagMCModelProperties::getDefaultFilePath(), "" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the file name can be returned
-FRENSIE_UNIT_TEST( DagMCModelProperties, getModelFileName )
+FRENSIE_UNIT_TEST( DagMCModelProperties, constructor )
 {
-  const Geometry::DagMCModelProperties properties( "test.h5m" );
+  std::unique_ptr<const Geometry::DagMCModelProperties>
+    properties( new Geometry::DagMCModelProperties( "test.h5m" ) );
 
-  FRENSIE_CHECK_EQUAL( properties.getModelFileName(), "test.h5m" );
+  FRENSIE_CHECK_EQUAL( properties->getModelFileName(), "test.h5m" );
+  FRENSIE_CHECK_EQUAL( properties->getModelFilePath(), "" );
+  FRENSIE_CHECK_EQUAL( properties->getModelFileNameWithPath(), "test.h5m" );
+
+  properties.reset( new Geometry::DagMCModelProperties( "test_dir/test.h5m" ) );
+
+  FRENSIE_CHECK_EQUAL( properties->getModelFileName(), "test.h5m" );
+  FRENSIE_CHECK_EQUAL( properties->getModelFilePath(), "test_dir" );
+  FRENSIE_CHECK_EQUAL( properties->getModelFileNameWithPath(), "test_dir/test.h5m" );
+
+  properties.reset( new Geometry::DagMCModelProperties( "/home/test_dir/test.h5m" ) );
+
+  FRENSIE_CHECK_EQUAL( properties->getModelFileName(), "test.h5m" );
+  FRENSIE_CHECK_EQUAL( properties->getModelFilePath(), "/home/test_dir" );
+  FRENSIE_CHECK_EQUAL( properties->getModelFileNameWithPath(), "/home/test_dir/test.h5m" );
 }
 
 //---------------------------------------------------------------------------//

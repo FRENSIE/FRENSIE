@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_HPP
 #define MONTE_CARLO_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // FRENSIE Includes
 #include "MonteCarlo_TypedObserverPhaseSpaceDimensionDiscretization.hpp"
 #include "Utility_Vector.hpp"
@@ -60,6 +63,9 @@ protected:
   //! Return the boundaries array
   const BinBoundaryArray& getBinBoundaries() const;
 
+  //! Return the shared boundaries array
+  std::shared_ptr<const BinBoundaryArray> getSharedBoundaries() const;
+
   //! Calculate the index of bins that the value falls in
   void calculateBinIndicesOfValue( const DimensionValueType value,
                                    BinIndexArray& bin_indices ) const override;
@@ -103,7 +109,7 @@ private:
   friend class boost::serialization::access;
 
   // The sorted dimension bin boundaries
-  BinBoundaryArray d_dimension_bin_boundaries;
+  std::shared_ptr<const BinBoundaryArray> d_dimension_bin_boundaries;
 };
 
 } // end MonteCarlo namespace

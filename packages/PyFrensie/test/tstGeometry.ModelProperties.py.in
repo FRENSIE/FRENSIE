@@ -46,11 +46,19 @@ if inspect.ismodule( DagMC ):
 
         @classmethod
         def setUpClass(cls):
-            cls.properties = DagMC.DagMCModelProperties( "dummy.h5m" )
+            cls.properties = DagMC.DagMCModelProperties( "test_dir/dummy.h5m" )
 
         def testGetModelFileName(self):
             "*Test Geometry.ModelProperties getModelFileName"
             self.assertEqual( self.properties.getModelFileName(), "dummy.h5m")
+
+        def testGetModelFilePath(self):
+            "*Test Geometry.ModelProperties getModelFilePath"
+            self.assertEqual( self.properties.getModelFilePath(), "test_dir" )
+
+        def testGetModelFileNameWithPath(self):
+            "*Test Geometry.ModelProperties getModelFileNameWithPath"
+            self.assertEqual( self.properties.getModelFileNameWithPath(), "test_dir/dummy.h5m" )
 
         def testSetFacetTolerance(self):
             "*Test Geometry.ModelProperties setFacetTolerance"
@@ -281,11 +289,19 @@ if inspect.ismodule( ROOT ):
 
         @classmethod
         def setUpClass(cls):
-            cls.properties = ROOT.RootModelProperties( "dummy.c" )
+            cls.properties = ROOT.RootModelProperties( "test_dir/dummy.c" )
 
         def testGetModelFileName(self):
             "*Test Geometry.ModelProperties getModelFileName"
             self.assertEqual( self.properties.getModelFileName(), "dummy.c")
+
+        def testGetModelFilePath(self):
+            "*Test Geometry.ModelProperties getModelFilePath"
+            self.assertEqual( self.properties.getModelFilePath(), "test_dir" )
+
+        def testGetModelFileNameWithPath(self):
+            "*Test Geometry.ModelProperties getModelFileNameWithPath"
+            self.assertEqual( self.properties.getModelFileNameWithPath(), "test_dir/dummy.c" )
 
         def testSetMaterialPropertyName(self):
             "*Test Geometry.ModelProperties setMaterialPropertyName"

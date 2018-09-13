@@ -40,6 +40,12 @@ public:
   ACEAndENDLElectronPhotonRelaxationDataGenerator(
    const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
    const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container );
+
+  //! Constructor (existing data container)
+  ACEAndENDLElectronPhotonRelaxationDataGenerator(
+     const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
+     const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container,
+     const boost::filesystem::path& file_name_with_path );
    
   //! Destructor
   ~ACEAndENDLElectronPhotonRelaxationDataGenerator()
@@ -48,16 +54,16 @@ public:
 protected:
 
   //! Set the atomic data
-  void setRelaxationData( Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const final override;
+  void setRelaxationData() final override;
 
   //! Set the Compton profile data
-  void setComptonProfileData( Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const final override;
+  void setComptonProfileData() final override;
 
   //! Set the Waller-Hartree scattering function data
-  void setWallerHartreeScatteringFunctionData( Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const final override;
+  void setWallerHartreeScatteringFunctionData() final override;
 
   //! Set the Waller-Hartree atomic form factor data
-  void setWallerHartreeAtomicFormFactorData( Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const final override;
+  void setWallerHartreeAtomicFormFactorData() final override;
 
   //! Extract the photon heating numbers
   void extractPhotonHeatingNumbers(
@@ -91,18 +97,14 @@ private:
   // Set the transition data
   void setTransitionData( const unsigned subshell,
                           const unsigned transitions,
-                          const unsigned subshell_data_start_index,
-                          Data::ElectronPhotonRelaxationVolatileDataContainer&
-                          data_container ) const;
+                          const unsigned subshell_data_start_index );
 
   // Set the Waller-Hartree atomic form factor data
   void setWallerHartreeAtomicFormFactorData(
                        const std::function<double(double)>& evaluation_wrapper,
                        std::list<double>& recoil_momentum_grid,
                        const double initial_grid_value,
-                       const double initial_form_factor_value,
-                       Data::ElectronPhotonRelaxationVolatileDataContainer&
-                       data_container ) const;
+                       const double initial_form_factor_value );
 
   // Extract the half Compton profile from the ACE table
   void extractHalfComptonProfile(

@@ -65,7 +65,7 @@ void DagMCModel::initialize( const DagMCModelProperties& model_properties,
     d_model_properties.reset( new DagMCModelProperties( model_properties ) );
 
     FRENSIE_LOG_PARTIAL_NOTIFICATION( "Loading model "
-                                      << model_properties.getModelFileName()
+                                      << model_properties.getModelFileNameWithPath()
                                       << " ... " );
     FRENSIE_FLUSH_ALL_LOGS();
 
@@ -74,7 +74,7 @@ void DagMCModel::initialize( const DagMCModelProperties& model_properties,
     }
     EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
                              "Unable to load DagMC geometry file "
-                             << model_properties.getModelFileName() << "!" );
+                             << model_properties.getModelFileNameWithPath() << "!" );
 
     // Validate the properties in the geometry
     try{
@@ -119,9 +119,9 @@ void DagMCModel::initialize( const DagMCModelProperties& model_properties,
   else
   {
     FRENSIE_LOG_DAGMC_WARNING( "Cannot load requested model ("
-                               << model_properties.getModelFileName() << ") "
+                               << model_properties.getModelFileNameWithPath() << ") "
                                "because a model ("
-                               << d_model_properties->getModelFileName() << ")"
+                               << d_model_properties->getModelFileNameWithPath() << ")"
                                " has already been loaded!" );
   }
 }
@@ -197,7 +197,7 @@ void DagMCModel::loadDagMCGeometry( const bool suppress_dagmc_output )
 
   // Load the geometry
   moab::ErrorCode return_value =
-    d_dagmc->load_file( d_model_properties->getModelFileName().c_str() );
+    d_dagmc->load_file( d_model_properties->getModelFileNameWithPath().c_str() );
 
   // Restore cout and cerr if they were suppressed
   if( suppress_dagmc_output )
@@ -1020,7 +1020,7 @@ void DagMCModel::getSurfaceIdsWithPropertyValue(
 // Print model details
 std::string DagMCModel::getName() const
 {
-  return d_model_properties->getModelFileName();
+  return d_model_properties->getModelFileNameWithPath();
 }
 
 // Return the cell handler
