@@ -277,12 +277,12 @@ FRENSIE_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   cdf_value = hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cdf_value, 7.2973328907193880e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf_value, 7.2973329008396992e-01, 1e-12 );
 
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff+1e-10;
   cdf_value = hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cdf_value, 7.2973328962368389e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf_value, 7.2973329063571502e-01, 1e-12 );
 
   // Test 3: at the max angle
   scattering_angle_cosine = 1.0;
@@ -1663,7 +1663,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   // Moment preserving elastic cross section
   std::vector<double> moment_preserving_cross_sections;
   size_t mp_threshold_energy_index;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogLogCosLog<true> ,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogNudgedLogCosLog ,Utility::Correlated>(
                                moment_preserving_cross_sections,
                                mp_threshold_energy_index,
                                data_container,
@@ -1686,7 +1686,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     {
     // Create the full continuous scattering function
     std::shared_ptr<TwoDDist> full_continuous_function;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LogLogCosLog<true> ,Utility::Correlated>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LogNudgedLogCosLog ,Utility::Correlated>(
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
@@ -1723,7 +1723,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
   // Create the hybrid scattering function
   std::shared_ptr<TwoDDist> hybrid_function;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction<Utility::LogLogCosLog<true> ,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction<Utility::LogNudgedLogCosLog ,Utility::Correlated>(
             cross_section_ratios,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),

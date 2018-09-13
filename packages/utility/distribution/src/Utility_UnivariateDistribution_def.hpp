@@ -93,10 +93,10 @@ inline bool UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>::isIn
  */
 template<typename IndependentUnit, typename DependentUnit>
 inline bool UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
-                                      const LogCosIndepVarProcessingTag<true> ) const
+                                      const NudgedLogCosIndepVarProcessingTag ) const
 {
-  return LogLogCos<true>::isIndepVarInValidRange( this->getLowerBoundOfIndepVar() ) &&
-    LogLogCos<true>::isIndepVarInValidRange( this->getUpperBoundOfIndepVar() );
+  return LogNudgedLogCos::isIndepVarInValidRange( this->getLowerBoundOfIndepVar() ) &&
+    LogNudgedLogCos::isIndepVarInValidRange( this->getUpperBoundOfIndepVar() );
 }
 
 // Test if the independent variable is compatible with LogCos processing
@@ -105,10 +105,10 @@ inline bool UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>::isIn
  */
 template<typename IndependentUnit, typename DependentUnit>
 inline bool UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
-                                      const LogCosIndepVarProcessingTag<false> ) const
+                                      const LogCosIndepVarProcessingTag ) const
 {
-  return LogLogCos<false>::isIndepVarInValidRange( this->getLowerBoundOfIndepVar() ) &&
-    LogLogCos<false>::isIndepVarInValidRange( this->getUpperBoundOfIndepVar() );
+  return LogLogCos::isIndepVarInValidRange( this->getLowerBoundOfIndepVar() ) &&
+    LogLogCos::isIndepVarInValidRange( this->getUpperBoundOfIndepVar() );
 }
 
 // Test if the dependent variable is compatible with Lin processing
@@ -139,7 +139,7 @@ inline bool UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>::isDe
  */
 template<typename IndependentUnit, typename DependentUnit>
 inline bool UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>::isDepVarCompatibleWithProcessingType(
-                                        const LogCosDepVarProcessingTag<true> ) const
+                                        const NudgedLogCosDepVarProcessingTag ) const
 {
   return false;
 }
@@ -150,7 +150,7 @@ inline bool UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>::isDe
  */
 template<typename IndependentUnit, typename DependentUnit>
 inline bool UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>::isDepVarCompatibleWithProcessingType(
-                                        const LogCosDepVarProcessingTag<false> ) const
+                                        const LogCosDepVarProcessingTag ) const
 {
   return false;
 }

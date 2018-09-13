@@ -50,7 +50,7 @@ void ElasticElectronScatteringDistributionACEFactory::createScreenedRutherfordEl
 // Create the scattering function
 /*! \details If the eprdata12 library is used the TwoDInterpPolicy will be set
  *  to LinLinLin to match MCNP6.1. If the eprdata14 library is used the
- *  TwoDInterpPolicy will be set to LogLogCosLog<false> to match MCNP6.2.
+ *  TwoDInterpPolicy will be set to LogLogCosLog to match MCNP6.2.
  */
 void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
         const Data::XSSEPRDataExtractor& raw_electroatom_data,
@@ -90,15 +90,15 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
       primary_grid[n] = angular_energy_grid[n];
 
       secondary_dists[n].reset(
-        new const Utility::TabularCDFDistribution<Utility::LogLogCos<false> >(
+        new const Utility::TabularCDFDistribution<Utility::LogLogCos >(
           elas_block( offset[n], table_length[n] ),
           elas_block( offset[n] + table_length[n], table_length[n] ),
           true ) );
     }
 
-    // Set the scattering function with LogLogCosLog<false> interp (eprdata14)
+    // Set the scattering function with LogLogCosLog interp (eprdata14)
     scattering_function.reset(
-      new MonteCarlo::ElasticBasicBivariateDistribution<Utility::Correlated<Utility::LogLogCosLog<false>> >(
+      new MonteCarlo::ElasticBasicBivariateDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
                                                          primary_grid,
                                                          secondary_dists,
                                                          0.999999 ) );

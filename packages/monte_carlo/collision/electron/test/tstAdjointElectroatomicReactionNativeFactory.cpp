@@ -186,7 +186,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
   double cutoff_angle_cosine = 0.9;
   double evaluation_tol = 1e-15;
 
-  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LogLogCosLog<false>,Utility::Correlated>(
+  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LogLogCosLog,Utility::Correlated>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -214,7 +214,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
   energy = 20.0;
   cross_section = reaction->getCrossSection( energy );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.096244853899329463, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.0962446943088544, 1e-12 );
 
   // Clear the reaction
   reaction.reset();

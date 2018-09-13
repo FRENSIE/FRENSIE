@@ -50,7 +50,7 @@ IF(${FRENSIE_ENABLE_OPENMP})
     TEST_EXEC_NAME_ROOT StandardEntityEstimator
     EXTRA_ARGS --threads=2
     OPENMP_TEST)
-  ADD_TEST(SharedParallelStandardEntityEstimator_4
+  FRENSIE_ADD_TEST(SharedParallelStandardEntityEstimator_4
     TEST_EXEC_NAME_ROOT StandardEntityEstimator
     EXTRA_ARGS --threads=4
     OPENMP_TEST)
@@ -111,11 +111,11 @@ FRENSIE_ADD_TEST_EXECUTABLE(CellPulseHeightEstimator DEPENDS tstCellPulseHeightE
 FRENSIE_ADD_TEST(CellPulseHeightEstimator)
 
 IF(${FRENSIE_ENABLE_OPENMP})
-  ADD_TEST(SharedParallelCellPulseHeightEstimator_2
+  FRENSIE_ADD_TEST(SharedParallelCellPulseHeightEstimator_2
     TEST_EXEC_NAME_ROOT CellPulseHeightEstimator
     EXTRA_ARGS --threads=2
     OPENMP_TEST)
-  ADD_TEST(SharedParallelCellPulseHeightEstimator_4
+  FRENSIE_ADD_TEST(SharedParallelCellPulseHeightEstimator_4
     TEST_EXEC_NAME_ROOT CellPulseHeightEstimator
     EXTRA_ARGS --threads=4
     OPENMP_TEST)

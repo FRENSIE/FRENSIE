@@ -17,6 +17,11 @@
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
+// Test Variables
+//---------------------------------------------------------------------------//
+double delta = 1e-10;
+
+//---------------------------------------------------------------------------//
 // Testing Types
 //---------------------------------------------------------------------------//
 typedef std::tuple<
@@ -135,7 +140,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
   Utility::set<zmember>( z_1_grid[2], 0.5 );
 
   double z =
-    Utility::LogLogCosLog<false>::interpolate<ymember,zmember>( x0,
+    Utility::LogLogCosLog::interpolate<ymember,zmember>( x0,
                                                          x1,
                                                          x,
                                                          y,
@@ -152,7 +157,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
 
   x = 0.1;
 
-  z = Utility::LogLogCosLog<false>::interpolate<ymember,zmember>( x0,
+  z = Utility::LogLogCosLog::interpolate<ymember,zmember>( x0,
                                                            x1,
                                                            x,
                                                            y,
@@ -169,7 +174,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
 
   x = 1.0;
 
-  z = Utility::LogLogCosLog<false>::interpolate<ymember,zmember>( x0,
+  z = Utility::LogLogCosLog::interpolate<ymember,zmember>( x0,
                                                            x1,
                                                            x,
                                                            y,
@@ -220,7 +225,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
   Utility::set<zmember>( grid_1[2], 0.5 );
 
   double z =
-    Utility::LogLogCosLog<false>::interpolate<ymember,zmember>(x0,
+    Utility::LogLogCosLog::interpolate<ymember,zmember>(x0,
                                                         x1,
                                                         x,
                                                         y,
@@ -233,7 +238,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
 
   x = 0.1;
 
-  z = Utility::LogLogCosLog<false>::interpolate<ymember,zmember>( x0,
+  z = Utility::LogLogCosLog::interpolate<ymember,zmember>( x0,
                                                            x1,
                                                            x,
                                                            y,
@@ -246,7 +251,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
 
   x = 1.0;
 
-  z = Utility::LogLogCosLog<false>::interpolate<ymember,zmember>( x0,
+  z = Utility::LogLogCosLog::interpolate<ymember,zmember>( x0,
                                                            x1,
                                                            x,
                                                            y,
@@ -286,7 +291,7 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolate_no_tuple_grids )
   z_1_grid[1] = 5.0;
   z_1_grid[2] = 0.5;
 
-  double z = Utility::LogLogCosLog<false>::interpolate( x0,
+  double z = Utility::LogLogCosLog::interpolate( x0,
                                                  x1,
                                                  x,
                                                  y,
@@ -303,7 +308,7 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolate_no_tuple_grids )
 
   x = 0.1;
 
-  z = Utility::LogLogCosLog<false>::interpolate( x0,
+  z = Utility::LogLogCosLog::interpolate( x0,
                                           x1,
                                           x,
                                           y,
@@ -320,7 +325,7 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolate_no_tuple_grids )
 
   x = 1.0;
 
-  z = Utility::LogLogCosLog<false>::interpolate( x0,
+  z = Utility::LogLogCosLog::interpolate( x0,
                                           x1,
                                           x,
                                           y,
@@ -343,20 +348,20 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, calculateIntermediateGridLength )
   double x0 = 0.1, x1 = 1.0, x = 0.3;
   double L0 = 3.0, L1 = 5.0;
 
-  double Lx = Utility::LogLogCosLog<false>::calculateIntermediateGridLength(
+  double Lx = Utility::LogLogCosLog::calculateIntermediateGridLength(
                                                            x0, x1, x, L0, L1 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( Lx, 3.9542425094393248, 1e-15 );
 
   x = 0.1;
 
-  Lx = Utility::LogLogCosLog<false>::calculateIntermediateGridLength(x0, x1, x, L0, L1 );
+  Lx = Utility::LogLogCosLog::calculateIntermediateGridLength(x0, x1, x, L0, L1 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( Lx, 3.0, 1e-15 );
 
   x = 1.0;
 
-  Lx = Utility::LogLogCosLog<false>::calculateIntermediateGridLength(x0, x1, x, L0, L1 );
+  Lx = Utility::LogLogCosLog::calculateIntermediateGridLength(x0, x1, x, L0, L1 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( Lx, 5.0, 1e-15 );
 }
@@ -368,21 +373,21 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, calculateIntermediateGridLimit )
   double x0 = 0.1, x1 = 1.0, x = 0.3;
   double y0_min = -1.0, y1_min = -1.0;
 
-  double yx_min = Utility::LogLogCosLog<false>::calculateIntermediateGridLimit(
+  double yx_min = Utility::LogLogCosLog::calculateIntermediateGridLimit(
                                                    x0, x1, x, y0_min, y1_min );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( yx_min, -1.0, 1e-15 );
 
   x = 0.1;
 
-  yx_min = Utility::LogLogCosLog<false>::calculateIntermediateGridLimit(
+  yx_min = Utility::LogLogCosLog::calculateIntermediateGridLimit(
                                                    x0, x1, x, y0_min, y1_min );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( yx_min, -1.0, 1e-15 );
 
   x = 1.0;
 
-  yx_min = Utility::LogLogCosLog<false>::calculateIntermediateGridLimit(
+  yx_min = Utility::LogLogCosLog::calculateIntermediateGridLimit(
                                                    x0, x1, x, y0_min, y1_min );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( yx_min, -1.0, 1e-15 );
@@ -427,7 +432,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
   Utility::set<zmember>( z_1_grid[1], 1e-1 );
   Utility::set<zmember>( z_1_grid[2], 1.0 );
 
-  double z = Utility::LogLogCosLog<false>::interpolateUnitBase<ymember,zmember>(
+  double z = Utility::LogLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -445,7 +450,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
 
   y = -1.0; // min possible y at x = 0.3
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -463,7 +468,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
 
   y = 0.999999; // max possible y at x = 0.3
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -482,7 +487,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
   y = 0.9;
   x = 0.1;
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -500,7 +505,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
 
   y = -1.0;
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -518,7 +523,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
 
   y = 1.0;
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -537,7 +542,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
   y = 0.9;
   x = 1.0;
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -555,7 +560,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
 
   y = -1.0;
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -573,7 +578,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
 
   y = 0.999999;
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -624,7 +629,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
   Utility::set<zmember>( grid_1[1], 1e-1 );
   Utility::set<zmember>( grid_1[2], 1.0 );
 
-  double z = Utility::LogLogCosLog<false>::interpolateUnitBase<ymember,zmember>(
+  double z = Utility::LogLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -638,7 +643,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
 
   y = -1.0; // min possible y at x = 0.3
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -652,7 +657,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
 
   y = 0.999999; // max possible y at x = 0.3
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -667,7 +672,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
   y = 0.9;
   x = 0.1;
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -681,7 +686,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
 
   y = -1.0;
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -695,7 +700,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
 
   y = 0.999999;
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -710,7 +715,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
   y = 0.9;
   x = 1.0;
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -724,7 +729,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
 
   y = -1.0;
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -738,7 +743,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
 
   y = 0.999999;
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -780,7 +785,7 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateUnitBase_no_tuple_grids )
   z_1_grid[1] = 1e-1;
   z_1_grid[2] = 1.0;
 
-  double z = Utility::LogLogCosLog<false>::interpolateUnitBase( x0,
+  double z = Utility::LogLogCosLog::interpolateUnitBase( x0,
                                                          x1,
                                                          x,
                                                          y,
@@ -797,7 +802,7 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateUnitBase_no_tuple_grids )
 
   y = -1.0; // min possible y at x = 0.3
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase( x0,
+  z = Utility::LogLogCosLog::interpolateUnitBase( x0,
                                                   x1,
                                                   x,
                                                   y,
@@ -814,7 +819,7 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateUnitBase_no_tuple_grids )
 
   y = 0.999999; // max possible y at x = 0.3
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase( x0,
+  z = Utility::LogLogCosLog::interpolateUnitBase( x0,
                                                   x1,
                                                   x,
                                                   y,
@@ -832,7 +837,7 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateUnitBase_no_tuple_grids )
   y = 0.9;
   x = 0.1;
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase( x0,
+  z = Utility::LogLogCosLog::interpolateUnitBase( x0,
                                                   x1,
                                                   x,
                                                   y,
@@ -849,7 +854,7 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateUnitBase_no_tuple_grids )
 
   y = -1.0;
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase( x0,
+  z = Utility::LogLogCosLog::interpolateUnitBase( x0,
                                                x1,
                                                x,
                                                y,
@@ -866,7 +871,7 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateUnitBase_no_tuple_grids )
 
   y = 0.999999;
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase( x0,
+  z = Utility::LogLogCosLog::interpolateUnitBase( x0,
                                                   x1,
                                                   x,
                                                   y,
@@ -884,7 +889,7 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateUnitBase_no_tuple_grids )
   y = 0.9;
   x = 1.0;
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase( x0,
+  z = Utility::LogLogCosLog::interpolateUnitBase( x0,
                                                x1,
                                                x,
                                                y,
@@ -901,7 +906,7 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateUnitBase_no_tuple_grids )
 
   y = -1.0;
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase( x0,
+  z = Utility::LogLogCosLog::interpolateUnitBase( x0,
                                                x1,
                                                x,
                                                y,
@@ -918,7 +923,7 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateUnitBase_no_tuple_grids )
 
   y = 0.999999;
 
-  z = Utility::LogLogCosLog<false>::interpolateUnitBase( x0,
+  z = Utility::LogLogCosLog::interpolateUnitBase( x0,
                                                x1,
                                                x,
                                                y,
@@ -939,10 +944,10 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateUnitBase_no_tuple_grids )
 FRENSIE_UNIT_TEST( LogLogCosLog_false, processDepVar )
 {
   FRENSIE_CHECK_FLOATING_EQUALITY( std::log(0.1),
-                          Utility::LogLogCosLog<false>::processDepVar(0.1),
+                          Utility::LogLogCosLog::processDepVar(0.1),
                           1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY( std::log(1.0),
-                          Utility::LogLogCosLog<false>::processDepVar( 1.0 ),
+                          Utility::LogLogCosLog::processDepVar( 1.0 ),
                           1e-15 );
 }
 
@@ -951,10 +956,10 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, processDepVar )
 FRENSIE_UNIT_TEST( LogLogCosLog_false, recoverProcessedDepVar )
 {
   FRENSIE_CHECK_FLOATING_EQUALITY( 0.1,
-                          Utility::LogLogCosLog<false>::recoverProcessedDepVar(std::log(0.1)),
+                          Utility::LogLogCosLog::recoverProcessedDepVar(std::log(0.1)),
                           1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY( 1.0,
-                          Utility::LogLogCosLog<false>::recoverProcessedDepVar(std::log(1.0)),
+                          Utility::LogLogCosLog::recoverProcessedDepVar(std::log(1.0)),
                           1e-15 );
 }
 
@@ -963,10 +968,10 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, recoverProcessedDepVar )
 FRENSIE_UNIT_TEST( LogLogCosLog_false, processSecondIndepVar )
 {
   FRENSIE_CHECK_FLOATING_EQUALITY( std::log(2.0),
-                          Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0),
+                          Utility::LogLogCosLog::processSecondIndepVar(-1.0),
                           1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY( std::log(1.0-0.999999),
-                          Utility::LogLogCosLog<false>::processSecondIndepVar(0.999999),
+                          Utility::LogLogCosLog::processSecondIndepVar(0.999999),
                           1e-15 );
 }
 
@@ -976,11 +981,11 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, recoverProcessedSecondIndepVar )
 {
   FRENSIE_CHECK_FLOATING_EQUALITY(
                   -1.0,
-                  Utility::LogLogCosLog<false>::recoverProcessedSecondIndepVar(std::log(2.0)),
+                  Utility::LogLogCosLog::recoverProcessedSecondIndepVar(std::log(2.0)),
                   1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY(
                   0.999999,
-                  Utility::LogLogCosLog<false>::recoverProcessedSecondIndepVar(std::log(1.0-0.999999)),
+                  Utility::LogLogCosLog::recoverProcessedSecondIndepVar(std::log(1.0-0.999999)),
                   1e-15 );
 }
 
@@ -989,10 +994,10 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, recoverProcessedSecondIndepVar )
 FRENSIE_UNIT_TEST( LogLogCosLog_false, processFirstIndepVar )
 {
   FRENSIE_CHECK_FLOATING_EQUALITY( std::log(0.1),
-                          Utility::LogLogCosLog<false>::processFirstIndepVar(0.1),
+                          Utility::LogLogCosLog::processFirstIndepVar(0.1),
                           1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY( std::log(1.0),
-                          Utility::LogLogCosLog<false>::processFirstIndepVar(1.0),
+                          Utility::LogLogCosLog::processFirstIndepVar(1.0),
                           1e-15 );
 }
 
@@ -1002,11 +1007,11 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, recoverProcessedFirstIndepVar )
 {
   FRENSIE_CHECK_FLOATING_EQUALITY(
                   0.1,
-                  Utility::LogLogCosLog<false>::recoverProcessedFirstIndepVar(std::log(0.1)),
+                  Utility::LogLogCosLog::recoverProcessedFirstIndepVar(std::log(0.1)),
                   1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY(
                   1.0,
-                  Utility::LogLogCosLog<false>::recoverProcessedFirstIndepVar(std::log(1.0)),
+                  Utility::LogLogCosLog::recoverProcessedFirstIndepVar(std::log(1.0)),
                   1e-15 );
 }
 
@@ -1025,48 +1030,48 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
   constexpr const size_t ymember = WrappedYMember::value;
   constexpr const size_t zmember = WrappedZMember::value;
 
-  double x0 = Utility::LogLogCosLog<false>::processFirstIndepVar(0.1);
-  double x1 = Utility::LogLogCosLog<false>::processFirstIndepVar(1.0);
-  double x = Utility::LogLogCosLog<false>::processFirstIndepVar(0.3);
-  double y = Utility::LogLogCosLog<false>::processSecondIndepVar(0.9);
+  double x0 = Utility::LogLogCosLog::processFirstIndepVar(0.1);
+  double x1 = Utility::LogLogCosLog::processFirstIndepVar(1.0);
+  double x = Utility::LogLogCosLog::processFirstIndepVar(0.3);
+  double y = Utility::LogLogCosLog::processSecondIndepVar(0.9);
 
   std::vector<ytuple> y_0_grid( 4 );
   Utility::set<ymember>( y_0_grid[3],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0) );
+                         Utility::LogLogCosLog::processSecondIndepVar(-1.0) );
   Utility::set<ymember>( y_0_grid[2],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(0.0) );
+                         Utility::LogLogCosLog::processSecondIndepVar(0.0) );
   Utility::set<ymember>( y_0_grid[1],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(0.5) );
+                         Utility::LogLogCosLog::processSecondIndepVar(0.5) );
   Utility::set<ymember>( y_0_grid[0],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(0.999999) );
+                         Utility::LogLogCosLog::processSecondIndepVar(0.999999) );
 
   std::vector<ztuple> z_0_grid( 4 );
   Utility::set<zmember>( z_0_grid[3],
-                         Utility::LogLogCosLog<false>::processDepVar(100.0) );
+                         Utility::LogLogCosLog::processDepVar(100.0) );
   Utility::set<zmember>( z_0_grid[2],
-                         Utility::LogLogCosLog<false>::processDepVar(0.1) );
+                         Utility::LogLogCosLog::processDepVar(0.1) );
   Utility::set<zmember>( z_0_grid[1],
-                         Utility::LogLogCosLog<false>::processDepVar(1.0) );
+                         Utility::LogLogCosLog::processDepVar(1.0) );
   Utility::set<zmember>( z_0_grid[0],
-                         Utility::LogLogCosLog<false>::processDepVar(10.0) );
+                         Utility::LogLogCosLog::processDepVar(10.0) );
 
   std::vector<ytuple> y_1_grid( 3 );
   Utility::set<ymember>( y_1_grid[2],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0) );
+                         Utility::LogLogCosLog::processSecondIndepVar(-1.0) );
   Utility::set<ymember>( y_1_grid[1],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(0.0) );
+                         Utility::LogLogCosLog::processSecondIndepVar(0.0) );
   Utility::set<ymember>( y_1_grid[0],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(0.999999) );
+                         Utility::LogLogCosLog::processSecondIndepVar(0.999999) );
 
   std::vector<ztuple> z_1_grid( 3 );
   Utility::set<zmember>( z_1_grid[2],
-                         Utility::LogLogCosLog<false>::processDepVar(50.0) );
+                         Utility::LogLogCosLog::processDepVar(50.0) );
   Utility::set<zmember>( z_1_grid[1],
-                         Utility::LogLogCosLog<false>::processDepVar(5.0) );
+                         Utility::LogLogCosLog::processDepVar(5.0) );
   Utility::set<zmember>( z_1_grid[0],
-                         Utility::LogLogCosLog<false>::processDepVar(0.5) );
+                         Utility::LogLogCosLog::processDepVar(0.5) );
 
-  double z = Utility::LogLogCosLog<false>::interpolateProcessed<ymember,zmember>(
+  double z = Utility::LogLogCosLog::interpolateProcessed<ymember,zmember>(
                                                         x0,
                                                         x1,
                                                         x,
@@ -1082,9 +1087,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 2.0801924668549385, 1e-12 );
 
-  x = Utility::LogLogCosLog<false>::processFirstIndepVar(0.1);
+  x = Utility::LogLogCosLog::processFirstIndepVar(0.1);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessed<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateProcessed<ymember,zmember>(
                                                         x0,
                                                         x1,
                                                         x,
@@ -1100,9 +1105,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3263204908129951, 1e-12 );
 
-  x = Utility::LogLogCosLog<false>::processFirstIndepVar(1.0);
+  x = Utility::LogLogCosLog::processFirstIndepVar(1.0);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessed<ymember,zmember>( x0,
+  z = Utility::LogLogCosLog::interpolateProcessed<ymember,zmember>( x0,
                                                         x1,
                                                         x,
                                                         y,
@@ -1132,44 +1137,44 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
   constexpr const size_t ymember = WrappedYMember::value;
   constexpr const size_t zmember = WrappedZMember::value;
 
-  double x0 = Utility::LogLogCosLog<false>::processFirstIndepVar(0.1);
-  double x1 = Utility::LogLogCosLog<false>::processFirstIndepVar(1.0);
-  double x = Utility::LogLogCosLog<false>::processFirstIndepVar(0.3);
-  double y = Utility::LogLogCosLog<false>::processSecondIndepVar(0.9);
+  double x0 = Utility::LogLogCosLog::processFirstIndepVar(0.1);
+  double x1 = Utility::LogLogCosLog::processFirstIndepVar(1.0);
+  double x = Utility::LogLogCosLog::processFirstIndepVar(0.3);
+  double y = Utility::LogLogCosLog::processSecondIndepVar(0.9);
 
   std::vector<tuple> grid_0( 4 );
   Utility::set<ymember>( grid_0[3],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0) );
+                         Utility::LogLogCosLog::processSecondIndepVar(-1.0) );
   Utility::set<ymember>( grid_0[2],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(0.0) );
+                         Utility::LogLogCosLog::processSecondIndepVar(0.0) );
   Utility::set<ymember>( grid_0[1],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(0.5) );
+                         Utility::LogLogCosLog::processSecondIndepVar(0.5) );
   Utility::set<ymember>( grid_0[0],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(0.999999) );
+                         Utility::LogLogCosLog::processSecondIndepVar(0.999999) );
   Utility::set<zmember>( grid_0[3],
-                         Utility::LogLogCosLog<false>::processDepVar(100.0) );
+                         Utility::LogLogCosLog::processDepVar(100.0) );
   Utility::set<zmember>( grid_0[2],
-                         Utility::LogLogCosLog<false>::processDepVar(0.1) );
+                         Utility::LogLogCosLog::processDepVar(0.1) );
   Utility::set<zmember>( grid_0[1],
-                         Utility::LogLogCosLog<false>::processDepVar(1.0) );
+                         Utility::LogLogCosLog::processDepVar(1.0) );
   Utility::set<zmember>( grid_0[0],
-                         Utility::LogLogCosLog<false>::processDepVar(10.0) );
+                         Utility::LogLogCosLog::processDepVar(10.0) );
 
   std::vector<tuple> grid_1( 3 );
   Utility::set<ymember>( grid_1[2],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0) );
+                         Utility::LogLogCosLog::processSecondIndepVar(-1.0) );
   Utility::set<ymember>( grid_1[1],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(0.0) );
+                         Utility::LogLogCosLog::processSecondIndepVar(0.0) );
   Utility::set<ymember>( grid_1[0],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(0.999999) );
+                         Utility::LogLogCosLog::processSecondIndepVar(0.999999) );
   Utility::set<zmember>( grid_1[2],
-                         Utility::LogLogCosLog<false>::processDepVar(50.0) );
+                         Utility::LogLogCosLog::processDepVar(50.0) );
   Utility::set<zmember>( grid_1[1],
-                         Utility::LogLogCosLog<false>::processDepVar(5.0) );
+                         Utility::LogLogCosLog::processDepVar(5.0) );
   Utility::set<zmember>( grid_1[0],
-                         Utility::LogLogCosLog<false>::processDepVar(0.5) );
+                         Utility::LogLogCosLog::processDepVar(0.5) );
 
-  double z = Utility::LogLogCosLog<false>::interpolateProcessed<ymember,zmember>(
+  double z = Utility::LogLogCosLog::interpolateProcessed<ymember,zmember>(
                                                         x0,
                                                         x1,
                                                         x,
@@ -1181,9 +1186,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 2.0801924668549385, 1e-12 );
 
-  x = Utility::LogLogCosLog<false>::processFirstIndepVar(0.1);
+  x = Utility::LogLogCosLog::processFirstIndepVar(0.1);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessed<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateProcessed<ymember,zmember>(
                                                         x0,
                                                         x1,
                                                         x,
@@ -1195,9 +1200,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3263204908129951, 1e-12 );
 
-  x = Utility::LogLogCosLog<false>::processFirstIndepVar(1.0);
+  x = Utility::LogLogCosLog::processFirstIndepVar(1.0);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessed<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateProcessed<ymember,zmember>(
                                                         x0,
                                                         x1,
                                                         x,
@@ -1215,34 +1220,34 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_false,
 // can be done
 FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateProcessed_no_tuple_grids )
 {
-  double x0 = Utility::LogLogCosLog<false>::processFirstIndepVar(0.1);
-  double x1 = Utility::LogLogCosLog<false>::processFirstIndepVar(1.0);
-  double x = Utility::LogLogCosLog<false>::processFirstIndepVar(0.3);
-  double y = Utility::LogLogCosLog<false>::processSecondIndepVar(0.9);
+  double x0 = Utility::LogLogCosLog::processFirstIndepVar(0.1);
+  double x1 = Utility::LogLogCosLog::processFirstIndepVar(1.0);
+  double x = Utility::LogLogCosLog::processFirstIndepVar(0.3);
+  double y = Utility::LogLogCosLog::processSecondIndepVar(0.9);
 
   std::vector<double> y_0_grid( 4 );
-  y_0_grid[3] = Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0);
-  y_0_grid[2] = Utility::LogLogCosLog<false>::processSecondIndepVar(0.0);
-  y_0_grid[1] = Utility::LogLogCosLog<false>::processSecondIndepVar(0.5);
-  y_0_grid[0] = Utility::LogLogCosLog<false>::processSecondIndepVar(0.999999);
+  y_0_grid[3] = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
+  y_0_grid[2] = Utility::LogLogCosLog::processSecondIndepVar(0.0);
+  y_0_grid[1] = Utility::LogLogCosLog::processSecondIndepVar(0.5);
+  y_0_grid[0] = Utility::LogLogCosLog::processSecondIndepVar(0.999999);
 
   std::vector<double> z_0_grid( 4 );
-  z_0_grid[3] = Utility::LogLogCosLog<false>::processDepVar(100.0);
-  z_0_grid[2] = Utility::LogLogCosLog<false>::processDepVar(0.1);
-  z_0_grid[1] = Utility::LogLogCosLog<false>::processDepVar(1.0);
-  z_0_grid[0] = Utility::LogLogCosLog<false>::processDepVar(10.0);
+  z_0_grid[3] = Utility::LogLogCosLog::processDepVar(100.0);
+  z_0_grid[2] = Utility::LogLogCosLog::processDepVar(0.1);
+  z_0_grid[1] = Utility::LogLogCosLog::processDepVar(1.0);
+  z_0_grid[0] = Utility::LogLogCosLog::processDepVar(10.0);
 
   std::vector<double> y_1_grid( 3 );
-  y_1_grid[2] = Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0);
-  y_1_grid[1] = Utility::LogLogCosLog<false>::processSecondIndepVar(0.0);
-  y_1_grid[0] = Utility::LogLogCosLog<false>::processSecondIndepVar(0.999999);
+  y_1_grid[2] = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
+  y_1_grid[1] = Utility::LogLogCosLog::processSecondIndepVar(0.0);
+  y_1_grid[0] = Utility::LogLogCosLog::processSecondIndepVar(0.999999);
 
   std::vector<double> z_1_grid( 3 );
-  z_1_grid[2] = Utility::LogLogCosLog<false>::processDepVar(50.0);
-  z_1_grid[1] = Utility::LogLogCosLog<false>::processDepVar(5.0);
-  z_1_grid[0] = Utility::LogLogCosLog<false>::processDepVar(0.5);
+  z_1_grid[2] = Utility::LogLogCosLog::processDepVar(50.0);
+  z_1_grid[1] = Utility::LogLogCosLog::processDepVar(5.0);
+  z_1_grid[0] = Utility::LogLogCosLog::processDepVar(0.5);
 
-  double z = Utility::LogLogCosLog<false>::interpolateProcessed( x0,
+  double z = Utility::LogLogCosLog::interpolateProcessed( x0,
                                                           x1,
                                                           x,
                                                           y,
@@ -1257,9 +1262,9 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateProcessed_no_tuple_grids )
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 2.0801924668549385, 1e-12 );
 
-  x = Utility::LogLogCosLog<false>::processFirstIndepVar(0.1);
+  x = Utility::LogLogCosLog::processFirstIndepVar(0.1);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessed( x0,
+  z = Utility::LogLogCosLog::interpolateProcessed( x0,
                                                    x1,
                                                    x,
                                                    y,
@@ -1274,9 +1279,9 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateProcessed_no_tuple_grids )
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3263204908129951, 1e-12 );
 
-  x = Utility::LogLogCosLog<false>::processFirstIndepVar(1.0);
+  x = Utility::LogLogCosLog::processFirstIndepVar(1.0);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessed( x0,
+  z = Utility::LogLogCosLog::interpolateProcessed( x0,
                                                    x1,
                                                    x,
                                                    y,
@@ -1296,26 +1301,26 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateProcessed_no_tuple_grids )
 // Check that the intermediate grid length can be calculated
 FRENSIE_UNIT_TEST( LogLogCosLog_false, calculateIntermediateGridLengthProcessed )
 {
-  double x0 = Utility::LogLogCosLog<false>::processFirstIndepVar(0.1);
-  double x1 = Utility::LogLogCosLog<false>::processFirstIndepVar(1.0);
-  double x = Utility::LogLogCosLog<false>::processFirstIndepVar(0.3);
+  double x0 = Utility::LogLogCosLog::processFirstIndepVar(0.1);
+  double x1 = Utility::LogLogCosLog::processFirstIndepVar(1.0);
+  double x = Utility::LogLogCosLog::processFirstIndepVar(0.3);
   double L0 = 3.0, L1 = 5.0;
 
-  double Lx = Utility::LogLogCosLog<false>::calculateIntermediateGridLengthProcessed(
+  double Lx = Utility::LogLogCosLog::calculateIntermediateGridLengthProcessed(
                                                            x0, x1, x, L0, L1 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( Lx, 3.9542425094393248, 1e-15 );
 
-  x = Utility::LogLogCosLog<false>::processFirstIndepVar(0.1);
+  x = Utility::LogLogCosLog::processFirstIndepVar(0.1);
 
-  Lx = Utility::LogLogCosLog<false>::calculateIntermediateGridLengthProcessed(
+  Lx = Utility::LogLogCosLog::calculateIntermediateGridLengthProcessed(
                                                            x0, x1, x, L0, L1 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( Lx, 3.0, 1e-15 );
 
-  x = Utility::LogLogCosLog<false>::processFirstIndepVar(1.0);
+  x = Utility::LogLogCosLog::processFirstIndepVar(1.0);
 
-  Lx = Utility::LogLogCosLog<false>::calculateIntermediateGridLengthProcessed(
+  Lx = Utility::LogLogCosLog::calculateIntermediateGridLengthProcessed(
                                                            x0, x1, x, L0, L1 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( Lx, 5.0, 1e-15 );
@@ -1325,35 +1330,35 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, calculateIntermediateGridLengthProcessed 
 // Check that the intermediate grid min value can be calculated
 FRENSIE_UNIT_TEST( LogLogCosLog_false, calculateIntermediateProcessedGridLimit )
 {
-  double x0 = Utility::LogLogCosLog<false>::processFirstIndepVar(0.1);
-  double x1 = Utility::LogLogCosLog<false>::processFirstIndepVar(1.0);
-  double x = Utility::LogLogCosLog<false>::processFirstIndepVar(0.3);
-  double y0_min = Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0);
-  double y1_min = Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0);
+  double x0 = Utility::LogLogCosLog::processFirstIndepVar(0.1);
+  double x1 = Utility::LogLogCosLog::processFirstIndepVar(1.0);
+  double x = Utility::LogLogCosLog::processFirstIndepVar(0.3);
+  double y0_min = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
+  double y1_min = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
 
-  double yx_min = Utility::LogLogCosLog<false>::calculateIntermediateProcessedGridLimit(
+  double yx_min = Utility::LogLogCosLog::calculateIntermediateProcessedGridLimit(
                                                    x0, x1, x, y0_min, y1_min );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( yx_min,
-                          Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0),
+                          Utility::LogLogCosLog::processSecondIndepVar(-1.0),
                           1e-15 );
 
-  x = Utility::LogLogCosLog<false>::processFirstIndepVar(0.1);
+  x = Utility::LogLogCosLog::processFirstIndepVar(0.1);
 
-  yx_min = Utility::LogLogCosLog<false>::calculateIntermediateProcessedGridLimit(
+  yx_min = Utility::LogLogCosLog::calculateIntermediateProcessedGridLimit(
                                                    x0, x1, x, y0_min, y1_min );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( yx_min,
-                          Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0),
+                          Utility::LogLogCosLog::processSecondIndepVar(-1.0),
                           1e-15 );
 
-  x = Utility::LogLogCosLog<false>::processFirstIndepVar(1.0);
+  x = Utility::LogLogCosLog::processFirstIndepVar(1.0);
 
-  yx_min = Utility::LogLogCosLog<false>::calculateIntermediateProcessedGridLimit(
+  yx_min = Utility::LogLogCosLog::calculateIntermediateProcessedGridLimit(
                                                    x0, x1, x, y0_min, y1_min );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( yx_min,
-                          Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0),
+                          Utility::LogLogCosLog::processSecondIndepVar(-1.0),
                           1e-15 );
 }
 
@@ -1373,49 +1378,49 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
   constexpr const size_t ymember = WrappedYMember::value;
   constexpr const size_t zmember = WrappedZMember::value;
 
-  double x0 = Utility::LogLogCosLog<false>::processFirstIndepVar(0.1);
-  double x1 = Utility::LogLogCosLog<false>::processFirstIndepVar(1.0);
-  double x = Utility::LogLogCosLog<false>::processFirstIndepVar(0.3);
-  double y = Utility::LogLogCosLog<false>::processSecondIndepVar(0.9);
+  double x0 = Utility::LogLogCosLog::processFirstIndepVar(0.1);
+  double x1 = Utility::LogLogCosLog::processFirstIndepVar(1.0);
+  double x = Utility::LogLogCosLog::processFirstIndepVar(0.3);
+  double y = Utility::LogLogCosLog::processSecondIndepVar(0.9);
   double fuzzy_tol = 1e-4;
 
   std::vector<ytuple> y_0_grid( 4 );
   Utility::set<ymember>( y_0_grid[3],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0) );
+                         Utility::LogLogCosLog::processSecondIndepVar(-1.0) );
   Utility::set<ymember>( y_0_grid[2],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(0.0) );
+                         Utility::LogLogCosLog::processSecondIndepVar(0.0) );
   Utility::set<ymember>( y_0_grid[1],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(0.5) );
+                         Utility::LogLogCosLog::processSecondIndepVar(0.5) );
   Utility::set<ymember>( y_0_grid[0],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(0.999999) );
+                         Utility::LogLogCosLog::processSecondIndepVar(0.999999) );
 
   std::vector<ztuple> z_0_grid( 4 );
   Utility::set<zmember>( z_0_grid[3],
-                         Utility::LogLogCosLog<false>::processDepVar(1e-3) );
+                         Utility::LogLogCosLog::processDepVar(1e-3) );
   Utility::set<zmember>( z_0_grid[2],
-                         Utility::LogLogCosLog<false>::processDepVar(1e-2) );
+                         Utility::LogLogCosLog::processDepVar(1e-2) );
   Utility::set<zmember>( z_0_grid[1],
-                         Utility::LogLogCosLog<false>::processDepVar(1e-1) );
+                         Utility::LogLogCosLog::processDepVar(1e-1) );
   Utility::set<zmember>( z_0_grid[0],
-                         Utility::LogLogCosLog<false>::processDepVar(1.0) );
+                         Utility::LogLogCosLog::processDepVar(1.0) );
 
   std::vector<ytuple> y_1_grid( 3 );
   Utility::set<ymember>( y_1_grid[2],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0) );
+                         Utility::LogLogCosLog::processSecondIndepVar(-1.0) );
   Utility::set<ymember>( y_1_grid[1],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(0.0) );
+                         Utility::LogLogCosLog::processSecondIndepVar(0.0) );
   Utility::set<ymember>( y_1_grid[0],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(0.999999) );
+                         Utility::LogLogCosLog::processSecondIndepVar(0.999999) );
 
   std::vector<ztuple> z_1_grid( 3 );
   Utility::set<zmember>( z_1_grid[2],
-                         Utility::LogLogCosLog<false>::processDepVar(1e-2) );
+                         Utility::LogLogCosLog::processDepVar(1e-2) );
   Utility::set<zmember>( z_1_grid[1],
-                         Utility::LogLogCosLog<false>::processDepVar(1e-1) );
+                         Utility::LogLogCosLog::processDepVar(1e-1) );
   Utility::set<zmember>( z_1_grid[0],
-                         Utility::LogLogCosLog<false>::processDepVar(1.0) );
+                         Utility::LogLogCosLog::processDepVar(1.0) );
 
-  double z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase<ymember,zmember>(
+  double z = Utility::LogLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -1432,9 +1437,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3920360807059723e-01, 1e-12 );
 
   // max possible processed y at x = 0.3
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0);
+  y = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -1451,9 +1456,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3e-3, 1e-12 );
 
   // max possible processed y + fuzzy bound at x = 0.3
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0)*(1.0 + fuzzy_tol);
+  y = Utility::LogLogCosLog::processSecondIndepVar(-1.0)*(1.0 + fuzzy_tol);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -1470,9 +1475,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3e-3, 1e-12 );
 
   // min possible processed y at x = 0.3
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(0.999999);
+  y = Utility::LogLogCosLog::processSecondIndepVar(0.999999);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -1488,10 +1493,10 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(0.9);
-  x = Utility::LogLogCosLog<false>::processFirstIndepVar(0.1);
+  y = Utility::LogLogCosLog::processSecondIndepVar(0.9);
+  x = Utility::LogLogCosLog::processFirstIndepVar(0.1);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -1507,9 +1512,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3263204908129952e-01, 1e-12 );
 
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0);
+  y = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -1525,9 +1530,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-3, 1e-12 );
 
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(0.999999);
+  y = Utility::LogLogCosLog::processSecondIndepVar(0.999999);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -1543,10 +1548,10 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(0.9);
-  x = Utility::LogLogCosLog<false>::processFirstIndepVar(1.0);
+  y = Utility::LogLogCosLog::processSecondIndepVar(0.9);
+  x = Utility::LogLogCosLog::processFirstIndepVar(1.0);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -1562,9 +1567,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4677992676232424e-01, 1e-12 );
 
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0);
+  y = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -1580,9 +1585,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-2, 1e-12 );
 
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(0.999999);
+  y = Utility::LogLogCosLog::processSecondIndepVar(0.999999);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -1614,44 +1619,44 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
   constexpr const size_t ymember = WrappedYMember::value;
   constexpr const size_t zmember = WrappedZMember::value;
 
-  double x0 = Utility::LogLogCosLog<false>::processFirstIndepVar(0.1);
-  double x1 = Utility::LogLogCosLog<false>::processFirstIndepVar(1.0);
-  double x = Utility::LogLogCosLog<false>::processFirstIndepVar(0.3);
-  double y = Utility::LogLogCosLog<false>::processSecondIndepVar(0.9);
+  double x0 = Utility::LogLogCosLog::processFirstIndepVar(0.1);
+  double x1 = Utility::LogLogCosLog::processFirstIndepVar(1.0);
+  double x = Utility::LogLogCosLog::processFirstIndepVar(0.3);
+  double y = Utility::LogLogCosLog::processSecondIndepVar(0.9);
 
   std::vector<tuple> grid_0( 4 );
   Utility::set<ymember>( grid_0[3],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0) );
+                         Utility::LogLogCosLog::processSecondIndepVar(-1.0) );
   Utility::set<ymember>( grid_0[2],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(0.0) );
+                         Utility::LogLogCosLog::processSecondIndepVar(0.0) );
   Utility::set<ymember>( grid_0[1],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(0.5) );
+                         Utility::LogLogCosLog::processSecondIndepVar(0.5) );
   Utility::set<ymember>( grid_0[0],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(0.999999) );
+                         Utility::LogLogCosLog::processSecondIndepVar(0.999999) );
   Utility::set<zmember>( grid_0[3],
-                         Utility::LogLogCosLog<false>::processDepVar(1e-3) );
+                         Utility::LogLogCosLog::processDepVar(1e-3) );
   Utility::set<zmember>( grid_0[2],
-                         Utility::LogLogCosLog<false>::processDepVar(1e-2) );
+                         Utility::LogLogCosLog::processDepVar(1e-2) );
   Utility::set<zmember>( grid_0[1],
-                         Utility::LogLogCosLog<false>::processDepVar(1e-1) );
+                         Utility::LogLogCosLog::processDepVar(1e-1) );
   Utility::set<zmember>( grid_0[0],
-                         Utility::LogLogCosLog<false>::processDepVar(1.0) );
+                         Utility::LogLogCosLog::processDepVar(1.0) );
 
   std::vector<tuple> grid_1( 3 );
   Utility::set<ymember>( grid_1[2],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0) );
+                         Utility::LogLogCosLog::processSecondIndepVar(-1.0) );
   Utility::set<ymember>( grid_1[1],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(0.0) );
+                         Utility::LogLogCosLog::processSecondIndepVar(0.0) );
   Utility::set<ymember>( grid_1[0],
-                         Utility::LogLogCosLog<false>::processSecondIndepVar(0.999999) );
+                         Utility::LogLogCosLog::processSecondIndepVar(0.999999) );
   Utility::set<zmember>( grid_1[2],
-                         Utility::LogLogCosLog<false>::processDepVar(1e-2) );
+                         Utility::LogLogCosLog::processDepVar(1e-2) );
   Utility::set<zmember>( grid_1[1],
-                         Utility::LogLogCosLog<false>::processDepVar(1e-1) );
+                         Utility::LogLogCosLog::processDepVar(1e-1) );
   Utility::set<zmember>( grid_1[0],
-                         Utility::LogLogCosLog<false>::processDepVar(1.0) );
+                         Utility::LogLogCosLog::processDepVar(1.0) );
 
-  double z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase<ymember,zmember>(
+  double z = Utility::LogLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -1664,9 +1669,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3920360807059723e-01, 1e-12 );
 
   // min possible y at x = 0.3
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0);
+  y = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -1679,9 +1684,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3e-3, 1e-12 );
 
   // max possible y at x = 0.3
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(0.999999);
+  y = Utility::LogLogCosLog::processSecondIndepVar(0.999999);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -1693,10 +1698,10 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(0.9);
-  x = Utility::LogLogCosLog<false>::processFirstIndepVar(0.1);
+  y = Utility::LogLogCosLog::processSecondIndepVar(0.9);
+  x = Utility::LogLogCosLog::processFirstIndepVar(0.1);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -1708,9 +1713,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3263204908129952e-01, 1e-12 );
 
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0);
+  y = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -1722,9 +1727,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-3, 1e-12 );
 
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(0.999999);
+  y = Utility::LogLogCosLog::processSecondIndepVar(0.999999);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -1736,10 +1741,10 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(0.9);
-  x = Utility::LogLogCosLog<false>::processFirstIndepVar(1.0);
+  y = Utility::LogLogCosLog::processSecondIndepVar(0.9);
+  x = Utility::LogLogCosLog::processFirstIndepVar(1.0);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -1751,9 +1756,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4677992676232424e-01, 1e-12 );
 
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0);
+  y = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -1765,9 +1770,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-2, 1e-12 );
 
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(0.999999);
+  y = Utility::LogLogCosLog::processSecondIndepVar(0.999999);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -1785,34 +1790,34 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
 // four points can be done
 FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateProcessedUnitBase_no_tuple_grids )
 {
-  double x0 = Utility::LogLogCosLog<false>::processFirstIndepVar(0.1);
-  double x1 = Utility::LogLogCosLog<false>::processFirstIndepVar(1.0);
-  double x = Utility::LogLogCosLog<false>::processFirstIndepVar(0.3);
-  double y = Utility::LogLogCosLog<false>::processSecondIndepVar(0.9);
+  double x0 = Utility::LogLogCosLog::processFirstIndepVar(0.1);
+  double x1 = Utility::LogLogCosLog::processFirstIndepVar(1.0);
+  double x = Utility::LogLogCosLog::processFirstIndepVar(0.3);
+  double y = Utility::LogLogCosLog::processSecondIndepVar(0.9);
 
   std::vector<double> y_0_grid( 4 );
-  y_0_grid[3] = Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0);
-  y_0_grid[2] = Utility::LogLogCosLog<false>::processSecondIndepVar(0.0);
-  y_0_grid[1] = Utility::LogLogCosLog<false>::processSecondIndepVar(0.5);
-  y_0_grid[0] = Utility::LogLogCosLog<false>::processSecondIndepVar(0.999999);
+  y_0_grid[3] = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
+  y_0_grid[2] = Utility::LogLogCosLog::processSecondIndepVar(0.0);
+  y_0_grid[1] = Utility::LogLogCosLog::processSecondIndepVar(0.5);
+  y_0_grid[0] = Utility::LogLogCosLog::processSecondIndepVar(0.999999);
 
   std::vector<double> z_0_grid( 4 );
-  z_0_grid[3] = Utility::LogLogCosLog<false>::processDepVar(1e-3);
-  z_0_grid[2] = Utility::LogLogCosLog<false>::processDepVar(1e-2);
-  z_0_grid[1] = Utility::LogLogCosLog<false>::processDepVar(1e-1);
-  z_0_grid[0] = Utility::LogLogCosLog<false>::processDepVar(1.0);
+  z_0_grid[3] = Utility::LogLogCosLog::processDepVar(1e-3);
+  z_0_grid[2] = Utility::LogLogCosLog::processDepVar(1e-2);
+  z_0_grid[1] = Utility::LogLogCosLog::processDepVar(1e-1);
+  z_0_grid[0] = Utility::LogLogCosLog::processDepVar(1.0);
 
   std::vector<double> y_1_grid( 3 );
-  y_1_grid[2] = Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0);
-  y_1_grid[1] = Utility::LogLogCosLog<false>::processSecondIndepVar(0.0);
-  y_1_grid[0] = Utility::LogLogCosLog<false>::processSecondIndepVar(0.999999);
+  y_1_grid[2] = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
+  y_1_grid[1] = Utility::LogLogCosLog::processSecondIndepVar(0.0);
+  y_1_grid[0] = Utility::LogLogCosLog::processSecondIndepVar(0.999999);
 
   std::vector<double> z_1_grid( 3 );
-  z_1_grid[2] = Utility::LogLogCosLog<false>::processDepVar(1e-2);
-  z_1_grid[1] = Utility::LogLogCosLog<false>::processDepVar(1e-1);
-  z_1_grid[0] = Utility::LogLogCosLog<false>::processDepVar(1.0);
+  z_1_grid[2] = Utility::LogLogCosLog::processDepVar(1e-2);
+  z_1_grid[1] = Utility::LogLogCosLog::processDepVar(1e-1);
+  z_1_grid[0] = Utility::LogLogCosLog::processDepVar(1.0);
 
-  double z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase(
+  double z = Utility::LogLogCosLog::interpolateProcessedUnitBase(
                                                       x0,
                                                       x1,
                                                       x,
@@ -1829,9 +1834,9 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateProcessedUnitBase_no_tuple_gri
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3920360807059723e-01, 1e-12 );
 
   // min possible y at x = 0.3
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0);
+  y = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase( x0,
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase( x0,
                                                         x1,
                                                         x,
                                                         y,
@@ -1847,9 +1852,9 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateProcessedUnitBase_no_tuple_gri
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3e-3, 1e-12 );
 
   // max possible y at x = 0.5
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(0.999999);
+  y = Utility::LogLogCosLog::processSecondIndepVar(0.999999);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase( x0,
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase( x0,
                                                            x1,
                                                            x,
                                                            y,
@@ -1864,10 +1869,10 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateProcessedUnitBase_no_tuple_gri
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(0.9);
-  x = Utility::LogLogCosLog<false>::processFirstIndepVar(0.1);
+  y = Utility::LogLogCosLog::processSecondIndepVar(0.9);
+  x = Utility::LogLogCosLog::processFirstIndepVar(0.1);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase( x0,
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase( x0,
                                                            x1,
                                                            x,
                                                            y,
@@ -1882,9 +1887,9 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateProcessedUnitBase_no_tuple_gri
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3263204908129952e-01, 1e-12 );
 
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0);
+  y = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase( x0,
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase( x0,
                                                            x1,
                                                            x,
                                                            y,
@@ -1899,9 +1904,9 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateProcessedUnitBase_no_tuple_gri
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-3, 1e-12 );
 
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(0.999999);
+  y = Utility::LogLogCosLog::processSecondIndepVar(0.999999);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase( x0,
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase( x0,
                                                            x1,
                                                            x,
                                                            y,
@@ -1916,10 +1921,10 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateProcessedUnitBase_no_tuple_gri
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(0.9);
-  x = Utility::LogLogCosLog<false>::processFirstIndepVar(1.0);
+  y = Utility::LogLogCosLog::processSecondIndepVar(0.9);
+  x = Utility::LogLogCosLog::processFirstIndepVar(1.0);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase( x0,
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase( x0,
                                                            x1,
                                                            x,
                                                            y,
@@ -1934,9 +1939,9 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateProcessedUnitBase_no_tuple_gri
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4677992676232424e-01, 1e-12 );
 
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(-1.0);
+  y = Utility::LogLogCosLog::processSecondIndepVar(-1.0);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase( x0,
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase( x0,
                                                            x1,
                                                            x,
                                                            y,
@@ -1951,9 +1956,9 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateProcessedUnitBase_no_tuple_gri
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-2, 1e-12 );
 
-  y = Utility::LogLogCosLog<false>::processSecondIndepVar(0.999999);
+  y = Utility::LogLogCosLog::processSecondIndepVar(0.999999);
 
-  z = Utility::LogLogCosLog<false>::interpolateProcessedUnitBase( x0,
+  z = Utility::LogLogCosLog::interpolateProcessedUnitBase( x0,
                                                            x1,
                                                            x,
                                                            y,
@@ -1968,34 +1973,6 @@ FRENSIE_UNIT_TEST( LogLogCosLog_false, interpolateProcessedUnitBase_no_tuple_gri
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //---------------------------------------------------------------------------//
 // Check that the log-logcos-log interpolation policy between four points
@@ -2017,8 +1994,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
   std::vector<ytuple> y_0_grid( 4 );
   Utility::set<ymember>( y_0_grid[0], -1.0 );
   Utility::set<ymember>( y_0_grid[1], 0.0 );
-  Utility::set<ymember>( y_0_grid[2], 0.5 );
-  Utility::set<ymember>( y_0_grid[3], 0.999999 );
+  Utility::set<ymember>( y_0_grid[2], 0.999999 );
+  Utility::set<ymember>( y_0_grid[3], 1.0 );
 
   std::vector<ztuple> z_0_grid( 4 );
   Utility::set<zmember>( z_0_grid[0], 100.0 );
@@ -2028,8 +2005,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
 
   std::vector<ytuple> y_1_grid( 3 );
   Utility::set<ymember>( y_1_grid[0], -1.0 );
-  Utility::set<ymember>( y_1_grid[1], 0.0 );
-  Utility::set<ymember>( y_1_grid[2], 0.999999 );
+  Utility::set<ymember>( y_1_grid[1], 0.999999 );
+  Utility::set<ymember>( y_1_grid[2], 1.0 );
 
   std::vector<ztuple> z_1_grid( 3 );
   Utility::set<zmember>( z_1_grid[0], 50.0 );
@@ -2037,7 +2014,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
   Utility::set<zmember>( z_1_grid[2], 0.5 );
 
   double z =
-    Utility::LogLogCosLog<true>::interpolate<ymember,zmember>( x0,
+    Utility::LogNudgedLogCosLog::interpolate<ymember,zmember>( x0,
                                                          x1,
                                                          x,
                                                          y,
@@ -2050,11 +2027,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
                                                          z_1_grid.begin(),
                                                          z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 2.0801924668549385, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.8895869164792762, 1e-12 );
 
   x = 0.1;
 
-  z = Utility::LogLogCosLog<true>::interpolate<ymember,zmember>( x0,
+  z = Utility::LogNudgedLogCosLog::interpolate<ymember,zmember>( x0,
                                                            x1,
                                                            x,
                                                            y,
@@ -2067,11 +2044,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
                                                            z_1_grid.begin(),
                                                            z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3263204908129951, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4678033444505051e-01, 1e-12 );
 
   x = 1.0;
 
-  z = Utility::LogLogCosLog<true>::interpolate<ymember,zmember>( x0,
+  z = Utility::LogNudgedLogCosLog::interpolate<ymember,zmember>( x0,
                                                            x1,
                                                            x,
                                                            y,
@@ -2084,7 +2061,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
                                                            z_1_grid.begin(),
                                                            z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.4064603452870852, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.1080617677478831e+01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -2106,8 +2083,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
   std::vector<tuple> grid_0( 4 );
   Utility::set<ymember>( grid_0[0], -1.0 );
   Utility::set<ymember>( grid_0[1], 0.0 );
-  Utility::set<ymember>( grid_0[2], 0.5 );
-  Utility::set<ymember>( grid_0[3], 0.999999 );
+  Utility::set<ymember>( grid_0[2], 0.999999 );
+  Utility::set<ymember>( grid_0[3], 1.0 );
   Utility::set<zmember>( grid_0[0], 100.0 );
   Utility::set<zmember>( grid_0[1], 0.1 );
   Utility::set<zmember>( grid_0[2], 1.0 );
@@ -2115,14 +2092,14 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
 
   std::vector<tuple> grid_1( 3 );
   Utility::set<ymember>( grid_1[0], -1.0 );
-  Utility::set<ymember>( grid_1[1], 0.0 );
-  Utility::set<ymember>( grid_1[2], 0.999999 );
+  Utility::set<ymember>( grid_1[1], 0.999999 );
+  Utility::set<ymember>( grid_1[2], 1.0 );
   Utility::set<zmember>( grid_1[0], 50.0 );
   Utility::set<zmember>( grid_1[1], 5.0 );
   Utility::set<zmember>( grid_1[2], 0.5 );
 
   double z =
-    Utility::LogLogCosLog<true>::interpolate<ymember,zmember>(x0,
+    Utility::LogNudgedLogCosLog::interpolate<ymember,zmember>(x0,
                                                         x1,
                                                         x,
                                                         y,
@@ -2131,11 +2108,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
                                                         grid_1.begin(),
                                                         grid_1.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 2.0801924668549385, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.8895869164792762, 1e-12 );
 
   x = 0.1;
 
-  z = Utility::LogLogCosLog<true>::interpolate<ymember,zmember>( x0,
+  z = Utility::LogNudgedLogCosLog::interpolate<ymember,zmember>( x0,
                                                            x1,
                                                            x,
                                                            y,
@@ -2144,11 +2121,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
                                                            grid_1.begin(),
                                                            grid_1.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3263204908129951, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4678033444505051e-01, 1e-12 );
 
   x = 1.0;
 
-  z = Utility::LogLogCosLog<true>::interpolate<ymember,zmember>( x0,
+  z = Utility::LogNudgedLogCosLog::interpolate<ymember,zmember>( x0,
                                                            x1,
                                                            x,
                                                            y,
@@ -2157,7 +2134,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
                                                            grid_1.begin(),
                                                            grid_1.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.4064603452870852, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.1080617677478831e+01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -2169,8 +2146,8 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolate_no_tuple_grids )
   std::vector<double> y_0_grid( 4 );
   y_0_grid[0] = -1.0;
   y_0_grid[1] = 0.0;
-  y_0_grid[2] = 0.5;
-  y_0_grid[3] = 0.999999;
+  y_0_grid[2] = 0.999999;
+  y_0_grid[3] = 1.0;
 
   std::vector<double> z_0_grid( 4 );
   z_0_grid[0] = 100.0;
@@ -2180,15 +2157,15 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolate_no_tuple_grids )
 
   std::vector<double> y_1_grid( 3 );
   y_1_grid[0] = -1.0;
-  y_1_grid[1] = 0.0;
-  y_1_grid[2] = 0.999999;
+  y_1_grid[1] = 0.999999;
+  y_1_grid[2] = 1.0;
 
   std::vector<double> z_1_grid( 3 );
   z_1_grid[0] = 50.0;
   z_1_grid[1] = 5.0;
   z_1_grid[2] = 0.5;
 
-  double z = Utility::LogLogCosLog<true>::interpolate( x0,
+  double z = Utility::LogNudgedLogCosLog::interpolate( x0,
                                                  x1,
                                                  x,
                                                  y,
@@ -2201,11 +2178,11 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolate_no_tuple_grids )
                                                  z_1_grid.begin(),
                                                  z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 2.0801924668549385, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.8895869164792762, 1e-12 );
 
   x = 0.1;
 
-  z = Utility::LogLogCosLog<true>::interpolate( x0,
+  z = Utility::LogNudgedLogCosLog::interpolate( x0,
                                           x1,
                                           x,
                                           y,
@@ -2218,11 +2195,11 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolate_no_tuple_grids )
                                           z_1_grid.begin(),
                                           z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3263204908129951, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4678033444505051e-01, 1e-12 );
 
   x = 1.0;
 
-  z = Utility::LogLogCosLog<true>::interpolate( x0,
+  z = Utility::LogNudgedLogCosLog::interpolate( x0,
                                           x1,
                                           x,
                                           y,
@@ -2235,7 +2212,7 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolate_no_tuple_grids )
                                           z_1_grid.begin(),
                                           z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.4064603452870852, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.1080617677478831e+01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -2245,20 +2222,20 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, calculateIntermediateGridLength )
   double x0 = 0.1, x1 = 1.0, x = 0.3;
   double L0 = 3.0, L1 = 5.0;
 
-  double Lx = Utility::LogLogCosLog<true>::calculateIntermediateGridLength(
+  double Lx = Utility::LogNudgedLogCosLog::calculateIntermediateGridLength(
                                                            x0, x1, x, L0, L1 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( Lx, 3.9542425094393248, 1e-15 );
 
   x = 0.1;
 
-  Lx = Utility::LogLogCosLog<true>::calculateIntermediateGridLength(x0, x1, x, L0, L1 );
+  Lx = Utility::LogNudgedLogCosLog::calculateIntermediateGridLength(x0, x1, x, L0, L1 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( Lx, 3.0, 1e-15 );
 
   x = 1.0;
 
-  Lx = Utility::LogLogCosLog<true>::calculateIntermediateGridLength(x0, x1, x, L0, L1 );
+  Lx = Utility::LogNudgedLogCosLog::calculateIntermediateGridLength(x0, x1, x, L0, L1 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( Lx, 5.0, 1e-15 );
 }
@@ -2270,21 +2247,21 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, calculateIntermediateGridLimit )
   double x0 = 0.1, x1 = 1.0, x = 0.3;
   double y0_min = -1.0, y1_min = -1.0;
 
-  double yx_min = Utility::LogLogCosLog<true>::calculateIntermediateGridLimit(
+  double yx_min = Utility::LogNudgedLogCosLog::calculateIntermediateGridLimit(
                                                    x0, x1, x, y0_min, y1_min );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( yx_min, -1.0, 1e-15 );
 
   x = 0.1;
 
-  yx_min = Utility::LogLogCosLog<true>::calculateIntermediateGridLimit(
+  yx_min = Utility::LogNudgedLogCosLog::calculateIntermediateGridLimit(
                                                    x0, x1, x, y0_min, y1_min );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( yx_min, -1.0, 1e-15 );
 
   x = 1.0;
 
-  yx_min = Utility::LogLogCosLog<true>::calculateIntermediateGridLimit(
+  yx_min = Utility::LogNudgedLogCosLog::calculateIntermediateGridLimit(
                                                    x0, x1, x, y0_min, y1_min );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( yx_min, -1.0, 1e-15 );
@@ -2310,8 +2287,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
   std::vector<ytuple> y_0_grid( 4 );
   Utility::set<ymember>( y_0_grid[0], -1.0 );
   Utility::set<ymember>( y_0_grid[1], 0.0 );
-  Utility::set<ymember>( y_0_grid[2], 0.5 );
-  Utility::set<ymember>( y_0_grid[3], 0.999999 );
+  Utility::set<ymember>( y_0_grid[2], 0.999999 );
+  Utility::set<ymember>( y_0_grid[3], 1.0 );
 
   std::vector<ztuple> z_0_grid( 4 );
   Utility::set<zmember>( z_0_grid[0], 1e-3 );
@@ -2321,15 +2298,15 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
 
   std::vector<ytuple> y_1_grid( 3 );
   Utility::set<ymember>( y_1_grid[0], -1.0 );
-  Utility::set<ymember>( y_1_grid[1], 0.0 );
-  Utility::set<ymember>( y_1_grid[2], 0.999999 );
+  Utility::set<ymember>( y_1_grid[1], 0.999999 );
+  Utility::set<ymember>( y_1_grid[2], 1.0 );
 
   std::vector<ztuple> z_1_grid( 3 );
   Utility::set<zmember>( z_1_grid[0], 1e-2 );
   Utility::set<zmember>( z_1_grid[1], 1e-1 );
   Utility::set<zmember>( z_1_grid[2], 1.0 );
 
-  double z = Utility::LogLogCosLog<true>::interpolateUnitBase<ymember,zmember>(
+  double z = Utility::LogNudgedLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -2343,11 +2320,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
                                                               z_1_grid.begin(),
                                                               z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3920360807059723e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.5334275379752840e-02, 1e-12 );
 
   y = -1.0; // min possible y at x = 0.3
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -2363,9 +2340,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3e-3, 1e-12 );
 
-  y = 0.999999; // max possible y at x = 0.3
+  y = 1.0; // max possible y at x = 0.3
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -2384,7 +2361,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
   y = 0.9;
   x = 0.1;
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -2398,11 +2375,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
                                                               z_1_grid.begin(),
                                                               z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3263204908129952e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4678033444505061e-02, 1e-12 );
 
   y = -1.0;
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -2420,7 +2397,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
 
   y = 1.0;
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -2439,7 +2416,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
   y = 0.9;
   x = 1.0;
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -2453,11 +2430,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
                                                               z_1_grid.begin(),
                                                               z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4677992676232424e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.6087196373909353e-02, 1e-12 );
 
   y = -1.0;
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -2473,9 +2450,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-2, 1e-12 );
 
-  y = 0.999999;
+  y = 1.0;
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -2511,8 +2488,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
   std::vector<tuple> grid_0( 4 );
   Utility::set<ymember>( grid_0[0], -1.0 );
   Utility::set<ymember>( grid_0[1], 0.0 );
-  Utility::set<ymember>( grid_0[2], 0.5 );
-  Utility::set<ymember>( grid_0[3], 0.999999 );
+  Utility::set<ymember>( grid_0[2], 0.999999 );
+  Utility::set<ymember>( grid_0[3], 1.0 );
   Utility::set<zmember>( grid_0[0], 1e-3 );
   Utility::set<zmember>( grid_0[1], 1e-2 );
   Utility::set<zmember>( grid_0[2], 1e-1 );
@@ -2520,13 +2497,13 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
 
   std::vector<tuple> grid_1( 3 );
   Utility::set<ymember>( grid_1[0], -1.0 );
-  Utility::set<ymember>( grid_1[1], 0.0 );
-  Utility::set<ymember>( grid_1[2], 0.999999 );
+  Utility::set<ymember>( grid_1[1], 0.999999 );
+  Utility::set<ymember>( grid_1[2], 1.0 );
   Utility::set<zmember>( grid_1[0], 1e-2 );
   Utility::set<zmember>( grid_1[1], 1e-1 );
   Utility::set<zmember>( grid_1[2], 1.0 );
 
-  double z = Utility::LogLogCosLog<true>::interpolateUnitBase<ymember,zmember>(
+  double z = Utility::LogNudgedLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -2536,11 +2513,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
                                                               grid_1.begin(),
                                                               grid_1.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3920360807059723e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.5334275379752840e-02, 1e-12 );
 
   y = -1.0; // min possible y at x = 0.3
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -2552,9 +2529,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3e-3, 1e-12 );
 
-  y = 0.999999; // max possible y at x = 0.3
+  y = 1.0; // max possible y at x = 0.3
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -2569,7 +2546,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
   y = 0.9;
   x = 0.1;
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -2579,11 +2556,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
                                                               grid_1.begin(),
                                                               grid_1.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3263204908129952e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4678033444505061e-02, 1e-12 );
 
   y = -1.0;
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -2595,9 +2572,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-3, 1e-12 );
 
-  y = 0.999999;
+  y = 1.0;
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -2612,7 +2589,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
   y = 0.9;
   x = 1.0;
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -2622,11 +2599,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
                                                               grid_1.begin(),
                                                               grid_1.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4677992676232424e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.6087196373909353e-02, 1e-12 );
 
   y = -1.0;
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -2638,9 +2615,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-2, 1e-12 );
 
-  y = 0.999999;
+  y = 1.0;
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -2663,8 +2640,8 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateUnitBase_no_tuple_grids )
   std::vector<double> y_0_grid( 4 );
   y_0_grid[0] = -1.0;
   y_0_grid[1] = 0.0;
-  y_0_grid[2] = 0.5;
-  y_0_grid[3] = 0.999999;
+  y_0_grid[2] = 0.999999;
+  y_0_grid[3] = 1.0;
 
   std::vector<double> z_0_grid( 4 );
   z_0_grid[0] = 1e-3;
@@ -2674,15 +2651,15 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateUnitBase_no_tuple_grids )
 
   std::vector<double> y_1_grid( 3 );
   y_1_grid[0] = -1.0;
-  y_1_grid[1] = 0.0;
-  y_1_grid[2] = 0.999999;
+  y_1_grid[1] = 0.999999;
+  y_1_grid[2] = 1.0;
 
   std::vector<double> z_1_grid( 3 );
   z_1_grid[0] = 1e-2;
   z_1_grid[1] = 1e-1;
   z_1_grid[2] = 1.0;
 
-  double z = Utility::LogLogCosLog<true>::interpolateUnitBase( x0,
+  double z = Utility::LogNudgedLogCosLog::interpolateUnitBase( x0,
                                                          x1,
                                                          x,
                                                          y,
@@ -2695,11 +2672,11 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateUnitBase_no_tuple_grids )
                                                          z_1_grid.begin(),
                                                          z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3920360807059723e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.5334275379752840e-02, 1e-12 );
 
   y = -1.0; // min possible y at x = 0.3
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase( x0,
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase( x0,
                                                   x1,
                                                   x,
                                                   y,
@@ -2714,9 +2691,9 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateUnitBase_no_tuple_grids )
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3e-3, 1e-12 );
 
-  y = 0.999999; // max possible y at x = 0.3
+  y = 1.0; // max possible y at x = 0.3
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase( x0,
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase( x0,
                                                   x1,
                                                   x,
                                                   y,
@@ -2734,7 +2711,7 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateUnitBase_no_tuple_grids )
   y = 0.9;
   x = 0.1;
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase( x0,
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase( x0,
                                                   x1,
                                                   x,
                                                   y,
@@ -2747,11 +2724,11 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateUnitBase_no_tuple_grids )
                                                   z_1_grid.begin(),
                                                   z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3263204908129952e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4678033444505061e-02, 1e-12 );
 
   y = -1.0;
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase( x0,
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase( x0,
                                                x1,
                                                x,
                                                y,
@@ -2766,9 +2743,9 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateUnitBase_no_tuple_grids )
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-3, 1e-12 );
 
-  y = 0.999999;
+  y = 1.0;
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase( x0,
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase( x0,
                                                   x1,
                                                   x,
                                                   y,
@@ -2786,7 +2763,7 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateUnitBase_no_tuple_grids )
   y = 0.9;
   x = 1.0;
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase( x0,
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase( x0,
                                                x1,
                                                x,
                                                y,
@@ -2799,11 +2776,11 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateUnitBase_no_tuple_grids )
                                                z_1_grid.begin(),
                                                z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4677992676232424e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.6087196373909353e-02, 1e-12 );
 
   y = -1.0;
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase( x0,
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase( x0,
                                                x1,
                                                x,
                                                y,
@@ -2818,9 +2795,9 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateUnitBase_no_tuple_grids )
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-2, 1e-12 );
 
-  y = 0.999999;
+  y = 1.0;
 
-  z = Utility::LogLogCosLog<true>::interpolateUnitBase( x0,
+  z = Utility::LogNudgedLogCosLog::interpolateUnitBase( x0,
                                                x1,
                                                x,
                                                y,
@@ -2841,10 +2818,10 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateUnitBase_no_tuple_grids )
 FRENSIE_UNIT_TEST( LogLogCosLog_true, processDepVar )
 {
   FRENSIE_CHECK_FLOATING_EQUALITY( std::log(0.1),
-                          Utility::LogLogCosLog<true>::processDepVar(0.1),
+                          Utility::LogNudgedLogCosLog::processDepVar(0.1),
                           1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY( std::log(1.0),
-                          Utility::LogLogCosLog<true>::processDepVar( 1.0 ),
+                          Utility::LogNudgedLogCosLog::processDepVar( 1.0 ),
                           1e-15 );
 }
 
@@ -2853,10 +2830,10 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, processDepVar )
 FRENSIE_UNIT_TEST( LogLogCosLog_true, recoverProcessedDepVar )
 {
   FRENSIE_CHECK_FLOATING_EQUALITY( 0.1,
-                          Utility::LogLogCosLog<true>::recoverProcessedDepVar(std::log(0.1)),
+                          Utility::LogNudgedLogCosLog::recoverProcessedDepVar(std::log(0.1)),
                           1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY( 1.0,
-                          Utility::LogLogCosLog<true>::recoverProcessedDepVar(std::log(1.0)),
+                          Utility::LogNudgedLogCosLog::recoverProcessedDepVar(std::log(1.0)),
                           1e-15 );
 }
 
@@ -2864,11 +2841,11 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, recoverProcessedDepVar )
 // Check that the second independent variable can be processed
 FRENSIE_UNIT_TEST( LogLogCosLog_true, processSecondIndepVar )
 {
-  FRENSIE_CHECK_FLOATING_EQUALITY( std::log(2.0),
-                          Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0),
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::log(2.0 + delta),
+                          Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0),
                           1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( std::log(1.0-0.999999),
-                          Utility::LogLogCosLog<true>::processSecondIndepVar(0.999999),
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::log(delta),
+                          Utility::LogNudgedLogCosLog::processSecondIndepVar(1.0),
                           1e-15 );
 }
 
@@ -2878,11 +2855,11 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, recoverProcessedSecondIndepVar )
 {
   FRENSIE_CHECK_FLOATING_EQUALITY(
                   -1.0,
-                  Utility::LogLogCosLog<true>::recoverProcessedSecondIndepVar(std::log(2.0)),
+                  Utility::LogNudgedLogCosLog::recoverProcessedSecondIndepVar(std::log(2.0+delta)),
                   1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY(
-                  0.999999,
-                  Utility::LogLogCosLog<true>::recoverProcessedSecondIndepVar(std::log(1.0-0.999999)),
+                  1.0,
+                  Utility::LogNudgedLogCosLog::recoverProcessedSecondIndepVar(std::log(delta)),
                   1e-15 );
 }
 
@@ -2891,10 +2868,10 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, recoverProcessedSecondIndepVar )
 FRENSIE_UNIT_TEST( LogLogCosLog_true, processFirstIndepVar )
 {
   FRENSIE_CHECK_FLOATING_EQUALITY( std::log(0.1),
-                          Utility::LogLogCosLog<true>::processFirstIndepVar(0.1),
+                          Utility::LogNudgedLogCosLog::processFirstIndepVar(0.1),
                           1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY( std::log(1.0),
-                          Utility::LogLogCosLog<true>::processFirstIndepVar(1.0),
+                          Utility::LogNudgedLogCosLog::processFirstIndepVar(1.0),
                           1e-15 );
 }
 
@@ -2904,11 +2881,11 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, recoverProcessedFirstIndepVar )
 {
   FRENSIE_CHECK_FLOATING_EQUALITY(
                   0.1,
-                  Utility::LogLogCosLog<true>::recoverProcessedFirstIndepVar(std::log(0.1)),
+                  Utility::LogNudgedLogCosLog::recoverProcessedFirstIndepVar(std::log(0.1)),
                   1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY(
                   1.0,
-                  Utility::LogLogCosLog<true>::recoverProcessedFirstIndepVar(std::log(1.0)),
+                  Utility::LogNudgedLogCosLog::recoverProcessedFirstIndepVar(std::log(1.0)),
                   1e-15 );
 }
 
@@ -2927,48 +2904,48 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
   constexpr const size_t ymember = WrappedYMember::value;
   constexpr const size_t zmember = WrappedZMember::value;
 
-  double x0 = Utility::LogLogCosLog<true>::processFirstIndepVar(0.1);
-  double x1 = Utility::LogLogCosLog<true>::processFirstIndepVar(1.0);
-  double x = Utility::LogLogCosLog<true>::processFirstIndepVar(0.3);
-  double y = Utility::LogLogCosLog<true>::processSecondIndepVar(0.9);
+  double x0 = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.1);
+  double x1 = Utility::LogNudgedLogCosLog::processFirstIndepVar(1.0);
+  double x = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.3);
+  double y = Utility::LogNudgedLogCosLog::processSecondIndepVar(0.9);
 
   std::vector<ytuple> y_0_grid( 4 );
   Utility::set<ymember>( y_0_grid[3],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0) );
   Utility::set<ymember>( y_0_grid[2],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(0.0) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(0.0) );
   Utility::set<ymember>( y_0_grid[1],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(0.5) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(0.999999) );
   Utility::set<ymember>( y_0_grid[0],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(0.999999) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(1.0) );
 
   std::vector<ztuple> z_0_grid( 4 );
   Utility::set<zmember>( z_0_grid[3],
-                         Utility::LogLogCosLog<true>::processDepVar(100.0) );
+                         Utility::LogNudgedLogCosLog::processDepVar(100.0) );
   Utility::set<zmember>( z_0_grid[2],
-                         Utility::LogLogCosLog<true>::processDepVar(0.1) );
+                         Utility::LogNudgedLogCosLog::processDepVar(0.1) );
   Utility::set<zmember>( z_0_grid[1],
-                         Utility::LogLogCosLog<true>::processDepVar(1.0) );
+                         Utility::LogNudgedLogCosLog::processDepVar(1.0) );
   Utility::set<zmember>( z_0_grid[0],
-                         Utility::LogLogCosLog<true>::processDepVar(10.0) );
+                         Utility::LogNudgedLogCosLog::processDepVar(10.0) );
 
   std::vector<ytuple> y_1_grid( 3 );
   Utility::set<ymember>( y_1_grid[2],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0) );
   Utility::set<ymember>( y_1_grid[1],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(0.0) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(0.999999) );
   Utility::set<ymember>( y_1_grid[0],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(0.999999) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(1.0) );
 
   std::vector<ztuple> z_1_grid( 3 );
   Utility::set<zmember>( z_1_grid[2],
-                         Utility::LogLogCosLog<true>::processDepVar(50.0) );
+                         Utility::LogNudgedLogCosLog::processDepVar(50.0) );
   Utility::set<zmember>( z_1_grid[1],
-                         Utility::LogLogCosLog<true>::processDepVar(5.0) );
+                         Utility::LogNudgedLogCosLog::processDepVar(5.0) );
   Utility::set<zmember>( z_1_grid[0],
-                         Utility::LogLogCosLog<true>::processDepVar(0.5) );
+                         Utility::LogNudgedLogCosLog::processDepVar(0.5) );
 
-  double z = Utility::LogLogCosLog<true>::interpolateProcessed<ymember,zmember>(
+  double z = Utility::LogNudgedLogCosLog::interpolateProcessed<ymember,zmember>(
                                                         x0,
                                                         x1,
                                                         x,
@@ -2982,11 +2959,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
                                                         z_1_grid.begin(),
                                                         z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 2.0801924668549385, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.8895869164792762, 1e-12 );
 
-  x = Utility::LogLogCosLog<true>::processFirstIndepVar(0.1);
+  x = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.1);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessed<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateProcessed<ymember,zmember>(
                                                         x0,
                                                         x1,
                                                         x,
@@ -3000,11 +2977,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
                                                         z_1_grid.begin(),
                                                         z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3263204908129951, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4678033444505051e-01, 1e-12 );
 
-  x = Utility::LogLogCosLog<true>::processFirstIndepVar(1.0);
+  x = Utility::LogNudgedLogCosLog::processFirstIndepVar(1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessed<ymember,zmember>( x0,
+  z = Utility::LogNudgedLogCosLog::interpolateProcessed<ymember,zmember>( x0,
                                                         x1,
                                                         x,
                                                         y,
@@ -3017,7 +2994,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
                                                         z_1_grid.begin(),
                                                         z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.4064603452870852, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.1080617677478831e+01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -3034,44 +3011,44 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
   constexpr const size_t ymember = WrappedYMember::value;
   constexpr const size_t zmember = WrappedZMember::value;
 
-  double x0 = Utility::LogLogCosLog<true>::processFirstIndepVar(0.1);
-  double x1 = Utility::LogLogCosLog<true>::processFirstIndepVar(1.0);
-  double x = Utility::LogLogCosLog<true>::processFirstIndepVar(0.3);
-  double y = Utility::LogLogCosLog<true>::processSecondIndepVar(0.9);
+  double x0 = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.1);
+  double x1 = Utility::LogNudgedLogCosLog::processFirstIndepVar(1.0);
+  double x = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.3);
+  double y = Utility::LogNudgedLogCosLog::processSecondIndepVar(0.9);
 
   std::vector<tuple> grid_0( 4 );
   Utility::set<ymember>( grid_0[3],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0) );
   Utility::set<ymember>( grid_0[2],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(0.0) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(0.0) );
   Utility::set<ymember>( grid_0[1],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(0.5) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(0.999999) );
   Utility::set<ymember>( grid_0[0],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(0.999999) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(1.0) );
   Utility::set<zmember>( grid_0[3],
-                         Utility::LogLogCosLog<true>::processDepVar(100.0) );
+                         Utility::LogNudgedLogCosLog::processDepVar(100.0) );
   Utility::set<zmember>( grid_0[2],
-                         Utility::LogLogCosLog<true>::processDepVar(0.1) );
+                         Utility::LogNudgedLogCosLog::processDepVar(0.1) );
   Utility::set<zmember>( grid_0[1],
-                         Utility::LogLogCosLog<true>::processDepVar(1.0) );
+                         Utility::LogNudgedLogCosLog::processDepVar(1.0) );
   Utility::set<zmember>( grid_0[0],
-                         Utility::LogLogCosLog<true>::processDepVar(10.0) );
+                         Utility::LogNudgedLogCosLog::processDepVar(10.0) );
 
   std::vector<tuple> grid_1( 3 );
   Utility::set<ymember>( grid_1[2],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0) );
   Utility::set<ymember>( grid_1[1],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(0.0) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(0.999999) );
   Utility::set<ymember>( grid_1[0],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(0.999999) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(1.0) );
   Utility::set<zmember>( grid_1[2],
-                         Utility::LogLogCosLog<true>::processDepVar(50.0) );
+                         Utility::LogNudgedLogCosLog::processDepVar(50.0) );
   Utility::set<zmember>( grid_1[1],
-                         Utility::LogLogCosLog<true>::processDepVar(5.0) );
+                         Utility::LogNudgedLogCosLog::processDepVar(5.0) );
   Utility::set<zmember>( grid_1[0],
-                         Utility::LogLogCosLog<true>::processDepVar(0.5) );
+                         Utility::LogNudgedLogCosLog::processDepVar(0.5) );
 
-  double z = Utility::LogLogCosLog<true>::interpolateProcessed<ymember,zmember>(
+  double z = Utility::LogNudgedLogCosLog::interpolateProcessed<ymember,zmember>(
                                                         x0,
                                                         x1,
                                                         x,
@@ -3081,11 +3058,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
                                                         grid_1.begin(),
                                                         grid_1.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 2.0801924668549385, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.8895869164792762, 1e-12 );
 
-  x = Utility::LogLogCosLog<true>::processFirstIndepVar(0.1);
+  x = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.1);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessed<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateProcessed<ymember,zmember>(
                                                         x0,
                                                         x1,
                                                         x,
@@ -3095,11 +3072,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
                                                         grid_1.begin(),
                                                         grid_1.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3263204908129951, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4678033444505051e-01, 1e-12 );
 
-  x = Utility::LogLogCosLog<true>::processFirstIndepVar(1.0);
+  x = Utility::LogNudgedLogCosLog::processFirstIndepVar(1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessed<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateProcessed<ymember,zmember>(
                                                         x0,
                                                         x1,
                                                         x,
@@ -3109,7 +3086,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
                                                         grid_1.begin(),
                                                         grid_1.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.4064603452870852, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.1080617677478831e+01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -3117,34 +3094,34 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLogCosLog_true,
 // can be done
 FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateProcessed_no_tuple_grids )
 {
-  double x0 = Utility::LogLogCosLog<true>::processFirstIndepVar(0.1);
-  double x1 = Utility::LogLogCosLog<true>::processFirstIndepVar(1.0);
-  double x = Utility::LogLogCosLog<true>::processFirstIndepVar(0.3);
-  double y = Utility::LogLogCosLog<true>::processSecondIndepVar(0.9);
+  double x0 = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.1);
+  double x1 = Utility::LogNudgedLogCosLog::processFirstIndepVar(1.0);
+  double x = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.3);
+  double y = Utility::LogNudgedLogCosLog::processSecondIndepVar(0.9);
 
   std::vector<double> y_0_grid( 4 );
-  y_0_grid[3] = Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0);
-  y_0_grid[2] = Utility::LogLogCosLog<true>::processSecondIndepVar(0.0);
-  y_0_grid[1] = Utility::LogLogCosLog<true>::processSecondIndepVar(0.5);
-  y_0_grid[0] = Utility::LogLogCosLog<true>::processSecondIndepVar(0.999999);
+  y_0_grid[3] = Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0);
+  y_0_grid[2] = Utility::LogNudgedLogCosLog::processSecondIndepVar(0.0);
+  y_0_grid[1] = Utility::LogNudgedLogCosLog::processSecondIndepVar(0.999999);
+  y_0_grid[0] = Utility::LogNudgedLogCosLog::processSecondIndepVar(1.0);
 
   std::vector<double> z_0_grid( 4 );
-  z_0_grid[3] = Utility::LogLogCosLog<true>::processDepVar(100.0);
-  z_0_grid[2] = Utility::LogLogCosLog<true>::processDepVar(0.1);
-  z_0_grid[1] = Utility::LogLogCosLog<true>::processDepVar(1.0);
-  z_0_grid[0] = Utility::LogLogCosLog<true>::processDepVar(10.0);
+  z_0_grid[3] = Utility::LogNudgedLogCosLog::processDepVar(100.0);
+  z_0_grid[2] = Utility::LogNudgedLogCosLog::processDepVar(0.1);
+  z_0_grid[1] = Utility::LogNudgedLogCosLog::processDepVar(1.0);
+  z_0_grid[0] = Utility::LogNudgedLogCosLog::processDepVar(10.0);
 
   std::vector<double> y_1_grid( 3 );
-  y_1_grid[2] = Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0);
-  y_1_grid[1] = Utility::LogLogCosLog<true>::processSecondIndepVar(0.0);
-  y_1_grid[0] = Utility::LogLogCosLog<true>::processSecondIndepVar(0.999999);
+  y_1_grid[2] = Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0);
+  y_1_grid[1] = Utility::LogNudgedLogCosLog::processSecondIndepVar(0.999999);
+  y_1_grid[0] = Utility::LogNudgedLogCosLog::processSecondIndepVar(1.0);
 
   std::vector<double> z_1_grid( 3 );
-  z_1_grid[2] = Utility::LogLogCosLog<true>::processDepVar(50.0);
-  z_1_grid[1] = Utility::LogLogCosLog<true>::processDepVar(5.0);
-  z_1_grid[0] = Utility::LogLogCosLog<true>::processDepVar(0.5);
+  z_1_grid[2] = Utility::LogNudgedLogCosLog::processDepVar(50.0);
+  z_1_grid[1] = Utility::LogNudgedLogCosLog::processDepVar(5.0);
+  z_1_grid[0] = Utility::LogNudgedLogCosLog::processDepVar(0.5);
 
-  double z = Utility::LogLogCosLog<true>::interpolateProcessed( x0,
+  double z = Utility::LogNudgedLogCosLog::interpolateProcessed( x0,
                                                           x1,
                                                           x,
                                                           y,
@@ -3157,11 +3134,11 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateProcessed_no_tuple_grids )
                                                           z_1_grid.begin(),
                                                           z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 2.0801924668549385, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.8895869164792762, 1e-12 );
 
-  x = Utility::LogLogCosLog<true>::processFirstIndepVar(0.1);
+  x = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.1);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessed( x0,
+  z = Utility::LogNudgedLogCosLog::interpolateProcessed( x0,
                                                    x1,
                                                    x,
                                                    y,
@@ -3174,11 +3151,11 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateProcessed_no_tuple_grids )
                                                    z_1_grid.begin(),
                                                    z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3263204908129951, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4678033444505051e-01, 1e-12 );
 
-  x = Utility::LogLogCosLog<true>::processFirstIndepVar(1.0);
+  x = Utility::LogNudgedLogCosLog::processFirstIndepVar(1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessed( x0,
+  z = Utility::LogNudgedLogCosLog::interpolateProcessed( x0,
                                                    x1,
                                                    x,
                                                    y,
@@ -3191,33 +3168,33 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateProcessed_no_tuple_grids )
                                                    z_1_grid.begin(),
                                                    z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.4064603452870852, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.1080617677478831e+01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the intermediate grid length can be calculated
 FRENSIE_UNIT_TEST( LogLogCosLog_true, calculateIntermediateGridLengthProcessed )
 {
-  double x0 = Utility::LogLogCosLog<true>::processFirstIndepVar(0.1);
-  double x1 = Utility::LogLogCosLog<true>::processFirstIndepVar(1.0);
-  double x = Utility::LogLogCosLog<true>::processFirstIndepVar(0.3);
+  double x0 = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.1);
+  double x1 = Utility::LogNudgedLogCosLog::processFirstIndepVar(1.0);
+  double x = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.3);
   double L0 = 3.0, L1 = 5.0;
 
-  double Lx = Utility::LogLogCosLog<true>::calculateIntermediateGridLengthProcessed(
+  double Lx = Utility::LogNudgedLogCosLog::calculateIntermediateGridLengthProcessed(
                                                            x0, x1, x, L0, L1 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( Lx, 3.9542425094393248, 1e-15 );
 
-  x = Utility::LogLogCosLog<true>::processFirstIndepVar(0.1);
+  x = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.1);
 
-  Lx = Utility::LogLogCosLog<true>::calculateIntermediateGridLengthProcessed(
+  Lx = Utility::LogNudgedLogCosLog::calculateIntermediateGridLengthProcessed(
                                                            x0, x1, x, L0, L1 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( Lx, 3.0, 1e-15 );
 
-  x = Utility::LogLogCosLog<true>::processFirstIndepVar(1.0);
+  x = Utility::LogNudgedLogCosLog::processFirstIndepVar(1.0);
 
-  Lx = Utility::LogLogCosLog<true>::calculateIntermediateGridLengthProcessed(
+  Lx = Utility::LogNudgedLogCosLog::calculateIntermediateGridLengthProcessed(
                                                            x0, x1, x, L0, L1 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( Lx, 5.0, 1e-15 );
@@ -3227,35 +3204,35 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, calculateIntermediateGridLengthProcessed )
 // Check that the intermediate grid min value can be calculated
 FRENSIE_UNIT_TEST( LogLogCosLog_true, calculateIntermediateProcessedGridLimit )
 {
-  double x0 = Utility::LogLogCosLog<true>::processFirstIndepVar(0.1);
-  double x1 = Utility::LogLogCosLog<true>::processFirstIndepVar(1.0);
-  double x = Utility::LogLogCosLog<true>::processFirstIndepVar(0.3);
-  double y0_min = Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0);
-  double y1_min = Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0);
+  double x0 = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.1);
+  double x1 = Utility::LogNudgedLogCosLog::processFirstIndepVar(1.0);
+  double x = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.3);
+  double y0_min = Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0);
+  double y1_min = Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0);
 
-  double yx_min = Utility::LogLogCosLog<true>::calculateIntermediateProcessedGridLimit(
+  double yx_min = Utility::LogNudgedLogCosLog::calculateIntermediateProcessedGridLimit(
                                                    x0, x1, x, y0_min, y1_min );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( yx_min,
-                          Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0),
+                          Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0),
                           1e-15 );
 
-  x = Utility::LogLogCosLog<true>::processFirstIndepVar(0.1);
+  x = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.1);
 
-  yx_min = Utility::LogLogCosLog<true>::calculateIntermediateProcessedGridLimit(
+  yx_min = Utility::LogNudgedLogCosLog::calculateIntermediateProcessedGridLimit(
                                                    x0, x1, x, y0_min, y1_min );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( yx_min,
-                          Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0),
+                          Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0),
                           1e-15 );
 
-  x = Utility::LogLogCosLog<true>::processFirstIndepVar(1.0);
+  x = Utility::LogNudgedLogCosLog::processFirstIndepVar(1.0);
 
-  yx_min = Utility::LogLogCosLog<true>::calculateIntermediateProcessedGridLimit(
+  yx_min = Utility::LogNudgedLogCosLog::calculateIntermediateProcessedGridLimit(
                                                    x0, x1, x, y0_min, y1_min );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( yx_min,
-                          Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0),
+                          Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0),
                           1e-15 );
 }
 
@@ -3275,49 +3252,49 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
   constexpr const size_t ymember = WrappedYMember::value;
   constexpr const size_t zmember = WrappedZMember::value;
 
-  double x0 = Utility::LogLogCosLog<true>::processFirstIndepVar(0.1);
-  double x1 = Utility::LogLogCosLog<true>::processFirstIndepVar(1.0);
-  double x = Utility::LogLogCosLog<true>::processFirstIndepVar(0.3);
-  double y = Utility::LogLogCosLog<true>::processSecondIndepVar(0.9);
+  double x0 = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.1);
+  double x1 = Utility::LogNudgedLogCosLog::processFirstIndepVar(1.0);
+  double x = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.3);
+  double y = Utility::LogNudgedLogCosLog::processSecondIndepVar(0.9);
   double fuzzy_tol = 1e-4;
 
   std::vector<ytuple> y_0_grid( 4 );
   Utility::set<ymember>( y_0_grid[3],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0) );
   Utility::set<ymember>( y_0_grid[2],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(0.0) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(0.0) );
   Utility::set<ymember>( y_0_grid[1],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(0.5) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(0.999999) );
   Utility::set<ymember>( y_0_grid[0],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(0.999999) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(1.0) );
 
   std::vector<ztuple> z_0_grid( 4 );
   Utility::set<zmember>( z_0_grid[3],
-                         Utility::LogLogCosLog<true>::processDepVar(1e-3) );
+                         Utility::LogNudgedLogCosLog::processDepVar(1e-3) );
   Utility::set<zmember>( z_0_grid[2],
-                         Utility::LogLogCosLog<true>::processDepVar(1e-2) );
+                         Utility::LogNudgedLogCosLog::processDepVar(1e-2) );
   Utility::set<zmember>( z_0_grid[1],
-                         Utility::LogLogCosLog<true>::processDepVar(1e-1) );
+                         Utility::LogNudgedLogCosLog::processDepVar(1e-1) );
   Utility::set<zmember>( z_0_grid[0],
-                         Utility::LogLogCosLog<true>::processDepVar(1.0) );
+                         Utility::LogNudgedLogCosLog::processDepVar(1.0) );
 
   std::vector<ytuple> y_1_grid( 3 );
   Utility::set<ymember>( y_1_grid[2],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0) );
   Utility::set<ymember>( y_1_grid[1],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(0.0) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(0.999999) );
   Utility::set<ymember>( y_1_grid[0],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(0.999999) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(1.0) );
 
   std::vector<ztuple> z_1_grid( 3 );
   Utility::set<zmember>( z_1_grid[2],
-                         Utility::LogLogCosLog<true>::processDepVar(1e-2) );
+                         Utility::LogNudgedLogCosLog::processDepVar(1e-2) );
   Utility::set<zmember>( z_1_grid[1],
-                         Utility::LogLogCosLog<true>::processDepVar(1e-1) );
+                         Utility::LogNudgedLogCosLog::processDepVar(1e-1) );
   Utility::set<zmember>( z_1_grid[0],
-                         Utility::LogLogCosLog<true>::processDepVar(1.0) );
+                         Utility::LogNudgedLogCosLog::processDepVar(1.0) );
 
-  double z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase<ymember,zmember>(
+  double z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -3331,12 +3308,12 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
                                                               z_1_grid.begin(),
                                                               z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3920360807059723e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.5334275379752840e-02, 1e-12 );
 
   // max possible processed y at x = 0.3
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -3353,9 +3330,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3e-3, 1e-12 );
 
   // max possible processed y + fuzzy bound at x = 0.3
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0)*(1.0 + fuzzy_tol);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0)*(1.0 + fuzzy_tol);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -3372,9 +3349,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3e-3, 1e-12 );
 
   // min possible processed y at x = 0.3
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(0.999999);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -3390,10 +3367,10 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(0.9);
-  x = Utility::LogLogCosLog<true>::processFirstIndepVar(0.1);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(0.9);
+  x = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.1);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -3407,11 +3384,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
                                                               z_1_grid.begin(),
                                                               z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3263204908129952e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4678033444505061e-02, 1e-12 );
 
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -3427,9 +3404,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-3, 1e-12 );
 
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(0.999999);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -3445,10 +3422,10 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(0.9);
-  x = Utility::LogLogCosLog<true>::processFirstIndepVar(1.0);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(0.9);
+  x = Utility::LogNudgedLogCosLog::processFirstIndepVar(1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -3462,11 +3439,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
                                                               z_1_grid.begin(),
                                                               z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4677992676232424e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.6087196373909353e-02, 1e-12 );
 
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -3482,9 +3459,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-2, 1e-12 );
 
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(0.999999);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -3516,44 +3493,44 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
   constexpr const size_t ymember = WrappedYMember::value;
   constexpr const size_t zmember = WrappedZMember::value;
 
-  double x0 = Utility::LogLogCosLog<true>::processFirstIndepVar(0.1);
-  double x1 = Utility::LogLogCosLog<true>::processFirstIndepVar(1.0);
-  double x = Utility::LogLogCosLog<true>::processFirstIndepVar(0.3);
-  double y = Utility::LogLogCosLog<true>::processSecondIndepVar(0.9);
+  double x0 = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.1);
+  double x1 = Utility::LogNudgedLogCosLog::processFirstIndepVar(1.0);
+  double x = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.3);
+  double y = Utility::LogNudgedLogCosLog::processSecondIndepVar(0.9);
 
   std::vector<tuple> grid_0( 4 );
   Utility::set<ymember>( grid_0[3],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0) );
   Utility::set<ymember>( grid_0[2],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(0.0) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(0.0) );
   Utility::set<ymember>( grid_0[1],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(0.5) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(0.999999) );
   Utility::set<ymember>( grid_0[0],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(0.999999) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(1.0) );
   Utility::set<zmember>( grid_0[3],
-                         Utility::LogLogCosLog<true>::processDepVar(1e-3) );
+                         Utility::LogNudgedLogCosLog::processDepVar(1e-3) );
   Utility::set<zmember>( grid_0[2],
-                         Utility::LogLogCosLog<true>::processDepVar(1e-2) );
+                         Utility::LogNudgedLogCosLog::processDepVar(1e-2) );
   Utility::set<zmember>( grid_0[1],
-                         Utility::LogLogCosLog<true>::processDepVar(1e-1) );
+                         Utility::LogNudgedLogCosLog::processDepVar(1e-1) );
   Utility::set<zmember>( grid_0[0],
-                         Utility::LogLogCosLog<true>::processDepVar(1.0) );
+                         Utility::LogNudgedLogCosLog::processDepVar(1.0) );
 
   std::vector<tuple> grid_1( 3 );
   Utility::set<ymember>( grid_1[2],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0) );
   Utility::set<ymember>( grid_1[1],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(0.0) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(0.999999) );
   Utility::set<ymember>( grid_1[0],
-                         Utility::LogLogCosLog<true>::processSecondIndepVar(0.999999) );
+                         Utility::LogNudgedLogCosLog::processSecondIndepVar(1.0) );
   Utility::set<zmember>( grid_1[2],
-                         Utility::LogLogCosLog<true>::processDepVar(1e-2) );
+                         Utility::LogNudgedLogCosLog::processDepVar(1e-2) );
   Utility::set<zmember>( grid_1[1],
-                         Utility::LogLogCosLog<true>::processDepVar(1e-1) );
+                         Utility::LogNudgedLogCosLog::processDepVar(1e-1) );
   Utility::set<zmember>( grid_1[0],
-                         Utility::LogLogCosLog<true>::processDepVar(1.0) );
+                         Utility::LogNudgedLogCosLog::processDepVar(1.0) );
 
-  double z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase<ymember,zmember>(
+  double z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -3563,12 +3540,12 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
                                                               grid_1.begin(),
                                                               grid_1.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3920360807059723e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.5334275379752840e-02, 1e-12 );
 
   // min possible y at x = 0.3
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -3581,9 +3558,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3e-3, 1e-12 );
 
   // max possible y at x = 0.3
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(0.999999);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -3595,10 +3572,10 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(0.9);
-  x = Utility::LogLogCosLog<true>::processFirstIndepVar(0.1);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(0.9);
+  x = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.1);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -3608,11 +3585,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
                                                               grid_1.begin(),
                                                               grid_1.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3263204908129952e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4678033444505061e-02, 1e-12 );
 
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -3624,9 +3601,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-3, 1e-12 );
 
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(0.999999);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -3638,10 +3615,10 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(0.9);
-  x = Utility::LogLogCosLog<true>::processFirstIndepVar(1.0);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(0.9);
+  x = Utility::LogNudgedLogCosLog::processFirstIndepVar(1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -3651,11 +3628,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
                                                               grid_1.begin(),
                                                               grid_1.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4677992676232424e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.6087196373909353e-02, 1e-12 );
 
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -3667,9 +3644,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-2, 1e-12 );
 
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(0.999999);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase<ymember,zmember>(
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase<ymember,zmember>(
                                                               x0,
                                                               x1,
                                                               x,
@@ -3687,34 +3664,34 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
 // four points can be done
 FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateProcessedUnitBase_no_tuple_grids )
 {
-  double x0 = Utility::LogLogCosLog<true>::processFirstIndepVar(0.1);
-  double x1 = Utility::LogLogCosLog<true>::processFirstIndepVar(1.0);
-  double x = Utility::LogLogCosLog<true>::processFirstIndepVar(0.3);
-  double y = Utility::LogLogCosLog<true>::processSecondIndepVar(0.9);
+  double x0 = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.1);
+  double x1 = Utility::LogNudgedLogCosLog::processFirstIndepVar(1.0);
+  double x = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.3);
+  double y = Utility::LogNudgedLogCosLog::processSecondIndepVar(0.9);
 
   std::vector<double> y_0_grid( 4 );
-  y_0_grid[3] = Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0);
-  y_0_grid[2] = Utility::LogLogCosLog<true>::processSecondIndepVar(0.0);
-  y_0_grid[1] = Utility::LogLogCosLog<true>::processSecondIndepVar(0.5);
-  y_0_grid[0] = Utility::LogLogCosLog<true>::processSecondIndepVar(0.999999);
+  y_0_grid[3] = Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0);
+  y_0_grid[2] = Utility::LogNudgedLogCosLog::processSecondIndepVar(0.0);
+  y_0_grid[1] = Utility::LogNudgedLogCosLog::processSecondIndepVar(0.999999);
+  y_0_grid[0] = Utility::LogNudgedLogCosLog::processSecondIndepVar(1.0);
 
   std::vector<double> z_0_grid( 4 );
-  z_0_grid[3] = Utility::LogLogCosLog<true>::processDepVar(1e-3);
-  z_0_grid[2] = Utility::LogLogCosLog<true>::processDepVar(1e-2);
-  z_0_grid[1] = Utility::LogLogCosLog<true>::processDepVar(1e-1);
-  z_0_grid[0] = Utility::LogLogCosLog<true>::processDepVar(1.0);
+  z_0_grid[3] = Utility::LogNudgedLogCosLog::processDepVar(1e-3);
+  z_0_grid[2] = Utility::LogNudgedLogCosLog::processDepVar(1e-2);
+  z_0_grid[1] = Utility::LogNudgedLogCosLog::processDepVar(1e-1);
+  z_0_grid[0] = Utility::LogNudgedLogCosLog::processDepVar(1.0);
 
   std::vector<double> y_1_grid( 3 );
-  y_1_grid[2] = Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0);
-  y_1_grid[1] = Utility::LogLogCosLog<true>::processSecondIndepVar(0.0);
-  y_1_grid[0] = Utility::LogLogCosLog<true>::processSecondIndepVar(0.999999);
+  y_1_grid[2] = Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0);
+  y_1_grid[1] = Utility::LogNudgedLogCosLog::processSecondIndepVar(0.999999);
+  y_1_grid[0] = Utility::LogNudgedLogCosLog::processSecondIndepVar(1.0);
 
   std::vector<double> z_1_grid( 3 );
-  z_1_grid[2] = Utility::LogLogCosLog<true>::processDepVar(1e-2);
-  z_1_grid[1] = Utility::LogLogCosLog<true>::processDepVar(1e-1);
-  z_1_grid[0] = Utility::LogLogCosLog<true>::processDepVar(1.0);
+  z_1_grid[2] = Utility::LogNudgedLogCosLog::processDepVar(1e-2);
+  z_1_grid[1] = Utility::LogNudgedLogCosLog::processDepVar(1e-1);
+  z_1_grid[0] = Utility::LogNudgedLogCosLog::processDepVar(1.0);
 
-  double z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase(
+  double z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase(
                                                       x0,
                                                       x1,
                                                       x,
@@ -3728,12 +3705,12 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateProcessedUnitBase_no_tuple_grid
                                                       z_1_grid.begin(),
                                                       z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3920360807059723e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.5334275379752840e-02, 1e-12 );
 
   // min possible y at x = 0.3
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase( x0,
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase( x0,
                                                         x1,
                                                         x,
                                                         y,
@@ -3749,9 +3726,9 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateProcessedUnitBase_no_tuple_grid
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3e-3, 1e-12 );
 
   // max possible y at x = 0.5
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(0.999999);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase( x0,
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase( x0,
                                                            x1,
                                                            x,
                                                            y,
@@ -3766,10 +3743,10 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateProcessedUnitBase_no_tuple_grid
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(0.9);
-  x = Utility::LogLogCosLog<true>::processFirstIndepVar(0.1);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(0.9);
+  x = Utility::LogNudgedLogCosLog::processFirstIndepVar(0.1);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase( x0,
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase( x0,
                                                            x1,
                                                            x,
                                                            y,
@@ -3782,11 +3759,11 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateProcessedUnitBase_no_tuple_grid
                                                            z_1_grid.begin(),
                                                            z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.3263204908129952e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4678033444505061e-02, 1e-12 );
 
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase( x0,
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase( x0,
                                                            x1,
                                                            x,
                                                            y,
@@ -3801,9 +3778,9 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateProcessedUnitBase_no_tuple_grid
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-3, 1e-12 );
 
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(0.999999);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase( x0,
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase( x0,
                                                            x1,
                                                            x,
                                                            y,
@@ -3818,10 +3795,10 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateProcessedUnitBase_no_tuple_grid
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(0.9);
-  x = Utility::LogLogCosLog<true>::processFirstIndepVar(1.0);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(0.9);
+  x = Utility::LogNudgedLogCosLog::processFirstIndepVar(1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase( x0,
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase( x0,
                                                            x1,
                                                            x,
                                                            y,
@@ -3834,11 +3811,11 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateProcessedUnitBase_no_tuple_grid
                                                            z_1_grid.begin(),
                                                            z_1_grid.end() );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4677992676232424e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.6087196373909353e-02, 1e-12 );
 
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(-1.0);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(-1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase( x0,
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase( x0,
                                                            x1,
                                                            x,
                                                            y,
@@ -3853,9 +3830,9 @@ FRENSIE_UNIT_TEST( LogLogCosLog_true, interpolateProcessedUnitBase_no_tuple_grid
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-2, 1e-12 );
 
-  y = Utility::LogLogCosLog<true>::processSecondIndepVar(0.999999);
+  y = Utility::LogNudgedLogCosLog::processSecondIndepVar(1.0);
 
-  z = Utility::LogLogCosLog<true>::interpolateProcessedUnitBase( x0,
+  z = Utility::LogNudgedLogCosLog::interpolateProcessedUnitBase( x0,
                                                            x1,
                                                            x,
                                                            y,

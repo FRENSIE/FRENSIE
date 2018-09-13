@@ -34,7 +34,8 @@ class WeightWindow
 public:
 
   //! Constructor
-  WeightWindow();
+  WeightWindow()
+  { /* ... */ }
 
   //! Destructor
   virtual ~WeightWindow()

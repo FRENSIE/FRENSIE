@@ -34,7 +34,6 @@ FRENSIE_UNIT_TEST( SimulationProperties, defaults )
   FRENSIE_CHECK_EQUAL( properties.getNumberOfHistories(), 0 );
   FRENSIE_CHECK_EQUAL( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
                        0.001 );
-  FRENSIE_CHECK( properties.displayWarnings() );
   FRENSIE_CHECK( !properties.isImplicitCaptureModeOn() );
 
   // Neutron properties
@@ -190,7 +189,6 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationProperties,
   FRENSIE_CHECK_EQUAL( properties.getNumberOfHistories(), 0 );
   FRENSIE_CHECK_EQUAL( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
                        0.001 );
-  FRENSIE_CHECK( properties.displayWarnings() );
   FRENSIE_CHECK( !properties.isImplicitCaptureModeOn() );
 
   FRENSIE_CHECK_EQUAL( properties.getFreeGasThreshold(), 400.0 );

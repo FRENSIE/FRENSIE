@@ -167,7 +167,7 @@ A brief usage tutorial for this class is shown below:
    cell_materials = model.getCellMaterialIds()
    cell_densities = model.getCellDensities()
    cell_estimator_data = model.getCellEstimatorData()
-   navigator = model.createNavigatorAdvanced()
+   navigator = model.createNavigator()
 "
 
 %advanced_model_interface_setup( DagMCModel )

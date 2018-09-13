@@ -32,7 +32,7 @@ using namespace Utility::Units;
 namespace si = boost::units::si;
 namespace cgs = boost::units::cgs;
 
-typedef std::tuple<Utility::LogLogCos<false>,Utility::LinLogCos<false>,Utility::LogLogCos<true>,Utility::LinLogCos<true> > InterpTypes;
+typedef std::tuple<Utility::LogLogCos,Utility::LinLogCos,Utility::LogNudgedLogCos,Utility::LinNudgedLogCos > InterpTypes;
 
 typedef TestArchiveHelper::TestArchives TestArchives;
 
@@ -1130,14 +1130,14 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularCDFDistribution,
 
   initialize<InterpolationPolicy>( distribution );
 
-  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLogCos<false> >() );
-  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLogCos<false> >() );
-  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogCosLog<false> >() );
-  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogCosLin<false> >() );
-  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLogCos<true> >() );
-  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLogCos<true> >() );
-  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogCosLog<true> >() );
-  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogCosLin<true> >() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLogCos >() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLogCos >() );
+  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogCosLog >() );
+  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogCosLin >() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogNudgedLogCos >() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinNudgedLogCos >() );
+  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::NudgedLogCosLog >() );
+  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::NudgedLogCosLin >() );
   FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
   FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
@@ -1170,10 +1170,10 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularCDFDistribution,
 
   initializeCDF<InterpolationPolicy>( distribution );
 
-  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLogCos<false> >() );
-  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLogCos<false> >() );
-  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogCosLog<false> >() );
-  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogCosLin<false> >() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLogCos >() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLogCos >() );
+  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogCosLog >() );
+  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogCosLin >() );
   FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
   FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
@@ -1215,10 +1215,10 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularCDFDistribution,
 
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
-  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLogCos<false> >() );
-  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLogCos<false> >() );
-  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogCosLog<false> >() );
-  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogCosLin<false> >() );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLogCos >() );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLogCos >() );
+  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogCosLog >() );
+  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogCosLin >() );
   FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
   FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
@@ -1251,10 +1251,10 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularCDFDistribution,
 
   initializeUnitAwareCDF<InterpolationPolicy>( unit_aware_distribution );
 
-  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLogCos<false> >() );
-  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLogCos<false> >() );
-  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogCosLog<false> >() );
-  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogCosLin<false> >() );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLogCos >() );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLogCos >() );
+  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogCosLog >() );
+  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogCosLin >() );
   FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
   FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
@@ -1309,14 +1309,14 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareTabularCDFDistribution,
   typedef typename Utility::UnitTraits<DepUnitA>::template GetQuantityType<double>::type DepQuantityA;
   typedef typename Utility::UnitTraits<DepUnitB>::template GetQuantityType<double>::type DepQuantityB;
 
-  initializeCDF<Utility::LogLogCos<false> >( distribution );
+  initializeCDF<Utility::LogLogCos >( distribution );
 
   // Copy from unitless distribution to distribution type A
-  Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos<false>,IndepUnitA,DepUnitA>
-    unit_aware_dist_a_copy = Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos<false>,IndepUnitA,DepUnitA>::fromUnitlessDistribution( *dynamic_cast<Utility::TabularCDFDistribution<Utility::LogLogCos<false> >*>( distribution.get() ) );
+  Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,IndepUnitA,DepUnitA>
+    unit_aware_dist_a_copy = Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,IndepUnitA,DepUnitA>::fromUnitlessDistribution( *dynamic_cast<Utility::TabularCDFDistribution<Utility::LogLogCos >*>( distribution.get() ) );
 
   // Copy from distribution type A to distribution type B
-  Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos<false>,IndepUnitB,DepUnitB>
+  Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,IndepUnitB,DepUnitB>
   unit_aware_dist_b_copy( unit_aware_dist_a_copy );
 
   IndepQuantityA indep_quantity_a =
@@ -1396,11 +1396,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( TabularCDFDistribution,
 
     std::shared_ptr<Utility::UnivariateDistribution> base_dist_a;
 
-    initialize<Utility::LogLogCos<false> >( base_dist_a );
+    initialize<Utility::LogLogCos >( base_dist_a );
 
     std::shared_ptr<Utility::UnivariateDistribution> base_dist_b;
 
-    initialize<Utility::LinLogCos<false> >( base_dist_b );
+    initialize<Utility::LinLogCos >( base_dist_b );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( base_dist_a ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( base_dist_b ) );
@@ -1470,11 +1470,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareTabularCDFDistribution,
 
     std::shared_ptr<Utility::UnitAwareUnivariateDistribution<void,si::amount> > base_dist_a;
 
-    initialize<Utility::LogLogCos<false> >( base_dist_a );
+    initialize<Utility::LogLogCos >( base_dist_a );
 
     std::shared_ptr<Utility::UnitAwareUnivariateDistribution<void,si::amount> > base_dist_b;
 
-    initialize<Utility::LinLogCos<false> >( base_dist_b );
+    initialize<Utility::LinLogCos >( base_dist_b );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( base_dist_a ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( base_dist_b ) );

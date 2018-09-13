@@ -26,10 +26,12 @@
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "Utility_Communicator.hpp"
 
+extern "C" void __custom_signal_handler__( int signal );
+
 namespace MonteCarlo{
 
 //! The particle simulation manager base class
-class ParticleSimulationManager 
+class ParticleSimulationManager : public std::enable_shared_from_this<ParticleSimulationManager> 
 {
 
 public:
@@ -62,17 +64,33 @@ public:
   //! Return the event handler
   EventHandler& getEventHandler();
 
+  //! Set the simulation name
+  void setSimulationName( const std::string& new_name );
+  
+  //! Get the simulation name
+  const std::string& getSimulationName() const;
+
+  //! Set the simulation archive type
+  void setSimulationArchiveType( const std::string& archive_type );
+  
+  //! Get the simulation archive type
+  const std::string& getSimulationArchiveType() const;
+
+  //! Set the simulation name and archive type
+  void setSimulationNameAndArchiveType( const std::string& new_name,
+                                        const std::string& archive_type );
+
   //! Run the simulation set up by the user
   virtual void runSimulation();
+
+  //! Run the simulation set up by the user with the ability to interrupt
+  virtual void runInterruptibleSimulation();
 
   //! Print the simulation data to the desired stream
   virtual void printSimulationSummary( std::ostream& os ) const;
 
   //! Log the simulation data
   virtual void logSimulationSummary() const;
-
-  //! The signal handler
-  virtual void signalHandler( int signal );
 
 protected:
 
@@ -136,6 +154,12 @@ protected:
   //! Rendezvous (cache state)
   virtual void rendezvous();
 
+  //! The signal handler
+  virtual void signalHandler( int signal );
+
+  //! Check if a signal type is handled by the manager
+  static bool isSignalTypeHandled( const int signal );
+
   //! Exit if required based on signal count
   void exitIfRequired( const int signal_counter, const int signal ) const;
 
@@ -170,6 +194,12 @@ private:
                                   const double op_to_collision_site,
                                   const double cell_total_macro_cross_section,
                                   const double track_start_position[3] );
+
+  // Conduct a basic rendezvous
+  void basicRendezvous() const;
+
+  // Declare the custom signal handler as a friend
+  friend void ::__custom_signal_handler__( int );
 
   // The simulation name
   std::string d_simulation_name;

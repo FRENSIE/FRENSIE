@@ -21,17 +21,10 @@
 
 namespace Utility{
 
-// Get the interpolation type
-template<bool use_nudge>
-inline InterpolationType LogCosLog<use_nudge>::getInterpolationType()
-{
-  return LOGCOSLOG_INTERPOLATION;
-}
-
 // Interpolate between two points
 template<bool use_nudge>
 template<typename IndepType, typename DepCosineType>
-inline DepCosineType LogCosLog<use_nudge>::interpolate( const IndepType indep_var_0,
+inline DepCosineType LogCosLogHelper<use_nudge>::interpolate( const IndepType indep_var_0,
                                           const IndepType indep_var_1,
                                           const IndepType indep_var,
                                           const DepCosineType raw_dep_var_0,
@@ -44,17 +37,17 @@ inline DepCosineType LogCosLog<use_nudge>::interpolate( const IndepType indep_va
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var ) );
-  testPrecondition( LogCosLog<use_nudge>::isIndepVarInValidRange( indep_var_0 ) );
-  testPrecondition( LogCosLog<use_nudge>::isIndepVarInValidRange( indep_var_1 ) );
-  testPrecondition( LogCosLog<use_nudge>::isIndepVarInValidRange( indep_var ) );
+  testPrecondition( LogCosLogHelper<use_nudge>::isIndepVarInValidRange( indep_var_0 ) );
+  testPrecondition( LogCosLogHelper<use_nudge>::isIndepVarInValidRange( indep_var_1 ) );
+  testPrecondition( LogCosLogHelper<use_nudge>::isIndepVarInValidRange( indep_var ) );
   testPrecondition( indep_var_0 < indep_var_1 );
   testPrecondition( indep_var >= indep_var_0 );
   testPrecondition( indep_var <= indep_var_1 );
   // Make sure the dependent variables are valid
   testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_0 ) );
   testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_1 ) );
-  testPrecondition( LogCosLog<use_nudge>::isDepVarInValidRange( raw_dep_var_0 ) );
-  testPrecondition( LogCosLog<use_nudge>::isDepVarInValidRange( raw_dep_var_1 ) );
+  testPrecondition( LogCosLogHelper<use_nudge>::isDepVarInValidRange( raw_dep_var_0 ) );
+  testPrecondition( LogCosLogHelper<use_nudge>::isDepVarInValidRange( raw_dep_var_1 ) );
 
   DepCosineType dep_var_0 = CosNudgeHelper<use_nudge>::convertFromCosineVar(raw_dep_var_0);
   DepCosineType dep_var_1 = CosNudgeHelper<use_nudge>::convertFromCosineVar(raw_dep_var_1);
@@ -67,7 +60,7 @@ inline DepCosineType LogCosLog<use_nudge>::interpolate( const IndepType indep_va
 // Interpolate between two points using the indep variable ratio (beta)
 template<bool use_nudge>
 template<typename T, typename DepCosineType>
-inline DepCosineType LogCosLog<use_nudge>::interpolate( const T beta,
+inline DepCosineType LogCosLogHelper<use_nudge>::interpolate( const T beta,
                                           const DepCosineType raw_dep_var_0,
                                           const DepCosineType raw_dep_var_1 )
 {
@@ -80,8 +73,8 @@ inline DepCosineType LogCosLog<use_nudge>::interpolate( const T beta,
   // Make sure the dependent variables are valid
   testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_0 ) );
   testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_1 ) );
-  testPrecondition( LogCosLog<use_nudge>::isDepVarInValidRange( raw_dep_var_0 ) );
-  testPrecondition( LogCosLog<use_nudge>::isDepVarInValidRange( raw_dep_var_1 ) );
+  testPrecondition( LogCosLogHelper<use_nudge>::isDepVarInValidRange( raw_dep_var_0 ) );
+  testPrecondition( LogCosLogHelper<use_nudge>::isDepVarInValidRange( raw_dep_var_1 ) );
 
   DepCosineType dep_var_0 = CosNudgeHelper<use_nudge>::convertFromCosineVar(raw_dep_var_0);
   DepCosineType dep_var_1 = CosNudgeHelper<use_nudge>::convertFromCosineVar(raw_dep_var_1);
@@ -93,7 +86,7 @@ inline DepCosineType LogCosLog<use_nudge>::interpolate( const T beta,
 template<bool use_nudge>
 template<typename IndepType, typename DepCosineType>
 inline typename QuantityTraits<DepCosineType>::RawType
-LogCosLog<use_nudge>::interpolateAndProcess( const IndepType indep_var_0,
+LogCosLogHelper<use_nudge>::interpolateAndProcess( const IndepType indep_var_0,
                                   const IndepType indep_var_1,
                                   const IndepType indep_var,
                                   const DepCosineType raw_dep_var_0,
@@ -106,17 +99,17 @@ LogCosLog<use_nudge>::interpolateAndProcess( const IndepType indep_var_0,
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var ) );
-  testPrecondition( LogCosLog<use_nudge>::isIndepVarInValidRange( indep_var_0 ) );
-  testPrecondition( LogCosLog<use_nudge>::isIndepVarInValidRange( indep_var_1 ) );
-  testPrecondition( LogCosLog<use_nudge>::isIndepVarInValidRange( indep_var ) );
+  testPrecondition( LogCosLogHelper<use_nudge>::isIndepVarInValidRange( indep_var_0 ) );
+  testPrecondition( LogCosLogHelper<use_nudge>::isIndepVarInValidRange( indep_var_1 ) );
+  testPrecondition( LogCosLogHelper<use_nudge>::isIndepVarInValidRange( indep_var ) );
   testPrecondition( indep_var_0 < indep_var_1 );
   testPrecondition( indep_var >= indep_var_0 );
   testPrecondition( indep_var <= indep_var_1 );
   // Make sure the dependent variables are valid
   testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_0 ) );
   testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_1 ) );
-  testPrecondition( LogCosLog<use_nudge>::isDepVarInValidRange( raw_dep_var_0 ) );
-  testPrecondition( LogCosLog<use_nudge>::isDepVarInValidRange( raw_dep_var_1 ) );
+  testPrecondition( LogCosLogHelper<use_nudge>::isDepVarInValidRange( raw_dep_var_0 ) );
+  testPrecondition( LogCosLogHelper<use_nudge>::isDepVarInValidRange( raw_dep_var_1 ) );
 
   DepCosineType dep_var_0 = CosNudgeHelper<use_nudge>::convertFromCosineVar(raw_dep_var_0);
   DepCosineType dep_var_1 = CosNudgeHelper<use_nudge>::convertFromCosineVar(raw_dep_var_1);
@@ -129,10 +122,10 @@ LogCosLog<use_nudge>::interpolateAndProcess( const IndepType indep_var_0,
 template<bool use_nudge>
 template<typename T>
 inline typename QuantityTraits<T>::RawType
-LogCosLog<use_nudge>::processIndepVar( const T indep_var )
+LogCosLogHelper<use_nudge>::processIndepVar( const T indep_var )
 {
   // Make sure the indep var value is valid
-  testPrecondition( LogCosLog<use_nudge>::isIndepVarInValidRange( indep_var ) );
+  testPrecondition( LogCosLogHelper<use_nudge>::isIndepVarInValidRange( indep_var ) );
 
   return log( getRawQuantity(indep_var) );
 }
@@ -141,10 +134,10 @@ LogCosLog<use_nudge>::processIndepVar( const T indep_var )
 template<bool use_nudge>
 template<typename T>
 inline typename QuantityTraits<T>::RawType
-LogCosLog<use_nudge>::processDepVar( const T dep_var )
+LogCosLogHelper<use_nudge>::processDepVar( const T dep_var )
 {
   // Make sure the indep var value is valid
-  testPrecondition( LogCosLog<use_nudge>::isDepVarInValidRange( dep_var ) );
+  testPrecondition( LogCosLogHelper<use_nudge>::isDepVarInValidRange( dep_var ) );
 
   return log( CosNudgeHelper<use_nudge>::convertFromCosineVar( getRawQuantity(dep_var) ) );
 }
@@ -152,7 +145,7 @@ LogCosLog<use_nudge>::processDepVar( const T dep_var )
 // Recover the processed independent value
 template<bool use_nudge>
 template<typename T>
-inline T LogCosLog<use_nudge>::recoverProcessedIndepVar( const T processed_indep_var )
+inline T LogCosLogHelper<use_nudge>::recoverProcessedIndepVar( const T processed_indep_var )
 {
   return exp( processed_indep_var );
 }
@@ -160,7 +153,7 @@ inline T LogCosLog<use_nudge>::recoverProcessedIndepVar( const T processed_indep
 // Recover the processed dependent value
 template<bool use_nudge>
 template<typename T>
-inline T LogCosLog<use_nudge>::recoverProcessedDepVar( const T processed_dep_var )
+inline T LogCosLogHelper<use_nudge>::recoverProcessedDepVar( const T processed_dep_var )
 {
   return CosNudgeHelper<use_nudge>::convertToCosineVar( exp( processed_dep_var ) );
 }
@@ -168,7 +161,7 @@ inline T LogCosLog<use_nudge>::recoverProcessedDepVar( const T processed_dep_var
 // Test if the independent value is in a valid range (doesn't check nan/inf)
 template<bool use_nudge>
 template<typename T>
-inline bool LogCosLog<use_nudge>::isIndepVarInValidRange( const T indep_var )
+inline bool LogCosLogHelper<use_nudge>::isIndepVarInValidRange( const T indep_var )
 {
   return indep_var > QuantityTraits<T>::zero();
 }
@@ -176,7 +169,7 @@ inline bool LogCosLog<use_nudge>::isIndepVarInValidRange( const T indep_var )
 // Test if the dependent value is in a valid range (doesn't check nan/inf)
 template<>
 template<typename T>
-inline bool LogCosLog<true>::isDepVarInValidRange( const T dep_var )
+inline bool LogCosLogHelper<true>::isDepVarInValidRange( const T dep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
@@ -188,7 +181,7 @@ inline bool LogCosLog<true>::isDepVarInValidRange( const T dep_var )
 // Test if the dependent value is in a valid range (doesn't check nan/inf)
 template<>
 template<typename T>
-inline bool LogCosLog<false>::isDepVarInValidRange( const T dep_var )
+inline bool LogCosLogHelper<false>::isDepVarInValidRange( const T dep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
@@ -197,25 +190,28 @@ inline bool LogCosLog<false>::isDepVarInValidRange( const T dep_var )
          dep_var < QuantityTraits<T>::one();
 }
 
+// Get the interpolation type
+inline InterpolationType LogCosLog::getInterpolationType()
+{
+  return LOGCOSLOG_INTERPOLATION;
+}
+
 // The name of the policy
-template<bool use_nudge>
-inline const std::string LogCosLog<use_nudge>::name()
+inline const std::string LogCosLog::name()
 {
   return "LogCosLog";
 }
 
-// Return if the cosine nudge factor is on
-template<bool use_nudge>
-inline const bool LogCosLog<use_nudge>::isCosineNudgeOn()
-{
-  return use_nudge;
-}
-
 // Get the interpolation type
-template<bool use_nudge>
-inline InterpolationType LogLogCos<use_nudge>::getInterpolationType()
+inline InterpolationType NudgedLogCosLog::getInterpolationType()
 {
-  return LOGLOGCOS_INTERPOLATION;
+  return NUDGEDLOGCOSLOG_INTERPOLATION;
+}
+
+// The name of the policy
+inline const std::string NudgedLogCosLog::name()
+{
+  return "NudgedLogCosLog";
 }
 
 // Calculate the unit base grid length (L)
@@ -231,17 +227,17 @@ inline InterpolationType LogLogCos<use_nudge>::getInterpolationType()
 template<>
 template<typename IndepType>
 inline typename QuantityTraits<IndepType>::RawType
-InterpolationHelper<LogLogCos<false> >::calculateUnitBaseGridLength(
+InterpolationHelper<LogLogCosHelper<false> >::calculateUnitBaseGridLength(
                                        const IndepType grid_lower_indep_value,
                                        const IndepType grid_upper_indep_value )
 {
   // Make sure the grid is valid
   testPrecondition( grid_lower_indep_value <= grid_upper_indep_value );
-  testPrecondition( LinLogCos<false>::isIndepVarInValidRange( grid_lower_indep_value ) );
+  testPrecondition( LinLogCosHelper<false>::isIndepVarInValidRange( grid_lower_indep_value ) );
 
   return ThisType::calculateUnitBaseGridLengthProcessed(
-          LinLogCos<false>::processIndepVar( grid_upper_indep_value ),
-          LinLogCos<false>::processIndepVar( grid_lower_indep_value ) );
+          LinLogCosHelper<false>::processIndepVar( grid_upper_indep_value ),
+          LinLogCosHelper<false>::processIndepVar( grid_lower_indep_value ) );
 }
 
 // Calculate the unit base grid length (L)
@@ -257,17 +253,17 @@ InterpolationHelper<LogLogCos<false> >::calculateUnitBaseGridLength(
 template<>
 template<typename IndepType>
 inline typename QuantityTraits<IndepType>::RawType
-InterpolationHelper<LogLogCos<true> >::calculateUnitBaseGridLength(
+InterpolationHelper<LogLogCosHelper<true> >::calculateUnitBaseGridLength(
                                        const IndepType grid_lower_indep_value,
                                        const IndepType grid_upper_indep_value )
 {
   // Make sure the grid is valid
   testPrecondition( grid_lower_indep_value <= grid_upper_indep_value );
-  testPrecondition( LinLogCos<true>::isIndepVarInValidRange( grid_lower_indep_value ) );
+  testPrecondition( LinLogCosHelper<true>::isIndepVarInValidRange( grid_lower_indep_value ) );
 
   return ThisType::calculateUnitBaseGridLengthProcessed(
-          LinLogCos<true>::processIndepVar( grid_upper_indep_value ),
-          LinLogCos<true>::processIndepVar( grid_lower_indep_value ) );
+          LinLogCosHelper<true>::processIndepVar( grid_upper_indep_value ),
+          LinLogCosHelper<true>::processIndepVar( grid_lower_indep_value ) );
 }
 
 // Calculate the unit base independent variable (eta)
@@ -280,7 +276,7 @@ InterpolationHelper<LogLogCos<true> >::calculateUnitBaseGridLength(
 template<>
 template<typename IndepType>
 inline typename QuantityTraits<IndepType>::RawType
-InterpolationHelper<LogLogCos<false> >::calculateUnitBaseIndepVar(
+InterpolationHelper<LogLogCosHelper<false> >::calculateUnitBaseIndepVar(
           const IndepType indep_var,
           const IndepType indep_var_min,
           const typename QuantityTraits<IndepType>::RawType indep_grid_length,
@@ -288,25 +284,25 @@ InterpolationHelper<LogLogCos<false> >::calculateUnitBaseIndepVar(
 {
   // Make sure the intermediate grid min indep var is valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_min ) );
-  testPrecondition( LogLogCos<false>::isIndepVarInValidRange( indep_var_min ) );
+  testPrecondition( LogLogCosHelper<false>::isIndepVarInValidRange( indep_var_min ) );
   // Make sure the intermediate grid length is valid
   testPrecondition( !QuantityTraits<typename QuantityTraits<IndepType>::RawType>::isnaninf( indep_grid_length ) );
   testPrecondition( indep_grid_length > 0.0 );
   // Make sure the independent variable is valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var ) );
-  testPrecondition( LogLogCos<false>::isIndepVarInValidRange( indep_var ) );
+  testPrecondition( LogLogCosHelper<false>::isIndepVarInValidRange( indep_var ) );
   testPrecondition( indep_var >=
                     ThisType::calculateFuzzyLowerBound( indep_var_min, tol ) );
   remember( typename QuantityTraits<IndepType>::RawType test_difference =
-            LogLogCos<false>::processIndepVar(indep_var) -
-            LogLogCos<false>::processIndepVar(indep_var_min) );
+            LogLogCosHelper<false>::processIndepVar(indep_var) -
+            LogLogCosHelper<false>::processIndepVar(indep_var_min) );
 
   testPrecondition( test_difference <= ThisType::calculateFuzzyUpperBound(
                                                     indep_grid_length, tol ) );
 
   return calculateUnitBaseIndepVarProcessed(
-                       LogLogCos<false>::processIndepVar(indep_var_min),
-                       LogLogCos<false>::processIndepVar(indep_var),
+                       LogLogCosHelper<false>::processIndepVar(indep_var_min),
+                       LogLogCosHelper<false>::processIndepVar(indep_var),
                        indep_grid_length,
                        tol );
 }
@@ -321,7 +317,7 @@ InterpolationHelper<LogLogCos<false> >::calculateUnitBaseIndepVar(
 template<>
 template<typename IndepType>
 inline typename QuantityTraits<IndepType>::RawType
-InterpolationHelper<LogLogCos<true> >::calculateUnitBaseIndepVar(
+InterpolationHelper<LogLogCosHelper<true> >::calculateUnitBaseIndepVar(
           const IndepType indep_var,
           const IndepType indep_var_min,
           const typename QuantityTraits<IndepType>::RawType indep_grid_length,
@@ -329,25 +325,25 @@ InterpolationHelper<LogLogCos<true> >::calculateUnitBaseIndepVar(
 {
   // Make sure the intermediate grid min indep var is valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_min ) );
-  testPrecondition( LogLogCos<true>::isIndepVarInValidRange( indep_var_min ) );
+  testPrecondition( LogLogCosHelper<true>::isIndepVarInValidRange( indep_var_min ) );
   // Make sure the intermediate grid length is valid
   testPrecondition( !QuantityTraits<typename QuantityTraits<IndepType>::RawType>::isnaninf( indep_grid_length ) );
   testPrecondition( indep_grid_length > 0.0 );
   // Make sure the independent variable is valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var ) );
-  testPrecondition( LogLogCos<true>::isIndepVarInValidRange( indep_var ) );
+  testPrecondition( LogLogCosHelper<true>::isIndepVarInValidRange( indep_var ) );
   testPrecondition( indep_var >=
                     ThisType::calculateFuzzyLowerBound( indep_var_min, tol ) );
   remember( typename QuantityTraits<IndepType>::RawType test_difference =
-            LogLogCos<true>::processIndepVar(indep_var) -
-            LogLogCos<true>::processIndepVar(indep_var_min) );
+            LogLogCosHelper<true>::processIndepVar(indep_var) -
+            LogLogCosHelper<true>::processIndepVar(indep_var_min) );
 
   testPrecondition( test_difference <= ThisType::calculateFuzzyUpperBound(
                                                     indep_grid_length, tol ) );
 
   return calculateUnitBaseIndepVarProcessed(
-                       LogLogCos<true>::processIndepVar(indep_var_min),
-                       LogLogCos<true>::processIndepVar(indep_var),
+                       LogLogCosHelper<true>::processIndepVar(indep_var_min),
+                       LogLogCosHelper<true>::processIndepVar(indep_var),
                        indep_grid_length,
                        tol );
 }
@@ -361,7 +357,7 @@ InterpolationHelper<LogLogCos<true> >::calculateUnitBaseIndepVar(
 template<>
 template<typename IndepType>
 inline IndepType
-InterpolationHelper<LogLogCos<false> >::calculateIndepVar(
+InterpolationHelper<LogLogCosHelper<false> >::calculateIndepVar(
           const typename QuantityTraits<IndepType>::RawType eta,
           const IndepType indep_var_min,
           const typename QuantityTraits<IndepType>::RawType indep_grid_length,
@@ -372,14 +368,14 @@ InterpolationHelper<LogLogCos<false> >::calculateIndepVar(
   testPrecondition( eta <= 1.0 );
   // Make sure the grid min indep var is valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_min ) );
-  testPrecondition( LogLogCos<false>::isIndepVarInValidRange( indep_var_min ) );
+  testPrecondition( LogLogCosHelper<false>::isIndepVarInValidRange( indep_var_min ) );
   // Make sure the grid length is valid
   testPrecondition( !QuantityTraits<typename QuantityTraits<IndepType>::RawType>::isnaninf( indep_grid_length ) );
   testPrecondition( indep_grid_length >= 0.0 );
 
   IndepType grid_indep_var( QuantityTraits<IndepType>::initializeQuantity(
-    LogLogCos<false>::recoverProcessedIndepVar(
-                    LogLogCos<false>::processIndepVar( indep_var_min ) -
+    LogLogCosHelper<false>::recoverProcessedIndepVar(
+                    LogLogCosHelper<false>::processIndepVar( indep_var_min ) -
                     indep_grid_length*eta ) ) );
 
   // Check for rounding errors
@@ -402,7 +398,7 @@ InterpolationHelper<LogLogCos<false> >::calculateIndepVar(
 template<>
 template<typename IndepType>
 inline IndepType
-InterpolationHelper<LogLogCos<true> >::calculateIndepVar(
+InterpolationHelper<LogLogCosHelper<true> >::calculateIndepVar(
           const typename QuantityTraits<IndepType>::RawType eta,
           const IndepType indep_var_min,
           const typename QuantityTraits<IndepType>::RawType indep_grid_length,
@@ -413,14 +409,14 @@ InterpolationHelper<LogLogCos<true> >::calculateIndepVar(
   testPrecondition( eta <= 1.0 );
   // Make sure the grid min indep var is valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_min ) );
-  testPrecondition( LogLogCos<true>::isIndepVarInValidRange( indep_var_min ) );
+  testPrecondition( LogLogCosHelper<true>::isIndepVarInValidRange( indep_var_min ) );
   // Make sure the grid length is valid
   testPrecondition( !QuantityTraits<typename QuantityTraits<IndepType>::RawType>::isnaninf( indep_grid_length ) );
   testPrecondition( indep_grid_length >= 0.0 );
 
   IndepType grid_indep_var( QuantityTraits<IndepType>::initializeQuantity(
-    LogLogCos<true>::recoverProcessedIndepVar(
-                    LogLogCos<true>::processIndepVar( indep_var_min ) -
+    LogLogCosHelper<true>::recoverProcessedIndepVar(
+                    LogLogCosHelper<true>::processIndepVar( indep_var_min ) -
                     indep_grid_length*eta ) ) );
 
   // Check for rounding errors
@@ -437,7 +433,7 @@ InterpolationHelper<LogLogCos<true> >::calculateIndepVar(
 // Interpolate between two points
 template<bool use_nudge>
 template<typename IndepCosineType, typename DepType>
-inline DepType LogLogCos<use_nudge>::interpolate( const IndepCosineType raw_indep_var_0,
+inline DepType LogLogCosHelper<use_nudge>::interpolate( const IndepCosineType raw_indep_var_0,
                                        const IndepCosineType raw_indep_var_1,
                                        const IndepCosineType raw_indep_var,
                                        const DepType dep_var_0,
@@ -450,17 +446,17 @@ inline DepType LogLogCos<use_nudge>::interpolate( const IndepCosineType raw_inde
   testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var_1 ) );
   testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var ) );
-  testPrecondition( LogLogCos<use_nudge>::isIndepVarInValidRange( raw_indep_var_0 ) );
-  testPrecondition( LogLogCos<use_nudge>::isIndepVarInValidRange( raw_indep_var_1 ) );
-  testPrecondition( LogLogCos<use_nudge>::isIndepVarInValidRange( raw_indep_var ) );
+  testPrecondition( LogLogCosHelper<use_nudge>::isIndepVarInValidRange( raw_indep_var_0 ) );
+  testPrecondition( LogLogCosHelper<use_nudge>::isIndepVarInValidRange( raw_indep_var_1 ) );
+  testPrecondition( LogLogCosHelper<use_nudge>::isIndepVarInValidRange( raw_indep_var ) );
   testPrecondition( raw_indep_var_0 < raw_indep_var_1 );
   testPrecondition( raw_indep_var >= raw_indep_var_0 );
   testPrecondition( raw_indep_var <= raw_indep_var_1 );
   // Make sure the dependent variables are valid
   testPrecondition( !QuantityTraits<DepType>::isnaninf( dep_var_0 ) );
   testPrecondition( !QuantityTraits<DepType>::isnaninf( dep_var_1 ) );
-  testPrecondition( LogLogCos<use_nudge>::isDepVarInValidRange( dep_var_0 ) );
-  testPrecondition( LogLogCos<use_nudge>::isDepVarInValidRange( dep_var_1 ) );
+  testPrecondition( LogLogCosHelper<use_nudge>::isDepVarInValidRange( dep_var_0 ) );
+  testPrecondition( LogLogCosHelper<use_nudge>::isDepVarInValidRange( dep_var_1 ) );
 
   IndepCosineType indep_var_0 = CosNudgeHelper<use_nudge>::convertFromCosineVar(raw_indep_var_0);
   IndepCosineType indep_var_1 = CosNudgeHelper<use_nudge>::convertFromCosineVar(raw_indep_var_1);
@@ -479,7 +475,7 @@ inline DepType LogLogCos<use_nudge>::interpolate( const IndepCosineType raw_inde
  */
 template<>
 template<typename T>
-T InterpolationHelper<LogLogCos<false> >::interpolate( const T processed_indep_var_0,
+T InterpolationHelper<LogLogCosHelper<false> >::interpolate( const T processed_indep_var_0,
                                                const T processed_indep_var,
                                                const T processed_dep_var_0,
                                                const T processed_slope )
@@ -495,7 +491,7 @@ T InterpolationHelper<LogLogCos<false> >::interpolate( const T processed_indep_v
   // Make sure that the slope is valid
   testPrecondition( !Utility::QuantityTraits<T>::isnaninf( processed_slope ) );
 
-  return LogLogCos<false>::recoverProcessedDepVar(
+  return LogLogCosHelper<false>::recoverProcessedDepVar(
                processed_dep_var_0 +
                processed_slope*(processed_indep_var_0 - processed_indep_var) );
 }
@@ -508,7 +504,7 @@ T InterpolationHelper<LogLogCos<false> >::interpolate( const T processed_indep_v
  */
 template<>
 template<typename T>
-T InterpolationHelper<LogLogCos<true> >::interpolate( const T processed_indep_var_0,
+T InterpolationHelper<LogLogCosHelper<true> >::interpolate( const T processed_indep_var_0,
                                                const T processed_indep_var,
                                                const T processed_dep_var_0,
                                                const T processed_slope )
@@ -524,7 +520,7 @@ T InterpolationHelper<LogLogCos<true> >::interpolate( const T processed_indep_va
   // Make sure that the slope is valid
   testPrecondition( !QuantityTraits<T>::isnaninf( processed_slope ) );
 
-  return LogLogCos<true>::recoverProcessedDepVar(
+  return LogLogCosHelper<true>::recoverProcessedDepVar(
                processed_dep_var_0 +
                processed_slope*(processed_indep_var_0 - processed_indep_var) );
 }
@@ -532,7 +528,7 @@ T InterpolationHelper<LogLogCos<true> >::interpolate( const T processed_indep_va
 // Interpolate between two points using the indep variable ratio (beta)
 template<bool use_nudge>
 template<typename T, typename DepType>
-inline DepType LogLogCos<use_nudge>::interpolate( const T beta,
+inline DepType LogLogCosHelper<use_nudge>::interpolate( const T beta,
                                        const DepType dep_var_0,
                                        const DepType dep_var_1 )
 {
@@ -545,8 +541,8 @@ inline DepType LogLogCos<use_nudge>::interpolate( const T beta,
   // Make sure the dependent variables are valid
   testPrecondition( !QuantityTraits<DepType>::isnaninf( dep_var_0 ) );
   testPrecondition( !QuantityTraits<DepType>::isnaninf( dep_var_1 ) );
-  testPrecondition( LogLogCos<use_nudge>::isDepVarInValidRange( dep_var_0 ) );
-  testPrecondition( LogLogCos<use_nudge>::isDepVarInValidRange( dep_var_1 ) );
+  testPrecondition( LogLogCosHelper<use_nudge>::isDepVarInValidRange( dep_var_0 ) );
+  testPrecondition( LogLogCosHelper<use_nudge>::isDepVarInValidRange( dep_var_1 ) );
 
   return dep_var_0*pow((dep_var_1/dep_var_0),beta);
 }
@@ -555,7 +551,7 @@ inline DepType LogLogCos<use_nudge>::interpolate( const T beta,
 template<bool use_nudge>
 template<typename IndepCosineType, typename DepType>
 inline typename QuantityTraits<DepType>::RawType
-LogLogCos<use_nudge>::interpolateAndProcess( const IndepCosineType raw_indep_var_0,
+LogLogCosHelper<use_nudge>::interpolateAndProcess( const IndepCosineType raw_indep_var_0,
                                   const IndepCosineType raw_indep_var_1,
                                   const IndepCosineType raw_indep_var,
                                   const DepType dep_var_0,
@@ -568,17 +564,17 @@ LogLogCos<use_nudge>::interpolateAndProcess( const IndepCosineType raw_indep_var
   testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var_1 ) );
   testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var ) );
-  testPrecondition( LogLogCos<use_nudge>::isIndepVarInValidRange( raw_indep_var_0 ) );
-  testPrecondition( LogLogCos<use_nudge>::isIndepVarInValidRange( raw_indep_var_1 ) );
-  testPrecondition( LogLogCos<use_nudge>::isIndepVarInValidRange( raw_indep_var ) );
+  testPrecondition( LogLogCosHelper<use_nudge>::isIndepVarInValidRange( raw_indep_var_0 ) );
+  testPrecondition( LogLogCosHelper<use_nudge>::isIndepVarInValidRange( raw_indep_var_1 ) );
+  testPrecondition( LogLogCosHelper<use_nudge>::isIndepVarInValidRange( raw_indep_var ) );
   testPrecondition( raw_indep_var_0 < raw_indep_var_1 );
   testPrecondition( raw_indep_var >= raw_indep_var_0 );
   testPrecondition( raw_indep_var <= raw_indep_var_1 );
   // Make sure the dependent variables are valid
   testPrecondition( !QuantityTraits<DepType>::isnaninf( dep_var_0 ) );
   testPrecondition( !QuantityTraits<DepType>::isnaninf( dep_var_1 ) );
-  testPrecondition( LogLogCos<use_nudge>::isDepVarInValidRange( dep_var_0 ) );
-  testPrecondition( LogLogCos<use_nudge>::isDepVarInValidRange( dep_var_1 ) );
+  testPrecondition( LogLogCosHelper<use_nudge>::isDepVarInValidRange( dep_var_0 ) );
+  testPrecondition( LogLogCosHelper<use_nudge>::isDepVarInValidRange( dep_var_1 ) );
 
   IndepCosineType indep_var_0 = CosNudgeHelper<use_nudge>::convertFromCosineVar(raw_indep_var_0);
   IndepCosineType indep_var_1 = CosNudgeHelper<use_nudge>::convertFromCosineVar(raw_indep_var_1);
@@ -592,10 +588,10 @@ LogLogCos<use_nudge>::interpolateAndProcess( const IndepCosineType raw_indep_var
 template<bool use_nudge>
 template<typename T>
 inline typename QuantityTraits<T>::RawType
-LogLogCos<use_nudge>::processIndepVar( const T indep_var )
+LogLogCosHelper<use_nudge>::processIndepVar( const T indep_var )
 {
   // Make sure the indep var value is valid
-  testPrecondition( LogLogCos<use_nudge>::isIndepVarInValidRange( indep_var ) );
+  testPrecondition( LogLogCosHelper<use_nudge>::isIndepVarInValidRange( indep_var ) );
 
   return log( CosNudgeHelper<use_nudge>::convertFromCosineVar( getRawQuantity(indep_var) ) );
 }
@@ -604,10 +600,10 @@ LogLogCos<use_nudge>::processIndepVar( const T indep_var )
 template<bool use_nudge>
 template<typename T>
 inline typename QuantityTraits<T>::RawType
-LogLogCos<use_nudge>::processDepVar( const T dep_var )
+LogLogCosHelper<use_nudge>::processDepVar( const T dep_var )
 {
   // Make sure the indep var value is valid
-  testPrecondition( LogLogCos<use_nudge>::isDepVarInValidRange( dep_var ) );
+  testPrecondition( LogLogCosHelper<use_nudge>::isDepVarInValidRange( dep_var ) );
 
   return log( getRawQuantity(dep_var) );
 }
@@ -615,7 +611,7 @@ LogLogCos<use_nudge>::processDepVar( const T dep_var )
 // Recover the processed independent value
 template<bool use_nudge>
 template<typename T>
-inline T LogLogCos<use_nudge>::recoverProcessedIndepVar( const T processed_indep_var )
+inline T LogLogCosHelper<use_nudge>::recoverProcessedIndepVar( const T processed_indep_var )
 {
   return CosNudgeHelper<use_nudge>::convertToCosineVar( exp( processed_indep_var ) );
 }
@@ -623,7 +619,7 @@ inline T LogLogCos<use_nudge>::recoverProcessedIndepVar( const T processed_indep
 // Recover the processed dependent value
 template<bool use_nudge>
 template<typename T>
-inline T LogLogCos<use_nudge>::recoverProcessedDepVar( const T processed_dep_var )
+inline T LogLogCosHelper<use_nudge>::recoverProcessedDepVar( const T processed_dep_var )
 {
   return exp( processed_dep_var );
 }
@@ -631,7 +627,7 @@ inline T LogLogCos<use_nudge>::recoverProcessedDepVar( const T processed_dep_var
 // Test if the independent value is in a valid range (doesn't check nan/inf)
 template<>
 template<typename T>
-inline bool LogLogCos<false>::isIndepVarInValidRange( const T indep_var )
+inline bool LogLogCosHelper<false>::isIndepVarInValidRange( const T indep_var )
 {
   return indep_var >= QuantityTraits<T>::initializeQuantity(-1.0) &&
          indep_var < QuantityTraits<T>::one();
@@ -640,7 +636,7 @@ inline bool LogLogCos<false>::isIndepVarInValidRange( const T indep_var )
 // Test if the independent value is in a valid range (doesn't check nan/inf)
 template<>
 template<typename T>
-inline bool LogLogCos<true>::isIndepVarInValidRange( const T indep_var )
+inline bool LogLogCosHelper<true>::isIndepVarInValidRange( const T indep_var )
 {
   return indep_var >= QuantityTraits<T>::initializeQuantity(-1.0) &&
          indep_var <= QuantityTraits<T>::one();
@@ -650,7 +646,7 @@ inline bool LogLogCos<true>::isIndepVarInValidRange( const T indep_var )
 // Test if the dependent value is in a valid range (doesn't check nan/inf)
 template<bool use_nudge>
 template<typename T>
-inline bool LogLogCos<use_nudge>::isDepVarInValidRange( const T dep_var )
+inline bool LogLogCosHelper<use_nudge>::isDepVarInValidRange( const T dep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
@@ -658,31 +654,34 @@ inline bool LogLogCos<use_nudge>::isDepVarInValidRange( const T dep_var )
   return dep_var > QuantityTraits<T>::zero();
 }
 
+// Get the interpolation type
+inline InterpolationType LogLogCos::getInterpolationType()
+{
+  return LOGLOGCOS_INTERPOLATION;
+}
+
 // The name of the policy
-template<bool use_nudge>
-inline const std::string LogLogCos<use_nudge>::name()
+inline const std::string LogLogCos::name()
 {
   return "LogLogCos";
 }
 
-// Return if the cosine nudge factor is on
-template<bool use_nudge>
-inline const bool LogLogCos<use_nudge>::isCosineNudgeOn()
+// Get the interpolation type
+inline InterpolationType LogNudgedLogCos::getInterpolationType()
 {
-  return use_nudge;
+  return LOGNUDGEDLOGCOS_INTERPOLATION;
 }
 
-// Get the interpolation type
-template<bool use_nudge>
-inline InterpolationType LogCosLin<use_nudge>::getInterpolationType()
+// The name of the policy
+inline const std::string LogNudgedLogCos::name()
 {
-  return LOGCOSLIN_INTERPOLATION;
+  return "LogNudgedLogCos";
 }
 
 // Interpolate between two points
 template<bool use_nudge>
 template<typename IndepType, typename DepCosineType>
-inline DepCosineType LogCosLin<use_nudge>::interpolate( const IndepType indep_var_0,
+inline DepCosineType LogCosLinHelper<use_nudge>::interpolate( const IndepType indep_var_0,
                                           const IndepType indep_var_1,
                                           const IndepType indep_var,
                                           const DepCosineType raw_dep_var_0,
@@ -695,17 +694,17 @@ inline DepCosineType LogCosLin<use_nudge>::interpolate( const IndepType indep_va
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var ) );
-  testPrecondition( LogCosLin<use_nudge>::isIndepVarInValidRange( indep_var_0 ) );
-  testPrecondition( LogCosLin<use_nudge>::isIndepVarInValidRange( indep_var_1 ) );
-  testPrecondition( LogCosLin<use_nudge>::isIndepVarInValidRange( indep_var ) );
+  testPrecondition( LogCosLinHelper<use_nudge>::isIndepVarInValidRange( indep_var_0 ) );
+  testPrecondition( LogCosLinHelper<use_nudge>::isIndepVarInValidRange( indep_var_1 ) );
+  testPrecondition( LogCosLinHelper<use_nudge>::isIndepVarInValidRange( indep_var ) );
   testPrecondition( indep_var_0 < indep_var_1 );
   testPrecondition( indep_var >= indep_var_0 );
   testPrecondition( indep_var <= indep_var_1 );
   // Make sure the dependent variables are valid
   testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_0 ) );
   testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_1 ) );
-  testPrecondition( LogCosLin<use_nudge>::isDepVarInValidRange( raw_dep_var_0 ) );
-  testPrecondition( LogCosLin<use_nudge>::isDepVarInValidRange( raw_dep_var_1 ) );
+  testPrecondition( LogCosLinHelper<use_nudge>::isDepVarInValidRange( raw_dep_var_0 ) );
+  testPrecondition( LogCosLinHelper<use_nudge>::isDepVarInValidRange( raw_dep_var_1 ) );
 
   DepCosineType dep_var_0 = CosNudgeHelper<use_nudge>::convertFromCosineVar(raw_dep_var_0);
   DepCosineType dep_var_1 = CosNudgeHelper<use_nudge>::convertFromCosineVar(raw_dep_var_1);
@@ -717,7 +716,7 @@ inline DepCosineType LogCosLin<use_nudge>::interpolate( const IndepType indep_va
 // Interpolate between two points using the indep variable ratio (beta)
 template<bool use_nudge>
 template<typename T, typename DepCosineType>
-inline DepCosineType LogCosLin<use_nudge>::interpolate( const T beta,
+inline DepCosineType LogCosLinHelper<use_nudge>::interpolate( const T beta,
                                           const DepCosineType raw_dep_var_0,
                                           const DepCosineType raw_dep_var_1 )
 {
@@ -730,8 +729,8 @@ inline DepCosineType LogCosLin<use_nudge>::interpolate( const T beta,
   // Make sure the dependent variables are valid
   testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_0 ) );
   testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_1 ) );
-  testPrecondition( LogCosLin<use_nudge>::isDepVarInValidRange( raw_dep_var_0 ) );
-  testPrecondition( LogCosLin<use_nudge>::isDepVarInValidRange( raw_dep_var_1 ) );
+  testPrecondition( LogCosLinHelper<use_nudge>::isDepVarInValidRange( raw_dep_var_0 ) );
+  testPrecondition( LogCosLinHelper<use_nudge>::isDepVarInValidRange( raw_dep_var_1 ) );
 
   DepCosineType dep_var_0 = CosNudgeHelper<use_nudge>::convertFromCosineVar(raw_dep_var_0);
   DepCosineType dep_var_1 = CosNudgeHelper<use_nudge>::convertFromCosineVar(raw_dep_var_1);
@@ -743,7 +742,7 @@ inline DepCosineType LogCosLin<use_nudge>::interpolate( const T beta,
 template<bool use_nudge>
 template<typename IndepType, typename DepCosineType>
 inline typename QuantityTraits<DepCosineType>::RawType
-LogCosLin<use_nudge>::interpolateAndProcess( const IndepType indep_var_0,
+LogCosLinHelper<use_nudge>::interpolateAndProcess( const IndepType indep_var_0,
                                   const IndepType indep_var_1,
                                   const IndepType indep_var,
                                   const DepCosineType raw_dep_var_0,
@@ -756,17 +755,17 @@ LogCosLin<use_nudge>::interpolateAndProcess( const IndepType indep_var_0,
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var ) );
-  testPrecondition( LogCosLin<use_nudge>::isIndepVarInValidRange( indep_var_0 ) );
-  testPrecondition( LogCosLin<use_nudge>::isIndepVarInValidRange( indep_var_1 ) );
-  testPrecondition( LogCosLin<use_nudge>::isIndepVarInValidRange( indep_var ) );
+  testPrecondition( LogCosLinHelper<use_nudge>::isIndepVarInValidRange( indep_var_0 ) );
+  testPrecondition( LogCosLinHelper<use_nudge>::isIndepVarInValidRange( indep_var_1 ) );
+  testPrecondition( LogCosLinHelper<use_nudge>::isIndepVarInValidRange( indep_var ) );
   testPrecondition( indep_var_0 < indep_var_1 );
   testPrecondition( indep_var >= indep_var_0 );
   testPrecondition( indep_var <= indep_var_1 );
   // Make sure the dependent variables are valid
   testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_0 ) );
   testPrecondition( !QuantityTraits<DepCosineType>::isnaninf( raw_dep_var_1 ) );
-  testPrecondition( LogCosLin<use_nudge>::isDepVarInValidRange( raw_dep_var_0 ) );
-  testPrecondition( LogCosLin<use_nudge>::isDepVarInValidRange( raw_dep_var_1 ) );
+  testPrecondition( LogCosLinHelper<use_nudge>::isDepVarInValidRange( raw_dep_var_0 ) );
+  testPrecondition( LogCosLinHelper<use_nudge>::isDepVarInValidRange( raw_dep_var_1 ) );
 
   DepCosineType dep_var_0 = CosNudgeHelper<use_nudge>::convertFromCosineVar(raw_dep_var_0);
   DepCosineType dep_var_1 = CosNudgeHelper<use_nudge>::convertFromCosineVar(raw_dep_var_1);
@@ -779,10 +778,10 @@ LogCosLin<use_nudge>::interpolateAndProcess( const IndepType indep_var_0,
 template<bool use_nudge>
 template<typename T>
 inline typename QuantityTraits<T>::RawType
-LogCosLin<use_nudge>::processIndepVar( const T indep_var )
+LogCosLinHelper<use_nudge>::processIndepVar( const T indep_var )
 {
   // Make sure the indep var value is valid
-  testPrecondition( LogCosLin<use_nudge>::isIndepVarInValidRange( indep_var ) );
+  testPrecondition( LogCosLinHelper<use_nudge>::isIndepVarInValidRange( indep_var ) );
 
   return getRawQuantity(indep_var);
 }
@@ -791,10 +790,10 @@ LogCosLin<use_nudge>::processIndepVar( const T indep_var )
 template<bool use_nudge>
 template<typename T>
 inline typename QuantityTraits<T>::RawType
-LogCosLin<use_nudge>::processDepVar( const T dep_var )
+LogCosLinHelper<use_nudge>::processDepVar( const T dep_var )
 {
   // Make sure the indep var value is valid
-  testPrecondition( LogCosLin<use_nudge>::isDepVarInValidRange( dep_var ) );
+  testPrecondition( LogCosLinHelper<use_nudge>::isDepVarInValidRange( dep_var ) );
 
   return log( CosNudgeHelper<use_nudge>::convertFromCosineVar( getRawQuantity(dep_var) ) );
 }
@@ -802,7 +801,7 @@ LogCosLin<use_nudge>::processDepVar( const T dep_var )
 // Recover the processed independent value
 template<bool use_nudge>
 template<typename T>
-inline T LogCosLin<use_nudge>::recoverProcessedIndepVar( const T processed_indep_var )
+inline T LogCosLinHelper<use_nudge>::recoverProcessedIndepVar( const T processed_indep_var )
 {
   return processed_indep_var;
 }
@@ -810,7 +809,7 @@ inline T LogCosLin<use_nudge>::recoverProcessedIndepVar( const T processed_indep
 // Recover the processed dependent value
 template<bool use_nudge>
 template<typename T>
-inline T LogCosLin<use_nudge>::recoverProcessedDepVar( const T processed_dep_var )
+inline T LogCosLinHelper<use_nudge>::recoverProcessedDepVar( const T processed_dep_var )
 {
   return CosNudgeHelper<use_nudge>::convertToCosineVar( exp( processed_dep_var ) );
 }
@@ -818,7 +817,7 @@ inline T LogCosLin<use_nudge>::recoverProcessedDepVar( const T processed_dep_var
 // Test if the independent value is in a valid range (doesn't check nan/inf)
 template<bool use_nudge>
 template<typename T>
-inline bool LogCosLin<use_nudge>::isIndepVarInValidRange( const T indep_var )
+inline bool LogCosLinHelper<use_nudge>::isIndepVarInValidRange( const T indep_var )
 {
   return true;
 }
@@ -826,7 +825,7 @@ inline bool LogCosLin<use_nudge>::isIndepVarInValidRange( const T indep_var )
 // Test if the dependent value is in a valid range (doesn't check nan/inf)
 template<>
 template<typename T>
-inline bool LogCosLin<false>::isDepVarInValidRange( const T dep_var )
+inline bool LogCosLinHelper<false>::isDepVarInValidRange( const T dep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
@@ -838,7 +837,7 @@ inline bool LogCosLin<false>::isDepVarInValidRange( const T dep_var )
 // Test if the dependent value is in a valid range (doesn't check nan/inf)
 template<>
 template<typename T>
-inline bool LogCosLin<true>::isDepVarInValidRange( const T dep_var )
+inline bool LogCosLinHelper<true>::isDepVarInValidRange( const T dep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
@@ -847,25 +846,28 @@ inline bool LogCosLin<true>::isDepVarInValidRange( const T dep_var )
          dep_var <= QuantityTraits<T>::one();
 }
 
+// Get the interpolation type
+inline InterpolationType LogCosLin::getInterpolationType()
+{
+  return LOGCOSLIN_INTERPOLATION;
+}
+
 // The name of the policy
-template<bool use_nudge>
-inline const std::string LogCosLin<use_nudge>::name()
+inline const std::string LogCosLin::name()
 {
   return "LogCosLin";
 }
 
-// Return if the cosine nudge factor is on
-template<bool use_nudge>
-inline const bool LogCosLin<use_nudge>::isCosineNudgeOn()
-{
-  return use_nudge;
-}
-
 // Get the interpolation type
-template<bool use_nudge>
-inline InterpolationType LinLogCos<use_nudge>::getInterpolationType()
+inline InterpolationType NudgedLogCosLin::getInterpolationType()
 {
-  return LINLOGCOS_INTERPOLATION;
+  return NUDGEDLOGCOSLIN_INTERPOLATION;
+}
+
+// The name of the policy
+inline const std::string NudgedLogCosLin::name()
+{
+  return "NudgedLogCosLin";
 }
 
 // Calculate the unit base grid length (L)
@@ -881,17 +883,17 @@ inline InterpolationType LinLogCos<use_nudge>::getInterpolationType()
 template<>
 template<typename IndepType>
 inline typename QuantityTraits<IndepType>::RawType
-InterpolationHelper<LinLogCos<false> >::calculateUnitBaseGridLength(
+InterpolationHelper<LinLogCosHelper<false> >::calculateUnitBaseGridLength(
                                        const IndepType grid_lower_indep_value,
                                        const IndepType grid_upper_indep_value )
 {
   // Make sure the grid is valid
   testPrecondition( grid_lower_indep_value <= grid_upper_indep_value );
-  testPrecondition( LinLogCos<false>::isIndepVarInValidRange( grid_lower_indep_value ) );
+  testPrecondition( LinLogCosHelper<false>::isIndepVarInValidRange( grid_lower_indep_value ) );
 
   return ThisType::calculateUnitBaseGridLengthProcessed(
-          LinLogCos<false>::processIndepVar( grid_upper_indep_value ),
-          LinLogCos<false>::processIndepVar( grid_lower_indep_value ) );
+          LinLogCosHelper<false>::processIndepVar( grid_upper_indep_value ),
+          LinLogCosHelper<false>::processIndepVar( grid_lower_indep_value ) );
 }
 
 // Calculate the unit base grid length (L)
@@ -907,17 +909,17 @@ InterpolationHelper<LinLogCos<false> >::calculateUnitBaseGridLength(
 template<>
 template<typename IndepType>
 inline typename QuantityTraits<IndepType>::RawType
-InterpolationHelper<LinLogCos<true> >::calculateUnitBaseGridLength(
+InterpolationHelper<LinLogCosHelper<true> >::calculateUnitBaseGridLength(
                                        const IndepType grid_lower_indep_value,
                                        const IndepType grid_upper_indep_value )
 {
   // Make sure the grid is valid
   testPrecondition( grid_lower_indep_value <= grid_upper_indep_value );
-  testPrecondition( LinLogCos<true>::isIndepVarInValidRange( grid_lower_indep_value ) );
+  testPrecondition( LinLogCosHelper<true>::isIndepVarInValidRange( grid_lower_indep_value ) );
 
   return ThisType::calculateUnitBaseGridLengthProcessed(
-          LinLogCos<true>::processIndepVar( grid_upper_indep_value ),
-          LinLogCos<true>::processIndepVar( grid_lower_indep_value ) );
+          LinLogCosHelper<true>::processIndepVar( grid_upper_indep_value ),
+          LinLogCosHelper<true>::processIndepVar( grid_lower_indep_value ) );
 }
 
 // Calculate the unit base independent variable (eta)
@@ -930,7 +932,7 @@ InterpolationHelper<LinLogCos<true> >::calculateUnitBaseGridLength(
 template<>
 template<typename IndepType>
 inline typename QuantityTraits<IndepType>::RawType
-InterpolationHelper<LinLogCos<false> >::calculateUnitBaseIndepVar(
+InterpolationHelper<LinLogCosHelper<false> >::calculateUnitBaseIndepVar(
           const IndepType indep_var,
           const IndepType indep_var_min,
           const typename QuantityTraits<IndepType>::RawType indep_grid_length,
@@ -938,25 +940,25 @@ InterpolationHelper<LinLogCos<false> >::calculateUnitBaseIndepVar(
 {
   // Make sure the intermediate grid min indep var is valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_min ) );
-  testPrecondition( LinLogCos<false>::isIndepVarInValidRange( indep_var_min ) );
+  testPrecondition( LinLogCosHelper<false>::isIndepVarInValidRange( indep_var_min ) );
   // Make sure the intermediate grid length is valid
   testPrecondition( !QuantityTraits<typename QuantityTraits<IndepType>::RawType>::isnaninf( indep_grid_length ) );
   testPrecondition( indep_grid_length > 0.0 );
   // Make sure the independent variable is valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var ) );
-  testPrecondition( LinLogCos<false>::isIndepVarInValidRange( indep_var ) );
+  testPrecondition( LinLogCosHelper<false>::isIndepVarInValidRange( indep_var ) );
   testPrecondition( indep_var >=
                     ThisType::calculateFuzzyLowerBound( indep_var_min, tol ) );
   remember( typename QuantityTraits<IndepType>::RawType test_difference =
-            LinLogCos<false>::processIndepVar(indep_var) -
-            LinLogCos<false>::processIndepVar(indep_var_min) );
+            LinLogCosHelper<false>::processIndepVar(indep_var) -
+            LinLogCosHelper<false>::processIndepVar(indep_var_min) );
 
   testPrecondition( test_difference <= ThisType::calculateFuzzyUpperBound(
                                                     indep_grid_length, tol ) );
 
   return calculateUnitBaseIndepVarProcessed(
-                       LinLogCos<false>::processIndepVar(indep_var_min),
-                       LinLogCos<false>::processIndepVar(indep_var),
+                       LinLogCosHelper<false>::processIndepVar(indep_var_min),
+                       LinLogCosHelper<false>::processIndepVar(indep_var),
                        indep_grid_length,
                        tol );
 }
@@ -971,7 +973,7 @@ InterpolationHelper<LinLogCos<false> >::calculateUnitBaseIndepVar(
 template<>
 template<typename IndepType>
 inline typename QuantityTraits<IndepType>::RawType
-InterpolationHelper<LinLogCos<true> >::calculateUnitBaseIndepVar(
+InterpolationHelper<LinLogCosHelper<true> >::calculateUnitBaseIndepVar(
           const IndepType indep_var,
           const IndepType indep_var_min,
           const typename QuantityTraits<IndepType>::RawType indep_grid_length,
@@ -979,25 +981,25 @@ InterpolationHelper<LinLogCos<true> >::calculateUnitBaseIndepVar(
 {
   // Make sure the intermediate grid min indep var is valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_min ) );
-  testPrecondition( LinLogCos<true>::isIndepVarInValidRange( indep_var_min ) );
+  testPrecondition( LinLogCosHelper<true>::isIndepVarInValidRange( indep_var_min ) );
   // Make sure the intermediate grid length is valid
   testPrecondition( !QuantityTraits<typename QuantityTraits<IndepType>::RawType>::isnaninf( indep_grid_length ) );
   testPrecondition( indep_grid_length > 0.0 );
   // Make sure the independent variable is valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var ) );
-  testPrecondition( LinLogCos<true>::isIndepVarInValidRange( indep_var ) );
+  testPrecondition( LinLogCosHelper<true>::isIndepVarInValidRange( indep_var ) );
   testPrecondition( indep_var >=
                     ThisType::calculateFuzzyLowerBound( indep_var_min, tol ) );
   remember( typename QuantityTraits<IndepType>::RawType test_difference =
-            LinLogCos<true>::processIndepVar(indep_var) -
-            LinLogCos<true>::processIndepVar(indep_var_min) );
+            LinLogCosHelper<true>::processIndepVar(indep_var) -
+            LinLogCosHelper<true>::processIndepVar(indep_var_min) );
 
   testPrecondition( test_difference <= ThisType::calculateFuzzyUpperBound(
                                                     indep_grid_length, tol ) );
 
   return calculateUnitBaseIndepVarProcessed(
-                       LinLogCos<true>::processIndepVar(indep_var_min),
-                       LinLogCos<true>::processIndepVar(indep_var),
+                       LinLogCosHelper<true>::processIndepVar(indep_var_min),
+                       LinLogCosHelper<true>::processIndepVar(indep_var),
                        indep_grid_length,
                        tol );
 }
@@ -1011,7 +1013,7 @@ InterpolationHelper<LinLogCos<true> >::calculateUnitBaseIndepVar(
 template<>
 template<typename IndepType>
 inline IndepType
-InterpolationHelper<LinLogCos<false> >::calculateIndepVar(
+InterpolationHelper<LinLogCosHelper<false> >::calculateIndepVar(
           const typename QuantityTraits<IndepType>::RawType eta,
           const IndepType indep_var_min,
           const typename QuantityTraits<IndepType>::RawType indep_grid_length,
@@ -1022,14 +1024,14 @@ InterpolationHelper<LinLogCos<false> >::calculateIndepVar(
   testPrecondition( eta <= 1.0 );
   // Make sure the grid min indep var is valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_min ) );
-  testPrecondition( LinLogCos<false>::isIndepVarInValidRange( indep_var_min ) );
+  testPrecondition( LinLogCosHelper<false>::isIndepVarInValidRange( indep_var_min ) );
   // Make sure the grid length is valid
   testPrecondition( !QuantityTraits<typename QuantityTraits<IndepType>::RawType>::isnaninf( indep_grid_length ) );
   testPrecondition( indep_grid_length >= 0.0 );
 
   IndepType grid_indep_var( QuantityTraits<IndepType>::initializeQuantity(
-    LinLogCos<false>::recoverProcessedIndepVar(
-                    LinLogCos<false>::processIndepVar( indep_var_min ) -
+    LinLogCosHelper<false>::recoverProcessedIndepVar(
+                    LinLogCosHelper<false>::processIndepVar( indep_var_min ) -
                     indep_grid_length*eta ) ) );
 
   // Check for rounding errors
@@ -1052,7 +1054,7 @@ InterpolationHelper<LinLogCos<false> >::calculateIndepVar(
 template<>
 template<typename IndepType>
 inline IndepType
-InterpolationHelper<LinLogCos<true> >::calculateIndepVar(
+InterpolationHelper<LinLogCosHelper<true> >::calculateIndepVar(
           const typename QuantityTraits<IndepType>::RawType eta,
           const IndepType indep_var_min,
           const typename QuantityTraits<IndepType>::RawType indep_grid_length,
@@ -1063,14 +1065,14 @@ InterpolationHelper<LinLogCos<true> >::calculateIndepVar(
   testPrecondition( eta <= 1.0 );
   // Make sure the grid min indep var is valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_min ) );
-  testPrecondition( LinLogCos<true>::isIndepVarInValidRange( indep_var_min ) );
+  testPrecondition( LinLogCosHelper<true>::isIndepVarInValidRange( indep_var_min ) );
   // Make sure the grid length is valid
   testPrecondition( !QuantityTraits<typename QuantityTraits<IndepType>::RawType>::isnaninf( indep_grid_length ) );
   testPrecondition( indep_grid_length >= 0.0 );
 
   IndepType grid_indep_var( QuantityTraits<IndepType>::initializeQuantity(
-    LinLogCos<true>::recoverProcessedIndepVar(
-                    LinLogCos<true>::processIndepVar( indep_var_min ) -
+    LinLogCosHelper<true>::recoverProcessedIndepVar(
+                    LinLogCosHelper<true>::processIndepVar( indep_var_min ) -
                     indep_grid_length*eta ) ) );
 
   // Check for rounding errors
@@ -1087,7 +1089,7 @@ InterpolationHelper<LinLogCos<true> >::calculateIndepVar(
 // Interpolate between two points
 template<bool use_nudge>
 template<typename IndepCosineType, typename DepType>
-inline DepType LinLogCos<use_nudge>::interpolate( const IndepCosineType raw_indep_var_0,
+inline DepType LinLogCosHelper<use_nudge>::interpolate( const IndepCosineType raw_indep_var_0,
                                        const IndepCosineType raw_indep_var_1,
                                        const IndepCosineType raw_indep_var,
                                        const DepType dep_var_0,
@@ -1100,17 +1102,17 @@ inline DepType LinLogCos<use_nudge>::interpolate( const IndepCosineType raw_inde
   testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var_1 ) );
   testPrecondition( !QuantityTraits<IndepCosineType>::isnaninf( raw_indep_var ) );
-  testPrecondition( LinLogCos<use_nudge>::isIndepVarInValidRange( raw_indep_var_0 ) );
-  testPrecondition( LinLogCos<use_nudge>::isIndepVarInValidRange( raw_indep_var_1 ) );
-  testPrecondition( LinLogCos<use_nudge>::isIndepVarInValidRange( raw_indep_var ) );
+  testPrecondition( LinLogCosHelper<use_nudge>::isIndepVarInValidRange( raw_indep_var_0 ) );
+  testPrecondition( LinLogCosHelper<use_nudge>::isIndepVarInValidRange( raw_indep_var_1 ) );
+  testPrecondition( LinLogCosHelper<use_nudge>::isIndepVarInValidRange( raw_indep_var ) );
   testPrecondition( raw_indep_var_0 < raw_indep_var_1 );
   testPrecondition( raw_indep_var >= raw_indep_var_0 );
   testPrecondition( raw_indep_var <= raw_indep_var_1 );
   // Make sure the dependent variables are valid
   testPrecondition( !QuantityTraits<DepType>::isnaninf( dep_var_0 ) );
   testPrecondition( !QuantityTraits<DepType>::isnaninf( dep_var_1 ) );
-  testPrecondition( LinLogCos<use_nudge>::isDepVarInValidRange( dep_var_0 ) );
-  testPrecondition( LinLogCos<use_nudge>::isDepVarInValidRange( dep_var_1 ) );
+  testPrecondition( LinLogCosHelper<use_nudge>::isDepVarInValidRange( dep_var_0 ) );
+  testPrecondition( LinLogCosHelper<use_nudge>::isDepVarInValidRange( dep_var_1 ) );
 
   // Convert cosine variables
   IndepCosineType indep_var_0 = CosNudgeHelper<use_nudge>::convertFromCosineVar(raw_indep_var_0);
@@ -1131,7 +1133,7 @@ inline DepType LinLogCos<use_nudge>::interpolate( const IndepCosineType raw_inde
  */
 template<>
 template<typename T>
-T InterpolationHelper<LinLogCos<false> >::interpolate( const T processed_indep_var_0,
+T InterpolationHelper<LinLogCosHelper<false> >::interpolate( const T processed_indep_var_0,
                                                const T processed_indep_var,
                                                const T processed_dep_var_0,
                                                const T processed_slope )
@@ -1147,7 +1149,7 @@ T InterpolationHelper<LinLogCos<false> >::interpolate( const T processed_indep_v
   // Make sure that the slope is valid
   testPrecondition( !Utility::QuantityTraits<T>::isnaninf( processed_slope ) );
 
-  return LinLogCos<false>::recoverProcessedDepVar(
+  return LinLogCosHelper<false>::recoverProcessedDepVar(
                processed_dep_var_0 +
                processed_slope*(processed_indep_var_0 - processed_indep_var) );
 }
@@ -1160,7 +1162,7 @@ T InterpolationHelper<LinLogCos<false> >::interpolate( const T processed_indep_v
  */
 template<>
 template<typename T>
-T InterpolationHelper<LinLogCos<true> >::interpolate( const T processed_indep_var_0,
+T InterpolationHelper<LinLogCosHelper<true> >::interpolate( const T processed_indep_var_0,
                                                const T processed_indep_var,
                                                const T processed_dep_var_0,
                                                const T processed_slope )
@@ -1176,7 +1178,7 @@ T InterpolationHelper<LinLogCos<true> >::interpolate( const T processed_indep_va
   // Make sure that the slope is valid
   testPrecondition( !QuantityTraits<T>::isnaninf( processed_slope ) );
 
-  return LinLogCos<true>::recoverProcessedDepVar(
+  return LinLogCosHelper<true>::recoverProcessedDepVar(
                processed_dep_var_0 +
                processed_slope*(processed_indep_var_0 - processed_indep_var) );
 }
@@ -1184,7 +1186,7 @@ T InterpolationHelper<LinLogCos<true> >::interpolate( const T processed_indep_va
 // Interpolate between two points using the indep variable ratio (beta)
 template<bool use_nudge>
 template<typename T, typename DepType>
-inline DepType LinLogCos<use_nudge>::interpolate( const T beta,
+inline DepType LinLogCosHelper<use_nudge>::interpolate( const T beta,
                                        const DepType dep_var_0,
                                        const DepType dep_var_1 )
 {
@@ -1197,8 +1199,8 @@ inline DepType LinLogCos<use_nudge>::interpolate( const T beta,
   // Make sure the dependent variables are valid
   testPrecondition( !QuantityTraits<DepType>::isnaninf( dep_var_0 ) );
   testPrecondition( !QuantityTraits<DepType>::isnaninf( dep_var_1 ) );
-  testPrecondition( LinLogCos<use_nudge>::isDepVarInValidRange( dep_var_0 ) );
-  testPrecondition( LinLogCos<use_nudge>::isDepVarInValidRange( dep_var_1 ) );
+  testPrecondition( LinLogCosHelper<use_nudge>::isDepVarInValidRange( dep_var_0 ) );
+  testPrecondition( LinLogCosHelper<use_nudge>::isDepVarInValidRange( dep_var_1 ) );
 
   return dep_var_0 + (dep_var_1 - dep_var_0)*beta;
 }
@@ -1207,7 +1209,7 @@ inline DepType LinLogCos<use_nudge>::interpolate( const T beta,
 template<bool use_nudge>
 template<typename IndepCosineType, typename DepType>
 inline typename QuantityTraits<DepType>::RawType
-LinLogCos<use_nudge>::interpolateAndProcess( const IndepCosineType raw_indep_var_0,
+LinLogCosHelper<use_nudge>::interpolateAndProcess( const IndepCosineType raw_indep_var_0,
                                   const IndepCosineType raw_indep_var_1,
                                   const IndepCosineType raw_indep_var,
                                   const DepType dep_var_0,
@@ -1224,10 +1226,10 @@ LinLogCos<use_nudge>::interpolateAndProcess( const IndepCosineType raw_indep_var
 template<bool use_nudge>
 template<typename T>
 inline typename QuantityTraits<T>::RawType
-LinLogCos<use_nudge>::processIndepVar( const T indep_var )
+LinLogCosHelper<use_nudge>::processIndepVar( const T indep_var )
 {
   // Make sure the indep var value is valid
-  testPrecondition( LinLogCos<use_nudge>::isIndepVarInValidRange( indep_var ) );
+  testPrecondition( LinLogCosHelper<use_nudge>::isIndepVarInValidRange( indep_var ) );
 
   return log( CosNudgeHelper<use_nudge>::convertFromCosineVar( getRawQuantity(indep_var) ) );
 }
@@ -1236,10 +1238,10 @@ LinLogCos<use_nudge>::processIndepVar( const T indep_var )
 template<bool use_nudge>
 template<typename T>
 inline typename QuantityTraits<T>::RawType
-LinLogCos<use_nudge>::processDepVar( const T dep_var )
+LinLogCosHelper<use_nudge>::processDepVar( const T dep_var )
 {
   // Make sure the indep var value is valid
-  testPrecondition( LinLogCos<use_nudge>::isDepVarInValidRange( dep_var ) );
+  testPrecondition( LinLogCosHelper<use_nudge>::isDepVarInValidRange( dep_var ) );
 
   return getRawQuantity(dep_var);
 }
@@ -1247,7 +1249,7 @@ LinLogCos<use_nudge>::processDepVar( const T dep_var )
 // Recover the processed independent value
 template<bool use_nudge>
 template<typename T>
-inline T LinLogCos<use_nudge>::recoverProcessedIndepVar( const T processed_indep_var )
+inline T LinLogCosHelper<use_nudge>::recoverProcessedIndepVar( const T processed_indep_var )
 {
   return CosNudgeHelper<use_nudge>::convertToCosineVar( exp( processed_indep_var ) );
 }
@@ -1255,7 +1257,7 @@ inline T LinLogCos<use_nudge>::recoverProcessedIndepVar( const T processed_indep
 // Recover the processed dependent value
 template<bool use_nudge>
 template<typename T>
-inline T LinLogCos<use_nudge>::recoverProcessedDepVar( const T processed_dep_var )
+inline T LinLogCosHelper<use_nudge>::recoverProcessedDepVar( const T processed_dep_var )
 {
   return processed_dep_var;
 }
@@ -1263,7 +1265,7 @@ inline T LinLogCos<use_nudge>::recoverProcessedDepVar( const T processed_dep_var
 // Test if the independent value is in a valid range (doesn't check nan/inf)
 template<>
 template<typename T>
-inline bool LinLogCos<false>::isIndepVarInValidRange( const T indep_var )
+inline bool LinLogCosHelper<false>::isIndepVarInValidRange( const T indep_var )
 {
   return indep_var >= QuantityTraits<T>::initializeQuantity(-1.0) &&
          indep_var < QuantityTraits<T>::one();
@@ -1272,7 +1274,7 @@ inline bool LinLogCos<false>::isIndepVarInValidRange( const T indep_var )
 // Test if the independent value is in a valid range (doesn't check nan/inf)
 template<>
 template<typename T>
-inline bool LinLogCos<true>::isIndepVarInValidRange( const T indep_var )
+inline bool LinLogCosHelper<true>::isIndepVarInValidRange( const T indep_var )
 {
   return indep_var >= QuantityTraits<T>::initializeQuantity(-1.0) &&
          indep_var <= QuantityTraits<T>::one();
@@ -1281,7 +1283,7 @@ inline bool LinLogCos<true>::isIndepVarInValidRange( const T indep_var )
 // Test if the dependent value is in a valid range (doesn't check nan/inf)
 template<bool use_nudge>
 template<typename T>
-inline bool LinLogCos<use_nudge>::isDepVarInValidRange( const T dep_var )
+inline bool LinLogCosHelper<use_nudge>::isDepVarInValidRange( const T dep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
@@ -1289,18 +1291,28 @@ inline bool LinLogCos<use_nudge>::isDepVarInValidRange( const T dep_var )
   return true;
 }
 
+// Get the interpolation type
+inline InterpolationType LinLogCos::getInterpolationType()
+{
+  return LINLOGCOS_INTERPOLATION;
+}
+
 // The name of the policy
-template<bool use_nudge>
-inline const std::string LinLogCos<use_nudge>::name()
+inline const std::string LinLogCos::name()
 {
   return "LinLogCos";
 }
 
-// Return if the cosine nudge factor is on
-template<bool use_nudge>
-inline const bool LinLogCos<use_nudge>::isCosineNudgeOn()
+// Get the interpolation type
+inline InterpolationType LinNudgedLogCos::getInterpolationType()
 {
-  return use_nudge;
+  return LINNUDGEDLOGCOS_INTERPOLATION;
+}
+
+// The name of the policy
+inline const std::string LinNudgedLogCos::name()
+{
+  return "LinNudgedLogCos";
 }
 
 } // end Utility namespace

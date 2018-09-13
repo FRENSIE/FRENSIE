@@ -38,7 +38,7 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
   MonteCarlo::CoupledElasticSamplingMethod sampling_method =
     MonteCarlo::TWO_D_UNION;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LogLogCosLog<true> ,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LogNudgedLogCosLog ,Utility::Correlated>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -74,7 +74,7 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createDecoupledElasticReaction_LogLogCosLog )
 {
   std::shared_ptr<const MonteCarlo::DecoupledElasticElectroatomicReaction<Utility::LogLog>> reaction;
-  MonteCarlo::ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LogLogCosLog<false>,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LogLogCosLog,Utility::Correlated>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -125,7 +125,7 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
 {
   double cutoff_angle_cosine = 0.9;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LogLogCosLog<true> ,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LogNudgedLogCosLog ,Utility::Correlated>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -145,7 +145,7 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
 
   energy = 4e-4;
   cross_section = reaction->getCrossSection( energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.2786275807901049e+08, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.2786275809074390e+08, 1e-12 );
 
   energy = 1e5;
   cross_section = reaction->getCrossSection( energy );
@@ -160,7 +160,7 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
 FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createCutoffElasticReaction_LogLogCosLog )
 {
-  MonteCarlo::ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LogLogCosLog<false>,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LogLogCosLog,Utility::Correlated>(
                 *data_container,
                 energy_grid,
                 grid_searcher,

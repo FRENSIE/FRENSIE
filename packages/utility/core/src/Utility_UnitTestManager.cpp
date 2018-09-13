@@ -557,6 +557,7 @@ UnitTestManager::Data::Data()
     d_passed_test_counter( 0 ),
     d_checks_counter( 0 ),
     d_passed_checks_counter( 0 ),
+    d_unexpected_exceptions_counter( 0 ),
     d_total_unit_test_execution_time( 0.0 )
 {
   // Initialize the command line options

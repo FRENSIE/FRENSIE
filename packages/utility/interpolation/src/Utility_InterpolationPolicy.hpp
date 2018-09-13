@@ -106,14 +106,6 @@ public:
   template<typename T>
   static T calculateFuzzyUpperBound( const T value, const double tol = 1e-3 );
 
-  // //! Convert from the cosine variable to a shifted cosine variable
-  // template<typename T, bool use_nudge = false>
-  // static T convertFromCosineVar( const T cosine_var );
-
-  // //! Convert to the cosine variable from a shifted cosine variable
-  // template<typename T, bool use_nudge = false>
-  // static T convertToCosineVar( const T shifted_cosine );
-
   //! The name of the policy
   static std::string name();
 };

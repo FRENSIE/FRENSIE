@@ -552,20 +552,20 @@ void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPoli
 #define __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy, ... ) \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LinLinLin>, __VA_ARGS__ ); \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LinLogLin>, __VA_ARGS__ ); \
-  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LinLogCosLin<true> >, __VA_ARGS__ ); \
-  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LinLogCosLin<false> >, __VA_ARGS__ ); \
+  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LinNudgedLogCosLin >, __VA_ARGS__ ); \
+  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LinLogCosLin >, __VA_ARGS__ ); \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LinLinLog>, __VA_ARGS__ ); \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LinLogLog>, __VA_ARGS__ ); \
-  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LinLogCosLog<true> >, __VA_ARGS__ ); \
-  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LinLogCosLog<false> >, __VA_ARGS__ ); \
+  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LinNudgedLogCosLog >, __VA_ARGS__ ); \
+  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LinLogCosLog >, __VA_ARGS__ ); \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LogLinLin>, __VA_ARGS__ ); \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LogLogLin>, __VA_ARGS__ ); \
-  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LogLogCosLin<true> >, __VA_ARGS__ ); \
-  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LogLogCosLin<false> >, __VA_ARGS__ ); \
+  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LogNudgedLogCosLin >, __VA_ARGS__ ); \
+  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LogLogCosLin >, __VA_ARGS__ ); \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LogLinLog>, __VA_ARGS__ ); \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LogLogLog>, __VA_ARGS__ ); \
-  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LogLogCosLog<true> >, __VA_ARGS__ ); \
-  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LogLogCosLog<false> >, __VA_ARGS__ )
+  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LogNudgedLogCosLog >, __VA_ARGS__ ); \
+  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LogLogCosLog >, __VA_ARGS__ )
 
 #define ___INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_PARTIAL__( DECL_TYPE, BivariateDistribution, ... ) \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, BivariateDistribution, Utility::Direct, __VA_ARGS__ ); \

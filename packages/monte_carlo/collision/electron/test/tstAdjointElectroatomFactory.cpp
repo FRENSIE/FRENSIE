@@ -59,7 +59,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     cutoff_elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog<false>,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
         cutoff_elastic_distribution,
         *data_container,
         properties.getAdjointElasticCutoffAngleCosine(),
@@ -91,7 +91,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
 
   energy = 20.0;
   cross_section = atom->getTotalCrossSection( energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.4386701575400948e+05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.4386701575384877e+05, 1e-12 );
 
 
   // Test that the absorption cross section can be returned
@@ -158,7 +158,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.9778260498147749e+06, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 20.0, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.0987213022929017, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.0987211415683742, 1e-12 );
 
 
   // Test that there is no total electroionization

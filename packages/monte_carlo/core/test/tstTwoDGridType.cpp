@@ -31,7 +31,6 @@ FRENSIE_UNIT_TEST( TwoDGridType, convert_to_int )
   FRENSIE_CHECK_EQUAL( (unsigned)MonteCarlo::UNIT_BASE_CORRELATED_GRID, 1 );
   FRENSIE_CHECK_EQUAL( (unsigned)MonteCarlo::DIRECT_GRID, 2 );
   FRENSIE_CHECK_EQUAL( (unsigned)MonteCarlo::UNIT_BASE_GRID, 3 );
-  FRENSIE_CHECK_EQUAL( (unsigned)MonteCarlo::CUMULATIVE_POINTS_GRID, 4 );
 }
 
 //---------------------------------------------------------------------------//
@@ -53,10 +52,6 @@ FRENSIE_UNIT_TEST( TwoDGridType, toString )
   type_string =
     Utility::toString( MonteCarlo::UNIT_BASE_GRID );
   FRENSIE_CHECK_EQUAL( type_string, "Unit-base" );
-
-  type_string =
-    Utility::toString( MonteCarlo::CUMULATIVE_POINTS_GRID );
-  FRENSIE_CHECK_EQUAL( type_string, "Cumulative Points" );
 }
 
 //---------------------------------------------------------------------------//
@@ -79,10 +74,6 @@ FRENSIE_UNIT_TEST( TwoDGridType, stream_operator )
   ss.str( "" );
   ss << MonteCarlo::UNIT_BASE_GRID;
   FRENSIE_CHECK_EQUAL( ss.str(), "Unit-base" );
-
-  ss.str( "" );
-  ss << MonteCarlo::CUMULATIVE_POINTS_GRID;
-  FRENSIE_CHECK_EQUAL( ss.str(), "Cumulative Points" );
 }
 
 //---------------------------------------------------------------------------//
@@ -117,14 +108,10 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( TwoDGridType,
     MonteCarlo::TwoDGridType type_4 =
       MonteCarlo::UNIT_BASE_GRID;
 
-    MonteCarlo::TwoDGridType type_5 =
-      MonteCarlo::CUMULATIVE_POINTS_GRID;
-
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_1 ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_2 ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_3 ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_4 ) );
-    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_5 ) );
   }
 
   // Copy the archive ostream to an istream
@@ -154,11 +141,6 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( TwoDGridType,
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_4 ) );
   FRENSIE_CHECK_EQUAL( type_4, MonteCarlo::UNIT_BASE_GRID );
-
-  MonteCarlo::TwoDGridType type_5;
-
-  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_5 ) );
-  FRENSIE_CHECK_EQUAL( type_5, MonteCarlo::CUMULATIVE_POINTS_GRID );
 }
 
 // //---------------------------------------------------------------------------//
@@ -231,24 +213,6 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( TwoDGridType,
 //   interp =
 //     MonteCarlo::convertStringToTwoDGridType( "UNIT-BASE" );
 //   FRENSIE_CHECK_EQUAL( interp, MonteCarlo::UNIT_BASE_GRID );
-// }
-
-// //---------------------------------------------------------------------------//
-// // Check that a string can be converted to a TwoDGridType
-// FRENSIE_UNIT_TEST( TwoDGridType,
-//                    convertStringToTwoDGridType_CumulativePoints )
-// {
-//   MonteCarlo::TwoDGridType interp =
-//     MonteCarlo::convertStringToTwoDGridType( "Cumulative Points" );
-//   FRENSIE_CHECK_EQUAL( interp, MonteCarlo::CUMULATIVE_POINTS_GRID );
-
-//   interp =
-//     MonteCarlo::convertStringToTwoDGridType( "cumulative points" );
-//   FRENSIE_CHECK_EQUAL( interp, MonteCarlo::CUMULATIVE_POINTS_GRID );
-
-//   interp =
-//     MonteCarlo::convertStringToTwoDGridType( "CUMULATIVE POINTS" );
-//   FRENSIE_CHECK_EQUAL( interp, MonteCarlo::CUMULATIVE_POINTS_GRID );
 // }
 
 //---------------------------------------------------------------------------//

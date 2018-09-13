@@ -312,30 +312,6 @@ inline T InterpolationHelper<ParentInterpolationType>::calculateFuzzyUpperBound(
     return value*(1-tol);
 }
 
-// // Convert from cosine variable
-// /*! \details This function converts from cosine (mu) to the delta cosine
-//  * (1 - mu) + nudge.
-//  */
-// template<typename ParentInterpolationType>
-// template<typename T, bool use_nudge>
-// inline T InterpolationHelper<ParentInterpolationType>::convertFromCosineVar(
-//           const T cosine_var )
-// {
-//   return QuantityTraits<T>::one() - cosine_var;
-// }
-
-// // Convert to cosine variable
-// /*! \details This function converts from the delta cosine (1 - mu) + nudge
-//  *  back to cosine (mu).
-//  */
-// template<typename ParentInterpolationType>
-// template<typename T, bool use_nudge>
-// inline T InterpolationHelper<ParentInterpolationType>::convertToCosineVar(
-//           const T delta_cosine )
-// {
-//   return delta_cosine + QuantityTraits<T>::one();
-// }
-
 // The name of the policy
 template<typename ParentInterpolationType>
 inline std::string InterpolationHelper<ParentInterpolationType>::name()

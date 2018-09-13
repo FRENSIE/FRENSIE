@@ -27,7 +27,7 @@
 template<typename Policy>
 struct TypeList
 {
-  typedef boost::mpl::list<std::tuple<Policy,std::string>,std::tuple<Policy,std::array<int,1> >,std::tuple<Policy,std::vector<int> >,std::tuple<Policy,std::list<int> >,std::tuple<Policy,std::forward_list<int> >,std::tuple<Policy,std::deque<int> >,std::tuple<Policy,std::set<int> >,std::tuple<Policy,std::unordered_set<int> >,std::tuple<Policy,std::map<int,double> >,std::tuple<Policy,std::unordered_map<int,double> > > type;
+  typedef boost::mpl::list<std::tuple<Policy,std::string>,std::tuple<Policy,std::array<int,4> >,std::tuple<Policy,std::vector<int> >,std::tuple<Policy,std::list<int> >,std::tuple<Policy,std::forward_list<int> >,std::tuple<Policy,std::deque<int> >,std::tuple<Policy,std::set<int> >,std::tuple<Policy,std::unordered_set<int> >,std::tuple<Policy,std::map<int,double> >,std::tuple<Policy,std::unordered_map<int,double> > > type;
 };
 
 template<typename... TypeLists>

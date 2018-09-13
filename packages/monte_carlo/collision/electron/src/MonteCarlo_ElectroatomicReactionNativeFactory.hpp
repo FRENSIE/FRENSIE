@@ -52,7 +52,7 @@ public:
   using ThisType = ElectroatomicReactionNativeFactory;
 
   //! Create an coupled elastic scattering electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogCosLog<true>,
+  template< typename TwoDInterpPolicy = Utility::LogNudgedLogCosLog,
             template<typename> class TwoDGridPolicy = Utility::Correlated,
             typename ReactionType = ElectroatomicReaction>
   static void createCoupledElasticReaction(
@@ -64,7 +64,7 @@ public:
     const double evaluation_tol );
 
   //! Create a hybrid elastic scattering electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogCosLog<true>,
+  template< typename TwoDInterpPolicy = Utility::LogNudgedLogCosLog,
             template<typename> class TwoDGridPolicy = Utility::Correlated,
             typename ReactionType = ElectroatomicReaction>
   static void createHybridElasticReaction(
@@ -76,7 +76,7 @@ public:
     const double evaluation_tol );
 
   //! Create a decoupled elastic scattering electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogCosLog<false>,
+  template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
             template<typename> class TwoDGridPolicy = Utility::Correlated,
             typename ReactionType = ElectroatomicReaction>
   static void createDecoupledElasticReaction(
@@ -87,7 +87,7 @@ public:
     const double evaluation_tol );
 
   //! Create an cutoff elastic scattering electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogCosLog<false>,
+  template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
             template<typename> class TwoDGridPolicy = Utility::Correlated,
             typename ReactionType = ElectroatomicReaction>
   static void createCutoffElasticReaction(
@@ -106,7 +106,7 @@ public:
     std::shared_ptr<const ElectroatomicReaction>& elastic_reaction );
 
   //! Create the moment preserving elastic scattering electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogCosLog<false>,
+  template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
             template<typename> class TwoDGridPolicy = Utility::Correlated,
             typename ReactionType = ElectroatomicReaction>
   static void createMomentPreservingElasticReaction(

@@ -750,8 +750,8 @@ template<typename TwoDGridPolicy,
          typename DependentUnit>
 void UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::verifyValidSecondIndepVarProcessingType()
 {
-  TEST_FOR_EXCEPTION( !(std::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,Utility::LogCosIndepVarProcessingTag<true> >::value ||
-                        std::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,Utility::LogCosIndepVarProcessingTag<false> >::value ||
+  TEST_FOR_EXCEPTION( !(std::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,Utility::NudgedLogCosIndepVarProcessingTag >::value ||
+                        std::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,Utility::LogCosIndepVarProcessingTag >::value ||
                         std::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,Utility::LinIndepVarProcessingTag>::value),
                       std::runtime_error,
                       "The interpolation type used must be either Z-LogCos-X "
@@ -820,17 +820,17 @@ void UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependen
 
 #define __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, TwoDGridPolicy, ... ) \
   __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLinLin>, __VA_ARGS__ ); \
-  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLogCosLin<true> >, __VA_ARGS__ ); \
-  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLogCosLin<false> >, __VA_ARGS__ ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinNudgedLogCosLin >, __VA_ARGS__ ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLogCosLin >, __VA_ARGS__ ); \
   __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLinLog>, __VA_ARGS__ ); \
-  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLogCosLog<true> >, __VA_ARGS__ ); \
-  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLogCosLog<false> >, __VA_ARGS__ ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinNudgedLogCosLog >, __VA_ARGS__ ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLogCosLog >, __VA_ARGS__ ); \
   __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLinLin>, __VA_ARGS__ ); \
-  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLogCosLin<true> >, __VA_ARGS__ ); \
-  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLogCosLin<false> >, __VA_ARGS__ ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogNudgedLogCosLin >, __VA_ARGS__ ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLogCosLin >, __VA_ARGS__ ); \
   __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLinLog>, __VA_ARGS__ ); \
-  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLogCosLog<true> >, __VA_ARGS__ ); \
-  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLogCosLog<false> >, __VA_ARGS__ )
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogNudgedLogCosLog >, __VA_ARGS__ ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLogCosLog >, __VA_ARGS__ )
 
 #define ___ELASTIC_BASIC_BIVARIATE_DIST__( DECL_TYPE, ... ) \
   __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, Utility::Direct, __VA_ARGS__ ); \

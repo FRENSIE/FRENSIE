@@ -26,7 +26,6 @@ SimulationGeneralProperties::SimulationGeneralProperties()
     d_number_of_batches_per_processor( 1 ),
     d_wall_time( Utility::QuantityTraits<double>::inf() ),
     d_surface_flux_estimator_angle_cosine_cutoff( 0.001 ),
-    d_display_warnings( true ),
     d_implicit_capture_mode_on( false )
 { /* ... */ }
 
@@ -189,24 +188,6 @@ void SimulationGeneralProperties::setSurfaceFluxEstimatorAngleCosineCutoff(
 double SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff() const
 {
   return d_surface_flux_estimator_angle_cosine_cutoff;
-}
-
-// Turn on warnings (on by default)
-void SimulationGeneralProperties::setWarningsOn()
-{
-  d_display_warnings = true;
-}
-
-// Turn off warnings (on by default)
-void SimulationGeneralProperties::setWarningsOff()
-{
-  d_display_warnings = false;
-}
-
-// Return if warnings should be printed
-bool SimulationGeneralProperties::displayWarnings() const
-{
-  return d_display_warnings;
 }
 
 // Set implicit capture mode to on (off by default)

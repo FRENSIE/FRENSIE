@@ -10,6 +10,7 @@
 #include <limits>
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "Geometry_Model.hpp"
 
 namespace Geometry{
@@ -39,6 +40,8 @@ auto Model::invalidEstimatorId() -> EstimatorId
 }
   
 } // end Geometry namespace
+
+EXPLICIT_CLASS_SAVE_LOAD_INST( Geometry::Model );
 
 //---------------------------------------------------------------------------//
 // end Geometry_Model.cpp

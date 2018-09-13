@@ -69,7 +69,7 @@ private:
   // The transition distribution (also stores the outgoing particle energies )
   std::unique_ptr<Utility::DiscreteDistribution> d_transition_distribution;
 
-  // The outgoing partiel energies
+  // The outgoing partial energies
   std::vector<double> d_outgoing_particle_energies;
 
   // The transition vacancy shells (first = primary, second = secondary)

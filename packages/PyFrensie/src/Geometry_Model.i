@@ -75,7 +75,7 @@ A brief usage tutorial for this class is shown below:
    cell_materials = model.getCellMaterialIds()
    cell_densities = model.getCellDensities()
    cell_estimator_data = model.getCellEstimatorData()
-   navigator = model.createNavigatorAdvanced()
+   navigator = model.createNavigator()
 "
 
 %model_interface_setup( Model )
@@ -137,23 +137,20 @@ A brief usage tutorial for this class is shown below:
 %feature("docstring")
 Geometry::InfiniteMediumModel
 "
-The InfiniteMediumModel class stores a geometric model, which can be from a CAD (.sat) file
-or a Root (.root) file. It can be used for querying properties of the geometry
-and for creating navigators, which can be used to traverse the geometry.
-A brief usage tutorial for this class is shown below:
+The InfiniteMediumModel class stores an infinite geometric model. A cell id,
+material id and density can optionally be assigned to the single infinite cell
+stored in the model. A brief usage tutorial for this class is shown below:
 
    import PyFrensie.Geometry, numpy
 
-   model = PyFrensie.Geometry.DagMC.DagMCModel.getInstance()
-   properties = PyFrensie.Geometry.DagMC.DagMCModelProperties( 'my_geom.sat' )
-   model.initialize( properties )
+   model = PyFrensie.Geometry.InfiniteMediumModel()
 
    cells = model.getCells( True, True )
    materials = model.getMaterialIds()
    cell_materials = model.getCellMaterialIds()
    cell_densities = model.getCellDensities()
    cell_estimator_data = model.getCellEstimatorData()
-   navigator = model.createNavigatorAdvanced()
+   navigator = model.createNavigator()
 "
 
 %model_interface_setup( InfiniteMediumModel )
@@ -190,7 +187,6 @@ for this class is shown below:
    surface_estimator_data = model.getSurfaceEstimatorData()
 
    navigator = model.createNavigator()
-   navigator = model.createNavigatorAdvanced()
 "
 
 %advanced_model_interface_setup( AdvancedModel )

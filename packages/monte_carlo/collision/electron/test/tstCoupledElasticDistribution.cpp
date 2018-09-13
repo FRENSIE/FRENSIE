@@ -35,7 +35,7 @@ namespace cgs = boost::units::cgs;
 
 typedef quantity<si::dimensionless> dl;
 
-typedef std::tuple<Utility::LinLin,Utility::LogLin,Utility::LinLogCos<true>,Utility::LogLogCos<true> > InterpTypes;
+typedef std::tuple<Utility::LinLin,Utility::LogLin,Utility::LinNudgedLogCos,Utility::LogNudgedLogCos > InterpTypes;
 
 typedef TestArchiveHelper::TestArchives TestArchives;
 
@@ -815,8 +815,8 @@ FRENSIE_UNIT_TEST_TEMPLATE( CoupledElasticDistribution,
 
   FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
   FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLogCos<true> >() );
-  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLogCos<true> >() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogNudgedLogCos >() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinNudgedLogCos >() );
   FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
 
@@ -869,8 +869,8 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareCoupledElasticDistribution,
 
   FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
   FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLogCos<true> >() );
-  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLogCos<true> >() );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogNudgedLogCos >() );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinNudgedLogCos >() );
   FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
 
@@ -1033,12 +1033,12 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( CoupledElasticDistribution,
     std::shared_ptr<Utility::UnivariateDistribution>
       base_dist_a;
 
-    initialize<Utility::LinLogCos<true> >( base_dist_a );
+    initialize<Utility::LinNudgedLogCos >( base_dist_a );
 
     std::shared_ptr<Utility::UnivariateDistribution>
       base_dist_b;
 
-    initialize<Utility::LogLogCos<true> >( base_dist_b );
+    initialize<Utility::LogNudgedLogCos >( base_dist_b );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "concrete_dist", *concrete_dist ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( intermediate_base_dist ) );
@@ -1129,12 +1129,12 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareCoupledElasticDistribution,
     std::shared_ptr<Utility::UnitAwareUnivariateDistribution<si::dimensionless,si::amount> >
       base_dist_a;
 
-    initialize<Utility::LinLogCos<true> >( base_dist_a );
+    initialize<Utility::LinNudgedLogCos >( base_dist_a );
 
     std::shared_ptr<Utility::UnitAwareUnivariateDistribution<si::dimensionless,si::amount> >
       base_dist_b;
 
-    initialize<Utility::LogLogCos<true> >( base_dist_b );
+    initialize<Utility::LogNudgedLogCos >( base_dist_b );
 
     FRENSIE_CHECK_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "concrete_dist", *concrete_dist ) );
     FRENSIE_CHECK_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( intermediate_base_dist ) );

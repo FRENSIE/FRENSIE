@@ -219,7 +219,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Create cutoff distribution
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_elastic_distribution;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog<false>,Utility::Correlated>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
         cutoff_elastic_distribution,
         data_container,
         cutoff_angle_cosine,

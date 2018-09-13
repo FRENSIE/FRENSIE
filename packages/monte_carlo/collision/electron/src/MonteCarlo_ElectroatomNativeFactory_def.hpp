@@ -71,7 +71,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
               ( properties.getElasticElectronDistributionMode() == HYBRID_DISTRIBUTION &&
                 properties.getElasticCutoffAngleCosine() < 1.0 ) )
           {
-            ThisType::createElasticElectroatomCore<Utility::LogLogCosLog<true>,Utility::Direct>(
+            ThisType::createElasticElectroatomCore<Utility::LogNudgedLogCosLog,Utility::Direct>(
                                                   raw_electroatom_data,
                                                   energy_grid,
                                                   grid_searcher,
@@ -80,7 +80,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
           }
           else
           {
-            ThisType::createElasticElectroatomCore<Utility::LogLogCosLog<false>,Utility::Direct>(
+            ThisType::createElasticElectroatomCore<Utility::LogLogCosLog,Utility::Direct>(
                                                   raw_electroatom_data,
                                                   energy_grid,
                                                   grid_searcher,
@@ -107,7 +107,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
             ( properties.getElasticElectronDistributionMode() == HYBRID_DISTRIBUTION &&
               properties.getElasticCutoffAngleCosine() < 1.0 ) )
         {
-          ThisType::createElasticElectroatomCore<Utility::LogLogCosLog<true>,Utility::Correlated>(
+          ThisType::createElasticElectroatomCore<Utility::LogNudgedLogCosLog,Utility::Correlated>(
                                                   raw_electroatom_data,
                                                   energy_grid,
                                                   grid_searcher,
@@ -116,7 +116,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
         }
         else
         {
-          ThisType::createElasticElectroatomCore<Utility::LogLogCosLog<false>,Utility::Correlated>(
+          ThisType::createElasticElectroatomCore<Utility::LogLogCosLog,Utility::Correlated>(
                                                   raw_electroatom_data,
                                                   energy_grid,
                                                   grid_searcher,

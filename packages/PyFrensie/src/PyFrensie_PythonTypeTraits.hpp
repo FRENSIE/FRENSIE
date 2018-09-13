@@ -56,6 +56,9 @@ bool isValidSet( PyObject* py_obj );
 template<typename KeyType, typename ValueType>
 bool isValidDictionary( PyObject* py_obj );
 
+// Create a char** object from a Python object
+char** convertPythonToArgv( PyObject* py_obj );
+
 // Create a Python (NumPy) object from an array object
 template<typename STLCompliantArray>
 PyObject* convertArrayToPython( const STLCompliantArray& obj );
@@ -302,7 +305,7 @@ struct PythonTypeTraits<std::string>
 template<>
 struct PythonTypeTraits<char*>
 {
-  // Create a Python object from a char* object
+  //! Create a Python object from a char* object
   static inline PyObject* convertToPython( const char* obj )
   { return PyString_FromString( obj ); }
 
@@ -313,6 +316,26 @@ struct PythonTypeTraits<char*>
   //! Check if a Python object can be converted to the desired type
   static inline bool isConvertable( PyObject* py_obj )
   { return PyString_Check( py_obj ); }
+};
+
+
+/*! \brief The specialization of PyFrensie::PythonTypeTraits for argv (char**)
+ * \ingroup python_type_traits
+ * \details When the convertFromPython function is used for a char** in a
+ * typemap(in), it requires the additional defining of a %typemap(freearg) to
+ * clean up the char** array malloc'd before the function call
+ * (e.g. %typemap(freearg) char** { free((char *) $1); })
+ */
+template<>
+struct PythonTypeTraits<char**>
+{
+  //! Create a char** object from a Python object
+  static inline char** convertFromPython( PyObject* py_obj )
+  { return Details::convertPythonToArgv( py_obj ); }
+
+  //! Check if a Python object can be converted to the desired type
+  static inline bool isConvertable( PyObject* py_obj )
+  { return PyList_Check( py_obj ); }
 };
 
 /*! \brief The partial specialization of PyFrensie::PythonTypeTraits for
@@ -353,6 +376,74 @@ struct PythonTypeTraits<std::unordered_set<T> >
   //! Check if a Python object can be converted to the desired type
   static inline bool isConvertable( PyObject* py_obj )
   { return Details::isValidSet<T>( py_obj ); }
+};
+
+/*! \brief The specialization of PyFrensie::PythonTypeTraits for
+ * std::vector<std::string>
+ * \ingroup python_type_traits
+ */
+template<>
+struct PythonTypeTraits<std::vector<std::string> >
+{
+  //! Create a Python List object from a s std::vector<std::string> object
+  static inline PyObject* convertToPython( const std::vector<std::string>& obj )
+  {
+    PyObject* py_list = PyList_New( obj.size() );
+
+    for( size_t i = 0; i < obj.size(); ++i )
+    {
+      PyObject* py_list_item = PyFrensie::convertToPython( obj[i] );
+
+      PyList_SetItem( py_list, i, py_list_item );
+    }
+
+    return py_list;
+  }
+
+  //! Create a std::vector<T> object from a Python object
+  static inline std::vector<std::string> convertFromPython( PyObject* py_obj )
+  {
+    if( PyList_Check( py_obj ) )
+    {
+      std::vector<std::string> output( PyList_Size( py_obj ) );
+
+      for( size_t i = 0; i < output.size(); ++i )
+      {
+        output[i] = PyFrensie::convertFromPython<std::string>( PyList_GetItem(py_obj, i) );
+      }
+      
+      return output;
+    }
+    else
+      return std::vector<std::string>();
+  }
+
+  //! Check if a Python object can be converted to the desired type
+  static inline bool isConvertable( PyObject* py_obj )
+  {
+    if( PyList_Check( py_obj ) )
+    {
+      if( PyList_Size( py_obj ) > 0 )
+      {
+        PyObject* tmp_py_obj = PyList_New(0);
+
+        // Break down the list and check each element
+        for( unsigned i = 0; i < PyList_Size( py_obj ); ++i )
+        {
+          PyObject* py_elem = PyList_GetItem( py_obj, i );
+          if( !PythonTypeTraits<std::string>::isConvertable( py_elem ) )
+            return false;
+        }
+
+        return true;
+      }
+      // Empty lists are always convertable
+      else
+        return true;
+    }
+    else
+      return false;
+  }
 };
 
 /*! \brief The partial specialization of PyFrensie::PythonTypeTraits for

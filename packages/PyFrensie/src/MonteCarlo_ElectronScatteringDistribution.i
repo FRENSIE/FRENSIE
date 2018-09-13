@@ -358,19 +358,19 @@ std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDis
 %}
 
 // Add tamplates for the Correlated CoupledElasticDistribution
-%template(createCoupledElasticDistribution_LogLogCorrelated) createCoupledElasticDistribution<Utility::LogLogCosLog<true>, Utility::Correlated>;
+%template(createCoupledElasticDistribution_LogLogCorrelated) createCoupledElasticDistribution<Utility::LogNudgedLogCosLog, Utility::Correlated>;
 %template(createCoupledElasticDistribution_LinLogCorrelated) createCoupledElasticDistribution<Utility::LinLinLog, Utility::Correlated>;
 %template(createCoupledElasticDistribution_LinLinCorrelated) createCoupledElasticDistribution<Utility::LinLinLin, Utility::Correlated>;
 // Add tamplates for the Direct CoupledElasticDistribution
-%template(createCoupledElasticDistribution_LogLogDirect) createCoupledElasticDistribution<Utility::LogLogCosLog<true>, Utility::Direct>;
+%template(createCoupledElasticDistribution_LogLogDirect) createCoupledElasticDistribution<Utility::LogNudgedLogCosLog, Utility::Direct>;
 %template(createCoupledElasticDistribution_LinLogDirect) createCoupledElasticDistribution<Utility::LinLinLog, Utility::Direct>;
 %template(createCoupledElasticDistribution_LinLinDirect) createCoupledElasticDistribution<Utility::LinLinLin, Utility::Direct>;
 // Add tamplates for the Correlated CutoffElasticDistribution
-%template(createCutoffElasticDistribution_LogLogCorrelated) createCutoffElasticDistribution<Utility::LogLogCosLog<false>, Utility::Correlated>;
+%template(createCutoffElasticDistribution_LogLogCorrelated) createCutoffElasticDistribution<Utility::LogLogCosLog, Utility::Correlated>;
 %template(createCutoffElasticDistribution_LinLogCorrelated) createCutoffElasticDistribution<Utility::LinLinLog, Utility::Correlated>;
 %template(createCutoffElasticDistribution_LinLinCorrelated) createCutoffElasticDistribution<Utility::LinLinLin, Utility::Correlated>;
 // Add tamplates for the Direct CutoffElasticDistribution
-%template(createCutoffElasticDistribution_LogLogDirect) createCutoffElasticDistribution<Utility::LogLogCosLog<false>, Utility::Direct>;
+%template(createCutoffElasticDistribution_LogLogDirect) createCutoffElasticDistribution<Utility::LogLogCosLog, Utility::Direct>;
 %template(createCutoffElasticDistribution_LinLogDirect) createCutoffElasticDistribution<Utility::LinLinLog, Utility::Direct>;
 %template(createCutoffElasticDistribution_LinLinDirect) createCutoffElasticDistribution<Utility::LinLinLin, Utility::Direct>;
 

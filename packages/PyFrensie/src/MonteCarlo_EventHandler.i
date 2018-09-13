@@ -53,74 +53,82 @@ using namespace MonteCarlo;
 // Add EventHandler support
 // ---------------------------------------------------------------------------//
 
+%shared_ptr(MonteCarlo::EventHandler)
+
 // Define the updateObserversFromParticle from the base classes
-%extend MonteCarlo::EventHandler
-{
-  // Update the observers from a surface intersection event
-  void updateObserversFromParticleCrossingSurfaceEvent(
-                              const ParticleState& particle,
-                              const Geometry::Model::EntityId surface_crossing,
-                              const double surface_normal[3] )
-  {
-    $self->updateObserversFromParticleCrossingSurfaceEvent(
-      particle, surface_crossing, surface_normal );
-  };
+// %extend MonteCarlo::EventHandler
+// {
+//   // Update the observers from a surface intersection event
+//   void updateObserversFromParticleCrossingSurfaceEvent(
+//                               const ParticleState& particle,
+//                               const Geometry::Model::EntityId surface_crossing,
+//                               const double surface_normal[3] )
+//   {
+//     $self->updateObserversFromParticleCrossingSurfaceEvent(
+//       particle, surface_crossing, surface_normal );
+//   };
 
-  // Update the observers from a particle entering cell event
-  void updateObserversFromParticleEnteringCellEvent(
-                               const ParticleState& particle,
-                               const Geometry::Model::EntityId cell_entering )
-  {
-    $self->updateObserversFromParticleEnteringCellEvent(
-      particle, cell_entering );
-  };
+//   // Update the observers from a particle entering cell event
+//   void updateObserversFromParticleEnteringCellEvent(
+//                                const ParticleState& particle,
+//                                const Geometry::Model::EntityId cell_entering )
+//   {
+//     $self->updateObserversFromParticleEnteringCellEvent(
+//       particle, cell_entering );
+//   };
 
-  // Update the observers from a particle leaving cell event
-  void updateObserversFromParticleLeavingCellEvent(
-                                const ParticleState& particle,
-                                const Geometry::Model::EntityId cell_leaving )
-  {
-    $self->updateObserversFromParticleLeavingCellEvent(
-      particle, cell_leaving );
-  };
+//   // Update the observers from a particle leaving cell event
+//   void updateObserversFromParticleLeavingCellEvent(
+//                                 const ParticleState& particle,
+//                                 const Geometry::Model::EntityId cell_leaving )
+//   {
+//     $self->updateObserversFromParticleLeavingCellEvent(
+//       particle, cell_leaving );
+//   };
 
-  // Update the observers from a particle colliding in cell event
-  void updateObserversFromParticleCollidingInCellEvent(
-                                    const ParticleState& particle,
-                                    const double inverse_total_cross_section )
-  {
-    $self->updateObserversFromParticleCollidingInCellEvent(
-      particle, inverse_total_cross_section );
-  }
+//   // Update the observers from a particle colliding in cell event
+//   void updateObserversFromParticleCollidingInCellEvent(
+//                                     const ParticleState& particle,
+//                                     const double inverse_total_cross_section )
+//   {
+//     $self->updateObserversFromParticleCollidingInCellEvent(
+//       particle, inverse_total_cross_section );
+//   }
 
-  // Update the observers from a particle subtrack ending in cell event
-  void updateObserversFromParticleSubtrackEndingInCellEvent(
-                              const ParticleState& particle,
-                              const Geometry::Model::EntityId cell_of_subtrack,
-                              const double particle_subtrack_length )
-  {
-    $self->updateObserversFromParticleSubtrackEndingInCellEvent(
-      particle, cell_of_subtrack, particle_subtrack_length );
-  }
+//   // Update the observers from a particle subtrack ending in cell event
+//   void updateObserversFromParticleSubtrackEndingInCellEvent(
+//                               const ParticleState& particle,
+//                               const Geometry::Model::EntityId cell_of_subtrack,
+//                               const double particle_subtrack_length )
+//   {
+//     $self->updateObserversFromParticleSubtrackEndingInCellEvent(
+//       particle, cell_of_subtrack, particle_subtrack_length );
+//   }
 
-  // Update the global estimators from a subtrack ending event
-  void updateObserversFromParticleSubtrackEndingGlobalEvent(
-      const ParticleState& particle,
-      const double start_point[3],
-      const double end_point[3] )
-  {
-    $self->updateObserversFromParticleSubtrackEndingGlobalEvent(
-      particle, start_point, end_point );
-  }
+//   // Update the global estimators from a subtrack ending event
+//   void updateObserversFromParticleSubtrackEndingGlobalEvent(
+//       const ParticleState& particle,
+//       const double start_point[3],
+//       const double end_point[3] )
+//   {
+//     $self->updateObserversFromParticleSubtrackEndingGlobalEvent(
+//       particle, start_point, end_point );
+//   }
 
-  // Update the global estimators from a subtrack ending event
-  void updateObserversFromParticleGoneGlobalEvent( const ParticleState& particle )
-  {
-    $self->updateObserversFromParticleGoneGlobalEvent(
-      particle );
-  }
-};
+//   // Update the global estimators from a subtrack ending event
+//   void updateObserversFromParticleGoneGlobalEvent( const ParticleState& particle )
+//   {
+//     $self->updateObserversFromParticleGoneGlobalEvent(
+//       particle );
+//   }
+// };
 
+%ignore MonteCarlo::EventHandler::enableThreadSupport;
+%ignore MonteCarlo::EventHandler::updateObserversFromParticleSimulationStartedEvent;
+%ignore MonteCarlo::EventHandler::updateObserversFromParticleSimulationStoppedEvent;
+%ignore MonteCarlo::EventHandler::commitObserverHistoryContributions;
+%ignore MonteCarlo::EventHandler::resetObserverData;
+%ignore MonteCarlo::EventHandler::reduceObserverData;
 %ignore MonteCarlo::EventHandler::registerObserver;
 
 %include "MonteCarlo_EventHandler.hpp"

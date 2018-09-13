@@ -110,6 +110,25 @@ template<typename DerivedType>
 template<typename Archive>
 void OArchivableObject<DerivedType>::saveToArchive( Archive& archive ) const
 {
+  // Note: There appears to be an error in the boost serialization library
+  // when loading from an archive. For some reason the oserializer for
+  // std::vector<double does not get initialized correctly. The oserializer
+  // for non-pointer types should always have a NULL bpis (pointer oserializer)
+  // but with std::vector<double> it is **sometimes** and **unpredictably** set
+  // to a non-null value! When this happens, the basic_oarchive::save_object
+  // method will not exit at line 277 (v1.66) and will instead write the
+  // object id before writing the vector data. When one attempts to load the
+  // archive an error may occur when reading the vector (e.g. input stream
+  // error) due to the erroneous object_id (this will become the vector's
+  // size if the input archive is text or binary but the xml archive will not
+  // be affected). To avoid this situation, we will always check the value of
+  // the bpis pointer for the std::vector<double> oserializer here and set
+  // it back to NULL if necessary.
+  if( boost::serialization::singleton<boost::archive::detail::oserializer<Archive, std::vector<double> > >::get_const_instance().get_bpos() != NULL )
+  {
+    boost::serialization::singleton<boost::archive::detail::oserializer<Archive, std::vector<double> > >::get_mutable_instance().set_bpos( NULL );
+  }
+  
   try{
     archive << boost::serialization::make_nvp( this->getOArchiveName(), *dynamic_cast<const DerivedType*>(this) );
   }

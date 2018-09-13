@@ -137,11 +137,11 @@ protected:
 
   //! Test if the independent variable is compatible with LogCos processing
   virtual bool isIndepVarCompatibleWithProcessingType(
-                                     const LogCosIndepVarProcessingTag<true> ) const;
+                                     const NudgedLogCosIndepVarProcessingTag ) const;
 
   //! Test if the independent variable is compatible with LogCos processing
   virtual bool isIndepVarCompatibleWithProcessingType(
-                                     const LogCosIndepVarProcessingTag<false> ) const;
+                                     const LogCosIndepVarProcessingTag ) const;
 
   //! Test if the dependent variable is compatible with Lin processing
   virtual bool isDepVarCompatibleWithProcessingType(
@@ -153,11 +153,11 @@ protected:
 
   //! Test if the dependent variable is compatible with LogCos processing
   virtual bool isDepVarCompatibleWithProcessingType(
-                                       const LogCosDepVarProcessingTag<true> ) const;
+                                       const NudgedLogCosDepVarProcessingTag ) const;
 
   //! Test if the dependent variable is compatible with LogCos processing
   virtual bool isDepVarCompatibleWithProcessingType(
-                                       const LogCosDepVarProcessingTag<false> ) const;
+                                       const LogCosDepVarProcessingTag ) const;
 
   //! Add distribution data to the stream
   template<typename... Types>

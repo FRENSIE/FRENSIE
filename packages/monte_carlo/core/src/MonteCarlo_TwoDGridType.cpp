@@ -24,8 +24,6 @@ namespace MonteCarlo{
 //     return DIRECT_GRID;
 //   else if( raw_policy == "Unit-base" || raw_policy == "unit-base" || raw_policy == "UNIT-BASE" )
 //     return UNIT_BASE_GRID;
-//   else if( raw_policy == "Cumulative Points" || raw_policy == "cumulative points" || raw_policy == "CUMULATIVE POINTS" )
-//     return CUMULATIVE_POINTS_GRID;
 //   else
 //   {
 //     THROW_EXCEPTION( std::runtime_error,

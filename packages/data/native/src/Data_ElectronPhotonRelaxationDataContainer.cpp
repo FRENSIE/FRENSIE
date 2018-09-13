@@ -1309,7 +1309,6 @@ void ElectronPhotonRelaxationDataContainer::setAveragePhotonHeatingNumbers(
 {
   // Make sure the heating numbers are valid
   testPrecondition( heating_numbers.size() == d_photon_energy_grid.size() );
-  testPrecondition( Data::valuesGreaterThanZero( heating_numbers ) );
 
   d_average_photon_heating_numbers = heating_numbers;
 }

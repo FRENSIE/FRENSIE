@@ -197,10 +197,10 @@ FRENSIE_UNIT_TEST( SimulationAdjointElectronProperties,
   MonteCarlo::SimulationAdjointElectronProperties properties;
 
   FRENSIE_CHECK_EQUAL( properties.getAdjointCoupledElasticSamplingMode(),
-                       MonteCarlo::TWO_D_UNION );
+                       MonteCarlo::MODIFIED_TWO_D_UNION );
 
   MonteCarlo::CoupledElasticSamplingMethod mode;
-  mode = MonteCarlo::MODIFIED_TWO_D_UNION;
+  mode = MonteCarlo::TWO_D_UNION;
 
   properties.setAdjointCoupledElasticSamplingMode( mode );
 
@@ -313,7 +313,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationAdjointElectronProperties,
   FRENSIE_CHECK_EQUAL( default_properties.getAdjointElasticElectronDistributionMode(),
                        MonteCarlo::COUPLED_DISTRIBUTION );
   FRENSIE_CHECK_EQUAL( default_properties.getAdjointCoupledElasticSamplingMode(),
-                       MonteCarlo::TWO_D_UNION );
+                       MonteCarlo::MODIFIED_TWO_D_UNION );
   FRENSIE_CHECK_EQUAL(
              default_properties.getAdjointBremsstrahlungAngularDistributionFunction(),
              MonteCarlo::TWOBS_DISTRIBUTION );

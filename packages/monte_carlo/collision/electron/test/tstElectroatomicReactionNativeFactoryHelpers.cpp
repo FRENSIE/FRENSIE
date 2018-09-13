@@ -29,7 +29,7 @@ double eval_tol = 1e-7;
 FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createCoupledElasticReaction_LogLogCosLog )
 {
-  reaction = MonteCarlo::createCoupledElasticReaction<Utility::LogLogCosLog<true> ,Utility::Correlated>(
+  reaction = MonteCarlo::createCoupledElasticReaction<Utility::LogNudgedLogCosLog ,Utility::Correlated>(
                 *data_container,
                 MonteCarlo::TWO_D_UNION,
                 eval_tol );
@@ -61,7 +61,7 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
 FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createDecoupledElasticReaction_LogLogCosLog )
 {
-  reaction = MonteCarlo::createDecoupledElasticReaction<Utility::LogLogCosLog<false>,Utility::Correlated>(
+  reaction = MonteCarlo::createDecoupledElasticReaction<Utility::LogLogCosLog,Utility::Correlated>(
                 *data_container,
                 eval_tol );
 
@@ -94,7 +94,7 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
 {
   double cutoff_angle_cosine = 0.9;
 
-  reaction = MonteCarlo::createHybridElasticReaction<Utility::LogLogCosLog<true> ,Utility::Correlated>(
+  reaction = MonteCarlo::createHybridElasticReaction<Utility::LogNudgedLogCosLog ,Utility::Correlated>(
                 *data_container,
                 cutoff_angle_cosine,
                 1e-14 );
@@ -111,7 +111,7 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
 
   energy = 4.0e-4;
   cross_section = reaction->getCrossSection( energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.2786275807901049e+08, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.2786275809074390e+08, 1e-12 );
 
   energy = 1.0e5;
   cross_section = reaction->getCrossSection( energy );
@@ -126,7 +126,7 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
 FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createCutoffElasticReaction_LogLogCosLog )
 {
-  reaction = MonteCarlo::createCutoffElasticReaction<Utility::LogLogCosLog<false>,Utility::Correlated>(
+  reaction = MonteCarlo::createCutoffElasticReaction<Utility::LogLogCosLog,Utility::Correlated>(
                 *data_container,
                 1.0,
                 eval_tol );

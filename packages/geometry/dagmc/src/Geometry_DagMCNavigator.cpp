@@ -376,7 +376,8 @@ bool DagMCNavigator::advanceToCellBoundaryImpl( double* surface_normal,
     // This will also fire a ray to fill the new intersection data
     this->changeDirection( reflected_direction[0],
                            reflected_direction[1],
-                           reflected_direction[2] );
+                           reflected_direction[2],
+                           true );
 
     reflecting_boundary = true;
   }
@@ -426,13 +427,25 @@ void DagMCNavigator::changeDirection( const double x_direction,
                                       const double y_direction,
                                       const double z_direction )
 {
+  this->changeDirection( x_direction, y_direction, z_direction, false );
+}
+
+// Change the direction of the ray
+void DagMCNavigator::changeDirection( const double x_direction,
+                                      const double y_direction,
+                                      const double z_direction,
+                                      const bool reflection )
+{
   // Make sure that the ray is set
   testPrecondition( this->isStateSet() );
   // Make sure that the direction is valid
   testPrecondition( Utility::isUnitVector( x_direction, y_direction, z_direction ) );
 
   // Change the direction
-  d_internal_ray.changeDirection( x_direction, y_direction, z_direction );
+  d_internal_ray.changeDirection( x_direction,
+                                  y_direction,
+                                  z_direction,
+                                  reflection );
 
   // Fire the ray so that the new intersection data is set
   Navigator::fireRay();

@@ -38,13 +38,13 @@ ParticleSourceComponent::ParticleSourceComponent(
 
 // Constructor (with rejection cells)
 /*! The standard particle source class
- * \details It is sometimes necessary to limit where a particle's spatial 
- * coordinates are sampled, this class allows the user to specify rejection 
- * cells in the model of interest. Any sampled particle states with spatial 
- * coordinates that do not fall within one of the rejection cells will be 
- * discarded and a new state will be sampled. If no rejection cells are 
+ * \details It is sometimes necessary to limit where a particle's spatial
+ * coordinates are sampled, this class allows the user to specify rejection
+ * cells in the model of interest. Any sampled particle states with spatial
+ * coordinates that do not fall within one of the rejection cells will be
+ * discarded and a new state will be sampled. If no rejection cells are
  * specified all sampled particle states will be used.
- */ 
+ */
 ParticleSourceComponent::ParticleSourceComponent(
                           const uint32_t id,
                           const double selection_weight,
@@ -89,7 +89,7 @@ void ParticleSourceComponent::enableThreadSupport( const size_t threads )
 
   // The navigators will be initialize just-in-time
   d_navigator.resize( threads );
-  
+
   d_start_cell_cache.resize( threads, d_rejection_cells );
 
   d_number_of_trials.resize( threads, 0 );
@@ -121,8 +121,8 @@ void ParticleSourceComponent::resetData()
 
 // Reduce the sampling statistics on the root process
 /*! \details Only the master thread should call this method. After the
- * reduction operation is complete the 
- * MonteCarlo::ParticleSourceComponent::resetData will be called on all 
+ * reduction operation is complete the
+ * MonteCarlo::ParticleSourceComponent::resetData will be called on all
  * processes except for the root process.
  */
 void ParticleSourceComponent::reduceData( const Utility::Communicator& comm,
@@ -150,7 +150,7 @@ void ParticleSourceComponent::reduceData( const Utility::Communicator& comm,
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
                              "unable to reduce the source trial "
                              "counters!" );
-    
+
     // Reduce the sample counters
     try{
       this->reduceSampleCounters( comm, root_process );
@@ -158,12 +158,12 @@ void ParticleSourceComponent::reduceData( const Utility::Communicator& comm,
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
                              "unable to reduce the source sample "
                              "counters!" );
-    
+
     comm.barrier();
-    
+
     // Reduce data in derived class
     this->reduceDataImpl( comm, root_process );
-    
+
     // Reset the sampling data if not the root process
     if( comm.rank() != root_process )
       this->resetData();
@@ -171,7 +171,7 @@ void ParticleSourceComponent::reduceData( const Utility::Communicator& comm,
 }
 
 // Sample a particle state
-/*! \details If MonteCarlo::ParticleSourceComponent::enableThreadSupport has 
+/*! \details If MonteCarlo::ParticleSourceComponent::enableThreadSupport has
  * been called, this method is thread-safe.
  */
 void ParticleSourceComponent::sampleParticleState(
@@ -188,12 +188,12 @@ void ParticleSourceComponent::sampleParticleState(
     d_navigator[Utility::OpenMPProperties::getThreadId()] =
       d_model->createNavigator();
   }
-  
+
   // Cache some data for this thread in case they need to be
   // accessed multiple times
   const Geometry::Navigator& navigator =
     *d_navigator[Utility::OpenMPProperties::getThreadId()];
-  
+
   Counter& trial_counter =
     d_number_of_trials[Utility::OpenMPProperties::getThreadId()];
 
@@ -236,7 +236,7 @@ void ParticleSourceComponent::sampleParticleState(
       {
         valid_sample = false;
         break;
-      }        
+      }
     }
 
     // Set the particle source id
@@ -255,10 +255,10 @@ void ParticleSourceComponent::sampleParticleState(
       }
       EXCEPTION_CATCH_RETHROW( std::runtime_error,
                                "Unable to embed the sampled particle "
-                               << particle->getHistoryNumber() << "in "
+                               << particle->getHistoryNumber() << " in "
                                "the correct location of model "
                                << d_model->getName() << "!" );
-      
+
       // Embed the particle in the model
       particle->embedInModel( d_model, start_cell_id );
       particle->setSourceCell( start_cell_id );
@@ -287,7 +287,7 @@ void ParticleSourceComponent::getStartingCells(
 {
   // Make sure that only the root process calls this function
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
-  
+
   this->mergeLocalStartCellCaches( starting_cells );
 }
 
@@ -310,7 +310,7 @@ auto ParticleSourceComponent::getNumberOfTrials() const -> Counter
 {
   // Make sure that only the root process calls this function
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
-  
+
   return this->reduceLocalTrialCounters();
 }
 
@@ -409,7 +409,7 @@ void ParticleSourceComponent::mergeStartingCells(
 {
   CellIdSet start_cell_cache;
   this->mergeLocalStartCellCaches( start_cell_cache );
-  
+
   std::vector<CellIdSet> gathered_start_cell_caches;
 
   try{
@@ -520,7 +520,7 @@ bool ParticleSourceComponent::isSampledParticlePositionValid(
 }
 
 EXPLICIT_CLASS_SAVE_LOAD_INST( ParticleSourceComponent );
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

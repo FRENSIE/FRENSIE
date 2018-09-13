@@ -72,7 +72,7 @@ void PositronatomNativeFactory::createPositronatomCore(
               ( properties.getElasticElectronDistributionMode() == HYBRID_DISTRIBUTION &&
                 properties.getElasticCutoffAngleCosine() < 1.0 ) )
           {
-            ThisType::createElasticPositronatomCore<Utility::LogLogCosLog<true>,Utility::Direct>(
+            ThisType::createElasticPositronatomCore<Utility::LogNudgedLogCosLog,Utility::Direct>(
                                                   raw_positronatom_data,
                                                   energy_grid,
                                                   grid_searcher,
@@ -81,7 +81,7 @@ void PositronatomNativeFactory::createPositronatomCore(
           }
           else
           {
-            ThisType::createElasticPositronatomCore<Utility::LogLogCosLog<false>,Utility::Direct>(
+            ThisType::createElasticPositronatomCore<Utility::LogLogCosLog,Utility::Direct>(
                                                   raw_positronatom_data,
                                                   energy_grid,
                                                   grid_searcher,
@@ -108,7 +108,7 @@ void PositronatomNativeFactory::createPositronatomCore(
             ( properties.getElasticElectronDistributionMode() == HYBRID_DISTRIBUTION &&
               properties.getElasticCutoffAngleCosine() < 1.0 ) )
         {
-          ThisType::createElasticPositronatomCore<Utility::LogLogCosLog<true>,Utility::Correlated>(
+          ThisType::createElasticPositronatomCore<Utility::LogNudgedLogCosLog,Utility::Correlated>(
                                                   raw_positronatom_data,
                                                   energy_grid,
                                                   grid_searcher,
@@ -117,7 +117,7 @@ void PositronatomNativeFactory::createPositronatomCore(
         }
         else
         {
-          ThisType::createElasticPositronatomCore<Utility::LogLogCosLog<false>,Utility::Correlated>(
+          ThisType::createElasticPositronatomCore<Utility::LogLogCosLog,Utility::Correlated>(
                                                   raw_positronatom_data,
                                                   energy_grid,
                                                   grid_searcher,

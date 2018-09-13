@@ -1,0 +1,23 @@
+//---------------------------------------------------------------------------//
+//!
+//! \file   PyFrensie_MPI_Setup.i
+//! \author Alex Robinson
+//! \brief  The PyFrensie_MPI_Setup.i is a SWIG interface file that allows
+//!         SWIG to generate python code that will allow MPI to initialize
+//!         correctly when done from within a python script.
+//!
+//---------------------------------------------------------------------------//
+
+%pythonbegin
+%{
+# If MPI has been enabled in FRENSIE, the libmpi.so library must be imported
+# before the Utility.MPI library to ensure proper initialization
+  __pyfrensie_mpi_enabled__ = "${FRENSIE_ENABLE_MPI}".lower().find("on") >= 0
+  if __pyfrensie_mpi_enabled__:
+      import ctypes
+      ctypes.CDLL("${MPI_mpi_LIBRARY}", mode=ctypes.RTLD_GLOBAL)
+%}
+
+//---------------------------------------------------------------------------//
+// end PyFrensie_MPI_Setup.i
+//---------------------------------------------------------------------------//

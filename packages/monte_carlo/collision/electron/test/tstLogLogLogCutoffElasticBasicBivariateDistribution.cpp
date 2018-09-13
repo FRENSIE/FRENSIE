@@ -91,7 +91,7 @@ void initialize( std::shared_ptr<BaseTabDistribution>& tab_dist,
   Utility::setQuantity( primary_bins[1], 2.0 );
   secondary_dists[1].reset( new Utility::UnitAwareTabularDistribution<Utility::LinLin,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>( bin_boundaries, values ) );
 
-  tab_dist.reset( new MonteCarlo::UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy<Utility::LogLogCosLog<false> >,typename BaseTabDistribution::PrimaryIndepUnit,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>(
+  tab_dist.reset( new MonteCarlo::UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy<Utility::LogLogCosLog >,typename BaseTabDistribution::PrimaryIndepUnit,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>(
       primary_bins, secondary_dists, cutoff, 1e-3, 1e-7 ) );
 
   dist = tab_dist;
@@ -372,13 +372,13 @@ FRENSIE_UNIT_TEST( ElasticBasicBivariateDistribution,
 
     // Create the secondary distribution in the first bin
     primary_grid[0] = 0.0;
-    secondary_dists[0].reset( new Utility::UniformDistribution( 0.1, 1.0, 0.1 ) );
+    secondary_dists[0].reset( new Utility::UniformDistribution( 0.1, 0.999999, 0.1 ) );
 
     // Create the secondary distribution In the first bin
     primary_grid[1] = 2.0;
     secondary_dists[1] = secondary_dists[0];
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogCosLog<false> > >(
+    test_dist.reset( new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogCosLog > >(
                                              primary_grid, secondary_dists ) );
   }
 
@@ -392,13 +392,13 @@ FRENSIE_UNIT_TEST( ElasticBasicBivariateDistribution,
 
     // Create the secondary distribution in the first bin
     primary_grid[0] = 1.0;
-    secondary_dists[0].reset( new Utility::UniformDistribution( 0.1, 1.0, 0.1 ) );
+    secondary_dists[0].reset( new Utility::UniformDistribution( 0.1, 0.999999, 0.1 ) );
 
     // Create the secondary distribution In the first bin
     primary_grid[1] = 3.0;
     secondary_dists[1] = secondary_dists[0];
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogCosLog<false> > >(
+    test_dist.reset( new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogCosLog > >(
                                              primary_grid, secondary_dists ) );
   }
 
@@ -415,21 +415,21 @@ FRENSIE_UNIT_TEST( ElasticBasicBivariateDistribution,
     std::vector<std::vector<double> > secondary_grids( 4 ), values( 4 );
     secondary_grids[0].resize( 2 ); values[0].resize( 2 );
     secondary_grids[0][0] = 0.1;    values[0][0] = 0.1;
-    secondary_grids[0][1] = 1.0;   values[0][1] = 0.1;
+    secondary_grids[0][1] = 0.999999;   values[0][1] = 0.1;
 
     secondary_grids[1].resize( 3 ); values[1].resize( 3 );
     secondary_grids[1][0] = 0.1;    values[1][0] = 0.1;
     secondary_grids[1][1] = 0.5;    values[1][1] = 1.0;
-    secondary_grids[1][2] = 1.0;    values[1][2] = 0.5;
+    secondary_grids[1][2] = 0.999999;    values[1][2] = 0.5;
 
     secondary_grids[2].resize( 2 ); values[2].resize( 2 );
     secondary_grids[2][0] = 0.1;    values[2][0] = 0.5;
-    secondary_grids[2][1] = 1.0;    values[2][1] = 0.5;
+    secondary_grids[2][1] = 0.999999;    values[2][1] = 0.5;
 
     secondary_grids[3] = secondary_grids[0];
     values[3] = values[0];
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogCosLog<false> > >(
+    test_dist.reset( new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogCosLog > >(
                                                                primary_grid,
                                                                secondary_grids,
                                                                values ) );
@@ -5442,7 +5442,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ElasticBasicBivariateDistribution,
 
     initialize<Utility::UnitBase>( tab_distribution, distribution );
 
-    auto concrete_dist = std::dynamic_pointer_cast<MonteCarlo::ElasticBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogCosLog<false> > > >( distribution );
+    auto concrete_dist = std::dynamic_pointer_cast<MonteCarlo::ElasticBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogCosLog > > >( distribution );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( concrete_dist ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "intermediate_base_dist", tab_distribution ) );
@@ -5457,7 +5457,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ElasticBasicBivariateDistribution,
 
   createIArchive( archive_istream, iarchive );
 
-  std::shared_ptr<MonteCarlo::ElasticBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogCosLog<false> > > > concrete_dist;
+  std::shared_ptr<MonteCarlo::ElasticBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogCosLog > > > concrete_dist;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( concrete_dist ) );
 
@@ -5575,7 +5575,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareElasticBasicBivariateDistribution,
     initialize<Utility::UnitBase>( unit_aware_tab_distribution,
                                    unit_aware_distribution );
 
-    auto concrete_dist = std::dynamic_pointer_cast<MonteCarlo::UnitAwareElasticBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogCosLog<false> >,MegaElectronVolt,cgs::dimensionless,Barn> >( unit_aware_distribution );
+    auto concrete_dist = std::dynamic_pointer_cast<MonteCarlo::UnitAwareElasticBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogCosLog >,MegaElectronVolt,cgs::dimensionless,Barn> >( unit_aware_distribution );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( concrete_dist ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "intermediate_base_dist", unit_aware_tab_distribution ) );
@@ -5590,7 +5590,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareElasticBasicBivariateDistribution,
 
   createIArchive( archive_istream, iarchive );
 
-  std::shared_ptr<MonteCarlo::UnitAwareElasticBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogCosLog<false> >,MegaElectronVolt,cgs::dimensionless,Barn> > concrete_dist;
+  std::shared_ptr<MonteCarlo::UnitAwareElasticBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogCosLog >,MegaElectronVolt,cgs::dimensionless,Barn> > concrete_dist;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( concrete_dist ) );
 

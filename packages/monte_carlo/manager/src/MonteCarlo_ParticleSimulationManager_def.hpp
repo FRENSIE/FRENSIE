@@ -17,35 +17,49 @@
   FRENSIE_LOG_TAGGED_WARNING(                   \
        "Lost Particle",                         \
        "history " << particle.getHistoryNumber() <<        \
-       ", generation " << particle.getGenerationNumber() );     \
-                                                          \
+       ", generation " << particle.getGenerationNumber() << \
+       ", collision number " << particle.getCollisionNumber() );        \
+                                                                        \
   FRENSIE_LOG_TAGGED_NOTIFICATION( "Lost Particle State Dump", \
-                                   particle )
+                                   "\n" << particle )
 
 //! Macro for catching a lost particle and breaking a loop
 #define CATCH_LOST_PARTICLE_AND_BREAK( particle )       \
-  catch( std::runtime_error& exception )                \
+  catch( const std::runtime_error& exception )                \
   {                                                   \
     particle.setAsLost();                               \
                                                         \
-    FRENSIE_LOG_NESTED_ERROR( exception.what() );       \
-                                                        \
     LOG_LOST_PARTICLE_DETAILS( particle );              \
+                                                        \
+    FRENSIE_LOG_NESTED_ERROR( exception.what() );       \
                                                         \
     break;                                              \
   }
 
-//! Macro for catching a lost source particle
-#define CATCH_LOST_SOURCE_PARTICLE_AND_CONTINUE( bank ) \
-  catch( std::runtime_error& exception )                \
+//! Macro for catching a lost particle
+#define CATCH_LOST_PARTICLE( particle, ... )                  \
+  catch( const std::runtime_error& exception )                \
   {                                                   \
-    bank.top().setAsLost();                             \
+    particle.setAsLost();                               \
+                                                        \
+    LOG_LOST_PARTICLE_DETAILS( particle );              \
                                                         \
     FRENSIE_LOG_NESTED_ERROR( exception.what() );       \
                                                         \
-    LOG_LOST_PARTICLE_DETAILS( bank.top() );            \
+    __VA_ARGS__;                                        \
+  }
+
+//! Macro for catching a lost particle
+#define CATCH_LOST_PARTICLE_AND_CONTINUE( particle, ... )     \
+  catch( const std::runtime_error& exception )                \
+  {                                                   \
+    particle.setAsLost();                               \
                                                         \
-    bank.pop();                                         \
+    LOG_LOST_PARTICLE_DETAILS( particle );              \
+                                                        \
+    FRENSIE_LOG_NESTED_ERROR( exception.what() );       \
+                                                        \
+    __VA_ARGS__;                                        \
                                                         \
     continue;                                           \
   }
@@ -60,7 +74,7 @@ void ParticleSimulationManager::simulateParticle(
                                             const bool source_particle )
 {
   // Make sure that the particle is embedded in the model
-  testPrecondition( !unresolved_particle.isEmbeddedInModel( *d_model ) );
+  testPrecondition( unresolved_particle.isEmbeddedInModel( *d_model ) );
 
   // Resolve the particle state
   State& particle = dynamic_cast<State&>( unresolved_particle );
@@ -173,7 +187,7 @@ void ParticleSimulationManager::simulateParticleTrack(
     CATCH_LOST_PARTICLE_AND_BREAK( particle );
 
     // Get the total cross section for the cell
-    if( d_model->isCellVoid<State>( particle.getCell() ) )
+    if( !d_model->isCellVoid<State>( particle.getCell() ) )
     {
       cell_total_macro_cross_section =
         d_model->getMacroscopicTotalCrossSectionQuick( particle );
@@ -238,16 +252,24 @@ void ParticleSimulationManager::simulateParticleTrack(
 
       // Undergo a collision with the material in the cell
       if( particle )
-        d_collision_kernel->collideWithCellMaterial( particle, bank );
+      {
+        try{
+          d_collision_kernel->collideWithCellMaterial( particle, bank );
+        }
+        CATCH_LOST_PARTICLE( particle );
+      }
 
       // All split particles must also undergo a collision
       while( !local_bank.isEmpty() )
       {
         ParticleBank next_gen_local_bank;
 
-        d_collision_kernel->collideWithCellMaterial(
+        try{
+          d_collision_kernel->collideWithCellMaterial(
                                       dynamic_cast<State&>( local_bank.top() ),
                                       next_gen_local_bank );
+        }
+        CATCH_LOST_PARTICLE_AND_CONTINUE( local_bank.top(), local_bank.pop() );
 
         std::shared_ptr<ParticleState> local_particle;
 

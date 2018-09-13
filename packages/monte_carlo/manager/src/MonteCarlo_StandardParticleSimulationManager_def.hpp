@@ -90,7 +90,9 @@ void StandardParticleSimulationManager<mode>::simulateUnresolvedParticle(
   // Only simulate the particle if there is a simulation function associated
   // with the type
   if( simulation_function_it != d_simulate_particle_function_map.end() )
+  {
     simulation_function_it->second( unresolved_particle, bank, source_particle );
+  }
   else
     unresolved_particle.setAsGone();
 }
@@ -100,10 +102,12 @@ template<ParticleModeType mode>
 template<typename State>
 void StandardParticleSimulationManager<mode>::addSimulateParticleFunction()
 {
-  // Make sure that the state is compatible with the mode
-  testPrecondition( MonteCarlo::isParticleTypeCompatible<mode>( State::type ) );
+  constexpr const ParticleType particle_type = State::type;
   
-  d_simulate_particle_function_map[State::type] =
+  // Make sure that the state is compatible with the mode
+  testPrecondition( MonteCarlo::isParticleTypeCompatible<mode>( particle_type ) );
+  
+  d_simulate_particle_function_map[particle_type] =
     std::bind<void>( &ParticleSimulationManager::simulateParticle<State>,
                      std::ref( *this ),
                      std::placeholders::_1,

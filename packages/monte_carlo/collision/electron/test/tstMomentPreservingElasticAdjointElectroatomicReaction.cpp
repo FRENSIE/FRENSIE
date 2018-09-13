@@ -94,7 +94,7 @@ FRENSIE_UNIT_TEST( MomentPreservingElasticAdjointElectroatomicReaction,
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.6718090775280627e+06, 1e-12 );
 
   cross_section = mp_elastic_reaction->getCrossSection( 20.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.096244853899329463, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.0962446943088544, 1e-12 );
 }
 
 
@@ -149,7 +149,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   // Moment preserving elastic cross section
   std::vector<double> moment_preserving_cross_sections;
   size_t threshold_index;
-  NativeFactory::calculateMomentPreservingCrossSections<Utility::LogLogCosLog<false>,Utility::Correlated>(
+  NativeFactory::calculateMomentPreservingCrossSections<Utility::LogLogCosLog,Utility::Correlated>(
                                 moment_preserving_cross_sections,
                                 threshold_index,
                                 data_container,
@@ -163,7 +163,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution>
         discrete_elastic_distribution;
 
-  NativeFactory::createMomentPreservingElasticDistribution<Utility::LogLogCosLog<false>,Utility::Correlated>(
+  NativeFactory::createMomentPreservingElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
         discrete_elastic_distribution,
         data_container,
         cutoff_angle_cosine,

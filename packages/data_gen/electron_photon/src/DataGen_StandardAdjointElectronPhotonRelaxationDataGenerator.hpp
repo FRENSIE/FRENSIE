@@ -54,15 +54,12 @@ public:
       const double min_photon_energy,
       const double max_photon_energy,
       const double min_electron_energy,
-      const double max_electron_energy,
-      std::ostream* os_log = &std::cout,
-      std::ostream* os_warn = &std::cerr );
+      const double max_electron_energy );
 
   //! Basic Constructor
   StandardAdjointElectronPhotonRelaxationDataGenerator(
       const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>&
-      forward_epr_data,
-      std::ostream* os_log = &std::cout );
+      forward_epr_data );
 
   //! Destructor
   virtual ~StandardAdjointElectronPhotonRelaxationDataGenerator()
@@ -263,7 +260,7 @@ public:
   void populateEPRDataContainer(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
     const bool populate_photons = true,
-    const bool populate_electrons = true ) const;
+    const bool populate_electrons = true ) const final override;
 
 protected:
 
@@ -463,9 +460,6 @@ private:
   // The forward data
   std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>
   d_forward_epr_data;
-
-  // The log stream
-  std::ostream* d_os_log;
 
   // The adjoint pair production energy dist norm constant evaluation tolerance
   double d_adjoint_pair_production_energy_dist_norm_const_evaluation_tol;

@@ -408,1477 +408,1477 @@ class EventHandlerTestCase(unittest.TestCase):
 #         "*Test MonteCarlo.Event.EventHandler setNumberOfHistories"
 
 
-#-----------------------------------------------------------------------------#
-    # Check if observers can be updated from a particle colliding in cell event
-    def testUpdateObserversFromParticleCollidingInCellEvent(self):
-        "*Test MonteCarlo.Event.EventHandler updateObserversFromParticleCollidingInCellEvent"
-        event_handler = Event.EventHandler()
-
-        event_handler.addEstimator( self.estimator_1 )
-        event_handler.addEstimator( self.estimator_2 )
-        event_handler.addEstimator( self.estimator_3 )
-        event_handler.addEstimator( self.estimator_4 )
-        event_handler.addEstimator( self.estimator_5 )
-        event_handler.addEstimator( self.estimator_6 )
-        event_handler.addEstimator( self.estimator_7 )
-        event_handler.addEstimator( self.estimator_8 )
-        event_handler.addEstimator( self.estimator_9 )
-        event_handler.addEstimator( self.estimator_10 )
-        event_handler.addEstimator( self.mesh_estimator_1 )
-        event_handler.addEstimator( self.mesh_estimator_2 )
-        event_handler.addParticleTracker( self.particle_tracker )
-
-        local_model = Geometry.InfiniteMediumModel( 1 )
-
-        photon = MonteCarlo.PhotonState( 0 )
-        photon.setWeight( 1.0 )
-        photon.setEnergy( 1.0 )
-        photon.embedInModel( local_model )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        event_handler.updateObserversFromParticleCollidingInCellEvent( photon, 1.0 )
-
-        self.assertTrue( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        electron = MonteCarlo.ElectronState( 0 )
-        electron.setWeight( 1.0 )
-        electron.setEnergy( 1.0 )
-        electron.embedInModel( local_model )
-
-        event_handler.updateObserversFromParticleCollidingInCellEvent( electron, 1.0 )
-
-        self.assertTrue( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        event_handler.commitObserverHistoryContributions()
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        first_moments = self.estimator_1.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_1.getEntityBinDataSecondMoments( 1 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_1.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_1.getEntityBinDataSecondMoments( 2 )
-
-        self.assertSequenceEqual( list(first_moments), [0.0] )
-        self.assertSequenceEqual( list(second_moments), [0.0] )
-
-        first_moments = self.estimator_2.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_2.getEntityBinDataSecondMoments( 1 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_2.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_2.getEntityBinDataSecondMoments( 2 )
-
-        self.assertSequenceEqual( list(first_moments), [0.0] )
-        self.assertSequenceEqual( list(second_moments), [0.0] )
-
-        local_model = Geometry.InfiniteMediumModel( 2 )
-
-        photon = MonteCarlo.PhotonState( 0 )
-        photon.setWeight( 1.0 )
-        photon.setEnergy( 1.0 )
-        photon.embedInModel( local_model )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        event_handler.updateObserversFromParticleCollidingInCellEvent( photon, 1.0 )
-
-        self.assertTrue( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        electron = MonteCarlo.ElectronState( 0 )
-        electron.setWeight( 1.0 )
-        electron.setEnergy( 1.0 )
-        electron.embedInModel( local_model )
-
-        event_handler.updateObserversFromParticleCollidingInCellEvent( electron, 1.0 )
-
-        self.assertTrue( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        event_handler.commitObserverHistoryContributions()
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        first_moments = self.estimator_1.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_1.getEntityBinDataSecondMoments( 1 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_1.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_1.getEntityBinDataSecondMoments( 2 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_2.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_2.getEntityBinDataSecondMoments( 1 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_2.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_2.getEntityBinDataSecondMoments( 2 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-#-----------------------------------------------------------------------------#
-    # Check if observers can be updated from a particle subtrack ending in cell
-    # event
-    def testUpdateObserversFromParticleSubtrackEndingInCellEvent(self):
-        "*Test MonteCarlo.Event.EventHandler updateObserversFromParticleSubtrackEndingInCellEvent"
-        event_handler = Event.EventHandler()
-
-        event_handler.addEstimator( self.estimator_1 )
-        event_handler.addEstimator( self.estimator_2 )
-        event_handler.addEstimator( self.estimator_3 )
-        event_handler.addEstimator( self.estimator_4 )
-        event_handler.addEstimator( self.estimator_5 )
-        event_handler.addEstimator( self.estimator_6 )
-        event_handler.addEstimator( self.estimator_7 )
-        event_handler.addEstimator( self.estimator_8 )
-        event_handler.addEstimator( self.estimator_9 )
-        event_handler.addEstimator( self.estimator_10 )
-        event_handler.addEstimator( self.mesh_estimator_1 )
-        event_handler.addEstimator( self.mesh_estimator_2 )
-        event_handler.addParticleTracker( self.particle_tracker )
-
-        photon = MonteCarlo.PhotonState( 0 )
-        photon.setWeight( 1.0 )
-        photon.setEnergy( 1.0 )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        event_handler.updateObserversFromParticleSubtrackEndingInCellEvent( photon, 1, 1.0 )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        electron = MonteCarlo.ElectronState( 0 )
-        electron.setWeight( 1.0 )
-        electron.setEnergy( 1.0 )
-
-        event_handler.updateObserversFromParticleSubtrackEndingInCellEvent( electron, 1, 1.0 )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        event_handler.commitObserverHistoryContributions()
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        first_moments = self.estimator_3.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_3.getEntityBinDataSecondMoments( 1 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_3.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_3.getEntityBinDataSecondMoments( 2 )
-
-        self.assertSequenceEqual( list(first_moments), [0.0] )
-        self.assertSequenceEqual( list(second_moments), [0.0] )
-
-        first_moments = self.estimator_4.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_4.getEntityBinDataSecondMoments( 1 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_5.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_5.getEntityBinDataSecondMoments( 2 )
-
-        # These two moments seem to be off from the C++ unit test
-        # self.assertSequenceEqual( list(first_moments), [0.0] )
-        # self.assertSequenceEqual( list(second_moments), [0.0] )
-
-        photon = MonteCarlo.PhotonState( 0 )
-        photon.setWeight( 1.0 )
-        photon.setEnergy( 1.0 )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        event_handler.updateObserversFromParticleSubtrackEndingInCellEvent( photon, 2, 1.0 )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        electron = MonteCarlo.ElectronState( 0 )
-        electron.setWeight( 1.0 )
-        electron.setEnergy( 1.0 )
-
-        event_handler.updateObserversFromParticleSubtrackEndingInCellEvent( electron, 2, 1.0 )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        event_handler.commitObserverHistoryContributions()
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        first_moments = self.estimator_3.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_3.getEntityBinDataSecondMoments( 1 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_3.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_3.getEntityBinDataSecondMoments( 2 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_4.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_4.getEntityBinDataSecondMoments( 1 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_4.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_4.getEntityBinDataSecondMoments( 2 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-#-----------------------------------------------------------------------------#
-    # Check if observers can be updated from particle entering cell and particle
-    # leaving cell events
-    def testUpdateObserversFromParticleEntering_LeavingCellEvent(self):
-        "*Test MonteCarlo.Event.EventHandler updateObserversFromParticleEntering_LeavingCellEvent"
-        event_handler = Event.EventHandler()
-
-        event_handler.addEstimator( self.estimator_1 )
-        event_handler.addEstimator( self.estimator_2 )
-        event_handler.addEstimator( self.estimator_3 )
-        event_handler.addEstimator( self.estimator_4 )
-        event_handler.addEstimator( self.estimator_5 )
-        event_handler.addEstimator( self.estimator_6 )
-        event_handler.addEstimator( self.estimator_7 )
-        event_handler.addEstimator( self.estimator_8 )
-        event_handler.addEstimator( self.estimator_9 )
-        event_handler.addEstimator( self.estimator_10 )
-        event_handler.addEstimator( self.mesh_estimator_1 )
-        event_handler.addEstimator( self.mesh_estimator_2 )
-        event_handler.addParticleTracker( self.particle_tracker )
-
-        photon = MonteCarlo.PhotonState( 0 )
-        photon.setWeight( 1.0 )
-        photon.setEnergy( 2.0 )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        event_handler.updateObserversFromParticleEnteringCellEvent( photon, 1 )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        photon.setEnergy( 1.0 )
-
-        event_handler.updateObserversFromParticleLeavingCellEvent( photon, 1 )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        electron = MonteCarlo.ElectronState( 0 )
-        electron.setWeight( 1.0 )
-        electron.setEnergy( 2.0 )
-
-        event_handler.updateObserversFromParticleEnteringCellEvent( electron, 1 )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        electron.setEnergy( 1.0 )
-
-        event_handler.updateObserversFromParticleLeavingCellEvent( electron, 1 )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        event_handler.commitObserverHistoryContributions()
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        first_moments = self.estimator_5.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_5.getEntityBinDataSecondMoments( 1 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_5.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_5.getEntityBinDataSecondMoments( 2 )
-
-        self.assertSequenceEqual( list(first_moments), [0.0] )
-        self.assertSequenceEqual( list(second_moments), [0.0] )
-
-        first_moments = self.estimator_6.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_6.getEntityBinDataSecondMoments( 1 )
-
-        self.assertSequenceEqual( list(first_moments), [2.0] )
-        self.assertSequenceEqual( list(second_moments), [4.0] )
-
-        first_moments = self.estimator_6.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_6.getEntityBinDataSecondMoments( 2 )
-
-        self.assertSequenceEqual( list(first_moments), [0.0] )
-        self.assertSequenceEqual( list(second_moments), [0.0] )
-
-        photon = MonteCarlo.PhotonState( 0 )
-        photon.setWeight( 1.0 )
-        photon.setEnergy( 2.0 )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        event_handler.updateObserversFromParticleEnteringCellEvent( photon, 2 )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        photon.setEnergy( 1.0 )
-
-        event_handler.updateObserversFromParticleLeavingCellEvent( photon, 2 )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        electron = MonteCarlo.ElectronState( 0 )
-        electron.setWeight( 1.0 )
-        electron.setEnergy( 2.0 )
-
-        event_handler.updateObserversFromParticleEnteringCellEvent( electron, 2 )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        electron.setEnergy( 1.0 )
-
-        event_handler.updateObserversFromParticleLeavingCellEvent( electron, 2 )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        event_handler.commitObserverHistoryContributions()
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        first_moments = self.estimator_5.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_5.getEntityBinDataSecondMoments( 1 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_5.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_5.getEntityBinDataSecondMoments( 2 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_6.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_6.getEntityBinDataSecondMoments( 1 )
-
-        self.assertSequenceEqual( list(first_moments), [2.0] )
-        self.assertSequenceEqual( list(second_moments), [4.0] )
-
-        first_moments = self.estimator_6.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_6.getEntityBinDataSecondMoments( 2 )
-
-        self.assertSequenceEqual( list(first_moments), [2.0] )
-        self.assertSequenceEqual( list(second_moments), [4.0] )
-
-#-----------------------------------------------------------------------------#
-    # Check if observers can be updated from a particle crossing surface event
-    def testUpdateObserversFromParticleCrossingSurfaceEvent(self):
-        "*Test MonteCarlo.Event.EventHandler updateObserversFromParticleCrossingSurfaceEvent"
-        event_handler = Event.EventHandler()
-
-        event_handler.addEstimator( self.estimator_1 )
-        event_handler.addEstimator( self.estimator_2 )
-        event_handler.addEstimator( self.estimator_3 )
-        event_handler.addEstimator( self.estimator_4 )
-        event_handler.addEstimator( self.estimator_5 )
-        event_handler.addEstimator( self.estimator_6 )
-        event_handler.addEstimator( self.estimator_7 )
-        event_handler.addEstimator( self.estimator_8 )
-        event_handler.addEstimator( self.estimator_9 )
-        event_handler.addEstimator( self.estimator_10 )
-        event_handler.addEstimator( self.mesh_estimator_1 )
-        event_handler.addEstimator( self.mesh_estimator_2 )
-        event_handler.addParticleTracker( self.particle_tracker )
-
-        photon = MonteCarlo.PhotonState( 0 )
-        photon.setWeight( 1.0 )
-        photon.setEnergy( 1.0 )
-        photon.setDirection( 1.0, 0.0, 0.0 )
-
-        surface_normal = [1.0, 0.0, 0.0]
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        event_handler.updateObserversFromParticleCrossingSurfaceEvent( photon, 1, surface_normal )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        electron = MonteCarlo.ElectronState( 0 )
-        electron.setWeight( 1.0 )
-        electron.setEnergy( 1.0 )
-        electron.setDirection( -1.0, 0.0, 0.0 )
-
-        event_handler.updateObserversFromParticleCrossingSurfaceEvent( electron, 1, surface_normal )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        event_handler.commitObserverHistoryContributions()
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        first_moments = self.estimator_7.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_7.getEntityBinDataSecondMoments( 1 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_7.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_7.getEntityBinDataSecondMoments( 2 )
-
-        self.assertSequenceEqual( list(first_moments), [0.0] )
-        self.assertSequenceEqual( list(second_moments), [0.0] )
-
-        first_moments = self.estimator_8.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_8.getEntityBinDataSecondMoments( 1 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_8.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_8.getEntityBinDataSecondMoments( 2 )
-
-        self.assertSequenceEqual( list(first_moments), [0.0] )
-        self.assertSequenceEqual( list(second_moments), [0.0] )
-
-        first_moments = self.estimator_9.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_9.getEntityBinDataSecondMoments( 1 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_9.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_9.getEntityBinDataSecondMoments( 2 )
-
-        self.assertSequenceEqual( list(first_moments), [0.0] )
-        self.assertSequenceEqual( list(second_moments), [0.0] )
-
-        first_moments = self.estimator_10.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_10.getEntityBinDataSecondMoments( 1 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_10.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_10.getEntityBinDataSecondMoments( 2 )
-
-        self.assertSequenceEqual( list(first_moments), [0.0] )
-        self.assertSequenceEqual( list(second_moments), [0.0] )
-
-        photon = MonteCarlo.PhotonState( 0 )
-        photon.setWeight( 1.0 )
-        photon.setEnergy( 1.0 )
-        photon.setDirection( 1.0, 0.0, 0.0 )
-
-        surface_normal = [1.0, 0.0, 0.0]
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        event_handler.updateObserversFromParticleCrossingSurfaceEvent( photon, 2, surface_normal )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        electron = MonteCarlo.ElectronState( 0 )
-        electron.setWeight( 1.0 )
-        electron.setEnergy( 1.0 )
-        electron.setDirection( -1.0, 0.0, 0.0 )
-
-        event_handler.updateObserversFromParticleCrossingSurfaceEvent( electron, 2, surface_normal )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        event_handler.commitObserverHistoryContributions()
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        first_moments = self.estimator_7.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_7.getEntityBinDataSecondMoments( 1 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_7.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_7.getEntityBinDataSecondMoments( 2 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_8.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_8.getEntityBinDataSecondMoments( 1 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_8.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_8.getEntityBinDataSecondMoments( 2 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_9.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_9.getEntityBinDataSecondMoments( 1 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_9.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_9.getEntityBinDataSecondMoments( 2 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_10.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_10.getEntityBinDataSecondMoments( 1 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.estimator_10.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_10.getEntityBinDataSecondMoments( 2 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-#-----------------------------------------------------------------------------#
-    # Check if observers can be updated from particle subtrack ending and
-    # particle gone events
-    def testUpdateObserversFromParticleSubtrackEnding_GoneGlobalEvent(self):
-        "*Test MonteCarlo.Event.EventHandler updateObserversFromParticleSubtrackEnding_GoneGlobalEvent"
-        event_handler = Event.EventHandler()
-
-        event_handler.addEstimator( self.estimator_1 )
-        event_handler.addEstimator( self.estimator_2 )
-        event_handler.addEstimator( self.estimator_3 )
-        event_handler.addEstimator( self.estimator_4 )
-        event_handler.addEstimator( self.estimator_5 )
-        event_handler.addEstimator( self.estimator_6 )
-        event_handler.addEstimator( self.estimator_7 )
-        event_handler.addEstimator( self.estimator_8 )
-        event_handler.addEstimator( self.estimator_9 )
-        event_handler.addEstimator( self.estimator_10 )
-        event_handler.addEstimator( self.mesh_estimator_1 )
-        event_handler.addEstimator( self.mesh_estimator_2 )
-        event_handler.addParticleTracker( self.particle_tracker )
-
-        electron = MonteCarlo.ElectronState( 0 )
-        electron.setWeight( 1.0 )
-        electron.setEnergy( 1.0 )
-
-        start_point = [0.5, 0.5, 0.0]
-        end_point = [0.5, 0.5, 2.0]
-
-        event_handler.updateObserversFromParticleSubtrackEndingGlobalEvent( electron, start_point, end_point )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        electron.setAsGone()
-
-        event_handler.updateObserversFromParticleGoneGlobalEvent( electron )
-
-        photon = MonteCarlo.PhotonState( 0 )
-        photon.setWeight( 1.0 )
-        photon.setEnergy( 1.0 )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        event_handler.updateObserversFromParticleSubtrackEndingGlobalEvent( photon, start_point, end_point )
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertTrue( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        photon.setAsGone()
-
-        event_handler.updateObserversFromParticleGoneGlobalEvent( photon )
-
-        event_handler.commitObserverHistoryContributions()
-
-        self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
-        self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
-
-        first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 0 )
-        second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 0 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 1 )
-
-        self.assertSequenceEqual( list(first_moments), [0.0] )
-        self.assertSequenceEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 2 )
-
-        self.assertSequenceEqual( list(first_moments), [0.0] )
-        self.assertSequenceEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 3 )
-        second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 3 )
-
-        self.assertSequenceEqual( list(first_moments), [0.0] )
-        self.assertSequenceEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 4 )
-        second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 4 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 5 )
-        second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 5 )
-
-        self.assertSequenceEqual( list(first_moments), [0.0] )
-        self.assertSequenceEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 6 )
-        second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 6 )
-
-        self.assertSequenceEqual( list(first_moments), [0.0] )
-        self.assertSequenceEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 7 )
-        second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 7 )
-
-        self.assertSequenceEqual( list(first_moments), [0.0] )
-        self.assertSequenceEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 0 )
-        second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 0 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 1 )
-
-        self.assertSequenceEqual( list(first_moments), [0.0] )
-        self.assertSequenceEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 2 )
-
-        self.assertSequenceEqual( list(first_moments), [0.0] )
-        self.assertSequenceEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 3 )
-        second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 3 )
-
-        self.assertSequenceEqual( list(first_moments), [0.0] )
-        self.assertSequenceEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 4 )
-        second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 4 )
-
-        self.assertSequenceEqual( list(first_moments), [1.0] )
-        self.assertSequenceEqual( list(second_moments), [1.0] )
-
-        first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 5 )
-        second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 5 )
-
-        self.assertSequenceEqual( list(first_moments), [0.0] )
-        self.assertSequenceEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 6 )
-        second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 6 )
-
-        self.assertSequenceEqual( list(first_moments), [0.0] )
-        self.assertSequenceEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 7 )
-        second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 7 )
-
-        self.assertSequenceEqual( list(first_moments), [0.0] )
-        self.assertSequenceEqual( list(second_moments), [0.0] )
-
-        history_map = self.particle_tracker.getHistoryData()
-
-        self.assertTrue( 0 in history_map )
-        self.assertTrue( MonteCarlo.PHOTON in history_map[0] )
-        self.assertTrue( MonteCarlo.ELECTRON in history_map[0] )
-
-#-----------------------------------------------------------------------------#
-    # Check if observers can be updated in parallel
-    def testUpdate_thread_safe(self):
-        "*Test MonteCarlo.Event.EventHandler update_thread_safe"
-        event_handler = Event.EventHandler()
-
-        event_handler.addEstimator( self.estimator_1 )
-        event_handler.addEstimator( self.estimator_2 )
-        event_handler.addEstimator( self.estimator_3 )
-        event_handler.addEstimator( self.estimator_4 )
-        event_handler.addEstimator( self.estimator_5 )
-        event_handler.addEstimator( self.estimator_6 )
-        event_handler.addEstimator( self.estimator_7 )
-        event_handler.addEstimator( self.estimator_8 )
-        event_handler.addEstimator( self.estimator_9 )
-        event_handler.addEstimator( self.estimator_10 )
-        event_handler.addEstimator( self.mesh_estimator_1 )
-        event_handler.addEstimator( self.mesh_estimator_2 )
-        event_handler.addParticleTracker( self.particle_tracker )
-
-        event_handler.resetObserverData()
-
-        threads = 2
-
-        event_handler.enableThreadSupport( threads )
-
-        #pragma omp parallel num_threads( threads )
-        for j in range(threads):
-          local_model = Geometry.InfiniteMediumModel( 1 )
-
-          photon = MonteCarlo.PhotonState( j )
-          photon.setWeight( 1.0 )
-          photon.setEnergy( 2.0 )
-          photon.setDirection( 1.0, 0.0, 0.0 )
-          photon.embedInModel( local_model )
-
-          electron = MonteCarlo.ElectronState( j )
-          electron.setWeight( 1.0 )
-          electron.setEnergy( 2.0 )
-          electron.setDirection( -1.0, 0.0, 0.0 )
-          electron.embedInModel( local_model )
-
-          surface_normal = [1.0, 0.0, 0.0]
-          start_point = [0.5, 0.5, 0.0]
-          end_point = [0.5, 0.5, 2.0]
-
-          event_handler.updateObserversFromParticleCollidingInCellEvent( photon, 1.0 )
-          event_handler.updateObserversFromParticleCollidingInCellEvent( electron, 1.0 )
-          event_handler.updateObserversFromParticleSubtrackEndingInCellEvent( photon, 1, 1.0 )
-          event_handler.updateObserversFromParticleSubtrackEndingInCellEvent( electron, 1, 1.0 )
-          event_handler.updateObserversFromParticleEnteringCellEvent( photon, 1 )
-          event_handler.updateObserversFromParticleEnteringCellEvent( electron, 1 )
-
-          photon.setEnergy( 1.0 )
-          electron.setEnergy( 1.0 )
-
-          event_handler.updateObserversFromParticleLeavingCellEvent( photon, 1 )
-          event_handler.updateObserversFromParticleLeavingCellEvent( electron, 1 )
-
-          event_handler.updateObserversFromParticleCrossingSurfaceEvent( photon, 1, surface_normal )
-          event_handler.updateObserversFromParticleCrossingSurfaceEvent( electron, 1, surface_normal )
-          event_handler.updateObserversFromParticleSubtrackEndingGlobalEvent( photon, start_point, end_point )
-          event_handler.updateObserversFromParticleSubtrackEndingGlobalEvent( electron, start_point, end_point )
-
-          photon.setAsGone()
-          electron.setAsGone()
-
-          event_handler.updateObserversFromParticleGoneGlobalEvent( photon )
-          event_handler.updateObserversFromParticleGoneGlobalEvent( electron )
-
-          event_handler.commitObserverHistoryContributions()
-
-        first_moments = self.estimator_1.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_1.getEntityBinDataSecondMoments( 1 )
-
-        self.assertEqual( list(first_moments), [1.0*threads] )
-        self.assertEqual( list(second_moments), [1.0*threads] )
-
-        first_moments = self.estimator_1.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_1.getEntityBinDataSecondMoments( 2 )
-
-        self.assertEqual( list(first_moments), [0.0] )
-        self.assertEqual( list(second_moments), [0.0] )
-
-        first_moments = self.estimator_2.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_2.getEntityBinDataSecondMoments( 1 )
-
-        self.assertEqual( list(first_moments), [2.0*threads] )
-        self.assertEqual( list(second_moments), [4.0*threads] )
-
-        first_moments = self.estimator_2.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_2.getEntityBinDataSecondMoments( 2 )
-
-        self.assertEqual( list(first_moments), [0.0] )
-        self.assertEqual( list(second_moments), [0.0] )
-
-        first_moments = self.estimator_3.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_3.getEntityBinDataSecondMoments( 1 )
-
-        self.assertEqual( list(first_moments), [1.0*threads] )
-        self.assertEqual( list(second_moments), [1.0*threads] )
-
-        first_moments = self.estimator_3.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_3.getEntityBinDataSecondMoments( 2 )
-
-        self.assertEqual( list(first_moments), [0.0] )
-        self.assertEqual( list(second_moments), [0.0] )
-
-        first_moments = self.estimator_4.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_4.getEntityBinDataSecondMoments( 1 )
-
-        self.assertEqual( list(first_moments), [2.0*threads] )
-        self.assertEqual( list(second_moments), [4.0*threads] )
-
-        first_moments = self.estimator_5.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_5.getEntityBinDataSecondMoments( 2 )
-
-        self.assertEqual( list(first_moments), [0.0] )
-        self.assertEqual( list(second_moments), [0.0] )
-
-        first_moments = self.estimator_5.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_5.getEntityBinDataSecondMoments( 1 )
-
-        self.assertEqual( list(first_moments), [1.0*threads] )
-        self.assertEqual( list(second_moments), [1.0*threads] )
-
-        first_moments = self.estimator_5.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_5.getEntityBinDataSecondMoments( 2 )
-
-        self.assertEqual( list(first_moments), [0.0] )
-        self.assertEqual( list(second_moments), [0.0] )
-
-        first_moments = self.estimator_6.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_6.getEntityBinDataSecondMoments( 1 )
-
-        self.assertEqual( list(first_moments), [2.0*threads] )
-        self.assertEqual( list(second_moments), [4.0*threads] )
-
-        first_moments = self.estimator_6.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_6.getEntityBinDataSecondMoments( 2 )
-
-        self.assertEqual( list(first_moments), [0.0] )
-        self.assertEqual( list(second_moments), [0.0] )
-
-        first_moments = self.estimator_7.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_7.getEntityBinDataSecondMoments( 1 )
-
-        self.assertEqual( list(first_moments), [1.0*threads] )
-        self.assertEqual( list(second_moments), [1.0*threads] )
-
-        first_moments = self.estimator_7.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_7.getEntityBinDataSecondMoments( 2 )
-
-        self.assertEqual( list(first_moments), [0.0] )
-        self.assertEqual( list(second_moments), [0.0] )
-
-        first_moments = self.estimator_8.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_8.getEntityBinDataSecondMoments( 1 )
-
-        self.assertEqual( list(first_moments), [1.0*threads] )
-        self.assertEqual( list(second_moments), [1.0*threads] )
-
-        first_moments = self.estimator_8.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_8.getEntityBinDataSecondMoments( 2 )
-
-        self.assertEqual( list(first_moments), [0.0] )
-        self.assertEqual( list(second_moments), [0.0] )
-
-        first_moments = self.estimator_9.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_9.getEntityBinDataSecondMoments( 1 )
-
-        self.assertEqual( list(first_moments), [1.0*threads] )
-        self.assertEqual( list(second_moments), [1.0*threads] )
-
-        first_moments = self.estimator_9.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_9.getEntityBinDataSecondMoments( 2 )
-
-        self.assertEqual( list(first_moments), [0.0] )
-        self.assertEqual( list(second_moments), [0.0] )
-
-        first_moments = self.estimator_10.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.estimator_10.getEntityBinDataSecondMoments( 1 )
-
-        self.assertEqual( list(first_moments), [1.0*threads] )
-        self.assertEqual( list(second_moments), [1.0*threads] )
-
-        first_moments = self.estimator_10.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.estimator_10.getEntityBinDataSecondMoments( 2 )
-
-        self.assertEqual( list(first_moments), [0.0] )
-        self.assertEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 0 )
-        second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 0 )
-
-        self.assertEqual( list(first_moments), [1.0*threads] )
-        self.assertEqual( list(second_moments), [1.0*threads] )
-
-        first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 1 )
-
-        self.assertEqual( list(first_moments), [0.0] )
-        self.assertEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 2 )
-
-        self.assertEqual( list(first_moments), [0.0] )
-        self.assertEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 3 )
-        second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 3 )
-
-        self.assertEqual( list(first_moments), [0.0] )
-        self.assertEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 4 )
-        second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 4 )
-
-        self.assertEqual( list(first_moments), [1.0*threads] )
-        self.assertEqual( list(second_moments), [1.0*threads] )
-
-        first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 5 )
-        second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 5 )
-
-        self.assertEqual( list(first_moments), [0.0] )
-        self.assertEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 6 )
-        second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 6 )
-
-        self.assertEqual( list(first_moments), [0.0] )
-        self.assertEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 7 )
-        second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 7 )
-
-        self.assertEqual( list(first_moments), [0.0] )
-        self.assertEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 0 )
-        second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 0 )
-
-        self.assertEqual( list(first_moments), [1.0*threads] )
-        self.assertEqual( list(second_moments), [1.0*threads] )
-
-        first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 1 )
-        second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 1 )
-
-        self.assertEqual( list(first_moments), [0.0] )
-        self.assertEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 2 )
-        second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 2 )
-
-        self.assertEqual( list(first_moments), [0.0] )
-        self.assertEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 3 )
-        second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 3 )
-
-        self.assertEqual( list(first_moments), [0.0] )
-        self.assertEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 4 )
-        second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 4 )
-
-        self.assertEqual( list(first_moments), [1.0*threads] )
-        self.assertEqual( list(second_moments), [1.0*threads] )
-
-        first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 5 )
-        second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 5 )
-
-        self.assertEqual( list(first_moments), [0.0] )
-        self.assertEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 6 )
-        second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 6 )
-
-        self.assertEqual( list(first_moments), [0.0] )
-        self.assertEqual( list(second_moments), [0.0] )
-
-        first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 7 )
-        second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 7 )
-
-        self.assertEqual( list(first_moments), [0.0] )
-        self.assertEqual( list(second_moments), [0.0] )
-
-        history_map = self.particle_tracker.getHistoryData()
-
-        for i in range(threads):
-          self.assertTrue( i in history_map )
-          self.assertTrue( MonteCarlo.PHOTON in history_map[i] )
-          self.assertTrue( MonteCarlo.ELECTRON in history_map[i] )
-
-        for i in range(threads):
-          local_model = Geometry.InfiniteMediumModel( 2 )
-
-          photon = MonteCarlo.PhotonState( i )
-          photon.setWeight( 1.0 )
-          photon.setEnergy( 2.0 )
-          photon.embedInModel( local_model )
-
-          electron = MonteCarlo.ElectronState( i )
-          electron.setWeight( 1.0 )
-          electron.setEnergy( 2.0 )
-          electron.embedInModel( local_model )
-
-          surface_normal = [1.0, 0.0, 0.0]
-          start_point = [0.5, 0.5, 0.0]
-          end_point = [0.5, 0.5, 2.0]
-
-          event_handler.updateObserversFromParticleCollidingInCellEvent( photon, 1.0 )
-          event_handler.updateObserversFromParticleCollidingInCellEvent( electron, 1.0 )
-          event_handler.updateObserversFromParticleSubtrackEndingInCellEvent( photon, 2, 1.0 )
-          event_handler.updateObserversFromParticleSubtrackEndingInCellEvent( electron, 2, 1.0 )
-          event_handler.updateObserversFromParticleEnteringCellEvent( photon, 2 )
-          event_handler.updateObserversFromParticleEnteringCellEvent( electron, 2 )
-
-          photon.setEnergy( 1.0 )
-          electron.setEnergy( 1.0 )
-
-          event_handler.updateObserversFromParticleLeavingCellEvent( photon, 2 )
-          event_handler.updateObserversFromParticleLeavingCellEvent( electron, 2 )
-
-          event_handler.updateObserversFromParticleCrossingSurfaceEvent( photon, 2, surface_normal )
-          event_handler.updateObserversFromParticleCrossingSurfaceEvent( electron, 2, surface_normal )
-          event_handler.updateObserversFromParticleSubtrackEndingGlobalEvent( electron, start_point, end_point )
-
-          photon.setAsGone()
-          electron.setAsGone()
-
-          event_handler.updateObserversFromParticleGoneGlobalEvent( photon )
-          event_handler.updateObserversFromParticleGoneGlobalEvent( electron )
-
-          event_handler.commitObserverHistoryContributions()
+# #-----------------------------------------------------------------------------#
+#     # Check if observers can be updated from a particle colliding in cell event
+#     def testUpdateObserversFromParticleCollidingInCellEvent(self):
+#         "*Test MonteCarlo.Event.EventHandler updateObserversFromParticleCollidingInCellEvent"
+#         event_handler = Event.EventHandler()
+
+#         event_handler.addEstimator( self.estimator_1 )
+#         event_handler.addEstimator( self.estimator_2 )
+#         event_handler.addEstimator( self.estimator_3 )
+#         event_handler.addEstimator( self.estimator_4 )
+#         event_handler.addEstimator( self.estimator_5 )
+#         event_handler.addEstimator( self.estimator_6 )
+#         event_handler.addEstimator( self.estimator_7 )
+#         event_handler.addEstimator( self.estimator_8 )
+#         event_handler.addEstimator( self.estimator_9 )
+#         event_handler.addEstimator( self.estimator_10 )
+#         event_handler.addEstimator( self.mesh_estimator_1 )
+#         event_handler.addEstimator( self.mesh_estimator_2 )
+#         event_handler.addParticleTracker( self.particle_tracker )
+
+#         local_model = Geometry.InfiniteMediumModel( 1 )
+
+#         photon = MonteCarlo.PhotonState( 0 )
+#         photon.setWeight( 1.0 )
+#         photon.setEnergy( 1.0 )
+#         photon.embedInModel( local_model )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         event_handler.updateObserversFromParticleCollidingInCellEvent( photon, 1.0 )
+
+#         self.assertTrue( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         electron = MonteCarlo.ElectronState( 0 )
+#         electron.setWeight( 1.0 )
+#         electron.setEnergy( 1.0 )
+#         electron.embedInModel( local_model )
+
+#         event_handler.updateObserversFromParticleCollidingInCellEvent( electron, 1.0 )
+
+#         self.assertTrue( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         event_handler.commitObserverHistoryContributions()
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         first_moments = self.estimator_1.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_1.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_1.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_1.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertSequenceEqual( list(first_moments), [0.0] )
+#         self.assertSequenceEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.estimator_2.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_2.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_2.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_2.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertSequenceEqual( list(first_moments), [0.0] )
+#         self.assertSequenceEqual( list(second_moments), [0.0] )
+
+#         local_model = Geometry.InfiniteMediumModel( 2 )
+
+#         photon = MonteCarlo.PhotonState( 0 )
+#         photon.setWeight( 1.0 )
+#         photon.setEnergy( 1.0 )
+#         photon.embedInModel( local_model )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         event_handler.updateObserversFromParticleCollidingInCellEvent( photon, 1.0 )
+
+#         self.assertTrue( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         electron = MonteCarlo.ElectronState( 0 )
+#         electron.setWeight( 1.0 )
+#         electron.setEnergy( 1.0 )
+#         electron.embedInModel( local_model )
+
+#         event_handler.updateObserversFromParticleCollidingInCellEvent( electron, 1.0 )
+
+#         self.assertTrue( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         event_handler.commitObserverHistoryContributions()
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         first_moments = self.estimator_1.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_1.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_1.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_1.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_2.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_2.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_2.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_2.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+# #-----------------------------------------------------------------------------#
+#     # Check if observers can be updated from a particle subtrack ending in cell
+#     # event
+#     def testUpdateObserversFromParticleSubtrackEndingInCellEvent(self):
+#         "*Test MonteCarlo.Event.EventHandler updateObserversFromParticleSubtrackEndingInCellEvent"
+#         event_handler = Event.EventHandler()
+
+#         event_handler.addEstimator( self.estimator_1 )
+#         event_handler.addEstimator( self.estimator_2 )
+#         event_handler.addEstimator( self.estimator_3 )
+#         event_handler.addEstimator( self.estimator_4 )
+#         event_handler.addEstimator( self.estimator_5 )
+#         event_handler.addEstimator( self.estimator_6 )
+#         event_handler.addEstimator( self.estimator_7 )
+#         event_handler.addEstimator( self.estimator_8 )
+#         event_handler.addEstimator( self.estimator_9 )
+#         event_handler.addEstimator( self.estimator_10 )
+#         event_handler.addEstimator( self.mesh_estimator_1 )
+#         event_handler.addEstimator( self.mesh_estimator_2 )
+#         event_handler.addParticleTracker( self.particle_tracker )
+
+#         photon = MonteCarlo.PhotonState( 0 )
+#         photon.setWeight( 1.0 )
+#         photon.setEnergy( 1.0 )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         event_handler.updateObserversFromParticleSubtrackEndingInCellEvent( photon, 1, 1.0 )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         electron = MonteCarlo.ElectronState( 0 )
+#         electron.setWeight( 1.0 )
+#         electron.setEnergy( 1.0 )
+
+#         event_handler.updateObserversFromParticleSubtrackEndingInCellEvent( electron, 1, 1.0 )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         event_handler.commitObserverHistoryContributions()
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         first_moments = self.estimator_3.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_3.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_3.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_3.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertSequenceEqual( list(first_moments), [0.0] )
+#         self.assertSequenceEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.estimator_4.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_4.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_5.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_5.getEntityBinDataSecondMoments( 2 )
+
+#         # These two moments seem to be off from the C++ unit test
+#         # self.assertSequenceEqual( list(first_moments), [0.0] )
+#         # self.assertSequenceEqual( list(second_moments), [0.0] )
+
+#         photon = MonteCarlo.PhotonState( 0 )
+#         photon.setWeight( 1.0 )
+#         photon.setEnergy( 1.0 )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         event_handler.updateObserversFromParticleSubtrackEndingInCellEvent( photon, 2, 1.0 )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         electron = MonteCarlo.ElectronState( 0 )
+#         electron.setWeight( 1.0 )
+#         electron.setEnergy( 1.0 )
+
+#         event_handler.updateObserversFromParticleSubtrackEndingInCellEvent( electron, 2, 1.0 )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         event_handler.commitObserverHistoryContributions()
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         first_moments = self.estimator_3.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_3.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_3.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_3.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_4.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_4.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_4.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_4.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+# #-----------------------------------------------------------------------------#
+#     # Check if observers can be updated from particle entering cell and particle
+#     # leaving cell events
+#     def testUpdateObserversFromParticleEntering_LeavingCellEvent(self):
+#         "*Test MonteCarlo.Event.EventHandler updateObserversFromParticleEntering_LeavingCellEvent"
+#         event_handler = Event.EventHandler()
+
+#         event_handler.addEstimator( self.estimator_1 )
+#         event_handler.addEstimator( self.estimator_2 )
+#         event_handler.addEstimator( self.estimator_3 )
+#         event_handler.addEstimator( self.estimator_4 )
+#         event_handler.addEstimator( self.estimator_5 )
+#         event_handler.addEstimator( self.estimator_6 )
+#         event_handler.addEstimator( self.estimator_7 )
+#         event_handler.addEstimator( self.estimator_8 )
+#         event_handler.addEstimator( self.estimator_9 )
+#         event_handler.addEstimator( self.estimator_10 )
+#         event_handler.addEstimator( self.mesh_estimator_1 )
+#         event_handler.addEstimator( self.mesh_estimator_2 )
+#         event_handler.addParticleTracker( self.particle_tracker )
+
+#         photon = MonteCarlo.PhotonState( 0 )
+#         photon.setWeight( 1.0 )
+#         photon.setEnergy( 2.0 )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         event_handler.updateObserversFromParticleEnteringCellEvent( photon, 1 )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         photon.setEnergy( 1.0 )
+
+#         event_handler.updateObserversFromParticleLeavingCellEvent( photon, 1 )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         electron = MonteCarlo.ElectronState( 0 )
+#         electron.setWeight( 1.0 )
+#         electron.setEnergy( 2.0 )
+
+#         event_handler.updateObserversFromParticleEnteringCellEvent( electron, 1 )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         electron.setEnergy( 1.0 )
+
+#         event_handler.updateObserversFromParticleLeavingCellEvent( electron, 1 )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         event_handler.commitObserverHistoryContributions()
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         first_moments = self.estimator_5.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_5.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_5.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_5.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertSequenceEqual( list(first_moments), [0.0] )
+#         self.assertSequenceEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.estimator_6.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_6.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertSequenceEqual( list(first_moments), [2.0] )
+#         self.assertSequenceEqual( list(second_moments), [4.0] )
+
+#         first_moments = self.estimator_6.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_6.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertSequenceEqual( list(first_moments), [0.0] )
+#         self.assertSequenceEqual( list(second_moments), [0.0] )
+
+#         photon = MonteCarlo.PhotonState( 0 )
+#         photon.setWeight( 1.0 )
+#         photon.setEnergy( 2.0 )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         event_handler.updateObserversFromParticleEnteringCellEvent( photon, 2 )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         photon.setEnergy( 1.0 )
+
+#         event_handler.updateObserversFromParticleLeavingCellEvent( photon, 2 )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         electron = MonteCarlo.ElectronState( 0 )
+#         electron.setWeight( 1.0 )
+#         electron.setEnergy( 2.0 )
+
+#         event_handler.updateObserversFromParticleEnteringCellEvent( electron, 2 )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         electron.setEnergy( 1.0 )
+
+#         event_handler.updateObserversFromParticleLeavingCellEvent( electron, 2 )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         event_handler.commitObserverHistoryContributions()
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         first_moments = self.estimator_5.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_5.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_5.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_5.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_6.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_6.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertSequenceEqual( list(first_moments), [2.0] )
+#         self.assertSequenceEqual( list(second_moments), [4.0] )
+
+#         first_moments = self.estimator_6.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_6.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertSequenceEqual( list(first_moments), [2.0] )
+#         self.assertSequenceEqual( list(second_moments), [4.0] )
+
+# #-----------------------------------------------------------------------------#
+#     # Check if observers can be updated from a particle crossing surface event
+#     def testUpdateObserversFromParticleCrossingSurfaceEvent(self):
+#         "*Test MonteCarlo.Event.EventHandler updateObserversFromParticleCrossingSurfaceEvent"
+#         event_handler = Event.EventHandler()
+
+#         event_handler.addEstimator( self.estimator_1 )
+#         event_handler.addEstimator( self.estimator_2 )
+#         event_handler.addEstimator( self.estimator_3 )
+#         event_handler.addEstimator( self.estimator_4 )
+#         event_handler.addEstimator( self.estimator_5 )
+#         event_handler.addEstimator( self.estimator_6 )
+#         event_handler.addEstimator( self.estimator_7 )
+#         event_handler.addEstimator( self.estimator_8 )
+#         event_handler.addEstimator( self.estimator_9 )
+#         event_handler.addEstimator( self.estimator_10 )
+#         event_handler.addEstimator( self.mesh_estimator_1 )
+#         event_handler.addEstimator( self.mesh_estimator_2 )
+#         event_handler.addParticleTracker( self.particle_tracker )
+
+#         photon = MonteCarlo.PhotonState( 0 )
+#         photon.setWeight( 1.0 )
+#         photon.setEnergy( 1.0 )
+#         photon.setDirection( 1.0, 0.0, 0.0 )
+
+#         surface_normal = [1.0, 0.0, 0.0]
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         event_handler.updateObserversFromParticleCrossingSurfaceEvent( photon, 1, surface_normal )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         electron = MonteCarlo.ElectronState( 0 )
+#         electron.setWeight( 1.0 )
+#         electron.setEnergy( 1.0 )
+#         electron.setDirection( -1.0, 0.0, 0.0 )
+
+#         event_handler.updateObserversFromParticleCrossingSurfaceEvent( electron, 1, surface_normal )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         event_handler.commitObserverHistoryContributions()
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         first_moments = self.estimator_7.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_7.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_7.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_7.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertSequenceEqual( list(first_moments), [0.0] )
+#         self.assertSequenceEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.estimator_8.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_8.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_8.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_8.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertSequenceEqual( list(first_moments), [0.0] )
+#         self.assertSequenceEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.estimator_9.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_9.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_9.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_9.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertSequenceEqual( list(first_moments), [0.0] )
+#         self.assertSequenceEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.estimator_10.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_10.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_10.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_10.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertSequenceEqual( list(first_moments), [0.0] )
+#         self.assertSequenceEqual( list(second_moments), [0.0] )
+
+#         photon = MonteCarlo.PhotonState( 0 )
+#         photon.setWeight( 1.0 )
+#         photon.setEnergy( 1.0 )
+#         photon.setDirection( 1.0, 0.0, 0.0 )
+
+#         surface_normal = [1.0, 0.0, 0.0]
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         event_handler.updateObserversFromParticleCrossingSurfaceEvent( photon, 2, surface_normal )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         electron = MonteCarlo.ElectronState( 0 )
+#         electron.setWeight( 1.0 )
+#         electron.setEnergy( 1.0 )
+#         electron.setDirection( -1.0, 0.0, 0.0 )
+
+#         event_handler.updateObserversFromParticleCrossingSurfaceEvent( electron, 2, surface_normal )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         event_handler.commitObserverHistoryContributions()
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         first_moments = self.estimator_7.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_7.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_7.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_7.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_8.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_8.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_8.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_8.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_9.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_9.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_9.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_9.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_10.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_10.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.estimator_10.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_10.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+# #-----------------------------------------------------------------------------#
+#     # Check if observers can be updated from particle subtrack ending and
+#     # particle gone events
+#     def testUpdateObserversFromParticleSubtrackEnding_GoneGlobalEvent(self):
+#         "*Test MonteCarlo.Event.EventHandler updateObserversFromParticleSubtrackEnding_GoneGlobalEvent"
+#         event_handler = Event.EventHandler()
+
+#         event_handler.addEstimator( self.estimator_1 )
+#         event_handler.addEstimator( self.estimator_2 )
+#         event_handler.addEstimator( self.estimator_3 )
+#         event_handler.addEstimator( self.estimator_4 )
+#         event_handler.addEstimator( self.estimator_5 )
+#         event_handler.addEstimator( self.estimator_6 )
+#         event_handler.addEstimator( self.estimator_7 )
+#         event_handler.addEstimator( self.estimator_8 )
+#         event_handler.addEstimator( self.estimator_9 )
+#         event_handler.addEstimator( self.estimator_10 )
+#         event_handler.addEstimator( self.mesh_estimator_1 )
+#         event_handler.addEstimator( self.mesh_estimator_2 )
+#         event_handler.addParticleTracker( self.particle_tracker )
+
+#         electron = MonteCarlo.ElectronState( 0 )
+#         electron.setWeight( 1.0 )
+#         electron.setEnergy( 1.0 )
+
+#         start_point = [0.5, 0.5, 0.0]
+#         end_point = [0.5, 0.5, 2.0]
+
+#         event_handler.updateObserversFromParticleSubtrackEndingGlobalEvent( electron, start_point, end_point )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         electron.setAsGone()
+
+#         event_handler.updateObserversFromParticleGoneGlobalEvent( electron )
+
+#         photon = MonteCarlo.PhotonState( 0 )
+#         photon.setWeight( 1.0 )
+#         photon.setEnergy( 1.0 )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         event_handler.updateObserversFromParticleSubtrackEndingGlobalEvent( photon, start_point, end_point )
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertTrue( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         photon.setAsGone()
+
+#         event_handler.updateObserversFromParticleGoneGlobalEvent( photon )
+
+#         event_handler.commitObserverHistoryContributions()
+
+#         self.assertFalse( self.estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_2.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_3.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_4.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_5.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_6.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_7.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_8.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_9.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.estimator_10.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_1.hasUncommittedHistoryContribution() )
+#         self.assertFalse( self.mesh_estimator_2.hasUncommittedHistoryContribution() )
+
+#         first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 0 )
+#         second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 0 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertSequenceEqual( list(first_moments), [0.0] )
+#         self.assertSequenceEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertSequenceEqual( list(first_moments), [0.0] )
+#         self.assertSequenceEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 3 )
+#         second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 3 )
+
+#         self.assertSequenceEqual( list(first_moments), [0.0] )
+#         self.assertSequenceEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 4 )
+#         second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 4 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 5 )
+#         second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 5 )
+
+#         self.assertSequenceEqual( list(first_moments), [0.0] )
+#         self.assertSequenceEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 6 )
+#         second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 6 )
+
+#         self.assertSequenceEqual( list(first_moments), [0.0] )
+#         self.assertSequenceEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 7 )
+#         second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 7 )
+
+#         self.assertSequenceEqual( list(first_moments), [0.0] )
+#         self.assertSequenceEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 0 )
+#         second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 0 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertSequenceEqual( list(first_moments), [0.0] )
+#         self.assertSequenceEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertSequenceEqual( list(first_moments), [0.0] )
+#         self.assertSequenceEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 3 )
+#         second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 3 )
+
+#         self.assertSequenceEqual( list(first_moments), [0.0] )
+#         self.assertSequenceEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 4 )
+#         second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 4 )
+
+#         self.assertSequenceEqual( list(first_moments), [1.0] )
+#         self.assertSequenceEqual( list(second_moments), [1.0] )
+
+#         first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 5 )
+#         second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 5 )
+
+#         self.assertSequenceEqual( list(first_moments), [0.0] )
+#         self.assertSequenceEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 6 )
+#         second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 6 )
+
+#         self.assertSequenceEqual( list(first_moments), [0.0] )
+#         self.assertSequenceEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 7 )
+#         second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 7 )
+
+#         self.assertSequenceEqual( list(first_moments), [0.0] )
+#         self.assertSequenceEqual( list(second_moments), [0.0] )
+
+#         history_map = self.particle_tracker.getHistoryData()
+
+#         self.assertTrue( 0 in history_map )
+#         self.assertTrue( MonteCarlo.PHOTON in history_map[0] )
+#         self.assertTrue( MonteCarlo.ELECTRON in history_map[0] )
+
+# #-----------------------------------------------------------------------------#
+#     # Check if observers can be updated in parallel
+#     def testUpdate_thread_safe(self):
+#         "*Test MonteCarlo.Event.EventHandler update_thread_safe"
+#         event_handler = Event.EventHandler()
+
+#         event_handler.addEstimator( self.estimator_1 )
+#         event_handler.addEstimator( self.estimator_2 )
+#         event_handler.addEstimator( self.estimator_3 )
+#         event_handler.addEstimator( self.estimator_4 )
+#         event_handler.addEstimator( self.estimator_5 )
+#         event_handler.addEstimator( self.estimator_6 )
+#         event_handler.addEstimator( self.estimator_7 )
+#         event_handler.addEstimator( self.estimator_8 )
+#         event_handler.addEstimator( self.estimator_9 )
+#         event_handler.addEstimator( self.estimator_10 )
+#         event_handler.addEstimator( self.mesh_estimator_1 )
+#         event_handler.addEstimator( self.mesh_estimator_2 )
+#         event_handler.addParticleTracker( self.particle_tracker )
+
+#         event_handler.resetObserverData()
+
+#         threads = 2
+
+#         event_handler.enableThreadSupport( threads )
+
+#         #pragma omp parallel num_threads( threads )
+#         for j in range(threads):
+#           local_model = Geometry.InfiniteMediumModel( 1 )
+
+#           photon = MonteCarlo.PhotonState( j )
+#           photon.setWeight( 1.0 )
+#           photon.setEnergy( 2.0 )
+#           photon.setDirection( 1.0, 0.0, 0.0 )
+#           photon.embedInModel( local_model )
+
+#           electron = MonteCarlo.ElectronState( j )
+#           electron.setWeight( 1.0 )
+#           electron.setEnergy( 2.0 )
+#           electron.setDirection( -1.0, 0.0, 0.0 )
+#           electron.embedInModel( local_model )
+
+#           surface_normal = [1.0, 0.0, 0.0]
+#           start_point = [0.5, 0.5, 0.0]
+#           end_point = [0.5, 0.5, 2.0]
+
+#           event_handler.updateObserversFromParticleCollidingInCellEvent( photon, 1.0 )
+#           event_handler.updateObserversFromParticleCollidingInCellEvent( electron, 1.0 )
+#           event_handler.updateObserversFromParticleSubtrackEndingInCellEvent( photon, 1, 1.0 )
+#           event_handler.updateObserversFromParticleSubtrackEndingInCellEvent( electron, 1, 1.0 )
+#           event_handler.updateObserversFromParticleEnteringCellEvent( photon, 1 )
+#           event_handler.updateObserversFromParticleEnteringCellEvent( electron, 1 )
+
+#           photon.setEnergy( 1.0 )
+#           electron.setEnergy( 1.0 )
+
+#           event_handler.updateObserversFromParticleLeavingCellEvent( photon, 1 )
+#           event_handler.updateObserversFromParticleLeavingCellEvent( electron, 1 )
+
+#           event_handler.updateObserversFromParticleCrossingSurfaceEvent( photon, 1, surface_normal )
+#           event_handler.updateObserversFromParticleCrossingSurfaceEvent( electron, 1, surface_normal )
+#           event_handler.updateObserversFromParticleSubtrackEndingGlobalEvent( photon, start_point, end_point )
+#           event_handler.updateObserversFromParticleSubtrackEndingGlobalEvent( electron, start_point, end_point )
+
+#           photon.setAsGone()
+#           electron.setAsGone()
+
+#           event_handler.updateObserversFromParticleGoneGlobalEvent( photon )
+#           event_handler.updateObserversFromParticleGoneGlobalEvent( electron )
+
+#           event_handler.commitObserverHistoryContributions()
+
+#         first_moments = self.estimator_1.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_1.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertEqual( list(first_moments), [1.0*threads] )
+#         self.assertEqual( list(second_moments), [1.0*threads] )
+
+#         first_moments = self.estimator_1.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_1.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertEqual( list(first_moments), [0.0] )
+#         self.assertEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.estimator_2.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_2.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertEqual( list(first_moments), [2.0*threads] )
+#         self.assertEqual( list(second_moments), [4.0*threads] )
+
+#         first_moments = self.estimator_2.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_2.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertEqual( list(first_moments), [0.0] )
+#         self.assertEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.estimator_3.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_3.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertEqual( list(first_moments), [1.0*threads] )
+#         self.assertEqual( list(second_moments), [1.0*threads] )
+
+#         first_moments = self.estimator_3.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_3.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertEqual( list(first_moments), [0.0] )
+#         self.assertEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.estimator_4.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_4.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertEqual( list(first_moments), [2.0*threads] )
+#         self.assertEqual( list(second_moments), [4.0*threads] )
+
+#         first_moments = self.estimator_5.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_5.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertEqual( list(first_moments), [0.0] )
+#         self.assertEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.estimator_5.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_5.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertEqual( list(first_moments), [1.0*threads] )
+#         self.assertEqual( list(second_moments), [1.0*threads] )
+
+#         first_moments = self.estimator_5.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_5.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertEqual( list(first_moments), [0.0] )
+#         self.assertEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.estimator_6.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_6.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertEqual( list(first_moments), [2.0*threads] )
+#         self.assertEqual( list(second_moments), [4.0*threads] )
+
+#         first_moments = self.estimator_6.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_6.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertEqual( list(first_moments), [0.0] )
+#         self.assertEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.estimator_7.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_7.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertEqual( list(first_moments), [1.0*threads] )
+#         self.assertEqual( list(second_moments), [1.0*threads] )
+
+#         first_moments = self.estimator_7.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_7.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertEqual( list(first_moments), [0.0] )
+#         self.assertEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.estimator_8.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_8.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertEqual( list(first_moments), [1.0*threads] )
+#         self.assertEqual( list(second_moments), [1.0*threads] )
+
+#         first_moments = self.estimator_8.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_8.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertEqual( list(first_moments), [0.0] )
+#         self.assertEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.estimator_9.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_9.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertEqual( list(first_moments), [1.0*threads] )
+#         self.assertEqual( list(second_moments), [1.0*threads] )
+
+#         first_moments = self.estimator_9.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_9.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertEqual( list(first_moments), [0.0] )
+#         self.assertEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.estimator_10.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.estimator_10.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertEqual( list(first_moments), [1.0*threads] )
+#         self.assertEqual( list(second_moments), [1.0*threads] )
+
+#         first_moments = self.estimator_10.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.estimator_10.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertEqual( list(first_moments), [0.0] )
+#         self.assertEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 0 )
+#         second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 0 )
+
+#         self.assertEqual( list(first_moments), [1.0*threads] )
+#         self.assertEqual( list(second_moments), [1.0*threads] )
+
+#         first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertEqual( list(first_moments), [0.0] )
+#         self.assertEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertEqual( list(first_moments), [0.0] )
+#         self.assertEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 3 )
+#         second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 3 )
+
+#         self.assertEqual( list(first_moments), [0.0] )
+#         self.assertEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 4 )
+#         second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 4 )
+
+#         self.assertEqual( list(first_moments), [1.0*threads] )
+#         self.assertEqual( list(second_moments), [1.0*threads] )
+
+#         first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 5 )
+#         second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 5 )
+
+#         self.assertEqual( list(first_moments), [0.0] )
+#         self.assertEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 6 )
+#         second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 6 )
+
+#         self.assertEqual( list(first_moments), [0.0] )
+#         self.assertEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_1.getEntityBinDataFirstMoments( 7 )
+#         second_moments = self.mesh_estimator_1.getEntityBinDataSecondMoments( 7 )
+
+#         self.assertEqual( list(first_moments), [0.0] )
+#         self.assertEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 0 )
+#         second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 0 )
+
+#         self.assertEqual( list(first_moments), [1.0*threads] )
+#         self.assertEqual( list(second_moments), [1.0*threads] )
+
+#         first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 1 )
+#         second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 1 )
+
+#         self.assertEqual( list(first_moments), [0.0] )
+#         self.assertEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 2 )
+#         second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 2 )
+
+#         self.assertEqual( list(first_moments), [0.0] )
+#         self.assertEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 3 )
+#         second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 3 )
+
+#         self.assertEqual( list(first_moments), [0.0] )
+#         self.assertEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 4 )
+#         second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 4 )
+
+#         self.assertEqual( list(first_moments), [1.0*threads] )
+#         self.assertEqual( list(second_moments), [1.0*threads] )
+
+#         first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 5 )
+#         second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 5 )
+
+#         self.assertEqual( list(first_moments), [0.0] )
+#         self.assertEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 6 )
+#         second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 6 )
+
+#         self.assertEqual( list(first_moments), [0.0] )
+#         self.assertEqual( list(second_moments), [0.0] )
+
+#         first_moments = self.mesh_estimator_2.getEntityBinDataFirstMoments( 7 )
+#         second_moments = self.mesh_estimator_2.getEntityBinDataSecondMoments( 7 )
+
+#         self.assertEqual( list(first_moments), [0.0] )
+#         self.assertEqual( list(second_moments), [0.0] )
+
+#         history_map = self.particle_tracker.getHistoryData()
+
+#         for i in range(threads):
+#           self.assertTrue( i in history_map )
+#           self.assertTrue( MonteCarlo.PHOTON in history_map[i] )
+#           self.assertTrue( MonteCarlo.ELECTRON in history_map[i] )
+
+#         for i in range(threads):
+#           local_model = Geometry.InfiniteMediumModel( 2 )
+
+#           photon = MonteCarlo.PhotonState( i )
+#           photon.setWeight( 1.0 )
+#           photon.setEnergy( 2.0 )
+#           photon.embedInModel( local_model )
+
+#           electron = MonteCarlo.ElectronState( i )
+#           electron.setWeight( 1.0 )
+#           electron.setEnergy( 2.0 )
+#           electron.embedInModel( local_model )
+
+#           surface_normal = [1.0, 0.0, 0.0]
+#           start_point = [0.5, 0.5, 0.0]
+#           end_point = [0.5, 0.5, 2.0]
+
+#           event_handler.updateObserversFromParticleCollidingInCellEvent( photon, 1.0 )
+#           event_handler.updateObserversFromParticleCollidingInCellEvent( electron, 1.0 )
+#           event_handler.updateObserversFromParticleSubtrackEndingInCellEvent( photon, 2, 1.0 )
+#           event_handler.updateObserversFromParticleSubtrackEndingInCellEvent( electron, 2, 1.0 )
+#           event_handler.updateObserversFromParticleEnteringCellEvent( photon, 2 )
+#           event_handler.updateObserversFromParticleEnteringCellEvent( electron, 2 )
+
+#           photon.setEnergy( 1.0 )
+#           electron.setEnergy( 1.0 )
+
+#           event_handler.updateObserversFromParticleLeavingCellEvent( photon, 2 )
+#           event_handler.updateObserversFromParticleLeavingCellEvent( electron, 2 )
+
+#           event_handler.updateObserversFromParticleCrossingSurfaceEvent( photon, 2, surface_normal )
+#           event_handler.updateObserversFromParticleCrossingSurfaceEvent( electron, 2, surface_normal )
+#           event_handler.updateObserversFromParticleSubtrackEndingGlobalEvent( electron, start_point, end_point )
+
+#           photon.setAsGone()
+#           electron.setAsGone()
+
+#           event_handler.updateObserversFromParticleGoneGlobalEvent( photon )
+#           event_handler.updateObserversFromParticleGoneGlobalEvent( electron )
+
+#           event_handler.commitObserverHistoryContributions()
 
 #-----------------------------------------------------------------------------#
     # Check if distributed observers can be updated

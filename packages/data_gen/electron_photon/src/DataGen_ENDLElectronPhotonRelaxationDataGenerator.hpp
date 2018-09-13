@@ -1,13 +1,14 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   DataGen_StandardElectronPhotonRelaxationDataGenerator.hpp
+//! \file   DataGen_ENDLElectronPhotonRelaxationDataGenerator.hpp
 //! \author Alex Robinson, Luke Kersting
-//! \brief  The standard electron-photon-relaxation data generator class decl.
+//! \brief  The ENDL electron-photon-relaxation data generator class
+//!         declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_GEN_STANDARD_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
-#define DATA_GEN_STANDARD_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
+#ifndef DATA_GEN_ENDL_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
+#define DATA_GEN_ENDL_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
 
 // Std Lib Includes
 #include <utility>
@@ -21,38 +22,33 @@
 #include "MonteCarlo_TwoDInterpolationType.hpp"
 #include "MonteCarlo_TwoDGridType.hpp"
 #include "Data_ENDLDataContainer.hpp"
-#include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_ArrayView.hpp"
 #include "Utility_UnivariateDistribution.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
 
 namespace DataGen{
 
-//! The standard electron-photon-relaxation data generator class
-class StandardElectronPhotonRelaxationDataGenerator : public ElectronPhotonRelaxationDataGenerator
+//! The ENDL electron-photon-relaxation data generator class
+class ENDLElectronPhotonRelaxationDataGenerator : public ElectronPhotonRelaxationDataGenerator
 {
 
 public:
 
   //! Constructor
-  StandardElectronPhotonRelaxationDataGenerator(
-     const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
+  ENDLElectronPhotonRelaxationDataGenerator(
      const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container,
      const double min_photon_energy,
      const double max_photon_energy,
      const double min_electron_energy,
-     const double max_electron_energy,
-     std::ostream* os_log = &std::cout,
-     std::ostream* os_warn = &std::cerr );
+     const double max_electron_energy );
 
   //! Basic Constructor
-  StandardElectronPhotonRelaxationDataGenerator(
-     const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
-     const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container,
-     std::ostream* os_log = &std::cout );
+  ENDLElectronPhotonRelaxationDataGenerator(
+                          const std::shared_ptr<const Data::ENDLDataContainer>&
+                          endl_data_container );
 
   //! Destructor
-  ~StandardElectronPhotonRelaxationDataGenerator()
+  ~ENDLElectronPhotonRelaxationDataGenerator()
   { /* ... */ }
 
   //! Set the occupation number evaluation tolerance
@@ -118,8 +114,7 @@ public:
   MonteCarlo::TwoDGridType getElectronTwoDGridPolicy() const;
 
   //! Populate the electron-photon-relaxation data container
-  void populateEPRDataContainer(
-   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+  void populateEPRDataContainer( Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const final override;
 
   //! Repopulate the electron elastic data
   static void repopulateElectronElasticData(
@@ -129,8 +124,7 @@ public:
     const double tabular_evaluation_tol = 1e-7,
     const unsigned number_of_moment_preserving_angles = 1,
     const MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LOGLOGLOG_INTERPOLATION,
-    const MonteCarlo::TwoDGridType two_d_grid = MonteCarlo::CORRELATED_GRID,
-    std::ostream& os_log = std::cout );
+    const MonteCarlo::TwoDGridType two_d_grid = MonteCarlo::CORRELATED_GRID );
 
   //! Repopulate the electron moment preserving data
   static void repopulateMomentPreservingData(
@@ -138,50 +132,122 @@ public:
     const double cutoff_angle_cosine = 0.9,
     const double tabular_evaluation_tol = 1e-7,
     const unsigned number_of_moment_preserving_angles = 1,
-    const MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LOGLOGLOG_INTERPOLATION,
-    std::ostream& os_log = std::cout );
+    const MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LOGLOGLOG_INTERPOLATION );
 
 protected:
 
+  //! Constructor (check for valid min/max particle energies)
+  ENDLElectronPhotonRelaxationDataGenerator(
+     const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container,
+     const double min_photon_energy,
+     const double max_photon_energy,
+     const double min_electron_energy,
+     const double max_electron_energy,
+     const bool check_photon_energies );
+
   //! Set the atomic data
-  void setRelaxationData(
+  virtual void setRelaxationData(
    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   //! Set the Compton profile data
-  void setComptonProfileData(
-   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
-
-  //! Set the occupation number data
-  void setOccupationNumberData(
+  virtual void setComptonProfileData(
    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   //! Set the Waller-Hartree scattering function data
-  void setWallerHartreeScatteringFunctionData(
+  virtual void setWallerHartreeScatteringFunctionData(
    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   //! Set the Waller-Hartree atomic form factor data
-  void setWallerHartreeAtomicFormFactorData(
+  virtual void setWallerHartreeAtomicFormFactorData(
    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
-  //! Set the photon data
-  void setPhotonData(
-   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+  //! Extract the photon heating numbers
+  virtual void extractPhotonHeatingNumbers(
+                        std::shared_ptr<const Utility::UnivariateDistribution>&
+                        heating_numbers ) const;
 
-  //! Set the electron data
-  void setElectronData(
-   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+  //! Extract the Waller-Hartree incoherent cross section
+  virtual void extractWallerHartreeIncoherentCrossSection(
+                        std::shared_ptr<const Utility::UnivariateDistribution>&
+                        waller_hartree_incoherent_cs ) const;
+
+  //! Extract the Waller-Hartree coherent cross section
+  virtual void extractWallerHartreeCoherentCrossSection(
+                        std::shared_ptr<const Utility::UnivariateDistribution>&
+                        waller_hartree_coherent_cs ) const;
+
+  //! Extract the pair production cross section
+  virtual void extractPairProductionCrossSection(
+                        std::shared_ptr<const Utility::UnivariateDistribution>&
+                        pair_production_cs ) const;
+
+  //! Extract the triplet production cross section
+  virtual void extractTripletProductionCrossSection(
+                        std::shared_ptr<const Utility::UnivariateDistribution>&
+                        triplet_production_cs ) const;
+
+  //! Extract the subshell photoelectric effect cross sections
+  virtual void extractSubshellPhotoelectricEffectCrossSections(
+                  std::vector<std::pair<unsigned,std::shared_ptr<const Utility::UnivariateDistribution> > >&
+                  subshell_photoelectric_effect_css ) const;
+
+  //! Create the heating numbers on the union energy grid
+  virtual void createHeatingNumbersOnUnionEnergyGrid(
+                  const std::list<double>& union_energy_grid,
+                  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  original_cross_section,
+                  std::vector<double>& cross_section ) const;
+
+  //! Extract the average photon heating numbers
+  template<typename InterpPolicy>
+  void extractPhotonCrossSection(
+          Utility::ArrayView<const double> raw_energy_grid,
+          Utility::ArrayView<const double> raw_cross_section,
+          std::shared_ptr<const Utility::UnivariateDistribution>& cross_section,
+          const bool processed_raw_data = true ) const;
+
+  // Create the subshell impulse approx incoherent cross section evaluators
+  void createSubshellImpulseApproxIncoherentCrossSectionEvaluators(
+     const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
+     std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution> > >& evaluators ) const;
+
+  // Initialize the photon union energy grid
+  void initializePhotonUnionEnergyGrid(
+     const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
+     std::list<double>& union_energy_grid ) const;
+
+  // Create the cross section on the union energy grid
+  void createCrossSectionOnUnionEnergyGrid(
+                  const std::list<double>& union_energy_grid,
+                  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  original_cross_section,
+                  std::vector<double>& cross_section,
+                  unsigned& threshold_index,
+                  const double true_threshold_energy,
+                  const bool zero_at_threshold ) const;
+
+  //! Return the endl data container
+  const Data::ENDLDataContainer& getENDLDataContainer() const;
 
 private:
 
-  // The if a value is not equal to zero
-  static bool notEqualZero( const double value );
+  // Find the table min photon energy
+  double findTableMinPhotonEnergy() const;
 
-  // Set the transition data
-  void setTransitionData( const unsigned subshell,
-                          const unsigned transitions,
-                          const unsigned subshell_data_start_index,
-                          Data::ElectronPhotonRelaxationVolatileDataContainer&
-                          data_container ) const;
+  // Fine the table max photon energy
+  double findTableMaxPhotonEnergy() const;
+
+  // Set the photon data
+  void setPhotonData(
+   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+
+  // Set the electron data
+  void setElectronData(
+   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+
+  // Set the occupation number data
+  void setOccupationNumberData(
+   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Set the Waller-Hartree atomic form factor data
   void setWallerHartreeAtomicFormFactorData(
@@ -209,38 +275,12 @@ private:
     const MonteCarlo::TwoDInterpolationType two_d_interp,
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container );
 
-  // Extract the average photon heating numbers
-  template<typename InterpPolicy>
-  void extractPhotonCrossSection(
-          Utility::ArrayView<const double> raw_energy_grid,
-          Utility::ArrayView<const double> raw_cross_section,
-          std::shared_ptr<const Utility::UnivariateDistribution>& cross_section,
-          const bool processed_raw_data = true ) const;
-
   // Extract electron cross sections
   template<typename InterpPolicy>
   void extractElectronCrossSection(
         const std::vector<double>& raw_energy_grid,
         const std::vector<double>& raw_cross_section,
         std::shared_ptr<const Utility::UnivariateDistribution>& cross_section ) const;
-
-  // Extract the subshell photoelectric cross sections
-  void extractSubshellPhotoelectricCrossSections( std::vector<std::pair<unsigned,std::shared_ptr<const Utility::UnivariateDistribution> > >& cross_sections ) const;
-
-  // Create the subshell impulse approx incoherent cross section evaluators
-  void createSubshellImpulseApproxIncoherentCrossSectionEvaluators(
-     const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
-     std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution> > >& evaluators ) const;
-
-  // Initialize the photon union energy grid
-  void initializePhotonUnionEnergyGrid(
-     const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
-     std::list<double>& union_energy_grid ) const;
-
-  // Initialize the electron union energy grid
-  void initializeElectronUnionEnergyGrid(
-     const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
-     std::list<double>& union_energy_grid ) const;
 
   // Add binding energies to union energy grid
   void addBindingEnergiesToUnionEnergyGrid(
@@ -250,14 +290,19 @@ private:
      const bool add_nudged_values,
      std::list<double>& union_energy_grid ) const;
 
-  // Create the cross section on the union energy grid
-  void createCrossSectionOnUnionEnergyGrid(
-   const std::list<double>& union_energy_grid,
-   const std::shared_ptr<const Utility::UnivariateDistribution>& original_cross_section,
-   std::vector<double>& cross_section,
-   unsigned& threshold_index,
-   const double true_threshold_energy,
-   const bool zero_at_threshold ) const;
+  // Initialize the electron union energy grid
+  void initializeElectronUnionEnergyGrid(
+     const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
+     std::list<double>& union_energy_grid ) const;
+
+  // Merge the electron union energy grid
+  void mergeElectronUnionEnergyGrid(
+    const std::vector<double>& energy_grid,
+    std::list<double>& union_energy_grid ) const;
+
+  // Calculate the electron total cross section
+  void calculateElectronTotalCrossSection(
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Create the cross section on the union energy grid
   void createCrossSectionOnUnionEnergyGrid(
@@ -273,11 +318,6 @@ private:
                              unsigned& threshold_index,
                              const bool zero_at_threshold ) const;
 
-  // Merge the electron union energy grid
-  void mergeElectronUnionEnergyGrid(
-    const std::vector<double>& energy_grid,
-    std::list<double>& union_energy_grid ) const;
-
   // Calculate the total photoelectric cross section
   void calculateTotalPhotoelectricCrossSection(
    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
@@ -290,10 +330,6 @@ private:
   void calculatePhotonTotalCrossSection(
            Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
            const bool use_waller_hartree_incoherent_cs ) const;
-
-  // Calculate the electron total cross section
-  void calculateElectronTotalCrossSection(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Add cross section to electron/photon total cross section
   void addCrossSectionToTotalCrossSection(
@@ -323,14 +359,11 @@ private:
     std::shared_ptr<const Utility::UnivariateDistribution>& total_elastic_cross_section,
     const std::vector<double>& raw_energy_grid ) const;
 
-  // The ACE data
-  std::shared_ptr<const Data::XSSEPRDataExtractor> d_ace_epr_data;
+  // The if a value is not equal to zero
+  static bool notEqualZero( const double value );
 
   // The ENDL data
   std::shared_ptr<const Data::ENDLDataContainer> d_endl_data_container;
-
-  // The log stream
-  std::ostream* d_os_log;
 
   // The FullyTabularTwoDDistribution evaluation tolerance
   double d_tabular_evaluation_tol;
@@ -362,7 +395,7 @@ private:
 };
 
 // The if a value is not equal to zero
-inline bool StandardElectronPhotonRelaxationDataGenerator::notEqualZero(
+inline bool ENDLElectronPhotonRelaxationDataGenerator::notEqualZero(
                                                            const double value )
 {
   return value != 0.0;
@@ -374,12 +407,12 @@ inline bool StandardElectronPhotonRelaxationDataGenerator::notEqualZero(
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "DataGen_StandardElectronPhotonRelaxationDataGenerator_def.hpp"
+#include "DataGen_ENDLElectronPhotonRelaxationDataGenerator_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end DATA_GEN_STANDARD_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
+#endif // end DATA_GEN_ENDL_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
 
 //---------------------------------------------------------------------------//
-// end DataGen_StandardElectronPhotonRelaxationDataGenerator.hpp
+// end DataGen_ENDLElectronPhotonRelaxationDataGenerator.hpp
 //---------------------------------------------------------------------------//

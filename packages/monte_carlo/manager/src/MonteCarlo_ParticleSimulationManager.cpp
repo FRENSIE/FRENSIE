@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <csignal>
+
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSimulationManager.hpp"
 #include "MonteCarlo_ParticleSimulationManagerFactory.hpp"
@@ -13,6 +16,24 @@
 #include "Utility_OpenMPProperties.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_DesignByContract.hpp"
+
+// The registered managers (these must be global so that the custom signal
+// handler can access them)
+std::set<std::shared_ptr<MonteCarlo::ParticleSimulationManager> > __registered_managers__;
+
+// The default signal handler (cache so that it can be restored later)
+void (*__default_signal_handler__)( int );
+
+// The custom signal handler that will forward signals to the registered
+// managers
+extern "C" void __custom_signal_handler__( int signal )
+{
+  for( auto&& registered_manager : __registered_managers__ )
+  {
+    if( registered_manager )
+      registered_manager->signalHandler( signal );
+  }
+}
 
 namespace MonteCarlo{
 
@@ -143,6 +164,58 @@ EventHandler& ParticleSimulationManager::getEventHandler()
   return *d_event_handler;
 }
 
+// Get the simulation name
+const std::string& ParticleSimulationManager::getSimulationName() const
+{
+  return d_simulation_name;
+}
+
+// Set the simulation name
+/*! \details A simulation archive will be generated with the the new name.
+ */
+void ParticleSimulationManager::setSimulationName( const std::string& new_name )
+{
+  if( new_name.size() > 0 )
+    d_simulation_name = new_name;
+
+  this->basicRendezvous();
+}
+
+// Get the simulation archive type
+const std::string& ParticleSimulationManager::getSimulationArchiveType() const
+{
+  return d_archive_type;
+}
+
+// Set the simulation archive type
+/*! \details Acceptable values are "xml", "txt", "bin", "h5fa". A simulation 
+ * archive of the new type will be generated.
+ */
+void ParticleSimulationManager::setSimulationArchiveType( const std::string& archive_type )
+{
+  if( archive_type.size() > 0 )
+    d_archive_type = archive_type;
+
+  this->basicRendezvous();
+}
+
+// Set the simulation name and archive type
+/*! \details Acceptable values for the archive type are "xml", "txt", "bin", 
+ * "h5fa". A simulation archive with the new name and type will be generated.
+ */
+void ParticleSimulationManager::setSimulationNameAndArchiveType(
+                                              const std::string& new_name,
+                                              const std::string& archive_type )
+{
+  if( new_name.size() > 0 )
+    d_simulation_name = new_name;
+  
+  if( archive_type.size() > 0 )
+    d_archive_type = archive_type;
+
+  this->basicRendezvous();
+}
+
 // Run the simulation set up by the user
 void ParticleSimulationManager::runSimulation()
 {
@@ -188,11 +261,41 @@ void ParticleSimulationManager::runSimulation()
   }
   else
   {
-    FRENSIE_LOG_WARNING( "Simulation terminated. " );
+    FRENSIE_LOG_NOTIFICATION( "Simulation terminated. " );
   }
   FRENSIE_FLUSH_ALL_LOGS();
 
   this->rendezvous();
+}
+
+// Run the simulation set up by the user with the ability to interrupt
+/*! \details Sending a SIGINT signal (usually Ctrl+C) will cause the
+ * simulation to be terminated once the current batch is completed. Sending
+ * a second SIGINT signal before the simulation has been terminated will 
+ * cause the program to exit immediately.
+ */ 
+void ParticleSimulationManager::runInterruptibleSimulation()
+{
+  #pragma omp critical (register_manager)
+  {
+    if( __registered_managers__.empty() )
+    {
+      __default_signal_handler__ =
+        std::signal( SIGINT, __custom_signal_handler__ );
+    }
+        
+    __registered_managers__.insert( this->shared_from_this() );
+  }
+
+  this->runSimulation();
+
+  #pragma omp critical (register_manager)
+  {
+    __registered_managers__.erase( this->shared_from_this() );
+    
+    if( __registered_managers__.empty() )
+      std::signal( SIGINT, __default_signal_handler__ );
+  }
 }
 
 // Enable thread support
@@ -248,11 +351,25 @@ bool ParticleSimulationManager::isSimulationComplete()
 // Rendezvous (cache state)
 void ParticleSimulationManager::rendezvous()
 {
+  this->basicRendezvous();
+
+  ++d_rendezvous_number;
+}
+
+// Conduct a basic rendezvous
+void ParticleSimulationManager::basicRendezvous() const
+{
   std::string archive_name( d_simulation_name );
   archive_name += "_rendezvous_";
   archive_name += Utility::toString( d_rendezvous_number );
   archive_name += ".";
   archive_name += d_archive_type;
+
+  FRENSIE_LOG_NOTIFICATION( "Rendezvous "
+                            << d_rendezvous_number << ": "
+                            << d_next_history );
+
+  FRENSIE_FLUSH_ALL_LOGS();
   
   ParticleSimulationManagerFactory
     tmp_factory( d_model,
@@ -260,15 +377,13 @@ void ParticleSimulationManager::rendezvous()
                  d_event_handler,
                  d_weight_windows,
                  d_collision_forcer,
-                 std::const_pointer_cast<SimulationProperties>(d_properties),
+                 d_properties,
                  d_simulation_name,
                  d_archive_type,
                  d_next_history,
                  d_rendezvous_number+1 );
 
   tmp_factory.saveToFile( archive_name, true );
-
-  ++d_rendezvous_number;
 }
 
 // Print the simulation data to the desired stream
@@ -308,13 +423,27 @@ void ParticleSimulationManager::runSimulationBatch(
       try{
         d_source->sampleParticleState( source_bank, history );
       }
-      CATCH_LOST_SOURCE_PARTICLE_AND_CONTINUE( source_bank );
+      catch( const std::runtime_error& exception )
+      {
+        LOG_LOST_PARTICLE_DETAILS( source_bank.top() );
+        
+        FRENSIE_LOG_NESTED_ERROR( exception.what() );
+        
+        continue;
+      }
+      // The source has likely been constructed incorrectly
+      catch( const std::logic_error& exception )
+      {        
+        FRENSIE_LOG_NESTED_ERROR( exception.what() );
+
+        std::exit( 1 );
+      }
 
       // Simulate the particles generated by the source first
       while( source_bank.size() > 0 )
       {
         this->simulateUnresolvedParticle( source_bank.top(), bank, true );
-
+        
         source_bank.pop();
       }
 
@@ -335,19 +464,29 @@ void ParticleSimulationManager::runSimulationBatch(
 // The signal handler
 /*! \details The first signal will cause the simulation to finish. The
  * second signal will cause the simulation to end without caching its state.
+ * Only the SIGINT signal can currently cause the simulation to finish.
  */
 void ParticleSimulationManager::signalHandler( int signal )
 {
-  static int number_of_signals_handled = 0;
+  if( this->isSignalTypeHandled( signal ) )
+  {
+    static int number_of_signals_handled = 0;
 
-  ++number_of_signals_handled;
-  
-  FRENSIE_LOG_WARNING( "Terminating simulation..." );
-  
-  if( number_of_signals_handled == 1 )
-    d_end_simulation = true;
+    ++number_of_signals_handled;
+    
+    FRENSIE_LOG_NOTIFICATION( "Terminating simulation..." );
+    
+    if( number_of_signals_handled == 1 )
+      d_end_simulation = true;
+    
+    this->exitIfRequired( number_of_signals_handled, signal );
+  }
+}
 
-  this->exitIfRequired( number_of_signals_handled, signal );
+// Check if a signal type is handled by the manager
+bool ParticleSimulationManager::isSignalTypeHandled( const int signal )
+{
+  return signal == SIGINT;
 }
 
 // Exit if required based on signal count

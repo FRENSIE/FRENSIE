@@ -121,7 +121,7 @@ AtomType convertAtomicNumberToAtomTypeEnum( const unsigned atomic_number )
   default:
     THROW_EXCEPTION( std::runtime_error,
 		     "Atomic number " << atomic_number <<
-		     "is not valid!" );
+		     " is not valid!" );
   }
 }
 

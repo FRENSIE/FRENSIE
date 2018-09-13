@@ -19,7 +19,8 @@ class DefaultWeightWindow : public WeightWindow
 public:
 
   //! Constructor
-  DefaultWeightWindow();
+  DefaultWeightWindow()
+  { /* ... */ }
 
   //! Destructor
   ~DefaultWeightWindow()

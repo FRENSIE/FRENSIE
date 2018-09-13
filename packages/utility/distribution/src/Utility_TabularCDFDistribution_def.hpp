@@ -1005,17 +1005,17 @@ EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Ut
 EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularCDFDistribution<Utility::LogLin,void,void> );
 
 // Explicit cosine instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos<false>,void,void> );
-EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularCDFDistribution<Utility::LogLogCos<false>,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularCDFDistribution<Utility::LogLogCos,void,void> );
 
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLogCos<false>,void,void> );
-EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularCDFDistribution<Utility::LinLogCos<false>,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLogCos,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularCDFDistribution<Utility::LinLogCos,void,void> );
 
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos<true>,void,void> );
-EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularCDFDistribution<Utility::LogLogCos<true>,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogNudgedLogCos,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularCDFDistribution<Utility::LogNudgedLogCos,void,void> );
 
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLogCos<true>,void,void> );
-EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularCDFDistribution<Utility::LinLogCos<true>,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinNudgedLogCos,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularCDFDistribution<Utility::LinNudgedLogCos,void,void> );
 
 #endif // end Utility_TabularCDFDistribution_def.hpp
 

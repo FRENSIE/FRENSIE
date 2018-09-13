@@ -191,7 +191,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Moment preserving elastic cross section
     std::vector<double> moment_preserving_cross_sections;
     size_t threshold_index;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogLogCosLog<false>,Utility::Correlated>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogLogCosLog,Utility::Correlated>(
                                moment_preserving_cross_sections,
                                threshold_index,
                                data_container,

@@ -43,19 +43,22 @@ public:
   //! Run the simulation set up by the user
   void runSimulation() final override;
 
+  //! Run the simulation set up by the user with the ability to interrupt
+  void runInterruptibleSimulation() final override;
+  
   //! Print the simulation data to the desired stream
   void printSimulationSummary( std::ostream& os ) const final override;
 
   //! Log the simulation data
   void logSimulationSummary() const final override;
 
-  //! The signal handler
-  void signalHandler( int signal ) final override;
-
 protected:
 
   //! Rendezvous (cache state)
   void rendezvous() final override;
+
+  //! The signal handler
+  void signalHandler( int signal ) final override;
 
 private:
 

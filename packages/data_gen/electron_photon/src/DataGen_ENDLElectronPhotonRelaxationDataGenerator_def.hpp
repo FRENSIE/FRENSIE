@@ -1,13 +1,14 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   DataGen_StandardElectronPhotonRelaxationDataGenerator_def.hpp
+//! \file   DataGen_ENDLElectronPhotonRelaxationDataGenerator_def.hpp
 //! \author Alex Robinson, Luke Kersting
-//! \brief  The standard electron-photon-relaxation data generator template def
+//! \brief  The ENDL electron-photon-relaxation data generator template
+//!         definitions
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_GEN_STANDARD_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_DEF_HPP
-#define DATA_GEN_STANDARD_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_DEF_HPP
+#ifndef DATA_GEN_ENDL_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_DEF_HPP
+#define DATA_GEN_ENDL_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_DEF_HPP
 
 // FRENSIE Includes
 #include "Utility_TabularDistribution.hpp"
@@ -16,7 +17,7 @@ namespace DataGen{
 
 // Extract the average photon heating numbers
 template<typename InterpPolicy>
-void StandardElectronPhotonRelaxationDataGenerator::extractPhotonCrossSection(
+void ENDLElectronPhotonRelaxationDataGenerator::extractPhotonCrossSection(
            Utility::ArrayView<const double> raw_energy_grid,
            Utility::ArrayView<const double> raw_cross_section,
            std::shared_ptr<const Utility::UnivariateDistribution>& cross_section,
@@ -60,7 +61,7 @@ void StandardElectronPhotonRelaxationDataGenerator::extractPhotonCrossSection(
 
 // Extract electron cross section
 template<typename InterpPolicy>
-void StandardElectronPhotonRelaxationDataGenerator::extractElectronCrossSection(
+void ENDLElectronPhotonRelaxationDataGenerator::extractElectronCrossSection(
         const std::vector<double>& raw_energy_grid,
         const std::vector<double>& raw_cross_section,
         std::shared_ptr<const Utility::UnivariateDistribution>& cross_section ) const
@@ -88,8 +89,8 @@ void StandardElectronPhotonRelaxationDataGenerator::extractElectronCrossSection(
 
 } // end DataGen namespace
 
-#endif // end DATA_GEN_STANDARD_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_DEF_HPP
+#endif // end DATA_GEN_ENDL_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end DataGen_StandardElectronPhotonRelaxationDataGenerator_def.hpp
+// end DataGen_ENDLElectronPhotonRelaxationDataGenerator_def.hpp
 //---------------------------------------------------------------------------//

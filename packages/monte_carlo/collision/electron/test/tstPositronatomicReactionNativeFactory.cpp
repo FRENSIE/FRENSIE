@@ -38,7 +38,7 @@ FRENSIE_UNIT_TEST( PositronatomicReactionNativeFactory,
   MonteCarlo::CoupledElasticSamplingMethod sampling_method =
     MonteCarlo::TWO_D_UNION;
 
-  MonteCarlo::PositronatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LogLogCosLog<true>,Utility::Correlated>(
+  MonteCarlo::PositronatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LogNudgedLogCosLog,Utility::Correlated>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -73,7 +73,7 @@ FRENSIE_UNIT_TEST( PositronatomicReactionNativeFactory,
 FRENSIE_UNIT_TEST( PositronatomicReactionNativeFactory,
                    createDecoupledElasticReaction_LogLogCosLog )
 {
-  MonteCarlo::PositronatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LogLogCosLog<false>,Utility::Correlated>(
+  MonteCarlo::PositronatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LogLogCosLog,Utility::Correlated>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -109,7 +109,7 @@ FRENSIE_UNIT_TEST( PositronatomicReactionNativeFactory,
 {
   double cutoff_angle_cosine = 0.9;
 
-  MonteCarlo::PositronatomicReactionNativeFactory::createHybridElasticReaction<Utility::LogLogCosLog<true> ,Utility::Correlated>(
+  MonteCarlo::PositronatomicReactionNativeFactory::createHybridElasticReaction<Utility::LogNudgedLogCosLog ,Utility::Correlated>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -129,7 +129,7 @@ FRENSIE_UNIT_TEST( PositronatomicReactionNativeFactory,
 
   energy = 4e-4;
   cross_section = reaction->getCrossSection( energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.2786275807901049e+08, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.2786275809074390e+08, 1e-12 );
 
   energy = 1e5;
   cross_section = reaction->getCrossSection( energy );
@@ -144,7 +144,7 @@ FRENSIE_UNIT_TEST( PositronatomicReactionNativeFactory,
 FRENSIE_UNIT_TEST( PositronatomicReactionNativeFactory,
                    createCutoffElasticReaction_LogLogCosLog )
 {
-  MonteCarlo::PositronatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LogLogCosLog<false>,Utility::Correlated>(
+  MonteCarlo::PositronatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LogLogCosLog,Utility::Correlated>(
                 *data_container,
                 energy_grid,
                 grid_searcher,

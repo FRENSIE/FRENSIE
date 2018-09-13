@@ -26,8 +26,7 @@ enum TwoDGridType{
   CORRELATED_GRID = 0,
   UNIT_BASE_CORRELATED_GRID = 1,
   DIRECT_GRID = 2,
-  UNIT_BASE_GRID = 3,
-  CUMULATIVE_POINTS_GRID = 4
+  UNIT_BASE_GRID = 3
 };
 
 } // end MonteCarlo namespace
@@ -98,7 +97,6 @@ void serialize( Archive& archive,
       BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::UNIT_BASE_CORRELATED_GRID, int, type );
       BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::DIRECT_GRID, int, type );
       BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::UNIT_BASE_GRID, int, type );
-      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::CUMULATIVE_POINTS_GRID, int, type );
       default:
       {
         THROW_EXCEPTION( std::logic_error,

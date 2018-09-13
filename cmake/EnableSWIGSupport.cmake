@@ -9,7 +9,7 @@ MACRO(ENABLE_SWIG_SUPPORT)
   ENDIF()
 
   # Find the SWIG package available on this system
-  FIND_PACKAGE(SWIG 3.0.8 REQUIRED)
+  FIND_PACKAGE(SWIG 3.0.12 REQUIRED)
   
   # Find the python package available on this system
   FIND_PACKAGE(PythonInterp 2.7 REQUIRED)
