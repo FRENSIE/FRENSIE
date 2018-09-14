@@ -44,57 +44,57 @@ FRENSIE_UNIT_TEST_TEMPLATE( SurfaceFluxEstimator,
                                                              *model ) ) );
   FRENSIE_REQUIRE( estimator->isEntityAssigned( 46 ) );
   FRENSIE_CHECK_FLOATING_EQUALITY( estimator->getEntityNormConstant( 46 ),
-                                   2.848516241083349883e+02,
+                                   2.848516339523823717e+02,
                                    1e-15 );
 
   FRENSIE_REQUIRE( estimator->isEntityAssigned( 53 ) );
   FRENSIE_CHECK_FLOATING_EQUALITY( estimator->getEntityNormConstant( 53 ),
-                                   9.773235573848069180e+01,
+                                   9.773235727898624248e+01,
                                    1e-15 );
 
   FRENSIE_REQUIRE( estimator->isEntityAssigned( 55 ) );
   FRENSIE_CHECK_FLOATING_EQUALITY( estimator->getEntityNormConstant( 55 ),
-                                   1.666729374649003148e+01,
+                                   1.666730003051475251e+01,
                                    1e-15 );
 
   FRENSIE_REQUIRE( estimator->isEntityAssigned( 57 ) );
   FRENSIE_CHECK_FLOATING_EQUALITY( estimator->getEntityNormConstant( 57 ),
-                                   2.594277182945700702e+02,
+                                   2.594277176251208061e+02,
                                    1e-15 );
 
   FRENSIE_REQUIRE( estimator->isEntityAssigned( 58 ) );
   FRENSIE_CHECK_FLOATING_EQUALITY( estimator->getEntityNormConstant( 58 ),
-                                   3.715087327610179813e+01,
+                                   3.715085987553494107e+01,
                                    1e-15 );
 
   FRENSIE_REQUIRE( estimator->isEntityAssigned( 83 ) );
   FRENSIE_CHECK_FLOATING_EQUALITY( estimator->getEntityNormConstant( 83 ),
-                                   6.714270345462136902e+01,
+                                   6.714270351030512529e+01,
                                    1e-15 );
 
   FRENSIE_REQUIRE( estimator->isEntityAssigned( 86 ) );
   FRENSIE_CHECK_FLOATING_EQUALITY( estimator->getEntityNormConstant( 86 ),
-                                   3.165649943330208771e-01,
+                                   3.165650076907713384e-01,
                                    1e-15 );
 
   FRENSIE_REQUIRE( estimator->isEntityAssigned( 89 ) );
   FRENSIE_CHECK_FLOATING_EQUALITY( estimator->getEntityNormConstant( 89 ),
-                                   3.165650099181220867e-01,
+                                   3.165650076907712274e-01,
                                    1e-15 );
 
   FRENSIE_REQUIRE( estimator->isEntityAssigned( 92 ) );
   FRENSIE_CHECK_FLOATING_EQUALITY( estimator->getEntityNormConstant( 92 ),
-                                   3.165650995069881901e-01,
+                                   3.165650076907711163e-01,
                                    1e-15 );
 
   FRENSIE_REQUIRE( estimator->isEntityAssigned( 425 ) );
   FRENSIE_CHECK_FLOATING_EQUALITY( estimator->getEntityNormConstant( 425 ),
-                                   8.970075180783169344e+00,
+                                   8.970071513450820433,
                                    1e-15 );
 
   FRENSIE_REQUIRE( estimator->isEntityAssigned( 434 ) );
   FRENSIE_CHECK_FLOATING_EQUALITY( estimator->getEntityNormConstant( 434 ),
-                                   4.002588252827990800e+00,
+                                   4.002587201643236448,
                                    1e-15 );
 }
 
@@ -115,13 +115,13 @@ FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   Geometry::DagMCModelProperties local_properties( test_dagmc_geom_file_name );
-  
+
   local_properties.setFacetTolerance( 1e-3 );
   local_properties.setTerminationCellPropertyName( "graveyard" );
   local_properties.setMaterialPropertyName( "mat" );
   local_properties.setDensityPropertyName( "rho" );
   local_properties.setEstimatorPropertyName( "tally" );
-  
+
   std::shared_ptr<Geometry::DagMCModel> tmp_model =
     Geometry::DagMCModel::getInstance();
 

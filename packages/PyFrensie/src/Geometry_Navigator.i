@@ -64,7 +64,7 @@ class is shown below:
 
    import PyFrensie.Geometry, numpy
    model = PyFrensie.Geometry.DagMC.DagMCModel.getInstance()
-   properties = PyFrensie.Geometry.DagMC.DagMCModelProperties( 'my_geom.sat' )
+   properties = PyFrensie.Geometry.DagMC.DagMCModelProperties( 'my_geom.h5m' )
    model.initialize( properties )
    navigator = model.createNavigator()
 
@@ -170,7 +170,7 @@ class is shown below:
 
    import PyFrensie.Geometry, numpy
    model = PyFrensie.Geometry.DagMC.DagMCModel.getInstance()
-   properties = PyFrensie.Geometry.DagMC.DagMCModelProperties( 'my_geom.sat' )
+   properties = PyFrensie.Geometry.DagMC.DagMCModelProperties( 'my_geom.h5m' )
    model.initialize( properties )
    navigator = model.createNavigator()
 

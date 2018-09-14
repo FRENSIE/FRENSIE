@@ -59,7 +59,7 @@ using namespace Geometry;
 %feature("docstring")
 Geometry::Model
 "
-The Model class stores a geometric model, which can be from a CAD (.sat) file
+The Model class stores a geometric model, which can be from a CAD (.h5m) file
 or a Root (.root) file. It can be used for querying properties of the geometry
 and for creating navigators, which can be used to traverse the geometry.
 A brief usage tutorial for this class is shown below:
@@ -67,7 +67,7 @@ A brief usage tutorial for this class is shown below:
    import PyFrensie.Geometry, numpy
 
    model = PyFrensie.Geometry.DagMC.DagMCModel.getInstance()
-   properties = PyFrensie.Geometry.DagMC.DagMCModelProperties( 'my_geom.sat' )
+   properties = PyFrensie.Geometry.DagMC.DagMCModelProperties( 'my_geom.h5m' )
    model.initialize( properties )
 
    cells = model.getCells( True, True )
@@ -174,7 +174,7 @@ for this class is shown below:
 
    import PyFrensie.Geometry, numpy
    model = PyFrensie.Geometry.DagMC.DagMCModel.getInstance()
-   properties = PyFrensie.Geometry.DagMC.DagMCModelProperties( 'my_geom.sat' )
+   properties = PyFrensie.Geometry.DagMC.DagMCModelProperties( 'my_geom.h5m' )
    model.initialize( properties )
 
    cells = model.getCells( True, True )
