@@ -20,6 +20,8 @@ using namespace MonteCarlo;
 // Include typemaps support
 %include <typemaps.i>
 
+%template(LongUnsignedSet) std::set<unsigned long>;
+
 // ---------------------------------------------------------------------------//
 // Add ParticleTracker support
 // ---------------------------------------------------------------------------//

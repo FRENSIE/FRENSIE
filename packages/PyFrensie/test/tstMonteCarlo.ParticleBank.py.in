@@ -1,4 +1,5 @@
-#! ${PYTHON_EXECUTABLE#-----------------------------------------------------------------------------#
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
 ## MonteCarlo.ParticleBank class unit tests
 #  \file   tstMonteCarlo.ParticleBank.py
 #  \author Luke Kersting

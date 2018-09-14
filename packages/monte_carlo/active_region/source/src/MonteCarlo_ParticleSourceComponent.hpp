@@ -39,6 +39,9 @@ class ParticleSourceComponent
 
 public:
 
+  //! The id type
+  typedef ParticleState::sourceIdType Id;
+
   //! The trial counter type
   typedef Utility::DistributionTraits::Counter Counter;
 
@@ -46,12 +49,12 @@ public:
   typedef Geometry::Model::CellIdSet CellIdSet;
 
   //! Constructor
-  ParticleSourceComponent( const uint32_t id,
+  ParticleSourceComponent( const Id id,
                            const double selection_weight,
                            const std::shared_ptr<const Geometry::Model>& model );
 
   //! Constructor (with rejection cells)
-  ParticleSourceComponent( const uint32_t id,
+  ParticleSourceComponent( const Id id,
                            const double selection_weight,
                            const CellIdSet& rejection_cells,
                            const std::shared_ptr<const Geometry::Model>& model );
@@ -81,7 +84,7 @@ public:
   double getSelectionWeight() const;
 
   //! Get the id of this source
-  uint32_t getId() const;
+  Id getId() const;
 
   //! Return the number of sampling trials
   Counter getNumberOfTrials() const;
@@ -215,7 +218,7 @@ private:
   friend class boost::serialization::access;
 
   // The component id
-  UniqueIdManager<ParticleSourceComponent,uint32_t> d_id;
+  UniqueIdManager<ParticleSourceComponent,Id> d_id;
 
   // The component selection weight
   double d_selection_weight;

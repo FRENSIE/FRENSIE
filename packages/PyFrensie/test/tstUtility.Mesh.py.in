@@ -1,4 +1,5 @@
-#! ${PYTHON_EXECUTABLE#-----------------------------------------------------------------------------#
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
 ## Utility.Mesh classes unit tests
 #  \file   tstUtility.Mesh.py
 #  \author Luke Kersting

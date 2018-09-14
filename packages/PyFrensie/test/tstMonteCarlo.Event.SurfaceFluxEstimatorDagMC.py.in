@@ -1,4 +1,5 @@
-#! ${PYTHON_EXECUTABLE#-----------------------------------------------------------------------------#
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
 ## MonteCarlo.Event.SurfaceFluxEstimatorDagMC class unit tests
 #  \file   tstMonteCarlo.Event.SurfaceFluxEstimatorDagMC.py
 #  \author Luke Kersting

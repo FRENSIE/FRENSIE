@@ -1,4 +1,5 @@
-#! ${PYTHON_EXECUTABLE#-----------------------------------------------------------------------------#
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
 ## MonteCarlo.Event.ObserverPhaseSpaceDimensionDiscretization class unit tests
 #  \file   tstMonteCarlo.Event.ObserverPhaseSpaceDimensionDiscretization.py
 #  \author Luke Kersting

@@ -1,4 +1,5 @@
-#! ${PYTHON_EXECUTABLE#-----------------------------------------------------------------------------#
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
 ## MonteCarlo.ActiveRegion.ParticleSource class unit tests
 #  \file   tstMonteCarlo.ActiveRegion.ParticleSource.py
 #  \author Luke Kersting

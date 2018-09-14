@@ -1,4 +1,5 @@
-#! ${PYTHON_EXECUTABLE#-----------------------------------------------------------------------------#
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
 ## MonteCarlo.Event.CellPulseHeightEstimator class unit tests
 #  \file   tstMonteCarlo.Event.CellPulseHeightEstimator.py
 #  \author Luke Kersting

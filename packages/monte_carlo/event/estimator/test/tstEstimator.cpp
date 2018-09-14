@@ -340,6 +340,65 @@ FRENSIE_UNIT_TEST( Estimator, setDiscretization )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the dimensions that have been discretized can be returned
+FRENSIE_UNIT_TEST( Estimator, getDiscretizedDimensions )
+{
+  TestEstimator estimator( 0, 1.0 );
+
+  std::vector<MonteCarlo::ObserverPhaseSpaceDimension> discretized_dimensions;
+
+  estimator.getDiscretizedDimensions( discretized_dimensions );
+
+  FRENSIE_CHECK_EQUAL( discretized_dimensions.size(), 0 );
+  
+  std::vector<double> energy_bin_boundaries( 7 );
+  energy_bin_boundaries[0] = 0.0;
+  energy_bin_boundaries[1] = 1e-1;
+  energy_bin_boundaries[2] = 1e-1;
+  energy_bin_boundaries[3] = 1.0;
+  energy_bin_boundaries[4] = 10.0;
+  energy_bin_boundaries[5] = 10.0;
+  energy_bin_boundaries[6] = 20.0;
+
+  estimator.setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>( energy_bin_boundaries);
+
+  estimator.getDiscretizedDimensions( discretized_dimensions );
+
+  FRENSIE_REQUIRE_EQUAL( discretized_dimensions.size(), 1 );
+  FRENSIE_CHECK_EQUAL( discretized_dimensions[0], MonteCarlo::OBSERVER_ENERGY_DIMENSION );
+
+  std::vector<double> time_bin_boundaries( 4 );
+  time_bin_boundaries[0] = 0.0;
+  time_bin_boundaries[1] = 1e3;
+  time_bin_boundaries[2] = 1e5;
+  time_bin_boundaries[3] = 1e7;
+
+  estimator.setDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION>( time_bin_boundaries);
+
+  estimator.getDiscretizedDimensions( discretized_dimensions );
+
+  FRENSIE_REQUIRE_EQUAL( discretized_dimensions.size(), 2 );
+  FRENSIE_CHECK_EQUAL( discretized_dimensions[0], MonteCarlo::OBSERVER_ENERGY_DIMENSION );
+  FRENSIE_CHECK_EQUAL( discretized_dimensions[1], MonteCarlo::OBSERVER_TIME_DIMENSION );
+
+  std::vector<unsigned> collision_number_bins( 4 );
+  collision_number_bins[0] = 0u;
+  collision_number_bins[1] = 1u;
+  collision_number_bins[2] = 2u;
+  collision_number_bins[3] = std::numeric_limits<unsigned>::max();
+
+  estimator.setDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>(
+						       collision_number_bins );
+
+  estimator.getDiscretizedDimensions( discretized_dimensions );
+
+  FRENSIE_REQUIRE_EQUAL( discretized_dimensions.size(), 3 );
+  FRENSIE_CHECK_EQUAL( discretized_dimensions[0], MonteCarlo::OBSERVER_ENERGY_DIMENSION );
+  FRENSIE_CHECK_EQUAL( discretized_dimensions[1], MonteCarlo::OBSERVER_TIME_DIMENSION );
+  FRENSIE_CHECK_EQUAL( discretized_dimensions[2], MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the total number of bins can be returned
 FRENSIE_UNIT_TEST( Estimator, getNumberOfBins )
 {

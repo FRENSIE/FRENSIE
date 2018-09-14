@@ -32,6 +32,9 @@ class StandardAdjointParticleSourceComponent : public StandardParticleSourceComp
 
 public:
 
+  //! The id type
+  typedef ParticleState::sourceIdType Id;
+
   //! The trial counter type
   typedef typename BaseType::Counter Counter;
 
@@ -40,7 +43,7 @@ public:
 
   //! Constructor
   StandardAdjointParticleSourceComponent(
-    const uint32_t id,
+    const Id id,
     const double selection_weight,
     const std::shared_ptr<const Geometry::Model>& model,
     const std::shared_ptr<const ParticleDistribution>& particle_distribution,
@@ -48,7 +51,7 @@ public:
 
   //! Constructor (with rejection cells )
   StandardAdjointParticleSourceComponent(
-    const uint32_t id,
+    const Id id,
     const double selection_weight,
     const std::vector<Geometry::Model::EntityId>& rejection_cells,
     const std::shared_ptr<const Geometry::Model>& model,
@@ -57,7 +60,7 @@ public:
 
   //! Constructor (with rejection cells )
   StandardAdjointParticleSourceComponent(
-    const uint32_t id,
+    const Id id,
     const double selection_weight,
     const CellIdSet& rejection_cells,
     const std::shared_ptr<const Geometry::Model>& model,
@@ -66,14 +69,14 @@ public:
 
   //! Constructor
   StandardAdjointParticleSourceComponent(
-    const uint32_t id,
+    const Id id,
     const double selection_weight,
     const std::shared_ptr<const FilledGeometryModel>& model,
     const std::shared_ptr<const ParticleDistribution>& particle_distribution );
 
   //! Constructor (with rejection cells )
   StandardAdjointParticleSourceComponent(
-    const uint32_t id,
+    const Id id,
     const double selection_weight,
     const std::vector<Geometry::Model::EntityId>& rejection_cells,
     const std::shared_ptr<const FilledGeometryModel>& model,
@@ -81,7 +84,7 @@ public:
 
   //! Constructor (with rejection cells )
   StandardAdjointParticleSourceComponent(
-    const uint32_t id,
+    const Id id,
     const double selection_weight,
     const CellIdSet& rejection_cells,
     const std::shared_ptr<const FilledGeometryModel>& model,

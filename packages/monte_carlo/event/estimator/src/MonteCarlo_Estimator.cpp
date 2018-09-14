@@ -63,6 +63,13 @@ bool Estimator::doesDimensionHaveDiscretization(
   return d_phase_space_discretization.doesDimensionHaveDiscretization( dimension );
 }
 
+// Return the dimensions that have been discretized
+void Estimator::getDiscretizedDimensions(
+       std::vector<ObserverPhaseSpaceDimension>& discretized_dimensions ) const
+{
+  return d_phase_space_discretization.getDiscretizedDimensions( discretized_dimensions );
+}
+
 // Return the number of bins for a dimension of the phase space
 size_t Estimator::getNumberOfBins(
                             const ObserverPhaseSpaceDimension dimension ) const
