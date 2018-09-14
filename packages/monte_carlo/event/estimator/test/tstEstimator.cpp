@@ -230,7 +230,7 @@ FRENSIE_UNIT_TEST( Estimator, setDiscretization_raw_data )
   {
     TestEstimator estimator( 0, 1.0 );
 
-    std::vector<std::set<size_t> > source_id_bins( 3 );
+    std::vector<std::set<MonteCarlo::ParticleState::sourceIdType> > source_id_bins( 3 );
     source_id_bins[0].insert( 0 );
     source_id_bins[0].insert( 1 );
     source_id_bins[1].insert( 1 );
@@ -241,7 +241,7 @@ FRENSIE_UNIT_TEST( Estimator, setDiscretization_raw_data )
 
     FRENSIE_CHECK_EQUAL( estimator.getNumberOfBins( MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION ), 3 );
 
-    std::vector<std::set<size_t> > source_id_bins_copy;
+    std::vector<std::set<MonteCarlo::ParticleState::sourceIdType> > source_id_bins_copy;
 
     estimator.getDiscretization<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION>( source_id_bins_copy );
 

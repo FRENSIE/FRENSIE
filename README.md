@@ -318,7 +318,61 @@ the following CMake variables can be set:
  * `-D DAGMC_PREFIX:PATH=path-to-dagmc-install-dir` indicates where the custom DAGMC install directory is located.
  * `-D ROOT_PREFIX:PATH=path-to-root-install-dir` indicates where the custom ROOT install directory is located.
  * `-D BUILDNAME_PREFIX:STRING=my-build-name` sets the custom build name that will be displayed on the CDash dashboard (only used when FRENSIE_ENABLE_DASHBOARD_CLIENT is set to ON).
- * `-D MCNP_DATA_DIR:PATH=path-to-mcnp-data` indicates where the nuclear data used by MCNP6 is located on the system. When this configure option is used, the FACEMC executable can be tested using the nuclear data used by MCNP6 by running `make test` or `make test-slow`. To disable these tests delete this configure option from the frensie.sh script.
+ * `-D MCNP_DATA_DIR:PATH=path-to-mcnp-data` indicates where the nuclear data used by MCNP6 is located on the system. 
+
+**Note 3**: Each FRENSIE package has a custom build target, a custom test build
+target and a custom test run target. For a given package PACKAGE the three
+targets will have the following names:
+ 1. PACKAGE,
+ 2. PACKAGE_tests,
+ 3. test-PACKAGE.
+If you want to build the utility_core package, you would run
+`make utility_core` or `make -j8 utility_core`. If you want to build all of
+the utility_core package tests, you would run `make utility_core_tests` or
+`make -j8 utility_core_tests`. Once the package tests have been built you can
+run the tests by running `make test-utility_core`.
+
+FRENSIE has the following packages:
+ * utility_core
+ * utility_mpi
+ * utility_archive
+ * utility_system
+ * utility_prng
+ * utility_interpolation
+ * utility_grid
+ * utility_distribution
+ * utility_stats
+ * utility_integrator
+ * utility_mesh
+ * geometry_core
+ * geometry_dagmc (if DagMC is enabled)
+ * geometry_root (if ROOT is enabled)
+ * data_core
+ * data_ace
+ * data_endf
+ * data_endl
+ * data_native
+ * data_database
+ * data_xsdir
+ * monte_carlo_core
+ * monte_carlo_collision_core
+ * monte_carlo_collisoin_photon
+ * monte_carlo_collision_electron
+ * monte_carlo_collision_neutron
+ * monte_carlo_collision_kernel
+ * monte_carlo_active_region_core
+ * monte_carlo_active_region_response
+ * monte_carlo_active_region_source
+ * monte_carlo_event_core
+ * monte_carlo_event_estimator
+ * monte_carlo_event_particle_tracker
+ * monte_carlo_event_forced_collisions
+ * monte_carlo_event_weight_windows
+ * monte_carlo_event_dispatcher
+ * monte_carlo_manager
+ * data_gen_endl
+ * data_gen_electron_photon
+ * data_gen_free_gas_sab
 
 ## Dashboard
 A private [dashboard](http://cdash.ep.wisc.edu) has been set up for developers. Please register with the dashboard and send an email to [Alex Robinson](https://github.com/aprobinson) indicating that you would like to have access to the dashboard.

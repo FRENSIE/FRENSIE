@@ -23,65 +23,65 @@ MACRO(ENABLE_MOAB_SUPPORT)
     MESSAGE(FATAL_ERROR "The moab library could not be found.")
   ENDIF()
 
-  IF(FRENSIE_ENABLE_DAGMC)
-    # Check if the Moab patch has been applied
-    IF((NOT DEFINED MOAB_THREAD_SAFE_PATCHED) OR (NOT ${MOAB_THREAD_SAFE_PATCHED}))
-      FIND_FILE(GEOM_QUERY_TOOL_CPP
-      NAMES "GeomQueryTool.cpp"
-      PATHS ${MOAB_PREFIX}/src/src ${MOAB_SOURCE}/src)
-      IF(${GEOM_QUERY_TOOL_CPP} MATCHES NOTFOUND)
-          MESSAGE(FATAL_ERROR "The GeomQueryTool.cpp file could not be found!")
-      ENDIF()
+  # IF(FRENSIE_ENABLE_DAGMC)
+  #   # Check if the Moab patch has been applied
+  #   IF((NOT DEFINED MOAB_THREAD_SAFE_PATCHED) OR (NOT ${MOAB_THREAD_SAFE_PATCHED}))
+  #     FIND_FILE(GEOM_QUERY_TOOL_CPP
+  #     NAMES "GeomQueryTool.cpp"
+  #     PATHS ${MOAB_PREFIX}/src/src ${MOAB_SOURCE}/src)
+  #     IF(${GEOM_QUERY_TOOL_CPP} MATCHES NOTFOUND)
+  #         MESSAGE(FATAL_ERROR "The GeomQueryTool.cpp file could not be found!")
+  #     ENDIF()
 
-      IF(NOT DEFINED MOAB_THREAD_SAFE_PATCH)
-        MESSAGE(FATAL_ERROR "The GeomQueryTool.cpp patch file needs to be defined!")
-      ENDIF()
+  #     IF(NOT DEFINED MOAB_THREAD_SAFE_PATCH)
+  #       MESSAGE(FATAL_ERROR "The GeomQueryTool.cpp patch file needs to be defined!")
+  #     ENDIF()
 
-      IF(NOT DEFINED PATCH_EXEC)
-        MESSAGE(FATAL_ERROR "The patch executable needs to be defined!")
-      ENDIF()
+  #     IF(NOT DEFINED PATCH_EXEC)
+  #       MESSAGE(FATAL_ERROR "The patch executable needs to be defined!")
+  #     ENDIF()
 
-      EXECUTE_PROCESS(COMMAND ${PATCH_EXEC} -s -N -r ${CMAKE_BINARY_DIR}/GeomQueryTool.cpp.rej ${GEOM_QUERY_TOOL_CPP}
-        ${MOAB_THREAD_SAFE_PATCH}
-        OUTPUT_VARIABLE MOAB_THREAD_SAFE_PATCH_OUTPUT
-        ERROR_VARIABLE MOAB_THREAD_SAFE_PATCH_ERROR
-        RESULT_VARIABLE MOAB_THREAD_SAFE_PATCH_RESULT)
+  #     EXECUTE_PROCESS(COMMAND ${PATCH_EXEC} -s -N -r ${CMAKE_BINARY_DIR}/GeomQueryTool.cpp.rej ${GEOM_QUERY_TOOL_CPP}
+  #       ${MOAB_THREAD_SAFE_PATCH}
+  #       OUTPUT_VARIABLE MOAB_THREAD_SAFE_PATCH_OUTPUT
+  #       ERROR_VARIABLE MOAB_THREAD_SAFE_PATCH_ERROR
+  #       RESULT_VARIABLE MOAB_THREAD_SAFE_PATCH_RESULT)
 
-      IF(${MOAB_THREAD_SAFE_PATCH_OUTPUT} MATCHES "FAILED")
-        MESSAGE(FATAL_ERROR "The GeomQueryTool.cpp file could not be patched: ${MOAB_THREAD_SAFE_PATCH_OUTPUT}")
-      ELSEIF(${MOAB_THREAD_SAFE_PATCH_OUTPUT} MATCHES "refusing")
-        MESSAGE(FATAL_ERROR "The GeomQueryTool.cpp file could not be patched: ${MOAB_THREAD_SAFE_PATCH_OUTPUT}")
-      ELSEIF(MOAB_THREAD_SAFE_PATCH_RESULT EQUAL "0")
-        MESSAGE(FATAL_ERROR "GeomQueryTool.cpp was successfully patched for the first time. Moab needs to be rebuilt before proceeding.")
-      ELSE()
-        SET(MOAB_THREAD_SAFE_PATCHED "ON"
-          CACHE BOOL "Flag that indicates if the patch was successful." FORCE)
-        MESSAGE("-- GeomQueryTool.cpp has been patched!")
-      ENDIF()
-    ENDIF()
+  #     IF(${MOAB_THREAD_SAFE_PATCH_OUTPUT} MATCHES "FAILED")
+  #       MESSAGE(FATAL_ERROR "The GeomQueryTool.cpp file could not be patched: ${MOAB_THREAD_SAFE_PATCH_OUTPUT}")
+  #     ELSEIF(${MOAB_THREAD_SAFE_PATCH_OUTPUT} MATCHES "refusing")
+  #       MESSAGE(FATAL_ERROR "The GeomQueryTool.cpp file could not be patched: ${MOAB_THREAD_SAFE_PATCH_OUTPUT}")
+  #     ELSEIF(MOAB_THREAD_SAFE_PATCH_RESULT EQUAL "0")
+  #       MESSAGE(FATAL_ERROR "GeomQueryTool.cpp was successfully patched for the first time. Moab needs to be rebuilt before proceeding.")
+  #     ELSE()
+  #       SET(MOAB_THREAD_SAFE_PATCHED "ON"
+  #         CACHE BOOL "Flag that indicates if the patch was successful." FORCE)
+  #       MESSAGE("-- GeomQueryTool.cpp has been patched!")
+  #     ENDIF()
+  #   ENDIF()
 
-    # Moab patch has been applied - now find DagMC library
-    # Use the user supplied prefix to find the DagMC libraries and include dirs.
-    SET(DAGMC_INCLUDE_DIRS ${DAGMC_PREFIX}/include)
-    SET(DAGMC_LIBRARY_DIRS ${DAGMC_PREFIX}/lib)
-    FIND_LIBRARY(DAGMC dagmc ${DAGMC_LIBRARY_DIRS})
+  #   # Moab patch has been applied - now find DagMC library
+  #   # Use the user supplied prefix to find the DagMC libraries and include dirs.
+  #   SET(DAGMC_INCLUDE_DIRS ${DAGMC_PREFIX}/include)
+  #   SET(DAGMC_LIBRARY_DIRS ${DAGMC_PREFIX}/lib)
+  #   FIND_LIBRARY(DAGMC dagmc ${DAGMC_LIBRARY_DIRS})
 
-    IF(${DAGMC} MATCHES NOTFOUND)
-      MESSAGE(FATAL_ERROR "The dagmc library could not be found.")
-    ENDIF()
+  #   IF(${DAGMC} MATCHES NOTFOUND)
+  #     MESSAGE(FATAL_ERROR "The dagmc library could not be found.")
+  #   ENDIF()
 
-    SET(MOAB ${DAGMC} ${MOAB})
+  #   SET(MOAB ${DAGMC} ${MOAB})
 
-    SET(HAVE_FRENSIE_DAGMC "1")
-  ENDIF()
+  #   SET(HAVE_FRENSIE_DAGMC "1")
+  # ENDIF()
 
   # Set the include paths for Moab and DagMC
   INCLUDE_DIRECTORIES(${MOAB_INCLUDE_DIRS})
-  INCLUDE_DIRECTORIES(${DAGMC_INCLUDE_DIRS})
+  #INCLUDE_DIRECTORIES(${DAGMC_INCLUDE_DIRS})
 
   # Set the link paths for Moab and DagMC
   LINK_DIRECTORIES(${MOAB_LIBRARY_DIRS})
-  LINK_DIRECTORIES(${DAGMC_LIBRARY_DIRS})
+  #LINK_DIRECTORIES(${DAGMC_LIBRARY_DIRS})
 
   # Check if C compiler compatibility needs to be checked
   STRING(COMPARE NOTEQUAL "${MOAB_C_COMPILER}" "${MOAB_CC}" NEW_COMPILER)
@@ -149,13 +149,6 @@ MACRO(ENABLE_MOAB_SUPPORT)
     MESSAGE(" MOAB_LIBRARY_DIRS = ${MOAB_LIBRARY_DIRS}")
     MESSAGE(" MOAB_LIBRARY = ${MOAB}")
     MESSAGE("End of MOAB details\n")
-
-    MESSAGE("Found DAGMC!  Here are the details: ")
-    MESSAGE(" DAGMC_PREFIX = ${DAGMC_PREFIX}")
-    MESSAGE(" DAGMC_INCLUDE_DIRS = ${DAGMC_INCLUDE_DIRS}")
-    MESSAGE(" DAGMC_LIBRARY_DIRS = ${DAGMC_LIBRARY_DIRS}")
-    MESSAGE(" DAGMC_LIBRARY = ${DAGMC}")
-    MESSAGE("End of DAGMC details\n")
   ENDIF()
 
 ENDMACRO(ENABLE_MOAB_SUPPORT)
