@@ -29,16 +29,6 @@ FRENSIE_ADD_TEST_EXECUTABLE(DagMCModel DEPENDS tstDagMCModel.cpp)
 FRENSIE_ADD_TEST(DagMCModel
   EXTRA_ARGS --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.h5m)
 
-FRENSIE_ADD_TEST_EXECUTABLE(DagMCModelIArchive DEPENDS tstDagMCModelIArchive.cpp)
-FRENSIE_ADD_TEST(DagMCModelIArchiveFullPath
-  TEST_EXEC_NAME_ROOT DagMCModelIArchive
-  EXTRA_ARGS --test_archive_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_model_archive_full_path.xml)
-FRENSIE_ADD_TEST(DagMCModelIArchiveRelativePath
-  TEST_EXEC_NAME_ROOT DagMCModelIArchive
-  EXTRA_ARGS
-  --test_archive_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_model_archive_relative_path.xml
-  --reset_path=${CMAKE_CURRENT_SOURCE_DIR}/test_files)
-
 FRENSIE_ADD_TEST_EXECUTABLE(DagMCNavigator DEPENDS tstDagMCNavigator.cpp)
 FRENSIE_ADD_TEST(DagMCNavigator
   EXTRA_ARGS --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.h5m)

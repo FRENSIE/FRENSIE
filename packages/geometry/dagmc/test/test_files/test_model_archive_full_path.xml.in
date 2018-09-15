@@ -10,8 +10,7 @@
 			<tx class_id="5" tracking_level="1" version="0" object_id="_1">
 				<d_file_name>test_geom.h5m</d_file_name>
                                 <raw_file_path>${CMAKE_CURRENT_SOURCE_DIR}</raw_file_path>
-                                <d_facet_tolerance>1.00000000000000002e-03</d_facet_tolerance>
-				<d_fast_id_lookup>0</d_fast_id_lookup>
+                                <d_fast_id_lookup>0</d_fast_id_lookup>
 				<d_termination_cell_property>graveyard</d_termination_cell_property>
 				<d_reflecting_surface_property>reflecting.surface</d_reflecting_surface_property>
 				<d_material_property>mat</d_material_property>

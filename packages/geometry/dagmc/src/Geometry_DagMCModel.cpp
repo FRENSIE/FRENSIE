@@ -26,104 +26,75 @@
 
 namespace Geometry{
 
-// Initialize static member data
-std::shared_ptr<DagMCModel> DagMCModel::s_instance;
-
-// Get the DagMC instance
-std::shared_ptr<DagMCModel> DagMCModel::getInstance()
-{
-  // Just-in-time initialization
-  if( !s_instance )
-    s_instance.reset( new DagMCModel );
-
-  return s_instance;
-}
+// Default constructor
+DagMCModel::DagMCModel()
+{ /* ... */ }
 
 // Constructor
-DagMCModel::DagMCModel()
+DagMCModel::DagMCModel( const DagMCModelProperties& model_properties,
+                        const bool suppress_dagmc_output )
   : d_dagmc( NULL ),
     d_cell_handler(),
     d_surface_handler(),
     d_termination_cells(),
     d_reflecting_surfaces(),
-    d_model_properties()
-{ /* ... */ }
-
-// Check if the DagMC model has been initialized
-bool DagMCModel::isInitialized() const
-{
-  return d_dagmc != NULL;
+    d_model_properties( new DagMCModelProperties( model_properties ) )
+{ 
+  this->initialize( suppress_dagmc_output );
 }
 
-// Initialize the DagMC model
-void DagMCModel::initialize( const DagMCModelProperties& model_properties,
-                             const bool suppress_dagmc_output )
+// Initialize the model
+void DagMCModel::initialize( const bool suppress_dagmc_output )
 {
-  if( !this->isInitialized() )
-  {
-    // Cache the model properties
-    d_model_properties.reset( new DagMCModelProperties( model_properties ) );
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "Loading model "
+                                    << d_model_properties->getModelFileNameWithPath()
+                                    << " ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
 
-    FRENSIE_LOG_PARTIAL_NOTIFICATION( "Loading model "
-                                      << model_properties.getModelFileNameWithPath()
-                                      << " ... " );
-    FRENSIE_FLUSH_ALL_LOGS();
-
-    try{
-      this->loadDagMCGeometry( suppress_dagmc_output );
-    }
-    EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
-                             "Unable to load DagMC geometry file "
-                             << model_properties.getModelFileNameWithPath() << "!" );
-
-    // Validate the properties in the geometry
-    try{
-      this->validatePropertyNames();
-    }
-    EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
-                             "Invalid DagMC geometry properties encountered!" );
-
-    // Parse the properties
-    try{
-      this->parseProperties();
-    }
-    EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
-                             "Unable to parse the DagMC properties!" );
-
-    // Construct the cell and surface handlers
-    try{
-      this->constructEntityHandlers();
-    }
-    EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
-                             "Unable to construct the entity handlers!" );
-
-    // Extract the termination cells
-    try{
-      this->extractTerminationCells();
-    }
-    EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
-                             "Unable to extract the termination cells!" );
-
-    // Get the reflecting surfaces
-    try{
-      this->extractReflectingSurfaces();
-    }
-    EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
-                             "Unable to extract the reflecting surfaces!" );
-
-    FRENSIE_LOG_NOTIFICATION( "done!" );
-    FRENSIE_FLUSH_ALL_LOGS();
+  try{
+    this->loadDagMCGeometry( suppress_dagmc_output );
   }
+  EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
+                           "Unable to load DagMC geometry file "
+                           << d_model_properties->getModelFileNameWithPath() << "!" );
 
-  // A model has already been loaded - ignore new model
-  else
-  {
-    FRENSIE_LOG_DAGMC_WARNING( "Cannot load requested model ("
-                               << model_properties.getModelFileNameWithPath() << ") "
-                               "because a model ("
-                               << d_model_properties->getModelFileNameWithPath() << ")"
-                               " has already been loaded!" );
+  // Validate the properties in the geometry
+  try{
+    this->validatePropertyNames();
   }
+  EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
+                           "Invalid DagMC geometry properties encountered!" );
+
+  // Parse the properties
+  try{
+    this->parseProperties();
+  }
+  EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
+                           "Unable to parse the DagMC properties!" );
+
+  // Construct the cell and surface handlers
+  try{
+    this->constructEntityHandlers();
+  }
+  EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
+                           "Unable to construct the entity handlers!" );
+
+  // Extract the termination cells
+  try{
+    this->extractTerminationCells();
+  }
+  EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
+                           "Unable to extract the termination cells!" );
+  
+  // Get the reflecting surfaces
+  try{
+    this->extractReflectingSurfaces();
+  }
+  EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
+                           "Unable to extract the reflecting surfaces!" );
+
+  FRENSIE_LOG_NOTIFICATION( "done!" );
+  FRENSIE_FLUSH_ALL_LOGS();
 }
 
 // validate the properties
@@ -330,9 +301,6 @@ void DagMCModel::extractReflectingSurfaces()
 // Get the model properties
 const DagMCModelProperties& DagMCModel::getModelProperties() const
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
-
   return *d_model_properties;
 }
 
@@ -351,9 +319,6 @@ bool DagMCModel::hasSurfaceEstimatorData() const
 // Get the material ids
 void DagMCModel::getMaterialIds( MaterialIdSet& material_ids ) const
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
-
   std::vector<std::string> raw_material_ids;
 
   this->getPropertyValues( d_model_properties->getMaterialPropertyName(),
@@ -384,9 +349,6 @@ void DagMCModel::getCells( CellIdSet& cell_set,
                            const bool include_void_cells,
                            const bool include_termination_cells ) const
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
-
   moab::Range::const_iterator cell_handle_it = d_cell_handler->begin();
 
   while( cell_handle_it != d_cell_handler->end() )
@@ -417,9 +379,6 @@ void DagMCModel::getCells( CellIdSet& cell_set,
 // Get the cell material ids
 void DagMCModel::getCellMaterialIds( CellIdMatIdMap& cell_id_mat_id_map ) const
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
-
   // Load a map of the cell ids and material names
   CellIdPropertyValuesMap cell_id_mat_name_map;
 
@@ -461,9 +420,6 @@ void DagMCModel::getCellMaterialIds( CellIdMatIdMap& cell_id_mat_id_map ) const
  */
 void DagMCModel::getCellDensities( CellIdDensityMap& cell_id_density_map ) const
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
-
   // Load a map of the cell ids and density names
   CellIdPropertyValuesMap cell_id_density_name_map;
 
@@ -509,9 +465,6 @@ void DagMCModel::getCellDensities( CellIdDensityMap& cell_id_density_map ) const
 void DagMCModel::getCellEstimatorData(
                           CellEstimatorIdDataMap& estimator_id_data_map ) const
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
-
   // Load the estimator property cell id map
   PropValueCellIdMap estimator_prop_cell_id_map;
 
@@ -579,9 +532,6 @@ void DagMCModel::getCellEstimatorData(
 // Get the problem surfaces
 void DagMCModel::getSurfaces( SurfaceIdSet& surface_set ) const
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
-
   moab::Range::const_iterator surface_handle_it = d_surface_handler->begin();
 
   while( surface_handle_it != d_surface_handler->end() )
@@ -599,9 +549,6 @@ void DagMCModel::getSurfaces( SurfaceIdSet& surface_set ) const
 void DagMCModel::getSurfaceEstimatorData(
                        SurfaceEstimatorIdDataMap& estimator_id_data_map ) const
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
-
   // Load the estimator property surface id map
   PropValueSurfaceIdMap estimator_prop_surface_id_map;
 
@@ -670,26 +617,18 @@ void DagMCModel::getSurfaceEstimatorData(
 // Check if a cell exists
 bool DagMCModel::doesCellExist( const EntityId cell_id ) const
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
-
   return d_cell_handler->doesCellExist( cell_id );
 }
 
 // Check if the surface exists
 bool DagMCModel::doesSurfaceExist( const EntityId surface_id ) const
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
-
   return d_surface_handler->doesSurfaceExist( surface_id );
 }
 
 // Get the cell volume
 auto DagMCModel::getCellVolume( const EntityId cell_id ) const -> Volume
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
   // Make sure the cell exists
   testPrecondition( this->doesCellExist( cell_id ) );
 
@@ -715,8 +654,6 @@ auto DagMCModel::getCellVolume( const EntityId cell_id ) const -> Volume
 // Get the surface area
 auto DagMCModel::getSurfaceArea( const EntityId surface_id ) const -> Area
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
   // Make sure the cell exists
   testPrecondition( this->doesSurfaceExist( surface_id ) );
 
@@ -743,8 +680,6 @@ auto DagMCModel::getSurfaceArea( const EntityId surface_id ) const -> Area
 // Check if the cell is a termination cell
 bool DagMCModel::isTerminationCell( const EntityId cell_id ) const
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
   // Make sure the cell exists
   testPrecondition( this->doesCellExist( cell_id ) );
 
@@ -755,8 +690,6 @@ bool DagMCModel::isTerminationCell( const EntityId cell_id ) const
 // Check if the cell is a void cell
 bool DagMCModel::isVoidCell( const EntityId cell_id ) const
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
   // Make sure the cell exists
   testPrecondition( this->doesCellExist( cell_id ) );
 
@@ -769,8 +702,6 @@ bool DagMCModel::isVoidCell( const EntityId cell_id ) const
 // Check if the surface is a reflecting surface
 bool DagMCModel::isReflectingSurface( const EntityId surface_id ) const
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
   // Make sure the surface exists
   testPrecondition( this->doesSurfaceExist( surface_id ) );
 
@@ -782,20 +713,14 @@ bool DagMCModel::isReflectingSurface( const EntityId surface_id ) const
 DagMCNavigator* DagMCModel::createNavigatorAdvanced(
     const Navigator::AdvanceCompleteCallback& advance_complete_callback ) const
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
-
-  return new DagMCNavigator( DagMCModel::getInstance(),
+  return new DagMCNavigator( this->shared_from_this(),
                              advance_complete_callback );
 }
 
 // Create a raw, heap-allocated navigator
 DagMCNavigator* DagMCModel::createNavigatorAdvanced() const
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
-
-  return new DagMCNavigator( DagMCModel::getInstance() );
+  return new DagMCNavigator( this->shared_from_this() );
 }
 
 // Get the cells associated with a property name
@@ -805,9 +730,6 @@ void DagMCModel::getCellsWithProperty( std::vector<moab::EntityHandle>& cells,
                                        const std::string& property,
                                        const std::string* property_value ) const
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
-
   moab::ErrorCode return_value =
     d_dagmc->entities_by_property( property, cells, 3, property_value );
 
@@ -824,9 +746,6 @@ void DagMCModel::getSurfacesWithProperty(
                                      const std::string& property,
                                      const std::string* property_value ) const
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
-
   moab::ErrorCode return_value =
     d_dagmc->entities_by_property( property, surfaces, 2, property_value );
 
@@ -839,9 +758,6 @@ void DagMCModel::getSurfacesWithProperty(
 void DagMCModel::getPropertyValues( const std::string& property,
                                     std::vector<std::string>& values ) const
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
-
   // Get all of the property values
   moab::ErrorCode return_value =
     d_dagmc->get_all_prop_values( property, values );
@@ -856,9 +772,6 @@ void DagMCModel::getCellPropertyValues(
                           const std::string& property,
                           CellIdPropertyValuesMap& cell_id_prop_val_map ) const
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
-
   std::vector<moab::EntityHandle> cells_with_property;
 
   // Get all of the cells with the desired property
@@ -891,9 +804,6 @@ void DagMCModel::getCellIdsWithPropertyValue(
                                const std::string& property,
                                PropValueCellIdMap& prop_val_cell_id_map ) const
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
-
   // Get all of the values for the desired property
   PropertyValuesArray property_values;
 
@@ -938,9 +848,6 @@ void DagMCModel::getSurfacePropertyValues(
                     const std::string& property,
                     SurfaceIdPropertyValuesMap& surface_id_prop_val_map ) const
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
-
   std::vector<moab::EntityHandle> surfaces_with_property;
 
   // Get all of the surfaces with the desired property
@@ -973,9 +880,6 @@ void DagMCModel::getSurfaceIdsWithPropertyValue(
                          const std::string& property,
                          PropValueSurfaceIdMap& prop_val_surface_id_map ) const
 {
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
-
   // Get all of the values for the desired property
   PropertyValuesArray property_values;
 

@@ -98,7 +98,7 @@ are described.
 13. run `exec bash`
 14. run `cmake --version` and verify that the output is 3.x
 
-### Building Doxygen - Optional
+### Building Doxygen - optional
 **Basic:**
 
 1. run `sudo apt-get install doxygen`
@@ -118,7 +118,7 @@ are described.
 10. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/doxygen/bin:$PATH`
 11. run `exec bash`
 
-### Building Open MPI - Optional
+### Building Open MPI - optional
 **Basic:**
 
 1. run `sudo apt-get install openmpi-bin libopenmpi-dev`
@@ -204,7 +204,7 @@ are described.
 9. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/boost/lib:$LD_LIBRARY_PATH`
 10. run `exec bash`
 
-### Building MOAB - Optional
+### Building MOAB - optional
 1. create a moab directory (e.g. software/moab)
 2. move to the moab directory
 3. run `git clone https://aprobinson@bitbucket.org/aprobinson/moab.git`
@@ -227,7 +227,7 @@ are described.
 16. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/moab/lib:$LD_LIBRARY_PATH`
 17. run `exec bash`
 
-### Building DagMC - Optional
+### Building DagMC - optional
 1. create a dagmc directory (e.g. software/dagmc)
 2. move to the dagmc directory
 3. run `git clone https://github.com/svalinn/DAGMC`
@@ -245,7 +245,7 @@ are described.
 14. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/dagmc/lib:$LD_LIBRARY_PATH`
 14. run `exec bash`
 
-### Building ROOT - Optional
+### Building ROOT - optional
 **Basic:**
 
 1. download the appropriate [ROOT 6.04/02 binaries](https://root.cern.ch/content/release-60402)

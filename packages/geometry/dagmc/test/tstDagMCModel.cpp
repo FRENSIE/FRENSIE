@@ -29,29 +29,25 @@ typedef TestArchiveHelper::TestArchives TestArchives;
 //---------------------------------------------------------------------------//
 std::unique_ptr<const Geometry::DagMCModelProperties> model_properties;
 
-bool cache_test_archive;
-
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
-// Check that DagMC can be initialized
-FRENSIE_UNIT_TEST( DagMCModel, initialize )
+// Check that a DagMC model can be constructed
+FRENSIE_UNIT_TEST( DagMCModel, constructor )
 {
-  std::shared_ptr<Geometry::DagMCModel> model =
-    Geometry::DagMCModel::getInstance();
+  std::shared_ptr<Geometry::DagMCModel>
+    model_a, model_b;
 
-  FRENSIE_CHECK( !model->isInitialized() );
-  FRENSIE_CHECK_NO_THROW( model->initialize( *model_properties ) );
-
-  FRENSIE_CHECK( model->isInitialized() );
+  FRENSIE_CHECK_NO_THROW( model_a.reset( new Geometry::DagMCModel( *model_properties ) ) );
+  FRENSIE_CHECK_NO_THROW( model_b.reset( new Geometry::DagMCModel( *model_properties ) ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the model properties can be retrieved
 FRENSIE_UNIT_TEST( DagMCModel, getModelProperties )
 {
-  std::shared_ptr<Geometry::DagMCModel> model =
-    Geometry::DagMCModel::getInstance();
+  std::shared_ptr<Geometry::DagMCModel>
+    model( new Geometry::DagMCModel( *model_properties ) );
 
   const Geometry::DagMCModelProperties& cached_properties =
     model->getModelProperties();
@@ -64,8 +60,8 @@ FRENSIE_UNIT_TEST( DagMCModel, getModelProperties )
 // Check if the model has cell estimator data
 FRENSIE_UNIT_TEST( DagMCModel, hasCellEstimatorData )
 {
-  std::shared_ptr<Geometry::DagMCModel> model =
-    Geometry::DagMCModel::getInstance();
+  std::shared_ptr<Geometry::DagMCModel> 
+    model( new Geometry::DagMCModel( *model_properties ) );
 
   FRENSIE_CHECK( model->hasCellEstimatorData() );
 }
@@ -74,8 +70,8 @@ FRENSIE_UNIT_TEST( DagMCModel, hasCellEstimatorData )
 // Check if the model has surface estimator data
 FRENSIE_UNIT_TEST( DagMCModel, hasSurfaceEstimatorData )
 {
-  std::shared_ptr<Geometry::DagMCModel> model =
-    Geometry::DagMCModel::getInstance();
+  std::shared_ptr<Geometry::DagMCModel> 
+    model( new Geometry::DagMCModel( *model_properties ) );
 
   FRENSIE_CHECK( model->hasSurfaceEstimatorData() );
 }
@@ -84,8 +80,8 @@ FRENSIE_UNIT_TEST( DagMCModel, hasSurfaceEstimatorData )
 // Check that the material ids can be returned
 FRENSIE_UNIT_TEST( DagMCModel, getMaterialIds )
 {
-  std::shared_ptr<Geometry::DagMCModel> model =
-    Geometry::DagMCModel::getInstance();
+  std::shared_ptr<Geometry::DagMCModel> 
+    model( new Geometry::DagMCModel( *model_properties ) );
 
   Geometry::Model::MaterialIdSet material_ids;
 
@@ -106,8 +102,8 @@ FRENSIE_UNIT_TEST( DagMCModel, getMaterialIds )
 // Check that the problem cells can be returned
 FRENSIE_UNIT_TEST( DagMCModel, getCells )
 {
-  std::shared_ptr<Geometry::DagMCModel> model =
-    Geometry::DagMCModel::getInstance();
+  std::shared_ptr<Geometry::DagMCModel> 
+    model( new Geometry::DagMCModel( *model_properties ) );
 
   Geometry::Model::CellIdSet cells;
 
@@ -204,8 +200,8 @@ FRENSIE_UNIT_TEST( DagMCModel, getCells )
 // Check that the cell material ids can be returned
 FRENSIE_UNIT_TEST( DagMCModel, getCellMaterialIds )
 {
-  std::shared_ptr<Geometry::DagMCModel> model =
-    Geometry::DagMCModel::getInstance();
+  std::shared_ptr<Geometry::DagMCModel> 
+    model( new Geometry::DagMCModel( *model_properties ) );
 
   Geometry::Model::CellIdMatIdMap cell_id_mat_id_map;
 
@@ -280,8 +276,8 @@ FRENSIE_UNIT_TEST( DagMCModel, getCellMaterialIds )
 // Check that the cell densities can be returned
 FRENSIE_UNIT_TEST( DagMCModel, getCellDensities )
 {
-  std::shared_ptr<Geometry::DagMCModel> model =
-    Geometry::DagMCModel::getInstance();
+  std::shared_ptr<Geometry::DagMCModel> 
+    model( new Geometry::DagMCModel( *model_properties ) );
 
   Geometry::Model::CellIdDensityMap cell_id_density_map;
 
@@ -410,8 +406,8 @@ FRENSIE_UNIT_TEST( DagMCModel, getCellDensities )
 // Check that the cell estimator data can be returned
 FRENSIE_UNIT_TEST( DagMCModel, getCellEstimatorData )
 {
-  std::shared_ptr<Geometry::DagMCModel> model =
-    Geometry::DagMCModel::getInstance();
+  std::shared_ptr<Geometry::DagMCModel> 
+    model( new Geometry::DagMCModel( *model_properties ) );
 
   Geometry::Model::CellEstimatorIdDataMap cell_estimator_id_data_map;
 
@@ -464,8 +460,8 @@ FRENSIE_UNIT_TEST( DagMCModel, getCellEstimatorData )
 // Check if cells exist
 FRENSIE_UNIT_TEST( DagMCModel, doesCellExist )
 {
-  std::shared_ptr<Geometry::DagMCModel> model =
-    Geometry::DagMCModel::getInstance();
+  std::shared_ptr<Geometry::DagMCModel>
+    model( new Geometry::DagMCModel( *model_properties ) );
 
   FRENSIE_CHECK( !model->doesCellExist( 0 ) );
   FRENSIE_CHECK( model->doesCellExist( 1 ) );
@@ -536,8 +532,8 @@ FRENSIE_UNIT_TEST( DagMCModel, doesCellExist )
 // Check if cells are termination cells
 FRENSIE_UNIT_TEST( DagMCModel, isTerminationCell )
 {
-  std::shared_ptr<Geometry::DagMCModel> model =
-    Geometry::DagMCModel::getInstance();
+  std::shared_ptr<Geometry::DagMCModel> 
+    model( new Geometry::DagMCModel( *model_properties ) );
 
   FRENSIE_CHECK( !model->isTerminationCell( 1 ) );
   FRENSIE_CHECK( !model->isTerminationCell( 3 ) );
@@ -601,8 +597,8 @@ FRENSIE_UNIT_TEST( DagMCModel, isTerminationCell )
 // Check if the cell is a void cell
 FRENSIE_UNIT_TEST( DagMCModel, isVoidCell )
 {
-  std::shared_ptr<Geometry::DagMCModel> model =
-    Geometry::DagMCModel::getInstance();
+  std::shared_ptr<Geometry::DagMCModel> 
+    model( new Geometry::DagMCModel( *model_properties ) );
 
   FRENSIE_CHECK( !model->isVoidCell( 1 ) );
   FRENSIE_CHECK( !model->isVoidCell( 3 ) );
@@ -666,8 +662,8 @@ FRENSIE_UNIT_TEST( DagMCModel, isVoidCell )
 // Check that the cell volume can be returned
 FRENSIE_UNIT_TEST( DagMCModel, getCellVolume )
 {
-  std::shared_ptr<Geometry::DagMCModel> model =
-    Geometry::DagMCModel::getInstance();
+  std::shared_ptr<Geometry::DagMCModel> 
+    model( new Geometry::DagMCModel( *model_properties ) );
 
   // Get the volume of cell 53
   Geometry::Model::Volume cell_volume = model->getCellVolume( 53 );
@@ -681,8 +677,8 @@ FRENSIE_UNIT_TEST( DagMCModel, getCellVolume )
 // Check that the problem surfaces can be returned
 FRENSIE_UNIT_TEST( DagMCModel, getSurfaces )
 {
-  std::shared_ptr<Geometry::DagMCModel> model =
-    Geometry::DagMCModel::getInstance();
+  std::shared_ptr<Geometry::DagMCModel> 
+    model( new Geometry::DagMCModel( *model_properties ) );
 
   Geometry::AdvancedModel::SurfaceIdSet surfaces;
 
@@ -695,8 +691,8 @@ FRENSIE_UNIT_TEST( DagMCModel, getSurfaces )
 // Check that the surface estimator data can be returned
 FRENSIE_UNIT_TEST( DagMCModel, getSurfaceEstimatorData )
 {
-  std::shared_ptr<Geometry::DagMCModel> model =
-    Geometry::DagMCModel::getInstance();
+  std::shared_ptr<Geometry::DagMCModel> 
+    model( new Geometry::DagMCModel( *model_properties ) );
 
   Geometry::AdvancedModel::SurfaceEstimatorIdDataMap
     surface_estimator_id_data_map;
@@ -743,8 +739,8 @@ FRENSIE_UNIT_TEST( DagMCModel, getSurfaceEstimatorData )
 // Check if surfaces exist
 FRENSIE_UNIT_TEST( DagMCModel, doesSurfaceExist )
 {
-  std::shared_ptr<Geometry::DagMCModel> model =
-    Geometry::DagMCModel::getInstance();
+  std::shared_ptr<Geometry::DagMCModel> 
+    model( new Geometry::DagMCModel( *model_properties ) );
 
   FRENSIE_CHECK( !model->doesSurfaceExist( 0 ) );
   FRENSIE_CHECK( model->doesSurfaceExist( 1 ) );
@@ -764,8 +760,8 @@ FRENSIE_UNIT_TEST( DagMCModel, doesSurfaceExist )
 // Check that the surface area can be returned
 FRENSIE_UNIT_TEST( DagMCModel, getSurfaceArea )
 {
-  std::shared_ptr<Geometry::DagMCModel> model =
-    Geometry::DagMCModel::getInstance();
+  std::shared_ptr<Geometry::DagMCModel>
+    model( new Geometry::DagMCModel( *model_properties ) );
 
   // Get the surface area of surface 242
   Geometry::AdvancedModel::Area surface_area = model->getSurfaceArea( 242 );
@@ -779,8 +775,8 @@ FRENSIE_UNIT_TEST( DagMCModel, getSurfaceArea )
 // Check if a surface is a reflecting surface
 FRENSIE_UNIT_TEST( DagMCModel, isReflectingSurface )
 {
-  std::shared_ptr<Geometry::DagMCModel> model =
-    Geometry::DagMCModel::getInstance();
+  std::shared_ptr<Geometry::DagMCModel> 
+    model( new Geometry::DagMCModel( *model_properties ) );
 
   FRENSIE_CHECK( model->isReflectingSurface( 408 ) );
   FRENSIE_CHECK( !model->isReflectingSurface( 1 ) );
@@ -790,8 +786,8 @@ FRENSIE_UNIT_TEST( DagMCModel, isReflectingSurface )
 // Check that a DagMC navigator can be created
 FRENSIE_UNIT_TEST( DagMCModel, createNavigatorAdvanced )
 {
-  std::shared_ptr<Geometry::DagMCModel> model =
-    Geometry::DagMCModel::getInstance();
+  std::shared_ptr<Geometry::DagMCModel> 
+    model( new Geometry::DagMCModel( *model_properties ) );
 
   std::shared_ptr<Geometry::DagMCNavigator> navigator(
                                             model->createNavigatorAdvanced() );
@@ -807,8 +803,8 @@ FRENSIE_UNIT_TEST( DagMCModel, createNavigatorAdvanced )
 // Check that a navigator can be created
 FRENSIE_UNIT_TEST( DagMCModel, createNavigator )
 {
-  std::shared_ptr<Geometry::DagMCModel> model =
-    Geometry::DagMCModel::getInstance();
+  std::shared_ptr<Geometry::DagMCModel>
+    model( new Geometry::DagMCModel( *model_properties ) );
 
   std::shared_ptr<Geometry::Navigator> navigator =
     model->createNavigator();
@@ -831,31 +827,120 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DagMCModel, archive, TestArchives )
   std::string archive_name( "test_dagmc_model" );
   std::ostringstream archive_ostream;
 
-  std::unique_ptr<OArchive> oarchive;
-
-  createOArchive( archive_name, archive_ostream, oarchive );
-
-  auto model = Geometry::DagMCModel::getInstance();
-
-  FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "model", model ) );
-
-  oarchive.reset();
-
-  if( cache_test_archive && archive_name.find(".h5a") >= archive_name.size() )
   {
-    std::unique_ptr<std::ofstream> ofstream;
+    std::unique_ptr<OArchive> oarchive;
 
-    if( archive_name.find( ".bin" ) < archive_name.size() )
-    {
-      ofstream.reset( new std::ofstream( archive_name, std::ofstream::binary ) );
-    }
-    else
-    {
-      ofstream.reset( new std::ofstream( archive_name ) );
-    }
+    createOArchive( archive_name, archive_ostream, oarchive );
+    
+    std::shared_ptr<Geometry::DagMCModel>
+      model( new Geometry::DagMCModel( *model_properties ) );
 
-    (*ofstream) << archive_ostream.str();
+    std::shared_ptr<const Geometry::AdvancedModel>
+      advanced_base_model = model;
+
+    std::shared_ptr<const Geometry::Model>
+      base_model = model;
+    
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( model ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( advanced_base_model ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( base_model ) );
   }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  std::shared_ptr<Geometry::DagMCModel> model;
+  std::shared_ptr<const Geometry::AdvancedModel> advanced_base_model;
+  std::shared_ptr<const Geometry::Model> base_model;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( model ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( advanced_base_model ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( base_model ) );
+
+  iarchive.reset();
+
+  const Geometry::DagMCModelProperties& cached_properties =
+    model->getModelProperties();
+
+  FRENSIE_CHECK( cached_properties.getModelFileName().find( "test_geom.h5m" ) <
+                 cached_properties.getModelFileName().size() );
+
+  Geometry::Model::CellIdSet cells;
+  base_model->getCells( cells, true, true );
+  
+  FRENSIE_CHECK_EQUAL( cells.size(), 56 );
+  FRENSIE_CHECK( cells.count( 1 ) );
+  FRENSIE_CHECK( cells.count( 3 ) );
+  FRENSIE_CHECK( cells.count( 5 ) );
+  FRENSIE_CHECK( cells.count( 7 ) );
+  FRENSIE_CHECK( cells.count( 9 ) );
+  FRENSIE_CHECK( cells.count( 13 ) );
+  FRENSIE_CHECK( cells.count( 19 ) );
+  FRENSIE_CHECK( cells.count( 26 ) );
+  FRENSIE_CHECK( cells.count( 27 ) );
+  FRENSIE_CHECK( cells.count( 28 ) );
+  FRENSIE_CHECK( cells.count( 29 ) );
+  FRENSIE_CHECK( cells.count( 30 ) );
+  FRENSIE_CHECK( cells.count( 31 ) );
+  FRENSIE_CHECK( cells.count( 32 ) );
+  FRENSIE_CHECK( cells.count( 33 ) );
+  FRENSIE_CHECK( cells.count( 34 ) );
+  FRENSIE_CHECK( cells.count( 35 ) );
+  FRENSIE_CHECK( cells.count( 36 ) );
+  FRENSIE_CHECK( cells.count( 37 ) );
+  FRENSIE_CHECK( cells.count( 41 ) );
+  FRENSIE_CHECK( cells.count( 48 ) );
+  FRENSIE_CHECK( cells.count( 49 ) );
+  FRENSIE_CHECK( cells.count( 50 ) );
+  FRENSIE_CHECK( cells.count( 51 ) );
+  FRENSIE_CHECK( cells.count( 52 ) );
+  FRENSIE_CHECK( cells.count( 53 ) );
+  FRENSIE_CHECK( cells.count( 54 ) );
+  FRENSIE_CHECK( cells.count( 55 ) );
+  FRENSIE_CHECK( cells.count( 56 ) );
+  FRENSIE_CHECK( cells.count( 57 ) );
+  FRENSIE_CHECK( cells.count( 58 ) );
+  FRENSIE_CHECK( cells.count( 59 ) );
+  FRENSIE_CHECK( cells.count( 63 ) );
+  FRENSIE_CHECK( cells.count( 70 ) );
+  FRENSIE_CHECK( cells.count( 71 ) );
+  FRENSIE_CHECK( cells.count( 72 ) );
+  FRENSIE_CHECK( cells.count( 73 ) );
+  FRENSIE_CHECK( cells.count( 74 ) );
+  FRENSIE_CHECK( cells.count( 75 ) );
+  FRENSIE_CHECK( cells.count( 76 ) );
+  FRENSIE_CHECK( cells.count( 77 ) );
+  FRENSIE_CHECK( cells.count( 78 ) );
+  FRENSIE_CHECK( cells.count( 79 ) );
+  FRENSIE_CHECK( cells.count( 80 ) );
+  FRENSIE_CHECK( cells.count( 81 ) );
+  FRENSIE_CHECK( cells.count( 82 ) );
+  FRENSIE_CHECK( cells.count( 83 ) );
+  FRENSIE_CHECK( cells.count( 88 ) );
+  FRENSIE_CHECK( cells.count( 136 ) );
+  FRENSIE_CHECK( cells.count( 152 ) );
+  FRENSIE_CHECK( cells.count( 154 ) );
+  FRENSIE_CHECK( cells.count( 166 ) );
+  FRENSIE_CHECK( cells.count( 168 ) );
+  FRENSIE_CHECK( cells.count( 184 ) );
+  FRENSIE_CHECK( cells.count( 188 ) );
+  FRENSIE_CHECK( cells.count( 189 ) );
+
+  Geometry::AdvancedModel::SurfaceIdSet surfaces;
+
+  advanced_base_model->getSurfaces( surfaces );
+
+  FRENSIE_CHECK_EQUAL( surfaces.size(), 293 );
+
+  FRENSIE_CHECK_EQUAL( model->getModelProperties().getTerminationCellPropertyName(), "graveyard" );
+  FRENSIE_CHECK_EQUAL( model->getModelProperties().getMaterialPropertyName(), "mat" );
+  FRENSIE_CHECK_EQUAL( model->getModelProperties().getDensityPropertyName(), "rho" );
+  FRENSIE_CHECK_EQUAL( model->getModelProperties().getEstimatorPropertyName(), "tally" );
 }
 
 //---------------------------------------------------------------------------//
@@ -870,16 +955,12 @@ FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_cad_file",
                                         test_dagmc_geom_file_name, "",
                                         "Test CAD file name" );
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "cache_test_archive",
-                                        cache_test_archive, false,
-                                        "Cache the test archive" );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   Geometry::DagMCModelProperties local_properties( test_dagmc_geom_file_name );
 
-  local_properties.setFacetTolerance( 1e-3 );
   local_properties.setTerminationCellPropertyName( "graveyard" );
   local_properties.setMaterialPropertyName( "mat" );
   local_properties.setDensityPropertyName( "rho" );

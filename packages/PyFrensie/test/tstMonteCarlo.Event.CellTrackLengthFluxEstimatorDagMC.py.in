@@ -38,17 +38,12 @@ class CellTrackLengthFluxEstimatorDagMCTestCase(unittest.TestCase):
       # Setup the DagMC Geometry
       local_properties = DagMC.DagMCModelProperties( options.test_cad_file )
 
-      local_properties.setFacetTolerance( 1e-3 )
       local_properties.setTerminationCellPropertyName( "graveyard" )
       local_properties.setMaterialPropertyName( "mat" )
       local_properties.setDensityPropertyName( "rho" )
       local_properties.setEstimatorPropertyName( "tally" )
 
-      tmp_model = DagMC.DagMCModel.getInstance()
-
-      tmp_model.initialize( local_properties )
-
-      self.model = tmp_model
+      self.model = DagMC.DagMCModel( local_properties )
 
     def testConstructor(self):
         "*Test MonteCarlo.ActiveRegion.CellTrackLengthFluxEstimatorDagMC constructor"

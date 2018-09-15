@@ -701,52 +701,6 @@ FRENSIE_UNIT_TEST( DagMCNavigator, clone )
   FRENSIE_CHECK_EQUAL( number_of_advances, 2 );
 }
 
-// //---------------------------------------------------------------------------//
-// // Check that a navigator can be archived
-// FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DagMCNavigator, archive, TestArchives )
-// {
-//   FETCH_TEMPLATE_PARAM( 0, RawOArchive );
-//   FETCH_TEMPLATE_PARAM( 1, RawIArchive );
-
-//   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
-//   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
-
-//   std::string archive_name( "test_dagmc_navigator" );
-//   std::ostringstream archive_ostream;
-
-//   std::unique_ptr<OArchive> oarchive;
-
-//   createOArchive( archive_name, archive_ostream, oarchive );
-
-//   std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
-
-//   // Initialize the ray
-//   navigator->setState( -40.0*cgs::centimeter,
-//                        -40.0*cgs::centimeter,
-//                        108.0*cgs::centimeter,
-//                        0.0, 0.0, 1.0 );
-
-//   FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( navigator ) );
-
-//   oarchive.reset();
-
-//   if( cache_test_archive && archive_name.find(".h5a") >= archive_name.size() )
-//   {
-//     std::unique_ptr<std::ofstream> ofstream;
-
-//     if( archive_name.find( ".bin" ) < archive_name.size() )
-//     {
-//       ofstream.reset( new std::ofstream( archive_name, std::ofstream::binary ) );
-//     }
-//     else
-//     {
-//       ofstream.reset( new std::ofstream( archive_name ) );
-//     }
-
-//     (*ofstream) << archive_ostream.str();
-//   }
-// }
-
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
@@ -759,27 +713,18 @@ FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_cad_file",
                                         test_dagmc_geom_file_name, "",
                                         "Test CAD file name" );
-  // ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "cache_test_archive",
-  //                                       cache_test_archive, false,
-  //                                       "Cache the test archive" );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   Geometry::DagMCModelProperties local_properties( test_dagmc_geom_file_name );
 
-  local_properties.setFacetTolerance( 1e-3 );
   local_properties.setTerminationCellPropertyName( "graveyard" );
   local_properties.setMaterialPropertyName( "mat" );
   local_properties.setDensityPropertyName( "rho" );
   local_properties.setEstimatorPropertyName( "tally" );
 
-  std::shared_ptr<Geometry::DagMCModel> tmp_model =
-    Geometry::DagMCModel::getInstance();
-
-  tmp_model->initialize( local_properties );
-
-  model = tmp_model;
+  model.reset( new Geometry::DagMCModel( local_properties ) );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();

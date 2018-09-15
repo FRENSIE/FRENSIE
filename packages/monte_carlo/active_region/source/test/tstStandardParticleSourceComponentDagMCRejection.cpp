@@ -338,15 +338,9 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   // Initialize the geometry model
   Geometry::DagMCModelProperties local_properties( test_dagmc_geom_file_name );
 
-  local_properties.setFacetTolerance( 1e-3 );
   local_properties.setTerminationCellPropertyName( "graveyard" );
 
-  std::shared_ptr<Geometry::DagMCModel> tmp_model =
-    Geometry::DagMCModel::getInstance();
-
-  tmp_model->initialize( local_properties );
-
-  model = tmp_model;
+  model.reset( new Geometry::DagMCModel( local_properties ) );
 
   // Create the particle distribution
   std::shared_ptr<MonteCarlo::StandardParticleDistribution>

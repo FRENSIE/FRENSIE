@@ -104,7 +104,6 @@ FRENSIE_UNIT_TEST( DagMCModel, iarchive )
 
   FRENSIE_CHECK_EQUAL( surfaces.size(), 293 );
 
-  FRENSIE_CHECK_EQUAL( model->getModelProperties().getFacetTolerance(), 1e-3 );
   FRENSIE_CHECK_EQUAL( model->getModelProperties().getTerminationCellPropertyName(), "graveyard" );
   FRENSIE_CHECK_EQUAL( model->getModelProperties().getMaterialPropertyName(), "mat" );
   FRENSIE_CHECK_EQUAL( model->getModelProperties().getDensityPropertyName(), "rho" );

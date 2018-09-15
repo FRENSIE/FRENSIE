@@ -37,7 +37,6 @@ DagMCNavigator::DagMCNavigator(
 {
   // Make sure that the dagmc instance is valid
   testPrecondition( dagmc_model.get() );
-  testPrecondition( dagmc_model->isInitialized() );
 }
 
 // Copy constructor

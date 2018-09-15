@@ -223,18 +223,12 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   Geometry::DagMCModelProperties local_properties( test_dagmc_geom_file_name );
   
-  local_properties.setFacetTolerance( 1e-3 );
   local_properties.setTerminationCellPropertyName( "graveyard" );
   local_properties.setMaterialPropertyName( "mat" );
   local_properties.setDensityPropertyName( "rho" );
   local_properties.setEstimatorPropertyName( "tally" );
   
-  std::shared_ptr<Geometry::DagMCModel> tmp_model =
-    Geometry::DagMCModel::getInstance();
-
-  tmp_model->initialize( local_properties );
-
-  model = tmp_model;
+  model.reset( new Geometry::DagMCModel( local_properties ) );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
