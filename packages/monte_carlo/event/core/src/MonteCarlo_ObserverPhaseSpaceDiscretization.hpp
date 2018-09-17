@@ -59,6 +59,9 @@ public:
   bool doesDimensionHaveDiscretization(
                            const ObserverPhaseSpaceDimension dimension ) const;
 
+  //! Get a dimension discretization
+  const ObserverPhaseSpaceDimensionDiscretization& getDimensionDiscretization( const ObserverPhaseSpaceDimension dimension ) const;
+
   //! Return the dimensions that have been discretized
   void getDiscretizedDimensions(
          std::set<ObserverPhaseSpaceDimension>& discretized_dimensions ) const;

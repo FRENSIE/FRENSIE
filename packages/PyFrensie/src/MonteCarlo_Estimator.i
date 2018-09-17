@@ -65,7 +65,6 @@ typedef unsigned int uint32_t;
 // Add some general templates
 %template(LongUnsignedVector) std::vector<long unsigned int>;
 %template(IntVector) std::vector<int>;
-//%template(StringVectorMap) std::map<std::string,std::vector<double> >;
 
 // Add some general typemaps
 %apply long unsigned int { const Geometry::Model::EntityId };
@@ -138,7 +137,7 @@ typedef unsigned int uint32_t;
 
 %template(ParticleResponseVector) std::vector< std::shared_ptr< ParticleResponse const >,std::allocator< std::shared_ptr< ParticleResponse const > > >;
 
-// Add a typemap for std::set<uint64_t>& entity_ids
+// Add a typemap for std::map<std::string,std::vector<double> >& processed data
 %typemap(in,numinputs=0) std::map<std::string,std::vector<double> >& processed_data (std::map<std::string,std::vector<double> > temp) "$1 = &temp;"
 
 %typemap(argout) std::map<std::string,std::vector<double> >& processed_data {
@@ -149,7 +148,37 @@ typedef unsigned int uint32_t;
 %typemap(in,numinputs=0) std::set<uint64_t>& entity_ids (std::set<uint64_t> temp) "$1 = &temp;"
 
 %typemap(argout) std::set<uint64_t>& entity_ids {
+  %append_output(PyFrensie::convertToPython( *$1 ));
+}
+
+// Add a typemap for std::vector<ObserverPhaseSpaceDimension>& discretized_dimensions
+%template(ObserverPhaseSpaceDimensionVector) std::vector<MonteCarlo::ObserverPhaseSpaceDimension>;
+
+%typemap (in,numinputs=0) std::vector<MonteCarlo::ObserverPhaseSpaceDimension>& discretized_dimensions (std::vector<MonteCarlo::ObserverPhaseSpaceDimension> temp) "$1 = &temp;"
+
+%typemap(argout) std::vector<MonteCarlo::ObserverPhaseSpaceDimension>& discretized_dimensions {
   %append_output(swig::from( *$1 ));
+}
+
+// Add a typemap for std::vector<double>& bin_data
+%typemap (in,numinputs=0) std::vector<double>& bin_data (std::vector<double> temp) "$1 = &temp;"
+
+%typemap(argout) std::vector<double>& bin_data {
+  %append_output(PyFrensie::convertToPython( *$1 ));
+}
+
+// Add a typemap for std::vector<unsigned>& bin_data
+%typemap (in,numinputs=0) std::vector<unsigned>& bin_data (std::vector<unsigned> temp) "$1 = &temp;"
+
+%typemap(argout) std::vector<unsigned>& bin_data {
+  %append_output(PyFrensie::convertToPython( *$1 ));
+}
+
+// Add a typemap for std::vector<std::set<uint32_t> >& bin_data
+%typemap (in,numinputs=0) std::vector<std::set<uint32_t> >& bin_data (std::vector<std::set<uint32_t> > temp) "$1 = &temp;"
+
+%typemap(argout) std::vector<std::set<uint32_t> >& bin_data {
+  %append_output(PyFrensie::convertToPython( *$1 ));
 }
 
 %shared_ptr( MonteCarlo::Estimator )
@@ -162,6 +191,16 @@ typedef unsigned int uint32_t;
 %template(setSourceTimeDiscretization) MonteCarlo::Estimator::setDiscretization<MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION, std::vector<double> >;
 %template(setCollisionNumberDiscretization) MonteCarlo::Estimator::setDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION, std::vector<unsigned> >;
 %template(setCosineDiscretization) MonteCarlo::Estimator::setDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION, std::vector<double> >;
+%template(setSourceIdDiscretization) MonteCarlo::Estimator::setDiscretization<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION, std::vector<std::set<uint32_t> > >;
+
+// Add getDiscretization function templates
+%template(getEnergyDiscretization) MonteCarlo::Estimator::getDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION, std::vector<double> >;
+%template(getTimeDiscretization) MonteCarlo::Estimator::getDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION, std::vector<double> >;
+%template(getSourceEnergyDiscretization) MonteCarlo::Estimator::getDiscretization<MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION, std::vector<double> >;
+%template(getSourceTimeDiscretization) MonteCarlo::Estimator::getDiscretization<MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION, std::vector<double> >;
+%template(getCollisionNumberDiscretization) MonteCarlo::Estimator::getDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION, std::vector<unsigned> >;
+%template(getCosineDiscretization) MonteCarlo::Estimator::getDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION, std::vector<double> >;
+%template(getSourceIdDiscretization) MonteCarlo::Estimator::getDiscretization<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION, std::vector<std::set<uint32_t> > >;
 
 // ---------------------------------------------------------------------------//
 // Add EntityEstimator support

@@ -168,9 +168,8 @@ A brief usage tutorial for this class is shown below:
 
    import PyFrensie.Geometry, numpy
 
-   model = PyFrensie.Geometry.DagMC.DagMCModel.getInstance()
    properties = PyFrensie.Geometry.DagMC.DagMCModelProperties( 'my_geom.h5m' )
-   model.initialize( properties )
+   model = PyFrensie.Geometry.DagMC.DagMCModel( properties )
 
    cells = model.getCells( True, True )
    materials = model.getMaterialIds()

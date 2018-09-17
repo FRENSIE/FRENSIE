@@ -43,6 +43,10 @@ public:
         discretization,
         const bool range_dimension ) override;
 
+  //! Get a dimension discretization
+  const ObserverPhaseSpaceDimensionDiscretization& getDimensionDiscretization(
+                  const ObserverPhaseSpaceDimension dimension ) const override;
+
   //! Check if a dimension has a discretization
   bool doesDimensionHaveDiscretization(
                   const ObserverPhaseSpaceDimension dimension ) const override;

@@ -89,12 +89,23 @@ public:
   //! Check if the estimator is a mesh estimator
   virtual bool isMeshEstimator() const = 0;
 
+  //! Check if a discretization has been set for a dimension of the phase space
+  bool doesDimensionHaveDiscretization( const ObserverPhaseSpaceDimension dimension ) const;
+
   //! Set the discretization for a dimension of the phase space
   template<ObserverPhaseSpaceDimension dimension, typename InputDataType>
-  void setDiscretization( const InputDataType& bin_data );
+  void setDiscretization( const InputDataType& input_bin_data );
 
   //! Set the discretization for a dimension of the phase space
   void setDiscretization( const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins );
+
+  //! Return the discretization for a dimension of the phase space
+  template<ObserverPhaseSpaceDimension dimension, typename InputDataType>
+  void getDiscretization( InputDataType& bin_data );
+
+  //! Return the dimensions that have been discretized
+  void getDiscretizedDimensions(
+      std::vector<ObserverPhaseSpaceDimension>& discretized_dimensions ) const;
 
   //! Return the number of bins for a dimension of the phase space
   size_t getNumberOfBins( const ObserverPhaseSpaceDimension dimension ) const;

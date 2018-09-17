@@ -25,12 +25,12 @@ namespace MonteCarlo{
 
 // Default constructor
 ParticleSourceComponent::ParticleSourceComponent()
-  : d_id( std::numeric_limits<uint32_t>::max() )
+  : d_id( std::numeric_limits<Id>::max() )
 { /* ... */ }
 
 // Constructor
 ParticleSourceComponent::ParticleSourceComponent(
-                          const uint32_t id,
+                          const Id id,
                           const double selection_weight,
                           const std::shared_ptr<const Geometry::Model>& model )
   : ParticleSourceComponent( id, selection_weight, CellIdSet(), model )
@@ -46,7 +46,7 @@ ParticleSourceComponent::ParticleSourceComponent(
  * specified all sampled particle states will be used.
  */
 ParticleSourceComponent::ParticleSourceComponent(
-                          const uint32_t id,
+                          const Id id,
                           const double selection_weight,
                           const CellIdSet& rejection_cells,
                           const std::shared_ptr<const Geometry::Model>& model )
@@ -298,7 +298,7 @@ double ParticleSourceComponent::getSelectionWeight() const
 }
 
 // Get the id of this source
-uint32_t ParticleSourceComponent::getId() const
+auto ParticleSourceComponent::getId() const -> Id
 {
   return d_id;
 }

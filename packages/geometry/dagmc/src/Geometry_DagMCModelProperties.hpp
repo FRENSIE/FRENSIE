@@ -53,12 +53,6 @@ public:
   //! Get the model file name with path
   std::string getModelFileNameWithPath() const;
 
-  //! Set the face tolerance for the model
-  void setFacetTolerance( const double facet_tol );
-
-  //! Get the facet tolerance for the model
-  double getFacetTolerance() const;
-
   //! Check if fast id lookup is used with the model
   bool isFastIdLookupUsed() const;
 
@@ -212,9 +206,6 @@ private:
   // The model file path
   boost::filesystem::path d_file_path;
 
-  // The facet tolerance
-  double d_facet_tolerance;
-
   // The fast id lookup flag
   bool d_fast_id_lookup;
 
@@ -277,7 +268,6 @@ void DagMCModelProperties::save( Archive& ar, const unsigned version ) const
 
   ar & BOOST_SERIALIZATION_NVP( raw_file_path );
   
-  ar & BOOST_SERIALIZATION_NVP( d_facet_tolerance );
   ar & BOOST_SERIALIZATION_NVP( d_fast_id_lookup );
   ar & BOOST_SERIALIZATION_NVP( d_termination_cell_property );
   ar & BOOST_SERIALIZATION_NVP( d_reflecting_surface_property );
@@ -315,7 +305,6 @@ void DagMCModelProperties::load( Archive& ar, const unsigned version )
       !boost::filesystem::exists( d_file_path / d_file_name ) )
     d_file_path = s_default_path;
   
-  ar & BOOST_SERIALIZATION_NVP( d_facet_tolerance );
   ar & BOOST_SERIALIZATION_NVP( d_fast_id_lookup );
   ar & BOOST_SERIALIZATION_NVP( d_termination_cell_property );
   ar & BOOST_SERIALIZATION_NVP( d_reflecting_surface_property );

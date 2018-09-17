@@ -105,7 +105,12 @@ void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::print(
   }
 }
 
-
+// Return the bin set array
+template<ObserverPhaseSpaceDimension dimension>
+auto UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::getBinBoundaries() const -> const BinSetArray&
+{
+  return d_dimension_bins;
+}
 
 // Check if the value is contained in the discretization
 template<ObserverPhaseSpaceDimension dimension>

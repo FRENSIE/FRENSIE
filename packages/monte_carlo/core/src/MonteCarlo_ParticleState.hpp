@@ -54,6 +54,9 @@ public:
   //! Typedef for generation number type
   typedef unsigned generationNumberType;
 
+  //! Typedef for the source id type
+  typedef uint32_t sourceIdType;
+
   //! Typedef for weight type
   typedef double weightType;
 
@@ -100,10 +103,10 @@ public:
   ParticleType getParticleType() const;
 
   //! Return the id of the source that created the particle (history)
-  size_t getSourceId() const;
+  sourceIdType getSourceId() const;
 
   //! Set the id of the source that created the particle (history)
-  void setSourceId( const size_t id );
+  void setSourceId( const sourceIdType id );
 
   //! Return the cell handle for the cell where the particle (history) started
   Geometry::Model::EntityId getSourceCell() const;
@@ -309,7 +312,7 @@ private:
   ParticleType d_particle_type;
 
   // The source id
-  size_t d_source_id;
+  sourceIdType d_source_id;
 
   // Source (starting) energy of the particle (history) (MeV)
   energyType d_source_energy;

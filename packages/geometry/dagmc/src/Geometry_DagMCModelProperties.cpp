@@ -30,7 +30,6 @@ DagMCModelProperties::DagMCModelProperties(
                                       const boost::filesystem::path& filename )
   : d_file_name( filename.filename().string() ),
     d_file_path( filename.parent_path().make_preferred() ),
-    d_facet_tolerance( 1e-3 ),
     d_fast_id_lookup( false ),
     d_termination_cell_property( "termination.cell" ),
     d_reflecting_surface_property( "reflecting.surface" ),
@@ -88,22 +87,6 @@ std::string DagMCModelProperties::getModelFileNameWithPath() const
   return (d_file_path / d_file_name).string();
 }
 
-// Set the face tolerance for the model
-void DagMCModelProperties::setFacetTolerance( const double facet_tol )
-{
-  // Make sure that the facet tolerance is valid
-  testPrecondition( facet_tol > 0.0 );
-  testPrecondition( facet_tol < 1.0 );
-
-  d_facet_tolerance = facet_tol;
-}
-  
-// Get the facet tolerance for the model
-double DagMCModelProperties::getFacetTolerance() const
-{
-  return d_facet_tolerance;
-}
-
 // Check if fast id lookup is used with the model
 bool DagMCModelProperties::isFastIdLookupUsed() const
 {
@@ -127,7 +110,9 @@ void DagMCModelProperties::setTerminationCellPropertyName(
                                                       const std::string& name )
 {
   // Make sure that the name is valid
-  testPrecondition( name.find( "_" ) >= name.size() );
+  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
+                      std::runtime_error,
+                      "The \"_\" character is reserved!" );
 
   d_termination_cell_property = name;
 }
@@ -143,7 +128,9 @@ void DagMCModelProperties::setReflectingSurfacePropertyName(
                                                       const std::string& name )
 {
   // Make sure that the name is valid
-  testPrecondition( name.find( "_" ) >= name.size() );
+  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
+                      std::runtime_error,
+                      "The \"_\" character is reserved!" );
 
   d_reflecting_surface_property = name;
 }
@@ -158,7 +145,9 @@ const std::string& DagMCModelProperties::getReflectingSurfacePropertyName() cons
 void DagMCModelProperties::setMaterialPropertyName( const std::string& name )
 {
   // Make sure that the name is valid
-  testPrecondition( name.find( "_" ) >= name.size() );
+  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
+                      std::runtime_error,
+                      "The \"_\" character is reserved!" );
 
   d_material_property = name;
 }
@@ -173,7 +162,9 @@ const std::string& DagMCModelProperties::getMaterialPropertyName() const
 void DagMCModelProperties::setDensityPropertyName( const std::string& name )
 {
   // Make sure that the name is valid
-  testPrecondition( name.find( "_" ) >= name.size() );
+  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
+                      std::runtime_error,
+                      "The \"_\" character is reserved!" );
   
   d_density_property = name;
 }
@@ -188,7 +179,9 @@ const std::string& DagMCModelProperties::getDensityPropertyName() const
 void DagMCModelProperties::setEstimatorPropertyName( const std::string& name )
 {
   // Make sure that the name is valid
-  testPrecondition( name.find( "_" ) >= name.size() );
+  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
+                      std::runtime_error,
+                      "The \"_\" character is reserved!" );
 
   d_estimator_property = name;
 }
@@ -216,7 +209,9 @@ void DagMCModelProperties::getPropertyNames( std::vector<std::string>& propertie
 void DagMCModelProperties::setSurfaceCurrentName( const std::string& name )
 {
   // Make sure that the name is valid
-  testPrecondition( name.find( "_" ) >= name.size() );
+  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
+                      std::runtime_error,
+                      "The \"_\" character is reserved!" );
   
   d_surface_current_name = name;
 }
@@ -231,7 +226,9 @@ const std::string& DagMCModelProperties::getSurfaceCurrentName() const
 void DagMCModelProperties::setSurfaceFluxName( const std::string& name )
 {
   // Make sure that the name is valid
-  testPrecondition( name.find( "_" ) >= name.size() );
+  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
+                      std::runtime_error,
+                      "The \"_\" character is reserved!" );
 
   d_surface_flux_name = name;
 }
@@ -246,7 +243,9 @@ const std::string& DagMCModelProperties::getSurfaceFluxName() const
 void DagMCModelProperties::setCellPulseHeightName( const std::string& name )
 {
   // Make sure that the name is valid
-  testPrecondition( name.find( "_" ) >= name.size() );
+  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
+                      std::runtime_error,
+                      "The \"_\" character is reserved!" );
   
   d_cell_pulse_height_name = name;
 }
@@ -261,7 +260,9 @@ const std::string& DagMCModelProperties::getCellPulseHeightName() const
 void DagMCModelProperties::setCellTrackLengthFluxName( const std::string& name )
 {
   // Make sure that the name is valid
-  testPrecondition( name.find( "_" ) >= name.size() );
+  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
+                      std::runtime_error,
+                      "The \"_\" character is reserved!" );
   
   d_cell_track_length_flux_name = name;
 }
@@ -276,7 +277,9 @@ const std::string& DagMCModelProperties::getCellTrackLengthFluxName() const
 void DagMCModelProperties::setCellCollisionFluxName( const std::string& name )
 {
   // Make sure that the name is valid
-  testPrecondition( name.find( "_" ) >= name.size() );
+  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
+                      std::runtime_error,
+                      "The \"_\" character is reserved!" );
   
   d_cell_collision_flux_name = name;
 }
@@ -317,7 +320,9 @@ EstimatorType DagMCModelProperties::getEstimatorType(
                                       const std::string& estimator_name ) const
 {
   // Make sure that the estimator name is valid
-  testPrecondition( this->isEstimatorNameValid( estimator_name ) );
+  TEST_FOR_EXCEPTION( !this->isEstimatorNameValid( estimator_name ),
+                      std::runtime_error,
+                      "The estimator name is not valid!" );
 
   if( estimator_name == d_surface_current_name )
     return SURFACE_CURRENT_ESTIMATOR;
@@ -341,8 +346,12 @@ EstimatorType DagMCModelProperties::getEstimatorType(
 void DagMCModelProperties::setPhotonName( const std::string& name )
 {
   // Make sure that the name is valid
-  testPrecondition( name.find( "_" ) >= name.size() );
-  testPrecondition( name.find( "." ) >= name.size() );
+  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
+                      std::runtime_error,
+                      "The \"_\" character is reserved!" );
+  TEST_FOR_EXCEPTION( name.find( "." ) < name.size(),
+                      std::runtime_error,
+                      "The \".\" character is reserved!" );
 
   d_photon_name = name;
 }
@@ -357,8 +366,12 @@ const std::string& DagMCModelProperties::getPhotonName() const
 void DagMCModelProperties::setNeutronName( const std::string& name )
 {
   // Make sure that the name is valid
-  testPrecondition( name.find( "_" ) >= name.size() );
-  testPrecondition( name.find( "." ) >= name.size() );
+  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
+                      std::runtime_error,
+                      "The \"_\" character is reserved!" );
+  TEST_FOR_EXCEPTION( name.find( "." ) < name.size(),
+                      std::runtime_error,
+                      "The \".\" character is reserved!" );
 
   d_neutron_name = name;
 }
@@ -373,8 +386,12 @@ const std::string& DagMCModelProperties::getNeutronName() const
 void DagMCModelProperties::setElectronName( const std::string& name )
 {
   // Make sure that the name is valid
-  testPrecondition( name.find( "_" ) >= name.size() );
-  testPrecondition( name.find( "." ) >= name.size() );
+  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
+                      std::runtime_error,
+                      "The \"_\" character is reserved!" );
+  TEST_FOR_EXCEPTION( name.find( "." ) < name.size(),
+                      std::runtime_error,
+                      "The \".\" character is reserved!" );
 
   d_electron_name = name;
 }
@@ -389,8 +406,12 @@ const std::string& DagMCModelProperties::getElectronName() const
 void DagMCModelProperties::setAdjointPhotonName( const std::string& name )
 {
   // Make sure that the name is valid
-  testPrecondition( name.find( "_" ) >= name.size() );
-  testPrecondition( name.find( "." ) >= name.size() );
+  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
+                      std::runtime_error,
+                      "The \"_\" character is reserved!" );
+  TEST_FOR_EXCEPTION( name.find( "." ) < name.size(),
+                      std::runtime_error,
+                      "The \".\" character is reserved!" );
 
   d_adjoint_photon_name = name;
 }
@@ -405,8 +426,12 @@ const std::string& DagMCModelProperties::getAdjointPhotonName() const
 void DagMCModelProperties::setAdjointNeutronName( const std::string& name )
 {
   // Make sure that the name is valid
-  testPrecondition( name.find( "_" ) >= name.size() );
-  testPrecondition( name.find( "." ) >= name.size() );
+  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
+                      std::runtime_error,
+                      "The \"_\" character is reserved!" );
+  TEST_FOR_EXCEPTION( name.find( "." ) < name.size(),
+                      std::runtime_error,
+                      "The \".\" character is reserved!" );
 
   d_adjoint_neutron_name = name;
 }
@@ -421,8 +446,12 @@ const std::string& DagMCModelProperties::getAdjointNeutronName() const
 void DagMCModelProperties::setAdjointElectronName( const std::string& name )
 {
   // Make sure that the name is valid
-  testPrecondition( name.find( "_" ) >= name.size() );
-  testPrecondition( name.find( "." ) >= name.size() );
+  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
+                      std::runtime_error,
+                      "The \"_\" character is reserved!" );
+  TEST_FOR_EXCEPTION( name.find( "." ) < name.size(),
+                      std::runtime_error,
+                      "The \".\" character is reserved!" );
 
   d_adjoint_electron_name = name;
 }
@@ -450,7 +479,9 @@ ParticleType DagMCModelProperties::getParticleType(
                                        const std::string& particle_name ) const
 {
   // Make sure the particle name is valid
-  testPrecondition( this->isParticleNameValid( particle_name ) );
+  TEST_FOR_EXCEPTION( !this->isParticleNameValid( particle_name ),
+                      std::runtime_error,
+                      "The particle name is not valid!" );
 
   if( particle_name == d_photon_name )
     return PHOTON;

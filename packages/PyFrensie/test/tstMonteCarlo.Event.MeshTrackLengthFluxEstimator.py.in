@@ -1,4 +1,5 @@
-#! ${PYTHON_EXECUTABLE#-----------------------------------------------------------------------------#
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
 ## MonteCarlo.Event.MeshTrackLengthFluxEstimator class unit tests
 #  \file   tstMonteCarlo.Event.MeshTrackLengthFluxEstimator.py
 #  \author Luke Kersting

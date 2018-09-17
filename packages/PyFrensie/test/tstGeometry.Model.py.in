@@ -24,6 +24,7 @@ parser.add_option("-r", "--root_file", type="string", dest="root_file", default=
 options,args = parser.parse_args()
 
 from testingHelpers import importPyFrensieModuleFromBuildDir
+Utility = importPyFrensieModuleFromBuildDir('Utility')
 Geometry = importPyFrensieModuleFromBuildDir('Geometry')
 
 try:
@@ -46,21 +47,19 @@ if inspect.ismodule( DagMC ):
 
         @classmethod
         def setUpClass(cls):
-            cls.model = DagMC.DagMCModel.getInstance()
             properties = DagMC.DagMCModelProperties( options.dagmc_h5m_file )
             properties.setTerminationCellPropertyName( "graveyard" )
             properties.setMaterialPropertyName( "mat" )
             properties.setDensityPropertyName( "rho" )
             properties.setEstimatorPropertyName( "tally" )
-            cls.model.initialize( properties )
+            cls.model = DagMC.DagMCModel( properties )
 
-        def testIsInitialize(self):
-            "*Test Geometry.Model isInitialized"
-            self.assertTrue( self.model.isInitialized() )
 
         def testGetModelProperties(self):
             "*Test Geometry.Model getModelProperties"
             cached_properties = self.model.getModelProperties()
+            self.assertEqual( cached_properties.getModelFileNameWithPath(),
+                              options.dagmc_h5m_file )
             self.assertTrue( cached_properties.getModelFileName() in options.dagmc_h5m_file )
 
         def testHasCellEstimatorData(self):
@@ -614,6 +613,8 @@ if inspect.ismodule( ROOT ):
         def testGetModelPropertie(self):
             "*Test Geometry.Model getModelPropertie"
             properties = self.model.getModelProperties()
+            self.assertEqual( properties.getModelFileNameWithPath(),
+                              options.root_file )
             self.assertTrue( properties.getModelFileName() in options.root_file )
             self.assertEqual( properties.getMaterialPropertyName(), "mat" )
             self.assertEqual( properties.getVoidMaterialName(), "void" )

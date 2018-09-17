@@ -277,7 +277,7 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_COLLISION_NUMBER_DIMENSION>
 template<>
 struct ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_ID_DIMENSION>
 {
-  typedef size_t dimensionType;
+  typedef ParticleState::sourceIdType dimensionType;
 
   typedef std::vector<dimensionType> dimensionBinType;
 

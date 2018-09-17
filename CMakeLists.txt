@@ -58,7 +58,6 @@ OPTION(FRENSIE_ENABLE_PROFILING "Enable profiling with FRENSIE" OFF)
 OPTION(FRENSIE_ENABLE_COVERAGE "Enable coverage testing in FRENSIE" OFF)
 OPTION(FRENSIE_ENABLE_OPENMP "Enable shared-memory parallelism in FRENSIE" ON)
 OPTION(FRENSIE_ENABLE_MPI "Enable distributed-memory parallelism in FRENSIE" OFF)
-OPTION(FRENSIE_ENABLE_PYTHON "Enable python interfaces in FRENSIE" OFF)
 OPTION(FRENSIE_ENABLE_ROOT "Enable the Root geometry interfaces in FRENSIE" OFF)
 OPTION(FRENSIE_ENABLE_HDF5 "Enable the HDF5 file interfaces in FRENSIE" OFF)
 OPTION(FRENSIE_ENABLE_MOAB "Enable the Moab mesh interfaces in FRENSIE" OFF)
@@ -156,9 +155,7 @@ ENDIF()
 ##---------------------------------------------------------------------------##
 # SWIG will be used to generate the Python interfaces. If SWIG is located
 # in a non-standard location set the SWIG_PREFIX variable.
-IF(FRENSIE_ENABLE_PYTHON)
-  ENABLE_SWIG_SUPPORT()
-ENDIF()
+ENABLE_SWIG_SUPPORT()
 
 ##---------------------------------------------------------------------------##
 ## Configure HDF5 Support
@@ -171,17 +168,6 @@ IF(FRENSIE_ENABLE_HDF5)
 ENDIF()
 
 ##---------------------------------------------------------------------------##
-## Configure MOAB Support
-##---------------------------------------------------------------------------##
-# If the MOAB package is in a non-standard location, set the MOAB_PREFIX
-# variable. If FRENSIE_ENABLE_DAGMC is set to ON, the DagMC library will
-# be found.
-IF(FRENSIE_ENABLE_MOAB)
-  SET(HAVE_FRENSIE_MOAB "1")
-  ENABLE_MOAB_SUPPORT()
-ENDIF()
-
-##---------------------------------------------------------------------------##
 ## Configure Boost Support
 ##---------------------------------------------------------------------------##
 # If the Boost package is in a non-standard location, set the BOOST_PREFIX
@@ -190,11 +176,32 @@ ENDIF()
 ENABLE_BOOST_SUPPORT()
 
 ##---------------------------------------------------------------------------##
+## Configure MOAB Support
+##---------------------------------------------------------------------------##
+# If the MOAB package is in a non-standard location, set the MOAB_PREFIX
+# variable. 
+IF(FRENSIE_ENABLE_MOAB)
+  SET(HAVE_FRENSIE_MOAB "1")
+  ENABLE_MOAB_SUPPORT()
+ENDIF()
+
+##---------------------------------------------------------------------------##
+## Configure DagMC Support
+##---------------------------------------------------------------------------##
+# If the DagMC package is in a non-standard location, set the DAGMC_PREFIX
+# variable.
+IF(FRENSIE_ENABLE_DAGMC)
+  SET(HAVE_FRENSIE_DAGMC "1")
+  ENABLE_DAGMC_SUPPORT()
+ENDIF()
+
+##---------------------------------------------------------------------------##
 ## Configure Root Support
 ##---------------------------------------------------------------------------##
 # If the Root package is in a non-standard location, set the ROOT_PREFIX
 # variable.
 IF(FRENSIE_ENABLE_ROOT)
+  SET(HAVE_FRENSIE_ROOT "1")
   ENABLE_ROOT_SUPPORT()
 ENDIF()
 
@@ -264,7 +271,7 @@ ADD_SUBDIRECTORY(scripts)
 
 ADD_SUBDIRECTORY(packages)
 
-##ADD_SUBDIRECTORY(tools)
+#ADD_SUBDIRECTORY(tools)
 
 SET(GLOBAL_TOOLS_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/tools)
 

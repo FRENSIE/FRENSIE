@@ -37,24 +37,19 @@ namespace Geometry{
  * is also a singleton. Once a DagMC model is initialized cell and surface
  * properties can be queried and navigators can be created.
  */
-class DagMCModel : public AdvancedModel
+class DagMCModel : public AdvancedModel,
+                   public std::enable_shared_from_this<DagMCModel>
 {
 
 public:
 
+  // Constructor
+  DagMCModel( const DagMCModelProperties& model_properties,
+              const bool suppress_dagmc_output = true );
+
   //! Destructor
   ~DagMCModel()
   { /* ... */ }
-
-  //! Get the DagMC model instance
-  static std::shared_ptr<DagMCModel> getInstance();
-
-  //! Check if the DagMC model has been initialized
-  bool isInitialized() const;
-
-  //! Initialize the DagMC model
-  void initialize( const DagMCModelProperties& model_properties,
-                   const bool suppress_dagmc_output = true );
 
   //! Get the model properties
   const DagMCModelProperties& getModelProperties() const;
@@ -136,8 +131,11 @@ private:
   // The property value surface id array map type
   typedef std::map<std::string,SurfaceIdArray> PropValueSurfaceIdMap;
 
-  // Constructor
+  // Default constructor
   DagMCModel();
+
+  // Initialize the model
+  void initialize( const bool suppress_dagmc_output );
 
   // Load the dagmc geometry file
   void loadDagMCGeometry( const bool suppress_dagmc_output );
@@ -227,9 +225,6 @@ private:
 
   // Declare the DagMCNavigator as a friend
   friend class DagMCNavigator;
-
-  // The DagMC model instance
-  static std::shared_ptr<DagMCModel> s_instance;
 
   // The raw DagMC instance
   moab::DagMC* d_dagmc;

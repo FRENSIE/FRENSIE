@@ -30,6 +30,8 @@ namespace Data{
 class ScatteringCenterPropertiesDatabase : public ScatteringCenterPropertiesDatabaseImpl,
                                            public Utility::ArchivableObject<ScatteringCenterPropertiesDatabase>
 {
+  // The base archivable object type
+  typedef Utility::ArchivableObject<ScatteringCenterPropertiesDatabase> BaseArchivableObjectType;
 
 public:
 
@@ -46,6 +48,15 @@ public:
 
   //! The database name used in an archive
   virtual const char* getArchiveName() const override;
+
+protected:
+
+  //! Load the archived object (implementation)
+  void loadFromFileImpl( const boost::filesystem::path& archive_name_with_path ) final override;
+
+  //! Archive the object (implementation)
+  void saveToFileImpl( const boost::filesystem::path& archive_name_with_path,
+                       const bool overwrite ) const final override;
 
 private:
 

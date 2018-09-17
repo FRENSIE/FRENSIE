@@ -33,9 +33,6 @@ MACRO(ENABLE_ROOT_SUPPORT)
   FIND_PROGRAM(ROOT_EXE root PATHS ${ROOT_BINARY_DIR})
   SET(ROOT_EXE ${ROOT_EXE} -b -q -l)
 
-  # Indicate that Root has been enabled
-  SET(HAVE_FRENSIE_ROOT "1")
-
   # Echo ROOT build info if a verbose configure is requested
   IF(CMAKE_VERBOSE_CONFIGURE)
     MESSAGE("\nFound ROOT!  Here are the details: ")

@@ -52,13 +52,12 @@ if inspect.ismodule( DagMC ):
 
         @classmethod
         def setUpClass(cls):
-            cls.model = DagMC.DagMCModel.getInstance()
             properties = DagMC.DagMCModelProperties( options.dagmc_h5m_file )
             properties.setTerminationCellPropertyName( "graveyard" )
             properties.setMaterialPropertyName( "mat" )
             properties.setDensityPropertyName( "rho" )
             properties.setEstimatorPropertyName( "tally" )
-            cls.model.initialize( properties )
+            cls.model = DagMC.DagMCModel( properties )
 
         def testGetPointLocation(self):
             "*Test Geometry.Navigator getPointLocation"

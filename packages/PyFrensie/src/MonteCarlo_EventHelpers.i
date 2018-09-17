@@ -271,7 +271,7 @@
 %pre_default_typed_setup_helper( BASE, SOURCE_TIME, SourceTime, double)
 %pre_default_typed_setup_helper( BASE, TIME, Time, double)
 %pre_default_typed_setup_helper( BASE, COLLISION_NUMBER, CollisionNumber, unsigned)
-%pre_default_typed_setup_helper( BASE, SOURCE_ID, SourceId, std::set<unsigned long>)
+%pre_default_typed_setup_helper( BASE, SOURCE_ID, SourceId, std::set<unsigned>)
 
 %enddef
 

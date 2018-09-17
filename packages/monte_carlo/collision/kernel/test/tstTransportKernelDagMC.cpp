@@ -280,15 +280,8 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   {
     Geometry::DagMCModelProperties
       local_properties( test_dagmc_geom_file_name );
-  
-    local_properties.setFacetTolerance( 1e-3 );
 
-    std::shared_ptr<Geometry::DagMCModel> local_model =
-      Geometry::DagMCModel::getInstance();
-
-    local_model->initialize( local_properties );
-  
-    unfilled_model = local_model;
+    unfilled_model.reset( new Geometry::DagMCModel( local_properties ) );
   }
 
   // Initialize the random number generator

@@ -29,7 +29,6 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, default_properties )
 {
   const Geometry::DagMCModelProperties default_properties( "dummy.h5m" );
 
-  FRENSIE_CHECK_EQUAL( default_properties.getFacetTolerance(), 1e-3 );
   FRENSIE_CHECK( !default_properties.isFastIdLookupUsed() );
   FRENSIE_CHECK_EQUAL( default_properties.getTerminationCellPropertyName(),
                        "termination.cell" );
@@ -83,16 +82,6 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, constructor )
   FRENSIE_CHECK_EQUAL( properties->getModelFileName(), "test.h5m" );
   FRENSIE_CHECK_EQUAL( properties->getModelFilePath(), "/home/test_dir" );
   FRENSIE_CHECK_EQUAL( properties->getModelFileNameWithPath(), "/home/test_dir/test.h5m" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the facet tolerance can be set
-FRENSIE_UNIT_TEST( DagMCModelProperties, setFacetTolerance )
-{
-  Geometry::DagMCModelProperties properties( "test.h5m" );
-  properties.setFacetTolerance( 5e-4 );
-
-  FRENSIE_CHECK_EQUAL( properties.getFacetTolerance(), 5e-4 );
 }
 
 //---------------------------------------------------------------------------//
@@ -464,7 +453,6 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DagMCModelProperties,
     createOArchive( archive_base_name, archive_ostream, oarchive );
 
     Geometry::DagMCModelProperties properties( "dummy.h5m" );
-    properties.setFacetTolerance( 1e-4 );
     properties.setTerminationCellPropertyName( "graveyard" );
     properties.setReflectingSurfacePropertyName( "ref.surf" );
     properties.setMaterialPropertyName( "mat" );
@@ -498,7 +486,6 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DagMCModelProperties,
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( properties ) );
 
   FRENSIE_CHECK_EQUAL( properties.getModelFileName(), "dummy.h5m" );
-  FRENSIE_CHECK_EQUAL( properties.getFacetTolerance(), 1e-4 );
   FRENSIE_CHECK( !properties.isFastIdLookupUsed() );
   FRENSIE_CHECK_EQUAL( properties.getTerminationCellPropertyName(),
                        "graveyard" );

@@ -54,8 +54,8 @@ using namespace MonteCarlo;
 %template(UnsignedVector) std::vector<unsigned>;
 %template(UnsignedDoublePair) std::pair<long unsigned int,double>;
 %template(UnsignedDoublePairVector) std::vector<std::pair<long unsigned int,double> >;
-%template(LongUnsignedSet) std::set<long unsigned int>;
-%template(LongUnsignedVectorSet) std::vector<std::set<long unsigned int> >;
+%template(UnsignedSet) std::set<unsigned>;
+%template(UnsignedVectorSet) std::vector<std::set<unsigned> >;
 
 // ---------------------------------------------------------------------------//
 // Add ObserverPhaseSpaceDimension support

@@ -131,13 +131,13 @@ ParticleType ParticleState::getParticleType() const
 }
 
 // Return the source id that created the particle (history)
-size_t ParticleState::getSourceId() const
+ParticleState::sourceIdType ParticleState::getSourceId() const
 {
   return d_source_id;
 }
 
 // Set the source id of the source that created the particle (history)
-void ParticleState::setSourceId( const size_t id )
+void ParticleState::setSourceId( const sourceIdType id )
 {
   d_source_id = id;
 }

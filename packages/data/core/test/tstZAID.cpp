@@ -176,6 +176,24 @@ FRENSIE_UNIT_TEST( ZAID, zaid_string_constructor_metastable )
   FRENSIE_CHECK_EQUAL( u238_meta_zaid.isomerNumber(), 1 );
   FRENSIE_CHECK_EQUAL( u238_meta_zaid.toRaw(), 92638 );
   FRENSIE_CHECK_EQUAL( (unsigned)u238_meta_zaid, 92638 );
+
+  Data::ZAID te127_meta_zaid( "1052127" );
+
+  FRENSIE_CHECK_EQUAL( te127_meta_zaid.atom(), Data::Te_ATOM );
+  FRENSIE_CHECK_EQUAL( te127_meta_zaid.atomicNumber(), 52 );
+  FRENSIE_CHECK_EQUAL( te127_meta_zaid.atomicMassNumber(), 127 );
+  FRENSIE_CHECK_EQUAL( te127_meta_zaid.isomerNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( te127_meta_zaid.toRaw(), 52527 );
+  FRENSIE_CHECK_EQUAL( (unsigned)te127_meta_zaid, 52527 );
+
+  te127_meta_zaid = Data::ZAID( std::string( "1052127" ) );
+
+  FRENSIE_CHECK_EQUAL( te127_meta_zaid.atom(), Data::Te_ATOM );
+  FRENSIE_CHECK_EQUAL( te127_meta_zaid.atomicNumber(), 52 );
+  FRENSIE_CHECK_EQUAL( te127_meta_zaid.atomicMassNumber(), 127 );
+  FRENSIE_CHECK_EQUAL( te127_meta_zaid.isomerNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( te127_meta_zaid.toRaw(), 52527 );
+  FRENSIE_CHECK_EQUAL( (unsigned)te127_meta_zaid, 52527 );
 }
 
 //---------------------------------------------------------------------------//
@@ -208,6 +226,15 @@ FRENSIE_UNIT_TEST( ZAID, raw_zaid_constructor_stable )
   FRENSIE_CHECK_EQUAL( u238_zaid.isomerNumber(), 0 );
   FRENSIE_CHECK_EQUAL( u238_zaid.toRaw(), 92238 );
   FRENSIE_CHECK_EQUAL( (unsigned)u238_zaid, 92238 );
+
+  Data::ZAID te127_meta_zaid( 1052127 );
+
+  FRENSIE_CHECK_EQUAL( te127_meta_zaid.atom(), Data::Te_ATOM );
+  FRENSIE_CHECK_EQUAL( te127_meta_zaid.atomicNumber(), 52 );
+  FRENSIE_CHECK_EQUAL( te127_meta_zaid.atomicMassNumber(), 127 );
+  FRENSIE_CHECK_EQUAL( te127_meta_zaid.isomerNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( te127_meta_zaid.toRaw(), 52527 );
+  FRENSIE_CHECK_EQUAL( (unsigned)te127_meta_zaid, 52527 );
 }
 
 //---------------------------------------------------------------------------//

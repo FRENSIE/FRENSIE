@@ -99,7 +99,7 @@ FRENSIE_UNIT_TEST( ObserverPhaseSpaceDimensionTraits, upperBound )
   FRENSIE_CHECK_EQUAL( ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_TIME_DIMENSION>::upperBound(), std::numeric_limits<double>::infinity() );
   FRENSIE_CHECK_EQUAL( ObserverPhaseSpaceDimensionTraits<OBSERVER_TIME_DIMENSION>::upperBound(), std::numeric_limits<double>::infinity() );
   FRENSIE_CHECK_EQUAL( ObserverPhaseSpaceDimensionTraits<OBSERVER_COLLISION_NUMBER_DIMENSION>::upperBound(), std::numeric_limits<ParticleState::collisionNumberType>::max() );
-  FRENSIE_CHECK_EQUAL( ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_ID_DIMENSION>::upperBound(), std::numeric_limits<size_t>::max() );
+  FRENSIE_CHECK_EQUAL( ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_ID_DIMENSION>::upperBound(), std::numeric_limits<ParticleState::sourceIdType>::max() );
 }
 
 //---------------------------------------------------------------------------//
@@ -136,8 +136,8 @@ FRENSIE_UNIT_TEST( ObserverPhaseSpaceDimensionTraits,
   FRENSIE_CHECK_EQUAL( MonteCarlo::getDimensionValue<OBSERVER_ENERGY_DIMENSION>( boost::any( 1.0 ) ), 1.0 );
   FRENSIE_CHECK_EQUAL( MonteCarlo::getDimensionValue<OBSERVER_SOURCE_TIME_DIMENSION>( boost::any( 0.0 ) ), 0.0 );
   FRENSIE_CHECK_EQUAL( MonteCarlo::getDimensionValue<OBSERVER_TIME_DIMENSION>( boost::any( 0.1 ) ), 0.1 );
-  FRENSIE_CHECK_EQUAL( MonteCarlo::getDimensionValue<OBSERVER_COLLISION_NUMBER_DIMENSION>( boost::any( 0u ) ), 0u );
-  FRENSIE_CHECK_EQUAL( MonteCarlo::getDimensionValue<OBSERVER_SOURCE_ID_DIMENSION>( boost::any( (size_t)2 ) ), 2u );
+  FRENSIE_CHECK_EQUAL( MonteCarlo::getDimensionValue<OBSERVER_COLLISION_NUMBER_DIMENSION>( boost::any( (ParticleState::collisionNumberType)0 ) ), 0u );
+  FRENSIE_CHECK_EQUAL( MonteCarlo::getDimensionValue<OBSERVER_SOURCE_ID_DIMENSION>( boost::any( (ParticleState::sourceIdType)2 ) ), 2u );
 }
 
 //---------------------------------------------------------------------------//
@@ -217,7 +217,7 @@ FRENSIE_UNIT_TEST( ObserverPhaseSpaceDimensionTraits, getDimensionRange )
   }
 
   {
-    unsigned collision_number_range_start, collision_number_range_end;
+    MonteCarlo::ParticleState::collisionNumberType collision_number_range_start, collision_number_range_end;
 
     MonteCarlo::getDimensionRange<OBSERVER_COLLISION_NUMBER_DIMENSION>(
                                                   particle_wrapper,
@@ -229,7 +229,7 @@ FRENSIE_UNIT_TEST( ObserverPhaseSpaceDimensionTraits, getDimensionRange )
   }
 
   {
-    size_t source_id_range_start, source_id_range_end;
+    MonteCarlo::ParticleState::sourceIdType source_id_range_start, source_id_range_end;
 
     MonteCarlo::getDimensionRange<OBSERVER_SOURCE_ID_DIMENSION>(
                                                   particle_wrapper,

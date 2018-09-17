@@ -60,12 +60,6 @@ if inspect.ismodule( DagMC ):
             "*Test Geometry.ModelProperties getModelFileNameWithPath"
             self.assertEqual( self.properties.getModelFileNameWithPath(), "test_dir/dummy.h5m" )
 
-        def testSetFacetTolerance(self):
-            "*Test Geometry.ModelProperties setFacetTolerance"
-            self.assertEqual( self.properties.getFacetTolerance(), 1e-3 )
-            self.properties.setFacetTolerance( 5e-4 )
-            self.assertEqual( self.properties.getFacetTolerance(), 5e-4 )
-
         def testSetIdLookup(self):
             "*Test Geometry.ModelProperties setIdLookup"
             self.assertTrue( not self.properties.isFastIdLookupUsed() )

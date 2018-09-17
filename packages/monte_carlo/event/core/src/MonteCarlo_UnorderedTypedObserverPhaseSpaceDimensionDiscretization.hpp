@@ -75,6 +75,9 @@ public:
   //! Print the dimension discretization
   void print( std::ostream& os ) const override;
 
+  //! Return the bin set array
+  const BinSetArray& getBinBoundaries() const;
+
 protected:
 
   //! Default constructor

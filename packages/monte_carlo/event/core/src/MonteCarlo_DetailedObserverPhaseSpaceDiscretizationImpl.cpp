@@ -73,6 +73,20 @@ void DetailedObserverPhaseSpaceDiscretizationImpl::assignDiscretizationToDimensi
   }
 }
 
+// Get a dimension discretization
+const ObserverPhaseSpaceDimensionDiscretization&
+DetailedObserverPhaseSpaceDiscretizationImpl::getDimensionDiscretization(
+                            const ObserverPhaseSpaceDimension dimension ) const
+{
+  auto dimension_it = d_dimension_discretization_map.find( dimension );
+  
+  TEST_FOR_EXCEPTION( dimension_it == d_dimension_discretization_map.end(),
+                      std::runtime_error,
+                      "Dimension " << dimension << " has no discretization!" );
+
+  return *dimension_it->second;
+}
+
 // Check if a dimension has a discretization
 bool DetailedObserverPhaseSpaceDiscretizationImpl::doesDimensionHaveDiscretization(
                             const ObserverPhaseSpaceDimension dimension ) const

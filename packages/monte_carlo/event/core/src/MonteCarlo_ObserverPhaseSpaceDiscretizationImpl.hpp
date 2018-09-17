@@ -63,6 +63,9 @@ public:
         discretization,
         const bool range_dimension ) = 0;
 
+  //! Get a dimension discretization
+  virtual const ObserverPhaseSpaceDimensionDiscretization& getDimensionDiscretization( const ObserverPhaseSpaceDimension dimension ) const = 0;
+
   //! Check if a dimension has a discretization
   virtual bool doesDimensionHaveDiscretization(
                        const ObserverPhaseSpaceDimension dimension ) const = 0;

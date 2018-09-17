@@ -97,7 +97,21 @@ typedef unsigned long int uint64_t;
 // Add ParticleState support
 // ---------------------------------------------------------------------------//
 
-// Add typemaps for converting EntityId to and from Python string
+// Add typemaps for converting ParticleState::sourceIdType to and from Python
+%typemap(in) const MonteCarlo::ParticleState::sourceIdType id ( MonteCarlo::ParticleState::sourceIdType temp ){
+  temp = PyFrensie::convertFromPython<ParticleState::sourceIdType>( $input );
+  $1 = temp;
+}
+
+%typemap(out) MonteCarlo::ParticleState::sourceIdType {
+  %append_output(PyFrensie::convertToPython( $1 ));
+}
+
+%typemap(typecheck, precedence=70) (const MonteCarlo::ParticleState::sourceIdType) {
+  $1 = (PyInt_Check($input)) ? 1 : 0;
+}
+
+// Add typemaps for converting EntityId to and from Python int
 %typemap(in) const Geometry::Model::EntityId cell ( Geometry::Model::EntityId temp ){
   temp = PyInt_AsUnsignedLongMask( $input );
   $1 = temp;
