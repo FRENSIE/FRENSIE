@@ -65,7 +65,7 @@ void DagMCModel::initialize( const DagMCModelProperties& model_properties,
     d_model_properties.reset( new DagMCModelProperties( model_properties ) );
 
     FRENSIE_LOG_PARTIAL_NOTIFICATION( "Loading model "
-                                      << model_properties.getModelFileName()
+                                      << model_properties.getModelFileNameWithPath()
                                       << " ... " );
     FRENSIE_FLUSH_ALL_LOGS();
 
@@ -74,7 +74,7 @@ void DagMCModel::initialize( const DagMCModelProperties& model_properties,
     }
     EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
                              "Unable to load DagMC geometry file "
-                             << model_properties.getModelFileName() << "!" );
+                             << model_properties.getModelFileNameWithPath() << "!" );
 
     // Validate the properties in the geometry
     try{
@@ -82,28 +82,28 @@ void DagMCModel::initialize( const DagMCModelProperties& model_properties,
     }
     EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
                              "Invalid DagMC geometry properties encountered!" );
-    
+
     // Parse the properties
     try{
       this->parseProperties();
     }
     EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
                              "Unable to parse the DagMC properties!" );
-    
+
     // Construct the cell and surface handlers
     try{
       this->constructEntityHandlers();
     }
     EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
                              "Unable to construct the entity handlers!" );
-    
+
     // Extract the termination cells
     try{
       this->extractTerminationCells();
     }
     EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
                              "Unable to extract the termination cells!" );
-    
+
     // Get the reflecting surfaces
     try{
       this->extractReflectingSurfaces();
@@ -114,14 +114,14 @@ void DagMCModel::initialize( const DagMCModelProperties& model_properties,
     FRENSIE_LOG_NOTIFICATION( "done!" );
     FRENSIE_FLUSH_ALL_LOGS();
   }
-    
+
   // A model has already been loaded - ignore new model
   else
   {
     FRENSIE_LOG_DAGMC_WARNING( "Cannot load requested model ("
-                               << model_properties.getModelFileName() << ") "
+                               << model_properties.getModelFileNameWithPath() << ") "
                                "because a model ("
-                               << d_model_properties->getModelFileName() << ")"
+                               << d_model_properties->getModelFileNameWithPath() << ")"
                                " has already been loaded!" );
   }
 }
@@ -137,7 +137,7 @@ void DagMCModel::validatePropertyNames() const
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                       InvalidDagMCGeometry,
                       moab::ErrorCodeStr[return_value] );
-  
+
   // Get the valid property names
   std::vector<std::string> valid_properties;
   d_model_properties->getPropertyNames( valid_properties );
@@ -159,7 +159,8 @@ void DagMCModel::validatePropertyNames() const
       }
     }
 
-    if( !valid_property )
+    // Trelis has an internal property names picked that should be ignored
+    if( !valid_property && properties[i] != "picked" )
     {
       if( invalid_properties.size() > 0 )
         invalid_properties += ", ";
@@ -180,11 +181,11 @@ void DagMCModel::validatePropertyNames() const
 void DagMCModel::loadDagMCGeometry( const bool suppress_dagmc_output )
 {
   // Create a new DagMC instance
-  d_dagmc = moab::DagMC::instance();
+  d_dagmc = new moab::DagMC();
 
   // Check if DagMC output should be suppressed on initialization
   std::streambuf* cout_streambuf, *cerr_streambuf;
-  
+
   if( suppress_dagmc_output )
   {
     cout_streambuf = std::cout.rdbuf();
@@ -196,8 +197,7 @@ void DagMCModel::loadDagMCGeometry( const bool suppress_dagmc_output )
 
   // Load the geometry
   moab::ErrorCode return_value =
-    d_dagmc->load_file( d_model_properties->getModelFileName().c_str(),
-                        d_model_properties->getFacetTolerance() );
+    d_dagmc->load_file( d_model_properties->getModelFileNameWithPath().c_str() );
 
   // Restore cout and cerr if they were suppressed
   if( suppress_dagmc_output )
@@ -289,7 +289,7 @@ void DagMCModel::extractTerminationCells()
   }
   EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
                            "Unable to parse the termination cells!" );
-  
+
   for( size_t i = 0; i < cells_with_property.size(); ++i )
   {
     d_termination_cells.insert(
@@ -317,12 +317,12 @@ void DagMCModel::extractReflectingSurfaces()
 
   // Initialize the reflecting surfaces
   d_reflecting_surfaces.clear();
-  
+
   for( size_t i = 0; i < surfaces_with_property.size(); ++i )
   {
     EntityId surface_id =
       d_surface_handler->getSurfaceId( surfaces_with_property[i] );
-    
+
     d_reflecting_surfaces.insert( ReflectingSurfaceIdHandleMap::value_type(
                                      surface_id, surfaces_with_property[i] ) );
   }
@@ -333,7 +333,7 @@ const DagMCModelProperties& DagMCModel::getModelProperties() const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
-  
+
   return *d_model_properties;
 }
 
@@ -495,7 +495,7 @@ void DagMCModel::getCellDensities( CellIdDensityMap& cell_id_density_map ) const
 
     double raw_density =
       Utility::fromString<double>( cell_it->second.front() );
-    
+
     // Convert 1/b-cm top 1/cm^3
     if( raw_density > 0.0 )
       raw_density *= 1e24;
@@ -647,7 +647,7 @@ void DagMCModel::getSurfaceEstimatorData(
                         InvalidDagMCGeometry,
                         "surface estimator " << id << " has a cell estimator "
                         "type specified!" );
-    
+
     // Make sure at least one surface has been assigned to the estimator
     TEST_FOR_EXCEPTION( estimator_it->second.size() == 0,
                         InvalidDagMCGeometry,
@@ -785,7 +785,7 @@ DagMCNavigator* DagMCModel::createNavigatorAdvanced(
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
-  
+
   return new DagMCNavigator( DagMCModel::getInstance(),
                              advance_complete_callback );
 }
@@ -795,7 +795,7 @@ DagMCNavigator* DagMCModel::createNavigatorAdvanced() const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
-  
+
   return new DagMCNavigator( DagMCModel::getInstance() );
 }
 
@@ -1020,7 +1020,7 @@ void DagMCModel::getSurfaceIdsWithPropertyValue(
 // Print model details
 std::string DagMCModel::getName() const
 {
-  return d_model_properties->getModelFileName();
+  return d_model_properties->getModelFileNameWithPath();
 }
 
 // Return the cell handler

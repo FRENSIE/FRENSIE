@@ -10,9 +10,6 @@
 #ifndef MONTE_CARLO_FLOATING_POINT_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_HPP
 #define MONTE_CARLO_FLOATING_POINT_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_HPP
 
-// Std Lib Includes
-#include <type_traits>
-
 // FRENSIE Includes
 #include "MonteCarlo_OrderedTypedObserverPhaseSpaceDimensionDiscretization.hpp"
 #include "Utility_HashBasedGridSearcher.hpp"
@@ -22,26 +19,12 @@ namespace MonteCarlo{
 /*! \brief The floating point ordered typed observer phase space dimension
  * discretization class.
  *
- * This is a dummy class that will cause a compilation error if the dimension
- * value type associated with a dimension is not a floating point type.
- */
-template<ObserverPhaseSpaceDimension dimension, typename Enabled = void>
-class FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretizationHelper
-{ /* ... */ };
-
-/*! \brief The floating point ordered typed observer phase space dimension
- * discretization class.
- *
  * This class specialization will only be used if the dimension value type
  * associated with a dimension is a floating point type. If a dimension is used
  * that doesn't meet this requirement a compilation error will occur.
  */
 template<ObserverPhaseSpaceDimension dimension>
-class FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization :
-#if !defined SWIG
-public FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretizationHelper<dimension,typename std::enable_if<std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>,
-#endif // !defined SWIG
-public OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>
+class FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization : public OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>
 {
   // Typedef for the base type
   typedef OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension> BaseType;

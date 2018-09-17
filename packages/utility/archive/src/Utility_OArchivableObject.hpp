@@ -16,6 +16,16 @@
 // Boost Includes
 #include <boost/filesystem/path.hpp>
 
+namespace boost{
+namespace archive{
+namespace detail{
+  
+class basic_pointer_oserializer;
+
+}
+}
+}
+
 namespace Utility{
 
 //! The output archivable object base class
@@ -39,6 +49,20 @@ public:
   //! Archive the object
   void saveToFile( const boost::filesystem::path& archive_name_with_path,
                    const bool overwrite = false ) const;
+
+protected:
+
+  //! Archive the object (implementation)
+  virtual void saveToFileImpl( const boost::filesystem::path& archive_name_with_path,
+                               const bool overwrite ) const;
+
+  //! Reset the bpos pointer
+  template<typename T>
+  const boost::archive::detail::basic_pointer_oserializer* resetBposPointer( const std::string& extension ) const;
+
+  //! Restore the bpos pointer
+  template<typename T>
+  void restoreBposPointer( const std::string& extension, const boost::archive::detail::basic_pointer_oserializer* bpos ) const;
 
 private:
 

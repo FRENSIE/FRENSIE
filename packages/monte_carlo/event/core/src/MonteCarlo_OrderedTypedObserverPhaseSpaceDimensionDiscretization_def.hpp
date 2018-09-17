@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_DEF_HPP
 #define MONTE_CARLO_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_DEF_HPP
 
+// Boost Includes
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_SortAlgorithms.hpp"
@@ -25,7 +28,7 @@ OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::OrderedTypedOb
 template<ObserverPhaseSpaceDimension dimension>
 OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::OrderedTypedObserverPhaseSpaceDimensionDiscretization(
                              const BinBoundaryArray& dimension_bin_boundaries )
-  : d_dimension_bin_boundaries( dimension_bin_boundaries )
+  : d_dimension_bin_boundaries( new BinBoundaryArray( dimension_bin_boundaries ) )
 {
   // Make sure that there is at least one bin
   TEST_FOR_EXCEPTION( dimension_bin_boundaries.size() <= 1,
@@ -63,13 +66,20 @@ void OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::print( st
 {
   os << this->getDimensionName() << " Bin Boundaries: ";
 
-  for( size_t i = 0; i < d_dimension_bin_boundaries.size(); ++i )
-    os << Utility::toString(d_dimension_bin_boundaries[i]) << " ";
+  for( size_t i = 0; i < d_dimension_bin_boundaries->size(); ++i )
+    os << Utility::toString((*d_dimension_bin_boundaries)[i]) << " ";
 }
 
 // Return the boundaries array
 template<ObserverPhaseSpaceDimension dimension>
 auto OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::getBinBoundaries() const -> const BinBoundaryArray&
+{
+  return (*d_dimension_bin_boundaries);
+}
+
+// Return the shared boundaries array
+template<ObserverPhaseSpaceDimension dimension>
+auto OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::getSharedBoundaries() const -> std::shared_ptr<const BinBoundaryArray>
 {
   return d_dimension_bin_boundaries;
 }

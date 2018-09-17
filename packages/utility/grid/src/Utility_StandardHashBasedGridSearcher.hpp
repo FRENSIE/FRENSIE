@@ -135,7 +135,7 @@ BOOST_SERIALIZATION_STD_HASH_BASED_GRID_SEARCHER_VERSION( 0 );
 #define BOOST_SERIALIZATION_STD_HASH_BASED_GRID_SEARCHER_EXPORT_STANDARD_KEY()\
   BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_KEY_IMPL( \
     StandardHashBasedGridSearcher, Utility,             \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( std::string( "StandardHashBasedGridSearcher<" ) + Utility::typeName<T>() + (ToF == true ? "Processed" : "Raw")), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( std::string( "StandardHashBasedGridSearcher<" ) + Utility::typeName<T>() + ">" + (ToF == true ? "Processed" : "Raw")), \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename T, bool ToF ), \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( T, ToF ) )
 

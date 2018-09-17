@@ -881,6 +881,7 @@ int main( int argc, char** argv )
           cutoff_angle_cosine,
           electron_tabular_evaluation_tol,
           number_of_moment_preserving_angles,
+          electron_grid,
           electron_interp );
       }
       EXCEPTION_CATCH_AND_EXIT( std::exception,

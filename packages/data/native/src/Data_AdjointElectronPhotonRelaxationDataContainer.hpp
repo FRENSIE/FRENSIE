@@ -32,6 +32,8 @@ namespace Data{
  */
 class AdjointElectronPhotonRelaxationDataContainer : public Utility::ArchivableObject<AdjointElectronPhotonRelaxationDataContainer>
 {
+  // The base type
+  typedef Utility::ArchivableObject<AdjointElectronPhotonRelaxationDataContainer> BaseType;
 
 public:
 
@@ -471,6 +473,13 @@ protected:
   //! Default constructor
   AdjointElectronPhotonRelaxationDataContainer()
   { /* ... */ }
+
+  //! Load the archived object (implementation)
+  void loadFromFileImpl( const boost::filesystem::path& archive_name_with_path ) final override;
+
+  //! Archive the object (implementation)
+  void saveToFileImpl( const boost::filesystem::path& archive_name_with_path,
+                       const bool overwrite ) const final override;
 
 //---------------------------------------------------------------------------//
 // SET NOTES

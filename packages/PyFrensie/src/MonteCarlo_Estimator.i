@@ -8,6 +8,8 @@
 
 %{
 // FRENSIE Includes
+#include "PyFrensie_PythonTypeTraits.hpp"
+
 #include "Geometry_InfiniteMediumModel.hpp"
 #include "Geometry_AdvancedModel.hpp"
 #include "Geometry_InfiniteMediumNavigator.hpp"
@@ -63,7 +65,7 @@ typedef unsigned int uint32_t;
 // Add some general templates
 %template(LongUnsignedVector) std::vector<long unsigned int>;
 %template(IntVector) std::vector<int>;
-%template(StringVectorMap) std::map<std::string,std::vector<double> >;
+//%template(StringVectorMap) std::map<std::string,std::vector<double> >;
 
 // Add some general typemaps
 %apply long unsigned int { const Geometry::Model::EntityId };
@@ -140,7 +142,7 @@ typedef unsigned int uint32_t;
 %typemap(in,numinputs=0) std::map<std::string,std::vector<double> >& processed_data (std::map<std::string,std::vector<double> > temp) "$1 = &temp;"
 
 %typemap(argout) std::map<std::string,std::vector<double> >& processed_data {
-  %append_output(swig::from( *$1 ));
+  %append_output(PyFrensie::convertToPython( *$1 ));
 }
 
 // Add a typemap for std::set<uint64_t>& entity_ids

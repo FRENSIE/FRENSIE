@@ -27,7 +27,7 @@ IF(FRENSIE_ENABLE_DAGMC)
   FRENSIE_ADD_TEST(TransportKernelDagMC
     EXTRA_ARGS
     --test_database=${COLLISION_DATABASE_XML_FILE}
-    --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat)
+    --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.h5m)
 
 ENDIF()
 

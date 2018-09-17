@@ -1,9 +1,9 @@
 #! ${PYTHON_EXECUTABLE}
 #-----------------------------------------------------------------------------#
 ## Utility.Prng module unit tests
-#  \file   tstUtility.Prng.py
+#  \file   tstUtility.Logging.py
 #  \author Alex Robinson
-#  \brief  Unit tests for the Utility.Prng module
+#  \brief  Unit tests for the Utility module
 #-----------------------------------------------------------------------------#
 
 # System imports
@@ -24,7 +24,7 @@ options,args = parser.parse_args()
 #-----------------------------------------------------------------------------#
 # Tests.
 #-----------------------------------------------------------------------------#
-# Test the 
+# Test the logging methods
 class Logging(unittest.TestCase):
     "TestCase class for Utility logging methods"
 
@@ -51,6 +51,17 @@ class Logging(unittest.TestCase):
         f2 = open(filename2, "r")
         self.assertTrue( message in f2.read() )
 
+        # Append an error to a previous log
+        Utility.removeAllLogs()
+        Utility.initializeSynchronousErrorLog( filename1, True )
+
+        message2 = "test error 2"
+        
+        Utility.logError( message2 )
+        Utility.flushAllLogs()
+
+        self.assertTrue( message2 in f1.read() )
+
     def testLogWarning(self):
         "*Test Utility.logWarning method"
         Utility.removeAllLogs()
@@ -73,6 +84,17 @@ class Logging(unittest.TestCase):
 
         f2 = open(filename2, "r")
         self.assertTrue( message in f2.read() )
+
+        # Append an warning to a previous log
+        Utility.removeAllLogs()
+        Utility.initializeSynchronousWarningLog( filename1, True )
+
+        message2 = "test warning 2"
+        
+        Utility.logWarning( message2 )
+        Utility.flushAllLogs()
+
+        self.assertTrue( message2 in f1.read() )
         
     def testLogNotification(self):
         "*Test Utility.logNotification method"
@@ -96,6 +118,17 @@ class Logging(unittest.TestCase):
 
         f2 = open(filename2, "r")
         self.assertTrue( message in f2.read() )
+
+        # Append an notification to a previous log
+        Utility.removeAllLogs()
+        Utility.initializeSynchronousNotificationLog( filename1, True )
+
+        message2 = "test notification 2"
+        
+        Utility.logNotification( message2 )
+        Utility.flushAllLogs()
+
+        self.assertTrue( message2 in f1.read() )
 
 #-----------------------------------------------------------------------------#
 # Custom main

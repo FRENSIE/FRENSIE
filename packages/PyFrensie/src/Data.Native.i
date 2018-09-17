@@ -147,6 +147,12 @@ using namespace Data;
 
 %extend Data::NATIVE_DATA_CONTAINER
 {
+  // Save the container to a file
+  void saveToFile( const std::string& filename, const bool overwrite = false )
+  {
+    $self->saveToFile( filename, overwrite );
+  }
+  
   // String conversion method
   PyObject* __str__() const
   {

@@ -8,10 +8,9 @@ depends on are listed below.
 
 1. [HDF5 1.8.13+](http://www.hdfgroup.org/HDF5)
 2. [OpenMPI 1.8.2](http://www.open-mpi.org/) - optional
-3. [Cubit 14.0](https://cubit.sandia.gov/index.html) - optional
-4. [CGM 14.1pre](http://trac.mcs.anl.gov/projects/ITAPS/wiki/CGM) - only with Cubit
-5. [MOAB 4.6.3](http://trac.mcs.anl.gov/projects/ITAPS/wiki/MOAB)
-6. [Trilinos 11.14.3](http://trilinos.org/)
+3. [Trelis 16.3](https://www.csimsoft.com/trelis.jsp) - optional
+5. [MOAB 5.0.0](http://press3.mcs.anl.gov/sigma/moab-library/) - optional
+6. [DagMC 3.0.0](https://github.com/svalinn/DAGMC) - optional
 7. [Boost 1.56.0+](http://www.boost.org/)
 8. [ROOT 6.04/02+](https://root.cern.ch/content/release-60402) - optional
 9. [Python 2.7+](https://www.python.org/) - optional
@@ -20,13 +19,12 @@ depends on are listed below.
 12. [SWIG 3.0.8+](http://www.swig.org/) - optional
 
 Note that OpenMPI is only required if you plan on running FRENSIE on a
-distributed memory system. Cubit is only required if you plan on using CAD
-geometries for particle simulations. If Cubit is used, CGM must also be
-built. If you do not plan on doing particle simulations both ROOT and Cubit
-can be neglected. If the FRENSIE python interfaces will be used the Python,
-SWIG, Numpy and H5Py packages will also be required. Building FRENSIE without
-these optional packages will result in faster build times which can be useful
-for certain development tasks.
+distributed memory system. Trelis is only required if you plan on using CAD
+geometries for particle simulations. If you do not plan on doing particle
+simulations both ROOT and Trelis can be neglected. If the FRENSIE python
+interfaces will be used the Python, SWIG, Numpy and H5Py packages will also be
+required. Building FRENSIE without these optional packages will result in faster
+build times which can be useful for certain development tasks.
 
 FRENSIE also requires a GNU compiler (4.9.0 or greater), CMake (3.0.1 or
 greater) and git (1.9.1 or greater) to build correctly. If you plan on building
@@ -169,103 +167,14 @@ are described.
 13. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/mpi/lib:$LD_LIBRARY_PATH`
 14. run `exec bash`
 
-### Building Cubit - Optional
-1. Cubit is not open source software so a [license](https://cubit.sandia.gov/public/licensing.html) must be acquired.
-2. The binary files will be be available for download once a license has been acquired
-3. move the Cubit-14.0-Lin64.tar.gz file to the cubit14.0 directory (e.g. software/cubit14.0)
-4. run `tar -xvf Cubit-14.0-Lin64.tar.gz`
-5. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/cubit14.0:$PATH`
-6. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/cubit14.0/bin:$LD_LIBRARY_PATH`
-7. run `exec bash`
-
-### Building CGM - Only with Cubit
-1. download the [CGM 14.1pre source](http://ftp.mcs.anl.gov/pub/fathom/cgm-nightly-trunk.tar.gz)
-2. move the cgm-nightly-trunk.tar.gz file to the cgm directory (e.g. software/cgm)
-3. move to the cgm directory
-4. run `tar -xvf cgm-nightly-trunk.tar.gz`
-5. run `ln -s cgma-14.1pre src`
-6. run `mkdir build`
-7. move to the build directory (e.g. software/cgm/build)
-8. run `../src/configure --enable-optimize --enable-shared --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --with-cubit=absolute-path-to_software/cubit14.0 --prefix=absolute-path-to_software/cgm`
-9. run `make -j n`
-10. run `make check`
-11. run `make install`
-12. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/cgm/lib:$LD_LIBRARY_PATH`
-
-### Building MOAB
-1. download the [MOAB 4.6.3 source](http://ftp.mcs.anl.gov/pub/fathom/moab-4.6.3.tar.gz)
-2. move the moab-4.6.3.tar.gz file to the moab directory (e.g. software/moab)
-3. move to the moab directory
-4. run `tar -xvf moab-4.6.3.tar.gz`
-5. run `ln -s moab-4.6.3 src`
-6. run `mkdir build`
-7. move to the build directory (e.g. software/moab/build)
-8.
-  * **Basic HDF5 Build:**
-    * if DagMC is desired (Cubit 14.0 and CGM must be built):
-    run `../src/configure --enable-optimize --enable-shared --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --with-cgm=absolute-path-to_software/cgm/ --with-hdf5 --prefix=absolute-path-to_software/moab/`
-    * else run `../src/configure --enable-optimize --enable-shared --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --with-hdf5 --prefix=absolute-path-to_software/moab/`
-  * **Advanced HDF5 Build:**
-    * if DagMC is desired (Cubit 14.0 and CGM must be built):
-    run `../src/configure --enable-optimize --enable-shared --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --with-cgm=absolute-path-to_software/cgm/ --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
-    * else run `../src/configure --enable-optimize --enable-shared --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
-9. run `make -j n`
-10. run `make check`
-11. run `make install`
-12. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/moab/bin:$PATH`
-13. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/moab/lib:$LD_LIBRARY_PATH`
-14. run `exec bash`
-
-### Building Boost
-**Basic:**
-
-1. run `sudo apt-get install libboost-all-dev`
-
-**Advanced:**
-
-1. download the [Boost 1.56.0 source](http://sourceforge.net/projects/boost/files/boost/1.56.0/)
-2. move the boost_1_56_0.tar.gz file to the boost directory (e.g. software/boost)
-3. move to the boost directory
-4. run `tar -xvf boost_1_56_0.tar.gz`
-5. move to the boost_1_56_0 directory (e.g. software/boost/boost_1_56_0)
-6. run `./bootstrap.sh --prefix=absolute-path-to_software/boost`
-7. if MPI has been built, open project-conf.jam in your preferred text editor and add the following line: `using mpi ;`
-8. run `./b2 -j n --prefix=absolute-path-to_software/boost -s NO_BZIP2=1 link=shared runtime-link=shared cxxflags="-D_GLIBCXX_USE_CXX11_ABI=0" install`, where n is the number of threads to use while building
-9. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/boost/lib:$LD_LIBRARY_PATH`
-10. run `exec bash`
-
-### Building Trilinos
-1. download the [Trilinos 11.14.3 source](http://trilinos.org/download/)
-2. move the trilinos-11.14.3-Source.tar.gz file to the trilinos directory (e.g. software/trilinos)
-3. move to the trilinos directory
-4. run `tar -xvf trilinos-11.14.3-Source.tar.gz`
-5. run `ln -s trilinos-11.14.3.Source src`
-6. run `mkdir build`
-7. move to the build directory (e.g. software/trilinos/build)
-8. copy `FRENSIE/scripts/trilinos-basic.sh` into the build directory
-9. change the variables in the script to reflect the desired system paths
-10. run `./trilinos-basic.sh` to configure trilinos
-11. run `make -j n`
-12. run `make test`
-13. run `make install`
-14. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/trilinos/lib:$LD_LIBRARY_PATH`
-15. add the following line to the .bashrc file: `export PYTHONPATH=absolute-path-to_software/trilinos/lib/python2.7/site-packages:$PYTHONPATH`
-15. run `exec bash`
-
-Note: If your system does not have LAPACK installed Trilinos will give you
-a configure error. You can use your system's package manager to install LAPACK
-or you can build if from source using the following instructions below. If
-you build LAPACK from source, use the FRENSIE/scripts/trilinos.sh script
-instead of the FRENSIE/scripts/trilinos-basic.sh script since it will allow
-you to specify the location of your custom build LAPACK package.
-
+### Building Lapack
 **Basic:**
 
 1. run `sudo apt-get install liblapack-dev liblapack3`
 
-Note: If on Ubuntu 16.04 this is the recommended way to install lapack. The
-advanced install below will result in an runtime error when importing numpy in
-python.
+Note: If on Ubuntu 16.04 or greater this is the recommended way to install
+lapack. The advanced install below will result in an runtime error when
+importing numpy in python.
 
 **Advanced:**
 
@@ -284,6 +193,96 @@ python.
 13. run `make install`
 14. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/lapack/lib:$LD_LIBRARY_PATH`
 15. run `exec bash`
+
+### Building MOAB - Optional
+1. download the [MOAB 5.0.0 source](http://ftp.mcs.anl.gov/pub/fathom/moab-5.0.0.tar.gz)
+2. move the moab-5.0.5.tar.gz file to the moab directory (e.g. software/moab)
+3. move to the moab directory
+4. run `tar -xvf moab-5.0.0.tar.gz`
+5. run `ln -s moab-5.0.0 src`
+6. run `mkdir build`
+7. move to the build directory (e.g. software/moab/build)
+8.
+  * **Basic HDF5 Build:**
+    * if DagMC is desired:
+    run `../src/configure --enable-dagmc --enable-optimize --enable-shared --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --with-hdf5 --prefix=absolute-path-to_software/moab/`
+    * else run `../src/configure --enable-optimize --enable-shared --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --with-hdf5 --prefix=absolute-path-to_software/moab/`
+  * **Advanced HDF5 Build:**
+    * if DagMC is desired:
+    run `../src/configure --enable-dagmc --enable-optimize --enable-shared --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
+    * else run `../src/configure --enable-optimize --enable-shared --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
+9. run `make -j n`
+10. run `make check`
+11. run `make install`
+12. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/moab/bin:$PATH`
+13. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/moab/lib:$LD_LIBRARY_PATH`
+14. run `exec bash`
+
+### Building DagMC - Optional
+1. move to the dagmc directory (e.g. software/dagmc)
+2. run `git clone https://github.com/svalinn/DAGMC.git`
+3. run `ln -s DAGMC src`
+4. run `mkdir build`
+5. move to the build directory (e.g. software/dagmc/build)
+6. copy `FRENSIE/scripts/dagmc.sh` into the build directory
+7. change the variables in the script to reflect the desired system paths
+8. run `./dagmc.sh` to configure dagmc
+9. run `make -j n`
+10. run `make -j n install`
+11. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/dagmc/bin:$PATH`
+12. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/dagmc/lib:$LD_LIBRARY_PATH`
+13. run `exec bash`
+
+### Building Trelis - Optional
+1. Trelis is not open source software so a [license](https://www.csimsoft.com/trelislicensing) must be acquired.
+2. The binary files will be be available for download once a license has been acquired
+3. move the Trelis-16.3-Lin64.tar.gz file to the trelis directory (e.g. software/trelis)
+4. run `tar -xvf Trelis-16.3-Lin64.tar.gz`
+5. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/trelis/Trelis-16.3/bin:$PATH`
+6. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/trelis/Trelis-16.3/bin:$LD_LIBRARY_PATH`
+7. run `exec bash`
+
+Note: Trelis requires an additional plugin to be installed is order to export
+geometries as .h5m files which can then be used by MOAB and DagMC. It is
+important to activate the Trelis license before installing the DagMC plugin.
+
+### Building DagMC Plugin for Trelis - Optional
+**Basic:**
+
+1. download the [DagMC Plugin](https://uwmadison.app.box.com/v/dagmc-trelis)
+2. move the `svalinn-plugin-linux.tgz` file to the trelis directory (e.g. software/trelis)
+3. move to the trelis bin directory (e.g. software/trelis/bin)
+4. run `tar xzf ../svalinn-plugin-linux.tgz`
+4. run `bash plugins/svalinn/install.sh`
+
+**Advanced:**
+
+1. move to the trelis directory (e.g. software/trelis)
+2. run `git clone https://github.com/svalinn/DAGMC-Trelis.git`
+5. run `ln -s DAGMC-Trelis src`
+6. run `mkdir build`
+5. move to the build directory (e.g. software/trelis/build)
+6. copy `FRENSIE/scripts/trelis_plugin.sh` into the build directory
+7. change the variables in the script to reflect the desired system paths
+8. run `./trelis_plugin.sh` to install the plugin
+
+### Building Boost
+**Basic:**
+
+1. run `sudo apt-get install libboost-all-dev`
+
+**Advanced:**
+
+1. download the [Boost 1.56.0 source](http://sourceforge.net/projects/boost/files/boost/1.56.0/)
+2. move the boost_1_56_0.tar.gz file to the boost directory (e.g. software/boost)
+3. move to the boost directory
+4. run `tar -xvf boost_1_56_0.tar.gz`
+5. move to the boost_1_56_0 directory (e.g. software/boost/boost_1_56_0)
+6. run `./bootstrap.sh --prefix=absolute-path-to_software/boost`
+7. if MPI has been built, open project-conf.jam in your preferred text editor and add the following line: `using mpi ;`
+8. run `./b2 -j n --prefix=absolute-path-to_software/boost -s NO_BZIP2=1 link=shared runtime-link=shared cxxflags="-D_GLIBCXX_USE_CXX11_ABI=0" install`, where n is the number of threads to use while building
+9. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/boost/lib:$LD_LIBRARY_PATH`
+10. run `exec bash`
 
 ### Building ROOT - Optional
 **Basic:**
@@ -342,6 +341,7 @@ the frensie.sh script:
  * `-D FRENSIE_ENABLE_MPI:BOOL=ON` enables MPI support.
  * `-D FRENSIE_ENABLE_PYTHON:BOOL=ON` enables the FRENSIE python interfaces.
  * `-D FRENSIE_ENABLE_ROOT:BOOL=ON` enables the ROOT geometry interfaces.
+ * `-D FRENSIE_ENABLE_MOAB:BOOL=ON` enables the MOAB for meshing (necessary for DagMC).
  * `-D FRENSIE_ENABLE_DAGMC:BOOL=ON` enables the DagMC geometry interfaces.
  * `-D FRENSIE_ENABLE_COLOR_OUTPUT:BOOL=OFF` disables color output in TTY shells.
  * `-D FRENSIE_ENABLE_EXPLICIT_TEMPLATE_INST:BOOL=OFF` disables explicit template instantiation. Build times will be shorter when this is enabled.
@@ -354,8 +354,6 @@ the following CMake variables can be set:
  * `-D MPI_PREFIX:PATH=path-to-mpi-install-dir` indicates where the custom MPI install directory is located.
  * `-D MOAB_PREFIX:PATH=path-to-mpi-install-dir` indicates where the custom MOAB install directory is located.
  * `-D MOAB_SOURCE:PATH=path-to-moab-src-dir` indicates where the MOAB source directory is located if it is separate from the MOAB install prefix.
- * `-D TRILINOS_PREFIX:PATH=path-to-trilinos-install-dir` indicates where the custom Trilinos install directory is located.
- * `-D TRILINOS_SOURCE:PATH=path-to-trilinos-src-dir` indicates where the Trilinos source directory is located if it is separate from the Trilinos install prefix.
  * `-D BOOST_PREFIX:PATH=path-to-boost-install-dir` indicates where the custom Boost install directory is located.
  * `-D ROOT_PREFIX:PATH=path-to-root-install-dir` indicates where the custom ROOT install directory is located.
  * `-D SWIG_PREFIX:PATH=path-to-swig-install-dir` indicates where the custom SWIG install directory is located.
@@ -363,25 +361,18 @@ the following CMake variables can be set:
  * `-D BUILDNAME_PREFIX:STRING=my-build-name` sets the custom build name that will be displayed on the CDash dashboard (only used when FRENSIE_ENABLE_DASHBOARD_CLIENT is set to ON).
  * `-D MCNP_DATA_DIR:PATH=path-to-mcnp-data` indicates where the nuclear data used by MCNP6 is located on the system. When this configure option is used, the FACEMC executable can be tested using the nuclear data used by MCNP6 by running `make test` or `make test-slow`. To disable these tests delete this configure option from the frensie.sh script.
 
-The FRENSIE build system needs to know where the Trilinos source files
-and Moab source files are. Therefore, there are two optional CMake variables
-called TRILINOS_SOURCE and MOAB_SOURCE that can be set if the source files are
-in a non-standard location (not in TRILINOS_PREFIX/src or MOAB_PREFIX/src ).
-This variable is shown in the frensie.sh script.
-
-There are two reasons why the Trilinos source file location is needed. The
-first is that Trilinos provides a standard unit test main file that can
-be used to compile basic unit test suites. The second reason is because of
-a bug that has been found in the Teuchos_TwoDArray.hpp file. A patch file
-has been created and will be applied by the build system.
+The FRENSIE build system needs to know where the Moab source files are.
+Therefore, there is an optional CMake variables called MOAB_SOURCE that can be
+set if the source files are in a non-standard location (not in MOAB_PREFIX/src
+). This variable is shown in the frensie.sh script.
 
 The reason why the moab source file location is needed is because of a race
-condition that was found in the DagMC.cpp file. Without patching this file
-the only safe way to run DagMC with threads is by placing omp critical blocks
-around each DagMC call, which results in very poor thread scaling. A patch
-file has been created which will be applied by the build system. The first time
-the patch is applied, the build system will report an error and indicate that
-moab must be rebuilt before it can proceed. After rebuilding moab by simply
+condition that was found in the GeomQueryTool.cpp file. Without patching this
+file the only safe way to run DagMC with threads is by placing omp critical
+blocks around each DagMC call, which results in very poor thread scaling. A
+patch file has been created which will be applied by the build system. The first
+time the patch is applied, the build system will report an error and indicate
+that moab must be rebuilt before it can proceed. After rebuilding moab by simply
 going to the moab build directory and running `make -j n` and `make install`
 frensie can be reconfigured by running the frensie.sh script and the build
 system should report no errors. After applying the patch to fix the race
@@ -399,4 +390,4 @@ Before setting up the crontab entries, a separate frensie build should be create
 The second line can be omitted if the client will only do nightly builds. Note that the first line tells cron to run the nightly script every day at 1:00 AM. The second line tells cron to run the ci script every 5 minutes (if no changes to the master branch have occurred nothing happens).
 
 ## Feedback
-If any issues are encountered during the build process please direct your questions to [Alex Robinson](https://github.com/aprobinson), [Eli Moll](https://github.com/ecmoll) or [Luke Kersting](https://github.com/lkersting).
+If any issues are encountered during the build process please direct your questions to [Alex Robinson](https://github.com/aprobinson), [Eli Moll](https://github.com/ecmoll), [Luke Kersting](https://github.com/lkersting) or [Philip Britt](https://github.com/psbritt).

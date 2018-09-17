@@ -40,17 +40,17 @@ void DagMCModel::extractEstimatorPropertyValues(
   TEST_FOR_EXCEPTION( first_pos > prop_value.size(),
                       std::runtime_error,
                       "the estimator property " << prop_value <<
-                      " found in the .sat file is invalid (the form needs to "
+                      " found in the .h5m file is invalid (the form needs to "
                       "be id.type.ptype)!" );
   TEST_FOR_EXCEPTION( last_pos > prop_value.size(),
                       std::runtime_error,
                       "the estimator property " << prop_value <<
-                      " found in the .sat file is invalid (the form needs to "
+                      " found in the .h5m file is invalid (the form needs to "
                       "be id.type.ptype)!" );
   TEST_FOR_EXCEPTION( first_pos == last_pos,
                       std::runtime_error,
                       "the estimator property " << prop_value <<
-                      " found in the .sat file is invalid (the form needs to "
+                      " found in the .h5m file is invalid (the form needs to "
                       "be id.type.ptype)!" );
 
   std::string id_string = prop_value.substr( 0, first_pos );
@@ -106,7 +106,7 @@ void DagMCModel::load( Archive& ar, const unsigned version )
 
   // Load the model properties only - all other data must be reinitialized
   decltype(d_model_properties) cached_model_properties;
-  
+
   ar & boost::serialization::make_nvp( "d_model_properties",
                                        cached_model_properties );
 

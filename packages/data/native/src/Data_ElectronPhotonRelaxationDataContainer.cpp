@@ -28,8 +28,61 @@ const std::string ElectronPhotonRelaxationDataContainer::s_archive_name( "contai
 ElectronPhotonRelaxationDataContainer::ElectronPhotonRelaxationDataContainer(
                            const boost::filesystem::path& file_name_with_path )
 {
+  std::string extension = file_name_with_path.extension().string();
+
+  // The bpis pointer must be NULL. Depending on the libraries that have been
+  // loaded (e.g. utility_grid) the bpis might be initialized to a non-NULL
+  // value
+  const boost::archive::detail::basic_pointer_iserializer* bpis =
+    this->resetBpisPointer<std::vector<double> >( extension );
+  
   // Import the data in the archive
   this->loadFromFile( file_name_with_path );
+
+  // The bpis pointer must be restored to its original value so that libraries
+  // that expect it to be non-NULL behave correctly
+  this->restoreBpisPointer<std::vector<double> >( extension, bpis );
+}
+
+// Load the archived object (implementation)
+void ElectronPhotonRelaxationDataContainer::loadFromFileImpl(
+                        const boost::filesystem::path& archive_name_with_path )
+{
+  std::string extension = archive_name_with_path.extension().string();
+
+  // The bpis pointer must be NULL. Depending on the libraries that have been
+  // loaded (e.g. utility_grid) the bpis might be initialized to a non-NULL
+  // value
+  const boost::archive::detail::basic_pointer_iserializer* bpis =
+    this->resetBpisPointer<std::vector<double> >( extension );
+  
+  // Import the data in the archive
+  BaseType::loadFromFileImpl( archive_name_with_path );
+
+  // The bpis pointer must be restored to its original value so that libraries
+  // that expect it to be non-NULL behave correctly
+  this->restoreBpisPointer<std::vector<double> >( extension, bpis );
+}
+
+// Archive the object (implementation)
+void ElectronPhotonRelaxationDataContainer::saveToFileImpl(
+                         const boost::filesystem::path& archive_name_with_path,
+                         const bool overwrite ) const
+{
+  std::string extension = archive_name_with_path.extension().string();
+
+  // The bpos pointer must be NULL. Depending on the libraries that have been
+  // loaded (e.g. utility_grid) the bpos might be initialized to a non-NULL
+  // value
+  const boost::archive::detail::basic_pointer_oserializer* bpos =
+    this->resetBposPointer<std::vector<double> >( extension );
+  
+  // Import the data in the archive
+  BaseType::saveToFileImpl( archive_name_with_path, overwrite );
+
+  // The bpos pointer must be restored to its original value so that libraries
+  // that expect it to be non-NULL behave correctly
+  this->restoreBposPointer<std::vector<double> >( extension, bpos );
 }
 
 // The database name used in an archive
@@ -131,24 +184,40 @@ double ElectronPhotonRelaxationDataContainer::getElectronTabularEvaluationTolera
   return d_electron_tabular_evaluation_tol;
 }
 
-// Return the union energy grid convergence tolerance
-double
-ElectronPhotonRelaxationDataContainer::getGridConvergenceTolerance() const
+// Return the photon union energy grid convergence tolerance
+double ElectronPhotonRelaxationDataContainer::getPhotonGridConvergenceTolerance() const
 {
-  return d_grid_convergence_tol;
+  return d_photon_grid_convergence_tol;
 }
 
-// Return the union energy grid absolute difference tolerance
-double
-ElectronPhotonRelaxationDataContainer::getGridAbsoluteDifferenceTolerance() const
+// Return the photon union energy grid absolute difference tolerance
+double ElectronPhotonRelaxationDataContainer::getPhotonGridAbsoluteDifferenceTolerance() const
 {
-  return d_grid_absolute_diff_tol;
+  return d_photon_grid_absolute_diff_tol;
 }
 
-// Return the union energy grid distance tolerance
-double ElectronPhotonRelaxationDataContainer::getGridDistanceTolerance() const
+// Return the photon union energy grid distance tolerance
+double ElectronPhotonRelaxationDataContainer::getPhotonGridDistanceTolerance() const
 {
-  return d_grid_distance_tol;
+  return d_photon_grid_distance_tol;
+}
+
+// Return the electron union energy grid convergence tolerance
+double ElectronPhotonRelaxationDataContainer::getElectronGridConvergenceTolerance() const
+{
+  return d_electron_grid_convergence_tol;
+}
+
+// Return the electron union energy grid absolute difference tolerance
+double ElectronPhotonRelaxationDataContainer::getElectronGridAbsoluteDifferenceTolerance() const
+{
+  return d_electron_grid_absolute_diff_tol;
+}
+
+// Return the electron union energy grid distance tolerance
+double ElectronPhotonRelaxationDataContainer::getElectronGridDistanceTolerance() const
+{
+  return d_electron_grid_distance_tol;
 }
 
 //---------------------------------------------------------------------------//
@@ -1008,34 +1077,64 @@ void ElectronPhotonRelaxationDataContainer::setElectronTabularEvaluationToleranc
   d_electron_tabular_evaluation_tol = electron_tabular_evaluation_tol;
 }
 
-// Set the union energy grid convergence tolerance
-void ElectronPhotonRelaxationDataContainer::setGridConvergenceTolerance(
+// Set the photon union energy grid convergence tolerance
+void ElectronPhotonRelaxationDataContainer::setPhotonGridConvergenceTolerance(
     const double grid_convergence_tol )
 {
   // Make sure the tolerance is valid
   testPrecondition( grid_convergence_tol >= 0.0 );
 
-  d_grid_convergence_tol = grid_convergence_tol;
+  d_photon_grid_convergence_tol = grid_convergence_tol;
 }
 
-// Set the union energy grid absolute difference tolerance
-void ElectronPhotonRelaxationDataContainer::setGridAbsoluteDifferenceTolerance(
+// Set the photon union energy grid absolute difference tolerance
+void ElectronPhotonRelaxationDataContainer::setPhotonGridAbsoluteDifferenceTolerance(
     const double grid_absolute_diff_tol )
 {
   // Make sure the tolerance is valid
   testPrecondition( grid_absolute_diff_tol >= 0.0 );
 
-  d_grid_absolute_diff_tol = grid_absolute_diff_tol;
+  d_photon_grid_absolute_diff_tol = grid_absolute_diff_tol;
 }
 
-// Set the union energy grid distance tolerance
-void ElectronPhotonRelaxationDataContainer::setGridDistanceTolerance(
+// Set the photon union energy grid distance tolerance
+void ElectronPhotonRelaxationDataContainer::setPhotonGridDistanceTolerance(
     const double grid_distance_tol )
 {
   // Make sure the tolerance is valid
   testPrecondition( grid_distance_tol >= 0.0 );
 
-  d_grid_distance_tol = grid_distance_tol;
+  d_photon_grid_distance_tol = grid_distance_tol;
+}
+
+// Set the electron union energy grid convergence tolerance
+void ElectronPhotonRelaxationDataContainer::setElectronGridConvergenceTolerance(
+    const double grid_convergence_tol )
+{
+  // Make sure the tolerance is valid
+  testPrecondition( grid_convergence_tol >= 0.0 );
+
+  d_electron_grid_convergence_tol = grid_convergence_tol;
+}
+
+// Set the electron union energy grid absolute difference tolerance
+void ElectronPhotonRelaxationDataContainer::setElectronGridAbsoluteDifferenceTolerance(
+    const double grid_absolute_diff_tol )
+{
+  // Make sure the tolerance is valid
+  testPrecondition( grid_absolute_diff_tol >= 0.0 );
+
+  d_electron_grid_absolute_diff_tol = grid_absolute_diff_tol;
+}
+
+// Set the electron union energy grid distance tolerance
+void ElectronPhotonRelaxationDataContainer::setElectronGridDistanceTolerance(
+    const double grid_distance_tol )
+{
+  // Make sure the tolerance is valid
+  testPrecondition( grid_distance_tol >= 0.0 );
+
+  d_electron_grid_distance_tol = grid_distance_tol;
 }
 
 //---------------------------------------------------------------------------//

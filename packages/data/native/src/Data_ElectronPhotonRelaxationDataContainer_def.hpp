@@ -43,9 +43,12 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_angle_cosine );
   DATA_MAKE_NVP_DEFAULT( ar, number_of_moment_preserving_angles );
   DATA_MAKE_NVP_DEFAULT( ar, electron_tabular_evaluation_tol );
-  DATA_MAKE_NVP_DEFAULT( ar, grid_convergence_tol );
-  DATA_MAKE_NVP_DEFAULT( ar, grid_absolute_diff_tol );
-  DATA_MAKE_NVP_DEFAULT( ar, grid_distance_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, photon_grid_convergence_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, photon_grid_absolute_diff_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, photon_grid_distance_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_grid_convergence_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_grid_absolute_diff_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_grid_distance_tol );
 
   // Relaxation Data
   DATA_MAKE_NVP_DEFAULT( ar, subshells );
@@ -147,9 +150,12 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_angle_cosine );
   DATA_MAKE_NVP_DEFAULT( ar, number_of_moment_preserving_angles );
   DATA_MAKE_NVP_DEFAULT( ar, electron_tabular_evaluation_tol );
-  DATA_MAKE_NVP_DEFAULT( ar, grid_convergence_tol );
-  DATA_MAKE_NVP_DEFAULT( ar, grid_absolute_diff_tol );
-  DATA_MAKE_NVP_DEFAULT( ar, grid_distance_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, photon_grid_convergence_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, photon_grid_absolute_diff_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, photon_grid_distance_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_grid_convergence_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_grid_absolute_diff_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_grid_distance_tol );
 
   // Relaxation Data
   DATA_MAKE_NVP_DEFAULT( ar, subshells );

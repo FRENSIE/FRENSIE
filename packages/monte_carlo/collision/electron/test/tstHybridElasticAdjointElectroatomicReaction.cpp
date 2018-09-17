@@ -91,8 +91,8 @@ FRENSIE_UNIT_TEST( HybridElasticAdjointElectroatomicReaction,
 
   cross_section = hybrid_elastic_reaction->getCrossSection( 1e-3 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          1.9778260462206174e+06,
-                          1e-12 );
+                                   1.977826046223735437e+06,
+                                   1e-12 );
 
   ratio = 8.1267567055936911e-06;
   cross_section = hybrid_elastic_reaction->getCrossSection( 20.0 );

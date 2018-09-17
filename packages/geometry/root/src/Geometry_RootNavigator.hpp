@@ -170,6 +170,19 @@ inline void RootNavigator::deepCopy( T* copy_array, const T* orig_array )
   copy_array[2] = orig_array[2];
 }
 
+/*! The Root geometry error
+ * \details This error class can be used to record geometry gaps.
+ */
+class RootGeometryError : public GeometryError
+{
+
+public:
+
+  RootGeometryError( const std::string& what )
+    : GeometryError( what )
+  { /* ... */ }
+};
+
 } // end Geometry namespace
 
 #endif // end GEOMETRY_ROOT_NAVIGATOR_HPP

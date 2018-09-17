@@ -347,7 +347,7 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
 FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    populateEPRDataContainer_h_lin )
 {
-  std::shared_ptr<const DataGen::ElectronPhotonRelaxationDataGenerator>
+  std::shared_ptr<DataGen::ElectronPhotonRelaxationDataGenerator>
     data_generator;
 
   {
@@ -379,10 +379,10 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
     data_generator.reset( raw_data_generator );
   }
 
-  Data::ElectronPhotonRelaxationVolatileDataContainer data_container;
+  data_generator->populateEPRDataContainer();
 
-  data_generator->populateEPRDataContainer( data_container );
-
+  const Data::ElectronPhotonRelaxationDataContainer& data_container =
+    data_generator->getDataContainer();
 
   // Check the table settings data
   FRENSIE_CHECK_EQUAL( data_container.getAtomicNumber(), 1 );
@@ -402,10 +402,10 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
   FRENSIE_CHECK_EQUAL( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
   FRENSIE_CHECK_EQUAL( data_container.getElectronTwoDInterpPolicy(), "Lin-Lin-Lin" );
   FRENSIE_CHECK_EQUAL( data_container.getElectronTwoDGridPolicy(), "Unit-base Correlated" );
-  FRENSIE_CHECK_EQUAL( data_container.getGridConvergenceTolerance(), 0.001 );
+  FRENSIE_CHECK_EQUAL( data_container.getElectronGridConvergenceTolerance(), 0.001 );
   FRENSIE_CHECK_EQUAL(
-    data_container.getGridAbsoluteDifferenceTolerance(), 1e-80 );
-  FRENSIE_CHECK_EQUAL( data_container.getGridDistanceTolerance(), 1e-20 );
+    data_container.getElectronGridAbsoluteDifferenceTolerance(), 1e-80 );
+  FRENSIE_CHECK_EQUAL( data_container.getElectronGridDistanceTolerance(), 1e-20 );
 
   // Check the relaxation data
   FRENSIE_CHECK_EQUAL( data_container.getSubshells().size(), 1 );
@@ -920,7 +920,7 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
 FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    populateEPRDataContainer_h )
 {
-  std::shared_ptr<const DataGen::ElectronPhotonRelaxationDataGenerator>
+  std::shared_ptr<DataGen::ElectronPhotonRelaxationDataGenerator>
     data_generator;
 
   {
@@ -953,10 +953,10 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
     data_generator.reset( raw_data_generator );
   }
 
-  Data::ElectronPhotonRelaxationVolatileDataContainer data_container;
+  data_generator->populateEPRDataContainer();
 
-  data_generator->populateEPRDataContainer( data_container );
-
+  const Data::ElectronPhotonRelaxationDataContainer& data_container =
+    data_generator->getDataContainer();
 
   // Check the table settings data
   FRENSIE_CHECK_EQUAL( data_container.getAtomicNumber(), 1 );
@@ -976,10 +976,9 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
   FRENSIE_CHECK_EQUAL( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
   FRENSIE_CHECK_EQUAL( data_container.getElectronTwoDInterpPolicy(), "Lin-Lin-Log" );
   FRENSIE_CHECK_EQUAL( data_container.getElectronTwoDGridPolicy(), "Unit-base Correlated" );
-  FRENSIE_CHECK_EQUAL( data_container.getGridConvergenceTolerance(), 0.001 );
-  FRENSIE_CHECK_EQUAL(
-    data_container.getGridAbsoluteDifferenceTolerance(), 1e-80 );
-  FRENSIE_CHECK_EQUAL( data_container.getGridDistanceTolerance(), 1e-20 );
+  FRENSIE_CHECK_EQUAL( data_container.getElectronGridConvergenceTolerance(), 0.001 );
+  FRENSIE_CHECK_EQUAL( data_container.getElectronGridAbsoluteDifferenceTolerance(), 1e-80 );
+  FRENSIE_CHECK_EQUAL( data_container.getElectronGridDistanceTolerance(), 1e-20 );
 
   // Check the relaxation data
   FRENSIE_CHECK_EQUAL( data_container.getSubshells().size(), 1 );
@@ -1499,8 +1498,13 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
 FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    repopulateMomentPreservingData_h )
 {
-  Data::ElectronPhotonRelaxationVolatileDataContainer
-    data_container( "test_h_epr.xml" );
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator
+    data_generator( h_xss_data_extractor,
+                    h_endl_data_container,
+                    "test_h_epr.xml" );
+
+  const Data::ElectronPhotonRelaxationDataContainer&
+    data_container = data_generator.getDataContainer();
 
   FRENSIE_CHECK( data_container.hasMomentPreservingData() );;
 
@@ -1509,24 +1513,20 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
   unsigned number_of_discrete_angles = 0;
   MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LINLINLOG_INTERPOLATION;
 
-  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
-    data_container,
-    cutoff_angle_cosine,
-    tabular_evaluation_tol,
-    number_of_discrete_angles,
-    two_d_interp );
+  data_generator.repopulateMomentPreservingData( cutoff_angle_cosine,
+                                                 tabular_evaluation_tol,
+                                                 number_of_discrete_angles,
+                                                 two_d_interp );
 
   FRENSIE_CHECK( !data_container.hasMomentPreservingData() );;
 
   cutoff_angle_cosine = 0.9;
   number_of_discrete_angles = 2;
 
-  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
-    data_container,
-    cutoff_angle_cosine,
-    tabular_evaluation_tol,
-    number_of_discrete_angles,
-    two_d_interp );
+  data_generator.repopulateMomentPreservingData( cutoff_angle_cosine,
+                                                 tabular_evaluation_tol,
+                                                 number_of_discrete_angles,
+                                                 two_d_interp );
 
   // Check the table settings data
   FRENSIE_CHECK_EQUAL( data_container.getAtomicNumber(), 1 );
@@ -1546,10 +1546,10 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
   FRENSIE_CHECK_EQUAL( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
   FRENSIE_CHECK_EQUAL( data_container.getElectronTwoDInterpPolicy(), "Lin-Lin-Log" );
   FRENSIE_CHECK_EQUAL( data_container.getElectronTwoDGridPolicy(), "Unit-base Correlated" );
-  FRENSIE_CHECK_EQUAL( data_container.getGridConvergenceTolerance(), 0.001 );
+  FRENSIE_CHECK_EQUAL( data_container.getElectronGridConvergenceTolerance(), 0.001 );
   FRENSIE_CHECK_EQUAL(
-    data_container.getGridAbsoluteDifferenceTolerance(), 1e-80 );
-  FRENSIE_CHECK_EQUAL( data_container.getGridDistanceTolerance(), 1e-20 );
+    data_container.getElectronGridAbsoluteDifferenceTolerance(), 1e-80 );
+  FRENSIE_CHECK_EQUAL( data_container.getElectronGridDistanceTolerance(), 1e-20 );
 
   // Check the relaxation data
   FRENSIE_CHECK_EQUAL( data_container.getSubshells().size(), 1 );
@@ -2069,8 +2069,13 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
 FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                    repopulateElectronElasticData_h )
 {
-  Data::ElectronPhotonRelaxationVolatileDataContainer
-    data_container( "test_h_epr.xml" );
+  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator
+    data_generator( h_xss_data_extractor,
+                    h_endl_data_container,
+                    "test_h_epr.xml" );
+
+  const Data::ElectronPhotonRelaxationDataContainer&
+    data_container = data_generator.getDataContainer();
 
   FRENSIE_CHECK( data_container.hasMomentPreservingData() );
 
@@ -2078,30 +2083,30 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
   double cutoff_angle_cosine = 1.0;
   double tabular_evaluation_tol = 1e-7;
   unsigned number_of_discrete_angles = 0;
+  MonteCarlo::TwoDGridType two_d_grid = MonteCarlo::CORRELATED_GRID;
   MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LINLINLIN_INTERPOLATION;
 
-  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
-    data_container,
-    max_energy,
-    cutoff_angle_cosine,
-    tabular_evaluation_tol,
-    number_of_discrete_angles,
-    two_d_interp );
+  data_generator.repopulateElectronElasticData( max_energy,
+                                                cutoff_angle_cosine,
+                                                tabular_evaluation_tol,
+                                                number_of_discrete_angles,
+                                                two_d_grid,
+                                                two_d_interp );
 
   FRENSIE_CHECK( !data_container.hasMomentPreservingData() );
 
   max_energy = 20.0;
   cutoff_angle_cosine = 0.9;
   number_of_discrete_angles = 2;
+  two_d_grid = MonteCarlo::UNIT_BASE_CORRELATED_GRID;
   two_d_interp = MonteCarlo::LOGLOGLOG_INTERPOLATION;
 
-  DataGen::ACEAndENDLElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
-    data_container,
-    max_energy,
-    cutoff_angle_cosine,
-    tabular_evaluation_tol,
-    number_of_discrete_angles,
-    two_d_interp );
+  data_generator.repopulateElectronElasticData( max_energy,
+                                                cutoff_angle_cosine,
+                                                tabular_evaluation_tol,
+                                                number_of_discrete_angles,
+                                                two_d_grid,
+                                                two_d_interp );
 
   // Check the table settings data
   FRENSIE_CHECK_EQUAL( data_container.getAtomicNumber(), 1 );
@@ -2121,10 +2126,10 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
   FRENSIE_CHECK_EQUAL( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
   FRENSIE_CHECK_EQUAL( data_container.getElectronTwoDInterpPolicy(), "Log-Log-Log" );
   FRENSIE_CHECK_EQUAL( data_container.getElectronTwoDGridPolicy(), "Unit-base Correlated" );
-  FRENSIE_CHECK_EQUAL( data_container.getGridConvergenceTolerance(), 0.001 );
+  FRENSIE_CHECK_EQUAL( data_container.getElectronGridConvergenceTolerance(), 0.001 );
   FRENSIE_CHECK_EQUAL(
-    data_container.getGridAbsoluteDifferenceTolerance(), 1e-80 );
-  FRENSIE_CHECK_EQUAL( data_container.getGridDistanceTolerance(), 1e-20 );
+    data_container.getElectronGridAbsoluteDifferenceTolerance(), 1e-80 );
+  FRENSIE_CHECK_EQUAL( data_container.getElectronGridDistanceTolerance(), 1e-20 );
 
   // Check the relaxation data
   FRENSIE_CHECK_EQUAL( data_container.getSubshells().size(), 1 );

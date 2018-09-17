@@ -39,6 +39,7 @@ using namespace Data;
 %include <std_map.i>
 %include <std_vector.i>
 %include <std_except.i>
+%include <std_shared_ptr.i>
 
 // Include typemaps support
 %include <typemaps.i>
@@ -129,6 +130,12 @@ tutorial for this class is shown below:
 
 %extend Data::ENDLDataContainer
 {
+  // Save the container to a file
+  void saveToFile( const std::string& filename, const bool overwrite = false )
+  {
+    $self->saveToFile( filename, overwrite );
+  }
+  
   // String conversion method
   PyObject* __str__() const
   {
@@ -148,6 +155,8 @@ tutorial for this class is shown below:
     return PyString_FromString( oss.str().c_str() );
   }
 }
+
+%shared_ptr( Data::ENDLDataContainer )
 
 // Include the ENDLDataContainer
 %include "Data_ENDLDataContainer.hpp"

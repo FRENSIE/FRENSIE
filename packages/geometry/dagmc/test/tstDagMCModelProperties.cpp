@@ -27,7 +27,7 @@ typedef TestArchiveHelper::TestArchives TestArchives;
 // Check that the default properties are correct
 FRENSIE_UNIT_TEST( DagMCModelProperties, default_properties )
 {
-  const Geometry::DagMCModelProperties default_properties( "dummy.sat" );
+  const Geometry::DagMCModelProperties default_properties( "dummy.h5m" );
 
   FRENSIE_CHECK_EQUAL( default_properties.getFacetTolerance(), 1e-3 );
   FRENSIE_CHECK( !default_properties.isFastIdLookupUsed() );
@@ -57,22 +57,39 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, default_properties )
   FRENSIE_CHECK_EQUAL( default_properties.getAdjointPhotonName(), "p*" );
   FRENSIE_CHECK_EQUAL( default_properties.getAdjointNeutronName(), "n*" );
   FRENSIE_CHECK_EQUAL( default_properties.getAdjointElectronName(), "e*" );
+
+  FRENSIE_CHECK_EQUAL( Geometry::DagMCModelProperties::getDefaultFilePath(), "" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the file name can be returned
-FRENSIE_UNIT_TEST( DagMCModelProperties, getModelFileName )
+FRENSIE_UNIT_TEST( DagMCModelProperties, constructor )
 {
-  const Geometry::DagMCModelProperties properties( "test.sat" );
+  std::unique_ptr<const Geometry::DagMCModelProperties>
+    properties( new Geometry::DagMCModelProperties( "test.h5m" ) );
 
-  FRENSIE_CHECK_EQUAL( properties.getModelFileName(), "test.sat" );
+  FRENSIE_CHECK_EQUAL( properties->getModelFileName(), "test.h5m" );
+  FRENSIE_CHECK_EQUAL( properties->getModelFilePath(), "" );
+  FRENSIE_CHECK_EQUAL( properties->getModelFileNameWithPath(), "test.h5m" );
+
+  properties.reset( new Geometry::DagMCModelProperties( "test_dir/test.h5m" ) );
+
+  FRENSIE_CHECK_EQUAL( properties->getModelFileName(), "test.h5m" );
+  FRENSIE_CHECK_EQUAL( properties->getModelFilePath(), "test_dir" );
+  FRENSIE_CHECK_EQUAL( properties->getModelFileNameWithPath(), "test_dir/test.h5m" );
+
+  properties.reset( new Geometry::DagMCModelProperties( "/home/test_dir/test.h5m" ) );
+
+  FRENSIE_CHECK_EQUAL( properties->getModelFileName(), "test.h5m" );
+  FRENSIE_CHECK_EQUAL( properties->getModelFilePath(), "/home/test_dir" );
+  FRENSIE_CHECK_EQUAL( properties->getModelFileNameWithPath(), "/home/test_dir/test.h5m" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the facet tolerance can be set
 FRENSIE_UNIT_TEST( DagMCModelProperties, setFacetTolerance )
 {
-  Geometry::DagMCModelProperties properties( "test.sat" );
+  Geometry::DagMCModelProperties properties( "test.h5m" );
   properties.setFacetTolerance( 5e-4 );
 
   FRENSIE_CHECK_EQUAL( properties.getFacetTolerance(), 5e-4 );
@@ -82,7 +99,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, setFacetTolerance )
 // Check that the id lookup type can be set
 FRENSIE_UNIT_TEST( DagMCModelProperties, setIdLookup )
 {
-  Geometry::DagMCModelProperties properties( "test.sat" );
+  Geometry::DagMCModelProperties properties( "test.h5m" );
   properties.useFastIdLookup();
 
   FRENSIE_CHECK( properties.isFastIdLookupUsed() );
@@ -96,7 +113,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, setIdLookup )
 // Check that the termination cell property name can be set
 FRENSIE_UNIT_TEST( DagMCModelProperties, setTerminationCellPropertyName )
 {
-  Geometry::DagMCModelProperties properties( "test.sat" );
+  Geometry::DagMCModelProperties properties( "test.h5m" );
   properties.setTerminationCellPropertyName( "graveyard" );
 
   FRENSIE_CHECK_EQUAL( properties.getTerminationCellPropertyName(),
@@ -107,7 +124,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, setTerminationCellPropertyName )
 // Check that the reflecting surface property name can be set
 FRENSIE_UNIT_TEST( DagMCModelProperties, setReflectingSurfacePropertyName )
 {
-  Geometry::DagMCModelProperties properties( "test.sat" );
+  Geometry::DagMCModelProperties properties( "test.h5m" );
   properties.setReflectingSurfacePropertyName( "spec.reflect" );
 
   FRENSIE_CHECK_EQUAL( properties.getReflectingSurfacePropertyName(),
@@ -118,7 +135,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, setReflectingSurfacePropertyName )
 // Check that the material property name can be set
 FRENSIE_UNIT_TEST( DagMCModelProperties, setMaterialPropertyName )
 {
-  Geometry::DagMCModelProperties properties( "test.sat" );
+  Geometry::DagMCModelProperties properties( "test.h5m" );
   properties.setMaterialPropertyName( "mat" );
 
   FRENSIE_CHECK_EQUAL( properties.getMaterialPropertyName(), "mat" );
@@ -128,7 +145,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, setMaterialPropertyName )
 // Check that the density property name can be set
 FRENSIE_UNIT_TEST( DagMCModelProperties, setDensityPropertyName )
 {
-  Geometry::DagMCModelProperties properties( "test.sat" );
+  Geometry::DagMCModelProperties properties( "test.h5m" );
   properties.setDensityPropertyName( "rho" );
 
   FRENSIE_CHECK_EQUAL( properties.getDensityPropertyName(), "rho" );
@@ -138,7 +155,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, setDensityPropertyName )
 // Check that the estimator property name can be set
 FRENSIE_UNIT_TEST( DagMCModelProperties, setEstimatorPropertyName )
 {
-  Geometry::DagMCModelProperties properties( "test.sat" );
+  Geometry::DagMCModelProperties properties( "test.h5m" );
   properties.setEstimatorPropertyName( "tally" );
 
   FRENSIE_CHECK_EQUAL( properties.getEstimatorPropertyName(), "tally" );
@@ -148,7 +165,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, setEstimatorPropertyName )
 // Check that all of the property names can be returned
 FRENSIE_UNIT_TEST( DagMCModelProperties, getPropertyNames )
 {
-  Geometry::DagMCModelProperties properties( "test.sat" );
+  Geometry::DagMCModelProperties properties( "test.h5m" );
 
   std::vector<std::string> property_names;
 
@@ -176,7 +193,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, getPropertyNames )
 // Check that the surface current name can be set
 FRENSIE_UNIT_TEST( DagMCModelProperties, setSurfaceCurrentName )
 {
-  Geometry::DagMCModelProperties properties( "test.sat" );
+  Geometry::DagMCModelProperties properties( "test.h5m" );
   properties.setSurfaceCurrentName( "surf.cur" );
 
   FRENSIE_CHECK_EQUAL( properties.getSurfaceCurrentName(), "surf.cur" );
@@ -186,7 +203,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, setSurfaceCurrentName )
 // Check that the surface flux name can be set
 FRENSIE_UNIT_TEST( DagMCModelProperties, setSurfaceFluxName )
 {
-  Geometry::DagMCModelProperties properties( "test.sat" );
+  Geometry::DagMCModelProperties properties( "test.h5m" );
   properties.setSurfaceFluxName( "surf.flux" );
 
   FRENSIE_CHECK_EQUAL( properties.getSurfaceFluxName(), "surf.flux" );
@@ -196,7 +213,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, setSurfaceFluxName )
 // Check that the cell pulse height name can be set
 FRENSIE_UNIT_TEST( DagMCModelProperties, setCellPulseHeightName )
 {
-  Geometry::DagMCModelProperties properties( "test.sat" );
+  Geometry::DagMCModelProperties properties( "test.h5m" );
   properties.setCellPulseHeightName( "cell.ph" );
 
   FRENSIE_CHECK_EQUAL( properties.getCellPulseHeightName(), "cell.ph" );
@@ -206,7 +223,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, setCellPulseHeightName )
 // Check that the cell track-length flux name can be set
 FRENSIE_UNIT_TEST( DagMCModelProperties, setCellTrackLengthFluxName )
 {
-  Geometry::DagMCModelProperties properties( "test.sat" );
+  Geometry::DagMCModelProperties properties( "test.h5m" );
   properties.setCellTrackLengthFluxName( "cell.tl" );
 
   FRENSIE_CHECK_EQUAL( properties.getCellTrackLengthFluxName(), "cell.tl" );
@@ -216,7 +233,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, setCellTrackLengthFluxName )
 // Check that the cell collision flux name can be set
 FRENSIE_UNIT_TEST( DagMCModelProperties, setCellCollisionFluxName )
 {
-  Geometry::DagMCModelProperties properties( "test.sat" );
+  Geometry::DagMCModelProperties properties( "test.h5m" );
   properties.setCellCollisionFluxName( "cell.c" );
 
   FRENSIE_CHECK_EQUAL( properties.getCellCollisionFluxName(), "cell.c" );
@@ -226,7 +243,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, setCellCollisionFluxName )
 // Check if a cell estimator name is valid
 FRENSIE_UNIT_TEST( DagMCModelProperties, isCellEstimatorNameValid )
 {
-  const Geometry::DagMCModelProperties properties( "test.sat" );
+  const Geometry::DagMCModelProperties properties( "test.h5m" );
 
   FRENSIE_CHECK( properties.isCellEstimatorNameValid(
                                        properties.getCellPulseHeightName() ) );
@@ -244,7 +261,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, isCellEstimatorNameValid )
 // Check if a surface estimator name is valid
 FRENSIE_UNIT_TEST( DagMCModelProperties, isSurfaceEstimatorNameValid )
 {
-  const Geometry::DagMCModelProperties properties( "test.sat" );
+  const Geometry::DagMCModelProperties properties( "test.h5m" );
 
   FRENSIE_CHECK( properties.isSurfaceEstimatorNameValid(
                                         properties.getSurfaceCurrentName() ) );
@@ -262,7 +279,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, isSurfaceEstimatorNameValid )
 // Check if an estimator name is valid
 FRENSIE_UNIT_TEST( DagMCModelProperties, isEstimatorNameValid )
 {
-  const Geometry::DagMCModelProperties properties( "test.sat" );
+  const Geometry::DagMCModelProperties properties( "test.h5m" );
 
   FRENSIE_CHECK( properties.isEstimatorNameValid(
                                         properties.getSurfaceCurrentName() ) );
@@ -281,7 +298,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, isEstimatorNameValid )
 // Check if the estimator type can be returned
 FRENSIE_UNIT_TEST( DagMCModelProperties, getEstimatorType )
 {
-  const Geometry::DagMCModelProperties properties( "test.sat" );
+  const Geometry::DagMCModelProperties properties( "test.h5m" );
 
   Geometry::EstimatorType estimator_type =
     properties.getEstimatorType( properties.getSurfaceCurrentName() );
@@ -318,7 +335,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, getEstimatorType )
 // Check that the photon name can be set
 FRENSIE_UNIT_TEST( DagMCModelProperties, setPhotonName )
 {
-  Geometry::DagMCModelProperties properties( "test.sat" );
+  Geometry::DagMCModelProperties properties( "test.h5m" );
   properties.setPhotonName( "photon" );
 
   FRENSIE_CHECK_EQUAL( properties.getPhotonName(), "photon" );
@@ -328,7 +345,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, setPhotonName )
 // Check that the neutron name can be set
 FRENSIE_UNIT_TEST( DagMCModelProperties, setNeutronName )
 {
-  Geometry::DagMCModelProperties properties( "test.sat" );
+  Geometry::DagMCModelProperties properties( "test.h5m" );
   properties.setNeutronName( "neutron" );
 
   FRENSIE_CHECK_EQUAL( properties.getNeutronName(), "neutron" );
@@ -338,7 +355,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, setNeutronName )
 // Check that the electron name can be set
 FRENSIE_UNIT_TEST( DagMCModelProperties, setElectronName )
 {
-  Geometry::DagMCModelProperties properties( "test.sat" );
+  Geometry::DagMCModelProperties properties( "test.h5m" );
   properties.setElectronName( "electron" );
 
   FRENSIE_CHECK_EQUAL( properties.getElectronName(), "electron" );
@@ -348,7 +365,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, setElectronName )
 // Check that the adjoint photon name can be set
 FRENSIE_UNIT_TEST( DagMCModelProperties, setAdjointPhotonName )
 {
-  Geometry::DagMCModelProperties properties( "test.sat" );
+  Geometry::DagMCModelProperties properties( "test.h5m" );
   properties.setAdjointPhotonName( "adjoint-photon" );
 
   FRENSIE_CHECK_EQUAL( properties.getAdjointPhotonName(), "adjoint-photon" );
@@ -358,7 +375,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, setAdjointPhotonName )
 // Check that the adjoint neutron name can be set
 FRENSIE_UNIT_TEST( DagMCModelProperties, setAdjointNeutronName )
 {
-  Geometry::DagMCModelProperties properties( "test.sat" );
+  Geometry::DagMCModelProperties properties( "test.h5m" );
   properties.setAdjointNeutronName( "adjoint-neutron" );
 
   FRENSIE_CHECK_EQUAL( properties.getAdjointNeutronName(), "adjoint-neutron" );
@@ -368,7 +385,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, setAdjointNeutronName )
 // Check that the adjoint electron name can be set
 FRENSIE_UNIT_TEST( DagMCModelProperties, setAdjointElectronName )
 {
-  Geometry::DagMCModelProperties properties( "test.sat" );
+  Geometry::DagMCModelProperties properties( "test.h5m" );
   properties.setAdjointElectronName( "adjoint-electron" );
 
   FRENSIE_CHECK_EQUAL( properties.getAdjointElectronName(),
@@ -379,7 +396,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, setAdjointElectronName )
 // Check if a particle name is valid
 FRENSIE_UNIT_TEST( DagMCModelProperties, isParticleNameValid )
 {
-  const Geometry::DagMCModelProperties properties( "test.sat" );
+  const Geometry::DagMCModelProperties properties( "test.h5m" );
 
   FRENSIE_CHECK( properties.isParticleNameValid( properties.getPhotonName() ) );
   FRENSIE_CHECK( properties.isParticleNameValid( properties.getNeutronName() ) );
@@ -394,7 +411,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, isParticleNameValid )
 // Check that a particle type can be returned
 FRENSIE_UNIT_TEST( DagMCModelProperties, getParticleType )
 {
-  const Geometry::DagMCModelProperties properties( "test.sat" );
+  const Geometry::DagMCModelProperties properties( "test.h5m" );
 
   Geometry::ParticleType particle_type =
     properties.getParticleType( properties.getPhotonName() );
@@ -446,7 +463,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DagMCModelProperties,
 
     createOArchive( archive_base_name, archive_ostream, oarchive );
 
-    Geometry::DagMCModelProperties properties( "dummy.sat" );
+    Geometry::DagMCModelProperties properties( "dummy.h5m" );
     properties.setFacetTolerance( 1e-4 );
     properties.setTerminationCellPropertyName( "graveyard" );
     properties.setReflectingSurfacePropertyName( "ref.surf" );
@@ -476,11 +493,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DagMCModelProperties,
 
   createIArchive( archive_istream, iarchive );
 
-  Geometry::DagMCModelProperties properties( "?.sat" );
+  Geometry::DagMCModelProperties properties( "?.h5m" );
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( properties ) );
 
-  FRENSIE_CHECK_EQUAL( properties.getModelFileName(), "dummy.sat" );
+  FRENSIE_CHECK_EQUAL( properties.getModelFileName(), "dummy.h5m" );
   FRENSIE_CHECK_EQUAL( properties.getFacetTolerance(), 1e-4 );
   FRENSIE_CHECK( !properties.isFastIdLookupUsed() );
   FRENSIE_CHECK_EQUAL( properties.getTerminationCellPropertyName(),

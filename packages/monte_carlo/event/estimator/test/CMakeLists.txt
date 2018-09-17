@@ -90,7 +90,7 @@ IF(${FRENSIE_ENABLE_DAGMC})
     DEPENDS tstSurfaceFluxEstimatorDagMC.cpp
     LIB_DEPENDS geometry_dagmc)
   FRENSIE_ADD_TEST(SurfaceFluxEstimatorDagMC
-    EXTRA_ARGS --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat)
+    EXTRA_ARGS --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.h5m)
 ENDIF()
 
 FRENSIE_ADD_TEST_EXECUTABLE(SurfaceCurrentEstimator DEPENDS tstSurfaceCurrentEstimator.cpp)
@@ -140,7 +140,7 @@ IF(${FRENSIE_ENABLE_DAGMC})
     DEPENDS tstCellCollisionFluxEstimatorDagMC.cpp
     LIB_DEPENDS geometry_dagmc)
   FRENSIE_ADD_TEST(CellCollisionFluxEstimatorDagMC
-    EXTRA_ARGS --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat)
+    EXTRA_ARGS --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.h5m)
 ENDIF()
 
 IF(${FRENSIE_ENABLE_ROOT})
@@ -171,7 +171,7 @@ IF(${FRENSIE_ENABLE_DAGMC})
     DEPENDS tstCellTrackLengthFluxEstimatorDagMC.cpp
     LIB_DEPENDS geometry_dagmc)
   FRENSIE_ADD_TEST(CellTrackLengthFluxEstimatorDagMC
-    EXTRA_ARGS --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat)
+    EXTRA_ARGS --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.h5m)
 ENDIF()
 
 IF(${FRENSIE_ENABLE_ROOT})

@@ -213,13 +213,13 @@ private:
 /*! The DagMC geometry error
  * \details This error class can be used to record geometry gaps.
  */
-class DagMCGeometryError : public std::runtime_error
+class DagMCGeometryError : public GeometryError
 {
 
 public:
 
-  DagMCGeometryError( const std::string& what_arg )
-    : std::runtime_error( what_arg )
+  DagMCGeometryError( const std::string& what )
+    : GeometryError( what )
   { /* ... */ }
 };
   

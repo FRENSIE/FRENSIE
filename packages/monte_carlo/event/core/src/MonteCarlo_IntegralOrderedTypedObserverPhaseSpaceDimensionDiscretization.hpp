@@ -10,23 +10,10 @@
 #ifndef MONTE_CARLO_INTEGRAL_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_HPP
 #define MONTE_CARLO_INTEGRAL_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_HPP
 
-// Std Lib Includes
-#include <type_traits>
-
 // FRENSIE Includes
 #include "MonteCarlo_OrderedTypedObserverPhaseSpaceDimensionDiscretization.hpp"
 
 namespace MonteCarlo{
-
-/*! \brief The integral ordered typed observer phase space dimension
- * discretization class.
- *
- * This is a dummy class that will cause a compilation error if the dimension
- * value type associated with a dimension is not an integral type.
- */
-template<ObserverPhaseSpaceDimension dimension, typename Enabled = void>
-class IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretizationHelper
-{ /* ... */ };
 
 /*! \brief The integral ordered typed observer phase space dimension
  * discretization class.
@@ -36,11 +23,7 @@ class IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretizationHelper
  * that does not meet this requirement a compilation error will occur.
  */
 template<ObserverPhaseSpaceDimension dimension>
-class IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization :
-#if !defined SWIG
-public IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretizationHelper<dimension,typename std::enable_if<std::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value>::type>,
-#endif // !defined SWIG
-public OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>
+class IntegralOrderedTypedObserverPhaseSpaceDimensionDiscretization : public OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>
 {
   // Typedef for the base type
   typedef OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension> BaseType;

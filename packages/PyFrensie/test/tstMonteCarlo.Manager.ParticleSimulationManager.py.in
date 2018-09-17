@@ -586,7 +586,7 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
         manager.runSimulation()
 
         self.assertEqual( manager.getNextHistory(), 5 )
-        self.assertEqual( manager.getNumberOfRendezvous(), 3 )
+        self.assertEqual( manager.getNumberOfRendezvous(), 2 )
 
 #-----------------------------------------------------------------------------#
     # Check that a simulation can be run
@@ -839,6 +839,26 @@ class ParticleSimulationManagerRestartTestCase(ParametrizedTestCase):
         source = ActiveRegion.StandardParticleSource( source_component )
         event_handler = Event.EventHandler( properties )
 
+        # There are no surfaces - this is just a dummy estimator to test the
+        # restart feature
+        estimator_1 = Event.WeightMultipliedSurfaceCurrentEstimator( 1, 1.0, [2] )
+        estimator_1.setParticleTypes( [MonteCarlo.PHOTON] )
+        estimator_1.setCosineDiscretization( [-1.0, 0.0, 1.0] )
+
+        event_handler.addEstimator( estimator_1 )
+
+        del estimator_1
+
+        estimator_2 = Event.WeightMultipliedCellTrackLengthFluxEstimator( 2, 1.0, [1], [1.0] )
+        
+        estimator_2.setParticleTypes( [MonteCarlo.PHOTON] )
+        estimator_2.setEnergyDiscretization( [0.001, 0.01, 0.1, 1.0, 10.0] )
+        estimator_2.setCollisionNumberDiscretization( [0, 1, 10] )
+
+        event_handler.addEstimator( estimator_2 )
+
+        del estimator_2
+        
         factory = Manager.ParticleSimulationManagerFactory( model,
                                                             source,
                                                             event_handler,
@@ -852,6 +872,11 @@ class ParticleSimulationManagerRestartTestCase(ParametrizedTestCase):
 
         next_history = manager.getNextHistory()
         rendezvous_number = manager.getNumberOfRendezvous()
+
+        del model
+        del source
+        del event_handler
+        del manager
 
         # Reset variables
         source_component = None

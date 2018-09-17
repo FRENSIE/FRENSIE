@@ -56,7 +56,7 @@ FRENSIE_UNIT_TEST( DagMCModel, getModelProperties )
   const Geometry::DagMCModelProperties& cached_properties =
     model->getModelProperties();
 
-  FRENSIE_CHECK( cached_properties.getModelFileName().find( "test_geom.sat" ) <
+  FRENSIE_CHECK( cached_properties.getModelFileName().find( "test_geom.h5m" ) <
                  cached_properties.getModelFileName().size() );
 }
 

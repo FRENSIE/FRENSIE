@@ -30,6 +30,11 @@ PyFrensie_MAKE_TEST(tstUtility.Logging)
 ADD_TEST(PyFrensie.Utility.Logging_test tstUtility.Logging.py)
 SET_PROPERTY(TEST PyFrensie.Utility.Logging_test PROPERTY LABELS pyfrensie)
 
+# Add the Utility arrayFromString unit tests
+PyFrensie_MAKE_TEST(tstUtility.ArrayFromString)
+ADD_TEST(PyFrensie.Utility.ArrayFromString_test tstUtility.ArrayFromString.py)
+SET_PROPERTY(TEST PyFrensie.Utility.ArrayFromString_test PROPERTY LABELS pyfrensie)
+
 IF(HAVE_FRENSIE_MPI)
   # Add the Utility_GlobalMPISession unit tests
   PyFrensie_MAKE_TEST(tstUtility.MPI.GlobalMPISessionInit)
@@ -245,7 +250,7 @@ IF(${FRENSIE_ENABLE_DAGMC} OR ${FRENSIE_ENABLE_ROOT})
   PyFrensie_MAKE_TEST(tstGeometry.ModelProperties)
 
   IF(${FRENSIE_ENABLE_DAGMC})
-    ADD_TEST(PyFrensie.Geometry.ModelProperties_DagMC_test ${PYTHON_EXECUTABLE} tstGeometry.ModelProperties.py --dagmc_sat_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat)
+    ADD_TEST(PyFrensie.Geometry.ModelProperties_DagMC_test ${PYTHON_EXECUTABLE} tstGeometry.ModelProperties.py --dagmc_h5m_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.h5m)
     SET_PROPERTY(TEST PyFrensie.Geometry.ModelProperties_DagMC_test PROPERTY LABELS pyfrensie dagmc)
   ENDIF()
 
@@ -260,7 +265,7 @@ IF(${FRENSIE_ENABLE_DAGMC} OR ${FRENSIE_ENABLE_ROOT})
   PyFrensie_MAKE_TEST(tstGeometry.Model)
 
   IF(${FRENSIE_ENABLE_DAGMC})
-    ADD_TEST(PyFrensie.Geometry.Model_DagMC_test ${PYTHON_EXECUTABLE} tstGeometry.Model.py --dagmc_sat_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat)
+    ADD_TEST(PyFrensie.Geometry.Model_DagMC_test ${PYTHON_EXECUTABLE} tstGeometry.Model.py --dagmc_h5m_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.h5m)
     SET_PROPERTY(TEST PyFrensie.Geometry.Model_DagMC_test PROPERTY LABELS pyfrensie dagmc)
   ENDIF()
 
@@ -276,7 +281,7 @@ IF(${FRENSIE_ENABLE_DAGMC} OR ${FRENSIE_ENABLE_ROOT})
   PyFrensie_MAKE_TEST(tstGeometry.Navigator)
 
   IF(${FRENSIE_ENABLE_DAGMC})
-    ADD_TEST(PyFrensie.Geometry.Navigator_DagMC_test ${PYTHON_EXECUTABLE} tstGeometry.Navigator.py --dagmc_sat_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat)
+    ADD_TEST(PyFrensie.Geometry.Navigator_DagMC_test ${PYTHON_EXECUTABLE} tstGeometry.Navigator.py --dagmc_h5m_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.h5m)
     SET_PROPERTY(TEST PyFrensie.Geometry.Navigator_DagMC_test PROPERTY LABELS pyfrensie dagmc)
   ENDIF()
 
@@ -338,9 +343,37 @@ ADD_TEST(PyFrensie.MonteCarlo.Collision.MaterialDefinitionDatabase_test ${PYTHON
 IF(${FRENSIE_ENABLE_DAGMC})
   # Add the MonteCarlo.Collision.FilledGeometryModel unit tests
   PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.FilledGeometryModel)
-  ADD_TEST(PyFrensie.MonteCarlo.Collision.FilledGeometryModel_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.FilledGeometryModel.py --dagmc_sat_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat --database_path=${COLLISION_DATABASE_XML_FILE})
+  ADD_TEST(PyFrensie.MonteCarlo.Collision.FilledGeometryModel_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.FilledGeometryModel.py --dagmc_h5m_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.h5m --database_path=${COLLISION_DATABASE_XML_FILE})
   ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Collision.FilledGeometryModel ${COLLISION_DATABASE_XML_FILE_TARGET} )
 ENDIF()
+
+# # Add the MonteCarlo.Collision.PhotonKinematics unit tests
+# PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.PhotonKinematics)
+# ADD_TEST(PyFrensie.MonteCarlo.Collision.PhotonKinematics_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.PhotonKinematics.py)
+
+# Add the MonteCarlo.Electron.ElectronScatteringNativeDistribution unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Electron.ElectronScatteringNativeDistribution)
+ADD_TEST(PyFrensie.MonteCarlo.Electron.ElectronScatteringNativeDistribution_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Electron.ElectronScatteringNativeDistribution.py --nativefile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml)
+SET_PROPERTY(TEST PyFrensie.MonteCarlo.Electron.ElectronScatteringNativeDistribution_test PROPERTY LABELS pyfrensie electron )
+
+# # Add the MonteCarlo.Electron.ElectronScatteringACEDistribution unit tests
+# PyFrensie_MAKE_TEST(tstMonteCarlo.Electron.ElectronScatteringACEDistribution)
+# ADD_TEST(PyFrensie.MonteCarlo.Electron.ElectronScatteringACEDistribution_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Electron.ElectronScatteringACEDistribution.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr14_ace_file.txt --tablename=1000.14p)
+# SET_PROPERTY(TEST PyFrensie.MonteCarlo.Electron.ElectronScatteringACEDistribution_test PROPERTY LABELS pyfrensie electron )
+
+# # Add the MonteCarlo.Electron.AdjointElectronScatteringDistribution unit tests
+# PyFrensie_MAKE_TEST(tstMonteCarlo.Electron.AdjointElectronScatteringDistribution)
+# ADD_TEST(PyFrensie.MonteCarlo.Electron.AdjointElectronScatteringDistribution_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Electron.AdjointElectronScatteringDistribution.py --adjointfile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml)
+# SET_PROPERTY(TEST PyFrensie.MonteCarlo.Electron.AdjointElectronScatteringDistribution_test PROPERTY LABELS pyfrensie electron adjoint)
+
+# Add the MonteCarlo.Electron.ElectroatomicReaction unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Electron.ElectroatomicReaction)
+ADD_TEST(PyFrensie.MonteCarlo.Electron.ElectroatomicReaction_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Electron.ElectroatomicReaction.py --nativefile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml )
+
+# # Add the adjoint MonteCarlo.Electron.AdjointElectroatomicReaction unit tests
+# PyFrensie_MAKE_TEST(tstMonteCarlo.Electron.AdjointElectroatomicReaction)
+# ADD_TEST(PyFrensie.MonteCarlo.Electron.AdjointElectroatomicReaction_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Electron.AdjointElectroatomicReaction.py --nativefile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml )
+# SET_PROPERTY(TEST PyFrensie.MonteCarlo.Electron.AdjointElectroatomicReaction_test PROPERTY LABELS pyfrensie electron )
 
 # Add the MonteCarlo.ActiveRegion.PhaseSpaceDimension unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.ActiveRegion.PhaseSpaceDimension)
@@ -396,13 +429,13 @@ SET_PROPERTY(TEST PyFrensie.MonteCarlo.Event.MeshTrackLengthFluxEstimator_test P
 # Add the DAGMC Estimator unit tests
 IF(${FRENSIE_ENABLE_DAGMC})
   PyFrensie_MAKE_TEST(tstMonteCarlo.Event.SurfaceFluxEstimatorDagMC)
-  ADD_TEST(PyFrensie.MonteCarlo.Event.SurfaceFluxEstimatorDagMC_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.SurfaceFluxEstimatorDagMC.py --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat)
+  ADD_TEST(PyFrensie.MonteCarlo.Event.SurfaceFluxEstimatorDagMC_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.SurfaceFluxEstimatorDagMC.py --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.h5m)
 
   PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CellCollisionFluxEstimatorDagMC)
-  ADD_TEST(PyFrensie.MonteCarlo.Event.CellCollisionFluxEstimatorDagMC_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellCollisionFluxEstimatorDagMC.py --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat)
+  ADD_TEST(PyFrensie.MonteCarlo.Event.CellCollisionFluxEstimatorDagMC_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellCollisionFluxEstimatorDagMC.py --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.h5m)
 
   PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CellTrackLengthFluxEstimatorDagMC)
-  ADD_TEST(PyFrensie.MonteCarlo.Event.CellTrackLengthFluxEstimatorDagMC_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellTrackLengthFluxEstimatorDagMC.py --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat)
+  ADD_TEST(PyFrensie.MonteCarlo.Event.CellTrackLengthFluxEstimatorDagMC_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CellTrackLengthFluxEstimatorDagMC.py --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.h5m)
 ENDIF()
 
 # Add the Root Estimator unit tests
@@ -438,78 +471,39 @@ IF(HAVE_FRENSIE_MPI)
 ENDIF()
 
 IF(HAVE_FRENSIE_HDF5)
-  # Add the MonteCarlo.Manager.ParticleSimulationManager unit tests
-  PyFrensie_MAKE_TEST(tstMonteCarlo.Manager.ParticleSimulationManager)
-  ADD_TEST(PyFrensie.MonteCarlo.Manager.ParticleSimulationManager_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Manager.ParticleSimulationManager.py --database_path=${COLLISION_DATABASE_XML_FILE} --threads=1 --have_hdf5 )
-  ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Manager.ParticleSimulationManager ${COLLISION_DATABASE_XML_FILE_TARGET} )
-
-  IF(HAVE_FRENSIE_OPENMP)
-    ADD_TEST(PyFrensie.MonteCarlo.Manager.SharedParallelParticleSimulationManager_2_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Manager.ParticleSimulationManager.py --database_path=${COLLISION_DATABASE_XML_FILE} --threads=2 --have_hdf5 )
-    ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Manager.ParticleSimulationManager ${COLLISION_DATABASE_XML_FILE_TARGET} )
-
-    ADD_TEST(PyFrensie.MonteCarlo.Manager.SharedParallelParticleSimulationManager_4_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Manager.ParticleSimulationManager.py --database_path=${COLLISION_DATABASE_XML_FILE} --threads=4 --have_hdf5 )
-    ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Manager.ParticleSimulationManager ${COLLISION_DATABASE_XML_FILE_TARGET} )
-  ENDIF()
-
-  IF(HAVE_FRENSIE_MPI)
-  PyFrensie_MAKE_TEST(tstMonteCarlo.Manager.DistributedParticleSimulationManager)
-    ADD_TEST(PyFrensie.MonteCarlo.Manager.DistributedParticleSimulationManager_2_test ${MPIEXEC} -n 2 ${PYTHON_EXECUTABLE} tstMonteCarlo.Manager.DistributedParticleSimulationManager.py --database_path=${COLLISION_DATABASE_XML_FILE} --threads=1 --have_hdf5 )
-    ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Manager.DistributedParticleSimulationManager ${COLLISION_DATABASE_XML_FILE_TARGET} )
-
-    ADD_TEST(PyFrensie.MonteCarlo.Manager.DistributedParticleSimulationManager_4_test ${MPIEXEC} -n 4 ${PYTHON_EXECUTABLE} tstMonteCarlo.Manager.DistributedParticleSimulationManager.py --database_path=${COLLISION_DATABASE_XML_FILE} --threads=1 --have_hdf5 )
-    ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Manager.DistributedParticleSimulationManager ${COLLISION_DATABASE_XML_FILE_TARGET} )
-  ENDIF()
-
-ELSE()
-  # Add the MonteCarlo.Manager.ParticleSimulationManager unit tests
-  PyFrensie_MAKE_TEST(tstMonteCarlo.Manager.ParticleSimulationManager)
-  ADD_TEST(PyFrensie.MonteCarlo.Manager.ParticleSimulationManager_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Manager.ParticleSimulationManager.py --database_path=${COLLISION_DATABASE_XML_FILE} --threads=1 )
-  ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Manager.ParticleSimulationManager ${COLLISION_DATABASE_XML_FILE_TARGET} )
-
-  IF(HAVE_FRENSIE_OPENMP)
-    ADD_TEST(PyFrensie.MonteCarlo.Manager.SharedParallelParticleSimulationManager_2_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Manager.ParticleSimulationManager.py --database_path=${COLLISION_DATABASE_XML_FILE} --threads=2 )
-    ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Manager.ParticleSimulationManager ${COLLISION_DATABASE_XML_FILE_TARGET} )
-
-    ADD_TEST(PyFrensie.MonteCarlo.Manager.SharedParallelParticleSimulationManager_4_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Manager.ParticleSimulationManager.py --database_path=${COLLISION_DATABASE_XML_FILE} --threads=4 )
-    ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Manager.ParticleSimulationManager ${COLLISION_DATABASE_XML_FILE_TARGET} )
-  ENDIF()
-
-  IF(HAVE_FRENSIE_MPI)
-  PyFrensie_MAKE_TEST(tstMonteCarlo.Manager.DistributedParticleSimulationManager)
-    ADD_TEST(PyFrensie.MonteCarlo.Manager.DistributedParticleSimulationManager_2_test ${MPIEXEC} -n 2 ${PYTHON_EXECUTABLE} tstMonteCarlo.Manager.DistributedParticleSimulationManager.py --database_path=${COLLISION_DATABASE_XML_FILE} --threads=1 )
-    ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Manager.DistributedParticleSimulationManager ${COLLISION_DATABASE_XML_FILE_TARGET} )
-
-    ADD_TEST(PyFrensie.MonteCarlo.Manager.DistributedParticleSimulationManager_4_test ${MPIEXEC} -n 4 ${PYTHON_EXECUTABLE} tstMonteCarlo.Manager.DistributedParticleSimulationManager.py --database_path=${COLLISION_DATABASE_XML_FILE} --threads=1 )
-    ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Manager.DistributedParticleSimulationManager ${COLLISION_DATABASE_XML_FILE_TARGET} )
-  ENDIF()
+  SET(HAVE_HDF5_FLAG --have_hdf5)
 ENDIF()
 
-# # Add the MonteCarlo.Collision.PhotonKinematics unit tests
-# PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.PhotonKinematics)
-# ADD_TEST(PyFrensie.MonteCarlo.Collision.PhotonKinematics_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.PhotonKinematics.py)
+# Add the MonteCarlo.Manager.ParticleSimulationManager unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Manager.ParticleSimulationManager)
+ADD_TEST(PyFrensie.MonteCarlo.Manager.ParticleSimulationManager_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Manager.ParticleSimulationManager.py --database_path=${COLLISION_DATABASE_XML_FILE} --threads=1 ${HAVE_HDF5_FLAG} )
+ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Manager.ParticleSimulationManager ${COLLISION_DATABASE_XML_FILE_TARGET} )
 
-# Add the MonteCarlo.Electron.ElectronScatteringNativeDistribution unit tests
-PyFrensie_MAKE_TEST(tstMonteCarlo.Electron.ElectronScatteringNativeDistribution)
-ADD_TEST(PyFrensie.MonteCarlo.Electron.ElectronScatteringNativeDistribution_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Electron.ElectronScatteringNativeDistribution.py --nativefile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml)
-SET_PROPERTY(TEST PyFrensie.MonteCarlo.Electron.ElectronScatteringNativeDistribution_test PROPERTY LABELS pyfrensie electron )
+IF(HAVE_FRENSIE_OPENMP)
+  ADD_TEST(PyFrensie.MonteCarlo.Manager.SharedParallelParticleSimulationManager_2_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Manager.ParticleSimulationManager.py --database_path=${COLLISION_DATABASE_XML_FILE} --threads=2 ${HAVE_HDF5_FLAG} )
+  ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Manager.ParticleSimulationManager ${COLLISION_DATABASE_XML_FILE_TARGET} )
 
-# # Add the MonteCarlo.Electron.ElectronScatteringACEDistribution unit tests
-# PyFrensie_MAKE_TEST(tstMonteCarlo.Electron.ElectronScatteringACEDistribution)
-# ADD_TEST(PyFrensie.MonteCarlo.Electron.ElectronScatteringACEDistribution_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Electron.ElectronScatteringACEDistribution.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr14_ace_file.txt --tablename=1000.14p)
-# SET_PROPERTY(TEST PyFrensie.MonteCarlo.Electron.ElectronScatteringACEDistribution_test PROPERTY LABELS pyfrensie electron )
+  ADD_TEST(PyFrensie.MonteCarlo.Manager.SharedParallelParticleSimulationManager_4_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Manager.ParticleSimulationManager.py --database_path=${COLLISION_DATABASE_XML_FILE} --threads=4 ${HAVE_HDF5_FLAG} )
+  ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Manager.ParticleSimulationManager ${COLLISION_DATABASE_XML_FILE_TARGET} )
+ENDIF()
 
-# # Add the MonteCarlo.Electron.AdjointElectronScatteringDistribution unit tests
-# PyFrensie_MAKE_TEST(tstMonteCarlo.Electron.AdjointElectronScatteringDistribution)
-# ADD_TEST(PyFrensie.MonteCarlo.Electron.AdjointElectronScatteringDistribution_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Electron.AdjointElectronScatteringDistribution.py --adjointfile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml)
-# SET_PROPERTY(TEST PyFrensie.MonteCarlo.Electron.AdjointElectronScatteringDistribution_test PROPERTY LABELS pyfrensie electron adjoint)
+IF(HAVE_FRENSIE_MPI)
+  PyFrensie_MAKE_TEST(tstMonteCarlo.Manager.DistributedParticleSimulationManager)
+  ADD_TEST(PyFrensie.MonteCarlo.Manager.DistributedParticleSimulationManager_2_test ${MPIEXEC} -n 2 ${PYTHON_EXECUTABLE} tstMonteCarlo.Manager.DistributedParticleSimulationManager.py --database_path=${COLLISION_DATABASE_XML_FILE} --threads=1 ${HAVE_HDF5_FLAG} )
+  ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Manager.DistributedParticleSimulationManager ${COLLISION_DATABASE_XML_FILE_TARGET} )
 
-# Add the MonteCarlo.Electron.ElectroatomicReaction unit tests
-PyFrensie_MAKE_TEST(tstMonteCarlo.Electron.ElectroatomicReaction)
-ADD_TEST(PyFrensie.MonteCarlo.Electron.ElectroatomicReaction_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Electron.ElectroatomicReaction.py --nativefile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml )
+  ADD_TEST(PyFrensie.MonteCarlo.Manager.DistributedParticleSimulationManager_4_test ${MPIEXEC} -n 4 ${PYTHON_EXECUTABLE} tstMonteCarlo.Manager.DistributedParticleSimulationManager.py --database_path=${COLLISION_DATABASE_XML_FILE} --threads=1 ${HAVE_HDF5_FLAG} )
+  ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Manager.DistributedParticleSimulationManager ${COLLISION_DATABASE_XML_FILE_TARGET} )
+ENDIF()
 
-# # Add the adjoint MonteCarlo.Electron.AdjointElectroatomicReaction unit tests
-# PyFrensie_MAKE_TEST(tstMonteCarlo.Electron.AdjointElectroatomicReaction)
-# ADD_TEST(PyFrensie.MonteCarlo.Electron.AdjointElectroatomicReaction_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Electron.AdjointElectroatomicReaction.py --nativefile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml )
-# SET_PROPERTY(TEST PyFrensie.MonteCarlo.Electron.AdjointElectroatomicReaction_test PROPERTY LABELS pyfrensie electron )
+IF(HAVE_FRENSIE_HDF5)
+  UNSET(HAVE_HDF5_FLAG)
+ENDIF()
+
+PyFrensie_MAKE_TEST(tstDataGen.ElectronPhoton.ElectronPhotonRelaxationDataGenerator)
+ADD_TEST(PyFrensie.DataGen.ElectronPhoton.ElectronPhotonRelaxationDataGenerator tstDataGen.ElectronPhoton.ElectronPhotonRelaxationDataGenerator.py --test_h_endl_file=${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_endl_native.xml --test_h_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt)
+
+PyFrensie_MAKE_TEST(tstDataGen.ENDL.StandardENDLDataGenerator)
+ADD_TEST(PyFrensie.DataGen.ENDL.StandardENDLDataGenerator tstDataGen.ENDL.StandardENDLDataGenerator.py --test_h_eadl_file=${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_eadl_endl_file.txt --test_h_epdl_file=${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_epdl_endl_file.txt --test_h_eedl_file=${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_eedl_endl_file.txt)
 
 

@@ -19,8 +19,6 @@
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
-#include "MonteCarlo_TwoDInterpolationType.hpp"
-#include "MonteCarlo_TwoDGridType.hpp"
 #include "Data_ENDLDataContainer.hpp"
 #include "Utility_ArrayView.hpp"
 #include "Utility_UnivariateDistribution.hpp"
@@ -47,92 +45,18 @@ public:
                           const std::shared_ptr<const Data::ENDLDataContainer>&
                           endl_data_container );
 
+  //! Constructor (existing data container)
+  ENDLElectronPhotonRelaxationDataGenerator(
+                          const std::shared_ptr<const Data::ENDLDataContainer>&
+                          endl_data_container,
+                          const boost::filesystem::path& file_name_with_path );
+
   //! Destructor
   ~ENDLElectronPhotonRelaxationDataGenerator()
   { /* ... */ }
 
-  //! Set the occupation number evaluation tolerance
-  void setOccupationNumberEvaluationTolerance(
-                                           const double evaluation_tolerance );
-
-  //! Get the occupation number evaluation tolerance
-  double getOccupationNumberEvaluationTolerance() const;
-
-  //! Set the subshell incoherent evaluation tolerance
-  void setSubshellIncoherentEvaluationTolerance(
-                                           const double evaluation_tolerance );
-
-  //! Get the subshell incoherent evaluation tolerance
-  double getSubshellIncoherentEvaluationTolerance() const;
-
-  //! Set the photon threshold energy nudge factor
-  void setPhotonThresholdEnergyNudgeFactor( const double nudge_factor );
-
-  //! Get the photon threshold energy nudge factor
-  double getPhotonThresholdEnergyNudgeFactor() const;
-
-  //! Set electron total elastic integrated cross section mode to off (off by default)
-  //! \todo Remove this option once the proper setting has been found.
-  void setElectronTotalElasticIntegratedCrossSectionModeOff();
-
-  //! Set electron total elastic integrated cross section mode to on (off by default)
-  //! \todo Remove this option once the proper setting has been found.
-  void setElectronTotalElasticIntegratedCrossSectionModeOn();
-
-  //! Return if electron total elastic integrated cross section mode to on (off by default)
-  //! \todo Remove this option once the proper setting has been found.
-  bool isElectronTotalElasticIntegratedCrossSectionModeOn() const;
-
-  //! Set the cutoff angle cosine
-  void setCutoffAngleCosine( const double cutoff_angle_cosine );
-
-  //! Get the cutoff angle cosine
-  double getCutoffAngleCosine() const;
-
-  //! Set the number of moment preserving angles
-  void setNumberOfMomentPreservingAngles( const unsigned number_of_angles );
-
-  //! Get the number of moment preserving angles
-  double getNumberOfMomentPreservingAngles() const;
-
-  //! Set the FullyTabularTwoDDistribution evaluation tolerance
-  void setTabularEvaluationTolerance( const double evaluation_tolerance );
-
-  //! Get the FullyTabularTwoDDistribution evaluation tolerance
-  double getTabularEvaluationTolerance() const;
-
-  //! Set the electron TwoDInterpPolicy (LogLogLog by default)
-  void setElectronTwoDInterpPolicy( MonteCarlo::TwoDInterpolationType interp );
-
-  //! Return the electron TwoDInterpPolicy
-  MonteCarlo::TwoDInterpolationType getElectronTwoDInterpPolicy() const;
-
-  //! Set the electron TwoDGridPolicy (Unit-base Correlated by default)
-  void setElectronTwoDGridPolicy( MonteCarlo::TwoDGridType grid );
-
-  //! Return the electron TwoDGridPolicy
-  MonteCarlo::TwoDGridType getElectronTwoDGridPolicy() const;
-
   //! Populate the electron-photon-relaxation data container
-  void populateEPRDataContainer( Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const final override;
-
-  //! Repopulate the electron elastic data
-  static void repopulateElectronElasticData(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
-    const double max_electron_energy = 20.0,
-    const double cutoff_angle_cosine = 0.9,
-    const double tabular_evaluation_tol = 1e-7,
-    const unsigned number_of_moment_preserving_angles = 1,
-    const MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LOGLOGLOG_INTERPOLATION,
-    const MonteCarlo::TwoDGridType two_d_grid = MonteCarlo::CORRELATED_GRID );
-
-  //! Repopulate the electron moment preserving data
-  static void repopulateMomentPreservingData(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
-    const double cutoff_angle_cosine = 0.9,
-    const double tabular_evaluation_tol = 1e-7,
-    const unsigned number_of_moment_preserving_angles = 1,
-    const MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LOGLOGLOG_INTERPOLATION );
+  void populateEPRDataContainer() final override;
 
 protected:
 
@@ -145,21 +69,33 @@ protected:
      const double max_electron_energy,
      const bool check_photon_energies );
 
+  //! Repopulate the electron elastic data
+  void repopulateElectronElasticDataImpl(
+         const double max_electron_energy,
+         const double cutoff_angle_cosine,
+         const double tabular_evaluation_tol,
+         const unsigned number_of_moment_preserving_angles,
+         const MonteCarlo::TwoDGridType two_d_grid,
+         const MonteCarlo::TwoDInterpolationType two_d_interp ) final override;
+
+  //! Repopulate the electron moment preserving data
+  void repopulateMomentPreservingDataImpl(
+         const double cutoff_angle_cosine,
+         const double tabular_evaluation_tol,
+         const unsigned number_of_moment_preserving_angles,
+         const MonteCarlo::TwoDInterpolationType two_d_interp ) final override;
+
   //! Set the atomic data
-  virtual void setRelaxationData(
-   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+  virtual void setRelaxationData();
 
   //! Set the Compton profile data
-  virtual void setComptonProfileData(
-   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+  virtual void setComptonProfileData();
 
   //! Set the Waller-Hartree scattering function data
-  virtual void setWallerHartreeScatteringFunctionData(
-   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+  virtual void setWallerHartreeScatteringFunctionData();
 
   //! Set the Waller-Hartree atomic form factor data
-  virtual void setWallerHartreeAtomicFormFactorData(
-   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+  virtual void setWallerHartreeAtomicFormFactorData();
 
   //! Extract the photon heating numbers
   virtual void extractPhotonHeatingNumbers(
@@ -208,13 +144,10 @@ protected:
 
   // Create the subshell impulse approx incoherent cross section evaluators
   void createSubshellImpulseApproxIncoherentCrossSectionEvaluators(
-     const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
      std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution> > >& evaluators ) const;
 
   // Initialize the photon union energy grid
-  void initializePhotonUnionEnergyGrid(
-     const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
-     std::list<double>& union_energy_grid ) const;
+  void initializePhotonUnionEnergyGrid( std::list<double>& union_energy_grid ) const;
 
   // Create the cross section on the union energy grid
   void createCrossSectionOnUnionEnergyGrid(
@@ -238,25 +171,13 @@ private:
   double findTableMaxPhotonEnergy() const;
 
   // Set the photon data
-  void setPhotonData(
-   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+  void setPhotonData();
 
   // Set the electron data
-  void setElectronData(
-   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+  void setElectronData();
 
   // Set the occupation number data
-  void setOccupationNumberData(
-   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
-
-  // Set the Waller-Hartree atomic form factor data
-  void setWallerHartreeAtomicFormFactorData(
-                       const std::function<double(double)>& evaluation_wrapper,
-                       std::list<double>& recoil_momentum_grid,
-                       const double initial_grid_value,
-                       const double initial_form_factor_value,
-                       Data::ElectronPhotonRelaxationVolatileDataContainer&
-                       data_container ) const;
+  void setOccupationNumberData();
 
   // Extract the half Compton profile from the ACE table
   void extractHalfComptonProfile(
@@ -265,15 +186,13 @@ private:
                            std::vector<double>& half_profile ) const;
 
   // Set the electron cross section union energy grid
-  void setElectronCrossSectionsData(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+  void setElectronCrossSectionsData();
 
   // Set the moment preserving data
-  static void setMomentPreservingData(
-    const std::vector<double>& elastic_energy_grid,
-    const double tabular_evaluation_tol,
-    const MonteCarlo::TwoDInterpolationType two_d_interp,
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container );
+  void setMomentPreservingData(
+                        const std::vector<double>& elastic_energy_grid,
+                        const double tabular_evaluation_tol,
+                        const MonteCarlo::TwoDInterpolationType two_d_interp );
 
   // Extract electron cross sections
   template<typename InterpPolicy>
@@ -284,16 +203,14 @@ private:
 
   // Add binding energies to union energy grid
   void addBindingEnergiesToUnionEnergyGrid(
-     const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
-     const double min_energy,
-     const double max_energy,
-     const bool add_nudged_values,
-     std::list<double>& union_energy_grid ) const;
+                                  const double min_energy,
+                                  const double max_energy,
+                                  const bool add_nudged_values,
+                                  std::list<double>& union_energy_grid ) const;
 
   // Initialize the electron union energy grid
   void initializeElectronUnionEnergyGrid(
-     const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
-     std::list<double>& union_energy_grid ) const;
+                                  std::list<double>& union_energy_grid ) const;
 
   // Merge the electron union energy grid
   void mergeElectronUnionEnergyGrid(
@@ -301,8 +218,7 @@ private:
     std::list<double>& union_energy_grid ) const;
 
   // Calculate the electron total cross section
-  void calculateElectronTotalCrossSection(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+  void calculateElectronTotalCrossSection();
 
   // Create the cross section on the union energy grid
   void createCrossSectionOnUnionEnergyGrid(
@@ -319,17 +235,14 @@ private:
                              const bool zero_at_threshold ) const;
 
   // Calculate the total photoelectric cross section
-  void calculateTotalPhotoelectricCrossSection(
-   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+  void calculateTotalPhotoelectricCrossSection();
 
   // Calculate the total impulse approx. incoherent cross section
-  void calculateImpulseApproxTotalIncoherentCrossSection(
-   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+  void calculateImpulseApproxTotalIncoherentCrossSection();
 
   // Calculate the photon total cross section
   void calculatePhotonTotalCrossSection(
-           Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
-           const bool use_waller_hartree_incoherent_cs ) const;
+                                 const bool use_waller_hartree_incoherent_cs );
 
   // Add cross section to electron/photon total cross section
   void addCrossSectionToTotalCrossSection(
@@ -355,43 +268,15 @@ private:
 
   // Calculate the electron total elastic cross section
   void calculateElectronTotalElasticCrossSection(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
-    std::shared_ptr<const Utility::UnivariateDistribution>& total_elastic_cross_section,
-    const std::vector<double>& raw_energy_grid ) const;
+                        std::shared_ptr<const Utility::UnivariateDistribution>&
+                        total_elastic_cross_section,
+                        const std::vector<double>& raw_energy_grid );
 
   // The if a value is not equal to zero
   static bool notEqualZero( const double value );
 
   // The ENDL data
   std::shared_ptr<const Data::ENDLDataContainer> d_endl_data_container;
-
-  // The FullyTabularTwoDDistribution evaluation tolerance
-  double d_tabular_evaluation_tol;
-
-  // The occupation number evaluation tolerance
-  double d_occupation_number_evaluation_tolerance;
-
-  // The subshell incoherent evaluation tolerance
-  double d_subshell_incoherent_evaluation_tolerance;
-
-  // The photon threshold energy nudge factor
-  double d_photon_threshold_energy_nudge_factor;
-
-  /* The electron total elastic integrated cross section mode
-   * (true = on, false = off - default) */
-  bool d_integrated_total_elastic_cross_section_mode_on;
-
-  // The cutoff angle cosine above which screened rutherford is used
-  double d_cutoff_angle_cosine;
-
-  // The number of moment preserving angles
-  unsigned d_number_of_moment_preserving_angles;
-
-  // The electron TwoDInterpPolicy (LogLogLog - default)
-  MonteCarlo::TwoDInterpolationType d_two_d_interp;
-
-  // The electron TwoDGridPolicy (LogLogLog - default)
-  MonteCarlo::TwoDGridType d_two_d_grid;
 };
 
 // The if a value is not equal to zero

@@ -1,0 +1,32 @@
+587,592c587,592
+<   std::vector<double>       &dists       = distList;
+<   std::vector<EntityHandle> &surfs       = surfList;
+<   std::vector<EntityHandle> &facets      = facetList;
+<   dists.clear();
+<   surfs.clear();
+<   facets.clear();
+---
+>   std::vector<double>       dists; // &dists       = distList;
+>   std::vector<EntityHandle> surfs; // &surfs       = surfList;
+>   std::vector<EntityHandle> facets; // &facets      = facetList;
+>   //dists.clear();
+>   //surfs.clear();
+>   //facets.clear();
+746,753c746,753
+<   std::vector<double>       &dists = disList;
+<   std::vector<EntityHandle> &surfs = surList;
+<   std::vector<EntityHandle> &facets= facList;
+<   std::vector<int>          &dirs  = dirList;
+<   dists.clear();
+<   surfs.clear();
+<   facets.clear();
+<   dirs.clear();
+---
+>   std::vector<double>       dists; // &dists = disList;
+>   std::vector<EntityHandle> surfs; // &surfs = surList;
+>   std::vector<EntityHandle> facets; // &facets= facList;
+>   std::vector<int>          dirs; // &dirs  = dirList;
+>   // dists.clear();
+>   // surfs.clear();
+>   // facets.clear();
+>   // dirs.clear();

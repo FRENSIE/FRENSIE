@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "FRENSIE_Archives.hpp"
-#include "Utility_HDF5IArchive.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
 namespace Utility{
@@ -25,6 +25,16 @@ namespace Utility{
  */
 template<typename DerivedType>
 void IArchivableObject<DerivedType>::loadFromFile( const boost::filesystem::path& archive_name_with_path )
+{
+  this->loadFromFileImpl( archive_name_with_path );
+}
+  
+// Load the archived object (implementation)
+/*! \details The file extension will be used to determine the archive type
+ * (e.g. .xml, .txt, .bin, .h5fa)
+ */
+template<typename DerivedType>
+void IArchivableObject<DerivedType>::loadFromFileImpl( const boost::filesystem::path& archive_name_with_path )
 {
   // Verify that the archive exists
   TEST_FOR_EXCEPTION( !boost::filesystem::exists( archive_name_with_path ),
@@ -69,12 +79,14 @@ void IArchivableObject<DerivedType>::loadFromFile( const boost::filesystem::path
 
     this->loadFromArchive( archive );
   }
+#ifdef HAVE_FRENSIE_HDF5
   else if( extension == ".h5fa" )
   {
     Utility::HDF5IArchive archive( archive_name_with_path.string() );
 
     this->loadFromArchive( archive );
   }
+#endif // end HAVE_FRENSIE_HDF5
   else
   {
     THROW_EXCEPTION( std::runtime_error,
@@ -84,32 +96,101 @@ void IArchivableObject<DerivedType>::loadFromFile( const boost::filesystem::path
   }
 }
 
+// Reset the bpis pointer
+template<typename DerivedType>
+template<typename T>
+const boost::archive::detail::basic_pointer_iserializer* IArchivableObject<DerivedType>::resetBpisPointer( const std::string& extension ) const
+{
+  const boost::archive::detail::basic_pointer_iserializer* bpis;
+  
+  if( extension == ".xml" )
+  {
+    bpis = boost::serialization::singleton<boost::archive::detail::iserializer<boost::archive::xml_iarchive, T > >::get_const_instance().get_bpis_ptr();
+    
+    if( bpis != NULL )
+    {
+      boost::serialization::singleton<boost::archive::detail::iserializer<boost::archive::xml_iarchive, T > >::get_mutable_instance().set_bpis( NULL );
+    }
+  }
+  else if( extension == ".txt" )
+  {
+    bpis = boost::serialization::singleton<boost::archive::detail::iserializer<boost::archive::text_iarchive, T > >::get_const_instance().get_bpis_ptr();
+    
+    if( bpis != NULL )
+    {
+      boost::serialization::singleton<boost::archive::detail::iserializer<boost::archive::text_iarchive, T > >::get_mutable_instance().set_bpis( NULL );
+    }
+  }
+  else if( extension == ".bin" )
+  {
+    bpis = boost::serialization::singleton<boost::archive::detail::iserializer<boost::archive::binary_iarchive, T > >::get_const_instance().get_bpis_ptr();
+    
+    if( bpis != NULL )
+    {
+      boost::serialization::singleton<boost::archive::detail::iserializer<boost::archive::binary_iarchive, T > >::get_mutable_instance().set_bpis( NULL );
+    }
+  }
+#ifdef HAVE_FRENSIE_HDF5
+  else if( extension == ".h5fa" )
+  {
+    bpis = boost::serialization::singleton<boost::archive::detail::iserializer<Utility::HDF5IArchive, T > >::get_const_instance().get_bpis_ptr();
+    
+    if( bpis != NULL )
+    {
+      boost::serialization::singleton<boost::archive::detail::iserializer<Utility::HDF5IArchive, T > >::get_mutable_instance().set_bpis( NULL );
+    }
+  }
+#endif // end HAVE_FRENSIE_HDF5
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                     "Cannot reset the bpis pointer because the extension "
+                     "type (" << extension << ") is not supported!" );
+  }
+
+  return bpis;
+}
+
+// Restore the bpis pointer
+template<typename DerivedType>
+template<typename T>
+void IArchivableObject<DerivedType>::restoreBpisPointer( const std::string& extension, const boost::archive::detail::basic_pointer_iserializer* bpis ) const
+{
+  if( bpis != NULL )
+  {
+    if( extension == ".xml" )
+    {
+      boost::serialization::singleton<boost::archive::detail::iserializer<boost::archive::xml_iarchive, T > >::get_mutable_instance().set_bpis( const_cast<boost::archive::detail::basic_pointer_iserializer*>(bpis) );
+    }
+    else if( extension == ".txt" )
+    {
+      boost::serialization::singleton<boost::archive::detail::iserializer<boost::archive::text_iarchive, T > >::get_mutable_instance().set_bpis( const_cast<boost::archive::detail::basic_pointer_iserializer*>(bpis) );
+    }
+    else if( extension == ".bin" )
+    {
+      boost::serialization::singleton<boost::archive::detail::iserializer<boost::archive::binary_iarchive, T > >::get_mutable_instance().set_bpis( const_cast<boost::archive::detail::basic_pointer_iserializer*>(bpis) );
+    }
+#ifdef HAVE_FRENSIE_HDF5
+    else if( extension == ".h5fa" )
+    {
+      boost::serialization::singleton<boost::archive::detail::iserializer<Utility::HDF5IArchive, T > >::get_mutable_instance().set_bpis( const_cast<boost::archive::detail::basic_pointer_iserializer*>(bpis) );
+    }
+#endif // end HAVE_FRENSIE_HDF5
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                       "Cannot restore the bpis pointer because the "
+                       "extension type (" << extension << ") is not "
+                       "supported!" );
+    }
+  }
+}
+
 // Archive the object using the required archive
 template<typename DerivedType>
 template<typename Archive>
 void IArchivableObject<DerivedType>::loadFromArchive( Archive& archive )
 {
-  // Note: There appears to be an error in the boost serialization library
-  // when loading from an archive. For some reason the iserializer for
-  // std::vector<double> does not get initialized correctly. The iserializer
-  // for non-pointer types should always have a NULL bpis (pointer iserializer)
-  // but with std::vector<double> it is **sometimes** and **unpredictably** set
-  // to a non-null value! When this happens, the basic_iarchive::load_preamble
-  // will erroneously set the tracking_level for std::vector<double> to true
-  // (i.e. it will treat the vector as a pointer to a vector). This will cause
-  // the return statement at basic_iarchive.cpp:397 to be hit, which will
-  // prevent the vector from ever being loaded, and more importantly, it will
-  // prevent the archive stream from being moved passed the vector data
-  // characters. When the iarchive calls load_end next, the data that gets read
-  // in will be unexpected by the archive, which will result in an
-  // input_stream_error exception being thrown. To avoid this situation, we
-  // will always check the value of the bpis for the std::vector<double>
-  // iserializer here and set it back to NULL if necessary.
-  if( boost::serialization::singleton<boost::archive::detail::iserializer<Archive, std::vector<double> > >::get_const_instance().get_bpis_ptr() != NULL )
-  {
-    boost::serialization::singleton<boost::archive::detail::iserializer<Archive, std::vector<double> > >::get_mutable_instance().set_bpis( NULL );
-  }
-
   try{
     archive >> boost::serialization::make_nvp( this->getIArchiveName(), *dynamic_cast<DerivedType*>(this) );
   }
@@ -118,11 +199,6 @@ void IArchivableObject<DerivedType>::loadFromArchive( Archive& archive )
                               "Unable to load the object from the desired "
                               "archive!" );
 }
-
-// if( boost::serialization::singleton<boost::archive::detail::iserializer<boost::archive::polymorphic_iarchive, std::vector<double> > >::get_const_instance().get_bpis_ptr() != NULL )
-// {
-//   boost::serialization::singleton<boost::archive::detail::iserializer<boost::archive::polymorphic_iarchive, std::vector<double> > >::get_mutable_instance().set_bpis( NULL );
-// }
 
 } // end Utility namespace
 

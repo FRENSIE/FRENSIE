@@ -32,7 +32,9 @@ namespace Data{
  */
 class ElectronPhotonRelaxationDataContainer : public Utility::ArchivableObject<ElectronPhotonRelaxationDataContainer>
 {
-
+  // The base type
+  typedef Utility::ArchivableObject<ElectronPhotonRelaxationDataContainer> BaseType;
+  
 public:
 
   //! Constructor (from saved archive)
@@ -96,14 +98,23 @@ public:
   //! Return the electron FullyTabularTwoDDistribution evaluation tolerance
   double getElectronTabularEvaluationTolerance() const;
 
-  //! Return the union energy grid convergence tolerance
-  double getGridConvergenceTolerance() const;
+  //! Return the photon union energy grid convergence tolerance
+  double getPhotonGridConvergenceTolerance() const;
 
-  //! Return the union energy grid absolute difference tolerance
-  double getGridAbsoluteDifferenceTolerance() const;
+  //! Return the photon union energy grid absolute difference tolerance
+  double getPhotonGridAbsoluteDifferenceTolerance() const;
 
-  //! Return the union energy grid distance tolerance
-  double getGridDistanceTolerance() const;
+  //! Return the photon union energy grid distance tolerance
+  double getPhotonGridDistanceTolerance() const;
+
+  //! Return the electron union energy grid convergence tolerance
+  double getElectronGridConvergenceTolerance() const;
+
+  //! Return the electron union energy grid absolute difference tolerance
+  double getElectronGridAbsoluteDifferenceTolerance() const;
+
+  //! Return the electron union energy grid distance tolerance
+  double getElectronGridDistanceTolerance() const;
 
 //---------------------------------------------------------------------------//
 // GET RELAXATION DATA
@@ -400,6 +411,13 @@ protected:
   ElectronPhotonRelaxationDataContainer()
   { /* ... */ }
 
+  //! Load the archived object (implementation)
+  void loadFromFileImpl( const boost::filesystem::path& archive_name_with_path ) final override;
+
+  //! Archive the object (implementation)
+  void saveToFileImpl( const boost::filesystem::path& archive_name_with_path,
+                       const bool overwrite ) const final override;
+
 //---------------------------------------------------------------------------//
 // SET NOTES
 //---------------------------------------------------------------------------//
@@ -455,14 +473,23 @@ protected:
   void setElectronTabularEvaluationTolerance(
     const double electron_tabular_evaluation_tol );
 
-  //! Set the union energy grid convergence tolerance
-  void setGridConvergenceTolerance( const double grid_convergence_tol );
+  //! Set the photon union energy grid convergence tolerance
+  void setPhotonGridConvergenceTolerance( const double grid_convergence_tol );
 
-  //! Set the union energy grid absolute difference tolerance
-  void setGridAbsoluteDifferenceTolerance( const double grid_absolute_diff_tol );
+  //! Set the photon union energy grid absolute difference tolerance
+  void setPhotonGridAbsoluteDifferenceTolerance( const double grid_absolute_diff_tol );
 
-  //! Set the union energy grid distance tolerance
-  void setGridDistanceTolerance( const double grid_distance_tol );
+  //! Set the photon union energy grid distance tolerance
+  void setPhotonGridDistanceTolerance( const double grid_distance_tol );
+
+  //! Set the electron union energy grid convergence tolerance
+  void setElectronGridConvergenceTolerance( const double grid_convergence_tol );
+
+  //! Set the electron union energy grid absolute difference tolerance
+  void setElectronGridAbsoluteDifferenceTolerance( const double grid_absolute_diff_tol );
+
+  //! Set the electron union energy grid distance tolerance
+  void setElectronGridDistanceTolerance( const double grid_distance_tol );
 
 //---------------------------------------------------------------------------//
 // SET RELAXATION DATA
@@ -880,14 +907,23 @@ private:
   // The electron FullyTabularTwoDDistribution evaluation tolerance
   double d_electron_tabular_evaluation_tol;
 
-  // The union energy grid convergence tolerance
-  double d_grid_convergence_tol;
+  // The photon union energy grid convergence tolerance
+  double d_photon_grid_convergence_tol;
 
-  // The union energy grid absolute difference tolerance
-  double d_grid_absolute_diff_tol;
+  // The photon union energy grid absolute difference tolerance
+  double d_photon_grid_absolute_diff_tol;
 
-  // The union energy grid distance tolerance
-  double d_grid_distance_tol;
+  // The photon union energy grid distance tolerance
+  double d_photon_grid_distance_tol;
+
+  // The electron union energy grid convergence tolerance
+  double d_electron_grid_convergence_tol;
+
+  // The electron union energy grid absolute difference tolerance
+  double d_electron_grid_absolute_diff_tol;
+
+  // The electron union energy grid distance tolerance
+  double d_electron_grid_distance_tol;
 
 //---------------------------------------------------------------------------//
 // RELAXATION DATA

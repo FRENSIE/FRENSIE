@@ -19,7 +19,7 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<const DataGen::StandardENDLDataGenerator>
+std::shared_ptr<DataGen::StandardENDLDataGenerator>
   data_generator_h, data_generator_c;
 
 std::string test_h_eadl_file_name, test_h_epdl_file_name, test_h_eedl_file_name,
@@ -30,19 +30,17 @@ std::string test_h_eadl_file_name, test_h_epdl_file_name, test_h_eedl_file_name,
 //---------------------------------------------------------------------------//
 // Check that a data container can be populated
 FRENSIE_UNIT_TEST( StandardENDLDataGenerator,
-                                          populateENDLDataContainer_h )
+                   populateENDLDataContainer_h )
 {
-    data_generator_h.reset(
-        new DataGen::StandardENDLDataGenerator(
-                1u,
-                test_h_eadl_file_name,
-                test_h_epdl_file_name,
-                test_h_eedl_file_name ) );
+  data_generator_h.reset( new DataGen::StandardENDLDataGenerator(
+                                                     test_h_eadl_file_name,
+                                                     test_h_epdl_file_name,
+                                                     test_h_eedl_file_name ) );
 
+  data_generator_h->populateENDLDataContainer();
 
-  Data::ENDLVolatileDataContainer data_container;
-
-  data_generator_h->populateENDLDataContainer( data_container );
+  const Data::ENDLDataContainer& data_container =
+    data_generator_h->getDataContainer();
 
   FRENSIE_CHECK_EQUAL( data_container.getAtomicNumber(), 1 );
 
@@ -663,16 +661,15 @@ FRENSIE_UNIT_TEST( StandardENDLDataGenerator,
 // Check that a data container can be populated
 FRENSIE_UNIT_TEST( StandardENDLDataGenerator, populateENDLDataContainer_c )
 {
-    data_generator_c.reset(
-        new DataGen::StandardENDLDataGenerator(
-                6u,
-                test_c_eadl_file_name,
-                test_c_epdl_file_name,
-                test_c_eedl_file_name ) );
+  data_generator_c.reset( new DataGen::StandardENDLDataGenerator(
+                                                     test_c_eadl_file_name,
+                                                     test_c_epdl_file_name,
+                                                     test_c_eedl_file_name ) );
 
-  Data::ENDLVolatileDataContainer data_container;
+  data_generator_c->populateENDLDataContainer();
 
-  data_generator_c->populateENDLDataContainer( data_container );
+  const Data::ENDLDataContainer& data_container =
+    data_generator_c->getDataContainer();
 
   FRENSIE_CHECK_EQUAL( data_container.getAtomicNumber(), 6 );
 

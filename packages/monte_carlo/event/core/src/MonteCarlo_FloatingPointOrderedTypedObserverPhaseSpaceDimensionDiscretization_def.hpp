@@ -10,6 +10,9 @@
 #ifndef MONTE_CARLO_FLOATING_POINT_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_DEF_HPP
 #define MONTE_CARLO_FLOATING_POINT_ORDERED_TYPED_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_DEF_HPP
 
+// Std Lib Includes
+#include <type_traits>
+
 // FRENSIE Includes
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_SearchAlgorithms.hpp"
@@ -21,14 +24,20 @@ namespace MonteCarlo{
 template<ObserverPhaseSpaceDimension dimension>
 FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization()
   : BaseType()
-{ /* ... */ }
+{ 
+  // Make sure that the dimension type is a floating point type
+  testStaticPrecondition((std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value));
+}
 
 // Constructor (with number of hash grid bins specified)
 template<ObserverPhaseSpaceDimension dimension>
 FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::FloatingPointOrderedTypedObserverPhaseSpaceDimensionDiscretization(
                              const BinBoundaryArray& dimension_bin_boundaries )
   : BaseType( dimension_bin_boundaries )
-{ /* ... */ }
+{ 
+  // Make sure that the dimension type is a floating point type
+  testStaticPrecondition((std::is_floating_point<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType>::value));
+}
 
 // Return the number of bins in the discretization
 template<ObserverPhaseSpaceDimension dimension>
