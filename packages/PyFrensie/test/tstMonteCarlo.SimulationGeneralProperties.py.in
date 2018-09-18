@@ -93,6 +93,9 @@ class SimulationGeneralPropertiesTestCase(unittest.TestCase):
         properties.setNumberOfHistories( 1000000000 )
         self.assertEqual( properties.getNumberOfHistories(), 1000000000 )
 
+        properties.setNumberOfHistories( 1e7 )
+        self.assertEqual( properties.getNumberOfHistories(), 1e7 )
+
     def testSetMinNumberOfRendezvous(self):
         "*Test MonteCarlo.SimulationGeneralProperties setMinNumberOfRendezvous"
         properties = MonteCarlo.SimulationGeneralProperties()

@@ -80,7 +80,7 @@ typedef unsigned int uint32_t;
 // Add ParticleHistoryObserver support
 // ---------------------------------------------------------------------------//
 
-// Add typemaps for converting unsigned long long to and from Python string
+// Add typemaps for converting unsigned long long to and from Python int
 %typemap(in) const unsigned long long num_histories ( unsigned long long temp ){
   temp = PyInt_AsUnsignedLongLongMask( $input );
   $1 = temp;
