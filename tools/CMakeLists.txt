@@ -50,4 +50,4 @@
 
 # ADD_SUBDIRECTORY(sample)
 
-ADD_SUBDIRECTORY(data_gen)
+ADD_SUBDIRECTORY(data)
