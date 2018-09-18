@@ -267,13 +267,13 @@ ADD_UNINSTALL_TARGET()
 ## Set Up the Project Directory Hierarchy
 ##---------------------------------------------------------------------------##
 
-ADD_SUBDIRECTORY(scripts)
+#ADD_SUBDIRECTORY(scripts)
 
 ADD_SUBDIRECTORY(packages)
 
-#ADD_SUBDIRECTORY(tools)
+ADD_SUBDIRECTORY(tools)
 
-SET(GLOBAL_TOOLS_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/tools)
+#SET(GLOBAL_TOOLS_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/tools)
 
 ADD_SUBDIRECTORY(doc)
 
@@ -281,26 +281,26 @@ ADD_SUBDIRECTORY(doc)
 ## Add additional testing targets for convenience
 ##---------------------------------------------------------------------------##
 # run `make test-fast` to run all tests except for the facemc tests
-ADD_CUSTOM_TARGET(test-fast
-  COMMAND ctest -E Facemc
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+# ADD_CUSTOM_TARGET(test-fast
+#   COMMAND ctest -E Facemc
+#   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
-ADD_CUSTOM_TARGET(test-fast4
-  COMMAND ctest -E Facemc -LE no_threads -j4
-  COMMAND ctest -E Facemc -L no_threads
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+# ADD_CUSTOM_TARGET(test-fast4
+#   COMMAND ctest -E Facemc -LE no_threads -j4
+#   COMMAND ctest -E Facemc -L no_threads
+#   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
-ADD_CUSTOM_TARGET(test-fast8
-  COMMAND ctest -E Facemc -LE no_threads -j8
-  COMMAND ctest -E Facemc -L no_threads
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+# ADD_CUSTOM_TARGET(test-fast8
+#   COMMAND ctest -E Facemc -LE no_threads -j8
+#   COMMAND ctest -E Facemc -L no_threads
+#   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
-ADD_CUSTOM_TARGET(test-fast12
-  COMMAND ctest -E Facemc -LE no_threads -j12
-  COMMAND ctest -E Facemc -L no_threads
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+# ADD_CUSTOM_TARGET(test-fast12
+#   COMMAND ctest -E Facemc -LE no_threads -j12
+#   COMMAND ctest -E Facemc -L no_threads
+#   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
-# run `make test-facemc` to run only the facemc tests
-ADD_CUSTOM_TARGET(test-facemc
-  COMMAND ctest -R Facemc
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+# # run `make test-facemc` to run only the facemc tests
+# ADD_CUSTOM_TARGET(test-facemc
+#   COMMAND ctest -R Facemc
+#   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})

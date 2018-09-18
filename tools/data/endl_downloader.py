@@ -141,14 +141,15 @@ endl_file.write( "  fi\n\n" )
 
 
 for i in range( 0, len(elemental_information) ):
-    ELEMENT = "za" + elemental_information[i][1] + elemental_information[i][2]
+    ELEMENT = "ZA" + elemental_information[i][1] + elemental_information[i][2]
     endl_file.write( "  printf \"Getting " + ELEMENT + " data:\\t\"\n" )
 
     endl_file.write( "  if [ -f ./eadl/" + ELEMENT + " ]; then\n" )
     endl_file.write( "    printf \"EADL data already exists\\t\"\n" )
     endl_file.write( "  else\n" )
     endl_file.write( "    cd ./eadl\n" )
-    endl_file.write( "    wget http://www.nndc.bnl.gov/endf/epics2014/ENDL/EADL.ELEMENTS/" +
+    #endl_file.write( "    wget http://www.nndc.bnl.gov/endf/epics2014/ENDL/EADL.ELEMENTS/" +
+    endl_file.write( "    wget https://www-nds.iaea.org/epics/ENDL_bkp/EADL/" +
                      ELEMENT + "\n" )
     endl_file.write( "    cd ../\n" )
     endl_file.write( "  fi\n\n" )
@@ -157,7 +158,8 @@ for i in range( 0, len(elemental_information) ):
     endl_file.write( "    printf \"EPDL data already exists\\t\"\n" )
     endl_file.write( "  else\n" )
     endl_file.write( "    cd ./epdl\n" )
-    endl_file.write( "    wget http://www.nndc.bnl.gov/endf/epics2014/ENDL/EPDL.ELEMENTS/" +
+    #endl_file.write( "    wget http://www.nndc.bnl.gov/endf/epics2014/ENDL/EPDL.ELEMENTS/" +
+    endl_file.write( "    wget https://www-nds.iaea.org/epics/ENDL_bkp/EPDL/" +
                      ELEMENT + "\n" )
     endl_file.write( "    cd ../\n" )
     endl_file.write( "  fi\n\n" )
@@ -166,7 +168,8 @@ for i in range( 0, len(elemental_information) ):
     endl_file.write( "    printf \"EEDL data already exists\\n\"\n" )
     endl_file.write( "  else\n" )
     endl_file.write( "    cd ./eedl\n" )
-    endl_file.write( "    wget http://www.nndc.bnl.gov/endf/epics2014/ENDL/EEDL.ELEMENTS/" +
+    #endl_file.write( "    wget http://www.nndc.bnl.gov/endf/epics2014/ENDL/EEDL.ELEMENTS/" +
+    endl_file.write( "    wget https://www-nds.iaea.org/epics/ENDL_bkp/EEDL/" +
                      ELEMENT + "\n" )
     endl_file.write( "    cd ../\n" )
     endl_file.write( "  fi\n\n" )

@@ -1,0 +1,36 @@
+#!${PYTHON_EXECUTABLE}
+##---------------------------------------------------------------------------##
+##!
+##! \file   process_xsdir.py
+##! \author Alex Robinson
+##! \brief  The process xsdir tool
+##!
+##---------------------------------------------------------------------------##
+
+from optparse import *
+import PyFrensie.Data as Data
+import PyFrensie.Utility
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-x", "--xsdir", type="string", dest="xsdir_file", default="xsdir",
+                  help="the xsdir file name")
+parser.add_option("-o", "--overwrite", action="store_true", dest="overwrite", default=False,
+                  help="overwrite existing database" )
+parser.add_option("-d", "--db_name", type="string", dest="db_name", default="database.xml",
+                  help="the database name (with extension)")
+options,args = parser.parse_args()
+
+if __name__ == "__main__":
+
+    xsdir = Data.Xsdir( options.xsdir_file, True )
+
+    database = Data.ScatteringCenterPropertiesDatabase()
+
+    xsdir.exportData( database )
+
+    database.saveToFile( options.db_name, options.overwrite )
+
+##---------------------------------------------------------------------------##
+## process_xsdir.py
+##---------------------------------------------------------------------------##
