@@ -147,9 +147,6 @@ void StandardENDLDataGenerator::populateEADLDataContainer()
       // Number of electrons in subshell
       case 91912:
       {
-        // Interpolation should always be LinLin = 0
-        testInvariant( interpolation_flag == 0 )
-          
         std::map<unsigned,double> subshell_data;
         eadl_file_handler->mapTwoColumnTable( subshells,
                                               subshell_data,
@@ -174,15 +171,15 @@ void StandardENDLDataGenerator::populateEADLDataContainer()
       // Binding energy of a subshell
       case 91913:
       {
-        // Interpolation should always be LinLin = 0
-        testInvariant( interpolation_flag == 0 )
-
         std::map<unsigned,double> subshell_data;
         eadl_file_handler->mapTwoColumnTable( subshells,
                                               subshell_data,
                                               convert_subshell );
 
-        testInvariant( subshells.size() == endf_subshells.size() );
+        TEST_FOR_EXCEPTION( subshells.size() != endf_subshells.size(),
+                            std::runtime_error,
+                            "The number of binding energy subshells is "
+                            "different than the number of subshells!" );
 
         // set the subshell data
         data_container.setSubshellBindingEnergy( subshell_data );
@@ -196,15 +193,15 @@ void StandardENDLDataGenerator::populateEADLDataContainer()
       // Kinetic energy of a subshell
       case 91914:
       {
-        // Interpolation should always be LinLin = 0
-        testInvariant( interpolation_flag == 0 )
-
         std::map<unsigned,double> subshell_data;
         eadl_file_handler->mapTwoColumnTable( subshells,
                                               subshell_data,
                                               convert_subshell );
 
-        testInvariant( subshells.size() == endf_subshells.size() );
+        TEST_FOR_EXCEPTION( subshells.size() != endf_subshells.size(),
+                            std::runtime_error,
+                            "The number of kinetic energy subshells is not "
+                            "equal to the number of subshells!" );
 
         // set the subshell data
         data_container.setSubshellKineticEnergy( subshell_data );
@@ -218,15 +215,15 @@ void StandardENDLDataGenerator::populateEADLDataContainer()
       // Average radius of a subshell
       case 91915:
       {
-        // Interpolation should always be LinLin = 0
-        testInvariant( interpolation_flag == 0 )
-
         std::map<unsigned,double> subshell_data;
         eadl_file_handler->mapTwoColumnTable( subshells,
                                               subshell_data,
                                               convert_subshell );
 
-        testInvariant( subshells.size() == endf_subshells.size() );
+        TEST_FOR_EXCEPTION( subshells.size() != endf_subshells.size(),
+                            std::runtime_error,
+                            "The number of average radius subshells is not "
+                            "equal to the number of subshells!" );
 
         // set the subshell data
         data_container.setSubshellAverageRadius( subshell_data );
@@ -240,9 +237,6 @@ void StandardENDLDataGenerator::populateEADLDataContainer()
       // Radiative level width of a subshell
       case 91921:
       {
-        // Interpolation should always be LinLin = 0
-        testInvariant( interpolation_flag == 0 )
-
         std::map<unsigned,double> subshell_data;
         eadl_file_handler->mapTwoColumnTable( subshells,
                                               subshell_data,
@@ -260,9 +254,6 @@ void StandardENDLDataGenerator::populateEADLDataContainer()
       // Non radiative level of a subshell
       case 91922:
       {
-        // Interpolation should always be LinLin = 0
-        testInvariant( interpolation_flag == 0 )
-
         std::map<unsigned,double> subshell_data;
         eadl_file_handler->mapTwoColumnTable( subshells,
                                               subshell_data,
@@ -323,9 +314,6 @@ void StandardENDLDataGenerator::populateEADLDataContainer()
       // The average number of particles per initial vacancy of a subshell
       case 92933:
       {
-        // Interpolation should always be LinLin = 0
-        testInvariant( interpolation_flag == 0 )
-
         std::map<unsigned,double> subshell_data;
         eadl_file_handler->mapTwoColumnTable( subshells,
                                               subshell_data,
@@ -360,9 +348,6 @@ void StandardENDLDataGenerator::populateEADLDataContainer()
       // The average energy of particles per initial vacancy
       case 92934:
       {
-        // Interpolation should always be LinLin = 0
-        testInvariant( interpolation_flag == 0 )
-
         std::map<unsigned,double> subshell_data;
         eadl_file_handler->mapTwoColumnTable( subshells,
                                               subshell_data,
@@ -398,15 +383,16 @@ void StandardENDLDataGenerator::populateEADLDataContainer()
       // The local deposition per initial vacancy of a subshell
       case 92935:
       {
-        // Interpolation should always be LinLin = 0
-        testInvariant( interpolation_flag == 0 )
-
         std::map<unsigned,double> subshell_data;
         eadl_file_handler->mapTwoColumnTable( subshells,
                                               subshell_data,
                                               convert_subshell );
 
-        testInvariant( subshells.size() == endf_subshells.size() );
+        TEST_FOR_EXCEPTION( subshells.size() != endf_subshells.size(),
+                            std::runtime_error,
+                            "The number of local deposition per initial "
+                            "vacancy subshells is not equal to the number "
+                            "of subshells!" );
 
         // set the subshell data
         data_container.setLocalDepositionPerInitialVacancy( subshell_data );
@@ -482,6 +468,14 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
                         << data_container.getAtomicNumber() <<
                         ")!" );
 
+    TEST_FOR_EXCEPTION( interpolation_flag != 0 &&
+                        interpolation_flag != 2 &&
+                        interpolation_flag != 3 &&
+                        interpolation_flag != 4 &&
+                        interpolation_flag != 5,
+                        std::runtime_error,
+                        "An invalid interpolation flag was encountered!" );
+
     // Read second table header and determine the reaction type
     epdl_file_handler->readSecondTableHeader( reaction_type, electron_shell );
 
@@ -532,9 +526,6 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
       // Read in the integrated incoherent cross section data
       case 72000:
       {
-        // Interpolation should always be LogLog = 5
-        testInvariant( interpolation_flag == 5 )
-
         std::vector<double> indep_data, dep_data;
         epdl_file_handler->processTwoColumnTable( indep_data, dep_data );
 
@@ -582,9 +573,6 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
       // Read in the integrated photoelectric cross section data
       case 73000:
       {
-        // Interpolation should always be LogLog = 5
-        testInvariant( interpolation_flag == 5 )
-
         std::vector<double> indep_data, dep_data;
         epdl_file_handler->processTwoColumnTable( indep_data, dep_data );
 
@@ -704,9 +692,6 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
       // Read the integrated pair production cross section
       case 74000:
       {
-        // Interpolation should always be LogLog = 5
-        testInvariant( interpolation_flag == 5 )
-
         std::vector<double> indep_data, dep_data;
         epdl_file_handler->processTwoColumnTable(
             indep_data,
@@ -758,9 +743,6 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
       // Read the integrated triplet production cross section
       case 75000:
       {
-        // Interpolation should always be LogLog = 5
-        testInvariant( interpolation_flag == 5 )
-
         std::vector<double> indep_data, dep_data;
         epdl_file_handler->processTwoColumnTable( indep_data,
                                                   dep_data );
@@ -811,9 +793,6 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
       // Read the atomic form factor
       case 93941:
       {
-        // Interpolation should always be LogLog = 5
-        testInvariant( interpolation_flag == 5 )
-
         std::vector<double> indep_data, dep_data;
         epdl_file_handler->processTwoColumnTable( indep_data, dep_data );
 
@@ -829,9 +808,6 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
       // Read the scattering function
       case 93942:
       {
-        // Interpolation should always be LogLog = 5
-        testInvariant( interpolation_flag == 5 )
-
         std::vector<double> indep_data, dep_data;
         epdl_file_handler->processTwoColumnTable( indep_data, dep_data );
 
@@ -847,9 +823,6 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
       // Imaginary anomalous scattering factor
       case 93943:
       {
-        // Interpolation should always be LinLin = 2
-        testInvariant( interpolation_flag == 2 )
-
         std::vector<double> indep_data, dep_data;
         epdl_file_handler->processTwoColumnTable( indep_data, dep_data );
 
@@ -866,9 +839,6 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
       // Real anomalous scattering factor
       case 93944:
       {
-        // Interpolation should always be LinLin = 2
-        testInvariant( interpolation_flag == 2 )
-
         std::vector<double> indep_data, dep_data;
         epdl_file_handler->processTwoColumnTable( indep_data, dep_data );
 
@@ -955,6 +925,14 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
                         << data_container.getAtomicNumber() <<
                         ")!" );
 
+    TEST_FOR_EXCEPTION( interpolation_flag != 0 &&
+                        interpolation_flag != 2 &&
+                        interpolation_flag != 3 &&
+                        interpolation_flag != 4 &&
+                        interpolation_flag != 5,
+                        std::runtime_error,
+                        "An invalid interpolation flag was encountered!" );
+
     // Read second table header and determine the reaction type
     eedl_file_handler->readSecondTableHeader( reaction_type,
                                               electron_shell );
@@ -976,9 +954,6 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
       // Integrated elastic transport cross section data
       case 7000:
       {
-        // Interpolation should always be LogLog = 5
-        testInvariant( interpolation_flag == 5 )
-
         std::vector<double> energy_grid, cross_section;
         eedl_file_handler->processTwoColumnTable( energy_grid,
                                                   cross_section );
@@ -995,16 +970,17 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
       // Integrated large angle scattering cross section data
       case 8000:
       {
-        // Interpolation should always be LogLog = 5
-        testInvariant( interpolation_flag == 5 )
-
         std::vector<double> energy_grid, cross_section;
         eedl_file_handler->processTwoColumnTable( energy_grid,
                                                   cross_section );
 
         // Test that the cutoff energy grid is the same as the transport
-        testInvariant( energy_grid.size() ==
-                       data_container.getElasticEnergyGrid().size() );
+        TEST_FOR_EXCEPTION( energy_grid.size() !=
+                            data_container.getElasticEnergyGrid().size(),
+                            std::runtime_error,
+                            "The integrated large angle scattering cross "
+                            "section energy grid should be the same as the "
+                            "elastic energy grid!" );
 
         data_container.setCutoffElasticCrossSection( cross_section );
 
@@ -1017,9 +993,6 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
       // Average energy to residual atom from elastic scattering
       case 8011:
       {
-        // Interpolation should always be LinLin = 0
-        testInvariant( interpolation_flag == 0 )
-
         std::vector<double> residual_incident_energy, residual_energy;
         eedl_file_handler->processTwoColumnTable( residual_incident_energy,
                                                   residual_energy );
@@ -1036,9 +1009,6 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
       // Average energy of scattered electron from elastic scattering
       case 8010:
       {
-        // Interpolation should always be LinLin = 0
-        testInvariant( interpolation_flag == 0 )
-
         std::vector<double> scattered_incident_energy, scattered_energy;
         eedl_file_handler->processTwoColumnTable( scattered_incident_energy,
                                                   scattered_energy );
@@ -1057,9 +1027,6 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
       // Elastic angular distribution of the scattered electron data
       case 8022:
       {
-        // Interpolation should always be LinLin = 0
-        testInvariant( interpolation_flag == 0 )
-
         std::map<double,std::vector<double> > elastic_angle;
 
         eedl_file_handler->mapThreeColumnTable( elastic_angular_energy_grid,
@@ -1080,16 +1047,17 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
       // Integrated total elastic cross section data
       case 10000:
       {
-        // Interpolation should always be LogLog = 5
-        testInvariant( interpolation_flag == 5 )
-
         std::vector<double> energy_grid, cross_section;
         eedl_file_handler->processTwoColumnTable( energy_grid,
                                                   cross_section );
 
         // Test that the energy grid is the same as the transport and cutoff
-        testPostcondition( energy_grid.size() ==
-                           data_container.getElasticEnergyGrid().size() );
+        TEST_FOR_EXCEPTION( energy_grid.size() !=
+                            data_container.getElasticEnergyGrid().size(),
+                            std::runtime_error,
+                            "The integrated total elastic cross section "
+                            "energy grid should be the same as the elastic "
+                            "energy grid!" );
 
         data_container.setTotalElasticCrossSection( cross_section );
 
@@ -1102,9 +1070,6 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
       // Extract the integrated ionization (electroionization) cross section
       case 81000:
       {
-        // Interpolation should always be LinLin = 0
-        testInvariant( interpolation_flag == 0 )
-
         std::vector<double> energy_grid, cross_section;
         eedl_file_handler->processTwoColumnTable( energy_grid,
                                                   cross_section );
@@ -1125,9 +1090,6 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
       // Average energy of primary and secondary electrons from ionization
       case 81010:
       {
-        // Interpolation should always be LinLin = 0
-        testInvariant( interpolation_flag == 0 )
-
         std::vector<double> incident_energy, average_outgoing_energy;
         eedl_file_handler->processTwoColumnTable( incident_energy,
                                                   average_outgoing_energy );
@@ -1168,10 +1130,12 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
       
       case 81021:
       {
-        // Interpolation should always be LinLin = 0
-        testInvariant( interpolation_flag == 0 )
         // The outgoing particle designator should be electron as recoil (19)
-        testInvariant( outgoing_particle_designator == 19 );
+        TEST_FOR_EXCEPTION( outgoing_particle_designator != 19,
+                            std::runtime_error,
+                            "The outgoint particle designator should be for "
+                            "a recoil electron (19) but is instead "
+                            << outgoing_particle_designator << "!" );
 
         std::vector<double> electron_energy_grid;
         std::map<double,std::vector<double> > electroionization_recoil_energy,
@@ -1203,9 +1167,6 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
       
       case 82000:
       {
-        // Interpolation should always be LinLin = 0
-        testInvariant( interpolation_flag == 0 )
-
         // Extract the integrated bremsstrahlung cross section
         std::vector<double> energy_grid, cross_section;
         eedl_file_handler->processTwoColumnTable( energy_grid,
@@ -1223,9 +1184,6 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
       // Average energy of secondary particles from bremsstrahlung
       case 82010:
       {
-        // Interpolation should always be LinLin = 0
-        testInvariant( interpolation_flag == 0 )
-
         std::vector<double> incident_energy, average_outgoing_energy;
         eedl_file_handler->processTwoColumnTable( incident_energy,
                                                   average_outgoing_energy );
@@ -1263,10 +1221,12 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
       // Read the spectrum of the secondary photon from bremsstrahlung
       case 82021:
       {
-        // Interpolation should always be LinLin = 0
-        testInvariant( interpolation_flag == 0 )
         // The outgoing particle designator should be photon (7)
-        testInvariant( outgoing_particle_designator == 7 );
+        TEST_FOR_EXCEPTION( outgoing_particle_designator != 7,
+                            std::runtime_error,
+                            "The outgoint particle designator should be for "
+                            "a photon (7) but is instead "
+                            << outgoing_particle_designator << "!" );
 
         std::vector<double> electron_energy_grid;
         std::map<double,std::vector<double> > bremsstrahlung_photon_energy,
@@ -1291,9 +1251,6 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
       // Extract the integrated (atomic) excitation cross section
       case 83000:
       {
-        // Interpolation should always be LinLin = 0
-        testInvariant( interpolation_flag == 0 )
-
         std::vector<double> energy_grid, cross_section;
         eedl_file_handler->processTwoColumnTable( energy_grid, cross_section );
 
@@ -1308,17 +1265,18 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
       
       case 83011:
       {
-        // Read the average energy loss from excitation
-        testInvariant( interpolation_flag == 0 );
-
         std::vector<double> atomic_excitation_energy_grid,
                             atomic_excitation_energy_loss;
 
         eedl_file_handler->processTwoColumnTable( atomic_excitation_energy_grid,
                                                   atomic_excitation_energy_loss );
 
-        testPostcondition( atomic_excitation_energy_grid.size() ==
-                           data_container.getAtomicExcitationEnergyGrid().size() );
+        TEST_FOR_EXCEPTION( atomic_excitation_energy_grid.size() !=
+                            data_container.getAtomicExcitationEnergyGrid().size(),
+                            std::runtime_error,
+                            "The average energy loss from excitation energy "
+                            "grid should be the same as the atomic excitation "
+                            "energy grid!" );
 
         data_container.setAtomicExcitationEnergyLoss( atomic_excitation_energy_loss );
 
