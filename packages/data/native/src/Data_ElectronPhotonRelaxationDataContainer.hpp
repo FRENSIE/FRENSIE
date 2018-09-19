@@ -34,7 +34,7 @@ class ElectronPhotonRelaxationDataContainer : public Utility::ArchivableObject<E
 {
   // The base type
   typedef Utility::ArchivableObject<ElectronPhotonRelaxationDataContainer> BaseType;
-  
+
 public:
 
   //! Constructor (from saved archive)

@@ -115,7 +115,7 @@ void ElectronPhotonRelaxationDataGenerator::setMaxPhotonEnergy(
                                                const double max_photon_energy )
 {
   // Make sure the max photon energy is valid
-  testPrecondition( d_data_container.getMaxPhotonEnergy() < max_photon_energy );
+  testPrecondition( d_data_container.getMinPhotonEnergy() < max_photon_energy );
 
   d_data_container.setMaxPhotonEnergy( max_photon_energy );
 }

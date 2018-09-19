@@ -236,7 +236,7 @@ private:
   // The electron TwoDInterpPolicy (LogLogLog - default)
   MonteCarlo::TwoDInterpolationType d_two_d_interp;
 
-  // The electron TwoDGridPolicy (LogLogLog - default)
+  // The electron TwoDGridPolicy (Unit-base Correlated - default)
   MonteCarlo::TwoDGridType d_two_d_grid;
 };
 

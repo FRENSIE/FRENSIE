@@ -10,6 +10,8 @@
 #define DATA_GEN_ADJOINT_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
 
 // FRENSIE Includes
+#include "MonteCarlo_TwoDInterpolationType.hpp"
+#include "MonteCarlo_TwoDGridType.hpp"
 #include "Data_AdjointElectronPhotonRelaxationVolatileDataContainer.hpp"
 #include "Utility_GridGenerator.hpp"
 
@@ -23,11 +25,16 @@ public:
 
   //! Constructor
   AdjointElectronPhotonRelaxationDataGenerator(
-                                            const unsigned atomic_number,
-                                            const double min_photon_energy,
-                                            const double max_photon_energy,
-                                            const double min_electron_energy,
-                                            const double max_electron_energy );
+                                          const unsigned atomic_number,
+                                          const double atomic_weight,
+                                          const double min_photon_energy,
+                                          const double max_photon_energy,
+                                          const double min_electron_energy,
+                                          const double max_electron_energy );
+
+  //! Constructor (existing data container)
+  AdjointElectronPhotonRelaxationDataGenerator(
+                          const boost::filesystem::path& file_name_with_path );
 
   //! Destructor
   virtual ~AdjointElectronPhotonRelaxationDataGenerator()
@@ -48,30 +55,51 @@ public:
   //! Return the max electron energy
   double getMaxElectronEnergy() const;
 
-  //! Set the default grid convergence tolerance
-  void setDefaultGridConvergenceTolerance( const double convergence_tol );
+  //! Set the default photon grid convergence tolerance
+  void setPhotonGridConvergenceTolerance( const double convergence_tol );
 
-  //! Get the default grid convergence tolerance
-  double getDefaultGridConvergenceTolerance() const;
+  //! Get the default photon grid convergence tolerance
+  double getPhotonGridConvergenceTolerance() const;
 
-  //! Set the default grid absolute difference tolerance
-  void setDefaultGridAbsoluteDifferenceTolerance(
+  //! Set the default photon grid absolute difference tolerance
+  void setPhotonGridAbsoluteDifferenceTolerance(
                                               const double absolute_diff_tol );
 
-  //! Get the default grid absolute difference tolerance
-  double getDefaultGridAbsoluteDifferenceTolerance() const;
+  //! Get the default photon grid absolute difference tolerance
+  double getPhotonGridAbsoluteDifferenceTolerance() const;
 
-  //! Set the default grid distance tolerance
-  void setDefaultGridDistanceTolerance( const double distance_tol );
+  //! Set the default photon grid distance tolerance
+  void setPhotonGridDistanceTolerance( const double distance_tol );
 
-  //! Get the default grid distance tolerance
-  double getDefaultGridDistanceTolerance() const;
+  //! Get the default photon grid distance tolerance
+  double getPhotonGridDistanceTolerance() const;
+
+  //! Set the default electron grid convergence tolerance
+  void setElectronGridConvergenceTolerance( const double convergence_tol );
+
+  //! Get the default electron grid convergence tolerance
+  double getElectronGridConvergenceTolerance() const;
+
+  //! Set the default electron grid absolute difference tolerance
+  void setElectronGridAbsoluteDifferenceTolerance(
+                                              const double absolute_diff_tol );
+
+  //! Get the default electron grid absolute difference tolerance
+  double getElectronGridAbsoluteDifferenceTolerance() const;
+
+  //! Set the default electron grid distance tolerance
+  void setElectronGridDistanceTolerance( const double distance_tol );
+
+  //! Get the default electron grid distance tolerance
+  double getElectronGridDistanceTolerance() const;
 
   //! Populate the electron-photon-relaxation data container
   virtual void populateEPRDataContainer(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
     const bool populate_photons,
-    const bool populate_electrons ) const = 0;
+    const bool populate_electrons ) = 0;
+
+  //! Get the data container
+  const Data::AdjointElectronPhotonRelaxationDataContainer& getDataContainer() const;
 
 protected:
 
@@ -87,39 +115,35 @@ protected:
   //! Set the max electron energy
   void setMaxElectronEnergy( const double max_electron_energy );
 
-  //! Set the basic data
-  void setBasicData(Data::AdjointElectronPhotonRelaxationVolatileDataContainer&
-                    data_container ) const;
+  //! Get the volatile data container
+  Data::AdjointElectronPhotonRelaxationVolatileDataContainer& getVolatileDataContainer();
 
-  //! Set the default convergence parameters
-  void setDefaultConvergenceParameters(
-                    Data::AdjointElectronPhotonRelaxationVolatileDataContainer&
-                    data_container ) const;
-
-  //! Get a default grid generator (Lin-Lin grid)
+  //! Get a default photon grid generator (Lin-Lin grid)
   const Utility::GridGenerator<Utility::LinLin>&
-  getDefaultGridGenerator() const;
+  getDefaultPhotonGridGenerator() const;
+
+  //! Get a default electron grid generator (Log-Log grid)
+  const Utility::GridGenerator<Utility::LogLog>&
+  getDefaultElectronGridGenerator() const;
 
 private:
 
-  // The atomic number for which relaxation data can be generated
-  unsigned d_atomic_number;
+  // The adjoint electron-photon-relaxation volatile data container
+  Data::AdjointElectronPhotonRelaxationVolatileDataContainer d_data_container;
 
-  // The min photon energy
-  double d_min_photon_energy;
-
-  // The max photon energy
-  double d_max_photon_energy;
-
-  // The min electron energy
-  double d_min_electron_energy;
-
-  // The max electron energy
-  double d_max_electron_energy;
-
-  // The default grid generator
+  // The default photon grid generator
   std::unique_ptr<Utility::GridGenerator<Utility::LinLin> >
-  d_default_grid_generator;
+  d_default_photon_grid_generator;
+
+  // The default electron grid generator
+  std::unique_ptr<Utility::GridGenerator<Utility::LogLog> >
+  d_default_electron_grid_generator;
+
+  // The electron TwoDInterpPolicy (LogLogLog - default)
+  MonteCarlo::TwoDInterpolationType d_two_d_interp;
+
+  // The electron TwoDGridPolicy (Unit-base Correlated - default)
+  MonteCarlo::TwoDGridType d_two_d_grid;
 };
 
 } // end DataGen namespace

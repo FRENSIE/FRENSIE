@@ -96,40 +96,51 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer, setMaxElectronE
 }
 
 //---------------------------------------------------------------------------//
+// Photon Table Tests
+//---------------------------------------------------------------------------//
 // Check that the grid convergence tolerance can be set
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-                   setGridConvergenceTolerance )
+                   setAdjointPhotonGridConvergenceTolerance )
 {
-  epr_data_container.setGridConvergenceTolerance( 0.001 );
+  epr_data_container.setAdjointPhotonGridConvergenceTolerance( 0.001 );
 
-  FRENSIE_CHECK_EQUAL( epr_data_container.getGridConvergenceTolerance(),
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointPhotonGridConvergenceTolerance(),
                        0.001 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the grid absolute difference tolerance can be set
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-                   setGridAbsoluteDifferenceTolerance )
+                   setAdjointPhotonGridAbsoluteDifferenceTolerance )
 {
-  epr_data_container.setGridAbsoluteDifferenceTolerance( 1e-42 );
+  epr_data_container.setAdjointPhotonGridAbsoluteDifferenceTolerance( 1e-42 );
 
-  FRENSIE_CHECK_EQUAL( epr_data_container.getGridAbsoluteDifferenceTolerance(),
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointPhotonGridAbsoluteDifferenceTolerance(),
                        1e-42 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the grid distance tolerance can be set
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-                   setGridDistanceTolerance )
+                   setAdjointPhotonGridDistanceTolerance )
 {
-  epr_data_container.setGridDistanceTolerance( 1e-15 );
+  epr_data_container.setAdjointPhotonGridDistanceTolerance( 1e-15 );
 
-  FRENSIE_CHECK_EQUAL( epr_data_container.getGridDistanceTolerance(),
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointPhotonGridDistanceTolerance(),
                        1e-15 );
 }
 
 //---------------------------------------------------------------------------//
-// Photon Table Tests
+// Check that the photon tabular tol can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setPhotonTabularEvaluationTolerance )
+{
+  epr_data_container.setPhotonTabularEvaluationTolerance( 1e-3 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getPhotonTabularEvaluationTolerance(),
+                       1e-3 );
+}
+
 //---------------------------------------------------------------------------//
 // Check that the adjoint pair production energy dist norm constant evaluation
 // tolerance can be set
@@ -284,22 +295,22 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the adjoint_electron_absolute_diff_tol can be set
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-                   setAdjointElectronAbsoluteDifferenceTolerance )
+                   setAdjointElectronGridAbsoluteDifferenceTolerance )
 {
-  epr_data_container.setAdjointElectronAbsoluteDifferenceTolerance( 1e-3 );
+  epr_data_container.setAdjointElectronGridAbsoluteDifferenceTolerance( 1e-3 );
 
-  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointElectronAbsoluteDifferenceTolerance(),
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointElectronGridAbsoluteDifferenceTolerance(),
                        1e-3 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the adjoint_electron_distance_tol can be set
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-                   setAdjointElectronDistanceTolerance )
+                   setAdjointElectronGridDistanceTolerance )
 {
-  epr_data_container.setAdjointElectronDistanceTolerance( 1e-3 );
+  epr_data_container.setAdjointElectronGridDistanceTolerance( 1e-3 );
 
-  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointElectronDistanceTolerance(),
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointElectronGridDistanceTolerance(),
                        1e-3 );
 }
 
@@ -1987,9 +1998,9 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getCutoffAngleCosine(), 0.9 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getNumberOfAdjointMomentPreservingAngles(), 1 );
 
-  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getGridConvergenceTolerance(), 0.001 );
-  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getGridAbsoluteDifferenceTolerance(), 1e-42 );
-  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getGridDistanceTolerance(), 1e-15 );
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAdjointPhotonGridConvergenceTolerance(), 0.001 );
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAdjointPhotonGridAbsoluteDifferenceTolerance(), 1e-42 );
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAdjointPhotonGridDistanceTolerance(), 1e-15 );
 
   // Relaxation Tests
   FRENSIE_CHECK( epr_data_container_copy.getSubshells().count( 1 ) );
@@ -2121,9 +2132,9 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getCutoffAngleCosine(), 0.9 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getNumberOfAdjointMomentPreservingAngles(), 1 );
 
-  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getGridConvergenceTolerance(), 0.001 );
-  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getGridAbsoluteDifferenceTolerance(), 1e-42 );
-  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getGridDistanceTolerance(), 1e-15 );
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAdjointPhotonGridConvergenceTolerance(), 0.001 );
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAdjointPhotonGridAbsoluteDifferenceTolerance(), 1e-42 );
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAdjointPhotonGridDistanceTolerance(), 1e-15 );
 
   // Relaxation Tests
   FRENSIE_CHECK( epr_data_container_copy.getSubshells().count( 1 ) );

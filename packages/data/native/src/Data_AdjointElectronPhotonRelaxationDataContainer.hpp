@@ -77,18 +77,21 @@ public:
   //! Return the maximum electron energy
   double getMaxElectronEnergy() const;
 
-  //! Return the union energy grid convergence tolerance
-  double getGridConvergenceTolerance() const;
-
-  //! Return the union energy grid absolute difference tolerance
-  double getGridAbsoluteDifferenceTolerance() const;
-
-  //! Return the union energy grid distance tolerance
-  double getGridDistanceTolerance() const;
-
 //---------------------------------------------------------------------------//
 // GET PHOTON TABLE DATA
 //---------------------------------------------------------------------------//
+
+  //! Return the adjoint photon grid convergence tolerance
+  double getAdjointPhotonGridConvergenceTolerance() const;
+
+  //! Return the adjoint photon grid absolute diff tolerance
+  double getAdjointPhotonGridAbsoluteDifferenceTolerance() const;
+
+  //! Return the adjoint photon grid distance tolerance
+  double getAdjointPhotonGridDistanceTolerance() const;
+
+  //! Return the photon FullyTabularTwoDDistribution evaluation tolerance
+  double getPhotonTabularEvaluationTolerance() const;
 
   //! Return the adjoint pair production energy dist norm constant evaluation tol
   double getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance() const;
@@ -133,11 +136,11 @@ public:
   //! Return the adjoint electron grid convergence tolerance
   double getAdjointElectronGridConvergenceTolerance() const;
 
-  //! Return the adjoint electron absolute diff tolerance
-  double getAdjointElectronAbsoluteDifferenceTolerance() const;
+  //! Return the adjoint electron grid absolute diff tolerance
+  double getAdjointElectronGridAbsoluteDifferenceTolerance() const;
 
-  //! Return the adjoint electron distance tolerance
-  double getAdjointElectronDistanceTolerance() const;
+  //! Return the adjoint electron grid distance tolerance
+  double getAdjointElectronGridDistanceTolerance() const;
 
   //! Return the electron FullyTabularTwoDDistribution evaluation tolerance
   double getElectronTabularEvaluationTolerance() const;
@@ -510,18 +513,21 @@ protected:
   //! Set the maximum electron energy
   void setMaxElectronEnergy( const double max_electron_energy );
 
-  //! Set the union energy grid convergence tolerance
-  void setGridConvergenceTolerance( const double grid_convergence_tol );
-
-  //! Set the union energy grid absolute difference tolerance
-  void setGridAbsoluteDifferenceTolerance( const double grid_absolute_diff_tol );
-
-  //! Set the union energy grid distance tolerance
-  void setGridDistanceTolerance( const double grid_distance_tol );
-
 //---------------------------------------------------------------------------//
 // SET PHOTON TABLE DATA
 //---------------------------------------------------------------------------//
+
+  //! Set the adjoint photon grid convergence tolerance
+  void setAdjointPhotonGridConvergenceTolerance( const double grid_convergence_tol );
+
+  //! Set the adjoint photon grid absolute difference tolerance
+  void setAdjointPhotonGridAbsoluteDifferenceTolerance( const double grid_absolute_diff_tol );
+
+  //! Set the adjoint photon grid distance tolerance
+  void setAdjointPhotonGridDistanceTolerance( const double grid_distance_tol );
+
+  //! Set the photon FullyTabularTwoDDistribution evaluation tolerance
+  void setPhotonTabularEvaluationTolerance( const double evaluation_tol );
 
   //! Set the adjoint pair production energy dist norm constant evaluation tol
   void setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(
@@ -569,63 +575,59 @@ protected:
 
   //! Set the number of discrete moment preserving angles
   void setNumberOfAdjointMomentPreservingAngles(
-    const unsigned number_of_adjoint_moment_preserving_angles );
+    const unsigned number_of_moment_preserving_angles );
 
   //! Set the adjoint electron grid convergence tolerance
   void setAdjointElectronGridConvergenceTolerance(
-    const double adjoint_electron_grid_convergence_tol );
+    const double grid_convergence_tol );
 
   //! Set the adjoint electron absolute diff tolerance
-  void setAdjointElectronAbsoluteDifferenceTolerance(
-    const double adjoint_electron_absolute_diff_tol );
+  void setAdjointElectronGridAbsoluteDifferenceTolerance(
+    const double absolute_diff_tol );
 
   //! Set the adjoint electron distance tolerance
-  void setAdjointElectronDistanceTolerance(
-    const double adjoint_electron_distance_tol );
+  void setAdjointElectronGridDistanceTolerance( const double distance_tol );
 
   //! Set the electron FullyTabularTwoDDistribution evaluation tolerance
-  void setElectronTabularEvaluationTolerance(
-    const double electron_tabular_evaluation_tol );
+  void setElectronTabularEvaluationTolerance( const double evaluation_tol );
 
   //! Set the adjoint bremsstrahlung max energy nudge value
   void setAdjointBremsstrahlungMaxEnergyNudgeValue(
-    const double adjoint_bremsstrahlung_max_energy_nudge_value );
+    const double max_energy_nudge_value );
 
   //! Set the adjoint bremsstrahlung energy to outgoing energy nudge value
   void setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(
-    const double adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value );
+    const double energy_to_outgoing_energy_nudge_value );
 
   //! Set the adjoint bremsstrahlung cross section evaluation tolerance
   void setAdjointBremsstrahlungEvaluationTolerance(
-    const double adjoint_bremsstrahlung_evaluation_tolerance );
+    const double evaluation_tolerance );
 
   //! Set the adjoint bremsstrahlung grid convergence tolerance
   void setAdjointBremsstrahlungGridConvergenceTolerance(
-    const double adjoint_bremsstrahlung_convergence_tolerance );
+    const double convergence_tolerance );
 
   //! Set the adjoint bremsstrahlung absolute difference tolerance
   void setAdjointBremsstrahlungAbsoluteDifferenceTolerance(
-    const double adjoint_bremsstrahlung_absolute_diff_tol );
+    const double absolute_diff_tol );
 
   //! Set the adjoint bremsstrahlung distance tolerance
-  void setAdjointBremsstrahlungDistanceTolerance(
-    const double adjoint_bremsstrahlung_distance_tol );
+  void setAdjointBremsstrahlungDistanceTolerance( const double distance_tol );
 
   //! Set the adjoint electroionization cross section evaluation tolerance
   void setAdjointElectroionizationEvaluationTolerance(
-    const double adjoint_electroionization_evaluation_tol );
+    const double evaluation_tol );
 
   //! Set the adjoint electroionization grid convergence tolerance
   void setAdjointElectroionizationGridConvergenceTolerance(
-    const double adjoint_electroionization_convergence_tol );
+    const double convergence_tol );
 
   //! Set the adjoint electroionization absolute difference tolerance
   void setAdjointElectroionizationAbsoluteDifferenceTolerance(
-    const double adjoint_electroionization_absolute_diff_tol );
+    const double absolute_diff_tol );
 
   //! Set the adjoint electroionization distance tolerance
-  void setAdjointElectroionizationDistanceTolerance(
-    const double adjoint_electroionization_distance_tol );
+  void setAdjointElectroionizationDistanceTolerance( const double distance_tol );
 
 //---------------------------------------------------------------------------//
 // SET RELAXATION DATA
@@ -1050,18 +1052,21 @@ private:
   // The maximum electron energy
   double d_max_electron_energy;
 
-  // The union energy grid convergence tolerance
-  double d_grid_convergence_tol;
-
-  // The union energy grid absolute difference tolerance
-  double d_grid_absolute_diff_tol;
-
-  // The union energy grid distance tolerance
-  double d_grid_distance_tol;
-
 //---------------------------------------------------------------------------//
 // PHOTON TABLE DATA
 //---------------------------------------------------------------------------//
+
+  // The adjoint photon grid convergence tolerance
+  double d_adjoint_photon_grid_convergence_tol;
+
+  // The adjoint photon grid absolute difference tolerance
+  double d_adjoint_photon_grid_absolute_diff_tol;
+
+  // The adjoint photon grid distance tolerance
+  double d_adjoint_photon_grid_distance_tol;
+
+  // The photon FullyTabularTwoDDistribution evaluation tolerance
+  double d_photon_tabular_evaluation_tol;
 
   // The adjoint pair production energy dist norm constant evaluation tol
   double d_adjoint_pair_production_energy_dist_norm_constant_evaluation_tol;
@@ -1106,11 +1111,11 @@ private:
   // The adjoint electron grid convergence tolerance
   double d_adjoint_electron_grid_convergence_tol;
 
-  // The adjoint electron absolute diff tolerance
-  double d_adjoint_electron_absolute_diff_tol;
+  // The adjoint electron grid absolute diff tolerance
+  double d_adjoint_electron_grid_absolute_diff_tol;
 
-  // The adjoint electron distance tolerance
-  double d_adjoint_electron_distance_tol;
+  // The adjoint electron grid distance tolerance
+  double d_adjoint_electron_grid_distance_tol;
 
   // The electron FullyTabularTwoDDistribution evaluation tolerance
   double d_electron_tabular_evaluation_tol;

@@ -548,7 +548,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRelaxationData()
   // Assign the set of all subshells
   data_container.setSubshells( subshells );
 
-  // Assign the subshel data
+  // Assign the subshell data
   for( auto&& subshell : subshells )
   {
     data_container.setSubshellOccupancy( subshell, d_endl_data_container->getSubshellOccupancy( subshell ) );
@@ -1419,6 +1419,8 @@ void ENDLElectronPhotonRelaxationDataGenerator::createSubshellImpulseApproxIncoh
                    data_container.getSubshellOccupancy( subshell ),
                    data_container.getSubshellBindingEnergy( subshell ),
                    occupation_number_dist ) );
+
+    ++i;
   }
 }
 
