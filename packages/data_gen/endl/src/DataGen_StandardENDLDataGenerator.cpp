@@ -15,6 +15,43 @@
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_DesignByContract.hpp"
 
+//! Macro that helps to set the interpolation type
+#define SET_INTERP_TYPE( data_container, setInterpType, raw_interp_type, ... ) \
+  switch( raw_interp_type )                                             \
+  {                                                                   \
+    case 0:                                                             \
+    {                                                                     \
+      data_container.setInterpType<Utility::LinLin>( __VA_ARGS__ );     \
+      break;                                                            \
+    }                                                                   \
+    case 2:                                       \
+    {                                             \
+      data_container.setInterpType<Utility::LinLin>( __VA_ARGS__ );     \
+      break;                                            \
+    }                                                   \
+    case 3:                                               \
+    {                                                     \
+      data_container.setInterpType<Utility::LinLog>( __VA_ARGS__ );     \
+      break;                                              \
+    }                                                     \
+    case 4:                                       \
+    {                                                   \
+      data_container.setInterpType<Utility::LogLin>( __VA_ARGS__ );     \
+      break;                                            \
+    }                                                   \
+    case 5:                                               \
+    {                                                     \
+      data_container.setInterpType<Utility::LogLog>( __VA_ARGS__ );    \
+      break;                                              \
+    }                                                     \
+    default:                                                  \
+    {                                                         \
+      THROW_EXCEPTION( std::runtime_error,                              \
+                       "The interpolation type " << raw_interp_type <<  \
+                       "is not valid (" << #setInterpType << ")!" );    \
+    }                                                                   \
+  }
+
 namespace DataGen{
 
 // Constructor
@@ -502,6 +539,10 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
         data_container.setCoherentCrossSectionEnergyGrid( indep_data );
         data_container.setCoherentCrossSection( dep_data );
 
+        SET_INTERP_TYPE( data_container,
+                         setCoherentCrossSectionInterpType,
+                         interpolation_flag );
+
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
         FRENSIE_FLUSH_ALL_LOGS();
         
@@ -517,6 +558,10 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
         data_container.setCoherentAveragePhotonIncidentEnergy( indep_data );
         data_container.setCoherentAveragePhotonEnergy( dep_data );
 
+        SET_INTERP_TYPE( data_container,
+                         setCoherentAveragePhotonEnergyInterpType,
+                         interpolation_flag );
+
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
         FRENSIE_FLUSH_ALL_LOGS();
         
@@ -531,6 +576,10 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
 
         data_container.setIncoherentCrossSectionEnergyGrid( indep_data );
         data_container.setIncoherentCrossSection( dep_data );
+
+        SET_INTERP_TYPE( data_container,
+                         setIncoherentCrossSectionInterpType,
+                         interpolation_flag );
 
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
         FRENSIE_FLUSH_ALL_LOGS();
@@ -549,12 +598,20 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
         {
           data_container.setIncoherentAveragePhotonIncidentEnergy( indep_data );
           data_container.setIncoherentAveragePhotonEnergy( dep_data );
+
+          SET_INTERP_TYPE( data_container,
+                           setIncoherentAveragePhotonEnergyInterpType,
+                           interpolation_flag );
         }
         // Average energy of scattered electron from incoherent scattering ( Yo == 9 )
         else if( outgoing_particle_designator == 9 )
         {
           data_container.setIncoherentAverageElectronIncidentEnergy( indep_data );
           data_container.setIncoherentAverageElectronEnergy( dep_data );
+
+          SET_INTERP_TYPE( data_container,
+                           setIncoherentAverageElectronEnergyInterpType,
+                           interpolation_flag );
         }
         else
         {
@@ -581,6 +638,10 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
         {
           data_container.setPhotoelectricCrossSectionEnergyGrid( indep_data );
           data_container.setPhotoelectricCrossSection( dep_data );
+
+          SET_INTERP_TYPE( data_container,
+                           setPhotoelectricCrossSectionInterpType,
+                           interpolation_flag );
         }
         else
         {
@@ -588,6 +649,11 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
                                                                  indep_data );
           data_container.setPhotoelectricCrossSection( endf_subshell,
                                                        dep_data );
+
+          SET_INTERP_TYPE( data_container,
+                           setPhotoelectricCrossSectionInterpType,
+                           interpolation_flag,
+                           endf_subshell );
         }
 
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
@@ -609,12 +675,20 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
           {
             data_container.setPhotoelectricAveragePhotonsIncidentEnergy( indep_data );
             data_container.setPhotoelectricAveragePhotonsEnergy( dep_data );
+
+            SET_INTERP_TYPE( data_container,
+                             setPhotoelectricAveragePhotonsEnergyInterpType,
+                             interpolation_flag );
           }
           // Average energy of scattered electron from photoelectric effect ( Yo == 9 )
           else if( outgoing_particle_designator == 9 )
           {
             data_container.setPhotoelectricAverageElectronsIncidentEnergy( indep_data );
             data_container.setPhotoelectricAverageElectronsEnergy( dep_data );
+
+            SET_INTERP_TYPE( data_container,
+                             setPhotoelectricAverageElectronsEnergyInterpType,
+                             interpolation_flag );
           }
           else
           {
@@ -635,6 +709,11 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
             data_container.setPhotoelectricAveragePhotonsEnergy(
                 endf_subshell,
                 dep_data );
+
+            SET_INTERP_TYPE( data_container,
+                             setPhotoelectricAveragePhotonsEnergyInterpType,
+                             interpolation_flag,
+                             endf_subshell );
           }
           // Average energy of scattered electron from photoelectric effect ( Yo == 9 )
           else if( outgoing_particle_designator == 9 )
@@ -645,6 +724,11 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
             data_container.setPhotoelectricAverageElectronsEnergy(
                 endf_subshell,
                 dep_data );
+
+            SET_INTERP_TYPE( data_container,
+                             setPhotoelectricAverageElectronsEnergyInterpType,
+                             interpolation_flag,
+                             endf_subshell );
           }
           else
           {
@@ -672,6 +756,10 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
           data_container.setPhotoelectricAverageResidualIncidentEnergy(
             indep_data );
           data_container.setPhotoelectricAverageResidualEnergy( dep_data );
+
+          SET_INTERP_TYPE( data_container,
+                           setPhotoelectricAverageResidualEnergyInterpType,
+                           interpolation_flag );
         }
         else
         {
@@ -681,6 +769,11 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
           data_container.setPhotoelectricAverageResidualEnergy(
             endf_subshell,
             dep_data );
+
+          SET_INTERP_TYPE( data_container,
+                           setPhotoelectricAverageResidualEnergyInterpType,
+                           interpolation_flag,
+                           endf_subshell );
         }
 
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
@@ -700,6 +793,10 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
         data_container.setPairProductionCrossSectionEnergyGrid( indep_data );
         data_container.setPairProductionCrossSection( dep_data );
 
+        SET_INTERP_TYPE( data_container,
+                         setPairProductionCrossSectionInterpType,
+                         interpolation_flag );
+
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
         FRENSIE_FLUSH_ALL_LOGS();
         
@@ -718,6 +815,10 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
           data_container.setPairProductionAveragePositronIncidentEnergy(
             indep_data );
           data_container.setPairProductionAveragePositronEnergy( dep_data );
+
+          SET_INTERP_TYPE( data_container,
+                           setPairProductionAveragePositronEnergyInterpType,
+                           interpolation_flag );
         }
         // Average energy of secondary electron from pair production ( Yo == 9 )
         else if( outgoing_particle_designator == 9 )
@@ -725,6 +826,10 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
           data_container.setPairProductionAverageElectronIncidentEnergy(
             indep_data );
           data_container.setPairProductionAverageElectronEnergy( dep_data );
+
+          SET_INTERP_TYPE( data_container,
+                           setPairProductionAverageElectronEnergyInterpType,
+                           interpolation_flag );
         }
         else
         {
@@ -750,6 +855,10 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
         data_container.setTripletProductionCrossSectionEnergyGrid( indep_data );
         data_container.setTripletProductionCrossSection( dep_data );
 
+        SET_INTERP_TYPE( data_container,
+                         setTripletProductionCrossSectionInterpType,
+                         interpolation_flag );
+
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
         FRENSIE_FLUSH_ALL_LOGS();
         
@@ -768,6 +877,10 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
           data_container.setTripletProductionAveragePositronIncidentEnergy(
             indep_data );
           data_container.setTripletProductionAveragePositronEnergy( dep_data );
+
+          SET_INTERP_TYPE( data_container,
+                           setTripletProductionAveragePositronEnergyInterpType,
+                           interpolation_flag );
         }
         // Average energy of secondary electron from triplet production ( Yo == 9 )
         else if( outgoing_particle_designator == 9 )
@@ -775,6 +888,10 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
           data_container.setTripletProductionAverageElectronIncidentEnergy(
             indep_data );
           data_container.setTripletProductionAverageElectronEnergy( dep_data );
+
+          SET_INTERP_TYPE( data_container,
+                           setTripletProductionAverageElectronEnergyInterpType,
+                           interpolation_flag );
         }
         else
         {
@@ -799,6 +916,10 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
         data_container.setCoherentFormFactorArgument( indep_data );
         data_container.setCoherentFormFactor( dep_data );
 
+        SET_INTERP_TYPE( data_container,
+                         setCoherentFormFactorInterpType,
+                         interpolation_flag );
+
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
         FRENSIE_FLUSH_ALL_LOGS();
         
@@ -813,6 +934,10 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
 
         data_container.setIncoherentScatteringFunctionArgument( indep_data );
         data_container.setIncoherentScatteringFunction( dep_data );
+
+        SET_INTERP_TYPE( data_container,
+                         setIncoherentScatteringFunctionInterpType,
+                         interpolation_flag );
 
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
         FRENSIE_FLUSH_ALL_LOGS();
@@ -830,6 +955,10 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
             indep_data );
         data_container.setCoherentImaginaryAnomalousFactor( dep_data );
 
+        SET_INTERP_TYPE( data_container,
+                         setCoherentImaginaryAnomalousFactorInterpType,
+                         interpolation_flag );
+
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
         FRENSIE_FLUSH_ALL_LOGS();
         
@@ -845,6 +974,10 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
         data_container.setCoherentRealAnomalousFactorIncidentEnergy(
             indep_data );
         data_container.setCoherentRealAnomalousFactor( dep_data );
+
+        SET_INTERP_TYPE( data_container,
+                         setCoherentRealAnomalousFactorInterpType,
+                         interpolation_flag );
 
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
         FRENSIE_FLUSH_ALL_LOGS();
@@ -961,6 +1094,10 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
         data_container.setElasticEnergyGrid( energy_grid );
         data_container.setElasticTransportCrossSection( cross_section );
 
+        SET_INTERP_TYPE( data_container,
+                         setElasticTransportCrossSectionInterpType,
+                         interpolation_flag );
+
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
         FRENSIE_FLUSH_ALL_LOGS();
         
@@ -984,6 +1121,10 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
 
         data_container.setCutoffElasticCrossSection( cross_section );
 
+        SET_INTERP_TYPE( data_container,
+                         setCutoffElasticCrossSectionInterpType,
+                         interpolation_flag );
+
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
         FRENSIE_FLUSH_ALL_LOGS();
         
@@ -999,6 +1140,10 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
 
         data_container.setCutoffElasticResidualIncidentEnergy( residual_incident_energy );
         data_container.setCutoffElasticResidualEnergy( residual_energy );
+
+        SET_INTERP_TYPE( data_container,
+                         setCutoffElasticResidualEnergyInterpType,
+                         interpolation_flag );
 
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
         FRENSIE_FLUSH_ALL_LOGS();
@@ -1017,6 +1162,10 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
           scattered_incident_energy );
         data_container.setCutoffElasticScatteredElectronEnergy(
           scattered_energy );
+
+        SET_INTERP_TYPE( data_container,
+                         setCutoffElasticScatteredElectronEnergyInterpType,
+                         interpolation_flag );
 
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
         FRENSIE_FLUSH_ALL_LOGS();
@@ -1037,6 +1186,10 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
           elastic_angular_energy_grid );
         data_container.setCutoffElasticAngles( elastic_angle );
         data_container.setCutoffElasticPDF( elastic_pdf );
+
+        SET_INTERP_TYPE( data_container,
+                         setCutoffElasticPDFInterpType,
+                         interpolation_flag );
 
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
         FRENSIE_FLUSH_ALL_LOGS();
@@ -1061,6 +1214,10 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
 
         data_container.setTotalElasticCrossSection( cross_section );
 
+        SET_INTERP_TYPE( data_container,
+                         setTotalElasticCrossSectionInterpType,
+                         interpolation_flag );
+
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
         FRENSIE_FLUSH_ALL_LOGS();
         
@@ -1080,6 +1237,11 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
         data_container.setElectroionizationCrossSection(
           endf_subshell,
           cross_section );
+
+        SET_INTERP_TYPE( data_container,
+                         setElectroionizationCrossSectionInterpType,
+                         interpolation_flag,
+                         endf_subshell );
 
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
         FRENSIE_FLUSH_ALL_LOGS();
@@ -1103,6 +1265,11 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
           data_container.setElectroionizationAverageScatteredElectronEnergy(
               endf_subshell,
               average_outgoing_energy );
+
+          SET_INTERP_TYPE( data_container,
+                           setElectroionizationAverageScatteredElectronEnergyInterpType,
+                           interpolation_flag,
+                           endf_subshell );
         }
         // Average energy of secondary electron from ionization
         else if( outgoing_particle_designator == 19 ) // 19 = recoil electron
@@ -1113,6 +1280,11 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
           data_container.setElectroionizationAverageRecoilElectronEnergy(
               endf_subshell,
               average_outgoing_energy );
+
+          SET_INTERP_TYPE( data_container,
+                           setElectroionizationAverageRecoilElectronEnergyInterpType,
+                           interpolation_flag,
+                           endf_subshell );
         }
         else
         {
@@ -1159,6 +1331,11 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
                           endf_subshell,
                           electroionization_recoil_pdf );
 
+        SET_INTERP_TYPE( data_container,
+                         setElectroionizationRecoilPDFInterpType,
+                         interpolation_flag,
+                         endf_subshell );
+
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
         FRENSIE_FLUSH_ALL_LOGS();
         
@@ -1174,6 +1351,10 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
 
         data_container.setBremsstrahlungCrossSectionEnergyGrid( energy_grid );
         data_container.setBremsstrahlungCrossSection( cross_section );
+
+        SET_INTERP_TYPE( data_container,
+                         setBremsstrahlungCrossSectionInterpType,
+                         interpolation_flag );
 
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
         FRENSIE_FLUSH_ALL_LOGS();
@@ -1195,6 +1376,10 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
               incident_energy );
           data_container.setBremsstrahlungAveragePhotonEnergy(
               average_outgoing_energy );
+
+          SET_INTERP_TYPE( data_container,
+                           setBremsstrahlungAveragePhotonEnergyInterpType,
+                           interpolation_flag );
         }
         // Average energy of secondary electron from bremsstrahlung
         else if( outgoing_particle_designator == 9 )
@@ -1203,6 +1388,10 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
               incident_energy );
           data_container.setBremsstrahlungAverageElectronEnergy(
               average_outgoing_energy );
+
+          SET_INTERP_TYPE( data_container,
+                           setBremsstrahlungAverageElectronEnergyInterpType,
+                           interpolation_flag );
         }
         else
         {
@@ -1242,6 +1431,10 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
 
         data_container.setBremsstrahlungPhotonPDF( bremsstrahlung_photon_pdf );
 
+        SET_INTERP_TYPE( data_container,
+                         setBremsstrahlungPhotonPDFInterpType,
+                         interpolation_flag );
+
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
         FRENSIE_FLUSH_ALL_LOGS();
         
@@ -1256,6 +1449,10 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
 
         data_container.setAtomicExcitationEnergyGrid( energy_grid );
         data_container.setAtomicExcitationCrossSection( cross_section );
+
+        SET_INTERP_TYPE( data_container,
+                         setAtomicExcitationCrossSectionInterpType,
+                         interpolation_flag );
 
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
         FRENSIE_FLUSH_ALL_LOGS();
@@ -1279,6 +1476,10 @@ void StandardENDLDataGenerator::populateEEDLDataContainer()
                             "energy grid!" );
 
         data_container.setAtomicExcitationEnergyLoss( atomic_excitation_energy_loss );
+
+        SET_INTERP_TYPE( data_container,
+                         setAtomicExcitationEnergyLossInterpType,
+                         interpolation_flag );
 
         FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
         FRENSIE_FLUSH_ALL_LOGS();
