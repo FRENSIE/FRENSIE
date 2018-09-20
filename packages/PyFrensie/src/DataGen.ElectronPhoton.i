@@ -29,6 +29,9 @@ data.
 // Add support for the electron photon relaxation data generator
 %include "DataGen_ElectronPhotonRelaxationDataGenerator.i"
 
+// Add support for the adjoint electron photon relaxation data generator
+%include "DataGen_AdjointElectronPhotonRelaxationDataGenerator.i"
+
 // Add support for the moment preserving electron data generator
 //%include "DataGen_MomentPreservingElectronDataGenerator.i"
 

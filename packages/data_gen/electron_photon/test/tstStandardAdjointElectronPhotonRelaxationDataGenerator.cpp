@@ -95,14 +95,67 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   FRENSIE_CHECK_EQUAL( generator.getMaxPhotonEnergy(), 20.0 );
   FRENSIE_CHECK_EQUAL( generator.getMinElectronEnergy(), 1e-5 );
   FRENSIE_CHECK_EQUAL( generator.getMaxElectronEnergy(), 1e5 );
-  FRENSIE_CHECK_EQUAL( generator.getPhotonGridConvergenceTolerance(), 1e-3 );
-  FRENSIE_CHECK_EQUAL( generator.getPhotonGridAbsoluteDifferenceTolerance(),
+  FRENSIE_CHECK_EQUAL( generator.getDefaultPhotonGridConvergenceTolerance(), 1e-3 );
+  FRENSIE_CHECK_EQUAL( generator.getDefaultPhotonGridAbsoluteDifferenceTolerance(),
                        1e-13 );
-  FRENSIE_CHECK_EQUAL( generator.getPhotonGridDistanceTolerance(), 1e-13 );
-  FRENSIE_CHECK_EQUAL( generator.getElectronGridConvergenceTolerance(), 1e-3 );
-  FRENSIE_CHECK_EQUAL( generator.getElectronGridAbsoluteDifferenceTolerance(),
+  FRENSIE_CHECK_EQUAL( generator.getDefaultPhotonGridDistanceTolerance(), 1e-13 );
+  FRENSIE_CHECK_EQUAL( generator.getDefaultElectronGridConvergenceTolerance(), 1e-3 );
+  FRENSIE_CHECK_EQUAL( generator.getDefaultElectronGridAbsoluteDifferenceTolerance(),
                        1e-13 );
-  FRENSIE_CHECK_EQUAL( generator.getElectronGridDistanceTolerance(), 1e-13 );
+  FRENSIE_CHECK_EQUAL( generator.getDefaultElectronGridDistanceTolerance(), 1e-13 );
+
+  // Test the photon table data
+  FRENSIE_CHECK_EQUAL( generator.getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(),
+                       1e-3 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointPairProductionEnergyDistNormConstantNudgeValue(),
+                       1e-6 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(),
+                       1e-3 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointTripletProductionEnergyDistNormConstantNudgeValue(),
+                       1e-6 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointIncoherentMaxEnergyNudgeValue(),
+                       0.2 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
+                       1e-6 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointIncoherentEvaluationTolerance(),
+                       1e-3 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointIncoherentGridConvergenceTolerance(),
+                       1e-3 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
+                       1e-20 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointIncoherentGridDistanceTolerance(),
+                       1e-14 );
+
+  // Test the electron table data
+  FRENSIE_CHECK_EQUAL( generator.getCutoffAngleCosine(), 1 );
+  FRENSIE_CHECK_EQUAL( generator.getNumberOfMomentPreservingAngles(), 0 );
+  FRENSIE_CHECK_EQUAL( generator.getDefaultElectronGridConvergenceTolerance(),
+                       0.001 );
+  FRENSIE_CHECK_EQUAL( generator.getDefaultElectronGridAbsoluteDifferenceTolerance(),
+                       1e-13 );
+  FRENSIE_CHECK_EQUAL( generator.getDefaultElectronGridDistanceTolerance(), 1e-13 );
+  FRENSIE_CHECK_EQUAL( generator.getElectronTabularEvaluationTolerance(),
+                       1e-8 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungMaxEnergyNudgeValue(),
+                       0.2 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(),
+                       1e-7 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungEvaluationTolerance(),
+                       1e-6 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungGridConvergenceTolerance(),
+                       0.001 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungAbsoluteDifferenceTolerance(),
+                       1e-16 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungDistanceTolerance(),
+                       1e-8 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointElectroionizationEvaluationTolerance(),
+                       1e-6 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointElectroionizationGridConvergenceTolerance(),
+                       0.001 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointElectroionizationAbsoluteDifferenceTolerance(),
+                       1e-16 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointElectroionizationDistanceTolerance(),
+                       1e-8 );
 
   // Check the data container values
   auto data_container = generator.getDataContainer();
@@ -173,14 +226,67 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   FRENSIE_CHECK_EQUAL( generator.getMaxPhotonEnergy(), 20.0 );
   FRENSIE_CHECK_EQUAL( generator.getMinElectronEnergy(), 1e-5 );
   FRENSIE_CHECK_EQUAL( generator.getMaxElectronEnergy(), 1e5 );
-  FRENSIE_CHECK_EQUAL( generator.getPhotonGridConvergenceTolerance(), 1e-3 );
-  FRENSIE_CHECK_EQUAL( generator.getPhotonGridAbsoluteDifferenceTolerance(),
+  FRENSIE_CHECK_EQUAL( generator.getDefaultPhotonGridConvergenceTolerance(), 1e-3 );
+  FRENSIE_CHECK_EQUAL( generator.getDefaultPhotonGridAbsoluteDifferenceTolerance(),
                        1e-13 );
-  FRENSIE_CHECK_EQUAL( generator.getPhotonGridDistanceTolerance(), 1e-13 );
-  FRENSIE_CHECK_EQUAL( generator.getElectronGridConvergenceTolerance(), 1e-3 );
-  FRENSIE_CHECK_EQUAL( generator.getElectronGridAbsoluteDifferenceTolerance(),
+  FRENSIE_CHECK_EQUAL( generator.getDefaultPhotonGridDistanceTolerance(), 1e-13 );
+  FRENSIE_CHECK_EQUAL( generator.getDefaultElectronGridConvergenceTolerance(), 1e-3 );
+  FRENSIE_CHECK_EQUAL( generator.getDefaultElectronGridAbsoluteDifferenceTolerance(),
                        1e-13 );
-  FRENSIE_CHECK_EQUAL( generator.getElectronGridDistanceTolerance(), 1e-13 );
+  FRENSIE_CHECK_EQUAL( generator.getDefaultElectronGridDistanceTolerance(), 1e-13 );
+
+  // Test the photon table data
+  FRENSIE_CHECK_EQUAL( generator.getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(),
+                       1e-3 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointPairProductionEnergyDistNormConstantNudgeValue(),
+                       1e-6 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(),
+                       1e-3 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointTripletProductionEnergyDistNormConstantNudgeValue(),
+                       1e-6 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointIncoherentMaxEnergyNudgeValue(),
+                       0.2 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
+                       1e-6 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointIncoherentEvaluationTolerance(),
+                       1e-3 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointIncoherentGridConvergenceTolerance(),
+                       1e-3 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
+                       1e-20 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointIncoherentGridDistanceTolerance(),
+                       1e-14 );
+
+  // Test the electron table data
+  FRENSIE_CHECK_EQUAL( generator.getCutoffAngleCosine(), 1 );
+  FRENSIE_CHECK_EQUAL( generator.getNumberOfMomentPreservingAngles(), 0 );
+  FRENSIE_CHECK_EQUAL( generator.getDefaultElectronGridConvergenceTolerance(),
+                       0.001 );
+  FRENSIE_CHECK_EQUAL( generator.getDefaultElectronGridAbsoluteDifferenceTolerance(),
+                       1e-13 );
+  FRENSIE_CHECK_EQUAL( generator.getDefaultElectronGridDistanceTolerance(), 1e-13 );
+  FRENSIE_CHECK_EQUAL( generator.getElectronTabularEvaluationTolerance(),
+                       1e-8 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungMaxEnergyNudgeValue(),
+                       0.2 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(),
+                       1e-7 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungEvaluationTolerance(),
+                       1e-6 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungGridConvergenceTolerance(),
+                       0.001 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungAbsoluteDifferenceTolerance(),
+                       1e-16 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungDistanceTolerance(),
+                       1e-8 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointElectroionizationEvaluationTolerance(),
+                       1e-6 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointElectroionizationGridConvergenceTolerance(),
+                       0.001 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointElectroionizationAbsoluteDifferenceTolerance(),
+                       1e-16 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointElectroionizationDistanceTolerance(),
+                       1e-8 );
 
   // Check the data container values
   auto data_container = generator.getDataContainer();
@@ -239,89 +345,9 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the Photon grid convergence tolerance can be set
+// Check that a data generator can be constructed from an existing data container
 FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
-                   setPhotonGridConvergenceTolerance )
-{
-  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
-    generator( h_epr_data_container );
-
-  generator.setPhotonGridConvergenceTolerance( 1e-5 );
-
-  FRENSIE_CHECK_EQUAL( generator.getPhotonGridConvergenceTolerance(), 1e-5 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the Photon grid absolute difference tolerance can be set
-FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
-                   setPhotonGridAbsoluteDifferenceTolerance )
-{
-  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
-    generator( h_epr_data_container );
-
-  generator.setPhotonGridAbsoluteDifferenceTolerance( 1e-40 );
-
-  FRENSIE_CHECK_EQUAL( generator.getPhotonGridAbsoluteDifferenceTolerance(),
-                       1e-40 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the Photon grid distance tolerance can be set
-FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
-                   setPhotonGridDistanceTolerance )
-{
-  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
-    generator( h_epr_data_container );
-
-  generator.setPhotonGridDistanceTolerance( 1e-30 );
-
-  FRENSIE_CHECK_EQUAL( generator.getPhotonGridDistanceTolerance(), 1e-30 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the Electron grid convergence tolerance can be set
-FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
-                   setElectronGridConvergenceTolerance )
-{
-  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
-    generator( h_epr_data_container );
-
-  generator.setElectronGridConvergenceTolerance( 1e-5 );
-
-  FRENSIE_CHECK_EQUAL( generator.getElectronGridConvergenceTolerance(), 1e-5 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the Electron grid absolute difference tolerance can be set
-FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
-                   setElectronGridAbsoluteDifferenceTolerance )
-{
-  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
-    generator( h_epr_data_container );
-
-  generator.setElectronGridAbsoluteDifferenceTolerance( 1e-40 );
-
-  FRENSIE_CHECK_EQUAL( generator.getElectronGridAbsoluteDifferenceTolerance(),
-                       1e-40 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the Electron grid distance tolerance can be set
-FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
-                   setElectronGridDistanceTolerance )
-{
-  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
-    generator( h_epr_data_container );
-
-  generator.setElectronGridDistanceTolerance( 1e-30 );
-
-  FRENSIE_CHECK_EQUAL( generator.getElectronGridDistanceTolerance(), 1e-30 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the table data can be set
-FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
-                   setTableData_h )
+                   constructor_existing_container )
 {
   Data::AdjointElectronPhotonRelaxationVolatileDataContainer data_container;
 
@@ -369,12 +395,12 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
     new TestStandardAdjointElectronPhotonRelaxationDataGenerator(
       h_epr_data_container, "test_h_aepr.xml" ) );
 
-  generator_h->setPhotonGridConvergenceTolerance( 1e-3 );
-  generator_h->setPhotonGridAbsoluteDifferenceTolerance( 1e-42 );
-  generator_h->setPhotonGridDistanceTolerance( 1e-15 );
-  generator_h->setElectronGridConvergenceTolerance( 0.5 );
-  generator_h->setElectronGridAbsoluteDifferenceTolerance( 1e-16 );
-  generator_h->setElectronGridDistanceTolerance( 1e-9 );
+  generator_h->setDefaultPhotonGridConvergenceTolerance( 1e-3 );
+  generator_h->setDefaultPhotonGridAbsoluteDifferenceTolerance( 1e-42 );
+  generator_h->setDefaultPhotonGridDistanceTolerance( 1e-15 );
+  generator_h->setDefaultElectronGridConvergenceTolerance( 0.5 );
+  generator_h->setDefaultElectronGridAbsoluteDifferenceTolerance( 1e-16 );
+  generator_h->setDefaultElectronGridDistanceTolerance( 1e-9 );
 
   // Check the data container values
   auto h_data_container = generator_h->getDataContainer();
@@ -415,6 +441,361 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   // Check the electron table data
   FRENSIE_CHECK_EQUAL( h_data_container.getCutoffAngleCosine(), 0.9 );
   FRENSIE_CHECK_EQUAL( h_data_container.getNumberOfAdjointMomentPreservingAngles(), 1 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectronGridConvergenceTolerance(),
+                       0.5 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectronGridAbsoluteDifferenceTolerance(),
+                       1e-16 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectronGridDistanceTolerance(), 1e-9 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getElectronTabularEvaluationTolerance(),
+                       1e-4 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungMaxEnergyNudgeValue(),
+                       0.2 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(),
+                       1e-7 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungEvaluationTolerance(),
+                       1e-3 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungGridConvergenceTolerance(),
+                       0.5 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungAbsoluteDifferenceTolerance(),
+                       1e-12 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungDistanceTolerance(),
+                       1e-14 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectroionizationEvaluationTolerance(),
+                       1e-3 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectroionizationGridConvergenceTolerance(),
+                       0.5 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectroionizationAbsoluteDifferenceTolerance(),
+                       1e-12 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectroionizationDistanceTolerance(),
+                       1e-14 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Photon grid convergence tolerance can be set
+FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
+                   setDefaultPhotonGridConvergenceTolerance )
+{
+  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
+    generator( h_epr_data_container );
+
+  generator.setDefaultPhotonGridConvergenceTolerance( 1e-5 );
+
+  FRENSIE_CHECK_EQUAL( generator.getDefaultPhotonGridConvergenceTolerance(), 1e-5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Photon grid absolute difference tolerance can be set
+FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
+                   setDefaultPhotonGridAbsoluteDifferenceTolerance )
+{
+  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
+    generator( h_epr_data_container );
+
+  generator.setDefaultPhotonGridAbsoluteDifferenceTolerance( 1e-40 );
+
+  FRENSIE_CHECK_EQUAL( generator.getDefaultPhotonGridAbsoluteDifferenceTolerance(),
+                       1e-40 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Photon grid distance tolerance can be set
+FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
+                   setDefaultPhotonGridDistanceTolerance )
+{
+  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
+    generator( h_epr_data_container );
+
+  generator.setDefaultPhotonGridDistanceTolerance( 1e-30 );
+
+  FRENSIE_CHECK_EQUAL( generator.getDefaultPhotonGridDistanceTolerance(), 1e-30 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Electron grid convergence tolerance can be set
+FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
+                   setDefaultElectronGridConvergenceTolerance )
+{
+  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
+    generator( h_epr_data_container );
+
+  generator.setDefaultElectronGridConvergenceTolerance( 1e-5 );
+
+  FRENSIE_CHECK_EQUAL( generator.getDefaultElectronGridConvergenceTolerance(), 1e-5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Electron grid absolute difference tolerance can be set
+FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
+                   setDefaultElectronGridAbsoluteDifferenceTolerance )
+{
+  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
+    generator( h_epr_data_container );
+
+  generator.setDefaultElectronGridAbsoluteDifferenceTolerance( 1e-40 );
+
+  FRENSIE_CHECK_EQUAL( generator.getDefaultElectronGridAbsoluteDifferenceTolerance(),
+                       1e-40 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Electron grid distance tolerance can be set
+FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
+                   setDefaultElectronGridDistanceTolerance )
+{
+  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
+    generator( h_epr_data_container );
+
+  generator.setDefaultElectronGridDistanceTolerance( 1e-30 );
+
+  FRENSIE_CHECK_EQUAL( generator.getDefaultElectronGridDistanceTolerance(), 1e-30 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint pair production energy dist. norm constant evaluation
+// tolerance can be set
+FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
+                   setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance )
+{
+  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
+    generator( h_epr_data_container );
+
+  generator.setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance( 1e-5 );
+
+  FRENSIE_CHECK_EQUAL( generator.getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(),
+                       1e-5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint pair production energy dist. norm constant nudge
+// value can be set
+FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
+                   setAdjointPairProductionEnergyDistNormConstantNudgeValue )
+{
+  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
+    generator( h_epr_data_container );
+
+  generator.setAdjointPairProductionEnergyDistNormConstantNudgeValue( 1e-4 );
+
+  FRENSIE_CHECK_EQUAL( generator.getAdjointPairProductionEnergyDistNormConstantNudgeValue(),
+                       1e-4 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint triplet production energy dist. norm constant
+// evaluation tolerance can be set
+FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
+                   setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance )
+{
+  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
+    generator( h_epr_data_container );
+
+  generator.setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance( 1e-4 );
+
+  FRENSIE_CHECK_EQUAL( generator.getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(),
+                       1e-4 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint triplet production energy dist. norm const
+// nudge value can be set
+FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
+                   setAdjointTripletProductionEnergyDistNormConstantNudgeValue )
+{
+  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
+    generator( h_epr_data_container );
+
+  generator.setAdjointTripletProductionEnergyDistNormConstantNudgeValue( 1e-2 );
+
+  FRENSIE_CHECK_EQUAL( generator.getAdjointTripletProductionEnergyDistNormConstantNudgeValue(),
+                       1e-2 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint incoherent max energy nudge value can be set
+FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
+                   setAdjointIncoherentMaxEnergyNudgeValue )
+{
+  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
+    generator( h_epr_data_container );
+
+  generator.setAdjointIncoherentMaxEnergyNudgeValue( 0.5 );
+
+  FRENSIE_CHECK_EQUAL( generator.getAdjointIncoherentMaxEnergyNudgeValue(),
+                       0.5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint incoherent energy to max energy nudge value can
+// be set
+FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
+                   setAdjointIncoherentEnergyToMaxEnergyNudgeValue )
+{
+  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
+    generator( h_epr_data_container );
+
+  generator.setAdjointIncoherentEnergyToMaxEnergyNudgeValue( 1e-3 );
+
+  FRENSIE_CHECK_EQUAL( generator.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint incoherent evaluation tolerance can
+// be set
+FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
+                   setAdjointIncoherentEvaluationTolerance )
+{
+  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
+    generator( h_epr_data_container );
+
+  generator.setAdjointIncoherentEvaluationTolerance( 1e-4 );
+
+  FRENSIE_CHECK_EQUAL( generator.getAdjointIncoherentEvaluationTolerance(),
+                       1e-4 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint incoherent grid convergence tolerance can be set
+FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
+                   setAdjointIncoherentGridConvergenceTolerance )
+{
+  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
+    generator( h_epr_data_container );
+
+  generator.setAdjointIncoherentGridConvergenceTolerance( 1e-5 );
+
+  FRENSIE_CHECK_EQUAL( generator.getAdjointIncoherentGridConvergenceTolerance(),
+                       1e-5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint incoherent grid absolute difference tolerance can
+// be set
+FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
+                   setAdjointIncoherentGridAbsoluteDifferenceTolerance )
+{
+  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
+    generator( h_epr_data_container );
+
+  generator.setAdjointIncoherentGridAbsoluteDifferenceTolerance( 1e-50 );
+
+  FRENSIE_CHECK_EQUAL( generator.getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
+                       1e-50 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint incoherent grid distance tolerance can be set
+FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
+                   setAdjointIncoherentGridDistanceTolerance )
+{
+  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
+    generator( h_epr_data_container );
+
+  generator.setAdjointIncoherentGridDistanceTolerance( 1e-40 );
+
+  FRENSIE_CHECK_EQUAL( generator.getAdjointIncoherentGridDistanceTolerance(),
+                       1e-40 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint bremsstrahlung evaluation tolerance can be set
+FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
+                   setAdjointBremsstrahlungEvaluationTolerance )
+{
+  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
+    generator( h_epr_data_container );
+
+  generator.setAdjointBremsstrahlungEvaluationTolerance( 1e-4 );
+
+  FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungEvaluationTolerance(),
+                       1e-4 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the table data can be set
+FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
+                   setTableData_h )
+{
+  generator_h.reset(
+    new TestStandardAdjointElectronPhotonRelaxationDataGenerator(
+      h_epr_data_container, 1e-3, 20.0, 1e-5, 20.0 ) );
+
+  // Set default photon grid tolerances
+  generator_h->setDefaultPhotonGridConvergenceTolerance( 1e-3 );
+  generator_h->setDefaultPhotonGridAbsoluteDifferenceTolerance( 1e-42 );
+  generator_h->setDefaultPhotonGridDistanceTolerance( 1e-15 );
+
+  generator_h->setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance( 1e-3 );
+  generator_h->setAdjointPairProductionEnergyDistNormConstantNudgeValue( 1e-6 );
+  generator_h->setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance( 1e-3 );
+  generator_h->setAdjointTripletProductionEnergyDistNormConstantNudgeValue( 1e-6 );
+  generator_h->setAdjointIncoherentMaxEnergyNudgeValue( 0.2 );
+  generator_h->setAdjointIncoherentEnergyToMaxEnergyNudgeValue( 1e-6 );
+  generator_h->setAdjointIncoherentEvaluationTolerance( 1e-3 );
+  generator_h->setAdjointIncoherentGridConvergenceTolerance( 0.5 );
+  generator_h->setAdjointIncoherentGridAbsoluteDifferenceTolerance( 1e-42 );
+  generator_h->setAdjointIncoherentGridDistanceTolerance( 1e-15 );
+
+  // Set default electron grid tolerances
+  generator_h->setDefaultElectronGridConvergenceTolerance( 0.5 );
+  generator_h->setDefaultElectronGridAbsoluteDifferenceTolerance( 1e-16 );
+  generator_h->setDefaultElectronGridDistanceTolerance( 1e-9 );
+
+  generator_h->setElectronTabularEvaluationTolerance( 1e-4 );
+  generator_h->setElectronTwoDInterpPolicy( MonteCarlo::LOGLOGLOG_INTERPOLATION );
+  generator_h->setElectronTwoDGridPolicy( MonteCarlo::UNIT_BASE_CORRELATED_GRID );
+
+  generator_h->setAdjointBremsstrahlungMaxEnergyNudgeValue( 0.2 );
+  generator_h->setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue( 1e-7 );
+  generator_h->setAdjointBremsstrahlungEvaluationTolerance( 1e-3 );
+  generator_h->setAdjointBremsstrahlungGridConvergenceTolerance( 0.5 );
+  generator_h->setAdjointBremsstrahlungAbsoluteDifferenceTolerance( 1e-12 );
+  generator_h->setAdjointBremsstrahlungDistanceTolerance( 1e-14 );
+
+  generator_h->setAdjointElectroionizationEvaluationTolerance( 1e-3 );
+  generator_h->setAdjointElectroionizationGridConvergenceTolerance( 0.5 );
+  generator_h->setAdjointElectroionizationAbsoluteDifferenceTolerance( 1e-12 );
+  generator_h->setAdjointElectroionizationDistanceTolerance( 1e-14 );
+
+  // Check the data container values
+  auto h_data_container = generator_h->getDataContainer();
+
+  // Check the basic table settings data
+  FRENSIE_CHECK_EQUAL( h_data_container.getAtomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getMinPhotonEnergy(), 0.001 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getMaxPhotonEnergy(), 20.0 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getMinElectronEnergy(), 1.0e-5 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getMaxElectronEnergy(), 20.0 );
+
+  // Check the photon table settings data
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointPhotonGridConvergenceTolerance(), 0.001 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointPhotonGridAbsoluteDifferenceTolerance(), 1e-42 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointPhotonGridDistanceTolerance(), 1e-15 );
+
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(),
+                       1e-3 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointPairProductionEnergyDistNormConstantNudgeValue(),
+                       1e-6 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(),
+                       1e-3 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointTripletProductionEnergyDistNormConstantNudgeValue(),
+                       1e-6 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointIncoherentMaxEnergyNudgeValue(),
+                       0.2 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
+                       1e-6 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointIncoherentEvaluationTolerance(),
+                       1e-3 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointIncoherentGridConvergenceTolerance(),
+                       0.5 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
+                       1e-42 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointIncoherentGridDistanceTolerance(),
+                       1e-15 );
+
+  // Check the electron table data
+  FRENSIE_CHECK_EQUAL( h_data_container.getCutoffAngleCosine(), 1 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getNumberOfAdjointMomentPreservingAngles(), 0 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectronGridConvergenceTolerance(),
                        0.5 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectronGridAbsoluteDifferenceTolerance(),

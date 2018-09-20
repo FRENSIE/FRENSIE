@@ -43,11 +43,106 @@ public:
   //! Get the atomic number
   unsigned getAtomicNumber() const;
 
+  ///////////////////////
+  // Photon Table Data //
+  ///////////////////////
+
   //! Return the min photon energy
   double getMinPhotonEnergy() const;
 
   //! Return the max photon energy
   double getMaxPhotonEnergy() const;
+
+  //! Set the default photon grid convergence tolerance
+  void setDefaultPhotonGridConvergenceTolerance( const double convergence_tol );
+
+  //! Get the default photon grid convergence tolerance
+  double getDefaultPhotonGridConvergenceTolerance() const;
+
+  //! Set the default photon grid absolute difference tolerance
+  void setDefaultPhotonGridAbsoluteDifferenceTolerance(
+                                              const double absolute_diff_tol );
+
+  //! Get the default photon grid absolute difference tolerance
+  double getDefaultPhotonGridAbsoluteDifferenceTolerance() const;
+
+  //! Set the default photon grid distance tolerance
+  void setDefaultPhotonGridDistanceTolerance( const double distance_tol );
+
+  //! Get the default photon grid distance tolerance
+  double getDefaultPhotonGridDistanceTolerance() const;
+
+  //! Set the adjoint pair production energy dist. norm const. evaluation tol.
+  void setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(
+                                                 const double evaluation_tol );
+
+  //! Return the adjoint pair production energy dist. norm const. evaluation tol
+  double getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance() const;
+
+  //! Set the adjoint pair production energy dist. norm const. nudge value
+  void setAdjointPairProductionEnergyDistNormConstantNudgeValue(
+                                                    const double nudge_value );
+
+  //! Return the adjoint pair production energy dist. norm const. nudge value
+  double getAdjointPairProductionEnergyDistNormConstantNudgeValue() const;
+
+  //! Set the adjoint triplet production energy dist. norm const. evaluation tol.
+  void setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(
+                                                 const double evaluation_tol );
+
+  //! Return the adjoint triplet production energy dist. norm const. evaluation tol
+  double getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance() const;
+
+  //! Set the adjoint triplet production energy dist. norm const. nudge value
+  void setAdjointTripletProductionEnergyDistNormConstantNudgeValue(
+                                                    const double nudge_value );
+
+  //! Return the adjoint triplet production energy dist. norm const. nudge value
+  double getAdjointTripletProductionEnergyDistNormConstantNudgeValue() const;
+
+  //! Set the adjoint incoherent max energy nudge value
+  void setAdjointIncoherentMaxEnergyNudgeValue( const double max_energy_nudge_value );
+
+  //! Return the adjoint incoherent max energy nudge value
+  double getAdjointIncoherentMaxEnergyNudgeValue() const;
+
+  //! Set the adjoint incoherent energy to max energy nudge value
+  void setAdjointIncoherentEnergyToMaxEnergyNudgeValue(
+                               const double energy_to_max_energy_nudge_value );
+
+  //! Return the adjoint incoherent energy to max energy nudge value
+  double getAdjointIncoherentEnergyToMaxEnergyNudgeValue() const;
+
+  //! Set the adjoint incoherent cross section evaluation tolerance
+  void setAdjointIncoherentEvaluationTolerance(
+                                                 const double evaluation_tol );
+
+  //! Return the adjoint incoherent cross section evaluation tolerance
+  double getAdjointIncoherentEvaluationTolerance() const;
+
+  //! Set the adjoint incoherent grid convergence tolerance
+  void setAdjointIncoherentGridConvergenceTolerance(
+                                                const double convergence_tol );
+
+  //! Return the adjoint incoherent grid convergence tolerance
+  double getAdjointIncoherentGridConvergenceTolerance() const;
+
+  //! Set the adjoint incoherent grid absolute difference tolerance
+  void setAdjointIncoherentGridAbsoluteDifferenceTolerance(
+                                              const double absolute_diff_tol );
+
+  //! Return the adjoint incoherent grid absolute difference tolerance
+  double getAdjointIncoherentGridAbsoluteDifferenceTolerance() const;
+
+  //! Set the adjoint incoherent grid distance tolerance
+  void setAdjointIncoherentGridDistanceTolerance( const double distance_tol );
+
+  //! Return the adjoint incoherent grid distance tolerance
+  double getAdjointIncoherentGridDistanceTolerance() const;
+
+  /////////////////////////
+  // Electron Table Data //
+  /////////////////////////
 
   //! Return the min electron energy
   double getMinElectronEnergy() const;
@@ -55,43 +150,110 @@ public:
   //! Return the max electron energy
   double getMaxElectronEnergy() const;
 
-  //! Set the default photon grid convergence tolerance
-  void setPhotonGridConvergenceTolerance( const double convergence_tol );
-
-  //! Get the default photon grid convergence tolerance
-  double getPhotonGridConvergenceTolerance() const;
-
-  //! Set the default photon grid absolute difference tolerance
-  void setPhotonGridAbsoluteDifferenceTolerance(
-                                              const double absolute_diff_tol );
-
-  //! Get the default photon grid absolute difference tolerance
-  double getPhotonGridAbsoluteDifferenceTolerance() const;
-
-  //! Set the default photon grid distance tolerance
-  void setPhotonGridDistanceTolerance( const double distance_tol );
-
-  //! Get the default photon grid distance tolerance
-  double getPhotonGridDistanceTolerance() const;
-
   //! Set the default electron grid convergence tolerance
-  void setElectronGridConvergenceTolerance( const double convergence_tol );
+  void setDefaultElectronGridConvergenceTolerance( const double convergence_tol );
 
   //! Get the default electron grid convergence tolerance
-  double getElectronGridConvergenceTolerance() const;
+  double getDefaultElectronGridConvergenceTolerance() const;
 
   //! Set the default electron grid absolute difference tolerance
-  void setElectronGridAbsoluteDifferenceTolerance(
+  void setDefaultElectronGridAbsoluteDifferenceTolerance(
                                               const double absolute_diff_tol );
 
   //! Get the default electron grid absolute difference tolerance
-  double getElectronGridAbsoluteDifferenceTolerance() const;
+  double getDefaultElectronGridAbsoluteDifferenceTolerance() const;
 
   //! Set the default electron grid distance tolerance
-  void setElectronGridDistanceTolerance( const double distance_tol );
+  void setDefaultElectronGridDistanceTolerance( const double distance_tol );
 
   //! Get the default electron grid distance tolerance
-  double getElectronGridDistanceTolerance() const;
+  double getDefaultElectronGridDistanceTolerance() const;
+
+  //! Return the cutoff angle cosine above which screened rutherford is used
+  double getCutoffAngleCosine() const;
+
+  //! Return the number of moment preserving angles
+  unsigned getNumberOfMomentPreservingAngles() const;
+
+  //! Set the electron FullyTabularTwoDDistribution evaluation tolerance
+  void setElectronTabularEvaluationTolerance( const double tabular_evaluation_tol );
+
+  //! Return the electron FullyTabularTwoDDistribution evaluation tolerance
+  double getElectronTabularEvaluationTolerance() const;
+
+  //! Set the electron TwoDInterpPolicy (LogLogLog by default)
+  void setElectronTwoDInterpPolicy( const MonteCarlo::TwoDInterpolationType two_d_interp );
+
+  //! Return the electron TwoDInterpPolicy (LogLogLog by default)
+  MonteCarlo::TwoDInterpolationType getElectronTwoDInterpPolicy() const;
+
+  //! Set the electron TwoDGridPolicy (Unit-base Correlated by default)
+  void setElectronTwoDGridPolicy( const MonteCarlo::TwoDGridType two_d_grid );
+
+  //! Return the electron TwoDGridPolicy (Unit-base Correlated by default)
+  MonteCarlo::TwoDGridType getElectronTwoDGridPolicy() const;
+
+  //! Set the adjoint bremsstrahlung max energy nudge value
+  void setAdjointBremsstrahlungMaxEnergyNudgeValue( const double max_energy_nudge_value );
+
+  //! Return the adjoint bremsstrahlung max energy nudge value
+  double getAdjointBremsstrahlungMaxEnergyNudgeValue() const;
+
+  //! Set the adjoint bremsstrahlung energy to outgoing energy nudge value
+  void setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(
+                          const double energy_to_outgoing_energy_nudge_value );
+
+  //! Return the adjoint bremsstrahlung energy to outgoing energy nudge value
+  double getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue() const;
+
+  //! Set the adjoint bremsstrahlung cross section evaluation tolerance
+  void setAdjointBremsstrahlungEvaluationTolerance( const double evaluation_tol );
+
+  //! Return the adjoint bremsstrahlung cross section evaluation tolerance
+  double getAdjointBremsstrahlungEvaluationTolerance() const;
+
+  //! Set the adjoint bremsstrahlung grid convergence tolerance
+  void setAdjointBremsstrahlungGridConvergenceTolerance( const double convergence_tol );
+
+  //! Return the adjoint bremsstrahlung grid convergence tolerance
+  double getAdjointBremsstrahlungGridConvergenceTolerance() const;
+
+  //! Set the adjoint bremsstrahlung absolute difference tolerance
+  void setAdjointBremsstrahlungAbsoluteDifferenceTolerance( const double absolute_diff_tol );
+
+  //! Return the adjoint bremsstrahlung absolute difference tolerance
+  double getAdjointBremsstrahlungAbsoluteDifferenceTolerance() const;
+
+  //! Set the adjoint bremsstrahlung distance tolerance
+  void setAdjointBremsstrahlungDistanceTolerance( const double distance_tol );
+
+  //! Return the adjoint bremsstrahlung distance tolerance
+  double getAdjointBremsstrahlungDistanceTolerance() const;
+
+  //! Set the adjoint electroionization cross section evaluation tolerance
+  void setAdjointElectroionizationEvaluationTolerance( const double evaluation_tol );
+
+  //! Return the adjoint electroionization cross section evaluation tolerance
+  double getAdjointElectroionizationEvaluationTolerance() const;
+
+  //! Set the adjoint electroionization grid convergence tolerance
+  void setAdjointElectroionizationGridConvergenceTolerance( const double convergence_tol );
+
+  //! Return the adjoint electroionization grid convergence tolerance
+  double getAdjointElectroionizationGridConvergenceTolerance() const;
+
+  //! Set the adjoint electroionization absolute difference tolerance
+  void setAdjointElectroionizationAbsoluteDifferenceTolerance( const double absolute_diff_tol );
+
+  //! Return the adjoint electroionization absolute difference tolerance
+  double getAdjointElectroionizationAbsoluteDifferenceTolerance() const;
+
+  //! Set the adjoint electroionization distance tolerance
+  void setAdjointElectroionizationDistanceTolerance( const double distance_tol );
+
+  //! Return the adjoint electroionization distance tolerance
+  double getAdjointElectroionizationDistanceTolerance() const;
+
 
   //! Populate the electron-photon-relaxation data container
   virtual void populateEPRDataContainer(
@@ -127,6 +289,13 @@ protected:
   getDefaultElectronGridGenerator() const;
 
 private:
+
+  // Convert string to TwoDInterpolationType
+  const MonteCarlo::TwoDInterpolationType
+  convertStringToTwoDInterpType( const std::string& raw_policy );
+
+  // Convert string to TwoDGridType
+  const MonteCarlo::TwoDGridType convertStringToTwoDGridType( const std::string& raw_policy );
 
   // The adjoint electron-photon-relaxation volatile data container
   Data::AdjointElectronPhotonRelaxationVolatileDataContainer d_data_container;

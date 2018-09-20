@@ -145,9 +145,6 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::populateEPRDataContai
     const bool populate_photons,
     const bool populate_electrons )
 {
-  Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
-    this->getVolatileDataContainer();
-
   // Set the relaxation data
   FRENSIE_LOG_PARTIAL_NOTIFICATION( Utility::Bold( "Setting the adjoint relaxation data" )
                                     << " ... " );
@@ -572,13 +569,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPairProduct
   // Create the evaluation wrapper
   std::function<double(double)> evaluation_wrapper =
     evaluator->getEnergyDistributionNormConstantEvaluationWrapper(
-              data_container.getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance() );
+      this->getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance() );
 
   // Create the energy distribution norm constant grid
   std::vector<double> energy_grid( 2 ), energy_dist_norm_constants;
 
   energy_grid[0] = 2*Utility::PhysicalConstants::electron_rest_mass_energy +
-     data_container.getAdjointPairProductionEnergyDistNormConstantNudgeValue();
+     this->getAdjointPairProductionEnergyDistNormConstantNudgeValue();
   energy_grid[1] = this->getMaxPhotonEnergy();
 
   try{
@@ -636,13 +633,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointTripletProd
   // Create the evaluation wrapper
   std::function<double(double)> evaluation_wrapper =
     evaluator->getEnergyDistributionNormConstantEvaluationWrapper(
-           data_container.getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance() );
+      this->getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance() );
 
   // Create the energy distribution norm constant grid
   std::vector<double> energy_grid( 2 ), energy_dist_norm_constants;
 
   energy_grid[0] = 4*Utility::PhysicalConstants::electron_rest_mass_energy +
-     data_container.getAdjointTripletProductionEnergyDistNormConstantNudgeValue();
+     this->getAdjointTripletProductionEnergyDistNormConstantNudgeValue();
   energy_grid[1] = this->getMaxPhotonEnergy();
 
   try{
@@ -790,27 +787,23 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::initializeAdjointPhot
 // Update the adjoint photon union energy grid
 void StandardAdjointElectronPhotonRelaxationDataGenerator::updateAdjointPhotonUnionEnergyGrid(
          std::list<double>& union_energy_grid,
-         const std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& cs_evaluator )
+         const std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& cs_evaluator ) const
 {
-
-  Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
-    this->getVolatileDataContainer();
-
   // Create an adjoint incoherent grid generator
   AdjointIncoherentGridGenerator<Utility::LinLinLin>
     grid_generator( this->getMaxPhotonEnergy(),
-                    data_container.getAdjointIncoherentMaxEnergyNudgeValue(),
-                    data_container.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
-                    data_container.getAdjointIncoherentGridConvergenceTolerance(),
-                    data_container.getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
-                    data_container.getAdjointIncoherentGridDistanceTolerance() );
+                    this->getAdjointIncoherentMaxEnergyNudgeValue(),
+                    this->getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
+                    this->getAdjointIncoherentGridConvergenceTolerance(),
+                    this->getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
+                    this->getAdjointIncoherentGridDistanceTolerance() );
 
   // Throw an exception if dirty convergence occurs
   grid_generator.throwExceptionOnDirtyConvergence();
 
   std::function<double(double,double)> cs_evaluation_wrapper =
     grid_generator.createCrossSectionEvaluator(
-                           cs_evaluator, data_container.getAdjointIncoherentEvaluationTolerance() );
+                cs_evaluator, this->getAdjointIncoherentEvaluationTolerance() );
 
   try{
     grid_generator.generateInPlace( union_energy_grid, cs_evaluation_wrapper );
@@ -829,7 +822,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::updateAdjointPhotonUn
 void StandardAdjointElectronPhotonRelaxationDataGenerator::updateAdjointPhotonUnionEnergyGrid(
          std::list<double>& union_energy_grid,
          const std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >&
-         cs_evaluators )
+         cs_evaluators ) const
 {
   for( unsigned i = 0u; i < cs_evaluators.size(); ++i )
   {
@@ -839,27 +832,23 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::updateAdjointPhotonUn
     const std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution>& cs_evaluator =
       cs_evaluators[i].second;
 
-
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
-      this->getVolatileDataContainer();
-
     // Create an adjoint incoherent grid generator
     AdjointIncoherentGridGenerator<Utility::LinLinLin>
       grid_generator( this->getMaxPhotonEnergy(),
                       cs_evaluator->getSubshellBindingEnergy()+
-                        data_container.getAdjointIncoherentMaxEnergyNudgeValue(),
+                        this->getAdjointIncoherentMaxEnergyNudgeValue(),
                       cs_evaluator->getSubshellBindingEnergy()+
-                        data_container.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
-                      data_container.getAdjointIncoherentGridConvergenceTolerance(),
-                      data_container.getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
-                      data_container.getAdjointIncoherentGridDistanceTolerance() );
+                        this->getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
+                      this->getAdjointIncoherentGridConvergenceTolerance(),
+                      this->getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
+                      this->getAdjointIncoherentGridDistanceTolerance() );
 
     // Throw an exception if dirty convergence occurs
     grid_generator.throwExceptionOnDirtyConvergence();
 
     std::function<double(double,double)> cs_evaluation_wrapper =
       grid_generator.createCrossSectionEvaluator(
-                           cs_evaluator,  data_container.getAdjointIncoherentEvaluationTolerance() );
+                cs_evaluator,  this->getAdjointIncoherentEvaluationTolerance() );
 
     try{
       grid_generator.generateInPlace( union_energy_grid, cs_evaluation_wrapper );
@@ -906,30 +895,27 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createCrossSectionOnU
           const std::list<double>& union_energy_grid,
           const std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& cs_evaluator,
           std::vector<std::vector<double> >& max_energy_grid,
-          std::vector<std::vector<double> >& cross_section )
+          std::vector<std::vector<double> >& cross_section ) const
 {
   // Resize the max energy grid and cross section arrays
   max_energy_grid.resize( union_energy_grid.size() );
   cross_section.resize( union_energy_grid.size() );
 
-  Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
-    this->getVolatileDataContainer();
-
   // Create a grid generator
   AdjointIncoherentGridGenerator<Utility::LinLinLin>
     grid_generator( this->getMaxPhotonEnergy(),
-                    data_container.getAdjointIncoherentMaxEnergyNudgeValue(),
-                    data_container.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
-                    data_container.getAdjointIncoherentGridConvergenceTolerance(),
-                    data_container.getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
-                    data_container.getAdjointIncoherentGridDistanceTolerance() );
+                    this->getAdjointIncoherentMaxEnergyNudgeValue(),
+                    this->getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
+                    this->getAdjointIncoherentGridConvergenceTolerance(),
+                    this->getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
+                    this->getAdjointIncoherentGridDistanceTolerance() );
 
   // Throw an exception if dirty convergence occurs
   grid_generator.throwExceptionOnDirtyConvergence();
 
   std::function<double(double,double)> cs_evaluation_wrapper =
     grid_generator.createCrossSectionEvaluator(
-                           cs_evaluator, data_container.getAdjointIncoherentEvaluationTolerance() );
+                           cs_evaluator, this->getAdjointIncoherentEvaluationTolerance() );
 
   // Evaluate the cross section at every energy grid point
   std::list<double>::const_iterator energy_grid_it =
@@ -971,30 +957,27 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createCrossSectionOnU
           const std::list<double>& union_energy_grid,
           const std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution>& cs_evaluator,
           std::vector<std::vector<double> >& max_energy_grid,
-          std::vector<std::vector<double> >& cross_section )
+          std::vector<std::vector<double> >& cross_section ) const
 {
   // Resize the max energy grid and cross section arrays
   max_energy_grid.resize( union_energy_grid.size() );
   cross_section.resize( union_energy_grid.size() );
 
-  Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
-    this->getVolatileDataContainer();
-
   // Create a grid generator
   AdjointIncoherentGridGenerator<Utility::LinLinLin>
     grid_generator( this->getMaxPhotonEnergy(),
-                    cs_evaluator->getSubshellBindingEnergy()+ data_container.getAdjointIncoherentMaxEnergyNudgeValue(),
-                    cs_evaluator->getSubshellBindingEnergy()+ data_container.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
-                    data_container.getAdjointIncoherentGridConvergenceTolerance(),
-                    data_container.getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
-                    data_container.getAdjointIncoherentGridDistanceTolerance() );
+                    cs_evaluator->getSubshellBindingEnergy()+ this->getAdjointIncoherentMaxEnergyNudgeValue(),
+                    cs_evaluator->getSubshellBindingEnergy()+ this->getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
+                    this->getAdjointIncoherentGridConvergenceTolerance(),
+                    this->getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
+                    this->getAdjointIncoherentGridDistanceTolerance() );
 
   // Throw an exception if dirty convergence occurs
   grid_generator.throwExceptionOnDirtyConvergence();
 
   std::function<double(double,double)> cs_evaluation_wrapper =
     grid_generator.createCrossSectionEvaluator(
-                           cs_evaluator,  data_container.getAdjointIncoherentEvaluationTolerance() );
+                  cs_evaluator, this->getAdjointIncoherentEvaluationTolerance() );
 
   // Evaluate the cross section at every energy grid point
   std::list<double>::const_iterator energy_grid_it =
@@ -1343,7 +1326,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
   std::function<double (double)> bremsstrahlung_grid_function =
     brem_grid_generators->createAdjointCrossSectionFunction(
-            data_container.getAdjointBremsstrahlungEvaluationTolerance() );
+            this->getAdjointBremsstrahlungEvaluationTolerance() );
 
   // Temporarily save cross section values so they don't have to be generated again
   std::vector<double> old_adjoint_bremsstrahlung_cs;
@@ -1386,7 +1369,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
     ionization_grid_functions[*shell] =
       ionization_grid_generators[*shell]->createAdjointCrossSectionFunction(
-            data_container.getAdjointElectroionizationEvaluationTolerance() );
+            this->getAdjointElectroionizationEvaluationTolerance() );
 
     // Generate electroionization (temporarily keep this grid and evaluated function)
     this->getDefaultElectronGridGenerator().generateAndEvaluateInPlace(
@@ -1521,7 +1504,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_distribution;
 
-    if( data_container.getElectronTwoDInterpPolicy() == Utility::toString( MonteCarlo::LINLINLOG_INTERPOLATION ) )
+    if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLOG_INTERPOLATION )
     {
       MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
         cutoff_distribution,
@@ -1529,9 +1512,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
         d_forward_epr_data->getCutoffElasticPDF(),
         d_forward_epr_data->getElasticAngularEnergyGrid(),
         d_forward_epr_data->getCutoffAngleCosine(),
-        data_container.getElectronTabularEvaluationTolerance() );
+        this->getElectronTabularEvaluationTolerance() );
     }
-    else if( data_container.getElectronTwoDInterpPolicy() == Utility::toString( MonteCarlo::LINLINLIN_INTERPOLATION ) )
+    else if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLIN_INTERPOLATION )
     {
       MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin,Utility::Correlated>(
         cutoff_distribution,
@@ -1539,9 +1522,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
         d_forward_epr_data->getCutoffElasticPDF(),
         d_forward_epr_data->getElasticAngularEnergyGrid(),
         d_forward_epr_data->getCutoffAngleCosine(),
-        data_container.getElectronTabularEvaluationTolerance() );
+        this->getElectronTabularEvaluationTolerance() );
     }
-    else if( data_container.getElectronTwoDInterpPolicy() == Utility::toString( MonteCarlo::LOGLOGLOG_INTERPOLATION ) )
+    else if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LOGLOGLOG_INTERPOLATION )
     {
       MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
         cutoff_distribution,
@@ -1549,13 +1532,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
         d_forward_epr_data->getCutoffElasticPDF(),
         d_forward_epr_data->getElasticAngularEnergyGrid(),
         d_forward_epr_data->getCutoffAngleCosine(),
-        data_container.getElectronTabularEvaluationTolerance() );
+        this->getElectronTabularEvaluationTolerance() );
     }
     else
     {
       THROW_EXCEPTION( std::runtime_error,
                        "Error: the TwoDInterpPolicy " <<
-                       data_container.getElectronTwoDInterpPolicy() <<
+                       this->getElectronTwoDInterpPolicy() <<
                        " is invalid or currently not supported!" );
     }
 
@@ -1638,7 +1621,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     brem_grid_generators->generateAndEvaluateDistributionOnPrimaryEnergyGrid(
       brem_energy_grid,
       brem_pdf,
-      data_container.getAdjointBremsstrahlungEvaluationTolerance(),
+      this->getAdjointBremsstrahlungEvaluationTolerance(),
       energy_grid,
       cross_section,
       threshold );
@@ -1690,7 +1673,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     ionization_grid_generators.find( *shell )->second->generateAndEvaluateDistributionOnPrimaryEnergyGrid(
       ionization_energy_grid,
       ionization_pdf,
-      data_container.getAdjointElectroionizationEvaluationTolerance(),
+      this->getAdjointElectroionizationEvaluationTolerance(),
       energy_grid,
       cross_section,
       threshold );
@@ -1906,14 +1889,11 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicEx
 void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstrahlungGridGenerator(
     const std::shared_ptr<const std::vector<double> >& forward_electron_energy_grid,
     const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
-    std::shared_ptr<BremsstrahlungGridGenerator>& brem_grid_generators )
+    std::shared_ptr<BremsstrahlungGridGenerator>& brem_grid_generators ) const
 {
   std::shared_ptr<const BremsstrahlungReaction> bremsstrahlung_reaction;
 
-  Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
-    this->getVolatileDataContainer();
-
-  if( data_container.getElectronTwoDInterpPolicy() == Utility::toString( MonteCarlo::LINLINLOG_INTERPOLATION ) )
+  if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLOG_INTERPOLATION )
   {
     MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLog,Utility::UnitBaseCorrelated,BremsstrahlungReaction>(
         *d_forward_epr_data,
@@ -1921,9 +1901,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
         forward_grid_searcher,
         bremsstrahlung_reaction,
         MonteCarlo::DIPOLE_DISTRIBUTION,
-        data_container.getElectronTabularEvaluationTolerance() );
+        this->getElectronTabularEvaluationTolerance() );
   }
-  else if( data_container.getElectronTwoDInterpPolicy() == Utility::toString( MonteCarlo::LINLINLIN_INTERPOLATION ) )
+  else if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLIN_INTERPOLATION )
   {
     MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLin,Utility::UnitBaseCorrelated,BremsstrahlungReaction>(
         *d_forward_epr_data,
@@ -1931,9 +1911,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
         forward_grid_searcher,
         bremsstrahlung_reaction,
         MonteCarlo::DIPOLE_DISTRIBUTION,
-        data_container.getElectronTabularEvaluationTolerance() );
+        this->getElectronTabularEvaluationTolerance() );
   }
-  else if( data_container.getElectronTwoDInterpPolicy() == Utility::toString( MonteCarlo::LOGLOGLOG_INTERPOLATION ) )
+  else if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
     MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog,Utility::UnitBaseCorrelated,BremsstrahlungReaction>(
         *d_forward_epr_data,
@@ -1941,13 +1921,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
         forward_grid_searcher,
         bremsstrahlung_reaction,
         MonteCarlo::DIPOLE_DISTRIBUTION,
-        data_container.getElectronTabularEvaluationTolerance() );
+        this->getElectronTabularEvaluationTolerance() );
   }
   else
   {
     THROW_EXCEPTION( std::runtime_error,
                      "Error: the TwoDInterpPolicy " <<
-                     data_container.getElectronTwoDInterpPolicy() <<
+                     this->getElectronTwoDInterpPolicy() <<
                      " is invalid or currently not supported!" );
   }
 
@@ -1957,11 +1937,11 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
         d_forward_epr_data->getBremsstrahlungEnergyGrid(),
         this->getMinElectronEnergy(),
         this->getMaxElectronEnergy(),
-        data_container.getAdjointBremsstrahlungMaxEnergyNudgeValue(),
-        data_container.getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(),
-        data_container.getAdjointBremsstrahlungGridConvergenceTolerance(),
-        data_container.getAdjointBremsstrahlungAbsoluteDifferenceTolerance(),
-        data_container.getAdjointBremsstrahlungDistanceTolerance() ) );
+        this->getAdjointBremsstrahlungMaxEnergyNudgeValue(),
+        this->getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(),
+        this->getAdjointBremsstrahlungGridConvergenceTolerance(),
+        this->getAdjointBremsstrahlungAbsoluteDifferenceTolerance(),
+        this->getAdjointBremsstrahlungDistanceTolerance() ) );
 }
 
 // Create the adjoint electroionization subshell grid generator
@@ -1974,16 +1954,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
     const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
     std::shared_ptr<ElectroionizationGridGenerator>&
         adjoint_electroionization_grid_generator,
-    const unsigned shell )
+    const unsigned shell ) const
 {
   // Create the subshell reaction
   std::shared_ptr<const ElectroionizationReaction>
     electroionization_subshell_reaction;
 
-  Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
-    this->getVolatileDataContainer();
-
-  if( data_container.getElectronTwoDInterpPolicy() == Utility::toString( MonteCarlo::LINLINLOG_INTERPOLATION ) )
+  if( this->getElectronTwoDInterpPolicy() ==  MonteCarlo::LINLINLOG_INTERPOLATION )
   {
     MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<Utility::LinLinLog,Utility::UnitBaseCorrelated,ElectroionizationReaction>(
         *d_forward_epr_data,
@@ -1991,9 +1968,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
         forward_grid_searcher,
         shell,
         electroionization_subshell_reaction,
-        data_container.getElectronTabularEvaluationTolerance() );
+        this->getElectronTabularEvaluationTolerance() );
   }
-  else if( data_container.getElectronTwoDInterpPolicy() == Utility::toString( MonteCarlo::LINLINLIN_INTERPOLATION ) )
+  else if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLIN_INTERPOLATION )
   {
     MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<Utility::LinLinLin,Utility::UnitBaseCorrelated,ElectroionizationReaction>(
         *d_forward_epr_data,
@@ -2001,9 +1978,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
         forward_grid_searcher,
         shell,
         electroionization_subshell_reaction,
-        data_container.getElectronTabularEvaluationTolerance() );
+        this->getElectronTabularEvaluationTolerance() );
   }
-  else if( data_container.getElectronTwoDInterpPolicy() == Utility::toString( MonteCarlo::LOGLOGLOG_INTERPOLATION ) )
+  else if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
     MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<Utility::LogLogLog,Utility::UnitBaseCorrelated,ElectroionizationReaction>(
         *d_forward_epr_data,
@@ -2011,13 +1988,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
         forward_grid_searcher,
         shell,
         electroionization_subshell_reaction,
-        data_container.getElectronTabularEvaluationTolerance() );
+        this->getElectronTabularEvaluationTolerance() );
   }
   else
   {
     THROW_EXCEPTION( std::runtime_error,
                      "Error: the TwoDInterpPolicy " <<
-                     data_container.getElectronTwoDInterpPolicy() <<
+                     this->getElectronTwoDInterpPolicy() <<
                      " is invalid or currently not supported!" );
   }
 
@@ -2036,9 +2013,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
         this->getMaxElectronEnergy(),
         2.00 * d_forward_epr_data->getSubshellBindingEnergy( shell ),
         1e-7 + d_forward_epr_data->getSubshellBindingEnergy( shell ),
-        data_container.getAdjointElectroionizationGridConvergenceTolerance(),
-        data_container.getAdjointElectroionizationAbsoluteDifferenceTolerance(),
-        data_container.getAdjointElectroionizationDistanceTolerance() ) );
+        this->getAdjointElectroionizationGridConvergenceTolerance(),
+        this->getAdjointElectroionizationAbsoluteDifferenceTolerance(),
+        this->getAdjointElectroionizationDistanceTolerance() ) );
 }
 
 // Initialize the electron union energy grid

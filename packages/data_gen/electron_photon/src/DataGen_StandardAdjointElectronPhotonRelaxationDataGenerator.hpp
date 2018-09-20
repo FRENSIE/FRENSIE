@@ -170,13 +170,13 @@ private:
   // Update the adjoint photon union energy grid
   void updateAdjointPhotonUnionEnergyGrid(
          std::list<double>& union_energy_grid,
-         const std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& cs_evaluator );
+         const std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& cs_evaluator ) const;
 
   // Update the adjoint photon union energy grid
   void updateAdjointPhotonUnionEnergyGrid(
          std::list<double>& union_energy_grid,
          const std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >&
-         cs_evaluators );
+         cs_evaluators ) const;
 
   // Update the adjoint photon union energy grid
   void updateAdjointPhotonUnionEnergyGrid(
@@ -189,14 +189,14 @@ private:
           const std::list<double>& union_energy_grid,
           const std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& cs_evaluator,
           std::vector<std::vector<double> >& max_energy_grid,
-          std::vector<std::vector<double> >& cross_section );
+          std::vector<std::vector<double> >& cross_section ) const;
 
   // Create the cross section on the union energy grid
   void createCrossSectionOnUnionEnergyGrid(
           const std::list<double>& union_energy_grid,
           const std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution>& cs_evaluator,
           std::vector<std::vector<double> >& max_energy_grid,
-          std::vector<std::vector<double> >& cross_section );
+          std::vector<std::vector<double> >& cross_section ) const;
 
   // Calculate the impulse approx total incoherent adjoint cross section
   void calculateAdjointImpulseApproxTotalIncoherentCrossSection();
@@ -236,7 +236,7 @@ private:
     const std::shared_ptr<const std::vector<double> >& forward_electron_energy_grid,
     const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
     std::shared_ptr<BremsstrahlungGridGenerator>&
-        adjoint_bremsstrahlung_grid_generator );
+        adjoint_bremsstrahlung_grid_generator ) const;
 
   // Create the adjoint electroionization subshell grid generator
   void createAdjointElectroionizationSubshellGridGenerator(
@@ -244,7 +244,7 @@ private:
     const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
     std::shared_ptr<ElectroionizationGridGenerator>&
         adjoint_electroionization_grid_generator,
-    const unsigned shell );
+    const unsigned shell ) const;
 
   // The forward data
   std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>
