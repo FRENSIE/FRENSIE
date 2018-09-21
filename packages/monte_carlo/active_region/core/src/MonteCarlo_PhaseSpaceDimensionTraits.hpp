@@ -46,7 +46,7 @@ struct PhaseSpaceDimensionTraits<PRIMARY_SPATIAL_DIMENSION>
 
   //! Get the coordinate weight
   static inline DimensionWeightType getCoordinateWeight( const PhaseSpacePoint& point )
-  { point.getPrimarySpatialCoordinateWeight(); }
+  { return point.getPrimarySpatialCoordinateWeight(); }
 
   //! Set the coordinate weight
   static inline void setCoordinateWeight( PhaseSpacePoint& point,
@@ -85,7 +85,7 @@ struct PhaseSpaceDimensionTraits<SECONDARY_SPATIAL_DIMENSION>
 
   //! Get the coordinate weight
   static inline DimensionWeightType getCoordinateWeight( const PhaseSpacePoint& point )
-  { point.getSecondarySpatialCoordinateWeight(); }
+  { return point.getSecondarySpatialCoordinateWeight(); }
 
   //! Set the coordinate weight
   static inline void setCoordinateWeight( PhaseSpacePoint& point,
@@ -124,7 +124,7 @@ struct PhaseSpaceDimensionTraits<TERTIARY_SPATIAL_DIMENSION>
 
   //! Get the coordinate weight
   static inline DimensionWeightType getCoordinateWeight( const PhaseSpacePoint& point )
-  { point.getTertiarySpatialCoordinateWeight(); }
+  { return point.getTertiarySpatialCoordinateWeight(); }
 
   //! Set the coordinate weight
   static inline void setCoordinateWeight( PhaseSpacePoint& point,
@@ -163,7 +163,7 @@ struct PhaseSpaceDimensionTraits<PRIMARY_DIRECTIONAL_DIMENSION>
 
   //! Get the coordinate weight
   static inline DimensionWeightType getCoordinateWeight( const PhaseSpacePoint& point )
-  { point.getPrimaryDirectionalCoordinateWeight(); }
+  { return point.getPrimaryDirectionalCoordinateWeight(); }
 
   //! Set the coordinate weight
   static inline void setCoordinateWeight( PhaseSpacePoint& point,
@@ -202,7 +202,7 @@ struct PhaseSpaceDimensionTraits<SECONDARY_DIRECTIONAL_DIMENSION>
 
   //! Get the coordinate weight
   static inline DimensionWeightType getCoordinateWeight( const PhaseSpacePoint& point )
-  { point.getSecondaryDirectionalCoordinateWeight(); }
+  { return point.getSecondaryDirectionalCoordinateWeight(); }
 
   //! Set the coordinate weight
   static inline void setCoordinateWeight( PhaseSpacePoint& point,
@@ -241,7 +241,7 @@ struct PhaseSpaceDimensionTraits<TERTIARY_DIRECTIONAL_DIMENSION>
 
   //! Get the coordinate weight
   static inline DimensionWeightType getCoordinateWeight( const PhaseSpacePoint& point )
-  { point.getTertiaryDirectionalCoordinateWeight(); }
+  { return point.getTertiaryDirectionalCoordinateWeight(); }
 
   //! Set the coordinate weight
   static inline void setCoordinateWeight( PhaseSpacePoint& point,
@@ -280,7 +280,7 @@ struct PhaseSpaceDimensionTraits<ENERGY_DIMENSION>
 
   //! Get the coordinate weight
   static inline DimensionWeightType getCoordinateWeight( const PhaseSpacePoint& point )
-  { point.getEnergyCoordinateWeight(); }
+  { return point.getEnergyCoordinateWeight(); }
 
   //! Set the coordinate weight
   static inline void setCoordinateWeight( PhaseSpacePoint& point,
@@ -319,7 +319,7 @@ struct PhaseSpaceDimensionTraits<TIME_DIMENSION>
 
   //! Get the coordinate weight
   static inline DimensionWeightType getCoordinateWeight( const PhaseSpacePoint& point )
-  { point.getTimeCoordinateWeight(); }
+  { return point.getTimeCoordinateWeight(); }
 
   //! Set the coordinate weight
   static inline void setCoordinateWeight( PhaseSpacePoint& point,
@@ -363,7 +363,7 @@ struct PhaseSpaceDimensionTraits<WEIGHT_DIMENSION>
 
   //! Get the coordinate weight
   static inline DimensionWeightType getCoordinateWeight( const PhaseSpacePoint& point )
-  { point.getWeightCoordinate(); }
+  { return point.getWeightCoordinate(); }
 
   //! Set the coordinate weight
   static inline void setCoordinateWeight( PhaseSpacePoint&,
