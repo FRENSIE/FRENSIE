@@ -109,6 +109,18 @@ AdjointElectronPhotonRelaxationDataGenerator::AdjointElectronPhotonRelaxationDat
   d_default_electron_grid_generator->throwExceptionOnDirtyConvergence();
 }
 
+// Set the table notes
+void AdjointElectronPhotonRelaxationDataGenerator::setNotes( const std::string& notes )
+{
+  d_data_container.setNotes( notes );
+}
+
+// Return the table notes
+const std::string& AdjointElectronPhotonRelaxationDataGenerator::getNotes() const
+{
+  return d_data_container.getNotes();
+}
+
 // Get the atomic number
 unsigned AdjointElectronPhotonRelaxationDataGenerator::getAtomicNumber() const
 {

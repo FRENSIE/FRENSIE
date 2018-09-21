@@ -40,6 +40,12 @@ public:
   virtual ~AdjointElectronPhotonRelaxationDataGenerator()
   { /* ... */ }
 
+  //! Set the table notes
+  void setNotes( const std::string& notes );
+
+  //! Return the table notes
+  const std::string& getNotes() const;
+
   //! Get the atomic number
   unsigned getAtomicNumber() const;
 
