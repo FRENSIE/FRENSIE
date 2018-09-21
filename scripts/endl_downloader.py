@@ -107,7 +107,8 @@ elemental_information = {"H":   "001000",
 def generateBashScript( element_list ):
 
     # The site base path
-    site_base_path = "https://www-nds.iaea.org/epics/ENDL_bkp/"
+    #site_base_path = "https://www.nndc.bnl.gov/endf/epics/ENDL2017/"
+    site_base_path = "https://www-nds.iaea.org/epics2014/ENDL/"
     
     print "#!/bin/bash"
     print "##---------------------------------------------------------------------------##"
@@ -151,7 +152,7 @@ def generateBashScript( element_list ):
             print element_name, " is not valid!"
             sys.exit(1)
 
-        element = "ZA" + elemental_information[element_name]
+        element = "za" + elemental_information[element_name]
 
         print "  printf \"Getting " + element + " data: \\t\""
 

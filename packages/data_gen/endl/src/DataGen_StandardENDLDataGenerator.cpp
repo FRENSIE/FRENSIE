@@ -913,6 +913,27 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
         std::vector<double> indep_data, dep_data;
         epdl_file_handler->processTwoColumnTable( indep_data, dep_data );
 
+        // Check the form factor units and convert to 1/cm if possible - there
+        // is an unreported unit conversion from the EPICS14 to EPICS17 from
+        // 1/cm to 1/(10^-16 m).
+        if( indep_data[1] != 1.0e5 )
+        {
+          TEST_FOR_EXCEPTION( interpolation_flag != 0 &&
+                              interpolation_flag != 2 &&
+                              interpolation_flag != 4,
+                              std::runtime_error,
+                              "The atomic form factor arguments cannot be "
+                              "scaled because the argument grid is not "
+                              "linear!" );
+          
+          {
+            double scale_factor = 1.0e5/indep_data[1];
+            
+            for( size_t i = 0; i < indep_data.size(); ++i )
+              indep_data[i] *= scale_factor;
+          }
+        }
+
         data_container.setCoherentFormFactorArgument( indep_data );
         data_container.setCoherentFormFactor( dep_data );
 
@@ -931,6 +952,27 @@ void StandardENDLDataGenerator::populateEPDLDataContainer()
       {
         std::vector<double> indep_data, dep_data;
         epdl_file_handler->processTwoColumnTable( indep_data, dep_data );
+
+        // Check the form factor units and convert to 1/cm if possible - there
+        // is an unreported unit conversion from the EPICS14 to EPICS17 from
+        // 1/cm to 1/(10^-16 m).
+        if( indep_data[1] != 10.0 )
+        {
+          TEST_FOR_EXCEPTION( interpolation_flag != 0 &&
+                              interpolation_flag != 2 &&
+                              interpolation_flag != 4,
+                              std::runtime_error,
+                              "The scattering function arguments cannot be "
+                              "scaled because the argument grid is not "
+                              "linear!" );
+          
+          {
+            double scale_factor = 10.0/indep_data[1];
+            
+            for( size_t i = 0; i < indep_data.size(); ++i )
+              indep_data[i] *= scale_factor;
+          }
+        }
 
         data_container.setIncoherentScatteringFunctionArgument( indep_data );
         data_container.setIncoherentScatteringFunction( dep_data );
