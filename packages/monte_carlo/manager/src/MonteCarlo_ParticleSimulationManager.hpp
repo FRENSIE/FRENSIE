@@ -31,7 +31,7 @@ extern "C" void __custom_signal_handler__( int signal );
 namespace MonteCarlo{
 
 //! The particle simulation manager base class
-class ParticleSimulationManager : public std::enable_shared_from_this<ParticleSimulationManager> 
+class ParticleSimulationManager : public std::enable_shared_from_this<ParticleSimulationManager>
 {
 
 public:
@@ -64,15 +64,18 @@ public:
   //! Return the event handler
   EventHandler& getEventHandler();
 
+  //! Return the simulation properties
+  const SimulationProperties& getSimulationProperties() const;
+
   //! Set the simulation name
   void setSimulationName( const std::string& new_name );
-  
+
   //! Get the simulation name
   const std::string& getSimulationName() const;
 
   //! Set the simulation archive type
   void setSimulationArchiveType( const std::string& archive_type );
-  
+
   //! Get the simulation archive type
   const std::string& getSimulationArchiveType() const;
 
@@ -215,7 +218,7 @@ private:
 
   // The transport kernel
   std::unique_ptr<const TransportKernel> d_transport_kernel;
-  
+
   // The particle source
   std::shared_ptr<ParticleSource> d_source;
 

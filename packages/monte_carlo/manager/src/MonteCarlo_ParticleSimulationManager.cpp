@@ -139,7 +139,7 @@ void ParticleSimulationManager::incrementNextHistory( const uint64_t increment_s
 {
   d_next_history += increment_size;
 }
-  
+
 // Return the model
 const FilledGeometryModel& ParticleSimulationManager::getModel() const
 {
@@ -162,6 +162,12 @@ const EventHandler& ParticleSimulationManager::getEventHandler() const
 EventHandler& ParticleSimulationManager::getEventHandler()
 {
   return *d_event_handler;
+}
+
+// Return the simulation properties
+const SimulationProperties& ParticleSimulationManager::getSimulationProperties() const
+{
+  return *d_properties;
 }
 
 // Get the simulation name
@@ -188,7 +194,7 @@ const std::string& ParticleSimulationManager::getSimulationArchiveType() const
 }
 
 // Set the simulation archive type
-/*! \details Acceptable values are "xml", "txt", "bin", "h5fa". A simulation 
+/*! \details Acceptable values are "xml", "txt", "bin", "h5fa". A simulation
  * archive of the new type will be generated.
  */
 void ParticleSimulationManager::setSimulationArchiveType( const std::string& archive_type )
@@ -200,7 +206,7 @@ void ParticleSimulationManager::setSimulationArchiveType( const std::string& arc
 }
 
 // Set the simulation name and archive type
-/*! \details Acceptable values for the archive type are "xml", "txt", "bin", 
+/*! \details Acceptable values for the archive type are "xml", "txt", "bin",
  * "h5fa". A simulation archive with the new name and type will be generated.
  */
 void ParticleSimulationManager::setSimulationNameAndArchiveType(
@@ -209,7 +215,7 @@ void ParticleSimulationManager::setSimulationNameAndArchiveType(
 {
   if( new_name.size() > 0 )
     d_simulation_name = new_name;
-  
+
   if( archive_type.size() > 0 )
     d_archive_type = archive_type;
 
@@ -232,7 +238,7 @@ void ParticleSimulationManager::runSimulation()
   this->registerSimulationStartedEvent();
 
   uint64_t next_rendezvous_history = d_next_history + d_rendezvous_batch_size;
-  
+
   while( !d_event_handler->isSimulationComplete() )
   {
     if( !d_end_simulation )
@@ -243,7 +249,7 @@ void ParticleSimulationManager::runSimulation()
     }
     else // end the simulation if requested (from signal handler)
       break;
-    
+
     if( next_rendezvous_history <= d_next_history )
     {
       this->rendezvous();
@@ -271,9 +277,9 @@ void ParticleSimulationManager::runSimulation()
 // Run the simulation set up by the user with the ability to interrupt
 /*! \details Sending a SIGINT signal (usually Ctrl+C) will cause the
  * simulation to be terminated once the current batch is completed. Sending
- * a second SIGINT signal before the simulation has been terminated will 
+ * a second SIGINT signal before the simulation has been terminated will
  * cause the program to exit immediately.
- */ 
+ */
 void ParticleSimulationManager::runInterruptibleSimulation()
 {
   #pragma omp critical (register_manager)
@@ -283,7 +289,7 @@ void ParticleSimulationManager::runInterruptibleSimulation()
       __default_signal_handler__ =
         std::signal( SIGINT, __custom_signal_handler__ );
     }
-        
+
     __registered_managers__.insert( this->shared_from_this() );
   }
 
@@ -292,7 +298,7 @@ void ParticleSimulationManager::runInterruptibleSimulation()
   #pragma omp critical (register_manager)
   {
     __registered_managers__.erase( this->shared_from_this() );
-    
+
     if( __registered_managers__.empty() )
       std::signal( SIGINT, __default_signal_handler__ );
   }
@@ -323,7 +329,7 @@ void ParticleSimulationManager::reduceData( const Utility::Communicator& comm,
                                             const int root_process )
 {
   comm.barrier();
-  
+
   d_source->reduceData( comm, root_process );
   d_event_handler->reduceObserverData( comm, root_process );
 
@@ -370,7 +376,7 @@ void ParticleSimulationManager::basicRendezvous() const
                             << d_next_history );
 
   FRENSIE_FLUSH_ALL_LOGS();
-  
+
   ParticleSimulationManagerFactory
     tmp_factory( d_model,
                  d_source,
@@ -412,7 +418,7 @@ void ParticleSimulationManager::runSimulationBatch(
   {
     // Create a bank for each thread
     ParticleBank source_bank, bank;
-    
+
     #pragma omp for
     for( uint64_t history = batch_start_history; history < batch_end_history; ++history )
     {
@@ -426,9 +432,9 @@ void ParticleSimulationManager::runSimulationBatch(
       catch( const Geometry::GeometryError& exception )
       {
         LOG_LOST_PARTICLE_DETAILS( source_bank.top() );
-        
+
         FRENSIE_LOG_NESTED_ERROR( exception.what() );
-        
+
         continue;
       }
       catch( const std::runtime_error& exception )
@@ -441,7 +447,7 @@ void ParticleSimulationManager::runSimulationBatch(
       catch( const std::logic_error& exception )
       {
         FRENSIE_LOG_ERROR( "There is an issue with the source!" );
-        
+
         FRENSIE_LOG_NESTED_ERROR( exception.what() );
 
         std::exit( 1 );
@@ -451,15 +457,15 @@ void ParticleSimulationManager::runSimulationBatch(
       while( source_bank.size() > 0 )
       {
         this->simulateUnresolvedParticle( source_bank.top(), bank, true );
-        
+
         source_bank.pop();
       }
 
       // This history only ends when the particle bank is empty
       while( bank.size() > 0 )
-      {            
+      {
         this->simulateUnresolvedParticle( bank.top(), bank, false );
-        
+
         bank.pop();
       }
 
@@ -481,12 +487,12 @@ void ParticleSimulationManager::signalHandler( int signal )
     static int number_of_signals_handled = 0;
 
     ++number_of_signals_handled;
-    
+
     FRENSIE_LOG_NOTIFICATION( "Terminating simulation..." );
-    
+
     if( number_of_signals_handled == 1 )
       d_end_simulation = true;
-    
+
     this->exitIfRequired( number_of_signals_handled, signal );
   }
 }
@@ -510,7 +516,7 @@ bool ParticleSimulationManager::hasEndSimulationRequestBeenMade() const
 {
   return d_end_simulation;
 }
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
