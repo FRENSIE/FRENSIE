@@ -45,6 +45,12 @@ const std::vector<double>& ENDLDataContainer::getCoherentCrossSection() const
   return d_coherent_cross_section;
 }
 
+// Return the coherent photon cross section interpolation type
+const std::string& ENDLDataContainer::getCoherentCrossSectionInterpType() const
+{
+  return d_coherent_cross_section_interp_type;
+}
+
 // Return the argument for the coherent form factor
 const std::vector<double>& ENDLDataContainer::getCoherentFormFactorArgument() const
 {
@@ -55,6 +61,12 @@ const std::vector<double>& ENDLDataContainer::getCoherentFormFactorArgument() co
 const std::vector<double>& ENDLDataContainer::getCoherentFormFactor() const
 {
   return d_coherent_form_factor;
+}
+
+// Return the coherent form factor interpolation type
+const std::string& ENDLDataContainer::getCoherentFormFactorInterpType() const
+{
+  return d_coherent_form_factor_interp_type;
 }
 
 // Return the incident energy grid for the coherent imaginary anomalous scattering factor
@@ -70,6 +82,12 @@ const std::vector<double>& ENDLDataContainer::getCoherentImaginaryAnomalousFacto
   return d_coherent_imaginary_anomalous_scattering_factor;
 }
 
+// Return the coherent imaginary anomalous scattering factor interpolation type
+const std::string& ENDLDataContainer::getCoherentImaginaryAnomalousFactorInterpType() const
+{
+  return d_coherent_imaginary_anomalous_scattering_factor_interp_type;
+}
+
 // Return the incident energy grid for the coherent real anomalous scattering factor
 const std::vector<double>&
   ENDLDataContainer::getCoherentRealAnomalousFactorIncidentEnergy() const
@@ -81,6 +99,12 @@ const std::vector<double>&
 const std::vector<double>& ENDLDataContainer::getCoherentRealAnomalousFactor() const
 {
   return d_coherent_real_anomalous_scattering_factor;
+}
+
+// Return the coherent real anomalous scattering factor interpolation type
+const std::string& ENDLDataContainer::getCoherentRealAnomalousFactorInterpType() const
+{
+  return d_coherent_real_anomalous_scattering_factor_interp_type;
 }
 
 // Return the incident energy grid for the coherent average energy of the scattered photon
@@ -100,6 +124,12 @@ const std::vector<double>& ENDLDataContainer::getCoherentAveragePhotonEnergy() c
   return d_coherent_average_photon_energy;
 }
 
+// Return the coherent average energy of the scattered photon
+const std::string& ENDLDataContainer::getCoherentAveragePhotonEnergyInterpType() const
+{
+  return d_coherent_average_photon_energy_interp_type;
+}
+
 //---------------------------------------------------------------------------//
 // GET INCOHERENT PHOTON DATA
 //---------------------------------------------------------------------------//
@@ -116,6 +146,12 @@ const std::vector<double>& ENDLDataContainer::getIncoherentCrossSection() const
   return d_incoherent_cross_section;
 }
 
+// Return the incoherent photon cross section interpolation type
+const std::string& ENDLDataContainer::getIncoherentCrossSectionInterpType() const
+{
+  return d_incoherent_cross_section_interp_type;
+}
+
 // Return the argument for the incoherent scattering function
 const std::vector<double>& ENDLDataContainer::getIncoherentScatteringFunctionArgument() const
 {
@@ -126,6 +162,12 @@ const std::vector<double>& ENDLDataContainer::getIncoherentScatteringFunctionArg
 const std::vector<double>& ENDLDataContainer::getIncoherentScatteringFunction() const
 {
   return d_incoherent_scattering_function;
+}
+
+// Return the incoherent scattering function
+const std::string& ENDLDataContainer::getIncoherentScatteringFunctionInterpType() const
+{
+  return d_incoherent_scattering_function_interp_type;
 }
 
 // Return the incident energy grid for the incoherent average energy of the scattered photon
@@ -140,6 +182,12 @@ const std::vector<double>& ENDLDataContainer::getIncoherentAveragePhotonEnergy()
   return d_incoherent_average_photon_energy;
 }
 
+// Return the incoherent average energy of the scattered photon interpolation type
+const std::string& ENDLDataContainer::getIncoherentAveragePhotonEnergyInterpType() const
+{
+  return d_incoherent_average_photon_energy_interp_type;
+}
+
 // Return the incident energy grid for the incoherent average energy of the recoil electron
 const std::vector<double>& ENDLDataContainer::getIncoherentAverageElectronIncidentEnergy() const
 {
@@ -150,6 +198,12 @@ const std::vector<double>& ENDLDataContainer::getIncoherentAverageElectronIncide
 const std::vector<double>& ENDLDataContainer::getIncoherentAverageElectronEnergy() const
 {
   return d_incoherent_average_electron_energy;
+}
+
+// Return the incoherent average energy of the recoil electron interpolation type
+const std::string& ENDLDataContainer::getIncoherentAverageElectronEnergyInterpType() const
+{
+  return d_incoherent_average_electron_energy_interp_type;
 }
 
 //---------------------------------------------------------------------------//
@@ -168,6 +222,12 @@ const std::vector<double>& ENDLDataContainer::getPhotoelectricCrossSection() con
   return d_photoelectric_cross_section;
 }
 
+// Return the photoelectric photon cross section interpolation type
+const std::string& ENDLDataContainer::getPhotoelectricCrossSectionInterpType() const
+{
+  return d_photoelectric_cross_section_interp_type;
+}
+
 // Return the incident energy grid for the photoelectric average energy of the residual atom
 const std::vector<double>& ENDLDataContainer::getPhotoelectricAverageResidualIncidentEnergy() const
 {
@@ -181,6 +241,12 @@ const std::vector<double>& ENDLDataContainer::getPhotoelectricAverageResidualInc
 const std::vector<double>& ENDLDataContainer::getPhotoelectricAverageResidualEnergy() const
 {
   return d_photoelectric_average_residual_energy;
+}
+
+// Return the photoelectric average energy of the residual atom interpolation type
+const std::string& ENDLDataContainer::getPhotoelectricAverageResidualEnergyInterpType() const
+{
+  return d_photoelectric_average_residual_energy_interp_type;
 }
 
 // Return the incident energy grid for the photoelectric average energy of the secondary photons
@@ -199,6 +265,12 @@ const std::vector<double>& ENDLDataContainer::getPhotoelectricAveragePhotonsEner
   return d_photoelectric_secondary_photons_energy;
 }
 
+// Return the photoelectric average energy of the secondary photons interpolation type
+const std::string& ENDLDataContainer::getPhotoelectricAveragePhotonsEnergyInterpType() const
+{
+  return d_photoelectric_secondary_photons_energy_interp_type;
+}
+
 // Return the incident energy grid for the photoelectric average energy of the secondary electrons
 const std::vector<double>& ENDLDataContainer::getPhotoelectricAverageElectronsIncidentEnergy() const
 {
@@ -215,6 +287,12 @@ const std::vector<double>& ENDLDataContainer::getPhotoelectricAverageElectronsEn
   return d_photoelectric_secondary_electrons_energy;
 }
 
+// Return the photoelectric average energy of the secondary electrons
+const std::string& ENDLDataContainer::getPhotoelectricAverageElectronsEnergyInterpType() const
+{
+  return d_photoelectric_secondary_electrons_energy_interp_type;
+}
+
 //---------------------------------------------------------------------------//
 // GET PHOTOELECTRIC PHOTON DATA BY SUBSHELL
 //---------------------------------------------------------------------------//
@@ -229,7 +307,7 @@ const std::vector<double>&
   return d_photoelectric_subshell_cross_section_energy_grid.find( subshell )->second;
 }
 
-// Return the photoelectric photon cross section a subshell
+// Return the photoelectric photon cross section for a subshell
 const std::vector<double>&
   ENDLDataContainer::getPhotoelectricCrossSection( const unsigned subshell ) const
 {
@@ -239,7 +317,17 @@ const std::vector<double>&
   return d_photoelectric_subshell_cross_section.find( subshell )->second;
 }
 
-// Return the incident energy grid for the photoelectric average energy of the residual atom a subshell
+// Return the photoelectric photon cross section interpolation type for a subshell
+const std::string&
+  ENDLDataContainer::getPhotoelectricCrossSectionInterpType( const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+
+  return d_photoelectric_subshell_cross_section_interp_type.find( subshell )->second;
+}
+
+// Return the incident energy grid for the photoelectric average energy of the residual atom for a subshell
 const std::vector<double>&
   ENDLDataContainer::getPhotoelectricAverageResidualIncidentEnergy( const unsigned subshell ) const
 {
@@ -249,7 +337,7 @@ const std::vector<double>&
   return d_photoelectric_subshell_average_residual_incident_energy.find( subshell )->second;
 }
 
-// Return the photoelectric average energy of the residual atom a subshell
+// Return the photoelectric average energy of the residual atom for a subshell
 /*! \details The average energy to the residual atom insures energy
  * conservation and is deposited locally.
  */
@@ -262,7 +350,20 @@ const std::vector<double>&
   return d_photoelectric_subshell_average_residual_energy.find( subshell )->second;
 }
 
-// Return the incident energy grid for the photoelectric average energy of the secondary photons a subshell
+// Return the photoelectric average energy of the residual atom interpolation type for a subshell
+/*! \details The average energy to the residual atom insures energy
+ * conservation and is deposited locally.
+ */
+const std::string&
+  ENDLDataContainer::getPhotoelectricAverageResidualEnergyInterpType( const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+
+  return d_photoelectric_subshell_average_residual_energy_interp_type.find( subshell )->second;
+}
+
+// Return the incident energy grid for the photoelectric average energy of the secondary photons for a subshell
 const std::vector<double>&
   ENDLDataContainer::getPhotoelectricAveragePhotonsIncidentEnergy( const unsigned subshell ) const
 {
@@ -272,7 +373,7 @@ const std::vector<double>&
   return d_photoelectric_subshell_secondary_photons_incident_energy.find( subshell )->second;
 }
 
-// Return the photoelectric average energy of the secondary photons a subshell
+// Return the photoelectric average energy of the secondary photons for a subshell
 /*! \details For the photoelectric effect, photons and electrons are
  * released from the atom. These are accounted for in energy deposition through
  * the atom relaxation data.
@@ -286,7 +387,17 @@ const std::vector<double>&
   return d_photoelectric_subshell_secondary_photons_energy.find( subshell )->second;
 }
 
-// Return the incident energy grid for the photoelectric average energy of the secondary electrons a subshell
+// Return the photoelectric average energy of the secondary photons interpolation type for a subshell
+const std::string&
+  ENDLDataContainer::getPhotoelectricAveragePhotonsEnergyInterpType( const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+
+  return d_photoelectric_subshell_secondary_photons_energy_interp_type.find( subshell )->second;
+}
+
+// Return the incident energy grid for the photoelectric average energy of the secondary electrons for a subshell
 const std::vector<double>&
   ENDLDataContainer::getPhotoelectricAverageElectronsIncidentEnergy( const unsigned subshell ) const
 {
@@ -296,7 +407,7 @@ const std::vector<double>&
   return d_photoelectric_subshell_secondary_electrons_incident_energy.find( subshell )->second;
 }
 
-// Return the photoelectric average energy of the secondary electrons a subshell
+// Return the photoelectric average energy of the secondary electrons for a subshell
 /*! \details For the photoelectric effect, photons and electrons are
  * released from the atom. These are accounted for in energy deposition through
  * the atom relaxation data.
@@ -308,6 +419,16 @@ const std::vector<double>&
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
 
   return d_photoelectric_subshell_secondary_electrons_energy.find( subshell )->second;
+}
+
+// Return the photoelectric average energy of the secondary electrons for a subshell
+const std::string&
+  ENDLDataContainer::getPhotoelectricAverageElectronsEnergyInterpType( const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+
+  return d_photoelectric_subshell_secondary_electrons_energy_interp_type.find( subshell )->second;
 }
 
 //---------------------------------------------------------------------------//
@@ -326,6 +447,12 @@ const std::vector<double>& ENDLDataContainer::getPairProductionCrossSection() co
   return d_pair_production_cross_section;
 }
 
+// Return the pair production photon cross section interpolation type
+const std::string& ENDLDataContainer::getPairProductionCrossSectionInterpType() const
+{
+  return d_pair_production_cross_section_interp_type;
+}
+
 // Return the incident energy grid for the pair production average energy of the secondary positron
 const std::vector<double>& ENDLDataContainer::getPairProductionAveragePositronIncidentEnergy() const
 {
@@ -338,6 +465,12 @@ const std::vector<double>& ENDLDataContainer::getPairProductionAveragePositronEn
   return d_pair_production_average_positron_energy;
 }
 
+// Return the pair production average energy of the secondary positron interpolation type
+const std::string& ENDLDataContainer::getPairProductionAveragePositronEnergyInterpType() const
+{
+  return d_pair_production_average_positron_energy_interp_type;
+}
+
 // Return the incident energy grid for the pair production average energy of the secondary electron
 const std::vector<double>& ENDLDataContainer::getPairProductionAverageElectronIncidentEnergy() const
 {
@@ -348,6 +481,12 @@ const std::vector<double>& ENDLDataContainer::getPairProductionAverageElectronIn
 const std::vector<double>& ENDLDataContainer::getPairProductionAverageElectronEnergy() const
 {
   return d_pair_production_average_electron_energy;
+}
+
+// Return the pair production average energy of the secondary electron interpolation type
+const std::string& ENDLDataContainer::getPairProductionAverageElectronEnergyInterpType() const
+{
+  return d_pair_production_average_electron_energy_interp_type;
 }
 
 //---------------------------------------------------------------------------//
@@ -366,6 +505,12 @@ const std::vector<double>& ENDLDataContainer::getTripletProductionCrossSection()
   return d_triplet_production_cross_section;
 }
 
+// Return the triplet production photon cross section interpolation type
+const std::string& ENDLDataContainer::getTripletProductionCrossSectionInterpType() const
+{
+  return d_triplet_production_cross_section_interp_type;
+}
+
 // Return the incident energy grid for the triplet production average energy of the secondary positron
 const std::vector<double>& ENDLDataContainer::getTripletProductionAveragePositronIncidentEnergy() const
 {
@@ -378,6 +523,12 @@ const std::vector<double>& ENDLDataContainer::getTripletProductionAveragePositro
   return d_triplet_production_average_positron_energy;
 }
 
+// Return the triplet production average energy of the secondary positron interpolation type
+const std::string& ENDLDataContainer::getTripletProductionAveragePositronEnergyInterpType() const
+{
+  return d_triplet_production_average_positron_energy_interp_type;
+}
+
 // Return the incident energy grid for the triplet production average energy of the secondary electron
 const std::vector<double>& ENDLDataContainer::getTripletProductionAverageElectronIncidentEnergy() const
 {
@@ -388,6 +539,12 @@ const std::vector<double>& ENDLDataContainer::getTripletProductionAverageElectro
 const std::vector<double>& ENDLDataContainer::getTripletProductionAverageElectronEnergy() const
 {
   return d_triplet_production_average_electron_energy;
+}
+
+// Return the triplet production average energy of the secondary electron interpolation type
+const std::string& ENDLDataContainer::getTripletProductionAverageElectronEnergyInterpType() const
+{
+  return d_triplet_production_average_electron_energy_interp_type;
 }
 
 //---------------------------------------------------------------------------//

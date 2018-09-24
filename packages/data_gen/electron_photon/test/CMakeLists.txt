@@ -27,6 +27,28 @@ FRENSIE_ADD_TEST(OccupationNumberEvaluator
 FRENSIE_ADD_TEST_EXECUTABLE(DefaultComptonProfileGenerator DEPENDS tstDefaultComptonProfileGenerator.cpp)
 FRENSIE_ADD_TEST(DefaultComptonProfileGenerator)
 
+# Add ENDLElectronPhotonRelaxationDataGenerator
+FRENSIE_ADD_TEST_EXECUTABLE(ENDLElectronPhotonRelaxationDataGenerator
+  DEPENDS tstENDLElectronPhotonRelaxationDataGenerator.cpp
+  TARGET_DEPENDS ${TEST_H_ENDL_NATIVE_FILE_TARGET} ${TEST_C_ENDL_NATIVE_FILE_TARGET})
+FRENSIE_ADD_TEST(ENDLElectronPhotonRelaxationDataGenerator
+  EXTRA_ARGS
+  --test_h_endl_file=${TEST_H_ENDL_NATIVE_FILE}
+  --test_c_endl_file=${TEST_C_ENDL_NATIVE_FILE})
+
+# Add ACEAndENDLElectronPhotonRelaxationDataGenerator
+FRENSIE_ADD_TEST_EXECUTABLE(ACEAndENDLElectronPhotonRelaxationDataGenerator
+  DEPENDS tstACEAndENDLElectronPhotonRelaxationDataGenerator.cpp
+  TARGET_DEPENDS ${TEST_H_ENDL_NATIVE_FILE_TARGET} ${TEST_C_ENDL_NATIVE_FILE_TARGET})
+FRENSIE_ADD_TEST(ACEAndENDLElectronPhotonRelaxationDataGenerator
+  EXTRA_ARGS
+  --test_h_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt
+  --test_h_ace_table=1000.12p
+  --test_h_endl_file=${TEST_H_ENDL_NATIVE_FILE}
+  --test_c_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_c_epr_ace_file.txt
+  --test_c_ace_table=6000.12p
+  --test_c_endl_file=${TEST_C_ENDL_NATIVE_FILE})
+
 # Add AdjointElectronGridGenerator
 FRENSIE_ADD_TEST_EXECUTABLE(AdjointElectronGridGenerator DEPENDS tstAdjointElectronGridGenerator.cpp)
 FRENSIE_ADD_TEST(AdjointElectronGridGenerator
@@ -64,24 +86,6 @@ FRENSIE_ADD_TEST(StandardMomentPreservingElectronDataGenerator
   --test_h_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml
   --test_pb_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml
   --test_al_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml)
-
-# Add ENDLElectronPhotonRelaxationDataGenerator
-FRENSIE_ADD_TEST_EXECUTABLE(ENDLElectronPhotonRelaxationDataGenerator DEPENDS tstENDLElectronPhotonRelaxationDataGenerator.cpp)
-FRENSIE_ADD_TEST(ENDLElectronPhotonRelaxationDataGenerator
-  EXTRA_ARGS
-  --test_h_endl_file=${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_endl_native.xml
-  --test_c_endl_file=${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_c_endl_native.xml)
-
-# Add ACEAndENDLElectronPhotonRelaxationDataGenerator
-FRENSIE_ADD_TEST_EXECUTABLE(ACEAndENDLElectronPhotonRelaxationDataGenerator DEPENDS tstACEAndENDLElectronPhotonRelaxationDataGenerator.cpp)
-FRENSIE_ADD_TEST(ACEAndENDLElectronPhotonRelaxationDataGenerator
-  EXTRA_ARGS
-  --test_h_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt
-  --test_h_ace_table=1000.12p
-  --test_h_endl_file=${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_endl_native.xml
-  --test_c_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_c_epr_ace_file.txt
-  --test_c_ace_table=6000.12p
-  --test_c_endl_file=${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_c_endl_native.xml)
 
 # Add StandardAdjointElectronPhotonRelaxationDataGenerator
 FRENSIE_ADD_TEST_EXECUTABLE(StandardAdjointElectronPhotonRelaxationDataGenerator DEPENDS tstStandardAdjointElectronPhotonRelaxationDataGenerator.cpp)

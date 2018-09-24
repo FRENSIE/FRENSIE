@@ -110,18 +110,6 @@ void addU238ACEFile( const boost::filesystem::path& ace_test_data_dir,
 void addUEPRACEFile( const boost::filesystem::path& ace_test_data_dir,
                      Data::ScatteringCenterPropertiesDatabase& database );
 
-//! Add the "test_h_endl_native.xml" properties
-void addHENDLNativeFile( const boost::filesystem::path& endl_test_data_dir,
-                         Data::ScatteringCenterPropertiesDatabase& database );
-
-//! Add the "test_c_endl_native.xml" properties
-void addCENDLNativeFile( const boost::filesystem::path& endl_test_data_dir,
-                         Data::ScatteringCenterPropertiesDatabase& database );
-
-//! Add the "test_pb_endl_native.xml" properties
-void addPbENDLNativeFile( const boost::filesystem::path& endl_test_data_dir,
-                          Data::ScatteringCenterPropertiesDatabase& database );
-
 //! Add the "test_epr_1_native.xml" properties
 void addHNativeEPRFile( const boost::filesystem::path& native_test_data_dir,
                         Data::ScatteringCenterPropertiesDatabase& database );
@@ -223,27 +211,6 @@ void addUACETestFiles( const boost::filesystem::path& ace_test_data_dir,
   Details::addUEPRACEFile( ace_test_data_dir, database );
 }
 
-//! Add the ENDL test files for H
-void addHENDLTestFiles( const boost::filesystem::path& endl_test_data_dir,
-                        Data::ScatteringCenterPropertiesDatabase& database )
-{
-  Details::addHENDLNativeFile( endl_test_data_dir, database );
-}
-
-//! Add the ENDL test files for C
-void addCENDLTestFiles( const boost::filesystem::path& endl_test_data_dir,
-                        Data::ScatteringCenterPropertiesDatabase& database )
-{
-  Details::addCENDLNativeFile( endl_test_data_dir, database );
-}
-
-//! Add the ENDL test files for Pb
-void addPbENDLTestFiles( const boost::filesystem::path& endl_test_data_dir,
-                         Data::ScatteringCenterPropertiesDatabase& database )
-{
-  Details::addPbENDLNativeFile( endl_test_data_dir, database );
-}
-
 //! Add the Native test files for H
 void addHNativeTestFiles( const boost::filesystem::path& native_test_data_dir,
                           Data::ScatteringCenterPropertiesDatabase& database )
@@ -298,9 +265,6 @@ int main( int argc, char** argv )
       ("native_dir,n",
        boost::program_options::value<std::string>(),
        "specify the relative location of the native test data directory")
-      ("endl_dir,e",
-       boost::program_options::value<std::string>(),
-       "specify the relative location of the endl test data directory")
       ("database_name,o",
        boost::program_options::value<std::string>()->default_value("database.xml"),
        "Set the database output file name");
@@ -338,20 +302,6 @@ int main( int argc, char** argv )
   ace_test_data_dir = boost::filesystem::relative( ace_test_data_dir );
                                                    
 
-  // Set the endl test data directory path
-  TEST_FOR_EXCEPTION( !command_line_arguments.count( "endl_dir" ),
-                      std::runtime_error,
-                      "The endl test data directory must be specified!" );
-
-  boost::filesystem::path endl_test_data_dir =
-    command_line_arguments["endl_dir"].as<std::string>();
-
-  TEST_FOR_EXCEPTION( !boost::filesystem::is_directory( endl_test_data_dir ),
-                      std::runtime_error,
-                      "The endl test data directory is not valid!" );
-
-  endl_test_data_dir = boost::filesystem::relative( endl_test_data_dir );
-
   // Set the native test data directory path
   TEST_FOR_EXCEPTION( !command_line_arguments.count( "native_dir" ),
                       std::runtime_error,
@@ -377,11 +327,6 @@ int main( int argc, char** argv )
   addAuACETestFiles( ace_test_data_dir, database );
   addPbACETestFiles( ace_test_data_dir, database );
   addUACETestFiles( ace_test_data_dir, database );
-
-  // Add the endl data properties
-  addHENDLTestFiles( endl_test_data_dir, database );
-  addCENDLTestFiles( endl_test_data_dir, database );
-  addPbENDLTestFiles( endl_test_data_dir, database );
 
   // Add the native data properties
   addHNativeTestFiles( native_test_data_dir, database );
@@ -1113,126 +1058,6 @@ void addUEPRACEFile( const boost::filesystem::path& ace_test_data_dir,
                                                             ace_test_data_file,
                                                             1,
                                                             "92000.12p" ) );
-
-  atom_properties.setElectroatomicDataProperties( electroatomic_properties );
-}
-
-// Add the "test_h_endl_native.xml" properties
-void addHENDLNativeFile( const boost::filesystem::path& endl_test_data_dir,
-                         Data::ScatteringCenterPropertiesDatabase& database )
-{
-  boost::filesystem::path endl_test_data_file = endl_test_data_dir;
-  endl_test_data_file /= "test_h_endl_native.xml";
-
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( endl_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_h_endl_native.xml\" data file could not be "
-                      "found (check endl test data directory path)!" );
-
-  if( !database.doAtomPropertiesExist( Data::H_ATOM ) )
-    database.initializeAtomProperties( Data::H_ATOM, 0.999242 );
-
-  Data::AtomProperties& atom_properties =
-    database.getAtomProperties( Data::H_ATOM );
-
-  auto atomic_weight =
-    0.999242*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
-
-  std::shared_ptr<const Data::PhotoatomicDataProperties>
-    photoatomic_properties( new Data::ENDLPhotoatomicDataProperties(
-                                                           atomic_weight,
-                                                           endl_test_data_file,
-                                                           0,
-                                                           Data::H_ATOM ) );
-
-  atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
-
-  std::shared_ptr<const Data::ElectroatomicDataProperties>
-    electroatomic_properties( new Data::ENDLElectroatomicDataProperties(
-                                                           atomic_weight,
-                                                           endl_test_data_file,
-                                                           0,
-                                                           Data::H_ATOM ) );
-
-  atom_properties.setElectroatomicDataProperties( electroatomic_properties );
-}
-
-// Add the "test_c_endl_native.xml" properties
-void addCENDLNativeFile( const boost::filesystem::path& endl_test_data_dir,
-                         Data::ScatteringCenterPropertiesDatabase& database )
-{
-  boost::filesystem::path endl_test_data_file = endl_test_data_dir;
-  endl_test_data_file /= "test_c_endl_native.xml";
-
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( endl_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_c_endl_native.xml\" data file could not be "
-                      "found (check endl test data directory path)!" );
-
-  if( !database.doAtomPropertiesExist( Data::C_ATOM ) )
-    database.initializeAtomProperties( Data::C_ATOM, 11.907800 );
-
-  Data::AtomProperties& atom_properties =
-    database.getAtomProperties( Data::C_ATOM );
-
-  auto atomic_weight =
-    11.907800*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
-
-  std::shared_ptr<const Data::PhotoatomicDataProperties>
-    photoatomic_properties( new Data::ENDLPhotoatomicDataProperties(
-                                                           atomic_weight,
-                                                           endl_test_data_file,
-                                                           0,
-                                                           Data::C_ATOM ) );
-
-  atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
-
-  std::shared_ptr<const Data::ElectroatomicDataProperties>
-    electroatomic_properties( new Data::ENDLElectroatomicDataProperties(
-                                                           atomic_weight,
-                                                           endl_test_data_file,
-                                                           0,
-                                                           Data::C_ATOM ) );
-
-  atom_properties.setElectroatomicDataProperties( electroatomic_properties );
-}
-
-// Add the "test_pb_endl_native.xml" properties
-void addPbENDLNativeFile( const boost::filesystem::path& endl_test_data_dir,
-                          Data::ScatteringCenterPropertiesDatabase& database )
-{
-  boost::filesystem::path endl_test_data_file = endl_test_data_dir;
-  endl_test_data_file /= "test_pb_endl_native.xml";
-
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( endl_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_pb_endl_native.xml\" data file could not be "
-                      "found (check endl test data directory path)!" );
-
-  if( !database.doAtomPropertiesExist( Data::Pb_ATOM ) )
-    database.initializeAtomProperties( Data::Pb_ATOM, 205.420000 );
-
-  Data::AtomProperties& atom_properties =
-    database.getAtomProperties( Data::Pb_ATOM );
-
-  auto atomic_weight =
-    205.420000*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
-
-  std::shared_ptr<const Data::PhotoatomicDataProperties>
-    photoatomic_properties( new Data::ENDLPhotoatomicDataProperties(
-                                                           atomic_weight,
-                                                           endl_test_data_file,
-                                                           0,
-                                                           Data::Pb_ATOM ) );
-
-  atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
-
-  std::shared_ptr<const Data::ElectroatomicDataProperties>
-    electroatomic_properties( new Data::ENDLElectroatomicDataProperties(
-                                                           atomic_weight,
-                                                           endl_test_data_file,
-                                                           0,
-                                                           Data::Pb_ATOM ) );
 
   atom_properties.setElectroatomicDataProperties( electroatomic_properties );
 }

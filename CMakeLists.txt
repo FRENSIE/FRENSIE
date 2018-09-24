@@ -29,17 +29,6 @@ ENFORCE_OUT_OF_SOURCE_BUILD()
 # Enable C++11 standard support
 ENABLE_CXX_STANDARD_SUPPORT( 14 )
 
-# Load the patch files
-SET(MOAB_THREAD_SAFE_PATCH
-  ${CMAKE_SOURCE_DIR}/patches/GeomQueryTool_cpp_patch
-  CACHE STRING "The GeomQueryTool.cpp patch file" FORCE)
-
-# Find the patch exec
-FIND_PROGRAM(PATCH_EXEC NAMES patch)
-IF(${PATCH_EXEC} MATCHES NOTFOUND)
-  MESSAGE(FATAL_ERROR "The patch program could not be found!")
-ENDIF()
-
 # Force shared libraries to be built
 SET(BUILD_SHARED_LIBS ON)
 

@@ -408,7 +408,6 @@ FRENSIE_UNIT_TEST( ENDLDataContainer, setNonRadiativeTransitionEnergy )
 //---------------------------------------------------------------------------//
 // TEST COHERENT PHOTON DATA
 //---------------------------------------------------------------------------//
-
 // Check that the coherent cross section energy grid can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setCoherentCrossSectionEnergyGrid )
@@ -443,6 +442,31 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the coherent photon cross section interpolation type can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer, setCoherentCrossSectionInterpType )
+{
+  endl_data_container.setCoherentCrossSectionInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentCrossSectionInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setCoherentCrossSectionInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentCrossSectionInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setCoherentCrossSectionInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentCrossSectionInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setCoherentCrossSectionInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentCrossSectionInterpType(),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the argument for the coherent form factor can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setCoherentFormFactorArgument)
@@ -472,6 +496,31 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   endl_data_container.setCoherentFormFactor( factor );
 
   FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentFormFactor(), factor );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the coherent form factor interpolation type can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer, setCoherentFormFactorInterpType )
+{
+  endl_data_container.setCoherentFormFactorInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentFormFactorInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setCoherentFormFactorInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentFormFactorInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setCoherentFormFactorInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentFormFactorInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setCoherentFormFactorInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentFormFactorInterpType(),
+                       Utility::LogLog::name() );
 }
 
 //---------------------------------------------------------------------------//
@@ -510,6 +559,32 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the coherent imaginary factor interpolation type can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setCoherentImaginaryAnomalousFactorInterpType )
+{
+  endl_data_container.setCoherentImaginaryAnomalousFactorInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentImaginaryAnomalousFactorInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setCoherentImaginaryAnomalousFactorInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentImaginaryAnomalousFactorInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setCoherentImaginaryAnomalousFactorInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentImaginaryAnomalousFactorInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setCoherentImaginaryAnomalousFactorInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentImaginaryAnomalousFactorInterpType(),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the energy grid for the coherent real factor can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setCoherentRealAnomalousFactorIncidentEnergy )
@@ -541,6 +616,32 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container.getCoherentRealAnomalousFactor(),
     factor );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the coherent real factor interpolation type can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setCoherentRealAnomalousFactorInterpType )
+{
+  endl_data_container.setCoherentRealAnomalousFactorInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentRealAnomalousFactorInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setCoherentRealAnomalousFactorInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentRealAnomalousFactorInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setCoherentRealAnomalousFactorInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentRealAnomalousFactorInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setCoherentRealAnomalousFactorInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentRealAnomalousFactorInterpType(),
+                       Utility::LogLog::name() );
 }
 
 //---------------------------------------------------------------------------//
@@ -578,9 +679,34 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the coherent average photon energy interpolation type can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setCoherentAveragePhotonEnergyInterpType )
+{
+  endl_data_container.setCoherentAveragePhotonEnergyInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentAveragePhotonEnergyInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setCoherentAveragePhotonEnergyInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentAveragePhotonEnergyInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setCoherentAveragePhotonEnergyInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentAveragePhotonEnergyInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setCoherentAveragePhotonEnergyInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentAveragePhotonEnergyInterpType(),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // TEST INCOHERENT PHOTON DATA
 //---------------------------------------------------------------------------//
-
 // Check that the incoherent cross section energy grid can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setIncoherentCrossSectionEnergyGrid )
@@ -611,6 +737,31 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
             endl_data_container.getIncoherentCrossSection(),
             cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the incoherent cross section interpolation type can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer, setIncoherentCrossSectionInterpType )
+{
+  endl_data_container.setIncoherentCrossSectionInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getIncoherentCrossSectionInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setIncoherentCrossSectionInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getIncoherentCrossSectionInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setIncoherentCrossSectionInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getIncoherentCrossSectionInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setIncoherentCrossSectionInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getIncoherentCrossSectionInterpType(),
+                       Utility::LogLog::name() );
 }
 
 //---------------------------------------------------------------------------//
@@ -648,6 +799,32 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check the incoherent scattering function interpolation type can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setIncoherentScatteringFunctionInterpType )
+{
+  endl_data_container.setIncoherentScatteringFunctionInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getIncoherentScatteringFunctionInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setIncoherentScatteringFunctionInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getIncoherentScatteringFunctionInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setIncoherentScatteringFunctionInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getIncoherentScatteringFunctionInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setIncoherentScatteringFunctionInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getIncoherentScatteringFunctionInterpType(),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the incoherent average photon incident energy can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setIncoherentAveragePhotonIncidentEnergy )
@@ -682,6 +859,33 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the incoherent average photon energy interpolation type can be
+// set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setIncoherentAveragePhotonEnergyInterpType )
+{
+  endl_data_container.setIncoherentAveragePhotonEnergyInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getIncoherentAveragePhotonEnergyInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setIncoherentAveragePhotonEnergyInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getIncoherentAveragePhotonEnergyInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setIncoherentAveragePhotonEnergyInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getIncoherentAveragePhotonEnergyInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setIncoherentAveragePhotonEnergyInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getIncoherentAveragePhotonEnergyInterpType(),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the incoherent average electron incident energy can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setIncoherentAverageElectronIncidentEnergy )
@@ -713,6 +917,33 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container.getIncoherentAverageElectronEnergy(),
     energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the incoherent average electron energy interpolation type can be
+// set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setIncoherentAverageElectronEnergyInterpType )
+{
+  endl_data_container.setIncoherentAverageElectronEnergyInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getIncoherentAverageElectronEnergyInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setIncoherentAverageElectronEnergyInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getIncoherentAverageElectronEnergyInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setIncoherentAverageElectronEnergyInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getIncoherentAverageElectronEnergyInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setIncoherentAverageElectronEnergyInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getIncoherentAverageElectronEnergyInterpType(),
+                       Utility::LogLog::name() );
 }
 
 //---------------------------------------------------------------------------//
@@ -753,6 +984,32 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the photoelectric cross section interpolation type can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setPhotoelectricCrossSectionInterpType )
+{
+  endl_data_container.setPhotoelectricCrossSectionInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricCrossSectionInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setPhotoelectricCrossSectionInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricCrossSectionInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setPhotoelectricCrossSectionInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricCrossSectionInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setPhotoelectricCrossSectionInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricCrossSectionInterpType(),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the photoelectric average photon incident energy can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setPhotoelectricAverageResidualIncidentEnergy )
@@ -785,6 +1042,33 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container.getPhotoelectricAverageResidualEnergy(),
     energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the photoelectric average photon energy interpolation type can be
+// set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setPhotoelectricAverageResidualEnergyInterpType )
+{
+  endl_data_container.setPhotoelectricAverageResidualEnergyInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAverageResidualEnergyInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setPhotoelectricAverageResidualEnergyInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAverageResidualEnergyInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setPhotoelectricAverageResidualEnergyInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAverageResidualEnergyInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setPhotoelectricAverageResidualEnergyInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAverageResidualEnergyInterpType(),
+                       Utility::LogLog::name() );
 }
 
 //---------------------------------------------------------------------------//
@@ -824,6 +1108,33 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the photoelectric average photons energy interpolation type can
+// be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setPhotoelectricAveragePhotonsEnergyInterpType )
+{
+  endl_data_container.setPhotoelectricAveragePhotonsEnergyInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAveragePhotonsEnergyInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setPhotoelectricAveragePhotonsEnergyInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAveragePhotonsEnergyInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setPhotoelectricAveragePhotonsEnergyInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAveragePhotonsEnergyInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setPhotoelectricAveragePhotonsEnergyInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAveragePhotonsEnergyInterpType(),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the photoelectric average electrons incident energy can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setPhotoelectricAverageElectronsIncidentEnergy )
@@ -860,9 +1171,35 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the photoelectric average electrons energy interpolation type can
+// be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setPhotoelectricAverageElectronsEnergyInterpType )
+{
+  endl_data_container.setPhotoelectricAverageElectronsEnergyInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAverageElectronsEnergyInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setPhotoelectricAverageElectronsEnergyInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAverageElectronsEnergyInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setPhotoelectricAverageElectronsEnergyInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAverageElectronsEnergyInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setPhotoelectricAverageElectronsEnergyInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAverageElectronsEnergyInterpType(),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // TEST PHOTOELECTRIC PHOTON DATA BY SUBSHELL
 //---------------------------------------------------------------------------//
-
 // Check that the photoelectric cross section energy grid can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setPhotoelectricCrossSectionEnergyGrid_Subshell )
@@ -903,6 +1240,34 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the photoelectric cross section interpolation type can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setPhotoelectricCrossSectionInterpType_Subshell )
+{
+  unsigned shell = 1;
+
+  endl_data_container.setPhotoelectricCrossSectionInterpType<Utility::LinLin>( shell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricCrossSectionInterpType( shell ),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setPhotoelectricCrossSectionInterpType<Utility::LinLog>( shell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricCrossSectionInterpType( shell ),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setPhotoelectricCrossSectionInterpType<Utility::LogLin>( shell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricCrossSectionInterpType( shell ),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setPhotoelectricCrossSectionInterpType<Utility::LogLog>( shell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricCrossSectionInterpType( shell ),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the photoelectric average photon incident energy can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setPhotoelectricAverageResidualIncidentEnergy_Subshell )
@@ -940,6 +1305,35 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container.getPhotoelectricAverageResidualEnergy( shell ),
     energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the photoelectric average photon energy interpolation type can be
+// set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setPhotoelectricAverageResidualEnergyInterpType_Subshell )
+{
+  unsigned shell = 1;
+    
+  endl_data_container.setPhotoelectricAverageResidualEnergyInterpType<Utility::LinLin>( shell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAverageResidualEnergyInterpType( shell ),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setPhotoelectricAverageResidualEnergyInterpType<Utility::LinLog>( shell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAverageResidualEnergyInterpType( shell ),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setPhotoelectricAverageResidualEnergyInterpType<Utility::LogLin>( shell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAverageResidualEnergyInterpType( shell ),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setPhotoelectricAverageResidualEnergyInterpType<Utility::LogLog>( shell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAverageResidualEnergyInterpType( shell ),
+                       Utility::LogLog::name() );
 }
 
 //---------------------------------------------------------------------------//
@@ -985,6 +1379,35 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the photoelectric average photons energy interpolation type can
+// be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setPhotoelectricAveragePhotonsEnergyInterpType_Subshell )
+{
+  unsigned shell = 1;
+
+  endl_data_container.setPhotoelectricAveragePhotonsEnergyInterpType<Utility::LinLin>( shell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAveragePhotonsEnergyInterpType( shell ),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setPhotoelectricAveragePhotonsEnergyInterpType<Utility::LinLog>( shell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAveragePhotonsEnergyInterpType( shell ),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setPhotoelectricAveragePhotonsEnergyInterpType<Utility::LogLin>( shell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAveragePhotonsEnergyInterpType( shell ),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setPhotoelectricAveragePhotonsEnergyInterpType<Utility::LogLog>( shell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAveragePhotonsEnergyInterpType( shell ),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the photoelectric average electrons incident energy can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setPhotoelectricAverageElectronsIncidentEnergy_Subshell )
@@ -1027,9 +1450,37 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the photoelectric average electrons energy interpolation type can
+// be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setPhotoelectricAverageElectronsEnergyInterpType_Subshell )
+{
+  unsigned shell = 1;
+
+  endl_data_container.setPhotoelectricAverageElectronsEnergyInterpType<Utility::LinLin>( shell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAverageElectronsEnergyInterpType( shell ),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setPhotoelectricAverageElectronsEnergyInterpType<Utility::LinLog>( shell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAverageElectronsEnergyInterpType( shell ),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setPhotoelectricAverageElectronsEnergyInterpType<Utility::LogLin>( shell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAverageElectronsEnergyInterpType( shell ),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setPhotoelectricAverageElectronsEnergyInterpType<Utility::LogLog>( shell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPhotoelectricAverageElectronsEnergyInterpType( shell ),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // TEST PAIR PRODUCTION PHOTON DATA
 //---------------------------------------------------------------------------//
-
 // Check that the pair production cross section energy grid can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setPairProductionCrossSectionEnergyGrid )
@@ -1061,6 +1512,32 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container.getPairProductionCrossSection(),
     cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the pair production cross section interpolatio type can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setPairProductionCrossSectionInterpType )
+{
+  endl_data_container.setPairProductionCrossSectionInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPairProductionCrossSectionInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setPairProductionCrossSectionInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPairProductionCrossSectionInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setPairProductionCrossSectionInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPairProductionCrossSectionInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setPairProductionCrossSectionInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPairProductionCrossSectionInterpType(),
+                       Utility::LogLog::name() );
 }
 
 //---------------------------------------------------------------------------//
@@ -1100,6 +1577,33 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the pair production average positron energy interpolation type
+// can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setPairProductionAveragePositronEnergyInterpType )
+{
+  endl_data_container.setPairProductionAveragePositronEnergyInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPairProductionAveragePositronEnergyInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setPairProductionAveragePositronEnergyInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPairProductionAveragePositronEnergyInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setPairProductionAveragePositronEnergyInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPairProductionAveragePositronEnergyInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setPairProductionAveragePositronEnergyInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPairProductionAveragePositronEnergyInterpType(),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the pair production average electron incident energy can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setPairProductionAverageElectronIncidentEnergy )
@@ -1136,9 +1640,35 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the pair production average electron energy interpolation type
+// can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setPairProductionAverageElectronEnergyInterpType )
+{
+  endl_data_container.setPairProductionAverageElectronEnergyInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPairProductionAverageElectronEnergyInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setPairProductionAverageElectronEnergyInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPairProductionAverageElectronEnergyInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setPairProductionAverageElectronEnergyInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPairProductionAverageElectronEnergyInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setPairProductionAverageElectronEnergyInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getPairProductionAverageElectronEnergyInterpType(),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // TEST TRIPLET PRODUCTION PHOTON DATA
 //---------------------------------------------------------------------------//
-
 // Check that the triplet production cross section energy grid can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setTripletProductionCrossSectionEnergyGrid )
@@ -1170,6 +1700,33 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container.getTripletProductionCrossSection(),
     cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the triplet production cross section interpolation type can be
+// set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setTripletProductionCrossSectionInterpType )
+{
+  endl_data_container.setTripletProductionCrossSectionInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getTripletProductionCrossSectionInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setTripletProductionCrossSectionInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getTripletProductionCrossSectionInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setTripletProductionCrossSectionInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getTripletProductionCrossSectionInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setTripletProductionCrossSectionInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getTripletProductionCrossSectionInterpType(),
+                       Utility::LogLog::name() );
 }
 
 //---------------------------------------------------------------------------//
@@ -1209,6 +1766,33 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the triplet production average positron energy interpolation type
+// can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setTripletProductionAveragePositronEnergyInterpType )
+{
+  endl_data_container.setTripletProductionAveragePositronEnergyInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getTripletProductionAveragePositronEnergyInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setTripletProductionAveragePositronEnergyInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getTripletProductionAveragePositronEnergyInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setTripletProductionAveragePositronEnergyInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getTripletProductionAveragePositronEnergyInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setTripletProductionAveragePositronEnergyInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getTripletProductionAveragePositronEnergyInterpType(),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the triplet production average electron incident energy can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setTripletProductionAverageElectronIncidentEnergy )
@@ -1245,9 +1829,35 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the triplet production average electron energy interpolation type
+// can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setTripletProductionAverageElectronEnergyInterpType )
+{
+  endl_data_container.setTripletProductionAverageElectronEnergyInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getTripletProductionAverageElectronEnergyInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setTripletProductionAverageElectronEnergyInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getTripletProductionAverageElectronEnergyInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setTripletProductionAverageElectronEnergyInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getTripletProductionAverageElectronEnergyInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setTripletProductionAverageElectronEnergyInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getTripletProductionAverageElectronEnergyInterpType(),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // TEST ELASTIC ELECTRON DATA
 //---------------------------------------------------------------------------//
-
 // Check that the elastic energy grid can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setElasticEnergyGrid )
@@ -1282,6 +1892,32 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the elastic transport cross section interpolation type can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setElasticTransportCrossSectionInterpType )
+{
+  endl_data_container.setElasticTransportCrossSectionInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getElasticTransportCrossSectionInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setElasticTransportCrossSectionInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getElasticTransportCrossSectionInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setElasticTransportCrossSectionInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getElasticTransportCrossSectionInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setElasticTransportCrossSectionInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getElasticTransportCrossSectionInterpType(),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the cutoff elastic electron cross section can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setCutoffElasticCrossSection )
@@ -1297,6 +1933,33 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
             endl_data_container.getCutoffElasticCrossSection(),
             cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the cutoff elastic electron cross section interpolation type can
+// be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setCutoffElasticCrossSectionInterpType )
+{
+  endl_data_container.setCutoffElasticCrossSectionInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCutoffElasticCrossSectionInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setCutoffElasticCrossSectionInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCutoffElasticCrossSectionInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setCutoffElasticCrossSectionInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCutoffElasticCrossSectionInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setCutoffElasticCrossSectionInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCutoffElasticCrossSectionInterpType(),
+                       Utility::LogLog::name() );
 }
 
 //---------------------------------------------------------------------------//
@@ -1336,6 +1999,32 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the cutoff elastic average energy to the residual atom can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setCutoffElasticResidualEnergyInterpType )
+{
+  endl_data_container.setCutoffElasticResidualEnergyInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCutoffElasticResidualEnergyInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setCutoffElasticResidualEnergyInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCutoffElasticResidualEnergyInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setCutoffElasticResidualEnergyInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCutoffElasticResidualEnergyInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setCutoffElasticResidualEnergyInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCutoffElasticResidualEnergyInterpType(),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the scattered electron incident energy grid can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setCutoffElasticScatteredElectronIncidentEnergy )
@@ -1369,6 +2058,32 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container.getCutoffElasticScatteredElectronEnergy(),
     energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the average energy to the scattered electron can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setCutoffElasticScatteredElectronEnergyInterpType )
+{
+  endl_data_container.setCutoffElasticScatteredElectronEnergyInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCutoffElasticScatteredElectronEnergyInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setCutoffElasticScatteredElectronEnergyInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCutoffElasticScatteredElectronEnergyInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setCutoffElasticScatteredElectronEnergyInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCutoffElasticScatteredElectronEnergyInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setCutoffElasticScatteredElectronEnergyInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCutoffElasticScatteredElectronEnergyInterpType(),
+                       Utility::LogLog::name() );
 }
 
 //---------------------------------------------------------------------------//
@@ -1465,6 +2180,32 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the elastic pdf interpolation type can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setCutoffElasticPDFInterpType )
+{
+  endl_data_container.setCutoffElasticPDFInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCutoffElasticPDFInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setCutoffElasticPDFInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCutoffElasticPDFInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setCutoffElasticPDFInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCutoffElasticPDFInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setCutoffElasticPDFInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCutoffElasticPDFInterpType(),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the total elastic electron cross section can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setTotalElasticCrossSection )
@@ -1480,6 +2221,33 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
             endl_data_container.getTotalElasticCrossSection(),
             cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the total elastic electron cross section interpolation type can
+// be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setTotalElasticCrossSectionInterpType )
+{
+  endl_data_container.setTotalElasticCrossSectionInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getTotalElasticCrossSectionInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setTotalElasticCrossSectionInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getTotalElasticCrossSectionInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setTotalElasticCrossSectionInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getTotalElasticCrossSectionInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setTotalElasticCrossSectionInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getTotalElasticCrossSectionInterpType(),
+                       Utility::LogLog::name() );
 }
 
 /*
@@ -1538,7 +2306,6 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 //---------------------------------------------------------------------------//
 // TEST ELECTROIONIZATION ELECTRON DATA
 //---------------------------------------------------------------------------//
-
 // Check that the electroionization cross section energy grid can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setElectroionizationCrossSectionEnergyGrid )
@@ -1578,6 +2345,35 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container.getElectroionizationCrossSection( subshell ),
     cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electroionization electron cross section interpolation type
+// can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setElectroionizationCrossSectionInterpType )
+{
+  unsigned subshell = 1;
+
+  endl_data_container.setElectroionizationCrossSectionInterpType<Utility::LinLin>( subshell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getElectroionizationCrossSectionInterpType( subshell ),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setElectroionizationCrossSectionInterpType<Utility::LinLog>( subshell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getElectroionizationCrossSectionInterpType( subshell ),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setElectroionizationCrossSectionInterpType<Utility::LogLin>( subshell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getElectroionizationCrossSectionInterpType( subshell ),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setElectroionizationCrossSectionInterpType<Utility::LogLog>( subshell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getElectroionizationCrossSectionInterpType( subshell ),
+                       Utility::LogLog::name() );
 }
 
 //---------------------------------------------------------------------------//
@@ -1623,6 +2419,35 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the electroionization average scattered electron energy
+// interpolation type can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setElectroionizationAverageScatteredElectronEnergyInterpType )
+{
+  unsigned subshell = 1;
+  
+  endl_data_container.setElectroionizationAverageScatteredElectronEnergyInterpType<Utility::LinLin>( subshell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getElectroionizationAverageScatteredElectronEnergyInterpType( subshell ),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setElectroionizationAverageScatteredElectronEnergyInterpType<Utility::LinLog>( subshell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getElectroionizationAverageScatteredElectronEnergyInterpType( subshell ),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setElectroionizationAverageScatteredElectronEnergyInterpType<Utility::LogLin>( subshell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getElectroionizationAverageScatteredElectronEnergyInterpType( subshell ),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setElectroionizationAverageScatteredElectronEnergyInterpType<Utility::LogLog>( subshell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getElectroionizationAverageScatteredElectronEnergyInterpType( subshell ),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the incident energy grid for the electroionization recoil can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setElectroionizationAverageRecoilElectronIncidentEnergy )
@@ -1662,6 +2487,35 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container.getElectroionizationAverageRecoilElectronEnergy( subshell ),
     energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electroionization average recoil energy interpolation type
+// can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setElectroionizationAverageRecoilElectronEnergyInterpType )
+{
+  unsigned subshell = 1;
+  
+  endl_data_container.setElectroionizationAverageRecoilElectronEnergyInterpType<Utility::LinLin>( subshell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getElectroionizationAverageRecoilElectronEnergyInterpType( subshell ),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setElectroionizationAverageRecoilElectronEnergyInterpType<Utility::LinLog>( subshell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getElectroionizationAverageRecoilElectronEnergyInterpType( subshell ),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setElectroionizationAverageRecoilElectronEnergyInterpType<Utility::LogLin>( subshell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getElectroionizationAverageRecoilElectronEnergyInterpType( subshell ),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setElectroionizationAverageRecoilElectronEnergyInterpType<Utility::LogLog>( subshell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getElectroionizationAverageRecoilElectronEnergyInterpType( subshell ),
+                       Utility::LogLog::name() );
 }
 
 //---------------------------------------------------------------------------//
@@ -1780,6 +2634,34 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the electroionization recoil pdf interpolation type can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setElectroionizationRecoilPDFInterpType )
+{
+  unsigned subshell = 1;
+
+  endl_data_container.setElectroionizationRecoilPDFInterpType<Utility::LinLin>( subshell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getElectroionizationRecoilPDFInterpType( subshell ),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setElectroionizationRecoilPDFInterpType<Utility::LinLog>( subshell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getElectroionizationRecoilPDFInterpType( subshell ),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setElectroionizationRecoilPDFInterpType<Utility::LogLin>( subshell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getElectroionizationRecoilPDFInterpType( subshell ),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setElectroionizationRecoilPDFInterpType<Utility::LogLog>( subshell );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getElectroionizationRecoilPDFInterpType( subshell ),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // TEST BREMSSTRAHLUNG ELECTRON DATA
 //---------------------------------------------------------------------------//
 // Check that the bremsstrahlung cross section energy grid can be set
@@ -1818,6 +2700,33 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the bremsstrahlung electron cross section interpolation type can
+// be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setBremsstrahlungCrossSectionInterpType )
+{
+  endl_data_container.setBremsstrahlungCrossSectionInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getBremsstrahlungCrossSectionInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setBremsstrahlungCrossSectionInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getBremsstrahlungCrossSectionInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setBremsstrahlungCrossSectionInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getBremsstrahlungCrossSectionInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setBremsstrahlungCrossSectionInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getBremsstrahlungCrossSectionInterpType(),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the bremsstrahlung energy grid for the secondary photon can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setBremsstrahlungAveragePhotonIncidentEnergy )
@@ -1851,6 +2760,33 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container.getBremsstrahlungAveragePhotonEnergy(),
     energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the bremsstrahlung average energy of the secondary photon
+// interpolation type can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setBremsstrahlungAveragePhotonEnergyInterpType )
+{
+  endl_data_container.setBremsstrahlungAveragePhotonEnergyInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getBremsstrahlungAveragePhotonEnergyInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setBremsstrahlungAveragePhotonEnergyInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getBremsstrahlungAveragePhotonEnergyInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setBremsstrahlungAveragePhotonEnergyInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getBremsstrahlungAveragePhotonEnergyInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setBremsstrahlungAveragePhotonEnergyInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getBremsstrahlungAveragePhotonEnergyInterpType(),
+                       Utility::LogLog::name() );
 }
 
 //---------------------------------------------------------------------------//
@@ -1949,6 +2885,32 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the bremsstrahlung photon pdf interpolation type can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setBremsstrahlungPhotonPDFInterpType )
+{
+  endl_data_container.setBremsstrahlungPhotonPDFInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getBremsstrahlungPhotonPDFInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setBremsstrahlungPhotonPDFInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getBremsstrahlungPhotonPDFInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setBremsstrahlungPhotonPDFInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getBremsstrahlungPhotonPDFInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setBremsstrahlungPhotonPDFInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getBremsstrahlungPhotonPDFInterpType(),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the bremsstrahlung energy grid for the secondary electron can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setBremsstrahlungAverageElectronIncidentEnergy )
@@ -1982,6 +2944,33 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container.getBremsstrahlungAverageElectronEnergy(),
     energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the bremsstrahlung average energy of the secondary electron
+// interpolatio type can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setBremsstrahlungAverageElectronEnergyInterpType )
+{
+  endl_data_container.setBremsstrahlungAverageElectronEnergyInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getBremsstrahlungAverageElectronEnergyInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setBremsstrahlungAverageElectronEnergyInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getBremsstrahlungAverageElectronEnergyInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setBremsstrahlungAverageElectronEnergyInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getBremsstrahlungAverageElectronEnergyInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setBremsstrahlungAverageElectronEnergyInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getBremsstrahlungAverageElectronEnergyInterpType(),
+                       Utility::LogLog::name() );
 }
 
 //---------------------------------------------------------------------------//
@@ -2023,6 +3012,33 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the atomic excitation electron cross section interpolation type
+// can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setAtomicExcitationCrossSectionInterpType )
+{
+  endl_data_container.setAtomicExcitationCrossSectionInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getAtomicExcitationCrossSectionInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setAtomicExcitationCrossSectionInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getAtomicExcitationCrossSectionInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setAtomicExcitationCrossSectionInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getAtomicExcitationCrossSectionInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setAtomicExcitationCrossSectionInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getAtomicExcitationCrossSectionInterpType(),
+                       Utility::LogLog::name() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the atomic excitation energy loss can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,
                    setAtomicExcitationEnergyLoss )
@@ -2037,6 +3053,32 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 
   FRENSIE_CHECK_EQUAL( endl_data_container.getAtomicExcitationEnergyLoss(),
                        energy_loss );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the atomic excitation energy loss interpolation type can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer,
+                   setAtomicExcitationEnergyLossInterpType )
+{
+  endl_data_container.setAtomicExcitationEnergyLossInterpType<Utility::LinLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getAtomicExcitationEnergyLossInterpType(),
+                       Utility::LinLin::name() );
+
+  endl_data_container.setAtomicExcitationEnergyLossInterpType<Utility::LinLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getAtomicExcitationEnergyLossInterpType(),
+                       Utility::LinLog::name() );
+
+  endl_data_container.setAtomicExcitationEnergyLossInterpType<Utility::LogLin>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getAtomicExcitationEnergyLossInterpType(),
+                       Utility::LogLin::name() );
+
+  endl_data_container.setAtomicExcitationEnergyLossInterpType<Utility::LogLog>();
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getAtomicExcitationEnergyLossInterpType(),
+                       Utility::LogLog::name() );
 }
 
 //---------------------------------------------------------------------------//
@@ -2151,27 +3193,38 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getCoherentCrossSectionEnergyGrid().size(), 3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentCrossSection().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentFormFactorArgument().size(), 3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentFormFactor().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCoherentFormFactorInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentImaginaryAnomalousFactorIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentImaginaryAnomalousFactor().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCoherentImaginaryAnomalousFactorInterpType(),
+                       Utility::LogLog::name() );
+                      
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentRealAnomalousFactorIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentRealAnomalousFactor().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCoherentRealAnomalousFactorInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentAveragePhotonIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentAveragePhotonEnergy().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCoherentAveragePhotonEnergyInterpType(),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST INCOHERENT PHOTON DATA
@@ -2181,21 +3234,29 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getIncoherentCrossSectionEnergyGrid().size(), 3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getIncoherentCrossSection().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getIncoherentCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getIncoherentScatteringFunctionArgument().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getIncoherentScatteringFunction().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getIncoherentScatteringFunctionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getIncoherentAveragePhotonIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getIncoherentAveragePhotonEnergy().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getIncoherentAveragePhotonEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getIncoherentAverageElectronIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getIncoherentAverageElectronEnergy().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getIncoherentAverageElectronEnergyInterpType(),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST PHOTOELECTRIC PHOTON DATA
@@ -2206,24 +3267,33 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricCrossSection().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageResidualIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageResidualEnergy().size(),
     3 );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricAverageResidualEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAveragePhotonsIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAveragePhotonsEnergy().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricAveragePhotonsEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageElectronsIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageElectronsEnergy().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricAverageElectronsEnergyInterpType(),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST PHOTOELECTRIC PHOTON DATA BY SUBSHELL
@@ -2234,24 +3304,32 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricCrossSection(1u).size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricCrossSectionInterpType(1u),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageResidualIncidentEnergy(1u).size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageResidualEnergy(1u).size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricAverageResidualEnergyInterpType(1u),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAveragePhotonsIncidentEnergy(1u).size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAveragePhotonsEnergy(1u).size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricAveragePhotonsEnergyInterpType(1u),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageElectronsIncidentEnergy(1u).size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageElectronsEnergy(1u).size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricAverageElectronsEnergyInterpType(1u),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST PAIR PRODUCTION PHOTON DATA
@@ -2262,20 +3340,24 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPairProductionCrossSection().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPairProductionCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPairProductionAveragePositronIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPairProductionAveragePositronEnergy().size(),
     3 );
-  FRENSIE_CHECK_EQUAL(
-    endl_data_container_copy.getPairProductionAveragePositronEnergy().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPairProductionAveragePositronEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPairProductionAverageElectronIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPairProductionAverageElectronEnergy().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPairProductionAverageElectronEnergyInterpType(),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST TRIPLET PRODUCTION PHOTON DATA
@@ -2286,18 +3368,24 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getTripletProductionCrossSection().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getTripletProductionCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getTripletProductionAveragePositronIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getTripletProductionAveragePositronEnergy().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getTripletProductionAveragePositronEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getTripletProductionAverageElectronIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getTripletProductionAverageElectronEnergy().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getTripletProductionAverageElectronEnergyInterpType(),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST ELASTIC ELECTRON DATA
@@ -2307,18 +3395,24 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCutoffElasticCrossSection().size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCutoffElasticCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCutoffElasticResidualIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCutoffElasticResidualEnergy().size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCutoffElasticResidualEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCutoffElasticScatteredElectronIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCutoffElasticScatteredElectronEnergy().size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCutoffElasticScatteredElectronEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCutoffElasticAngularEnergyGrid().size(),
     1 );
@@ -2329,6 +3423,8 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getCutoffElasticAnglesAtEnergy(1.0).size(), 3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCutoffElasticPDFAtEnergy(1.0).size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCutoffElasticPDFInterpType(),
+                       Utility::LogLog::name() );
 /*
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getScreenedRutherfordElasticCrossSection().size(),
@@ -2341,6 +3437,8 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getTotalElasticCrossSection().size(),
 		       3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getTotalElasticCrossSectionInterpType(),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST ELECTROIONIZATION ELECTRON DATA
@@ -2351,12 +3449,16 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getElectroionizationCrossSection(1u).size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getElectroionizationCrossSectionInterpType(1u),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getElectroionizationAverageScatteredElectronIncidentEnergy(1u).size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getElectroionizationAverageScatteredElectronEnergy(1u).size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getElectroionizationAverageScatteredElectronEnergyInterpType(1u),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getElectroionizationAverageRecoilElectronIncidentEnergy(1u).size(),
     3 );
@@ -2375,6 +3477,8 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getElectroionizationRecoilPDFAtEnergy(1u, 1.0).size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getElectroionizationRecoilPDFInterpType(1u),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST BREMSSTRAHLUNG ELECTRON DATA
@@ -2385,12 +3489,16 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungCrossSection().size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getBremsstrahlungCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungAverageElectronIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungAverageElectronEnergy().size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getBremsstrahlungAverageElectronEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungPhotonEnergyGrid().size(),
     2 );
@@ -2403,12 +3511,16 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungPhotonPDFAtEnergy(1.0).size(),
     3 );
+    FRENSIE_CHECK_EQUAL( endl_data_container_copy.getBremsstrahlungPhotonPDFInterpType(),
+                         Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungAveragePhotonIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungAveragePhotonEnergy().size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getBremsstrahlungAveragePhotonEnergyInterpType(),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST ATOMIC EXCITATION ELECTRON DATA
@@ -2419,9 +3531,13 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getAtomicExcitationCrossSection().size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getAtomicExcitationCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getAtomicExcitationEnergyLoss().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getAtomicExcitationEnergyLossInterpType(),
+                       Utility::LogLog::name() );
 }
 
 //---------------------------------------------------------------------------//
@@ -2533,27 +3649,38 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getCoherentCrossSectionEnergyGrid().size(), 3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentCrossSection().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentFormFactorArgument().size(), 3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentFormFactor().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCoherentFormFactorInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentImaginaryAnomalousFactorIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentImaginaryAnomalousFactor().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCoherentImaginaryAnomalousFactorInterpType(),
+                       Utility::LogLog::name() );
+                      
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentRealAnomalousFactorIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentRealAnomalousFactor().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCoherentRealAnomalousFactorInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentAveragePhotonIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentAveragePhotonEnergy().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCoherentAveragePhotonEnergyInterpType(),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST INCOHERENT PHOTON DATA
@@ -2563,21 +3690,29 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getIncoherentCrossSectionEnergyGrid().size(), 3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getIncoherentCrossSection().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getIncoherentCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getIncoherentScatteringFunctionArgument().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getIncoherentScatteringFunction().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getIncoherentScatteringFunctionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getIncoherentAveragePhotonIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getIncoherentAveragePhotonEnergy().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getIncoherentAveragePhotonEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getIncoherentAverageElectronIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getIncoherentAverageElectronEnergy().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getIncoherentAverageElectronEnergyInterpType(),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST PHOTOELECTRIC PHOTON DATA
@@ -2588,24 +3723,33 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricCrossSection().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageResidualIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageResidualEnergy().size(),
     3 );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricAverageResidualEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAveragePhotonsIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAveragePhotonsEnergy().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricAveragePhotonsEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageElectronsIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageElectronsEnergy().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricAverageElectronsEnergyInterpType(),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST PHOTOELECTRIC PHOTON DATA BY SUBSHELL
@@ -2616,24 +3760,32 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricCrossSection(1u).size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricCrossSectionInterpType(1u),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageResidualIncidentEnergy(1u).size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageResidualEnergy(1u).size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricAverageResidualEnergyInterpType(1u),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAveragePhotonsIncidentEnergy(1u).size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAveragePhotonsEnergy(1u).size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricAveragePhotonsEnergyInterpType(1u),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageElectronsIncidentEnergy(1u).size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageElectronsEnergy(1u).size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricAverageElectronsEnergyInterpType(1u),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST PAIR PRODUCTION PHOTON DATA
@@ -2644,20 +3796,24 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPairProductionCrossSection().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPairProductionCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPairProductionAveragePositronIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPairProductionAveragePositronEnergy().size(),
     3 );
-  FRENSIE_CHECK_EQUAL(
-    endl_data_container_copy.getPairProductionAveragePositronEnergy().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPairProductionAveragePositronEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPairProductionAverageElectronIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPairProductionAverageElectronEnergy().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPairProductionAverageElectronEnergyInterpType(),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST TRIPLET PRODUCTION PHOTON DATA
@@ -2668,40 +3824,51 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getTripletProductionCrossSection().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getTripletProductionCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getTripletProductionAveragePositronIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getTripletProductionAveragePositronEnergy().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getTripletProductionAveragePositronEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getTripletProductionAverageElectronIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getTripletProductionAverageElectronEnergy().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getTripletProductionAverageElectronEnergyInterpType(),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST ELASTIC ELECTRON DATA
 //---------------------------------------------------------------------------//
-
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getElasticEnergyGrid().size(), 3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCutoffElasticCrossSection().size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCutoffElasticCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCutoffElasticResidualIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCutoffElasticResidualEnergy().size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCutoffElasticResidualEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCutoffElasticScatteredElectronIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCutoffElasticScatteredElectronEnergy().size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCutoffElasticScatteredElectronEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCutoffElasticAngularEnergyGrid().size(),
     1 );
@@ -2712,6 +3879,8 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getCutoffElasticAnglesAtEnergy(1.0).size(), 3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCutoffElasticPDFAtEnergy(1.0).size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCutoffElasticPDFInterpType(),
+                       Utility::LogLog::name() );
 /*
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getScreenedRutherfordElasticCrossSection().size(),
@@ -2724,23 +3893,28 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getTotalElasticCrossSection().size(),
 		       3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getTotalElasticCrossSectionInterpType(),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST ELECTROIONIZATION ELECTRON DATA
 //---------------------------------------------------------------------------//
-
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getElectroionizationCrossSectionEnergyGrid(1u).size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getElectroionizationCrossSection(1u).size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getElectroionizationCrossSectionInterpType(1u),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getElectroionizationAverageScatteredElectronIncidentEnergy(1u).size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getElectroionizationAverageScatteredElectronEnergy(1u).size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getElectroionizationAverageScatteredElectronEnergyInterpType(1u),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getElectroionizationAverageRecoilElectronIncidentEnergy(1u).size(),
     3 );
@@ -2759,23 +3933,28 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getElectroionizationRecoilPDFAtEnergy(1u, 1.0).size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getElectroionizationRecoilPDFInterpType(1u),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST BREMSSTRAHLUNG ELECTRON DATA
 //---------------------------------------------------------------------------//
-
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungCrossSectionEnergyGrid().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungCrossSection().size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getBremsstrahlungCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungAverageElectronIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungAverageElectronEnergy().size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getBremsstrahlungAverageElectronEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungPhotonEnergyGrid().size(),
     2 );
@@ -2788,28 +3967,34 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungPhotonPDFAtEnergy(1.0).size(),
     3 );
+    FRENSIE_CHECK_EQUAL( endl_data_container_copy.getBremsstrahlungPhotonPDFInterpType(),
+                         Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungAveragePhotonIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungAveragePhotonEnergy().size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getBremsstrahlungAveragePhotonEnergyInterpType(),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST ATOMIC EXCITATION ELECTRON DATA
 //---------------------------------------------------------------------------//
-
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getAtomicExcitationEnergyGrid().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getAtomicExcitationCrossSection().size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getAtomicExcitationCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getAtomicExcitationEnergyLoss().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getAtomicExcitationEnergyLossInterpType(),
+                       Utility::LogLog::name() );
 }
-
 
 //---------------------------------------------------------------------------//
 // Check that the data can be exported and imported
@@ -2917,7 +4102,6 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getNonRadiativeTransitionEnergy( 1 ).size(),
     1 );
 
-
 //---------------------------------------------------------------------------//
 // TEST COHERENT PHOTON DATA
 //---------------------------------------------------------------------------//
@@ -2926,27 +4110,38 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getCoherentCrossSectionEnergyGrid().size(), 3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentCrossSection().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container.getCoherentCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentFormFactorArgument().size(), 3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentFormFactor().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCoherentFormFactorInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentImaginaryAnomalousFactorIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentImaginaryAnomalousFactor().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCoherentImaginaryAnomalousFactorInterpType(),
+                       Utility::LogLog::name() );
+                      
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentRealAnomalousFactorIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentRealAnomalousFactor().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCoherentRealAnomalousFactorInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentAveragePhotonIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCoherentAveragePhotonEnergy().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCoherentAveragePhotonEnergyInterpType(),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST INCOHERENT PHOTON DATA
@@ -2956,21 +4151,29 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getIncoherentCrossSectionEnergyGrid().size(), 3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getIncoherentCrossSection().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getIncoherentCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getIncoherentScatteringFunctionArgument().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getIncoherentScatteringFunction().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getIncoherentScatteringFunctionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getIncoherentAveragePhotonIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getIncoherentAveragePhotonEnergy().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getIncoherentAveragePhotonEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getIncoherentAverageElectronIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getIncoherentAverageElectronEnergy().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getIncoherentAverageElectronEnergyInterpType(),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST PHOTOELECTRIC PHOTON DATA
@@ -2981,24 +4184,33 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricCrossSection().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageResidualIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageResidualEnergy().size(),
     3 );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricAverageResidualEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAveragePhotonsIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAveragePhotonsEnergy().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricAveragePhotonsEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageElectronsIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageElectronsEnergy().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricAverageElectronsEnergyInterpType(),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST PHOTOELECTRIC PHOTON DATA BY SUBSHELL
@@ -3009,24 +4221,32 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricCrossSection(1u).size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricCrossSectionInterpType(1u),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageResidualIncidentEnergy(1u).size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageResidualEnergy(1u).size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricAverageResidualEnergyInterpType(1u),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAveragePhotonsIncidentEnergy(1u).size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAveragePhotonsEnergy(1u).size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricAveragePhotonsEnergyInterpType(1u),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageElectronsIncidentEnergy(1u).size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPhotoelectricAverageElectronsEnergy(1u).size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPhotoelectricAverageElectronsEnergyInterpType(1u),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST PAIR PRODUCTION PHOTON DATA
@@ -3037,20 +4257,24 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPairProductionCrossSection().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPairProductionCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPairProductionAveragePositronIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPairProductionAveragePositronEnergy().size(),
     3 );
-  FRENSIE_CHECK_EQUAL(
-    endl_data_container_copy.getPairProductionAveragePositronEnergy().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPairProductionAveragePositronEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPairProductionAverageElectronIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getPairProductionAverageElectronEnergy().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getPairProductionAverageElectronEnergyInterpType(),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST TRIPLET PRODUCTION PHOTON DATA
@@ -3061,40 +4285,51 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getTripletProductionCrossSection().size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getTripletProductionCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getTripletProductionAveragePositronIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getTripletProductionAveragePositronEnergy().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getTripletProductionAveragePositronEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getTripletProductionAverageElectronIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getTripletProductionAverageElectronEnergy().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getTripletProductionAverageElectronEnergyInterpType(),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST ELASTIC ELECTRON DATA
 //---------------------------------------------------------------------------//
-
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getElasticEnergyGrid().size(), 3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCutoffElasticCrossSection().size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCutoffElasticCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCutoffElasticResidualIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCutoffElasticResidualEnergy().size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCutoffElasticResidualEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCutoffElasticScatteredElectronIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCutoffElasticScatteredElectronEnergy().size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCutoffElasticScatteredElectronEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCutoffElasticAngularEnergyGrid().size(),
     1 );
@@ -3105,6 +4340,8 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getCutoffElasticAnglesAtEnergy(1.0).size(), 3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getCutoffElasticPDFAtEnergy(1.0).size(), 3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getCutoffElasticPDFInterpType(),
+                       Utility::LogLog::name() );
 /*
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getScreenedRutherfordElasticCrossSection().size(),
@@ -3117,23 +4354,28 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getTotalElasticCrossSection().size(),
 		       3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getTotalElasticCrossSectionInterpType(),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST ELECTROIONIZATION ELECTRON DATA
 //---------------------------------------------------------------------------//
-
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getElectroionizationCrossSectionEnergyGrid(1u).size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getElectroionizationCrossSection(1u).size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getElectroionizationCrossSectionInterpType(1u),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getElectroionizationAverageScatteredElectronIncidentEnergy(1u).size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getElectroionizationAverageScatteredElectronEnergy(1u).size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getElectroionizationAverageScatteredElectronEnergyInterpType(1u),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getElectroionizationAverageRecoilElectronIncidentEnergy(1u).size(),
     3 );
@@ -3152,23 +4394,28 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getElectroionizationRecoilPDFAtEnergy(1u, 1.0).size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getElectroionizationRecoilPDFInterpType(1u),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST BREMSSTRAHLUNG ELECTRON DATA
 //---------------------------------------------------------------------------//
-
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungCrossSectionEnergyGrid().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungCrossSection().size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getBremsstrahlungCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungAverageElectronIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungAverageElectronEnergy().size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getBremsstrahlungAverageElectronEnergyInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungPhotonEnergyGrid().size(),
     2 );
@@ -3181,26 +4428,33 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungPhotonPDFAtEnergy(1.0).size(),
     3 );
+    FRENSIE_CHECK_EQUAL( endl_data_container_copy.getBremsstrahlungPhotonPDFInterpType(),
+                         Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungAveragePhotonIncidentEnergy().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getBremsstrahlungAveragePhotonEnergy().size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getBremsstrahlungAveragePhotonEnergyInterpType(),
+                       Utility::LogLog::name() );
 
 //---------------------------------------------------------------------------//
 // TEST ATOMIC EXCITATION ELECTRON DATA
 //---------------------------------------------------------------------------//
-
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getAtomicExcitationEnergyGrid().size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getAtomicExcitationCrossSection().size(),
     3u );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getAtomicExcitationCrossSectionInterpType(),
+                       Utility::LogLog::name() );
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getAtomicExcitationEnergyLoss().size(),
     3 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getAtomicExcitationEnergyLossInterpType(),
+                       Utility::LogLog::name() );
 }
 
 //---------------------------------------------------------------------------//

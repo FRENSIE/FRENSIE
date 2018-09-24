@@ -46,11 +46,23 @@ ENDLDataContainer::getElasticTransportCrossSection() const
   return d_elastic_transport_cross_section;
 }
 
+// Return the elastic transport cross section interpolation type
+const std::string& ENDLDataContainer::getElasticTransportCrossSectionInterpType() const
+{
+  return d_elastic_transport_cross_section_interp_type;
+}
+
 // Return the cutoff elastic electron cross section
 const std::vector<double>&
 ENDLDataContainer::getCutoffElasticCrossSection() const
 {
   return d_cutoff_elastic_cross_section;
+}
+
+// Return the cutoff elastic electron cross section
+const std::string& ENDLDataContainer::getCutoffElasticCrossSectionInterpType() const
+{
+  return d_cutoff_elastic_cross_section_interp_type;
 }
 
 // Return the incident energy grid for the cutoff elastic average energy to the residual atom
@@ -67,6 +79,13 @@ ENDLDataContainer::getCutoffElasticResidualEnergy() const
   return d_cutoff_elastic_residual_energy;
 }
 
+// Return the cutoff elastic average energy to the residual atom interp type
+const std::string&
+ENDLDataContainer::getCutoffElasticResidualEnergyInterpType() const
+{
+  return d_cutoff_elastic_residual_energy_interp_type;
+}
+
 // Return the incident energy grid for the cutoff elastic average energy to the scattered electron
 const std::vector<double>&
 ENDLDataContainer::getCutoffElasticScatteredElectronIncidentEnergy() const
@@ -79,6 +98,13 @@ const std::vector<double>&
 ENDLDataContainer::getCutoffElasticScatteredElectronEnergy() const
 {
   return d_cutoff_elastic_scattered_electron_energy;
+}
+
+// Return the cutoff elastic average energy to the scattered electron interpolation type
+const std::string&
+ENDLDataContainer::getCutoffElasticScatteredElectronEnergyInterpType() const
+{
+  return d_cutoff_elastic_scattered_electron_energy_interp_type;
 }
 
 // Return the cutoff elastic angular energy grid
@@ -130,11 +156,24 @@ ENDLDataContainer::getCutoffElasticPDF() const
   return d_cutoff_elastic_pdf;
 }
 
+// Return the elastic pdf for an incident energy
+const std::string& ENDLDataContainer::getCutoffElasticPDFInterpType() const
+{
+  return d_cutoff_elastic_pdf_interp_type;
+}
+
 // Return the total elastic electron cross section
 const std::vector<double>&
 ENDLDataContainer::getTotalElasticCrossSection() const
 {
   return d_total_elastic_cross_section;
+}
+
+// Return the total elastic electron cross section interpolation type
+const std::string&
+ENDLDataContainer::getTotalElasticCrossSectionInterpType() const
+{
+  return d_total_elastic_cross_section_interp_type;
 }
 
 //---------------------------------------------------------------------------//
@@ -160,6 +199,13 @@ ENDLDataContainer::getElectroionizationCrossSection(
   return d_electroionization_subshell_cross_section.find( subshell )->second;
 }
 
+// Return the electroionization electron cross section interpolation type for a subshell
+const std::string&
+ENDLDataContainer::getElectroionizationCrossSectionInterpType(
+    const unsigned subshell ) const
+{
+  return d_electroionization_subshell_cross_section_interp_type.find( subshell )->second;
+}
 
 // Return the electroionization incident energy grid for the average scattered electron energy for a subshell
 const std::vector<double>&
@@ -177,6 +223,14 @@ ENDLDataContainer::getElectroionizationAverageScatteredElectronEnergy(
   return d_electroionization_average_scattered_electron_energy.find( subshell )->second;
 }
 
+// Return the electroionization average scattered electron energy interpolation type for a subshell
+const std::string&
+ENDLDataContainer::getElectroionizationAverageScatteredElectronEnergyInterpType(
+                           const unsigned subshell ) const
+{
+  return d_electroionization_average_scattered_electron_energy_interp_type.find( subshell )->second;
+}
+
 // Return the electroionization incident energy grid for the average recoil electron energy for a subshell
 const std::vector<double>&
 ENDLDataContainer::getElectroionizationAverageRecoilElectronIncidentEnergy(
@@ -191,6 +245,14 @@ ENDLDataContainer::getElectroionizationAverageRecoilElectronEnergy(
                            const unsigned subshell ) const
 {
   return d_electroionization_average_recoil_electron_energy.find( subshell )->second;
+}
+
+// Return the electroionization average recoil electron energy interpolation type for a subshell
+const std::string&
+ENDLDataContainer::getElectroionizationAverageRecoilElectronEnergyInterpType(
+                           const unsigned subshell ) const
+{
+  return d_electroionization_average_recoil_electron_energy_interp_type.find( subshell )->second;
 }
 
 // Return the electroionization incident energy grid for the recoil electron spectrum for all subshells
@@ -272,6 +334,17 @@ ENDLDataContainer::getElectroionizationRecoilPDF(
   return d_electroionization_recoil_pdf.find( subshell )->second;
 }
 
+// Return the electroionization recoil energy pdf interpolation type for all subshells and energies
+const std::string&
+ENDLDataContainer::getElectroionizationRecoilPDFInterpType(
+                                                const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+
+  return d_electroionization_recoil_pdf_interp_type.find( subshell )->second;
+}
+
 //---------------------------------------------------------------------------//
 // GET BREMSSTRAHLUNG DATA
 //---------------------------------------------------------------------------//
@@ -290,6 +363,13 @@ ENDLDataContainer::getBremsstrahlungCrossSection() const
   return d_bremsstrahlung_cross_section;
 }
 
+// Return the bremsstrahlung electron cross section interpolation type
+const std::string&
+ENDLDataContainer::getBremsstrahlungCrossSectionInterpType() const
+{
+  return d_bremsstrahlung_cross_section_interp_type;
+}
+
 // Return the bremsstrahlung incident electron energy grid for the average energy of the secondary photon
 const std::vector<double>&
 ENDLDataContainer::getBremsstrahlungAveragePhotonIncidentEnergy() const
@@ -302,6 +382,13 @@ const std::vector<double>&
 ENDLDataContainer::getBremsstrahlungAveragePhotonEnergy() const
 {
   return d_bremsstrahlung_average_photon_energy;
+}
+
+// Return the bremsstrahlung average energy of the secondary photon interpolation type
+const std::string&
+ENDLDataContainer::getBremsstrahlungAveragePhotonEnergyInterpType() const
+{
+  return d_bremsstrahlung_average_photon_energy_interp_type;
 }
 
 // Return the bremsstrahlung photon energy grid
@@ -353,6 +440,12 @@ ENDLDataContainer::getBremsstrahlungPhotonPDF() const
   return d_bremsstrahlung_photon_pdf;
 }
 
+// Return the bremsstrahlung photon pdf interpolation type for all incident energies
+const std::string& ENDLDataContainer::getBremsstrahlungPhotonPDFInterpType() const
+{
+  return d_bremsstrahlung_photon_pdf_interp_type;
+}
+
 // Return the bremsstrahlung incident electron energy grid for the average energy of the secondary electron
 const std::vector<double>&
 ENDLDataContainer::getBremsstrahlungAverageElectronIncidentEnergy() const
@@ -365,6 +458,13 @@ const std::vector<double>&
 ENDLDataContainer::getBremsstrahlungAverageElectronEnergy() const
 {
   return d_bremsstrahlung_average_electron_energy;
+}
+
+// Return the bremsstrahlung average energy of the secondary electron interpolation type
+const std::string&
+ENDLDataContainer::getBremsstrahlungAverageElectronEnergyInterpType() const
+{
+  return d_bremsstrahlung_average_electron_energy_interp_type;
 }
 
 //---------------------------------------------------------------------------//
@@ -385,11 +485,25 @@ ENDLDataContainer::getAtomicExcitationCrossSection() const
   return d_atomic_excitation_cross_section;
 }
 
+// Return the atomic excitation electron cross section interpolation type
+const std::string&
+ENDLDataContainer::getAtomicExcitationCrossSectionInterpType() const
+{
+  return d_atomic_excitation_cross_section_interp_type;
+}
+
 // Return the atomic excitation energy loss
 const std::vector<double>&
 ENDLDataContainer::getAtomicExcitationEnergyLoss() const
 {
   return d_atomic_excitation_energy_loss;
+}
+
+// Return the atomic excitation energy loss interpolation type
+const std::string&
+ENDLDataContainer::getAtomicExcitationEnergyLossInterpType() const
+{
+  return d_atomic_excitation_energy_loss_interp_type;
 }
 
 //---------------------------------------------------------------------------//

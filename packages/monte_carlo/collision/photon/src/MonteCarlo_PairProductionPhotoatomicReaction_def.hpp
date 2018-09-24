@@ -407,7 +407,7 @@ double PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::
   if ( angle_cosine >= 1.0 )
     return 1.0;
   else
-    angle_cosine;
+    return angle_cosine;
 }
 
 // Initialize interaction models
