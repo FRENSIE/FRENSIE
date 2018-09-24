@@ -270,18 +270,24 @@ void ENDLElectronPhotonRelaxationDataGenerator::populateEPRDataContainer()
 }
 
 // Repopulate the electron elastic data
-void ENDLElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDataImpl(
-                         const double max_electron_energy,
-                         const double cutoff_angle_cosine,
-                         const double tabular_evaluation_tol,
-                         const unsigned number_of_moment_preserving_angles,
-                         const MonteCarlo::TwoDGridType two_d_grid,
-                         const MonteCarlo::TwoDInterpolationType two_d_interp )
+/*! \details This function will regenerate the electron elastic data overwriting
+ *  the old elastic data.
+ */
+void ENDLElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
+                        const boost::filesystem::path& file_name_with_path,
+                        const double max_electron_energy,
+                        const double cutoff_angle_cosine,
+                        const double tabular_evaluation_tol,
+                        const unsigned number_of_moment_preserving_angles,
+                        const MonteCarlo::TwoDGridType two_d_grid,
+                        const MonteCarlo::TwoDInterpolationType two_d_interp )
 {
+  Data::ElectronPhotonRelaxationVolatileDataContainer data_container( file_name_with_path );
+
   TEST_FOR_EXCEPTION( max_electron_energy <= 0.0,
                       std::runtime_error,
                       "The max electron energy must be greater than "
-                      << this->getMinElectronEnergy() << "!" );
+                      << data_container.getMinElectronEnergy() << "!" );
 
   TEST_FOR_EXCEPTION( cutoff_angle_cosine > 1.0,
                       std::runtime_error,
@@ -300,9 +306,6 @@ void ENDLElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDataImp
                       std::runtime_error,
                       "The tabular evaluation tolerance must be between 0.0 "
                       "and 1.0!" );
-
-  Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
-    this->getVolatileDataContainer();
 
   // Get the elastic angular energy grid
   std::vector<double> angular_energy_grid(
@@ -453,19 +456,28 @@ void ENDLElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDataImp
                      angular_energy_grid.back() );
   }
 
+  // Overwrite the file with the new data
+  data_container.saveToFile( file_name_with_path, true );
+
   // Repopulate moment preserving data
-  this->repopulateMomentPreservingDataImpl( cutoff_angle_cosine,
-                                            tabular_evaluation_tol,
-                                            number_of_moment_preserving_angles,
-                                            two_d_interp );
+  ENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+                                        file_name_with_path,
+                                        cutoff_angle_cosine,
+                                        tabular_evaluation_tol,
+                                        number_of_moment_preserving_angles,
+                                        two_d_interp );
 }
 
 // Repopulate the electron moment preserving data
-void ENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingDataImpl(
-                         const double cutoff_angle_cosine,
-                         const double tabular_evaluation_tol,
-                         const unsigned number_of_moment_preserving_angles,
-                         const MonteCarlo::TwoDInterpolationType two_d_interp )
+/*! \details This function will regenerate the elastic moment preserving data
+ *  overwriting the old elastic moment preserving data.
+ */
+void ENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+                        const boost::filesystem::path& file_name_with_path,
+                        const double cutoff_angle_cosine,
+                        const double tabular_evaluation_tol,
+                        const unsigned number_of_moment_preserving_angles,
+                        const MonteCarlo::TwoDInterpolationType two_d_interp )
 {
   TEST_FOR_EXCEPTION( cutoff_angle_cosine > 1.0,
                       std::runtime_error,
@@ -485,12 +497,11 @@ void ENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingDataIm
                       "The tabular evaluation tolerance must be between 0.0 "
                       "and 1.0!" );
 
-  this->setCutoffAngleCosine( cutoff_angle_cosine );
-  this->setNumberOfMomentPreservingAngles( number_of_moment_preserving_angles );
-  this->setElectronTwoDInterpPolicy( two_d_interp );
+  Data::ElectronPhotonRelaxationVolatileDataContainer data_container( file_name_with_path );
 
-  Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
-    this->getVolatileDataContainer();
+  data_container.setCutoffAngleCosine( cutoff_angle_cosine );
+  data_container.setNumberOfMomentPreservingAngles( number_of_moment_preserving_angles );
+  data_container.setElectronTwoDInterpPolicy( Utility::toString( two_d_interp ) );
 
   std::vector<double> angular_energy_grid(
     data_container.getElasticAngularEnergyGrid() );
@@ -527,12 +538,17 @@ void ENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingDataIm
   // Set the moment preserving data
   else
   {
-    this->setMomentPreservingData( angular_energy_grid,
-                                   tabular_evaluation_tol,
-                                   two_d_interp );
+    ENDLElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
+                                  data_container,
+                                  angular_energy_grid,
+                                  tabular_evaluation_tol,
+                                  two_d_interp );
 
     FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
   }
+
+  // Overwrite the file with the new data
+  data_container.saveToFile( file_name_with_path, true );
 }
 
 // Set the atomic data
@@ -1630,9 +1646,11 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronData()
   // Set the moment preserving data
   else
   {
-    this->setMomentPreservingData( angular_energy_grid,
-                                   this->getTabularEvaluationTolerance(),
-                                   this->getElectronTwoDInterpPolicy() );
+    ENDLElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
+                                  this->getVolatileDataContainer(),
+                                  angular_energy_grid,
+                                  this->getTabularEvaluationTolerance(),
+                                  this->getElectronTwoDInterpPolicy() );
 
     FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
   }
@@ -2076,9 +2094,10 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData()
 
 // Set the moment preserving data
 void ENDLElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
-                         const std::vector<double>& angular_energy_grid,
-                         const double tabular_evaluation_tol,
-                         const MonteCarlo::TwoDInterpolationType two_d_interp )
+          Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
+          const std::vector<double>& angular_energy_grid,
+          const double tabular_evaluation_tol,
+          const MonteCarlo::TwoDInterpolationType two_d_interp )
 {
   // Make sure the tolerance is valid
   testPrecondition( tabular_evaluation_tol > 0.0 );
@@ -2090,11 +2109,11 @@ void ENDLElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
 
   // Get the cutoff and total elastic cross sections and the energy grid
   std::shared_ptr<std::vector<double> > cutoff_cross_section(
-       new std::vector<double>( this->getDataContainer().getCutoffElasticCrossSection() ) );
+       new std::vector<double>( data_container.getCutoffElasticCrossSection() ) );
   std::shared_ptr<std::vector<double> > total_cross_section(
-       new std::vector<double>( this->getDataContainer().getTotalElasticCrossSection() ) );
+       new std::vector<double>( data_container.getTotalElasticCrossSection() ) );
   std::shared_ptr<std::vector<double> > energy_grid(
-       new std::vector<double>( this->getDataContainer().getElectronEnergyGrid() ) );
+       new std::vector<double>( data_container.getElectronEnergyGrid() ) );
 
   if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
@@ -2103,10 +2122,10 @@ void ENDLElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         cutoff_cross_section,
         total_cross_section,
         energy_grid,
-        this->getDataContainer().getCutoffElasticAngles(),
-        this->getDataContainer().getCutoffElasticPDF(),
+        data_container.getCutoffElasticAngles(),
+        data_container.getCutoffElasticPDF(),
         angular_energy_grid,
-        this->getDataContainer().getAtomicNumber(),
+        data_container.getAtomicNumber(),
         MonteCarlo::MODIFIED_TWO_D_UNION,
         tabular_evaluation_tol );
   }
@@ -2117,10 +2136,10 @@ void ENDLElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         cutoff_cross_section,
         total_cross_section,
         energy_grid,
-        this->getDataContainer().getCutoffElasticAngles(),
-        this->getDataContainer().getCutoffElasticPDF(),
+        data_container.getCutoffElasticAngles(),
+        data_container.getCutoffElasticPDF(),
         angular_energy_grid,
-        this->getDataContainer().getAtomicNumber(),
+        data_container.getAtomicNumber(),
         MonteCarlo::MODIFIED_TWO_D_UNION,
         tabular_evaluation_tol );
   }
@@ -2131,10 +2150,10 @@ void ENDLElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         cutoff_cross_section,
         total_cross_section,
         energy_grid,
-        this->getDataContainer().getCutoffElasticAngles(),
-        this->getDataContainer().getCutoffElasticPDF(),
+        data_container.getCutoffElasticAngles(),
+        data_container.getCutoffElasticPDF(),
         angular_energy_grid,
-        this->getDataContainer().getAtomicNumber(),
+        data_container.getAtomicNumber(),
         MonteCarlo::MODIFIED_TWO_D_UNION,
         tabular_evaluation_tol );
   }
@@ -2147,21 +2166,21 @@ void ENDLElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
 
   // Create the elastic traits
   std::shared_ptr<MonteCarlo::ElasticElectronTraits> elastic_traits(
-    new MonteCarlo::ElasticElectronTraits( this->getDataContainer().getAtomicNumber() ) );
+    new MonteCarlo::ElasticElectronTraits( data_container.getAtomicNumber() ) );
 
   // Create the moment evaluator of the elastic scattering distribution
   std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator> moments_evaluator;
   moments_evaluator.reset(
     new DataGen::ElasticElectronMomentsEvaluator(
-        this->getDataContainer().getCutoffElasticAngles(),
+        data_container.getCutoffElasticAngles(),
         energy_grid,
         grid_searcher,
         cutoff_cross_section,
         total_cross_section,
-        this->getDataContainer().getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
+        data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
         coupled_distribution,
         elastic_traits,
-        this->getDataContainer().getCutoffAngleCosine() ) );
+        data_container.getCutoffAngleCosine() ) );
 
   // Moment preserving discrete angles and weights
   std::vector<double> discrete_angles, weights;
@@ -2175,21 +2194,20 @@ void ENDLElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
     ENDLElectronPhotonRelaxationDataGenerator::calculateDiscreteAnglesAndWeights(
         moments_evaluator,
         angular_energy_grid[i],
-        this->getDataContainer().getNumberOfMomentPreservingAngles(),
+        data_container.getNumberOfMomentPreservingAngles(),
         discrete_angles,
         weights,
         cross_section_reduction[i] );
 
-    this->getVolatileDataContainer().setMomentPreservingElasticDiscreteAngles(
+    data_container.setMomentPreservingElasticDiscreteAngles(
                                                         angular_energy_grid[i],
                                                         discrete_angles );
-    this->getVolatileDataContainer().setMomentPreservingElasticWeights(
-                                                        angular_energy_grid[i],
-                                                        weights );
+    data_container.setMomentPreservingElasticWeights( angular_energy_grid[i],
+                                                      weights );
   }
 
   // Set the cross section reduction
-  this->getVolatileDataContainer().setMomentPreservingCrossSectionReduction( cross_section_reduction );
+  data_container.setMomentPreservingCrossSectionReduction( cross_section_reduction );
 }
 
 // Initialize the photon union energy grid

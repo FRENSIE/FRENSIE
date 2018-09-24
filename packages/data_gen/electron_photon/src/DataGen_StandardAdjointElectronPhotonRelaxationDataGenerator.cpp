@@ -14,6 +14,7 @@
 #include <boost/bind.hpp>
 
 // FRENSIE Includes
+// #include "DataGen_ENDLElectronPhotonRelaxationDataGenerator.hpp"
 #include "DataGen_StandardAdjointElectronPhotonRelaxationDataGenerator.hpp"
 #include "DataGen_AdjointPairProductionEnergyDistributionNormConstantEvaluator.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
@@ -1215,6 +1216,26 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   //---------------------------------------------------------------------------//
   // Generate Grid Points For The Elastic Cross Section Data
   //---------------------------------------------------------------------------//
+
+  // // Update the forward elastic data if necessary
+  // if ( d_forward_epr_data->getCutoffAngleCosine() != this->getCutoffAngleCosine() || d_forward_epr_data->getNumberOfMomentPreservingAngles() != this->getNumberOfMomentPreservingAngles() )
+  // {
+  //   // create a temperary file
+  //   d_forward_epr_data->saveToFile( "temp_epr_file.xml" );
+
+  //   // Update the forward elastic data
+  //   DataGen::ENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+  //                                                 "temp_epr_file.xml",
+  //                                                 this->getCutoffAngleCosine(),
+  //                                                 this->getElectronTabularEvaluationTolerance(),
+  //                                                 this->getNumberOfMomentPreservingAngles(),
+  //                                                 this->getElectronTwoDInterpPolicy() );
+
+  //   // Reset the forward data container to use the temperary file
+  //   d_forward_epr_data.reset(
+  //     new Data::ElectronPhotonRelaxationDataContainer( "temp_epr_file.xml" ) );
+  // }
+
   // Extract the cutoff elastic cross section data
   std::shared_ptr<std::vector<double> > forward_cutoff_elastic_cs(
        new std::vector<double>( d_forward_epr_data->getCutoffElasticCrossSection() ) );
@@ -1298,7 +1319,6 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     boost::bind( &Utility::UnivariateDistribution::evaluate,
                  boost::cref( *adjoint_excitation_cross_section ),
                  _1 );
-
 
   Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
     this->getVolatileDataContainer();
@@ -2025,6 +2045,18 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::initializeAdjointElec
   // Add the min electron energy to the union energy grid
   union_energy_grid.push_back( this->getMinElectronEnergy() );
 
+  // Add the screened Rutherford threshold energy
+  std::vector<double> forward_energy_grid = d_forward_epr_data->getElectronEnergyGrid();
+  unsigned rutherford_threshold = d_forward_epr_data->getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
+
+  union_energy_grid.push_back( forward_energy_grid[rutherford_threshold] );
+
+  /* Add the max incoming ionization adjoint electron energy (i.e. the max
+   * electron energy minus the binding energy and 1e-7). This should
+   * help when interpolating the adjoint cross section for electroionization
+   * since the electron must at least gain the binding_energy and the minimum
+   * tabulated energy loss in the forward case is 1e-7 MeV.
+   */
   const std::set<unsigned>& subshells = d_forward_epr_data->getSubshells();
 
   std::set<unsigned>::const_iterator subshell = subshells.begin();

@@ -175,8 +175,14 @@ public:
   //! Get the default electron grid distance tolerance
   double getDefaultElectronGridDistanceTolerance() const;
 
+  // //! Set the cutoff angle cosine above which screened rutherford is used
+  // void setCutoffAngleCosine( const double angle_cutoff );
+
   //! Return the cutoff angle cosine above which screened rutherford is used
   double getCutoffAngleCosine() const;
+
+  // //! Set the number of moment preserving angles
+  // void setNumberOfMomentPreservingAngles( const unsigned number_of_angles );
 
   //! Return the number of moment preserving angles
   unsigned getNumberOfMomentPreservingAngles() const;

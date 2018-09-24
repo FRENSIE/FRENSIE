@@ -551,11 +551,23 @@ MonteCarlo::TwoDGridType AdjointElectronPhotonRelaxationDataGenerator::getElectr
   return d_two_d_grid;
 }
 
+// // Set the cutoff angle cosine above which screened rutherford is used
+// void AdjointElectronPhotonRelaxationDataGenerator::setCutoffAngleCosine( const double angle_cutoff )
+// {
+//   d_data_container.setCutoffAngleCosine( angle_cutoff );
+// }
+
 // Get the cutoff angle cosine above which screened rutherford is used
 double AdjointElectronPhotonRelaxationDataGenerator::getCutoffAngleCosine() const
 {
   return d_data_container.getCutoffAngleCosine();
 }
+
+// // Set the number of moment preserving angles
+// void AdjointElectronPhotonRelaxationDataGenerator::setNumberOfMomentPreservingAngles( const unsigned number_of_angles )
+// {
+//   d_data_container.setNumberOfAdjointMomentPreservingAngles( number_of_angles );
+// }
 
 // Get the number of moment preserving angles
 unsigned AdjointElectronPhotonRelaxationDataGenerator::getNumberOfMomentPreservingAngles() const

@@ -22,6 +22,28 @@ notes="This table was generated on " + today + ". It is for testing only!"
 print "Updating the adjoint H native test data...\n"
 
 h_epr_data = Native.ElectronPhotonRelaxationDataContainer( "test_epr_1_native.xml" )
+
+cutoff_angle_cosine=0.9
+number_of_moment_preserving_angles=2
+electron_tabular_eval_tol = 1e-5
+electron_two_d_interp = MonteCarlo.LOGLOGLOG_INTERPOLATION
+
+# Update the forward elastic data if necessary
+if h_epr_data.getCutoffAngleCosine() != cutoff_angle_cosine or h_epr_data.getNumberOfMomentPreservingAngles() != number_of_moment_preserving_angles:
+  # create a temporary file
+  h_epr_data.saveToFile( "temp_epr_file.xml" )
+
+  # Update the forward elastic data
+  ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+                                                 "temp_epr_file.xml",
+                                                 cutoff_angle_cosine,
+                                                 electron_tabular_eval_tol,
+                                                 number_of_moment_preserving_angles,
+                                                 electron_two_d_interp )
+
+  # Reset the forward data container to use the temporary file
+  h_epr_data = Native.ElectronPhotonRelaxationDataContainer( "temp_epr_file.xml" )
+
 generator_h = ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator( h_epr_data, 1e-3, 20.0, 1e-5, 20.0 )
 
 # Set default photon grid tolerances
@@ -40,15 +62,13 @@ generator_h.setAdjointIncoherentGridConvergenceTolerance( 0.5 )
 generator_h.setAdjointIncoherentGridAbsoluteDifferenceTolerance( 1e-42 )
 generator_h.setAdjointIncoherentGridDistanceTolerance( 1e-16 )
 
-# --cutoff_angle_cosine=0.9 --number_of_moment_preserving_angles=2
-
 # Set default electron grid tolerances
 generator_h.setDefaultElectronGridConvergenceTolerance( 1e-2 )
 generator_h.setDefaultElectronGridAbsoluteDifferenceTolerance( 1e-16 )
 generator_h.setDefaultElectronGridDistanceTolerance( 1e-9 )
 
-generator_h.setElectronTabularEvaluationTolerance( 1e-5 )
-generator_h.setElectronTwoDInterpPolicy( MonteCarlo.LOGLOGLOG_INTERPOLATION )
+generator_h.setElectronTabularEvaluationTolerance( electron_tabular_eval_tol )
+generator_h.setElectronTwoDInterpPolicy( electron_two_d_interp )
 generator_h.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
 
 generator_h.setAdjointBremsstrahlungMaxEnergyNudgeValue( 0.2 )
@@ -74,15 +94,40 @@ except RuntimeError:
 
 print "adjoint H native data updated successfully!\n"
 
-# Add notes and save the file
+# Save the file
 h_data_container = generator_h.getDataContainer()
 h_data_container.saveToFile( "test_aepr_1_native.xml", True)
 
+# Remove the temporary file if necessary
+if os.path.isfile("temp_epr_file.xml"):
+  os.remove("temp_epr_file.xml")
 
 # Update adjoint Carbon data
 print "Updating the adjoint C native test data...\n"
 
 c_epr_data = Native.ElectronPhotonRelaxationDataContainer( "test_epr_6_native.xml" )
+
+cutoff_angle_cosine=0.9
+number_of_moment_preserving_angles=2
+electron_tabular_eval_tol = 1e-5
+electron_two_d_interp = MonteCarlo.LOGLOGLOG_INTERPOLATION
+
+# Update the forward elastic data if necessary
+if c_epr_data.getCutoffAngleCosine() != cutoff_angle_cosine or c_epr_data.getNumberOfMomentPreservingAngles() != number_of_moment_preserving_angles:
+  # create a temporary file
+  c_epr_data.saveToFile( "temp_epr_file.xml" )
+
+  # Update the forward elastic data
+  ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+                                                 "temp_epr_file.xml",
+                                                 cutoff_angle_cosine,
+                                                 electron_tabular_eval_tol,
+                                                 number_of_moment_preserving_angles,
+                                                 electron_two_d_interp )
+
+  # Reset the forward data container to use the temporary file
+  c_epr_data = Native.ElectronPhotonRelaxationDataContainer( "temp_epr_file.xml" )
+
 generator_c = ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator( c_epr_data, 1e-3, 20.0, 1e-5, 20.0 )
 
 # Set default photon grid tolerances
@@ -101,15 +146,13 @@ generator_c.setAdjointIncoherentGridConvergenceTolerance( 0.5 )
 generator_c.setAdjointIncoherentGridAbsoluteDifferenceTolerance( 1e-42 )
 generator_c.setAdjointIncoherentGridDistanceTolerance( 1e-16 )
 
-#  --cutoff_angle_cosine=0.9 --number_of_moment_preserving_angles=2
-
 # Set default electron grid tolerances
 generator_c.setDefaultElectronGridConvergenceTolerance( 1e-2 )
 generator_c.setDefaultElectronGridAbsoluteDifferenceTolerance( 1e-16 )
 generator_c.setDefaultElectronGridDistanceTolerance( 1e-9 )
 
-generator_c.setElectronTabularEvaluationTolerance( 1e-5 )
-generator_c.setElectronTwoDInterpPolicy( MonteCarlo.LOGLOGLOG_INTERPOLATION )
+generator_c.setElectronTabularEvaluationTolerance( electron_tabular_eval_tol )
+generator_c.setElectronTwoDInterpPolicy( electron_two_d_interp )
 generator_c.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
 
 generator_c.setAdjointBremsstrahlungMaxEnergyNudgeValue( 0.2 )
@@ -135,15 +178,40 @@ except RuntimeError:
 
 print "adjoint C native data updated successfully!\n"
 
-# Add notes and save the file
+# Save the file
 c_data_container = generator_c.getDataContainer()
 c_data_container.saveToFile( "test_aepr_6_native.xml", True)
 
+# Remove the temporary file if necessary
+if os.path.isfile("temp_epr_file.xml"):
+  os.remove("temp_epr_file.xml")
 
 # Update adjoint Aluminum data
 print "Updating the adjoint Al native test data...\n"
 
 al_epr_data = Native.ElectronPhotonRelaxationDataContainer( "test_epr_13_native.xml" )
+
+cutoff_angle_cosine=0.9
+number_of_moment_preserving_angles=2
+electron_tabular_eval_tol = 1e-5
+electron_two_d_interp = MonteCarlo.LOGLOGLOG_INTERPOLATION
+
+# Update the forward elastic data if necessary
+if al_epr_data.getCutoffAngleCosine() != cutoff_angle_cosine or al_epr_data.getNumberOfMomentPreservingAngles() != number_of_moment_preserving_angles:
+  # create a temporary file
+  al_epr_data.saveToFile( "temp_epr_file.xml" )
+
+  # Update the forward elastic data
+  ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+                                                 "temp_epr_file.xml",
+                                                 cutoff_angle_cosine,
+                                                 electron_tabular_eval_tol,
+                                                 number_of_moment_preserving_angles,
+                                                 electron_two_d_interp )
+
+  # Reset the forward data container to use the temporary file
+  al_epr_data = Native.ElectronPhotonRelaxationDataContainer( "temp_epr_file.xml" )
+
 generator_al = ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator( al_epr_data, 1e-3, 20.0, 1e-5, 20.0 )
 
 # Set default photon grid tolerances
@@ -162,15 +230,13 @@ generator_al.setAdjointIncoherentGridConvergenceTolerance( 0.5 )
 generator_al.setAdjointIncoherentGridAbsoluteDifferenceTolerance( 1e-42 )
 generator_al.setAdjointIncoherentGridDistanceTolerance( 1e-16 )
 
-#  --cutoff_angle_cosine=0.9 --number_of_moment_preserving_angles=2
-
 # Set default electron grid tolerances
 generator_al.setDefaultElectronGridConvergenceTolerance( 1e-2 )
 generator_al.setDefaultElectronGridAbsoluteDifferenceTolerance( 1e-16 )
 generator_al.setDefaultElectronGridDistanceTolerance( 1e-9 )
 
-generator_al.setElectronTabularEvaluationTolerance( 1e-5 )
-generator_al.setElectronTwoDInterpPolicy( MonteCarlo.LOGLOGLOG_INTERPOLATION )
+generator_al.setElectronTabularEvaluationTolerance( electron_tabular_eval_tol )
+generator_al.setElectronTwoDInterpPolicy( electron_two_d_interp )
 generator_al.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
 
 generator_al.setAdjointBremsstrahlungMaxEnergyNudgeValue( 0.2 )
@@ -196,15 +262,40 @@ except RuntimeError:
 
 print "adjoint Al native data updated successfully!\n"
 
-# Add notes and save the file
+# Save the file
 al_data_container = generator_al.getDataContainer()
 al_data_container.saveToFile( "test_aepr_13_native.xml", True)
 
+# Remove the temporary file if necessary
+if os.path.isfile("temp_epr_file.xml"):
+  os.remove("temp_epr_file.xml")
 
 # Update adjoint Silicon data
 print "Updating the adjoint Si native test data...\n"
 
 si_epr_data = Native.ElectronPhotonRelaxationDataContainer( "test_epr_14_native.xml" )
+
+cutoff_angle_cosine=0.9
+number_of_moment_preserving_angles=2
+electron_tabular_eval_tol = 1e-5
+electron_two_d_interp = MonteCarlo.LOGLOGLOG_INTERPOLATION
+
+# Update the forward elastic data if necessary
+if si_epr_data.getCutoffAngleCosine() != cutoff_angle_cosine or si_epr_data.getNumberOfMomentPreservingAngles() != number_of_moment_preserving_angles:
+  # create a temporary file
+  si_epr_data.saveToFile( "temp_epr_file.xml" )
+
+  # Update the forward elastic data
+  ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+                                                 "temp_epr_file.xml",
+                                                 cutoff_angle_cosine,
+                                                 electron_tabular_eval_tol,
+                                                 number_of_moment_preserving_angles,
+                                                 electron_two_d_interp )
+
+  # Reset the forward data container to use the temporary file
+  si_epr_data = Native.ElectronPhotonRelaxationDataContainer( "temp_epr_file.xml" )
+
 generator_si = ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator( si_epr_data, 1e-3, 20.0, 1e-5, 20.0 )
 
 # Set default photon grid tolerances
@@ -230,8 +321,8 @@ generator_si.setDefaultElectronGridConvergenceTolerance( 1e-2 )
 generator_si.setDefaultElectronGridAbsoluteDifferenceTolerance( 1e-16 )
 generator_si.setDefaultElectronGridDistanceTolerance( 1e-9 )
 
-generator_si.setElectronTabularEvaluationTolerance( 1e-5 )
-generator_si.setElectronTwoDInterpPolicy( MonteCarlo.LOGLOGLOG_INTERPOLATION )
+generator_si.setElectronTabularEvaluationTolerance( electron_tabular_eval_tol )
+generator_si.setElectronTwoDInterpPolicy( electron_two_d_interp )
 generator_si.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
 
 generator_si.setAdjointBremsstrahlungMaxEnergyNudgeValue( 0.2 )
@@ -257,15 +348,41 @@ except RuntimeError:
 
 print "adjoint Si native data updated successfully!\n"
 
-# Add notes and save the file
+# Save the file
 si_data_container = generator_si.getDataContainer()
 si_data_container.saveToFile( "test_aepr_14_native.xml", True)
+
+# Remove the temporary file if necessary
+if os.path.isfile("temp_epr_file.xml"):
+  os.remove("temp_epr_file.xml")
 
 
 # # Update adjoint Lead data
 # print "Updating the adjoint Pb native test data...\n"
 
 # pb_epr_data = Native.ElectronPhotonRelaxationDataContainer( "test_epr_82_native.xml" )
+
+# cutoff_angle_cosine=0.9
+# number_of_moment_preserving_angles=2
+# electron_tabular_eval_tol = 1e-5
+# electron_two_d_interp = MonteCarlo.LOGLOGLOG_INTERPOLATION
+
+# # Update the forward elastic data if necessary
+# if pb_epr_data.getCutoffAngleCosine() != cutoff_angle_cosine or pb_epr_data.getNumberOfMomentPreservingAngles() != number_of_moment_preserving_angles:
+#   # create a temporary file
+#   pb_epr_data.saveToFile( "temp_epr_file.xml" )
+
+#   # Update the forward elastic data
+#   ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+#                                                  "temp_epr_file.xml",
+#                                                  cutoff_angle_cosine,
+#                                                  electron_tabular_eval_tol,
+#                                                  number_of_moment_preserving_angles,
+#                                                  electron_two_d_interp )
+
+#   # Reset the forward data container to use the temporary file
+#   pb_epr_data = Native.ElectronPhotonRelaxationDataContainer( "temp_epr_file.xml" )
+
 # generator_pb = ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator( pb_epr_data, 1e-3, 20.0, 1e-5, 20.0 )
 
 # # Set default photon grid tolerances
@@ -291,8 +408,8 @@ si_data_container.saveToFile( "test_aepr_14_native.xml", True)
 # generator_pb.setDefaultElectronGridAbsoluteDifferenceTolerance( 1e-16 )
 # generator_pb.setDefaultElectronGridDistanceTolerance( 1e-9 )
 
-# generator_pb.setElectronTabularEvaluationTolerance( 1e-5 )
-# generator_pb.setElectronTwoDInterpPolicy( MonteCarlo.LOGLOGLOG_INTERPOLATION )
+# generator_pb.setElectronTabularEvaluationTolerance( electron_tabular_eval_tol )
+# generator_pb.setElectronTwoDInterpPolicy( electron_two_d_interp )
 # generator_pb.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
 
 # generator_pb.setAdjointBremsstrahlungMaxEnergyNudgeValue( 0.2 )
@@ -318,7 +435,11 @@ si_data_container.saveToFile( "test_aepr_14_native.xml", True)
 
 # print "adjoint Pb native data updated successfully!\n"
 
-# # Add notes and save the file
+# # Save the file
 # pb_data_container = generator_pb.getDataContainer()
 # pb_data_container.saveToFile( "test_aepr_82_native.xml", True)
+
+# # Remove the temporary file if necessary
+# if os.path.isfile("temp_epr_file.xml"):
+#   os.remove("temp_epr_file.xml")
 

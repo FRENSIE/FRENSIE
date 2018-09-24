@@ -1315,7 +1315,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   std::vector<double> energy_grid = h_data_container.getAdjointElectronEnergyGrid();
   FRENSIE_CHECK_EQUAL( energy_grid.front(), 1.0e-5 );
   FRENSIE_CHECK_EQUAL( energy_grid.back(), 20.0 );
-  FRENSIE_CHECK_EQUAL( energy_grid.size(), 7 );
+  FRENSIE_CHECK_EQUAL( energy_grid.size(), 8 );
 
    std::vector<double> cross_section;
    unsigned threshold;
@@ -1330,7 +1330,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   FRENSIE_CHECK_EQUAL( cross_section.front(), 2.74896e+8 );
   FRENSIE_CHECK_EQUAL( cross_section.back(), 304.72762372903747519 );
-  FRENSIE_CHECK_EQUAL( cross_section.size(), 7-threshold );
+  FRENSIE_CHECK_EQUAL( cross_section.size(), 8-threshold );
 
   threshold =
      h_data_container.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
@@ -1340,9 +1340,9 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   cross_section =
      h_data_container.getAdjointScreenedRutherfordElasticCrossSection();
 
-  FRENSIE_CHECK_EQUAL( cross_section.front(), 1.230344065585843055e+03 );
+  FRENSIE_CHECK_EQUAL( cross_section.front(), 2.574552047073666472 );
   FRENSIE_CHECK_EQUAL( cross_section.back(), 1.271739489125800355e+04 );
-  FRENSIE_CHECK_EQUAL( cross_section.size(), 7-threshold );
+  FRENSIE_CHECK_EQUAL( cross_section.size(), 8-threshold );
 
   std::vector<double> angular_grid =
     h_data_container.getAdjointElasticAngularEnergyGrid();
@@ -1425,7 +1425,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   FRENSIE_CHECK_FLOATING_EQUALITY( reduction_ratio.front(), 0.9500004750002375431, 1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY( reduction_ratio.back(), 8.2846746577972752e-06, 1e-15 );
 
-  FRENSIE_CHECK_EQUAL( reduction_ratio.size(), 7-threshold );
+  FRENSIE_CHECK_EQUAL( reduction_ratio.size(), 8-threshold );
 
   // Check the forward inelastic cross section data
   threshold =
@@ -1438,7 +1438,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   FRENSIE_CHECK_EQUAL( cross_section.front(), 2.97832e+01 );
   FRENSIE_CHECK_EQUAL( cross_section.back(), 1.64670355529995461e+05 );
-  FRENSIE_CHECK_EQUAL( cross_section.size(), 7-threshold );
+  FRENSIE_CHECK_EQUAL( cross_section.size(), 8-threshold );
 
 
   // Check the atomic excitation data
@@ -1452,7 +1452,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   FRENSIE_CHECK_EQUAL( cross_section.front(), 6.12430578984167427e+07 );
   FRENSIE_CHECK_EQUAL( cross_section.back(), 8.18292998361299251e+04 );
-  FRENSIE_CHECK_EQUAL( cross_section.size(), 7-threshold );
+  FRENSIE_CHECK_EQUAL( cross_section.size(), 8-threshold );
 
   std::vector<double> atomic_excitation_energy_grid =
     h_data_container.getAdjointAtomicExcitationEnergyGrid();
@@ -1480,7 +1480,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   FRENSIE_CHECK_EQUAL( cross_section.front(), 4.42736548286178930e+01 );
   FRENSIE_CHECK_EQUAL( cross_section.back(), 2.89178093381140533e-01 );
-  FRENSIE_CHECK_EQUAL( cross_section.size(), 7-threshold );
+  FRENSIE_CHECK_EQUAL( cross_section.size(), 8-threshold );
 
   FRENSIE_CHECK( !h_data_container.seperateAdjointBremsstrahlungEnergyGrid() );
 
@@ -1527,7 +1527,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   FRENSIE_CHECK_EQUAL( cross_section.front(), 4.59979189086422043e+10 );
   FRENSIE_CHECK_EQUAL( cross_section.back(), 6.20356430451277847e+04 );
-  FRENSIE_CHECK_EQUAL( cross_section.size(), 7-threshold );
+  FRENSIE_CHECK_EQUAL( cross_section.size(), 8-threshold );
 
   FRENSIE_CHECK( !h_data_container.seperateAdjointElectroionizationEnergyGrid() );
 
