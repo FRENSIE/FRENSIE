@@ -46,12 +46,6 @@ public:
 
 private:
 
-  // Test if a value is greater than or equal to one
-  static bool greaterThanOrEqualToOne( const double value );
-
-  // Test if a value is greater than one
-  static bool greaterThanOne( const double value );
-
   // The if a value is not equal to zero
   static bool notEqualZero( const double value );
 
@@ -64,18 +58,6 @@ private:
   // The EEDL file name with path
   boost::filesystem::path d_eedl_file_name;
 };
-
-// Test if a value is greater than or equal to one
-inline bool StandardENDLDataGenerator::greaterThanOrEqualToOne( const double value )
-{
-  return value >= 1.0;
-}
-
-// Test if a value is greater than one
-inline bool StandardENDLDataGenerator::greaterThanOne( const double value )
-{
-  return value > 1.0;
-}
 
 // The if a value is not equal to zero
 inline bool StandardENDLDataGenerator::notEqualZero( const double value )

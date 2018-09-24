@@ -43,7 +43,7 @@ void ElectronPhotonRelaxationDataContainer::loadFromFileImpl(
   // value
   const boost::archive::detail::basic_pointer_iserializer* bpis =
     this->resetBpisPointer<std::vector<double> >( extension );
-  
+
   // Import the data in the archive
   BaseType::loadFromFileImpl( archive_name_with_path );
 
@@ -64,7 +64,7 @@ void ElectronPhotonRelaxationDataContainer::saveToFileImpl(
   // value
   const boost::archive::detail::basic_pointer_oserializer* bpos =
     this->resetBposPointer<std::vector<double> >( extension );
-  
+
   // Import the data in the archive
   BaseType::saveToFileImpl( archive_name_with_path, overwrite );
 

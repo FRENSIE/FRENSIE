@@ -157,25 +157,6 @@ public:
   //! Populate the electron-photon-relaxation data container
   virtual void populateEPRDataContainer() = 0;
 
-  //! Repopulate the electron elastic data
-  void repopulateElectronElasticData(
-                         const double max_electron_energy = 20.0,
-                         const double cutoff_angle_cosine = 0.9,
-                         const double tabular_evaluation_tol = 1e-7,
-                         const unsigned number_of_moment_preserving_angles = 1,
-                         const MonteCarlo::TwoDGridType two_d_grid =
-                         MonteCarlo::UNIT_BASE_CORRELATED_GRID,
-                         const MonteCarlo::TwoDInterpolationType two_d_interp =
-                         MonteCarlo::LOGLOGLOG_INTERPOLATION );
-
-  //! Repopulate the electron moment preserving data
-  void repopulateMomentPreservingData(
-                         const double cutoff_angle_cosine = 0.9,
-                         const double tabular_evaluation_tol = 1e-7,
-                         const unsigned number_of_moment_preserving_angles = 1,
-                         const MonteCarlo::TwoDInterpolationType two_d_interp =
-                         MonteCarlo::LOGLOGLOG_INTERPOLATION );
-
   //! Get the data container
   const Data::ElectronPhotonRelaxationDataContainer& getDataContainer() const;
 
@@ -204,22 +185,6 @@ protected:
   const Utility::GridGenerator<Utility::LogLog>&
   getDefaultElectronGridGenerator() const;
 
-  //! Repopulate the electron elastic data
-  virtual void repopulateElectronElasticDataImpl(
-              const double max_electron_energy,
-              const double cutoff_angle_cosine,
-              const double tabular_evaluation_tol,
-              const unsigned number_of_moment_preserving_angles,
-              const MonteCarlo::TwoDGridType two_d_grid,
-              const MonteCarlo::TwoDInterpolationType two_d_interp ) = 0;
-
-  //! Repopulate the electron moment preserving data
-  virtual void repopulateMomentPreservingDataImpl(
-              const double cutoff_angle_cosine,
-              const double tabular_evaluation_tol,
-              const unsigned number_of_moment_preserving_angles,
-              const MonteCarlo::TwoDInterpolationType two_d_interp ) = 0;
-
 private:
 
   // The electron-photon-relaxation volatile data container
@@ -236,7 +201,7 @@ private:
   // The electron TwoDInterpPolicy (LogLogLog - default)
   MonteCarlo::TwoDInterpolationType d_two_d_interp;
 
-  // The electron TwoDGridPolicy (LogLogLog - default)
+  // The electron TwoDGridPolicy (Unit-base Correlated - default)
   MonteCarlo::TwoDGridType d_two_d_grid;
 };
 

@@ -14,6 +14,7 @@
 #include <boost/bind.hpp>
 
 // FRENSIE Includes
+// #include "DataGen_ENDLElectronPhotonRelaxationDataGenerator.hpp"
 #include "DataGen_StandardAdjointElectronPhotonRelaxationDataGenerator.hpp"
 #include "DataGen_AdjointPairProductionEnergyDistributionNormConstantEvaluator.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
@@ -51,37 +52,12 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
       const double min_electron_energy,
       const double max_electron_energy )
   : AdjointElectronPhotonRelaxationDataGenerator( forward_epr_data->getAtomicNumber(),
+                                                  forward_epr_data->getAtomicWeight(),
                                                   min_photon_energy,
                                                   max_photon_energy,
                                                   min_electron_energy,
                                                   max_electron_energy ),
-    d_forward_epr_data( forward_epr_data ),
-    d_adjoint_pair_production_energy_dist_norm_const_evaluation_tol( 1e-3 ),
-    d_adjoint_pair_production_energy_dist_norm_const_nudge_value( 1e-6 ),
-    d_adjoint_triplet_production_energy_dist_norm_const_evaluation_tol( 1e-3 ),
-    d_adjoint_triplet_production_energy_dist_norm_const_nudge_value( 1e-6 ),
-    d_adjoint_incoherent_max_energy_nudge_value( 0.2 ),
-    d_adjoint_incoherent_energy_to_max_energy_nudge_value( 1e-6 ),
-    d_adjoint_incoherent_evaluation_tol( 0.001 ),
-    d_adjoint_incoherent_grid_convergence_tol( 0.001 ),
-    d_adjoint_incoherent_grid_absolute_diff_tol( 1e-20 ),
-    d_adjoint_incoherent_grid_distance_tol( 1e-14 ),
-    d_adjoint_electron_grid_convergence_tol( 0.001 ),
-    d_adjoint_electron_absolute_diff_tol( 1e-16 ),
-    d_adjoint_electron_distance_tol( 1e-8 ),
-    d_tabular_evaluation_tol( 1e-8 ),
-    d_electron_two_d_interp( MonteCarlo::LOGLOGLOG_INTERPOLATION ),
-    d_electron_two_d_grid( MonteCarlo::UNIT_BASE_CORRELATED_GRID ),
-    d_adjoint_bremsstrahlung_max_energy_nudge_value( 0.2 ),
-    d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value( 1e-7 ),
-    d_adjoint_bremsstrahlung_evaluation_tol( 1e-6 ),
-    d_adjoint_bremsstrahlung_grid_convergence_tol( 0.001 ),
-    d_adjoint_bremsstrahlung_absolute_diff_tol( 1e-16 ),
-    d_adjoint_bremsstrahlung_distance_tol( 1e-8 ),
-    d_adjoint_electroionization_evaluation_tol( 1e-6 ),
-    d_adjoint_electroionization_grid_convergence_tol( 0.001 ),
-    d_adjoint_electroionization_absolute_diff_tol( 1e-16 ),
-    d_adjoint_electroionization_distance_tol( 1e-8 )
+    d_forward_epr_data( forward_epr_data )
 {
   // Make sure the forward epr data is valid
   testPrecondition( forward_epr_data.get() );
@@ -93,8 +69,9 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
 
     FRENSIE_LOG_WARNING( "the min photon energy requested is below the "
                          << "requested forward table min photon energy! The "
-                         << "table's min photon energy will be used "
-                         << "instead." );
+                         << "table's min photon energy ("
+                         << forward_epr_data->getMinPhotonEnergy()
+                         << ") will be used instead." );
   }
 
   // Check if the max photon energy is above the forward table max energy
@@ -104,8 +81,9 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
 
     FRENSIE_LOG_WARNING( "the max photon energy requested is above the "
                          << "requested forward table max photon energy! The "
-                         << "table's max photon energy will be used "
-                         << "instead." );
+                         << "table's max photon energy ("
+                         << forward_epr_data->getMaxPhotonEnergy()
+                         << ") will be used instead." );
   }
 
   // Check if the min electron energy is below the forward table min energy
@@ -115,8 +93,9 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
 
     FRENSIE_LOG_WARNING( "the min electron energy requested is above the "
                          << "requested forward table min electron energy! The "
-                         << "table's min electron energy will be used "
-                         << "instead." );
+                         << "table's min electron energy ("
+                         << forward_epr_data->getMinElectronEnergy()
+                         << ") will be used instead." );
   }
 
   // Check if the max electron energy is above the forward table max energy
@@ -126,8 +105,9 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
 
     FRENSIE_LOG_WARNING( "the max electron energy requested is above the "
                          << "requested forward table max electron energy! The "
-                         << "table's max electron energy will be used "
-                         << "instead." );
+                         << "table's max electron energy ("
+                         << forward_epr_data->getMaxElectronEnergy()
+                         << ") will be used instead." );
   }
 }
 
@@ -143,463 +123,35 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
                                     forward_epr_data->getMaxElectronEnergy() )
 { /* ... */ }
 
-// Set the adjoint pair production energy dist. norm const. evaluation tol.
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPairProductionEnergyDistNormConstEvaluationTolerance(
-                                                  const double evaluation_tol )
+// Constructor (existing data container)
+StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPhotonRelaxationDataGenerator(
+     const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>&
+      forward_epr_data,
+     const boost::filesystem::path& file_name_with_path )
+  : AdjointElectronPhotonRelaxationDataGenerator( file_name_with_path ),
+    d_forward_epr_data( forward_epr_data )
 {
-  // Make sure the evaluation tolerance is valid
-  testPrecondition( evaluation_tol > 0.0 );
-  testPrecondition( evaluation_tol < 1.0 );
-
-  d_adjoint_pair_production_energy_dist_norm_const_evaluation_tol =
-    evaluation_tol;
+  // Check if the data tables are compatible
+  TEST_FOR_EXCEPTION( forward_epr_data->getAtomicNumber() !=
+                      this->getDataContainer().getAtomicNumber(),
+                      std::runtime_error,
+                      "The forward and adjoint data tables are not compatible "
+                      "(Z-forward=" << forward_epr_data->getAtomicNumber() <<
+                      "(Z-adjoint=" << this->getDataContainer().getAtomicNumber() <<
+                      ")!" );
 }
-
-// Get the adjoint pair production energy dist. norm const. evaluation tol
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointPairProductionEnergyDistNormConstEvaluationTolerance() const
-{
-  return d_adjoint_pair_production_energy_dist_norm_const_evaluation_tol;
-}
-
-// Set the adjoint pair production energy dist. norm const. nudge value
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPairProductionEnergyDistNormConstNudgeValue(
-                                                     const double nudge_value )
-{
-  // Make sure the nudge value is valid
-  testPrecondition( nudge_value >= 0.0 );
-
-  d_adjoint_pair_production_energy_dist_norm_const_nudge_value = nudge_value;
-}
-
-// Get the adjoint pair production energy dist. norm const. nudge value
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointPairProductionEnergyDistNormConstNudgeValue() const
-{
-  return d_adjoint_pair_production_energy_dist_norm_const_nudge_value;
-}
-
-// Set the adjoint triplet production energy dist. norm const. evaluation tol.
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointTripletProductionEnergyDistNormConstEvaluationTolerance(
-                                                  const double evaluation_tol )
-{
-  // Make sure the evaluation tolerance is valid
-  testPrecondition( evaluation_tol > 0.0 );
-  testPrecondition( evaluation_tol < 1.0 );
-
-  d_adjoint_triplet_production_energy_dist_norm_const_evaluation_tol =
-    evaluation_tol;
-}
-
-// Get the adjoint triplet production energy dist. norm const. evaluation tol
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointTripletProductionEnergyDistNormConstEvaluationTolerance() const
-{
-  return d_adjoint_triplet_production_energy_dist_norm_const_evaluation_tol;
-}
-
-// Set the adjoint triplet production energy dist. norm const. nudge value
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointTripletProductionEnergyDistNormConstNudgeValue(
-                                                     const double nudge_value )
-{
-  // Make sure the nudge value is valid
-  testPrecondition( nudge_value >= 0.0 );
-
-  d_adjoint_triplet_production_energy_dist_norm_const_nudge_value =
-    nudge_value;
-}
-
-// Get the adjoint triplet production energy dist. norm const. nudge value
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointTripletProductionEnergyDistNormConstNudgeValue() const
-{
-  return d_adjoint_triplet_production_energy_dist_norm_const_nudge_value;
-}
-
-// Set the adjoint incoherent max energy nudge value
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointIncoherentMaxEnergyNudgeValue(
-                                          const double max_energy_nudge_value )
-{
-  // Make sure the nudge value is valid
-  testPrecondition( max_energy_nudge_value > 0.0 );
-
-  d_adjoint_incoherent_max_energy_nudge_value = max_energy_nudge_value;
-}
-
-// Return the adjoint incoherent max energy nudge value
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointIncoherentMaxEnergyNudgeValue() const
-{
-  return d_adjoint_incoherent_max_energy_nudge_value;
-}
-
-// Set the adjoint incoherent energy to max energy nudge value
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointIncoherentEnergyToMaxEnergyNudgeValue(
-                                const double energy_to_max_energy_nudge_value )
-{
-  // Make sure the nudge value is valid
-  testPrecondition( energy_to_max_energy_nudge_value >= 0.0 );
-
-  d_adjoint_incoherent_energy_to_max_energy_nudge_value =
-    energy_to_max_energy_nudge_value;
-}
-
-// Return the adjoint incoherent energy to max energy nudge value
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointIncoherentEnergyToMaxEnergyNudgeValue() const
-{
-  return d_adjoint_incoherent_energy_to_max_energy_nudge_value;
-}
-
-// Set the adjoint incoherent cross section evaluation tolerance
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointIncoherentCrossSectionEvaluationTolerance(
-                                                  const double evaluation_tol )
-{
-  // Make sure the evaluation tolerance is valid
-  testPrecondition( evaluation_tol > 0.0 );
-  testPrecondition( evaluation_tol < 1.0 );
-
-  d_adjoint_incoherent_evaluation_tol = evaluation_tol;
-}
-
-// Return the adjoint incoherent cross section evaluation tolerance
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointIncoherentCrossSectionEvaluationTolerance() const
-{
-  return d_adjoint_incoherent_evaluation_tol;
-}
-
-// Set the adjoint incoherent grid convergence tolerance
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointIncoherentGridConvergenceTolerance(
-                                                 const double convergence_tol )
-{
-  // Make sure the convergence tolerance is valid
-  testPrecondition( convergence_tol <= 1.0 );
-  testPrecondition( convergence_tol > 0.0 );
-
-  d_adjoint_incoherent_grid_convergence_tol = convergence_tol;
-}
-
-// Return the adjoint incoherent grid convergence tolerance
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointIncoherentGridConvergenceTolerance() const
-{
-  return d_adjoint_incoherent_grid_convergence_tol;
-}
-
-// Set the adjoint incoherent grid absolute difference tolerance
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointIncoherentGridAbsoluteDifferenceTolerance(
-                                               const double absolute_diff_tol )
-{
-  // Make sure the absolute difference tolerance is valid
-  testPrecondition( absolute_diff_tol <= 1.0 );
-  testPrecondition( absolute_diff_tol >= 0.0 );
-
-  d_adjoint_incoherent_grid_absolute_diff_tol = absolute_diff_tol;
-}
-
-// Get the adjoint incoherent grid absolute difference tolerance
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointIncoherentGridAbsoluteDifferenceTolerance() const
-{
-  return d_adjoint_incoherent_grid_absolute_diff_tol;
-}
-
-// Set the adjoint incoherent grid distance tolerance
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointIncoherentGridDistanceTolerance(
-                                                    const double distance_tol )
-{
-  // Make sure the distance tolerance is valid
-  testPrecondition( distance_tol <= 1.0 );
-  testPrecondition( distance_tol >= 0.0 );
-
-  d_adjoint_incoherent_grid_distance_tol = distance_tol;
-}
-
-// Get the adjoint incoherent grid distance tolerance
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointIncoherentGridDistanceTolerance() const
-{
-  return d_adjoint_incoherent_grid_distance_tol;
-}
-
-// Get the cutoff angle cosine above which screened rutherford is used
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getCutoffAngleCosine() const
-{
-  return d_forward_epr_data->getCutoffAngleCosine();
-}
-
-// Get the number of moment preserving angles
-unsigned StandardAdjointElectronPhotonRelaxationDataGenerator::getNumberOfMomentPreservingAngles() const
-{
-  return d_forward_epr_data->getNumberOfMomentPreservingAngles();
-}
-
-// Set the adjoint bremsstrahlung max energy nudge value
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointBremsstrahlungMaxEnergyNudgeValue(
-                                          const double max_energy_nudge_value )
-{
-  // Make sure the nudge value is valid
-  testPrecondition( max_energy_nudge_value > 0.0 );
-
-  d_adjoint_bremsstrahlung_max_energy_nudge_value = max_energy_nudge_value;
-}
-
-// Return the adjoint bremsstrahlung max energy nudge value
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointBremsstrahlungMaxEnergyNudgeValue() const
-{
-  return d_adjoint_bremsstrahlung_max_energy_nudge_value;
-}
-
-// Set the adjoint bremsstrahlung energy to outgoing energy nudge value
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(
-                            const double energy_to_outgoing_energy_nudge_value )
-{
-  // Make sure the nudge value is valid
-  testPrecondition( energy_to_outgoing_energy_nudge_value >= 0.0 );
-
-  d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value =
-    energy_to_outgoing_energy_nudge_value;
-}
-
-// Return the adjoint bremsstrahlung energy to outgoing energy nudge value
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue() const
-{
-  return d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value;
-}
-
-// Set the evaluation tolerance for the adjoint bremsstrahlung cross section
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointBremsstrahlungEvaluationTolerance(
-                                            const double evaluation_tolerance )
-{
-  // Make sure the evaluation tolerance is valid
-  testPrecondition( evaluation_tolerance > 0.0 );
-  testPrecondition( evaluation_tolerance < 1.0 );
-
-  d_adjoint_bremsstrahlung_evaluation_tol = evaluation_tolerance;
-}
-
-// Get the evaluation tolerance for the adjoint bremsstrahlung cross section
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointBremsstrahlungEvaluationTolerance() const
-{
-  return d_adjoint_bremsstrahlung_evaluation_tol;
-}
-
-// Set the adjoint bremsstrahlung grid convergence tolerance
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointBremsstrahlungGridConvergenceTolerance(
-                                                 const double convergence_tol )
-{
-  // Make sure the convergence tolerance is valid
-  testPrecondition( convergence_tol <= 1.0 );
-  testPrecondition( convergence_tol > 0.0 );
-
-  d_adjoint_bremsstrahlung_grid_convergence_tol = convergence_tol;
-}
-
-// Return the adjoint bremsstrahlung grid convergence tolerance
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointBremsstrahlungGridConvergenceTolerance() const
-{
-  return d_adjoint_bremsstrahlung_grid_convergence_tol;
-}
-
-// Set the adjoint bremsstrahlung absolute difference tolerance
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointBremsstrahlungAbsoluteDifferenceTolerance(
-                                               const double absolute_diff_tol )
-{
-  // Make sure the absolute difference tolerance is valid
-  testPrecondition( absolute_diff_tol <= 1.0 );
-  testPrecondition( absolute_diff_tol >= 0.0 );
-
-  d_adjoint_bremsstrahlung_absolute_diff_tol = absolute_diff_tol;
-}
-
-// Get the adjoint bremsstrahlung absolute difference tolerance
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointBremsstrahlungAbsoluteDifferenceTolerance() const
-{
-  return d_adjoint_bremsstrahlung_absolute_diff_tol;
-}
-
-// Set the adjoint bremsstrahlung distance tolerance
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointBremsstrahlungDistanceTolerance(
-                                                    const double distance_tol )
-{
-  // Make sure the distance tolerance is valid
-  testPrecondition( distance_tol <= 1.0 );
-  testPrecondition( distance_tol >= 0.0 );
-
-  d_adjoint_bremsstrahlung_distance_tol = distance_tol;
-}
-
-// Get the adjoint bremsstrahlung distance tolerance
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointBremsstrahlungDistanceTolerance() const
-{
-  return d_adjoint_bremsstrahlung_distance_tol;
-}
-
-// Set the evaluation tolerance for the adjoint electroionization cross section
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectroionizationEvaluationTolerance(
-                                            const double evaluation_tolerance )
-{
-  // Make sure the evaluation tolerance is valid
-  testPrecondition( evaluation_tolerance > 0.0 );
-  testPrecondition( evaluation_tolerance < 1.0 );
-
-  d_adjoint_electroionization_evaluation_tol = evaluation_tolerance;
-}
-
-// Get the evaluation tolerance for the adjoint electroionization cross section
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointElectroionizationEvaluationTolerance() const
-{
-  return d_adjoint_electroionization_evaluation_tol;
-}
-
-// Set the adjoint electroionization grid convergence tolerance
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectroionizationGridConvergenceTolerance(
-                                                 const double convergence_tol )
-{
-  // Make sure the convergence tolerance is valid
-  testPrecondition( convergence_tol <= 1.0 );
-  testPrecondition( convergence_tol > 0.0 );
-
-  d_adjoint_electroionization_grid_convergence_tol = convergence_tol;
-}
-
-// Return the adjoint electroionization grid convergence tolerance
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointElectroionizationGridConvergenceTolerance() const
-{
-  return d_adjoint_electroionization_grid_convergence_tol;
-}
-
-// Set the adjoint electroionization absolute difference tolerance
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectroionizationAbsoluteDifferenceTolerance(
-                                               const double absolute_diff_tol )
-{
-  // Make sure the absolute difference tolerance is valid
-  testPrecondition( absolute_diff_tol <= 1.0 );
-  testPrecondition( absolute_diff_tol >= 0.0 );
-
-  d_adjoint_electroionization_absolute_diff_tol = absolute_diff_tol;
-}
-
-// Get the adjoint electroionization absolute difference tolerance
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointElectroionizationAbsoluteDifferenceTolerance() const
-{
-  return d_adjoint_electroionization_absolute_diff_tol;
-}
-
-// Set the adjoint electroionization distance tolerance
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectroionizationDistanceTolerance(
-                                                    const double distance_tol )
-{
-  // Make sure the distance tolerance is valid
-  testPrecondition( distance_tol <= 1.0 );
-  testPrecondition( distance_tol >= 0.0 );
-
-  d_adjoint_electroionization_distance_tol = distance_tol;
-}
-
-// Get the adjoint electroionization distance tolerance
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointElectroionizationDistanceTolerance() const
-{
-  return d_adjoint_electroionization_distance_tol;
-}
-
-// Set the electron FullyTabularTwoDDistribution evaluation tolerance
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setTabularEvaluationTolerance(
-                        const double tabular_evaluation_tol )
-{
-  // Make sure the tolerance is valid
-  testPrecondition( tabular_evaluation_tol < 1.0 );
-  testPrecondition( tabular_evaluation_tol > 0.0 );
-
-  d_tabular_evaluation_tol = tabular_evaluation_tol;
-}
-
-// Get the electron FullyTabularTwoDDistribution evaluation tolerance
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getTabularEvaluationTolerance() const
-{
-  return d_tabular_evaluation_tol;
-}
-
-// Set the electron TwoDInterpPolicy (LogLogLog by default)
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setElectronTwoDInterpPolicy(
-                    const MonteCarlo::TwoDInterpolationType two_d_interp )
-{
-  d_electron_two_d_interp = two_d_interp;
-}
-
-// Return the electron TwoDInterpPolicy (LogLogLog by default)
-MonteCarlo::TwoDInterpolationType StandardAdjointElectronPhotonRelaxationDataGenerator::getElectronTwoDInterpPolicy() const
-{
-  return d_electron_two_d_interp;
-}
-
-// Set the electron TwoDGridPolicy (Unit-base Correlated by default)
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setElectronTwoDGridPolicy(
-                    const MonteCarlo::TwoDGridType two_d_grid )
-{
-  d_electron_two_d_grid = two_d_grid;
-}
-
-// Return the electron TwoDGridPolicy (Unit-base Correlated by default)
-MonteCarlo::TwoDGridType StandardAdjointElectronPhotonRelaxationDataGenerator::getElectronTwoDGridPolicy() const
-{
-  return d_electron_two_d_grid;
-}
-
-// Set the adjoint electron grid convergence tolerance
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronGridConvergenceTolerance(
-                        const double adjoint_electron_grid_convergence_tol )
-{
-  d_adjoint_electron_grid_convergence_tol =
-    adjoint_electron_grid_convergence_tol;
-}
-
-// Get the adjoint electron grid convergence tolerance
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointElectronGridConvergenceTolerance() const
-{
-  return d_adjoint_electron_grid_convergence_tol;
-}
-
-// Set the adjoint electron absolute diff tolerance
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronAbsoluteDifferenceTolerance(
-                        const double adjoint_electron_absolute_diff_tol )
-{
-  d_adjoint_electron_absolute_diff_tol = adjoint_electron_absolute_diff_tol;
-}
-
-// Get the adjoint electron absolute diff tolerance
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointElectronAbsoluteDifferenceTolerance() const
-{
-  return d_adjoint_electron_absolute_diff_tol;
-}
-
-// Set the adjoint electron distance tolerance
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDistanceTolerance(
-                        const double adjoint_electron_distance_tol )
-{
-  d_adjoint_electron_distance_tol = adjoint_electron_distance_tol;
-}
-
-// Get the adjoint electron distance tolerance
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointElectronDistanceTolerance() const
-{
-  return d_adjoint_electron_distance_tol;
-}
-
-
 
 // Populate the adjoint electron-photon-relaxation data container
 void StandardAdjointElectronPhotonRelaxationDataGenerator::populateEPRDataContainer(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
     const bool populate_photons,
-    const bool populate_electrons ) const
+    const bool populate_electrons )
 {
-  // Set the table data
-  FRENSIE_LOG_PARTIAL_NOTIFICATION( Utility::Bold( "Setting the table data" )
-                                    << " ... " );
-  FRENSIE_FLUSH_ALL_LOGS();
-
-  this->setTableData( data_container );
-
-  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
-
   // Set the relaxation data
   FRENSIE_LOG_PARTIAL_NOTIFICATION( Utility::Bold( "Setting the adjoint relaxation data" )
                                     << " ... " );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  this->setAdjointRelaxationData( data_container );
+  this->setAdjointRelaxationData();
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
@@ -608,7 +160,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::populateEPRDataContai
     // Set the photon data
     FRENSIE_LOG_NOTIFICATION( Utility::Bold( "Setting the adjoint photon data: " ) );
 
-    this->setAdjointPhotonData( data_container );
+    this->setAdjointPhotonData();
 
     FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
   }
@@ -623,7 +175,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::populateEPRDataContai
     // Set the electron data
     FRENSIE_LOG_NOTIFICATION( Utility::Bold( "Setting the adjoint electron data: " ) );
 
-    this->setAdjointElectronData( data_container );
+    this->setAdjointElectronData();
 
     FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
   }
@@ -634,161 +186,81 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::populateEPRDataContai
   }
 }
 
-// Set the table data
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setTableData(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const
-{
-  this->setBasicData( data_container );
-  this->setDefaultConvergenceParameters( data_container );
-
-  // Set the photon table data
-  data_container.setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(
-             d_adjoint_pair_production_energy_dist_norm_const_evaluation_tol );
-  data_container.setAdjointPairProductionEnergyDistNormConstantNudgeValue(
-                d_adjoint_pair_production_energy_dist_norm_const_nudge_value );
-  data_container.setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(
-          d_adjoint_triplet_production_energy_dist_norm_const_evaluation_tol );
-  data_container.setAdjointTripletProductionEnergyDistNormConstantNudgeValue(
-             d_adjoint_triplet_production_energy_dist_norm_const_nudge_value );
-  data_container.setAdjointIncoherentMaxEnergyNudgeValue(
-                                 d_adjoint_incoherent_max_energy_nudge_value );
-  data_container.setAdjointIncoherentEnergyToMaxEnergyNudgeValue(
-                       d_adjoint_incoherent_energy_to_max_energy_nudge_value );
-  data_container.setAdjointIncoherentEvaluationTolerance(
-                                         d_adjoint_incoherent_evaluation_tol );
-  data_container.setAdjointIncoherentGridConvergenceTolerance(
-                                   d_adjoint_incoherent_grid_convergence_tol );
-  data_container.setAdjointIncoherentGridAbsoluteDifferenceTolerance(
-                                 d_adjoint_incoherent_grid_absolute_diff_tol );
-  data_container.setAdjointIncoherentGridDistanceTolerance(
-                                      d_adjoint_incoherent_grid_distance_tol );
-
-  // Set the electron table data
-  data_container.setCutoffAngleCosine(
-    d_forward_epr_data->getCutoffAngleCosine() );
-  data_container.setNumberOfAdjointMomentPreservingAngles(
-    d_forward_epr_data->getNumberOfMomentPreservingAngles() );
-  data_container.setAdjointElectronGridConvergenceTolerance(
-    d_adjoint_electron_grid_convergence_tol );
-  data_container.setAdjointElectronAbsoluteDifferenceTolerance(
-    d_adjoint_electron_absolute_diff_tol );
-  data_container.setAdjointElectronDistanceTolerance(
-    d_adjoint_electron_distance_tol );
-  data_container.setAdjointBremsstrahlungMaxEnergyNudgeValue(
-    d_adjoint_bremsstrahlung_max_energy_nudge_value );
-  data_container.setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(
-    d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value );
-  data_container.setAdjointBremsstrahlungEvaluationTolerance(
-    d_adjoint_bremsstrahlung_evaluation_tol );
-  data_container.setAdjointBremsstrahlungGridConvergenceTolerance(
-    d_adjoint_bremsstrahlung_grid_convergence_tol );
-  data_container.setAdjointBremsstrahlungAbsoluteDifferenceTolerance(
-    d_adjoint_bremsstrahlung_absolute_diff_tol );
-  data_container.setAdjointBremsstrahlungDistanceTolerance(
-    d_adjoint_bremsstrahlung_distance_tol );
-  data_container.setAdjointElectroionizationEvaluationTolerance(
-    d_adjoint_electroionization_evaluation_tol );
-  data_container.setAdjointElectroionizationGridConvergenceTolerance(
-    d_adjoint_electroionization_grid_convergence_tol );
-  data_container.setAdjointElectroionizationAbsoluteDifferenceTolerance(
-    d_adjoint_electroionization_absolute_diff_tol );
-  data_container.setAdjointElectroionizationDistanceTolerance(
-    d_adjoint_electroionization_distance_tol );
-  data_container.setElectronTabularEvaluationTolerance(
-    d_tabular_evaluation_tol );
-  {
-  std::string interp = Utility::toString( d_electron_two_d_interp );
-  data_container.setElectronTwoDInterpPolicy( interp );
-  }
-  {
-  std::string grid =
-    Utility::toString( d_electron_two_d_grid );
-  data_container.setElectronTwoDGridPolicy( grid );
-  }
-}
-
 // Set the relaxation data
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointRelaxationData(
-                    Data::AdjointElectronPhotonRelaxationVolatileDataContainer&
-                    data_container ) const
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointRelaxationData()
 {
   // Extract and set the subshells
   const std::set<unsigned>& subshells = d_forward_epr_data->getSubshells();
 
+  Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
+    this->getVolatileDataContainer();
+
+  // Assign the set of all subshells
   data_container.setSubshells( subshells );
 
-  // Extract and set the other subshell data
-  std::set<unsigned>::const_iterator subshell_it =
-    subshells.begin();
-
-  while( subshell_it != subshells.end() )
+  // Assign the subshell data
+  for( auto&& subshell : subshells )
   {
     data_container.setSubshellOccupancy(
-                    *subshell_it,
-                    d_forward_epr_data->getSubshellOccupancy( *subshell_it ) );
+                subshell,
+                d_forward_epr_data->getSubshellOccupancy( subshell ) );
 
     data_container.setSubshellBindingEnergy(
-                *subshell_it,
-                d_forward_epr_data->getSubshellBindingEnergy( *subshell_it ) );
-
-    ++subshell_it;
+                subshell,
+                d_forward_epr_data->getSubshellBindingEnergy( subshell ) );
   }
 }
 
 // Set the Compton profile data
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setComptonProfileData(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setComptonProfileData()
 {
+  Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
+    this->getVolatileDataContainer();
+
   // Get the subshells
   const std::set<unsigned>& subshells = d_forward_epr_data->getSubshells();
 
-  std::set<unsigned>::const_iterator subshell_it =
-    subshells.begin();
-
   // Extract and set the Compton profiles and grids
-  while( subshell_it != subshells.end() )
+  for( auto&& subshell : subshells )
   {
     data_container.setComptonProfileMomentumGrid(
-           *subshell_it,
-           d_forward_epr_data->getComptonProfileMomentumGrid( *subshell_it ) );
+              subshell,
+              d_forward_epr_data->getComptonProfileMomentumGrid( subshell ) );
 
     data_container.setComptonProfile(
-                       *subshell_it,
-                       d_forward_epr_data->getComptonProfile( *subshell_it ) );
-
-    ++subshell_it;
+              subshell,
+              d_forward_epr_data->getComptonProfile( subshell ) );
   }
 }
 
 // Set the occupation number data
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setOccupationNumberData(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setOccupationNumberData()
 {
+  Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
+    this->getVolatileDataContainer();
+
   // Get the subshells
   const std::set<unsigned>& subshells = d_forward_epr_data->getSubshells();
 
-  std::set<unsigned>::const_iterator subshell_it =
-    subshells.begin();
-
   // Extract and set the occupation numbers and grids
-  while( subshell_it != subshells.end() )
+  for( auto&& subshell : subshells )
   {
     data_container.setOccupationNumberMomentumGrid(
-         *subshell_it,
-         d_forward_epr_data->getOccupationNumberMomentumGrid( *subshell_it ) );
+            subshell,
+            d_forward_epr_data->getOccupationNumberMomentumGrid( subshell ) );
 
     data_container.setOccupationNumber(
-                     *subshell_it,
-                     d_forward_epr_data->getOccupationNumber( *subshell_it ) );
-
-    ++subshell_it;
+            subshell,
+            d_forward_epr_data->getOccupationNumber( subshell ) );
   }
 }
 
 // Set the Waller-Hartree scattering function data
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setWallerHartreeScatteringFunctionData(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setWallerHartreeScatteringFunctionData()
 {
+  Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
+    this->getVolatileDataContainer();
+
   // Extract and set the scattering function grid
   data_container.setWallerHartreeScatteringFunctionMomentumGrid(
         d_forward_epr_data->getWallerHartreeScatteringFunctionMomentumGrid() );
@@ -799,9 +271,11 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setWallerHartreeScatt
 }
 
 //! Set the Waller-Hartree atomic form factor data
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFactorData(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFactorData()
 {
+  Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
+    this->getVolatileDataContainer();
+
   // Extract and set the atomic form factor grid
   data_container.setWallerHartreeAtomicFormFactorMomentumGrid(
           d_forward_epr_data->getWallerHartreeAtomicFormFactorMomentumGrid() );
@@ -820,9 +294,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomi
 }
 
 // Set the photon data
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
-                    Data::AdjointElectronPhotonRelaxationVolatileDataContainer&
-                    data_container ) const
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData()
 {
   // Set the Compton profile data
   FRENSIE_LOG_PARTIAL_NOTIFICATION( " Setting the " <<
@@ -830,7 +302,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
                                     << " data ... " );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  this->setComptonProfileData( data_container );
+  this->setComptonProfileData();
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
@@ -840,7 +312,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
                                     << " data ... " );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  this->setOccupationNumberData( data_container );
+  this->setOccupationNumberData();
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
@@ -850,7 +322,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
                                     << " data ... " );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  this->setWallerHartreeScatteringFunctionData( data_container );
+  this->setWallerHartreeScatteringFunctionData();
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
@@ -860,7 +332,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
                                     << " data ... " );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  this->setWallerHartreeAtomicFormFactorData( data_container );
+  this->setWallerHartreeAtomicFormFactorData();
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
@@ -924,12 +396,14 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
                           union_energy_grid, impulse_approx_total_forward_cs );
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( " done." ) );
+  FRENSIE_FLUSH_ALL_LOGS();
+
+  Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
+    this->getVolatileDataContainer();
 
   // Set the union energy grid
   std::vector<double> energy_grid;
-  energy_grid.assign( union_energy_grid.begin(),
-                      union_energy_grid.end() );
-
+  energy_grid.assign( union_energy_grid.begin(), union_energy_grid.end() );
   data_container.setAdjointPhotonEnergyGrid( energy_grid );
 
   // Create and set the 2-D cross sections
@@ -984,8 +458,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
                               << " cross section ... " );
     FRENSIE_FLUSH_ALL_LOGS();
 
-    this->calculateAdjointImpulseApproxTotalIncoherentCrossSection(
-                                                              data_container );
+    this->calculateAdjointImpulseApproxTotalIncoherentCrossSection();
 
     FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
@@ -1004,7 +477,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
                                                waller_hartree_coherent_cs,
                                                cross_section );
 
-    data_container.setAdjointWallerHartreeCoherentCrossSection(cross_section);
+    data_container.setAdjointWallerHartreeCoherentCrossSection( cross_section );
 
     FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
@@ -1041,7 +514,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
                                     << " cross section ... " );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  this->calculateAdjointPhotonTotalCrossSection( data_container, true );
+  this->calculateAdjointPhotonTotalCrossSection( true );
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
@@ -1050,7 +523,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
                                     << " cross section ... " );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  this->calculateAdjointPhotonTotalCrossSection( data_container, false );
+  this->calculateAdjointPhotonTotalCrossSection( false );
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
@@ -1065,7 +538,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
                                       << " energy distribution data ... " );
     FRENSIE_FLUSH_ALL_LOGS();
 
-    this->setAdjointPairProductionEnergyDistribution( data_container );
+    this->setAdjointPairProductionEnergyDistribution();
 
     FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
@@ -1075,15 +548,14 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
                                       << " energy distribution data ... " );
     FRENSIE_FLUSH_ALL_LOGS();
 
-    this->setAdjointTripletProductionEnergyDistribution( data_container );
+    this->setAdjointTripletProductionEnergyDistribution();
 
     FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
   }
 }
 
 // Set the adjoint pair production energy distributions
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPairProductionEnergyDistribution(
-         Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPairProductionEnergyDistribution()
 {
   // Create the evaluator
   std::shared_ptr<AdjointPairProductionEnergyDistributionNormConstantEvaluator>
@@ -1092,20 +564,23 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPairProduct
      d_forward_epr_data->getPairProductionCrossSection(),
      d_forward_epr_data->getPairProductionCrossSectionThresholdEnergyIndex() );
 
+  Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
+    this->getVolatileDataContainer();
+
   // Create the evaluation wrapper
   std::function<double(double)> evaluation_wrapper =
     evaluator->getEnergyDistributionNormConstantEvaluationWrapper(
-             d_adjoint_pair_production_energy_dist_norm_const_evaluation_tol );
+      this->getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance() );
 
   // Create the energy distribution norm constant grid
   std::vector<double> energy_grid( 2 ), energy_dist_norm_constants;
 
   energy_grid[0] = 2*Utility::PhysicalConstants::electron_rest_mass_energy +
-    d_adjoint_pair_production_energy_dist_norm_const_nudge_value;
+     this->getAdjointPairProductionEnergyDistNormConstantNudgeValue();
   energy_grid[1] = this->getMaxPhotonEnergy();
 
   try{
-    this->getDefaultGridGenerator().generateAndEvaluateInPlace(
+    this->getDefaultPhotonGridGenerator().generateAndEvaluateInPlace(
                                                     energy_grid,
                                                     energy_dist_norm_constants,
                                                     evaluation_wrapper );
@@ -1144,8 +619,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPairProduct
 }
 
 // Set the adjoint triplet production energy distribution
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointTripletProductionEnergyDistribution(
-         Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointTripletProductionEnergyDistribution()
 {
   // Create the evaluator
   std::shared_ptr<AdjointPairProductionEnergyDistributionNormConstantEvaluator>
@@ -1154,20 +628,23 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointTripletProd
      d_forward_epr_data->getTripletProductionCrossSection(),
      d_forward_epr_data->getTripletProductionCrossSectionThresholdEnergyIndex() );
 
+  Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
+    this->getVolatileDataContainer();
+
   // Create the evaluation wrapper
   std::function<double(double)> evaluation_wrapper =
     evaluator->getEnergyDistributionNormConstantEvaluationWrapper(
-          d_adjoint_triplet_production_energy_dist_norm_const_evaluation_tol );
+      this->getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance() );
 
   // Create the energy distribution norm constant grid
   std::vector<double> energy_grid( 2 ), energy_dist_norm_constants;
 
   energy_grid[0] = 4*Utility::PhysicalConstants::electron_rest_mass_energy +
-    d_adjoint_triplet_production_energy_dist_norm_const_nudge_value;
+     this->getAdjointTripletProductionEnergyDistNormConstantNudgeValue();
   energy_grid[1] = this->getMaxPhotonEnergy();
 
   try{
-    this->getDefaultGridGenerator().generateAndEvaluateInPlace(
+    this->getDefaultPhotonGridGenerator().generateAndEvaluateInPlace(
                                                     energy_grid,
                                                     energy_dist_norm_constants,
                                                     evaluation_wrapper );
@@ -1235,26 +712,20 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createSubshellImpulse
   // Get the subshells
   const std::set<unsigned>& subshells = d_forward_epr_data->getSubshells();
 
-  std::set<unsigned>::const_iterator subshell_it =
-    subshells.begin();
-
-  // Resize the cs_evaluators array
+  // Resize the cs_evaluators
   cs_evaluators.resize( subshells.size() );
 
-  std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >::iterator
-    cs_evaluators_it = cs_evaluators.begin();
+  int i = 0;
 
-  // Extract and set the occupation numbers and grids
-  while( subshell_it != subshells.end() )
+  for( auto&& subshell : subshells )
   {
-    cs_evaluators_it->first = *subshell_it;
+    cs_evaluators[i].first = subshell;
 
     this->createSubshellImpulseApproxIncoherentAdjointCrossSectionEvaluator(
-                                                    cs_evaluators_it->first,
-                                                    cs_evaluators_it->second );
+                                                    cs_evaluators[i].first,
+                                                    cs_evaluators[i].second );
 
-    ++subshell_it;
-    ++cs_evaluators_it;
+    ++i;
   }
 }
 
@@ -1322,18 +793,18 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::updateAdjointPhotonUn
   // Create an adjoint incoherent grid generator
   AdjointIncoherentGridGenerator<Utility::LinLinLin>
     grid_generator( this->getMaxPhotonEnergy(),
-                    d_adjoint_incoherent_max_energy_nudge_value,
-                    d_adjoint_incoherent_energy_to_max_energy_nudge_value,
-                    d_adjoint_incoherent_grid_convergence_tol,
-                    d_adjoint_incoherent_grid_absolute_diff_tol,
-                    d_adjoint_incoherent_grid_distance_tol );
+                    this->getAdjointIncoherentMaxEnergyNudgeValue(),
+                    this->getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
+                    this->getAdjointIncoherentGridConvergenceTolerance(),
+                    this->getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
+                    this->getAdjointIncoherentGridDistanceTolerance() );
 
   // Throw an exception if dirty convergence occurs
   grid_generator.throwExceptionOnDirtyConvergence();
 
   std::function<double(double,double)> cs_evaluation_wrapper =
     grid_generator.createCrossSectionEvaluator(
-                           cs_evaluator, d_adjoint_incoherent_evaluation_tol );
+                cs_evaluator, this->getAdjointIncoherentEvaluationTolerance() );
 
   try{
     grid_generator.generateInPlace( union_energy_grid, cs_evaluation_wrapper );
@@ -1366,19 +837,19 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::updateAdjointPhotonUn
     AdjointIncoherentGridGenerator<Utility::LinLinLin>
       grid_generator( this->getMaxPhotonEnergy(),
                       cs_evaluator->getSubshellBindingEnergy()+
-                      d_adjoint_incoherent_max_energy_nudge_value,
+                        this->getAdjointIncoherentMaxEnergyNudgeValue(),
                       cs_evaluator->getSubshellBindingEnergy()+
-                      d_adjoint_incoherent_energy_to_max_energy_nudge_value,
-                      d_adjoint_incoherent_grid_convergence_tol,
-                      d_adjoint_incoherent_grid_absolute_diff_tol,
-                      d_adjoint_incoherent_grid_distance_tol );
+                        this->getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
+                      this->getAdjointIncoherentGridConvergenceTolerance(),
+                      this->getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
+                      this->getAdjointIncoherentGridDistanceTolerance() );
 
     // Throw an exception if dirty convergence occurs
     grid_generator.throwExceptionOnDirtyConvergence();
 
     std::function<double(double,double)> cs_evaluation_wrapper =
       grid_generator.createCrossSectionEvaluator(
-                           cs_evaluator, d_adjoint_incoherent_evaluation_tol );
+                cs_evaluator,  this->getAdjointIncoherentEvaluationTolerance() );
 
     try{
       grid_generator.generateInPlace( union_energy_grid, cs_evaluation_wrapper );
@@ -1408,7 +879,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::updateAdjointPhotonUn
                        std::placeholders::_1 );
 
   try{
-    this->getDefaultGridGenerator().generateInPlace( union_energy_grid,
+    this->getDefaultPhotonGridGenerator().generateInPlace( union_energy_grid,
                                                      cs_evaluation_wrapper );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
@@ -1434,19 +905,18 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createCrossSectionOnU
   // Create a grid generator
   AdjointIncoherentGridGenerator<Utility::LinLinLin>
     grid_generator( this->getMaxPhotonEnergy(),
-                    d_adjoint_incoherent_max_energy_nudge_value,
-                    d_adjoint_incoherent_energy_to_max_energy_nudge_value,
-                    //this->getDefaultGridConvergenceTolerance(),
-                    d_adjoint_incoherent_grid_convergence_tol,
-                    d_adjoint_incoherent_grid_absolute_diff_tol,
-                    d_adjoint_incoherent_grid_distance_tol );
+                    this->getAdjointIncoherentMaxEnergyNudgeValue(),
+                    this->getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
+                    this->getAdjointIncoherentGridConvergenceTolerance(),
+                    this->getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
+                    this->getAdjointIncoherentGridDistanceTolerance() );
 
   // Throw an exception if dirty convergence occurs
   grid_generator.throwExceptionOnDirtyConvergence();
 
   std::function<double(double,double)> cs_evaluation_wrapper =
     grid_generator.createCrossSectionEvaluator(
-                           cs_evaluator, d_adjoint_incoherent_evaluation_tol );
+                           cs_evaluator, this->getAdjointIncoherentEvaluationTolerance() );
 
   // Evaluate the cross section at every energy grid point
   std::list<double>::const_iterator energy_grid_it =
@@ -1497,20 +967,18 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createCrossSectionOnU
   // Create a grid generator
   AdjointIncoherentGridGenerator<Utility::LinLinLin>
     grid_generator( this->getMaxPhotonEnergy(),
-                    cs_evaluator->getSubshellBindingEnergy()+
-                    d_adjoint_incoherent_max_energy_nudge_value,
-                    cs_evaluator->getSubshellBindingEnergy()+
-                    d_adjoint_incoherent_energy_to_max_energy_nudge_value,
-                    d_adjoint_incoherent_grid_convergence_tol,
-                    d_adjoint_incoherent_grid_absolute_diff_tol,
-                    d_adjoint_incoherent_grid_distance_tol );
+                    cs_evaluator->getSubshellBindingEnergy()+ this->getAdjointIncoherentMaxEnergyNudgeValue(),
+                    cs_evaluator->getSubshellBindingEnergy()+ this->getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
+                    this->getAdjointIncoherentGridConvergenceTolerance(),
+                    this->getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
+                    this->getAdjointIncoherentGridDistanceTolerance() );
 
   // Throw an exception if dirty convergence occurs
   grid_generator.throwExceptionOnDirtyConvergence();
 
   std::function<double(double,double)> cs_evaluation_wrapper =
     grid_generator.createCrossSectionEvaluator(
-                           cs_evaluator, d_adjoint_incoherent_evaluation_tol );
+                  cs_evaluator, this->getAdjointIncoherentEvaluationTolerance() );
 
   // Evaluate the cross section at every energy grid point
   std::list<double>::const_iterator energy_grid_it =
@@ -1574,10 +1042,11 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createCrossSectionOnU
 }
 
 // Calculate the total incoherent adjoint cross section
-void StandardAdjointElectronPhotonRelaxationDataGenerator::calculateAdjointImpulseApproxTotalIncoherentCrossSection(
-                    Data::AdjointElectronPhotonRelaxationVolatileDataContainer&
-                    data_container ) const
+void StandardAdjointElectronPhotonRelaxationDataGenerator::calculateAdjointImpulseApproxTotalIncoherentCrossSection()
 {
+  Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
+    this->getVolatileDataContainer();
+
   // Get the union energy grid
   const std::vector<double>& energy_grid =
     data_container.getAdjointPhotonEnergyGrid();
@@ -1644,9 +1113,11 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::calculateAdjointImpul
 
 // Calculate the adjoint photon total cross section
 void StandardAdjointElectronPhotonRelaxationDataGenerator::calculateAdjointPhotonTotalCrossSection(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
-    const bool use_waller_hartree_adjoint_incoherent_cs ) const
+    const bool use_waller_hartree_adjoint_incoherent_cs )
 {
+  Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
+    this->getVolatileDataContainer();
+
   // Get the adjoint photon energy grid
   const std::vector<double>& energy_grid =
     data_container.getAdjointPhotonEnergyGrid();
@@ -1708,8 +1179,7 @@ double StandardAdjointElectronPhotonRelaxationDataGenerator::evaluateAdjointPhot
 }
 
 // Set the adjoint electron data
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronData(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronData()
 {
 //---------------------------------------------------------------------------//
 // Set Electron Cross Section Data Data
@@ -1741,18 +1211,31 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
   std::list<double> union_energy_grid;
 
-  this->initializeAdjointElectronUnionEnergyGrid(
-          data_container,
-          union_energy_grid );
-
-  Utility::GridGenerator<Utility::LinLin>
-  union_energy_grid_generator( d_adjoint_electron_grid_convergence_tol,
-                               d_adjoint_electron_absolute_diff_tol,
-                               d_adjoint_electron_distance_tol );
+  this->initializeAdjointElectronUnionEnergyGrid( union_energy_grid );
 
   //---------------------------------------------------------------------------//
   // Generate Grid Points For The Elastic Cross Section Data
   //---------------------------------------------------------------------------//
+
+  // // Update the forward elastic data if necessary
+  // if ( d_forward_epr_data->getCutoffAngleCosine() != this->getCutoffAngleCosine() || d_forward_epr_data->getNumberOfMomentPreservingAngles() != this->getNumberOfMomentPreservingAngles() )
+  // {
+  //   // create a temperary file
+  //   d_forward_epr_data->saveToFile( "temp_epr_file.xml" );
+
+  //   // Update the forward elastic data
+  //   DataGen::ENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+  //                                                 "temp_epr_file.xml",
+  //                                                 this->getCutoffAngleCosine(),
+  //                                                 this->getElectronTabularEvaluationTolerance(),
+  //                                                 this->getNumberOfMomentPreservingAngles(),
+  //                                                 this->getElectronTwoDInterpPolicy() );
+
+  //   // Reset the forward data container to use the temperary file
+  //   d_forward_epr_data.reset(
+  //     new Data::ElectronPhotonRelaxationDataContainer( "temp_epr_file.xml" ) );
+  // }
+
   // Extract the cutoff elastic cross section data
   std::shared_ptr<std::vector<double> > forward_cutoff_elastic_cs(
        new std::vector<double>( d_forward_epr_data->getCutoffElasticCrossSection() ) );
@@ -1772,7 +1255,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
                  _1 );
 
   // Generate cutoff elastic
-  union_energy_grid_generator.generateInPlace( union_energy_grid,
+  this->getDefaultElectronGridGenerator().generateInPlace( union_energy_grid,
                                                cutoff_elastic_grid_function );
 
   FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
@@ -1797,7 +1280,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
                  _1 );
 
   // Generate total elastic
-  union_energy_grid_generator.generateInPlace( union_energy_grid,
+  this->getDefaultElectronGridGenerator().generateInPlace( union_energy_grid,
                                                total_elastic_grid_function );
 
   FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
@@ -1812,7 +1295,6 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     forward_inelastic_electron_cross_section;
 
   this->createForwardInelasticElectronCrossSectionDistribution(
-            data_container,
             forward_inelastic_electron_cross_section );
 
   // Bind the distribution
@@ -1828,7 +1310,6 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   // Create the cross section distribution
   std::shared_ptr<const Utility::UnivariateDistribution> adjoint_excitation_cross_section;
   this->createAdjointAtomicExcitationCrossSectionDistribution(
-          data_container,
           forward_electron_energy_grid,
           forward_grid_searcher,
           adjoint_excitation_cross_section );
@@ -1839,8 +1320,11 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
                  boost::cref( *adjoint_excitation_cross_section ),
                  _1 );
 
+  Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
+    this->getVolatileDataContainer();
+
   // Generate atomic excitation (don't generate new grid points above the last grid point)
-  union_energy_grid_generator.refineInPlace(
+  this->getDefaultElectronGridGenerator().refineInPlace(
     union_energy_grid,
     atomic_excitation_grid_function,
     this->getMinElectronEnergy(),
@@ -1862,13 +1346,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
   std::function<double (double)> bremsstrahlung_grid_function =
     brem_grid_generators->createAdjointCrossSectionFunction(
-            d_adjoint_bremsstrahlung_evaluation_tol );
+            this->getAdjointBremsstrahlungEvaluationTolerance() );
 
   // Temporarily save cross section values so they don't have to be generated again
   std::vector<double> old_adjoint_bremsstrahlung_cs;
 
   // Generate bremsstrahlung (temporarily keep this grid and evaluated function)
-  union_energy_grid_generator.generateAndEvaluateInPlace(
+  this->getDefaultElectronGridGenerator().generateAndEvaluateInPlace(
     union_energy_grid,
     old_adjoint_bremsstrahlung_cs,
     bremsstrahlung_grid_function );
@@ -1905,10 +1389,10 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
     ionization_grid_functions[*shell] =
       ionization_grid_generators[*shell]->createAdjointCrossSectionFunction(
-            d_adjoint_electroionization_evaluation_tol );
+            this->getAdjointElectroionizationEvaluationTolerance() );
 
     // Generate electroionization (temporarily keep this grid and evaluated function)
-    union_energy_grid_generator.generateAndEvaluateInPlace(
+    this->getDefaultElectronGridGenerator().generateAndEvaluateInPlace(
       union_energy_grid,
       old_adjoint_electroionization_cs[*shell],
       ionization_grid_functions[*shell] );
@@ -2040,7 +1524,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_distribution;
 
-    if( d_electron_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
+    if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLOG_INTERPOLATION )
     {
       MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
         cutoff_distribution,
@@ -2048,9 +1532,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
         d_forward_epr_data->getCutoffElasticPDF(),
         d_forward_epr_data->getElasticAngularEnergyGrid(),
         d_forward_epr_data->getCutoffAngleCosine(),
-        d_tabular_evaluation_tol );
+        this->getElectronTabularEvaluationTolerance() );
     }
-    else if( d_electron_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
+    else if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLIN_INTERPOLATION )
     {
       MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin,Utility::Correlated>(
         cutoff_distribution,
@@ -2058,9 +1542,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
         d_forward_epr_data->getCutoffElasticPDF(),
         d_forward_epr_data->getElasticAngularEnergyGrid(),
         d_forward_epr_data->getCutoffAngleCosine(),
-        d_tabular_evaluation_tol );
+        this->getElectronTabularEvaluationTolerance() );
     }
-    else if( d_electron_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
+    else if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LOGLOGLOG_INTERPOLATION )
     {
       MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
         cutoff_distribution,
@@ -2068,13 +1552,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
         d_forward_epr_data->getCutoffElasticPDF(),
         d_forward_epr_data->getElasticAngularEnergyGrid(),
         d_forward_epr_data->getCutoffAngleCosine(),
-        d_tabular_evaluation_tol );
+        this->getElectronTabularEvaluationTolerance() );
     }
     else
     {
       THROW_EXCEPTION( std::runtime_error,
                        "Error: the TwoDInterpPolicy " <<
-                       d_electron_two_d_interp <<
+                       this->getElectronTwoDInterpPolicy() <<
                        " is invalid or currently not supported!" );
     }
 
@@ -2157,7 +1641,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     brem_grid_generators->generateAndEvaluateDistributionOnPrimaryEnergyGrid(
       brem_energy_grid,
       brem_pdf,
-      d_adjoint_bremsstrahlung_evaluation_tol,
+      this->getAdjointBremsstrahlungEvaluationTolerance(),
       energy_grid,
       cross_section,
       threshold );
@@ -2209,7 +1693,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     ionization_grid_generators.find( *shell )->second->generateAndEvaluateDistributionOnPrimaryEnergyGrid(
       ionization_energy_grid,
       ionization_pdf,
-      d_adjoint_electroionization_evaluation_tol,
+      this->getAdjointElectroionizationEvaluationTolerance(),
       energy_grid,
       cross_section,
       threshold );
@@ -2227,7 +1711,6 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 // Create the inelastic cross section distribution
 void
 StandardAdjointElectronPhotonRelaxationDataGenerator::createForwardInelasticElectronCrossSectionDistribution(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
     std::shared_ptr<const Utility::UnivariateDistribution>&
         forward_inelastic_electron_cross_section_distribution ) const
 {
@@ -2248,9 +1731,9 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::createForwardInelasticElec
   std::map<unsigned,unsigned> i_threshold_index;
 
   // Loop through the electroionization subshells
-    std::set<unsigned>::iterator shell = data_container.getSubshells().begin();
+  std::set<unsigned>::iterator shell = d_forward_epr_data->getSubshells().begin();
 
-  for ( shell; shell != data_container.getSubshells().end(); ++shell )
+  for ( shell; shell != d_forward_epr_data->getSubshells().end(); ++shell )
   {
     i_cross_sections[*shell] =
       d_forward_epr_data->getElectroionizationCrossSection( *shell );
@@ -2279,8 +1762,8 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::createForwardInelasticElec
         brem_cross_section[i-brem_threshold_index];
     }
 
-    shell = data_container.getSubshells().begin();
-    for ( shell; shell != data_container.getSubshells().end(); ++shell )
+    shell = d_forward_epr_data->getSubshells().begin();
+    for ( shell; shell != d_forward_epr_data->getSubshells().end(); ++shell )
     {
       // Add electroionization subshell cross section if above threshold
       if ( i >= i_threshold_index[*shell] )
@@ -2300,11 +1783,10 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::createForwardInelasticElec
 
 // Create the adjoint atomic excitation cross section reaction
 void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicExcitationCrossSectionDistribution(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
     const std::shared_ptr<const std::vector<double> >& forward_electron_energy_grid,
     const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
     std::shared_ptr<const Utility::UnivariateDistribution>&
-      adjoint_excitation_cross_section_distribution ) const
+      adjoint_excitation_cross_section_distribution )
 {
   // Extract the atomic excitation cross section data
   std::shared_ptr<std::vector<double> > atomic_excitation_cross_section(
@@ -2382,6 +1864,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicEx
     adjoint_excitation_energy_grid[i] -= adjoint_excitation_energy_gain[i];
   }
 
+  Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
+    this->getVolatileDataContainer();
+
   // Set atomic excitation energy grid (adjoint energy grid = forward energy grid - forward energy loss)
   data_container.setAdjointAtomicExcitationEnergyGrid(
     adjoint_excitation_energy_grid );
@@ -2428,7 +1913,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
 {
   std::shared_ptr<const BremsstrahlungReaction> bremsstrahlung_reaction;
 
-  if( d_electron_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
+  if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLOG_INTERPOLATION )
   {
     MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLog,Utility::UnitBaseCorrelated,BremsstrahlungReaction>(
         *d_forward_epr_data,
@@ -2436,9 +1921,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
         forward_grid_searcher,
         bremsstrahlung_reaction,
         MonteCarlo::DIPOLE_DISTRIBUTION,
-        d_tabular_evaluation_tol );
+        this->getElectronTabularEvaluationTolerance() );
   }
-  else if( d_electron_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
+  else if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLIN_INTERPOLATION )
   {
     MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLin,Utility::UnitBaseCorrelated,BremsstrahlungReaction>(
         *d_forward_epr_data,
@@ -2446,9 +1931,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
         forward_grid_searcher,
         bremsstrahlung_reaction,
         MonteCarlo::DIPOLE_DISTRIBUTION,
-        d_tabular_evaluation_tol );
+        this->getElectronTabularEvaluationTolerance() );
   }
-  else if( d_electron_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
+  else if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
     MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog,Utility::UnitBaseCorrelated,BremsstrahlungReaction>(
         *d_forward_epr_data,
@@ -2456,13 +1941,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
         forward_grid_searcher,
         bremsstrahlung_reaction,
         MonteCarlo::DIPOLE_DISTRIBUTION,
-        d_tabular_evaluation_tol );
+        this->getElectronTabularEvaluationTolerance() );
   }
   else
   {
     THROW_EXCEPTION( std::runtime_error,
                      "Error: the TwoDInterpPolicy " <<
-                     d_electron_two_d_interp <<
+                     this->getElectronTwoDInterpPolicy() <<
                      " is invalid or currently not supported!" );
   }
 
@@ -2472,11 +1957,11 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
         d_forward_epr_data->getBremsstrahlungEnergyGrid(),
         this->getMinElectronEnergy(),
         this->getMaxElectronEnergy(),
-        d_adjoint_bremsstrahlung_max_energy_nudge_value,
-        d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value,
-        d_adjoint_bremsstrahlung_grid_convergence_tol,
-        d_adjoint_bremsstrahlung_absolute_diff_tol,
-        d_adjoint_bremsstrahlung_distance_tol ) );
+        this->getAdjointBremsstrahlungMaxEnergyNudgeValue(),
+        this->getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(),
+        this->getAdjointBremsstrahlungGridConvergenceTolerance(),
+        this->getAdjointBremsstrahlungAbsoluteDifferenceTolerance(),
+        this->getAdjointBremsstrahlungDistanceTolerance() ) );
 }
 
 // Create the adjoint electroionization subshell grid generator
@@ -2495,7 +1980,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
   std::shared_ptr<const ElectroionizationReaction>
     electroionization_subshell_reaction;
 
-  if( d_electron_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
+  if( this->getElectronTwoDInterpPolicy() ==  MonteCarlo::LINLINLOG_INTERPOLATION )
   {
     MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<Utility::LinLinLog,Utility::UnitBaseCorrelated,ElectroionizationReaction>(
         *d_forward_epr_data,
@@ -2503,9 +1988,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
         forward_grid_searcher,
         shell,
         electroionization_subshell_reaction,
-        d_tabular_evaluation_tol );
+        this->getElectronTabularEvaluationTolerance() );
   }
-  else if( d_electron_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
+  else if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLIN_INTERPOLATION )
   {
     MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<Utility::LinLinLin,Utility::UnitBaseCorrelated,ElectroionizationReaction>(
         *d_forward_epr_data,
@@ -2513,9 +1998,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
         forward_grid_searcher,
         shell,
         electroionization_subshell_reaction,
-        d_tabular_evaluation_tol );
+        this->getElectronTabularEvaluationTolerance() );
   }
-  else if( d_electron_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
+  else if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
     MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<Utility::LogLogLog,Utility::UnitBaseCorrelated,ElectroionizationReaction>(
         *d_forward_epr_data,
@@ -2523,13 +2008,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
         forward_grid_searcher,
         shell,
         electroionization_subshell_reaction,
-        d_tabular_evaluation_tol );
+        this->getElectronTabularEvaluationTolerance() );
   }
   else
   {
     THROW_EXCEPTION( std::runtime_error,
                      "Error: the TwoDInterpPolicy " <<
-                     d_electron_two_d_interp <<
+                     this->getElectronTwoDInterpPolicy() <<
                      " is invalid or currently not supported!" );
   }
 
@@ -2548,20 +2033,31 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
         this->getMaxElectronEnergy(),
         2.00 * d_forward_epr_data->getSubshellBindingEnergy( shell ),
         1e-7 + d_forward_epr_data->getSubshellBindingEnergy( shell ),
-        d_adjoint_electroionization_grid_convergence_tol,
-        d_adjoint_electroionization_absolute_diff_tol,
-        d_adjoint_electroionization_distance_tol ) );
+        this->getAdjointElectroionizationGridConvergenceTolerance(),
+        this->getAdjointElectroionizationAbsoluteDifferenceTolerance(),
+        this->getAdjointElectroionizationDistanceTolerance() ) );
 }
 
 // Initialize the electron union energy grid
 void StandardAdjointElectronPhotonRelaxationDataGenerator::initializeAdjointElectronUnionEnergyGrid(
-     const Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
      std::list<double>& union_energy_grid ) const
 {
   // Add the min electron energy to the union energy grid
   union_energy_grid.push_back( this->getMinElectronEnergy() );
 
-  const std::set<unsigned>& subshells = data_container.getSubshells();
+  // Add the screened Rutherford threshold energy
+  std::vector<double> forward_energy_grid = d_forward_epr_data->getElectronEnergyGrid();
+  unsigned rutherford_threshold = d_forward_epr_data->getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
+
+  union_energy_grid.push_back( forward_energy_grid[rutherford_threshold] );
+
+  /* Add the max incoming ionization adjoint electron energy (i.e. the max
+   * electron energy minus the binding energy and 1e-7). This should
+   * help when interpolating the adjoint cross section for electroionization
+   * since the electron must at least gain the binding_energy and the minimum
+   * tabulated energy loss in the forward case is 1e-7 MeV.
+   */
+  const std::set<unsigned>& subshells = d_forward_epr_data->getSubshells();
 
   std::set<unsigned>::const_iterator subshell = subshells.begin();
 
@@ -2569,7 +2065,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::initializeAdjointElec
   while( subshell != subshells.end() )
   {
     double binding_energy =
-      data_container.getSubshellBindingEnergy( *subshell );
+      d_forward_epr_data->getSubshellBindingEnergy( *subshell );
 
       union_energy_grid.push_back(
         this->getMaxElectronEnergy() - binding_energy - 1e-7 );

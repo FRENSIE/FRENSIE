@@ -58,6 +58,27 @@ public:
   //! Populate the electron-photon-relaxation data container
   void populateEPRDataContainer() final override;
 
+  //! Repopulate the electron elastic data
+  static void repopulateElectronElasticData(
+            const boost::filesystem::path& file_name_with_path,
+            const double max_electron_energy = 20.0,
+            const double cutoff_angle_cosine = 0.9,
+            const double tabular_evaluation_tol = 1e-7,
+            const unsigned number_of_moment_preserving_angles = 1,
+            const MonteCarlo::TwoDGridType two_d_grid =
+            MonteCarlo::UNIT_BASE_CORRELATED_GRID,
+            const MonteCarlo::TwoDInterpolationType two_d_interp =
+            MonteCarlo::LOGLOGLOG_INTERPOLATION );
+
+  //! Repopulate the electron moment preserving data
+  static void repopulateMomentPreservingData(
+            const boost::filesystem::path& file_name_with_path,
+            const double cutoff_angle_cosine = 0.9,
+            const double tabular_evaluation_tol = 1e-7,
+            const unsigned number_of_moment_preserving_angles = 1,
+            const MonteCarlo::TwoDInterpolationType two_d_interp =
+            MonteCarlo::LOGLOGLOG_INTERPOLATION );
+
 protected:
 
   //! Constructor (check for valid min/max particle energies)
@@ -68,22 +89,6 @@ protected:
      const double min_electron_energy,
      const double max_electron_energy,
      const bool check_photon_energies );
-
-  //! Repopulate the electron elastic data
-  void repopulateElectronElasticDataImpl(
-         const double max_electron_energy,
-         const double cutoff_angle_cosine,
-         const double tabular_evaluation_tol,
-         const unsigned number_of_moment_preserving_angles,
-         const MonteCarlo::TwoDGridType two_d_grid,
-         const MonteCarlo::TwoDInterpolationType two_d_interp ) final override;
-
-  //! Repopulate the electron moment preserving data
-  void repopulateMomentPreservingDataImpl(
-         const double cutoff_angle_cosine,
-         const double tabular_evaluation_tol,
-         const unsigned number_of_moment_preserving_angles,
-         const MonteCarlo::TwoDInterpolationType two_d_interp ) final override;
 
   //! Set the atomic data
   virtual void setRelaxationData();
@@ -189,10 +194,11 @@ private:
   void setElectronCrossSectionsData();
 
   // Set the moment preserving data
-  void setMomentPreservingData(
-                        const std::vector<double>& elastic_energy_grid,
-                        const double tabular_evaluation_tol,
-                        const MonteCarlo::TwoDInterpolationType two_d_interp );
+  static void setMomentPreservingData(
+        Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
+        const std::vector<double>& elastic_energy_grid,
+        const double tabular_evaluation_tol,
+        const MonteCarlo::TwoDInterpolationType two_d_interp );
 
   // Extract electron cross sections
   template<typename InterpPolicy>

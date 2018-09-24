@@ -115,7 +115,7 @@ void ElectronPhotonRelaxationDataGenerator::setMaxPhotonEnergy(
                                                const double max_photon_energy )
 {
   // Make sure the max photon energy is valid
-  testPrecondition( d_data_container.getMaxPhotonEnergy() < max_photon_energy );
+  testPrecondition( d_data_container.getMinPhotonEnergy() < max_photon_energy );
 
   d_data_container.setMaxPhotonEnergy( max_photon_energy );
 }
@@ -502,36 +502,6 @@ Data::ElectronPhotonRelaxationVolatileDataContainer&
 ElectronPhotonRelaxationDataGenerator::getVolatileDataContainer()
 {
   return d_data_container;
-}
-
-// Repopulate the electron elastic data
-void ElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
-                         const double max_electron_energy,
-                         const double cutoff_angle_cosine,
-                         const double tabular_evaluation_tol,
-                         const unsigned number_of_moment_preserving_angles,
-                         const MonteCarlo::TwoDGridType two_d_grid,
-                         const MonteCarlo::TwoDInterpolationType two_d_interp )
-{
-  this->repopulateElectronElasticDataImpl( max_electron_energy,
-                                           cutoff_angle_cosine,
-                                           tabular_evaluation_tol,
-                                           number_of_moment_preserving_angles,
-                                           two_d_grid,
-                                           two_d_interp );
-}
-
-// Repopulate the electron moment preserving data
-void ElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
-                         const double cutoff_angle_cosine,
-                         const double tabular_evaluation_tol,
-                         const unsigned number_of_moment_preserving_angles,
-                         const MonteCarlo::TwoDInterpolationType two_d_interp )
-{
-  this->repopulateMomentPreservingDataImpl( cutoff_angle_cosine,
-                                            tabular_evaluation_tol,
-                                            number_of_moment_preserving_angles,
-                                            two_d_interp );
 }
 
 } // end DataGen namespace
