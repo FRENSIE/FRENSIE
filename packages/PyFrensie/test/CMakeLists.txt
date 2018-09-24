@@ -202,7 +202,8 @@ SET_PROPERTY(TEST PyFrensie.Data.ENDL.ENDLPhotoatomicDataProperties_test PROPERT
 
 # Add the Data.ENDL.ENDLDataContainer unit tests
 PyFrensie_MAKE_TEST(tstData.ENDL.ENDLDataContainer)
-ADD_TEST(PyFrensie.Data.ENDL.ENDLDataContainer_test ${PYTHON_EXECUTABLE} tstData.ENDL.ENDLDataContainer.py --endlfile=${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_endl_native.xml)
+ADD_DEPENDENCIES(PyFrensie_tstData.ENDL.ENDLDataContainer ${TEST_H_ENDL_NATIVE_FILE_TARGET})
+ADD_TEST(PyFrensie.Data.ENDL.ENDLDataContainer_test ${PYTHON_EXECUTABLE} tstData.ENDL.ENDLDataContainer.py --endlfile=${TEST_H_ENDL_NATIVE_FILE})
 SET_PROPERTY(TEST PyFrensie.Data.ENDL.ENDLDataContainer_test PROPERTY LABELS pyfrensie endl)
 
 # Add the Data.Native.NativeEPRElectroatomicDataProperties unit tests
@@ -501,12 +502,13 @@ IF(HAVE_FRENSIE_HDF5)
 ENDIF()
 
 PyFrensie_MAKE_TEST(tstDataGen.ElectronPhoton.ElectronPhotonRelaxationDataGenerator)
-ADD_TEST(PyFrensie.DataGen.ElectronPhoton.ElectronPhotonRelaxationDataGenerator tstDataGen.ElectronPhoton.ElectronPhotonRelaxationDataGenerator.py --test_h_endl_file=${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_endl_native.xml --test_h_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt)
+ADD_DEPENDENCIES(PyFrensie_tstDataGen.ElectronPhoton.ElectronPhotonRelaxationDataGenerator ${TEST_H_ENDL_NATIVE_FILE_TARGET})
+ADD_TEST(PyFrensie.DataGen.ElectronPhoton.ElectronPhotonRelaxationDataGenerator tstDataGen.ElectronPhoton.ElectronPhotonRelaxationDataGenerator.py --test_h_endl_file=${TEST_H_ENDL_NATIVE_FILE} --test_h_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt)
 
 PyFrensie_MAKE_TEST(tstDataGen.ElectronPhoton.AdjointElectronPhotonRelaxationDataGenerator)
 ADD_TEST(PyFrensie.DataGen.ElectronPhoton.AdjointElectronPhotonRelaxationDataGenerator tstDataGen.ElectronPhoton.AdjointElectronPhotonRelaxationDataGenerator.py --test_h_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml)
 
 PyFrensie_MAKE_TEST(tstDataGen.ENDL.StandardENDLDataGenerator)
-ADD_TEST(PyFrensie.DataGen.ENDL.StandardENDLDataGenerator tstDataGen.ENDL.StandardENDLDataGenerator.py --test_h_eadl_file=${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_eadl_endl_file.txt --test_h_epdl_file=${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_epdl_endl_file.txt --test_h_eedl_file=${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_eedl_endl_file.txt)
+ADD_TEST(PyFrensie.DataGen.ENDL.StandardENDLDataGenerator tstDataGen.ENDL.StandardENDLDataGenerator.py --test_h_eadl_file=${eadl1} --test_h_epdl_file=${epdl1} --test_h_eedl_file=${eedl1})
 
 

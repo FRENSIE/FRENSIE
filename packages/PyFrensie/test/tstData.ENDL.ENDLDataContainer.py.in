@@ -47,7 +47,7 @@ class ENDLDataContainerTestCase(unittest.TestCase):
 
     def testGetAtomicWeight(self):
         "*Test Data.ENDL.ENDLDataContainer getAtomicWeight method"
-        self.assertEqual(self.endl_container.getAtomicWeight(), 1.008)
+        self.assertEqual(self.endl_container.getAtomicWeight(), 1.0079)
 
     def testRelaxationData(self):
         "*Test Data.ENDL.ENDLDataContainer get relaxation data methods"
