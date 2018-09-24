@@ -32,15 +32,15 @@ ElectroatomFactory::ElectroatomFactory(
              const bool verbose )
   : d_electroatom_name_map(),
     d_electroatomic_table_name_map(),
-    d_verbose( verbose )  
+    d_verbose( verbose )
 {
   FRENSIE_LOG_NOTIFICATION( "Starting to load electroatom data tables ... " );
   FRENSIE_FLUSH_ALL_LOGS();
-  
+
   // Create each electroatom in the set
   ScatteringCenterNameSet::const_iterator electroatom_name =
     electroatom_names.begin();
-  
+
   while( electroatom_name != electroatom_names.end() )
   {
     TEST_FOR_EXCEPTION( !electroatom_definitions.doesDefinitionExist( *electroatom_name ),
@@ -72,7 +72,7 @@ ElectroatomFactory::ElectroatomFactory(
       {
         d_electroatomic_table_name_map[Data::ElectroatomicDataProperties::ACE_EPR_FILE];
       }
-      
+
       this->createElectroatomFromACETable( data_directory,
                                            *electroatom_name,
                                            atomic_weight,
@@ -89,7 +89,7 @@ ElectroatomFactory::ElectroatomFactory(
       {
         d_electroatomic_table_name_map[Data::ElectroatomicDataProperties::Native_EPR_FILE];
       }
-      
+
       this->createElectroatomFromNativeTable( data_directory,
                                               *electroatom_name,
                                               atomic_weight,
@@ -142,7 +142,7 @@ void ElectroatomFactory::createElectroatomFromACETable(
     boost::filesystem::path ace_file_path = data_directory;
     ace_file_path /= data_properties.filePath();
     ace_file_path.make_preferred();
-    
+
     if( d_verbose )
     {
       FRENSIE_LOG_PARTIAL_NOTIFICATION(
@@ -152,7 +152,7 @@ void ElectroatomFactory::createElectroatomFromACETable(
                                  " ... " );
       FRENSIE_FLUSH_ALL_LOGS();
     }
-    
+
     // Create the ACEFileHandler
     Data::ACEFileHandler ace_file_handler( ace_file_path,
                                            data_properties.tableName(),
@@ -230,12 +230,12 @@ void ElectroatomFactory::createElectroatomFromNativeTable(
                                 "Loading native EPR cross section table "
                                 "(v " << data_properties.fileVersion() <<
                                 ") for " << data_properties.atom() <<
-                                "from " << native_file_path.string() <<
+                                " from " << native_file_path.string() <<
                                 " ... " );
       FRENSIE_FLUSH_ALL_LOGS();
     }
 
-    // Create the native epr data container
+    // Create the epr data container
     Data::ElectronPhotonRelaxationDataContainer
       data_container( native_file_path );
 

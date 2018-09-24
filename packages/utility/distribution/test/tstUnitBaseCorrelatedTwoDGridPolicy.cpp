@@ -2,7 +2,7 @@
 //!
 //! \file   tstCorrelatedTwoDGridPolicy.cpp
 //! \author Luke Kersting
-//! \brief  The Unit-base Correlated two-dimensional grid policy unit tests
+//! \brief  The Unit-base Correlated two-dimensional sampling policy unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -17,6 +17,7 @@
 
 // FRENSIE Includes
 #include "Utility_TwoDGridPolicy.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 #include "Utility_DynamicOutputFormatter.hpp"
 #include "Utility_InterpolatedFullyTabularBasicBivariateDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
@@ -24,11 +25,6 @@
 #include "Utility_ExponentialDistribution.hpp"
 #include "Utility_ElectronVoltUnit.hpp"
 #include "Utility_BarnUnit.hpp"
-#include "Utility_UnitTestHarnessWithMain.hpp"
-
-//---------------------------------------------------------------------------//
-// Testing Types
-//---------------------------------------------------------------------------//
 
 using boost::units::quantity;
 using Utility::Units::MegaElectronVolt;
@@ -38,8 +34,12 @@ using Utility::Units::barn;
 using Utility::Units::barns;
 namespace cgs = boost::units::cgs;
 
-using DistributionType = std::vector<std::pair<double,std::shared_ptr<const Utility::TabularUnivariateDistribution> > >;
-using UnitAwareDistributionType = std::vector<std::pair<quantity<MegaElectronVolt>,std::shared_ptr<const Utility::UnitAwareTabularUnivariateDistribution<cgs::length,Barn> > > >;
+//---------------------------------------------------------------------------//
+// Testing Typenames
+//---------------------------------------------------------------------------//
+
+using DistributionType = Utility::FullyTabularBasicBivariateDistribution::DistributionType;
+using UnitAwareDistributionType = Utility::UnitAwareFullyTabularBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn>::DistributionType;
 using XIndepType = Utility::UnitTraits<MegaElectronVolt>::template GetQuantityType<double>::type;
 using YIndepType = Utility::UnitTraits<cgs::length>::template GetQuantityType<double>::type;
 using ZDepType = Utility::UnitTraits<Barn>::template GetQuantityType<double>::type;
@@ -48,8 +48,8 @@ using ZDepType = Utility::UnitTraits<Barn>::template GetQuantityType<double>::ty
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<DistributionType> distribution;
-std::shared_ptr<UnitAwareDistributionType> unit_aware_distribution;
+std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution::DistributionType> distribution;
+std::shared_ptr<Utility::UnitAwareFullyTabularBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn>::DistributionType> unit_aware_distribution;
 
 std::function<double(const Utility::TabularUnivariateDistribution&)> functor;
 std::function<YIndepType(const Utility::UnitAwareTabularUnivariateDistribution<cgs::length,Barn>&)> ua_functor;
@@ -57,9 +57,10 @@ std::function<YIndepType(const Utility::UnitAwareTabularUnivariateDistribution<c
 std::function<double (double)> min_func, max_func;
 std::function<YIndepType(const XIndepType)> ua_min_func, ua_max_func;
 
-DistributionType::const_iterator lower_bin, upper_bin, sampled_bin, start_bin;
+Utility::FullyTabularBasicBivariateDistribution::DistributionType::const_iterator
+  lower_bin, upper_bin, sampled_bin, start_bin;
 
-UnitAwareDistributionType::const_iterator
+Utility::UnitAwareFullyTabularBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn>::DistributionType::const_iterator
   ua_lower_bin, ua_upper_bin, ua_sampled_bin, ua_start_bin;
 
 //---------------------------------------------------------------------------//
@@ -100,12 +101,10 @@ FRENSIE_UNIT_TEST( UnitBaseCorrelated,
                    name )
 {
   std::string name = Utility::UnitBaseCorrelated<Utility::LinLinLin>::name();
-
   FRENSIE_CHECK( name == "Unit-base Correlated" );
 
-  name = Utility::UnitBaseCorrelated<Utility::LogLogLog>::name();
-
-  FRENSIE_CHECK( name == "Unit-base Correlated" );
+  name = Utility::UnitBaseCorrelated<Utility::LinLinLin>::TwoDInterpPolicy::name();
+  FRENSIE_CHECK( name == "LinLinLin" );
 }
 
 //---------------------------------------------------------------------------//
@@ -193,10 +192,10 @@ FRENSIE_UNIT_TEST( UnitBaseCorrelated, calculateUpperBound )
 FRENSIE_UNIT_TEST( UnitBaseCorrelated, evaluatePDF )
 {
   std::function<double(double,double)> evaluate =
-  [](double x_value, double y_value)
+  [&min_func, &max_func, &lower_bin, &upper_bin](double x_value, double y_value)
   {
     return Utility::UnitBaseCorrelated<Utility::LinLinLin>::evaluatePDF<Utility::TabularUnivariateDistribution,double,double,double>(
-      x_value, y_value, ::min_func, ::max_func, &Utility::TabularUnivariateDistribution::evaluate, ::lower_bin, ::upper_bin, 1e-3, 1e-15 );
+      x_value, y_value, min_func, max_func, &Utility::TabularUnivariateDistribution::evaluate, lower_bin, upper_bin, 1e-3, 1e-15 );
   };
 
   lower_bin = distribution->begin();
@@ -255,11 +254,11 @@ FRENSIE_UNIT_TEST( UnitBaseCorrelated, evaluatePDF )
 // Check that the unit-aware distribution can be evaluated
 FRENSIE_UNIT_TEST( UnitAwareCorrelated, evaluatePDF )
 {
-  std::function<ZDepType(XIndepType,YIndepType)> evaluate = 
-  [](XIndepType x_value, YIndepType y_value)
+  std::function<ZDepType(XIndepType,YIndepType)> evaluate =
+  [&ua_min_func, &ua_max_func, &ua_lower_bin, &ua_upper_bin](XIndepType x_value, YIndepType y_value)
   {
     return Utility::UnitBaseCorrelated<Utility::LinLinLin>::evaluatePDF<Utility::UnitAwareTabularUnivariateDistribution<cgs::length,Barn>,XIndepType,YIndepType,ZDepType>(
-      x_value, y_value, ::ua_min_func, ::ua_max_func, &Utility::UnitAwareTabularUnivariateDistribution<cgs::length,Barn>::evaluate, ::ua_lower_bin, ::ua_upper_bin, 1e-3, 1e-15 );
+      x_value, y_value, ua_min_func, ua_max_func, &Utility::UnitAwareTabularUnivariateDistribution<cgs::length,Barn>::evaluate, ua_lower_bin, ua_upper_bin, 1e-3, 1e-15 );
   };
 
   ua_lower_bin = unit_aware_distribution->begin();
@@ -334,11 +333,11 @@ FRENSIE_UNIT_TEST( UnitAwareCorrelated, evaluatePDF )
 // Check that the distribution can be evaluated
 FRENSIE_UNIT_TEST( UnitBaseCorrelated, evaluateCDF )
 {
-  std::function<double(double,double)> evaluate = 
-  [](double x_value, double y_value)
+  std::function<double(double,double)> evaluate =
+  [&min_func, &max_func, &lower_bin, &upper_bin](double x_value, double y_value)
   {
     return Utility::UnitBaseCorrelated<Utility::LinLinLin>::evaluateCDF<Utility::TabularUnivariateDistribution,double,double>(
-      x_value, y_value, ::min_func, ::max_func, &Utility::TabularUnivariateDistribution::evaluateCDF, ::lower_bin, ::upper_bin, 1e-3, 1e-15 );
+      x_value, y_value, min_func, max_func, &Utility::TabularUnivariateDistribution::evaluateCDF, lower_bin, upper_bin, 1e-3, 1e-15 );
   };
 
   lower_bin = distribution->begin();
@@ -398,11 +397,11 @@ FRENSIE_UNIT_TEST( UnitBaseCorrelated, evaluateCDF )
 // Check that the unit-aware distribution can be evaluated
 FRENSIE_UNIT_TEST( UnitAwareCorrelated, evaluateCDF )
 {
-  std::function<double(XIndepType,YIndepType)> evaluate = 
-  [](XIndepType x_value, YIndepType y_value)
+  std::function<double(XIndepType,YIndepType)> evaluate =
+  [&ua_min_func, &ua_max_func, &ua_lower_bin, &ua_upper_bin](XIndepType x_value, YIndepType y_value)
   {
     return Utility::UnitBaseCorrelated<Utility::LinLinLin>::evaluateCDF<Utility::UnitAwareTabularUnivariateDistribution<cgs::length,Barn>,XIndepType,YIndepType>(
-      x_value, y_value, ::ua_min_func, ::ua_max_func, &Utility::UnitAwareTabularUnivariateDistribution<cgs::length,Barn>::evaluateCDF, ::ua_lower_bin, ::ua_upper_bin, 1e-3, 1e-15 );
+      x_value, y_value, ua_min_func, ua_max_func, &Utility::UnitAwareTabularUnivariateDistribution<cgs::length,Barn>::evaluateCDF, ua_lower_bin, ua_upper_bin, 1e-3, 1e-15 );
   };
 
   ua_lower_bin = unit_aware_distribution->begin();
@@ -479,10 +478,10 @@ FRENSIE_UNIT_TEST( UnitBaseCorrelated, sample )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   std::function<double(double)> sample_function =
-  [](double x_value)
+  [&functor, &min_func, &max_func, &lower_bin, &upper_bin](double x_value)
   {
     return Utility::UnitBaseCorrelated<Utility::LinLinLin>::sample<double,double>(
-        ::functor, ::min_func, ::max_func, x_value, ::lower_bin, ::upper_bin );
+      functor, min_func, max_func, x_value, lower_bin, upper_bin );
   };
 
   lower_bin = distribution->begin();
@@ -588,10 +587,10 @@ FRENSIE_UNIT_TEST( UnitBaseCorrelated, sample )
 FRENSIE_UNIT_TEST( UnitAwareCorrelated, sample )
 {
   std::function<YIndepType(XIndepType)> sample_function =
-  [](XIndepType x_value)
+  [&ua_functor, &ua_min_func, &ua_max_func, &ua_lower_bin, &ua_upper_bin](XIndepType x_value)
   {
     return Utility::UnitBaseCorrelated<Utility::LinLinLin>::sample<XIndepType,YIndepType>(
-      ::ua_functor, ::ua_min_func, ::ua_max_func, x_value, ::ua_lower_bin, ::ua_upper_bin );
+      ua_functor, ua_min_func, ua_max_func, x_value, ua_lower_bin, ua_upper_bin );
   };
 
   // On the first bin
@@ -708,10 +707,10 @@ FRENSIE_UNIT_TEST( UnitBaseCorrelated, sampleDetailed )
 {
   double raw_sample;
   std::function<double(double)> sample_function =
-  [&raw_sample](double x_value)
+  [&functor, &min_func, &max_func, &lower_bin, &upper_bin, &sampled_bin, &raw_sample](double x_value)
   {
     return Utility::UnitBaseCorrelated<Utility::LinLinLin>::sampleDetailed<double,double>(
-      ::functor, ::min_func, ::max_func, x_value, ::lower_bin, ::upper_bin, ::sampled_bin, raw_sample );
+      functor, min_func, max_func, x_value, lower_bin, upper_bin, sampled_bin, raw_sample );
   };
 
   // On the first bin
@@ -881,10 +880,10 @@ FRENSIE_UNIT_TEST( UnitAwareCorrelated, sampleDetailed )
 {
   quantity<cgs::length> raw_sample;
   std::function<YIndepType(XIndepType)> sample_function =
-  [&raw_sample](XIndepType x_value)
+  [&ua_functor, &ua_min_func, &ua_max_func, &ua_lower_bin, &ua_upper_bin, &ua_sampled_bin, &raw_sample](XIndepType x_value)
   {
     return Utility::UnitBaseCorrelated<Utility::LinLinLin>::sampleDetailed<XIndepType,YIndepType>(
-      ::ua_functor, ::ua_min_func, ::ua_max_func, x_value, ::ua_lower_bin, ::ua_upper_bin, ::ua_sampled_bin, raw_sample );
+      ua_functor, ua_min_func, ua_max_func, x_value, ua_lower_bin, ua_upper_bin, ua_sampled_bin, raw_sample );
   };
 
   // On the first bin
@@ -1061,11 +1060,12 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Create the two-dimensional distribution
   {
-    distribution.reset( new DistributionType( 3 ) );
+    Utility::FullyTabularBasicBivariateDistribution::DistributionType
+      distribution_data( 3 );
 
     // Create the secondary distribution in the first bin
-    (*distribution)[0].first = 0.0;
-    (*distribution)[0].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 1.0 ) );
+    distribution_data[0].first = 0.0;
+    distribution_data[0].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 1.0 ) );
 
     // Create the secondary distribution in the second bin
     std::vector<double> bin_boundaries( 3 ), values( 3 );
@@ -1073,35 +1073,43 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     bin_boundaries[1] = 5.0; values[1] = 1.0;
     bin_boundaries[2] = 7.5; values[2] = 0.5;
 
-    (*distribution)[1].first = 1.0;
-    (*distribution)[1].second.reset( new Utility::TabularDistribution<Utility::LinLin>( bin_boundaries, values ) );
+    distribution_data[1].first = 1.0;
+    distribution_data[1].second.reset( new Utility::TabularDistribution<Utility::LinLin>( bin_boundaries, values ) );
 
     // Create the secondary distribution beyond the second bin
-    (*distribution)[2].first = 2.0;
-    (*distribution)[2].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
+    distribution_data[2].first = 2.0;
+    distribution_data[2].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
+
+    distribution.reset( new Utility::FullyTabularBasicBivariateDistribution::DistributionType(
+                                                        distribution_data ) );
   }
 
   // Create the unit-aware two-dimensional distribution
   {
-    unit_aware_distribution.reset( new UnitAwareDistributionType( 3 ) );
+    Utility::UnitAwareFullyTabularBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn>::DistributionType
+    distribution_data( 3 );
 
     // Create the secondary distribution in the first bin
-    (*unit_aware_distribution)[0].first = 0.0*MeV;
-    (*unit_aware_distribution)[0].second.reset( new Utility::UnitAwareUniformDistribution<cgs::length,Barn>( 0.0*cgs::centimeter, 10.0*cgs::centimeter, 1.0*barn ) );
+    distribution_data[0].first = 0.0*MeV;
+    distribution_data[0].second.reset( new Utility::UnitAwareUniformDistribution<cgs::length,Barn>( 0.0*cgs::centimeter, 10.0*cgs::centimeter, 1.0*barn ) );
 
     // Create the secondary distribution in the second bin
-    std::vector<quantity<cgs::length> > bin_boundaries( 3 );
-    std::vector<quantity<Barn> > values( 3 );
+    Teuchos::Array<quantity<cgs::length> > bin_boundaries( 3 );
+    Teuchos::Array<quantity<Barn> > values( 3 );
     bin_boundaries[0] = 2.5*cgs::centimeter; values[0] = 0.1*barn;
     bin_boundaries[1] = 5.0*cgs::centimeter; values[1] = 1.0*barn;
     bin_boundaries[2] = 7.5*cgs::centimeter; values[2] = 0.5*barn;
 
-    (*unit_aware_distribution)[1].first = 1.0*MeV;
-    (*unit_aware_distribution)[1].second.reset( new Utility::UnitAwareTabularDistribution<Utility::LinLin,cgs::length,Barn>( bin_boundaries, values ) );
+    distribution_data[1].first = 1.0*MeV;
+    distribution_data[1].second.reset( new Utility::UnitAwareTabularDistribution<Utility::LinLin,cgs::length,Barn>( bin_boundaries, values ) );
 
     // Create the secondary distribution beyond the second bin
-    (*unit_aware_distribution)[2].first = 2.0*MeV;
-    (*unit_aware_distribution)[2].second.reset( new Utility::UnitAwareUniformDistribution<cgs::length,Barn>( 0.0*cgs::centimeter, 10.0*cgs::centimeter, 0.1*barn ) );
+    distribution_data[2].first = 2.0*MeV;
+    distribution_data[2].second.reset( new Utility::UnitAwareUniformDistribution<cgs::length,Barn>( 0.0*cgs::centimeter, 10.0*cgs::centimeter, 0.1*barn ) );
+
+    unit_aware_distribution.reset(
+        new Utility::UnitAwareFullyTabularBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn>::DistributionType(
+                                                        distribution_data ) );
   }
 
   // Initialize the random number generator

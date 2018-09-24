@@ -63,7 +63,7 @@ class UnitAwareElasticBasicBivariateDistribution : public Utility::UnitAwareInte
   typedef typename BaseType::DistributionDataConstIterator DistributionDataConstIterator;
 
 public:
-  
+
   //! The primary independent quantity type
   typedef typename BaseType::PrimaryIndepQuantity PrimaryIndepQuantity;
 
@@ -75,7 +75,7 @@ public:
 
   //! The dependent quantity type
   typedef typename BaseType::DepQuantity DepQuantity;
-  
+
   //! Constructor
   UnitAwareElasticBasicBivariateDistribution(
         const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
@@ -169,7 +169,7 @@ public:
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const override;
-  
+
 private:
 
   //! Default constructor
@@ -255,13 +255,13 @@ private:
   SecondaryIndepQuantity d_lower_bound_conditional_indep_var;
 };
 
-/*! \brief The interpolated fully tabular two-dimensional distribution 
+/*! \brief The interpolated fully tabular two-dimensional distribution
  * (unit-agnostic)
  * \ingroup two_d_distributions
  */
 template<typename TwoDGridPolicy> using ElasticBasicBivariateDistribution =
   UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,void,void,void>;
-  
+
 } // end MonteCarlo namespace
 
 BOOST_SERIALIZATION_CLASS4_VERSION( UnitAwareElasticBasicBivariateDistribution, MonteCarlo, 0 );

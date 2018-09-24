@@ -177,7 +177,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     }
 
     std::shared_ptr<BasicBivariateDist> scattering_function(
-       new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
+       new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::Correlated<Utility::LogLogCosLog > >(
                                                         primary_grid,
                                                         secondary_dists ) );
     discrete_elastic_distribution.reset(
@@ -200,7 +200,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     std::shared_ptr<const std::vector<double> > cross_section(
                  new std::vector<double>( moment_preserving_cross_sections ) );
-    
+
     // Create the reaction
     mp_elastic_reaction.reset(
       new MonteCarlo::MomentPreservingElasticElectroatomicReaction<Utility::LinLin>(

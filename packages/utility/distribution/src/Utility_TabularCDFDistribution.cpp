@@ -22,11 +22,18 @@ EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularCDFDistribution<Utility:
 EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLin,void,void> );
 EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLin,void,void> );
 
+// Explicit cosine instantiation
 EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,void,void> );
 EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,void,void> );
 
 EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLogCos,void,void> );
 EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLogCos,void,void> );
+
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogNudgedLogCos,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogNudgedLogCos,void,void> );
+
+EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinNudgedLogCos,void,void> );
+EXPLICIT_CLASS_SAVE_LOAD_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinNudgedLogCos,void,void> );
 
 //---------------------------------------------------------------------------//
 // end Utility_TabularCDFDistribution.cpp

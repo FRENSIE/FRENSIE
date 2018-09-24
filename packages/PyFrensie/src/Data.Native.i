@@ -152,7 +152,7 @@ using namespace Data;
   {
     $self->saveToFile( filename, overwrite );
   }
-  
+
   // String conversion method
   PyObject* __str__() const
   {
@@ -207,6 +207,8 @@ tutorial for this class is shown below:
 
 %standard_native_data_container_setup( ElectronPhotonRelaxationDataContainer, EPR )
 
+%shared_ptr(Data::ElectronPhotonRelaxationDataContainer);
+
 // Include the ElectronPhotonRelaxationDataContainer
 %include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 
@@ -231,6 +233,8 @@ tutorial for this class is shown below:
 "
 
 %standard_native_data_container_setup( AdjointElectronPhotonRelaxationDataContainer, AEPR )
+
+%shared_ptr(Data::AdjointElectronPhotonRelaxationDataContainer);
 
 // Include the ElectronPhotonRelaxationDataContainer
 %include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"

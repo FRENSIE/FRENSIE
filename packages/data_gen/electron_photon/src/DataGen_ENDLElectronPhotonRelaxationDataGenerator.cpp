@@ -217,7 +217,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::populateEPRDataContainer()
   // Set the relaxation data
   FRENSIE_LOG_PARTIAL_NOTIFICATION( Utility::Bold( "Setting the relaxation data" ) << "..." );
   FRENSIE_FLUSH_ALL_LOGS();
-  
+
   this->setRelaxationData();
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
@@ -263,7 +263,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::populateEPRDataContainer()
 
   // Set the electron data
   FRENSIE_LOG_NOTIFICATION( Utility::Bold("Setting the electron data: " ) );
-  
+
   this->setElectronData();
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
@@ -275,6 +275,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDataImp
                          const double cutoff_angle_cosine,
                          const double tabular_evaluation_tol,
                          const unsigned number_of_moment_preserving_angles,
+                         const MonteCarlo::TwoDGridType two_d_grid,
                          const MonteCarlo::TwoDInterpolationType two_d_interp )
 {
   TEST_FOR_EXCEPTION( max_electron_energy <= 0.0,
@@ -327,38 +328,100 @@ void ENDLElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDataImp
       double max_cutoff_angle_cosine = 1.0;
 
       // Get the angular grid and pdf at the max energy
-      if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
+      if( two_d_grid == MonteCarlo::DIRECT_GRID ||
+          two_d_grid == MonteCarlo::UNIT_BASE_GRID )
       {
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogCosLog>(
-          angles,
-          pdf,
-          elastic_angle,
-          elastic_pdf,
-          max_electron_energy,
-          max_cutoff_angle_cosine,
-          tabular_evaluation_tol );
+        if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
+        {
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogNudgedLogCosLog,Utility::Direct>(
+            angles,
+            pdf,
+            elastic_angle,
+            elastic_pdf,
+            max_electron_energy,
+            max_cutoff_angle_cosine,
+            tabular_evaluation_tol );
+        }
+        else if ( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
+        {
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Direct>(
+            angles,
+            pdf,
+            elastic_angle,
+            elastic_pdf,
+            max_electron_energy,
+            max_cutoff_angle_cosine,
+            tabular_evaluation_tol );
+        }
+        else if ( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
+        {
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Direct>(
+            angles,
+            pdf,
+            elastic_angle,
+            elastic_pdf,
+            max_electron_energy,
+            max_cutoff_angle_cosine,
+            tabular_evaluation_tol );
+        }
+        else
+        {
+          THROW_EXCEPTION( std::runtime_error,
+                           "Error: the desired 2D interpolation policy " <<
+                           two_d_interp <<
+                           " is currently not supported!" );
+        }
       }
-      else if ( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
+      else if( two_d_grid == MonteCarlo::CORRELATED_GRID ||
+               two_d_grid == MonteCarlo::UNIT_BASE_CORRELATED_GRID )
       {
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin>(
-          angles,
-          pdf,
-          elastic_angle,
-          elastic_pdf,
-          max_electron_energy,
-          max_cutoff_angle_cosine,
-          tabular_evaluation_tol );
+        if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
+        {
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogNudgedLogCosLog,Utility::Correlated>(
+            angles,
+            pdf,
+            elastic_angle,
+            elastic_pdf,
+            max_electron_energy,
+            max_cutoff_angle_cosine,
+            tabular_evaluation_tol );
+        }
+        else if ( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
+        {
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
+            angles,
+            pdf,
+            elastic_angle,
+            elastic_pdf,
+            max_electron_energy,
+            max_cutoff_angle_cosine,
+            tabular_evaluation_tol );
+        }
+        else if ( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
+        {
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
+            angles,
+            pdf,
+            elastic_angle,
+            elastic_pdf,
+            max_electron_energy,
+            max_cutoff_angle_cosine,
+            tabular_evaluation_tol );
+        }
+        else
+        {
+          THROW_EXCEPTION( std::runtime_error,
+                           "Error: the desired 2D interpolation policy " <<
+                           two_d_interp <<
+                           " is currently not supported!" );
+        }
       }
-      else if ( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
+      else
       {
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog>(
-          angles,
-          pdf,
-          elastic_angle,
-          elastic_pdf,
-          max_electron_energy,
-          max_cutoff_angle_cosine,
-          tabular_evaluation_tol );
+        THROW_EXCEPTION( std::runtime_error,
+                         "Error: the desired 2D grid policy " <<
+                         two_d_grid <<
+                         " is currently not supported!" );
       }
 
       elastic_angle[max_electron_energy] = angles;
@@ -428,7 +491,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingDataIm
 
   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
     this->getVolatileDataContainer();
-  
+
   std::vector<double> angular_energy_grid(
     data_container.getElasticAngularEnergyGrid() );
 
@@ -485,7 +548,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRelaxationData()
   // Assign the set of all subshells
   data_container.setSubshells( subshells );
 
-  // Assign the subshel data
+  // Assign the subshell data
   for( auto&& subshell : subshells )
   {
     data_container.setSubshellOccupancy( subshell, d_endl_data_container->getSubshellOccupancy( subshell ) );
@@ -493,7 +556,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRelaxationData()
 
     const std::map<unsigned,double>& radiative_transition_probs =
       d_endl_data_container->getRadiativeTransitionProbability( subshell );
-    
+
     const std::map<unsigned,double>& radiative_transition_energies =
       d_endl_data_container->getRadiativeTransitionEnergy( subshell );
 
@@ -502,7 +565,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRelaxationData()
 
     const std::map<unsigned,std::map<unsigned,double> >& non_radiative_transition_energies =
       d_endl_data_container->getNonRadiativeTransitionEnergy( subshell );
-    
+
     std::vector<std::pair<unsigned,unsigned> > relaxation_vacancies;
     std::vector<double> relaxation_particle_energies, relaxation_probabilities;
 
@@ -526,11 +589,11 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRelaxationData()
         relaxation_vacancies.push_back( std::make_pair( non_radiative_transition_probs_data.first, data_it->first ) );
         relaxation_probabilities.push_back( data_it->second );
         relaxation_particle_energies.push_back( non_radiative_transition_energies.find( non_radiative_transition_probs_data.first )->second.find( data_it->first )->second );
-                                               
+
         ++data_it;
       }
     }
-    
+
     data_container.setSubshellRelaxationVacancies( subshell, relaxation_vacancies );
     data_container.setSubshellRelaxationParticleEnergies( subshell, relaxation_particle_energies );
     data_container.setSubshellRelaxationProbabilities( subshell, relaxation_probabilities );
@@ -542,7 +605,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setComptonProfileData()
 {
   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
     this->getVolatileDataContainer();
-  
+
   const std::set<unsigned>& subshells = data_container.getSubshells();
 
   // Create the Compton profile generator
@@ -565,7 +628,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setComptonProfileData()
   {
     unsigned compton_subshell_index = converter->convertSubshellToIndex(
                        Data::convertENDFDesignatorToSubshellEnum( subshell ) );
-    
+
     std::vector<double> full_momentum_grid, full_profile;
 
     MonteCarlo::createFullProfileFromHalfProfile(
@@ -577,7 +640,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setComptonProfileData()
                                  full_profile,
                                  true,
                                  false );
-  
+
     // The evaluator
     std::shared_ptr<OccupationNumberEvaluator> evaluator;
 
@@ -621,7 +684,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setOccupationNumberData()
 {
   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
     this->getVolatileDataContainer();
-  
+
   const std::set<unsigned>& subshells = data_container.getSubshells();
 
   std::set<unsigned>::const_iterator subshell = subshells.begin();
@@ -922,7 +985,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::extractSubshellPhotoelectricEffe
   cross_sections.resize( subshells.size() );
 
   int i = 0;
-  
+
   for( auto&& subshell : subshells )
   {
     const Utility::ArrayView<const double> energy_grid( d_endl_data_container->getPhotoelectricCrossSectionEnergyGrid( subshell ) );
@@ -960,7 +1023,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setPhotonData()
   std::shared_ptr<const Utility::UnivariateDistribution> heating_numbers;
 
   this->extractPhotonHeatingNumbers( heating_numbers );
-  
+
   // Extract the Waller-Hartree incoherent cross section
   std::shared_ptr<const Utility::UnivariateDistribution>
     waller_hartree_incoherent_cs;
@@ -1165,7 +1228,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setPhotonData()
                                     Utility::Italicized( "Waller-Hartree incoherent " )
                                     << "cross section ... " );
   FRENSIE_FLUSH_ALL_LOGS();
-  
+
   this->createCrossSectionOnUnionEnergyGrid( union_energy_grid,
                                              waller_hartree_incoherent_cs,
                                              cross_section,
@@ -1220,7 +1283,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setPhotonData()
                                     Utility::Italicized( "triplet production " )
                                     << "cross section ... " );
   FRENSIE_FLUSH_ALL_LOGS();
-  
+
   this->createCrossSectionOnUnionEnergyGrid(
                      union_energy_grid,
                      triplet_production_cs,
@@ -1271,7 +1334,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setPhotonData()
                                       << Utility::Italicized(" impulse approx incoherent " )
                                       << "cross section ... " );
     FRENSIE_FLUSH_ALL_LOGS();
-    
+
     this->createCrossSectionOnUnionEnergyGrid(
                              union_energy_grid,
                              impulse_approx_incoherent_cs_evaluators[i].second,
@@ -1292,7 +1355,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setPhotonData()
                                     Utility::Italicized( "total photoelectric " )
                                     << "cross section ... " );
   FRENSIE_FLUSH_ALL_LOGS();
-  
+
   this->calculateTotalPhotoelectricCrossSection();
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
@@ -1301,7 +1364,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setPhotonData()
                                     Utility::Italicized( "impulse approx total incoherent " )
                                     << "cross section ... " );
   FRENSIE_FLUSH_ALL_LOGS();
-  
+
   this->calculateImpulseApproxTotalIncoherentCrossSection();
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
@@ -1310,15 +1373,15 @@ void ENDLElectronPhotonRelaxationDataGenerator::setPhotonData()
                                     Utility::Italicized( "Waller-Hartree total " )
                                     << "cross section ... " );
   FRENSIE_FLUSH_ALL_LOGS();
-  
+
   this->calculatePhotonTotalCrossSection( true );
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
-  FRENSIE_LOG_PARTIAL_NOTIFICATION( " Setting the " << 
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( " Setting the " <<
                                     Utility::Italicized( "impulse approx total " )
                                     << "cross section ... " );
-  
+
   this->calculatePhotonTotalCrossSection( false );
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
@@ -1330,7 +1393,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::createSubshellImpulseApproxIncoh
 {
   const Data::ElectronPhotonRelaxationDataContainer& data_container =
     this->getDataContainer();
-  
+
   const std::set<unsigned>& subshells = data_container.getSubshells();
 
   evaluators.resize( subshells.size() );
@@ -1356,6 +1419,8 @@ void ENDLElectronPhotonRelaxationDataGenerator::createSubshellImpulseApproxIncoh
                    data_container.getSubshellOccupancy( subshell ),
                    data_container.getSubshellBindingEnergy( subshell ),
                    occupation_number_dist ) );
+
+    ++i;
   }
 }
 
@@ -1365,14 +1430,14 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronData()
 //---------------------------------------------------------------------------//
 // Set Elastic Data
 //---------------------------------------------------------------------------//
-  FRENSIE_LOG_PARTIAL_NOTIFICATION( " Setting the " << 
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( " Setting the " <<
                                     Utility::Italicized( "elastic cutoff " )
                                     << "data ... " );
   FRENSIE_FLUSH_ALL_LOGS();
 
   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
     this->getVolatileDataContainer();
-  
+
   // Set the cutoff elastic scattering interpolation policy
   data_container.setCutoffElasticInterpPolicy( "Lin-Lin" );
 
@@ -1408,39 +1473,102 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronData()
   {
     double max_cutoff_angle_cosine = 1.0;
 
-    if ( this->getElectronTwoDInterpPolicy() == MonteCarlo::LOGLOGLOG_INTERPOLATION )
-    {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogCosLog>(
-        elastic_angle[this->getMaxElectronEnergy()],
-        elastic_pdf[this->getMaxElectronEnergy()] ,
-        elastic_angle,
-        elastic_pdf,
-        this->getMaxElectronEnergy(),
-        max_cutoff_angle_cosine,
-        this->getTabularEvaluationTolerance() );
-    }
-    else if ( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLIN_INTERPOLATION )
-    {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin>(
-        elastic_angle[this->getMaxElectronEnergy()],
-        elastic_pdf[this->getMaxElectronEnergy()] ,
-        elastic_angle,
-        elastic_pdf,
-        this->getMaxElectronEnergy(),
-        max_cutoff_angle_cosine,
-        this->getTabularEvaluationTolerance() );
-    }
-    else if ( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLOG_INTERPOLATION )
-    {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog>(
-        elastic_angle[this->getMaxElectronEnergy()],
-        elastic_pdf[this->getMaxElectronEnergy()] ,
-        elastic_angle,
-        elastic_pdf,
-        this->getMaxElectronEnergy(),
-        max_cutoff_angle_cosine,
-        this->getTabularEvaluationTolerance() );
-    }
+      // Get the angular grid and pdf at the max energy
+      if( this->getElectronTwoDGridPolicy() == MonteCarlo::DIRECT_GRID ||
+          this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_GRID )
+      {
+        if ( this->getElectronTwoDInterpPolicy() == MonteCarlo::LOGLOGLOG_INTERPOLATION )
+        {
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogNudgedLogCosLog,Utility::Direct>(
+            elastic_angle[this->getMaxElectronEnergy()],
+            elastic_pdf[this->getMaxElectronEnergy()] ,
+            elastic_angle,
+            elastic_pdf,
+            this->getMaxElectronEnergy(),
+            max_cutoff_angle_cosine,
+            this->getTabularEvaluationTolerance() );
+        }
+        else if ( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLIN_INTERPOLATION )
+        {
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Direct>(
+            elastic_angle[this->getMaxElectronEnergy()],
+            elastic_pdf[this->getMaxElectronEnergy()] ,
+            elastic_angle,
+            elastic_pdf,
+            this->getMaxElectronEnergy(),
+            max_cutoff_angle_cosine,
+            this->getTabularEvaluationTolerance() );
+        }
+        else if ( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLOG_INTERPOLATION )
+        {
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Direct>(
+            elastic_angle[this->getMaxElectronEnergy()],
+            elastic_pdf[this->getMaxElectronEnergy()] ,
+            elastic_angle,
+            elastic_pdf,
+            this->getMaxElectronEnergy(),
+            max_cutoff_angle_cosine,
+            this->getTabularEvaluationTolerance() );
+        }
+        else
+        {
+          THROW_EXCEPTION( std::runtime_error,
+                           "Error: the desired 2D interpolation policy " <<
+                           this->getElectronTwoDInterpPolicy() <<
+                           " is currently not supported!" );
+        }
+      }
+      else if( this->getElectronTwoDGridPolicy() == MonteCarlo::CORRELATED_GRID ||
+               this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_CORRELATED_GRID )
+      {
+        if ( this->getElectronTwoDInterpPolicy() == MonteCarlo::LOGLOGLOG_INTERPOLATION )
+        {
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogNudgedLogCosLog,Utility::Correlated>(
+            elastic_angle[this->getMaxElectronEnergy()],
+            elastic_pdf[this->getMaxElectronEnergy()] ,
+            elastic_angle,
+            elastic_pdf,
+            this->getMaxElectronEnergy(),
+            max_cutoff_angle_cosine,
+            this->getTabularEvaluationTolerance() );
+        }
+        else if ( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLIN_INTERPOLATION )
+        {
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
+            elastic_angle[this->getMaxElectronEnergy()],
+            elastic_pdf[this->getMaxElectronEnergy()] ,
+            elastic_angle,
+            elastic_pdf,
+            this->getMaxElectronEnergy(),
+            max_cutoff_angle_cosine,
+            this->getTabularEvaluationTolerance() );
+        }
+        else if ( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLOG_INTERPOLATION )
+        {
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated >(
+            elastic_angle[this->getMaxElectronEnergy()],
+            elastic_pdf[this->getMaxElectronEnergy()] ,
+            elastic_angle,
+            elastic_pdf,
+            this->getMaxElectronEnergy(),
+            max_cutoff_angle_cosine,
+            this->getTabularEvaluationTolerance() );
+        }
+        else
+        {
+          THROW_EXCEPTION( std::runtime_error,
+                           "Error: the desired 2D interpolation policy " <<
+                           this->getElectronTwoDInterpPolicy() <<
+                           " is currently not supported!" );
+        }
+      }
+      else
+      {
+        THROW_EXCEPTION( std::runtime_error,
+                         "Error: the desired 2D grid policy " <<
+                         this->getElectronTwoDGridPolicy() <<
+                         " is currently not supported!" );
+      }
 
     elastic_angle.erase( *end_energy );
     elastic_pdf.erase( *end_energy );
@@ -1468,7 +1596,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronData()
  */
   FRENSIE_LOG_NOTIFICATION( " Setting the electron cross section data:" );
   FRENSIE_FLUSH_ALL_LOGS();
-  
+
   this->setElectronCrossSectionsData();
 
   FRENSIE_LOG_PARTIAL_NOTIFICATION( " Setting the " <<
@@ -1505,7 +1633,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronData()
     this->setMomentPreservingData( angular_energy_grid,
                                    this->getTabularEvaluationTolerance(),
                                    this->getElectronTwoDInterpPolicy() );
-    
+
     FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
   }
 
@@ -1516,7 +1644,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronData()
                                     Utility::Italicized( "electroionization " )
                                     << "data ... " );
   FRENSIE_FLUSH_ALL_LOGS();
-  
+
   std::set<unsigned>::iterator shell = data_container.getSubshells().begin();
 
   // Set the interpolation policy
@@ -1547,7 +1675,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronData()
                                     Utility::Italicized( "bremsstrahlung " )
                                     << "data ... " );
   FRENSIE_FLUSH_ALL_LOGS();
-  
+
   // Set the interpolation policy
   data_container.setBremsstrahlungPhotonInterpPolicy( "Lin-Lin" );
 
@@ -1587,7 +1715,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData()
 {
   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
     this->getVolatileDataContainer();
-  
+
   // cross sections in the file
   std::shared_ptr<const Utility::UnivariateDistribution>
         bremsstrahlung_cross_section, atomic_excitation_cross_section,
@@ -1760,7 +1888,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData()
 
   FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
   FRENSIE_FLUSH_ALL_LOGS();
-  
+
   for( unsigned i = 0; i < electroionization_cross_section.size(); ++i )
   {
     grid_function = boost::bind(
@@ -1812,7 +1940,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData()
                                       Utility::Italicized( "cutoff elastic " )
                                       << "cross section ... " );
     FRENSIE_FLUSH_ALL_LOGS();
-    
+
     this->createCrossSectionOnUnionEnergyGrid(
                      union_energy_grid,
                      cutoff_elastic_cross_section,
@@ -1823,14 +1951,14 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData()
 
     data_container.setCutoffElasticCrossSection( cutoff_cross_section );
     data_container.setCutoffElasticCrossSectionThresholdEnergyIndex( threshold );
-    
+
     FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
-    
+
     FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
                                       Utility::Italicized( "screened Rutherford elastic " )
                                       << "cross section ... " );
     FRENSIE_FLUSH_ALL_LOGS();
-    
+
     this->createCrossSectionOnUnionEnergyGrid(
                       union_energy_grid,
                       total_elastic_cross_section,
@@ -1841,7 +1969,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData()
 
     data_container.setTotalElasticCrossSection( total_cross_section );
     data_container.setTotalElasticCrossSectionThresholdEnergyIndex( threshold );
-    
+
     std::vector<double> raw_cross_section( total_cross_section.size() );
     for( int i = 0; i < total_cross_section.size(); ++i )
     {
@@ -1849,12 +1977,12 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData()
 
       // Calculate the relative difference between the total and cutoff cross sections
       double relative_difference = raw_cross_section[i]/total_cross_section[i];
-      
+
       // Check for roundoff error and reduce to zero if needed
       if( relative_difference < 1.0e-6 )
       {
         raw_cross_section[i] = 0.0;
-          
+
         // Update threshold index
         threshold = i+1;
       }
@@ -1862,9 +1990,9 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData()
 
     std::vector<double>::iterator start = raw_cross_section.begin();
     std::advance( start, threshold );
-    
+
     cross_section.assign( start, raw_cross_section.end() );
-    
+
     data_container.setScreenedRutherfordElasticCrossSection( cross_section );
     data_container.setScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(
                                                                                 threshold );
@@ -1932,7 +2060,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData()
     data_container.setElectroionizationCrossSectionThresholdEnergyIndex(
                                     electroionization_cross_section[i].first,
                                     threshold );
-    
+
     FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
   }
 
@@ -1970,7 +2098,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
 
   if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogNudgedLogCosLog,Utility::Correlated>(
         coupled_distribution,
         cutoff_cross_section,
         total_cross_section,
@@ -1979,7 +2107,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         this->getDataContainer().getCutoffElasticPDF(),
         angular_energy_grid,
         this->getDataContainer().getAtomicNumber(),
-        MonteCarlo::TWO_D_UNION,
+        MonteCarlo::MODIFIED_TWO_D_UNION,
         tabular_evaluation_tol );
   }
   else if ( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
@@ -1993,7 +2121,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         this->getDataContainer().getCutoffElasticPDF(),
         angular_energy_grid,
         this->getDataContainer().getAtomicNumber(),
-        MonteCarlo::TWO_D_UNION,
+        MonteCarlo::MODIFIED_TWO_D_UNION,
         tabular_evaluation_tol );
   }
   else if ( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
@@ -2007,7 +2135,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         this->getDataContainer().getCutoffElasticPDF(),
         angular_energy_grid,
         this->getDataContainer().getAtomicNumber(),
-        MonteCarlo::TWO_D_UNION,
+        MonteCarlo::MODIFIED_TWO_D_UNION,
         tabular_evaluation_tol );
   }
 
@@ -2070,7 +2198,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::initializePhotonUnionEnergyGrid(
 {
   const Data::ElectronPhotonRelaxationDataContainer& data_container =
     this->getDataContainer();
-  
+
   // Add the min photon energy to the union energy grid
   union_energy_grid.push_back( this->getMinPhotonEnergy() );
 
@@ -2154,7 +2282,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::addBindingEnergiesToUnionEnergyG
 {
   const Data::ElectronPhotonRelaxationDataContainer& data_container =
     this->getDataContainer();
-  
+
   const std::set<unsigned>& subshells = data_container.getSubshells();
 
   std::set<unsigned>::const_iterator subshell = subshells.begin();
@@ -2388,7 +2516,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::calculateTotalPhotoelectricCross
 {
   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
     this->getVolatileDataContainer();
-    
+
   const std::vector<double>& energy_grid =
     data_container.getPhotonEnergyGrid();
 
@@ -2432,7 +2560,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::calculateImpulseApproxTotalIncoh
 {
   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
     this->getVolatileDataContainer();
-  
+
   const std::vector<double>& energy_grid =
     data_container.getPhotonEnergyGrid();
 
@@ -2477,7 +2605,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::calculatePhotonTotalCrossSection
 {
   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
     this->getVolatileDataContainer();
-  
+
   const std::vector<double>& energy_grid =
     data_container.getPhotonEnergyGrid();
 
@@ -2534,7 +2662,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::calculateElectronTotalCrossSecti
 {
   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
     this->getVolatileDataContainer();
-  
+
   const std::vector<double>& energy_grid =
     data_container.getElectronEnergyGrid();
 
@@ -2665,7 +2793,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasticCro
 {
   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
     this->getVolatileDataContainer();
-  
+
   // Check to see if the ENDL or integrated cross section is wanted
   if ( !this->isElectronTotalElasticIntegratedCrossSectionModeOn() )
   {
@@ -2753,7 +2881,7 @@ const Data::ENDLDataContainer& ENDLElectronPhotonRelaxationDataGenerator::getEND
 {
   return *d_endl_data_container;
 }
-  
+
 } // end DataGen namespace
 
 //---------------------------------------------------------------------------//

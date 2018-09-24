@@ -46,7 +46,7 @@ FRENSIE_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_default )
   MonteCarlo::SimulationProperties properties;
 
   std::shared_ptr<const MonteCarlo::Electroatom> atom;
-  
+
   MonteCarlo::ElectroatomNativeFactory::createElectroatom( *data_container,
                                                            electroatom_name,
                                                            atomic_weight,
@@ -215,7 +215,7 @@ FRENSIE_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_coupled )
   properties.setNumberOfElectronHashGridBins( 100 );
 
   std::shared_ptr<const MonteCarlo::Electroatom> atom;
-  
+
   MonteCarlo::ElectroatomNativeFactory::createElectroatom( *data_container,
                                                            electroatom_name,
                                                            atomic_weight,
@@ -379,7 +379,7 @@ FRENSIE_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
   properties.setNumberOfElectronHashGridBins( 100 );
 
   std::shared_ptr<const MonteCarlo::Electroatom> atom;
-  
+
   MonteCarlo::ElectroatomNativeFactory::createElectroatom( *data_container,
                                                            electroatom_name,
                                                            atomic_weight,
@@ -543,14 +543,14 @@ FRENSIE_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_hybrid )
   MonteCarlo::SimulationProperties properties;
   properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
   properties.setElectronTwoDInterpPolicy( MonteCarlo::LOGLOGLOG_INTERPOLATION );
-  properties.setElectronTwoDSamplingPolicy( MonteCarlo::CORRELATED_SAMPLING );
+  properties.setElectronTwoDGridPolicy( MonteCarlo::CORRELATED_GRID );
   properties.setElasticElectronDistributionMode( MonteCarlo::HYBRID_DISTRIBUTION );
   properties.setElasticCutoffAngleCosine( cutoff_angle_cosine );
   properties.setElectronEvaluationTolerance( evaluation_tol );
   properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
   properties.setNumberOfElectronHashGridBins( 100 );
   std::shared_ptr<const MonteCarlo::Electroatom> atom;
-  
+
   MonteCarlo::ElectroatomNativeFactory::createElectroatom( *data_container,
                                                            electroatom_name,
                                                            atomic_weight,
@@ -660,7 +660,7 @@ FRENSIE_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_hybrid )
   cross_section_ratio =
     cutoff_elastic_distribution->evaluateCutoffCrossSectionRatio( 1.995260e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          6.1309E+8*cross_section_ratio + 2.5195477504187709e+08,
+                          4.8815266556554884e+08,
                           1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1e-5, reaction );
@@ -944,7 +944,7 @@ FRENSIE_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_no_electroionizat
   properties.setElectroionizationModeOff();
 
   std::shared_ptr<const MonteCarlo::Electroatom> atom;
-  
+
   MonteCarlo::ElectroatomNativeFactory::createElectroatom( *data_container,
                                                            electroatom_name,
                                                            atomic_weight,
@@ -1112,7 +1112,7 @@ FRENSIE_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_no_bremsstrahlung
   properties.setBremsstrahlungModeOff();
 
   std::shared_ptr<const MonteCarlo::Electroatom> atom;
-  
+
   MonteCarlo::ElectroatomNativeFactory::createElectroatom( *data_container,
                                                            electroatom_name,
                                                            atomic_weight,
@@ -1271,7 +1271,7 @@ FRENSIE_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_no_atomic_excitat
   properties.setAtomicExcitationModeOff();
 
   std::shared_ptr<const MonteCarlo::Electroatom> atom;
-  
+
   MonteCarlo::ElectroatomNativeFactory::createElectroatom( *data_container,
                                                            electroatom_name,
                                                            atomic_weight,

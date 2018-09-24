@@ -26,7 +26,7 @@
 #define _FUNC_NEW_NAME_3_ARGS( func_base_name, arg_1, arg_2, arg_3 ) create ## arg_1 ## arg_2 ## arg_3 ## func_base_name
 
 // Get the name of a function that has 2 template parameters
-#define _FUNC_NAME_2_ARGS( func_base_name, arg_1, arg_2 ) MonteCarlo::create ## func_base_name<arg_1,arg_2>
+#define _FUNC_NAME_2_ARGS( func_base_name, arg_1, arg_2 ) MonteCarlo::create ## func_base_name<arg_2<arg_1>>
 
 %{
 #define _FUNC_NEW_NAME_2_ARGS( func_base_name, arg_1, arg_2 ) create ## arg_1 ## arg_2 ## func_base_name
@@ -80,13 +80,21 @@
 %define %cos_electron_function_interface_setup( FUNCTION )
 
 // Set LogLogLog Functions
-%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, Correlated ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog, Utility::Correlated );
+%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, Correlated ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog , Utility::Correlated );
 
-%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, UnitBaseCorrelated ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog, Utility::UnitBaseCorrelated );
+%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, UnitBaseCorrelated ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog , Utility::UnitBaseCorrelated );
 
-%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, Direct ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog, Utility::Direct );
+%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, Direct ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog , Utility::Direct );
 
-%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, UnitBase ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog, Utility::UnitBase );
+%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, UnitBase ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog , Utility::UnitBase );
+
+%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, Correlated ) ) FUNC_NAME( FUNCTION, Utility::LogNudgedLogCosLog , Utility::Correlated );
+
+%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, UnitBaseCorrelated ) ) FUNC_NAME( FUNCTION, Utility::LogNudgedLogCosLog , Utility::UnitBaseCorrelated );
+
+%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, Direct ) ) FUNC_NAME( FUNCTION, Utility::LogNudgedLogCosLog , Utility::Direct );
+
+%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, UnitBase ) ) FUNC_NAME( FUNCTION, Utility::LogNudgedLogCosLog , Utility::UnitBase );
 
 // Set LinLinLin Functions
 %template( FUNC_NEW_NAME( FUNCTION, LinLinLin, Correlated ) ) FUNC_NAME( FUNCTION, Utility::LinLinLin, Utility::Correlated );

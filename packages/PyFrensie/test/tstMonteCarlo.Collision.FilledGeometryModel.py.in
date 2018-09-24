@@ -17,7 +17,7 @@ from optparse import *
 parser = OptionParser()
 parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
                   help="set the verbosity level [default 2]")
-parser.add_option("-f", "--dagmc_sat_file", type="string", dest="dagmc_sat_file", default="",
+parser.add_option("-f", "--dagmc_h5m_file", type="string", dest="dagmc_h5m_file", default="",
                   help="set the dagmc xml file that will be used to create the model")
 parser.add_option("-d", "--database_path", type="string", dest="database_path", default="",
                   help="set the path to the scattering center database that will be used to create the model")

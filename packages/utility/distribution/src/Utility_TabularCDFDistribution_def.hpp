@@ -29,7 +29,7 @@ template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularCDFDistribution()
-{ 
+{
   BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
@@ -109,7 +109,7 @@ UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUni
 {
   // Verify that the values are valid
   this->verifyValidValues( independent_values, cdf_values );
-  
+
   this->initializeDistributionFromCDF( independent_values, cdf_values );
 
   BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
@@ -481,7 +481,7 @@ UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUni
                                           InterpolationPolicy::processIndepVar(Utility::get<0>(*lower_bin_boundary)),
                                           Utility::getRawQuantity(Utility::get<3>(*lower_bin_boundary)) ) );
   }
-    
+
   ++lower_bin_boundary;
 
   // Make sure the sample is valid
@@ -678,9 +678,9 @@ void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
   {
     Utility::get<0>(d_distribution[i]) =
       IndepQuantity( independent_values[i] );
-    
+
     Utility::setQuantity( Utility::get<1>(d_distribution[i]), cdf_values[i] );
-    
+
     Utility::get<3>(d_distribution[i-1]) =
       calculateProcessedSlope( Utility::get<0>(d_distribution[i-1]),
                                Utility::get<0>(d_distribution[i]),
@@ -712,7 +712,7 @@ void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
   {
     Utility::get<0>(d_distribution[i]) =
       IndepQuantity( independent_values[i] );
-    
+
     Utility::get<2>(d_distribution[i]) =
       DepQuantity( dependent_values[i] );
   }
@@ -903,7 +903,7 @@ void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
                       "The tabular distribution cannot be constructed "
                       "because there aren't enough independent values "
                       "specified!" );
-  
+
   // The independent values must be sorted
   TEST_FOR_EXCEPTION( !Sort::isSortedAscending( independent_values.begin(),
 						independent_values.end() ),
@@ -943,7 +943,7 @@ void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
                       << dependent_values.size() << ")!" );
 
   typedef Utility::QuantityTraits<InputDepQuantity> InputDQT;
-  
+
   // Search for bad dependent values
   typename Utility::ArrayView<const InputDepQuantity>::const_iterator bad_dependent_value =
     std::find_if( dependent_values.begin(),
@@ -1004,11 +1004,18 @@ EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularCDFDistribution<U
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLin,void,void> );
 EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularCDFDistribution<Utility::LogLin,void,void> );
 
+// Explicit cosine instantiation (extern declaration)
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,void,void> );
 EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularCDFDistribution<Utility::LogLogCos,void,void> );
 
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinLogCos,void,void> );
 EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularCDFDistribution<Utility::LinLogCos,void,void> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LogNudgedLogCos,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularCDFDistribution<Utility::LogNudgedLogCos,void,void> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::UnitAwareTabularCDFDistribution<Utility::LinNudgedLogCos,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, UnitAwareTabularCDFDistribution<Utility::LinNudgedLogCos,void,void> );
 
 #endif // end Utility_TabularCDFDistribution_def.hpp
 

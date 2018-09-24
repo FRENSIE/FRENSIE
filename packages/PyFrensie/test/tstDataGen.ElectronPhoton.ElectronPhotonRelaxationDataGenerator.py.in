@@ -44,7 +44,7 @@ class ENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
 
     def testBasicConstructor(self):
         "*Test DataGen.ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator basic constructor"
-        
+
         generator = ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator( self.endl_container )
 
         self.assertEqual( generator.getAtomicNumber(), 1 )
@@ -68,13 +68,13 @@ class ENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         self.assertEqual( generator.getElectronTwoDInterpPolicy(),
                           MonteCarlo.LOGLOGLOG_INTERPOLATION )
         self.assertEqual( generator.getElectronTwoDGridPolicy(),
-                          MonteCarlo.UNIT_BASE_CORRELATED_SAMPLING )
+                          MonteCarlo.UNIT_BASE_CORRELATED_GRID )
 
     def testConstructor(self):
         "*Test DataGen.ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator constructor"
 
         generator = ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator( self.endl_container, 1e-3, 20.0, 1e-5, 1e5 )
-        
+
         self.assertEqual( generator.getAtomicNumber(), 1 )
         self.assertEqual( generator.getMinPhotonEnergy(), 1e-3 )
         self.assertEqual( generator.getMaxPhotonEnergy(), 20.0 )
@@ -96,7 +96,7 @@ class ENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         self.assertEqual( generator.getElectronTwoDInterpPolicy(),
                           MonteCarlo.LOGLOGLOG_INTERPOLATION )
         self.assertEqual( generator.getElectronTwoDGridPolicy(),
-                          MonteCarlo.UNIT_BASE_CORRELATED_SAMPLING )
+                          MonteCarlo.UNIT_BASE_CORRELATED_GRID )
 
     def testSetPhotonGridTolerances(self):
         "*Test DataGen.ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator setPhotonGridTolerances"
@@ -130,7 +130,7 @@ class ENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         generator = ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator( self.endl_container )
 
         generator.setOccupationNumberEvaluationTolerance( 1e-4 )
-        
+
         self.assertEqual( generator.getOccupationNumberEvaluationTolerance(), 1e-4 )
 
     def testSetSubshellIncoherentEvaluationTolerance(self):
@@ -139,7 +139,7 @@ class ENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         generator = ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator( self.endl_container )
 
         generator.setSubshellIncoherentEvaluationTolerance( 1e-5 )
-        
+
         self.assertEqual( generator.getSubshellIncoherentEvaluationTolerance(), 1e-5 )
 
     def testSetPhotonThresholdEnergyNudgeFactor(self):
@@ -148,7 +148,7 @@ class ENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         generator = ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator( self.endl_container )
 
         generator.setPhotonThresholdEnergyNudgeFactor( 1.5 )
-        
+
         self.assertEqual( generator.getPhotonThresholdEnergyNudgeFactor(), 1.5 )
 
     def testSetElectronTotalElasticIntegratedCrossSectionMode(self):
@@ -157,11 +157,11 @@ class ENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         generator = ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator( self.endl_container )
 
         generator.setElectronTotalElasticIntegratedCrossSectionModeOn()
-        
+
         self.assertTrue( generator.isElectronTotalElasticIntegratedCrossSectionModeOn() )
-        
+
         generator.setElectronTotalElasticIntegratedCrossSectionModeOff()
-        
+
         self.assertFalse( generator.isElectronTotalElasticIntegratedCrossSectionModeOn() )
 
     def testSetCutoffAngleCosine(self):
@@ -170,7 +170,7 @@ class ENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         generator = ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator( self.endl_container )
 
         generator.setCutoffAngleCosine( 0.89 )
-        
+
         self.assertEqual( generator.getCutoffAngleCosine(), 0.89 )
 
     def testSetNumberOfMomentPreservingAngles(self):
@@ -188,7 +188,7 @@ class ENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         generator = ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator( self.endl_container )
 
         generator.setTabularEvaluationTolerance( 1e-6 )
-        
+
         self.assertEqual( generator.getTabularEvaluationTolerance(), 1e-6 )
 
     def testSetElectronTwoDInterpPolicy(self):
@@ -197,12 +197,12 @@ class ENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         generator = ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator( self.endl_container )
 
         generator.setElectronTwoDInterpPolicy( MonteCarlo.LINLINLIN_INTERPOLATION )
-        
+
         self.assertEqual( generator.getElectronTwoDInterpPolicy(),
                           MonteCarlo.LINLINLIN_INTERPOLATION )
 
         generator.setElectronTwoDInterpPolicy( MonteCarlo.LINLINLOG_INTERPOLATION )
-        
+
         self.assertEqual( generator.getElectronTwoDInterpPolicy(),
                           MonteCarlo.LINLINLOG_INTERPOLATION )
 
@@ -211,25 +211,25 @@ class ENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
 
         generator = ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator( self.endl_container )
 
-        generator.setElectronTwoDGridPolicy( MonteCarlo.CORRELATED_SAMPLING )
-        
-        self.assertEqual( generator.getElectronTwoDGridPolicy(),
-                          MonteCarlo.CORRELATED_SAMPLING )
+        generator.setElectronTwoDGridPolicy( MonteCarlo.CORRELATED_GRID )
 
-        generator.setElectronTwoDGridPolicy( MonteCarlo.DIRECT_SAMPLING )
-        
         self.assertEqual( generator.getElectronTwoDGridPolicy(),
-                          MonteCarlo.DIRECT_SAMPLING )
+                          MonteCarlo.CORRELATED_GRID )
 
-        generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_SAMPLING )
-        
-        self.assertEqual( generator.getElectronTwoDGridPolicy(),
-                          MonteCarlo.UNIT_BASE_SAMPLING )
+        generator.setElectronTwoDGridPolicy( MonteCarlo.DIRECT_GRID )
 
-        generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_SAMPLING )
-        
         self.assertEqual( generator.getElectronTwoDGridPolicy(),
-                          MonteCarlo.UNIT_BASE_CORRELATED_SAMPLING )
+                          MonteCarlo.DIRECT_GRID )
+
+        generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_GRID )
+
+        self.assertEqual( generator.getElectronTwoDGridPolicy(),
+                          MonteCarlo.UNIT_BASE_GRID )
+
+        generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
+
+        self.assertEqual( generator.getElectronTwoDGridPolicy(),
+                          MonteCarlo.UNIT_BASE_CORRELATED_GRID )
 
     def testPopulateEPRDataContainer(self):
         "*Test DataGen.ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator populateEPRDataContainer"
@@ -244,14 +244,14 @@ class ENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         generator.setNumberOfMomentPreservingAngles( 1 )
         generator.setTabularEvaluationTolerance( 1e-7 )
         generator.setElectronTwoDInterpPolicy( MonteCarlo.LINLINLIN_INTERPOLATION )
-        generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_SAMPLING )
+        generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
         generator.setDefaultPhotonGridConvergenceTolerance( 1e-3 )
         generator.setDefaultPhotonGridAbsoluteDifferenceTolerance( 1e-80 )
         generator.setDefaultPhotonGridDistanceTolerance( 1e-20 )
         generator.setDefaultElectronGridConvergenceTolerance( 1e-3 )
         generator.setDefaultElectronGridAbsoluteDifferenceTolerance( 1e-80 )
         generator.setDefaultElectronGridDistanceTolerance( 1e-20 )
-        
+
         generator.populateEPRDataContainer()
 
         data_container = generator.getDataContainer()
@@ -279,7 +279,7 @@ class ENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         self.assertEqual( len(data_container.getSubshells()), 1 )
         self.assertFalse( data_container.hasRelaxationData() )
         self.assertFalse( data_container.hasSubshellRelaxationData( 1 ) )
-        
+
         # Check the Compton profiles
         self.assertEqual( len(data_container.getComptonProfileMomentumGrid(1)), 871 )
         self.assertEqual( len(data_container.getComptonProfile(1)), 871 )
@@ -287,85 +287,85 @@ class ENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         # Check the occupation numbers
         self.assertEqual( len(data_container.getOccupationNumberMomentumGrid(1)), 410 )
         self.assertEqual( len(data_container.getOccupationNumber(1)), 410 )
-        
+
         # Check the Waller-Hartree scattering function
         self.assertEqual( len(data_container.getWallerHartreeScatteringFunctionMomentumGrid()), 365 )
         self.assertEqual( len(data_container.getWallerHartreeScatteringFunction()), 365 )
-        
+
         # Check the Waller-Hartree atomic form factor
         self.assertEqual( len(data_container.getWallerHartreeAtomicFormFactorMomentumGrid()), 1582 )
         self.assertEqual( len(data_container.getWallerHartreeAtomicFormFactor()), 1582 )
-        
+
         # Check the Waller-Hartree squared form factor
         self.assertEqual( len(data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid()), 3231 )
         self.assertEqual( len(data_container.getWallerHartreeSquaredAtomicFormFactor()), 3231 )
-        
+
         # Check the photon energy grid
         self.assertEqual( len(data_container.getPhotonEnergyGrid()), 939 )
-        
+
         # Check the average photon heating numbers
         self.assertEqual( len(data_container.getAveragePhotonHeatingNumbers()), 939 )
-        
+
         # Check the Waller-Hartree incoherent cross section
         self.assertEqual( len(data_container.getWallerHartreeIncoherentCrossSection()), 939 )
-        
+
         # Check the impulse approx. incoherent cross section
         self.assertEqual( len(data_container.getImpulseApproxIncoherentCrossSection()), 939 )
-        
+
         # Check the subshell impulse approx. incoherent cross sections
         self.assertEqual( len(data_container.getImpulseApproxSubshellIncoherentCrossSection(1)), 939 )
-        
+
         # Check the Waller-Hartree coherent cross section
         self.assertEqual( len(data_container.getWallerHartreeCoherentCrossSection()), 939 )
-        
+
         # Check the pair production cross section
         self.assertEqual( len(data_container.getPairProductionCrossSection()), 518 )
         self.assertEqual( data_container.getPairProductionCrossSectionThresholdEnergyIndex(), 421 )
-        
+
         # Check the triplet production cross section
         self.assertEqual( len(data_container.getTripletProductionCrossSection()), 244 )
         self.assertEqual( data_container.getTripletProductionCrossSectionThresholdEnergyIndex(), 695 )
-        
+
         # Check the photoelectric cross section
         self.assertEqual( len(data_container.getPhotoelectricCrossSection()), 939 )
-        
+
         # Check the subshell photoelectric cross sections
         self.assertEqual( len(data_container.getSubshellPhotoelectricCrossSection(1)), 939 )
-        
+
         # Check the Waller-Hartree total cross section
         self.assertEqual( len(data_container.getWallerHartreeTotalCrossSection()), 939 )
-        
+
         # Check the impulse approx. total cross section
         self.assertEqual( len(data_container.getImpulseApproxTotalCrossSection()), 939 )
-        
+
         # Check the electron energy grid
         self.assertEqual( data_container.getElectronCrossSectionInterpPolicy(), "Log-Log" )
-        
+
         self.assertEqual( len(data_container.getElectronEnergyGrid()), 343 )
-        
+
         # Check the elastic data
         self.assertEqual( len(data_container.getCutoffElasticCrossSection()), 343 )
-        
+
         self.assertEqual( len(data_container.getScreenedRutherfordElasticCrossSection()), 280 )
         self.assertEqual( data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(), 63 )
-        
+
         self.assertEqual( data_container.getCutoffElasticInterpPolicy(), "Lin-Lin" )
-        
+
         self.assertEqual( len(data_container.getElasticAngularEnergyGrid()), 16 )
-        
+
         self.assertEqual( len(data_container.getCutoffElasticAngles(1.0e-5)), 2 )
         self.assertEqual( len(data_container.getCutoffElasticAngles(1.0e5)), 96 )
 
         self.assertEqual( len(data_container.getCutoffElasticPDF(1.0e-5)), 2 )
         self.assertEqual( len(data_container.getCutoffElasticPDF(1.0e+5)), 96 )
-        
+
         self.assertTrue( data_container.hasMomentPreservingData() )
         self.assertEqual( len(data_container.getMomentPreservingElasticDiscreteAngles( 1.0e-5 )), 1 )
         self.assertEqual( len(data_container.getMomentPreservingElasticDiscreteAngles( 1.0e+5 )), 1 )
 
         self.assertEqual( len(data_container.getMomentPreservingElasticWeights( 1.0e-5 )), 1 )
         self.assertEqual( len(data_container.getMomentPreservingElasticWeights( 1.0e+5 )), 1 )
-        
+
         # Check the electroionization data
         self.assertEqual( len(data_container.getElectroionizationCrossSection( 1 )), 340 )
         self.assertEqual( data_container.getElectroionizationCrossSectionThresholdEnergyIndex( 1 ), 3 )
@@ -382,22 +382,22 @@ class ENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         # Check the bremsstrahlung data
         self.assertEqual( len(data_container.getBremsstrahlungCrossSection()), 343 )
         self.assertEqual( data_container.getBremsstrahlungPhotonInterpPolicy(), "Lin-Lin" )
-        
+
         self.assertEqual( len(data_container.getBremsstrahlungEnergyGrid()), 10 )
         self.assertEqual( len(data_container.getBremsstrahlungPhotonEnergy( 1.00000e-5 )), 17 )
         self.assertEqual( len(data_container.getBremsstrahlungPhotonEnergy( 1.00000e+5 )), 111 )
         self.assertEqual( len(data_container.getBremsstrahlungPhotonPDF( 1.00000e-5 )), 17 )
         self.assertEqual( len(data_container.getBremsstrahlungPhotonPDF( 1.00000e+5 )), 111 )
-        
+
         # Check the atomic excitation data
         self.assertEqual( len(data_container.getAtomicExcitationCrossSection()), 340 )
         self.assertEqual( data_container.getAtomicExcitationCrossSectionThresholdEnergyIndex(), 3 )
-        
+
         self.assertEqual( len(data_container.getAtomicExcitationEnergyGrid()), 170 )
         self.assertEqual( data_container.getAtomicExcitationEnergyLossInterpPolicy(), "Lin-Lin" )
-        
+
         self.assertEqual( len(data_container.getAtomicExcitationEnergyLoss()), 170 )
-        
+
         # Check the total electron cross section data
         self.assertEqual( len(data_container.getTotalElectronCrossSection()), 343 )
 
@@ -414,7 +414,7 @@ class ENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         generator.setNumberOfMomentPreservingAngles( 1 )
         generator.setTabularEvaluationTolerance( 1e-7 )
         generator.setElectronTwoDInterpPolicy( MonteCarlo.LINLINLIN_INTERPOLATION )
-        generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_SAMPLING )
+        generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
         generator.setDefaultPhotonGridConvergenceTolerance( 1e-3 )
         generator.setDefaultPhotonGridAbsoluteDifferenceTolerance( 1e-80 )
         generator.setDefaultPhotonGridDistanceTolerance( 1e-20 )
@@ -452,7 +452,7 @@ class ENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         generator.setNumberOfMomentPreservingAngles( 1 )
         generator.setTabularEvaluationTolerance( 1e-7 )
         generator.setElectronTwoDInterpPolicy( MonteCarlo.LINLINLIN_INTERPOLATION )
-        generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_SAMPLING )
+        generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
         generator.setDefaultPhotonGridConvergenceTolerance( 1e-3 )
         generator.setDefaultPhotonGridAbsoluteDifferenceTolerance( 1e-80 )
         generator.setDefaultPhotonGridDistanceTolerance( 1e-20 )
@@ -469,11 +469,11 @@ class ENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         # Reload the generator
         generator = ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator( self.endl_container, "test_h_epr.xml" )
 
-        generator.repopulateElectronElasticData( 1e5, 1.0, 1e-7, 0, MonteCarlo.LINLINLIN_INTERPOLATION )
+        generator.repopulateElectronElasticData( 1e5, 1.0, 1e-7, 0, MonteCarlo.CORRELATED_GRID, MonteCarlo.LINLINLIN_INTERPOLATION )
 
         self.assertFalse( generator.getDataContainer().hasMomentPreservingData() )
 
-        generator.repopulateElectronElasticData( 20.0, 0.9, 1e-7, 2, MonteCarlo.LOGLOGLOG_INTERPOLATION )
+        generator.repopulateElectronElasticData( 20.0, 0.9, 1e-7, 2, MonteCarlo.UNIT_BASE_CORRELATED_GRID, MonteCarlo.LOGLOGLOG_INTERPOLATION )
 
         self.assertTrue( generator.getDataContainer().hasMomentPreservingData() )
 
@@ -487,14 +487,14 @@ class ACEAndENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         cls.endl_container = ENDL.ENDLDataContainer( options.test_h_endl_file )
 
         ace_file = ACE.ACEFileHandler( options.test_h_ace_file, "1000.12p", 1 )
-        
+
         cls.ace_container = ACE.XSSEPRDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
 
     def testBasicConstructor(self):
         "*Test DataGen.ElectronPhoton.ACEAndENDLElectronPhotonRelaxationDataGenerator basic constructor"
-        
+
         generator = ElectronPhoton.ACEAndENDLElectronPhotonRelaxationDataGenerator( self.ace_container, self.endl_container )
-        
+
         self.assertEqual( generator.getAtomicNumber(), 1 )
         self.assertAlmostEqual( generator.getMinPhotonEnergy(), 1e-6, delta=1e-9 )
         self.assertAlmostEqual( generator.getMaxPhotonEnergy(), 1e5, delta=1e-6 )
@@ -516,7 +516,7 @@ class ACEAndENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         self.assertEqual( generator.getElectronTwoDInterpPolicy(),
                           MonteCarlo.LOGLOGLOG_INTERPOLATION )
         self.assertEqual( generator.getElectronTwoDGridPolicy(),
-                          MonteCarlo.UNIT_BASE_CORRELATED_SAMPLING )
+                          MonteCarlo.UNIT_BASE_CORRELATED_GRID )
 
     def testConstructor(self):
         "*Test DataGen.ElectronPhoton.ACEAndENDLElectronPhotonRelaxationDataGenerator constructor"
@@ -544,13 +544,13 @@ class ACEAndENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         self.assertEqual( generator.getElectronTwoDInterpPolicy(),
                           MonteCarlo.LOGLOGLOG_INTERPOLATION )
         self.assertEqual( generator.getElectronTwoDGridPolicy(),
-                          MonteCarlo.UNIT_BASE_CORRELATED_SAMPLING )
+                          MonteCarlo.UNIT_BASE_CORRELATED_GRID )
 
     def testPopulateEPRDataContainer(self):
         "*Test DataGen.ElectronPhoton.ACEAndENDLElectronPhotonRelaxationDataGenerator populateEPRDataContainer"
 
         generator = ElectronPhoton.ACEAndENDLElectronPhotonRelaxationDataGenerator( self.ace_container, self.endl_container, 1e-3, 20.0, 1e-5, 1e5 )
-        
+
         generator.setOccupationNumberEvaluationTolerance( 1e-3 )
         generator.setSubshellIncoherentEvaluationTolerance( 1e-3 )
         generator.setPhotonThresholdEnergyNudgeFactor( 1.0001 )
@@ -559,7 +559,7 @@ class ACEAndENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         generator.setNumberOfMomentPreservingAngles( 1 )
         generator.setTabularEvaluationTolerance( 1e-7 )
         generator.setElectronTwoDInterpPolicy( MonteCarlo.LINLINLIN_INTERPOLATION )
-        generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_SAMPLING )
+        generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
         generator.setDefaultPhotonGridConvergenceTolerance( 1e-3 )
         generator.setDefaultPhotonGridAbsoluteDifferenceTolerance( 1e-80 )
         generator.setDefaultPhotonGridDistanceTolerance( 1e-20 )
@@ -589,105 +589,105 @@ class ACEAndENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         self.assertEqual( data_container.getElectronGridConvergenceTolerance(), 0.001 );
         self.assertEqual( data_container.getElectronGridAbsoluteDifferenceTolerance(), 1e-80 );
         self.assertEqual( data_container.getElectronGridDistanceTolerance(), 1e-20 );
-        
+
         # Check the relaxation data
         self.assertEqual( len(data_container.getSubshells()), 1 );
         self.assertEqual( data_container.getSubshellOccupancy( 1 ), 1 );
         self.assertEqual( data_container.getSubshellBindingEnergy( 1 ), 1.361e-05 );
         self.assertFalse( data_container.hasRelaxationData() );
         self.assertFalse( data_container.hasSubshellRelaxationData( 1 ) );
-        
+
         # Check the Compton profiles
         self.assertEqual( len(data_container.getComptonProfileMomentumGrid(1)), 871 );
         self.assertEqual( len(data_container.getComptonProfile(1)), 871 );
-        
+
         # Check the occupation numbers
         self.assertEqual( len(data_container.getOccupationNumberMomentumGrid(1)), 410 );
         self.assertEqual( len(data_container.getOccupationNumber(1)), 410 );
-        
+
         # Check the Waller-Hartree scattering function
         self.assertEqual( len(data_container.getWallerHartreeScatteringFunctionMomentumGrid()), 365 );
         self.assertEqual( len(data_container.getWallerHartreeScatteringFunction()), 365 );
-        
+
         # Check the Waller-Hartree atomic form factor
         self.assertEqual( len(data_container.getWallerHartreeAtomicFormFactorMomentumGrid()), 1582 );
         self.assertEqual( len(data_container.getWallerHartreeAtomicFormFactor()), 1582 );
-        
+
         # Check the Waller-Hartree squared form factor
         self.assertEqual( len(data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid()), 3231 );
         self.assertEqual( len(data_container.getWallerHartreeSquaredAtomicFormFactor()), 3231 );
-        
+
         # Check the photon energy grid
         self.assertEqual( len(data_container.getPhotonEnergyGrid()), 947 );
-        
+
         # Check the average photon heating numbers
         self.assertEqual( len(data_container.getAveragePhotonHeatingNumbers()), 947 );
-        
+
         # Check the Waller-Hartree incoherent cross section
         self.assertEqual( len(data_container.getWallerHartreeIncoherentCrossSection()), 947 );
         self.assertEqual( data_container.getWallerHartreeIncoherentCrossSectionThresholdEnergyIndex(), 0 );
-        
+
         # Check the impulse approx. incoherent cross section
         self.assertEqual( len(data_container.getImpulseApproxIncoherentCrossSection()), 947 );
         self.assertEqual( data_container.getImpulseApproxIncoherentCrossSectionThresholdEnergyIndex(), 0 );
-        
+
         # Check the subshell impulse approx. incoherent cross sections
         self.assertEqual( len(data_container.getImpulseApproxSubshellIncoherentCrossSection(1)), 947 );
         self.assertEqual( data_container.getImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(1), 0 );
-        
+
         # Check the Waller-Hartree coherent cross section
         self.assertEqual( len(data_container.getWallerHartreeCoherentCrossSection()), 947 );
         self.assertEqual( data_container.getWallerHartreeCoherentCrossSectionThresholdEnergyIndex(), 0 );
-        
+
         # Check the pair production cross section
         self.assertEqual( len(data_container.getPairProductionCrossSection()), 518 );
         self.assertEqual( data_container.getPairProductionCrossSectionThresholdEnergyIndex(), 429 );
-        
+
         # Check the triplet production cross section
         self.assertEqual( len(data_container.getTripletProductionCrossSection()), 244 );
         self.assertEqual( data_container.getTripletProductionCrossSectionThresholdEnergyIndex(), 703 );
-        
+
         # Check the photoelectric cross section
         self.assertEqual( len(data_container.getPhotoelectricCrossSection()), 947 );
         self.assertEqual( data_container.getPhotoelectricCrossSectionThresholdEnergyIndex(), 0 );
-        
+
         # Check the subshell photoelectric cross sections
         self.assertEqual( len(data_container.getSubshellPhotoelectricCrossSection(1)), 947 );
         self.assertEqual( data_container.getSubshellPhotoelectricCrossSectionThresholdEnergyIndex(1), 0 );
-        
+
         # Check the Waller-Hartree total cross section
         self.assertEqual( len(data_container.getWallerHartreeTotalCrossSection()), 947 );
-        
+
         # Check the impulse approx. total cross section
         self.assertEqual( len(data_container.getImpulseApproxTotalCrossSection()), 947 );
         # Check the electron energy grid
         self.assertEqual( data_container.getElectronCrossSectionInterpPolicy(), "Log-Log" )
-        
+
         self.assertEqual( len(data_container.getElectronEnergyGrid()), 343 )
-        
+
         # Check the elastic data
         self.assertEqual( len(data_container.getCutoffElasticCrossSection()), 343 )
-        
+
         self.assertEqual( len(data_container.getScreenedRutherfordElasticCrossSection()), 280 )
         self.assertEqual( data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(), 63 )
-        
+
         self.assertEqual( data_container.getCutoffElasticInterpPolicy(), "Lin-Lin" )
-        
+
         self.assertEqual( len(data_container.getElasticAngularEnergyGrid()), 16 )
-        
+
         self.assertEqual( len(data_container.getCutoffElasticAngles(1.0e-5)), 2 )
         self.assertEqual( len(data_container.getCutoffElasticAngles(1.0e5)), 96 )
 
         self.assertEqual( len(data_container.getCutoffElasticPDF(1.0e-5)), 2 )
         self.assertEqual( len(data_container.getCutoffElasticPDF(1.0e+5)), 96 )
-        
+
         self.assertTrue( data_container.hasMomentPreservingData() )
         self.assertEqual( len(data_container.getMomentPreservingElasticDiscreteAngles( 1.0e-5 )), 1 )
         self.assertEqual( len(data_container.getMomentPreservingElasticDiscreteAngles( 1.0e+5 )), 1 )
 
         self.assertEqual( len(data_container.getMomentPreservingElasticWeights( 1.0e-5 )), 1 )
         self.assertEqual( len(data_container.getMomentPreservingElasticWeights( 1.0e+5 )), 1 )
-        
+
         # Check the electroionization data
         self.assertEqual( len(data_container.getElectroionizationCrossSection( 1 )), 340 )
         self.assertEqual( data_container.getElectroionizationCrossSectionThresholdEnergyIndex( 1 ), 3 )
@@ -704,26 +704,26 @@ class ACEAndENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         # Check the bremsstrahlung data
         self.assertEqual( len(data_container.getBremsstrahlungCrossSection()), 343 )
         self.assertEqual( data_container.getBremsstrahlungPhotonInterpPolicy(), "Lin-Lin" )
-        
+
         self.assertEqual( len(data_container.getBremsstrahlungEnergyGrid()), 10 )
         self.assertEqual( len(data_container.getBremsstrahlungPhotonEnergy( 1.00000e-5 )), 17 )
         self.assertEqual( len(data_container.getBremsstrahlungPhotonEnergy( 1.00000e+5 )), 111 )
         self.assertEqual( len(data_container.getBremsstrahlungPhotonPDF( 1.00000e-5 )), 17 )
         self.assertEqual( len(data_container.getBremsstrahlungPhotonPDF( 1.00000e+5 )), 111 )
-        
+
         # Check the atomic excitation data
         self.assertEqual( len(data_container.getAtomicExcitationCrossSection()), 340 )
         self.assertEqual( data_container.getAtomicExcitationCrossSectionThresholdEnergyIndex(), 3 )
-        
+
         self.assertEqual( len(data_container.getAtomicExcitationEnergyGrid()), 170 )
         self.assertEqual( data_container.getAtomicExcitationEnergyLossInterpPolicy(), "Lin-Lin" )
-        
+
         self.assertEqual( len(data_container.getAtomicExcitationEnergyLoss()), 170 )
-        
+
         # Check the total electron cross section data
         self.assertEqual( len(data_container.getTotalElectronCrossSection()), 343 )
-        
-        
+
+
 #-----------------------------------------------------------------------------#
 # Custom main
 #-----------------------------------------------------------------------------#

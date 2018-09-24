@@ -40,8 +40,8 @@ void PositronatomNativeFactory::createPositronatom(
   TwoDInterpolationType electron_interp =
                           properties.getElectronTwoDInterpPolicy();
 
-  TwoDSamplingType electron_sampling =
-                          properties.getElectronTwoDSamplingPolicy();
+  TwoDGridType electron_sampling =
+                          properties.getElectronTwoDGridPolicy();
 
   // Create the positron-atom core
   /*! \todo Once testing for the proper 2D interp and sampling policies is
@@ -50,7 +50,7 @@ void PositronatomNativeFactory::createPositronatom(
    */
   if( electron_interp == LOGLOGLOG_INTERPOLATION )
   {
-    if( electron_sampling == UNIT_BASE_CORRELATED_SAMPLING )
+    if( electron_sampling == UNIT_BASE_CORRELATED_GRID )
     {
       ThisType::createPositronatomCore<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
                               raw_positronatom_data,
@@ -58,7 +58,7 @@ void PositronatomNativeFactory::createPositronatom(
                               properties,
                               core );
     }
-    else if( electron_sampling == CORRELATED_SAMPLING )
+    else if( electron_sampling == CORRELATED_GRID )
     {
       ThisType::createPositronatomCore<Utility::LogLogLog,Utility::Correlated>(
                               raw_positronatom_data,
@@ -66,7 +66,7 @@ void PositronatomNativeFactory::createPositronatom(
                               properties,
                               core );
     }
-    else if( electron_sampling == UNIT_BASE_SAMPLING )
+    else if( electron_sampling == UNIT_BASE_GRID )
     {
       ThisType::createPositronatomCore<Utility::LogLogLog,Utility::UnitBase>(
                               raw_positronatom_data,
@@ -82,7 +82,7 @@ void PositronatomNativeFactory::createPositronatom(
   }
   else if( electron_interp == LINLINLIN_INTERPOLATION )
   {
-    if( electron_sampling == UNIT_BASE_CORRELATED_SAMPLING )
+    if( electron_sampling == UNIT_BASE_CORRELATED_GRID )
     {
       ThisType::createPositronatomCore<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
                               raw_positronatom_data,
@@ -90,7 +90,7 @@ void PositronatomNativeFactory::createPositronatom(
                               properties,
                               core );
     }
-    else if( electron_sampling == CORRELATED_SAMPLING )
+    else if( electron_sampling == CORRELATED_GRID )
     {
       ThisType::createPositronatomCore<Utility::LinLinLin,Utility::Correlated>(
                               raw_positronatom_data,
@@ -98,7 +98,7 @@ void PositronatomNativeFactory::createPositronatom(
                               properties,
                               core );
     }
-    else if( electron_sampling == UNIT_BASE_SAMPLING )
+    else if( electron_sampling == UNIT_BASE_GRID )
     {
       ThisType::createPositronatomCore<Utility::LinLinLin,Utility::UnitBase>(
                               raw_positronatom_data,
@@ -114,7 +114,7 @@ void PositronatomNativeFactory::createPositronatom(
   }
   else if( electron_interp == LINLINLOG_INTERPOLATION )
   {
-    if( electron_sampling == UNIT_BASE_CORRELATED_SAMPLING )
+    if( electron_sampling == UNIT_BASE_CORRELATED_GRID )
     {
       ThisType::createPositronatomCore<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
                               raw_positronatom_data,
@@ -122,7 +122,7 @@ void PositronatomNativeFactory::createPositronatom(
                               properties,
                               core );
     }
-    else if( electron_sampling == CORRELATED_SAMPLING )
+    else if( electron_sampling == CORRELATED_GRID )
     {
       ThisType::createPositronatomCore<Utility::LinLinLog,Utility::Correlated>(
                               raw_positronatom_data,
@@ -130,7 +130,7 @@ void PositronatomNativeFactory::createPositronatom(
                               properties,
                               core );
     }
-    else if( electron_sampling == UNIT_BASE_SAMPLING )
+    else if( electron_sampling == UNIT_BASE_GRID )
     {
       ThisType::createPositronatomCore<Utility::LinLinLog,Utility::UnitBase>(
                               raw_positronatom_data,

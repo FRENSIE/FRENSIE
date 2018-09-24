@@ -20,7 +20,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_TwoDInterpolationType.hpp"
-#include "MonteCarlo_TwoDSamplingType.hpp"
+#include "MonteCarlo_TwoDGridType.hpp"
 #include "DataGen_StandardElectronPhotonRelaxationDataGenerator.hpp"
 #include "DataGen_StandardAdjointElectronPhotonRelaxationDataGenerator.hpp"
 #include "Data_CrossSectionsXMLProperties.hpp"
@@ -73,9 +73,9 @@ int main( int argc, char** argv )
   std::string electron_two_d_interp = "Log-Log-Log";
   MonteCarlo::TwoDInterpolationType electron_interp =
                                         MonteCarlo::LOGLOGLOG_INTERPOLATION;
-  std::string electron_two_d_sampling = "Unit-base Correlated";
-  MonteCarlo::TwoDSamplingType electron_sampling =
-                                        MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING;
+  std::string electron_two_d_grid = "Unit-base Correlated";
+  MonteCarlo::TwoDGridType electron_grid =
+                                        MonteCarlo::UNIT_BASE_CORRELATED_GRID;
   double adjoint_electron_grid_convergence_tol = 0.001;
   double adjoint_electron_grid_absolute_diff_tol = 1e-16;
   double adjoint_electron_grid_distance_tol = 1e-8;
@@ -196,7 +196,7 @@ int main( int argc, char** argv )
                                 &adjoint_incoherent_grid_distance_tol,
                                 "Adjoint incoherent grid distance tolerance "
                                 "(0.0<tol<1.0)" );
-  
+
   // Set the electron option names
   aepr_generator_clp.setOption( "cutoff_angle_cosine",
                                 &cutoff_angle_cosine,
@@ -213,9 +213,9 @@ int main( int argc, char** argv )
   aepr_generator_clp.setOption( "electron_interp_policy",
                                 &electron_two_d_interp,
                                 "The electron 2D interpolation policy" );
-  aepr_generator_clp.setOption( "electron_sampling_policy",
-                                &electron_two_d_sampling,
-                                "The electron 2D sampling policy" );
+  aepr_generator_clp.setOption( "electron_grid_policy",
+                                &electron_two_d_grid,
+                                "The electron 2D grid policy" );
   aepr_generator_clp.setOption( "adjoint_electron_grid_convergence_tol",
                                 &adjoint_electron_grid_convergence_tol,
                                 "Adjoint electron grid convergence "
@@ -268,7 +268,7 @@ int main( int argc, char** argv )
                                 &adjoint_electroionization_grid_distance_tol,
                                 "Adjoint electroionization grid distance "
                                 "tolerance (0.0<tol<1.0)" );
-  
+
   // Set the grid generation option names
   aepr_generator_clp.setOption( "grid_convergence_tol",
                                 &grid_convergence_tol,
@@ -306,7 +306,7 @@ int main( int argc, char** argv )
               << "either the forward_file option or the cross_sec_alias option"
               << " must be used!"
               << std::endl;
-    
+
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
     return 1;
@@ -455,7 +455,7 @@ int main( int argc, char** argv )
     std::cerr << Utility::BoldRed( "Error: " )
               << "the adjoint incoherent evaluation tolerance is not valid!"
               << std::endl;
-    
+
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
     return 1;
@@ -470,9 +470,9 @@ int main( int argc, char** argv )
               << "the adjoint incoherent grid convergence tolerance is not "
               << "valid!"
               << std::endl;
-    
+
     aepr_generator_clp.printHelpMessage( argv[0], *out );
-    
+
     return 1;
   }
 
@@ -522,11 +522,11 @@ int main( int argc, char** argv )
       MonteCarlo::convertStringToTwoDInterpolationType( electron_two_d_interp );
   }
 
-  // 17.) The electron TwoDSamplingPolicy
-  if( !Data::isTwoDSamplingPolicyValid( electron_two_d_sampling ) )
+  // 17.) The electron TwoDGridPolicy
+  if( !Data::isTwoDGridPolicyValid( electron_two_d_grid ) )
   {
     std::cerr << Utility::BoldRed( "Error: " )
-              << "the electron 2D sampling policy is not valid!"
+              << "the electron 2D grid policy is not valid!"
               << std::endl;
 
     aepr_generator_clp.printHelpMessage( argv[0], *out );
@@ -535,8 +535,8 @@ int main( int argc, char** argv )
   }
   else
   {
-    electron_sampling =
-      MonteCarlo::convertStringToTwoDSamplingType( electron_two_d_sampling );
+    electron_grid =
+      MonteCarlo::convertStringToTwoDGridType( electron_two_d_grid );
   }
 
   // 18.) The cutoff angle cosine must be in the valid range
@@ -602,7 +602,7 @@ int main( int argc, char** argv )
 
     return 1;
   }
-  
+
   // 23.) The adjoint electron grid distance tolerance must be in the valid range
   if( adjoint_electron_grid_distance_tol <= 0.0 ||
       adjoint_electron_grid_distance_tol >= 1.0 )
@@ -610,7 +610,7 @@ int main( int argc, char** argv )
     (*out) << Utility::BoldRed( "Error: " )
            << "the adjoint electron grid distance tolerance is not valid!"
            << std::endl;
-    
+
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
     return 1;
@@ -776,14 +776,14 @@ int main( int argc, char** argv )
 
     return 1;
   }
-  
+
   // 36.) The grid distance tolerance must be in the valid range
   if( grid_distance_tol <= 0.0 || grid_distance_tol >= 1.0 )
   {
     std::cerr << Utility::BoldRed( "Error: " )
               << "the grid distance tolerance is not valid!"
               << std::endl;
-    
+
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
     return 1;
@@ -804,7 +804,7 @@ int main( int argc, char** argv )
               << data_generated
               << ") was not valid!"
               << std::endl;
-    
+
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
     return 1;
@@ -881,6 +881,7 @@ int main( int argc, char** argv )
           cutoff_angle_cosine,
           electron_tabular_evaluation_tol,
           number_of_moment_preserving_angles,
+          electron_grid,
           electron_interp );
       }
       EXCEPTION_CATCH_AND_EXIT( std::exception,
@@ -945,7 +946,7 @@ int main( int argc, char** argv )
     generator.setAdjointElectroionizationDistanceTolerance( adjoint_electroionization_grid_distance_tol );
     generator.setTabularEvaluationTolerance( electron_tabular_evaluation_tol );
     generator.setElectronTwoDInterpPolicy( electron_interp );
-    generator.setElectronTwoDSamplingPolicy( electron_sampling );
+    generator.setElectronTwoDGridPolicy( electron_grid );
 
     // Populate the new data container
     try{

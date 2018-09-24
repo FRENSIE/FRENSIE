@@ -34,17 +34,17 @@ T InterpolationHelper<ParentInterpolationType>::interpolate(
   // T must be a floating point type
   testStaticPrecondition( (std::is_floating_point<T>::value) );
   // Make sure the processed independent variables are valid
-  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( 
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						     processed_indep_var_0 ) );
-  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( 
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						       processed_indep_var ) );
   testPrecondition( processed_indep_var_0 <= processed_indep_var );
   // Make sure the processed dependent variable is valid
-  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( 
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						       processed_dep_var_0 ) );
   // Make sure that the slope is valid
   testPrecondition( !Utility::QuantityTraits<T>::isnaninf( processed_slope ) );
-  
+
   return ParentInterpolationType::recoverProcessedDepVar(
                processed_dep_var_0 +
                processed_slope*(processed_indep_var - processed_indep_var_0) );
@@ -62,18 +62,18 @@ T InterpolationHelper<ParentInterpolationType>::interpolateAndProcess(
   // T must be a floating point type
   testStaticPrecondition( (std::is_floating_point<T>::value) );
   // Make sure the processed independent variables are valid
-  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( 
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						     processed_indep_var_0 ) );
-  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( 
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						       processed_indep_var ) );
   testPrecondition( processed_indep_var_0 <= processed_indep_var );
   // Make sure the processed dependent variable is valid
-  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( 
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						       processed_dep_var_0 ) );
   // Make sure that the slope is valid
   testPrecondition( !Utility::QuantityTraits<T>::isnaninf( processed_slope ) );
-  
-  return processed_dep_var_0 + 
+
+  return processed_dep_var_0 +
     processed_slope*(processed_indep_var - processed_indep_var_0);
 }
 
@@ -107,8 +107,8 @@ InterpolationHelper<ParentInterpolationType>::calculateUnitBaseGridLength(
  * the processed upper independent value and the processed lower
  * independent value. This is why any units associated with the independent
  * grid limits are stripped away. Due to conversion of the independent
- * values from a cosine (mu) to a delta cosine ( 1 - mu ) for LogLogCos and
- * LinLogCos, it is assumed the processed grids are inverted to ensure they
+ * values from a cosine (mu) to a delta cosine ( 1 - mu ) + nudge for LogLogCos
+ * and LinLogCos, it is assumed the processed grids are inverted to ensure they
  * are in ascending order.
  */
 template<typename ParentInterpolationType>
@@ -257,8 +257,9 @@ InterpolationHelper<ParentInterpolationType>::calculateIndepVar(
 // Calculate the processed independent variable (from eta)
 /*! \details A tolerance is not required with this method because no variable
  * processing is done. Due to conversion of the independent values from a cosine
- * (mu) to a delta cosine ( 1 - mu ) for LogLogCos and LinLogCos, it is assumed
- * the processed grids are inverted to ensure they are in ascending order.
+ * (mu) to a delta cosine ( 1 - mu ) + nudge for LogLogCos and LinLogCos, it is
+ * assumed the processed grids are inverted to ensure they are in ascending
+ * order.
  */
 template<typename ParentInterpolationType>
 template<typename T>
@@ -316,18 +317,6 @@ template<typename ParentInterpolationType>
 inline std::string InterpolationHelper<ParentInterpolationType>::name()
 {
   return Utility::typeName<ParentInterpolationType>();
-}
-
-// Convert the cosine variable
-/*! \details This function converts from cosine (mu) to delta cosine (1 - mu) or
- *  from delta cosine (1 - mu) back to cosine (mu).
- */
-template<typename ParentInterpolationType>
-template<typename T>
-inline T InterpolationHelper<ParentInterpolationType>::convertCosineVar(
-          const T cosine_var )
-{
-  return QuantityTraits<T>::one() - cosine_var;
 }
 
 // Get the interpolation type

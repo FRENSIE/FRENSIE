@@ -17,7 +17,7 @@ from optparse import *
 parser = OptionParser()
 parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
                   help="set the verbosity level [default 2]")
-parser.add_option("-d", "--dagmc_sat_file", type="string", dest="dagmc_sat_file", default="",
+parser.add_option("-d", "--dagmc_h5m_file", type="string", dest="dagmc_h5m_file", default="",
                   help="set the dagmc xml file that will be used to create the model")
 parser.add_option("-r", "--root_file", type="string", dest="root_file", default="",
                   help="set the root xml file that will be used to create the model")
@@ -47,19 +47,20 @@ if inspect.ismodule( DagMC ):
 
         @classmethod
         def setUpClass(cls):
-            properties = DagMC.DagMCModelProperties( options.dagmc_sat_file )
+            properties = DagMC.DagMCModelProperties( options.dagmc_h5m_file )
             properties.setTerminationCellPropertyName( "graveyard" )
             properties.setMaterialPropertyName( "mat" )
             properties.setDensityPropertyName( "rho" )
             properties.setEstimatorPropertyName( "tally" )
             cls.model = DagMC.DagMCModel( properties )
-            
-            
+
+
         def testGetModelProperties(self):
             "*Test Geometry.Model getModelProperties"
             cached_properties = self.model.getModelProperties()
             self.assertEqual( cached_properties.getModelFileNameWithPath(),
-                              options.dagmc_sat_file )
+                              options.dagmc_h5m_file )
+            self.assertTrue( cached_properties.getModelFileName() in options.dagmc_h5m_file )
 
         def testHasCellEstimatorData(self):
             "*Test Geometry.Model hasCellEstimatorData"
@@ -87,10 +88,10 @@ if inspect.ismodule( DagMC ):
         def testGetCells(self):
             "*Test Geometry.Model getCells"
             cells = self.model.getCells( True, True )
-            
+
             # 55 + implicit compliment cell
             self.assertEqual( len(cells), 56 )
-            
+
             self.assertTrue( 1 in cells )
             self.assertTrue( 3 in cells )
             self.assertTrue( 5 in cells )
@@ -147,26 +148,26 @@ if inspect.ismodule( DagMC ):
             self.assertTrue( 184 in cells )
             self.assertTrue( 188 in cells )
             self.assertTrue( 189 in cells )
-            
+
             cells = self.model.getCells( True, False )
             self.assertEqual( len(cells), 55 )
             self.assertTrue( 188 not in cells )
-            
+
             cells = self.model.getCells( False, True )
             self.assertEqual( len(cells), 55 )
             self.assertTrue( 189 not in cells )
-            
+
             cells = self.model.getCells( False, False )
             self.assertEqual( len(cells), 54 )
             self.assertTrue( 188 not in cells )
             self.assertTrue( 189 not in cells )
-            
+
         def testGetCellMaterialIds(self):
             "*Test Geometry.Model getCellMaterialIds"
             cell_id_mat_id_map = self.model.getCellMaterialIds()
-            
+
             self.assertEqual( len(cell_id_mat_id_map), 54 )
-            
+
             self.assertEqual( cell_id_mat_id_map.get( 9 ), 1 )
             self.assertEqual( cell_id_mat_id_map.get( 88 ), 1 )
             self.assertEqual( cell_id_mat_id_map.get( 136 ), 2 )
@@ -221,13 +222,13 @@ if inspect.ismodule( DagMC ):
             self.assertEqual( cell_id_mat_id_map.get( 80 ), 9 )
             self.assertEqual( cell_id_mat_id_map.get( 81 ), 9 )
             self.assertEqual( cell_id_mat_id_map.get( 5 ), 10 )
-            
+
         def testGetCellDensities(self):
             "*Test Geometry.Model getCellDensities"
             cell_id_density_map = self.model.getCellDensities()
-            
+
             self.assertEqual( len(cell_id_density_map), 54 )
-            
+
             self.assertEqual( cell_id_density_map.get( 9 ), -8.027 )
             self.assertEqual( cell_id_density_map.get( 88 ), -8.027 )
             self.assertEqual( cell_id_density_map.get( 136 ), -7.75 )
@@ -282,56 +283,56 @@ if inspect.ismodule( DagMC ):
             self.assertEqual( cell_id_density_map.get( 80 ), -7.83 )
             self.assertEqual( cell_id_density_map.get( 81 ), -7.83 )
             self.assertEqual( cell_id_density_map.get( 5 ), -13.31 )
-        
+
         def testGetCellDensities(self):
             "*Test Geometry.Model getCellDensities"
             cell_estimator_id_data_map = self.model.getCellEstimatorData()
-            
+
             self.assertEqual( len(cell_estimator_id_data_map), 5 )
             self.assertTrue( 0 in cell_estimator_id_data_map )
             self.assertTrue( 1 in cell_estimator_id_data_map )
             self.assertTrue( 2 in cell_estimator_id_data_map )
             self.assertTrue( 3 in cell_estimator_id_data_map )
             self.assertTrue( 4 in cell_estimator_id_data_map )
-            
+
             self.assertEqual( cell_estimator_id_data_map.get(0)[0],
                               Geometry.CELL_TRACK_LENGTH_FLUX_ESTIMATOR )
             self.assertEqual( cell_estimator_id_data_map.get(0)[1],
                               Geometry.NEUTRON )
             self.assertEqual( len(cell_estimator_id_data_map.get(0)[2]),
                               55 )
-            
+
             self.assertEqual( cell_estimator_id_data_map.get(1)[0],
                               Geometry.CELL_TRACK_LENGTH_FLUX_ESTIMATOR )
             self.assertEqual( cell_estimator_id_data_map.get(1)[1],
                               Geometry.PHOTON )
             self.assertEqual( len(cell_estimator_id_data_map.get(1)[2]),
                               55 )
-            
+
             self.assertEqual( cell_estimator_id_data_map.get(2)[0],
                               Geometry.CELL_COLLISION_FLUX_ESTIMATOR )
             self.assertEqual( cell_estimator_id_data_map.get(2)[1],
                               Geometry.NEUTRON )
             self.assertEqual( len(cell_estimator_id_data_map.get(2)[2]),
                               36 )
-            
+
             self.assertEqual( cell_estimator_id_data_map.get(3)[0],
                               Geometry.CELL_COLLISION_FLUX_ESTIMATOR )
             self.assertEqual( cell_estimator_id_data_map.get(3)[1],
                               Geometry.PHOTON )
             self.assertEqual( len(cell_estimator_id_data_map.get(3)[2]),
                               36 )
-            
+
             self.assertEqual( cell_estimator_id_data_map.get(4)[0],
                               Geometry.CELL_PULSE_HEIGHT_ESTIMATOR )
             self.assertEqual( cell_estimator_id_data_map.get(4)[1],
                               Geometry.PHOTON )
             self.assertEqual( len(cell_estimator_id_data_map.get(4)[2]),
                               2 )
-            
+
         def testDoesCellExist(self):
             "*Test Geometry.Model doesCellExist"
-            
+
             self.assertTrue( not self.model.doesCellExist( 0 ) )
             self.assertTrue(self.model.doesCellExist( 1 ) )
             self.assertTrue( not self.model.doesCellExist( 2 ) )
@@ -392,13 +393,13 @@ if inspect.ismodule( DagMC ):
             self.assertTrue(self.model.doesCellExist( 168 ) )
             self.assertTrue(self.model.doesCellExist( 184 ) )
             self.assertTrue(self.model.doesCellExist( 188 ) )
-            
+
             # Implicit compliment cell
             self.assertTrue(self.model.doesCellExist( 189 ) )
 
         def testIsTerminationCell(self):
             "*Test Geometry.Model isTerminationCell"
-            
+
             self.assertTrue( not self.model.isTerminationCell( 1 ) )
             self.assertTrue( not self.model.isTerminationCell( 3 ) )
             self.assertTrue( not self.model.isTerminationCell( 5 ) )
@@ -458,7 +459,7 @@ if inspect.ismodule( DagMC ):
 
         def testIsVoidCell(self):
             "*Test Geometry.Model isVoidCell"
-            
+
             self.assertTrue( not self.model.isVoidCell( 1 ) )
             self.assertTrue( not self.model.isVoidCell( 3 ) )
             self.assertTrue( not self.model.isVoidCell( 5 ) )
@@ -515,20 +516,20 @@ if inspect.ismodule( DagMC ):
             self.assertTrue( not self.model.isVoidCell( 184 ) )
             self.assertTrue(self.model.isVoidCell( 188 ) )
             self.assertTrue(self.model.isVoidCell( 189 ) )
-            
+
         def testGetCellVolume(self):
             "*Test Geometry.Model getCellVolume"
-            
+
             # Get the volume of cell 53
             cell_volume = self.model.getCellVolume( 53 )
             self.assertAlmostEqual( cell_volume, 98.322384, delta=1e-6*98.322384 )
-            
+
         def testGetSurfaces(self):
             "*Test Geometry.Model getSurfaces"
-            
+
             surfaces = self.model.getSurfaces()
             self.assertEqual( len(surfaces), 293 )
-            
+
         def testGetSurfaceEstimatorData(self):
             "*Test Geometry.Model getSurfaceEstimatorData"
             surface_estimator_id_data_map = self.model.getSurfaceEstimatorData()
@@ -537,28 +538,28 @@ if inspect.ismodule( DagMC ):
             self.assertTrue( 6 in surface_estimator_id_data_map )
             self.assertTrue( 7 in surface_estimator_id_data_map )
             self.assertTrue( 8 in surface_estimator_id_data_map )
-            
+
             self.assertEqual( surface_estimator_id_data_map.get(5)[0],
                               Geometry.SURFACE_FLUX_ESTIMATOR )
             self.assertEqual( surface_estimator_id_data_map.get(5)[1],
                               Geometry.NEUTRON )
             self.assertEqual( len(surface_estimator_id_data_map.get(5)[2]),
                               7 )
-            
+
             self.assertEqual( surface_estimator_id_data_map.get(6)[0],
                               Geometry.SURFACE_FLUX_ESTIMATOR )
             self.assertEqual( surface_estimator_id_data_map.get(6)[1],
                               Geometry.PHOTON )
             self.assertEqual( len(surface_estimator_id_data_map.get(6)[2]),
                               7 )
-            
+
             self.assertEqual( surface_estimator_id_data_map.get(7)[0],
                               Geometry.SURFACE_CURRENT_ESTIMATOR )
             self.assertEqual( surface_estimator_id_data_map.get(7)[1],
                               Geometry.NEUTRON )
             self.assertEqual( len(surface_estimator_id_data_map.get(7)[2]),
                               7 )
-            
+
             self.assertEqual( surface_estimator_id_data_map.get(8)[0],
                               Geometry.SURFACE_CURRENT_ESTIMATOR )
             self.assertEqual( surface_estimator_id_data_map.get(8)[1],
@@ -581,16 +582,16 @@ if inspect.ismodule( DagMC ):
 
         def testGetSurfaceArea(self):
             "*Test Geometry.Model getSurfaceArea"
-            
+
             # Get the surface area of surface 242
             surface_area = self.model.getSurfaceArea( 242 )
             self.assertAlmostEqual( surface_area, 38.7096, delta=1e-6*38.7096 )
-            
+
         def testIsReflectingSurface(self):
             "*Test Geometry.Model isReflectingSurface"
             self.assertTrue(self.model.isReflectingSurface( 408 ) )
             self.assertTrue( not self.model.isReflectingSurface( 1 ) )
-            
+
         def testCreateNavigator(self):
             "*Test Geometry.Model createNavigator"
             navigator = self.model.createNavigator()
@@ -614,6 +615,7 @@ if inspect.ismodule( ROOT ):
             properties = self.model.getModelProperties()
             self.assertEqual( properties.getModelFileNameWithPath(),
                               options.root_file )
+            self.assertTrue( properties.getModelFileName() in options.root_file )
             self.assertEqual( properties.getMaterialPropertyName(), "mat" )
             self.assertEqual( properties.getVoidMaterialName(), "void" )
             self.assertEqual( properties.getTerminalMaterialName(), "graveyard" )
@@ -621,43 +623,43 @@ if inspect.ismodule( ROOT ):
         def testHasCellEstimatorData(self):
             "*Test Geometry.Model hasCellEstimatorData"
             self.assertFalse( self.model.hasCellEstimatorData() )
-            
+
         def testGetMaterialIds(self):
             "*Test Geometry.Model getMaterialIds"
             material_ids = self.model.getMaterialIds()
-            
+
             self.assertEqual( len(material_ids), 1 )
             self.assertTrue( 1 in material_ids )
-            
+
         def testGetCells(self):
             "*Test Geometry.Model getCells"
             # Get all cells
             cells = self.model.getCells( True, True )
-            
+
             self.assertEqual( len(cells), 3 )
             self.assertTrue( 1 in cells )
             self.assertTrue( 2 in cells )
             self.assertTrue( 3 in cells )
-            
+
             # Get all cells except for termination cells
             cells = self.model.getCells( True, False )
-            
+
             self.assertEqual( len(cells), 2 )
             self.assertTrue( 1 in cells )
             self.assertTrue( 2 in cells )
             self.assertTrue( 3 not in cells )
-            
+
             # Get all cells except for void cells
             cells = self.model.getCells( False, True )
-            
+
             self.assertEqual( len(cells), 2 )
             self.assertTrue( 1 not in cells )
             self.assertTrue( 2 in cells )
             self.assertTrue( 3 in cells )
-            
+
             # Get all cells except for void and termination cells
             cells = self.model.getCells( False, False )
-            
+
             self.assertEqual( len(cells), 1 )
             self.assertTrue( 1 not in cells )
             self.assertTrue( 2 in cells )
@@ -666,7 +668,7 @@ if inspect.ismodule( ROOT ):
         def testGetCellMaterialNames(self):
             "*Test Geometry.Model getCellMaterialNames"
             cell_id_material_name_map = self.model.getCellMaterialNames()
-            
+
             self.assertEqual( len(cell_id_material_name_map), 3 )
             self.assertTrue( 1 in cell_id_material_name_map )
             self.assertTrue( 2 in cell_id_material_name_map )
@@ -678,57 +680,57 @@ if inspect.ismodule( ROOT ):
         def testGetCellMaterialIds(self):
             "*Test Geometry.Model getCellMaterialIds"
             cell_id_mat_id_map = self.model.getCellMaterialIds()
-            
+
             self.assertEqual( len(cell_id_mat_id_map), 1 )
             self.assertTrue( 2 in cell_id_mat_id_map )
             self.assertEqual( cell_id_mat_id_map[2], 1 )
-            
+
         def testGetCellDensities(self):
             "*Test Geometry.Model getCellDensities"
             cell_id_density_map = self.model.getCellDensities()
-            
+
             self.assertEqual( len(cell_id_density_map), 1 )
             self.assertTrue( 2 in cell_id_density_map )
             self.assertEqual( cell_id_density_map[2], 1e24 )
-            
+
         def testGetCellEstimatorData(self):
             "*Test Geometry.Model getCellEstimatorData"
             cell_estimator_id_data_map = self.model.getCellEstimatorData()
-            
+
             self.assertEqual( len(cell_estimator_id_data_map), 0 )
-            
+
         def testDoesCellExist(self):
             "*Test Geometry.Model doesCellExist"
-            
+
             self.assertTrue( self.model.doesCellExist( 1 ) )
             self.assertTrue( self.model.doesCellExist( 2 ) )
             self.assertTrue( self.model.doesCellExist( 3 ) )
             self.assertFalse( self.model.doesCellExist( 4 ) )
-            
+
         def testIsTerminationCell(self):
             "*Test Geometry.Model isTerminationCell"
-            
+
             self.assertFalse( self.model.isTerminationCell( 1 ) )
             self.assertFalse( self.model.isTerminationCell( 2 ) )
             self.assertTrue( self.model.isTerminationCell( 3 ) )
-            
+
         def testIsVoidCell(self):
             "*Test Geometry.Model isVoidCell"
-            
+
             self.assertTrue( self.model.isVoidCell( 1 ) )
             self.assertFalse( self.model.isVoidCell( 2 ) )
             self.assertFalse( self.model.isVoidCell( 3 ) )
-            
+
         def testGetCellVolume(self):
             "*Test Geometry.Model getCellVolume"
-            
+
             self.assertAlmostEqual( self.model.getCellVolume( 1 ), 934.550153050213, delta=1e-6 )
             self.assertAlmostEqual( self.model.getCellVolume( 2 ), 65.4498469497874, delta=1e-6 )
             self.assertAlmostEqual( self.model.getCellVolume( 3 ), 1744.0, delta=1e-6 )
-            
+
         def testCreateNavigator(self):
             "*Test Geometry.Model createNavigator"
-            
+
             # If this fails an error will be thrown
             navigator = self.model.createNavigator()
 
@@ -741,7 +743,7 @@ if __name__ == "__main__":
     suite = unittest.TestSuite()
 
     # Add the test cases to the test suite
-    if len(options.dagmc_sat_file) > 0 and inspect.ismodule(DagMC):
+    if len(options.dagmc_h5m_file) > 0 and inspect.ismodule(DagMC):
         suite.addTest(unittest.makeSuite(DagMCModelTestCase))
 
     if len(options.root_file) > 0 and inspect.ismodule(ROOT):

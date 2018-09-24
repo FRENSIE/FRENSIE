@@ -992,11 +992,11 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
                                                         Lx );
 
   // Calculate the y value on the first grid
-  T processed_indep_var_y_0 = ZYInterpPolicy::calculateProcessedIndepVar( 
+  T processed_indep_var_y_0 = ZYInterpPolicy::calculateProcessedIndepVar(
 			  eta,
 			  Utility::get<YIndepMember>( *start_processed_indep_y_grid_0 ),
 			  L0 );
-  
+
   // Calculate the y value on the second grid
   T processed_indep_var_y_1 = ZYInterpPolicy::calculateProcessedIndepVar(
 			  eta,
@@ -1540,9 +1540,21 @@ inline const std::string LinLogCosLin::name()
 }
 
 // The name of the policy
+inline const std::string LinNudgedLogCosLin::name()
+{
+  return "LinNudgedLogCosLin";
+}
+
+// The name of the policy
 inline const std::string LinLogCosLog::name()
 {
   return "LinLogCosLog";
+}
+
+// The name of the policy
+inline const std::string LinNudgedLogCosLog::name()
+{
+  return "LinNudgedLogCosLog";
 }
 
 // The name of the policy
@@ -1552,10 +1564,23 @@ inline const std::string LogLogCosLin::name()
 }
 
 // The name of the policy
+inline const std::string LogNudgedLogCosLin::name()
+{
+  return "LogNudgedLogCosLin";
+}
+
+// The name of the policy
 inline const std::string LogLogCosLog::name()
 {
   return "LogLogCosLog";
 }
+
+// The name of the policy
+inline const std::string LogNudgedLogCosLog::name()
+{
+  return "LogNudgedLogCosLog";
+}
+
 } // end Utility namespace
 
 #endif // end UTILITY_TWO_D_INTERPOLATION_POLICY_DEF_HPP

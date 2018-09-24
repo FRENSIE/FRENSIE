@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_TwoDInterpolationType.hpp"
-#include "MonteCarlo_TwoDSamplingType.hpp"
+#include "MonteCarlo_TwoDGridType.hpp"
 #include "Data_ElectronPhotonRelaxationVolatileDataContainer.hpp"
 #include "Utility_GridGenerator.hpp"
 
@@ -149,10 +149,10 @@ public:
   MonteCarlo::TwoDInterpolationType getElectronTwoDInterpPolicy() const;
 
   //! Set the electron TwoDGridPolicy (LogLogLog by default)
-  void setElectronTwoDGridPolicy( MonteCarlo::TwoDSamplingType sampling );
+  void setElectronTwoDGridPolicy( MonteCarlo::TwoDGridType sampling );
 
   //! Return the electron TwoDGridPolicy
-  MonteCarlo::TwoDSamplingType getElectronTwoDGridPolicy() const;
+  MonteCarlo::TwoDGridType getElectronTwoDGridPolicy() const;
 
   //! Populate the electron-photon-relaxation data container
   virtual void populateEPRDataContainer() = 0;
@@ -163,6 +163,8 @@ public:
                          const double cutoff_angle_cosine = 0.9,
                          const double tabular_evaluation_tol = 1e-7,
                          const unsigned number_of_moment_preserving_angles = 1,
+                         const MonteCarlo::TwoDGridType two_d_grid =
+                         MonteCarlo::UNIT_BASE_CORRELATED_GRID,
                          const MonteCarlo::TwoDInterpolationType two_d_interp =
                          MonteCarlo::LOGLOGLOG_INTERPOLATION );
 
@@ -173,10 +175,10 @@ public:
                          const unsigned number_of_moment_preserving_angles = 1,
                          const MonteCarlo::TwoDInterpolationType two_d_interp =
                          MonteCarlo::LOGLOGLOG_INTERPOLATION );
-                                             
+
   //! Get the data container
   const Data::ElectronPhotonRelaxationDataContainer& getDataContainer() const;
-  
+
 protected:
 
   //! Set the min photon energy
@@ -208,6 +210,7 @@ protected:
               const double cutoff_angle_cosine,
               const double tabular_evaluation_tol,
               const unsigned number_of_moment_preserving_angles,
+              const MonteCarlo::TwoDGridType two_d_grid,
               const MonteCarlo::TwoDInterpolationType two_d_interp ) = 0;
 
   //! Repopulate the electron moment preserving data
@@ -233,8 +236,8 @@ private:
   // The electron TwoDInterpPolicy (LogLogLog - default)
   MonteCarlo::TwoDInterpolationType d_two_d_interp;
 
-  // The electron TwoDGridPolicy (LogLogLog - default)
-  MonteCarlo::TwoDSamplingType d_two_d_grid;
+  // The electron TwoDGridPolicy (Unit-base Correlated - default)
+  MonteCarlo::TwoDGridType d_two_d_grid;
 };
 
 } // end DataGen namespace

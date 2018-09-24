@@ -55,8 +55,8 @@ std::string ToStringTraits<MonteCarlo::CoupledElasticSamplingMethod>::toString(
     return "One D Union";
   case MonteCarlo::TWO_D_UNION:
     return "Two D Union";
-  case MonteCarlo::SIMPLIFIED_UNION:
-    return "Simplified Union";
+  case MonteCarlo::MODIFIED_TWO_D_UNION:
+    return "Modified Two D Union";
   default:
     THROW_EXCEPTION( std::logic_error,
                      "Cannot convert the coupled elastic "

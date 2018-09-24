@@ -9,8 +9,8 @@
 		<d_model_properties class_id="4" tracking_level="0" version="0">
 			<tx class_id="5" tracking_level="1" version="0" object_id="_1">
 				<d_file_name>test_geom.h5m</d_file_name>
-                                <raw_file_path></raw_file_path>
-                                <d_fast_id_lookup>0</d_fast_id_lookup>
+				<raw_file_path></raw_file_path>
+				<d_fast_id_lookup>0</d_fast_id_lookup>
 				<d_termination_cell_property>graveyard</d_termination_cell_property>
 				<d_reflecting_surface_property>reflecting.surface</d_reflecting_surface_property>
 				<d_material_property>mat</d_material_property>

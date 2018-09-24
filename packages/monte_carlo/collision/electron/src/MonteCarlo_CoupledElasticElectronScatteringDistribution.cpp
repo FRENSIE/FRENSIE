@@ -35,7 +35,7 @@ CoupledElasticElectronScatteringDistribution::CoupledElasticElectronScatteringDi
   this->setSamplingMethod( sampling_method );
 }
 
-//! Set the sampling method ( Simplified Union - Default )
+//! Set the sampling method ( 2-D Union - Default )
 void CoupledElasticElectronScatteringDistribution::setSamplingMethod(
     const CoupledElasticSamplingMethod& method )
 {
@@ -51,10 +51,10 @@ void CoupledElasticElectronScatteringDistribution::setSamplingMethod(
       return this->sampleTwoDUnion(energy);
     };
   }
-  else if ( method == SIMPLIFIED_UNION )
+  else if ( method == MODIFIED_TWO_D_UNION )
   {
     d_sample_method = [this](const double &energy) {
-      return this->sampleSimplifiedUnion(energy);
+      return this->sampleModifiedTwoDUnion(energy);
     };
   }
   else
@@ -441,11 +441,49 @@ double CoupledElasticElectronScatteringDistribution::sampleOneDUnion(
  *  screened Rutherford distribution. The energy grid for the cross section
  *  ratios is much finer than the energy grid for the elastic secondary
  *  distribution, resulting in a difference in the sample values below the
+ *  cutoff due to interpolation errors. This difference is assumed small and
+ *  ignored.
+ */
+double CoupledElasticElectronScatteringDistribution::sampleTwoDUnion(
+    const double incoming_energy ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+
+  // Get the ratio of the cutoff cross section to the total cross section
+  double cutoff_ratio = d_cutoff_ratios->evaluate( incoming_energy );
+
+  // Get a random number
+  double random_number =
+            Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+  if ( random_number == cutoff_ratio ) // Sample mu_peak
+    return ElasticTraits::mu_peak;
+  else if ( random_number < cutoff_ratio ) // Sample tabular Cutoff
+  {
+    return d_coupled_dist->sampleSecondaryConditionalWithRandomNumber(
+                               incoming_energy, random_number );
+  }
+  else
+  {
+    // Sample the screened Rutherford analytical peak
+    return this->sampleScreenedRutherfordPeak( incoming_energy,
+                                               random_number,
+                                               cutoff_ratio );
+  }
+}
+
+// Sample using the Modified 2-D Union method
+/*! \details The elastic cutoff cross section ratios are used as the
+ *  boundary between the tabular Cutoff distribution and the analytical
+ *  screened Rutherford distribution. The energy grid for the cross section
+ *  ratios is much finer than the energy grid for the elastic secondary
+ *  distribution, resulting in a difference in the sample values below the
  *  cutoff due to interpolation errors. This difference is handled by
  *  normalizing the sampled values of the tabular Cutoff distribution to range
  *  from -1 to 0.999999 exactly.
  */
-double CoupledElasticElectronScatteringDistribution::sampleTwoDUnion(
+double CoupledElasticElectronScatteringDistribution::sampleModifiedTwoDUnion(
     const double incoming_energy ) const
 {
   // Make sure the incoming energy is valid
@@ -487,45 +525,6 @@ double CoupledElasticElectronScatteringDistribution::sampleTwoDUnion(
                                                cutoff_ratio );
   }
 }
-
-// Sample using the Simplified Union method
-/*! \details The elastic cutoff cross section ratios are used as the
- *  boundary between the tabular Cutoff distribution and the analytical
- *  screened Rutherford distribution. The energy grid for the cross section
- *  ratios is much finer than the energy grid for the elastic secondary
- *  distribution, resulting in a difference in the sample values below the
- *  cutoff due to interpolation errors. This difference is assumed small and
- *  ignored.
- */
-double CoupledElasticElectronScatteringDistribution::sampleSimplifiedUnion(
-    const double incoming_energy ) const
-{
-  // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
-
-  // Get the ratio of the cutoff cross section to the total cross section
-  double cutoff_ratio = d_cutoff_ratios->evaluate( incoming_energy );
-
-  // Get a random number
-  double random_number =
-            Utility::RandomNumberGenerator::getRandomNumber<double>();
-
-  if ( random_number == cutoff_ratio ) // Sample mu_peak
-    return ElasticTraits::mu_peak;
-  else if ( random_number < cutoff_ratio ) // Sample tabular Cutoff
-  {
-    return d_coupled_dist->sampleSecondaryConditionalWithRandomNumber(
-                               incoming_energy, random_number );
-  }
-  else
-  {
-    // Sample the screened Rutherford analytical peak
-    return this->sampleScreenedRutherfordPeak( incoming_energy,
-                                               random_number,
-                                               cutoff_ratio );
-  }
-}
-
 
 } // end MonteCarlo namespace
 

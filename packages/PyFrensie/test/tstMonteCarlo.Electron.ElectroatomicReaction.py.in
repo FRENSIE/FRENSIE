@@ -38,7 +38,7 @@ class CoupledElasticReactionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        method = Electron.SIMPLIFIED_UNION
+        method = Electron.TWO_D_UNION
         self.reaction = Electron.createCoupledElasticReaction_LinLogCorrelated( self.data, method, 1e-7 )
 
     def testGetReactionType(self):

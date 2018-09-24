@@ -201,15 +201,15 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Cutoff elastic cross section
     std::shared_ptr<const std::vector<double> > cutoff_cross_section(
        new std::vector<double>( data_container.getAdjointCutoffElasticCrossSection() ) );
-       
+
     // Cutoff elastic cross section
     std::shared_ptr<const std::vector<double> > total_cross_section(
        new std::vector<double>( data_container.getAdjointTotalElasticCrossSection() ) );
-       
+
     // Calculate the sampling ratios
     std::shared_ptr<std::vector<double> > sampling_ratios(
                       new std::vector<double>( total_cross_section->size() ) );
-    
+
     for ( unsigned i = 0; i < sampling_ratios->size(); ++i )
     {
       (*sampling_ratios)[i] =
@@ -247,7 +247,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   Utility::RandomNumberGenerator::createStreams();
 }
 
-FRENSIE_CUSTOM_UNIT_TEST_SETUP_END(); 
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstDecoupledElasticAdjointElectroatomicReaction.cpp

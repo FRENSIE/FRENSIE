@@ -36,7 +36,7 @@ class CoupledElasticElectronScatteringDistributionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.dist = Electron.createCoupledElasticDistribution_LogLogCorrelated( self.data, MonteCarlo.SIMPLIFIED_UNION, 1e-15 )
+        self.dist = Electron.createCoupledElasticDistribution_LogLogCorrelated( self.data, MonteCarlo.MODIFIED_TWO_D_UNION, 1e-15 )
 
     def testevaluate(self):
         "*Test MonteCarlo.Electron.createCoupledElasticDistribution evaluate method"
@@ -60,14 +60,14 @@ class CoupledElasticElectronScatteringDistributionTestCase(unittest.TestCase):
                                 2.7994721652548883e-13,
                                 delta=1e-6*2.7994721652548883e-13 )
         self.assertAlmostEqual( self.dist.evaluate(energy, 0.71),
-                                5.7108121830471785e-10,
-                                delta=1e-6*5.7108121830471785e-10 )
+                                5.710839937754998e-10,
+                                delta=1e-6*5.710839937754998e-10 )
         self.assertAlmostEqual( self.dist.evaluate(energy, 0.999999),
-                                2.5065255670297876e+02,
-                                delta=1e-9*2.5065255670297876e+02 )
+                                5.162812836655264e+02,
+                                delta=1e-9*5.162812836655264e+02 )
         self.assertAlmostEqual( self.dist.evaluate(energy, 1.0),
-                                1.0111031865248539e+06,
-                                delta=1e-9*1.0111031865248539e+06 )
+                                2.0826184975880277e+06,
+                                delta=1e-9*2.0826184975880277e+06 )
 
     def testevaluatePDF(self):
         "*Test MonteCarlo.Electron.createCoupledElasticDistribution evaluatePDF method"
@@ -103,14 +103,14 @@ class CoupledElasticElectronScatteringDistributionTestCase(unittest.TestCase):
                                 2.7994721068472260e-13,
                                 delta=1e-6*2.7994721068472260e-13 )
         self.assertAlmostEqual( self.dist.evaluatePDF(energy, 0.71),
-                                5.7108110201105866e-10,
-                                delta=1e-6*5.7108110201105866e-10 )
+                                5.71083877480881e-10,
+                                delta=1e-6*5.71083877480881e-10 )
         self.assertAlmostEqual( self.dist.evaluatePDF(energy, 0.999999),
-                                2.9593777728927319e+02,
-                                delta=1e-9*2.9593777728927319e+02 )
+                                518.3187273171304,
+                                delta=1e-9*518.3187273171304 )
         self.assertAlmostEqual( self.dist.evaluatePDF(energy, 1.0),
-                                4.7549457203327055e+09,
-                                delta=1e-9*4.7549457203327055e+09 )
+                                8.328025697833803e+09,
+                                delta=1e-9*8.328025697833803e+09 )
 
     def testevaluateCDF(self):
         "*Test MonteCarlo.Electron.createCoupledElasticDistribution evaluateCDF method"
@@ -143,8 +143,8 @@ class CoupledElasticElectronScatteringDistributionTestCase(unittest.TestCase):
                                 4.1911228355588470e-14,
                                 delta=1e-6*4.1911228355588470e-14 )
         self.assertAlmostEqual( self.dist.evaluateCDF(energy, 0.71),
-                                4.2244810859744993e-11,
-                                delta=1e-6*4.2244810859744993e-11 )
+                                4.224491523907478e-11,
+                                delta=1e-6*4.224491523907478e-11 )
         self.assertAlmostEqual( self.dist.evaluateCDF(energy, 0.999999),
                                 2.5106038136353922e-04,
                                 delta=tol*2.5106038136353922e-04 )
@@ -167,8 +167,8 @@ class CoupledElasticElectronScatteringDistributionTestCase(unittest.TestCase):
         Prng.RandomNumberGenerator.setFakeStream(random_numbers)
         outgoing_energy, scattering_angle_cosine = self.dist.sample( energy )
         self.assertAlmostEqual( scattering_angle_cosine,
-                                8.7957167491449995e-01,
-                                delta=tol*8.7957167491449995e-01 )
+                                0.8795716745932936,
+                                delta=tol*0.8795716745932936 )
         self.assertTrue( energy == outgoing_energy)
 
 #-----------------------------------------------------------------------------#

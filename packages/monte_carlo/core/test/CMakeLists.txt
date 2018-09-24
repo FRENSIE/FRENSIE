@@ -74,8 +74,8 @@ FRENSIE_ADD_TEST(BremsstrahlungAngularDistributionType)
 FRENSIE_ADD_TEST_EXECUTABLE(TwoDInterpolationType DEPENDS tstTwoDInterpolationType.cpp)
 FRENSIE_ADD_TEST(TwoDInterpolationType)
 
-FRENSIE_ADD_TEST_EXECUTABLE(TwoDSamplingType DEPENDS tstTwoDSamplingType.cpp)
-FRENSIE_ADD_TEST(TwoDSamplingType)
+FRENSIE_ADD_TEST_EXECUTABLE(TwoDGridType DEPENDS tstTwoDGridType.cpp)
+FRENSIE_ADD_TEST(TwoDGridType)
 
 FRENSIE_ADD_TEST_EXECUTABLE(ParticleModeType DEPENDS tstParticleModeType.cpp)
 FRENSIE_ADD_TEST(ParticleModeType)

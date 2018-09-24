@@ -129,7 +129,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   cutoff_angle_cosine = -1.0;
   energy = 1.0e-5;
-  std::vector<double> raw_grid = 
+  std::vector<double> raw_grid =
     data_container->getCutoffElasticAngles( energy );
   angular_grid =
     MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAboveCutoff(
@@ -979,10 +979,10 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                    createCoupledElasticDistribution_LogLogCosLog )
 {
-  MonteCarlo::CoupledElasticSamplingMethod sampling_method = MonteCarlo::SIMPLIFIED_UNION;
+  MonteCarlo::CoupledElasticSamplingMethod sampling_method = MonteCarlo::TWO_D_UNION;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogNudgedLogCosLog ,Utility::Correlated>(
         native_coupled_elastic_distribution,
         cutoff_cross_section,
         total_cross_section,
@@ -1052,14 +1052,14 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_coupled_elastic_distribution->sample( incoming_energy,
                                                outgoing_energy,
                                                scattering_angle_cosine );
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 8.88234091357768651e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 8.8823409100481654e-01, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 
   // Test 3
   native_coupled_elastic_distribution->sample( incoming_energy,
                                                outgoing_energy,
                                                scattering_angle_cosine );
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.84486904780908834e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.8448690423241103e-01, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 
   // Test 4
@@ -1089,12 +1089,12 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_coupled_elastic_distribution->sample( incoming_energy,
                                                outgoing_energy,
                                                scattering_angle_cosine );
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.9989497571065022e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.9989100124014851e-01, 1e-12 );
 
   native_coupled_elastic_distribution->sample( incoming_energy,
                                                outgoing_energy,
                                                scattering_angle_cosine );
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999901223584842e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999827282803233e-01, 1e-12 );
 
   native_coupled_elastic_distribution->sample( incoming_energy,
                                                outgoing_energy,
@@ -1115,7 +1115,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   MonteCarlo::CoupledElasticSamplingMethod sampling_method = MonteCarlo::ONE_D_UNION;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogNudgedLogCosLog ,Utility::Correlated>(
   native_coupled_elastic_distribution,
   cutoff_cross_section,
   total_cross_section,
@@ -1185,14 +1185,14 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_coupled_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 8.88234091357768651e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 8.8823409100481654e-01, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 
   // Test 3
   native_coupled_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.84486904780908834e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.8448690423241103e-01, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 
   // Test 4
@@ -1222,17 +1222,17 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_coupled_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.9989497571065022e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.9989100124014851e-01, 1e-12 );
 
   native_coupled_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999901223584842e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999827282803233e-01, 1e-12 );
 
   native_coupled_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999901226382204e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999827286909682e-01, 1e-12 );
 
   native_coupled_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
@@ -1243,12 +1243,12 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that the coupled distribution can be created
 FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
-    createCoupledElasticDistribution_LogLogCosLog_TwoDUnion )
+    createCoupledElasticDistribution_LogLogCosLog_ModifiedTwoDUnion )
 {
-  MonteCarlo::CoupledElasticSamplingMethod sampling_method = MonteCarlo::TWO_D_UNION;
+  MonteCarlo::CoupledElasticSamplingMethod sampling_method = MonteCarlo::MODIFIED_TWO_D_UNION;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogNudgedLogCosLog ,Utility::Correlated>(
   native_coupled_elastic_distribution,
   cutoff_cross_section,
   total_cross_section,
@@ -1318,14 +1318,14 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_coupled_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 8.88234091357768651e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 8.8823409100481654e-01, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 
   // Test 3
   native_coupled_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.84486904780908834e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.8448690423241103e-01, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 
   // Test 4
@@ -1355,12 +1355,12 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_coupled_elastic_distribution->sample( incoming_energy,
                                                outgoing_energy,
                                                scattering_angle_cosine );
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.9989496344746609e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.9989172833205142e-01, 1e-12 );
 
   native_coupled_elastic_distribution->sample( incoming_energy,
                                                outgoing_energy,
                                                scattering_angle_cosine );
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999899997202635e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999899995893549e-01, 1e-12 );
 
   native_coupled_elastic_distribution->sample( incoming_energy,
                                                outgoing_energy,
@@ -1378,7 +1378,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                    createCoupledElasticDistribution_LinLinLog )
 {
-  MonteCarlo::CoupledElasticSamplingMethod sampling_method = MonteCarlo::SIMPLIFIED_UNION;
+  MonteCarlo::CoupledElasticSamplingMethod sampling_method = MonteCarlo::TWO_D_UNION;
   double evaluation_tol = 1e-7;
 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
@@ -1473,7 +1473,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                    createCoupledElasticDistribution_LinLinLin )
 {
-  MonteCarlo::CoupledElasticSamplingMethod sampling_method = MonteCarlo::SIMPLIFIED_UNION;
+  MonteCarlo::CoupledElasticSamplingMethod sampling_method = MonteCarlo::TWO_D_UNION;
   double evaluation_tol = 1e-7;
 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLin,Utility::Correlated>(
@@ -1568,7 +1568,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                    createCoupledElasticDistribution_LinLinLog_adjoint )
 {
-  MonteCarlo::CoupledElasticSamplingMethod sampling_method = MonteCarlo::SIMPLIFIED_UNION;
+  MonteCarlo::CoupledElasticSamplingMethod sampling_method = MonteCarlo::TWO_D_UNION;
   double evaluation_tol = 1e-7;
 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
@@ -1663,7 +1663,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                    createCoupledElasticDistribution_LinLinLin_adjoint )
 {
-  MonteCarlo::CoupledElasticSamplingMethod sampling_method = MonteCarlo::SIMPLIFIED_UNION;
+  MonteCarlo::CoupledElasticSamplingMethod sampling_method = MonteCarlo::TWO_D_UNION;
   double evaluation_tol = 1e-14;
 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLin,Utility::Correlated>(
@@ -1761,7 +1761,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   double cutoff_angle_cosine = 0.9;
   double evaluation_tol = 1e-14;
 
-  std::shared_ptr<const std::vector<double> > energy_grid( 
+  std::shared_ptr<const std::vector<double> > energy_grid(
           new std::vector<double>( data_container->getElectronEnergyGrid() ) );
 
   std::shared_ptr<const std::vector<double> > cutoff_cross_section(
@@ -2049,20 +2049,20 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   // Moment preserving elastic cross section
   std::vector<double> moment_preserving_cross_sections;
   size_t mp_threshold_energy_index;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogNudgedLogCosLog ,Utility::Correlated>(
                                moment_preserving_cross_sections,
                                mp_threshold_energy_index,
                                *adjoint_data_container,
                                energy_grid,
                                evaluation_tol );
 
-  std::shared_ptr<const std::vector<double> > mp_cross_section( 
+  std::shared_ptr<const std::vector<double> > mp_cross_section(
                  new std::vector<double>( moment_preserving_cross_sections ) );
 
   std::shared_ptr< const MonteCarlo::HybridElasticElectronScatteringDistribution>
     native_hybrid_elastic_distribution;
 
-  
+
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
         native_hybrid_elastic_distribution,
         energy_grid,
@@ -2124,7 +2124,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> scattering_function;
 
-  TestElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LinLinLog>(
+  TestElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LinLinLog, Utility::Correlated>(
     data_container->getCutoffElasticAngles(),
     data_container->getCutoffElasticPDF(),
     data_container->getElasticAngularEnergyGrid(),
@@ -2146,7 +2146,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> scattering_function;
 
-  TestElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LinLinLin>(
+  TestElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LinLinLin, Utility::Correlated>(
     data_container->getCutoffElasticAngles(),
     data_container->getCutoffElasticPDF(),
     data_container->getElasticAngularEnergyGrid(),
@@ -2202,7 +2202,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   // Moment preserving elastic cross section
   std::vector<double> moment_preserving_cross_sections;
   size_t mp_threshold_energy_index;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogNudgedLogCosLog,Utility::Correlated>(
                                moment_preserving_cross_sections,
                                mp_threshold_energy_index,
                                *data_container,
@@ -2213,16 +2213,17 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                  new std::vector<double>( moment_preserving_cross_sections ) );
 
   std::shared_ptr<TwoDDist> cutoff_scattering_function;
-  TestElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LogLogCosLog>(
+  TestElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LogNudgedLogCosLog,Utility::Correlated >(
     data_container->getCutoffElasticAngles(),
     data_container->getCutoffElasticPDF(),
     data_container->getElasticAngularEnergyGrid(),
     cutoff_scattering_function,
     1.0,
-    evaluation_tol );
+    evaluation_tol,
+    false );
 
   std::shared_ptr<const Utility::UnivariateDistribution> cross_section_ratios;
-  TestElasticElectronScatteringDistributionNativeFactory::createHybridCrossSectionRatios<Utility::LogLogCosLog>(
+  TestElasticElectronScatteringDistributionNativeFactory::createHybridCrossSectionRatios<Utility::LogNudgedLogCosLog,Utility::Correlated >(
     energy_grid,
     cutoff_cross_section,
     mp_cross_section,

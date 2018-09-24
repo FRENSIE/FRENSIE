@@ -34,7 +34,7 @@ class ElectronPhotonRelaxationDataContainer : public Utility::ArchivableObject<E
 {
   // The base type
   typedef Utility::ArchivableObject<ElectronPhotonRelaxationDataContainer> BaseType;
-  
+
 public:
 
   //! Constructor (from saved archive)
@@ -661,7 +661,7 @@ protected:
   void setElectronTwoDInterpPolicy( const std::string& electron_two_d_interp );
 
   //! Set the electronTwoDGridPolicy
-  void setElectronTwoDGridPolicy( const std::string& electron_two_d_sampling );
+  void setElectronTwoDGridPolicy( const std::string& electron_two_d_grid );
 
   //! Set the elastic angular energy grid
   void setElasticAngularEnergyGrid(

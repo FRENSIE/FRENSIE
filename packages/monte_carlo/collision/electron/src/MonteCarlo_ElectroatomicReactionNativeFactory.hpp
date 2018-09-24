@@ -52,7 +52,7 @@ public:
   using ThisType = ElectroatomicReactionNativeFactory;
 
   //! Create an coupled elastic scattering electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
+  template< typename TwoDInterpPolicy = Utility::LogNudgedLogCosLog,
             template<typename> class TwoDGridPolicy = Utility::Correlated,
             typename ReactionType = ElectroatomicReaction>
   static void createCoupledElasticReaction(
@@ -64,7 +64,7 @@ public:
     const double evaluation_tol );
 
   //! Create a hybrid elastic scattering electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
+  template< typename TwoDInterpPolicy = Utility::LogNudgedLogCosLog,
             template<typename> class TwoDGridPolicy = Utility::Correlated,
             typename ReactionType = ElectroatomicReaction>
   static void createHybridElasticReaction(

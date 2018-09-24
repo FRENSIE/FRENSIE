@@ -89,14 +89,14 @@ class SimulationPropertiesTestCase(unittest.TestCase):
         self.assertEqual( properties.getElectronEvaluationTolerance(), 1e-7 )
         self.assertEqual( properties.getElectronTwoDInterpPolicy(),
                           MonteCarlo.LOGLOGLOG_INTERPOLATION )
-        self.assertEqual( properties.getElectronTwoDSamplingPolicy(),
-                          MonteCarlo.UNIT_BASE_CORRELATED_SAMPLING )
+        self.assertEqual( properties.getElectronTwoDGridPolicy(),
+                          MonteCarlo.UNIT_BASE_CORRELATED_GRID )
         self.assertEqual( properties.getBremsstrahlungAngularDistributionFunction(),
                           MonteCarlo.TWOBS_DISTRIBUTION )
         self.assertEqual( properties.getElasticElectronDistributionMode(),
                           MonteCarlo.DECOUPLED_DISTRIBUTION )
         self.assertEqual( properties.getCoupledElasticSamplingMode(),
-                          MonteCarlo.SIMPLIFIED_UNION )
+                          MonteCarlo.TWO_D_UNION )
         self.assertEqual( properties.getElasticCutoffAngleCosine(), 1.0 )
 
     def testSetAtomicRelaxationMode(self):

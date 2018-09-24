@@ -31,14 +31,18 @@ enum InterpolationType{
   LOGLOGCOS_INTERPOLATION = 7,
   LOGCOSLOG_INTERPOLATION = 8,
   LINLOGCOS_INTERPOLATION = 9,
-  LOGCOSLIN_INTERPOLATION = 10
+  LOGCOSLIN_INTERPOLATION = 10,
+  LOGNUDGEDLOGCOS_INTERPOLATION = 11,
+  NUDGEDLOGCOSLOG_INTERPOLATION = 12,
+  LINNUDGEDLOGCOS_INTERPOLATION = 13,
+  NUDGEDLOGCOSLIN_INTERPOLATION = 14
 };
 
 //! Convert an ENDF interpolation value to an InterpolationType
 InterpolationType convertENDFInterpolationTypeToInterpolationType(
                                              const unsigned endf_interp_type );
 
-/*! \brief Specialization of Utility::ToStringTraits for 
+/*! \brief Specialization of Utility::ToStringTraits for
  * Utility::InterpolationType
  * \ingroup to_string_traits
  */
@@ -55,7 +59,7 @@ struct ToStringTraits<InterpolationType>
 } // end Utility namespace
 
 namespace std{
-  
+
 //! Stream operator for printing InterpolationType enums
 inline std::ostream& operator<<( std::ostream& os,
                                  const Utility::InterpolationType type )
@@ -64,7 +68,7 @@ inline std::ostream& operator<<( std::ostream& os,
 
   return os;
 }
-  
+
 } // end std namespace
 
 #endif // end UTILITY_INTERPOLATION_TYPE_HPP

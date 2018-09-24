@@ -34,7 +34,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
                    createCoupledElasticReaction )
 {
   MonteCarlo::CoupledElasticSamplingMethod sampling_method =
-    MonteCarlo::SIMPLIFIED_UNION;
+    MonteCarlo::TWO_D_UNION;
   double evaluation_tol = 1e-7;
 
   MonteCarlo::AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLog,Utility::Correlated>(
@@ -214,7 +214,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
   energy = 20.0;
   cross_section = reaction->getCrossSection( energy );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.096244853899329463, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.0962446943088544, 1e-12 );
 
   // Clear the reaction
   reaction.reset();

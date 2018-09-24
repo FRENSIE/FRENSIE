@@ -2,17 +2,17 @@ FRENSIE_INITIALIZE_PACKAGE_TESTS(utility_dist)
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
-FRENSIE_ADD_TEST_EXECUTABLE(DirectTwoDGridPolicy DEPENDS tstDirectTwoDGridPolicy.cpp)
-FRENSIE_ADD_TEST(DirectTwoDGridPolicy)
+# FRENSIE_ADD_TEST_EXECUTABLE(DirectTwoDGridPolicy DEPENDS tstDirectTwoDGridPolicy.cpp)
+# FRENSIE_ADD_TEST(DirectTwoDGridPolicy)
 
-FRENSIE_ADD_TEST_EXECUTABLE(UnitBaseTwoDGridPolicy DEPENDS tstUnitBaseTwoDGridPolicy.cpp)
-FRENSIE_ADD_TEST(UnitBaseTwoDGridPolicy)
+# FRENSIE_ADD_TEST_EXECUTABLE(UnitBaseTwoDGridPolicy DEPENDS tstUnitBaseTwoDGridPolicy.cpp)
+# FRENSIE_ADD_TEST(UnitBaseTwoDGridPolicy)
 
-FRENSIE_ADD_TEST_EXECUTABLE(CorrelatedTwoDGridPolicy DEPENDS tstCorrelatedTwoDGridPolicy.cpp)
-FRENSIE_ADD_TEST(CorrelatedTwoDGridPolicy)
+# FRENSIE_ADD_TEST_EXECUTABLE(CorrelatedTwoDGridPolicy DEPENDS tstCorrelatedTwoDGridPolicy.cpp)
+# FRENSIE_ADD_TEST(CorrelatedTwoDGridPolicy)
 
-FRENSIE_ADD_TEST_EXECUTABLE(UnitBaseCorrelatedTwoDGridPolicy DEPENDS tstUnitBaseCorrelatedTwoDGridPolicy.cpp)
-FRENSIE_ADD_TEST(UnitBaseCorrelatedTwoDGridPolicy)
+# FRENSIE_ADD_TEST_EXECUTABLE(UnitBaseCorrelatedTwoDGridPolicy DEPENDS tstUnitBaseCorrelatedTwoDGridPolicy.cpp)
+# FRENSIE_ADD_TEST(UnitBaseCorrelatedTwoDGridPolicy)
 
 FRENSIE_ADD_TEST_EXECUTABLE(DeltaDistribution DEPENDS tstDeltaDistribution.cpp)
 FRENSIE_ADD_TEST(DeltaDistribution)
@@ -43,7 +43,7 @@ FRENSIE_ADD_TEST(PolynomialDistribution)
 
 FRENSIE_ADD_TEST_EXECUTABLE(PowerDistribution DEPENDS tstPowerDistribution.cpp)
 FRENSIE_ADD_TEST(PowerDistribution)
-  
+
 FRENSIE_ADD_TEST_EXECUTABLE(TabularDistribution DEPENDS tstTabularDistribution.cpp)
 FRENSIE_ADD_TEST(TabularDistribution)
 

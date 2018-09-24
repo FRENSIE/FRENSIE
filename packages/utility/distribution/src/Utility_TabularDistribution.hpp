@@ -219,9 +219,16 @@ private:
 
   // Get the default independent values (compatible with *-Log interpolation)
   template<typename InputIndepQuantity>
+  static std::vector<InputIndepQuantity> getDefaultIndepValuesImpl( NudgedLogCosIndepVarProcessingTag )
+  {
+    return std::vector<InputIndepQuantity>({Utility::QuantityTraits<InputIndepQuantity>::initializeQuantity(-1.0), Utility::QuantityTraits<InputIndepQuantity>::initializeQuantity(1.0)});
+  }
+
+  // Get the default independent values (compatible with *-Log interpolation)
+  template<typename InputIndepQuantity>
   static std::vector<InputIndepQuantity> getDefaultIndepValuesImpl( LogCosIndepVarProcessingTag )
   {
-    return std::vector<InputIndepQuantity>({Utility::QuantityTraits<InputIndepQuantity>::initializeQuantity(-1.0), Utility::QuantityTraits<InputIndepQuantity>::initializeQuantity(1.0-1e-9)});
+    return std::vector<InputIndepQuantity>({Utility::QuantityTraits<InputIndepQuantity>::initializeQuantity(-1.0), Utility::QuantityTraits<InputIndepQuantity>::initializeQuantity(1.0)});
   }
 
   // Initialize the distribution

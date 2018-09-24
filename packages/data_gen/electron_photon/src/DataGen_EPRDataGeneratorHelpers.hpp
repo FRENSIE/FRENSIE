@@ -24,7 +24,7 @@ std::shared_ptr<DataGen::StandardMomentPreservingElectronDataGenerator> createMo
     const unsigned atomic_number,
     const Data::ElectronPhotonRelaxationDataContainer& native_eedl_data,
     const MonteCarlo::TwoDInterpolationType two_d_interp,
-    const MonteCarlo::TwoDSamplingType two_d_sample,
+    const MonteCarlo::TwoDGridType two_d_grid,
     const double min_electron_energy,
     const double max_electron_energy,
     const double cutoff_angle_cosine,

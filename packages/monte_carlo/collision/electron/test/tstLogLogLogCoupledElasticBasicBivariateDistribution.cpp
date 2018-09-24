@@ -95,7 +95,7 @@ void initialize( std::shared_ptr<BaseTabDistribution>& tab_dist,
   Utility::setQuantity( primary_bins[1], 2.0 );
   secondary_dists[1].reset( new MonteCarlo::UnitAwareCoupledElasticDistribution<Utility::LinLin,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>( bin_boundaries, values, moliere_eta, cutoff_ratio ) );
 
-  tab_dist.reset( new MonteCarlo::UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy<Utility::LogLogCosLog>,typename BaseTabDistribution::PrimaryIndepUnit,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>(
+  tab_dist.reset( new MonteCarlo::UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy<Utility::LogNudgedLogCosLog >,typename BaseTabDistribution::PrimaryIndepUnit,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>(
       primary_bins, secondary_dists, cutoff, 1e-3, 1e-7 ) );
 
   dist = tab_dist;
@@ -219,7 +219,7 @@ FRENSIE_UNIT_TEST( ElasticBasicBivariateDistribution,
 
   // Beyond the second bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfSecondaryConditionalIndepVar( 3.0 ),
                        -1.0 );
 
@@ -265,7 +265,7 @@ FRENSIE_UNIT_TEST( UnitAwareElasticBasicBivariateDistribution,
 
   // Beyond the second bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfSecondaryConditionalIndepVar( 3.0*MeV ),
                        -1.0*cgs::dimensionless() );
 
@@ -282,10 +282,10 @@ FRENSIE_UNIT_TEST( ElasticBasicBivariateDistribution,
   // Before the first bin - no extension
   FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfSecondaryConditionalIndepVar( 0.0 ),
                        0.0 );
-  
+
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfSecondaryConditionalIndepVar( 0.0 ),
                        1.0 );
 
@@ -328,10 +328,10 @@ FRENSIE_UNIT_TEST( UnitAwareElasticBasicBivariateDistribution,
   // Before the first bin - no extension
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfSecondaryConditionalIndepVar( 0.0*MeV ),
                        0.0*cgs::dimensionless() );
-  
+
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfSecondaryConditionalIndepVar( 0.0*MeV ),
                        1.0*cgs::dimensionless() );
 
@@ -388,7 +388,7 @@ FRENSIE_UNIT_TEST( ElasticBasicBivariateDistribution,
     primary_grid[1] = 2.0;
     secondary_dists[1] = secondary_dists[0];
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogCosLog> >(
+    test_dist.reset( new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LogNudgedLogCosLog > >(
                                              primary_grid, secondary_dists ) );
   }
 
@@ -408,7 +408,7 @@ FRENSIE_UNIT_TEST( ElasticBasicBivariateDistribution,
     primary_grid[1] = 3.0;
     secondary_dists[1] = secondary_dists[0];
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogCosLog> >(
+    test_dist.reset( new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LogNudgedLogCosLog > >(
                                              primary_grid, secondary_dists ) );
   }
 
@@ -602,7 +602,7 @@ FRENSIE_UNIT_TEST( ElasticBasicBivariateDistribution, evaluate_direct )
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( tab_distribution->evaluate( 0.0, -1.0 ), 0.09, 1e-15 );
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluate( 0.0, 0.0 ), 0.45 );
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluate( 0.0, 0.999999 ), 0.9 );
@@ -752,7 +752,7 @@ FRENSIE_UNIT_TEST( ElasticBasicBivariateDistribution, evaluate_correlated )
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( tab_distribution->evaluate( 0.0, -1.0 ), 0.09, 1e-15 );
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluate( 0.0, 0.0 ), 0.45 );
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluate( 0.0, 0.999999 ), 0.9 );
@@ -903,7 +903,7 @@ FRENSIE_UNIT_TEST( ElasticBasicBivariateDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0 ),
                           8.57143469388192414e-02,
                           1e-15 );
@@ -1100,7 +1100,7 @@ FRENSIE_UNIT_TEST( ElasticBasicBivariateDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0 ),
                           8.57143469388192414e-02,
                           1e-15 );
@@ -1299,7 +1299,7 @@ FRENSIE_UNIT_TEST( ElasticBasicBivariateDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0 ),
                           8.57143469388192414e-02,
                           1e-15 );
@@ -1498,7 +1498,7 @@ FRENSIE_UNIT_TEST( ElasticBasicBivariateDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, -1.0 ), 0.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.0 ),
                           2.57143040816457724151e-01,
@@ -1637,7 +1637,7 @@ FRENSIE_UNIT_TEST( ElasticBasicBivariateDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, -1.0 ), 0.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.0 ),
                           2.57143040816457724151e-01,
@@ -1776,7 +1776,7 @@ FRENSIE_UNIT_TEST( ElasticBasicBivariateDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, -1.0 ), 0.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.0 ),
                           2.57143040816457724151e-01,
@@ -1920,7 +1920,7 @@ FRENSIE_UNIT_TEST( ElasticBasicBivariateDistribution,
   fake_stream[3] = 1.0-1e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   double sample = distribution->sampleSecondaryConditional( 0.0 );
   FRENSIE_CHECK_EQUAL( sample, -1.0 );
 
@@ -2083,7 +2083,7 @@ FRENSIE_UNIT_TEST( UnitAwareElasticBasicBivariateDistribution,
   fake_stream[3] = 1.0-1e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   quantity<cgs::dimensionless> sample =
                 unit_aware_distribution->sampleSecondaryConditional( 0.0*MeV );
   FRENSIE_CHECK_EQUAL( sample, -1.0*cgs::dimensionless() );
@@ -4476,7 +4476,7 @@ FRENSIE_UNIT_TEST( ElasticBasicBivariateDistribution,
   fake_stream[3] = 1.0-1e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   double sample = distribution->sampleSecondaryConditional( 0.0 );
   FRENSIE_CHECK_EQUAL( sample, -1.0 );
 
@@ -4639,7 +4639,7 @@ FRENSIE_UNIT_TEST( UnitAwareElasticBasicBivariateDistribution,
   fake_stream[3] = 1.0-1e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   quantity<cgs::dimensionless> sample =
                 unit_aware_distribution->sampleSecondaryConditional( 0.0*MeV );
   FRENSIE_CHECK_EQUAL( sample, -1.0*cgs::dimensionless() );
@@ -5546,7 +5546,7 @@ FRENSIE_UNIT_TEST( ElasticBasicBivariateDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.0;
   fake_stream[1] = 2.57143040816457724151e-01;
@@ -6401,7 +6401,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ElasticBasicBivariateDistribution,
 
   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
-  
+
   std::string archive_base_name( "test_LogLogLog_coupled_elastic_basic_bivariate_dist" );
   std::ostringstream archive_ostream;
 
@@ -6413,7 +6413,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ElasticBasicBivariateDistribution,
 
     initialize<Utility::UnitBase>( tab_distribution, distribution );
 
-    auto concrete_dist = std::dynamic_pointer_cast<MonteCarlo::ElasticBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogCosLog> > >( distribution );
+    auto concrete_dist = std::dynamic_pointer_cast<MonteCarlo::ElasticBasicBivariateDistribution<Utility::UnitBase<Utility::LogNudgedLogCosLog> > >( distribution );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( concrete_dist ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "intermediate_base_dist", tab_distribution ) );
@@ -6428,7 +6428,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ElasticBasicBivariateDistribution,
 
   createIArchive( archive_istream, iarchive );
 
-  std::shared_ptr<MonteCarlo::ElasticBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogCosLog> > > concrete_dist;
+  std::shared_ptr<MonteCarlo::ElasticBasicBivariateDistribution<Utility::UnitBase<Utility::LogNudgedLogCosLog> > > concrete_dist;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( concrete_dist ) );
 
@@ -6469,7 +6469,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ElasticBasicBivariateDistribution,
 
   std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution>
     intermediate_base_dist;
-  
+
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( intermediate_base_dist ) );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( intermediate_base_dist->evaluate( 0.0, -1.0 ), 0.09, 1e-15 );
@@ -6506,7 +6506,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ElasticBasicBivariateDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( intermediate_base_dist->evaluate( 3.0, 1.0 ), 9.00001800000899910, 1e-15 );
 
   std::shared_ptr<Utility::BasicBivariateDistribution> base_dist;
-  
+
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( base_dist ) );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 0.0, -1.0 ), 0.09, 1e-15 );
@@ -6554,7 +6554,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareElasticBasicBivariateDistribution,
 
   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
-  
+
   std::string archive_base_name( "test_LinLinLin_coupled_unit_aware_elastic_basic_bivariate_dist" );
   std::ostringstream archive_ostream;
 
@@ -6567,7 +6567,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareElasticBasicBivariateDistribution,
     initialize<Utility::UnitBase>( unit_aware_tab_distribution,
                                    unit_aware_distribution );
 
-    auto concrete_dist = std::dynamic_pointer_cast<MonteCarlo::UnitAwareElasticBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogCosLog>,MegaElectronVolt,cgs::dimensionless,Barn> >( unit_aware_distribution );
+    auto concrete_dist = std::dynamic_pointer_cast<MonteCarlo::UnitAwareElasticBasicBivariateDistribution<Utility::UnitBase<Utility::LogNudgedLogCosLog >,MegaElectronVolt,cgs::dimensionless,Barn> >( unit_aware_distribution );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( concrete_dist ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "intermediate_base_dist", unit_aware_tab_distribution ) );
@@ -6582,12 +6582,12 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareElasticBasicBivariateDistribution,
 
   createIArchive( archive_istream, iarchive );
 
-  std::shared_ptr<MonteCarlo::UnitAwareElasticBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogCosLog>,MegaElectronVolt,cgs::dimensionless,Barn> > concrete_dist;
+  std::shared_ptr<MonteCarlo::UnitAwareElasticBasicBivariateDistribution<Utility::UnitBase<Utility::LogNudgedLogCosLog >,MegaElectronVolt,cgs::dimensionless,Barn> > concrete_dist;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( concrete_dist ) );
 
   concrete_dist->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 0.0*MeV, -1.0*cgs::dimensionless() ),
                                   0.09*barn,
                                   1e-15 );
@@ -6674,7 +6674,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareElasticBasicBivariateDistribution,
   FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 3.0*MeV, 0.0*cgs::dimensionless() ), 4.5*barn );
   FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 3.0*MeV, 0.999999*cgs::dimensionless() ), 9.0*barn );
   FRENSIE_CHECK_FLOATING_EQUALITY( intermediate_base_dist->evaluate( 3.0*MeV, 1.0*cgs::dimensionless() ), 9.00001800000899910*barn, 1e-15 );
-  
+
   std::shared_ptr<Utility::UnitAwareBasicBivariateDistribution<MegaElectronVolt,cgs::dimensionless,Barn> > base_dist;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( base_dist ) );

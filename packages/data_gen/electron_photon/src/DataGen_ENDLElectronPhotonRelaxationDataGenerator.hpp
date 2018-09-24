@@ -75,6 +75,7 @@ protected:
          const double cutoff_angle_cosine,
          const double tabular_evaluation_tol,
          const unsigned number_of_moment_preserving_angles,
+         const MonteCarlo::TwoDGridType two_d_grid,
          const MonteCarlo::TwoDInterpolationType two_d_interp ) final override;
 
   //! Repopulate the electron moment preserving data
@@ -171,7 +172,7 @@ private:
 
   // Set the photon data
   void setPhotonData();
-  
+
   // Set the electron data
   void setElectronData();
 
@@ -249,7 +250,7 @@ private:
                               const std::vector<double>& cross_section,
                               std::vector<double>& total_cross_section ) const;
 
-  // Calculate the elastic anglular distribution for the angle cosine
+  // Calculate the elastic angular distribution for the angle cosine
   void calculateElasticAngleCosine(
     const std::vector<double>& raw_elastic_angle,
     const std::vector<double>& raw_elastic_pdf,
@@ -284,7 +285,7 @@ inline bool ENDLElectronPhotonRelaxationDataGenerator::notEqualZero(
 {
   return value != 0.0;
 }
-  
+
 } // end DataGen namespace
 
 //---------------------------------------------------------------------------//

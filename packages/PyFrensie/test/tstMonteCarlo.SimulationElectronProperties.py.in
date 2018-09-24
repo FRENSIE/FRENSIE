@@ -38,14 +38,14 @@ class SimulationElectronPropertiesTestCase(unittest.TestCase):
         self.assertEqual( properties.getElectronEvaluationTolerance(), 1e-7 )
         self.assertEqual( properties.getElectronTwoDInterpPolicy(),
                           MonteCarlo.LOGLOGLOG_INTERPOLATION )
-        self.assertEqual( properties.getElectronTwoDSamplingPolicy(),
-                          MonteCarlo.UNIT_BASE_CORRELATED_SAMPLING )
+        self.assertEqual( properties.getElectronTwoDGridPolicy(),
+                          MonteCarlo.UNIT_BASE_CORRELATED_GRID )
         self.assertTrue(properties.isAtomicRelaxationModeOn() )
         self.assertTrue(properties.isElasticModeOn() )
         self.assertEqual( properties.getElasticElectronDistributionMode(),
                           MonteCarlo.DECOUPLED_DISTRIBUTION )
         self.assertEqual( properties.getCoupledElasticSamplingMode(),
-                          MonteCarlo.SIMPLIFIED_UNION )
+                          MonteCarlo.TWO_D_UNION )
         self.assertEqual( properties.getElasticCutoffAngleCosine(), 1.0 )
         self.assertTrue(properties.isElectroionizationModeOn() )
         self.assertTrue(properties.isBremsstrahlungModeOn() )
@@ -113,28 +113,28 @@ class SimulationElectronPropertiesTestCase(unittest.TestCase):
         properties.setElectronTwoDInterpPolicy( interp )
         self.assertEqual( properties.getElectronTwoDInterpPolicy(), interp )
 
-    def testSetElectronTwoDSamplingPolicy(self):
-        "*Test MonteCarlo.SimulationElectronProperties setElectronTwoDSamplingPolicy"
+    def testSetElectronTwoDGridPolicy(self):
+        "*Test MonteCarlo.SimulationElectronProperties setElectronTwoDGridPolicy"
         properties = MonteCarlo.SimulationElectronProperties()
 
-        self.assertEqual( properties.getElectronTwoDSamplingPolicy(),
-                          MonteCarlo.UNIT_BASE_CORRELATED_SAMPLING )
+        self.assertEqual( properties.getElectronTwoDGridPolicy(),
+                          MonteCarlo.UNIT_BASE_CORRELATED_GRID )
 
-        sample_type = MonteCarlo.CORRELATED_SAMPLING
-        properties.setElectronTwoDSamplingPolicy( sample_type )
-        self.assertEqual( properties.getElectronTwoDSamplingPolicy(), sample_type )
+        sample_type = MonteCarlo.CORRELATED_GRID
+        properties.setElectronTwoDGridPolicy( sample_type )
+        self.assertEqual( properties.getElectronTwoDGridPolicy(), sample_type )
 
-        sample_type = MonteCarlo.DIRECT_SAMPLING
-        properties.setElectronTwoDSamplingPolicy( sample_type )
-        self.assertEqual( properties.getElectronTwoDSamplingPolicy(), sample_type )
+        sample_type = MonteCarlo.DIRECT_GRID
+        properties.setElectronTwoDGridPolicy( sample_type )
+        self.assertEqual( properties.getElectronTwoDGridPolicy(), sample_type )
 
-        sample_type = MonteCarlo.UNIT_BASE_SAMPLING
-        properties.setElectronTwoDSamplingPolicy( sample_type )
-        self.assertEqual( properties.getElectronTwoDSamplingPolicy(), sample_type )
+        sample_type = MonteCarlo.UNIT_BASE_GRID
+        properties.setElectronTwoDGridPolicy( sample_type )
+        self.assertEqual( properties.getElectronTwoDGridPolicy(), sample_type )
 
-        sample_type = MonteCarlo.UNIT_BASE_CORRELATED_SAMPLING
-        properties.setElectronTwoDSamplingPolicy( sample_type )
-        self.assertEqual( properties.getElectronTwoDSamplingPolicy(), sample_type )
+        sample_type = MonteCarlo.UNIT_BASE_CORRELATED_GRID
+        properties.setElectronTwoDGridPolicy( sample_type )
+        self.assertEqual( properties.getElectronTwoDGridPolicy(), sample_type )
 
     def testSetAtomicRelaxationModeOffOn(self):
         "*Test MonteCarlo.SimulationElectronProperties setAtomicRelaxationModeOffO"
@@ -184,7 +184,7 @@ class SimulationElectronPropertiesTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationElectronProperties()
 
         self.assertEqual( properties.getCoupledElasticSamplingMode(),
-                          MonteCarlo.SIMPLIFIED_UNION )
+                          MonteCarlo.TWO_D_UNION )
 
         mode = MonteCarlo.ONE_D_UNION
         properties.setCoupledElasticSamplingMode( mode )
@@ -194,7 +194,7 @@ class SimulationElectronPropertiesTestCase(unittest.TestCase):
         properties.setCoupledElasticSamplingMode( mode )
         self.assertEqual( properties.getCoupledElasticSamplingMode(), mode )
 
-        mode = MonteCarlo.SIMPLIFIED_UNION
+        mode = MonteCarlo.MODIFIED_TWO_D_UNION
         properties.setCoupledElasticSamplingMode( mode )
         self.assertEqual( properties.getCoupledElasticSamplingMode(), mode )
 

@@ -62,7 +62,7 @@ PositronatomFactory::PositronatomFactory(
 
     const Data::ElectroatomicDataProperties& electroatom_data_properties =
       positronatom_definition.getElectroatomicDataProperties( &atomic_weight );
-    
+
     if( electroatom_data_properties.fileType() ==
         Data::ElectroatomicDataProperties::ACE_EPR_FILE )
     {
@@ -72,7 +72,7 @@ PositronatomFactory::PositronatomFactory(
       {
         d_positronatomic_table_name_map[Data::ElectroatomicDataProperties::ACE_EPR_FILE];
       }
-      
+
       this->createPositronatomFromACETable( data_directory,
                                             *positronatom_name,
                                             atomic_weight,
@@ -135,7 +135,7 @@ void PositronatomFactory::createPositronatomFromACETable(
     boost::filesystem::path ace_file_path = data_directory;
     ace_file_path /= data_properties.filePath();
     ace_file_path.make_preferred();
-    
+
     if( d_verbose )
     {
       FRENSIE_LOG_PARTIAL_NOTIFICATION(
@@ -223,12 +223,12 @@ void PositronatomFactory::createPositronatomFromNativeTable(
                                 "Loading native EPR cross section table "
                                 "(v " << data_properties.fileVersion() <<
                                 ") for " << data_properties.atom() <<
-                                "from " << native_file_path.string() <<
+                                " from " << native_file_path.string() <<
                                 " ... " );
       FRENSIE_FLUSH_ALL_LOGS();
     }
 
-    // Create the eedl data container
+    // Create the epr data container
     Data::ElectronPhotonRelaxationDataContainer
       data_container( native_file_path );
 

@@ -27,6 +27,10 @@ InterpolationType convertENDFInterpolationTypeToInterpolationType(
   case 8u: return LOGCOSLOG_INTERPOLATION;
   case 9u: return LINLOGCOS_INTERPOLATION;
   case 10u: return LOGCOSLIN_INTERPOLATION;
+  case 11u: return LOGNUDGEDLOGCOS_INTERPOLATION;
+  case 12u: return NUDGEDLOGCOSLOG_INTERPOLATION;
+  case 13u: return LINNUDGEDLOGCOS_INTERPOLATION;
+  case 14u: return NUDGEDLOGCOSLIN_INTERPOLATION;
   default:
     THROW_EXCEPTION( std::runtime_error,
                      "Error: ENDF interpolation type " << endf_interp_type <<
@@ -60,6 +64,14 @@ std::string ToStringTraits<InterpolationType>::toString(
     return "Lin-LogCos";
   case LOGCOSLIN_INTERPOLATION:
     return "LogCos-Lin";
+  case LOGNUDGEDLOGCOS_INTERPOLATION:
+    return "Log-NudgedLogCos";
+  case NUDGEDLOGCOSLOG_INTERPOLATION:
+    return "NudgedLogCos-Log";
+  case LINNUDGEDLOGCOS_INTERPOLATION:
+    return "Lin-NudgedLogCos";
+  case NUDGEDLOGCOSLIN_INTERPOLATION:
+    return "NudgedLogCos-Lin";
   default:
     THROW_EXCEPTION( std::logic_error,
                      "InterpolationType " << (unsigned)obj <<

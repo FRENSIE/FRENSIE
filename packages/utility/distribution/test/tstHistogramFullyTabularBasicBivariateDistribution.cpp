@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstHistogramFullyTabularBivariateDistribution.cpp
+//! \file   tstHistogramFullyTabularBasicBivariateDistribution.cpp
 //! \author Alex Robinson
 //! \brief  The histogram fully tabular two-dimensional dist. unit tests
 //!

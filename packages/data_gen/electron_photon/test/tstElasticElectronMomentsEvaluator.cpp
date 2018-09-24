@@ -25,7 +25,7 @@ class TestElasticElectronMomentsEvaluator : public DataGen::ElasticElectronMomen
 public:
   TestElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container )
-    : ElasticElectronMomentsEvaluator( data_container, MonteCarlo::LINLINLOG_INTERPOLATION, MonteCarlo::CORRELATED_SAMPLING, -1.0, 1e-7 )
+    : ElasticElectronMomentsEvaluator( data_container, MonteCarlo::LINLINLOG_INTERPOLATION, MonteCarlo::CORRELATED_GRID, -1.0, 1e-7 )
   { /* ... */ }
 
   TestElasticElectronMomentsEvaluator(
@@ -1140,7 +1140,7 @@ FRENSIE_UNIT_TEST( ElasticElectronMomentsEvaluator,
   full_evaluator.reset( new DataGen::ElasticElectronMomentsEvaluator(
                                     *pb_data,
                                     MonteCarlo::LINLINLOG_INTERPOLATION,
-                                    MonteCarlo::CORRELATED_SAMPLING,
+                                    MonteCarlo::CORRELATED_GRID,
                                     -1.0,
                                     1e-7 ) );
 
@@ -1238,7 +1238,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
         al_data->getCutoffElasticPDF(),
         al_data->getElasticAngularEnergyGrid(),
         al_data->getAtomicNumber(),
-        MonteCarlo::TWO_D_UNION,
+        MonteCarlo::MODIFIED_TWO_D_UNION,
         tabular_evaluation_tol );
 
   // Create the moment evaluator
@@ -1267,7 +1267,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   pb_evaluator.reset(
     new DataGen::ElasticElectronMomentsEvaluator( *pb_data,
                                                   MonteCarlo::LINLINLOG_INTERPOLATION,
-                                                  MonteCarlo::CORRELATED_SAMPLING,
+                                                  MonteCarlo::CORRELATED_GRID,
                                                   cutoff_angle_cosine,
                                                   tabular_evaluation_tol ) );
 
@@ -1275,7 +1275,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   pb_lin_evaluator.reset(
     new DataGen::ElasticElectronMomentsEvaluator( *pb_data,
                                                   MonteCarlo::LINLINLIN_INTERPOLATION,
-                                                  MonteCarlo::CORRELATED_SAMPLING,
+                                                  MonteCarlo::CORRELATED_GRID,
                                                   cutoff_angle_cosine,
                                                   tabular_evaluation_tol ) );
   }

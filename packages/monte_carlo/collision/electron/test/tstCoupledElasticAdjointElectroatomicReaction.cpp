@@ -136,7 +136,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
         Data::AdjointElectronPhotonRelaxationDataContainer( test_native_file_name );
 
     MonteCarlo::CoupledElasticSamplingMethod sampling_method =
-      MonteCarlo::SIMPLIFIED_UNION;
+      MonteCarlo::TWO_D_UNION;
     double evaluation_tol = 1e-7;
 
     std::shared_ptr<const std::vector<double> > energy_grid(
@@ -144,11 +144,11 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     std::shared_ptr<const std::vector<double> > cutoff_cross_section(
        new std::vector<double>( data_container.getAdjointCutoffElasticCrossSection() ) );
-       
+
 
     std::shared_ptr<const std::vector<double> > total_cross_section(
        new std::vector<double>( data_container.getAdjointTotalElasticCrossSection() ) );
-       
+
     // Create coupled distribution
     std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
         coupled_elastic_distribution;
@@ -174,7 +174,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   Utility::RandomNumberGenerator::createStreams();
 }
 
-FRENSIE_CUSTOM_UNIT_TEST_SETUP_END(); 
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstCoupledElasticAdjointElectroatomicReaction.cpp

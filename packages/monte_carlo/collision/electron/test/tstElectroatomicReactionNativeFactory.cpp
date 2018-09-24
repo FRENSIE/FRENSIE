@@ -36,9 +36,9 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createCoupledElasticReaction_LogLogCosLog )
 {
   MonteCarlo::CoupledElasticSamplingMethod sampling_method =
-    MonteCarlo::SIMPLIFIED_UNION;
+    MonteCarlo::TWO_D_UNION;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LogNudgedLogCosLog ,Utility::Correlated>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -125,7 +125,7 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
 {
   double cutoff_angle_cosine = 0.9;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LogNudgedLogCosLog ,Utility::Correlated>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -145,7 +145,7 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
 
   energy = 4e-4;
   cross_section = reaction->getCrossSection( energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.2786275807901049e+08, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.2786275809074390e+08, 1e-12 );
 
   energy = 1e5;
   cross_section = reaction->getCrossSection( energy );
@@ -198,7 +198,7 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createCoupledElasticReaction_LinLinLog )
 {
   MonteCarlo::CoupledElasticSamplingMethod sampling_method =
-    MonteCarlo::SIMPLIFIED_UNION;
+    MonteCarlo::TWO_D_UNION;
 
   MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLog,Utility::Correlated>(
                 *data_container,
@@ -576,7 +576,7 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createCoupledElasticReaction_LinLinLin )
 {
   MonteCarlo::CoupledElasticSamplingMethod sampling_method =
-    MonteCarlo::SIMPLIFIED_UNION;
+    MonteCarlo::TWO_D_UNION;
 
   MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLin,Utility::Correlated>(
                 *data_container,

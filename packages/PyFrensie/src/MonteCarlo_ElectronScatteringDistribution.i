@@ -358,11 +358,11 @@ std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDis
 %}
 
 // Add tamplates for the Correlated CoupledElasticDistribution
-%template(createCoupledElasticDistribution_LogLogCorrelated) createCoupledElasticDistribution<Utility::LogLogCosLog, Utility::Correlated>;
+%template(createCoupledElasticDistribution_LogLogCorrelated) createCoupledElasticDistribution<Utility::LogNudgedLogCosLog, Utility::Correlated>;
 %template(createCoupledElasticDistribution_LinLogCorrelated) createCoupledElasticDistribution<Utility::LinLinLog, Utility::Correlated>;
 %template(createCoupledElasticDistribution_LinLinCorrelated) createCoupledElasticDistribution<Utility::LinLinLin, Utility::Correlated>;
 // Add tamplates for the Direct CoupledElasticDistribution
-%template(createCoupledElasticDistribution_LogLogDirect) createCoupledElasticDistribution<Utility::LogLogCosLog, Utility::Direct>;
+%template(createCoupledElasticDistribution_LogLogDirect) createCoupledElasticDistribution<Utility::LogNudgedLogCosLog, Utility::Direct>;
 %template(createCoupledElasticDistribution_LinLogDirect) createCoupledElasticDistribution<Utility::LinLinLog, Utility::Direct>;
 %template(createCoupledElasticDistribution_LinLinDirect) createCoupledElasticDistribution<Utility::LinLinLin, Utility::Direct>;
 // Add tamplates for the Correlated CutoffElasticDistribution

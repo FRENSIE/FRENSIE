@@ -14,7 +14,7 @@
 #include "MonteCarlo_IncoherentModelType.hpp"
 #include "MonteCarlo_IncoherentAdjointModelType.hpp"
 #include "MonteCarlo_TwoDInterpolationType.hpp"
-#include "MonteCarlo_TwoDSamplingType.hpp"
+#include "MonteCarlo_TwoDGridType.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
@@ -96,8 +96,8 @@ using namespace MonteCarlo;
 // Import the TwoDInterpolationType
 %include "MonteCarlo_TwoDInterpolationType.hpp"
 
-// Import the TwoDSamplingType
-%include "MonteCarlo_TwoDSamplingType.hpp"
+// Import the TwoDGridType
+%include "MonteCarlo_TwoDGridType.hpp"
 
 // Import the BremsstrahlungAngularDistributionType
 %include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
@@ -108,6 +108,25 @@ using namespace MonteCarlo;
 //---------------------------------------------------------------------------//
 // Add support for the SimulationGeneralProperties
 //---------------------------------------------------------------------------//
+
+// Add typemaps for converting const uint64_t to and from Python float/int
+%typemap(in) const uint64_t histories ( uint64_t temp ){
+
+  if( PyFloat_Check($input) )
+  {
+    temp = static_cast<uint64_t>( PyFloat_AsDouble( $input ) );
+  }
+  else if( PyInt_Check($input) )
+  {
+    temp = PyInt_AsUnsignedLongMask( $input );
+  }
+
+  $1 = temp;
+}
+
+%typemap(typecheck, precedence=70) (const uint64_t histories) {
+  $1 = (PyFloat_Check($input) || PyInt_Check($input) ) ? 1 : 0;
+}
 
 %feature("docstring") MonteCarlo::SimulationGeneralProperties
 "The SimulationGeneralProperties class stores general simulation properties. It can be used for setting and getting the general simulation properties when running a simulation."

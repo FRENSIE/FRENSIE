@@ -207,12 +207,12 @@ MonteCarlo::PROPERTIES::setElectronTwoDInterpPolicy;
 %feature("autodoc", "getElectronTwoDInterpPolicy(PROPERTIES self) -> TwoDInterpolationType")
 MonteCarlo::PROPERTIES::getElectronTwoDInterpPolicy;
 
-// Set/get Electron TwoDSamplingPolicy
-%feature("autodoc", "setElectronTwoDSamplingPolicy(PROPERTIES self, const TwoDSamplingType sampling_type) -> void")
-MonteCarlo::PROPERTIES::setElectronTwoDSamplingPolicy;
+// Set/get Electron TwoDGridPolicy
+%feature("autodoc", "setElectronTwoDGridPolicy(PROPERTIES self, const TwoDGridType sampling_type) -> void")
+MonteCarlo::PROPERTIES::setElectronTwoDGridPolicy;
 
-%feature("autodoc", "getElectronTwoDSamplingPolicy(PROPERTIES self) -> TwoDSamplingType")
-MonteCarlo::PROPERTIES::getElectronTwoDSamplingPolicy;
+%feature("autodoc", "getElectronTwoDGridPolicy(PROPERTIES self) -> TwoDGridType")
+MonteCarlo::PROPERTIES::getElectronTwoDGridPolicy;
 
 // Set/get Evaluation Tolerance
 %feature("autodoc", "setElectronEvaluationTolerance(PROPERTIES self, const double tol) -> void")

@@ -51,26 +51,94 @@ void PositronatomNativeFactory::createPositronatomCore(
                               energy_grid,
                               properties.getNumberOfElectronHashGridBins() ) );
 
-  // Create the elastic scattering reaction
+// Create the elastic scattering reaction
   if ( properties.isElasticModeOn() )
   {
-    if( std::is_same<TwoDInterpPolicy,Utility::LogLogLog>::value )
+    if( TwoDGridPolicy<TwoDInterpPolicy>::name() == "Unit-base" || TwoDGridPolicy<TwoDInterpPolicy>::name() == "Direct" )
     {
-      ThisType::createElasticPositronatomCore<Utility::LogLogCosLog,TwoDGridPolicy>(
-                                              raw_positronatom_data,
-                                              energy_grid,
-                                              grid_searcher,
-                                              properties,
-                                              scattering_reactions );
+      if( TwoDInterpPolicy::name() == "LogLogLog" )
+      {
+        if( properties.getElasticElectronDistributionMode() == COUPLED_DISTRIBUTION &&
+            properties.getCoupledElasticSamplingMode() == TWO_D_UNION )
+        {
+          THROW_EXCEPTION( std::runtime_error, "Error: the 2D grid policy "
+                       << TwoDGridPolicy<TwoDInterpPolicy>::name() << " is not currently supported "
+                       << "with a " << properties.getCoupledElasticSamplingMode()
+                       << " coupled elastic sampling mode!" );
+        }
+        else
+        {
+          if( properties.getElasticElectronDistributionMode() == COUPLED_DISTRIBUTION ||
+              ( properties.getElasticElectronDistributionMode() == HYBRID_DISTRIBUTION &&
+                properties.getElasticCutoffAngleCosine() < 1.0 ) )
+          {
+            ThisType::createElasticPositronatomCore<Utility::LogNudgedLogCosLog,Utility::Direct>(
+                                                  raw_positronatom_data,
+                                                  energy_grid,
+                                                  grid_searcher,
+                                                  properties,
+                                                  scattering_reactions );
+          }
+          else
+          {
+            ThisType::createElasticPositronatomCore<Utility::LogLogCosLog,Utility::Direct>(
+                                                  raw_positronatom_data,
+                                                  energy_grid,
+                                                  grid_searcher,
+                                                  properties,
+                                                  scattering_reactions );
+          }
+        }
+      }
+      else
+      {
+        ThisType::createElasticPositronatomCore<TwoDInterpPolicy,Utility::Direct>(
+                                                raw_positronatom_data,
+                                                energy_grid,
+                                                grid_searcher,
+                                                properties,
+                                                scattering_reactions );
+      }
+    }
+    else if( TwoDGridPolicy<TwoDInterpPolicy>::name() == "Unit-base Correlated" || TwoDGridPolicy<TwoDInterpPolicy>::name() == "Correlated" )
+    {
+      if( TwoDInterpPolicy::name() == "LogLogLog" )
+      {
+        if( properties.getElasticElectronDistributionMode() == COUPLED_DISTRIBUTION ||
+            ( properties.getElasticElectronDistributionMode() == HYBRID_DISTRIBUTION &&
+              properties.getElasticCutoffAngleCosine() < 1.0 ) )
+        {
+          ThisType::createElasticPositronatomCore<Utility::LogNudgedLogCosLog,Utility::Correlated>(
+                                                  raw_positronatom_data,
+                                                  energy_grid,
+                                                  grid_searcher,
+                                                  properties,
+                                                  scattering_reactions );
+        }
+        else
+        {
+          ThisType::createElasticPositronatomCore<Utility::LogLogCosLog,Utility::Correlated>(
+                                                  raw_positronatom_data,
+                                                  energy_grid,
+                                                  grid_searcher,
+                                                  properties,
+                                                  scattering_reactions );
+        }
+      }
+      else
+      {
+        ThisType::createElasticPositronatomCore<TwoDInterpPolicy,Utility::Correlated>(
+                                                raw_positronatom_data,
+                                                energy_grid,
+                                                grid_searcher,
+                                                properties,
+                                                scattering_reactions );
+      }
     }
     else
     {
-      ThisType::createElasticPositronatomCore<TwoDInterpPolicy,TwoDGridPolicy>(
-                                              raw_positronatom_data,
-                                              energy_grid,
-                                              grid_searcher,
-                                              properties,
-                                              scattering_reactions );
+      THROW_EXCEPTION( std::runtime_error, "Error: the 2D grid policy "
+                       << TwoDGridPolicy<TwoDInterpPolicy>::name() << " is not currently supported!" );
     }
   }
 

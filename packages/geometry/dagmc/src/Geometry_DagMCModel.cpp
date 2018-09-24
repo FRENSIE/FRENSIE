@@ -130,7 +130,8 @@ void DagMCModel::validatePropertyNames() const
       }
     }
 
-    if( !valid_property )
+    // Trelis has an internal property names picked that should be ignored
+    if( !valid_property && properties[i] != "picked" )
     {
       if( invalid_properties.size() > 0 )
         invalid_properties += ", ";

@@ -90,7 +90,7 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
       primary_grid[n] = angular_energy_grid[n];
 
       secondary_dists[n].reset(
-        new const Utility::TabularCDFDistribution<Utility::LogLogCos>(
+        new const Utility::TabularCDFDistribution<Utility::LogLogCos >(
           elas_block( offset[n], table_length[n] ),
           elas_block( offset[n] + table_length[n], table_length[n] ),
           true ) );

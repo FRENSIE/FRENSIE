@@ -44,7 +44,7 @@ enum CoupledElasticSamplingMethod{
   CoupledElasticSamplingMethod_START = 0,
   ONE_D_UNION = CoupledElasticSamplingMethod_START,
   TWO_D_UNION,
-  SIMPLIFIED_UNION,
+  MODIFIED_TWO_D_UNION,
   CoupledElasticSamplingMethod_END
 };
 
@@ -158,7 +158,7 @@ void serialize( Archive& archive,
     {
       BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::ONE_D_UNION, int, type );
       BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::TWO_D_UNION, int, type );
-      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::SIMPLIFIED_UNION, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::MODIFIED_TWO_D_UNION, int, type );
       default:
       {
         THROW_EXCEPTION( std::logic_error,

@@ -52,7 +52,7 @@ public:
   using ThisType = PositronatomicReactionNativeFactory;
 
   //! Create an coupled elastic scattering positron-atomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
+  template< typename TwoDInterpPolicy = Utility::LogNudgedLogCosLog,
             template<typename> class TwoDGridPolicy = Utility::Correlated,
             typename ReactionType = PositronatomicReaction>
   static void createCoupledElasticReaction(
@@ -64,7 +64,7 @@ public:
     const double evaluation_tol );
 
   //! Create a hybrid elastic scattering positron-atomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
+  template< typename TwoDInterpPolicy = Utility::LogNudgedLogCosLog,
             template<typename> class TwoDGridPolicy = Utility::Correlated,
             typename ReactionType = PositronatomicReaction>
   static void createHybridElasticReaction(

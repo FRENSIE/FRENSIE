@@ -91,13 +91,13 @@ FRENSIE_UNIT_TEST( HybridElasticAdjointElectroatomicReaction,
 
   cross_section = hybrid_elastic_reaction->getCrossSection( 1e-3 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          1.9778260462206174e+06,
-                          1e-12 );
+                                   1.977826046223735437e+06,
+                                   1e-12 );
 
-  ratio = 8.126760427122510161e-06;
+  ratio = 8.1267567055936911e-06;
   cross_section = hybrid_elastic_reaction->getCrossSection( 20.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          3.047276237290374752e+02*ratio + 2.096244853899329463,
+                          3.04727623729037475e+02*ratio + 2.0962446943088544,
                           1e-12 );
 }
 
@@ -157,7 +157,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Moment preserving elastic cross section
     std::vector<double> moment_preserving_cross_sections;
     size_t mp_threshold_energy_index;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogLogCosLog,Utility::Correlated>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogNudgedLogCosLog,Utility::Correlated>(
                                   moment_preserving_cross_sections,
                                   mp_threshold_energy_index,
                                   data_container,
@@ -170,7 +170,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Create the cutoff elastic scattering distribution
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
           cutoff_distribution;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogNudgedLogCosLog,Utility::Correlated>(
               cutoff_distribution,
               data_container,
               cutoff_angle_cosine,
@@ -188,7 +188,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution>
         hybrid_elastic_distribution;
 
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LogNudgedLogCosLog,Utility::Correlated>(
         hybrid_elastic_distribution,
         energy_grid,
         cutoff_cross_section,
@@ -204,7 +204,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     size_t mp_threshold_diff =
       mp_threshold_energy_index - hybrid_threshold_energy_index;
-    
+
     size_t cutoff_threshold_diff =
       data_container.getAdjointCutoffElasticCrossSectionThresholdEnergyIndex() -
       hybrid_threshold_energy_index;

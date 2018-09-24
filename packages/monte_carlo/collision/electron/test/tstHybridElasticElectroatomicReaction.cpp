@@ -157,7 +157,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   // Moment preserving elastic cross section
   std::vector<double> moment_preserving_cross_sections;
   size_t mp_threshold_energy_index;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogNudgedLogCosLog ,Utility::Correlated>(
                                moment_preserving_cross_sections,
                                mp_threshold_energy_index,
                                data_container,
@@ -166,7 +166,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
   std::shared_ptr<const std::vector<double> > mp_cross_section(
                  new std::vector<double>( moment_preserving_cross_sections ) );
-  
+
   // Calculate the hybrid cross section
   size_t hybrid_threshold_energy_index =
     std::min( mp_threshold_energy_index,
@@ -184,7 +184,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogNudgedLogCosLog ,Utility::Correlated>(
         cutoff_elastic_distribution,
         data_container,
         data_container.getCutoffAngleCosine(),
@@ -196,7 +196,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     double energy = (*energy_grid)[i + hybrid_threshold_energy_index];
     double reduced_cutoff_ratio =
       cutoff_elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
-    
+
     if ( i < mp_threshold_diff )
     {
       combined_cross_section[i] =
@@ -221,7 +221,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution>
         hybrid_elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LogNudgedLogCosLog ,Utility::Correlated>(
         hybrid_elastic_distribution,
         energy_grid,
         cutoff_cross_section,

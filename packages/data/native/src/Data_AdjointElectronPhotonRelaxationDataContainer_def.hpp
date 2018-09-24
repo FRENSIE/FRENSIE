@@ -36,11 +36,12 @@ void AdjointElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, max_photon_energy );
   DATA_MAKE_NVP_DEFAULT( ar, min_electron_energy );
   DATA_MAKE_NVP_DEFAULT( ar, max_electron_energy );
-  DATA_MAKE_NVP_DEFAULT( ar, grid_convergence_tol );
-  DATA_MAKE_NVP_DEFAULT( ar, grid_absolute_diff_tol );
-  DATA_MAKE_NVP_DEFAULT( ar, grid_distance_tol );
 
   // Photon Table Data
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_grid_convergence_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_grid_absolute_diff_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_grid_distance_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, photon_tabular_evaluation_tol );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_pair_production_energy_dist_norm_constant_evaluation_tol );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_pair_production_energy_dist_norm_constant_nudge_value );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_triplet_production_energy_dist_norm_constant_evaluation_tol );
@@ -56,8 +57,8 @@ void AdjointElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_angle_cosine );
   DATA_MAKE_NVP_DEFAULT( ar, number_of_adjoint_moment_preserving_angles );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_grid_convergence_tol );
-  DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_absolute_diff_tol );
-  DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_distance_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_grid_absolute_diff_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_grid_distance_tol );
   DATA_MAKE_NVP_DEFAULT( ar, electron_tabular_evaluation_tol );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_max_energy_nudge_value );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value );
@@ -113,7 +114,7 @@ void AdjointElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_bremsstrahlung_pdf );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_photon_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_photon_cross_section_threshold_index );
-  
+
   // Electron Data
   DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_interp );
   DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_grid );
@@ -156,7 +157,7 @@ void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
 {
   // Notes
   DATA_MAKE_NVP_DEFAULT( ar, notes );
-  
+
   // Basic Table Data
   DATA_MAKE_NVP_DEFAULT( ar, atomic_number );
   DATA_MAKE_NVP_DEFAULT( ar, atomic_weight );
@@ -164,11 +165,12 @@ void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, max_photon_energy );
   DATA_MAKE_NVP_DEFAULT( ar, min_electron_energy );
   DATA_MAKE_NVP_DEFAULT( ar, max_electron_energy );
-  DATA_MAKE_NVP_DEFAULT( ar, grid_convergence_tol );
-  DATA_MAKE_NVP_DEFAULT( ar, grid_absolute_diff_tol );
-  DATA_MAKE_NVP_DEFAULT( ar, grid_distance_tol );
 
   // Photon Table Data
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_grid_convergence_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_grid_absolute_diff_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_grid_distance_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, photon_tabular_evaluation_tol );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_pair_production_energy_dist_norm_constant_evaluation_tol );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_pair_production_energy_dist_norm_constant_nudge_value );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_triplet_production_energy_dist_norm_constant_evaluation_tol );
@@ -184,8 +186,8 @@ void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_angle_cosine );
   DATA_MAKE_NVP_DEFAULT( ar, number_of_adjoint_moment_preserving_angles );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_grid_convergence_tol );
-  DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_absolute_diff_tol );
-  DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_distance_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_grid_absolute_diff_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_grid_distance_tol );
   DATA_MAKE_NVP_DEFAULT( ar, electron_tabular_evaluation_tol );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_max_energy_nudge_value );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value );

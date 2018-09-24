@@ -45,7 +45,7 @@ struct CosGridHelper<Utility::UnitBaseCorrelated<TwoDInterpPolicy> >
   //! The cosine sampling policy
   using CosGridPolicy = Utility::Correlated<TwoDInterpPolicy>;
 };
-  
+
 } // end Details namespace
 
 // Default constructor
@@ -488,7 +488,7 @@ auto UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependen
 {
   // Dummy variable
   SecondaryIndepQuantity dummy_raw_sample;
-  
+
   // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
     sampling_functor = Utility::Details::TwoDGridPolicySamplingFunctorCreationHelper<TwoDGridPolicy>::template createSamplingFunctorWithSecondaryBinIndex<BaseUnivariateDistributionType>( secondary_bin_index );
@@ -538,7 +538,7 @@ auto UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependen
   // Make sure the random number is valid
   testPrecondition( random_number >= 0.0 );
   testPrecondition( random_number <= 1.0 );
-  
+
   // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
     sampling_functor = std::bind<SecondaryIndepQuantity>(
@@ -658,7 +658,7 @@ inline auto UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryInd
   if( lower_bin_boundary != upper_bin_boundary )
   {
     DistributionDataConstIterator sampled_bin_boundary;
-    
+
     sample = Details::CosGridHelper<TwoDGridPolicy>::CosGridPolicy::template sampleCosDetailed<PrimaryIndepQuantity,SecondaryIndepQuantity>(
           sample_functor,
           primary_indep_var_value,
@@ -750,7 +750,8 @@ template<typename TwoDGridPolicy,
          typename DependentUnit>
 void UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::verifyValidSecondIndepVarProcessingType()
 {
-  TEST_FOR_EXCEPTION( !(std::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,Utility::LogCosIndepVarProcessingTag>::value ||
+  TEST_FOR_EXCEPTION( !(std::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,Utility::NudgedLogCosIndepVarProcessingTag >::value ||
+                        std::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,Utility::LogCosIndepVarProcessingTag >::value ||
                         std::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,Utility::LinIndepVarProcessingTag>::value),
                       std::runtime_error,
                       "The interpolation type used must be either Z-LogCos-X "
@@ -819,12 +820,16 @@ void UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependen
 
 #define __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, TwoDGridPolicy, ... ) \
   __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLinLin>, __VA_ARGS__ ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinNudgedLogCosLin>, __VA_ARGS__ ); \
   __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLogCosLin>, __VA_ARGS__ ); \
   __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLinLog>, __VA_ARGS__ ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinNudgedLogCosLog>, __VA_ARGS__ ); \
   __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LinLogCosLog>, __VA_ARGS__ ); \
   __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLinLin>, __VA_ARGS__ ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogNudgedLogCosLin>, __VA_ARGS__ ); \
   __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLogCosLin>, __VA_ARGS__ ); \
   __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLinLog>, __VA_ARGS__ ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogNudgedLogCosLog>, __VA_ARGS__ ); \
   __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, TwoDGridPolicy<Utility::LogLogCosLog>, __VA_ARGS__ )
 
 #define ___ELASTIC_BASIC_BIVARIATE_DIST__( DECL_TYPE, ... ) \

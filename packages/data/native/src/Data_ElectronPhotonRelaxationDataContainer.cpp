@@ -43,7 +43,7 @@ void ElectronPhotonRelaxationDataContainer::loadFromFileImpl(
   // value
   const boost::archive::detail::basic_pointer_iserializer* bpis =
     this->resetBpisPointer<std::vector<double> >( extension );
-  
+
   // Import the data in the archive
   BaseType::loadFromFileImpl( archive_name_with_path );
 
@@ -64,7 +64,7 @@ void ElectronPhotonRelaxationDataContainer::saveToFileImpl(
   // value
   const boost::archive::detail::basic_pointer_oserializer* bpos =
     this->resetBposPointer<std::vector<double> >( extension );
-  
+
   // Import the data in the archive
   BaseType::saveToFileImpl( archive_name_with_path, overwrite );
 
@@ -88,7 +88,7 @@ const std::string& ElectronPhotonRelaxationDataContainer::getNotes() const
 {
   return d_notes;
 }
-  
+
 //---------------------------------------------------------------------------//
 // GET TABLE DATA
 //---------------------------------------------------------------------------//
@@ -1021,7 +1021,7 @@ void ElectronPhotonRelaxationDataContainer::setPhotonThresholdEnergyNudgeFactor(
 {
   // Make sure the nudge factor is valid
   testPrecondition( nudge_factor >= 1.0 );
-  
+
   d_photon_threshold_energy_nudge_factor = nudge_factor;
 }
 
@@ -1361,7 +1361,7 @@ void ElectronPhotonRelaxationDataContainer::setWallerHartreeSquaredAtomicFormFac
   d_waller_hartree_squared_atomic_form_factor_squared_momentum_grid =
     squared_momentum_grid;
 }
-  
+
 // Return the Waller-Hartree squared atomic form factor
 void ElectronPhotonRelaxationDataContainer::setWallerHartreeSquaredAtomicFormFactor(
                         const std::vector<double>& squared_atomic_form_factor )

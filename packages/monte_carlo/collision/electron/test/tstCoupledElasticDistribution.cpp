@@ -35,7 +35,7 @@ namespace cgs = boost::units::cgs;
 
 typedef quantity<si::dimensionless> dl;
 
-typedef std::tuple<Utility::LinLin,Utility::LogLin,Utility::LinLogCos,Utility::LogLogCos> InterpTypes;
+typedef std::tuple<Utility::LinLin,Utility::LogLin,Utility::LinNudgedLogCos,Utility::LogNudgedLogCos > InterpTypes;
 
 typedef TestArchiveHelper::TestArchives TestArchives;
 
@@ -104,7 +104,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( CoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( distribution );
 
   FRENSIE_CHECK_EQUAL( distribution->evaluate( -1.0 ), 1e1 );
@@ -123,7 +123,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareCoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( -1.0 ),
@@ -147,7 +147,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( CoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( distribution );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( distribution->evaluatePDF( -1.0 ),
@@ -174,7 +174,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareCoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   FRENSIE_CHECK_FLOATING_EQUALITY(
@@ -206,7 +206,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( CoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( tab_distribution );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( tab_distribution->evaluateCDF( -1.0 ),
@@ -233,7 +233,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareCoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( -1.0*si::dimensionless() ),
@@ -260,7 +260,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( CoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( distribution );
 
   std::vector<double> fake_stream( 3 );
@@ -294,7 +294,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareCoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   std::vector<double> fake_stream( 3 );
@@ -328,7 +328,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( CoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( distribution );
 
   std::vector<double> fake_stream( 3 );
@@ -368,7 +368,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareCoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   std::vector<double> fake_stream( 3 );
@@ -409,7 +409,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( CoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( tab_distribution );
 
   std::vector<double> fake_stream( 3 );
@@ -448,7 +448,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareCoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
   std::vector<double> fake_stream( 3 );
@@ -488,7 +488,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( CoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( tab_distribution );
 
   double sample = tab_distribution->sampleWithRandomNumber( 0.0 );
@@ -508,7 +508,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareCoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
   quantity<si::dimensionless> sample =
@@ -539,7 +539,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( CoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( tab_distribution );
 
   std::vector<double> fake_stream( 2 );
@@ -568,7 +568,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareCoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
   std::vector<double> fake_stream( 2 );
@@ -599,7 +599,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( CoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( tab_distribution );
 
   double sample =
@@ -617,7 +617,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareCoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
   quantity<si::dimensionless> sample =
@@ -638,7 +638,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( CoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( distribution );
 
   FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfIndepVar(), 1.0 );
@@ -652,7 +652,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareCoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfIndepVar(),
@@ -667,7 +667,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( CoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   std::shared_ptr<MonteCarlo::CoupledElasticDistribution<InterpolationPolicy> >
                 coupled_distribution;
 
@@ -684,7 +684,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareCoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
 std::shared_ptr<MonteCarlo::UnitAwareCoupledElasticDistribution<InterpolationPolicy,si::dimensionless,si::amount> >
 unit_aware_coupled_distribution;
 
@@ -702,7 +702,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( CoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( distribution );
 
   FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfIndepVar(), -1.0 );
@@ -716,7 +716,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareCoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfIndepVar(),
@@ -730,7 +730,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( CoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( distribution );
 
   FRENSIE_CHECK_EQUAL( distribution->getDistributionType(),
@@ -744,7 +744,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareCoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getDistributionType(),
@@ -758,7 +758,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( CoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( distribution );
 
   FRENSIE_CHECK( distribution->isTabular() );
@@ -771,7 +771,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareCoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   FRENSIE_CHECK( unit_aware_distribution->isTabular() );
@@ -784,7 +784,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( CoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( distribution );
 
   FRENSIE_CHECK( distribution->isContinuous() );
@@ -797,7 +797,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareCoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   FRENSIE_CHECK( unit_aware_distribution->isContinuous() );
@@ -810,13 +810,13 @@ FRENSIE_UNIT_TEST_TEMPLATE( CoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( distribution );
 
   FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
   FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLogCos>() );
-  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLogCos>() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogNudgedLogCos >() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinNudgedLogCos >() );
   FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
 
@@ -864,13 +864,13 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareCoupledElasticDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
   FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLogCos>() );
-  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLogCos>() );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogNudgedLogCos >() );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinNudgedLogCos >() );
   FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
 
@@ -926,7 +926,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareCoupledElasticDistribution,
   typedef typename std::remove_pointer<RawDepUnitA>::type DepUnitA;
   typedef typename std::remove_pointer<RawIndepUnitB>::type IndepUnitB;
   typedef typename std::remove_pointer<RawDepUnitB>::type DepUnitB;
-  
+
   typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
 
@@ -1011,7 +1011,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( CoupledElasticDistribution,
 
   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
-  
+
   std::string archive_base_name( "test_coupled_elastic_dist" );
   std::ostringstream archive_ostream;
 
@@ -1033,17 +1033,17 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( CoupledElasticDistribution,
     std::shared_ptr<Utility::UnivariateDistribution>
       base_dist_a;
 
-    initialize<Utility::LinLogCos>( base_dist_a );
+    initialize<Utility::LinNudgedLogCos >( base_dist_a );
 
     std::shared_ptr<Utility::UnivariateDistribution>
       base_dist_b;
 
-    initialize<Utility::LogLogCos>( base_dist_b );
+    initialize<Utility::LogNudgedLogCos >( base_dist_b );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "concrete_dist", *concrete_dist ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( intermediate_base_dist ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( base_dist_a ) );
-    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( base_dist_b ) );    
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( base_dist_b ) );
   }
 
   // Copy the archive ostream to an istream
@@ -1084,7 +1084,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( CoupledElasticDistribution,
   FRENSIE_CHECK_EQUAL( base_dist_a->evaluate( 0.5 ), 1e-1 );
   FRENSIE_CHECK_FLOATING_EQUALITY( base_dist_a->evaluate( 0.999999 ), 1e-2, 1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY( base_dist_a->evaluate( 1.0 ), 1.00000200000100021e+10, 1e-15 );
-  
+
   std::shared_ptr<Utility::UnivariateDistribution> base_dist_b;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( base_dist_b ) );
@@ -1093,7 +1093,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( CoupledElasticDistribution,
   FRENSIE_CHECK_EQUAL( base_dist_b->evaluate( 0.0 ), 1.0 );
   FRENSIE_CHECK_EQUAL( base_dist_b->evaluate( 0.5 ), 1e-1 );
   FRENSIE_CHECK_FLOATING_EQUALITY( base_dist_b->evaluate( 0.999999 ), 1e-2, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist_b->evaluate( 1.0 ), 1.00000200000100021e+10, 1e-15 );  
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist_b->evaluate( 1.0 ), 1.00000200000100021e+10, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1107,7 +1107,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareCoupledElasticDistribution,
 
   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
-  
+
   std::string archive_base_name( "test_coupled_elastic_dist" );
   std::ostringstream archive_ostream;
 
@@ -1129,17 +1129,17 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareCoupledElasticDistribution,
     std::shared_ptr<Utility::UnitAwareUnivariateDistribution<si::dimensionless,si::amount> >
       base_dist_a;
 
-    initialize<Utility::LinLogCos>( base_dist_a );
+    initialize<Utility::LinNudgedLogCos >( base_dist_a );
 
     std::shared_ptr<Utility::UnitAwareUnivariateDistribution<si::dimensionless,si::amount> >
       base_dist_b;
 
-    initialize<Utility::LogLogCos>( base_dist_b );
+    initialize<Utility::LogNudgedLogCos >( base_dist_b );
 
     FRENSIE_CHECK_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "concrete_dist", *concrete_dist ) );
     FRENSIE_CHECK_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( intermediate_base_dist ) );
     FRENSIE_CHECK_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( base_dist_a ) );
-    FRENSIE_CHECK_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( base_dist_b ) );    
+    FRENSIE_CHECK_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( base_dist_b ) );
   }
 
   // Copy the archive ostream to an istream
@@ -1180,7 +1180,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareCoupledElasticDistribution,
   FRENSIE_CHECK_EQUAL( base_dist_a->evaluate( 0.5 ), 1e-1*si::mole );
   FRENSIE_CHECK_FLOATING_EQUALITY( base_dist_a->evaluate( 0.999999 ), 1e-2*si::mole, 1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY( base_dist_a->evaluate( 1.0 ), 1.00000200000100021e+10*si::mole, 1e-15 );
-  
+
   std::shared_ptr<Utility::UnitAwareUnivariateDistribution<si::dimensionless,si::amount> > base_dist_b;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( base_dist_b ) );
@@ -1189,7 +1189,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareCoupledElasticDistribution,
   FRENSIE_CHECK_EQUAL( base_dist_b->evaluate( 0.0 ), 1.0*si::mole );
   FRENSIE_CHECK_EQUAL( base_dist_b->evaluate( 0.5 ), 1e-1*si::mole );
   FRENSIE_CHECK_FLOATING_EQUALITY( base_dist_b->evaluate( 0.999999 ), 1e-2*si::mole, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist_b->evaluate( 1.0 ), 1.00000200000100021e+10*si::mole, 1e-15 );  
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist_b->evaluate( 1.0 ), 1.00000200000100021e+10*si::mole, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//

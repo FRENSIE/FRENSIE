@@ -155,7 +155,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   // Moment preserving elastic cross section
   std::vector<double> moment_preserving_cross_sections;
   size_t mp_threshold_energy_index;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogNudgedLogCosLog ,Utility::Correlated>(
                                moment_preserving_cross_sections,
                                mp_threshold_energy_index,
                                data_container,
@@ -172,7 +172,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
   size_t mp_threshold_diff =
     mp_threshold_energy_index - hybrid_threshold_energy_index;
-  
+
   size_t cutoff_threshold_diff =
     data_container.getCutoffElasticCrossSectionThresholdEnergyIndex() -
     hybrid_threshold_energy_index;
@@ -183,7 +183,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogNudgedLogCosLog ,Utility::Correlated>(
         cutoff_elastic_distribution,
         data_container,
         data_container.getCutoffAngleCosine(),
@@ -219,7 +219,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution>
         hybrid_elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LogNudgedLogCosLog ,Utility::Correlated>(
         hybrid_elastic_distribution,
         energy_grid,
         cutoff_cross_section,

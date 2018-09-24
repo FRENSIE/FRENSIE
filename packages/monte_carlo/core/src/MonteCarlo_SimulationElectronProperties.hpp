@@ -20,7 +20,7 @@
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "MonteCarlo_TwoDInterpolationType.hpp"
-#include "MonteCarlo_TwoDSamplingType.hpp"
+#include "MonteCarlo_TwoDGridType.hpp"
 #include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 
 namespace MonteCarlo{
@@ -71,11 +71,11 @@ public:
   //! Return the electron 2D interpolation policy
   TwoDInterpolationType getElectronTwoDInterpPolicy() const;
 
-  //! Set the electron 2D sampling policy (UnitBaseCorrelated by default)
-  void setElectronTwoDSamplingPolicy( const TwoDSamplingType sampling_type );
+  //! Set the electron 2D grid policy (UnitBaseCorrelated by default)
+  void setElectronTwoDGridPolicy( TwoDGridType grid_type );
 
-  //! Return the electron 2D sampling policy
-  TwoDSamplingType getElectronTwoDSamplingPolicy() const;
+  //! Return the electron 2D grid policy
+  TwoDGridType getElectronTwoDGridPolicy() const;
 
   //! Set the number of electron hash grid bins
   void setNumberOfElectronHashGridBins( const unsigned bins );
@@ -109,8 +109,8 @@ public:
   //! Return the elastic distribution mode
   ElasticElectronDistributionType getElasticElectronDistributionMode() const;
 
-  //! Set the coupled elastic sampling mode ( Simplified Union by default )
-  void setCoupledElasticSamplingMode( const CoupledElasticSamplingMethod sampling_method );
+  //! Set the coupled elastic sampling mode ( Two D Union by default )
+  void setCoupledElasticSamplingMode( CoupledElasticSamplingMethod sampling_method );
 
   //! Return the coupled elastic sampling mode
   CoupledElasticSamplingMethod getCoupledElasticSamplingMode() const;
@@ -189,8 +189,8 @@ private:
   // The electron 2D interpolation type ( LogLogLog - default )
   TwoDInterpolationType d_electron_interpolation_type;
 
-  // The electron 2D sampling type ( UnitBaseCorrelated - default )
-  TwoDSamplingType d_electron_sampling_type;
+  // The electron 2D grid type ( UnitBaseCorrelated - default )
+  TwoDGridType d_electron_grid_type;
 
   // The number of electron hash grid bins
   unsigned d_num_electron_hash_grid_bins;
@@ -207,7 +207,7 @@ private:
   // The elastic electron distribution mode ( Decoupled - default )
   ElasticElectronDistributionType d_elastic_distribution_mode;
 
-  // The coupled elastic electron sampling method ( Simplified Union - default )
+  // The coupled elastic electron sampling method ( Two D Union - default )
   CoupledElasticSamplingMethod d_coupled_elastic_sampling_method;
 
   // The elastic cutoff angle cosine (mu = 1.0 by default)
@@ -242,7 +242,7 @@ void SimulationElectronProperties::serialize( Archive& ar,
   ar & BOOST_SERIALIZATION_NVP( d_max_electron_energy );
   ar & BOOST_SERIALIZATION_NVP( d_evaluation_tol );
   ar & BOOST_SERIALIZATION_NVP( d_electron_interpolation_type );
-  ar & BOOST_SERIALIZATION_NVP( d_electron_sampling_type );
+  ar & BOOST_SERIALIZATION_NVP( d_electron_grid_type );
   ar & BOOST_SERIALIZATION_NVP( d_num_electron_hash_grid_bins );
   ar & BOOST_SERIALIZATION_NVP( d_atomic_relaxation_mode_on );
   ar & BOOST_SERIALIZATION_NVP( d_elastic_mode_on );

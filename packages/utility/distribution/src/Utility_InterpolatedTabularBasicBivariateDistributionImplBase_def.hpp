@@ -48,7 +48,7 @@ void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPoli
 {
   // Set the distribution
   Distribution::setDistribution( primary_indep_grid, secondary_distributions );
-  
+
   // Verify that the distribution data is valid
   this->verifyValidData( primary_indep_grid, secondary_distributions );
 }
@@ -59,7 +59,7 @@ void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPoli
                                                const double fuzzy_boundary_tol,
                                                const double relative_error_tol,
                                                const double error_tol )
-{  
+{
   d_fuzzy_boundary_tol = fuzzy_boundary_tol;
   d_relative_error_tol = relative_error_tol;
   d_error_tol = error_tol;
@@ -157,7 +157,7 @@ void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPoli
                       "The error tolerance must in the interval "
                       "[0, 1)!" );
 }
- 
+
 // Evaluate the distribution
 template<typename TwoDGridPolicy, typename Distribution>
 auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::evaluate(
@@ -229,11 +229,11 @@ inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDG
 {
   // Find the bin boundaries
   DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
-  
+
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
                            upper_bin_boundary );
-  
+
   if( lower_bin_boundary != upper_bin_boundary )
   {
     return TwoDGridPolicy::template evaluatePDF<BaseUnivariateDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
@@ -256,17 +256,17 @@ inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDG
     {
       return ((*lower_bin_boundary->second).*evaluate)(secondary_indep_var_value);
     }
-    else 
+    else
       return QuantityTraits<ReturnType>::zero();
   }
 }
 
 // Return a random sample from the secondary conditional PDF
-/*! \details If the primary value provided is outside of the primary grid 
- * limits the appropriate limiting secondary distribution will be used to 
+/*! \details If the primary value provided is outside of the primary grid
+ * limits the appropriate limiting secondary distribution will be used to
  * create the sample. The alternative to this behavior is to throw an exception
- * unless the distribution has been extended by calling the 
- * extendBeyondPrimaryIndepLimits method. Since this is a performance critical 
+ * unless the distribution has been extended by calling the
+ * extendBeyondPrimaryIndepLimits method. Since this is a performance critical
  * method we decided against this behavior.
  */
 template<typename TwoDGridPolicy, typename Distribution>
@@ -287,7 +287,7 @@ auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPoli
 /*! \details If the primary value
  * provided is outside of the primary grid limits the appropriate limiting
  * secondary distribution will be used to create the sample. The alternative
- * to this behavior is to throw an exception unless the distribution has 
+ * to this behavior is to throw an exception unless the distribution has
  * been extended by calling the extendBeyondPrimaryIndepLimits method. Since
  * this is a performance critical method we decided against this behavior.
  */
@@ -355,17 +355,17 @@ inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDG
 {
   // Find the bin boundaries
   DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
-  
+
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
                            upper_bin_boundary );
 
   SecondaryIndepQuantity sample;
-  
+
   if( lower_bin_boundary != upper_bin_boundary )
   {
     DistributionDataConstIterator sampled_bin_boundary;
-    
+
     sample = TwoDGridPolicy::sampleDetailed(  sample_functor,
                                               min_secondary_indep_var_functor,
                                               max_secondary_indep_var_functor,
@@ -451,7 +451,7 @@ auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPoli
   -> SecondaryIndepQuantity
 {
   DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
-  
+
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
                            upper_bin_boundary );
@@ -480,7 +480,7 @@ auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPoli
   -> SecondaryIndepQuantity
 {
   DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
-  
+
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
                            upper_bin_boundary );
@@ -544,7 +544,7 @@ void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPoli
 
 #define EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_SAVE_LOAD_WITH_SAMPLE_POLICY_LINE__( Namespace, ... ) \
   EXPLICIT_CLASS_SAVE_LOAD_INST( Namespace::__VA_ARGS__ )
-  
+
 #define __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, FullTwoDGridPolicy, ... ) \
   DECL_TYPE##_TEMPLATE_CLASS_INST( Utility::BivariateDistribution<FullTwoDGridPolicy,__VA_ARGS__> ); \
   DECL_TYPE##_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_SAVE_LOAD_WITH_SAMPLE_POLICY_LINE__( Utility, BivariateDistribution<FullTwoDGridPolicy,__VA_ARGS__> )
@@ -552,16 +552,20 @@ void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPoli
 #define __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy, ... ) \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LinLinLin>, __VA_ARGS__ ); \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LinLogLin>, __VA_ARGS__ ); \
-  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LinLogCosLin>, __VA_ARGS__ ); \
+  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LinNudgedLogCosLin >, __VA_ARGS__ ); \
+  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LinLogCosLin >, __VA_ARGS__ ); \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LinLinLog>, __VA_ARGS__ ); \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LinLogLog>, __VA_ARGS__ ); \
-  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LinLogCosLog>, __VA_ARGS__ ); \
+  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LinNudgedLogCosLog >, __VA_ARGS__ ); \
+  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LinLogCosLog >, __VA_ARGS__ ); \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LogLinLin>, __VA_ARGS__ ); \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LogLogLin>, __VA_ARGS__ ); \
-  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LogLogCosLin>, __VA_ARGS__ ); \
+  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LogNudgedLogCosLin >, __VA_ARGS__ ); \
+  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LogLogCosLin >, __VA_ARGS__ ); \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LogLinLog>, __VA_ARGS__ ); \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LogLogLog>, __VA_ARGS__ ); \
-  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LogLogCosLog>, __VA_ARGS__ )
+  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LogNudgedLogCosLog >, __VA_ARGS__ ); \
+  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY_LINE__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy<Utility::LogLogCosLog >, __VA_ARGS__ )
 
 #define ___INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_PARTIAL__( DECL_TYPE, BivariateDistribution, ... ) \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, BivariateDistribution, Utility::Direct, __VA_ARGS__ ); \

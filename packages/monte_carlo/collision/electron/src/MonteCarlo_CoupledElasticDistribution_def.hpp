@@ -35,7 +35,7 @@ template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareCoupledElasticDistribution()
-{ 
+{
   BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
@@ -85,7 +85,7 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
                            dependent_values,
                            moliere_screening_constant,
                            cutoff_cross_section_ratio );
-  
+
   this->initializeDistributionFromRawData( independent_values,
                                            dependent_values );
 
@@ -870,7 +870,7 @@ void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dep
   {
     independent_values[i] =
       Utility::getRawQuantity( Utility::get<0>(d_distribution[i]) );
-    
+
     dependent_values[i] =
       Utility::getRawQuantity( Utility::get<2>(d_distribution[i])/d_cutoff_cross_section_ratio );
   }
@@ -1024,11 +1024,11 @@ EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareCoupledElasticDistrib
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::UnitAwareCoupledElasticDistribution<Utility::LogLin,void,void> );
 EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareCoupledElasticDistribution<Utility::LogLin,void,void> );
 
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::UnitAwareCoupledElasticDistribution<Utility::LinLogCos,void,void> );
-EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareCoupledElasticDistribution<Utility::LinLogCos,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::UnitAwareCoupledElasticDistribution<Utility::LinNudgedLogCos,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareCoupledElasticDistribution<Utility::LinNudgedLogCos,void,void> );
 
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::UnitAwareCoupledElasticDistribution<Utility::LogLogCos,void,void> );
-EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareCoupledElasticDistribution<Utility::LogLogCos,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::UnitAwareCoupledElasticDistribution<Utility::LogNudgedLogCos,void,void> );
+EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, UnitAwareCoupledElasticDistribution<Utility::LogNudgedLogCos,void,void> );
 
 #endif // end MONTE_CARLO_COUPLED_ELASTIC_DISTRIBUTION_DEF_HPP
 

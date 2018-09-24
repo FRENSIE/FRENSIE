@@ -19,7 +19,7 @@
 #include "MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_CoupledElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_TwoDInterpolationType.hpp"
-#include "MonteCarlo_TwoDSamplingType.hpp"
+#include "MonteCarlo_TwoDGridType.hpp"
 
 
 namespace DataGen{
@@ -41,7 +41,7 @@ public:
   ElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const MonteCarlo::TwoDInterpolationType two_d_interp,
-    const MonteCarlo::TwoDSamplingType two_d_sample,
+    const MonteCarlo::TwoDGridType two_d_grid,
     const double cutoff_angle_cosine,
     const double tabular_evaluation_tol );
 

@@ -17,7 +17,7 @@ from optparse import *
 parser = OptionParser()
 parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
                   help="set the verbosity level [default 2]")
-parser.add_option("-d", "--dagmc_sat_file", type="string", dest="dagmc_sat_file", default="",
+parser.add_option("-d", "--dagmc_h5m_file", type="string", dest="dagmc_h5m_file", default="",
                   help="set the dagmc .h5m file that will be used to create the model")
 parser.add_option("-r", "--root_file", type="string", dest="root_file", default="",
                   help="set the root .c file that will be used to create the model")
@@ -47,7 +47,7 @@ if inspect.ismodule( DagMC ):
         @classmethod
         def setUpClass(cls):
             cls.properties = DagMC.DagMCModelProperties( "test_dir/dummy.h5m" )
-            
+
         def testGetModelFileName(self):
             "*Test Geometry.ModelProperties getModelFileName"
             self.assertEqual( self.properties.getModelFileName(), "dummy.h5m")
@@ -59,7 +59,7 @@ if inspect.ismodule( DagMC ):
         def testGetModelFileNameWithPath(self):
             "*Test Geometry.ModelProperties getModelFileNameWithPath"
             self.assertEqual( self.properties.getModelFileNameWithPath(), "test_dir/dummy.h5m" )
-        
+
         def testSetIdLookup(self):
             "*Test Geometry.ModelProperties setIdLookup"
             self.assertTrue( not self.properties.isFastIdLookupUsed() )
@@ -324,7 +324,7 @@ if __name__ == "__main__":
     suite = unittest.TestSuite()
 
     # Add the test cases to the test suite
-    if len(options.dagmc_sat_file) > 0 and inspect.ismodule(DagMC):
+    if len(options.dagmc_h5m_file) > 0 and inspect.ismodule(DagMC):
         suite.addTest(unittest.makeSuite(DagMCModelPropertiesTestCase))
 
     if len(options.root_file) > 0 and inspect.ismodule(ROOT):

@@ -76,9 +76,9 @@ FRENSIE_UNIT_TEST( CoupledElasticSamplingMethod, toString )
 
   FRENSIE_CHECK_EQUAL( type_string, "Two D Union" );
 
-  type_string = Utility::toString( MonteCarlo::SIMPLIFIED_UNION );
+  type_string = Utility::toString( MonteCarlo::MODIFIED_TWO_D_UNION );
 
-  FRENSIE_CHECK_EQUAL( type_string, "Simplified Union" );
+  FRENSIE_CHECK_EQUAL( type_string, "Modified Two D Union" );
 }
 
 //---------------------------------------------------------------------------//
@@ -128,9 +128,9 @@ FRENSIE_UNIT_TEST( CoupledElasticSamplingMethod, stream_operator )
   FRENSIE_CHECK_EQUAL( ss.str(), "Two D Union" );
 
   ss.str( "" );
-  ss << MonteCarlo::SIMPLIFIED_UNION;
+  ss << MonteCarlo::MODIFIED_TWO_D_UNION;
 
-  FRENSIE_CHECK_EQUAL( ss.str(), "Simplified Union" );
+  FRENSIE_CHECK_EQUAL( ss.str(), "Modified Two D Union" );
 }
 
 //---------------------------------------------------------------------------//
@@ -236,7 +236,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( CoupledElasticSamplingMethod,
       MonteCarlo::TWO_D_UNION;
 
     MonteCarlo::CoupledElasticSamplingMethod type_3 =
-      MonteCarlo::SIMPLIFIED_UNION;
+      MonteCarlo::MODIFIED_TWO_D_UNION;
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_1 ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_2 ) );
@@ -264,7 +264,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( CoupledElasticSamplingMethod,
   MonteCarlo::CoupledElasticSamplingMethod type_3;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_3 ) );
-  FRENSIE_CHECK_EQUAL( type_3, MonteCarlo::SIMPLIFIED_UNION );
+  FRENSIE_CHECK_EQUAL( type_3, MonteCarlo::MODIFIED_TWO_D_UNION );
 }
 
 //---------------------------------------------------------------------------//

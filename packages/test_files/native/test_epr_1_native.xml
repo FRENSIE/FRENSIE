@@ -2,7 +2,7 @@
 <!DOCTYPE boost_serialization>
 <boost_serialization signature="serialization::archive" version="16">
 <N4Data45ElectronPhotonRelaxationVolatileDataContainerE class_id="0" tracking_level="0" version="0">
-	<notes>This table was generated on Thu Jan 18 11:16:16 CST 2018. It is for testing only!</notes>
+	<notes>This table was generated on Thu Jun 21 13:27:35 CDT 2018. It is for testing only!</notes>
 	<atomic_number>1</atomic_number>
         <atomic_weight>1.00800000000000000e+00</atomic_weight>
 	<min_photon_energy>1.00000000000000002e-03</min_photon_energy>

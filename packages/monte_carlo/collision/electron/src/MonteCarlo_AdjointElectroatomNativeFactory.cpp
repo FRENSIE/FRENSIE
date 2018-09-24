@@ -48,7 +48,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
 
     if( electron_interp == "Log-Log-Log" )
     {
-      ThisType::createElasticElectroatomCore<Utility::LogLogCosLog,Utility::Correlated>(
+      ThisType::createElasticElectroatomCore<Utility::LogNudgedLogCosLog,Utility::Correlated>(
                                                 raw_adjoint_electroatom_data,
                                                 energy_grid,
                                                 grid_searcher,

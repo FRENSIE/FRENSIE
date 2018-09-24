@@ -28,7 +28,7 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
 {
   // Notes
   DATA_MAKE_NVP_DEFAULT( ar, notes );
-  
+
   // Table Data
   DATA_MAKE_NVP_DEFAULT( ar, atomic_number );
   DATA_MAKE_NVP_DEFAULT( ar, atomic_weight );
@@ -135,7 +135,7 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
 {
   // Notes
   DATA_MAKE_NVP_DEFAULT( ar, notes );
-  
+
   // Table Data
   DATA_MAKE_NVP_DEFAULT( ar, atomic_number );
   DATA_MAKE_NVP_DEFAULT( ar, atomic_weight );

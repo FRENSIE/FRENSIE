@@ -26,7 +26,7 @@ namespace DataGen{
 ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const MonteCarlo::TwoDInterpolationType two_d_interp,
-    const MonteCarlo::TwoDSamplingType two_d_sample,
+    const MonteCarlo::TwoDGridType two_d_grid,
     const double cutoff_angle_cosine,
     const double tabular_evaluation_tol )
 
@@ -46,12 +46,12 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
        new std::vector<double>( data_container.getElectronEnergyGrid() ) );
 
   // Create the coupled elastic distribution (combined Cutoff and Screened Rutherford)
-  if ( two_d_sample == MonteCarlo::UNIT_BASE_SAMPLING ||
-       two_d_sample == MonteCarlo::DIRECT_SAMPLING )
+  if ( two_d_grid == MonteCarlo::UNIT_BASE_GRID ||
+       two_d_grid == MonteCarlo::DIRECT_GRID )
   {
     if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog,Utility::Direct>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogNudgedLogCosLog,Utility::Direct>(
       d_coupled_distribution,
       data_container,
       MonteCarlo::TWO_D_UNION,
@@ -74,15 +74,15 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
       tabular_evaluation_tol );
     }
   }
-  else if ( two_d_sample == MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING ||
-            two_d_sample == MonteCarlo::CORRELATED_SAMPLING )
+  else if ( two_d_grid == MonteCarlo::UNIT_BASE_CORRELATED_GRID ||
+            two_d_grid == MonteCarlo::CORRELATED_GRID )
   {
     if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogNudgedLogCosLog,Utility::Correlated>(
       d_coupled_distribution,
       data_container,
-      MonteCarlo::TWO_D_UNION,
+      MonteCarlo::MODIFIED_TWO_D_UNION,
       tabular_evaluation_tol );
     }
     else if( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
@@ -90,7 +90,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
       MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLin,Utility::Correlated>(
       d_coupled_distribution,
       data_container,
-      MonteCarlo::TWO_D_UNION,
+      MonteCarlo::MODIFIED_TWO_D_UNION,
       tabular_evaluation_tol );
     }
     else if( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
@@ -98,7 +98,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
       MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
       d_coupled_distribution,
       data_container,
-      MonteCarlo::TWO_D_UNION,
+      MonteCarlo::MODIFIED_TWO_D_UNION,
       tabular_evaluation_tol );
     }
   }
@@ -236,7 +236,7 @@ double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford(
   return pdf_value*legendre_value;
 }
 
-// Evaluate the Legendre Polynomial expansion of the elastic scttering PDF
+// Evaluate the Legendre Polynomial expansion of the elastic scattering PDF
 double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedPDF(
                                     const double scattering_angle_cosine,
                                     const double incoming_energy,
@@ -283,7 +283,7 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
   // Turn of error and warning messages
   integrator.dontEstimateRoundoff();
 
-  // Calucuate the cutoff and Rutherford component of the Legendre moment
+  // Calculate the cutoff and Rutherford component of the Legendre moment
   Utility::long_float cutoff_moment,rutherford_moment;
 
   // Get zeroth moments
@@ -354,7 +354,7 @@ void ElasticElectronMomentsEvaluator::evaluateCutoffPDFMoment(
             const double energy,
             const int n ) const
 {
-  // Make sure the energy, anfgular grid and order are valid
+  // Make sure the energy, angular grid and order are valid
   testPrecondition( energy > 0.0 );
   testPrecondition( n >= 0 );
   testPrecondition( angular_grid.size() > 1 );
@@ -459,7 +459,7 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMomentByNumer
             const double tolerance,
             const unsigned number_of_iterations ) const
 {
-  // Make sure the energy, anfgular grid and order are valid
+  // Make sure the energy, angular grid and order are valid
   testPrecondition( energy > 0.0 );
   testPrecondition( n >= 0 );
 
@@ -584,14 +584,14 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMoment(
   testPrecondition( energy > 0.0 );
   testPrecondition( n >= 0 );
 
-  // Calcuate Moliere's modified screening constant (eta)
+  // Calculate Moliere's modified screening constant (eta)
   Utility::long_float eta = Utility::long_float(
     d_elastic_traits->evaluateMoliereScreeningConstant( energy ) );
 
   /*! \details The recursion relationship has been able to calculated the
       Rutherford moment faster and more accurately than numerical integration.
       Numerical integration has been left in in case there is an exception
-      which the recursion relationship cannot calcuate.
+      which the recursion relationship cannot calculate.
    */
   evaluateScreenedRutherfordPDFMomentByRecursion(
     rutherford_moment,

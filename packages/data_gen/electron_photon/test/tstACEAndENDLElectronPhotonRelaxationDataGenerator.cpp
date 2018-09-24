@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   tstACEAndENDLElectronPhotonRelaxationDataGenerator.cpp
-//! \author Alex Robinson, Luke Kerstings
+//! \author Alex Robinson, Luke Kersting
 //! \brief  ACE and ENDL electron-photon-relaxation data generator unit tests
 //!
 //---------------------------------------------------------------------------//
@@ -69,7 +69,7 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
   FRENSIE_CHECK_EQUAL( generator.getElectronTwoDInterpPolicy(),
                        MonteCarlo::LOGLOGLOG_INTERPOLATION );
   FRENSIE_CHECK_EQUAL( generator.getElectronTwoDGridPolicy(),
-                       MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
+                       MonteCarlo::UNIT_BASE_CORRELATED_GRID );
 }
 
 //---------------------------------------------------------------------------//
@@ -110,7 +110,7 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator, constructor 
   FRENSIE_CHECK_EQUAL( generator.getElectronTwoDInterpPolicy(),
                        MonteCarlo::LOGLOGLOG_INTERPOLATION );
   FRENSIE_CHECK_EQUAL( generator.getElectronTwoDGridPolicy(),
-                       MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
+                       MonteCarlo::UNIT_BASE_CORRELATED_GRID );
 }
 
 //---------------------------------------------------------------------------//
@@ -323,23 +323,23 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                                                        h_endl_data_container );
 
   FRENSIE_CHECK_EQUAL( generator.getElectronTwoDGridPolicy(),
-                       MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
+                       MonteCarlo::UNIT_BASE_CORRELATED_GRID );
 
-  generator.setElectronTwoDGridPolicy( MonteCarlo::CORRELATED_SAMPLING );
+  generator.setElectronTwoDGridPolicy( MonteCarlo::CORRELATED_GRID );
   FRENSIE_CHECK_EQUAL( generator.getElectronTwoDGridPolicy(),
-                       MonteCarlo::CORRELATED_SAMPLING );
+                       MonteCarlo::CORRELATED_GRID );
 
-  generator.setElectronTwoDGridPolicy( MonteCarlo::DIRECT_SAMPLING );
+  generator.setElectronTwoDGridPolicy( MonteCarlo::DIRECT_GRID );
   FRENSIE_CHECK_EQUAL( generator.getElectronTwoDGridPolicy(),
-                       MonteCarlo::DIRECT_SAMPLING );
+                       MonteCarlo::DIRECT_GRID );
 
-  generator.setElectronTwoDGridPolicy( MonteCarlo::UNIT_BASE_SAMPLING );
+  generator.setElectronTwoDGridPolicy( MonteCarlo::UNIT_BASE_GRID );
   FRENSIE_CHECK_EQUAL( generator.getElectronTwoDGridPolicy(),
-                       MonteCarlo::UNIT_BASE_SAMPLING );
+                       MonteCarlo::UNIT_BASE_GRID );
 
-  generator.setElectronTwoDGridPolicy( MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
+  generator.setElectronTwoDGridPolicy( MonteCarlo::UNIT_BASE_CORRELATED_GRID );
   FRENSIE_CHECK_EQUAL( generator.getElectronTwoDGridPolicy(),
-                       MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
+                       MonteCarlo::UNIT_BASE_CORRELATED_GRID );
 }
 
 //---------------------------------------------------------------------------//
@@ -368,7 +368,7 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
     raw_data_generator->setNumberOfMomentPreservingAngles( 1 );
     raw_data_generator->setTabularEvaluationTolerance( 1e-7 );
     raw_data_generator->setElectronTwoDInterpPolicy( MonteCarlo::LINLINLIN_INTERPOLATION );
-    raw_data_generator->setElectronTwoDGridPolicy( MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
+    raw_data_generator->setElectronTwoDGridPolicy( MonteCarlo::UNIT_BASE_CORRELATED_GRID );
     raw_data_generator->setDefaultPhotonGridConvergenceTolerance( 1e-3 );
     raw_data_generator->setDefaultPhotonGridAbsoluteDifferenceTolerance( 1e-80 );
     raw_data_generator->setDefaultPhotonGridDistanceTolerance( 1e-20 );
@@ -941,7 +941,7 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
     raw_data_generator->setNumberOfMomentPreservingAngles( 1 );
     raw_data_generator->setTabularEvaluationTolerance( 1e-7 );
     raw_data_generator->setElectronTwoDInterpPolicy( MonteCarlo::LINLINLOG_INTERPOLATION );
-    raw_data_generator->setElectronTwoDGridPolicy( MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
+    raw_data_generator->setElectronTwoDGridPolicy( MonteCarlo::UNIT_BASE_CORRELATED_GRID );
     raw_data_generator->setDefaultPhotonGridConvergenceTolerance( 1e-3 );
     raw_data_generator->setDefaultPhotonGridAbsoluteDifferenceTolerance( 1e-80 );
     raw_data_generator->setDefaultPhotonGridDistanceTolerance( 1e-20 );
@@ -1517,7 +1517,7 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                                                  tabular_evaluation_tol,
                                                  number_of_discrete_angles,
                                                  two_d_interp );
-  
+
   FRENSIE_CHECK( !data_container.hasMomentPreservingData() );;
 
   cutoff_angle_cosine = 0.9;
@@ -2083,27 +2083,31 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
   double cutoff_angle_cosine = 1.0;
   double tabular_evaluation_tol = 1e-7;
   unsigned number_of_discrete_angles = 0;
+  MonteCarlo::TwoDGridType two_d_grid = MonteCarlo::CORRELATED_GRID;
   MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LINLINLIN_INTERPOLATION;
 
   data_generator.repopulateElectronElasticData( max_energy,
                                                 cutoff_angle_cosine,
                                                 tabular_evaluation_tol,
                                                 number_of_discrete_angles,
+                                                two_d_grid,
                                                 two_d_interp );
-  
+
   FRENSIE_CHECK( !data_container.hasMomentPreservingData() );
 
   max_energy = 20.0;
   cutoff_angle_cosine = 0.9;
   number_of_discrete_angles = 2;
+  two_d_grid = MonteCarlo::UNIT_BASE_CORRELATED_GRID;
   two_d_interp = MonteCarlo::LOGLOGLOG_INTERPOLATION;
 
   data_generator.repopulateElectronElasticData( max_energy,
                                                 cutoff_angle_cosine,
                                                 tabular_evaluation_tol,
                                                 number_of_discrete_angles,
+                                                two_d_grid,
                                                 two_d_interp );
-  
+
   // Check the table settings data
   FRENSIE_CHECK_EQUAL( data_container.getAtomicNumber(), 1 );
   FRENSIE_CHECK_EQUAL( data_container.getMinPhotonEnergy(), 0.001 );
@@ -2411,8 +2415,8 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
   discrete_angles =
     data_container.getMomentPreservingElasticDiscreteAngles( 20.0 );
 
-  FRENSIE_CHECK_EQUAL( discrete_angles.front(), 9.32887510289664434e-01 );
-  FRENSIE_CHECK_EQUAL( discrete_angles.back(), 9.98006165786147204e-01 );
+  FRENSIE_CHECK_EQUAL( discrete_angles.front(), 9.328875089566157630e-01 );
+  FRENSIE_CHECK_EQUAL( discrete_angles.back(), 9.980061660203300988e-01 );
   FRENSIE_CHECK_EQUAL( discrete_angles.size(), 2 );
 
   std::vector<double> discrete_weights =
@@ -2424,8 +2428,8 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
 
   discrete_weights = data_container.getMomentPreservingElasticWeights( 20.0 );
 
-  FRENSIE_CHECK_EQUAL( discrete_weights.front(), 2.39458310561493307e-03 );
-  FRENSIE_CHECK_EQUAL( discrete_weights.back(), 9.97605416894385089e-01 );
+  FRENSIE_CHECK_EQUAL( discrete_weights.front(), 2.394582285312764434e-03 );
+  FRENSIE_CHECK_EQUAL( discrete_weights.back(), 9.976054177146872481e-01 );
   FRENSIE_CHECK_EQUAL( discrete_weights.size(), 2 );
 
   unsigned threshold = data_container.getCutoffElasticCrossSectionThresholdEnergyIndex();

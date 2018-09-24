@@ -57,7 +57,7 @@ public:
   virtual ~CoupledElasticElectronScatteringDistribution()
   { /* ... */ }
 
-  //! Set the sampling method ( Simplified Union - Default )
+  //! Set the sampling method ( 2-D Union - Default )
   void setSamplingMethod( const MonteCarlo::CoupledElasticSamplingMethod& method );
 
   //! Evaluate the distribution
@@ -142,8 +142,8 @@ protected:
   //! Sample using the 2-D Union method
   double sampleTwoDUnion( const double incoming_energy ) const;
 
-  //! Sample using the Simplified Union method
-  double sampleSimplifiedUnion( const double incoming_energy ) const;
+  //! Sample using the Modified 2-D Union method
+  double sampleModifiedTwoDUnion( const double incoming_energy ) const;
 
   //! Sample an outgoing direction from the distribution
   void sampleAndRecordTrialsImpl( const double incoming_energy,

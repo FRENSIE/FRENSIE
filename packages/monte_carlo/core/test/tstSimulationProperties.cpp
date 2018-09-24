@@ -35,7 +35,7 @@ FRENSIE_UNIT_TEST( SimulationProperties, defaults )
   FRENSIE_CHECK_EQUAL( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
                        0.001 );
   FRENSIE_CHECK( !properties.isImplicitCaptureModeOn() );
-  
+
   // Neutron properties
   FRENSIE_CHECK_EQUAL( properties.getFreeGasThreshold(), 400.0 );
   FRENSIE_CHECK_EQUAL( properties.getAbsoluteMinNeutronEnergy(), 1e-11 );
@@ -81,14 +81,14 @@ FRENSIE_UNIT_TEST( SimulationProperties, defaults )
   FRENSIE_CHECK_EQUAL( properties.getElectronEvaluationTolerance(), 1e-7 );
   FRENSIE_CHECK_EQUAL( properties.getElectronTwoDInterpPolicy(),
                        MonteCarlo::LOGLOGLOG_INTERPOLATION );
-  FRENSIE_CHECK_EQUAL( properties.getElectronTwoDSamplingPolicy(),
-                       MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
+  FRENSIE_CHECK_EQUAL( properties.getElectronTwoDGridPolicy(),
+                       MonteCarlo::UNIT_BASE_CORRELATED_GRID );
   FRENSIE_CHECK_EQUAL( properties.getBremsstrahlungAngularDistributionFunction(),
                        MonteCarlo::TWOBS_DISTRIBUTION );
   FRENSIE_CHECK_EQUAL( properties.getElasticElectronDistributionMode(),
                        MonteCarlo::DECOUPLED_DISTRIBUTION );
   FRENSIE_CHECK_EQUAL( properties.getCoupledElasticSamplingMode(),
-                       MonteCarlo::SIMPLIFIED_UNION );
+                       MonteCarlo::TWO_D_UNION );
   FRENSIE_CHECK_EQUAL( properties.getElasticCutoffAngleCosine(), 1.0 );
 }
 
@@ -97,7 +97,7 @@ FRENSIE_UNIT_TEST( SimulationProperties, defaults )
 FRENSIE_UNIT_TEST( SimulationProperties, getMinParticleEnergy )
 {
   MonteCarlo::SimulationProperties properties;
-  
+
   FRENSIE_CHECK_EQUAL( properties.getMinParticleEnergy<MonteCarlo::NeutronState>(),
                        1e-11 );
   FRENSIE_CHECK_EQUAL( properties.getMinParticleEnergy<MonteCarlo::PhotonState>(),
@@ -113,7 +113,7 @@ FRENSIE_UNIT_TEST( SimulationProperties, getMinParticleEnergy )
 FRENSIE_UNIT_TEST( SimulationProperties, getMaxParticleEnergy )
 {
   MonteCarlo::SimulationProperties properties;
-  
+
   FRENSIE_CHECK_EQUAL( properties.getMaxParticleEnergy<MonteCarlo::NeutronState>(),
                        20.0 );
   FRENSIE_CHECK_EQUAL( properties.getMaxParticleEnergy<MonteCarlo::PhotonState>(),
@@ -131,7 +131,7 @@ FRENSIE_UNIT_TEST( SimulationProperties, setAtomicRelaxationModeOffOn )
   MonteCarlo::SimulationProperties properties;
 
   properties.setAtomicRelaxationModeOff( MonteCarlo::PHOTON );
-  
+
   FRENSIE_CHECK( !properties.isAtomicRelaxationModeOn( MonteCarlo::PHOTON ) );
 
   properties.setAtomicRelaxationModeOn( MonteCarlo::PHOTON );
@@ -139,7 +139,7 @@ FRENSIE_UNIT_TEST( SimulationProperties, setAtomicRelaxationModeOffOn )
   FRENSIE_CHECK( properties.isAtomicRelaxationModeOn( MonteCarlo::PHOTON ) );
 
   properties.setAtomicRelaxationModeOff( MonteCarlo::ELECTRON );
-  
+
   FRENSIE_CHECK( !properties.isAtomicRelaxationModeOn( MonteCarlo::ELECTRON ) );
 
   properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
@@ -190,7 +190,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationProperties,
   FRENSIE_CHECK_EQUAL( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
                        0.001 );
   FRENSIE_CHECK( !properties.isImplicitCaptureModeOn() );
-  
+
   FRENSIE_CHECK_EQUAL( properties.getFreeGasThreshold(), 400.0 );
   FRENSIE_CHECK_EQUAL( properties.getAbsoluteMinNeutronEnergy(), 1e-11 );
   FRENSIE_CHECK_EQUAL( properties.getMinNeutronEnergy(), 1e-11 );
@@ -232,14 +232,14 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationProperties,
   FRENSIE_CHECK_EQUAL( properties.getElectronEvaluationTolerance(), 1e-7 );
   FRENSIE_CHECK_EQUAL( properties.getElectronTwoDInterpPolicy(),
                        MonteCarlo::LOGLOGLOG_INTERPOLATION );
-  FRENSIE_CHECK_EQUAL( properties.getElectronTwoDSamplingPolicy(),
-                       MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
+  FRENSIE_CHECK_EQUAL( properties.getElectronTwoDGridPolicy(),
+                       MonteCarlo::UNIT_BASE_CORRELATED_GRID );
   FRENSIE_CHECK_EQUAL( properties.getBremsstrahlungAngularDistributionFunction(),
                        MonteCarlo::TWOBS_DISTRIBUTION );
   FRENSIE_CHECK_EQUAL( properties.getElasticElectronDistributionMode(),
                        MonteCarlo::DECOUPLED_DISTRIBUTION );
   FRENSIE_CHECK_EQUAL( properties.getCoupledElasticSamplingMode(),
-                       MonteCarlo::SIMPLIFIED_UNION );
+                       MonteCarlo::TWO_D_UNION );
   FRENSIE_CHECK_EQUAL( properties.getElasticCutoffAngleCosine(), 1.0 );
 }
 

@@ -183,7 +183,8 @@ using namespace MonteCarlo;
 %inline %{
 
   // Create an coupled elastic scattering electroatomic reaction
-  template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
+  template< typename TwoDInterpPolicy = Utility::LogNudgedLogCosLog,
+            template<typename> class TwoDGridPolicy = Utility::Correlated>
   std::shared_ptr<const MonteCarlo::CoupledElasticElectroatomicReaction<Utility::LogLog> > createCoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const MonteCarlo::CoupledElasticSamplingMethod& sampling_method,
@@ -475,11 +476,11 @@ using namespace MonteCarlo;
 %}
 
 // Wrap the correlated coupled elastic reactions
-%template(createCoupledElasticReaction_LogLogCorrelated) createCoupledElasticReaction<Utility::LogLogCosLog, Utility::Correlated>;
+%template(createCoupledElasticReaction_LogLogCorrelated) createCoupledElasticReaction<Utility::LogNudgedLogCosLog, Utility::Correlated>;
 %template(createCoupledElasticReaction_LinLogCorrelated) createCoupledElasticReaction<Utility::LinLinLog, Utility::Correlated>;
 %template(createCoupledElasticReaction_LinLinCorrelated) createCoupledElasticReaction<Utility::LinLinLin, Utility::Correlated>;
 // Wrap the direct coupled elastic reactions
-%template(createCoupledElasticReaction_LogLogDirect) createCoupledElasticReaction<Utility::LogLogCosLog, Utility::Direct>;
+%template(createCoupledElasticReaction_LogLogDirect) createCoupledElasticReaction<Utility::LogNudgedLogCosLog, Utility::Direct>;
 %template(createCoupledElasticReaction_LinLogDirect) createCoupledElasticReaction<Utility::LinLinLog, Utility::Direct>;
 %template(createCoupledElasticReaction_LinLinDirect) createCoupledElasticReaction<Utility::LinLinLin, Utility::Direct>;
 // Wrap the correlated decoupled elastic reactions
@@ -491,11 +492,11 @@ using namespace MonteCarlo;
 %template(createDecoupledElasticReaction_LinLogDirect) createDecoupledElasticReaction<Utility::LinLinLog, Utility::Direct>;
 %template(createDecoupledElasticReaction_LinLinDirect) createDecoupledElasticReaction<Utility::LinLinLin, Utility::Direct>;
 // Wrap the correlated coupled elastic reactions
-%template(createCoupledElasticReaction_LogLogCorrelated) createCoupledElasticReaction<Utility::LogLogCosLog, Utility::Correlated>;
+%template(createCoupledElasticReaction_LogLogCorrelated) createCoupledElasticReaction<Utility::LogNudgedLogCosLog, Utility::Correlated>;
 %template(createCoupledElasticReaction_LinLogCorrelated) createCoupledElasticReaction<Utility::LinLinLog, Utility::Correlated>;
 %template(createCoupledElasticReaction_LinLinCorrelated) createCoupledElasticReaction<Utility::LinLinLin, Utility::Correlated>;
 // Wrap the direct coupled elastic reactions
-%template(createCoupledElasticReaction_LogLogDirect) createCoupledElasticReaction<Utility::LogLogCosLog, Utility::Direct>;
+%template(createCoupledElasticReaction_LogLogDirect) createCoupledElasticReaction<Utility::LogNudgedLogCosLog, Utility::Direct>;
 %template(createCoupledElasticReaction_LinLogDirect) createCoupledElasticReaction<Utility::LinLinLog, Utility::Direct>;
 %template(createCoupledElasticReaction_LinLinDirect) createCoupledElasticReaction<Utility::LinLinLin, Utility::Direct>;
 

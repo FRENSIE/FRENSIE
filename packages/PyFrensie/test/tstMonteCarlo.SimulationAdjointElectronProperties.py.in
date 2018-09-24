@@ -44,7 +44,7 @@ class SimulationAdjointElectronPropertiesTestCase(unittest.TestCase):
         self.assertEqual( properties.getAdjointElasticElectronDistributionMode(),
                           MonteCarlo.COUPLED_DISTRIBUTION )
         self.assertEqual( properties.getAdjointCoupledElasticSamplingMode(),
-                          MonteCarlo.TWO_D_UNION )
+                          MonteCarlo.MODIFIED_TWO_D_UNION )
         self.assertEqual( properties.getAdjointBremsstrahlungAngularDistributionFunction(),
                           MonteCarlo.TWOBS_DISTRIBUTION )
         self.assertEqual( properties.getAdjointElectronEvaluationTolerance(), 1e-12 )
@@ -141,9 +141,9 @@ class SimulationAdjointElectronPropertiesTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationAdjointElectronProperties()
 
         self.assertEqual( properties.getAdjointCoupledElasticSamplingMode(),
-                          MonteCarlo.TWO_D_UNION )
+                          MonteCarlo.MODIFIED_TWO_D_UNION )
 
-        mode = MonteCarlo.SIMPLIFIED_UNION
+        mode = MonteCarlo.TWO_D_UNION
         properties.setAdjointCoupledElasticSamplingMode( mode )
         self.assertEqual( properties.getAdjointCoupledElasticSamplingMode(),
                           mode )

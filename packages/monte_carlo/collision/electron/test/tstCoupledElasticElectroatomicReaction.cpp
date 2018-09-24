@@ -164,7 +164,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
         Data::ElectronPhotonRelaxationDataContainer( test_native_file_name );
 
     MonteCarlo::CoupledElasticSamplingMethod sampling_method =
-        MonteCarlo::SIMPLIFIED_UNION;
+        MonteCarlo::TWO_D_UNION;
     double evaluation_tol = 1e-7;
 
     // Get electron energy grid
@@ -204,7 +204,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   Utility::RandomNumberGenerator::createStreams();
 }
 
-FRENSIE_CUSTOM_UNIT_TEST_SETUP_END(); 
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstCoupledElasticElectroatomicReaction.cpp

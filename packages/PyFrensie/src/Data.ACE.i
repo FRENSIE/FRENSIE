@@ -276,7 +276,7 @@ The XSSNeutronDataExtractor can be used to extract the data blocks from the
 xss array found in an ACE data table.  A brief usage tutorial for this class is
 shown below:
 
-  import PyFrensie.Data.ACE, PyTrilinos.Teuchos, numpy, matplotlib.pyplot
+  import PyFrensie.Data.ACE, numpy, matplotlib.pyplot
 
   h_1_ace_file = PyFrensie.Data.ACE.ACEFileHandler( ace_file_name, ace_table_name )
 
@@ -301,7 +301,7 @@ The XSSEPRDataExtractor can be used to extract the data blocks from the
 xss array found in an ACE data table.  A brief usage tutorial for this class is
 shown below:
 
-  import PyFrensie.Data.ACE, PyTrilinos.Teuchos, numpy, matplotlib.pyplot
+  import PyFrensie.Data.ACE, numpy, matplotlib.pyplot
 
   h_1_ace_file = PyFrensie.Data.ACE.ACEFileHandler( ace_file_name, ace_table_name )
 

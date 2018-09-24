@@ -22,7 +22,7 @@
 namespace Utility{
 
 // Calculate the Y independent lower bound between bin boundaries
-/*! \details The lower bound will be the minimum of the two boundary 
+/*! \details The lower bound will be the minimum of the two boundary
  * lower bounds.
  */
 template<typename _TwoDInterpPolicy>
@@ -1103,7 +1103,7 @@ YZIterator UnitBase<_TwoDInterpPolicy>::sampleBinBoundary(
 template<typename _TwoDInterpPolicy>
 inline const std::string UnitBase<_TwoDInterpPolicy>::name()
 {
-  return "Unit Base";
+  return "Unit-base";
 }
 
 // Calculate the Y independent lower bound between bin boundaries
@@ -1455,29 +1455,41 @@ struct CorrelatedEvaluatePDFCosHelperLogCosBase
                                      const ReturnType upper_eval,
                                      const T beta )
   {
-    /* NOTE: The special edge case of cosine of 1 (i.e. y = 1 ) will give a
-     * ln(1) for LogCosLog interpolation unless treated specifically. At the
-     * limits -1 and 1, the y values are the same (i.e. y_0 = y_1 = y ) and
-     * the LogCosLog equation reduces to the LinLin equation.
-     */
-    if( lower_y_value == upper_y_value && lower_y_value == y_indep_value )
-    {
-      return CorrelatedEvaluatePDFCosHelperLinBase::evaluate( y_indep_value,
-                                                              lower_y_value,
-                                                              lower_eval,
-                                                              upper_y_value,
-                                                              upper_eval,
-                                                              beta );
-    }
-    else
-    {
-      auto lower_product = lower_eval*Utility::LinLin::convertCosineVar(lower_y_value);
-      auto upper_product = upper_eval*Utility::LinLin::convertCosineVar(upper_y_value);
+    auto lower_product = lower_eval*Utility::CosNudgeHelper<false>::convertFromCosineVar(lower_y_value);
+    auto upper_product = upper_eval*Utility::CosNudgeHelper<false>::convertFromCosineVar(upper_y_value);
 
-      return (lower_product*upper_product)/
-        (Utility::LinLin::interpolate( beta, upper_product, lower_product )*
-         Utility::LinLin::convertCosineVar(y_indep_value) );
-    }
+    return (lower_product*upper_product)/
+      (Utility::LinLin::interpolate( beta, upper_product, lower_product )*
+        Utility::CosNudgeHelper<false>::convertFromCosineVar(y_indep_value) );
+  }
+};
+
+/*! \brief Base helper struct for calculating the PDF of a bivariate
+ * distribution assuming log-cos (with nudge factor) interpolation with the
+ * secondary indep grid
+ *
+ * The PDF for log-log interpolation is defined as: f(x,y) = (1/y)*( y_0*f_0(
+ * y_0 ) * y_1*f_1( y_1 ) )/ ( y_1*f_1(y_1)+( (y_0*f_0(y_0)) - (y_1*f_1(y_1))
+ * )*beta )
+ */
+struct CorrelatedEvaluatePDFCosHelperLogCosBaseWithNudge
+{
+  template<typename YIndepType,
+           typename ReturnType,
+           typename T>
+  static inline ReturnType evaluate( const YIndepType y_indep_value,
+                                     const YIndepType lower_y_value,
+                                     const ReturnType lower_eval,
+                                     const YIndepType upper_y_value,
+                                     const ReturnType upper_eval,
+                                     const T beta )
+  {
+    auto lower_product = lower_eval*Utility::CosNudgeHelper<true>::convertFromCosineVar(lower_y_value);
+    auto upper_product = upper_eval*Utility::CosNudgeHelper<true>::convertFromCosineVar(upper_y_value);
+
+    return (lower_product*upper_product)/
+      (Utility::LinLin::interpolate( beta, upper_product, lower_product )*
+        Utility::CosNudgeHelper<true>::convertFromCosineVar(y_indep_value) );
   }
 };
 
@@ -1523,14 +1535,28 @@ struct CorrelatedEvaluatePDFCosHelper<Utility::LinLog> : public CorrelatedEvalua
  * for Utility::LogCosLin.
  */
 template<>
-struct CorrelatedEvaluatePDFCosHelper<Utility::LogCosLin> : public CorrelatedEvaluatePDFCosHelperLogCosBase
+struct CorrelatedEvaluatePDFCosHelper<Utility::LogCosLin > : public CorrelatedEvaluatePDFCosHelperLogCosBase
+{ /* ... */ };
+
+/*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFCosHelper
+ * for Utility::LogCosLin.
+ */
+template<>
+struct CorrelatedEvaluatePDFCosHelper<Utility::NudgedLogCosLin > : public CorrelatedEvaluatePDFCosHelperLogCosBaseWithNudge
 { /* ... */ };
 
 /*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFCosHelper
  * for Utility::LogCosLog.
  */
 template<>
-struct CorrelatedEvaluatePDFCosHelper<Utility::LogCosLog> : public CorrelatedEvaluatePDFCosHelperLogCosBase
+struct CorrelatedEvaluatePDFCosHelper<Utility::LogCosLog > : public CorrelatedEvaluatePDFCosHelperLogCosBase
+{ /* ... */ };
+
+/*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFCosHelper
+ * for Utility::LogCosLog.
+ */
+template<>
+struct CorrelatedEvaluatePDFCosHelper<Utility::NudgedLogCosLog > : public CorrelatedEvaluatePDFCosHelperLogCosBaseWithNudge
 { /* ... */ };
 
 } // end Details namespace
@@ -1730,7 +1756,14 @@ struct CorrelatedEvaluatePDFHelper<Utility::LogLog> : public CorrelatedEvaluateP
  * Utility::LogCosLog
  */
 template<>
-struct CorrelatedEvaluatePDFHelper<Utility::LogCosLog> : public CorrelatedEvaluatePDFHelperLogBase
+struct CorrelatedEvaluatePDFHelper<Utility::LogCosLog > : public CorrelatedEvaluatePDFHelperLogBase
+{ /* ... */ };
+
+/*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFHelper for
+ * Utility::LogCosLog
+ */
+template<>
+struct CorrelatedEvaluatePDFHelper<Utility::NudgedLogCosLog > : public CorrelatedEvaluatePDFHelperLogBase
 { /* ... */ };
 
 /*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFHelper for
@@ -1744,7 +1777,14 @@ struct CorrelatedEvaluatePDFHelper<Utility::LogLin> : public CorrelatedEvaluateP
  * Utility::LogCosLin
  */
 template<>
-struct CorrelatedEvaluatePDFHelper<Utility::LogCosLin> : public CorrelatedEvaluatePDFHelperLogBase
+struct CorrelatedEvaluatePDFHelper<Utility::LogCosLin > : public CorrelatedEvaluatePDFHelperLogBase
+{ /* ... */ };
+
+/*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFHelper for
+ * Utility::LogCosLin
+ */
+template<>
+struct CorrelatedEvaluatePDFHelper<Utility::NudgedLogCosLin > : public CorrelatedEvaluatePDFHelperLogBase
 { /* ... */ };
 
 } // end Details namespace
@@ -2081,9 +2121,9 @@ double Correlated<_TwoDInterpPolicy>::evaluateCDF(
 /*! \details A direct correlated routine is used to sample the distribution.
  * In order for this method to calculate a sample accurately the same random
  * number must be used to sample from the distribution on the lower and upper
- * bounds. The sample functor must therefore wrap the 
+ * bounds. The sample functor must therefore wrap the
  * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
- * similar methods that takes a random number. 
+ * similar methods that takes a random number.
  */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
@@ -2119,9 +2159,9 @@ YIndepType Correlated<_TwoDInterpPolicy>::sample(
  * A direct correlated routine is used to sample the distribution.
  * In order for this method to calculate a sample accurately the same random
  * number must be used to sample from the distribution on the lower and upper
- * bounds. The sample functor must therefore wrap the 
+ * bounds. The sample functor must therefore wrap the
  * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
- * similar methods that takes a random number. 
+ * similar methods that takes a random number.
  */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
@@ -2151,7 +2191,7 @@ YIndepType Correlated<_TwoDInterpPolicy>::sampleCos(
 /* \details A direct correlated routine is used to sample the distribution.
  * In order for this method to calculate a sample accurately the same random
  * number must be used to sample from the distribution on the lower and upper
- * bounds. The sample functor must therefore wrap the 
+ * bounds. The sample functor must therefore wrap the
  * Utility::TabularUnivariateDist::sampleWithRandomNumberInSubrange routine.
  */
 template<typename _TwoDInterpPolicy>
@@ -2235,9 +2275,9 @@ YIndepType Correlated<_TwoDInterpPolicy>::sampleInSubrange(
 /*! \details A direct correlated routine is used to sample the distribution.
  * In order for this method to calculate a sample accurately the same random
  * number must be used to sample from the distribution on the lower and upper
- * bounds. The sample functor must therefore wrap the 
+ * bounds. The sample functor must therefore wrap the
  * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
- * similar methods that takes a random number. 
+ * similar methods that takes a random number.
  */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
@@ -2302,9 +2342,9 @@ YIndepType Correlated<_TwoDInterpPolicy>::sampleDetailed(
  * A direct correlated routine is used to sample the distribution.
  * In order for this method to calculate a sample accurately the same random
  * number must be used to sample from the distribution on the lower and upper
- * bounds. The sample functor must therefore wrap the 
+ * bounds. The sample functor must therefore wrap the
  * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
- * similar methods that takes a random number. 
+ * similar methods that takes a random number.
  */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
@@ -2905,7 +2945,14 @@ struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LogLog> : public UnitBaseCor
  * Utility::Details::UnitBaseCorrelatedEvaluatePDFHelper for Utility::LogCosLog
  */
 template<>
-struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LogCosLog> : public UnitBaseCorrelatedEvaluatePDFHelperLogBase
+struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LogCosLog > : public UnitBaseCorrelatedEvaluatePDFHelperLogBase
+{ /* ... */ };
+
+/*! \brief Specialization of
+ * Utility::Details::UnitBaseCorrelatedEvaluatePDFHelper for Utility::LogCosLog
+ */
+template<>
+struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::NudgedLogCosLog > : public UnitBaseCorrelatedEvaluatePDFHelperLogBase
 { /* ... */ };
 
 /*! \brief Specialization of
@@ -2919,7 +2966,14 @@ struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LogLin> : public UnitBaseCor
  * Utility::Details::UnitBaseCorrelatedEvaluatePDFHelper for Utility::LogCosLin
  */
 template<>
-struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LogCosLin> : public UnitBaseCorrelatedEvaluatePDFHelperLogBase
+struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LogCosLin > : public UnitBaseCorrelatedEvaluatePDFHelperLogBase
+{ /* ... */ };
+
+/*! \brief Specialization of
+ * Utility::Details::UnitBaseCorrelatedEvaluatePDFHelper for Utility::LogCosLin
+ */
+template<>
+struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::NudgedLogCosLin > : public UnitBaseCorrelatedEvaluatePDFHelperLogBase
 { /* ... */ };
 
 } // end Details namespace
@@ -3258,9 +3312,9 @@ double UnitBaseCorrelated<_TwoDInterpPolicy>::evaluateCDF(
 // Sample between bin boundaries using the desired sampling functor
 /*! \details In order for this method to calculate a sample accurately the same
  * random number must be used to sample from the distribution on the lower and
- * upper bounds. The sample functor must therefore wrap the 
+ * upper bounds. The sample functor must therefore wrap the
  * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
- * similar methods that takes a random number. 
+ * similar methods that takes a random number.
  */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
@@ -3294,9 +3348,9 @@ YIndepType UnitBaseCorrelated<_TwoDInterpPolicy>::sample(
 // Sample between bin boundaries using the desired sampling functor
 /*! \details In order for this method to calculate a sample accurately the same
  * random number must be used to sample from the distribution on the lower and
- * upper bounds. The sample functor must therefore wrap the 
+ * upper bounds. The sample functor must therefore wrap the
  * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
- * similar methods that takes a random number. 
+ * similar methods that takes a random number.
  */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
@@ -3326,7 +3380,7 @@ YIndepType UnitBaseCorrelated<_TwoDInterpPolicy>::sampleCos(
 /* \details A direct correlated routine is used to sample the distribution.
  * In order for this method to calculate a sample accurately the same random
  * number must be used to sample from the distribution on the lower and upper
- * bounds. The sample functor must therefore wrap the 
+ * bounds. The sample functor must therefore wrap the
  * Utility::TabularUnivariateDist::sampleWithRandomNumberInSubrange routine.
  */
 template<typename _TwoDInterpPolicy>
@@ -3430,9 +3484,9 @@ YIndepType UnitBaseCorrelated<_TwoDInterpPolicy>::sampleInSubrange(
 // Sample between bin boundaries using the desired sampling functor
 /*! \details In order for this method to calculate a sample accurately the same
  * random number must be used to sample from the distribution on the lower and
- * upper bounds. The sample functor must therefore wrap the 
+ * upper bounds. The sample functor must therefore wrap the
  * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
- * similar methods that takes a random number. 
+ * similar methods that takes a random number.
  */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
@@ -3538,9 +3592,9 @@ YIndepType UnitBaseCorrelated<_TwoDInterpPolicy>::sampleDetailed(
 // Sample between bin boundaries using the desired sampling functor
 /*! \details In order for this method to calculate a sample accurately the same
  * random number must be used to sample from the distribution on the lower and
- * upper bounds. The sample functor must therefore wrap the 
+ * upper bounds. The sample functor must therefore wrap the
  * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
- * similar methods that takes a random number. 
+ * similar methods that takes a random number.
  */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,

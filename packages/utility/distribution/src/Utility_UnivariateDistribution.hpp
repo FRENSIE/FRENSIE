@@ -137,6 +137,10 @@ protected:
 
   //! Test if the independent variable is compatible with LogCos processing
   virtual bool isIndepVarCompatibleWithProcessingType(
+                                     const NudgedLogCosIndepVarProcessingTag ) const;
+
+  //! Test if the independent variable is compatible with LogCos processing
+  virtual bool isIndepVarCompatibleWithProcessingType(
                                      const LogCosIndepVarProcessingTag ) const;
 
   //! Test if the dependent variable is compatible with Lin processing
@@ -146,6 +150,10 @@ protected:
   //! Test if the dependent variable is compatible with Log processing
   virtual bool isDepVarCompatibleWithProcessingType(
                                           const LogDepVarProcessingTag ) const;
+
+  //! Test if the dependent variable is compatible with LogCos processing
+  virtual bool isDepVarCompatibleWithProcessingType(
+                                       const NudgedLogCosDepVarProcessingTag ) const;
 
   //! Test if the dependent variable is compatible with LogCos processing
   virtual bool isDepVarCompatibleWithProcessingType(

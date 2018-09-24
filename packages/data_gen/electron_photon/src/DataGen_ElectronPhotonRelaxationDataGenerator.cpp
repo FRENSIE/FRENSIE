@@ -26,7 +26,7 @@ ElectronPhotonRelaxationDataGenerator::ElectronPhotonRelaxationDataGenerator(
     d_default_electron_grid_generator(
            new Utility::GridGenerator<Utility::LogLog>( 1e-3, 1e-13, 1e-13 ) ),
     d_two_d_interp( MonteCarlo::LOGLOGLOG_INTERPOLATION ),
-    d_two_d_grid( MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING )
+    d_two_d_grid( MonteCarlo::UNIT_BASE_CORRELATED_GRID )
 {
   // Make sure the atomic number is valid
   testPrecondition( atomic_number <= 100u );
@@ -49,22 +49,22 @@ ElectronPhotonRelaxationDataGenerator::ElectronPhotonRelaxationDataGenerator(
   d_data_container.setPhotonGridConvergenceTolerance( d_default_photon_grid_generator->getConvergenceTolerance() );
   d_data_container.setPhotonGridAbsoluteDifferenceTolerance( d_default_photon_grid_generator->getAbsoluteDifferenceTolerance() );
   d_data_container.setPhotonGridDistanceTolerance( d_default_photon_grid_generator->getDistanceTolerance() );
-  
+
   d_data_container.setElectronGridConvergenceTolerance( d_default_electron_grid_generator->getConvergenceTolerance() );
   d_data_container.setElectronGridAbsoluteDifferenceTolerance( d_default_electron_grid_generator->getAbsoluteDifferenceTolerance() );
   d_data_container.setElectronGridDistanceTolerance( d_default_electron_grid_generator->getDistanceTolerance() );
-  
+
   d_data_container.setOccupationNumberEvaluationTolerance( 1e-3 );
   d_data_container.setSubshellIncoherentEvaluationTolerance( 1e-3 );
   d_data_container.setPhotonThresholdEnergyNudgeFactor( 1.0001 );
-  
+
   d_data_container.setElectronTotalElasticIntegratedCrossSectionModeOnOff( false );
   d_data_container.setCutoffAngleCosine( 1.0 );
   d_data_container.setNumberOfMomentPreservingAngles( 0 );
   d_data_container.setElectronTabularEvaluationTolerance( 1e-7 );
   d_data_container.setElectronTwoDInterpPolicy( Utility::toString( d_two_d_interp ) );
   d_data_container.setElectronTwoDGridPolicy( Utility::toString( d_two_d_grid ) );
-  
+
   // Have the default grid generators throw exception on dirty convergence
   d_default_photon_grid_generator->throwExceptionOnDirtyConvergence();
   d_default_electron_grid_generator->throwExceptionOnDirtyConvergence();
@@ -82,7 +82,7 @@ ElectronPhotonRelaxationDataGenerator::ElectronPhotonRelaxationDataGenerator(
                  d_data_container.getElectronGridConvergenceTolerance(),
                  d_data_container.getElectronGridAbsoluteDifferenceTolerance(),
                  d_data_container.getElectronGridDistanceTolerance() ) )
-{ 
+{
   // Have the default grid generators throw exception on dirty convergence
   d_default_photon_grid_generator->throwExceptionOnDirtyConvergence();
   d_default_electron_grid_generator->throwExceptionOnDirtyConvergence();
@@ -115,7 +115,7 @@ void ElectronPhotonRelaxationDataGenerator::setMaxPhotonEnergy(
                                                const double max_photon_energy )
 {
   // Make sure the max photon energy is valid
-  testPrecondition( d_data_container.getMaxPhotonEnergy() < max_photon_energy );
+  testPrecondition( d_data_container.getMinPhotonEnergy() < max_photon_energy );
 
   d_data_container.setMaxPhotonEnergy( max_photon_energy );
 }
@@ -449,7 +449,7 @@ double ElectronPhotonRelaxationDataGenerator::getTabularEvaluationTolerance() co
 void ElectronPhotonRelaxationDataGenerator::setElectronTwoDInterpPolicy(
                                MonteCarlo::TwoDInterpolationType two_d_interp )
 {
-  
+
   d_two_d_interp = two_d_interp;
 
   d_data_container.setElectronTwoDInterpPolicy( Utility::toString( two_d_interp ) );
@@ -463,7 +463,7 @@ MonteCarlo::TwoDInterpolationType ElectronPhotonRelaxationDataGenerator::getElec
 
 // Set the electron TwoDGridPolicy (UnitBaseCorrelated by default)
 void ElectronPhotonRelaxationDataGenerator::setElectronTwoDGridPolicy(
-                                      MonteCarlo::TwoDSamplingType two_d_grid )
+                                      MonteCarlo::TwoDGridType two_d_grid )
 {
   d_two_d_grid = two_d_grid;
 
@@ -471,7 +471,7 @@ void ElectronPhotonRelaxationDataGenerator::setElectronTwoDGridPolicy(
 }
 
 // Return the electron TwoDGridPolicy
-MonteCarlo::TwoDSamplingType ElectronPhotonRelaxationDataGenerator::getElectronTwoDGridPolicy() const
+MonteCarlo::TwoDGridType ElectronPhotonRelaxationDataGenerator::getElectronTwoDGridPolicy() const
 {
   return d_two_d_grid;
 }
@@ -510,12 +510,14 @@ void ElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
                          const double cutoff_angle_cosine,
                          const double tabular_evaluation_tol,
                          const unsigned number_of_moment_preserving_angles,
+                         const MonteCarlo::TwoDGridType two_d_grid,
                          const MonteCarlo::TwoDInterpolationType two_d_interp )
 {
   this->repopulateElectronElasticDataImpl( max_electron_energy,
                                            cutoff_angle_cosine,
                                            tabular_evaluation_tol,
                                            number_of_moment_preserving_angles,
+                                           two_d_grid,
                                            two_d_interp );
 }
 

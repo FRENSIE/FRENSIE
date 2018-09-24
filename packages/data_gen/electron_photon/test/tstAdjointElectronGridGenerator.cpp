@@ -390,8 +390,6 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf[0.01].back(),
                                   1.3739035660758732e-08,
                                   1e-6 );
-std::cout << std::setprecision(16) << std::scientific << "pdf[0.01].front() = \t" << pdf[0.01].front() << std::endl;
-std::cout << std::setprecision(16) << std::scientific << "pdf[0.01].back() = \t" << pdf[0.01].back() << std::endl;
 
   // Check the generated max energy grid
   FRENSIE_CHECK_EQUAL( outgoing_energy_grid[1.0].size(), 515 );
@@ -408,10 +406,6 @@ std::cout << std::setprecision(16) << std::scientific << "pdf[0.01].back() = \t"
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf[1.0].back(),
                                   4.4407679324133394e-06,
                                   1e-6 );
-std::cout << std::setprecision(16) << std::scientific << "pdf[1.0].front() = \t" << pdf[1.0].front() << std::endl;
-std::cout << std::setprecision(16) << std::scientific << "pdf[1.0].back() = \t" << pdf[1.0].back() << std::endl;
-
-
 
   DataGen::AdjointElectronGridGenerator<BremsstrahlungReaction,Utility::LogLogLog>
     log_grid_generator( h_brem_reaction,
@@ -460,8 +454,6 @@ std::cout << std::setprecision(16) << std::scientific << "pdf[1.0].back() = \t" 
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf[0.01].back(),
                                   1.3739035660758732e-08,
                                   1e-6 );
-std::cout << std::setprecision(16) << std::scientific << "pdf[0.01].front() = \t" << pdf[0.01].front() << std::endl;
-std::cout << std::setprecision(16) << std::scientific << "pdf[0.01].back() = \t" << pdf[0.01].back() << std::endl;
 
   // Check the generated max energy grid
   FRENSIE_CHECK_EQUAL( outgoing_energy_grid[1.0].size(), 475 );
@@ -478,9 +470,6 @@ std::cout << std::setprecision(16) << std::scientific << "pdf[0.01].back() = \t"
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf[1.0].back(),
                                   4.4407679324133394e-06,
                                   1e-6 );
-std::cout << std::setprecision(16) << std::scientific << "pdf[1.0].front() = \t" << pdf[1.0].front() << std::endl;
-std::cout << std::setprecision(16) << std::scientific << "pdf[1.0].back() = \t" << pdf[1.0].back() << std::endl;
-
 }
 
 //---------------------------------------------------------------------------//
