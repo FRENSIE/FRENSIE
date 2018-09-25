@@ -566,6 +566,8 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRelaxationData()
     const std::map<unsigned,std::map<unsigned,double> >& non_radiative_transition_energies =
       d_endl_data_container->getNonRadiativeTransitionEnergy( subshell );
 
+    //std::cout << subshell << std::endl;
+
     std::vector<std::pair<unsigned,unsigned> > relaxation_vacancies;
     std::vector<double> relaxation_particle_energies, relaxation_probabilities;
 
@@ -578,6 +580,16 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRelaxationData()
 
     for( auto&& non_radiative_transition_probs_data : non_radiative_transition_probs )
     {
+      // std::cout << " " << non_radiative_transition_probs_data.first << std::endl;
+      // if( subshell == 20 && non_radiative_transition_probs_data.first == 1 )
+      //   std::cout << "map: " << Utility::toString(non_radiative_transition_energies) << std::endl;
+      TEST_FOR_EXCEPTION( non_radiative_transition_energies.find( non_radiative_transition_probs_data.first ) == non_radiative_transition_energies.end(),
+                            std::runtime_error,
+                            "There are no non-radiative transition energies "
+                            "for vacancy " << subshell << " transitioning to "
+                            << non_radiative_transition_probs_data.first <<
+                            "!" );
+      
       std::map<unsigned,double>::const_iterator data_it =
         non_radiative_transition_probs_data.second.begin();
 
@@ -588,12 +600,21 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRelaxationData()
       {
         relaxation_vacancies.push_back( std::make_pair( non_radiative_transition_probs_data.first, data_it->first ) );
         relaxation_probabilities.push_back( data_it->second );
+
+        TEST_FOR_EXCEPTION( non_radiative_transition_energies.find( non_radiative_transition_probs_data.first )->second.find( data_it->first ) == non_radiative_transition_energies.find( non_radiative_transition_probs_data.first )->second.end(),
+                            std::runtime_error,
+                            "There are no non-radiative transition energies "
+                            "for vacancy " << subshell << " transitioning to "
+                            << non_radiative_transition_probs_data.first <<
+                            " and " << data_it->first << "!" );
+        
         relaxation_particle_energies.push_back( non_radiative_transition_energies.find( non_radiative_transition_probs_data.first )->second.find( data_it->first )->second );
 
         ++data_it;
       }
     }
 
+    data_container.setSubshellRelaxationTransitions( subshell, relaxation_vacancies.size() );
     data_container.setSubshellRelaxationVacancies( subshell, relaxation_vacancies );
     data_container.setSubshellRelaxationParticleEnergies( subshell, relaxation_particle_energies );
     data_container.setSubshellRelaxationProbabilities( subshell, relaxation_probabilities );

@@ -1,9 +1,9 @@
 #!${PYTHON_EXECUTABLE}
 ##---------------------------------------------------------------------------##
 ##!
-##! \file   endltonative.py
+##! \file   endl_to_native_endl.py
 ##! \author Alex Robinson
-##! \brief  tool to convert endl data files to native format
+##! \brief  tool to convert endl data files to native endl format
 ##!
 ##---------------------------------------------------------------------------##
 
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     for z in atomic_numbers:
 
         # Create the filename from the atomic number
-        filename = "ZA"
+        filename = "za"
         
         if z < 10:
             filename += "00"
@@ -64,17 +64,18 @@ if __name__ == "__main__":
         full_epdl_file_path = database_dir + "/" + relative_epdl_file_path
         full_eedl_file_path = database_dir + "/" + relative_eedl_file_path
 
-        native_filename = "endl_" + str(z) + "_native.xml"
+        native_filename = "endl_native_" + str(z) + ".xml"
         native_file_path = database_dir + "/endldata/" + native_filename
 
         generator = DataGenENDL.StandardENDLDataGenerator( full_eadl_file_path,
                                                            full_epdl_file_path,
                                                            full_eedl_file_path )
+        print "Populating ENDL native data container for Z =", z
         generator.populateENDLDataContainer()
         generator.getDataContainer().saveToFile( native_file_path, True )
 
 ##---------------------------------------------------------------------------##
-## endltonative.py
+## endl_to_native_endl.py
 ##---------------------------------------------------------------------------##
 
         

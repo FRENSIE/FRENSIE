@@ -929,7 +929,7 @@ FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
   data_generator->populateEPRDataContainer();
 
   const Data::ElectronPhotonRelaxationDataContainer& data_container =
-    data_generator->getDataContainer();
+    *data_generator->getSharedDataContainer();
 
   // Check the table settings data
   FRENSIE_CHECK_EQUAL( data_container.getAtomicNumber(), 1 );
