@@ -34,7 +34,7 @@ if h_epr_data.getCutoffAngleCosine() != cutoff_angle_cosine or h_epr_data.getNum
   h_epr_data.saveToFile( "temp_epr_file.xml" )
 
   # Update the forward elastic data
-  ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+  ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator.repopulateMomentPreservingData(
                                                  "temp_epr_file.xml",
                                                  cutoff_angle_cosine,
                                                  electron_tabular_eval_tol,
@@ -118,7 +118,7 @@ if c_epr_data.getCutoffAngleCosine() != cutoff_angle_cosine or c_epr_data.getNum
   c_epr_data.saveToFile( "temp_epr_file.xml" )
 
   # Update the forward elastic data
-  ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+  ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator.repopulateMomentPreservingData(
                                                  "temp_epr_file.xml",
                                                  cutoff_angle_cosine,
                                                  electron_tabular_eval_tol,
@@ -202,7 +202,7 @@ if al_epr_data.getCutoffAngleCosine() != cutoff_angle_cosine or al_epr_data.getN
   al_epr_data.saveToFile( "temp_epr_file.xml" )
 
   # Update the forward elastic data
-  ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+  ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator.repopulateMomentPreservingData(
                                                  "temp_epr_file.xml",
                                                  cutoff_angle_cosine,
                                                  electron_tabular_eval_tol,
@@ -286,7 +286,7 @@ if si_epr_data.getCutoffAngleCosine() != cutoff_angle_cosine or si_epr_data.getN
   si_epr_data.saveToFile( "temp_epr_file.xml" )
 
   # Update the forward elastic data
-  ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+  ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator.repopulateMomentPreservingData(
                                                  "temp_epr_file.xml",
                                                  cutoff_angle_cosine,
                                                  electron_tabular_eval_tol,
@@ -373,7 +373,7 @@ if os.path.isfile("temp_epr_file.xml"):
 #   pb_epr_data.saveToFile( "temp_epr_file.xml" )
 
 #   # Update the forward elastic data
-#   ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+#   ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator.repopulateMomentPreservingData(
 #                                                  "temp_epr_file.xml",
 #                                                  cutoff_angle_cosine,
 #                                                  electron_tabular_eval_tol,
