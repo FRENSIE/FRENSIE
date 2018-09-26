@@ -231,6 +231,15 @@ class ENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         self.assertEqual( generator.getElectronTwoDGridPolicy(),
                           MonteCarlo.UNIT_BASE_CORRELATED_GRID )
 
+    def testSetNotes(self):
+        "*Test DataGen.ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator setNotes"
+
+        generator = ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator( self.endl_container )
+
+        generator.setNotes( "This is test data" )
+
+        self.assertEqual( generator.getNotes(), "This is test data" )
+
     def testPopulateEPRDataContainer(self):
         "*Test DataGen.ElectronPhoton.ENDLElectronPhotonRelaxationDataGenerator populateEPRDataContainer"
 

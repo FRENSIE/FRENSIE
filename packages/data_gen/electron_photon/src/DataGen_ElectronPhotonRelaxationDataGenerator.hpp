@@ -157,6 +157,12 @@ public:
   //! Return the electron TwoDGridPolicy
   MonteCarlo::TwoDGridType getElectronTwoDGridPolicy() const;
 
+  //! Set the generation notes
+  void setNotes( const std::string& notes );
+
+  //! Get the generation notes
+  const std::string& getNotes() const;
+
   //! Populate the electron-photon-relaxation data container
   virtual void populateEPRDataContainer() = 0;
 

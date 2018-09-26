@@ -516,6 +516,7 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
                           1e-15 );
 
   // Check the average photon heating numbers
+  FRENSIE_CHECK( data_container.hasAveragePhotonHeatingNumbers() );
   FRENSIE_CHECK_EQUAL( data_container.getAveragePhotonHeatingNumbers().size(),
                        947 );
   FRENSIE_CHECK_FLOATING_EQUALITY(

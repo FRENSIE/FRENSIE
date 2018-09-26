@@ -1036,7 +1036,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::extractSubshellPhotoelectricEffe
 }
 
 // Create the heating numbers on the union energy grid
-void ENDLElectronPhotonRelaxationDataGenerator::createHeatingNumbersOnUnionEnergyGrid(
+bool ENDLElectronPhotonRelaxationDataGenerator::createHeatingNumbersOnUnionEnergyGrid(
                   const std::list<double>& union_energy_grid,
                   const std::shared_ptr<const Utility::UnivariateDistribution>&
                   original_cross_section,
@@ -1046,6 +1046,8 @@ void ENDLElectronPhotonRelaxationDataGenerator::createHeatingNumbersOnUnionEnerg
                        "currently be generated using ENDL tables!" );
 
   cross_section.resize( union_energy_grid.size(), 0.0 );
+
+  return false;
 }
 
 // Set the photon data
@@ -1250,10 +1252,12 @@ void ENDLElectronPhotonRelaxationDataGenerator::setPhotonData()
   std::vector<double> cross_section;
   unsigned threshold;
 
-  this->createHeatingNumbersOnUnionEnergyGrid( union_energy_grid,
-                                               heating_numbers,
-                                               cross_section );
+  bool has_heating_numbers =
+    this->createHeatingNumbersOnUnionEnergyGrid( union_energy_grid,
+                                                 heating_numbers,
+                                                 cross_section );
 
+  data_container.setHasAveragePhotonHeatingNumbers( has_heating_numbers );
   data_container.setAveragePhotonHeatingNumbers( cross_section );
 
   FRENSIE_LOG_PARTIAL_NOTIFICATION( " Setting the " <<

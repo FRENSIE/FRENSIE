@@ -86,7 +86,7 @@ protected:
                   subshell_photoelectric_effect_css ) const final override;
 
   //! Create the heating numbers on the union energy grid
-  void createHeatingNumbersOnUnionEnergyGrid(
+  bool createHeatingNumbersOnUnionEnergyGrid(
                   const std::list<double>& union_energy_grid,
                   const std::shared_ptr<const Utility::UnivariateDistribution>&
                   original_cross_section,

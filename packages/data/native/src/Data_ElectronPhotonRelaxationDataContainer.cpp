@@ -406,6 +406,12 @@ ElectronPhotonRelaxationDataContainer::getPhotonEnergyGrid() const
   return d_photon_energy_grid;
 }
 
+// Check if there are average heating numbers
+bool ElectronPhotonRelaxationDataContainer::hasAveragePhotonHeatingNumbers() const
+{
+  return d_has_average_photon_heating_numbers;
+}
+
 // Return the average heating numbers
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getAveragePhotonHeatingNumbers() const
@@ -1386,6 +1392,13 @@ void ElectronPhotonRelaxationDataContainer::setPhotonEnergyGrid(
   testPrecondition( Data::energyGridValid( energy_grid ) );
 
   d_photon_energy_grid = energy_grid;
+}
+
+// Set that the container has average photon heating numbers
+void ElectronPhotonRelaxationDataContainer::setHasAveragePhotonHeatingNumbers(
+                                               const bool has_heating_numbers )
+{
+  d_has_average_photon_heating_numbers = has_heating_numbers;
 }
 
 // Set the average photon heating numbers

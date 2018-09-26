@@ -193,6 +193,9 @@ public:
   //! Return the photon energy grid
   const std::vector<double>& getPhotonEnergyGrid() const;
 
+  //! Check if there are average heating numbers
+  bool hasAveragePhotonHeatingNumbers() const;
+
   //! Return the average heating numbers
   const std::vector<double>& getAveragePhotonHeatingNumbers() const;
 
@@ -573,6 +576,9 @@ protected:
 
   //! Set the photon energy grid
   void setPhotonEnergyGrid( const std::vector<double>& energy_grid );
+
+  //! Set that the container has average photon heating numbers
+  void setHasAveragePhotonHeatingNumbers( const bool has_heating_numbers );
 
   //! Set the average photon heating numbers
   void setAveragePhotonHeatingNumbers(
@@ -989,6 +995,9 @@ private:
   // The photon energy grid (MeV)
   std::vector<double> d_photon_energy_grid;
 
+  // There are average heating numbers
+  bool d_has_average_photon_heating_numbers;
+  
   // The average heating numbers
   std::vector<double> d_average_photon_heating_numbers;
 

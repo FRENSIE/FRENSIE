@@ -476,6 +476,18 @@ MonteCarlo::TwoDGridType ElectronPhotonRelaxationDataGenerator::getElectronTwoDG
   return d_two_d_grid;
 }
 
+// Set the generation notes
+void ElectronPhotonRelaxationDataGenerator::setNotes( const std::string& notes )
+{
+  d_data_container->setNotes( notes );
+}
+
+// Get the generation notes
+const std::string& ElectronPhotonRelaxationDataGenerator::getNotes() const
+{
+  return d_data_container->getNotes();
+}
+
 //! Get a default photon grid generator (Lin-Lin grid)
 const Utility::GridGenerator<Utility::LinLin>&
 ElectronPhotonRelaxationDataGenerator::getDefaultPhotonGridGenerator() const

@@ -317,6 +317,18 @@ FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the notes can be set
+FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator, setNotes )
+{
+  DataGen::ENDLElectronPhotonRelaxationDataGenerator
+    generator( h_endl_data_container );
+
+  generator.setNotes( "This is test data" );
+
+  FRENSIE_CHECK_EQUAL( generator.getNotes(), "This is test data" );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a data container can be populated
 FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
                    populateEPRDataContainer_h_lin )
@@ -488,6 +500,7 @@ FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
                           1e-15 );
 
   // Check the average photon heating numbers
+  FRENSIE_CHECK( !data_container.hasAveragePhotonHeatingNumbers() );
   FRENSIE_CHECK_EQUAL( data_container.getAveragePhotonHeatingNumbers().size(),
                        939 );
   FRENSIE_CHECK_EQUAL( data_container.getAveragePhotonHeatingNumbers().front(),

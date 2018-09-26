@@ -103,7 +103,8 @@ def setGeneratorOptions( generator,
                          num_moment_preserving_angles,
                          tabular_evaluation_tol,
                          electron_two_d_interp_policy,
-                         electron_two_d_grid_policy ):
+                         electron_two_d_grid_policy,
+                         notes ):
 
     # Set the generator options
     if not photon_grid_convergence_tol is None:
@@ -181,6 +182,9 @@ def setGeneratorOptions( generator,
             print "Electron 2D grid policy", electron_two_d_grid_policy, "is not valid!"
             sys.exit(1)
 
+    if not notes is None:
+        generator.setNotes( notes )
+
 # Generate the data
 def generateData( endl_file_name,
                   output_file_name,
@@ -239,7 +243,8 @@ def generateData( endl_file_name,
                          num_moment_preserving_angles,
                          tabular_evaluation_tol,
                          electron_two_d_interp_policy,
-                         electron_two_d_grid_policy )
+                         electron_two_d_grid_policy,
+                         notes )
 
     # Populate the data
     generator.populateEPRDataContainer()
