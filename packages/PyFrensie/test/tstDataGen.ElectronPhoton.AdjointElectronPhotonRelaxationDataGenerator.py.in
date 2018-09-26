@@ -70,7 +70,7 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         self.assertEqual( generator.getAdjointIncoherentGridDistanceTolerance(), 1e-14 )
 
         # Test the electron table data
-        self.assertEqual( generator.getCutoffAngleCosine(), 1 )
+        self.assertEqual( generator.getCutoffAngleCosine(), 1.0 )
         self.assertEqual( generator.getNumberOfMomentPreservingAngles(), 0 )
         self.assertEqual( generator.getDefaultElectronGridConvergenceTolerance(), 0.001 )
         self.assertEqual( generator.getDefaultElectronGridAbsoluteDifferenceTolerance(), 1e-13 )
@@ -150,7 +150,7 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         self.assertEqual( generator.getAdjointIncoherentGridDistanceTolerance(), 1e-14 )
 
         # Test the electron table data
-        self.assertEqual( generator.getCutoffAngleCosine(), 1 )
+        self.assertEqual( generator.getCutoffAngleCosine(), 1.0 )
         self.assertEqual( generator.getNumberOfMomentPreservingAngles(), 0 )
         self.assertEqual( generator.getDefaultElectronGridConvergenceTolerance(), 0.001 )
         self.assertEqual( generator.getDefaultElectronGridAbsoluteDifferenceTolerance(), 1e-13 )
@@ -232,7 +232,7 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         self.assertEqual( generator.getAdjointIncoherentGridDistanceTolerance(), 1e-14 )
 
         # Test the electron table data
-        self.assertEqual( generator.getCutoffAngleCosine(), 1 )
+        self.assertEqual( generator.getCutoffAngleCosine(), 1.0 )
         self.assertEqual( generator.getNumberOfMomentPreservingAngles(), 0 )
         self.assertEqual( generator.getDefaultElectronGridConvergenceTolerance(), 0.001 )
         self.assertEqual( generator.getDefaultElectronGridAbsoluteDifferenceTolerance(), 1e-13 )
@@ -422,9 +422,12 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         generator_h.setDefaultElectronGridAbsoluteDifferenceTolerance( 1e-16 )
         generator_h.setDefaultElectronGridDistanceTolerance( 1e-9 )
 
-        generator_h.setElectronTabularEvaluationTolerance( 1e-4 )
+        generator_h.setElectronTabularEvaluationTolerance( 1e-7 )
         generator_h.setElectronTwoDInterpPolicy( MonteCarlo.LOGLOGLOG_INTERPOLATION )
         generator_h.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
+
+        generator_h.setCutoffAngleCosine( 0.9 )
+        generator_h.setNumberOfMomentPreservingAngles( 1 )
 
         generator_h.setAdjointBremsstrahlungMaxEnergyNudgeValue( 0.2 )
         generator_h.setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue( 1e-7 )
@@ -468,12 +471,12 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         self.assertEqual( h_data_container.getAdjointIncoherentGridDistanceTolerance(), 1e-15 )
 
         # Check the electron table data
-        self.assertEqual( h_data_container.getCutoffAngleCosine(), 1 )
-        self.assertEqual( h_data_container.getNumberOfAdjointMomentPreservingAngles(), 0 )
+        self.assertEqual( h_data_container.getCutoffAngleCosine(), 0.9 )
+        self.assertEqual( h_data_container.getNumberOfAdjointMomentPreservingAngles(), 1 )
         self.assertEqual( h_data_container.getAdjointElectronGridConvergenceTolerance(), 0.5 )
         self.assertEqual( h_data_container.getAdjointElectronGridAbsoluteDifferenceTolerance(), 1e-16 )
         self.assertEqual( h_data_container.getAdjointElectronGridDistanceTolerance(), 1e-9 )
-        self.assertEqual( h_data_container.getElectronTabularEvaluationTolerance(), 1e-4 )
+        self.assertEqual( h_data_container.getElectronTabularEvaluationTolerance(), 1e-7 )
         self.assertEqual( h_data_container.getAdjointBremsstrahlungMaxEnergyNudgeValue(), 0.2 )
         self.assertEqual( h_data_container.getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(), 1e-7 )
         self.assertEqual( h_data_container.getAdjointBremsstrahlungEvaluationTolerance(), 1e-3 )
@@ -722,8 +725,8 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         angular_grid = h_data_container.getAdjointElasticAngularEnergyGrid()
 
         self.assertEqual( angular_grid[0], 1.0e-5 )
-        self.assertEqual( angular_grid[-1], 1e5 )
-        self.assertEqual( len( angular_grid ), 16 )
+        self.assertEqual( angular_grid[-1], 20.0 )
+        self.assertEqual( len( angular_grid ), 12 )
 
         elastic_angles = h_data_container.getAdjointCutoffElasticAngles(1.0e-5)
 
@@ -731,11 +734,11 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         self.assertEqual( elastic_angles[-1], 0.999999 )
         self.assertEqual( len( elastic_angles ), 2 )
 
-        elastic_angles = h_data_container.getAdjointCutoffElasticAngles(1e5)
+        elastic_angles = h_data_container.getAdjointCutoffElasticAngles(20.0)
 
         self.assertEqual( elastic_angles[0], -1.0 )
         self.assertEqual( elastic_angles[-1], 0.999999 )
-        self.assertEqual( len( elastic_angles ), 96 )
+        self.assertEqual( len( elastic_angles ), 95 )
 
         elastic_pdf = h_data_container.getAdjointCutoffElasticPDF( 1e-5 )
 
@@ -743,19 +746,19 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         self.assertEqual( elastic_pdf[-1], 0.5 )
         self.assertEqual( len( elastic_pdf ), 2 )
 
-        elastic_pdf = h_data_container.getAdjointCutoffElasticPDF( 1e5 )
+        elastic_pdf = h_data_container.getAdjointCutoffElasticPDF( 20.0 )
 
-        self.assertEqual( elastic_pdf[0], 6.25670e-13 )
-        self.assertEqual( elastic_pdf[-1], 9.86945e+5 )
-        self.assertEqual( len( elastic_pdf ), 96 )
+        self.assertEqual( elastic_pdf[0], 1.488941264770909258e-10 )
+        self.assertEqual( elastic_pdf[-1], 9.608615060065749567e+05 )
+        self.assertEqual( len( elastic_pdf ), 95 )
 
         self.assertTrue( h_data_container.hasAdjointMomentPreservingData() )
 
         mp_cross_section_reduction = h_data_container.getAdjointMomentPreservingCrossSectionReduction()
 
         self.assertEqual( mp_cross_section_reduction[0], 7.50007499925003707e-01 )
-        self.assertEqual( mp_cross_section_reduction[-1], 9.95726637137201650e-12 )
-        self.assertEqual( len( mp_cross_section_reduction ), 16 )
+        self.assertEqual( mp_cross_section_reduction[-1], 4.935491711992172245e-05 )
+        self.assertEqual( len( mp_cross_section_reduction ), 12 )
 
         discrete_angles = h_data_container.getAdjointMomentPreservingElasticDiscreteAngles( 1.0e-5 )
 
@@ -763,10 +766,10 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         self.assertEqual( discrete_angles[-1], 9.33333333326667125e-01 )
         self.assertEqual( len( discrete_angles ), 1 )
 
-        discrete_angles = h_data_container.getAdjointMomentPreservingElasticDiscreteAngles( 1e5 )
+        discrete_angles = h_data_container.getAdjointMomentPreservingElasticDiscreteAngles( 20.0 )
 
-        self.assertEqual( discrete_angles[0], 9.96847743255635299e-01 )
-        self.assertEqual( discrete_angles[-1], 9.96847743255635299e-01 )
+        self.assertEqual( discrete_angles[0], 9.931382017989757172e-01 )
+        self.assertEqual( discrete_angles[-1], 9.931382017989757172e-01 )
         self.assertEqual( len( discrete_angles ), 1 )
 
         discrete_weights = h_data_container.getAdjointMomentPreservingElasticWeights( 1.0e-5 )
@@ -775,20 +778,11 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         self.assertEqual( discrete_weights[-1], 1.0 )
         self.assertEqual( len( discrete_weights ), 1 )
 
-        discrete_weights = h_data_container.getAdjointMomentPreservingElasticWeights( 1e5 )
+        discrete_weights = h_data_container.getAdjointMomentPreservingElasticWeights( 20.0 )
 
         self.assertEqual( discrete_weights[0], 1.0 )
         self.assertEqual( discrete_weights[-1], 1.0 )
         self.assertEqual( len( discrete_weights ), 1 )
-
-        threshold = h_data_container.getAdjointCutoffElasticCrossSectionThresholdEnergyIndex()
-
-        reduction_ratio = h_data_container.getReducedCutoffCrossSectionRatios()
-
-        self.assertAlmostEqual( reduction_ratio[0], 0.9500004750002375431, delta=1e-15 )
-        self.assertAlmostEqual( reduction_ratio[-1], 8.2846746577972752e-06, delta=1e-15 )
-
-        self.assertEqual( len( reduction_ratio ), 8-threshold )
 
         # Check the forward inelastic cross section data
         threshold = h_data_container.getForwardInelasticElectronCrossSectionThresholdEnergyIndex()
@@ -833,8 +827,8 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
 
         cross_section = h_data_container.getAdjointBremsstrahlungElectronCrossSection()
 
-        self.assertEqual( cross_section[0], 4.42736548286178930e+01 )
-        self.assertEqual( cross_section[-1], 2.89178093381140533e-01 )
+        self.assertEqual( cross_section[0], 4.427244458211502121e+01 )
+        self.assertEqual( cross_section[-1], 2.891819533322204649e-01 )
         self.assertEqual( len( cross_section ), 8-threshold )
 
         self.assertFalse( h_data_container.seperateAdjointBremsstrahlungEnergyGrid() )
@@ -853,14 +847,14 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
 
         electron_bremsstrahlung_pdf = h_data_container.getAdjointElectronBremsstrahlungPDF( 1e-5 )
 
-        self.assertEqual( electron_bremsstrahlung_pdf[0], 1.42794534619340929e+06 )
-        self.assertEqual( electron_bremsstrahlung_pdf[-1], 2.14479935631602688e-10 )
+        self.assertEqual( electron_bremsstrahlung_pdf[0], 1.427896162367836805e+06 )
+        self.assertEqual( electron_bremsstrahlung_pdf[-1], 2.144857987275867663e-10 )
         self.assertEqual( len( electron_bremsstrahlung_pdf ), 38 )
 
         electron_bremsstrahlung_pdf = h_data_container.getAdjointElectronBremsstrahlungPDF( 20.0 )
 
-        self.assertEqual( electron_bremsstrahlung_pdf[0], 1.93992587724727904e+06 )
-        self.assertEqual( electron_bremsstrahlung_pdf[-1], 2.78119830725271277e-03 )
+        self.assertEqual( electron_bremsstrahlung_pdf[0], 1.939776889015461085e+06 )
+        self.assertEqual( electron_bremsstrahlung_pdf[-1], 2.775315527637131022e-03 )
         self.assertEqual( len( electron_bremsstrahlung_pdf ), 21 )
 
         # Check the electroionization data
@@ -870,8 +864,8 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
 
         cross_section = h_data_container.getAdjointElectroionizationCrossSection( 1 )
 
-        self.assertEqual( cross_section[0], 4.59979189086422043e+10 )
-        self.assertEqual( cross_section[-1], 6.20356430451277847e+04 )
+        self.assertEqual( cross_section[0], 4.599858431241171265e+10 )
+        self.assertEqual( cross_section[-1], 6.203546061164286948e+04 )
         self.assertEqual( len( cross_section ), 8-threshold )
 
         self.assertFalse( h_data_container.seperateAdjointElectroionizationEnergyGrid() )
@@ -891,14 +885,14 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
 
         electroionization_recoil_pdf = h_data_container.getAdjointElectroionizationRecoilPDF( 1, 1e-5 )
 
-        self.assertEqual( electroionization_recoil_pdf[0], 2.88337599301526836e+02 )
-        self.assertEqual( electroionization_recoil_pdf[-1], 4.67633484079768083e-02 )
+        self.assertEqual( electroionization_recoil_pdf[0], 2.883262476197421620e+02 )
+        self.assertEqual( electroionization_recoil_pdf[-1], 4.674585918032569953e-02 )
         self.assertEqual( len( electroionization_recoil_pdf ), 25 )
 
         electroionization_recoil_pdf = h_data_container.getAdjointElectroionizationRecoilPDF( 1, 20.0 )
 
-        self.assertEqual( electroionization_recoil_pdf[0], 2.16041335995336442e+05 )
-        self.assertEqual( electroionization_recoil_pdf[-1], 2.25102948499896193e+04 )
+        self.assertEqual( electroionization_recoil_pdf[0], 2.160605686342868139e+05 )
+        self.assertEqual( electroionization_recoil_pdf[-1], 2.251264540445400417e+04 )
         self.assertEqual( len( electroionization_recoil_pdf ), 3 )
 
 #-----------------------------------------------------------------------------#

@@ -58,7 +58,6 @@ ElectronPhotonRelaxationDataGenerator::ElectronPhotonRelaxationDataGenerator(
   d_data_container.setSubshellIncoherentEvaluationTolerance( 1e-3 );
   d_data_container.setPhotonThresholdEnergyNudgeFactor( 1.0001 );
 
-  d_data_container.setElectronTotalElasticIntegratedCrossSectionModeOnOff( false );
   d_data_container.setCutoffAngleCosine( 1.0 );
   d_data_container.setNumberOfMomentPreservingAngles( 0 );
   d_data_container.setElectronTabularEvaluationTolerance( 1e-7 );
@@ -362,24 +361,6 @@ void ElectronPhotonRelaxationDataGenerator::setPhotonThresholdEnergyNudgeFactor(
 double ElectronPhotonRelaxationDataGenerator::getPhotonThresholdEnergyNudgeFactor() const
 {
   return d_data_container.getPhotonThresholdEnergyNudgeFactor();
-}
-
-// Set electron total elastic integrated cross section mode to off (on by default)
-void ElectronPhotonRelaxationDataGenerator::setElectronTotalElasticIntegratedCrossSectionModeOff()
-{
-  d_data_container.setElectronTotalElasticIntegratedCrossSectionModeOnOff( false );
-}
-
-// Set electron total elastic integrated cross section mode to on (on by default)
-void ElectronPhotonRelaxationDataGenerator::setElectronTotalElasticIntegratedCrossSectionModeOn()
-{
-  d_data_container.setElectronTotalElasticIntegratedCrossSectionModeOnOff( true );
-}
-
-// Return if electron total elastic integrated cross section mode to on (on by default)
-bool ElectronPhotonRelaxationDataGenerator::isElectronTotalElasticIntegratedCrossSectionModeOn() const
-{
-  return d_data_container.isElectronTotalElasticIntegratedCrossSectionModeOn();
 }
 
 // Set the cutoff angle cosine

@@ -86,9 +86,6 @@ public:
   //! Return the photon threshold energy nudge factor
   double getPhotonThresholdEnergyNudgeFactor() const;
 
-  //! Return if electron total elastic integrated cross section mode is on
-  bool isElectronTotalElasticIntegratedCrossSectionModeOn() const;
-
   //! Return the upper cutoff scattering angle cosine above which moment preserving elastic scattering is used
   double getCutoffAngleCosine() const;
 
@@ -458,10 +455,6 @@ protected:
   //! Set the photon threshold energy nudge factor
   void setPhotonThresholdEnergyNudgeFactor( const double nudge_factor );
 
-  //! Set the electron total elastic integrated cross section mode
-  void setElectronTotalElasticIntegratedCrossSectionModeOnOff(
-    const bool electron_total_elastic_integrated_cross_section_mode_on );
-
   //! Set the upper cutoff scattering angle below which moment preserving elastic scattering is used
   void setCutoffAngleCosine( const double cutoff_angle_cosine );
 
@@ -703,6 +696,14 @@ protected:
   void setMomentPreservingCrossSectionReduction(
     const std::vector<double>& cross_section_reduction );
 
+  //! Set the moment preserving elastic discrete angles
+  void setMomentPreservingElasticDiscreteAngles(
+    const std::map<double,std::vector<double> >& moment_preserving_elastic_discrete_angles);
+
+  //! Set the moment preserving elastic weights
+  void setMomentPreservingElasticWeights(
+    const std::map<double,std::vector<double> >& moment_preserving_elastic_weights );
+
   //! Set the moment preserving elastic discrete angles for an incoming energy
   void setMomentPreservingElasticDiscreteAngles(
     const double incoming_energy,
@@ -894,9 +895,6 @@ private:
 
   // The photon threshold energy nudge factor
   double d_photon_threshold_energy_nudge_factor;
-
-  // The electron total elastic integrated cross section mode
-  bool d_electron_total_elastic_integrated_cross_section_mode_on;
 
   // The elastic cutoff angle
   double d_cutoff_angle_cosine;

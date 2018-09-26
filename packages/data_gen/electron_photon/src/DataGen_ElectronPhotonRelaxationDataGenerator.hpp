@@ -112,18 +112,6 @@ public:
   //! Get the photon threshold energy nudge factor
   double getPhotonThresholdEnergyNudgeFactor() const;
 
-  //! Set electron total elastic integrated cross section mode to off (off by default)
-  //! \todo Remove this option once the proper setting has been found.
-  void setElectronTotalElasticIntegratedCrossSectionModeOff();
-
-  //! Set electron total elastic integrated cross section mode to on (off by default)
-  //! \todo Remove this option once the proper setting has been found.
-  void setElectronTotalElasticIntegratedCrossSectionModeOn();
-
-  //! Return if electron total elastic integrated cross section mode to on (off by default)
-  //! \todo Remove this option once the proper setting has been found.
-  bool isElectronTotalElasticIntegratedCrossSectionModeOn() const;
-
   //! Set the cutoff angle cosine
   void setCutoffAngleCosine( const double cutoff_angle_cosine );
 

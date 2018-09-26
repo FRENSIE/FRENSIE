@@ -412,7 +412,7 @@ void ElectronElasticDataEvaluator::evaluateElasticSecondaryDistribution(
   std::map<double,std::vector<double> >& elastic_pdf,
   std::vector<double>& moment_preserving_cross_section_reduction,
   std::map<double,std::vector<double> >& moment_preserving_angles,
-  std::map<double,std::vector<double> >& moment_preserving_weights )
+  std::map<double,std::vector<double> >& moment_preserving_weights ) const
 {
   // Evaluate the analog data
   this->evaluateAnalogElasticSecondaryDistribution(
@@ -456,7 +456,7 @@ void ElectronElasticDataEvaluator::evaluateElasticSecondaryDistribution(
 
 // Create the analog cutoff elastic cross section evaluator
 void ElectronElasticDataEvaluator::createCutoffCrossSectionEvaluator(
-  std::shared_ptr<const Utility::UnivariateDistribution>& cross_section_evaluator )
+  std::shared_ptr<const Utility::UnivariateDistribution>& cross_section_evaluator ) const
 {
   cross_section_evaluator.reset(
     new Utility::TabularDistribution<Utility::LogLog>(
@@ -464,9 +464,30 @@ void ElectronElasticDataEvaluator::createCutoffCrossSectionEvaluator(
       *d_cutoff_cross_section ) );
 }
 
+// Create the analog cutoff elastic cross section evaluator
+void ElectronElasticDataEvaluator::createCutoffCrossSectionEvaluator(
+  std::shared_ptr<MonteCarlo::ElectroatomicReaction>& cross_section_evaluator ) const
+{
+  // Create the hash-based grid searcher
+  std::shared_ptr<Utility::HashBasedGridSearcher<double> > forward_grid_searcher(
+       new Utility::StandardHashBasedGridSearcher<std::vector<double>,false>(
+                         d_energy_grid,
+                         d_energy_grid->front(),
+                         d_energy_grid->back(),
+                         d_energy_grid->size()/10 + 1 ) );
+
+  // Create the reaction
+  cross_section_evaluator.reset(
+    new MonteCarlo::VoidElectroatomicReaction<Utility::LogLog>(
+        d_energy_grid,
+        d_cutoff_cross_section,
+        d_cutoff_threshold_energy_index,
+        forward_grid_searcher ) );
+}
+
 // Create the analog total elastic cross section evaluator
 void ElectronElasticDataEvaluator::createTotalCrossSectionEvaluator(
-  std::shared_ptr<const Utility::UnivariateDistribution>& cross_section_evaluator )
+  std::shared_ptr<const Utility::UnivariateDistribution>& cross_section_evaluator ) const
 {
   cross_section_evaluator.reset(
       new Utility::TabularDistribution<Utility::LogLog>(
@@ -474,12 +495,34 @@ void ElectronElasticDataEvaluator::createTotalCrossSectionEvaluator(
         *d_total_cross_section ) );
 }
 
+//! Create the analog total elastic cross section evaluator
+void ElectronElasticDataEvaluator::createTotalCrossSectionEvaluator(
+  std::shared_ptr<MonteCarlo::ElectroatomicReaction>& cross_section_evaluator ) const
+{
+  // Create the hash-based grid searcher
+  std::shared_ptr<Utility::HashBasedGridSearcher<double> > forward_grid_searcher(
+       new Utility::StandardHashBasedGridSearcher<std::vector<double>,false>(
+                         d_energy_grid,
+                         d_energy_grid->front(),
+                         d_energy_grid->back(),
+                         d_energy_grid->size()/10 + 1 ) );
+
+  // Create the reaction
+  cross_section_evaluator.reset(
+    new MonteCarlo::VoidElectroatomicReaction<Utility::LogLog>(
+        d_energy_grid,
+        d_total_cross_section,
+        d_total_threshold_energy_index,
+        forward_grid_searcher ) );
+}
+
 // Evaluate the analog screened Rutherford elastic cross section
 void ElectronElasticDataEvaluator::evaluateScreenedRutherfordCrossSection(
   const std::vector<double>& total_elastic_cross_section,
   const std::vector<double>& cutoff_elastic_cross_section,
   std::vector<double>& rutherford_cross_section,
-  unsigned& rutherford_cross_section_threshold_energy_index )
+  unsigned& rutherford_cross_section_threshold_energy_index,
+  const double evaluation_tolerance ) const
 {
   // Make the the cross sections are valid
   testPrecondition( total_elastic_cross_section.size() > 0 );
@@ -497,7 +540,7 @@ void ElectronElasticDataEvaluator::evaluateScreenedRutherfordCrossSection(
     double relative_difference = raw_cross_section[i]/total_elastic_cross_section[i];
 
     // Check for roundoff error and reduce to zero if needed
-    if( relative_difference < 1.0e-6 )
+    if( relative_difference < evaluation_tolerance )
     {
       raw_cross_section[i] = 0.0;
 
@@ -516,7 +559,7 @@ void ElectronElasticDataEvaluator::evaluateScreenedRutherfordCrossSection(
 void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistribution(
   std::vector<double>& angular_energy_grid,
   std::map<double,std::vector<double> >& elastic_angle,
-  std::map<double,std::vector<double> >& elastic_pdf )
+  std::map<double,std::vector<double> >& elastic_pdf ) const
 {
   // Check if the max energy is the same as the angular energy grid max energy
   if( d_max_energy < d_angular_energy_grid.back() )
@@ -526,7 +569,7 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistribution(
     elastic_angle = d_elastic_angle;
 
     // Get the upper boundary of the max energy
-    std::vector<double>::iterator energy_bin =
+    auto energy_bin =
       Utility::Search::binaryUpperBound( d_angular_energy_grid.begin(),
                                          d_angular_energy_grid.end(),
                                          d_max_energy );
@@ -637,7 +680,8 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistribution(
       elastic_pdf[d_max_energy] = pdf;
 
       // Set new angular energy grid
-      angular_energy_grid.assign( d_angular_energy_grid.begin(), energy_bin );
+      std::vector<double> temp_grid( d_angular_energy_grid.begin(), energy_bin );
+      angular_energy_grid = temp_grid;
       angular_energy_grid.push_back( d_max_energy );
     }
     else
@@ -646,7 +690,8 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistribution(
       ++energy_bin;
 
       // Set new angular energy grid
-      angular_energy_grid.assign( d_angular_energy_grid.begin(), energy_bin );
+      std::vector<double> temp_grid( d_angular_energy_grid.begin(), energy_bin );
+      angular_energy_grid = temp_grid;
 
     }
 
@@ -672,7 +717,7 @@ void ElectronElasticDataEvaluator::evaluateMomentPreservingElasticData(
   const std::map<double,std::vector<double> >& elastic_pdf,
   std::vector<double>& cross_section_reduction,
   std::map<double,std::vector<double> >& moment_preserving_angles,
-  std::map<double,std::vector<double> >& moment_preserving_weights )
+  std::map<double,std::vector<double> >& moment_preserving_weights ) const
 {
   // Create the coupled elastic distribution (combined Cutoff and Screened Rutherford)
   std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
@@ -837,7 +882,7 @@ void ElectronElasticDataEvaluator::evaluateMomentPreservingElasticData(
   // iterate through all angular energy bins
   for ( unsigned i = 0; i < angular_energy_grid.size(); ++i )
   {
-    ElectronElasticDataEvaluator::calculateDiscreteAnglesAndWeights(
+    this->calculateDiscreteAnglesAndWeights(
         moments_evaluator,
         angular_energy_grid[i],
         discrete_angles,
@@ -877,7 +922,7 @@ void ElectronElasticDataEvaluator::calculateDiscreteAnglesAndWeights(
     const double& energy,
     std::vector<double>& discrete_angles,
     std::vector<double>& weights,
-    double& cross_section_reduction )
+    double& cross_section_reduction ) const
 {
   std::vector<Utility::long_float> legendre_moments;
   double precision = 1e-13;

@@ -13,16 +13,12 @@
 
 // FRENSIE Includes
 #include "DataGen_ACEAndENDLElectronPhotonRelaxationDataGenerator.hpp"
-#include "DataGen_MomentPreservingElectronDataGenerator.hpp"
 #include "DataGen_FormFactorEvaluator.hpp"
 #include "DataGen_ScatteringFunctionEvaluator.hpp"
 #include "DataGen_OccupationNumberEvaluator.hpp"
-#include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
-#include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "Data_SubshellType.hpp"
-#include "Utility_SloanRadauQuadrature.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_AtomicMomentumUnit.hpp"
 #include "Utility_InverseAngstromUnit.hpp"
@@ -128,7 +124,7 @@ void ACEAndENDLElectronPhotonRelaxationDataGenerator::setRelaxationData()
 {
   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
     this->getVolatileDataContainer();
-  
+
   // Extract the subshell ENDF designators
   Utility::ArrayView<const double> subshell_designators =
     d_ace_epr_data->extractSubshellENDFDesignators();
@@ -244,7 +240,7 @@ void ACEAndENDLElectronPhotonRelaxationDataGenerator::setComptonProfileData()
 {
   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
     this->getVolatileDataContainer();
-  
+
   const std::set<unsigned>& subshells = data_container.getSubshells();
 
   std::set<unsigned>::const_iterator subshell = subshells.begin();
@@ -314,7 +310,7 @@ void ACEAndENDLElectronPhotonRelaxationDataGenerator::setWallerHartreeScattering
 {
   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
     this->getVolatileDataContainer();
-  
+
   // Create the evaluator, initial recoil momentum grid
   std::shared_ptr<const ScatteringFunctionEvaluator> evaluator;
 
@@ -383,7 +379,7 @@ void ACEAndENDLElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicForm
 {
   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
     this->getVolatileDataContainer();
-  
+
   // Generate the form factor
   {
     Utility::ArrayView<const double> jcohe_block =
@@ -574,7 +570,7 @@ void ACEAndENDLElectronPhotonRelaxationDataGenerator::createHeatingNumbersOnUnio
                   std::vector<double>& cross_section ) const
 {
   unsigned threshold;
-  
+
   this->createCrossSectionOnUnionEnergyGrid( union_energy_grid,
                                              original_cross_section,
                                              cross_section,

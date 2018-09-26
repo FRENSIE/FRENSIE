@@ -786,13 +786,6 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointMomentPreservingElasticW
   return d_adjoint_moment_preserving_elastic_weights.find( incoming_adjoint_energy )->second;
 }
 
-// Return the ratio of the reduced cutoff cross section to the full cutoff
-const std::vector<double>&
-AdjointElectronPhotonRelaxationDataContainer::getReducedCutoffCrossSectionRatios() const
-{
-  return d_reduced_cutoff_cross_section_ratios;
-}
-
 // Return the electroionization energy grid for a subshell
 const std::vector<double>&
 AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationEnergyGrid(
@@ -2162,18 +2155,6 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointMomentPreservingEla
 {
   d_adjoint_moment_preserving_elastic_weights =
     adjoint_moment_preserving_elastic_weights;
-}
-
-// Set the moment preserving elastic weights for an incoming energy
-void AdjointElectronPhotonRelaxationDataContainer::setReducedCutoffCrossSectionRatios(
-            const std::vector<double>& reduced_cutoff_cross_section_ratios )
-{
-  // Make sure the ratios valid
-  testPrecondition( reduced_cutoff_cross_section_ratios.size() ==
-                    d_adjoint_cutoff_elastic_cross_section.size() );
-  testPrecondition( Data::valuesLessThanOne( reduced_cutoff_cross_section_ratios ) );
-
-  d_reduced_cutoff_cross_section_ratios = reduced_cutoff_cross_section_ratios;
 }
 
 // Set the electroionization energy grid for a subshell

@@ -231,12 +231,12 @@ FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
 {
   DataGen::ElectronElasticDataEvaluator evaluator( h_native_data_container );;
 
-  std::shared_ptr<const Utility::UnivariateDistribution> cutoff_evaluator;
+  std::shared_ptr<MonteCarlo::ElectroatomicReaction> cutoff_evaluator;
 
   evaluator.createCutoffCrossSectionEvaluator( cutoff_evaluator );
 
-  FRENSIE_CHECK_EQUAL( cutoff_evaluator->evaluate(1e-5), 2.74896e+8 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cutoff_evaluator->evaluate(1e5), 1.31176e-5, 1e-15 );
+  FRENSIE_CHECK_EQUAL( cutoff_evaluator->getCrossSection(1e-5), 2.74896e+8 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cutoff_evaluator->getCrossSection(1e5), 1.31176e-5, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -261,12 +261,12 @@ FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
 {
   DataGen::ElectronElasticDataEvaluator evaluator( h_native_data_container );
 
-  std::shared_ptr<const Utility::UnivariateDistribution> total_evaluator;
+  std::shared_ptr<MonteCarlo::ElectroatomicReaction> total_evaluator;
 
   evaluator.createTotalCrossSectionEvaluator( total_evaluator );
 
-  FRENSIE_CHECK_EQUAL( total_evaluator->evaluate(1e-5), 2.74896e+8 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( total_evaluator->evaluate(1e5), 1.29871e+04, 1e-15 );
+  FRENSIE_CHECK_EQUAL( total_evaluator->getCrossSection(1e-5), 2.74896e+8 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( total_evaluator->getCrossSection(1e5), 1.29871e+04, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -328,18 +328,15 @@ FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
   evaluator.setElectronTwoDInterpPolicy( MonteCarlo::LOGLOGLOG_INTERPOLATION );
   evaluator.setElectronTwoDGridPolicy( MonteCarlo::UNIT_BASE_CORRELATED_GRID );
 
-  std::vector<double> angular_grid, moment_preserving_cross_section_reduction;
+  std::vector<double> angular_grid, mp_cross_section_reduction;
   std::map<double,std::vector<double> > cutoff_elastic_angles, cutoff_elastic_pdf, moment_preserving_angles, moment_preserving_weights;
 
   // Create the coupled elastic distribution (combined Cutoff and Screened Rutherford)
-  std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
-        coupled_distribution;
-
   evaluator.evaluateElasticSecondaryDistribution(
       angular_grid,
       cutoff_elastic_angles,
       cutoff_elastic_pdf,
-      moment_preserving_cross_section_reduction,
+      mp_cross_section_reduction,
       moment_preserving_angles,
       moment_preserving_weights );
 
@@ -396,6 +393,10 @@ FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
   FRENSIE_CHECK_EQUAL( discrete_weights.front(), 1.0 );
   FRENSIE_CHECK_EQUAL( discrete_weights.back(), 1.0 );
   FRENSIE_CHECK_EQUAL( discrete_weights.size(), 1 );
+
+  FRENSIE_CHECK_EQUAL( mp_cross_section_reduction.front(), 7.50007499925003707e-01 );
+  FRENSIE_CHECK_EQUAL( mp_cross_section_reduction.back(), 9.95726637137201650e-12 );
+  FRENSIE_CHECK_EQUAL( mp_cross_section_reduction.size(), 16 );
 }
 
 //---------------------------------------------------------------------------//
@@ -416,9 +417,6 @@ FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
   std::map<double,std::vector<double> > cutoff_elastic_angles, cutoff_elastic_pdf, moment_preserving_angles, moment_preserving_weights;
 
   // Create the coupled elastic distribution (combined Cutoff and Screened Rutherford)
-  std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
-        coupled_distribution;
-
   evaluator.evaluateElasticSecondaryDistribution(
       angular_grid,
       cutoff_elastic_angles,
@@ -474,18 +472,15 @@ FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
   evaluator.setElectronTwoDGridPolicy( MonteCarlo::UNIT_BASE_CORRELATED_GRID );
   evaluator.setGenerateNewDistributionAtMaxEnergyOn();
 
-  std::vector<double> angular_grid, moment_preserving_cross_section_reduction;
+  std::vector<double> angular_grid, mp_cross_section_reduction;
   std::map<double,std::vector<double> > cutoff_elastic_angles, cutoff_elastic_pdf, moment_preserving_angles, moment_preserving_weights;
 
   // Create the coupled elastic distribution (combined Cutoff and Screened Rutherford)
-  std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
-        coupled_distribution;
-
   evaluator.evaluateElasticSecondaryDistribution(
       angular_grid,
       cutoff_elastic_angles,
       cutoff_elastic_pdf,
-      moment_preserving_cross_section_reduction,
+      mp_cross_section_reduction,
       moment_preserving_angles,
       moment_preserving_weights );
 
@@ -542,6 +537,10 @@ FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
   FRENSIE_CHECK_EQUAL( discrete_weights.front(), 1.0 );
   FRENSIE_CHECK_EQUAL( discrete_weights.back(), 1.0 );
   FRENSIE_CHECK_EQUAL( discrete_weights.size(), 1 );
+
+  FRENSIE_CHECK_EQUAL( mp_cross_section_reduction.front(), 7.50007499925003707e-01 );
+  FRENSIE_CHECK_EQUAL( mp_cross_section_reduction.back(), 4.935491711992172245e-05 );
+  FRENSIE_CHECK_EQUAL( mp_cross_section_reduction.size(), 12 );
 }
 
 //---------------------------------------------------------------------------//

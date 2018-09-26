@@ -127,18 +127,6 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the electron total elastic integrated cross section mode can be set
-FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-                   ElectronTotalElasticIntegratedCrossSectionModeOnOff )
-{
-  epr_data_container.setElectronTotalElasticIntegratedCrossSectionModeOnOff( true );
-  FRENSIE_CHECK( epr_data_container.isElectronTotalElasticIntegratedCrossSectionModeOn() );
-
-  epr_data_container.setElectronTotalElasticIntegratedCrossSectionModeOnOff( false );
-  FRENSIE_CHECK( !epr_data_container.isElectronTotalElasticIntegratedCrossSectionModeOn() );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the Cutoff Angle can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setCutoffAngleCosine )
 {
@@ -1541,7 +1529,6 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        1e-3 );
   FRENSIE_CHECK_EQUAL( epr_data_container.getPhotonThresholdEnergyNudgeFactor(),
                        1.01 );
-  FRENSIE_CHECK( !epr_data_container_copy.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getCutoffAngleCosine(),
                        0.9 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getNumberOfMomentPreservingAngles(),
@@ -1640,8 +1627,6 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        3u );
 
   // Electron Tests
-  FRENSIE_CHECK(
-    !epr_data_container_copy.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getCutoffAngleCosine(), 0.9 );
   FRENSIE_CHECK_EQUAL(
@@ -1771,8 +1756,6 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        1e-3 );
   FRENSIE_CHECK_EQUAL( epr_data_container.getPhotonThresholdEnergyNudgeFactor(),
                        1.01 );
-  FRENSIE_CHECK(
-    !epr_data_container_copy.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getCutoffAngleCosine(),
                        0.9 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getNumberOfMomentPreservingAngles(),
@@ -1871,8 +1854,6 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        3u );
 
   // Electron Tests
-  FRENSIE_CHECK(
-    !epr_data_container_copy.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getCutoffAngleCosine(), 0.9 );
   FRENSIE_CHECK_EQUAL(

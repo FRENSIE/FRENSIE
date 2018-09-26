@@ -384,9 +384,6 @@ public:
   const std::vector<double>& getAdjointMomentPreservingElasticWeights(
                            const double incoming_adjoint_energy ) const;
 
-  //! Return the ratio of the reduced cutoff cross section to the full cutoff
-  const std::vector<double>& getReducedCutoffCrossSectionRatios() const;
-
   //! Return the electroionization energy grid for the recoil electron spectrum for a subshell
   const std::vector<double>& getAdjointElectroionizationEnergyGrid(
                            const unsigned subshell ) const;
@@ -879,10 +876,6 @@ protected:
   void setAdjointMomentPreservingElasticWeights(
     const std::map<double,std::vector<double> >& adjoint_moment_preserving_elastic_weights );
 
-  //! Set the ratio of the reduced cutoff cross section to the full cutoff
-  void setReducedCutoffCrossSectionRatios(
-    const std::vector<double>& reduced_cutoff_cross_section_ratios );
-
   //! Set the electroionization energy grid for the recoil electron spectrum
   void setAdjointElectroionizationEnergyGrid(
     const unsigned subshell,
@@ -1317,9 +1310,6 @@ private:
 
   // The moment preserving elastic weights
   std::map<double,std::vector<double> > d_adjoint_moment_preserving_elastic_weights;
-
-  //! The ratio of the reduced cutoff cross section to the full cutoff
-  std::vector<double> d_reduced_cutoff_cross_section_ratios;
 
   // The electroionization energy grid (MeV) for a subshell
   std::map<unsigned,std::vector<double> > d_adjoint_electroionization_energy_grid;

@@ -56,7 +56,6 @@ FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
                        1e-3 );
   FRENSIE_CHECK_EQUAL( generator.getPhotonThresholdEnergyNudgeFactor(),
                        1.0001 );
-  FRENSIE_CHECK( !generator.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   FRENSIE_CHECK_EQUAL( generator.getCutoffAngleCosine(), 1.0 );
   FRENSIE_CHECK_EQUAL( generator.getNumberOfMomentPreservingAngles(), 0 );
   FRENSIE_CHECK_EQUAL( generator.getTabularEvaluationTolerance(), 1e-7 );
@@ -92,7 +91,6 @@ FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator, constructor )
                        1e-3 );
   FRENSIE_CHECK_EQUAL( generator.getPhotonThresholdEnergyNudgeFactor(),
                        1.0001 );
-  FRENSIE_CHECK( !generator.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   FRENSIE_CHECK_EQUAL( generator.getCutoffAngleCosine(), 1.0 );
   FRENSIE_CHECK_EQUAL( generator.getNumberOfMomentPreservingAngles(), 0 );
   FRENSIE_CHECK_EQUAL( generator.getTabularEvaluationTolerance(), 1e-7 );
@@ -217,21 +215,6 @@ FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the electron total elastic integrated cross section mode can be set
-FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
-                   setElectronTotalElasticIntegratedCrossSectionMode )
-{
-  DataGen::ENDLElectronPhotonRelaxationDataGenerator
-    generator( h_endl_data_container );
-
-  FRENSIE_CHECK( !generator.isElectronTotalElasticIntegratedCrossSectionModeOn() );
-  generator.setElectronTotalElasticIntegratedCrossSectionModeOn();
-  FRENSIE_CHECK( generator.isElectronTotalElasticIntegratedCrossSectionModeOn() );
-  generator.setElectronTotalElasticIntegratedCrossSectionModeOff();
-  FRENSIE_CHECK( !generator.isElectronTotalElasticIntegratedCrossSectionModeOn() );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the cutoff angle cosine can be set
 FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
                    setCutoffAngleCosine )
@@ -336,7 +319,6 @@ FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
     raw_data_generator->setOccupationNumberEvaluationTolerance( 1e-3 );
     raw_data_generator->setSubshellIncoherentEvaluationTolerance( 1e-3 );
     raw_data_generator->setPhotonThresholdEnergyNudgeFactor( 1.0001 );
-    raw_data_generator->setElectronTotalElasticIntegratedCrossSectionModeOn();
     raw_data_generator->setCutoffAngleCosine( 0.9 );
     raw_data_generator->setNumberOfMomentPreservingAngles( 1 );
     raw_data_generator->setTabularEvaluationTolerance( 1e-7 );
@@ -369,7 +351,6 @@ FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
     data_container.getSubshellIncoherentEvaluationTolerance(), 1e-3 );
   FRENSIE_CHECK_EQUAL(
     data_container.getPhotonThresholdEnergyNudgeFactor(), 1.0001 );
-  FRENSIE_CHECK( data_container.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   FRENSIE_CHECK_EQUAL( data_container.getCutoffAngleCosine(), 0.9 );
   FRENSIE_CHECK_EQUAL( data_container.getNumberOfMomentPreservingAngles(), 1 );
   FRENSIE_CHECK_EQUAL( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
@@ -671,12 +652,12 @@ FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
   threshold =
     data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
 
-  FRENSIE_CHECK_EQUAL( threshold, 63 );
+  FRENSIE_CHECK_EQUAL( threshold, 179 );
 
   cross_section = data_container.getScreenedRutherfordElasticCrossSection();
 
-  FRENSIE_CHECK_EQUAL( cross_section.front(), 5.70357400551438332e+00 );
-  FRENSIE_CHECK_EQUAL( cross_section.back(), 1.29045336560270462e+04);
+  FRENSIE_CHECK_EQUAL( cross_section.front(), 2.574552047073666472e+00 );
+  FRENSIE_CHECK_EQUAL( cross_section.back(), 1.298709998688240012e+04 );
   FRENSIE_CHECK_EQUAL( cross_section.size(), 343-threshold );
 
   FRENSIE_CHECK_EQUAL( data_container.getCutoffElasticInterpPolicy(), "Lin-Lin" );
@@ -721,15 +702,15 @@ FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
   std::vector<double> discrete_angles =
     data_container.getMomentPreservingElasticDiscreteAngles( 1.0e-5 );
 
-  FRENSIE_CHECK_EQUAL( discrete_angles.front(), 9.33333333326666792e-01 );
-  FRENSIE_CHECK_EQUAL( discrete_angles.back(), 9.33333333326666792e-01 );
+  FRENSIE_CHECK_EQUAL( discrete_angles.front(), 9.333333333266671250e-01 );
+  FRENSIE_CHECK_EQUAL( discrete_angles.back(), 9.333333333266671250e-01 );
   FRENSIE_CHECK_EQUAL( discrete_angles.size(), 1 );
 
   discrete_angles =
     data_container.getMomentPreservingElasticDiscreteAngles( 1.0e+5 );
 
-  FRENSIE_CHECK_EQUAL( discrete_angles.front(), 9.96835060894997071e-01 );
-  FRENSIE_CHECK_EQUAL( discrete_angles.back(), 9.96835060894997071e-01 );
+  FRENSIE_CHECK_EQUAL( discrete_angles.front(), 9.968477432556352991e-01 );
+  FRENSIE_CHECK_EQUAL( discrete_angles.back(), 9.968477432556352991e-01 );
   FRENSIE_CHECK_EQUAL( discrete_angles.size(), 1 );
 
   std::vector<double> discrete_weights =
@@ -880,9 +861,9 @@ FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
   // Check the total electron cross section data
   cross_section = data_container.getTotalElectronCrossSection();
 
-  FRENSIE_CHECK_EQUAL( cross_section.front(), 2.74896167231337309e+08 );
+  FRENSIE_CHECK_EQUAL( cross_section.front(), 2.748960297832000256e+08 );
 
-  FRENSIE_CHECK_EQUAL( cross_section.back(), 1.77239524290144647e+05 );
+  FRENSIE_CHECK_EQUAL( cross_section.back(), 1.773220906210000103e+05 );
 
   FRENSIE_CHECK_EQUAL( cross_section.size(), 343 );
 
@@ -909,7 +890,6 @@ FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
     raw_data_generator->setOccupationNumberEvaluationTolerance( 1e-3 );
     raw_data_generator->setSubshellIncoherentEvaluationTolerance( 1e-3 );
     raw_data_generator->setPhotonThresholdEnergyNudgeFactor( 1.0001 );
-    raw_data_generator->setElectronTotalElasticIntegratedCrossSectionModeOff();
     raw_data_generator->setCutoffAngleCosine( 0.9 );
     raw_data_generator->setNumberOfMomentPreservingAngles( 1 );
     raw_data_generator->setTabularEvaluationTolerance( 1e-7 );
@@ -943,7 +923,6 @@ FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
     data_container.getSubshellIncoherentEvaluationTolerance(), 1e-3 );
   FRENSIE_CHECK_EQUAL(
     data_container.getPhotonThresholdEnergyNudgeFactor(), 1.0001 );
-  FRENSIE_CHECK( !data_container.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   FRENSIE_CHECK_EQUAL( data_container.getCutoffAngleCosine(), 0.9 );
   FRENSIE_CHECK_EQUAL( data_container.getNumberOfMomentPreservingAngles(), 1 );
   FRENSIE_CHECK_EQUAL( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
@@ -1466,362 +1445,6 @@ FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
   FRENSIE_CHECK_EQUAL( cross_section.size(), 343 );
 
   data_container.saveToFile( "test_h_epr_endl.xml", true );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a data container can be populated
-FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
-                   repopulateMomentPreservingData_h )
-{
-  // Create the native data file container
-  std::shared_ptr<Data::ElectronPhotonRelaxationDataContainer> data_container(
-      new Data::ElectronPhotonRelaxationDataContainer(
-            "test_h_epr_endl.xml" ) );
-
-  FRENSIE_CHECK( data_container->hasMomentPreservingData() );
-
-  double cutoff_angle_cosine = 1.0;
-  double tabular_evaluation_tol = 1e-7;
-  unsigned number_of_discrete_angles = 0;
-  MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LINLINLOG_INTERPOLATION;
-
-  DataGen::ENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
-                                                "test_h_epr_endl.xml",
-                                                cutoff_angle_cosine,
-                                                tabular_evaluation_tol,
-                                                number_of_discrete_angles,
-                                                two_d_interp );
-
-  data_container.reset(
-      new Data::ElectronPhotonRelaxationDataContainer(
-            "test_h_epr_endl.xml" ) );
-
-  FRENSIE_CHECK( !data_container->hasMomentPreservingData() );
-
-  cutoff_angle_cosine = 0.9;
-  number_of_discrete_angles = 2;
-
-  DataGen::ENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
-                                                "test_h_epr_endl.xml",
-                                                cutoff_angle_cosine,
-                                                tabular_evaluation_tol,
-                                                number_of_discrete_angles,
-                                                two_d_interp );
-
-  data_container.reset(
-      new Data::ElectronPhotonRelaxationDataContainer(
-            "test_h_epr_endl.xml" ) );
-
-  // Check the table settings data
-  FRENSIE_CHECK_EQUAL( data_container->getAtomicNumber(), 1 );
-  FRENSIE_CHECK_EQUAL( data_container->getMinElectronEnergy(), 1.0e-5 );
-  FRENSIE_CHECK_EQUAL( data_container->getMaxElectronEnergy(), 1.0e+5 );
-  FRENSIE_CHECK( !data_container->isElectronTotalElasticIntegratedCrossSectionModeOn() );
-  FRENSIE_CHECK_EQUAL( data_container->getCutoffAngleCosine(), 0.9 );
-  FRENSIE_CHECK_EQUAL( data_container->getNumberOfMomentPreservingAngles(), 2 );
-  FRENSIE_CHECK_EQUAL( data_container->getElectronTabularEvaluationTolerance(), 1e-7 );
-  FRENSIE_CHECK_EQUAL( data_container->getElectronTwoDInterpPolicy(), "Lin-Lin-Log" );
-  FRENSIE_CHECK_EQUAL( data_container->getElectronTwoDGridPolicy(), "Unit-base Correlated" );
-  FRENSIE_CHECK_EQUAL( data_container->getElectronGridConvergenceTolerance(), 0.001 );
-  FRENSIE_CHECK_EQUAL(
-    data_container->getElectronGridAbsoluteDifferenceTolerance(), 1e-80 );
-  FRENSIE_CHECK_EQUAL( data_container->getElectronGridDistanceTolerance(), 1e-20 );
-
-  // Check the electron data
-  FRENSIE_CHECK_EQUAL( data_container->getElectronCrossSectionInterpPolicy(), "Log-Log" );
-
-  std::vector<double> energy_grid = data_container->getElectronEnergyGrid();
-  FRENSIE_CHECK_EQUAL( energy_grid.front(), 1.0e-5 );
-  FRENSIE_CHECK_EQUAL( energy_grid.back(), 1.0e+5 );
-  FRENSIE_CHECK_EQUAL( energy_grid.size(), 343 );
-
-  // Check the elastic data
-  FRENSIE_CHECK( data_container->hasMomentPreservingData() );
-
-  std::vector<double> discrete_angles =
-    data_container->getMomentPreservingElasticDiscreteAngles( 1.0e-5 );
-
-  FRENSIE_CHECK_EQUAL( discrete_angles.front(), 9.15505102565478457e-01 );
-  FRENSIE_CHECK_EQUAL( discrete_angles.back(), 9.64494897399291506e-01 );
-  FRENSIE_CHECK_EQUAL( discrete_angles.size(), 2 );
-
-  discrete_angles =
-    data_container->getMomentPreservingElasticDiscreteAngles( 1.0e+5 );
-
-  FRENSIE_CHECK_EQUAL( discrete_angles.front(), 9.33299181282832291e-01 );
-  FRENSIE_CHECK_EQUAL( discrete_angles.back(), 9.99151923494383754e-01 );
-  FRENSIE_CHECK_EQUAL( discrete_angles.size(), 2 );
-
-  std::vector<double> discrete_weights =
-    data_container->getMomentPreservingElasticWeights( 1.0e-5 );
-
-  FRENSIE_CHECK_EQUAL( discrete_weights.front(), 4.23453445543248319e-01 );
-  FRENSIE_CHECK_EQUAL( discrete_weights.back(), 5.76546554456751736e-01 );
-  FRENSIE_CHECK_EQUAL( discrete_weights.size(), 2 );
-
-  discrete_weights =
-    data_container->getMomentPreservingElasticWeights( 1.0e+5 );
-
-  FRENSIE_CHECK_EQUAL( discrete_weights.front(), 4.60802066127450477e-04 );
-  FRENSIE_CHECK_EQUAL( discrete_weights.back(), 9.99539197933872470e-01 );
-  FRENSIE_CHECK_EQUAL( discrete_weights.size(), 2 );
-
-  unsigned threshold =
-    data_container->getCutoffElasticCrossSectionThresholdEnergyIndex();
-
-  FRENSIE_CHECK_EQUAL( threshold, 0 );
-
-  std::vector<double> cross_section =
-    data_container->getCutoffElasticCrossSection();
-
-  FRENSIE_CHECK_EQUAL( cross_section.front(), 2.74896e+8 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section.back(), 1.31176e-5, 1e-15 );
-  FRENSIE_CHECK_EQUAL( cross_section.size(), 343-threshold );
-
-  threshold =
-    data_container->getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
-
-  FRENSIE_CHECK_EQUAL( threshold, 179 );
-
-  cross_section =
-    data_container->getScreenedRutherfordElasticCrossSection();
-
-//  FRENSIE_CHECK_EQUAL( cross_section.front(), 2.5745520470700284932 );
-//! \todo double check what the front cross section should be
-  FRENSIE_CHECK_EQUAL( cross_section.front(), 2.57455204707366647 );
-  FRENSIE_CHECK_EQUAL( cross_section.back(), 1.29871e+4-1.31176e-5 );
-  FRENSIE_CHECK_EQUAL( cross_section.size(), 343-threshold );
-
-  FRENSIE_CHECK_EQUAL( data_container->getCutoffElasticInterpPolicy(), "Lin-Lin" );
-
-  std::vector<double> angular_grid =
-    data_container->getElasticAngularEnergyGrid();
-
-  FRENSIE_CHECK_EQUAL( angular_grid.front(), 1.0e-5 );
-  FRENSIE_CHECK_EQUAL( angular_grid.back(), 1.0e+5 );
-  FRENSIE_CHECK_EQUAL( angular_grid.size(), 16 );
-
-  std::vector<double> elastic_angles =
-    data_container->getCutoffElasticAngles(1.0e-5);
-
-  FRENSIE_CHECK_EQUAL( elastic_angles.front(), -1.0 );
-  FRENSIE_CHECK_EQUAL( elastic_angles.back(), 0.999999 );
-  FRENSIE_CHECK_EQUAL( elastic_angles.size(), 2 );
-
-  elastic_angles =
-    data_container->getCutoffElasticAngles(1.0e+5);
-
-  FRENSIE_CHECK_EQUAL( elastic_angles.front(), -1.0 );
-  FRENSIE_CHECK_EQUAL( elastic_angles.back(), 0.999999 );
-  FRENSIE_CHECK_EQUAL( elastic_angles.size(), 96 );
-
-  std::vector<double> elastic_pdf =
-    data_container->getCutoffElasticPDF(1.0e-5);
-
-  FRENSIE_CHECK_EQUAL( elastic_pdf.front(), 0.5 );
-  FRENSIE_CHECK_EQUAL( elastic_pdf.back(), 0.5 );
-  FRENSIE_CHECK_EQUAL( elastic_pdf.size(), 2 );
-
-  elastic_pdf =
-    data_container->getCutoffElasticPDF(1.0e+5);
-
-  FRENSIE_CHECK_EQUAL( elastic_pdf.front(), 6.25670e-13 );
-  FRENSIE_CHECK_EQUAL( elastic_pdf.back(), 9.86945e+5 );
-  FRENSIE_CHECK_EQUAL( elastic_pdf.size(), 96 );
-
-  // Check the total electron cross section data
-  cross_section = data_container->getTotalElectronCrossSection();
-
-  FRENSIE_CHECK_EQUAL( cross_section.front(), 2.7489602978320003e+08 );
-
-  FRENSIE_CHECK_EQUAL( cross_section.back(), 1.7732209062100001e+05 );
-
-  FRENSIE_CHECK_EQUAL( cross_section.size(), 343 );
-
-  data_container->saveToFile( "test_h_epr_endl.xml", true );
-
-  Data::ElectronPhotonRelaxationDataContainer
-    data_container_copy( "test_h_epr_endl.xml" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a data container can be populated
-FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
-                   repopulateElectronElasticData_h )
-{
-  // Create the native data file container
-  std::shared_ptr<Data::ElectronPhotonRelaxationDataContainer> data_container(
-      new Data::ElectronPhotonRelaxationDataContainer(
-            "test_h_epr_endl.xml" ) );
-
-  FRENSIE_CHECK( data_container->hasMomentPreservingData() );
-
-  double max_energy = 1e5;
-  double cutoff_angle_cosine = 1.0;
-  double tabular_evaluation_tol = 1e-7;
-  unsigned number_of_discrete_angles = 0;
-  MonteCarlo::TwoDGridType two_d_grid = MonteCarlo::CORRELATED_GRID;
-  MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LINLINLIN_INTERPOLATION;
-
-
-  DataGen::ENDLElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
-                                                "test_h_epr_endl.xml",
-                                                max_energy,
-                                                cutoff_angle_cosine,
-                                                tabular_evaluation_tol,
-                                                number_of_discrete_angles,
-                                                two_d_grid,
-                                                two_d_interp );
-
-  data_container.reset(
-      new Data::ElectronPhotonRelaxationDataContainer(
-            "test_h_epr_endl.xml" ) );
-
-  FRENSIE_CHECK( !data_container->hasMomentPreservingData() );
-
-  max_energy = 20.0;
-  cutoff_angle_cosine = 0.9;
-  number_of_discrete_angles = 2;
-  two_d_grid = MonteCarlo::UNIT_BASE_CORRELATED_GRID;
-  two_d_interp = MonteCarlo::LOGLOGLOG_INTERPOLATION;
-
-  DataGen::ENDLElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
-                                                "test_h_epr_endl.xml",
-                                                max_energy,
-                                                cutoff_angle_cosine,
-                                                tabular_evaluation_tol,
-                                                number_of_discrete_angles,
-                                                two_d_grid,
-                                                two_d_interp );
-
-  data_container.reset(
-      new Data::ElectronPhotonRelaxationDataContainer(
-            "test_h_epr_endl.xml" ) );
-
-  // Check the table settings data
-  FRENSIE_CHECK_EQUAL( data_container->getAtomicNumber(), 1 );
-  FRENSIE_CHECK_EQUAL( data_container->getMinElectronEnergy(), 1.0e-5 );
-  FRENSIE_CHECK_EQUAL( data_container->getMaxElectronEnergy(), 1.0e+5 );
-  FRENSIE_CHECK( !data_container->isElectronTotalElasticIntegratedCrossSectionModeOn() );
-  FRENSIE_CHECK_EQUAL( data_container->getCutoffAngleCosine(), 0.9 );
-  FRENSIE_CHECK_EQUAL( data_container->getNumberOfMomentPreservingAngles(), 2 );
-  FRENSIE_CHECK_EQUAL( data_container->getElectronTabularEvaluationTolerance(), 1e-7 );
-  FRENSIE_CHECK_EQUAL( data_container->getElectronTwoDInterpPolicy(), "Log-Log-Log" );
-  FRENSIE_CHECK_EQUAL( data_container->getElectronTwoDGridPolicy(), "Unit-base Correlated" );
-  FRENSIE_CHECK_EQUAL( data_container->getElectronGridConvergenceTolerance(), 0.001 );
-  FRENSIE_CHECK_EQUAL(
-    data_container->getElectronGridAbsoluteDifferenceTolerance(), 1e-80 );
-  FRENSIE_CHECK_EQUAL( data_container->getElectronGridDistanceTolerance(), 1e-20 );
-
-  // Check the electron data
-  FRENSIE_CHECK_EQUAL( data_container->getElectronCrossSectionInterpPolicy(), "Log-Log" );
-
-  std::vector<double> energy_grid = data_container->getElectronEnergyGrid();
-  FRENSIE_CHECK_EQUAL( energy_grid.front(), 1.0e-5 );
-  FRENSIE_CHECK_EQUAL( energy_grid.back(), 1.0e+5 );
-  FRENSIE_CHECK_EQUAL( energy_grid.size(), 343 );
-
-  // Check the elastic data
-  FRENSIE_CHECK( data_container->hasMomentPreservingData() );
-
-  std::vector<double> discrete_angles =
-    data_container->getMomentPreservingElasticDiscreteAngles( 1.0e-5 );
-
-  FRENSIE_CHECK_EQUAL( discrete_angles.front(), 9.15505102565478457e-01 );
-  FRENSIE_CHECK_EQUAL( discrete_angles.back(), 9.64494897399291506e-01 );
-  FRENSIE_CHECK_EQUAL( discrete_angles.size(), 2 );
-
-  discrete_angles =
-    data_container->getMomentPreservingElasticDiscreteAngles( 20.0 );
-
-  FRENSIE_CHECK_EQUAL( discrete_angles.front(), 9.328875089566157630e-01 );
-  FRENSIE_CHECK_EQUAL( discrete_angles.back(), 9.980061660203300988e-01 );
-  FRENSIE_CHECK_EQUAL( discrete_angles.size(), 2 );
-
-  std::vector<double> discrete_weights =
-    data_container->getMomentPreservingElasticWeights( 1.0e-5 );
-
-  FRENSIE_CHECK_EQUAL( discrete_weights.front(), 4.23453445543248319e-01 );
-  FRENSIE_CHECK_EQUAL( discrete_weights.back(), 5.76546554456751736e-01 );
-  FRENSIE_CHECK_EQUAL( discrete_weights.size(), 2 );
-
-  discrete_weights = data_container->getMomentPreservingElasticWeights( 20.0 );
-
-  FRENSIE_CHECK_EQUAL( discrete_weights.front(), 2.394582285312764434e-03 );
-  FRENSIE_CHECK_EQUAL( discrete_weights.back(), 9.976054177146872481e-01 );
-  FRENSIE_CHECK_EQUAL( discrete_weights.size(), 2 );
-
-  unsigned threshold = data_container->getCutoffElasticCrossSectionThresholdEnergyIndex();
-
-  FRENSIE_CHECK_EQUAL( threshold, 0 );
-
-  std::vector<double> cross_section = data_container->getCutoffElasticCrossSection();
-
-  FRENSIE_CHECK_EQUAL( cross_section.front(), 2.74896e+8 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section.back(), 1.31176e-5, 1e-15 );
-  FRENSIE_CHECK_EQUAL( cross_section.size(), 343-threshold );
-
-  threshold =
-    data_container->getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
-
-  FRENSIE_CHECK_EQUAL( threshold, 179 );
-
-  cross_section =
-    data_container->getScreenedRutherfordElasticCrossSection();
-
-//  FRENSIE_CHECK_EQUAL( cross_section.front(), 2.5745520470700284932 );
-//! \todo double check what the front cross section should be
-  FRENSIE_CHECK_EQUAL( cross_section.front(), 2.57455204707366647 );
-  FRENSIE_CHECK_EQUAL( cross_section.back(), 1.29871e+4-1.31176e-5 );
-  FRENSIE_CHECK_EQUAL( cross_section.size(), 343-threshold );
-
-  FRENSIE_CHECK_EQUAL( data_container->getCutoffElasticInterpPolicy(), "Lin-Lin" );
-
-  std::vector<double> angular_grid =
-    data_container->getElasticAngularEnergyGrid();
-
-  FRENSIE_CHECK_EQUAL( angular_grid.front(), 1.0e-5 );
-  FRENSIE_CHECK_EQUAL( angular_grid.back(), 20.0 );
-  FRENSIE_CHECK_EQUAL( angular_grid.size(), 12 );
-
-  std::vector<double> elastic_angles =
-    data_container->getCutoffElasticAngles(1.0e-5);
-
-  FRENSIE_CHECK_EQUAL( elastic_angles.front(), -1.0 );
-  FRENSIE_CHECK_EQUAL( elastic_angles.back(), 0.999999 );
-  FRENSIE_CHECK_EQUAL( elastic_angles.size(), 2 );
-
-  elastic_angles = data_container->getCutoffElasticAngles(20.0);
-
-  FRENSIE_CHECK_EQUAL( elastic_angles.front(), -1.0 );
-  FRENSIE_CHECK_EQUAL( elastic_angles.back(), 0.999999 );
-  FRENSIE_CHECK_EQUAL( elastic_angles.size(), 95 );
-
-  std::vector<double> elastic_pdf = data_container->getCutoffElasticPDF(1.0e-5);
-
-  FRENSIE_CHECK_EQUAL( elastic_pdf.front(), 0.5 );
-  FRENSIE_CHECK_EQUAL( elastic_pdf.back(), 0.5 );
-  FRENSIE_CHECK_EQUAL( elastic_pdf.size(), 2 );
-
-  elastic_pdf = data_container->getCutoffElasticPDF(20.0);
-
-  FRENSIE_CHECK_EQUAL( elastic_pdf.front(), 1.48894126477090926e-10 );
-  FRENSIE_CHECK_EQUAL( elastic_pdf.back(), 9.60861506006574957e+05 );
-  FRENSIE_CHECK_EQUAL( elastic_pdf.size(), 95 );
-
-  // Check the total electron cross section data
-  cross_section = data_container->getTotalElectronCrossSection();
-
-  FRENSIE_CHECK_EQUAL( cross_section.front(), 2.7489602978320003e+08 );
-
-  FRENSIE_CHECK_EQUAL( cross_section.back(), 1.7732209062100001e+05 );
-
-  FRENSIE_CHECK_EQUAL( cross_section.size(), 343 );
-
-  data_container->saveToFile( "test_h_epr.txt", true );
-
-  Data::ElectronPhotonRelaxationDataContainer
-    data_container_copy( "test_h_epr.txt" );
 }
 
 //---------------------------------------------------------------------------//

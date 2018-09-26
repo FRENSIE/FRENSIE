@@ -39,7 +39,6 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, occupation_number_evaluation_tolerance );
   DATA_MAKE_NVP_DEFAULT( ar, subshell_incoherent_evaluation_tolerance );
   DATA_MAKE_NVP_DEFAULT( ar, photon_threshold_energy_nudge_factor );
-  DATA_MAKE_NVP_DEFAULT( ar, electron_total_elastic_integrated_cross_section_mode_on );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_angle_cosine );
   DATA_MAKE_NVP_DEFAULT( ar, number_of_moment_preserving_angles );
   DATA_MAKE_NVP_DEFAULT( ar, electron_tabular_evaluation_tol );
@@ -146,7 +145,6 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, occupation_number_evaluation_tolerance );
   DATA_MAKE_NVP_DEFAULT( ar, subshell_incoherent_evaluation_tolerance );
   DATA_MAKE_NVP_DEFAULT( ar, photon_threshold_energy_nudge_factor );
-  DATA_MAKE_NVP_DEFAULT( ar, electron_total_elastic_integrated_cross_section_mode_on );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_angle_cosine );
   DATA_MAKE_NVP_DEFAULT( ar, number_of_moment_preserving_angles );
   DATA_MAKE_NVP_DEFAULT( ar, electron_tabular_evaluation_tol );

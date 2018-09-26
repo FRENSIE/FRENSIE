@@ -16,9 +16,8 @@
 
 // FRENSIE Includes
 #include "DataGen_ElectronPhotonRelaxationDataGenerator.hpp"
-#include "DataGen_ElasticElectronMomentsEvaluator.hpp"
+#include "DataGen_ElectronElasticDataEvaluator.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
-#include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 #include "Data_ENDLDataContainer.hpp"
 #include "Utility_ArrayView.hpp"
 #include "Utility_UnivariateDistribution.hpp"
@@ -57,27 +56,6 @@ public:
 
   //! Populate the electron-photon-relaxation data container
   void populateEPRDataContainer() final override;
-
-  //! Repopulate the electron elastic data
-  static void repopulateElectronElasticData(
-            const boost::filesystem::path& file_name_with_path,
-            const double max_electron_energy = 20.0,
-            const double cutoff_angle_cosine = 0.9,
-            const double tabular_evaluation_tol = 1e-7,
-            const unsigned number_of_moment_preserving_angles = 1,
-            const MonteCarlo::TwoDGridType two_d_grid =
-            MonteCarlo::UNIT_BASE_CORRELATED_GRID,
-            const MonteCarlo::TwoDInterpolationType two_d_interp =
-            MonteCarlo::LOGLOGLOG_INTERPOLATION );
-
-  //! Repopulate the electron moment preserving data
-  static void repopulateMomentPreservingData(
-            const boost::filesystem::path& file_name_with_path,
-            const double cutoff_angle_cosine = 0.9,
-            const double tabular_evaluation_tol = 1e-7,
-            const unsigned number_of_moment_preserving_angles = 1,
-            const MonteCarlo::TwoDInterpolationType two_d_interp =
-            MonteCarlo::LOGLOGLOG_INTERPOLATION );
 
 protected:
 
@@ -191,14 +169,7 @@ private:
                            std::vector<double>& half_profile ) const;
 
   // Set the electron cross section union energy grid
-  void setElectronCrossSectionsData();
-
-  // Set the moment preserving data
-  static void setMomentPreservingData(
-        Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
-        const std::vector<double>& elastic_energy_grid,
-        const double tabular_evaluation_tol,
-        const MonteCarlo::TwoDInterpolationType two_d_interp );
+  void setElectronCrossSectionsData( const ElectronElasticDataEvaluator& elastic_evaluator );
 
   // Extract electron cross sections
   template<typename InterpPolicy>
@@ -255,28 +226,6 @@ private:
                               const std::vector<double>& energy_grid,
                               const std::vector<double>& cross_section,
                               std::vector<double>& total_cross_section ) const;
-
-  // Calculate the elastic angular distribution for the angle cosine
-  void calculateElasticAngleCosine(
-    const std::vector<double>& raw_elastic_angle,
-    const std::vector<double>& raw_elastic_pdf,
-    std::vector<double>& elastic_angle,
-    std::vector<double>& elastic_pdf ) const;
-
-  // Calculate the elastic moment preserving discrete angle cosines and weights
-  static void calculateDiscreteAnglesAndWeights(
-    const std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
-    const double& energy,
-    const int& number_of_moment_preserving_angles,
-    std::vector<double>& discrete_angles,
-    std::vector<double>& weights,
-    double& cross_section_reduction );
-
-  // Calculate the electron total elastic cross section
-  void calculateElectronTotalElasticCrossSection(
-                        std::shared_ptr<const Utility::UnivariateDistribution>&
-                        total_elastic_cross_section,
-                        const std::vector<double>& raw_energy_grid );
 
   // The if a value is not equal to zero
   static bool notEqualZero( const double value );

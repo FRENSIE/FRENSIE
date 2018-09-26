@@ -17,6 +17,7 @@
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "Data_ENDLDataContainer.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
+#include "MonteCarlo_VoidElectroatomicReaction.hpp"
 #include "Utility_ArrayView.hpp"
 #include "Utility_UnivariateDistribution.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
@@ -134,22 +135,31 @@ public:
     std::map<double,std::vector<double> >& elastic_pdf,
     std::vector<double>& moment_preserving_cross_section_reduction,
     std::map<double,std::vector<double> >& moment_preserving_angles,
-    std::map<double,std::vector<double> >& moment_preserving_weights );
+    std::map<double,std::vector<double> >& moment_preserving_weights ) const;
 
   //! Create the analog cutoff elastic cross section evaluator
   void createCutoffCrossSectionEvaluator(
-    std::shared_ptr<const Utility::UnivariateDistribution>& cross_section_evaluator );
+    std::shared_ptr<const Utility::UnivariateDistribution>& cross_section_evaluator ) const;
+
+  //! Create the analog cutoff elastic cross section evaluator
+  void createCutoffCrossSectionEvaluator(
+    std::shared_ptr<MonteCarlo::ElectroatomicReaction>& cross_section_evaluator ) const;
 
   //! Create the analog total elastic cross section evaluator
   void createTotalCrossSectionEvaluator(
-    std::shared_ptr<const Utility::UnivariateDistribution>& cross_section_evaluator );
+    std::shared_ptr<const Utility::UnivariateDistribution>& cross_section_evaluator ) const;
+
+  //! Create the analog total elastic cross section evaluator
+  void createTotalCrossSectionEvaluator(
+    std::shared_ptr<MonteCarlo::ElectroatomicReaction>& cross_section_evaluator ) const;
 
   //! Evaluate the analog screened Rutherford elastic cross section
   void evaluateScreenedRutherfordCrossSection(
     const std::vector<double>& total_elastic_cross_section,
     const std::vector<double>& cutoff_elastic_cross_section,
     std::vector<double>& rutherford_cross_section,
-    unsigned& rutherford_cross_section_threshold_energy_index );
+    unsigned& rutherford_cross_section_threshold_energy_index,
+    const double evaluation_tolerance = 1e-6 ) const;
 
 protected:
 
@@ -157,7 +167,7 @@ protected:
   void evaluateAnalogElasticSecondaryDistribution(
     std::vector<double>& angular_energy_grid,
     std::map<double,std::vector<double> >& elastic_angle,
-    std::map<double,std::vector<double> >& elastic_pdf );
+    std::map<double,std::vector<double> >& elastic_pdf ) const;
 
   // Evaluate the electron moment preserving elastic secondary distribution
   void evaluateMomentPreservingElasticData(
@@ -166,7 +176,7 @@ protected:
     const std::map<double,std::vector<double> >& elastic_pdf,
     std::vector<double>& cross_section_reduction,
     std::map<double,std::vector<double> >& moment_preserving_angles,
-    std::map<double,std::vector<double> >& moment_preserving_weights );
+    std::map<double,std::vector<double> >& moment_preserving_weights ) const;
 
 private:
 
@@ -176,7 +186,7 @@ private:
     const double& energy,
     std::vector<double>& discrete_angles,
     std::vector<double>& weights,
-    double& cross_section_reduction );
+    double& cross_section_reduction ) const;
 
   // Calculate the elastic angular distribution for the angle cosine
   void calculateElasticAngleCosine(

@@ -148,12 +148,6 @@ double ElectronPhotonRelaxationDataContainer::getPhotonThresholdEnergyNudgeFacto
   return d_photon_threshold_energy_nudge_factor;
 }
 
-// Return if electron total elastic integrated cross section mode is on
-bool ElectronPhotonRelaxationDataContainer::isElectronTotalElasticIntegratedCrossSectionModeOn() const
-{
-  return d_electron_total_elastic_integrated_cross_section_mode_on;
-}
-
 // Return the elastic cutoff angle
 double ElectronPhotonRelaxationDataContainer::getCutoffAngleCosine() const
 {
@@ -1025,14 +1019,6 @@ void ElectronPhotonRelaxationDataContainer::setPhotonThresholdEnergyNudgeFactor(
   d_photon_threshold_energy_nudge_factor = nudge_factor;
 }
 
-// Set the electron total elastic integrated cross section mode
-void ElectronPhotonRelaxationDataContainer::setElectronTotalElasticIntegratedCrossSectionModeOnOff(
-    const bool electron_total_elastic_integrated_cross_section_mode_on )
-{
-  d_electron_total_elastic_integrated_cross_section_mode_on =
-    electron_total_elastic_integrated_cross_section_mode_on;
-}
-
 // Set the elastic cutoff angle
 void ElectronPhotonRelaxationDataContainer::setCutoffAngleCosine(
                          const double cutoff_angle_cosine )
@@ -1726,33 +1712,34 @@ void ElectronPhotonRelaxationDataContainer::setCutoffElasticPDF(
   d_cutoff_elastic_pdf = cutoff_elastic_pdf;
 }
 
-//// Set the screened Rutherford elastic normalization constant
-//void ElectronPhotonRelaxationDataContainer::setScreenedRutherfordNormalizationConstant(
-//        const std::vector<double>& screened_rutherford_normalization_constant )
-//{
-//  // Make sure the screened_rutherford_normalization_constants are valid
-//  testPrecondition( std::find_if( screened_rutherford_normalization_constant.begin(),
-//                                  screened_rutherford_normalization_constant.end(),
-//                                  isValueLessThanZero ) ==
-//                    screened_rutherford_normalization_constant.end() );
-
-//  d_screened_rutherford_normalization_constant =
-//    screened_rutherford_normalization_constant;
-//}
-
-//// Set Moliere's screening constant
-//void ElectronPhotonRelaxationDataContainer::setMoliereScreeningConstant(
-//             const std::vector<double>& moliere_screening_constant )
-//{
-//  d_moliere_screening_constant = moliere_screening_constant;
-//}
-
 // Clear all the moment preserving data
 void ElectronPhotonRelaxationDataContainer::clearMomentPreservingData()
 {
   d_moment_preserving_elastic_discrete_angles.clear();
   d_moment_preserving_elastic_weights.clear();
   d_moment_preserving_cross_section_reductions.clear();
+}
+
+// Set the moment preserving elastic discrete angles
+void ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticDiscreteAngles(
+  const std::map<double,std::vector<double> >& moment_preserving_elastic_discrete_angles)
+{
+  // Make sure the moment preserving elastic discrete angles are valid
+  testPrecondition( moment_preserving_elastic_discrete_angles.size() ==
+                    this->getElasticAngularEnergyGrid().size() );
+
+  d_moment_preserving_elastic_discrete_angles = moment_preserving_elastic_discrete_angles;
+}
+
+// Set the moment preserving elastic weights
+void ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticWeights(
+  const std::map<double,std::vector<double> >& moment_preserving_elastic_weights )
+{
+  // Make sure the moment preserving elastic weights are valid
+  testPrecondition( moment_preserving_elastic_weights.size() ==
+                    this->getElasticAngularEnergyGrid().size() );
+
+  d_moment_preserving_elastic_weights = moment_preserving_elastic_weights;
 }
 
 // Set the moment preserving elastic discrete angles for an incoming energy
@@ -1764,7 +1751,7 @@ void ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticDiscreteAn
   testPrecondition( incoming_energy >= d_angular_energy_grid.front() );
   testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
   // Make sure the moment preserving elastic discrete angles are valid
- /* testPrecondition( moment_preserving_elastic_discrete_angles.size() ==
+  /* testPrecondition( moment_preserving_elastic_discrete_angles.size() ==
                d_number_of_discrete_angles.find( incoming_energy )->second );*/
   testPrecondition( std::find_if( moment_preserving_elastic_discrete_angles.begin(),
                                   moment_preserving_elastic_discrete_angles.end(),

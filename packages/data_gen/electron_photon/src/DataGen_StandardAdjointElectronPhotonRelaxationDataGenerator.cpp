@@ -14,12 +14,10 @@
 #include <boost/bind.hpp>
 
 // FRENSIE Includes
-// #include "DataGen_ENDLElectronPhotonRelaxationDataGenerator.hpp"
+#include "DataGen_ElectronElasticDataEvaluator.hpp"
 #include "DataGen_StandardAdjointElectronPhotonRelaxationDataGenerator.hpp"
 #include "DataGen_AdjointPairProductionEnergyDistributionNormConstantEvaluator.hpp"
-#include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
-#include "MonteCarlo_CoupledElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_VoidElectroatomicReaction.hpp"
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
@@ -1217,36 +1215,22 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   // Generate Grid Points For The Elastic Cross Section Data
   //---------------------------------------------------------------------------//
 
-  // // Update the forward elastic data if necessary
-  // if ( d_forward_epr_data->getCutoffAngleCosine() != this->getCutoffAngleCosine() || d_forward_epr_data->getNumberOfMomentPreservingAngles() != this->getNumberOfMomentPreservingAngles() )
-  // {
-  //   // create a temperary file
-  //   d_forward_epr_data->saveToFile( "temp_epr_file.xml" );
-
-  //   // Update the forward elastic data
-  //   DataGen::ENDLElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
-  //                                                 "temp_epr_file.xml",
-  //                                                 this->getCutoffAngleCosine(),
-  //                                                 this->getElectronTabularEvaluationTolerance(),
-  //                                                 this->getNumberOfMomentPreservingAngles(),
-  //                                                 this->getElectronTwoDInterpPolicy() );
-
-  //   // Reset the forward data container to use the temperary file
-  //   d_forward_epr_data.reset(
-  //     new Data::ElectronPhotonRelaxationDataContainer( "temp_epr_file.xml" ) );
-  // }
-
-  // Extract the cutoff elastic cross section data
-  std::shared_ptr<std::vector<double> > forward_cutoff_elastic_cs(
-       new std::vector<double>( d_forward_epr_data->getCutoffElasticCrossSection() ) );
+  // Create the electron elastic data evaluator
+  ElectronElasticDataEvaluator elastic_evaluator(
+                                      d_forward_epr_data,
+                                      this->getMinElectronEnergy(),
+                                      this->getMaxElectronEnergy(),
+                                      this->getCutoffAngleCosine(),
+                                      this->getNumberOfMomentPreservingAngles(),
+                                      this->getElectronTabularEvaluationTolerance(),
+                                      this->getElectronTwoDGridPolicy(),
+                                      this->getElectronTwoDInterpPolicy(),
+                                      MonteCarlo::MODIFIED_TWO_D_UNION,
+                                      true );
 
   // Create the reaction
-  std::shared_ptr<MonteCarlo::ElectroatomicReaction> cutoff_elastic_reaction(
-    new MonteCarlo::VoidElectroatomicReaction<Utility::LogLog>(
-        forward_electron_energy_grid,
-        forward_cutoff_elastic_cs,
-        d_forward_epr_data->getCutoffElasticCrossSectionThresholdEnergyIndex(),
-        forward_grid_searcher ) );
+  std::shared_ptr<MonteCarlo::ElectroatomicReaction> cutoff_elastic_reaction;
+  elastic_evaluator.createCutoffCrossSectionEvaluator( cutoff_elastic_reaction );
 
   // Bind the reaction
   boost::function<double (double pz)> cutoff_elastic_grid_function =
@@ -1261,17 +1245,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  // Extract the total elastic cross section data
-  std::shared_ptr<std::vector<double> > forward_total_elastic_cs(
-       new std::vector<double>( d_forward_epr_data->getTotalElasticCrossSection() ) );
-
   // Create the reaction
-  std::shared_ptr<MonteCarlo::ElectroatomicReaction> total_elastic_reaction(
-    new MonteCarlo::VoidElectroatomicReaction<Utility::LogLog>(
-        forward_electron_energy_grid,
-        forward_total_elastic_cs,
-        d_forward_epr_data->getTotalElasticCrossSectionThresholdEnergyIndex(),
-        forward_grid_searcher ) );
+  std::shared_ptr<MonteCarlo::ElectroatomicReaction> total_elastic_reaction;
+  elastic_evaluator.createTotalCrossSectionEvaluator( total_elastic_reaction );
 
   // Bind the reaction
   boost::function<double (double pz)> total_elastic_grid_function =
@@ -1455,53 +1431,28 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   data_container.setAdjointCutoffElasticCrossSectionThresholdEnergyIndex( threshold );
 
   // Set elastic angular distribution
-  data_container.setAdjointElasticAngularEnergyGrid(
-        d_forward_epr_data->getElasticAngularEnergyGrid() );
+  std::vector<double> angular_energy_grid;
+  std::map<double,std::vector<double> > elastic_angle, elastic_pdf;
 
-  data_container.setAdjointCutoffElasticAngles(
-        d_forward_epr_data->getCutoffElasticAngles() );
+  // Set the elastic moment preserving data
+  std::vector<double> moment_preserving_cross_section_reduction;
+  std::map<double,std::vector<double> > moment_preserving_angles, moment_preserving_weights;
 
-  data_container.setAdjointCutoffElasticPDF(
-        d_forward_epr_data->getCutoffElasticPDF() );
+  elastic_evaluator.evaluateElasticSecondaryDistribution(
+                          angular_energy_grid,
+                          elastic_angle,
+                          elastic_pdf,
+                          moment_preserving_cross_section_reduction,
+                          moment_preserving_angles,
+                          moment_preserving_weights );
 
-  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
-
-  FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
-                                    Utility::Italicized( "screened Rutherford elastic" )
-                                    << " cross section ... " );
-  FRENSIE_FLUSH_ALL_LOGS();
-
-  {
-  std::vector<double> raw_cross_section( total_cross_section.size() );
-  for( int i = 0; i < total_cross_section.size(); ++i )
-  {
-    raw_cross_section.at(i) = total_cross_section.at(i) - cutoff_cross_section.at(i);
-
-    double relative_difference = raw_cross_section.at(i)/total_cross_section.at(i);
-
-    // Check for roundoff error and reduce to zero if needed
-    if( relative_difference < 1.0e-16 )
-    {
-      raw_cross_section[i] = 0.0;
-
-      // Update threshold index
-      threshold = i+1;
-    }
-  }
-
-  std::vector<double>::iterator start = raw_cross_section.begin();
-  std::advance( start, threshold );
-
-  cross_section.assign( start, raw_cross_section.end() );
-
-  data_container.setAdjointScreenedRutherfordElasticCrossSection( cross_section );
-  data_container.setAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(
-  threshold );
-  }
+  data_container.setAdjointElasticAngularEnergyGrid( angular_energy_grid );
+  data_container.setAdjointCutoffElasticAngles( elastic_angle );
+  data_container.setAdjointCutoffElasticPDF( elastic_pdf );
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
-  if( d_forward_epr_data->hasMomentPreservingData() )
+  if( moment_preserving_angles.size() > 0 )
   {
     FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
                                       Utility::Italicized( "adjoint moment preserving elastic" )
@@ -1510,69 +1461,38 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
     // Set the cross sections reduction
     data_container.setAdjointMomentPreservingCrossSectionReduction(
-        d_forward_epr_data->getMomentPreservingCrossSectionReduction() );
+        moment_preserving_cross_section_reduction );
 
     // Set the discrete angles
     data_container.setAdjointMomentPreservingElasticDiscreteAngles(
-        d_forward_epr_data->getMomentPreservingElasticDiscreteAngles() );
+        moment_preserving_angles );
 
     // Set the discrete weights
     data_container.setAdjointMomentPreservingElasticWeights(
-        d_forward_epr_data->getMomentPreservingElasticWeights() );
-
-    // calculate the reduced cutoff elastic cross section ratio
-    std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
-        cutoff_distribution;
-
-    if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLOG_INTERPOLATION )
-    {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
-        cutoff_distribution,
-        d_forward_epr_data->getCutoffElasticAngles(),
-        d_forward_epr_data->getCutoffElasticPDF(),
-        d_forward_epr_data->getElasticAngularEnergyGrid(),
-        d_forward_epr_data->getCutoffAngleCosine(),
-        this->getElectronTabularEvaluationTolerance() );
-    }
-    else if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLIN_INTERPOLATION )
-    {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin,Utility::Correlated>(
-        cutoff_distribution,
-        d_forward_epr_data->getCutoffElasticAngles(),
-        d_forward_epr_data->getCutoffElasticPDF(),
-        d_forward_epr_data->getElasticAngularEnergyGrid(),
-        d_forward_epr_data->getCutoffAngleCosine(),
-        this->getElectronTabularEvaluationTolerance() );
-    }
-    else if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LOGLOGLOG_INTERPOLATION )
-    {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
-        cutoff_distribution,
-        d_forward_epr_data->getCutoffElasticAngles(),
-        d_forward_epr_data->getCutoffElasticPDF(),
-        d_forward_epr_data->getElasticAngularEnergyGrid(),
-        d_forward_epr_data->getCutoffAngleCosine(),
-        this->getElectronTabularEvaluationTolerance() );
-    }
-    else
-    {
-      THROW_EXCEPTION( std::runtime_error,
-                       "Error: the TwoDInterpPolicy " <<
-                       this->getElectronTwoDInterpPolicy() <<
-                       " is invalid or currently not supported!" );
-    }
-
-    std::vector<double> reduced_cutoff_cross_section_ratio( energy_grid.size() );
-    for( unsigned i = 0; i < energy_grid.size(); ++i )
-    {
-      reduced_cutoff_cross_section_ratio[i] =
-        cutoff_distribution->evaluateCutoffCrossSectionRatio( energy_grid[i] );
-    }
-
-    data_container.setReducedCutoffCrossSectionRatios( reduced_cutoff_cross_section_ratio );
+        moment_preserving_weights );
 
     FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
   }
+
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
+                                    Utility::Italicized( "screened Rutherford elastic" )
+                                    << " cross section ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
+
+  std::vector<double> rutherford_cross_section;
+  unsigned rutherford_cross_section_threshold_energy_index;
+
+  elastic_evaluator.evaluateScreenedRutherfordCrossSection(
+      total_cross_section,
+      cutoff_cross_section,
+      rutherford_cross_section,
+      rutherford_cross_section_threshold_energy_index );
+
+  data_container.setAdjointScreenedRutherfordElasticCrossSection( rutherford_cross_section );
+  data_container.setAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(
+  rutherford_cross_section_threshold_energy_index );
+
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
 //---------------------------------------------------------------------------//
 // Set The Forward Inelastic Cross Section Data

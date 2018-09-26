@@ -1828,22 +1828,6 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the reduced cutoff cross section ratios can be set
-FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-                   setReducedCutoffCrossSectionRatios )
-{
-  std::vector<double> ratios( 3 );
-  ratios[0] = 0.1;
-  ratios[1] = 0.2;
-  ratios[2] = 0.7;
-
-  epr_data_container.setReducedCutoffCrossSectionRatios( ratios );
-
-  FRENSIE_CHECK_EQUAL( epr_data_container.getReducedCutoffCrossSectionRatios(),
-                       ratios );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the electroionization electron cross section can be set
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                    setAdjointElectroionizationCrossSection )
@@ -2064,7 +2048,6 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAdjointMomentPreservingCrossSectionReduction().size(), 1 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAdjointMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAdjointMomentPreservingElasticWeights(1.0).size(), 3 );
-  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getReducedCutoffCrossSectionRatios().size(), 3 );
   FRENSIE_CHECK( epr_data_container.seperateAdjointElectroionizationEnergyGrid() );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAdjointElectroionizationEnergyGrid(1u).size(), 2 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAdjointElectroionizationEnergyGrid(1u).front(), 1.0 );
@@ -2198,7 +2181,6 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAdjointMomentPreservingCrossSectionReduction().size(), 1 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAdjointMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAdjointMomentPreservingElasticWeights(1.0).size(), 3 );
-  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getReducedCutoffCrossSectionRatios().size(), 3 );
   FRENSIE_CHECK( epr_data_container.seperateAdjointElectroionizationEnergyGrid() );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAdjointElectroionizationEnergyGrid(1u).size(), 2 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAdjointElectroionizationEnergyGrid(1u).front(), 1.0 );

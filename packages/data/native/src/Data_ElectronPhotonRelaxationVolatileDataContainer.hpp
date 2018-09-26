@@ -38,7 +38,6 @@ public:
   using ElectronPhotonRelaxationDataContainer::setOccupationNumberEvaluationTolerance;
   using ElectronPhotonRelaxationDataContainer::setSubshellIncoherentEvaluationTolerance;
   using ElectronPhotonRelaxationDataContainer::setPhotonThresholdEnergyNudgeFactor;
-  using ElectronPhotonRelaxationDataContainer::setElectronTotalElasticIntegratedCrossSectionModeOnOff;
   using ElectronPhotonRelaxationDataContainer::setCutoffAngleCosine;
   using ElectronPhotonRelaxationDataContainer::setNumberOfMomentPreservingAngles;
   using ElectronPhotonRelaxationDataContainer::setElectronTabularEvaluationTolerance;
