@@ -1,28 +1,20 @@
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/process_xsdir.py.in
   ${CMAKE_CURRENT_BINARY_DIR}/process_xsdir.py)
 
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/endltonative.py.in
-  ${CMAKE_CURRENT_BINARY_DIR}/endltonative.py)
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/endl_to_native_endl.py.in
+  ${CMAKE_CURRENT_BINARY_DIR}/endl_to_native_endl.py)
 
-SET(ENDL_DOWNLOADER endl_downloader.sh)
-IF(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${ENDL_DOWNLOADER})
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/native_endl_to_native_epr.py.in
+  ${CMAKE_CURRENT_BINARY_DIR}/native_endl_to_native_epr.py)
 
-  MESSAGE("-- Generating the ${ENDL_DOWNLOADER} script!")
-
-  EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/scripts/endl_downloader.py -a
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    OUTPUT_FILE ${ENDL_DOWNLOADER}
-    RESULT_VARIABLE RETURN_CODE)
-
-  IF(NOT "${RETURN_CODE}" STREQUAL "0")
-    MESSAGE(FATAL_ERROR "Could not generate the ${ENDL_DOWNLOADER} script!" )
-  ENDIF()
-ENDIF()
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/generate_native_epr.py.in
+  ${CMAKE_CURRENT_BINARY_DIR}/generate_native_epr.py)
 
 INSTALL(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/process_xsdir.py
-  ${CMAKE_CURRENT_BINARY_DIR}/endltonative.py
-  ${CMAKE_CURRENT_BINARY_DIR}/${ENDL_DOWNLOADER}
+  ${CMAKE_CURRENT_BINARY_DIR}/endl_to_native_endl.py
+  ${CMAKE_CURRENT_BINARY_DIR}/native_endl_to_native_epr.py
+  ${CMAKE_CURRENT_BINARY_DIR}/generate_native_epr.py
   DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
   PERMISSIONS OWNER_READ    GROUP_READ    WORLD_READ
               OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE)

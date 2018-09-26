@@ -510,6 +510,22 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the has average heating numbers flag can be set
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setHasAveragePhotonHeatingNumbers )
+{
+  epr_data_container.setHasAveragePhotonHeatingNumbers( false );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.hasAveragePhotonHeatingNumbers(),
+                       false );
+
+  epr_data_container.setHasAveragePhotonHeatingNumbers( true );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.hasAveragePhotonHeatingNumbers(),
+                       true );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the average heating numbers can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setAveragePhotonHeatingNumbers )
@@ -1587,6 +1603,7 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        4 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getPhotonEnergyGrid().size(),
                        3 );
+  FRENSIE_CHECK( epr_data_container.hasAveragePhotonHeatingNumbers() );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAveragePhotonHeatingNumbers().size(),
                        3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeIncoherentCrossSection().size(),
@@ -1814,6 +1831,7 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        4 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getPhotonEnergyGrid().size(),
                        3 );
+  FRENSIE_CHECK( epr_data_container.hasAveragePhotonHeatingNumbers() );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAveragePhotonHeatingNumbers().size(),
                        3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeIncoherentCrossSection().size(),

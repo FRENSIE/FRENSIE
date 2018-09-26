@@ -43,15 +43,19 @@ void ScatteringCenterPropertiesDatabase::loadFromFileImpl( const boost::filesyst
   // The bpis pointer must be NULL. Depending on the libraries that have been
   // loaded (e.g. utility_grid) the bpis might be initialized to a non-NULL
   // value
-  const boost::archive::detail::basic_pointer_iserializer* bpis =
+  const boost::archive::detail::basic_pointer_iserializer* vector_double_bpis =
     this->resetBpisPointer<std::vector<double> >( extension );
+
+  const boost::archive::detail::basic_pointer_iserializer* zaid_bpis =
+    this->resetBpisPointer<Data::ZAID>( extension );
   
   // Import the data in the archive
   BaseArchivableObjectType::loadFromFileImpl( archive_name_with_path );
 
   // The bpis pointer must be restored to its original value so that libraries
   // that expect it to be non-NULL behave correctly
-  this->restoreBpisPointer<std::vector<double> >( extension, bpis );
+  this->restoreBpisPointer<std::vector<double> >( extension, vector_double_bpis );
+  this->restoreBpisPointer<Data::ZAID>( extension, zaid_bpis );
 }
 
 // Archive the object (implementation)
@@ -63,15 +67,19 @@ void ScatteringCenterPropertiesDatabase::saveToFileImpl( const boost::filesystem
   // The bpos pointer must be NULL. Depending on the libraries that have been
   // loaded (e.g. utility_grid) the bpos might be initialized to a non-NULL
   // value
-  const boost::archive::detail::basic_pointer_oserializer* bpos =
+  const boost::archive::detail::basic_pointer_oserializer* vector_double_bpos =
     this->resetBposPointer<std::vector<double> >( extension );
+
+  const boost::archive::detail::basic_pointer_oserializer* zaid_bpos =
+    this->resetBposPointer<Data::ZAID>( extension );
   
   // Import the data in the archive
   BaseArchivableObjectType::saveToFileImpl( archive_name_with_path, overwrite );
 
   // The bpos pointer must be restored to its original value so that libraries
   // that expect it to be non-NULL behave correctly
-  this->restoreBposPointer<std::vector<double> >( extension, bpos );
+  this->restoreBposPointer<std::vector<double> >( extension, vector_double_bpos );
+  this->restoreBposPointer<Data::ZAID>( extension, zaid_bpos );
 }
 
 EXPLICIT_CLASS_SAVE_LOAD_INST( ScatteringCenterPropertiesDatabase );

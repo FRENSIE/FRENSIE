@@ -198,8 +198,6 @@ void ToStringTraits<Data::ZAID>::toStream( std::ostream& os,
 
 } // end Utility namespace
 
-BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( ZAID, Data );
-
 //---------------------------------------------------------------------------//
 // end Data_ZAID.cpp
 //---------------------------------------------------------------------------//

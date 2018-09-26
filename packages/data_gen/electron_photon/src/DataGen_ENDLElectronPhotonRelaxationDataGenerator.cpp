@@ -212,7 +212,7 @@ double ENDLElectronPhotonRelaxationDataGenerator::findTableMaxPhotonEnergy() con
 void ENDLElectronPhotonRelaxationDataGenerator::populateEPRDataContainer()
 {
   // Set the relaxation data
-  FRENSIE_LOG_PARTIAL_NOTIFICATION( Utility::Bold( "Setting the relaxation data" ) << "..." );
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( Utility::Bold( "Setting the relaxation data " ) << "... " );
   FRENSIE_FLUSH_ALL_LOGS();
 
   this->setRelaxationData();
@@ -220,7 +220,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::populateEPRDataContainer()
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
   // Set the Compton profile data
-  FRENSIE_LOG_PARTIAL_NOTIFICATION( Utility::Bold( "Setting the Compton profile data " ) << "..." );
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( Utility::Bold( "Setting the Compton profile data " ) << "... " );
   FRENSIE_FLUSH_ALL_LOGS();
 
   this->setComptonProfileData();
@@ -228,7 +228,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::populateEPRDataContainer()
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
   // Set the occupation number data
-  FRENSIE_LOG_PARTIAL_NOTIFICATION( Utility::Bold( "Setting the occupation number data " ) << "..." );
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( Utility::Bold( "Setting the occupation number data " ) << "... " );
   FRENSIE_FLUSH_ALL_LOGS();
 
   this->setOccupationNumberData();
@@ -236,7 +236,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::populateEPRDataContainer()
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
   // Set the Waller-Hartree scattering function data
-  FRENSIE_LOG_PARTIAL_NOTIFICATION( Utility::Bold( "Setting the Waller-Hartree scattering function data " ) << "..." );
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( Utility::Bold( "Setting the Waller-Hartree scattering function data " ) << "... " );
   FRENSIE_FLUSH_ALL_LOGS();
 
   this->setWallerHartreeScatteringFunctionData();
@@ -244,7 +244,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::populateEPRDataContainer()
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
   // Set the Waller-Hartree atomic form factor data
-  FRENSIE_LOG_PARTIAL_NOTIFICATION( Utility::Bold( "Setting the Waller-Hartree atomic form factor data " ) << "..." );
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( Utility::Bold( "Setting the Waller-Hartree atomic form factor data " ) << "... " );
   FRENSIE_FLUSH_ALL_LOGS();
 
   this->setWallerHartreeAtomicFormFactorData();
@@ -285,49 +285,81 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRelaxationData()
     data_container.setSubshellOccupancy( subshell, d_endl_data_container->getSubshellOccupancy( subshell ) );
     data_container.setSubshellBindingEnergy( subshell, d_endl_data_container->getSubshellBindingEnergy( subshell ) );
 
-    const std::map<unsigned,double>& radiative_transition_probs =
-      d_endl_data_container->getRadiativeTransitionProbability( subshell );
-
-    const std::map<unsigned,double>& radiative_transition_energies =
-      d_endl_data_container->getRadiativeTransitionEnergy( subshell );
-
-    const std::map<unsigned,std::map<unsigned,double> >& non_radiative_transition_probs =
-      d_endl_data_container->getNonRadiativeTransitionProbability( subshell );
-
-    const std::map<unsigned,std::map<unsigned,double> >& non_radiative_transition_energies =
-      d_endl_data_container->getNonRadiativeTransitionEnergy( subshell );
-
-    std::vector<std::pair<unsigned,unsigned> > relaxation_vacancies;
-    std::vector<double> relaxation_particle_energies, relaxation_probabilities;
-
-    for( auto&& radiative_transition_probs_data : radiative_transition_probs )
+    if( d_endl_data_container->hasRadiativeTransitions( subshell ) )
     {
-      relaxation_vacancies.push_back( std::make_pair( radiative_transition_probs_data.first, 0 ) );
-      relaxation_probabilities.push_back( radiative_transition_probs_data.second );
-      relaxation_particle_energies.push_back( radiative_transition_energies.find( radiative_transition_probs_data.first )->second );
-    }
+      TEST_FOR_EXCEPTION( !d_endl_data_container->hasNonRadiativeTransitions( subshell ),
+                          std::runtime_error,
+                          "There are radiative transitions and not "
+                          "non-radiative transitions!" );
+      
+      const std::map<unsigned,double>& radiative_transition_probs =
+        d_endl_data_container->getRadiativeTransitionProbability( subshell );
+      
+      const std::map<unsigned,double>& radiative_transition_energies =
+        d_endl_data_container->getRadiativeTransitionEnergy( subshell );
+      
+      const std::map<unsigned,std::map<unsigned,double> >& non_radiative_transition_probs =
+        d_endl_data_container->getNonRadiativeTransitionProbability( subshell );
+      
+      const std::map<unsigned,std::map<unsigned,double> >& non_radiative_transition_energies =
+        d_endl_data_container->getNonRadiativeTransitionEnergy( subshell );
+      
+      std::vector<std::pair<unsigned,unsigned> > relaxation_vacancies;
+      std::vector<double> relaxation_particle_energies, relaxation_probabilities;
 
-    for( auto&& non_radiative_transition_probs_data : non_radiative_transition_probs )
-    {
-      std::map<unsigned,double>::const_iterator data_it =
-        non_radiative_transition_probs_data.second.begin();
-
-      std::map<unsigned,double>::const_iterator data_end =
-        non_radiative_transition_probs_data.second.end();
-
-      while( data_it != data_end )
+      for( auto&& radiative_transition_probs_data : radiative_transition_probs )
       {
-        relaxation_vacancies.push_back( std::make_pair( non_radiative_transition_probs_data.first, data_it->first ) );
-        relaxation_probabilities.push_back( data_it->second );
-        relaxation_particle_energies.push_back( non_radiative_transition_energies.find( non_radiative_transition_probs_data.first )->second.find( data_it->first )->second );
-
-        ++data_it;
+        relaxation_vacancies.push_back( std::make_pair( radiative_transition_probs_data.first, 0 ) );
+        relaxation_probabilities.push_back( radiative_transition_probs_data.second );
+        relaxation_particle_energies.push_back( radiative_transition_energies.find( radiative_transition_probs_data.first )->second );
       }
-    }
+      
+      for( auto&& non_radiative_transition_probs_data : non_radiative_transition_probs )
+      {
+        TEST_FOR_EXCEPTION( non_radiative_transition_energies.find( non_radiative_transition_probs_data.first ) == non_radiative_transition_energies.end(),
+                            std::runtime_error,
+                            "There are no non-radiative transition energies "
+                            "for vacancy " << subshell << " transitioning to "
+                            << non_radiative_transition_probs_data.first <<
+                            "!" );
+      
+        std::map<unsigned,double>::const_iterator data_it =
+          non_radiative_transition_probs_data.second.begin();
+        
+        std::map<unsigned,double>::const_iterator data_end =
+          non_radiative_transition_probs_data.second.end();
+        
+        while( data_it != data_end )
+        {
+          relaxation_vacancies.push_back( std::make_pair( non_radiative_transition_probs_data.first, data_it->first ) );
+          relaxation_probabilities.push_back( data_it->second );
+          
+          TEST_FOR_EXCEPTION( non_radiative_transition_energies.find( non_radiative_transition_probs_data.first )->second.find( data_it->first ) == non_radiative_transition_energies.find( non_radiative_transition_probs_data.first )->second.end(),
+                              std::runtime_error,
+                              "There are no non-radiative transition energies "
+                              "for vacancy " << subshell << " transitioning to "
+                              << non_radiative_transition_probs_data.first <<
+                              " and " << data_it->first << "!" );
+        
+          relaxation_particle_energies.push_back( non_radiative_transition_energies.find( non_radiative_transition_probs_data.first )->second.find( data_it->first )->second );
 
-    data_container.setSubshellRelaxationVacancies( subshell, relaxation_vacancies );
-    data_container.setSubshellRelaxationParticleEnergies( subshell, relaxation_particle_energies );
-    data_container.setSubshellRelaxationProbabilities( subshell, relaxation_probabilities );
+          ++data_it;
+        }
+      }
+
+      data_container.setSubshellRelaxationTransitions( subshell, relaxation_vacancies.size() );
+      
+      data_container.setSubshellRelaxationVacancies( subshell, relaxation_vacancies );
+      data_container.setSubshellRelaxationParticleEnergies( subshell, relaxation_particle_energies );
+      data_container.setSubshellRelaxationProbabilities( subshell, relaxation_probabilities );
+    }
+    else
+    {
+      TEST_FOR_EXCEPTION( d_endl_data_container->hasNonRadiativeTransitions( subshell ),
+                          std::runtime_error,
+                          "There are non-radiative transitions and not "
+                          "radiative transitions!" );
+    }
   }
 }
 
@@ -735,7 +767,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::extractSubshellPhotoelectricEffe
 }
 
 // Create the heating numbers on the union energy grid
-void ENDLElectronPhotonRelaxationDataGenerator::createHeatingNumbersOnUnionEnergyGrid(
+bool ENDLElectronPhotonRelaxationDataGenerator::createHeatingNumbersOnUnionEnergyGrid(
                   const std::list<double>& union_energy_grid,
                   const std::shared_ptr<const Utility::UnivariateDistribution>&
                   original_cross_section,
@@ -745,6 +777,8 @@ void ENDLElectronPhotonRelaxationDataGenerator::createHeatingNumbersOnUnionEnerg
                        "currently be generated using ENDL tables!" );
 
   cross_section.resize( union_energy_grid.size(), 0.0 );
+
+  return false;
 }
 
 // Set the photon data
@@ -949,10 +983,12 @@ void ENDLElectronPhotonRelaxationDataGenerator::setPhotonData()
   std::vector<double> cross_section;
   unsigned threshold;
 
-  this->createHeatingNumbersOnUnionEnergyGrid( union_energy_grid,
-                                               heating_numbers,
-                                               cross_section );
+  bool has_heating_numbers =
+    this->createHeatingNumbersOnUnionEnergyGrid( union_energy_grid,
+                                                 heating_numbers,
+                                                 cross_section );
 
+  data_container.setHasAveragePhotonHeatingNumbers( has_heating_numbers );
   data_container.setAveragePhotonHeatingNumbers( cross_section );
 
   FRENSIE_LOG_PARTIAL_NOTIFICATION( " Setting the " <<

@@ -194,6 +194,45 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
   d_event_handler->setSimulationCompletionCriterion( updated_general_props );
 }
 
+// Load the archived object (implementation)
+void ParticleSimulationManagerFactory::loadFromFileImpl(
+                        const boost::filesystem::path& archive_name_with_path )
+{
+  std::string extension = archive_name_with_path.extension().string();
+
+  // The bpis pointer must be NULL. Depending on the libraries that have been
+  // loaded the bpis might be initialized to a non-NULL value
+  const boost::archive::detail::basic_pointer_iserializer* zaid_bpis =
+    this->resetBpisPointer<Data::ZAID>( extension );
+  
+  // Import the data in the archive
+  BaseArchivableObjectType::loadFromFileImpl( archive_name_with_path );
+
+  // The bpis pointer must be restored to its original value so that libraries
+  // that expect it to be non-NULL behave correctly
+  this->restoreBpisPointer<Data::ZAID>( extension, zaid_bpis );
+}
+
+// Archive the object (implementation)
+void ParticleSimulationManagerFactory::saveToFileImpl(
+                         const boost::filesystem::path& archive_name_with_path,
+                         const bool overwrite ) const
+{
+  std::string extension = archive_name_with_path.extension().string();
+
+  // The bpos pointer must be NULL. Depending on the libraries that have been
+  // loaded the bpos might be initialized to a non-NULL value
+  const boost::archive::detail::basic_pointer_oserializer* zaid_bpos =
+    this->resetBposPointer<Data::ZAID>( extension );
+  
+  // Import the data in the archive
+  BaseArchivableObjectType::saveToFileImpl( archive_name_with_path, overwrite );
+
+  // The bpos pointer must be restored to its original value so that libraries
+  // that expect it to be non-NULL behave correctly
+  this->restoreBposPointer<Data::ZAID>( extension, zaid_bpos );
+}
+
 // Set the weight windows that will be used by the manager
 void ParticleSimulationManagerFactory::setWeightWindows(
                     const std::shared_ptr<const WeightWindow>& weight_windows )

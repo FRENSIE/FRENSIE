@@ -176,7 +176,6 @@ struct hash<Data::ZAID> : public hash<unsigned>
 } // end std namespace
 
 BOOST_SERIALIZATION_CLASS_VERSION( ZAID, Data, 0 );
-BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ZAID, Data );
 
 EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Data, ZAID );
 

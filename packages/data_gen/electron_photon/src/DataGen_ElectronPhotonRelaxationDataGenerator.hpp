@@ -9,6 +9,9 @@
 #ifndef DATA_GEN_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
 #define DATA_GEN_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
 
+// Std Lib Include
+#include <memory>
+
 // FRENSIE Includes
 #include "MonteCarlo_TwoDInterpolationType.hpp"
 #include "MonteCarlo_TwoDGridType.hpp"
@@ -142,11 +145,20 @@ public:
   //! Return the electron TwoDGridPolicy
   MonteCarlo::TwoDGridType getElectronTwoDGridPolicy() const;
 
+  //! Set the generation notes
+  void setNotes( const std::string& notes );
+
+  //! Get the generation notes
+  const std::string& getNotes() const;
+
   //! Populate the electron-photon-relaxation data container
   virtual void populateEPRDataContainer() = 0;
 
   //! Get the data container
   const Data::ElectronPhotonRelaxationDataContainer& getDataContainer() const;
+
+  //! Get the shared data container
+  std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer> getSharedDataContainer() const;
 
 protected:
 
@@ -176,7 +188,7 @@ protected:
 private:
 
   // The electron-photon-relaxation volatile data container
-  Data::ElectronPhotonRelaxationVolatileDataContainer d_data_container;
+  std::shared_ptr<Data::ElectronPhotonRelaxationVolatileDataContainer> d_data_container;
 
   // The default photon grid generator
   std::unique_ptr<Utility::GridGenerator<Utility::LinLin> >

@@ -1275,6 +1275,8 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
 
   FRENSIE_CHECK_NO_THROW( test_xsdir.exportData( database ) );
 
+  database.saveToFile( "test_database.xml", true );
+
   // Check the H atom properties
   FRENSIE_REQUIRE( database.doAtomPropertiesExist( 1000 ) );
   

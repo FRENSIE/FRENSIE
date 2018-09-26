@@ -291,6 +291,9 @@ At this point all of the dependent software libraries should have been built. If
 8. run `make test`
 9. run `make manual`
 10. run `make install`
+11. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/frensie/bin:$PATH`
+12. add the following line to the .bashrc file: `export PYTHONPATH=absolute-path-to_software/frensie/bin:$PYTHONPATH`
+13. add the following line to the .bashrc file: `export PYTHONPATH=absolute-path-to_software/frensie/lib/python2.7/site-packages:$PYTHONPATH`
 
 **Note 1**: There are several other configure options that can be changed in
 the frensie.sh script:

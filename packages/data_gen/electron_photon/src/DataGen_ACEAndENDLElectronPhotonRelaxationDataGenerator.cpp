@@ -170,7 +170,7 @@ void ACEAndENDLElectronPhotonRelaxationDataGenerator::setRelaxationData()
     {
       data_container.setSubshellRelaxationTransitions( subshell_designators[i],
                                                        transitions );
-
+      
       this->setTransitionData( subshell_designators[i],
                                transitions,
                                (unsigned)relo_block[i] );
@@ -563,7 +563,7 @@ void ACEAndENDLElectronPhotonRelaxationDataGenerator::extractSubshellPhotoelectr
 }
 
 // Create the heating numbers on the union energy grid
-void ACEAndENDLElectronPhotonRelaxationDataGenerator::createHeatingNumbersOnUnionEnergyGrid(
+bool ACEAndENDLElectronPhotonRelaxationDataGenerator::createHeatingNumbersOnUnionEnergyGrid(
                   const std::list<double>& union_energy_grid,
                   const std::shared_ptr<const Utility::UnivariateDistribution>&
                   original_cross_section,
@@ -577,6 +577,7 @@ void ACEAndENDLElectronPhotonRelaxationDataGenerator::createHeatingNumbersOnUnio
                                              threshold,
                                              0.0,
                                              false );
+  return true;
 }
 
 // Extract the half Compton profile from the ACE table

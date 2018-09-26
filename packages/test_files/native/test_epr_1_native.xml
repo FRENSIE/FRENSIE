@@ -13902,7 +13902,8 @@
 		<item>1.94388812512526243e+01</item>
 		<item>2.00000000000000000e+01</item>
 	</photon_energy_grid>
-	<average_photon_heating_numbers>
+        <has_average_photon_heating_numbers>1</has_average_photon_heating_numbers>
+        <average_photon_heating_numbers>
 		<count>854</count>
 		<item_version>0</item_version>
 		<item>9.44850385307779940e-04</item>

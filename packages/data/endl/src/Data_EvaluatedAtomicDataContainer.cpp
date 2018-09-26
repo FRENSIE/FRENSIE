@@ -162,6 +162,17 @@ ENDLDataContainer::getAverageElectronEnergyPerInitialVacancy(
   return d_subshell_average_electron_energies.find( subshell )->second;
 }
 
+// Check if a subshell has radiative transitions
+bool ENDLDataContainer::hasRadiativeTransitions( const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) !=
+		    d_subshells.end() );
+
+  return d_radiative_transition_probabilities.find( subshell ) !=
+    d_radiative_transition_probabilities.end();
+}
+
 // Return the radiative transition probability
 const std::map<unsigned,double>&
 ENDLDataContainer::getRadiativeTransitionProbability(
@@ -170,6 +181,7 @@ ENDLDataContainer::getRadiativeTransitionProbability(
   // Make sure the subshells are valid
   testPrecondition( d_subshells.find( subshell ) !=
 		    d_subshells.end() );
+  testPrecondition( this->hasRadiativeTransitions( subshell ) );
 
   return d_radiative_transition_probabilities.find( subshell )->second;
 }
@@ -182,8 +194,20 @@ ENDLDataContainer::getRadiativeTransitionEnergy(
   // Make sure the subshells are valid
   testPrecondition( d_subshells.find( subshell ) !=
 		    d_subshells.end() );
+  testPrecondition( this->hasRadiativeTransitions( subshell ) );
 
   return d_radiative_transition_energies.find( subshell )->second;
+}
+
+// Check if a subshell has non radiative transitions
+bool ENDLDataContainer::hasNonRadiativeTransitions( const unsigned subshell ) const
+{
+  // Make sure the subshells are valid
+  testPrecondition( d_subshells.find( subshell ) !=
+		    d_subshells.end() );
+
+  return d_non_radiative_transition_probabilities.find( subshell ) !=
+    d_non_radiative_transition_probabilities.end();
 }
 
 // Return the non radiative transition probability
@@ -194,6 +218,7 @@ ENDLDataContainer::getNonRadiativeTransitionProbability(
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
 		    d_subshells.end() );
+  testPrecondition( this->hasNonRadiativeTransitions( subshell ) );
 
   return d_non_radiative_transition_probabilities.find( subshell )->second;
 }
