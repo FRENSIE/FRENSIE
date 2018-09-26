@@ -54,15 +54,15 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   // Check on lowest bin
   pdf = adjoint_brem_dist->evaluate( 1.0e-5, 20.2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.3858344126757182e-10, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.385826466399407401e-10, 1e-12 );
 
   // Check between bins
   pdf = adjoint_brem_dist->evaluate( 1.1e-5, 1.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.7791404105416156e-06, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.770633458972590829e-06, 1e-12 );
 
   // Check on highest bin
   pdf = adjoint_brem_dist->evaluate( 20.0, 20.000000201 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.1236276455444426e+06, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.123631896817522356e+06, 1e-12 );
 
   // Check above highest bin
   pdf = adjoint_brem_dist->evaluate( 21.0, 22.0 );
@@ -82,15 +82,15 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   // Check on lowest bin
   pdf = adjoint_brem_dist->evaluatePDF( 1.0e-5, 20.2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.0721013415265829e-10, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.072096490636989288e-10, 1e-12 );
 
   // Check between bins
   pdf = adjoint_brem_dist->evaluatePDF( 1.1e-5, 1.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.5486561949714790e-06, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.542740570891437021e-06, 1e-6 );
 
   // Check on highest bin
   pdf = adjoint_brem_dist->evaluatePDF( 20.0, 20.000000201 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 9.0650897007169446e+05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 9.065021839287067996e+05, 1e-12 );
 
   // Check above highest bin
   pdf = adjoint_brem_dist->evaluatePDF( 21.0, 22.0 );
@@ -118,7 +118,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   // Check on highest bin
   cdf = adjoint_brem_dist->evaluateCDF( 20.0, 20.1000000505 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.9949456588972041e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.994945737549996156e-01, 1e-12 );
 
   // Check above highest bin
   cdf = adjoint_brem_dist->evaluateCDF( 21.0, 22.0 );
@@ -133,7 +133,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 1e-5 MeV and 1.1192e-5 MeV distributions
-  fake_stream[1] = 0.5; // Sample an E_out of 1.4952039346353309e-05
+  fake_stream[1] = 0.5; // Sample an E_out of 1.494036975172417187e-05
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -143,7 +143,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.4952039346353309e-05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.494036975172417187e-05, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle, 1.0, 1e-12 );
 }
 
@@ -157,7 +157,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 1e-5 MeV and 1.1192e-5 MeV distributions
-  fake_stream[1] = 0.5; // Sample an E_out of 1.4952039346353309e-05
+  fake_stream[1] = 0.5; // Sample an E_out of 1.494036975172417187e-05
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -172,7 +172,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.4952039346353309e-05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.494036975172417187e-05, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle, 1.0, 1e-12 );
   FRENSIE_CHECK_EQUAL( trials, 1.0 );
 }
@@ -193,7 +193,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 1e-5 MeV and 1.1192e-5 MeV distributions
-  fake_stream[1] = 0.5; // Sample an E_out of 1.4952039346353309e-05
+  fake_stream[1] = 0.5; // Sample an E_out of 1.494036975172417187e-05
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -203,7 +203,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getEnergy(), 1.4952039346353309e-05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getEnergy(), 1.494036975172417187e-05, 1e-12 );
   FRENSIE_CHECK_SMALL( electron.getXDirection(), 1e-12 );
   FRENSIE_CHECK_SMALL( electron.getYDirection(), 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
@@ -242,7 +242,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   std::vector<double> primary_grid( energy_grid.size() );
   std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
     secondary_dists( energy_grid.size() );
-  
+
   for( unsigned n = 0; n < energy_grid.size(); ++n )
   {
     primary_grid[n] = energy_grid[n];

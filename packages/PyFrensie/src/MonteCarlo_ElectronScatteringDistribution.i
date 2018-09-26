@@ -8,6 +8,7 @@
 
 %{
 // FRENSIE Includes
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "MonteCarlo_ScatteringDistribution.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
@@ -50,6 +51,9 @@
 
 // Import the ToStringTraitsDecl
 %import "Utility_ToStringTraitsDecl.hpp"
+
+// shared_ptr Data Container handling
+%shared_ptr(Data::ElectronPhotonRelaxationDataContainer);
 
 // // Import the explicit template instantiation helpers
 // %import "Utility_ExplicitTemplateInstantiationMacros.hpp"

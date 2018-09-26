@@ -63,11 +63,11 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_neutron_mode )
   // Check analogue mode
   {
     properties->setAnalogueCaptureModeOn();
-    
+
     MonteCarlo::CollisionKernel collision_kernel( filled_model, *properties );
 
     FRENSIE_REQUIRE( collision_kernel.isDefinedOnModel( *filled_model ) );
-  
+
     MonteCarlo::NeutronState neutron( 1ull );
     neutron.embedInModel( *filled_model );
     neutron.setEnergy( 1.0 );
@@ -87,7 +87,7 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_neutron_mode )
     MonteCarlo::CollisionKernel collision_kernel( filled_model, *properties );
 
     FRENSIE_REQUIRE( collision_kernel.isDefinedOnModel( *filled_model ) );
-  
+
     MonteCarlo::NeutronState neutron( 1ull );
     neutron.embedInModel( *filled_model );
     neutron.setEnergy( 1.0 );
@@ -124,7 +124,7 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_photon_mode )
   // Check analogue mode
   {
     properties->setAnalogueCaptureModeOn();
-    
+
     MonteCarlo::CollisionKernel collision_kernel( filled_model, *properties );
 
     FRENSIE_REQUIRE( collision_kernel.isDefinedOnModel( *filled_model ) );
@@ -139,7 +139,7 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_photon_mode )
     FRENSIE_REQUIRE_NO_THROW( collision_kernel.collideWithCellMaterial( photon, bank ) );
     FRENSIE_CHECK_LESS_OR_EQUAL( photon.getEnergy(), 1.0 );
     FRENSIE_CHECK_EQUAL( photon.getWeight(), 1.0 );
-    
+
   }
 
   // Check survival bias mode
@@ -186,11 +186,11 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_electron_mode )
   // Check analogue mode
   {
     properties->setAnalogueCaptureModeOn();
-    
+
     MonteCarlo::CollisionKernel collision_kernel( filled_model, *properties );
 
     FRENSIE_REQUIRE( collision_kernel.isDefinedOnModel( *filled_model ) );
-  
+
     MonteCarlo::ElectronState electron( 1ull );
     electron.embedInModel( *filled_model );
     electron.setEnergy( 1.0 );
@@ -211,7 +211,7 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_electron_mode )
     MonteCarlo::CollisionKernel collision_kernel( filled_model, *properties );
 
     FRENSIE_REQUIRE( collision_kernel.isDefinedOnModel( *filled_model ) );
-  
+
     MonteCarlo::ElectronState electron( 1ull );
     electron.embedInModel( *filled_model );
     electron.setEnergy( 1.0 );
@@ -250,14 +250,14 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_photon_mode 
   // Check analogue mode
   {
     properties->setAnalogueCaptureModeOn();
-    
+
     MonteCarlo::CollisionKernel collision_kernel( filled_model, *properties );
 
     FRENSIE_REQUIRE( collision_kernel.isDefinedOnModel( *filled_model ) );
-    
+
     std::unique_ptr<MonteCarlo::AdjointPhotonState>
       adjoint_photon( new MonteCarlo::AdjointPhotonState( 1ull ) );
-    
+
     adjoint_photon->embedInModel( *filled_model );
     adjoint_photon->setEnergy( 1.0 );
     adjoint_photon->setWeight( 1.0 );
@@ -281,7 +281,7 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_photon_mode 
     fake_stream[2] = 0.0;
     fake_stream[3] = 0.5;
     fake_stream[4] = 0.0;
-    
+
     Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
     adjoint_photon.reset( new MonteCarlo::AdjointPhotonProbeState( 1ull ) );
@@ -299,7 +299,7 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_photon_mode 
                                      3.804939079352169351,
                                      1e-15 );
     FRENSIE_REQUIRE_EQUAL( bank->size(), 1 );
-    FRENSIE_CHECK_FLOATING_EQUALITY( bank->top().getEnergy(), 
+    FRENSIE_CHECK_FLOATING_EQUALITY( bank->top().getEnergy(),
                                      2*Utility::PhysicalConstants::electron_rest_mass_energy,
                                      1e-15 );
     FRENSIE_CHECK_FLOATING_EQUALITY( bank->top().getWeight(),
@@ -316,7 +316,7 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_photon_mode 
     fake_stream[4] = 0.0;
 
     Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-    
+
     adjoint_photon.reset( new MonteCarlo::AdjointPhotonProbeState( 1ull ) );
     adjoint_photon->setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy );
     adjoint_photon->setDirection( 0.0, 0.0, 1.0 );
@@ -330,13 +330,13 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_photon_mode 
                                      3.804939079352169351,
                                      1e-15 );
     FRENSIE_REQUIRE_EQUAL( bank->size(), 1 );
-    FRENSIE_CHECK_FLOATING_EQUALITY( bank->top().getEnergy(), 
+    FRENSIE_CHECK_FLOATING_EQUALITY( bank->top().getEnergy(),
                                      4*Utility::PhysicalConstants::electron_rest_mass_energy,
                                      1e-15 );
     FRENSIE_CHECK_FLOATING_EQUALITY( bank->top().getWeight(),
                                      3.804939079352169351,
                                      1e-15 );
-    
+
     Utility::RandomNumberGenerator::unsetFakeStream();
   }
 
@@ -344,14 +344,14 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_photon_mode 
   // adjoint photons have no absorption reactions
   {
     properties->setImplicitCaptureModeOn();
-    
+
     MonteCarlo::CollisionKernel collision_kernel( filled_model, *properties );
 
     FRENSIE_REQUIRE( collision_kernel.isDefinedOnModel( *filled_model ) );
-    
+
     std::unique_ptr<MonteCarlo::AdjointPhotonState>
       adjoint_photon( new MonteCarlo::AdjointPhotonState( 1ull ) );
-    
+
     adjoint_photon->embedInModel( *filled_model );
     adjoint_photon->setEnergy( 1.0 );
     adjoint_photon->setWeight( 1.0 );
@@ -375,7 +375,7 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_photon_mode 
     fake_stream[2] = 0.0;
     fake_stream[3] = 0.5;
     fake_stream[4] = 0.0;
-    
+
     Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
     adjoint_photon.reset( new MonteCarlo::AdjointPhotonProbeState( 1ull ) );
@@ -393,7 +393,7 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_photon_mode 
                                      3.804939079352169351,
                                      1e-15 );
     FRENSIE_REQUIRE_EQUAL( bank->size(), 1 );
-    FRENSIE_CHECK_FLOATING_EQUALITY( bank->top().getEnergy(), 
+    FRENSIE_CHECK_FLOATING_EQUALITY( bank->top().getEnergy(),
                                      2*Utility::PhysicalConstants::electron_rest_mass_energy,
                                      1e-15 );
     FRENSIE_CHECK_FLOATING_EQUALITY( bank->top().getWeight(),
@@ -410,7 +410,7 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_photon_mode 
     fake_stream[4] = 0.0;
 
     Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-    
+
     adjoint_photon.reset( new MonteCarlo::AdjointPhotonProbeState( 1ull ) );
     adjoint_photon->setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy );
     adjoint_photon->setDirection( 0.0, 0.0, 1.0 );
@@ -424,13 +424,13 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_photon_mode 
                                      3.804939079352169351,
                                      1e-15 );
     FRENSIE_REQUIRE_EQUAL( bank->size(), 1 );
-    FRENSIE_CHECK_FLOATING_EQUALITY( bank->top().getEnergy(), 
+    FRENSIE_CHECK_FLOATING_EQUALITY( bank->top().getEnergy(),
                                      4*Utility::PhysicalConstants::electron_rest_mass_energy,
                                      1e-15 );
     FRENSIE_CHECK_FLOATING_EQUALITY( bank->top().getWeight(),
                                      3.804939079352169351,
                                      1e-15 );
-    
+
     Utility::RandomNumberGenerator::unsetFakeStream();
   }
 }
@@ -459,13 +459,13 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_electron_mod
   // Check analogue mode
   {
     properties->setAnalogueCaptureModeOn();
-    
+
     MonteCarlo::CollisionKernel collision_kernel( filled_model, *properties );
 
     FRENSIE_REQUIRE( collision_kernel.isDefinedOnModel( *filled_model ) );
 
     MonteCarlo::AdjointElectronState adjoint_electron( 1ull );
-    
+
     adjoint_electron.embedInModel( *filled_model );
     adjoint_electron.setEnergy( 1.0 );
     adjoint_electron.setWeight( 1.0 );
@@ -478,20 +478,20 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_electron_mod
     // The adjoint electron's weight will be multiplied by the adjoint weight
     // factor before the collision occurs.
     FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getWeight(),
-                                     9.987076964513126320e-01,
+                                     9.984273247328523393e-01,
                                      1e-15 );
   }
 
   // Check survival bias mode
   {
     properties->setImplicitCaptureModeOn();
-    
+
     MonteCarlo::CollisionKernel collision_kernel( filled_model, *properties );
 
     FRENSIE_REQUIRE( collision_kernel.isDefinedOnModel( *filled_model ) );
 
     MonteCarlo::AdjointElectronState adjoint_electron( 1ull );
-    
+
     adjoint_electron.embedInModel( *filled_model );
     adjoint_electron.setEnergy( 1.0 );
     adjoint_electron.setWeight( 1.0 );
@@ -504,7 +504,7 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_electron_mod
     // The adjoint electron's weight will be multiplied by the adjoint weight
     // factor before the collision occurs.
     FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getWeight(),
-                                     9.987076964513126320e-01,
+                                     9.984273247328523393e-01,
                                      1e-15 );
   }
 }
@@ -530,7 +530,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Determine the database directory
     boost::filesystem::path database_path =
       test_scattering_center_database_name;
-    
+
     data_directory = database_path.parent_path();
 
     // Load the database
@@ -561,11 +561,11 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     h_definition.setPhotoatomicDataProperties(
           h_properties.getSharedPhotoatomicDataProperties(
                        Data::PhotoatomicDataProperties::Native_EPR_FILE, 0 ) );
-    
+
     h_definition.setAdjointPhotoatomicDataProperties(
           h_properties.getSharedAdjointPhotoatomicDataProperties(
                 Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 0 ) );
-    
+
     h_definition.setElectroatomicDataProperties(
           h_properties.getSharedElectroatomicDataProperties(
                      Data::ElectroatomicDataProperties::Native_EPR_FILE, 0 ) );
@@ -587,7 +587,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     o_definition.setPhotoatomicDataProperties(
           o_properties.getSharedPhotoatomicDataProperties(
                          Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) );
-    
+
     o_definition.setElectroatomicDataProperties(
           o_properties.getSharedElectroatomicDataProperties(
                        Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) );
@@ -630,7 +630,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                                "Water @ 293.6K", 1,
                                                {"H1 @ 293.6K", "O16 @ 293.6K"},
                                                {2.0,           1.0});
-    
+
     material_definition_database->addDefinition( "H1 @ 293.6K", 2,
                                                  {"H1 @ 293.6K"}, {1.0} );
 

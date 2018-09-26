@@ -7,8 +7,22 @@ import os
 import sys
 import datetime
 
-sys.path.insert(0, '/home/lkersting/research/frensie-repos/lkersting/lib/python2.7/site-packages/')
+# Simple class for color output
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
+# If specific install version of frensie is desired the line below can be
+# uncommented and that path to PyFrensie can be manually inserted.
+# sys.path.insert(0, '/home/lkersting/research/frensie-repos/lkersting/lib/python2.7/site-packages/')
+
+import PyFrensie.Utility as Utility
 import PyFrensie.Data.Native as Native
 import PyFrensie.MonteCarlo as MonteCarlo
 import PyFrensie.DataGen.ElectronPhoton as ElectronPhoton
@@ -17,9 +31,8 @@ import PyFrensie.DataGen.ElectronPhoton as ElectronPhoton
 today = str(datetime.datetime.today())
 notes="This table was generated on " + today + ". It is for testing only!"
 
-
 # Update adjoint Hydrogen data
-print "Updating the adjoint H native test data...\n"
+print bcolors.BOLD + "Updating the adjoint H native test data ...\n" + bcolors.ENDC
 
 h_epr_data = Native.ElectronPhotonRelaxationDataContainer( "test_epr_1_native.xml" )
 
@@ -71,21 +84,19 @@ generator_h.setNotes( notes )
 # Generate the data
 try:
     generator_h.populateEPRDataContainer( True, True )
-except RuntimeError:
-    print "adjoint H native data FAILED to update!"
+except Exception as e:
+    print(bcolors.BOLD + bcolors.FAIL + '\nadjoint H native data FAILED to update: '+ str(e))
+    sys.exit(1)
 
-print "adjoint H native data updated successfully!\n"
+print bcolors.BOLD + bcolors.OKGREEN + "adjoint H native data updated successfully!\n" + bcolors.ENDC
+print "-------------------------------------------\n"
 
 # Save the file
 h_data_container = generator_h.getDataContainer()
 h_data_container.saveToFile( "test_aepr_1_native.xml", True)
 
-# Remove the temporary file if necessary
-if os.path.isfile("temp_epr_file.xml"):
-  os.remove("temp_epr_file.xml")
-
 # Update adjoint Carbon data
-print "Updating the adjoint C native test data...\n"
+print bcolors.BOLD + "Updating the adjoint C native test data ...\n" + bcolors.ENDC
 
 c_epr_data = Native.ElectronPhotonRelaxationDataContainer( "test_epr_6_native.xml" )
 
@@ -112,12 +123,12 @@ generator_c.setDefaultElectronGridConvergenceTolerance( 1e-2 )
 generator_c.setDefaultElectronGridAbsoluteDifferenceTolerance( 1e-16 )
 generator_c.setDefaultElectronGridDistanceTolerance( 1e-9 )
 
-generator_c.setElectronTabularEvaluationTolerance( 1e-7 )
+generator_c.setElectronTabularEvaluationTolerance( 1e-5 )
 generator_c.setElectronTwoDInterpPolicy( MonteCarlo.LOGLOGLOG_INTERPOLATION )
 generator_c.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
 
-generator_h.setCutoffAngleCosine( 0.9 )
-generator_h.setNumberOfMomentPreservingAngles( 2 )
+generator_c.setCutoffAngleCosine( 0.9 )
+generator_c.setNumberOfMomentPreservingAngles( 2 )
 
 generator_c.setAdjointBremsstrahlungMaxEnergyNudgeValue( 0.2 )
 generator_c.setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue( 2e-7 )
@@ -137,21 +148,19 @@ generator_c.setNotes( notes )
 # Generate the data
 try:
     generator_c.populateEPRDataContainer( True, True )
-except RuntimeError:
-    print "adjoint C native data FAILED to update!"
+except Exception as e:
+    print(bcolors.BOLD + bcolors.FAIL + '\nadjoint C native data FAILED to update: '+ str(e))
+    sys.exit(1)
 
-print "adjoint C native data updated successfully!\n"
+print bcolors.BOLD + bcolors.OKGREEN + "adjoint C native data updated successfully!\n" + bcolors.ENDC
+print "-------------------------------------------\n"
 
 # Save the file
 c_data_container = generator_c.getDataContainer()
 c_data_container.saveToFile( "test_aepr_6_native.xml", True)
 
-# Remove the temporary file if necessary
-if os.path.isfile("temp_epr_file.xml"):
-  os.remove("temp_epr_file.xml")
-
 # Update adjoint Aluminum data
-print "Updating the adjoint Al native test data...\n"
+print bcolors.BOLD + "Updating the adjoint Al native test data ...\n" + bcolors.ENDC
 
 al_epr_data = Native.ElectronPhotonRelaxationDataContainer( "test_epr_13_native.xml" )
 
@@ -178,12 +187,12 @@ generator_al.setDefaultElectronGridConvergenceTolerance( 1e-2 )
 generator_al.setDefaultElectronGridAbsoluteDifferenceTolerance( 1e-16 )
 generator_al.setDefaultElectronGridDistanceTolerance( 1e-9 )
 
-generator_al.setElectronTabularEvaluationTolerance( 1e-7 )
+generator_al.setElectronTabularEvaluationTolerance( 1e-5 )
 generator_al.setElectronTwoDInterpPolicy( MonteCarlo.LOGLOGLOG_INTERPOLATION )
 generator_al.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
 
-generator_h.setCutoffAngleCosine( 0.9 )
-generator_h.setNumberOfMomentPreservingAngles( 2 )
+generator_al.setCutoffAngleCosine( 0.9 )
+generator_al.setNumberOfMomentPreservingAngles( 2 )
 
 generator_al.setAdjointBremsstrahlungMaxEnergyNudgeValue( 0.2 )
 generator_al.setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue( 2e-7 )
@@ -192,7 +201,7 @@ generator_al.setAdjointBremsstrahlungGridConvergenceTolerance( 0.5 )
 generator_al.setAdjointBremsstrahlungAbsoluteDifferenceTolerance( 1e-16 )
 generator_al.setAdjointBremsstrahlungDistanceTolerance( 1e-9 )
 
-generator_al.setAdjointElectroionizationEvaluationTolerance( 1e-3 )
+generator_al.setAdjointElectroionizationEvaluationTolerance( 1e-5 )
 generator_al.setAdjointElectroionizationGridConvergenceTolerance( 0.5 )
 generator_al.setAdjointElectroionizationAbsoluteDifferenceTolerance( 1e-16 )
 generator_al.setAdjointElectroionizationDistanceTolerance( 1e-9 )
@@ -203,21 +212,19 @@ generator_al.setNotes( notes )
 # Generate the data
 try:
     generator_al.populateEPRDataContainer( True, True )
-except RuntimeError:
-    print "adjoint Al native data FAILED to update!"
+except Exception as e:
+    print(bcolors.BOLD + bcolors.FAIL + '\nadjoint Al native data FAILED to update: '+ str(e))
+    sys.exit(1)
 
-print "adjoint Al native data updated successfully!\n"
+print bcolors.BOLD + bcolors.OKGREEN + "adjoint Al native data updated successfully!\n" + bcolors.ENDC
+print "-------------------------------------------\n"
 
 # Save the file
 al_data_container = generator_al.getDataContainer()
 al_data_container.saveToFile( "test_aepr_13_native.xml", True)
 
-# Remove the temporary file if necessary
-if os.path.isfile("temp_epr_file.xml"):
-  os.remove("temp_epr_file.xml")
-
 # Update adjoint Silicon data
-print "Updating the adjoint Si native test data...\n"
+print bcolors.BOLD + "Updating the adjoint Si native test data ...\n" + bcolors.ENDC
 
 si_epr_data = Native.ElectronPhotonRelaxationDataContainer( "test_epr_14_native.xml" )
 
@@ -248,8 +255,8 @@ generator_si.setElectronTabularEvaluationTolerance( 1e-7 )
 generator_si.setElectronTwoDInterpPolicy( MonteCarlo.LOGLOGLOG_INTERPOLATION )
 generator_si.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
 
-generator_h.setCutoffAngleCosine( 0.9 )
-generator_h.setNumberOfMomentPreservingAngles( 2 )
+generator_si.setCutoffAngleCosine( 0.9 )
+generator_si.setNumberOfMomentPreservingAngles( 2 )
 
 generator_si.setAdjointBremsstrahlungMaxEnergyNudgeValue( 0.2 )
 generator_si.setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue( 2e-7 )
@@ -269,22 +276,21 @@ generator_si.setNotes( notes )
 # Generate the data
 try:
     generator_si.populateEPRDataContainer( True, True )
-except RuntimeError:
-    print "adjoint Si native data FAILED to update!"
+except Exception as e:
+    print(bcolors.BOLD + bcolors.FAIL + '\nadjoint Si native data FAILED to update: '+ str(e))
+    sys.exit(1)
 
-print "adjoint Si native data updated successfully!\n"
+print bcolors.BOLD + bcolors.OKGREEN + "adjoint Si native data updated successfully!\n" + bcolors.ENDC
+print "-------------------------------------------\n"
 
 # Save the file
 si_data_container = generator_si.getDataContainer()
 si_data_container.saveToFile( "test_aepr_14_native.xml", True)
 
-# Remove the temporary file if necessary
-if os.path.isfile("temp_epr_file.xml"):
-  os.remove("temp_epr_file.xml")
-
+# NOTE: The adjoint Pb files are no longer used for testing!
 
 # # Update adjoint Lead data
-# print "Updating the adjoint Pb native test data...\n"
+# print bcolors.BOLD + "Updating the adjoint Pb native test data ...\n" + bcolors.ENDC
 
 # pb_epr_data = Native.ElectronPhotonRelaxationDataContainer( "test_epr_82_native.xml" )
 
@@ -315,8 +321,8 @@ if os.path.isfile("temp_epr_file.xml"):
 # generator_pb.setElectronTwoDInterpPolicy( MonteCarlo.LOGLOGLOG_INTERPOLATION )
 # generator_pb.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
 
-# generator_h.setCutoffAngleCosine( 0.9 )
-# generator_h.setNumberOfMomentPreservingAngles( 2 )
+# generator_pb.setCutoffAngleCosine( 0.9 )
+# generator_pb.setNumberOfMomentPreservingAngles( 2 )
 
 # generator_pb.setAdjointBremsstrahlungMaxEnergyNudgeValue( 0.2 )
 # generator_pb.setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue( 2e-7 )
@@ -336,16 +342,13 @@ if os.path.isfile("temp_epr_file.xml"):
 # # Generate the data
 # try:
 #     generator_pb.populateEPRDataContainer( True, True )
-# except RuntimeError:
-#     print "adjoint Pb native data FAILED to update!"
+# except Exception as e:
+#     print(bcolors.BOLD + bcolors.FAIL + '\nadjoint Pb native data FAILED to update: '+ str(e))
+#     sys.exit(1)
 
-# print "adjoint Pb native data updated successfully!\n"
+# print bcolors.BOLD + bcolors.OKGREEN + "adjoint Pb native data updated successfully!\n" + bcolors.ENDC
+# print "-------------------------------------------\n"
 
 # # Save the file
 # pb_data_container = generator_pb.getDataContainer()
 # pb_data_container.saveToFile( "test_aepr_82_native.xml", True)
-
-# # Remove the temporary file if necessary
-# if os.path.isfile("temp_epr_file.xml"):
-#   os.remove("temp_epr_file.xml")
-

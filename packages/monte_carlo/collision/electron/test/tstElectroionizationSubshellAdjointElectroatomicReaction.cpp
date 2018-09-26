@@ -114,7 +114,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, getCro
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.6110462808911211e+09, 1e-12 );
 
   cross_section = first_subshell_reaction->getCrossSection( 1.5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.0795465976383857e+04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.079667120183153565e+04, 1e-12 );
 
   cross_section = first_subshell_reaction->getCrossSection( 20.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.0110763061599802e+04, 1e-12 );
@@ -124,7 +124,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, getCro
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.3480113717434631e+11, 1e-12 );
 
   cross_section = last_subshell_reaction->getCrossSection( 1.5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.1277989214683068e+05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.127670255052910361e+05, 1e-12 );
 
   cross_section = last_subshell_reaction->getCrossSection( 20.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.1818180758223236e+05, 1e-12 );

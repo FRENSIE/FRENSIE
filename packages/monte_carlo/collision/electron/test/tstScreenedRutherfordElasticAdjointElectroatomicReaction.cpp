@@ -18,7 +18,7 @@
 #include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
-typedef MonteCarlo::ElasticElectronScatteringDistributionNativeFactory 
+typedef MonteCarlo::ElasticElectronScatteringDistributionNativeFactory
     NativeFactory;
 
 //---------------------------------------------------------------------------//
@@ -44,7 +44,7 @@ FRENSIE_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction, getRea
 FRENSIE_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction, getThresholdEnergy )
 {
   FRENSIE_CHECK_EQUAL( rutherford_elastic_reaction->getThresholdEnergy(),
-                       3.12509629531249944e-01 );
+                       2.59024e-01 );
 }
 
 //---------------------------------------------------------------------------//
@@ -92,8 +92,8 @@ FRENSIE_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction,
   cross_section = rutherford_elastic_reaction->getCrossSection( 1.0E-03 );
   FRENSIE_CHECK_SMALL( cross_section, 1e-12 );
 
-  cross_section = rutherford_elastic_reaction->getCrossSection( 0.312509629531249944 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.6966818153468921e+01, 1e-12 );
+  cross_section = rutherford_elastic_reaction->getCrossSection( 2.59024e-01 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.574552047073666472, 1e-12 );
 
   cross_section = rutherford_elastic_reaction->getCrossSection( 20.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.2717394891258004e+04, 1e-12 );

@@ -57,7 +57,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 
   energy = 1e-3;
   cross_section = reaction->getCrossSection( energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.8205052827449557e+06, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.874725328661224805e+06, 1e-12 );
 
   energy = 20.0;
   cross_section = reaction->getCrossSection( energy );
@@ -93,7 +93,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 
   energy = 1e-3;
   cross_section = reaction->getCrossSection( energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.8205052827449557e+06, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.874725328661224805e+06, 1e-12 );
 
   energy = 20.0;
   cross_section = reaction->getCrossSection( energy );
@@ -134,7 +134,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
   energy = 1e-3;
   cross_section = reaction->getCrossSection( energy );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.8205052827449557e+06, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.874725328661224805e+06, 1e-12 );
 
   energy = 20.0;
   cross_section = reaction->getCrossSection( energy );
@@ -159,16 +159,16 @@ FRENSIE_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
   // Test reaction properties
   FRENSIE_CHECK_EQUAL( reaction->getReactionType(),
        MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  FRENSIE_CHECK_EQUAL( reaction->getThresholdEnergy(), 3.12509629531249944e-01 );
+  FRENSIE_CHECK_EQUAL( reaction->getThresholdEnergy(), 2.59024e-01 );
 
   // Test that the stored cross section is correct
   double energy = 1.0;
   double cross_section = reaction->getCrossSection( energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.4916370483832088e+03, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.492318970451783571e+03, 1e-12 );
 
   energy = 10.0;
   cross_section = reaction->getCrossSection( energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.2060320040112263e+04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.206070802327034289e+04, 1e-12 );
 
   energy = 20.0;
   cross_section = reaction->getCrossSection( energy );
@@ -209,12 +209,12 @@ FRENSIE_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
   energy = 1e-3;
   cross_section = reaction->getCrossSection( energy );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.6718090775280627e+06, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.696297499655022053e+06, 1e-12 );
 
   energy = 20.0;
   cross_section = reaction->getCrossSection( energy );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.0962446943088544, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.051440287719986433, 1e-12 );
 
   // Clear the reaction
   reaction.reset();
@@ -244,7 +244,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 
   cross_section = reaction->getCrossSection( 1e-3 );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.0551636170350602e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.071196592417021282e+07, 1e-12 );
 
   cross_section = reaction->getCrossSection( 20.0 );
 
@@ -280,13 +280,13 @@ FRENSIE_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 
   // Test the first shell's stored cross section is correct
   double cross_section = reactions.front()->getCrossSection( 1e-5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.5998492533545486e+10, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.599858431241171265e+10, 1e-12 );
 
   cross_section = reactions.front()->getCrossSection( 1e-3 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.5792554094646232e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.627599463243934512e+07, 1e-12 );
 
   cross_section = reactions.front()->getCrossSection( 20.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 6.2035367482136615e+04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 6.203546061164286948e+04, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -310,13 +310,13 @@ FRENSIE_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 
   // Test that the stored cross section is correct
   double cross_section = reaction->getCrossSection( reaction->getThresholdEnergy() );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.9800795006423726e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.980092756766359940e+01, 1e-12 );
 
   cross_section = reaction->getCrossSection( 1e-3 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.4246702389204639e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.441998445400516893e+01, 1e-12 );
 
   cross_section = reaction->getCrossSection( 20.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.4971444066404619e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.497134894717789044e-01, 1e-12 );
 
   // Clear the reaction
   reaction.reset();

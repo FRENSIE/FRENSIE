@@ -52,7 +52,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, constructor_neutron_mode )
   properties->setParticleMode( MonteCarlo::NEUTRON_MODE );
 
   std::unique_ptr<const MonteCarlo::FilledGeometryModel> filled_model;
-  
+
   FRENSIE_CHECK_NO_THROW( filled_model.reset(
                                    new MonteCarlo::FilledGeometryModel(
                                         data_directory,
@@ -334,7 +334,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, isCellVoid_photon_mode )
                                                 true );
 
   FRENSIE_CHECK( !filled_model.isTerminationCell( 1 ) );
-  
+
   FRENSIE_CHECK( filled_model.isCellVoid( 1, MonteCarlo::NEUTRON ) );
   FRENSIE_CHECK( filled_model.isCellVoid<MonteCarlo::NeutronState>( 1 ) );
 
@@ -378,7 +378,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, isCellVoid_electron_mode )
                                                 true );
 
   FRENSIE_CHECK( !filled_model.isTerminationCell( 1 ) );
-  
+
   FRENSIE_CHECK( filled_model.isCellVoid( 1, MonteCarlo::NEUTRON ) );
   FRENSIE_CHECK( filled_model.isCellVoid<MonteCarlo::NeutronState>( 1 ) );
 
@@ -422,7 +422,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, isCellVoid_neutron_photon_mode )
                                                 true );
 
   FRENSIE_CHECK( !filled_model.isTerminationCell( 1 ) );
-  
+
   FRENSIE_CHECK( !filled_model.isCellVoid( 1, MonteCarlo::NEUTRON ) );
   FRENSIE_CHECK( !filled_model.isCellVoid<MonteCarlo::NeutronState>( 1 ) );
 
@@ -466,7 +466,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, isCellVoid_photon_electron_mode )
                                                 true );
 
   FRENSIE_CHECK( !filled_model.isTerminationCell( 1 ) );
-  
+
   FRENSIE_CHECK( filled_model.isCellVoid( 1, MonteCarlo::NEUTRON ) );
   FRENSIE_CHECK( filled_model.isCellVoid<MonteCarlo::NeutronState>( 1 ) );
 
@@ -510,7 +510,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, isCellVoid_neutron_photon_electron_mode 
                                                 true );
 
   FRENSIE_CHECK( !filled_model.isTerminationCell( 1 ) );
-  
+
   FRENSIE_CHECK( !filled_model.isCellVoid( 1, MonteCarlo::NEUTRON ) );
   FRENSIE_CHECK( !filled_model.isCellVoid<MonteCarlo::NeutronState>( 1 ) );
 
@@ -540,7 +540,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, isCellVoid_neutron_photon_electron_mode 
 // Check if a cell is void
 FRENSIE_UNIT_TEST( FilledGeometryModel, isCellVoid_adjoint_neutron_mode )
 {
-  
+
 }
 
 //---------------------------------------------------------------------------//
@@ -653,7 +653,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_mode )
     MonteCarlo::NeutronState neutron( 1ull );
     neutron.embedInModel( filled_model );
     neutron.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                        filled_model.getMacroscopicTotalCrossSection( neutron ),
                        5.565644507161069399e-01,
@@ -691,7 +691,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_mode )
                                       neutron.getCell(), neutron.getEnergy() ),
       5.565644507161069399e-01,
       1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSectionQuick<MonteCarlo::NeutronState>(
                                       neutron.getCell(), neutron.getEnergy() ),
@@ -721,7 +721,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_mode )
                                       neutron.getCell(), neutron.getEnergy() ),
        1.064473352626745806e-01,
        1e-15 );
-  
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                 filled_model.getMacroscopicTotalForwardCrossSection( neutron ),
                 1.064473352626745806e-01,
@@ -731,7 +731,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_mode )
            filled_model.getMacroscopicTotalForwardCrossSectionQuick( neutron ),
            1.064473352626745806e-01,
            1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSection<MonteCarlo::NeutronState>(
                                       neutron.getCell(), neutron.getEnergy() ),
@@ -930,7 +930,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_photon_mode )
     MonteCarlo::PhotonState photon( 1ull );
     photon.embedInModel( filled_model );
     photon.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                        filled_model.getMacroscopicTotalCrossSection( photon ),
                        7.063503858378371303e-02,
@@ -968,7 +968,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_photon_mode )
                                       photon.getCell(), photon.getEnergy() ),
       7.063503858378371303e-02,
       1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSectionQuick<MonteCarlo::PhotonState>(
                                       photon.getCell(), photon.getEnergy() ),
@@ -998,7 +998,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_photon_mode )
                                       photon.getCell(), photon.getEnergy() ),
        2.213467312742279508e-02,
        1e-15 );
-  
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                 filled_model.getMacroscopicTotalForwardCrossSection( photon ),
                 2.213467312742279508e-02,
@@ -1008,7 +1008,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_photon_mode )
            filled_model.getMacroscopicTotalForwardCrossSectionQuick( photon ),
            2.213467312742279508e-02,
            1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSection<MonteCarlo::PhotonState>(
                                       photon.getCell(), photon.getEnergy() ),
@@ -1207,7 +1207,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_electron_mode )
     MonteCarlo::ElectronState electron( 1ull );
     electron.embedInModel( filled_model );
     electron.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                       filled_model.getMacroscopicTotalCrossSection( electron ),
                       4.065685841790169070e+04,
@@ -1245,7 +1245,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_electron_mode )
                                     electron.getCell(), electron.getEnergy() ),
       4.065685841790169070e+04,
       1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSectionQuick<MonteCarlo::ElectronState>(
                                     electron.getCell(), electron.getEnergy() ),
@@ -1275,7 +1275,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_electron_mode )
                                     electron.getCell(), electron.getEnergy() ),
        2.997884161999163916e+04,
        1e-15 );
-  
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                filled_model.getMacroscopicTotalForwardCrossSection( electron ),
                2.997884161999163916e+04,
@@ -1285,7 +1285,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_electron_mode )
           filled_model.getMacroscopicTotalForwardCrossSectionQuick( electron ),
           2.997884161999163916e+04,
           1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSection<MonteCarlo::ElectronState>(
                                     electron.getCell(), electron.getEnergy() ),
@@ -1304,7 +1304,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_electron_mode )
     MonteCarlo::PositronState positron( 1ull );
     positron.embedInModel( filled_model );
     positron.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                       filled_model.getMacroscopicTotalCrossSection( positron ),
                       4.065685841790115228e+04,
@@ -1342,7 +1342,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_electron_mode )
                                     positron.getCell(), positron.getEnergy() ),
       4.065685841790115228e+04,
       1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSectionQuick<MonteCarlo::PositronState>(
                                     positron.getCell(), positron.getEnergy() ),
@@ -1372,7 +1372,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_electron_mode )
                                     positron.getCell(), positron.getEnergy() ),
        2.997884161999251228e+04,
        1e-15 );
-  
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                filled_model.getMacroscopicTotalForwardCrossSection( positron ),
                2.997884161999251228e+04,
@@ -1382,7 +1382,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_electron_mode )
           filled_model.getMacroscopicTotalForwardCrossSectionQuick( positron ),
           2.997884161999251228e+04,
           1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSection<MonteCarlo::PositronState>(
                                     positron.getCell(), positron.getEnergy() ),
@@ -1473,7 +1473,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_mode )
     MonteCarlo::NeutronState neutron( 1ull );
     neutron.embedInModel( filled_model );
     neutron.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                        filled_model.getMacroscopicTotalCrossSection( neutron ),
                        5.565644507161069399e-01,
@@ -1511,7 +1511,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_mode )
                                       neutron.getCell(), neutron.getEnergy() ),
       5.565644507161069399e-01,
       1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSectionQuick<MonteCarlo::NeutronState>(
                                       neutron.getCell(), neutron.getEnergy() ),
@@ -1541,7 +1541,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_mode )
                                       neutron.getCell(), neutron.getEnergy() ),
        1.064473352626745806e-01,
        1e-15 );
-  
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                 filled_model.getMacroscopicTotalForwardCrossSection( neutron ),
                 1.064473352626745806e-01,
@@ -1551,7 +1551,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_mode )
            filled_model.getMacroscopicTotalForwardCrossSectionQuick( neutron ),
            1.064473352626745806e-01,
            1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSection<MonteCarlo::NeutronState>(
                                       neutron.getCell(), neutron.getEnergy() ),
@@ -1570,7 +1570,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_mode )
     MonteCarlo::PhotonState photon( 1ull );
     photon.embedInModel( filled_model );
     photon.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                        filled_model.getMacroscopicTotalCrossSection( photon ),
                        7.063503858378371303e-02,
@@ -1608,7 +1608,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_mode )
                                       photon.getCell(), photon.getEnergy() ),
       7.063503858378371303e-02,
       1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSectionQuick<MonteCarlo::PhotonState>(
                                       photon.getCell(), photon.getEnergy() ),
@@ -1638,7 +1638,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_mode )
                                       photon.getCell(), photon.getEnergy() ),
        2.213467312742279508e-02,
        1e-15 );
-  
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                 filled_model.getMacroscopicTotalForwardCrossSection( photon ),
                 2.213467312742279508e-02,
@@ -1648,7 +1648,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_mode )
            filled_model.getMacroscopicTotalForwardCrossSectionQuick( photon ),
            2.213467312742279508e-02,
            1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSection<MonteCarlo::PhotonState>(
                                       photon.getCell(), photon.getEnergy() ),
@@ -1820,7 +1820,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_photon_electron_mode )
     MonteCarlo::PhotonState photon( 1ull );
     photon.embedInModel( filled_model );
     photon.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                        filled_model.getMacroscopicTotalCrossSection( photon ),
                        7.063503858378371303e-02,
@@ -1858,7 +1858,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_photon_electron_mode )
                                       photon.getCell(), photon.getEnergy() ),
       7.063503858378371303e-02,
       1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSectionQuick<MonteCarlo::PhotonState>(
                                       photon.getCell(), photon.getEnergy() ),
@@ -1888,7 +1888,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_photon_electron_mode )
                                       photon.getCell(), photon.getEnergy() ),
        2.213467312742279508e-02,
        1e-15 );
-  
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                 filled_model.getMacroscopicTotalForwardCrossSection( photon ),
                 2.213467312742279508e-02,
@@ -1898,7 +1898,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_photon_electron_mode )
            filled_model.getMacroscopicTotalForwardCrossSectionQuick( photon ),
            2.213467312742279508e-02,
            1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSection<MonteCarlo::PhotonState>(
                                       photon.getCell(), photon.getEnergy() ),
@@ -1917,7 +1917,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_photon_electron_mode )
     MonteCarlo::ElectronState electron( 1ull );
     electron.embedInModel( filled_model );
     electron.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                       filled_model.getMacroscopicTotalCrossSection( electron ),
                       4.065685841790169070e+04,
@@ -1955,7 +1955,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_photon_electron_mode )
                                     electron.getCell(), electron.getEnergy() ),
       4.065685841790169070e+04,
       1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSectionQuick<MonteCarlo::ElectronState>(
                                     electron.getCell(), electron.getEnergy() ),
@@ -1985,7 +1985,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_photon_electron_mode )
                                     electron.getCell(), electron.getEnergy() ),
        2.997884161999163916e+04,
        1e-15 );
-  
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                filled_model.getMacroscopicTotalForwardCrossSection( electron ),
                2.997884161999163916e+04,
@@ -1995,7 +1995,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_photon_electron_mode )
           filled_model.getMacroscopicTotalForwardCrossSectionQuick( electron ),
           2.997884161999163916e+04,
           1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSection<MonteCarlo::ElectronState>(
                                     electron.getCell(), electron.getEnergy() ),
@@ -2014,7 +2014,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_photon_electron_mode )
     MonteCarlo::PositronState positron( 1ull );
     positron.embedInModel( filled_model );
     positron.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                       filled_model.getMacroscopicTotalCrossSection( positron ),
                       4.065685841790115228e+04,
@@ -2052,7 +2052,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_photon_electron_mode )
                                     positron.getCell(), positron.getEnergy() ),
       4.065685841790115228e+04,
       1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSectionQuick<MonteCarlo::PositronState>(
                                     positron.getCell(), positron.getEnergy() ),
@@ -2082,7 +2082,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_photon_electron_mode )
                                     positron.getCell(), positron.getEnergy() ),
        2.997884161999251228e+04,
        1e-15 );
-  
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                filled_model.getMacroscopicTotalForwardCrossSection( positron ),
                2.997884161999251228e+04,
@@ -2092,7 +2092,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_photon_electron_mode )
           filled_model.getMacroscopicTotalForwardCrossSectionQuick( positron ),
           2.997884161999251228e+04,
           1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSection<MonteCarlo::PositronState>(
                                     positron.getCell(), positron.getEnergy() ),
@@ -2183,7 +2183,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_electro
     MonteCarlo::NeutronState neutron( 1ull );
     neutron.embedInModel( filled_model );
     neutron.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                        filled_model.getMacroscopicTotalCrossSection( neutron ),
                        5.565644507161069399e-01,
@@ -2221,7 +2221,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_electro
                                       neutron.getCell(), neutron.getEnergy() ),
       5.565644507161069399e-01,
       1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSectionQuick<MonteCarlo::NeutronState>(
                                       neutron.getCell(), neutron.getEnergy() ),
@@ -2251,7 +2251,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_electro
                                       neutron.getCell(), neutron.getEnergy() ),
        1.064473352626745806e-01,
        1e-15 );
-  
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                 filled_model.getMacroscopicTotalForwardCrossSection( neutron ),
                 1.064473352626745806e-01,
@@ -2261,7 +2261,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_electro
            filled_model.getMacroscopicTotalForwardCrossSectionQuick( neutron ),
            1.064473352626745806e-01,
            1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSection<MonteCarlo::NeutronState>(
                                       neutron.getCell(), neutron.getEnergy() ),
@@ -2280,7 +2280,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_electro
     MonteCarlo::PhotonState photon( 1ull );
     photon.embedInModel( filled_model );
     photon.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                        filled_model.getMacroscopicTotalCrossSection( photon ),
                        7.063503858378371303e-02,
@@ -2318,7 +2318,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_electro
                                       photon.getCell(), photon.getEnergy() ),
       7.063503858378371303e-02,
       1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSectionQuick<MonteCarlo::PhotonState>(
                                       photon.getCell(), photon.getEnergy() ),
@@ -2348,7 +2348,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_electro
                                       photon.getCell(), photon.getEnergy() ),
        2.213467312742279508e-02,
        1e-15 );
-  
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                 filled_model.getMacroscopicTotalForwardCrossSection( photon ),
                 2.213467312742279508e-02,
@@ -2358,7 +2358,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_electro
            filled_model.getMacroscopicTotalForwardCrossSectionQuick( photon ),
            2.213467312742279508e-02,
            1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSection<MonteCarlo::PhotonState>(
                                       photon.getCell(), photon.getEnergy() ),
@@ -2377,7 +2377,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_electro
     MonteCarlo::ElectronState electron( 1ull );
     electron.embedInModel( filled_model );
     electron.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                       filled_model.getMacroscopicTotalCrossSection( electron ),
                       4.065685841790169070e+04,
@@ -2415,7 +2415,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_electro
                                     electron.getCell(), electron.getEnergy() ),
       4.065685841790169070e+04,
       1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSectionQuick<MonteCarlo::ElectronState>(
                                     electron.getCell(), electron.getEnergy() ),
@@ -2445,7 +2445,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_electro
                                     electron.getCell(), electron.getEnergy() ),
        2.997884161999163916e+04,
        1e-15 );
-  
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                filled_model.getMacroscopicTotalForwardCrossSection( electron ),
                2.997884161999163916e+04,
@@ -2455,7 +2455,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_electro
           filled_model.getMacroscopicTotalForwardCrossSectionQuick( electron ),
           2.997884161999163916e+04,
           1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSection<MonteCarlo::ElectronState>(
                                     electron.getCell(), electron.getEnergy() ),
@@ -2474,7 +2474,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_electro
     MonteCarlo::PositronState positron( 1ull );
     positron.embedInModel( filled_model );
     positron.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                       filled_model.getMacroscopicTotalCrossSection( positron ),
                       4.065685841790115228e+04,
@@ -2512,7 +2512,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_electro
                                     positron.getCell(), positron.getEnergy() ),
       4.065685841790115228e+04,
       1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSectionQuick<MonteCarlo::PositronState>(
                                     positron.getCell(), positron.getEnergy() ),
@@ -2542,7 +2542,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_electro
                                     positron.getCell(), positron.getEnergy() ),
        2.997884161999251228e+04,
        1e-15 );
-  
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
                filled_model.getMacroscopicTotalForwardCrossSection( positron ),
                2.997884161999251228e+04,
@@ -2552,7 +2552,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_electro
           filled_model.getMacroscopicTotalForwardCrossSectionQuick( positron ),
           2.997884161999251228e+04,
           1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSection<MonteCarlo::PositronState>(
                                     positron.getCell(), positron.getEnergy() ),
@@ -2759,7 +2759,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_adjoint_photon_mode )
     MonteCarlo::AdjointPhotonState adjoint_photon( 1ull );
     adjoint_photon.embedInModel( filled_model );
     adjoint_photon.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
            filled_model.getMacroscopicTotalCrossSection( adjoint_photon ),
            3.898546934741942138e-01,
@@ -2797,7 +2797,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_adjoint_photon_mode )
                         adjoint_photon.getCell(), adjoint_photon.getEnergy() ),
       2.112255390180249326e-01,
       1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSectionQuick<MonteCarlo::AdjointPhotonState>(
                         adjoint_photon.getCell(), adjoint_photon.getEnergy() ),
@@ -2849,7 +2849,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_adjoint_photon_mode )
                         adjoint_photon.getCell(), adjoint_photon.getEnergy() ),
        1.332400408475752779e-02,
        1e-15 );
-  
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
          filled_model.getMacroscopicTotalForwardCrossSection( adjoint_photon ),
          5.430040110435463419e-02,
@@ -2859,7 +2859,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_adjoint_photon_mode )
          filled_model.getMacroscopicTotalForwardCrossSectionQuick( adjoint_photon ),
          5.430040110435463419e-02,
          1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSection<MonteCarlo::AdjointPhotonState>(
                         adjoint_photon.getCell(), adjoint_photon.getEnergy() ),
@@ -3103,139 +3103,139 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_adjoint_electron_mode 
     MonteCarlo::AdjointElectronState adjoint_electron( 1ull );
     adjoint_electron.embedInModel( filled_model );
     adjoint_electron.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
            filled_model.getMacroscopicTotalCrossSection( adjoint_electron ),
-           1.975740948366497760e+05,
+           1.977046421067211486e+05,
            1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
          filled_model.getMacroscopicTotalCrossSectionQuick( adjoint_electron ),
-         1.975740948366497760e+05,
+         1.977046421067211486e+05,
          1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
        filled_model.getMacroscopicTotalCrossSection<MonteCarlo::AdjointElectronState>(
                     adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-       1.975740948366497760e+05,
+       1.977046421067211486e+05,
        1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
        filled_model.getMacroscopicTotalCrossSectionQuick<MonteCarlo::AdjointElectronState>(
                     adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-       1.975740948366497760e+05,
+       1.977046421067211486e+05,
        1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
        filled_model.getMacroscopicTotalForwardCrossSection( adjoint_electron ),
-       1.961097622431130148e+05,
+       1.962428525463360711e+05,
        1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
        filled_model.getMacroscopicTotalForwardCrossSectionQuick( adjoint_electron ),
-       1.961097622431130148e+05,
+       1.962428525463360711e+05,
        1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSection<MonteCarlo::AdjointElectronState>(
                     adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-      1.961097622431130148e+05,
+      1.962428525463360711e+05,
       1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSectionQuick<MonteCarlo::AdjointElectronState>(
                     adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-      1.961097622431130148e+05,
+      1.962428525463360711e+05,
       1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
                        filled_model.getAdjointWeightFactor( adjoint_electron ),
-                       1.007466903109705880e+00,
+                       1.007448880514208334,
                        1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
                   filled_model.getAdjointWeightFactorQuick( adjoint_electron ),
-                  1.007466903109705880e+00,
+                  1.007448880514208334,
                   1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
           filled_model.getAdjointWeightFactor<MonteCarlo::AdjointElectronState>(
                     adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-          1.007466903109705880e+00,
+          1.007448880514208334,
           1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getAdjointWeightFactorQuick<MonteCarlo::AdjointElectronState>(
                     adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-      1.007466903109705880e+00,
+      1.007448880514208334,
       1e-15 );
 
     adjoint_electron.setEnergy( 10.0 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
               filled_model.getMacroscopicTotalCrossSection( adjoint_electron ),
-              1.781008558886992687e+05,
+              1.781038667483010504e+05,
               1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
          filled_model.getMacroscopicTotalCrossSectionQuick( adjoint_electron ),
-         1.781008558886992687e+05,
+         1.781038667483010504e+05,
          1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
        filled_model.getMacroscopicTotalCrossSection<MonteCarlo::AdjointElectronState>(
                     adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-       1.781008558886992687e+05,
+       1.781038667483010504e+05,
        1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
        filled_model.getMacroscopicTotalCrossSectionQuick<MonteCarlo::AdjointElectronState>(
                     adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-       1.781008558886992687e+05,
+       1.781038667483010504e+05,
        1e-15 );
-  
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
        filled_model.getMacroscopicTotalForwardCrossSection( adjoint_electron ),
-       1.781233226374924416e+05,
+       1.781250956364663143e+05,
        1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
        filled_model.getMacroscopicTotalForwardCrossSectionQuick( adjoint_electron ),
-       1.781233226374924416e+05,
+       1.781250956364663143e+05,
        1e-15 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSection<MonteCarlo::AdjointElectronState>(
                     adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-      1.781233226374924416e+05,
+      1.781250956364663143e+05,
       1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSectionQuick<MonteCarlo::AdjointElectronState>(
                     adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-      1.781233226374924416e+05,
+      1.781250956364663143e+05,
       1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
                        filled_model.getAdjointWeightFactor( adjoint_electron ),
-                       9.998738696962278238e-01,
+                       9.998808203409552675e-01,
                        1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
                   filled_model.getAdjointWeightFactorQuick( adjoint_electron ),
-                  9.998738696962278238e-01,
+                  9.998808203409552675e-01,
                   1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
          filled_model.getAdjointWeightFactor<MonteCarlo::AdjointElectronState>(
                     adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-         9.998738696962278238e-01,
+         9.998808203409552675e-01,
           1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getAdjointWeightFactorQuick<MonteCarlo::AdjointElectronState>(
                     adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-      9.998738696962278238e-01,
+      9.998808203409552675e-01,
       1e-15 );
 
     const std::vector<double>& critical_line_energies =
@@ -3381,7 +3381,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
   iarchive.reset();
 
   FRENSIE_CHECK( !filled_model->isTerminationCell( 1 ) );
-  
+
   FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::NEUTRON ) );
   FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::NeutronState>( 1 ) );
 
@@ -3462,7 +3462,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
   iarchive.reset();
 
   FRENSIE_CHECK( !filled_model->isTerminationCell( 1 ) );
-  
+
   FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::NEUTRON ) );
   FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::NeutronState>( 1 ) );
 
@@ -3543,7 +3543,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
   iarchive.reset();
 
   FRENSIE_CHECK( !filled_model->isTerminationCell( 1 ) );
-  
+
   FRENSIE_CHECK( !filled_model->isCellVoid( 1, MonteCarlo::NEUTRON ) );
   FRENSIE_CHECK( !filled_model->isCellVoid<MonteCarlo::NeutronState>( 1 ) );
 
@@ -3624,7 +3624,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
   iarchive.reset();
 
   FRENSIE_CHECK( !filled_model->isTerminationCell( 1 ) );
-  
+
   FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::NEUTRON ) );
   FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::NeutronState>( 1 ) );
 
@@ -3705,7 +3705,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
   iarchive.reset();
 
   FRENSIE_CHECK( !filled_model->isTerminationCell( 1 ) );
-  
+
   FRENSIE_CHECK( !filled_model->isCellVoid( 1, MonteCarlo::NEUTRON ) );
   FRENSIE_CHECK( !filled_model->isCellVoid<MonteCarlo::NeutronState>( 1 ) );
 
@@ -3923,7 +3923,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Determine the database directory
     boost::filesystem::path database_path =
       test_scattering_center_database_name;
-    
+
     data_directory = database_path.parent_path();
 
     // Load the database
@@ -3951,11 +3951,11 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     h_definition.setPhotoatomicDataProperties(
           h_properties.getSharedPhotoatomicDataProperties(
                        Data::PhotoatomicDataProperties::Native_EPR_FILE, 0 ) );
-    
+
     h_definition.setAdjointPhotoatomicDataProperties(
           h_properties.getSharedAdjointPhotoatomicDataProperties(
                 Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 0 ) );
-    
+
     h_definition.setElectroatomicDataProperties(
           h_properties.getSharedElectroatomicDataProperties(
                      Data::ElectroatomicDataProperties::Native_EPR_FILE, 0 ) );
@@ -3977,7 +3977,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     o_definition.setPhotoatomicDataProperties(
           o_properties.getSharedPhotoatomicDataProperties(
                          Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) );
-    
+
     o_definition.setElectroatomicDataProperties(
           o_properties.getSharedElectroatomicDataProperties(
                        Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) );
@@ -3997,7 +3997,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                                "Water @ 293.6K", 1,
                                                {"H1 @ 293.6K", "O16 @ 293.6K"},
                                                {2.0,           1.0});
-    
+
     material_definition_database->addDefinition( "H1 @ 293.6K", 2,
                                                  {"H1 @ 293.6K"}, {1.0} );
   }

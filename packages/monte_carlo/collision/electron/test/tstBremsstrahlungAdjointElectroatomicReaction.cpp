@@ -77,13 +77,13 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, getNumberOfEmitte
 FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, getCrossSection )
 {
   double cross_section = bremsstrahlung_reaction->getCrossSection( 1e-5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.9800795006423726e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.980092756766359940e+01, 1e-12 );
 
   cross_section = bremsstrahlung_reaction->getCrossSection( 2e-2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.4764284177960834, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.490273650787403259, 1e-12 );
 
   cross_section = bremsstrahlung_reaction->getCrossSection( 20.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.4971444066404619e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.497134894717789044e-01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -146,7 +146,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Get the cross section
     std::shared_ptr<const std::vector<double> > cross_section(
        new std::vector<double>( data_container.getAdjointBremsstrahlungElectronCrossSection() ) );
-       
+
     // Create the reaction
     bremsstrahlung_reaction.reset(
       new MonteCarlo::BremsstrahlungAdjointElectroatomicReaction<Utility::LinLin>(

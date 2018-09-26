@@ -677,12 +677,12 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
   threshold =
     data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
 
-  FRENSIE_CHECK_EQUAL( threshold, 63 );
+  FRENSIE_CHECK_EQUAL( threshold, 179 );
 
   cross_section = data_container.getScreenedRutherfordElasticCrossSection();
 
-  FRENSIE_CHECK_EQUAL( cross_section.front(), 5.70357400551438332e+00 );
-  FRENSIE_CHECK_EQUAL( cross_section.back(), 1.29045336560270462e+04);
+  FRENSIE_CHECK_EQUAL( cross_section.front(), 2.574552047073666472 );
+  FRENSIE_CHECK_EQUAL( cross_section.back(), 1.298709998688240012e+04 );
   FRENSIE_CHECK_EQUAL( cross_section.size(), 343-threshold );
 
   FRENSIE_CHECK_EQUAL( data_container.getCutoffElasticInterpPolicy(), "Lin-Lin" );
@@ -727,15 +727,15 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
   std::vector<double> discrete_angles =
     data_container.getMomentPreservingElasticDiscreteAngles( 1.0e-5 );
 
-  FRENSIE_CHECK_EQUAL( discrete_angles.front(), 9.33333333326666792e-01 );
-  FRENSIE_CHECK_EQUAL( discrete_angles.back(), 9.33333333326666792e-01 );
+  FRENSIE_CHECK_EQUAL( discrete_angles.front(), 9.333333333266671250e-01 );
+  FRENSIE_CHECK_EQUAL( discrete_angles.back(), 9.333333333266671250e-01 );
   FRENSIE_CHECK_EQUAL( discrete_angles.size(), 1 );
 
   discrete_angles =
     data_container.getMomentPreservingElasticDiscreteAngles( 1.0e+5 );
 
-  FRENSIE_CHECK_EQUAL( discrete_angles.front(), 9.96835060894997071e-01 );
-  FRENSIE_CHECK_EQUAL( discrete_angles.back(), 9.96835060894997071e-01 );
+  FRENSIE_CHECK_EQUAL( discrete_angles.front(), 9.968477432556352991e-01 );
+  FRENSIE_CHECK_EQUAL( discrete_angles.back(), 9.968477432556352991e-01 );
   FRENSIE_CHECK_EQUAL( discrete_angles.size(), 1 );
 
   std::vector<double> discrete_weights =
@@ -886,10 +886,8 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
   // Check the total electron cross section data
   cross_section = data_container.getTotalElectronCrossSection();
 
-  FRENSIE_CHECK_EQUAL( cross_section.front(), 2.74896167231337309e+08 );
-
-  FRENSIE_CHECK_EQUAL( cross_section.back(), 1.77239524290144647e+05 );
-
+  FRENSIE_CHECK_EQUAL( cross_section.front(), 2.748960297832000256e+08 );
+  FRENSIE_CHECK_EQUAL( cross_section.back(), 1.773220906210000103e+05 );
   FRENSIE_CHECK_EQUAL( cross_section.size(), 343 );
 
   data_container.saveToFile( "test_h_epr.xml", true);
@@ -1463,9 +1461,7 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
   cross_section = data_container.getTotalElectronCrossSection();
 
   FRENSIE_CHECK_EQUAL( cross_section.front(), 2.7489602978320003e+08 );
-
   FRENSIE_CHECK_EQUAL( cross_section.back(), 1.7732209062100001e+05 );
-
   FRENSIE_CHECK_EQUAL( cross_section.size(), 343 );
 
   data_container.saveToFile( "test_h_epr.xml", true );

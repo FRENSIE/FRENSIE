@@ -656,7 +656,7 @@ FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
 
   cross_section = data_container.getScreenedRutherfordElasticCrossSection();
 
-  FRENSIE_CHECK_EQUAL( cross_section.front(), 2.574552047073666472e+00 );
+  FRENSIE_CHECK_EQUAL( cross_section.front(), 2.574552047073666472 );
   FRENSIE_CHECK_EQUAL( cross_section.back(), 1.298709998688240012e+04 );
   FRENSIE_CHECK_EQUAL( cross_section.size(), 343-threshold );
 
@@ -862,9 +862,7 @@ FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
   cross_section = data_container.getTotalElectronCrossSection();
 
   FRENSIE_CHECK_EQUAL( cross_section.front(), 2.748960297832000256e+08 );
-
   FRENSIE_CHECK_EQUAL( cross_section.back(), 1.773220906210000103e+05 );
-
   FRENSIE_CHECK_EQUAL( cross_section.size(), 343 );
 
   data_container.saveToFile( "test_h_epr_endl.xml", true);
@@ -1439,9 +1437,7 @@ FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
   cross_section = data_container.getTotalElectronCrossSection();
 
   FRENSIE_CHECK_EQUAL( cross_section.front(), 2.7489602978320003e+08 );
-
   FRENSIE_CHECK_EQUAL( cross_section.back(), 1.7732209062100001e+05 );
-
   FRENSIE_CHECK_EQUAL( cross_section.size(), 343 );
 
   data_container.saveToFile( "test_h_epr_endl.xml", true );

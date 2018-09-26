@@ -58,7 +58,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomCore, getTotalForwardReaction )
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.97832E+01, 1e-12 );
 
   cross_section = total_forward_reaction.getCrossSection( 1e-3 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.0449492968423121e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.075323346040028706e+07, 1e-12 );
 
   cross_section = total_forward_reaction.getCrossSection( 20.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.6467035552999546e+05, 1e-12 );
@@ -83,21 +83,21 @@ FRENSIE_UNIT_TEST( AdjointElectroatomCore, getScatteringReactions )
                           b_reaction.getCrossSection( 1e-5 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          3.9800795006423726e+01 + 6.1243057898416743e+07,
+                          3.980092756766359940e+01 + 6.1243057898416743e+07,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 1e-3 ) +
                    b_reaction.getCrossSection( 1e-3 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          1.4246702389204639e+01 + 1.0551636170350602e+07,
+                          1.441998445400516893e+01 + 1.071196592417021282e+07,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 20.0 ) +
                    b_reaction.getCrossSection( 20.0 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          2.4971444066404619e-01 + 8.1829299836129925e+04,
+                          2.497134894717789044e-01 + 8.1829299836129925e+04,
                           1e-12 );
 }
 
@@ -182,10 +182,10 @@ FRENSIE_UNIT_TEST( AdjointElectroatomCore, getGridSearcher )
   FRENSIE_CHECK_EQUAL( grid_index, 0u );
 
   grid_index = grid_searcher.findLowerBinIndex( 1e-3 );
-  FRENSIE_CHECK_EQUAL( grid_index, 53 );
+  FRENSIE_CHECK_EQUAL( grid_index, 17 );
 
   grid_index = grid_searcher.findLowerBinIndex( 20.0 );
-  FRENSIE_CHECK_EQUAL( grid_index, 157 );
+  FRENSIE_CHECK_EQUAL( grid_index, 83 );
 }
 
 //---------------------------------------------------------------------------//
@@ -230,7 +230,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Get void reaction
     std::shared_ptr<const std::vector<double> > void_cross_section(
                          new std::vector<double>( energy_grid->size(), 0.0 ) );
-    
+
     std::shared_ptr<const MonteCarlo::ElectroatomicReaction> void_reaction(
      new MonteCarlo::AbsorptionElectroatomicReaction<Utility::LinLin,false>(
                        energy_grid,

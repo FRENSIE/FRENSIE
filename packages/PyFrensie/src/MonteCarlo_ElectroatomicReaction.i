@@ -8,6 +8,7 @@
 
 %{
 // FRENSIE Includes
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "MonteCarlo_MasslessParticleState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_AdjointPhotonState.hpp"
@@ -59,6 +60,9 @@ using namespace MonteCarlo;
 
 // ParticleState handling
 %import(module="PyFrensie.MonteCarlo") MonteCarlo_ParticleState.i
+
+// shared_ptr Data Container handling
+%shared_ptr(Data::ElectronPhotonRelaxationDataContainer);
 
 // Import the explicit template instantiation helpers
 %import "Utility_ExplicitTemplateInstantiationMacros.hpp"

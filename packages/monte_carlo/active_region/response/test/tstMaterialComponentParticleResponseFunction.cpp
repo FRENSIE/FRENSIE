@@ -128,7 +128,7 @@ FRENSIE_UNIT_TEST( MaterialComponentParticleResponseFunction, description )
                           1,
                           "H1 @ 293.6K",
                           MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION ) );
-    
+
   FRENSIE_CHECK_LESS( response_function->description().find( "cell_1_mat_component" ),
                       response_function->description().size() );
   FRENSIE_CHECK_LESS( response_function->description().find( "\"H1 @ 293.6K\"" ),
@@ -224,7 +224,7 @@ FRENSIE_UNIT_TEST( MaterialComponentParticleResponseFunction, evaluate )
   {
     MonteCarlo::PhotonState photon( 1ull );
     photon.setEnergy( 4.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY( response_function->evaluate( photon ),
                                      5.481451375530086199e-05,
                                      1e-15 );
@@ -248,7 +248,7 @@ FRENSIE_UNIT_TEST( MaterialComponentParticleResponseFunction, evaluate )
   {
     MonteCarlo::ElectronState electron( 1ull );
     electron.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY( response_function->evaluate( electron ),
                                      3.693456508334262700e-02,
                                      1e-15 );
@@ -264,7 +264,7 @@ FRENSIE_UNIT_TEST( MaterialComponentParticleResponseFunction, evaluate )
   {
     MonteCarlo::PositronState positron( 1ull );
     positron.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY( response_function->evaluate( positron ),
                                      3.693456508334262700e-02,
                                      1e-15 );
@@ -280,7 +280,7 @@ FRENSIE_UNIT_TEST( MaterialComponentParticleResponseFunction, evaluate )
   {
     MonteCarlo::AdjointPhotonState adjoint_photon( 1ull );
     adjoint_photon.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY( response_function->evaluate( adjoint_photon ),
                                      4.629028371467505184e-06,
                                      1e-15 );
@@ -296,9 +296,9 @@ FRENSIE_UNIT_TEST( MaterialComponentParticleResponseFunction, evaluate )
   {
     MonteCarlo::AdjointElectronState adjoint_electron( 1ull );
     adjoint_electron.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY( response_function->evaluate( adjoint_electron ),
-                                     5.103322094058865277e-01,
+                                     5.089779755448829990e-01,
                                      1e-15 );
   }
 }
@@ -330,7 +330,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( MaterialComponentParticleResponseFunction,
                                              "H1 @ 293.6K",
                                              MonteCarlo::N__GAMMA_REACTION ) );
 
-  
+
     std::shared_ptr<const MonteCarlo::ParticleResponseFunction>
       photon_response_function(
             new MonteCarlo::PhotonMaterialComponentParticleResponseFunction(
@@ -385,7 +385,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( MaterialComponentParticleResponseFunction,
   {
     MonteCarlo::NeutronState neutron( 1ull );
     neutron.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY( neutron_response_function->evaluate( neutron ),
                                      2.253571264294286624e-06,
                                      1e-15 );
@@ -394,7 +394,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( MaterialComponentParticleResponseFunction,
   {
     MonteCarlo::PhotonState photon( 1ull );
     photon.setEnergy( 4.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY( photon_response_function->evaluate( photon ),
                                      5.481451375530086199e-05,
                                      1e-15 );
@@ -403,7 +403,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( MaterialComponentParticleResponseFunction,
   {
     MonteCarlo::ElectronState electron( 1ull );
     electron.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY( electron_response_function->evaluate( electron ),
                                      3.693456508334262700e-02,
                                      1e-15 );
@@ -412,7 +412,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( MaterialComponentParticleResponseFunction,
   {
     MonteCarlo::PositronState positron( 1ull );
     positron.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK_FLOATING_EQUALITY( positron_response_function->evaluate( positron ),
                                      3.693456508334262700e-02,
                                      1e-15 );
@@ -467,7 +467,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( MaterialComponentParticleResponseFunction,
 
   MonteCarlo::AdjointPhotonState adjoint_photon( 1ull );
   adjoint_photon.setEnergy( 1.0 );
-    
+
   FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon_response_function->evaluate( adjoint_photon ),
                                    4.629028371467505184e-06,
                                    1e-15 );
@@ -518,12 +518,12 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( MaterialComponentParticleResponseFunction,
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( adjoint_electron_response_function ) );
 
   iarchive.reset();
-  
+
   MonteCarlo::AdjointElectronState adjoint_electron( 1ull );
   adjoint_electron.setEnergy( 1.0 );
-    
+
   FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron_response_function->evaluate( adjoint_electron ),
-                                   5.103322094058865277e-01,
+                                   5.089779755448829990e-01,
                                    1e-15 );
 }
 
@@ -548,7 +548,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Determine the database directory
     boost::filesystem::path database_path =
       test_scattering_center_database_name;
-    
+
     boost::filesystem::path data_directory = database_path.parent_path();
 
     // Load the database
@@ -577,11 +577,11 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     h_definition.setPhotoatomicDataProperties(
           h_properties.getSharedPhotoatomicDataProperties(
                        Data::PhotoatomicDataProperties::Native_EPR_FILE, 0 ) );
-    
+
     h_definition.setAdjointPhotoatomicDataProperties(
           h_properties.getSharedAdjointPhotoatomicDataProperties(
                 Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 0 ) );
-    
+
     h_definition.setElectroatomicDataProperties(
           h_properties.getSharedElectroatomicDataProperties(
                      Data::ElectroatomicDataProperties::Native_EPR_FILE, 0 ) );
@@ -603,7 +603,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     o_definition.setPhotoatomicDataProperties(
           o_properties.getSharedPhotoatomicDataProperties(
                          Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) );
-    
+
     o_definition.setElectroatomicDataProperties(
           o_properties.getSharedElectroatomicDataProperties(
                        Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) );
@@ -618,12 +618,12 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Set the material definitions
     std::shared_ptr<MonteCarlo::MaterialDefinitionDatabase>
       material_definition_database( new MonteCarlo::MaterialDefinitionDatabase );
-    
+
     material_definition_database->addDefinition(
                                                "Water @ 293.6K", 1,
                                                {"H1 @ 293.6K", "O16 @ 293.6K"},
                                                {2.0,           1.0});
-    
+
     material_definition_database->addDefinition( "H1 @ 293.6K", 2,
                                                  {"H1 @ 293.6K"}, {1.0} );
 
@@ -631,7 +631,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // positron material filled model
     std::shared_ptr<const Geometry::Model> unfilled_model(
             new Geometry::InfiniteMediumModel( 1, 1, -1.0/cubic_centimeter ) );
-    
+
     std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
     properties->setParticleMode( MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE );
 
@@ -643,7 +643,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                         properties,
                                         unfilled_model,
                                         true ) );
-  
+
     neutron_material_filled_model = filled_model;
     photon_material_filled_model = filled_model;
     electron_material_filled_model = filled_model;

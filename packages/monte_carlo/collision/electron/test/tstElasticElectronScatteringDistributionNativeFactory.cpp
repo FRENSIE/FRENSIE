@@ -2074,7 +2074,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Set fake random number stream
   std::vector<double> fake_stream( 4 );
-  fake_stream[0] = 0.1; // sample mu = 8.3035495004722581e-011
+  fake_stream[0] = 0.1; // sample mu = 8.092036645386622151e-011
   fake_stream[1] = 0.2; // sample mu = 9.2398608900202417e-01
   fake_stream[2] = 0.4; // sample mu = 9.7889262247552877e-01
   fake_stream[3] = 1.0-1e-15; // sample mu = 9.7889262247552877e-01
@@ -2089,7 +2089,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_hybrid_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 8.3035495004722581e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 8.092036645386622151e-01, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 
   // Test 2

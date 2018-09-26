@@ -52,7 +52,7 @@ FRENSIE_UNIT_TEST( TransportKernel, sampleOpticalPathLengthToNextCollisionSite )
   FRENSIE_CHECK_FLOATING_EQUALITY( MonteCarlo::TransportKernel::sampleOpticalPathLengthToNextCollisionSite(),
                                    0.2876820724517809,
                                    1e-15 );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -68,7 +68,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
   properties->setParticleMode( MonteCarlo::NEUTRON_MODE );
 
   std::shared_ptr<const MonteCarlo::FilledGeometryModel> filled_model;
-  
+
   FRENSIE_CHECK_NO_THROW( filled_model.reset(
                                    new MonteCarlo::FilledGeometryModel(
                                         data_directory,
@@ -96,7 +96,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
     FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleDistanceToNextCollisionSite( neutron ),
                                      0.5168890540558835,
                                      1e-15 );
-  
+
     Utility::RandomNumberGenerator::unsetFakeStream();
   }
 
@@ -138,7 +138,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
 
     Utility::RandomNumberGenerator::unsetFakeStream();
   }
-  
+
   {
     MonteCarlo::AdjointPhotonState adjoint_photon( 1ull );
     adjoint_photon.embedInModel( *filled_model );
@@ -178,7 +178,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
   properties->setParticleMode( MonteCarlo::PHOTON_MODE );
 
   std::shared_ptr<const MonteCarlo::FilledGeometryModel> filled_model;
-  
+
   FRENSIE_CHECK_NO_THROW( filled_model.reset(
                                    new MonteCarlo::FilledGeometryModel(
                                         data_directory,
@@ -219,7 +219,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
     FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleDistanceToNextCollisionSite( photon ),
                                      4.072795573128299,
                                      1e-15 );
-  
+
     Utility::RandomNumberGenerator::unsetFakeStream();
   }
 
@@ -248,7 +248,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
 
     Utility::RandomNumberGenerator::unsetFakeStream();
   }
-  
+
   {
     MonteCarlo::AdjointPhotonState adjoint_photon( 1ull );
     adjoint_photon.embedInModel( *filled_model );
@@ -288,7 +288,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
   properties->setParticleMode( MonteCarlo::ELECTRON_MODE );
 
   std::shared_ptr<const MonteCarlo::FilledGeometryModel> filled_model;
-  
+
   FRENSIE_CHECK_NO_THROW( filled_model.reset(
                                    new MonteCarlo::FilledGeometryModel(
                                         data_directory,
@@ -342,7 +342,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
     FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleDistanceToNextCollisionSite( electron ),
                                      7.075855923120492e-06,
                                      1e-15 );
-  
+
     Utility::RandomNumberGenerator::unsetFakeStream();
   }
 
@@ -360,10 +360,10 @@ FRENSIE_UNIT_TEST( TransportKernel,
     FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleDistanceToNextCollisionSite( positron ),
                                      7.075855923120585e-06,
                                      1e-15 );
-  
+
     Utility::RandomNumberGenerator::unsetFakeStream();
   }
-  
+
   {
     MonteCarlo::AdjointPhotonState adjoint_photon( 1ull );
     adjoint_photon.embedInModel( *filled_model );
@@ -403,7 +403,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
   properties->setParticleMode( MonteCarlo::ADJOINT_PHOTON_MODE );
 
   std::shared_ptr<const MonteCarlo::FilledGeometryModel> filled_model;
-  
+
   FRENSIE_CHECK_NO_THROW( filled_model.reset(
                                    new MonteCarlo::FilledGeometryModel(
                                         data_directory,
@@ -468,7 +468,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
 
     Utility::RandomNumberGenerator::unsetFakeStream();
   }
-  
+
   {
     MonteCarlo::AdjointPhotonState adjoint_photon( 1ull );
     adjoint_photon.embedInModel( *filled_model );
@@ -483,7 +483,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
     FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleDistanceToNextCollisionSite( adjoint_photon ),
                                      1.3619663312930712,
                                      1e-15 );
-  
+
     Utility::RandomNumberGenerator::unsetFakeStream();
   }
 
@@ -513,7 +513,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
   properties->setParticleMode( MonteCarlo::ADJOINT_ELECTRON_MODE );
 
   std::shared_ptr<const MonteCarlo::FilledGeometryModel> filled_model;
-  
+
   FRENSIE_CHECK_NO_THROW( filled_model.reset(
                                    new MonteCarlo::FilledGeometryModel(
                                         data_directory,
@@ -578,7 +578,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
 
     Utility::RandomNumberGenerator::unsetFakeStream();
   }
-  
+
   {
     MonteCarlo::AdjointPhotonState adjoint_photon( 1ull );
     adjoint_photon.embedInModel( *filled_model );
@@ -600,13 +600,13 @@ FRENSIE_UNIT_TEST( TransportKernel,
     Utility::RandomNumberGenerator::setFakeStream( {0.5, 0.25} );
 
     FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleDistanceToNextCollisionSite( adjoint_electron ),
-                                     3.5344858544097657e-06,
+                                     3.532088794909267672e-06,
                                      1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleDistanceToNextCollisionSite( adjoint_electron ),
-                                     1.4669441702506767e-06,
+                                     1.465949300669967403e-06,
                                      1e-15 );
-  
+
     Utility::RandomNumberGenerator::unsetFakeStream();
   }
 }
@@ -632,7 +632,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Determine the database directory
     boost::filesystem::path database_path =
       test_scattering_center_database_name;
-    
+
     data_directory = database_path.parent_path();
 
     // Load the database
@@ -660,11 +660,11 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     h_definition.setPhotoatomicDataProperties(
           h_properties.getSharedPhotoatomicDataProperties(
                        Data::PhotoatomicDataProperties::Native_EPR_FILE, 0 ) );
-    
+
     h_definition.setAdjointPhotoatomicDataProperties(
           h_properties.getSharedAdjointPhotoatomicDataProperties(
                 Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 0 ) );
-    
+
     h_definition.setElectroatomicDataProperties(
           h_properties.getSharedElectroatomicDataProperties(
                      Data::ElectroatomicDataProperties::Native_EPR_FILE, 0 ) );
@@ -686,7 +686,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     o_definition.setPhotoatomicDataProperties(
           o_properties.getSharedPhotoatomicDataProperties(
                          Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) );
-    
+
     o_definition.setElectroatomicDataProperties(
           o_properties.getSharedElectroatomicDataProperties(
                        Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) );
@@ -706,7 +706,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                                "Water @ 293.6K", 1,
                                                {"H1 @ 293.6K", "O16 @ 293.6K"},
                                                {2.0,           1.0});
-    
+
     material_definition_database->addDefinition( "H1 @ 293.6K", 2,
                                                  {"H1 @ 293.6K"}, {1.0} );
   }
