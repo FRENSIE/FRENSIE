@@ -27,6 +27,15 @@ FRENSIE_ADD_TEST(OccupationNumberEvaluator
 FRENSIE_ADD_TEST_EXECUTABLE(DefaultComptonProfileGenerator DEPENDS tstDefaultComptonProfileGenerator.cpp)
 FRENSIE_ADD_TEST(DefaultComptonProfileGenerator)
 
+# Add ElectronElasticDataEvaluator
+FRENSIE_ADD_TEST_EXECUTABLE(ElectronElasticDataEvaluator
+  DEPENDS tstElectronElasticDataEvaluator.cpp
+  TARGET_DEPENDS ${TEST_H_ENDL_NATIVE_FILE_TARGET} ${TEST_C_ENDL_NATIVE_FILE_TARGET})
+FRENSIE_ADD_TEST(ElectronElasticDataEvaluator
+  EXTRA_ARGS
+  --test_endl_file=${TEST_H_ENDL_NATIVE_FILE}
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml)
+
 # Add ENDLElectronPhotonRelaxationDataGenerator
 FRENSIE_ADD_TEST_EXECUTABLE(ENDLElectronPhotonRelaxationDataGenerator
   DEPENDS tstENDLElectronPhotonRelaxationDataGenerator.cpp
