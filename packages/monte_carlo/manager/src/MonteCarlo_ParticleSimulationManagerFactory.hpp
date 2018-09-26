@@ -31,6 +31,9 @@ struct ParticleSimulationManagerFactoryCreateHelper;
 class ParticleSimulationManagerFactory : public Utility::ArchivableObject<ParticleSimulationManagerFactory>
 {
 
+  // The base type
+  typedef Utility::ArchivableObject<ParticleSimulationManagerFactory> BaseArchivableObjectType;
+  
 public:
 
   //! Constructor
@@ -81,6 +84,15 @@ public:
 
   //! Return the manager
   std::shared_ptr<ParticleSimulationManager> getManager();
+
+protected:
+
+  //! Load the archived object (implementation)
+  void loadFromFileImpl( const boost::filesystem::path& archive_name_with_path ) final override;
+
+  //! Archive the object (implementation)
+  void saveToFileImpl( const boost::filesystem::path& archive_name_with_path,
+                       const bool overwrite ) const final override;
 
 private:
 

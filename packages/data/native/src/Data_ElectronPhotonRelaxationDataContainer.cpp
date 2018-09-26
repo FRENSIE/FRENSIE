@@ -1174,8 +1174,6 @@ void ElectronPhotonRelaxationDataContainer::setSubshellRelaxationTransitions(
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
-  // Make sure the number of transitions is valid
-  testPrecondition( transitions > 0 );
 
   d_relaxation_transitions[subshell] = transitions;
 }

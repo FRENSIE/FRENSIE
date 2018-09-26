@@ -97,6 +97,9 @@ public:
   const double getAverageElectronEnergyPerInitialVacancy(
     const unsigned subshell ) const;
 
+  //! Check if a subshell has radiative transitions
+  bool hasRadiativeTransitions( const unsigned subshell ) const;
+
   //! Return the radiative transition probability
   const std::map<unsigned,double>& getRadiativeTransitionProbability(
     const unsigned subshell ) const;
@@ -104,6 +107,9 @@ public:
   //! Return the radiative transition energy
   const std::map<unsigned,double>& getRadiativeTransitionEnergy(
     const unsigned subshell ) const;
+
+  //! Check if a subshell has non radiative transitions
+  bool hasNonRadiativeTransitions( const unsigned subshell ) const;
 
   //! Return the non radiative transition probability
   const std::map<unsigned,std::map<unsigned,double> >&

@@ -181,6 +181,75 @@ def setGeneratorOptions( generator,
             print "Electron 2D grid policy", electron_two_d_grid_policy, "is not valid!"
             sys.exit(1)
 
+# Generate the data
+def generateData( endl_file_name,
+                  output_file_name,
+                  ace_table_name = None,
+                  db_name = None,
+                  overwrite = False,
+                  notes = None,
+                  min_photon_energy = None,
+                  max_photon_energy = None,
+                  min_electron_energy = None,
+                  max_electron_energy = None,
+                  photon_grid_convergence_tol = None,
+                  photon_grid_abs_diff_tol = None,
+                  photon_grid_dist_tol = None,
+                  electron_grid_convergence_tol = None,
+                  electron_grid_abs_diff_tol = None,
+                  electron_grid_dist_tol = None,
+                  occupation_number_eval_tol = None,
+                  subshell_incoherent_eval_tol = None,
+                  photon_threshold_energy_nudge_factor = None,
+                  electron_total_elastic_integrated_cs_mode_on = False,
+                  cutoff_angle_cosine = None,
+                  num_moment_preserving_angles = None,
+                  tabular_evaluation_tol = None,
+                  electron_two_d_interp_policy = None,
+                  electron_two_d_grid_policy = None ):
+    
+    # Verify the energy limits
+    verifyEnergyLimits( min_photon_energy,
+                        max_photon_energy,
+                        min_electron_energy,
+                        max_electron_energy )
+
+    # Create the generator
+    generator = createGenerator( endl_file_name,
+                                 ace_table_name,
+                                 db_name,
+                                 min_photon_energy,
+                                 max_photon_energy,
+                                 min_electron_energy,
+                                 max_electron_energy )
+
+    # Set the generator options
+    setGeneratorOptions( generator,
+                         photon_grid_convergence_tol,
+                         photon_grid_abs_diff_tol,
+                         photon_grid_dist_tol,
+                         electron_grid_convergence_tol,
+                         electron_grid_abs_diff_tol,
+                         electron_grid_dist_tol,
+                         occupation_number_eval_tol,
+                         subshell_incoherent_eval_tol,
+                         photon_threshold_energy_nudge_factor,
+                         electron_total_elastic_integrated_cs_mode_on,
+                         cutoff_angle_cosine,
+                         num_moment_preserving_angles,
+                         tabular_evaluation_tol,
+                         electron_two_d_interp_policy,
+                         electron_two_d_grid_policy )
+
+    # Populate the data
+    generator.populateEPRDataContainer()
+
+    # Save the generated data
+    generator.getDataContainer().saveToFile( output_file_name, overwrite )
+
+    # Return the shared data container
+    return generator.getSharedDataContainer()
+
 if __name__ == "__main__":
 
     # Parse the command-line arguments
@@ -195,7 +264,7 @@ if __name__ == "__main__":
                       help="the output file name (with extension)")
     parser.add_option("--overwrite", action="store_true", dest="overwrite", default=False,
                       help="Overwrite an existing output file")
-    parser.add_option("--notes", type="string", dest="generation notes",
+    parser.add_option("--notes", type="string", dest="notes",
                       help="data generation notes")
     parser.add_option("--min_photon_energy", type="float", dest="min_photon_energy",
                       help="the min photon energy")
@@ -246,44 +315,31 @@ if __name__ == "__main__":
         print "The output file name must be specified!"
         sys.exit(1)
 
-    # Verify the energy limits
-    verifyEnergyLimits( options.min_photon_energy,
-                        options.max_photon_energy,
-                        options.min_electron_energy,
-                        options.max_electron_energy )
-
-    # Create the generator
-    generator = createGenerator( options.endl_file_name,
-                                 options.ace_table_name,
-                                 options.db_name,
-                                 options.min_photon_energy,
-                                 options.max_photon_energy,
-                                 options.min_electron_energy,
-                                 options.max_electron_energy )
-
-    # Set the generator options
-    setGeneratorOptions( generator,
-                         options.photon_grid_convergence_tol,
-                         options.photon_grid_abs_diff_tol,
-                         options.photon_grid_dist_tol,
-                         options.electron_grid_convergence_tol,
-                         options.electron_grid_abs_diff_tol,
-                         options.electron_grid_dist_tol,
-                         options.occupation_number_eval_tol,
-                         options.subshell_incoherent_eval_tol,
-                         options.photon_threshold_energy_nudge_factor,
-                         options.electron_total_elastic_integrated_cs_mode_on,
-                         options.cutoff_angle_cosine,
-                         options.num_moment_preserving_angles,
-                         options.tabular_evaluation_tol,
-                         options.electron_two_d_interp_policy,
-                         options.electron_two_d_grid_policy )
-
-    # Populate the data
-    generator.populateEPRDataContainer()
-
-    # Save the generated data
-    generator.getDataContainer().saveToFile( options.output_file_name, options.overwrite )
+    generateData( options.endl_file_name,
+                  options.output_file_name,
+                  options.ace_table_name,
+                  options.db_name,
+                  options.overwrite,
+                  options.notes,
+                  options.min_photon_energy,
+                  options.max_photon_energy,
+                  options.min_electron_energy,
+                  options.max_electron_energy,
+                  options.photon_grid_convergence_tol,
+                  options.photon_grid_abs_diff_tol,
+                  options.photon_grid_dist_tol,
+                  options.electron_grid_convergence_tol,
+                  options.electron_grid_abs_diff_tol,
+                  options.electron_grid_dist_tol,
+                  options.occupation_number_eval_tol,
+                  options.subshell_incoherent_eval_tol,
+                  options.photon_threshold_energy_nudge_factor,
+                  options.electron_total_elastic_integrated_cs_mode_on,
+                  options.cutoff_angle_cosine,
+                  options.num_moment_preserving_angles,
+                  options.tabular_evaluation_tol,
+                  options.electron_two_d_interp_policy,
+                  options.electron_two_d_grid_policy )
 
 ##---------------------------------------------------------------------------##
 ## native_endl_to_native_epr.py

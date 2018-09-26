@@ -174,7 +174,7 @@ void ACEAndENDLElectronPhotonRelaxationDataGenerator::setRelaxationData()
     {
       data_container.setSubshellRelaxationTransitions( subshell_designators[i],
                                                        transitions );
-
+      
       this->setTransitionData( subshell_designators[i],
                                transitions,
                                (unsigned)relo_block[i] );
