@@ -1203,8 +1203,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   //---------------------------------------------------------------------------//
 
   // Create the union energy grid
-  FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Creating " <<
-                                    Utility::Italicized( "union energy grid " ) );
+  FRENSIE_LOG_NOTIFICATION( "   Creating " <<
+                            Utility::Italicized( "union energy grid " ) );
   FRENSIE_FLUSH_ALL_LOGS();
 
   std::list<double> union_energy_grid;
@@ -1238,11 +1238,14 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
                  boost::cref( *cutoff_elastic_reaction ),
                  _1 );
 
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "     Adding Cutoff Elastic data to the grid ... ");
+  FRENSIE_FLUSH_ALL_LOGS();
+
   // Generate cutoff elastic
   this->getDefaultElectronGridGenerator().generateInPlace( union_energy_grid,
                                                cutoff_elastic_grid_function );
 
-  FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
+  FRENSIE_LOG_NOTIFICATION( "done" );
   FRENSIE_FLUSH_ALL_LOGS();
 
   // Create the reaction
@@ -1255,11 +1258,14 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
                  boost::cref( *total_elastic_reaction ),
                  _1 );
 
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "     Adding Total Elastic data to the grid ... ");
+  FRENSIE_FLUSH_ALL_LOGS();
+
   // Generate total elastic
   this->getDefaultElectronGridGenerator().generateInPlace( union_energy_grid,
                                                total_elastic_grid_function );
 
-  FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
+  FRENSIE_LOG_NOTIFICATION( "done" );
   FRENSIE_FLUSH_ALL_LOGS();
 
   //---------------------------------------------------------------------------//
@@ -1299,6 +1305,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
     this->getVolatileDataContainer();
 
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "     Adding Atomic Excitation data to the grid ... ");
+  FRENSIE_FLUSH_ALL_LOGS();
+
   // Generate atomic excitation (don't generate new grid points above the last grid point)
   this->getDefaultElectronGridGenerator().refineInPlace(
     union_energy_grid,
@@ -1306,7 +1315,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     this->getMinElectronEnergy(),
     data_container.getAdjointAtomicExcitationEnergyGrid().back() );
 
-  FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
+  FRENSIE_LOG_NOTIFICATION( "done" );
   FRENSIE_FLUSH_ALL_LOGS();
 
   //---------------------------------------------------------------------------//
@@ -1327,6 +1336,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   // Temporarily save cross section values so they don't have to be generated again
   std::vector<double> old_adjoint_bremsstrahlung_cs;
 
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "     Adding Bremsstrahlung data to the grid ... ");
+  FRENSIE_FLUSH_ALL_LOGS();
+
   // Generate bremsstrahlung (temporarily keep this grid and evaluated function)
   this->getDefaultElectronGridGenerator().generateAndEvaluateInPlace(
     union_energy_grid,
@@ -1336,7 +1348,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   std::list<double> old_adjoint_bremsstrahlung_union_energy_grid(
     union_energy_grid );
 
-  FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
+  FRENSIE_LOG_NOTIFICATION( "done" );
   FRENSIE_FLUSH_ALL_LOGS();
 
   //---------------------------------------------------------------------------//
@@ -1367,6 +1379,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
       ionization_grid_generators[*shell]->createAdjointCrossSectionFunction(
             this->getAdjointElectroionizationEvaluationTolerance() );
 
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "     Adding Electroionization subshell " << *shell << " data to the grid ... ");
+  FRENSIE_FLUSH_ALL_LOGS();
+
     // Generate electroionization (temporarily keep this grid and evaluated function)
     this->getDefaultElectronGridGenerator().generateAndEvaluateInPlace(
       union_energy_grid,
@@ -1376,7 +1391,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     old_adjoint_electroionization_union_energy_grid[*shell] =
       union_energy_grid;
 
-    FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
+    FRENSIE_LOG_NOTIFICATION( "done" );
     FRENSIE_FLUSH_ALL_LOGS();
   }
 
@@ -1948,7 +1963,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
   adjoint_electroionization_grid_generator.reset(
     new ElectroionizationGridGenerator(
         electroionization_subshell_reaction,
-        d_forward_epr_data->getElectroionizationEnergyGrid( shell),
+        d_forward_epr_data->getElectroionizationEnergyGrid( shell ),
         this->getMinElectronEnergy(),
         this->getMaxElectronEnergy(),
         2.00 * d_forward_epr_data->getSubshellBindingEnergy( shell ),

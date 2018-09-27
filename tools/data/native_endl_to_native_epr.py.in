@@ -41,7 +41,7 @@ def createGenerator( endl_file_name,
                      max_photon_energy,
                      min_electron_energy,
                      max_electron_energy ):
-    
+
     # Open the endl data container
     endl_data_container = ENDL.ENDLDataContainer( endl_file_name )
 
@@ -52,7 +52,7 @@ def createGenerator( endl_file_name,
         else:
             generator = DataGenEP.ENDLElectronPhotonRelaxationDataGenerator( endl_data_container, min_photon_energy, max_photon_energy, min_electron_energy, max_electron_energy )
     else:
-        # Open the database so that we can load the requested ace table       
+        # Open the database so that we can load the requested ace table
         database = Data.ScatteringCenterPropertiesDatabase( db_name )
 
         # Parse the zaid and table key
@@ -63,17 +63,17 @@ def createGenerator( endl_file_name,
         if table_version.find("p") == -1:
             print "Only ACE EPR tables can be specified (.12p or .14p)!"
             sys.exit(1)
-            
+
         table_version.rstrip("p")
-        
+
         table_version = int(table_version)
 
         if table_version < 12:
             print "Only ACE EPR tables can be specified (.12p or .14p)!"
             sys.exit(1)
-                    
+
         photoatomic_data_properties = database.getAtomProperties( zaid ).getPhotoatomicDataProperties( Data.PhotoatomicDataProperties.ACE_EPR_FILE, table_version )
-        
+
         ace_file = ACE.ACEFileHandler( photoatomic_data_properties.filePath(),
                                        photoatomic_data_properties.tableName(),
                                        photoatomic_data_properties.fileStartLine() )
@@ -98,7 +98,6 @@ def setGeneratorOptions( generator,
                          occupation_number_eval_tol,
                          subshell_incoherent_eval_tol,
                          photon_threshold_energy_nudge_factor,
-                         electron_total_elastic_integrated_cs_mode_on,
                          cutoff_angle_cosine,
                          num_moment_preserving_angles,
                          tabular_evaluation_tol,
@@ -133,11 +132,6 @@ def setGeneratorOptions( generator,
 
     if not photon_threshold_energy_nudge_factor is None:
         generator.setPhotonThresholdEnergyNudgeFactor( photon_threshold_energy_nudge_factor )
-
-    if electron_total_elastic_integrated_cs_mode_on:
-        generator.setElectronTotalElasticIntegratedCrossSectionModeOn()
-    else:
-        generator.setElectronTotalElasticIntegratedCrossSectionModeOff()
 
     if not cutoff_angle_cosine is None:
         generator.setCutoffAngleCosine( cutoff_angle_cosine )
@@ -205,13 +199,12 @@ def generateData( endl_file_name,
                   occupation_number_eval_tol = None,
                   subshell_incoherent_eval_tol = None,
                   photon_threshold_energy_nudge_factor = None,
-                  electron_total_elastic_integrated_cs_mode_on = False,
                   cutoff_angle_cosine = None,
                   num_moment_preserving_angles = None,
                   tabular_evaluation_tol = None,
                   electron_two_d_interp_policy = None,
                   electron_two_d_grid_policy = None ):
-    
+
     # Verify the energy limits
     verifyEnergyLimits( min_photon_energy,
                         max_photon_energy,
@@ -238,7 +231,6 @@ def generateData( endl_file_name,
                          occupation_number_eval_tol,
                          subshell_incoherent_eval_tol,
                          photon_threshold_energy_nudge_factor,
-                         electron_total_elastic_integrated_cs_mode_on,
                          cutoff_angle_cosine,
                          num_moment_preserving_angles,
                          tabular_evaluation_tol,
@@ -297,8 +289,6 @@ if __name__ == "__main__":
                       help="the subshell incoherent evaluation tolerance")
     parser.add_option("--photon_threshold_energy_nudge_factor", type="float", dest="photon_threshold_energy_nudge_factor",
                       help="the photon threshold energy nudge factor")
-    parser.add_option("--electron_total_elastic_integrated_cs_mode_on", action="store_true", dest="electron_total_elastic_integrated_cs_mode_on", default=False,
-                      help="Turn on the electron total elastic integrated cs mode" )
     parser.add_option("--cutoff_angle_cosine", type="float", dest="cutoff_angle_cosine",
                       help="The electron cutoff angle cosine")
     parser.add_option("--num_moment_preserving_angles", type="int", dest="num_moment_preserving_angles",
@@ -339,7 +329,6 @@ if __name__ == "__main__":
                   options.occupation_number_eval_tol,
                   options.subshell_incoherent_eval_tol,
                   options.photon_threshold_energy_nudge_factor,
-                  options.electron_total_elastic_integrated_cs_mode_on,
                   options.cutoff_angle_cosine,
                   options.num_moment_preserving_angles,
                   options.tabular_evaluation_tol,

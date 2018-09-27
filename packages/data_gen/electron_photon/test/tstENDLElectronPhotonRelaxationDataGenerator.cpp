@@ -1476,7 +1476,6 @@ FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
     raw_data_generator->setOccupationNumberEvaluationTolerance( 1e-3 );
     raw_data_generator->setSubshellIncoherentEvaluationTolerance( 1e-3 );
     raw_data_generator->setPhotonThresholdEnergyNudgeFactor( 1.0001 );
-    raw_data_generator->setElectronTotalElasticIntegratedCrossSectionModeOn();
     raw_data_generator->setTabularEvaluationTolerance( 1e-7 );
     raw_data_generator->setElectronTwoDInterpPolicy( MonteCarlo::LINLINLIN_INTERPOLATION );
     raw_data_generator->setElectronTwoDGridPolicy( MonteCarlo::UNIT_BASE_CORRELATED_GRID );
@@ -1507,7 +1506,6 @@ FRENSIE_UNIT_TEST( ENDLElectronPhotonRelaxationDataGenerator,
     data_container.getSubshellIncoherentEvaluationTolerance(), 1e-3 );
   FRENSIE_CHECK_EQUAL(
     data_container.getPhotonThresholdEnergyNudgeFactor(), 1.0001 );
-  FRENSIE_CHECK( data_container.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   FRENSIE_CHECK_EQUAL( data_container.getCutoffAngleCosine(), 1.0 );
   FRENSIE_CHECK_EQUAL( data_container.getNumberOfMomentPreservingAngles(), 0 );
   FRENSIE_CHECK_EQUAL( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
