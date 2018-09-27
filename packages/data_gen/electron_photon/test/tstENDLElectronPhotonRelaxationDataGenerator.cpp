@@ -2023,19 +2023,18 @@ FRENSIE_CHECK_FLOATING_EQUALITY(
     data_container.getCutoffElasticCrossSection();
 
   FRENSIE_CHECK_EQUAL( cross_section.front(), 3.06351e+9 );
-FRENSIE_CHECK_FLOATING_EQUALITY( cross_section.back(), 4.72309e-4, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section.back(), 4.72309e-4, 1e-15 );
   FRENSIE_CHECK_EQUAL( cross_section.size(), 354-threshold );
 
   threshold =
     data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
 
-  FRENSIE_CHECK_EQUAL( threshold, 76 );
+  FRENSIE_CHECK_EQUAL( threshold, 202 );
 
-  cross_section =
-    data_container.getScreenedRutherfordElasticCrossSection();
+  cross_section = data_container.getScreenedRutherfordElasticCrossSection();
 
-  FRENSIE_CHECK_EQUAL( cross_section.front(), 9.993579895794391632e+01 );
-  FRENSIE_CHECK_EQUAL( cross_section.back(), 1.398388292150950874e+05 );
+  FRENSIE_CHECK_EQUAL( cross_section.front(), 1.936345961806364357e+01 );
+  FRENSIE_CHECK_EQUAL( cross_section.back(), 1.407219995276909904e+05 );
   FRENSIE_CHECK_EQUAL( cross_section.size(), 354-threshold );
 
   std::vector<double> angular_grid =
@@ -2249,8 +2248,8 @@ FRENSIE_CHECK_FLOATING_EQUALITY( cross_section.back(), 4.72309e-4, 1e-15 );
   // Check the total electron cross section data
   cross_section = data_container.getTotalElectronCrossSection();
 
-  FRENSIE_CHECK_EQUAL( cross_section.front(), 3.098129764883274078e+09 );
-  FRENSIE_CHECK_EQUAL( cross_section.back(), 6.517157011874041054e+05 );
+  FRENSIE_CHECK_EQUAL( cross_section.front(), 3.098128233127999783e+09 );
+  FRENSIE_CHECK_EQUAL( cross_section.back(), 6.525988715000000084e+05 );
   FRENSIE_CHECK_EQUAL( cross_section.size(), 354 );
 
   data_container.saveToFile( "test_c_epr.xml", true );
