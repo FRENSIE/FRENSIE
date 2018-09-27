@@ -10,10 +10,9 @@
 import sys
 from os import path
 from optparse import *
-from native_endl_to_native_epr import generateData
+from native_endl_to_native_epr import generateData, addToDatabase
 import PyFrensie.Utility as Utility
 import PyFrensie.Data as Data
-import PyFrensie.Data.Native as Native
 
 if __name__ == "__main__":
 
@@ -176,7 +175,9 @@ if __name__ == "__main__":
             notification_string = "Generating " + output_file_path + " from " + endl_file_path + " ... "
 
             Utility.logNotification( notification_string )
-            print notification_string
+
+            if not options.log_file is None:
+                print notification_string
 
             data_container = \
             generateData( endl_file_path,
@@ -205,27 +206,11 @@ if __name__ == "__main__":
                           electron_two_d_grid_policy = element_parameters[21] )
 
             # Update the database
-            relative_path = path.relpath( output_file_path, path.dirname( options.db_name ) )
-            zaid = Data.ZAID(i*1000)
-
-            photoatomic_data_properties = \
-                Native.NativeEPRPhotoatomicDataProperties( data_container.getAtomicWeight(),
-                                                           relative_path,
-                                                           0,
-                                                           zaid.atom() )
-            electroatomic_data_properties = \
-                Native.NativeEPRElectroatomicDataProperties( data_container.getAtomicWeight(),
-                                                             relative_path,
-                                                             0,
-                                                             zaid.atom() )
-
-            if not database.doAtomPropertiesExist( zaid.atom() ):
-                database.initializeAtomProperties( zaid.atom(), data_container.getAtomicWeight() )
-
-            atom_properties = database.getAtomProperties( zaid.atom() )
-
-            atom_properties.setPhotoatomicDataProperties( photoatomic_data_properties )
-            atom_properties.setElectroatomicDataProperties( electroatomic_data_properties )
+            addToDatabase( output_file_path,
+                           path.dirname( options.db_name ),
+                           database,
+                           data_container.getAtomicNumber(),
+                           data_container.getAtomicWeight() )
 
             database_save_required = True
 
