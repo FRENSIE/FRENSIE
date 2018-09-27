@@ -9,6 +9,7 @@
 
 import sys
 from os import path
+from os import getcwd
 from optparse import *
 import PyFrensie.DataGen as DataGen
 import PyFrensie.DataGen.ENDL as DataGenENDL
@@ -18,6 +19,8 @@ import PyFrensie.Data.ENDL as ENDL
 import PyFrensie.Data.ACE as ACE
 import PyFrensie.MonteCarlo as MonteCarlo
 import PyFrensie.Utility
+import PyFrensie.Data as Data
+import PyFrensie.Data.Native as Native
 
 # Verify the user specified photon and electron limits
 def verifyEnergyLimits( min_photon_energy,
@@ -247,6 +250,37 @@ def generateData( endl_file_name,
     # Return the shared data container
     return generator.getSharedDataContainer()
 
+# Update the database
+def addToDatabase( path_to_data_file,
+                   path_to_database,
+                   database,
+                   atomic_number,
+                   atomic_weight ):
+
+    zaid = Data.ZAID(atomic_number*1000)
+
+    relative_path = path.relpath( path_to_data_file, path_to_database )
+
+    photoatomic_data_properties = \
+        Native.NativeEPRPhotoatomicDataProperties( atomic_weight,
+                                                   relative_path,
+                                                   0,
+                                                   zaid.atom() )
+    electroatomic_data_properties = \
+        Native.NativeEPRElectroatomicDataProperties( atomic_weight,
+                                                     relative_path,
+                                                     0,
+                                                     zaid.atom() )
+
+    if not database.doAtomPropertiesExist( zaid.atom() ):
+        database.initializeAtomProperties( zaid.atom(), atomic_weight )
+
+    atom_properties = database.getAtomProperties( zaid.atom() )
+
+    atom_properties.setPhotoatomicDataProperties( photoatomic_data_properties )
+    atom_properties.setElectroatomicDataProperties( electroatomic_data_properties )
+
+
 if __name__ == "__main__":
 
     # Parse the command-line arguments
@@ -256,11 +290,13 @@ if __name__ == "__main__":
     parser.add_option("-a", "--ace_table_name", type="string", dest="ace_table_name",
                       help="the ace table name")
     parser.add_option("-d", "--db_name", type="string", dest="db_name", default="database.xml",
-                  help="the database name (with extension)")
+                      help="the database name (with extension)")
     parser.add_option("-o", "--output_file_name", type="string", dest="output_file_name",
                       help="the output file name (with extension)")
     parser.add_option("--overwrite", action="store_true", dest="overwrite", default=False,
                       help="Overwrite an existing output file")
+    parser.add_option("--add_to_db", action="store_true", dest="add_to_db", default=False,
+                      help="Add the container to the database" )
     parser.add_option("--notes", type="string", dest="notes",
                       help="data generation notes")
     parser.add_option("--min_photon_energy", type="float", dest="min_photon_energy",
@@ -310,6 +346,7 @@ if __name__ == "__main__":
         print "The output file name must be specified!"
         sys.exit(1)
 
+    data_container = \
     generateData( options.endl_file_name,
                   options.output_file_name,
                   options.ace_table_name,
@@ -334,6 +371,22 @@ if __name__ == "__main__":
                   options.tabular_evaluation_tol,
                   options.electron_two_d_interp_policy,
                   options.electron_two_d_grid_policy )
+
+    # Add the container to the database
+    if options.add_to_db:
+        if options.db_name is None:
+            print "The database name must be supplied!"
+            sys.exit(1)
+
+        database = Data.ScatteringCenterPropertiesDatabase( options.db_name )
+
+        addToDatabase( options.output_file_name,
+                       path.dirname( options.db_name ),
+                       database,
+                       data_container.getAtomicNumber(),
+                       data_container.getAtomicWeight() )
+
+        database.saveToFile( options.db_name, True )
 
 ##---------------------------------------------------------------------------##
 ## native_endl_to_native_epr.py
