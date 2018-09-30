@@ -131,25 +131,41 @@ void initializeCartesianDirectionalDimensionDists(
 
 template<MonteCarlo::PhaseSpaceDimension parent_energy_dimension>
 void initializeMiscDimensionDists(
-         std::shared_ptr<StandardParticleDistribution>& particle_distribution )
+          std::shared_ptr<StandardParticleDistribution>& particle_distribution,
+          const bool mono_energy = false,
+          const bool mono_time = false )
 {
-  std::shared_ptr<const Utility::UnivariateDistribution> raw_uniform_dist_b(
+  std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+    time_dimension_dist;
+
+  if( mono_time )
+  {
+    std::shared_ptr<const Utility::UnivariateDistribution> raw_delta_dist(
+                                       new Utility::DeltaDistribution( 1.0 ) );
+
+    time_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TIME_DIMENSION>( raw_delta_dist ) );
+  }
+  else
+  {
+    std::shared_ptr<const Utility::UnivariateDistribution> raw_uniform_dist(
                            new Utility::UniformDistribution( 0.0, 1.0, 1.0 ) );
 
-  std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
-    time_dimension_dist( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TIME_DIMENSION>( raw_uniform_dist_b ) );
+    time_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TIME_DIMENSION>( raw_uniform_dist ) );
+  }
+
   particle_distribution->setDimensionDistribution( time_dimension_dist );
-
-  std::shared_ptr<const Utility::UnivariateDistribution> raw_delta_dist(
-                                       new Utility::DeltaDistribution( 0.5 ) );
-
-  std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
-    weight_dimension_dist( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::WEIGHT_DIMENSION>( raw_delta_dist ) );
-  particle_distribution->setDimensionDistribution( weight_dimension_dist );
 
   std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
     energy_dimension_dist;
 
+  if( mono_energy )
+  {
+    std::shared_ptr<const Utility::UnivariateDistribution> raw_delta_dist(
+                                      new Utility::DeltaDistribution( 10.0 ) );
+
+    energy_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::ENERGY_DIMENSION>( raw_delta_dist ) );
+  }
+  else
   {
     // Create the fully tabular distribution
     std::vector<double> primary_grid( {-1.0, 0.0, 1.0} );
@@ -172,7 +188,16 @@ void initializeMiscDimensionDists(
 
     energy_dimension_dist.reset( new MonteCarlo::DependentPhaseSpaceDimensionDistribution<parent_energy_dimension,MonteCarlo::ENERGY_DIMENSION>( raw_dependent_distribution ) );
   }
+  
   particle_distribution->setDimensionDistribution( energy_dimension_dist );
+
+  std::shared_ptr<const Utility::UnivariateDistribution> raw_delta_dist(
+                                       new Utility::DeltaDistribution( 0.5 ) );
+
+  std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+    weight_dimension_dist( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::WEIGHT_DIMENSION>( raw_delta_dist ) );
+  
+  particle_distribution->setDimensionDistribution( weight_dimension_dist );
 }
 
 std::shared_ptr<const ParticleDistribution>
@@ -201,7 +226,8 @@ createCartesianSpatialCartesianDirectionalDist()
 }
 
 std::shared_ptr<const ParticleDistribution>
-createCartesianSpatialSphericalDirectionalDist()
+createCartesianSpatialSphericalDirectionalDist( const bool mono_energy = false,
+                                                const bool mono_time = false )
 {
   std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
     spatial_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
@@ -217,7 +243,9 @@ createCartesianSpatialSphericalDirectionalDist()
 
   // Create the dimension distributions
   initializeCartesianSpatialDimensionDists( particle_distribution );
-  initializeMiscDimensionDists<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( particle_distribution );
+  initializeMiscDimensionDists<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( particle_distribution,
+                                                                       mono_energy,
+                                                                       mono_time );
 
   particle_distribution->constructDimensionDistributionDependencyTree();
 
@@ -1512,6 +1540,92 @@ FRENSIE_UNIT_TEST( StandardParticleDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( photon.getEnergy(), 20.0, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( photon.getSourceTime(), 1.0, 1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY( photon.getTime(), 1.0, 1e-15 );
+  FRENSIE_CHECK_EQUAL( photon.getSourceWeight(), 0.5 );
+  FRENSIE_CHECK_EQUAL( photon.getWeight(), 0.5 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distrubtion can be sampled
+FRENSIE_UNIT_TEST( StandardParticleDistribution,
+                   sample_cartesian_spatial_spherical_directional_mono_energy_mono_time )
+{
+  std::shared_ptr<const ParticleDistribution> particle_distribution =
+    createCartesianSpatialSphericalDirectionalDist( true, true );
+
+  // Set the random number generator stream
+  std::vector<double> fake_stream( 7 );
+  fake_stream[0] = 0.0; // x
+  fake_stream[1] = 0.5; // y
+  fake_stream[2] = 1.0-1e-15; // z
+  fake_stream[3] = 0.0; // theta
+  fake_stream[4] = 1.0-1e-15; // mu
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  MonteCarlo::PhotonState photon( 0 );
+
+  particle_distribution->sample( photon );
+
+  FRENSIE_CHECK_EQUAL( photon.getXPosition(), -1.0 );
+  FRENSIE_CHECK_EQUAL( photon.getYPosition(), 0.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getZPosition(), 1.0, 1e-12 );
+  FRENSIE_CHECK_SMALL( photon.getXDirection(), 1e-7 );
+  FRENSIE_CHECK_SMALL( photon.getYDirection(), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getZDirection(), 1.0, 1e-12 );
+  FRENSIE_CHECK_EQUAL( photon.getSourceEnergy(), 10.0 );
+  FRENSIE_CHECK_EQUAL( photon.getEnergy(), 10.0 );
+  FRENSIE_CHECK_EQUAL( photon.getSourceTime(), 1.0 );
+  FRENSIE_CHECK_EQUAL( photon.getTime(), 1.0 );
+  FRENSIE_CHECK_EQUAL( photon.getSourceWeight(), 0.5 );
+  FRENSIE_CHECK_EQUAL( photon.getWeight(), 0.5 );
+
+  // Set the random number generator stream
+  fake_stream[0] = 0.5; // x
+  fake_stream[1] = 0.0; // y
+  fake_stream[2] = 0.5; // z
+  fake_stream[3] = 0.0; // theta
+  fake_stream[4] = 0.0; // mu
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  particle_distribution->sample( photon );
+
+  FRENSIE_CHECK_EQUAL( photon.getXPosition(), 0.0 );
+  FRENSIE_CHECK_EQUAL( photon.getYPosition(), -1.0 );
+  FRENSIE_CHECK_EQUAL( photon.getZPosition(), 0.0 );
+  FRENSIE_CHECK_SMALL( photon.getXDirection(), 1e-12 );
+  FRENSIE_CHECK_SMALL( photon.getYDirection(), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getZDirection(), -1.0, 1e-12 );
+  FRENSIE_CHECK_EQUAL( photon.getSourceEnergy(), 10.0 );
+  FRENSIE_CHECK_EQUAL( photon.getEnergy(), 10.0 );
+  FRENSIE_CHECK_EQUAL( photon.getSourceTime(), 1.0 );
+  FRENSIE_CHECK_EQUAL( photon.getTime(), 1.0 );
+  FRENSIE_CHECK_EQUAL( photon.getSourceWeight(), 0.5 );
+  FRENSIE_CHECK_EQUAL( photon.getWeight(), 0.5 );
+
+  // Set the random number generator stream
+  fake_stream[0] = 1.0-1e-15; // x
+  fake_stream[1] = 1.0-1e-15; // y
+  fake_stream[2] = 0.0; // z
+  fake_stream[3] = 0.5; // theta
+  fake_stream[4] = 0.5; // mu
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  particle_distribution->sample( photon );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getXPosition(), 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getYPosition(), 1.0, 1e-12 );
+  FRENSIE_CHECK_EQUAL( photon.getZPosition(), -1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getXDirection(), -1.0, 1e-12 );
+  FRENSIE_CHECK_SMALL( photon.getYDirection(), 1e-12 );
+  FRENSIE_CHECK_SMALL( photon.getZDirection(), 1e-12 );
+  FRENSIE_CHECK_EQUAL( photon.getSourceEnergy(), 10.0 );
+  FRENSIE_CHECK_EQUAL( photon.getEnergy(), 10.0 );
+  FRENSIE_CHECK_EQUAL( photon.getSourceTime(), 1.0 );
+  FRENSIE_CHECK_EQUAL( photon.getTime(), 1.0 );
   FRENSIE_CHECK_EQUAL( photon.getSourceWeight(), 0.5 );
   FRENSIE_CHECK_EQUAL( photon.getWeight(), 0.5 );
 

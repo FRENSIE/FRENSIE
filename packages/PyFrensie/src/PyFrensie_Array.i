@@ -71,9 +71,9 @@
     Py_DECREF(np_array$argnum);
 }
 
-// // If an ArrayView argument has a non-const TYPE, then the default
-// // behavior is to assume that the array is input/output.  Therefore
-// // the input python argument must be a NumPy array.
+// If an ArrayView argument has a non-const TYPE, then the default
+// behavior is to assume that the array is input/output.  Therefore
+// the input python argument must be a NumPy array.
 %typemap(in) Utility::ArrayView< TYPE >
 {
   PyArrayObject* np_array =
@@ -85,24 +85,21 @@
   $1 = Utility::arrayView( (TYPE*)PyArray_DATA(np_array), PyArray_DIM(np_array, 0) );
 }
 
-// If an ArrayView is output, with either a const or non-const TYPE,
-// convert the underlying data to a NumPy array of correct type.
+// The array view data will not be deep-copied - modification of the original
+// data will be possible through the returned numpy array
 %typemap(out) Utility::ArrayView< TYPE >
 {
-  npy_intp dims[1] = { $1.size() };
-
-  $result = PyArray_SimpleNewFromData( 1, dims, TYPECODE, (void*)$1.data() );
+  $result = PyFrensie::Details::convertArrayViewToPython( $1 );
 
   if( !$result )
     SWIG_fail;
 }
 
+// The array view data cannot be modified and will therefore be deep-copied
 %typemap(out) Utility::ArrayView< const TYPE >
 {
-  npy_intp dims[1] = { $1.size() };
-
-  $result = PyArray_SimpleNewFromData( 1, dims, TYPECODE, (void*)$1.data() );
-
+  $result = PyFrensie::Details::convertArrayToPython( $1 );
+  
   if( !$result )
     SWIG_fail;
 }

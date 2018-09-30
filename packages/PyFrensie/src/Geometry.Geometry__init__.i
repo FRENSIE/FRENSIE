@@ -230,21 +230,13 @@ A NumPy array will be returned.
 }
 
 %typemap(out) const Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>::Length* {
-  std::vector<double> raw_length(3);
+  Utility::ArrayView<const double>
+    output_view( Utility::reinterpretAsRaw( $1 ), 3 );
 
-  raw_length[0] = Utility::getRawQuantity($1[0]);
-  raw_length[1] = Utility::getRawQuantity($1[1]);
-  raw_length[2] = Utility::getRawQuantity($1[2]);
+  $result = PyFrensie::Details::convertArrayToPython( output_view );
 
-  %append_output(PyFrensie::convertToPython( raw_length ));
-
-  // Utility::ArrayView<const double> output_view( raw_length.data(), 3 );
-  // npy_intp dims[1] = { output_view.size() };
-
-  // $result = PyArray_SimpleNewFromData( 1, dims, NPY_DOUBLE, (void*)output_view.data() );
-
-  // if( !$result )
-  //   SWIG_fail;
+  if( !$result )
+    SWIG_fail;
 }
 
 %typemap(typecheck, precedence=1050) (const Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>::Length[3]) {
@@ -270,9 +262,7 @@ A NumPy array will be returned.
 %typemap(out) const double* {
   Utility::ArrayView<const double> output_view( $1, 3 );
 
-  npy_intp dims[1] = { output_view.size() };
-
-  $result = PyArray_SimpleNewFromData( 1, dims, NPY_DOUBLE, (void*)output_view.data() );
+  $result = PyFrensie::Details::convertArrayToPython( output_view );
 
   if( !$result )
     SWIG_fail;

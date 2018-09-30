@@ -279,12 +279,18 @@ Data::NuclideProperties::getAdjointThermalNuclearDataFileTypes;
 %apply Data::PhotonuclearDataProperties::AtomicWeight {
   Data::NuclideProperties::AtomicWeight }
 
+// Add general templates
+%typemap(out) std::vector<Data::NuclideProperties::Energy> {
+  %append_output(PyFrensie::convertToPython( std::vector<double>( Utility::reinterpretAsRaw( $1.data() ), Utility::reinterpretAsRaw( $1.data()+$1.size() ) ) ));
+}
+
+%typemap(out) std::vector<Data::NuclideProperties::Temperature> {
+  %append_output(PyFrensie::convertToPython( std::vector<double>( Utility::reinterpretAsRaw( $1.data() ), Utility::reinterpretAsRaw( $1.data()+$1.size() ) ) ));
+}
+
+
 // Import the NuclideProperties
 %include "Data_NuclideProperties.hpp"
-
-// Add general templates
-%template(EnergyVector) std::vector<Data::NuclideProperties::Energy>;
-%template(TemperatureVector) std::vector<Data::NuclideProperties::Temperature>;
 
 //---------------------------------------------------------------------------//
 // end Data_NuclideProperties.i

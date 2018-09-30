@@ -47,9 +47,8 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
         # Set the number of requested threads
         cls.threads = options.threads
 
-        database_path = options.database_path
-        cls.data_directory = os.path.dirname(database_path)
-        database = Data.ScatteringCenterPropertiesDatabase(database_path)
+        cls.database_path = options.database_path
+        database = Data.ScatteringCenterPropertiesDatabase(cls.database_path)
         h_properties = database.getAtomProperties( Data.ZAID(1001) )
         h1_properties = database.getNuclideProperties( Data.ZAID(1001) )
         cls.scattering_center_definition_database = Collision.ScatteringCenterDefinitionDatabase()
@@ -104,7 +103,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
         properties.setNumberOfHistories( 5 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -153,7 +152,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
         properties.setNumberOfHistories( 5 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -201,7 +200,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
         properties.setNumberOfHistories( 5 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -249,7 +248,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
         properties.setNumberOfHistories( 5 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -297,7 +296,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
         properties.setNumberOfHistories( 5 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -345,7 +344,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
         properties.setNumberOfHistories( 5 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -393,7 +392,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
         properties.setNumberOfHistories( 5 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -441,7 +440,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
         properties.setNumberOfHistories( 5 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -491,7 +490,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 #         properties.setNumberOfHistories( 5 )
 
 #         model = Collision.FilledGeometryModel(
-#                                 self.data_directory,
+#                                 self.database_path,
 #                                 self.scattering_center_definition_database,
 #                                 self.material_definition_database,
 #                                 properties,
@@ -530,7 +529,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 #         properties.setNumberOfHistories( 5 )
 
 #         model = Collision.FilledGeometryModel(
-#                                 self.data_directory,
+#                                 self.database_path,
 #                                 self.scattering_center_definition_database,
 #                                 self.material_definition_database,
 #                                 properties,
@@ -569,7 +568,7 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 #         properties.setNumberOfHistories( 5 )
 
 #         model = Collision.FilledGeometryModel(
-#                                 self.data_directory,
+#                                 self.database_path,
 #                                 self.scattering_center_definition_database,
 #                                 self.material_definition_database,
 #                                 properties,

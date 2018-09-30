@@ -22,6 +22,7 @@
 // FRENSIE Includes
 #include "PyFrensie_NumPyTypeTraits.hpp"
 #include "PyFrensie_PythonTypeTraitsDecl.hpp"
+#include "Utility_ArrayView.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace PyFrensie{
@@ -63,9 +64,21 @@ char** convertPythonToArgv( PyObject* py_obj );
 template<typename STLCompliantArray>
 PyObject* convertArrayToPython( const STLCompliantArray& obj );
 
-// Create an array object from a Python object
+// Create an ArrayView object from a Python object
 template<typename STLCompliantArray>
 STLCompliantArray convertPythonToArray( PyObject* py_obj );
+
+// Create a Python (NumPy) object from an ArrayView object
+template<typename T>
+PyObject* convertArrayViewToPython( const Utility::ArrayView<T>& obj );
+
+// Create an ArrayView object from a Python object
+template<typename T>
+Utility::ArrayView<T> convertPythonToArrayView( PyObject* py_obj );
+
+// Create an ArrayView of const object from a Python object
+template<typename T>
+Utility::ArrayView<const T> convertPythonToArrayViewOfConst( PyObject* py_obj );
 
 // Create an array object from a Python object without a type conversion
 template<typename STLCompliantArray>

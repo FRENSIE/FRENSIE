@@ -39,7 +39,6 @@ class FilledGeometryModelTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         database_path = options.database_path
-        cls.data_directory = os.path.dirname(database_path)
         database = Data.ScatteringCenterPropertiesDatabase(database_path)
         h_properties = database.getAtomProperties( Data.ZAID(1001) )
         h1_properties = database.getNuclideProperties( Data.ZAID(1001) )
@@ -106,7 +105,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.NEUTRON_MODE )
 
-        filled_model = Collision.FilledGeometryModel( self.data_directory, self.scattering_center_definition_database, self.material_definition_database, properties, unfilled_model, True )
+        filled_model = Collision.FilledGeometryModel( options.database_path, self.scattering_center_definition_database, self.material_definition_database, properties, unfilled_model, True )
 
         self.assertTrue( filled_model.getUnfilledModel() == unfilled_model )
         self.assertFalse( filled_model == unfilled_model )
@@ -119,7 +118,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties.setParticleMode( MonteCarlo.PHOTON_MODE )
 
         filled_model = Collision.FilledGeometryModel(
-                                        self.data_directory,
+                                        options.database_path,
                                         self.scattering_center_definition_database,
                                         self.material_definition_database,
                                         properties,
@@ -137,7 +136,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties.setParticleMode( MonteCarlo.ELECTRON_MODE )
 
         filled_model = Collision.FilledGeometryModel(
-                                        self.data_directory,
+                                        options.database_path,
                                         self.scattering_center_definition_database,
                                         self.material_definition_database,
                                         properties,
@@ -155,7 +154,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_MODE )
 
         filled_model = Collision.FilledGeometryModel(
-                                        self.data_directory,
+                                        options.database_path,
                                         self.scattering_center_definition_database,
                                         self.material_definition_database,
                                         properties,
@@ -173,7 +172,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties.setParticleMode( MonteCarlo.PHOTON_ELECTRON_MODE )
 
         filled_model = Collision.FilledGeometryModel(
-                                        self.data_directory,
+                                        options.database_path,
                                         self.scattering_center_definition_database,
                                         self.material_definition_database,
                                         properties,
@@ -191,7 +190,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE )
 
         filled_model = Collision.FilledGeometryModel(
-                                        self.data_directory,
+                                        options.database_path,
                                         self.scattering_center_definition_database,
                                         self.material_definition_database,
                                         properties,
@@ -209,7 +208,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties.setParticleMode( MonteCarlo.ADJOINT_PHOTON_MODE )
 
         filled_model = Collision.FilledGeometryModel(
-                                        self.data_directory,
+                                        options.database_path,
                                         self.scattering_center_definition_database,
                                         self.material_definition_database,
                                         properties,
@@ -227,7 +226,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties.setParticleMode( MonteCarlo.ADJOINT_ELECTRON_MODE )
 
         filled_model = Collision.FilledGeometryModel(
-                                        self.data_directory,
+                                        options.database_path,
                                         self.scattering_center_definition_database,
                                         self.material_definition_database,
                                         properties,
@@ -244,7 +243,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.NEUTRON_MODE )
 
-        filled_model = Collision.FilledGeometryModel( self.data_directory,
+        filled_model = Collision.FilledGeometryModel( options.database_path,
                                                 self.scattering_center_definition_database,
                                                 self.material_definition_database,
                                                 properties,
@@ -272,7 +271,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.PHOTON_MODE )
 
-        filled_model = Collision.FilledGeometryModel( self.data_directory,
+        filled_model = Collision.FilledGeometryModel( options.database_path,
                                                 self.scattering_center_definition_database,
                                                 self.material_definition_database,
                                                 properties,
@@ -300,7 +299,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.ELECTRON_MODE )
 
-        filled_model = Collision.FilledGeometryModel( self.data_directory,
+        filled_model = Collision.FilledGeometryModel( options.database_path,
                                                 self.scattering_center_definition_database,
                                                 self.material_definition_database,
                                                 properties,
@@ -328,7 +327,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_MODE )
 
-        filled_model = Collision.FilledGeometryModel( self.data_directory,
+        filled_model = Collision.FilledGeometryModel( options.database_path,
                                                 self.scattering_center_definition_database,
                                                 self.material_definition_database,
                                                 properties,
@@ -356,7 +355,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.PHOTON_ELECTRON_MODE )
 
-        filled_model = Collision.FilledGeometryModel( self.data_directory,
+        filled_model = Collision.FilledGeometryModel( options.database_path,
                                                 self.scattering_center_definition_database,
                                                 self.material_definition_database,
                                                 properties,
@@ -384,7 +383,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE )
 
-        filled_model = Collision.FilledGeometryModel( self.data_directory,
+        filled_model = Collision.FilledGeometryModel( options.database_path,
                                                 self.scattering_center_definition_database,
                                                 self.material_definition_database,
                                                 properties,
@@ -412,7 +411,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.ADJOINT_PHOTON_MODE )
 
-        filled_model = Collision.FilledGeometryModel( self.data_directory,
+        filled_model = Collision.FilledGeometryModel( options.database_path,
                                                 self.scattering_center_definition_database,
                                                 self.material_definition_database,
                                                 properties,
@@ -440,7 +439,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.ADJOINT_ELECTRON_MODE )
 
-        filled_model = Collision.FilledGeometryModel( self.data_directory,
+        filled_model = Collision.FilledGeometryModel( options.database_path,
                                                 self.scattering_center_definition_database,
                                                 self.material_definition_database,
                                                 properties,
@@ -468,7 +467,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.NEUTRON_MODE )
 
-        filled_model = Collision.FilledGeometryModel( self.data_directory,
+        filled_model = Collision.FilledGeometryModel( options.database_path,
                                                 self.scattering_center_definition_database,
                                                 self.material_definition_database,
                                                 properties,
@@ -607,7 +606,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.PHOTON_MODE )
 
-        filled_model = Collision.FilledGeometryModel( self.data_directory,
+        filled_model = Collision.FilledGeometryModel( options.database_path,
                                                 self.scattering_center_definition_database,
                                                 self.material_definition_database,
                                                 properties,
@@ -749,7 +748,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.ELECTRON_MODE )
 
-        filled_model = Collision.FilledGeometryModel( self.data_directory,
+        filled_model = Collision.FilledGeometryModel( options.database_path,
                                                 self.scattering_center_definition_database,
                                                 self.material_definition_database,
                                                 properties,
@@ -936,7 +935,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_MODE )
 
-        filled_model = Collision.FilledGeometryModel( self.data_directory,
+        filled_model = Collision.FilledGeometryModel( options.database_path,
                                                 self.scattering_center_definition_database,
                                                 self.material_definition_database,
                                                 properties,
@@ -1110,7 +1109,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.PHOTON_ELECTRON_MODE )
 
-        filled_model = Collision.FilledGeometryModel( self.data_directory,
+        filled_model = Collision.FilledGeometryModel( options.database_path,
                                                 self.scattering_center_definition_database,
                                                 self.material_definition_database,
                                                 properties,
@@ -1311,7 +1310,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE )
 
-        filled_model = Collision.FilledGeometryModel( self.data_directory,
+        filled_model = Collision.FilledGeometryModel( options.database_path,
                                                 self.scattering_center_definition_database,
                                                 self.material_definition_database,
                                                 properties,
@@ -1558,7 +1557,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.ADJOINT_PHOTON_MODE )
 
-        filled_model = Collision.FilledGeometryModel( self.data_directory,
+        filled_model = Collision.FilledGeometryModel( options.database_path,
                                                 self.scattering_center_definition_database,
                                                 self.material_definition_database,
                                                 properties,
@@ -1722,7 +1721,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.ADJOINT_ELECTRON_MODE )
 
-        filled_model = Collision.FilledGeometryModel( self.data_directory,
+        filled_model = Collision.FilledGeometryModel( options.database_path,
                                                 self.scattering_center_definition_database,
                                                 self.material_definition_database,
                                                 properties,
@@ -1901,7 +1900,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.ADJOINT_PHOTON_MODE )
 
-        filled_model = Collision.FilledGeometryModel( self.data_directory,
+        filled_model = Collision.FilledGeometryModel( options.database_path,
                                                 self.scattering_center_definition_database,
                                                 self.material_definition_database,
                                                 properties,

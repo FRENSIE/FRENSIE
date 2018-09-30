@@ -163,9 +163,6 @@ protected:
   //! Check if a signal type is handled by the manager
   static bool isSignalTypeHandled( const int signal );
 
-  //! Exit if required based on signal count
-  void exitIfRequired( const int signal_counter, const int signal ) const;
-
 private:
 
   // Simulate an unresolved particle track
@@ -248,6 +245,9 @@ private:
 
   // Flag for ending simulation early
   bool d_end_simulation;
+
+  // Flag for exiting the simulation immediately
+  bool d_exit_simulation;
 };
 
 } // end MonteCarlo namespace

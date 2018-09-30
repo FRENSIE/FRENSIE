@@ -39,7 +39,7 @@ using Utility::Units::MeV;
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-boost::filesystem::path data_directory;
+std::string test_scattering_center_database_name;
 
 std::shared_ptr<MonteCarlo::ScatteringCenterDefinitionDatabase>
 scattering_center_definition_database;
@@ -82,7 +82,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -135,7 +135,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -189,7 +189,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -244,7 +244,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -300,7 +300,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -356,7 +356,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -415,7 +415,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationName )
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -475,7 +475,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationArchiveType )
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -534,7 +534,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationNameAndArchiveType )
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -596,7 +596,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, getModel )
     properties->setNumberOfHistories( 5 );
 
     model.reset( new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -652,7 +652,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, getSource )
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -706,7 +706,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, getEventHandler )
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -759,7 +759,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, runSimulation_history_wall )
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -817,7 +817,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, runSimulation_wall_time )
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -876,7 +876,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, runInterruptibleSimulation )
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -954,7 +954,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, printSimulationSummary )
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -1010,7 +1010,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, logSimulationSummary )
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -1071,7 +1071,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_basic )
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -1160,7 +1160,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_add_histories )
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -1249,7 +1249,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_new_wall_time )
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -1339,7 +1339,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager,
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -1430,7 +1430,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager,
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -1515,8 +1515,6 @@ FRENSIE_DATA_UNIT_TEST_INST( ParticleSimulationManager, restart_updated_props )
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_scattering_center_database_name;
-
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_database",
@@ -1534,8 +1532,6 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Determine the database directory
     boost::filesystem::path database_path =
       test_scattering_center_database_name;
-    
-    data_directory = database_path.parent_path();
 
     // Load the database
     const Data::ScatteringCenterPropertiesDatabase database( database_path );

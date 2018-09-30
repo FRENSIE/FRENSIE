@@ -310,7 +310,13 @@ inline PyObject* convertArrayToPython( const STLCompliantArray& obj )
 {
   typedef typename std::remove_const<typename STLCompliantArray::value_type>::type ValueType;
 
-  npy_intp dims[] = { obj.size() };
+  TEST_FOR_EXCEPTION( obj.size() > std::numeric_limits<npy_intp>::max(),
+                      std::runtime_error,
+                      "The object is too big to convert to a numpy array ("
+                      << obj.size() << " > "
+                      << std::numeric_limits<npy_intp>::max() << ")!" );
+    
+  npy_intp dims[] = { static_cast<npy_intp>(obj.size()) };
   int typecode = numpyTypecode( ValueType() );
 
   PyArrayObject* py_array =
@@ -376,6 +382,24 @@ STLCompliantArray convertPythonToArrayWithoutConversion( PyObject* py_obj )
   return output_array;
 }
 
+// Create a Python (NumPy) object from an ArrayView object
+template<typename T>
+PyObject* convertArrayViewToPython( const Utility::ArrayView<T>& obj )
+{
+  // The type cannot be const
+  testStaticPrecondition( !(std::is_const<T>::value) );
+  
+  TEST_FOR_EXCEPTION( obj.size() > std::numeric_limits<npy_intp>::max(),
+                      std::runtime_error,
+                      "The object is too big to convert to a numpy array ("
+                      << obj.size() << " > "
+                      << std::numeric_limits<npy_intp>::max() << ")!" );
+
+  npy_intp dims[1] = { static_cast<npy_intp>(obj.size()) };
+  int typecode = numpyTypecode( T() );
+  
+  return PyArray_SimpleNewFromData( 1, dims, typecode, (void*)obj.data() );
+}
 
 // Create a Python (NumPy) object from a fixed size array object
 template<typename FixedSizeArray>
@@ -383,7 +407,13 @@ PyObject* convertFixedSizeArrayToPython( const FixedSizeArray& obj )
 {
   typedef typename std::remove_const<typename FixedSizeArray::value_type>::type ValueType;
 
-  npy_intp dims[] = { obj.size() };
+  TEST_FOR_EXCEPTION( obj.size() > std::numeric_limits<npy_intp>::max(),
+                      std::runtime_error,
+                      "The object is too big to convert to a numpy array ("
+                      << obj.size() << " > "
+                      << std::numeric_limits<npy_intp>::max() << ")!" );
+  
+  npy_intp dims[] = { static_cast<npy_intp>(obj.size()) };
   int typecode = numpyTypecode( ValueType() );
 
   PyArrayObject* py_array =
@@ -443,7 +473,14 @@ inline PyObject* convert2DArrayToPython( const STLCompliant2DArray& obj )
   // Create a list of arrays
   for( unsigned i = 0; i < obj.size(); ++i )
   {
-    npy_intp dims[] = { obj[i].size() };
+    TEST_FOR_EXCEPTION( obj[i].size() > std::numeric_limits<npy_intp>::max(),
+                        std::runtime_error,
+                        "The object at index " << i << " is too big to "
+                        "convert to a numpy array ("
+                        << obj[i].size() << " > "
+                        << std::numeric_limits<npy_intp>::max() << ")!" );
+    
+    npy_intp dims[] = { static_cast<npy_intp>(obj[i].size()) };
     int typecode = numpyTypecode( ValueType() );
 
     PyArrayObject* py_array =
@@ -642,7 +679,7 @@ struct ConvertTupleElementsToPythonHelper<T,Types...>
     if( return_value != 0 )
     {
       PyErr_Format( PyExc_RuntimeError,
-                    "Could not set element %i of the tuple!",
+                    "Could not set element %lu of the tuple!",
                     element_index );
     }
 
@@ -665,7 +702,7 @@ struct ConvertTupleElementsToPythonHelper<T>
     if( return_value != 0 )
     {
       PyErr_Format( PyExc_RuntimeError,
-                    "Could not set element %i of the tuple!",
+                    "Could not set element %lu of the tuple!",
                     element_index );
     }
   }
