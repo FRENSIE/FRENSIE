@@ -31,6 +31,7 @@ enum ParticleType{
   ADJOINT_PHOTON,
   ADJOINT_NEUTRON,
   ADJOINT_ELECTRON,
+  ADJOINT_POSITRON,
   ParticleType_END
 };
 
@@ -38,9 +39,12 @@ enum ParticleType{
 ParticleType convertGeometryParticleTypeEnumToParticleTypeEnum(
                                   const Geometry::ParticleType particle_type );
 
-// Convert shorthand particle type name to a particle type
+//! Convert shorthand particle type name to a particle type
 ParticleType convertShortParticleTypeNameToParticleTypeEnum(
                                  const std::string& short_particle_type_name );
+
+//! Get the particle type enum from an int
+ParticleType convertIntToParticleType( const int raw_particle_type );
 
 } // end MonteCarlo namespace
 

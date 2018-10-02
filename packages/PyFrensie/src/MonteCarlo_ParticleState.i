@@ -160,9 +160,7 @@ typedef unsigned long int uint64_t;
 %typemap(out) const double* {
   Utility::ArrayView<const double> output_view( $1, 3 );
 
-  npy_intp dims[1] = { output_view.size() };
-
-  $result = PyArray_SimpleNewFromData( 1, dims, NPY_DOUBLE, (void*)output_view.data() );
+  $result = PyFrensie::Details::convertArrayToPython( output_view );
 
   if( !$result )
     SWIG_fail;

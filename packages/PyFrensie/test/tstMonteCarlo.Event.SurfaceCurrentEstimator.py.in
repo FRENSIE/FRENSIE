@@ -198,6 +198,9 @@ class SurfaceCurrentEstimatorTestCase(unittest.TestCase):
         estimator_1_base.setParticleTypes( particle_types )
         estimator_2_base.setParticleTypes( particle_types )
 
+        self.assertEqual( len(estimator_1_base.getParticleTypes()), 1 )
+        self.assertTrue( MonteCarlo.PHOTON in estimator_1_base.getParticleTypes() )
+
         self.assertFalse( estimator_1_base.hasUncommittedHistoryContribution() )
         self.assertFalse( estimator_2_base.hasUncommittedHistoryContribution() )
 

@@ -118,14 +118,7 @@ void BatchedDistributedStandardParticleSimulationManager<mode>::runSimulation()
 
   if( d_comm->rank() == 0 )
   {
-    if( !this->hasEndSimulationRequestBeenMade() )
-    {
-      FRENSIE_LOG_NOTIFICATION( "Simulation finished. " );
-    }
-    else
-    {
-      FRENSIE_LOG_WARNING( "Simulation terminated. " );
-    }
+    FRENSIE_LOG_NOTIFICATION( "Simulation finished. " );
     
     FRENSIE_FLUSH_ALL_LOGS();
   }
@@ -148,8 +141,7 @@ void BatchedDistributedStandardParticleSimulationManager<mode>::coordinateWorker
   
   while( true )
   {
-    if( this->hasEndSimulationRequestBeenMade() ||
-        this->isSimulationComplete() )
+    if( this->isSimulationComplete() )
     {
       this->stopWorkersAndRecordWork( true, batch_number );
 

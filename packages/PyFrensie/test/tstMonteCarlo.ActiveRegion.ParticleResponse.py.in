@@ -424,7 +424,6 @@ class MaterialParticleResponseFunctionTestCase(unittest.TestCase):
     def setUp(self):
       # Determine the database directory
       database_path = options.database
-      data_directory = os.path.dirname(database_path)
 
       # Load the database
       database = Data.ScatteringCenterPropertiesDatabase( database_path )
@@ -498,7 +497,7 @@ class MaterialParticleResponseFunctionTestCase(unittest.TestCase):
       properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE )
 
       filled_model = Collision.FilledGeometryModel(
-                                        data_directory,
+                                        database_path,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -517,7 +516,7 @@ class MaterialParticleResponseFunctionTestCase(unittest.TestCase):
       properties.setParticleMode( MonteCarlo.ADJOINT_PHOTON_MODE )
 
       self.adjoint_photon_material_filled_model = Collision.FilledGeometryModel(
-                                        data_directory,
+                                        database_path,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -529,7 +528,7 @@ class MaterialParticleResponseFunctionTestCase(unittest.TestCase):
       properties.setParticleMode( MonteCarlo.ADJOINT_ELECTRON_MODE )
 
       self.adjoint_electron_material_filled_model = Collision.FilledGeometryModel(
-                                        data_directory,
+                                        database_path,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -725,7 +724,6 @@ class MaterialComponentParticleResponseFunctionTestCase(unittest.TestCase):
     def setUp(self):
       # Determine the database directory
       database_path = options.database
-      data_directory = os.path.dirname(database_path)
 
       # Load the database
       database = Data.ScatteringCenterPropertiesDatabase( database_path )
@@ -799,7 +797,7 @@ class MaterialComponentParticleResponseFunctionTestCase(unittest.TestCase):
       properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE )
 
       filled_model = Collision.FilledGeometryModel(
-                                        data_directory,
+                                        database_path,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -818,7 +816,7 @@ class MaterialComponentParticleResponseFunctionTestCase(unittest.TestCase):
       properties.setParticleMode( MonteCarlo.ADJOINT_PHOTON_MODE )
 
       self.adjoint_photon_material_filled_model = Collision.FilledGeometryModel(
-                                        data_directory,
+                                        database_path,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -830,7 +828,7 @@ class MaterialComponentParticleResponseFunctionTestCase(unittest.TestCase):
       properties.setParticleMode( MonteCarlo.ADJOINT_ELECTRON_MODE )
 
       self.adjoint_electron_material_filled_model = Collision.FilledGeometryModel(
-                                        data_directory,
+                                        database_path,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,

@@ -27,9 +27,11 @@ boost::filesystem::path FilledGeometryModel::s_default_database_path;
 void FilledGeometryModel::setDefaultDatabasePath(
                          const boost::filesystem::path& default_database_path )
 {
-  s_default_database_path = default_database_path;
-
-  s_default_database_path.make_preferred();
+  // Remove the filename from the database path
+  if( default_database_path.has_filename() )
+    s_default_database_path = default_database_path.parent_path();
+  else
+    s_default_database_path = default_database_path;
 }
 
 // Default constructor
@@ -66,6 +68,10 @@ FilledGeometryModel::FilledGeometryModel(
   testPrecondition( properties.get() );
   // Make sure that the geometry model is valid
   testPrecondition( geometry_model.get() );
+
+  // Remove the filename from the database path
+  if( d_database_path.has_filename() )
+    d_database_path = d_database_path.parent_path();
   
   this->fillGeometry( verbose_construction );
 }

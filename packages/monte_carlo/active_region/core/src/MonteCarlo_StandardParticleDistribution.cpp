@@ -96,6 +96,34 @@ void StandardParticleDistribution::setDimensionDistribution(
     d_ready = false;
 }
 
+// Set the energy that will be sampled by the distribution
+/*! \details This method can be used to quickly set up a mono-energetic source
+ * distribution. This will destroy the current dependency tree. You will not
+ * be able to evaluate or sample from the particle distribution until the
+ * dependency tree has been constructed again.
+ */
+void StandardParticleDistribution::setEnergy( const double energy )
+{
+  std::shared_ptr<const Utility::UnivariateDistribution>
+    raw_energy_distribution( new Utility::DeltaDistribution( energy ) );
+  
+  this->setDimensionDistribution( std::shared_ptr<PhaseSpaceDimensionDistribution>( new IndependentPhaseSpaceDimensionDistribution<ENERGY_DIMENSION>( raw_energy_distribution ) ) );
+}
+
+// Set the time that will be sampled by the distribution
+/*! \details This method can be used to quickly set up the delta-time source
+ * distribution. This will destroy the current dependency tree. You will not
+ * be able to evaluate or sample from the particle distribution until the
+ * dependency tree has been constructed again.
+ */
+void StandardParticleDistribution::setTime( const double time )
+{
+  std::shared_ptr<const Utility::UnivariateDistribution>
+    raw_time_distribution( new Utility::DeltaDistribution( time ) );
+  
+  this->setDimensionDistribution( std::shared_ptr<PhaseSpaceDimensionDistribution>( new IndependentPhaseSpaceDimensionDistribution<TIME_DIMENSION>( raw_time_distribution ) ) );
+}
+
 // Set the position of the distribution
 /*! \details This method can be used to quickly set up a point distribution 
  * (in the spatial dimensions). The position specified must be in global

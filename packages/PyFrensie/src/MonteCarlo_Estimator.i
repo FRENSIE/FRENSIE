@@ -108,10 +108,22 @@ typedef unsigned int uint32_t;
     particle_types.resize(particle_types_int.size());
     for( unsigned i = 0; i < particle_types_int.size(); ++i )
     {
-      particle_types[i] = (MonteCarlo::ParticleType)particle_types_int[i];
+      particle_types[i] =
+        MonteCarlo::convertIntToParticleType(particle_types_int[i]);
     }
 
     $self->setParticleTypes( particle_types );
+  }
+
+  // Get the particle types that can contribute to the estimator
+  PyObject* getParticleTypes()
+  {
+    const std::set<ParticleType>& particle_types = $self->getParticleTypes();
+
+    std::set<int> raw_particle_types( particle_types.begin(),
+                                      particle_types.end() );
+
+    return PyFrensie::convertToPython( raw_particle_types );
   }
 
   // Set response functions
@@ -134,6 +146,10 @@ typedef unsigned int uint32_t;
   }
 
 };
+
+%ignore *::setParticleTypes;
+%ignore *::getParticleTypes;
+%ignore *::setResponseFunctions;
 
 %template(ParticleResponseVector) std::vector< std::shared_ptr< ParticleResponse const >,std::allocator< std::shared_ptr< ParticleResponse const > > >;
 

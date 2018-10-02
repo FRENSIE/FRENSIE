@@ -72,6 +72,12 @@ public:
                         const std::shared_ptr<PhaseSpaceDimensionDistribution>&
                         dimension_distribution );
 
+  //! Set the energy that will be sampled by the distribution
+  void setEnergy( const double energy );
+
+  //! Set the time that will be sampled by the distribution
+  void setTime( const double time );
+
   //! Set the position that will be sampled by the distribution
   void setPosition( const double x_position,
                     const double y_position,

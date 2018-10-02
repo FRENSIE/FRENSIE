@@ -53,9 +53,8 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
         # Set the number of requested threads
         cls.threads = options.threads
 
-        database_path = options.database_path
-        cls.data_directory = path.dirname(database_path)
-        database = Data.ScatteringCenterPropertiesDatabase(database_path)
+        cls.database_path = options.database_path
+        database = Data.ScatteringCenterPropertiesDatabase(cls.database_path)
         h_properties = database.getAtomProperties( Data.ZAID(1001) )
         h1_properties = database.getNuclideProperties( Data.ZAID(1001) )
         cls.scattering_center_definition_database = Collision.ScatteringCenterDefinitionDatabase()
@@ -108,7 +107,7 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
         properties.setNumberOfHistories( 5 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -148,7 +147,7 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
         properties.setMinNumberOfRendezvous( 10 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -189,7 +188,7 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
         properties.setMaxRendezvousBatchSize( 50 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -232,7 +231,7 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
         properties.setMinNumberOfBatchesPerRendezvous( 10 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -274,7 +273,7 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
         properties.setMaxBatchSize( 5000 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -317,7 +316,7 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
         properties.setMaxBatchSize( 50000 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -360,7 +359,7 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
         properties.setNumberOfHistories( 5 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -398,7 +397,7 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
         properties.setNumberOfHistories( 5 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -436,7 +435,7 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
         properties.setNumberOfHistories( 5 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -476,7 +475,7 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
         properties.setNumberOfHistories( 5 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -504,7 +503,7 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
         properties.setNumberOfHistories( 5 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -533,7 +532,7 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
         properties.setNumberOfHistories( 5 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -561,7 +560,7 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
         properties.setNumberOfHistories( 5 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -598,7 +597,7 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
         properties.setMaxRendezvousBatchSize( 10 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -636,7 +635,7 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
             properties.setMaxBatchSize( 10 )
             
             model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -675,7 +674,7 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
         properties.setNumberOfHistories( 5 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -709,7 +708,7 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
         properties.setNumberOfHistories( 5 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -765,9 +764,8 @@ class ParticleSimulationManagerRestartTestCase(ParametrizedTestCase):
         # Set the number of requested threads
         cls.threads = options.threads
 
-        database_path = options.database_path
-        cls.data_directory = path.dirname(database_path)
-        database = Data.ScatteringCenterPropertiesDatabase(database_path)
+        cls.database_path = options.database_path
+        database = Data.ScatteringCenterPropertiesDatabase(cls.database_path)
         h_properties = database.getAtomProperties( Data.ZAID(1001) )
         h1_properties = database.getNuclideProperties( Data.ZAID(1001) )
         cls.scattering_center_definition_database = Collision.ScatteringCenterDefinitionDatabase()
@@ -823,7 +821,7 @@ class ParticleSimulationManagerRestartTestCase(ParametrizedTestCase):
         properties.setMaxRendezvousBatchSize( 10 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -907,7 +905,7 @@ class ParticleSimulationManagerRestartTestCase(ParametrizedTestCase):
         properties.setMaxRendezvousBatchSize( 10 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -967,7 +965,7 @@ class ParticleSimulationManagerRestartTestCase(ParametrizedTestCase):
         properties.setMaxRendezvousBatchSize( 10 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -1027,7 +1025,7 @@ class ParticleSimulationManagerRestartTestCase(ParametrizedTestCase):
         properties.setMaxRendezvousBatchSize( 10 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,
@@ -1087,7 +1085,7 @@ class ParticleSimulationManagerRestartTestCase(ParametrizedTestCase):
         properties.setMaxRendezvousBatchSize( 10 )
 
         model = Collision.FilledGeometryModel(
-                                self.data_directory,
+                                self.database_path,
                                 self.scattering_center_definition_database,
                                 self.material_definition_database,
                                 properties,

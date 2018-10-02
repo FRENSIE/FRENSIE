@@ -16,9 +16,11 @@ enum ParticleType{
   PHOTON = 0,
   NEUTRON,
   ELECTRON,
+  POSITRON,
   ADJOINT_PHOTON,
   ADJOINT_NEUTRON,
-  ADJOINT_ELECTRON
+  ADJOINT_ELECTRON,
+  ADJOINT_POSITRON
 };
   
 } // end Geometry namespace

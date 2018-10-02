@@ -342,8 +342,7 @@ class StandardAdjointParticleSourceComponentTestCase(unittest.TestCase):
     def setUp(self):
       # Determine the database directory
       database_path = options.database
-      data_directory = os.path.dirname(database_path)
-
+      
       # Load the database
       database = Data.ScatteringCenterPropertiesDatabase( database_path )
 
@@ -377,7 +376,7 @@ class StandardAdjointParticleSourceComponentTestCase(unittest.TestCase):
       properties.setMaxAdjointPhotonEnergy( 10.0 )
 
       self.adjoint_photon_model = Collision.FilledGeometryModel(
-                                      data_directory,
+                                      database_path,
                                       scattering_center_definition_database,
                                       material_definition_database,
                                       properties,
@@ -390,7 +389,7 @@ class StandardAdjointParticleSourceComponentTestCase(unittest.TestCase):
       properties.setMaxAdjointElectronEnergy( 10.0 )
 
       self.adjoint_electron_model = Collision.FilledGeometryModel(
-                                      data_directory,
+                                      database_path,
                                       scattering_center_definition_database,
                                       material_definition_database,
                                       properties,
