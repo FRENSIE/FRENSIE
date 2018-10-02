@@ -35,17 +35,8 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator : public AdjointElect
 
 public:
 
-  typedef MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LogLog>
-    ElectroionizationReaction;
-
-  typedef MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LogLog>
-    BremsstrahlungReaction;
-
-  typedef DataGen::AdjointElectronGridGenerator<BremsstrahlungReaction, Utility::LinLinLin>
-    BremsstrahlungGridGenerator;
-
-  typedef DataGen::AdjointElectronGridGenerator<ElectroionizationReaction, Utility::LinLinLin>
-    ElectroionizationGridGenerator;
+  typedef DataGen::AdjointElectronGridGenerator<Utility::LogLogLog>
+    ElectronGridGenerator;
 
   //! Advanced Constructor
   StandardAdjointElectronPhotonRelaxationDataGenerator(
@@ -235,14 +226,14 @@ private:
   void createAdjointBremsstrahlungGridGenerator(
     const std::shared_ptr<const std::vector<double> >& forward_electron_energy_grid,
     const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
-    std::shared_ptr<BremsstrahlungGridGenerator>&
+    std::shared_ptr<ElectronGridGenerator>&
         adjoint_bremsstrahlung_grid_generator ) const;
 
   // Create the adjoint electroionization subshell grid generator
   void createAdjointElectroionizationSubshellGridGenerator(
     const std::shared_ptr<const std::vector<double> >& forward_electron_energy_grid,
     const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
-    std::shared_ptr<ElectroionizationGridGenerator>&
+    std::shared_ptr<ElectronGridGenerator>&
         adjoint_electroionization_grid_generator,
     const unsigned shell ) const;
 

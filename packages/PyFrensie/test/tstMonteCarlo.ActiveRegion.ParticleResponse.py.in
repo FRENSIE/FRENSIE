@@ -714,7 +714,7 @@ class MaterialParticleResponseFunctionTestCase(unittest.TestCase):
         adjoint_electron.setEnergy( 1.0 )
 
         self.assertAlmostEqual( response_function.evaluate( adjoint_electron ),
-                                5.089779755448829990e-01,
+                                5.363773170124445100e-01,
                                 delta=1e-15 )
 
 #-----------------------------------------------------------------------------#
@@ -1039,7 +1039,7 @@ class MaterialComponentParticleResponseFunctionTestCase(unittest.TestCase):
         adjoint_electron.setEnergy( 1.0 )
 
         self.assertAlmostEqual( response_function.evaluate( adjoint_electron ),
-                                5.089779755448829990e-01,
+                                5.363773170124445100e-01,
                                 delta=1e-15 )
 
 #-----------------------------------------------------------------------------#

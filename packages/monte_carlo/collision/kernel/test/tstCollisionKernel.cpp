@@ -478,7 +478,7 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_electron_mod
     // The adjoint electron's weight will be multiplied by the adjoint weight
     // factor before the collision occurs.
     FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getWeight(),
-                                     9.984273247328523393e-01,
+                                     1.002208744726088563,
                                      1e-15 );
   }
 
@@ -504,7 +504,7 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_electron_mod
     // The adjoint electron's weight will be multiplied by the adjoint weight
     // factor before the collision occurs.
     FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getWeight(),
-                                     9.984273247328523393e-01,
+                                     1.002208744726088563,
                                      1e-15 );
   }
 }

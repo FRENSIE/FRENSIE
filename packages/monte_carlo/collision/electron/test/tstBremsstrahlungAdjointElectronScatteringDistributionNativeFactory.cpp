@@ -37,7 +37,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistributionNativeFact
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 1e-5 MeV and 1.1192e-5 MeV distributions
-  fake_stream[1] = 0.5; // Sample an E_out of 1.494036975172417187e-05
+  fake_stream[1] = 0.5; // Sample an E_out of 1.292134711932079911e-05
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -47,7 +47,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistributionNativeFact
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.494036975172417187e-05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.292134711932079911e-05, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle, 1.0, 1e-12 );
 }
 
@@ -59,7 +59,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistributionNativeFact
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 1e-5 MeV and 1.1192e-5 MeV distributions
-  fake_stream[1] = 0.5; // Sample an E_out of 1.494036975172417187e-05
+  fake_stream[1] = 0.5; // Sample an E_out of 1.292134711932079911e-05
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -74,7 +74,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistributionNativeFact
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.494036975172417187e-05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.292134711932079911e-05, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle, 1.0, 1e-12 );
   FRENSIE_CHECK_EQUAL( trials, 1.0 );
 }
@@ -95,7 +95,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistributionNativeFact
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 1e-5 MeV and 1.1192e-5 MeV distributions
-  fake_stream[1] = 0.5; // Sample an E_out of 1.494036975172417187e-05
+  fake_stream[1] = 0.5; // Sample an E_out of 1.292134711932079911e-05
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -105,7 +105,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistributionNativeFact
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getEnergy(), 1.494036975172417187e-05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getEnergy(), 1.292134711932079911e-05, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( electron.getXDirection(), 0.0, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
@@ -134,7 +134,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   // Get the energy grid
   std::vector<double> energy_grid;
 
-  if ( data_container->seperateAdjointBremsstrahlungEnergyGrid() )
+  if ( data_container->separateAdjointBremsstrahlungEnergyGrid() )
     energy_grid = data_container->getAdjointElectronBremsstrahlungEnergyGrid();
   else
     energy_grid = data_container->getAdjointElectronEnergyGrid();

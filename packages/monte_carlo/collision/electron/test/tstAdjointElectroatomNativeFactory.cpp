@@ -66,15 +66,15 @@ FRENSIE_UNIT_TEST( AdjointElectroatomNativeFactory,
   // Test that the total cross section can be returned
   double energy = 1e-5;
   double cross_section = atom->getTotalCrossSection( energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.633472341011105347e+10, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.665353570771184540e+10, 1e-12 );
 
   energy = 1e-3;
   cross_section = atom->getTotalCrossSection( energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.986270030525523424e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.013600025347673148e+07, 1e-12 );
 
   energy = 20.0;
   cross_section = atom->getTotalCrossSection( energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.568871326762493118e+05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.785097370823987876e+05, 1e-12 );
 
 
   // Test that the absorption cross section can be returned
@@ -107,13 +107,13 @@ FRENSIE_UNIT_TEST( AdjointElectroatomNativeFactory,
   // Test that the bremsstrahlung cross section can be returned
   reaction = MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION;
   cross_section = atom->getReactionCrossSection( 1e-5, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.980092756766359940e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.420906922056859401e+01, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.441998445400516893e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.582521006440232370e+01, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 20.0, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.497134894717789044e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.873816755338521323e-01, 1e-12 );
 
   // Test that the coupled elastic cross section can be returned
   reaction = MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION;
@@ -157,13 +157,13 @@ FRENSIE_UNIT_TEST( AdjointElectroatomNativeFactory,
   // Test that the K subshell electroionization cross section can be returned
   reaction = MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
   cross_section = atom->getReactionCrossSection( 1e-5, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.599858431241171265e+10, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.631739660560436249e+10, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.627599463243934512e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.654929317543522827e+07, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 20.0, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 6.203546061164286948e+04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.365802734960628732e+04, 1e-12 );
 
 
   // Test that the L1 subshell electroionization cross section can be returned
@@ -208,13 +208,13 @@ FRENSIE_UNIT_TEST( AdjointElectroatomNativeFactory,
 
   // Test that the total cross section can be returned
   double cross_section = atom->getTotalCrossSection( 1e-5);
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.633319634679005432e+10, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.665200864439084625e+10, 1e-12 );
 
   cross_section = atom->getTotalCrossSection( 1e-3 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.900076021491498873e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.927406016313648596e+07, 1e-12 );
 
   cross_section = atom->getTotalCrossSection( 20.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.438670640914677642e+05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.654896684976172401e+05, 1e-12 );
 
 
   // Test that the absorption cross section can be returned
@@ -247,13 +247,13 @@ FRENSIE_UNIT_TEST( AdjointElectroatomNativeFactory,
   // Test that the bremsstrahlung cross section can be returned
   reaction = MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION;
   cross_section = atom->getReactionCrossSection( 1e-5, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.980092756766359940e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.420906922056859401e+01, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.441998445400516893e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.582521006440232370e+01, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 20.0, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.497134894717789044e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.873816755338521323e-01, 1e-12 );
 
 
   // Test that the coupled elastic cross section can be returned
@@ -298,13 +298,13 @@ FRENSIE_UNIT_TEST( AdjointElectroatomNativeFactory,
   // Test that the K subshell electroionization cross section can be returned
   reaction = MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
   cross_section = atom->getReactionCrossSection( 1e-5, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.599858431241171265e+10, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.631739660560436249e+10, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.627599463243934512e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.654929317543522827e+07, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 20.0, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 6.203546061164286948e+04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.365802734960628732e+04, 1e-12 );
 
 
   // Test that the L1 subshell electroionization cross section can be returned

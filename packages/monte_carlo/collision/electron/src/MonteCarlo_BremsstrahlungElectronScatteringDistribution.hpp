@@ -54,6 +54,12 @@ public:
   //! Return the Max incoming energy
   double getMaxEnergy() const;
 
+  //! Return the min outgoing photon energy
+  double getMinPhotonEnergy( const double incoming_energy ) const;
+
+  //! Return the Max outgoing photon energy
+  double getMaxPhotonEnergy( const double incoming_energy ) const;
+
   //! Evaluate the distribution for a given incoming and photon energy
   double evaluate( const double incoming_energy,
                    const double photon_energy ) const override;

@@ -15,28 +15,27 @@
 
 // FRENSIE Includes
 #include "Utility_TwoDGridGenerator.hpp"
+#include "Utility_FullyTabularBasicBivariateDistribution.hpp"
 
 namespace DataGen{
 
 //! The adjoint electron grid generator
-template<typename ElectroatomicReaction, typename TwoDInterpPolicy>
+template<typename TwoDInterpPolicy>
 class AdjointElectronGridGenerator : public Utility::TwoDGridGenerator<TwoDInterpPolicy>
 {
 
 public:
 
-  //! Typedef for the const electroatomic reaction
-  typedef const ElectroatomicReaction
-    ConstElectroatomicReaction;
-
   //! Constructor
   AdjointElectronGridGenerator(
-      const std::shared_ptr<const ElectroatomicReaction>& electroatomic_reaction,
+      const std::function<double(const double&)>& forward_cs_evaluator,
+      const std::function<double(const double&, const double&)>& forward_pdf_evaluator,
+      const std::function<double(const double&)>& min_outgoing_adjoint_energy,
       const std::vector<double>& primary_energy_grid,
       const double min_energy = 1e-5,
       const double max_energy = 20.0,
-      const double max_energy_nudge_value = 0.2,
-      const double energy_to_outgoing_energy_nudge_value = 1e-6,
+      const double min_energy_nudge_value = 1e-9,
+      const double max_energy_nudge_value = 1e-2,
       const double convergence_tol = 0.001,
       const double absolute_diff_tol = 1e-10,
       const double distance_tol = 1e-8 );
@@ -51,18 +50,18 @@ public:
   //! Get the max energy
   double getMaxEnergy() const;
 
+  //! Set the min energy nudge value
+  void setMinEnergyNudgeValue( const double min_energy_nudge_value );
+
   //! Set the max energy nudge value
   void setMaxEnergyNudgeValue( const double max_energy_nudge_value );
-  
-  //! Get the nudged max energy
+
+  //! Get the nudged minimum outgoing adjoint energy
+  double getNudgedMinEnergy( const double energy ) const;
+
+  //! Get the nudged maximum outgoing adjoint energy
   double getNudgedMaxEnergy() const;
 
-  //! Set the energy to outgoing energy nudge value
-  void setEnergyToOutgoingEnergyNudgeValue(
-            const double energy_to_outgoing_energy_nudge_value );
-
-  //! Get the nudged energy
-  double getNudgedEnergy( const double energy ) const;
 
   //! Evaluate the adjoint PDF value
   double evaluateAdjointPDF(
@@ -76,6 +75,11 @@ public:
         const double incoming_adjoint_energy,
         const double outgoing_adjoint_energy,
         const double precision ) const;
+
+  //! Return the differential cross section value at a given energy
+  double evaluateAdjointDifferentialCrossSection(
+      const double adjoint_incoming_energy,
+      const double adjoint_outgoing_energy ) const;
 
   //! Return the cross section value at a given energy
   double evaluateAdjointCrossSection(
@@ -108,11 +112,17 @@ protected:
   //! Initialize the outgoing energy grid at an energy grid point
   void initializeSecondaryGrid( std::vector<double>& outgoing_energy_grid,
                                 const double energy ) const;
-  
+
 private:
 
-  // The forward electroatomic reaction
-  std::shared_ptr<const ElectroatomicReaction> d_electroatomic_reaction;
+  // Function for evaluating the forward cross section
+  std::function<double(const double&)> d_forward_cs_evaluator;
+
+  // Function for evaluating the forward pdf
+  std::function<double(const double&, const double&)> d_forward_pdf_evaluator;
+
+  // Functor to calculate the min outgoing adjoint energy
+  std::function<double(const double&)> d_min_outgoing_adjoint_energy;
 
   // The primary incoming energy grid of the forward electronatomic reaction
   std::vector<double> d_primary_energy_grid;
@@ -126,11 +136,11 @@ private:
   // The max table energy (highest energy grid point)
   double d_max_energy;
 
-  // The max table energy nudge value 
+  // The max table energy nudge value
   double d_nudged_max_energy;
 
-  // The energy to outgoing energy nudge value
-  double d_energy_to_outgoing_energy_nudge_value;
+  // The min energy nudge value
+  double d_min_energy_nudge_value;
 };
 
 } // end DataGen namespace

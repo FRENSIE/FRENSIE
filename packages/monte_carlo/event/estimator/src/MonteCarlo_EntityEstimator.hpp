@@ -22,7 +22,7 @@ class EntityEstimator : public Estimator
 
 protected:
 
-  // Typedef for the map of entity ids and esimator moments array
+  // Typedef for the map of entity ids and estimator moments array
   typedef std::unordered_map<EntityId,TwoEstimatorMomentsCollection>
   EntityEstimatorMomentsCollectionMap;
 

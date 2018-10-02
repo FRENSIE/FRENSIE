@@ -65,6 +65,22 @@ double BremsstrahlungElectronScatteringDistribution::getMaxEnergy() const
   return d_bremsstrahlung_scattering_distribution->getUpperBoundOfPrimaryIndepVar();
 }
 
+// Return the min outgoing photon energy
+//! \details It is assumed that the minimum outgoing photon energy is 1e-7 MeV.
+double BremsstrahlungElectronScatteringDistribution::getMinPhotonEnergy( const double incoming_energy ) const
+{
+  return 1e-7;
+}
+
+// Return the Max outgoing photon energy
+/*! \details It is assumed that the maximum outgoing photon energy is the
+ * incoming electron energy.
+ */
+double BremsstrahlungElectronScatteringDistribution::getMaxPhotonEnergy( const double incoming_energy ) const
+{
+  return incoming_energy;
+}
+
 // Evaluate the distribution for a given incoming and photon energy
 double BremsstrahlungElectronScatteringDistribution::evaluate(
                      const double incoming_energy,
@@ -78,8 +94,8 @@ double BremsstrahlungElectronScatteringDistribution::evaluate(
   return d_bremsstrahlung_scattering_distribution->evaluate(
             incoming_energy,
             photon_energy,
-            [](const double& energy){return 1e-7;},
-            [](const double& energy){return energy;} );
+            [self = this](const double& energy){return self->getMinPhotonEnergy( energy );},
+            [self = this](const double& energy){return self->getMaxPhotonEnergy( energy );} );
 }
 
 // Evaluate the PDF value for a given incoming and photon energy
@@ -95,8 +111,8 @@ double BremsstrahlungElectronScatteringDistribution::evaluatePDF(
   return d_bremsstrahlung_scattering_distribution->evaluateSecondaryConditionalPDF(
             incoming_energy,
             photon_energy,
-            [](const double& energy){return 1e-7;},
-            [](const double& energy){return energy;} );
+            [self = this](const double& energy){return self->getMinPhotonEnergy( energy );},
+            [self = this](const double& energy){return self->getMaxPhotonEnergy( energy );} );
 }
 
 // Evaluate the CDF value for a given incoming and photon energy
@@ -112,8 +128,8 @@ double BremsstrahlungElectronScatteringDistribution::evaluateCDF(
   return d_bremsstrahlung_scattering_distribution->evaluateSecondaryConditionalCDF(
             incoming_energy,
             photon_energy,
-            [](const double& energy){return 1e-7;},
-            [](const double& energy){return energy;} );
+            [self = this](const double& energy){return self->getMinPhotonEnergy( energy );},
+            [self = this](const double& energy){return self->getMaxPhotonEnergy( energy );} );
 }
 
 // Sample the photon energy and direction from the distribution
@@ -126,8 +142,8 @@ void BremsstrahlungElectronScatteringDistribution::sample(
   photon_energy =
     d_bremsstrahlung_scattering_distribution->sampleSecondaryConditional(
       incoming_energy,
-      [](double energy){return 1e-7;},
-      [](double energy){return energy;} );
+      [self = this](const double& energy){return self->getMinPhotonEnergy( energy );},
+      [self = this](const double& energy){return self->getMaxPhotonEnergy( energy );} );
 
   // Sample the photon outgoing angle cosine
   photon_angle_cosine = d_angular_distribution_func( incoming_energy,
