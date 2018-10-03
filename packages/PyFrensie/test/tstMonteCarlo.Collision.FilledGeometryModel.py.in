@@ -28,6 +28,7 @@ Data = importPyFrensieModuleFromBuildDir('Data')
 Geometry = importPyFrensieModuleFromBuildDir('Geometry')
 MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
 Collision = importPyFrensieModuleFromBuildDir('MonteCarlo.Collision')
+Utility = importPyFrensieModuleFromBuildDir('Utility')
 
 #-----------------------------------------------------------------------------#
 # Tests.
@@ -202,7 +203,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
 
     def testConstructor_adjoint_photon_mode(self):
         "*Test MonteCarlo.Collision.FilledGeometryModel constructor_adjoint_photon_mode"
-        unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1.0 )
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1e24 )
 
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.ADJOINT_PHOTON_MODE )
@@ -220,7 +221,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
 
     def testConstructor_adjoint_electron_mode(self):
         "*Test MonteCarlo.Collision.FilledGeometryModel constructor_adjoint_electron_mode"
-        unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1.0 )
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1.0e24 )
 
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.ADJOINT_ELECTRON_MODE )
@@ -1552,7 +1553,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
     # Check that the macroscopic total cross section can be returned
     def testGet_cross_section_adjoint_photon_mode(self):
         "*Test MonteCarlo.Collision.FilledGeometryModel get_cross_section_adjoint_photon_mode"
-        unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1.0 )
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1.0e24 )
 
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.ADJOINT_PHOTON_MODE )
@@ -1716,7 +1717,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
 
     def testGet_cross_section_adjoint_electron_mode(self):
         "*Test MonteCarlo.Collision.FilledGeometryModel get_cross_section_adjoint_electron_mode"
-        unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1.0 )
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1.0e24 )
 
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.ADJOINT_ELECTRON_MODE )
@@ -1895,7 +1896,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
     # Check that the Critical Line Energies can be returned
     def testGetCriticalLineEnergies_adjoint_photon_mode(self):
         "*Test MonteCarlo.Collision.FilledGeometryModel getCriticalLineEnergies_adjoint_photon_mode"
-        unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1.0 )
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1.0e24 )
 
         properties = MonteCarlo.SimulationProperties()
         properties.setParticleMode( MonteCarlo.ADJOINT_PHOTON_MODE )

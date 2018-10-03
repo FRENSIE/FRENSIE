@@ -31,7 +31,7 @@ typedef TestArchiveHelper::TestArchives TestArchives;
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-boost::filesystem::path data_directory;
+std::string test_scattering_center_database_name;
 
 std::shared_ptr<MonteCarlo::ScatteringCenterDefinitionDatabase>
 scattering_center_definition_database;
@@ -55,7 +55,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, constructor_neutron_mode )
 
   FRENSIE_CHECK_NO_THROW( filled_model.reset(
                                    new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -83,7 +83,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, constructor_photon_mode )
 
   FRENSIE_CHECK_NO_THROW( filled_model.reset(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -111,7 +111,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, constructor_electron_mode )
 
   FRENSIE_CHECK_NO_THROW( filled_model.reset(
                                   new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -139,7 +139,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, constructor_neutron_photon_mode )
 
   FRENSIE_CHECK_NO_THROW( filled_model.reset(
                                  new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -167,7 +167,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, constructor_photon_electron_mode )
 
   FRENSIE_CHECK_NO_THROW( filled_model.reset(
                                 new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -195,7 +195,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, constructor_neutron_photon_electron_mode
 
   FRENSIE_CHECK_NO_THROW( filled_model.reset(
                               new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -230,7 +230,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, constructor_adjoint_photon_mode )
 
   FRENSIE_CHECK_NO_THROW( filled_model.reset(
                                new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -258,7 +258,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, constructor_adjoint_electron_mode )
 
   FRENSIE_CHECK_NO_THROW( filled_model.reset(
                                  new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -282,7 +282,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, isCellVoid_neutron_mode )
   std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
   properties->setParticleMode( MonteCarlo::NEUTRON_MODE );
 
-  MonteCarlo::FilledGeometryModel filled_model( data_directory,
+  MonteCarlo::FilledGeometryModel filled_model( test_scattering_center_database_name,
                                                 scattering_center_definition_database,
                                                 material_definition_database,
                                                 properties,
@@ -326,7 +326,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, isCellVoid_photon_mode )
   std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
   properties->setParticleMode( MonteCarlo::PHOTON_MODE );
 
-  MonteCarlo::FilledGeometryModel filled_model( data_directory,
+  MonteCarlo::FilledGeometryModel filled_model( test_scattering_center_database_name,
                                                 scattering_center_definition_database,
                                                 material_definition_database,
                                                 properties,
@@ -370,7 +370,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, isCellVoid_electron_mode )
   std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
   properties->setParticleMode( MonteCarlo::ELECTRON_MODE );
 
-  MonteCarlo::FilledGeometryModel filled_model( data_directory,
+  MonteCarlo::FilledGeometryModel filled_model( test_scattering_center_database_name,
                                                 scattering_center_definition_database,
                                                 material_definition_database,
                                                 properties,
@@ -414,7 +414,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, isCellVoid_neutron_photon_mode )
   std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
   properties->setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE );
 
-  MonteCarlo::FilledGeometryModel filled_model( data_directory,
+  MonteCarlo::FilledGeometryModel filled_model( test_scattering_center_database_name,
                                                 scattering_center_definition_database,
                                                 material_definition_database,
                                                 properties,
@@ -458,7 +458,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, isCellVoid_photon_electron_mode )
   std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
   properties->setParticleMode( MonteCarlo::PHOTON_ELECTRON_MODE );
 
-  MonteCarlo::FilledGeometryModel filled_model( data_directory,
+  MonteCarlo::FilledGeometryModel filled_model( test_scattering_center_database_name,
                                                 scattering_center_definition_database,
                                                 material_definition_database,
                                                 properties,
@@ -502,7 +502,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, isCellVoid_neutron_photon_electron_mode 
   std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
   properties->setParticleMode( MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE );
 
-  MonteCarlo::FilledGeometryModel filled_model( data_directory,
+  MonteCarlo::FilledGeometryModel filled_model( test_scattering_center_database_name,
                                                 scattering_center_definition_database,
                                                 material_definition_database,
                                                 properties,
@@ -553,7 +553,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, isCellVoid_adjoint_photon_mode )
   std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
   properties->setParticleMode( MonteCarlo::ADJOINT_PHOTON_MODE );
 
-  MonteCarlo::FilledGeometryModel filled_model( data_directory,
+  MonteCarlo::FilledGeometryModel filled_model( test_scattering_center_database_name,
                                                 scattering_center_definition_database,
                                                 material_definition_database,
                                                 properties,
@@ -597,7 +597,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, isCellVoid_adjoint_electron_mode )
   std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
   properties->setParticleMode( MonteCarlo::ADJOINT_ELECTRON_MODE );
 
-  MonteCarlo::FilledGeometryModel filled_model( data_directory,
+  MonteCarlo::FilledGeometryModel filled_model( test_scattering_center_database_name,
                                                 scattering_center_definition_database,
                                                 material_definition_database,
                                                 properties,
@@ -641,7 +641,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_mode )
   std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
   properties->setParticleMode( MonteCarlo::NEUTRON_MODE );
 
-  MonteCarlo::FilledGeometryModel filled_model( data_directory,
+  MonteCarlo::FilledGeometryModel filled_model( test_scattering_center_database_name,
                                                 scattering_center_definition_database,
                                                 material_definition_database,
                                                 properties,
@@ -891,7 +891,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_photon_mode )
   std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
   properties->setParticleMode( MonteCarlo::PHOTON_MODE );
 
-  MonteCarlo::FilledGeometryModel filled_model( data_directory,
+  MonteCarlo::FilledGeometryModel filled_model( test_scattering_center_database_name,
                                                 scattering_center_definition_database,
                                                 material_definition_database,
                                                 properties,
@@ -1141,7 +1141,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_electron_mode )
   std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
   properties->setParticleMode( MonteCarlo::ELECTRON_MODE );
 
-  MonteCarlo::FilledGeometryModel filled_model( data_directory,
+  MonteCarlo::FilledGeometryModel filled_model( test_scattering_center_database_name,
                                                 scattering_center_definition_database,
                                                 material_definition_database,
                                                 properties,
@@ -1461,7 +1461,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_mode )
   std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
   properties->setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE );
 
-  MonteCarlo::FilledGeometryModel filled_model( data_directory,
+  MonteCarlo::FilledGeometryModel filled_model( test_scattering_center_database_name,
                                                 scattering_center_definition_database,
                                                 material_definition_database,
                                                 properties,
@@ -1781,7 +1781,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_photon_electron_mode )
   std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
   properties->setParticleMode( MonteCarlo::PHOTON_ELECTRON_MODE );
 
-  MonteCarlo::FilledGeometryModel filled_model( data_directory,
+  MonteCarlo::FilledGeometryModel filled_model( test_scattering_center_database_name,
                                                 scattering_center_definition_database,
                                                 material_definition_database,
                                                 properties,
@@ -2171,7 +2171,7 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_neutron_photon_electro
   std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
   properties->setParticleMode( MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE );
 
-  MonteCarlo::FilledGeometryModel filled_model( data_directory,
+  MonteCarlo::FilledGeometryModel filled_model( test_scattering_center_database_name,
                                                 scattering_center_definition_database,
                                                 material_definition_database,
                                                 properties,
@@ -2633,13 +2633,13 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_adjoint_neutron_mode )
 FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_adjoint_photon_mode )
 {
   std::shared_ptr<const Geometry::Model> unfilled_model(
-            new Geometry::InfiniteMediumModel( 1, 2, 1.0/cubic_centimeter ) );
+            new Geometry::InfiniteMediumModel( 1, 2, 1e24/cubic_centimeter ) );
 
   std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
   properties->setParticleMode( MonteCarlo::ADJOINT_PHOTON_MODE );
   properties->setMaxAdjointPhotonEnergy( 20.0 );
 
-  MonteCarlo::FilledGeometryModel filled_model( data_directory,
+  MonteCarlo::FilledGeometryModel filled_model( test_scattering_center_database_name,
                                                 scattering_center_definition_database,
                                                 material_definition_database,
                                                 properties,
@@ -2943,12 +2943,12 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_adjoint_photon_mode )
 FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_adjoint_electron_mode )
 {
   std::shared_ptr<const Geometry::Model> unfilled_model(
-            new Geometry::InfiniteMediumModel( 1, 2, 1.0/cubic_centimeter ) );
+           new Geometry::InfiniteMediumModel( 1, 2, 1.e24/cubic_centimeter ) );
 
   std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
   properties->setParticleMode( MonteCarlo::ADJOINT_ELECTRON_MODE );
 
-  MonteCarlo::FilledGeometryModel filled_model( data_directory,
+  MonteCarlo::FilledGeometryModel filled_model( test_scattering_center_database_name,
                                                 scattering_center_definition_database,
                                                 material_definition_database,
                                                 properties,
@@ -3273,7 +3273,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
 
     std::unique_ptr<MonteCarlo::FilledGeometryModel> filled_model(
                                  new MonteCarlo::FilledGeometryModel(
-                                         data_directory,
+                                         test_scattering_center_database_name,
                                          scattering_center_definition_database,
                                          material_definition_database,
                                          properties,
@@ -3354,7 +3354,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
 
     std::unique_ptr<MonteCarlo::FilledGeometryModel> filled_model(
                                  new MonteCarlo::FilledGeometryModel(
-                                         data_directory,
+                                         test_scattering_center_database_name,
                                          scattering_center_definition_database,
                                          material_definition_database,
                                          properties,
@@ -3435,7 +3435,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
 
     std::unique_ptr<MonteCarlo::FilledGeometryModel> filled_model(
                                  new MonteCarlo::FilledGeometryModel(
-                                         data_directory,
+                                         test_scattering_center_database_name,
                                          scattering_center_definition_database,
                                          material_definition_database,
                                          properties,
@@ -3516,7 +3516,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
 
     std::unique_ptr<MonteCarlo::FilledGeometryModel> filled_model(
                                  new MonteCarlo::FilledGeometryModel(
-                                         data_directory,
+                                         test_scattering_center_database_name,
                                          scattering_center_definition_database,
                                          material_definition_database,
                                          properties,
@@ -3597,7 +3597,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
 
     std::unique_ptr<MonteCarlo::FilledGeometryModel> filled_model(
                                  new MonteCarlo::FilledGeometryModel(
-                                         data_directory,
+                                         test_scattering_center_database_name,
                                          scattering_center_definition_database,
                                          material_definition_database,
                                          properties,
@@ -3678,7 +3678,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
 
     std::unique_ptr<MonteCarlo::FilledGeometryModel> filled_model(
                                  new MonteCarlo::FilledGeometryModel(
-                                         data_directory,
+                                         test_scattering_center_database_name,
                                          scattering_center_definition_database,
                                          material_definition_database,
                                          properties,
@@ -3768,7 +3768,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
 
     std::unique_ptr<MonteCarlo::FilledGeometryModel> filled_model(
                                  new MonteCarlo::FilledGeometryModel(
-                                         data_directory,
+                                         test_scattering_center_database_name,
                                          scattering_center_definition_database,
                                          material_definition_database,
                                          properties,
@@ -3849,7 +3849,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
 
     std::unique_ptr<MonteCarlo::FilledGeometryModel> filled_model(
                                  new MonteCarlo::FilledGeometryModel(
-                                         data_directory,
+                                         test_scattering_center_database_name,
                                          scattering_center_definition_database,
                                          material_definition_database,
                                          properties,
@@ -3907,8 +3907,6 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_scattering_center_database_name;
-
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_database",
@@ -3923,8 +3921,6 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Determine the database directory
     boost::filesystem::path database_path =
       test_scattering_center_database_name;
-
-    data_directory = database_path.parent_path();
 
     // Load the database
     const Data::ScatteringCenterPropertiesDatabase database( database_path );
