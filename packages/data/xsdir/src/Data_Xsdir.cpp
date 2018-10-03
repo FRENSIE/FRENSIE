@@ -107,7 +107,7 @@ bool Xsdir::isTableHumanReadable( const std::vector<std::string>& entry_tokens )
   TEST_FOR_EXCEPTION( !Xsdir::isLineTableEntry( entry_tokens ),
                       std::logic_error,
                       "The line does not have table data!" );
-  
+
   return Xsdir::isTableHumanReadableQuick( entry_tokens );
 }
 
@@ -165,7 +165,7 @@ void Xsdir::quickExtractZaidsAndAtomicWeightRatiosFromEntryTokens(
                       "entries!" );
 
   zaids_and_atomic_weight_ratios.resize( entry_tokens.size()/2 );
-  
+
   for( size_t i = 0; i < entry_tokens.size(); i += 2 )
   {
     zaids_and_atomic_weight_ratios[i/2] =
@@ -203,7 +203,7 @@ double Xsdir::extractAtomicWeightRatioFromEntryTokens(
   TEST_FOR_EXCEPTION( !Xsdir::isLineTableEntry( entry_tokens ),
                       std::logic_error,
                       "The line does not have table data!" );
-  
+
   return Xsdir::quickExtractAtomicWeightRatioFromEntryTokens( entry_tokens );
 }
 
@@ -230,10 +230,10 @@ boost::filesystem::path Xsdir::quickExtractPathFromEntryTokens(
                                  const std::vector<std::string>& entry_tokens )
 {
   boost::filesystem::path table_path;
-  
+
   if( entry_tokens[3] == "0" )
     table_path = entry_tokens[2];
-  
+
   else
   {
     table_path = entry_tokens[3];
@@ -241,7 +241,7 @@ boost::filesystem::path Xsdir::quickExtractPathFromEntryTokens(
   }
 
   table_path.make_preferred();
-  
+
   return table_path;
 }
 
@@ -301,7 +301,7 @@ Xsdir::Xsdir( const boost::filesystem::path& xsdir_file_name,
 {
   // Convert to the preferred path format
   d_xsdir_path.make_preferred();
-  
+
   // Verify that the xsdir file exists
   TEST_FOR_EXCEPTION( !boost::filesystem::exists( d_xsdir_path ),
                       std::runtime_error,
@@ -316,7 +316,7 @@ Xsdir::Xsdir( const boost::filesystem::path& xsdir_file_name,
 
   // Loop through the xsdir file and process each unfiltered line
   std::string first_xsdir_line;
-  
+
   std::getline( xsdir_file, first_xsdir_line );
   boost::algorithm::to_lower( first_xsdir_line );
 
@@ -346,7 +346,7 @@ void Xsdir::processXsdirFile( const boost::filesystem::path& xsdir_file_path,
   while( !xsdir_file.eof() )
   {
     std::getline( xsdir_file, xsdir_line );
-    
+
     Xsdir::splitLineIntoEntryTokens( xsdir_line, entry_tokens );
 
     // Process the line if it passes through the filter
@@ -369,7 +369,7 @@ void Xsdir::parseEntryTokensAndInitializeDataPropertiesObject(
   this->quickExtractZaidsAndAtomicWeightRatiosFromEntryTokens(
                                               entry_tokens,
                                               zaids_and_atomic_weight_ratios );
-  
+
   for( size_t i = 0; i < zaids_and_atomic_weight_ratios.size(); ++i )
   {
     const Data::ZAID& zaid =
@@ -393,7 +393,7 @@ void Xsdir::parseEntryTokensAndCreateDataPropertiesObject(
                                   const std::string&,
                                   const bool log_parsed_entries ) const
 {
-  const std::tuple<std::string,unsigned,char> table_name_components = 
+  const std::tuple<std::string,unsigned,char> table_name_components =
     this->quickExtractTableNameComponentsFromEntryTokens( entry_tokens );
 
   const double atomic_weight_ratio =
@@ -401,7 +401,7 @@ void Xsdir::parseEntryTokensAndCreateDataPropertiesObject(
 
   const Energy evaluation_temp =
     this->quickExtractEvaluationTemperatureFromEntryTokens( entry_tokens );
-    
+
   const boost::filesystem::path table_file_path =
     this->quickExtractPathFromEntryTokens( entry_tokens );
 
@@ -498,7 +498,7 @@ void Xsdir::createContinuousEnergyNeutronTableProperties(
                       "The file that stores continuous energy neutron table "
                       << table_name << " does not exist at the specified path "
                       "(" << complete_table_file_path.string() << ")!" );
-  
+
   std::shared_ptr<const NuclearDataProperties> properties(
       new ACENuclearDataProperties( atomic_weight_ratio,
                                     evaluation_temp,
@@ -549,7 +549,7 @@ void Xsdir::createSABTableProperties(
                                                     table_file_path,
                                                     file_start_line,
                                                     table_name ) );
-  
+
   for( std::set<ZAID>::const_iterator zaid_it = zaids.begin();
        zaid_it != zaids.end();
        ++zaid_it )
@@ -558,7 +558,7 @@ void Xsdir::createSABTableProperties(
     // properties in the database
     TEST_FOR_EXCEPTION( !database.doNuclidePropertiesExist( *zaid_it ),
                         std::runtime_error,
-                        "The database entry for zaid " << *zaid_it << 
+                        "The database entry for zaid " << *zaid_it <<
                         " was not initialized during the initialization "
                         "step!" );
 
@@ -597,7 +597,7 @@ void Xsdir::createPhotonuclearTableProperties(
   // Convert the atomic weight ratio to the atomic weight
   const auto atomic_weight =
     atomic_weight_ratio*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
-  
+
   std::shared_ptr<const PhotonuclearDataProperties> properties(
                      new ACEPhotonuclearDataProperties( atomic_weight,
                                                         table_file_path,
@@ -608,9 +608,9 @@ void Xsdir::createPhotonuclearTableProperties(
   // in the database
   TEST_FOR_EXCEPTION( !database.doNuclidePropertiesExist( table_name.zaid() ),
                       std::runtime_error,
-                      "The database entry for zaid " << table_name.zaid() << 
+                      "The database entry for zaid " << table_name.zaid() <<
                       " was not initialized during the initialization step!" );
-  
+
   try{
     Data::NuclideProperties& nuclide_properties =
       database.getNuclideProperties( table_name.zaid() );
@@ -657,7 +657,8 @@ void Xsdir::createAtomicTableProperties(
     this->addPhotoatomicPropertiesToDatabase( database,
                                               photoatomic_properties );
 
-    if( Utility::get<1>( table_name_components ) == 12 )
+    if( Utility::get<1>( table_name_components ) == 12 ||
+        Utility::get<1>( table_name_components ) == 14 )
     {
       std::shared_ptr<const ElectroatomicDataProperties> electroatomic_properties(
                  new ACEElectroatomicDataProperties( atomic_weight,
@@ -777,7 +778,7 @@ void Xsdir::extractSABTableZaids(
 
   // Open the table file - the header will be parsed automatically
   std::unique_ptr<ACEFileHandler> file_handler;
-        
+
   try{
     file_handler.reset( new ACEFileHandler( complete_table_file_path.string(),
                                             table_name,
@@ -840,11 +841,11 @@ bool Xsdir::logFilteredZaidAtomicWeightRatioEntryLine(
   if( logging_requested )
   {
     std::vector<std::pair<Data::ZAID,double> > zaids_and_atomic_weight_ratios;
-    
+
     Xsdir::quickExtractZaidsAndAtomicWeightRatiosFromEntryTokens(
                                               entry_tokens,
                                               zaids_and_atomic_weight_ratios );
-    
+
     FRENSIE_LOG_TAGGED_NOTIFICATION( "Xsdir",
                                      "Ignoring zaid/awr entries "
                                      << zaids_and_atomic_weight_ratios );
@@ -940,10 +941,10 @@ void Xsdir::showEntriesWithTableTypeKey( std::ostream& os,
                                          const bool human_readable_only ) const
 {
   std::vector<LineFilterFunction> partial_filters( 1 );
-  partial_filters.front() = 
+  partial_filters.front() =
     [&key](const std::vector<std::string>& entry_tokens)
     {
-      const std::tuple<std::string,unsigned,char> table_name_components = 
+      const std::tuple<std::string,unsigned,char> table_name_components =
         Xsdir::quickExtractTableNameComponentsFromEntryTokens( entry_tokens );
 
       if( Utility::get<2>( table_name_components ) == key )
@@ -971,10 +972,10 @@ void Xsdir::showEntriesWithTableTypeKeyAndVersion(
                                          const bool human_readable_only ) const
 {
   std::vector<LineFilterFunction> partial_filters( 1 );
-  partial_filters.front() = 
+  partial_filters.front() =
     [&version,&key](const std::vector<std::string>& entry_tokens)
     {
-      const std::tuple<std::string,unsigned,char> table_name_components = 
+      const std::tuple<std::string,unsigned,char> table_name_components =
         Xsdir::quickExtractTableNameComponentsFromEntryTokens( entry_tokens );
 
       if( Utility::get<2>( table_name_components ) == key )
@@ -1018,10 +1019,10 @@ void Xsdir::showEntriesWithBasicTableName(
                                          const bool human_readable_only ) const
 {
   std::vector<LineFilterFunction> partial_filters( 1 );
-  partial_filters.front() = 
+  partial_filters.front() =
     [&basic_table_name](const std::vector<std::string>& entry_tokens)
     {
-      const std::tuple<std::string,unsigned,char> table_name_components = 
+      const std::tuple<std::string,unsigned,char> table_name_components =
         Xsdir::quickExtractTableNameComponentsFromEntryTokens( entry_tokens );
 
       if( Utility::get<0>( table_name_components ) == basic_table_name )
@@ -1046,7 +1047,7 @@ void Xsdir::showEntriesWithZAID( std::ostream& os,
                                  const Data::ZAID& zaid,
                                  const bool human_readable_only ) const
 {
-  LineFilterFunction partial_filter = 
+  LineFilterFunction partial_filter =
     std::bind<bool>( &Xsdir::filterEntryLineByZAIDAndTableTypeKey,
                      std::cref(zaid),
                      '*',
@@ -1127,7 +1128,7 @@ bool Xsdir::filterEntryLineByZAIDAndTableTypeKey(
                                  const boost::filesystem::path& xsdir_path,
                                  const std::vector<std::string>& entry_tokens )
 {
-  const std::tuple<std::string,unsigned,char> table_name_components = 
+  const std::tuple<std::string,unsigned,char> table_name_components =
     Xsdir::quickExtractTableNameComponentsFromEntryTokens( entry_tokens );
 
   // Check if the keys match - this line will not pass through the filter if
@@ -1146,7 +1147,7 @@ bool Xsdir::filterEntryLineByZAIDAndTableTypeKey(
     const Energy table_evaluation_temp =
       Xsdir::quickExtractEvaluationTemperatureFromEntryTokens( entry_tokens );
 
-    const bool equal_evaluation_temps = 
+    const bool equal_evaluation_temps =
       Utility::RelativeErrorComparisonPolicy::compare(
                                                   table_evaluation_temp,
                                                   evaluation_temp,
@@ -1173,18 +1174,18 @@ bool Xsdir::filterEntryLineByZAIDAndTableTypeKey(
 
     const std::string& table_name =
       Xsdir::quickExtractTableNameFromEntryTokens( entry_tokens );
-    
+
     const size_t file_start_line =
       Xsdir::quickExtractFileStartLineFromEntryTokens( entry_tokens );
-    
+
     std::set<ZAID> zaids;
-    
+
     Xsdir::extractSABTableZaids( xsdir_path,
                                  relative_table_path,
                                  table_name,
                                  file_start_line,
                                  zaids );
-    
+
     if( zaids.find( zaid ) == zaids.end() )
       return false;
   }
@@ -1199,7 +1200,7 @@ bool Xsdir::filterEntryLineByTableTypeKeys( const std::set<char>& keys,
 {
   std::tuple<std::string,unsigned,char> table_name_components =
     Xsdir::quickExtractTableNameComponentsFromEntryTokens( entry_tokens );
-  
+
   if( keys.find( Utility::get<2>(table_name_components) ) != keys.end() )
     return true;
   else
@@ -1212,7 +1213,7 @@ bool Xsdir::filterEntryLineByTableTypeKeysNotInSet( const std::set<char>& keys,
 {
   std::tuple<std::string,unsigned,char> table_name_components =
     Xsdir::quickExtractTableNameComponentsFromEntryTokens( entry_tokens );
-  
+
   if( keys.find( Utility::get<2>(table_name_components) ) == keys.end() )
     return true;
   else
@@ -1225,7 +1226,7 @@ void Xsdir::exportData( ScatteringCenterPropertiesDatabase& database ) const
   // Initialize the database entries
   FRENSIE_LOG_PARTIAL_NOTIFICATION( "Initializing atom and nuclide properties ... " );
   FRENSIE_FLUSH_ALL_LOGS();
-  
+
   LineProcessorFunction line_processor_function =
     std::bind<void>( &Xsdir::parseEntryTokensAndInitializeDataPropertiesObject,
                      std::cref( *this ),
@@ -1240,7 +1241,7 @@ void Xsdir::exportData( ScatteringCenterPropertiesDatabase& database ) const
     this->processXsdirFile( d_xsdir_path,
                             line_filter_function,
                             line_processor_function );
-                            
+
   }
 
   FRENSIE_LOG_NOTIFICATION( "done." );
@@ -1248,7 +1249,7 @@ void Xsdir::exportData( ScatteringCenterPropertiesDatabase& database ) const
   // Populate the database with the table data in the xsdir file
   FRENSIE_LOG_PARTIAL_NOTIFICATION( "Populating database entries ... " );
   FRENSIE_FLUSH_ALL_LOGS();
-  
+
   line_processor_function =
     std::bind<void>( &Xsdir::parseEntryTokensAndCreateDataPropertiesObject,
                      std::cref( *this ),
@@ -1264,10 +1265,10 @@ void Xsdir::exportData( ScatteringCenterPropertiesDatabase& database ) const
       std::bind<bool>( &Xsdir::filterEntryLineByTableTypeKeys,
                        data_table_keys,
                        std::placeholders::_1 );
-    
+
     LineFilterFunction line_filter_function =
       this->getStandardTableEntryLineFilterFunction( true, {table_type_key_partial_line_filter_function}, d_verbose );
-  
+
     this->processXsdirFile( d_xsdir_path,
                             line_filter_function,
                             line_processor_function );
@@ -1278,7 +1279,7 @@ void Xsdir::exportData( ScatteringCenterPropertiesDatabase& database ) const
   // Clean up the database
   FRENSIE_LOG_PARTIAL_NOTIFICATION( "Cleaning up database ... " );
   FRENSIE_FLUSH_ALL_LOGS();
-  
+
   database.removeEmptyProperties( true );
 
   FRENSIE_LOG_NOTIFICATION( "done." );

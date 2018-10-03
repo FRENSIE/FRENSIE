@@ -214,6 +214,13 @@ if __name__ == "__main__":
 
             database_save_required = True
 
+            notification_string = "done."
+
+            Utility.logNotification( notification_string )
+
+            if not options.log_file is None:
+                print notification_string
+
     # Save the updated database
     if database_save_required:
         database.saveToFile( options.db_name, True )

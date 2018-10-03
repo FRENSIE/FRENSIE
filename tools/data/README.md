@@ -1,4 +1,7 @@
 ## Data Setup Process ##
+NOTE: The frensie bin directory must be added to PATH and the frensie python lib
+directory must be added to PYTHONPATH for the following commands to work.
+
 1.) Run `process_xsdir.py -o --xsdir=xsdir --log_file=process_xsdir_log.txt` in the directory that contains the xsdir file of
 interest. This will create a file called database.xml.
 2.) Copy the scripts/endl_downloader.py script to the directory that contains
