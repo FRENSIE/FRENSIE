@@ -311,8 +311,6 @@ void ParticleSimulationManager::runInterruptibleSimulation()
     __registered_managers__.insert( this->shared_from_this() );
   }
 
-  //#pragma omp barrier
-
   this->runSimulation();
 
   #pragma omp master
@@ -322,8 +320,6 @@ void ParticleSimulationManager::runInterruptibleSimulation()
     if( __registered_managers__.empty() )
       std::signal( SIGINT, __default_signal_handler__ );
   }
-
-  //#pragma omp barrier
 }
 
 // Enable thread support
@@ -393,7 +389,7 @@ void ParticleSimulationManager::basicRendezvous() const
   archive_name += ".";
   archive_name += d_archive_type;
 
-  FRENSIE_LOG_NOTIFICATION( "Rendezvous "
+  FRENSIE_LOG_NOTIFICATION( " Rendezvous "
                             << d_rendezvous_number << ": "
                             << d_next_history );
 
@@ -502,8 +498,6 @@ void ParticleSimulationManager::runSimulationBatch(
       
       // History complete - commit all observer history contributions
       d_event_handler->commitObserverHistoryContributions();
-
-      //std::cout << history << " -> " << d_event_handler->getNumberOfCommittedHistories() << std::endl;
     }
   }
 }

@@ -37,6 +37,9 @@ PyFrensie.Utility module (see PyFrensie.Utility.__init__.py)
 # import code - see comment above)
 sys.path.pop(0)
 
+# Forward the sigint signal handler to PyFrensie
+_Utility__init__.usePyFrensieSignalHandlers()
+
 # Set up the random number generator
 _Utility__init__.initFrensiePrng()
 
@@ -47,6 +50,7 @@ _Utility__init__.initializeSynchronousLogs()
 %{
 #include <iostream>
 #include <fstream>
+#include <csignal>
   
 #define NO_IMPORT_ARRAY
 #include "numpy_include.h"
@@ -103,7 +107,42 @@ This method can be used to initialize the Utility.Prng.RandomNumberGenerator
 instead of calling 'Utility.Prng.RandomNumberGenerator.createStreams()'.
 "
 
+%{
+  // The default signal handler (cache so that it can be restored later)
+  void (*__default_signal_handler__)( int );
+
+  // The custom signal handler that will forward the python signal handler
+  // into PyFrensie
+  extern "C" void __custom_pyfrensie_signal_handler__( int signal )
+  {
+    std::exit( signal );
+  }
+%}
+
 %inline %{
+
+  //! Use the PyFrensie signal handlers
+  void usePyFrensieSignalHandlers()
+  {
+    if( !__default_signal_handler__ )
+      __default_signal_handler__ = std::signal( SIGINT, __custom_pyfrensie_signal_handler__ );
+  }
+
+  //! Use the Python signal handlers
+  void usePythonSignalHandlers()
+  {
+    if( __default_signal_handler__ )
+    {
+      std::signal( SIGINT, __default_signal_handler__ );
+
+      __default_signal_handler__ = NULL;
+    }
+  }
+
+  //! Infinite loop (used to test the sigint signal handler forwarding)
+  void infiniteLoop()
+  { while( true ); }
+  
   //! Initialize the random number generator
   void initFrensiePrng()
   {

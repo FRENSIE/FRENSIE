@@ -146,10 +146,10 @@ void ElectroatomFactory::createElectroatomFromACETable(
     if( d_verbose )
     {
       FRENSIE_LOG_PARTIAL_NOTIFICATION(
-                                 "Loading ACE EPR electroatomic cross section "
-                                 "table " << data_properties.tableName() <<
-                                 " from " << ace_file_path.string() <<
-                                 " ... " );
+                                " Loading ACE EPR electroatomic cross section "
+                                "table " << data_properties.tableName() <<
+                                " from " << ace_file_path.string() <<
+                                " ... " );
       FRENSIE_FLUSH_ALL_LOGS();
     }
 
@@ -227,11 +227,11 @@ void ElectroatomFactory::createElectroatomFromNativeTable(
     if( d_verbose )
     {
       FRENSIE_LOG_PARTIAL_NOTIFICATION(
-                                "Loading native EPR cross section table "
-                                "(v " << data_properties.fileVersion() <<
-                                ") for " << data_properties.atom() <<
-                                " from " << native_file_path.string() <<
-                                " ... " );
+                                     " Loading native EPR cross section table "
+                                     "(v " << data_properties.fileVersion() <<
+                                     ") for " << data_properties.atom() <<
+                                     " from " << native_file_path.string() <<
+                                     " ... " );
       FRENSIE_FLUSH_ALL_LOGS();
     }
 

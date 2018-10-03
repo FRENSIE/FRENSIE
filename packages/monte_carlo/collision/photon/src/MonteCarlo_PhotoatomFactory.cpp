@@ -146,7 +146,7 @@ void PhotoatomFactory::createPhotoatomFromACETable(
     if( d_verbose )
     {
       FRENSIE_LOG_PARTIAL_NOTIFICATION(
-                                   "Loading ACE EPR photoatomic cross section "
+                                   " Loading ACE EPR photoatomic cross section "
                                    "table " << data_properties.tableName() <<
                                    " from " << ace_file_path.string() <<
                                    " ... " );
@@ -227,7 +227,7 @@ void PhotoatomFactory::createPhotoatomFromNativeTable(
     if( d_verbose )
     {
       FRENSIE_LOG_PARTIAL_NOTIFICATION(
-                                "Loading native EPR cross section table "
+                                " Loading native EPR cross section table "
                                 "(v " << data_properties.fileVersion() <<
                                 ") for " << data_properties.atom() <<
                                 " from " << native_file_path.string() <<
