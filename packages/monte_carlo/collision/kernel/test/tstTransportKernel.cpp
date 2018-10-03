@@ -29,7 +29,7 @@ using Utility::Units::MeV;
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-boost::filesystem::path data_directory;
+std::string test_scattering_center_database_name;
 
 std::shared_ptr<MonteCarlo::ScatteringCenterDefinitionDatabase>
 scattering_center_definition_database;
@@ -71,7 +71,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
 
   FRENSIE_CHECK_NO_THROW( filled_model.reset(
                                    new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -181,7 +181,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
 
   FRENSIE_CHECK_NO_THROW( filled_model.reset(
                                    new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -291,7 +291,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
 
   FRENSIE_CHECK_NO_THROW( filled_model.reset(
                                    new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -397,7 +397,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
                    sampleDistanceToNextCollisionSite_adjoint_photon_mode )
 {
   std::shared_ptr<const Geometry::Model> unfilled_model(
-            new Geometry::InfiniteMediumModel( 1, 2, 1.0/cubic_centimeter ) );
+            new Geometry::InfiniteMediumModel( 1, 2, 1e24/cubic_centimeter ) );
 
   std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
   properties->setParticleMode( MonteCarlo::ADJOINT_PHOTON_MODE );
@@ -406,7 +406,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
 
   FRENSIE_CHECK_NO_THROW( filled_model.reset(
                                    new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -507,7 +507,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
                    sampleDistanceToNextCollisionSite_adjoint_electron_mode )
 {
   std::shared_ptr<const Geometry::Model> unfilled_model(
-            new Geometry::InfiniteMediumModel( 1, 2, 1.0/cubic_centimeter ) );
+            new Geometry::InfiniteMediumModel( 1, 2, 1e24/cubic_centimeter ) );
 
   std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
   properties->setParticleMode( MonteCarlo::ADJOINT_ELECTRON_MODE );
@@ -516,7 +516,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
 
   FRENSIE_CHECK_NO_THROW( filled_model.reset(
                                    new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -616,8 +616,6 @@ FRENSIE_UNIT_TEST( TransportKernel,
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_scattering_center_database_name;
-
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_database",
@@ -632,8 +630,6 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Determine the database directory
     boost::filesystem::path database_path =
       test_scattering_center_database_name;
-
-    data_directory = database_path.parent_path();
 
     // Load the database
     const Data::ScatteringCenterPropertiesDatabase database( database_path );

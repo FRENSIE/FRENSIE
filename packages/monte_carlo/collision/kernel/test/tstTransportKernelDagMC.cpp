@@ -29,7 +29,7 @@ using Utility::Units::MeV;
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-boost::filesystem::path data_directory;
+std::string test_scattering_center_database_name;
 
 std::shared_ptr<MonteCarlo::ScatteringCenterDefinitionDatabase>
 scattering_center_definition_database;
@@ -65,7 +65,7 @@ FRENSIE_UNIT_TEST( TransportKernel, sampleDistanceToNextCollisionSite_forward )
   std::shared_ptr<const MonteCarlo::FilledGeometryModel> filled_model;
 
   filled_model.reset( new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -154,7 +154,7 @@ FRENSIE_UNIT_TEST( TransportKernel, sampleDistanceToNextCollisionSite_adjoint )
   std::shared_ptr<const MonteCarlo::FilledGeometryModel> filled_model;
 
   filled_model.reset( new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        test_scattering_center_database_name,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -190,7 +190,6 @@ FRENSIE_UNIT_TEST( TransportKernel, sampleDistanceToNextCollisionSite_adjoint )
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_scattering_center_database_name;
 std::string test_dagmc_geom_file_name;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
@@ -211,8 +210,6 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     boost::filesystem::path database_path =
       test_scattering_center_database_name;
     
-    data_directory = database_path.parent_path();
-
     // Load the database
     const Data::ScatteringCenterPropertiesDatabase database( database_path );
 
