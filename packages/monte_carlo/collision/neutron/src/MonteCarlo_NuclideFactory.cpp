@@ -115,7 +115,7 @@ void NuclideFactory::createNuclideFromACETable(
     
     if( d_verbose )
     {
-      FRENSIE_LOG_PARTIAL_NOTIFICATION( "Loading ACE cross section table "
+      FRENSIE_LOG_PARTIAL_NOTIFICATION( " Loading ACE cross section table "
                                         << data_properties.tableName() <<
                                         " from " << ace_file_path.string() <<
                                         " ... " );

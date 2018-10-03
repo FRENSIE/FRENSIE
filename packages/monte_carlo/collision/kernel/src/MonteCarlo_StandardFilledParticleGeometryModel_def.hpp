@@ -93,6 +93,10 @@ void StandardFilledParticleGeometryModel<Material>::loadMaterialsAndFillModel(
 
     double density = cell_id_density_map.find( cell_id )->second.value();
 
+    // Convert the atom density (1/cm^3) to the required units (1/b-cm)
+    if( density > 0.0 )
+      density *= 1e-24;
+
     std::string material_name =
       material_definitions.getMaterialName( material_id );
 
