@@ -70,7 +70,10 @@ BatchedDistributedStandardParticleSimulationManager<mode>::BatchedDistributedSta
 template<ParticleModeType mode>
 void BatchedDistributedStandardParticleSimulationManager<mode>::runInterruptibleSimulation()
 {
-  FRENSIE_LOG_WARNING( "Distributed simulations cannot be interrupted!" );
+  if( d_comm->rank() == 0 )
+  {
+    FRENSIE_LOG_WARNING( "Distributed simulations cannot be interrupted!" );
+  }
 
   this->runSimulation();
 }
@@ -138,19 +141,24 @@ void BatchedDistributedStandardParticleSimulationManager<mode>::coordinateWorker
 
   // The idle worker info
   Utility::Communicator::Status idle_worker_info;
+
+  bool rendezvous_required = false;
   
   while( true )
   {
     if( this->isSimulationComplete() )
     {
-      this->stopWorkersAndRecordWork( true, batch_number );
+      this->stopWorkersAndRecordWork( true, rendezvous_required, batch_number );
 
       break;
     }
     else if( batch_number == d_batches_per_rendezvous )
     {
-      this->stopWorkersAndRecordWork( false, batch_number );
-
+      this->stopWorkersAndRecordWork( false, true, batch_number );
+      
+      // The rendezvous is complete
+      rendezvous_required = false;
+      
       // Reset the batch number
       batch_number = 0;
       
@@ -174,6 +182,9 @@ void BatchedDistributedStandardParticleSimulationManager<mode>::coordinateWorker
 
       // Increment the batch number
       ++batch_number;
+
+      // A rendezvous is required
+      rendezvous_required = true;
     }
   }
 }
@@ -182,6 +193,7 @@ void BatchedDistributedStandardParticleSimulationManager<mode>::coordinateWorker
 template<ParticleModeType mode>
 void BatchedDistributedStandardParticleSimulationManager<mode>::stopWorkersAndRecordWork(
                                                 const bool simulation_complete,
+                                                const bool rendezvous_required,
                                                 const uint64_t batch_number )
 {
   // The idle worker messages
@@ -190,9 +202,22 @@ void BatchedDistributedStandardParticleSimulationManager<mode>::stopWorkersAndRe
   // The request for each worker
   std::vector<Utility::Communicator::Request> requests;
 
-  // The stop message (1 = simulation complete, 0 = rendezvous batch complete)
-  std::pair<uint64_t,uint64_t> stop_message =
-    (simulation_complete ? std::make_pair( 1, 1 ) : std::make_pair( 0, 0 ));
+  // The stop message (0 = rendezvous batch complete - rendezvous,
+  //                   1 = simulation complete - rendezvous,
+  //                   2 = simulation complete - no rendezvous)
+  std::pair<uint64_t,uint64_t> stop_message = std::make_pair( 0, 0 );
+
+  if( simulation_complete )
+  {
+    stop_message.first += 1;
+    stop_message.second += 1;
+
+    if( !rendezvous_required )
+    {
+      stop_message.first += 1;
+      stop_message.second += 1;
+    }
+  }
 
   for( int i = 1; i < d_comm->size(); ++i )
   {
@@ -223,8 +248,13 @@ void BatchedDistributedStandardParticleSimulationManager<mode>::stopWorkersAndRe
   else
     this->incrementNextHistory( batch_number*this->getBatchSize() );
 
-  // Rendezvous
-  this->rendezvous();
+  // Rendezvous after rendezvous batch completed
+  if( !simulation_complete )
+    this->rendezvous();
+  
+  // Rendezvous after simulation completed (if required)
+  else if( rendezvous_required )
+    this->rendezvous();
 }
 
 // Check for idle worker
@@ -307,10 +337,11 @@ void BatchedDistributedStandardParticleSimulationManager<mode>::work()
     else
     {
       // Rendezvous with the root process
-      this->rendezvous();
+      if( task.first < 2 )
+        this->rendezvous();
 
       // The simulation is complete
-      if( task.first == 1 )
+      if( task.first > 0 )
         break;
     }
   }

@@ -67,6 +67,7 @@ private:
 
   // Tell workers to stop working
   void stopWorkersAndRecordWork( const bool simulation_complete,
+                                 const bool rendezvous_required,
                                  const uint64_t batch_number );
 
   // Check for idle worker

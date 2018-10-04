@@ -48,23 +48,30 @@ FRENSIE_ADD_TEST(EventHandler)
 IF(${FRENSIE_ENABLE_OPENMP})
   FRENSIE_ADD_TEST(SharedParallelEventHandler_2
     TEST_EXEC_NAME_ROOT EventHandler
-    EXTRA_ARGS --threads=2
+    EXTRA_ARGS --test_filter=update_parallel --threads=2
     OPENMP_TEST)
   FRENSIE_ADD_TEST(SharedParallelEventHandler_4
     TEST_EXEC_NAME_ROOT EventHandler
-    EXTRA_ARGS --threads=4
+    EXTRA_ARGS --test_filter=update_parallel --threads=4
     OPENMP_TEST)
 ENDIF()
 
 IF(${FRENSIE_ENABLE_MPI})
   FRENSIE_ADD_TEST(DistributedParallelEventHandler
     TEST_EXEC_NAME_ROOT EventHandler
-    EXTRA_ARGS --test_filter=update_distributed
+    EXTRA_ARGS --test_filter=update_parallel
     MPI_PROCS 2)
   FRENSIE_ADD_TEST(DistributedParallelEventHandler
     TEST_EXEC_NAME_ROOT EventHandler
-    EXTRA_ARGS --test_filter=update_distributed
+    EXTRA_ARGS --test_filter=update_parallel
     MPI_PROCS 4)
+ENDIF()
+
+IF(${FRENSIE_ENABLE_OPENMP} AND ${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(HybridParallelEventHandler_2
+    TEST_EXEC_NAME_ROOT EventHandler
+    EXTRA_ARGS --test_filter=update_parallel --threads=2
+    MPI_PROCS 2)
 ENDIF()
 
 IF(${FRENSIE_ENABLE_DAGMC})
