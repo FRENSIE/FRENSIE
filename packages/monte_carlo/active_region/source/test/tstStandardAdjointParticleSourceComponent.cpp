@@ -686,8 +686,6 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     boost::filesystem::path database_path =
       test_scattering_center_database_name;
 
-    boost::filesystem::path data_directory = database_path.parent_path();
-
     // Load the database
     const Data::ScatteringCenterPropertiesDatabase database( database_path );
 
@@ -719,7 +717,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create the unfilled model
     std::shared_ptr<const Geometry::Model> unfilled_model(
-             new Geometry::InfiniteMediumModel( 1, 2, 1.0/cubic_centimeter ) );
+             new Geometry::InfiniteMediumModel( 1, 2, 1e24/cubic_centimeter ) );
 
     // Create the adjoint photon model
     {
@@ -729,7 +727,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
       properties->setMaxAdjointPhotonEnergy( 10.0 );
 
       adjoint_photon_model.reset( new MonteCarlo::FilledGeometryModel(
-                                         data_directory,
+                                         database_path,
                                          scattering_center_definition_database,
                                          material_definition_database,
                                          properties,
@@ -745,7 +743,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
       properties->setMaxAdjointElectronEnergy( 10.0 );
 
       adjoint_electron_model.reset( new MonteCarlo::FilledGeometryModel(
-                                         data_directory,
+                                         database_path,
                                          scattering_center_definition_database,
                                          material_definition_database,
                                          properties,

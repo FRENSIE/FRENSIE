@@ -630,9 +630,7 @@ void EventHandler::reduceObserverData( const Utility::Communicator& comm,
                          reduced_num_committed_histories,
                          std::plus<uint64_t>(),
                          root_process );
-        // std::cout << "histories: " << this->getNumberOfCommittedHistories()
-        //           << "\nreduced histories: " << reduced_num_committed_histories
-        //           << std::endl;
+        
         d_number_of_committed_histories.front() =
           reduced_num_committed_histories;
 
