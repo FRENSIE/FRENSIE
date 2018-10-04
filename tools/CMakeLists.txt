@@ -51,3 +51,5 @@
 # ADD_SUBDIRECTORY(sample)
 
 ADD_SUBDIRECTORY(data)
+
+ADD_SUBDIRECTORY(post_processing)
