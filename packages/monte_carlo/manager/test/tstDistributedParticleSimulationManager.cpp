@@ -679,7 +679,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, runSimulation_history_wall )
   if( Utility::GlobalMPISession::rank() == 0 )
   {
     FRENSIE_CHECK_EQUAL( manager->getNextHistory(), 10 );
-    FRENSIE_CHECK_EQUAL( manager->getNumberOfRendezvous(), 3 );
+    FRENSIE_CHECK_EQUAL( manager->getNumberOfRendezvous(), 2 );
   }
   else
   {

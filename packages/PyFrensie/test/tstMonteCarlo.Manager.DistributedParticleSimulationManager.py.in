@@ -508,7 +508,7 @@ class DistributedParticleSimulationManagerTestCase(unittest.TestCase):
 
         if MPI.GlobalMPISession.rank() == 0:
           self.assertEqual( manager.getNextHistory(), 10 )
-          self.assertEqual( manager.getNumberOfRendezvous(), 3 )
+          self.assertEqual( manager.getNumberOfRendezvous(), 2 )
         else:
           self.assertEqual( manager.getNextHistory(), 0 )
           self.assertEqual( manager.getNumberOfRendezvous(), 0 )
