@@ -177,7 +177,8 @@ if __name__ == "__main__":
             Utility.logNotification( notification_string )
 
             if not options.log_file is None:
-                print notification_string
+                sys.stdout.write(notification_string)
+                sys.stdout.flush()
 
             data_container = \
             generateData( endl_file_path,
@@ -219,7 +220,8 @@ if __name__ == "__main__":
             Utility.logNotification( notification_string )
 
             if not options.log_file is None:
-                print notification_string
+                sys.stdout.write(notification_string + "\n")
+                sys.stdout.flush()
 
     # Save the updated database
     if database_save_required:

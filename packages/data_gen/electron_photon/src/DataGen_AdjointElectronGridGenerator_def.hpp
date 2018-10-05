@@ -382,6 +382,11 @@ void AdjointElectronGridGenerator<TwoDInterpPolicy>::generateAndEvaluateDistribu
                             std::placeholders::_1,
                             evaluation_tol );
 
+  std::cout << std::setprecision(16) << std::scientific << "incoming_adjoint_energy = \t" << incoming_adjoint_energy << std::endl;
+  std::cout << std::setprecision(16) << std::scientific << "initial_outgoing_energy_grid[0] = \t" << initial_outgoing_energy_grid[0] << std::endl;
+  std::cout << std::setprecision(16) << std::scientific << "initial_outgoing_energy_grid[1] = \t" << initial_outgoing_energy_grid[1] << std::endl;
+
+
   Utility::TwoDGridGenerator<TwoDInterpPolicy>::d_secondary_grid_generator.generateAndEvaluate(
               outgoing_energy_grid,
               evaluated_pdf,

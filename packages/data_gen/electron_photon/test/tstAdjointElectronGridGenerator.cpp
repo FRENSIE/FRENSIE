@@ -360,19 +360,19 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
                   distance_tol );
 
   diff_cross_section =
-    grid_generator.evaluateAdjointPDF( 1.88E-05, 1.0E-04, 1.0e-4 );
+    grid_generator.evaluateAdjointPDF( 1e-2, 0.019992531061237977, 1.0e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
                                    3.377210486413586921e+01,
                                    1e-5 );
 
   diff_cross_section =
-    grid_generator.evaluateAdjointPDF( 1.123900E-02, 3.16228, 1.0e-4 );
+    grid_generator.evaluateAdjointPDF( 1e-2, 0.020001807385767029, 1.0e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
                                    5.912510211318632893e-04,
                                    1e-6 );
 
   diff_cross_section =
-    grid_generator.evaluateAdjointPDF( 8.75350E-01, max_energy, 1.0e-4 );
+    grid_generator.evaluateAdjointPDF( 1e-2, 0.020011088014413269, 1.0e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
                                    6.687891849530321324e-07,
                                    1.0e-5 );
@@ -622,314 +622,498 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the ionization outgoing energy grid can be generated for Si
+FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
+                   generateAndEvaluateDistribution_ionization_si )
+{
+  {
+  DataGen::AdjointElectronGridGenerator<Utility::LogLogLog>
+  grid_generator( ionization_cs_evaluator,
+                  ionization_pdf_evaluator,
+                  ionization_min_function,
+                  ionization_energy_grid,
+                  min_energy,
+                  max_energy,
+                  min_energy_nudge_value,
+                  max_energy_nudge_value,
+                  convergence_tol,
+                  absolute_diff_tol,
+                  distance_tol );
+
+  // Set the primary energy grid
+  std::vector<double> primary_energy_grid(8);
+  primary_energy_grid[0] = 1e-5;
+  primary_energy_grid[1] = 1e-4;
+  primary_energy_grid[2] = 1e-3;
+  primary_energy_grid[3] = 1e-2;
+  primary_energy_grid[4] = 1e-1;
+  primary_energy_grid[5] = 1.0;
+  primary_energy_grid[6] = 10.0;
+  primary_energy_grid[7] = 20.0;
+
+  // cross section values
+  std::vector<double> cross_sections(8);
+  cross_sections[0] = 1.0;
+  cross_sections[1] = 1.0;
+  cross_sections[2] = 1.0;
+  cross_sections[3] = 1.0;
+  cross_sections[4] = 1.0;
+  cross_sections[5] = 1.0;
+  cross_sections[6] = 1.0;
+  cross_sections[7] = 1.0;
+
+
+  std::map<double,std::vector<double> > outgoing_energy_grid, pdf;
+
+  // Generate an outgoing energy grid at E=0.01 MeV
+  grid_generator.generateAndEvaluateDistributionOnPrimaryEnergyGrid(
+          outgoing_energy_grid,
+          pdf,
+          1e-6,
+          primary_energy_grid,
+          cross_sections,
+          0 );
+
+  // Check the generated outgoing energy grid
+  FRENSIE_CHECK_EQUAL( outgoing_energy_grid[0.01].size(), 512 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[0.01].front(),
+                                   1.000016099117129707e-02,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[0.01].back(), 2.000000038495000609e+01, 1e-6 );
+
+  // Check the evaluated pdf
+  FRENSIE_CHECK_EQUAL( pdf[0.01].size(), 512 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf[0.01].front(),
+                                   2.993084986818493344e+06,
+                                   1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf[0.01].back(),
+                                   1.221053017249922091e-08,
+                                   1e-6 );
+
+  // Check the generated max energy grid
+  FRENSIE_CHECK_EQUAL( outgoing_energy_grid[1.0].size(), 443 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[1.0].front(),
+                                   1.000000113241543920,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[1.0].back(), 2.000000038495000609e+01, 1e-6 );
+
+  // Check the evaluated cross section
+  FRENSIE_CHECK_EQUAL( pdf[1.0].size(), 443 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf[1.0].front(),
+                                   3.880057319456366822e+05,
+                                   1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf[1.0].back(),
+                                   3.764014372082443752e-06,
+                                   1e-6 );
+  }
+
+  {
+  DataGen::AdjointElectronGridGenerator<Utility::LogLogLog>
+  grid_generator( ionization_cs_evaluator,
+                  ionization_pdf_evaluator2,
+                  ionization_min_function2,
+                  ionization_energy_grid,
+                  min_energy,
+                  max_energy,
+                  min_energy_nudge_value,
+                  max_energy_nudge_value,
+                  convergence_tol,
+                  absolute_diff_tol,
+                  distance_tol );
+
+  // Set the primary energy grid
+  std::vector<double> primary_energy_grid(2);
+  primary_energy_grid[0] = 0.01;
+  primary_energy_grid[1] = 1.0;
+
+  // cross section values
+  std::vector<double> cross_sections(2);
+  cross_sections[0] = 1.0;
+  cross_sections[1] = 1.0;
+
+  std::map<double,std::vector<double> > outgoing_energy_grid, pdf;
+
+  // Generate an outgoing energy grid at E=0.01 MeV
+  grid_generator.generateAndEvaluateDistributionOnPrimaryEnergyGrid(
+          outgoing_energy_grid,
+          pdf,
+          1e-6,
+          primary_energy_grid,
+          cross_sections,
+          0 );
+
+  // Check the generated outgoing energy grid
+  FRENSIE_CHECK_EQUAL( outgoing_energy_grid[0.01].size(), 454 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[0.01].front(),
+                                   1.0000101e-02,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[0.01].back(), 2.00000003e+01, 1e-6 );
+
+  // Check the evaluated pdf
+  FRENSIE_CHECK_EQUAL( pdf[0.01].size(), 454 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf[0.01].front(),
+                                   2.972584360749191139e+06,
+                                   1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf[0.01].back(),
+                                   1.357522344360892967e-08,
+                                   1e-6 );
+
+  // Check the generated max energy grid
+  FRENSIE_CHECK_EQUAL( outgoing_energy_grid[1.0].size(), 481 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[1.0].front(),
+                                   1.000000101,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[1.0].back(), 2.00000003e+01, 1e-6 );
+
+  // Check the evaluated cross section
+  FRENSIE_CHECK_EQUAL( pdf[1.0].size(), 481 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf[1.0].front(),
+                                   3.912080368675402133e+05,
+                                   1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf[1.0].back(),
+                                   4.502822525645024672e-06,
+                                   1e-6 );
+  }
+}
+
+//---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 std::string test_native_h_file_name;
+std::string test_native_si_file_name;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_h_file",
                                         test_native_h_file_name, "",
                                         "Test Native H file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_si_file",
+                                        test_native_si_file_name, "",
+                                        "Test Native Si file name" );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  // Create the native data file container
-  Data::ElectronPhotonRelaxationDataContainer
-    data_container( test_native_h_file_name );
-
-  // Extract the common electron energy grid
-  std::shared_ptr<std::vector<double> > union_energy_grid(
-      new std::vector<double>( data_container.getElectronEnergyGrid() ) );
-
-  std::shared_ptr<Utility::HashBasedGridSearcher<double> > grid_searcher(
-      new Utility::StandardHashBasedGridSearcher<std::vector<double>,false>(
-                union_energy_grid,
-                union_energy_grid->front(),
-                union_energy_grid->back(),
-                union_energy_grid->size()/10 + 1 ) );
-
   double evaluation_tol = 1e-10;
 
-  // Create bremsstrahlung data
+  // Create the brem data with H
   {
-    // Create the min adjoint energy function for bremsstrahlung
-    brem_min_function = [](const double& energy){return energy + 1e-7;};
+    // Create the native H data file container
+    Data::ElectronPhotonRelaxationDataContainer
+      data_container( test_native_h_file_name );
 
-    // Create the bremsstrahlung reaction
-    std::shared_ptr<const MonteCarlo::VoidElectroatomicReaction<Utility::LogLog, false>> h_brem_reaction(
-      new MonteCarlo::VoidElectroatomicReaction<Utility::LogLog, false>(
-        union_energy_grid,
-        std::make_shared<std::vector<double> >( data_container.getBremsstrahlungCrossSection() ),
-        data_container.getBremsstrahlungCrossSectionThresholdEnergyIndex(),
-        grid_searcher ) );
+    // Extract the common electron energy grid
+    std::shared_ptr<std::vector<double> > union_energy_grid(
+        new std::vector<double>( data_container.getElectronEnergyGrid() ) );
 
-    // Create the forward cross section evaluator
-    brem_cs_evaluator = [h_brem_reaction](const double& incoming_energy){return h_brem_reaction->getCrossSection( incoming_energy );};
+    std::shared_ptr<Utility::HashBasedGridSearcher<double> > grid_searcher(
+        new Utility::StandardHashBasedGridSearcher<std::vector<double>,false>(
+                  union_energy_grid,
+                  union_energy_grid->front(),
+                  union_energy_grid->back(),
+                  union_energy_grid->size()/10 + 1 ) );
 
-    // Create the bremsstrahlung secondary distribution
-    brem_energy_grid = data_container.getBremsstrahlungEnergyGrid();
-    std::vector<double> brem_max_energy_grid( brem_energy_grid.size() );
-    std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
-      secondary_dists( brem_energy_grid.size() );
-
-    for( size_t n = 0; n < brem_energy_grid.size(); ++n )
+    // Create bremsstrahlung data
     {
-      double energy = brem_energy_grid[n];
+      // Create the min adjoint energy function for bremsstrahlung
+      brem_min_function = [](const double& energy){return energy + 1e-7;};
 
-      // Get the energy of the bremsstrahlung photon at the incoming energy
-      std::vector<double> energy_bins(
-          data_container.getBremsstrahlungPhotonEnergy( energy ) );
+      // Create the bremsstrahlung reaction
+      std::shared_ptr<const MonteCarlo::VoidElectroatomicReaction<Utility::LogLog, false>> h_brem_reaction(
+        new MonteCarlo::VoidElectroatomicReaction<Utility::LogLog, false>(
+          union_energy_grid,
+          std::make_shared<std::vector<double> >( data_container.getBremsstrahlungCrossSection() ),
+          data_container.getBremsstrahlungCrossSectionThresholdEnergyIndex(),
+          grid_searcher ) );
 
-      // Get the bremsstrahlung photon pdf at the incoming energy
-      std::vector<double> pdf(
-          data_container.getBremsstrahlungPhotonPDF( energy ) );
+      // Create the forward cross section evaluator
+      brem_cs_evaluator = [h_brem_reaction](const double& incoming_energy){return h_brem_reaction->getCrossSection( incoming_energy );};
 
-      // Reverse the order of the energy bins and pdfs
-      std::reverse(energy_bins.begin(), energy_bins.end() );
-      std::reverse(pdf.begin(), pdf.end() );
+      // Create the bremsstrahlung secondary distribution
+      brem_energy_grid = data_container.getBremsstrahlungEnergyGrid();
+      std::vector<double> brem_max_energy_grid( brem_energy_grid.size() );
+      std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
+        secondary_dists( brem_energy_grid.size() );
 
-      // Convert the photon energy to the outgoing electron energy
-      std::for_each(energy_bins.begin(), energy_bins.end(), [ &energy ](double& energy_bin) { energy_bin = energy - energy_bin;});
+      for( size_t n = 0; n < brem_energy_grid.size(); ++n )
+      {
+        double energy = brem_energy_grid[n];
 
-      // Make sure the first energy_bin is > 0
-      energy_bins[0] = 1e-15;
+        // Get the energy of the bremsstrahlung photon at the incoming energy
+        std::vector<double> energy_bins(
+            data_container.getBremsstrahlungPhotonEnergy( energy ) );
 
-      // Set the max outgoing energy for the incoming energy
-      brem_max_energy_grid[n] = energy_bins.back();
+        // Get the bremsstrahlung photon pdf at the incoming energy
+        std::vector<double> pdf(
+            data_container.getBremsstrahlungPhotonPDF( energy ) );
 
-      // Set the secondary energy distribution
-      secondary_dists[n].reset(
-        new const Utility::TabularDistribution<Utility::LinLin>( energy_bins,
-                                                                 pdf ) );
+        // Reverse the order of the energy bins and pdfs
+        std::reverse(energy_bins.begin(), energy_bins.end() );
+        std::reverse(pdf.begin(), pdf.end() );
+
+        // Convert the photon energy to the outgoing electron energy
+        std::for_each(energy_bins.begin(), energy_bins.end(), [ &energy ](double& energy_bin) { energy_bin = energy - energy_bin;});
+
+        // Make sure the first energy_bin is > 0
+        energy_bins[0] = 1e-15;
+
+        // Set the max outgoing energy for the incoming energy
+        brem_max_energy_grid[n] = energy_bins.back();
+
+        // Set the secondary energy distribution
+        secondary_dists[n].reset(
+          new const Utility::TabularDistribution<Utility::LinLin>( energy_bins,
+                                                                  pdf ) );
+      }
+
+      std::shared_ptr<const Utility::TabularUnivariateDistribution> max_energy_distribution(
+          new const Utility::TabularDistribution<Utility::LogLog>( brem_max_energy_grid,
+                                                                  brem_energy_grid ) );
+
+      // Create the min adjoint energy function for brem
+      brem_min_function = [max_energy_distribution](const double& energy){return max_energy_distribution->evaluate(energy);};
+
+      // Create the scattering function
+      std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> brem_distribution(
+        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
+                brem_energy_grid,
+                secondary_dists,
+                1e-6,
+                evaluation_tol ) );
+
+      // Create the forward pdf evaluator
+      brem_pdf_evaluator = [brem_distribution](const double& incoming_energy, const double& outgoing_energy){return brem_distribution->evaluateSecondaryConditionalPDF( incoming_energy, outgoing_energy );};
+
+
+
+      // Create the min adjoint energy function for bremsstrahlung
+      brem_min_function2 = [](const double& energy){return energy + 1e-7;};
+
+      std::shared_ptr<const MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LogLog> > full_brem_reaction;
+
+      MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
+          data_container,
+          union_energy_grid,
+          grid_searcher,
+          full_brem_reaction,
+          MonteCarlo::DIPOLE_DISTRIBUTION,
+          evaluation_tol );
+
+      // Create the forward cross section evaluator
+      brem_cs_evaluator2 = [full_brem_reaction](const double& incoming_energy){return full_brem_reaction->getCrossSection( incoming_energy );};
+
+
+      for( size_t n = 0; n < brem_energy_grid.size(); ++n )
+      {
+        double energy = brem_energy_grid[n];
+
+        // Get the energy of the bremsstrahlung photon at the incoming energy
+        std::vector<double> energy_bins(
+            data_container.getBremsstrahlungPhotonEnergy( energy ) );
+
+        // Get the bremsstrahlung photon pdf at the incoming energy
+        std::vector<double> pdf(
+            data_container.getBremsstrahlungPhotonPDF( energy ) );
+
+        secondary_dists[n].reset(
+          new const Utility::TabularDistribution<Utility::LinLin>( energy_bins,
+                                                                  pdf ) );
+      }
+
+      // Create the scattering function
+      std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> brem_distribution2(
+        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
+                brem_energy_grid,
+                secondary_dists,
+                1e-6,
+                evaluation_tol ) );
+
+
+      // Create the forward pdf evaluator
+      brem_pdf_evaluator2 = [brem_distribution2](const double& incoming_energy, const double& outgoing_energy){return brem_distribution2->evaluateSecondaryConditionalPDF( incoming_energy, incoming_energy - outgoing_energy); };
+
     }
-
-    std::shared_ptr<const Utility::TabularUnivariateDistribution> max_energy_distribution(
-        new const Utility::TabularDistribution<Utility::LogLog>( brem_max_energy_grid,
-                                                                 brem_energy_grid ) );
-
-    // Create the min adjoint energy function for brem
-    brem_min_function = [max_energy_distribution](const double& energy){return max_energy_distribution->evaluate(energy);};
-
-    // Create the scattering function
-    std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> brem_distribution(
-      new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
-              brem_energy_grid,
-              secondary_dists,
-              1e-6,
-              evaluation_tol ) );
-
-    // Create the forward pdf evaluator
-    brem_pdf_evaluator = [brem_distribution](const double& incoming_energy, const double& outgoing_energy){return brem_distribution->evaluateSecondaryConditionalPDF( incoming_energy, outgoing_energy );};
-
-
-
-    // Create the min adjoint energy function for bremsstrahlung
-    brem_min_function2 = [](const double& energy){return energy + 1e-7;};
-
-    std::shared_ptr<const MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LogLog> > full_brem_reaction;
-
-    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
-        data_container,
-        union_energy_grid,
-        grid_searcher,
-        full_brem_reaction,
-        MonteCarlo::DIPOLE_DISTRIBUTION,
-        evaluation_tol );
-
-    // Create the forward cross section evaluator
-    brem_cs_evaluator2 = [full_brem_reaction](const double& incoming_energy){return full_brem_reaction->getCrossSection( incoming_energy );};
-
-
-    for( size_t n = 0; n < brem_energy_grid.size(); ++n )
-    {
-      double energy = brem_energy_grid[n];
-
-      // Get the energy of the bremsstrahlung photon at the incoming energy
-      std::vector<double> energy_bins(
-          data_container.getBremsstrahlungPhotonEnergy( energy ) );
-
-      // Get the bremsstrahlung photon pdf at the incoming energy
-      std::vector<double> pdf(
-          data_container.getBremsstrahlungPhotonPDF( energy ) );
-
-      secondary_dists[n].reset(
-        new const Utility::TabularDistribution<Utility::LinLin>( energy_bins,
-                                                                 pdf ) );
-    }
-
-    // Create the scattering function
-    std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> brem_distribution2(
-      new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
-              brem_energy_grid,
-              secondary_dists,
-              1e-6,
-              evaluation_tol ) );
-
-
-    // Create the forward pdf evaluator
-    brem_pdf_evaluator2 = [brem_distribution2](const double& incoming_energy, const double& outgoing_energy){return brem_distribution2->evaluateSecondaryConditionalPDF( incoming_energy, incoming_energy - outgoing_energy); };
-
   }
 
-  // Create electroionization data
+
+  // Create electroionization data with Si
   {
-    // Extract the shell data
-    unsigned shell = *(data_container.getSubshells().begin());
-    binding_energy = data_container.getSubshellBindingEnergy( shell );
+    // Create the native H data file container
+    Data::ElectronPhotonRelaxationDataContainer
+      data_container( test_native_si_file_name );
 
-    // Create the electroionization reaction
-    std::shared_ptr<const MonteCarlo::VoidElectroatomicReaction<Utility::LogLog, false>> h_ionization_reaction(
-      new MonteCarlo::VoidElectroatomicReaction<Utility::LogLog, false>(
-        union_energy_grid,
-        std::make_shared<std::vector<double> >( data_container.getElectroionizationCrossSection(shell) ),
-        data_container.getElectroionizationCrossSectionThresholdEnergyIndex(shell),
-        grid_searcher ) );
+    // Extract the common electron energy grid
+    std::shared_ptr<std::vector<double> > union_energy_grid(
+        new std::vector<double>( data_container.getElectronEnergyGrid() ) );
 
-    // Create the forward cross section evaluator
-    ionization_cs_evaluator = [h_ionization_reaction](const double& incoming_energy){return h_ionization_reaction->getCrossSection( incoming_energy );};
+    std::shared_ptr<Utility::HashBasedGridSearcher<double> > grid_searcher(
+        new Utility::StandardHashBasedGridSearcher<std::vector<double>,false>(
+                  union_energy_grid,
+                  union_energy_grid->front(),
+                  union_energy_grid->back(),
+                  union_energy_grid->size()/10 + 1 ) );
 
-    // Create the electroionization secondary distribution
-    ionization_energy_grid = data_container.getElectroionizationEnergyGrid(shell);
-    std::vector<double> ionization_max_energy_grid( ionization_energy_grid.size() );
-    std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
-      secondary_dists( ionization_energy_grid.size() );
-
-
-    for( size_t n = 0; n < ionization_energy_grid.size(); ++n )
+    // Create electroionization subshell 6 data
     {
-      double energy = ionization_energy_grid[n];
+      // Extract the shell data
+      unsigned shell = *(data_container.getSubshells().end()--);
+      std::cout << std::setprecision(16) << std::scientific << "shell = \t" << shell << std::endl;
 
-      // Get the energy of the knock-on electron energy at the incoming energy
-      std::vector<double> knock_on_energy(
-          data_container.getElectroionizationRecoilEnergy( shell, energy ) );
 
-      // Get the knock-on electron pdf at the incoming energy
-      std::vector<double> knock_on_pdf(
-          data_container.getElectroionizationRecoilPDF( shell, energy ) );
+      binding_energy = data_container.getSubshellBindingEnergy( shell );
 
-      double energy_2k;
-      // If the grid point is not greater than the binding energy then fix it
-      if( energy <= binding_energy )
+      // Create the electroionization reaction
+      std::shared_ptr<const MonteCarlo::VoidElectroatomicReaction<Utility::LogLog, false>> h_ionization_reaction(
+        new MonteCarlo::VoidElectroatomicReaction<Utility::LogLog, false>(
+          union_energy_grid,
+          std::make_shared<std::vector<double> >( data_container.getElectroionizationCrossSection(shell) ),
+          data_container.getElectroionizationCrossSectionThresholdEnergyIndex(shell),
+          grid_searcher ) );
+
+      // Create the forward cross section evaluator
+      ionization_cs_evaluator = [h_ionization_reaction](const double& incoming_energy){return h_ionization_reaction->getCrossSection( incoming_energy );};
+
+      // Create the electroionization secondary distribution
+      ionization_energy_grid = data_container.getElectroionizationEnergyGrid(shell);
+      std::vector<double> ionization_max_energy_grid( ionization_energy_grid.size() );
+      std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
+        secondary_dists( ionization_energy_grid.size() );
+
+
+      for( size_t n = 0; n < ionization_energy_grid.size(); ++n )
       {
-        energy_2k = 2.0*knock_on_energy.back();
+        double energy = ionization_energy_grid[n];
+
+        // Get the energy of the knock-on electron energy at the incoming energy
+        std::vector<double> knock_on_energy(
+            data_container.getElectroionizationRecoilEnergy( shell, energy ) );
+
+        // Get the knock-on electron pdf at the incoming energy
+        std::vector<double> knock_on_pdf(
+            data_container.getElectroionizationRecoilPDF( shell, energy ) );
+
+        double energy_2k;
+        // If the grid point is not greater than the binding energy then fix it
+        if( energy <= binding_energy )
+        {
+          energy_2k = 2.0*knock_on_energy.back();
+        }
+        // Make sure the max knock-on energy matches the incoming energy
+        else
+        {
+          double old_max = knock_on_energy.back();
+          energy_2k = energy - binding_energy;
+          knock_on_energy.back() = energy_2k/2.0;
+        }
+
+        // Evaluate the energy of the primary electron energy at the incoming energy
+        std::vector<double>::iterator end = --knock_on_energy.end();
+
+        std::vector<double> primary_energy( knock_on_energy.begin(), end );
+        std::reverse(primary_energy.begin(), primary_energy.end() );
+
+        std::for_each(primary_energy.begin(), primary_energy.end(), [ &energy_2k ](double& energy_bin) { energy_bin = energy_2k - energy_bin;});
+
+
+        // Get the primary electron pdf at the incoming energy
+        end = --knock_on_pdf.end();
+        std::vector<double> primary_pdf( knock_on_pdf.begin(), end );
+        std::reverse(primary_pdf.begin(), primary_pdf.end() );
+
+        std::vector<double> energy_bins;
+        energy_bins.reserve( knock_on_energy.size() + primary_energy.size() ); // preallocate memory
+        energy_bins.insert( energy_bins.end(), knock_on_energy.begin(), knock_on_energy.end() );
+        energy_bins.insert( energy_bins.end(), primary_energy.begin(), primary_energy.end() );
+        std::vector<double> pdf;
+        pdf.reserve( knock_on_pdf.size() + primary_pdf.size() ); // preallocate memory
+        pdf.insert( pdf.end(), knock_on_pdf.begin(), knock_on_pdf.end() );
+        pdf.insert( pdf.end(), primary_pdf.begin(), primary_pdf.end() );
+
+        // Set the max outgoing energy for the incoming energy
+        ionization_max_energy_grid[n] = energy_bins.back();
+
+        // Set the secondary energy distribution
+        secondary_dists[n].reset(
+          new const Utility::TabularDistribution<Utility::LinLin>( energy_bins,
+                                                                  pdf ) );
       }
-      // Make sure the max knock-on energy matches the incoming energy
-      else
+
+      std::shared_ptr<const Utility::TabularUnivariateDistribution> max_energy_distribution(
+          new const Utility::TabularDistribution<Utility::LogLog>( ionization_max_energy_grid,
+                                                                  ionization_energy_grid ) );
+
+      // Create the min adjoint energy function for electroionization
+      ionization_min_function = [max_energy_distribution](const double& energy){return max_energy_distribution->evaluate(energy);};
+
+      // Create the scattering function
+      std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> ionization_distribution(
+        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogLog> >(
+                ionization_energy_grid,
+                secondary_dists,
+                1e-6,
+                evaluation_tol ) );
+
+      // Create the forward pdf evaluator
+      ionization_pdf_evaluator = [ionization_distribution](const double& incoming_energy, const double& outgoing_energy){return ionization_distribution->evaluateSecondaryConditionalPDF( incoming_energy, outgoing_energy );};
+
+
+      std::vector<double> ionization_min_energy_grid( ionization_energy_grid.size() );
+      for( size_t n = 0; n < ionization_energy_grid.size(); ++n )
       {
-        double old_max = knock_on_energy.back();
-        energy_2k = energy - binding_energy;
-        knock_on_energy.back() = energy_2k/2.0;
+        double energy = ionization_energy_grid[n];
+
+        // Get the energy of the knock-on electron energy at the incoming energy
+        std::vector<double> knock_on_energy(
+            data_container.getElectroionizationRecoilEnergy( shell, energy ) );
+
+        // Get the knock-on electron pdf at the incoming energy
+        std::vector<double> knock_on_pdf(
+            data_container.getElectroionizationRecoilPDF( shell, energy ) );
+
+        ionization_min_energy_grid[n] = knock_on_energy.front();
+
+        // Make sure the max knock-on energy matches the incoming energy
+        if( ionization_energy_grid[n] > binding_energy )
+        {
+          double old_max = knock_on_energy.back();
+          knock_on_energy.back() = (energy - binding_energy)/2.0;
+        }
+        secondary_dists[n].reset(
+          new const Utility::TabularDistribution<Utility::LinLin>( knock_on_energy,
+                                                                  knock_on_pdf ) );
       }
 
-      // Evaluate the energy of the primary electron energy at the incoming energy
-      std::vector<double>::iterator end = --knock_on_energy.end();
+      std::shared_ptr<const Utility::TabularUnivariateDistribution> min_energy_distribution(
+          new const Utility::TabularDistribution<Utility::LogLog>( ionization_max_energy_grid,
+                                                                  ionization_min_energy_grid ) );
 
-      std::vector<double> primary_energy( knock_on_energy.begin(), end );
-      std::reverse(primary_energy.begin(), primary_energy.end() );
+      // Create the min adjoint energy function for electroionization
+      ionization_min_function2 = [min_energy_distribution](const double& energy){return min_energy_distribution->evaluate(energy) + binding_energy + energy;};
 
-      std::for_each(primary_energy.begin(), primary_energy.end(), [ &energy_2k ](double& energy_bin) { energy_bin = energy_2k - energy_bin;});
+      // Create the scattering function
+      std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> ionization_distribution2(
+        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogLog> >(
+                ionization_energy_grid,
+                secondary_dists,
+                1e-6,
+                evaluation_tol ) );
 
+      // Create the forward pdf evaluator
+      ionization_pdf_evaluator2 = [ionization_distribution2](const double& incoming_energy, const double& outgoing_energy){
+        double energy = outgoing_energy;
+        double max_knock_on_energy = (incoming_energy - binding_energy)/2.0;
+        if ( outgoing_energy > max_knock_on_energy)
+        {
+          energy = incoming_energy - binding_energy - outgoing_energy;
+        }
 
-      // Get the primary electron pdf at the incoming energy
-      end = --knock_on_pdf.end();
-      std::vector<double> primary_pdf( knock_on_pdf.begin(), end );
-      std::reverse(primary_pdf.begin(), primary_pdf.end() );
-
-      std::vector<double> energy_bins;
-      energy_bins.reserve( knock_on_energy.size() + primary_energy.size() ); // preallocate memory
-      energy_bins.insert( energy_bins.end(), knock_on_energy.begin(), knock_on_energy.end() );
-      energy_bins.insert( energy_bins.end(), primary_energy.begin(), primary_energy.end() );
-      std::vector<double> pdf;
-      pdf.reserve( knock_on_pdf.size() + primary_pdf.size() ); // preallocate memory
-      pdf.insert( pdf.end(), knock_on_pdf.begin(), knock_on_pdf.end() );
-      pdf.insert( pdf.end(), primary_pdf.begin(), primary_pdf.end() );
-
-      // Set the max outgoing energy for the incoming energy
-      ionization_max_energy_grid[n] = energy_bins.back();
-
-      // Set the secondary energy distribution
-      secondary_dists[n].reset(
-        new const Utility::TabularDistribution<Utility::LinLin>( energy_bins,
-                                                                 pdf ) );
+        auto f_min = [&ionization_distribution2](double x){return ionization_distribution2->getLowerBoundOfSecondaryConditionalIndepVar(x); };
+        auto f_max = [&max_knock_on_energy](double x){return max_knock_on_energy; };
+        return ionization_distribution2->evaluateSecondaryConditionalPDF( incoming_energy, energy );
+      };
     }
-
-    std::shared_ptr<const Utility::TabularUnivariateDistribution> max_energy_distribution(
-        new const Utility::TabularDistribution<Utility::LogLog>( ionization_max_energy_grid,
-                                                                 ionization_energy_grid ) );
-
-    // Create the min adjoint energy function for electroionization
-    ionization_min_function = [max_energy_distribution](const double& energy){return max_energy_distribution->evaluate(energy);};
-
-    // Create the scattering function
-    std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> ionization_distribution(
-      new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
-              ionization_energy_grid,
-              secondary_dists,
-              1e-6,
-              evaluation_tol ) );
-
-    // Create the forward pdf evaluator
-    ionization_pdf_evaluator = [ionization_distribution](const double& incoming_energy, const double& outgoing_energy){return ionization_distribution->evaluateSecondaryConditionalPDF( incoming_energy, outgoing_energy );};
-
-
-    std::vector<double> ionization_min_energy_grid( ionization_energy_grid.size() );
-    for( size_t n = 0; n < ionization_energy_grid.size(); ++n )
-    {
-      double energy = ionization_energy_grid[n];
-
-      // Get the energy of the knock-on electron energy at the incoming energy
-      std::vector<double> knock_on_energy(
-          data_container.getElectroionizationRecoilEnergy( shell, energy ) );
-
-      // Get the knock-on electron pdf at the incoming energy
-      std::vector<double> knock_on_pdf(
-          data_container.getElectroionizationRecoilPDF( shell, energy ) );
-
-      ionization_min_energy_grid[n] = knock_on_energy.front();
-
-      // Make sure the max knock-on energy matches the incoming energy
-      if( ionization_energy_grid[n] > binding_energy )
-      {
-        double old_max = knock_on_energy.back();
-        knock_on_energy.back() = (energy - binding_energy)/2.0;
-      }
-      secondary_dists[n].reset(
-        new const Utility::TabularDistribution<Utility::LinLin>( knock_on_energy,
-                                                                 knock_on_pdf ) );
-    }
-
-    std::shared_ptr<const Utility::TabularUnivariateDistribution> min_energy_distribution(
-        new const Utility::TabularDistribution<Utility::LogLog>( ionization_max_energy_grid,
-                                                                 ionization_min_energy_grid ) );
-
-    // Create the min adjoint energy function for electroionization
-    ionization_min_function2 = [min_energy_distribution](const double& energy){return min_energy_distribution->evaluate(energy) + binding_energy + energy;};
-
-    // Create the scattering function
-    std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> ionization_distribution2(
-      new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
-              ionization_energy_grid,
-              secondary_dists,
-              1e-6,
-              evaluation_tol ) );
-
-    // Create the forward pdf evaluator
-    ionization_pdf_evaluator2 = [ionization_distribution2](const double& incoming_energy, const double& outgoing_energy){
-      double energy = outgoing_energy;
-      double max_knock_on_energy = (incoming_energy - binding_energy)/2.0;
-      if ( outgoing_energy > max_knock_on_energy)
-      {
-        energy = incoming_energy - binding_energy - outgoing_energy;
-      }
-
-      auto f_min = [&ionization_distribution2](double x){return ionization_distribution2->getLowerBoundOfSecondaryConditionalIndepVar(x); };
-      auto f_max = [&max_knock_on_energy](double x){return max_knock_on_energy; };
-      return ionization_distribution2->evaluateSecondaryConditionalPDF( incoming_energy, energy, f_min, f_max );
-    };
   }
 }
 
