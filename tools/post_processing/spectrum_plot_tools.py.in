@@ -12,17 +12,17 @@ import matplotlib.pyplot as plt
 import os
 import sys
 
-def plot_spectral_data_with_errors( frensie_data_name,
-                                    frensie_data,
-                                    test_data_name,
-                                    test_data,
-                                    data_name,
-                                    log_spacing,
-                                    per_lethargy = False,
-                                    top_ylims = None,
-                                    bottom_ylims = None,
-                                    legend_pos = None,
-                                    output_plot_name = None ):
+def plotSpectralDataWithErrors( frensie_data_name,
+                                frensie_data,
+                                test_data_name,
+                                test_data,
+                                data_name,
+                                log_spacing,
+                                per_lethargy = False,
+                                top_ylims = None,
+                                bottom_ylims = None,
+                                legend_pos = None,
+                                output_plot_name = None ):
 
     # Make sure that the FRENSIE data is a dictionary
     if not isinstance(frensie_data, dict):
