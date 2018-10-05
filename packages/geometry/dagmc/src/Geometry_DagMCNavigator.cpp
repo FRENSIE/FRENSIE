@@ -113,15 +113,6 @@ void DagMCNavigator::getSurfaceHandleNormal(
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                       DagMCGeometryError,
                       moab::ErrorCodeStr[return_value] );
-
-  // Make sure that the dot product of the direction and the surface normal
-  // is positive defined
-  if( Utility::calculateCosineOfAngleBetweenUnitVectors(direction, normal)< 0 )
-  {
-    normal[0] *= -1.0;
-    normal[1] *= -1.0;
-    normal[2] *= -1.0;
-  }
 }
 
 // Get the boundary cell

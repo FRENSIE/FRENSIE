@@ -549,8 +549,6 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     boost::filesystem::path database_path =
       test_scattering_center_database_name;
 
-    boost::filesystem::path data_directory = database_path.parent_path();
-
     // Load the database
     const Data::ScatteringCenterPropertiesDatabase database( database_path );
 
@@ -637,7 +635,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> filled_model(
                           new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        database_path,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -650,14 +648,14 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     positron_material_filled_model = filled_model;
 
     // Create the adjoint photon material filled model
-    unfilled_model.reset( new Geometry::InfiniteMediumModel( 1, 2, 1.0/cubic_centimeter ) );
+    unfilled_model.reset( new Geometry::InfiniteMediumModel( 1, 2, 1e24/cubic_centimeter ) );
 
     properties.reset( new MonteCarlo::SimulationProperties );
     properties->setParticleMode( MonteCarlo::ADJOINT_PHOTON_MODE );
 
     adjoint_photon_material_filled_model.reset(
                            new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        database_path,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,
@@ -670,7 +668,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     adjoint_electron_material_filled_model.reset(
                            new MonteCarlo::FilledGeometryModel(
-                                        data_directory,
+                                        database_path,
                                         scattering_center_definition_database,
                                         material_definition_database,
                                         properties,

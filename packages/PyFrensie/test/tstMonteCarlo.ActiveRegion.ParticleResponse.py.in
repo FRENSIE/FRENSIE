@@ -510,7 +510,7 @@ class MaterialParticleResponseFunctionTestCase(unittest.TestCase):
       self.positron_material_filled_model = filled_model
 
       # Create the adjoint photon material filled model
-      unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1.0 )
+      unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1e24 )
 
       properties = MonteCarlo.SimulationProperties()
       properties.setParticleMode( MonteCarlo.ADJOINT_PHOTON_MODE )
@@ -810,7 +810,7 @@ class MaterialComponentParticleResponseFunctionTestCase(unittest.TestCase):
       self.positron_material_filled_model = filled_model
 
       # Create the adjoint photon material filled model
-      unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1.0 )
+      unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1e24 )
 
       properties = MonteCarlo.SimulationProperties()
       properties.setParticleMode( MonteCarlo.ADJOINT_PHOTON_MODE )

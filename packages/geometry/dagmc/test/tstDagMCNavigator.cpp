@@ -94,6 +94,16 @@ FRENSIE_UNIT_TEST( DagMCNavigator, getSurfaceNormal )
   std::array<double,3> ref_normal( {0.0, 0.0, 1.0} );
 
   FRENSIE_CHECK_EQUAL( normal, ref_normal );
+
+  // Reversing the ray direction should not change the returned normal
+  ray.changeDirection( 0.0, 0.0, -1.0 );
+
+  navigator->getSurfaceNormal( 242,
+                               ray.getPosition(),
+                               ray.getDirection(),
+                               normal.data() );
+
+  FRENSIE_CHECK_EQUAL( normal, ref_normal );
 }
 
 //---------------------------------------------------------------------------//
