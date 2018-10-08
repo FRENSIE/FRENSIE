@@ -62,7 +62,8 @@ FRENSIE_ADD_TEST(ACEAndENDLElectronPhotonRelaxationDataGenerator
 FRENSIE_ADD_TEST_EXECUTABLE(AdjointElectronGridGenerator DEPENDS tstAdjointElectronGridGenerator.cpp)
 FRENSIE_ADD_TEST(AdjointElectronGridGenerator
   EXTRA_ARGS
-  --test_native_h_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml)
+  --test_native_h_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml
+  --test_native_si_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_14_native.xml)
 
 # Add AdjointPairProductionEnergyDistributionNormConstantEvaluator
 FRENSIE_ADD_TEST_EXECUTABLE(AdjointPairProductionEnergyDistributionNormConstantEvaluator DEPENDS tstAdjointPairProductionEnergyDistributionNormConstantEvaluator.cpp)

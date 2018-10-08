@@ -127,19 +127,19 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
                   distance_tol );
 
   diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( 1.361E-05, 1.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 7.930849251457873583e+08, 1e-5 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 9.074774563401691914e+08, 1e-5 );
 
   diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( max_energy, ionization_min_function(max_energy) );
-  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 6.692520228719266891e+09, 1e-5 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 1.679082410396810722e+10, 1e-5 );
 
   diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( max_energy, ionization_min_function(max_energy) + max_energy_nudge_value );
-  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 6.564149637416081429e+09, 1e-5 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 6.566927885730202675e+09, 1e-5 );
 
   diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( 1.2686300708196014e-04, 2.6912428420799615e-04 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 3.766682667766942978e+08, 1e-5 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 5.908052197644835472e+09, 1e-5 );
 
   diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( 1.2686300708196014e-04, 2.5692514588713508e-04 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 1.107424806514117718e+09, 1e-5 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 6.798016863532252312e+09, 1e-5 );
   }
 
   // Native Electroionization
@@ -199,27 +199,27 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
 
   cross_section = grid_generator.evaluateAdjointCrossSection( 1.361E-05, precision );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                                   1.519557651005748367e+10,
+                                   1.777122424737315369e+10,
                                    1e-5 );
 
   cross_section = grid_generator.evaluateAdjointCrossSection( 1.88E-05, precision );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                                   8.628283738325777054e+09,
+                                   1.069683412382569504e+10,
                                    1e-5 );
 
   cross_section = grid_generator.evaluateAdjointCrossSection( 1.123900E-02, precision );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                                   1.803481489441755926e+06,
+                                   8.293196907407618128e+05,
                                    1e-5 );
 
   cross_section = grid_generator.evaluateAdjointCrossSection( 8.75350E-01, precision );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                                   2.668359031821781537e+05,
+                                   9.257089639227419684e+04,
                                    1e-5 );
 
   cross_section = grid_generator.evaluateAdjointCrossSection( max_energy, precision );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                                   1.318357186343941066e+03,
+                                   1.565791552649094683e+03,
                                    1e-5 );
   }
 
@@ -248,7 +248,7 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
                                    1.731753912181469345e+10,
                                    1e-5 );
 
-  cross_section = grid_generator.evaluateAdjointCrossSection( 1.123900E-02, precision );
+  cross_section = grid_generator.evaluateAdjointCrossSection( 1e-2, precision );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
                                    1.307795306027776795e+06,
                                    1e-5 );
@@ -362,19 +362,19 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 1e-2, 0.019992531061237977, 1.0e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
-                                   3.377210486413586921e+01,
+                                   2.105414400255800969e-02,
                                    1e-5 );
 
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 1e-2, 0.020001807385767029, 1.0e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
-                                   5.912510211318632893e-04,
+                                   2.103491283074325133e-02,
                                    1e-6 );
 
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 1e-2, 0.020011088014413269, 1.0e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
-                                   6.687891849530321324e-07,
+                                   2.101569663835305829e-02,
                                    1.0e-5 );
   }
 
@@ -393,20 +393,28 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
                   absolute_diff_tol,
                   distance_tol );
 
+  std::cout << std::setprecision(16) << std::scientific << "binding_energy = \t" << binding_energy << std::endl;
+  double max_energy = (0.020001807385767029 - binding_energy );
+  std::cout << std::setprecision(16) << std::scientific << "max_energy = \t" << max_energy << std::endl;
+  double max_half = max_energy/2.0;
+  std::cout << std::setprecision(16) << std::scientific << "max_half = \t" << max_half << std::endl;
+  double energy = 1e-2 - max_half;
+  std::cout << std::setprecision(16) << std::scientific << "energy = \t" << energy << std::endl;
+
   diff_cross_section =
-    grid_generator.evaluateAdjointPDF( 1.88E-05, 1.0E-04, 1.0e-4 );
+    grid_generator.evaluateAdjointPDF( 1e-2, 0.019992531061237977, 1.0e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
                                    3.365324837657347956e+01,
                                    1e-5 );
 
   diff_cross_section =
-    grid_generator.evaluateAdjointPDF( 1.123900E-02, 3.16228, 1.0e-4 );
+    grid_generator.evaluateAdjointPDF( 1e-2, 0.020001807385767029, 1.0e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
                                    1.630694911109247750e-03,
                                    1e-6 );
 
   diff_cross_section =
-    grid_generator.evaluateAdjointPDF( 8.75350E-01, max_energy, 1.0e-4 );
+    grid_generator.evaluateAdjointPDF( 1e-2, 0.020011088014413269, 1.0e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
                                    3.825318894602592542e-06,
                                    1.0e-5 );
@@ -1111,7 +1119,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
         auto f_min = [&ionization_distribution2](double x){return ionization_distribution2->getLowerBoundOfSecondaryConditionalIndepVar(x); };
         auto f_max = [&max_knock_on_energy](double x){return max_knock_on_energy; };
-        return ionization_distribution2->evaluateSecondaryConditionalPDF( incoming_energy, energy );
+        return ionization_distribution2->evaluateSecondaryConditionalPDF( incoming_energy, energy, f_min, f_max );
       };
     }
   }
