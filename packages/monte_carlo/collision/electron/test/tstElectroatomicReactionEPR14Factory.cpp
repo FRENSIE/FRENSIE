@@ -14,6 +14,7 @@
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
