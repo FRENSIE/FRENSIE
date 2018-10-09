@@ -66,7 +66,7 @@ PositronatomFactory::PositronatomFactory(
     if( electroatom_data_properties.fileType() ==
         Data::ElectroatomicDataProperties::ACE_EPR_FILE )
     {
-      // Initialize the electroatomic table name map for ACE_EPR files
+      // Initialize the positronatomic table name map for ACE_EPR files
       if( d_positronatomic_table_name_map.find( Data::ElectroatomicDataProperties::ACE_EPR_FILE ) ==
           d_positronatomic_table_name_map.end() )
       {
@@ -95,7 +95,7 @@ PositronatomFactory::PositronatomFactory(
       THROW_EXCEPTION( std::runtime_error,
                        "Positronatom " << *positronatom_name << " cannot be "
                        "created because its definition specifies the use of "
-                       "an electroatomic data file of type "
+                       "a positronatomic data file of type "
                        << electroatom_data_properties.fileType() <<
                        ", which is currently unsupported!" );
     }
@@ -139,7 +139,7 @@ void PositronatomFactory::createPositronatomFromACETable(
     if( d_verbose )
     {
       FRENSIE_LOG_PARTIAL_NOTIFICATION(
-                                 "Loading ACE EPR electroatomic cross section "
+                                 "Loading ACE EPR positronatomic cross section "
                                  "table " << data_properties.tableName() <<
                                  " from " << ace_file_path.string() <<
                                  " ... " );

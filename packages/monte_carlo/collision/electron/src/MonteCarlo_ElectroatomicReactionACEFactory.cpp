@@ -65,7 +65,7 @@ void ElectroatomicReactionACEFactory::createDecoupledElasticReaction(
   // Remove all cross sections equal to zero
   std::shared_ptr<std::vector<double> >
     total_elastic_cross_section( new std::vector<double> );
-  
+
   ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
                       *energy_grid,
                       raw_electroatom_data.extractElasticTotalCrossSection(),
@@ -75,8 +75,8 @@ void ElectroatomicReactionACEFactory::createDecoupledElasticReaction(
   std::shared_ptr<std::vector<double> >
     cutoff_elastic_cross_sections( new std::vector<double> );
   cutoff_elastic_cross_sections->assign(
-      raw_electroatom_data.extractElasticTotalCrossSection().begin(),
-      raw_electroatom_data.extractElasticTotalCrossSection().end() );
+      raw_electroatom_data.extractElasticCutoffCrossSection().begin(),
+      raw_electroatom_data.extractElasticCutoffCrossSection().end() );
 
   elastic_reaction.reset(
     new DecoupledElasticElectroatomicReaction<Utility::LogLog>(
@@ -178,7 +178,7 @@ void ElectroatomicReactionACEFactory::createScreenedRutherfordElasticReaction(
   // Calculate the screened Rutherford elastic cross section
   std::shared_ptr<std::vector<double> > elastic_cross_section(
               new std::vector<double>( cutoff_elastic_cross_section.size() ) );
-  
+
   for ( unsigned i = 0; i < elastic_cross_section->size(); ++i )
   {
     (*elastic_cross_section)[i] =

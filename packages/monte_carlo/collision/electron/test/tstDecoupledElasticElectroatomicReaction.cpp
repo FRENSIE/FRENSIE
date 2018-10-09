@@ -92,6 +92,28 @@ FRENSIE_UNIT_TEST( DecoupledElasticElectroatomicReaction,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the sampling ratio can be returned
+FRENSIE_UNIT_TEST( DecoupledElasticElectroatomicReaction,
+                   getSamplingRatio )
+{
+
+  double ratio = decoupled_elastic_reaction->getSamplingRatio( 1.0E-05 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( ratio, 1.0, 1e-12 );
+
+  ratio = decoupled_elastic_reaction->getSamplingRatio( 1.0E-03 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( ratio, 1.0, 1e-12 );
+
+  ratio = decoupled_elastic_reaction->getSamplingRatio( 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( ratio, 7.7548919965521235e-01, 1e-12 );
+
+  ratio = decoupled_elastic_reaction->getSamplingRatio( 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( ratio, 7.7548919965521235e-01, 1e-12 );
+
+  ratio = decoupled_elastic_reaction->getSamplingRatio( 1.0E+05 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( ratio, 1.0100484326755011e-09, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the elastic reaction can be simulated
 FRENSIE_UNIT_TEST( DecoupledElasticElectroatomicReaction, react )
 {
