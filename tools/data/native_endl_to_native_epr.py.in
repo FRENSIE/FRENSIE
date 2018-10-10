@@ -67,9 +67,7 @@ def createGenerator( endl_file_name,
             print "Only ACE EPR tables can be specified (.12p or .14p)!"
             sys.exit(1)
 
-        table_version.rstrip("p")
-
-        table_version = int(table_version)
+        table_version = int( table_version.rstrip("p") )
 
         if table_version < 12:
             print "Only ACE EPR tables can be specified (.12p or .14p)!"
@@ -77,7 +75,7 @@ def createGenerator( endl_file_name,
 
         photoatomic_data_properties = database.getAtomProperties( zaid ).getPhotoatomicDataProperties( Data.PhotoatomicDataProperties.ACE_EPR_FILE, table_version )
 
-        ace_file = ACE.ACEFileHandler( photoatomic_data_properties.filePath(),
+        ace_file = ACE.ACEFileHandler( path.dirname(db_name) + "/" + photoatomic_data_properties.filePath(),
                                        photoatomic_data_properties.tableName(),
                                        photoatomic_data_properties.fileStartLine() )
         xss_extractor = ACE.XSSEPRDataExtractor( ace_file.getTableNXSArray(),
