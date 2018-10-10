@@ -366,6 +366,178 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
     const FirstIndepType indep_var_x_1,
     const FirstIndepType indep_var_x,
     const SecondIndepType indep_var_y,
+    const SecondIndepType indep_var_y_min,
+    const SecondIndepType indep_var_y_max,
+    const SecondIndepType indep_var_y_0_min,
+    const SecondIndepType indep_var_y_0_max,
+    const SecondIndepType indep_var_y_1_min,
+    const SecondIndepType indep_var_y_1_max,
+    const ZYLowerFunctor& evaluate_z_with_y_0_functor,
+    const ZYUpperFunctor& evaluate_z_with_y_1_functor,
+    const typename ZYLowerFunctor::result_type below_lower_limit_return_value,
+    const typename ZYLowerFunctor::result_type above_upper_limit_return_value,
+    const double fuzzy_boundary_tol )
+{
+  // The interpolation type on the Z variable must be consistent
+  testStaticPrecondition( (std::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
+  // All types must be a floating point type
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<FirstIndepType>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<SecondIndepType>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<typename ZYLowerFunctor::result_type>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<typename ZYUpperFunctor::result_type>::RawType>::value) );
+  // Make sure the first independent variables are valid
+  testPrecondition( !QuantityTraits<FirstIndepType>::isnaninf(indep_var_x_0) );
+  testPrecondition( !QuantityTraits<FirstIndepType>::isnaninf(indep_var_x_1) );
+  testPrecondition( !QuantityTraits<FirstIndepType>::isnaninf( indep_var_x ) );
+  testPrecondition( ThisType::isFirstIndepVarInValidRange( indep_var_x_0 ) );
+  testPrecondition( indep_var_x_0 <= indep_var_x_1 );
+  testPrecondition( indep_var_x >= indep_var_x_0 );
+  testPrecondition( indep_var_x <= indep_var_x_1 );
+  // Make sure the second independent variables are valid
+  testPrecondition( ThisType::isSecondIndepVarInValidRange(
+                                                         indep_var_y_0_min ) );
+  testPrecondition( indep_var_y_0_min < indep_var_y_0_max );
+  testPrecondition( ThisType::isSecondIndepVarInValidRange(
+                                                         indep_var_y_1_min ) );
+  testPrecondition( indep_var_y_1_min < indep_var_y_1_max );
+
+  if( indep_var_x_0 < indep_var_x_1 )
+  {
+    // Calculate the intermediate grid lengths
+    const typename QuantityTraits<SecondIndepType>::RawType L0 =
+      ZYInterpPolicy::calculateUnitBaseGridLength( indep_var_y_0_min,
+                                                   indep_var_y_0_max );
+
+    const typename QuantityTraits<SecondIndepType>::RawType L1 =
+      ZYInterpPolicy::calculateUnitBaseGridLength( indep_var_y_1_min,
+                                                   indep_var_y_1_max );
+
+    const typename QuantityTraits<SecondIndepType>::RawType Lx =
+      ZXInterpPolicy::calculateUnitBaseGridLength( indep_var_y_min,
+                                                   indep_var_y_max );
+
+    // Calculate the intermediate y min with fuzzy tol
+    const SecondIndepType indep_var_y_min_with_tol =
+      ThisType::calculateFuzzyLowerBound( indep_var_y_min, fuzzy_boundary_tol );
+
+    // Calculate the intermediate y max with fuzzy tol
+    const SecondIndepType indep_var_y_max_with_tol =
+      ThisType::calculateFuzzyUpperBound( indep_var_y_max, fuzzy_boundary_tol );
+
+    // Check if the secondary indep value is in the intermediate grid
+    if( indep_var_y >= indep_var_y_min_with_tol && indep_var_y <= indep_var_y_max_with_tol )
+    {
+      // Calculate the unit base independent variable
+      typename QuantityTraits<SecondIndepType>::RawType eta;
+
+      if( indep_var_y > indep_var_y_min && indep_var_y < indep_var_y_max )
+      {
+        eta = ZYInterpPolicy::calculateUnitBaseIndepVar(
+                                                    indep_var_y, indep_var_y_min, Lx );
+      }
+      else if( indep_var_y <= indep_var_y_min && indep_var_y >= indep_var_y_min_with_tol )
+        eta = 0.0;
+      else // indep_var_y >= indep_var_y_max && indep_var_y <= indep_var_y_max_with_tol
+        eta = 1.0;
+
+      // Calculate the y value on the first grid
+      const SecondIndepType indep_var_y_0 = std::min(
+          ZYInterpPolicy::calculateIndepVar( eta, indep_var_y_0_min, L0 ),
+          indep_var_y_0_max );
+
+
+      // Calculate the y value on the second grid
+      const SecondIndepType indep_var_y_1 = std::min(
+          ZYInterpPolicy::calculateIndepVar( eta, indep_var_y_1_min, L1 ),
+          indep_var_y_1_max );
+
+      // Evaluate the dependent value on the first y grid
+      const typename ZYLowerFunctor::result_type dep_var_0 =
+        evaluate_z_with_y_0_functor( indep_var_y_0 );
+
+      // Evaluate the dependent value on the second y grid
+      const typename ZYUpperFunctor::result_type dep_var_1 =
+        evaluate_z_with_y_1_functor( indep_var_y_1 );
+
+      // Process and scale the dependent values
+      const typename QuantityTraits<typename ZYLowerFunctor::result_type>::RawType
+        scaled_processed_dep_var_0 =
+        ThisType::processDepVar( dep_var_0 )*L0;
+
+      const typename QuantityTraits<typename ZYUpperFunctor::result_type>::RawType
+        scaled_processed_dep_var_1 =
+        ThisType::processDepVar( dep_var_1)*L1;
+
+      // Calculate the processed slope
+      const typename QuantityTraits<FirstIndepType>::RawType
+        processed_indep_var_x_0 =
+        ThisType::processFirstIndepVar( indep_var_x_0 );
+
+      const typename QuantityTraits<FirstIndepType>::RawType
+        processed_indep_var_x_1 =
+        ThisType::processFirstIndepVar( indep_var_x_1 );
+
+      const auto processed_slope =
+        (scaled_processed_dep_var_1 - scaled_processed_dep_var_0)/
+        (processed_indep_var_x_1 - processed_indep_var_x_0);
+
+      // Interpolate to find the processed dependent value at (x,y)
+      const typename QuantityTraits<FirstIndepType>::RawType
+        processed_indep_var_x =
+        ThisType::processFirstIndepVar( indep_var_x );
+
+      const auto processed_dep_var_yx = ZXInterpPolicy::interpolateAndProcess(
+                                                    processed_indep_var_x_0,
+                                                    processed_indep_var_x,
+                                                    scaled_processed_dep_var_0,
+                                                    processed_slope )/Lx;
+
+      return QuantityTraits<typename ZYLowerFunctor::result_type>::initializeQuantity(
+                    ThisType::recoverProcessedDepVar( processed_dep_var_yx ) );
+    }
+    else // indep_var_y < indep_var_y_min || indep_var_y > indep_var_y_max
+    {
+      if( indep_var_y < indep_var_y_min_with_tol )
+        return below_lower_limit_return_value;
+      else // indep_var_y > indep_var_y_max_with_tol
+        return above_upper_limit_return_value;
+    }
+  }
+  else // indep_var_x_0 == indep_var_x_1
+  {
+    if( indep_var_y < ThisType::calculateFuzzyLowerBound( indep_var_y_0_min,
+                                                          fuzzy_boundary_tol ) )
+      return below_lower_limit_return_value;
+    else if( indep_var_y > ThisType::calculateFuzzyLowerBound( indep_var_y_0_min,
+                                                               fuzzy_boundary_tol ) )
+      return above_upper_limit_return_value;
+    else
+      return evaluate_z_with_y_0_functor( indep_var_y );
+  }
+}
+
+// Conduct unit base interpolation
+/*! \details If indep_var_y is outside of the bounds of the intermediate grid
+ * a value of 0.0 will be returned from this method. If
+ * indep_var_x_0 == indep_var_x_1, the evaluate_z_with_y_0_functor will be
+ * called with indep_var_y. The parameter below_lower_limit_return_value can
+ * be used to set what this method returns if the secondary independent value
+ * is below the intermediate secondary independent grid limit. The parameter
+ * above_upper_limit_return_value can be used to set what this method returns
+ * if the secondary independent value is above the intermediate secondary
+ * independent grid limit.
+ */
+template<typename ZYInterpPolicy, typename ZXInterpPolicy>
+template<typename FirstIndepType,
+         typename SecondIndepType,
+         typename ZYLowerFunctor,
+         typename ZYUpperFunctor>
+inline typename ZYLowerFunctor::result_type
+TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
+    const FirstIndepType indep_var_x_0,
+    const FirstIndepType indep_var_x_1,
+    const FirstIndepType indep_var_x,
+    const SecondIndepType indep_var_y,
     const SecondIndepType indep_var_y_0_min,
     const SecondIndepType indep_var_y_0_max,
     const SecondIndepType indep_var_y_1_min,

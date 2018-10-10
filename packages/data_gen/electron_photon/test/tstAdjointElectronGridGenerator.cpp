@@ -158,19 +158,22 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
                   distance_tol );
 
   diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( 1.361E-05, 1.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 1.592751792270088911e+09, 1e-5 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 1.814954912687950611e+09, 1e-5 );
 
   diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( max_energy, ionization_min_function2(max_energy) + 1e-7 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 1.311974034139451599e+10, 1e-5 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 3.247690014705084610e+10, 1e-5 );
 
   diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( max_energy, ionization_min_function2(max_energy) + max_energy_nudge_value );
-  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 1.282753412031163216e+10, 1e-5 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 3.143296104297618866e+10, 1e-5 );
 
   diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( 1.2686300708196014e-04, 2.6912428420799615e-04 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 4.431087053939119577e+08, 1e-5 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 9.905569953495922089e+09, 1e-5 );
 
   diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( 1.2686300708196014e-04, 2.5692514588713508e-04 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 5.456093594668277502e+08, 1e-5 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 1.122426916593819809e+10, 1e-5 );
+
+  diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( 1e-2, 0.020001807385767029 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 3.477149461010203231e+04, 1e-5 );
   }
 }
 
@@ -240,27 +243,27 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
 
   cross_section = grid_generator.evaluateAdjointCrossSection( 1.361E-05, precision );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                                   3.047480843425046539e+10,
+                                   3.532617129134813690e+10,
                                    1e-5 );
 
   cross_section = grid_generator.evaluateAdjointCrossSection( 1.88E-05, precision );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                                   1.731753912181469345e+10,
+                                   2.122812908564072418e+10,
                                    1e-5 );
 
   cross_section = grid_generator.evaluateAdjointCrossSection( 1e-2, precision );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                                   1.307795306027776795e+06,
+                                   3.201604223291123752e+06,
                                    1e-5 );
 
   cross_section = grid_generator.evaluateAdjointCrossSection( 8.75350E-01, precision );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                                   9.394782941525161732e+04,
+                                   2.006028644547107979e+05,
                                    1e-5 );
 
   cross_section = grid_generator.evaluateAdjointCrossSection( max_energy, precision );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                                   2.610550145890727435e+03,
+                                   6.463571615338125412e+03,
                                    1e-5 );
   }
 
@@ -393,30 +396,22 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
                   absolute_diff_tol,
                   distance_tol );
 
-  std::cout << std::setprecision(16) << std::scientific << "binding_energy = \t" << binding_energy << std::endl;
-  double max_energy = (0.020001807385767029 - binding_energy );
-  std::cout << std::setprecision(16) << std::scientific << "max_energy = \t" << max_energy << std::endl;
-  double max_half = max_energy/2.0;
-  std::cout << std::setprecision(16) << std::scientific << "max_half = \t" << max_half << std::endl;
-  double energy = 1e-2 - max_half;
-  std::cout << std::setprecision(16) << std::scientific << "energy = \t" << energy << std::endl;
-
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 1e-2, 0.019992531061237977, 1.0e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
-                                   3.365324837657347956e+01,
+                                   1.087944283318578384e-02,
                                    1e-5 );
 
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 1e-2, 0.020001807385767029, 1.0e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
-                                   1.630694911109247750e-03,
+                                   1.086064735460050452e-02,
                                    1e-6 );
 
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 1e-2, 0.020011088014413269, 1.0e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
-                                   3.825318894602592542e-06,
+                                   1.084736247100938876e-02,
                                    1.0e-5 );
   }
 
@@ -683,35 +678,35 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
           0 );
 
   // Check the generated outgoing energy grid
-  FRENSIE_CHECK_EQUAL( outgoing_energy_grid[0.01].size(), 512 );
+  FRENSIE_CHECK_EQUAL( outgoing_energy_grid[0.01].size(), 458 );
   FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[0.01].front(),
-                                   1.000016099117129707e-02,
+                                   1.001888424818502855e-02,
                                    1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[0.01].back(), 2.000000038495000609e+01, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[0.01].back(), 2.000001017484025922e+01, 1e-6 );
 
   // Check the evaluated pdf
-  FRENSIE_CHECK_EQUAL( pdf[0.01].size(), 512 );
+  FRENSIE_CHECK_EQUAL( pdf[0.01].size(), 458 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf[0.01].front(),
-                                   2.993084986818493344e+06,
+                                   3.466121604316592407e+11,
                                    1e-6 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf[0.01].back(),
-                                   1.221053017249922091e-08,
+                                   1.429572209175365060e+03,
                                    1e-6 );
 
   // Check the generated max energy grid
-  FRENSIE_CHECK_EQUAL( outgoing_energy_grid[1.0].size(), 443 );
+  FRENSIE_CHECK_EQUAL( outgoing_energy_grid[1.0].size(), 557 );
   FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[1.0].front(),
-                                   1.000000113241543920,
+                                   1.000006621027896614,
                                    1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[1.0].back(), 2.000000038495000609e+01, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[1.0].back(), 2.000001017484025922e+01, 1e-6 );
 
   // Check the evaluated cross section
-  FRENSIE_CHECK_EQUAL( pdf[1.0].size(), 443 );
+  FRENSIE_CHECK_EQUAL( pdf[1.0].size(), 557 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf[1.0].front(),
-                                   3.880057319456366822e+05,
+                                   1.812088260005524445e+10,
                                    1e-6 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf[1.0].back(),
-                                   3.764014372082443752e-06,
+                                   1.291431156080828924e-01,
                                    1e-6 );
   }
 
@@ -751,35 +746,35 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
           0 );
 
   // Check the generated outgoing energy grid
-  FRENSIE_CHECK_EQUAL( outgoing_energy_grid[0.01].size(), 454 );
+  FRENSIE_CHECK_EQUAL( outgoing_energy_grid[0.01].size(), 486 );
   FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[0.01].front(),
-                                   1.0000101e-02,
+                                   1.000662100000000027e-02,
                                    1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[0.01].back(), 2.00000003e+01, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[0.01].back(), 2.000000681999999941e+01, 1e-6 );
 
   // Check the evaluated pdf
-  FRENSIE_CHECK_EQUAL( pdf[0.01].size(), 454 );
+  FRENSIE_CHECK_EQUAL( pdf[0.01].size(), 486 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf[0.01].front(),
-                                   2.972584360749191139e+06,
+                                   6.931684320545988770e+11,
                                    1e-6 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf[0.01].back(),
-                                   1.357522344360892967e-08,
+                                   2.798278197689248373e+03,
                                    1e-6 );
 
   // Check the generated max energy grid
-  FRENSIE_CHECK_EQUAL( outgoing_energy_grid[1.0].size(), 481 );
+  FRENSIE_CHECK_EQUAL( outgoing_energy_grid[1.0].size(), 548 );
   FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[1.0].front(),
-                                   1.000000101,
+                                   1.000006621000000040e+00,
                                    1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[1.0].back(), 2.00000003e+01, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[1.0].back(), 2.000000681999999941e+01, 1e-6 );
 
   // Check the evaluated cross section
-  FRENSIE_CHECK_EQUAL( pdf[1.0].size(), 481 );
+  FRENSIE_CHECK_EQUAL( pdf[1.0].size(), 548 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf[1.0].front(),
-                                   3.912080368675402133e+05,
+                                   3.624176557624928284e+10,
                                    1e-6 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf[1.0].back(),
-                                   4.502822525645024672e-06,
+                                   2.524135049327990155e-01,
                                    1e-6 );
   }
 }
@@ -1118,7 +1113,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
         }
 
         auto f_min = [&ionization_distribution2](double x){return ionization_distribution2->getLowerBoundOfSecondaryConditionalIndepVar(x); };
-        auto f_max = [&max_knock_on_energy](double x){return max_knock_on_energy; };
+        auto f_max = [](double x){return (x - binding_energy)/2.0; };
         return ionization_distribution2->evaluateSecondaryConditionalPDF( incoming_energy, energy, f_min, f_max );
       };
     }

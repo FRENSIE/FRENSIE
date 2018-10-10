@@ -2057,7 +2057,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
 
     // Define function for the lower and upper bounds of the outgoing energy
     auto f_min = [distribution](double x){return distribution->getLowerBoundOfSecondaryConditionalIndepVar(x); };
-    auto f_max = [max_knock_on_energy](double x){return max_knock_on_energy; };
+    auto f_max = [binding_energy](double x){return (x - binding_energy)/2.0; };
 
     return distribution->evaluateSecondaryConditionalPDF( incoming_energy, energy, f_min, f_max );
   };
