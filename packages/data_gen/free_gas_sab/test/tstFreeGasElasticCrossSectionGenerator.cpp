@@ -41,6 +41,7 @@ double A = 0.999167;
 TEUCHOS_UNIT_TEST( FreeGasElasticSAlphaBetaFunction,
 		   getTotalCrossSection )
 {
+  /*
   bool calculate_energy_cross_section = false; 
   bool calculate_total_cross_section  = true;
 
@@ -75,7 +76,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticSAlphaBetaFunction,
       std::cout << E[i] << " " << total_cross_section[E[i]] << std::endl; 
     }
   }
-
+  */
 }
 
 //---------------------------------------------------------------------------//
