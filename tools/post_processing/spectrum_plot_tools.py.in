@@ -22,7 +22,7 @@ def plotSpectralDataWithErrors( frensie_data_name,
                                 top_ylims = None,
                                 bottom_ylims = None,
                                 legend_pos = None,
-                                output_plot_name = None ):
+                                output_plot_names = None ):
 
     # Make sure that the FRENSIE data is a dictionary
     if not isinstance(frensie_data, dict):
@@ -134,7 +134,7 @@ def plotSpectralDataWithErrors( frensie_data_name,
     
     # Set up the bottom subplot
     ax[1].set_xscale("log")
-    ax[1].errorbar( energy_mid_pts, f_over_t, yerr=f_over_t_unc, capsize=2, fmt='o', ecolor="black", color="black", linewidth=0.6, markersize=1.5 )
+    ax[1].errorbar( energy_mid_pts, f_over_t, yerr=f_over_t_unc, capsize=1.5, fmt='o', ecolor="black", color="black", linewidth=0.5, markersize=1.9 )
     ax[1].set_ylabel( "F/" + test_data_name[0] )
     ax[1].set_xlabel( "Energy (MeV)" )
     
@@ -162,8 +162,9 @@ def plotSpectralDataWithErrors( frensie_data_name,
         ax[1].spines[axis].set_linewidth(edge_thickness)
 
     # Save the figure
-    if not output_plot_name is None:
-        fig.savefig( output_plot_name )
+    if not output_plot_names is None:
+        for i in range(0,len(output_plot_names)):
+            fig.savefig( output_plot_names[i] )
     else:
         fig.savefig("spectrum.eps")
     

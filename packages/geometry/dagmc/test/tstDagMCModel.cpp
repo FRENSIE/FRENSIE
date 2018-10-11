@@ -941,6 +941,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DagMCModel, archive, TestArchives )
   FRENSIE_CHECK_EQUAL( model->getModelProperties().getMaterialPropertyName(), "mat" );
   FRENSIE_CHECK_EQUAL( model->getModelProperties().getDensityPropertyName(), "rho" );
   FRENSIE_CHECK_EQUAL( model->getModelProperties().getEstimatorPropertyName(), "tally" );
+
+  // Check that a navigator can be created
+  std::shared_ptr<Geometry::Navigator> navigator;
+
+  FRENSIE_CHECK_NO_THROW( navigator = base_model->createNavigator() );
 }
 
 //---------------------------------------------------------------------------//
