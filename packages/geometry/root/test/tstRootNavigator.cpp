@@ -375,6 +375,53 @@ FRENSIE_UNIT_TEST( RootNavigator, setState )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distance to closest boundary
+FRENSIE_UNIT_TEST( RootNavigator, getDistanceToClosestBoundary )
+{
+  std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
+
+  // Initialize the ray
+  navigator->setState( 0.0*cgs::centimeter,
+                       0.0*cgs::centimeter,
+                       0.0*cgs::centimeter,
+                       0.0, 0.0, 1.0 );
+
+  // Fire a ray through the geometry
+  Geometry::Navigator::Length safety_distance =
+    navigator->getDistanceToClosestBoundary();
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( safety_distance,
+                                   2.5*cgs::centimeter,
+                                   1e-9 );
+
+  // Initialize the ray
+  navigator->setState( 2.5*cgs::centimeter,
+                       0.0*cgs::centimeter,
+                       0.0*cgs::centimeter,
+                       0.0, 0.0, 1.0 );
+
+  // Fire a ray through the geometry
+  safety_distance = navigator->getDistanceToClosestBoundary();
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( safety_distance,
+                                   0.0*cgs::centimeter,
+                                   1e-9 );
+
+  // Initialize the ray
+  navigator->setState( 4.0*cgs::centimeter,
+                       0.0*cgs::centimeter,
+                       0.0*cgs::centimeter,
+                       0.0, 0.0, 1.0 );
+
+  // Fire a ray through the geometry
+  safety_distance = navigator->getDistanceToClosestBoundary();
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( safety_distance,
+                                   1.0*cgs::centimeter,
+                                   1e-9 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that an internal ray can be fired
 FRENSIE_UNIT_TEST( RootNavigator, fireRay )
 {

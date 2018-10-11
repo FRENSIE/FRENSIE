@@ -313,6 +313,61 @@ FRENSIE_UNIT_TEST( DagMCNavigator, setState_known_cell )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distance to closest boundary
+FRENSIE_UNIT_TEST( DagMCNavigator, getDistanceToClosestBoundary )
+{
+  std::shared_ptr<Geometry::Navigator> navigator =
+    model->createNavigator();
+
+  // Initialize the ray
+  std::shared_ptr<Geometry::Navigator::Ray> ray(
+                           new Geometry::Navigator::Ray( -39.6*cgs::centimeter,
+                                                         -39.6*cgs::centimeter,
+                                                         59.69*cgs::centimeter,
+                                                         0.0, 1.0, 0.0 ) );
+
+  navigator->setState( ray->getPosition(), ray->getDirection(), 53 );
+
+  // Get safety distance
+  Geometry::Navigator::Length safety_distance =
+    navigator->getDistanceToClosestBoundary();
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( safety_distance,
+                                   1.27*cgs::centimeter,
+                                   1e-9 );
+
+  // Reset the ray
+  ray.reset( new Geometry::Navigator::Ray( -39.6*cgs::centimeter,
+                                           -39.6*cgs::centimeter,
+                                           60.69*cgs::centimeter,
+                                           0.0, 1.0, 0.0 ) );
+
+  navigator->setState( ray->getPosition(), ray->getDirection(), 53 );
+
+  // Get safety distance
+  safety_distance = navigator->getDistanceToClosestBoundary();
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( safety_distance,
+                                   0.27*cgs::centimeter,
+                                   1e-9 );
+
+  // Reset the ray
+  ray.reset( new Geometry::Navigator::Ray( -39.6*cgs::centimeter,
+                                           -39.6*cgs::centimeter,
+                                           60.96*cgs::centimeter,
+                                           1.0, 0.0, 0.0 ) );
+
+  navigator->setState( ray->getPosition(), ray->getDirection(), 53 );
+
+  // Get safety distance
+  safety_distance = navigator->getDistanceToClosestBoundary();
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( safety_distance,
+                                   0.0*cgs::centimeter,
+                                   1e-9 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the internal ray can be fired
 FRENSIE_UNIT_TEST( DagMCNavigator, fireRay )
 {

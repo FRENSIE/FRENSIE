@@ -168,6 +168,13 @@ auto InfiniteMediumNavigator::getCurrentCell() const -> EntityId
   return d_cell;
 }
 
+// Get the distance from the internal DagMC ray pos. to the nearest boundary in all directions
+//! \details An infinite medium has no surface.
+auto InfiniteMediumNavigator::getDistanceToClosestBoundary() -> Length
+{
+  return Utility::QuantityTraits<Length>::inf();
+}
+
 // Fire the internal ray through the geometry
 /*! \details An infinite medium has no surface. The surface hit will be set
  * to the invalid surface.

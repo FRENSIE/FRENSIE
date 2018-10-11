@@ -36,7 +36,7 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, getPointLocation )
                                        0.0*cgs::centimeter,
                                        0.0*cgs::centimeter,
                                        0.0, 0.0, 1.0 ) );
-  
+
   Geometry::PointLocation location = navigator->getPointLocation( *ray, 1 );
 
   FRENSIE_CHECK_EQUAL( location, Geometry::POINT_INSIDE_CELL );
@@ -96,7 +96,7 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, findCellContainingRay_cache )
                                        0.0, 0.0, 1.0 ) );
 
   Geometry::Navigator::CellIdSet cell_cache;
-  
+
   Geometry::Navigator::EntityId cell =
     navigator->findCellContainingRay( *ray, cell_cache );
 
@@ -134,7 +134,7 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, findCellContainingRay )
     navigator->findCellContainingRay( *ray );
 
   FRENSIE_CHECK_EQUAL( cell, 1 );
-  
+
   ray.reset( new Geometry::Navigator::Ray(
                    Utility::QuantityTraits<Geometry::Navigator::Length>::max(),
                    Utility::QuantityTraits<Geometry::Navigator::Length>::max(),
@@ -191,6 +191,37 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, setState )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distance to closest boundary
+FRENSIE_UNIT_TEST( InfiniteMediumNavigator, getDistanceToClosestBoundary )
+{
+  std::unique_ptr<Geometry::Navigator>
+    navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
+
+  navigator->setState( 0.0*cgs::centimeter,
+                       0.0*cgs::centimeter,
+                       0.0*cgs::centimeter,
+                       0.0, 0.0, 1.0 );
+
+  // Get safety distance
+  Geometry::Navigator::Length safety_distance =
+    navigator->getDistanceToClosestBoundary();
+
+  FRENSIE_CHECK_EQUAL( safety_distance,
+                       Utility::QuantityTraits<Geometry::Navigator::Length>::inf() );
+
+  navigator->setState( 1000.0*cgs::centimeter,
+                       10.0*cgs::centimeter,
+                       -120.0*cgs::centimeter,
+                       0.0, 0.0, 1.0 );
+
+  // Get safety distance
+  safety_distance = navigator->getDistanceToClosestBoundary();
+
+  FRENSIE_CHECK_EQUAL( safety_distance,
+                       Utility::QuantityTraits<Geometry::Navigator::Length>::inf() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the internal ray can be fired through the geometry
 FRENSIE_UNIT_TEST( InfiniteMediumNavigator, fireRay )
 {
@@ -213,7 +244,7 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, fireRay )
                        -1.0*cgs::centimeter,
                        1.0*cgs::centimeter,
                        1.0, 0.0, 0.0 );
-  
+
   distance_to_boundary = navigator->fireRay( &surface_hit );
 
   FRENSIE_CHECK_EQUAL( distance_to_boundary,
@@ -279,9 +310,9 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator,
                    advanceToCellBoundary_with_callback )
 {
   Geometry::InfiniteMediumModel model( 1 );
-  
+
   bool advance_finished = false;
-  
+
   std::unique_ptr<Geometry::Navigator>
     navigator( model.createNavigatorAdvanced( [&advance_finished](const Geometry::Navigator::Length){ advance_finished = true; } ) );
 
@@ -339,9 +370,9 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, advanceBySubstep )
 FRENSIE_UNIT_TEST( InfiniteMediumNavigator, advanceBySubstep_with_callback )
 {
   Geometry::InfiniteMediumModel model( 1 );
-  
+
   Geometry::Navigator::Length distance_traveled = 0.0*cgs::centimeter;
-  
+
   std::unique_ptr<Geometry::Navigator>
     navigator( model.createNavigatorAdvanced( [&distance_traveled](const Geometry::Navigator::Length distance){ distance_traveled += distance; } ) );
 
@@ -400,7 +431,7 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, changeDirection )
 FRENSIE_UNIT_TEST( InfiniteMediumNavigator, clone )
 {
   size_t number_of_advances = 0;
-  
+
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1, [&number_of_advances](const Geometry::Navigator::Length){ ++number_of_advances; } ) );
 
@@ -506,7 +537,7 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, clone )
 
 //   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( unique_navigator ) );
 //   FRENSIE_CHECK_EQUAL( unique_navigator->getCurrentCell(), 2 );
-  
+
 //   std::shared_ptr<Geometry::Navigator> shared_navigator;
 
 //   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( shared_navigator ) );

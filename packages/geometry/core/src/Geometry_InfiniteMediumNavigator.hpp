@@ -35,7 +35,7 @@ public:
                                 const Length position[3],
                                 const double direction[3],
                                 const EntityId cell ) const override;
-  
+
   //! Get the surface normal at a point on the surface
   void getSurfaceNormal( const EntityId surface_id,
                          const Length position[3],
@@ -52,7 +52,7 @@ public:
   EntityId findCellContainingRay(
                                     const Length position[3],
                                     const double direction[3] ) const override;
-  
+
   //! Check if an internal ray has been set
   bool isStateSet() const override;
 
@@ -63,7 +63,7 @@ public:
                  const double x_direction,
                  const double y_direction,
                  const double z_direction ) override;
-  
+
   //! Set the internal ray with known starting cell
   void setState( const Length x_position,
                  const Length y_position,
@@ -84,6 +84,9 @@ public:
 
   //! Get the cell that contains the internal ray
   EntityId getCurrentCell() const override;
+
+  //! Get the distance from the internal ray pos. to the nearest boundary in all directions
+  Length getDistanceToClosestBoundary() override;
 
   //! Fire the internal ray through the geometry
   Length fireRay( EntityId* surface_hit ) override;
@@ -118,7 +121,7 @@ private:
 
   // The infinite medium cell id
   EntityId d_cell;
-  
+
   // The position
   Length* d_position;
 

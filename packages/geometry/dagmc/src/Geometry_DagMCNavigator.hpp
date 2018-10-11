@@ -84,8 +84,8 @@ public:
                  const double x_direction,
                  const double y_direction,
                  const double z_direction ) override;
-                      
-                       
+
+
   //! Initialize (or reset) an internal DagMC ray
   void setState( const Length x_position,
                  const Length y_position,
@@ -107,6 +107,9 @@ public:
   //! Get the cell containing the internal DagMC ray position
   EntityId getCurrentCell() const override;
 
+  //! Get the distance from the internal DagMC ray pos. to the nearest boundary in all directions
+  Length getDistanceToClosestBoundary() override;
+
   //! Get the distance from the internal DagMC ray pos. to the nearest boundary
   Length fireRay( EntityId* surface_hit ) override;
 
@@ -117,7 +120,7 @@ public:
 
   //! Clone the navigator
   DagMCNavigator* clone( const AdvanceCompleteCallback& advance_complete_callback ) const override;
-  
+
   //! Clone the navigator
   DagMCNavigator* clone() const override;
 
@@ -184,7 +187,7 @@ private:
                                 const moab::EntityHandle current_cell_handle,
                                 moab::EntityHandle& surface_hit_handle,
                                 moab::DagMC::RayHistory* history = NULL ) const;
-  
+
   // Set an internal DagMC ray
   void setStateWithCellHandle( const Length x_position,
                                const Length y_position,
@@ -222,7 +225,7 @@ public:
     : GeometryError( what )
   { /* ... */ }
 };
-  
+
 } // end Geometry namespace
 
 #endif // end GEOMETRY_DAGMC_NAVIGATOR_HPP

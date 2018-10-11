@@ -26,7 +26,7 @@ const double DagMCNavigator::s_boundary_tol = 1e-5;
 // Default constructor
 DagMCNavigator::DagMCNavigator()
 { /* ... */ }
-  
+
 // Constructor
 DagMCNavigator::DagMCNavigator(
           const std::shared_ptr<const DagMCModel>& dagmc_model,
@@ -62,7 +62,7 @@ PointLocation DagMCNavigator::getPointLocation(
   testPrecondition( d_dagmc_model->getCellHandler().doesCellExist( cell_id ) );
 
   moab::EntityHandle cell_handle = d_dagmc_model->getCellHandler().getCellHandle( cell_id );
- 
+
   try{
     return this->getPointLocationWithCellHandle( position,
                                                  direction,
@@ -79,7 +79,7 @@ PointLocation DagMCNavigator::getPointLocation(
 }
 
 // Get the surface normal at a point on the surface
-/*! \details The dot product of the normal and the direction will be 
+/*! \details The dot product of the normal and the direction will be
  * positive defined.
  */
 void DagMCNavigator::getSurfaceNormal( const EntityId surface_id,
@@ -182,7 +182,7 @@ auto DagMCNavigator::findCellContainingRay( const Length position[3],
 {
   moab::EntityHandle cell_handle =
     this->findCellHandleContainingRay( position, direction );
-  
+
   return d_dagmc_model->getCellHandler().getCellId( cell_handle );
 }
 
@@ -211,7 +211,7 @@ void DagMCNavigator::setState( const Length x_position,
                                 x_direction, y_direction, z_direction,
                                 cell_handle );
 }
-                       
+
 // Initialize (or reset) an internal DagMC ray
 void DagMCNavigator::setState( const Length x_position,
                                const Length y_position,
@@ -267,6 +267,41 @@ auto DagMCNavigator::getCurrentCell() const -> EntityId
   testPrecondition( this->isStateSet() );
 
   return d_dagmc_model->getCellHandler().getCellId( d_internal_ray.getCurrentCell() );
+}
+
+// Get the distance from the internal DagMC ray pos. to the nearest boundary in all directions
+auto DagMCNavigator::getDistanceToClosestBoundary() -> Length
+{
+  // Make sure that the ray is set
+  testPrecondition( this->isStateSet() );
+
+  moab::EntityHandle surface_hit_handle;
+
+  double raw_distance_to_surface;
+
+  moab::ErrorCode return_value =
+    d_dagmc_model->getRawDagMCInstance().closest_to_location(
+      d_internal_ray.getCurrentCell(),
+      d_internal_ray.getPosition(),
+      raw_distance_to_surface );
+
+  // Check for a ray misfire which can be caused by a poorly created geometry
+  // or by gaps in the surface facets, which can occur for properly created
+  // geometries.
+  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+                      DagMCGeometryError,
+                      moab::ErrorCodeStr[return_value] );
+
+  TEST_FOR_EXCEPTION(
+               raw_distance_to_surface < 0.0,
+               DagMCGeometryError,
+               "DagMC had a ray closest boundary misfire! Here are the details...\n"
+               "  Current Cell: "
+               << d_internal_ray.getCurrentCell() << "\n"
+               "  Position: "
+               << this->arrayToString( d_internal_ray.getPosition() ) );
+
+  return Length::from_value(raw_distance_to_surface);
 }
 
 // Get the distance from the internal DagMC ray pos. to the nearest boundary
@@ -326,7 +361,7 @@ bool DagMCNavigator::advanceToCellBoundaryImpl( double* surface_normal,
   testPrecondition( this->isStateSet() );
   // Make sure that the instersection surface is know
   testPrecondition( d_internal_ray.knowsIntersectionSurface() );
-  
+
   bool reflecting_boundary = false;
 
   moab::EntityHandle intersection_surface =
@@ -408,7 +443,7 @@ void DagMCNavigator::advanceBySubstepImpl( const Length substep_distance )
   testPrecondition( substep_distance.value() >= 0.0  );
   testPrecondition( substep_distance.value() <
                     d_internal_ray.getDistanceToIntersectionSurface());
-  
+
   d_internal_ray.advanceSubstep( substep_distance.value() );
 }
 
@@ -482,7 +517,7 @@ PointLocation DagMCNavigator::getPointLocationWithCellHandle(
     return POINT_INSIDE_CELL;
   }
 }
-  
+
 // Get the boundary cell handle
 moab::EntityHandle DagMCNavigator::getBoundaryCellHandle(
                        const moab::EntityHandle cell_handle,
@@ -580,7 +615,7 @@ moab::EntityHandle DagMCNavigator::findCellHandleContainingRay(
     {
       cell_handle = this->getBoundaryCellHandle( cell_handle,
                                                  surface_hit_handle );
-    } 
+    }
   }
 
   return cell_handle;
@@ -625,7 +660,7 @@ auto DagMCNavigator::fireRayWithCellHandle(
                                                    surface_hit_handle,
                                                    raw_distance_to_surface,
                                                    history );
-  
+
   // Check for a ray misfire which can be caused by a poorly created geometry
   // or by gaps in the surface facets, which can occur for properly created
   // geometries.
@@ -672,7 +707,7 @@ void DagMCNavigator::setStateWithCellHandle(
 {
   // Make sure that the direction is valid
   testPrecondition( Utility::isUnitVector( x_direction, y_direction, z_direction ) );
-  
+
   // Set the basic ray info
   d_internal_ray.set( x_position.value(),
                       y_position.value(),
@@ -720,7 +755,7 @@ DagMCNavigator* DagMCNavigator::clone() const
 //   const bool internal_ray_set = this->isStateSet();
 
 //   ar & BOOST_SERIALIZATION_NVP( internal_ray_set );
-  
+
 //   if( internal_ray_set )
 //   {
 //     EntityId current_cell = this->getCurrentCell();
@@ -754,11 +789,11 @@ DagMCNavigator* DagMCNavigator::clone() const
 //     ar & BOOST_SERIALIZATION_NVP( current_cell );
 //     ar & boost::serialization::make_nvp( "current_position", boost::serialization::make_array<double>( Utility::reinterpretAsRaw(current_position), 3 ) );
 //     ar & boost::serialization::make_nvp( "current_direction", boost::serialization::make_array<double>( current_direction, 3 ) );
-    
+
 //     dynamic_cast<Navigator*>(this)->setState( current_position, current_direction, current_cell );
 //   }
 // }
-  
+
 } // end Geometry namespace
 
 //---------------------------------------------------------------------------//
