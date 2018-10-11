@@ -23,29 +23,30 @@ MassiveParticleState::MassiveParticleState()
 
 // Constructor
 MassiveParticleState::MassiveParticleState(
-					const historyNumberType history_number,
-					const ParticleType type,
-					const chargeType charge )
+                                    const historyNumberType history_number,
+                                    const ParticleType type,
+                                    const chargeType charge )
   : ParticleState( history_number, type, charge ),
     d_speed( 0.0 )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
 MassiveParticleState::MassiveParticleState(
-				      const ParticleState& existing_base_state,
-				      const ParticleType new_type,
-				      const chargeType new_charge,
-				      const double new_rest_mass_energy,
-				      const bool increment_generation_number,
-				      const bool reset_collision_number )
+                                    const ParticleState& existing_base_state,
+                                    const ParticleType new_type,
+                                    const chargeType new_charge,
+                                    const double new_rest_mass_energy,
+                                    const bool increment_generation_number,
+                                    const bool reset_collision_number )
   : ParticleState( existing_base_state,
-		   new_type,
-		   new_charge,
-		   increment_generation_number,
-		   reset_collision_number ),
+                   new_type,
+                   new_charge,
+                   increment_generation_number,
+                   reset_collision_number,
+                   existing_base_state.getRaySafetyDistance() ),
     d_speed( MonteCarlo::calculateRelativisticSpeed(
-					    new_rest_mass_energy,
-					    existing_base_state.getEnergy() ) )
+                                            new_rest_mass_energy,
+                                            existing_base_state.getEnergy() ) )
 {
   // Make sure the new rest mass energy is valid
   testPrecondition( new_rest_mass_energy > 0.0 );
@@ -53,17 +54,18 @@ MassiveParticleState::MassiveParticleState(
 
 // Copy constructor (with possible creation of new generation)
 MassiveParticleState::MassiveParticleState(
-			      const MassiveParticleState& existing_state,
-			      const ParticleType new_type,
-			      const chargeType new_charge,
-			      const double new_rest_mass_energy,
-			      const bool increment_generation_number,
-			      const bool reset_collision_number )
+                                  const MassiveParticleState& existing_state,
+                                  const ParticleType new_type,
+                                  const chargeType new_charge,
+                                  const double new_rest_mass_energy,
+                                  const bool increment_generation_number,
+                                  const bool reset_collision_number )
   : ParticleState( existing_state,
-		   new_type,
-		   new_charge,
-		   increment_generation_number,
-		   reset_collision_number ),
+                   new_type,
+                   new_charge,
+                   increment_generation_number,
+                   reset_collision_number,
+                   existing_state.getRaySafetyDistance() ),
     d_speed()
 {
   // Make sure the new rest mass energy is valid
@@ -74,7 +76,7 @@ MassiveParticleState::MassiveParticleState(
   else
   {
     MonteCarlo::calculateRelativisticSpeed( new_rest_mass_energy,
-					 this->getEnergy() );
+                                         this->getEnergy() );
   }
 }
 
@@ -86,7 +88,7 @@ void MassiveParticleState::setEnergy( const ParticleState::energyType energy )
   ParticleState::setEnergy( energy );
 
   d_speed = MonteCarlo::calculateRelativisticSpeed( this->getRestMassEnergy(),
-						 energy );
+                                                 energy );
 }
 
 // Return the speed of the particle (cm/s)
@@ -108,8 +110,8 @@ void MassiveParticleState::setSpeed( const double speed )
   d_speed = speed;
 
   ParticleState::setEnergy( MonteCarlo::calculateRelativisticKineticEnergy(
-						     this->getRestMassEnergy(),
-						     d_speed ) );
+                                                     this->getRestMassEnergy(),
+                                                     d_speed ) );
 }
 
 // Calculate the time to traverse a distance

@@ -21,24 +21,25 @@ MasslessParticleState::MasslessParticleState()
 
 // Constructor
 MasslessParticleState::MasslessParticleState(
-                                        const historyNumberType history_number,
-                                        const ParticleType type,
-                                        const chargeType charge )
+                                    const historyNumberType history_number,
+                                    const ParticleType type,
+                                    const chargeType charge )
   : ParticleState( history_number, type, charge )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
 MasslessParticleState::MasslessParticleState(
-                                      const ParticleState& existing_base_state,
-                                      const ParticleType new_type,
-                                      const chargeType new_charge,
-                                      const bool increment_generation_number,
-                                      const bool reset_collision_number )
+                                    const ParticleState& existing_base_state,
+                                    const ParticleType new_type,
+                                    const chargeType new_charge,
+                                    const bool increment_generation_number,
+                                    const bool reset_collision_number )
   : ParticleState( existing_base_state,
                    new_type,
                    new_charge,
                    increment_generation_number,
-                   reset_collision_number )
+                   reset_collision_number,
+                   existing_base_state.getRaySafetyDistance() )
 { /* ... */ }
 
 // Return the speed of the particle (cm/s)

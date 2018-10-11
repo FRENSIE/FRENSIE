@@ -60,6 +60,9 @@ public:
   //! Typedef for weight type
   typedef double weightType;
 
+  //! Typedef for ray safety distance type
+  typedef double raySafetyType;
+
 private:
 
   // Typedef for QuantityTraits
@@ -72,15 +75,16 @@ public:
 
   //! Constructor
   ParticleState( const historyNumberType history_number,
-		 const ParticleType type,
-		 const chargeType charge );
+                 const ParticleType type,
+                 const chargeType charge );
 
   //! Copy constructor (with possible creation of new generation)
   ParticleState( const ParticleState& existing_base_state,
-		 const ParticleType new_type,
-		 const chargeType new_charge,
-		 const bool increment_generation_number,
-		 const bool reset_collision_number );
+                 const ParticleType new_type,
+                 const chargeType new_charge,
+                 const bool increment_generation_number,
+                 const bool reset_collision_number,
+                 const raySafetyType ray_safety_distance );
 
   //! Destructor
   virtual ~ParticleState()
@@ -131,8 +135,8 @@ public:
 
   //! Set the position of the particle
   void setPosition( const double x_position,
-		    const double y_position,
-		    const double z_position );
+                    const double y_position,
+                    const double z_position );
 
   //! Set the position of the particle
   void setPosition( const double position[3] );
@@ -151,15 +155,15 @@ public:
 
   //! Set the direction of the particle
   void setDirection( const double x_direction,
-		     const double y_direction,
-		     const double z_direction );
+                     const double y_direction,
+                     const double z_direction );
 
   //! Set the direction of the particle
   void setDirection( const double direction[3] );
 
   //! Rotate the direction of the particle using polar a. cos and azimuthal a.
   void rotateDirection( const double polar_angle_cosine,
-			const double azimuthal_angle );
+                        const double azimuthal_angle );
 
   //! Advance the particle along its direction by the requested distance
   void advance( double distance );
@@ -223,6 +227,12 @@ public:
 
   //! Multiply the weight of the particle by a factor
   void multiplyWeight( const double weight_factor );
+
+  //! Set the ray safety distance ( i.e. distance to the closest boundary )
+  void setRaySafetyDistance( const raySafetyType safety_distance );
+
+  //! Return the ray safety distance ( i.e. distance to the closest boundary )
+  raySafetyType getRaySafetyDistance() const;
 
   //! Return if the particle is lost
   bool isLost() const;
@@ -340,6 +350,9 @@ private:
 
   // The weight of the particle
   weightType d_weight;
+
+  // The ray safety distance ( i.e. distance to the closest boundary )
+  raySafetyType d_ray_safety_distance;
 
   // The source (starting) cell of the particle (history)
   Geometry::Model::EntityId d_source_cell;

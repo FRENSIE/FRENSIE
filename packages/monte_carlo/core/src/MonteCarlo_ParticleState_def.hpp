@@ -43,6 +43,7 @@ void ParticleState::save( Archive& ar, const unsigned version ) const
   ar & BOOST_SERIALIZATION_NVP( d_generation_number );
   ar & BOOST_SERIALIZATION_NVP( d_source_weight );
   ar & BOOST_SERIALIZATION_NVP( d_weight );
+  ar & BOOST_SERIALIZATION_NVP( d_ray_safety_distance );
   ar & BOOST_SERIALIZATION_NVP( d_source_cell );
   ar & BOOST_SERIALIZATION_NVP( d_lost );
   ar & BOOST_SERIALIZATION_NVP( d_gone );
@@ -74,6 +75,7 @@ void ParticleState::load( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_NVP( d_generation_number );
   ar & BOOST_SERIALIZATION_NVP( d_source_weight );
   ar & BOOST_SERIALIZATION_NVP( d_weight );
+  ar & BOOST_SERIALIZATION_NVP( d_ray_safety_distance );
   ar & BOOST_SERIALIZATION_NVP( d_source_cell );
   ar & BOOST_SERIALIZATION_NVP( d_lost );
   ar & BOOST_SERIALIZATION_NVP( d_gone );
@@ -93,7 +95,7 @@ void ParticleState::load( Archive& ar, const unsigned version )
   // We will not use the cell when we set the internal ray because the
   // particle may not be embeded in the same geometry as it was when it
   // was archived.
-  d_navigator->setState( position, direction );  
+  d_navigator->setState( position, direction );
 }
 
 } // end MonteCarlo namespace

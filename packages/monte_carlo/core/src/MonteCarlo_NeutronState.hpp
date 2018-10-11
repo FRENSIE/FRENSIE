@@ -47,13 +47,13 @@ public:
 
   //! Copy constructor (with possible creation of new generation)
   NeutronState( const ParticleState& existing_base_state,
-		const bool increment_generation_number = false,
-		const bool reset_collision_number = false );
+                const bool increment_generation_number = false,
+                const bool reset_collision_number = false );
 
   //! Copy constructor (with possible creation of new generation)
   NeutronState( const NeutronState& existing_base_state,
-		const bool increment_generation_number = false,
-		const bool reset_collision_number = false );
+                const bool increment_generation_number = false,
+                const bool reset_collision_number = false );
 
   //! Destructor
   ~NeutronState()
