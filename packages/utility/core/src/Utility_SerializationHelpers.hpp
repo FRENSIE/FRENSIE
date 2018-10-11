@@ -510,7 +510,31 @@ namespace extra_detail{ \
       boost::serialization::base_object<base_namespace::name >(*this)     \
   )
 
-#else // !defined SWIG
+/*! Allow shared from this
+ *
+ * This macro must be called from the global namespace. This macro must be 
+ * called if a class that can be serialized inherits from 
+ * std::enable_shared_from_this.
+ * \ingroup boost_serialization_helpers
+ */
+#define BOOST_SERIALIZATION_ENABLE_SHARED_FROM_THIS( type )     \
+  namespace boost{                                              \
+  namespace serialization{                                      \
+  template<class Archive>                                       \
+  inline void load_construct_data( Archive& ar, type* obj, const unsigned int file_version ) \
+  {                                                                     \
+    std::shared_ptr<type> shared_obj;                                     \
+    access::construct( obj );                                           \
+                                                                        \
+    boost::serialization::shared_ptr_helper<std::shared_ptr> & h =      \
+      ar.template get_helper<shared_ptr_helper<std::shared_ptr> >(      \
+                                                shared_ptr_helper_id ); \
+    h.reset( shared_obj, obj );                                         \
+  }                                                                     \
+  }                                                                     \
+  }
+
+#else // defined SWIG
 
 #define __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( ... )
 #define BOOST_SERIALIZATION_TEMPLATE_CLASS_VERSION_IMPL( ... )
@@ -548,6 +572,7 @@ namespace extra_detail{ \
 #define BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ... )
 #define BOOST_SERIALIZATION_ENUM_CASE( ... )
 #define BOOST_SERIALIZATION_BASE_OBJECT_NVP2( ... )
+#define BOOST_SERIALIZATION_ENABLE_SHARED_FROM_THIS( ... )
 
 #endif // end !defined SWIG
 

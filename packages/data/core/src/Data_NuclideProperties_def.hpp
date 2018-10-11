@@ -457,9 +457,10 @@ NuclideProperties::getSharedProperties(
                                       "file type " << file_type <<
                                       ", version " << table_version <<
                                       " and evaluation temp "
-                                      << evaluation_temp << " do not exist! "
-                                      "Data for the closes evaluation temp ("
-                                      << Utility::get<0>(*temp_grid_it) <<
+                                      << Utility::toString(evaluation_temp) <<
+                                      " do not exist! Data for the closes "
+                                      "evaluation temp ("
+                                      << Utility::toString(Utility::get<0>(*temp_grid_it)) <<
                                       ") will be returned!" );
         }
       }

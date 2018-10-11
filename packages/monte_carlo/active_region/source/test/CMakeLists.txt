@@ -8,6 +8,13 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 FRENSIE_ADD_TEST_EXECUTABLE(StandardParticleSourceComponent DEPENDS tstStandardParticleSourceComponent.cpp)
 FRENSIE_ADD_TEST(StandardParticleSourceComponent)
 
+FRENSIE_ADD_TEST_EXECUTABLE(StandardParticleSourceComponentDagMC
+  DEPENDS tstStandardParticleSourceComponentDagMC.cpp
+  LIB_DEPENDS geometry_dagmc)
+FRENSIE_ADD_TEST(StandardParticleSourceComponentDagMC
+  EXTRA_ARGS
+  --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_source_geom.h5m)
+
 FRENSIE_ADD_TEST_EXECUTABLE(StandardAdjointParticleSourceComponent
   DEPENDS tstStandardAdjointParticleSourceComponent.cpp
   TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
