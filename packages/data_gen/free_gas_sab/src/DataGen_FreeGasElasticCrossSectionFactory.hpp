@@ -22,6 +22,9 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
+#include "DataGen_FreeGasElasticSAlphaBetaFunction.hpp"
+#include "DataGen_FreeGasElasticMarginalAlphaFunction.hpp"
+#include "DataGen_FreeGasElasticMarginalBetaFunction.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Utility_SearchAlgorithms.hpp"
@@ -68,8 +71,20 @@ private:
   // Extract the cross section from the specified 
   void extractCrossSectionFromACE();
 
+  // Extract the angular distribution from ACE (if exists)
+  void extractAngularDistributionFromACE();
+
   // Convert cross section to zero-temperature cross section
   void convertCrossSectionToZeroTemperature();
+
+  // Generate the free gas S(alpha,beta) cross section 
+  void generateFreeGasCrossSection();
+
+  // Generate the free gas beta distribution for each incoming energy
+  void generateFreeGasBetaDistribution();
+
+  // Generate the free gas alpha distribution for each incoming energy and beta
+  void generateFreeGasAlphaDistribution();
 
 // Variables 
 
@@ -82,15 +97,44 @@ const bool d_is_ascii;
 // Nuclear parameters
 double d_A;
 double d_kT;
+double d_energy_cutoff;
+double d_pi3;
 
 // Unmodified elastic cross section
 Teuchos::Array<double> d_unmodified_elastic_cross_section;
 
+// ACE angular distribution
+Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>
+  d_ace_angular_distribution;
+
 // Zero temperature cross section
 Teuchos::Array<double> d_zero_temperature_cross_section;
 
+// Unmodified elastic cross section distribution
+Teuchos::RCP<Utility::OneDDistribution> d_zero_temperature_cross_section_distribution;
+
+// Free-gas cross section 
+Teuchos::Array<double> d_free_gas_cross_section;
+
+// Free-gas cross section distribution
+Teuchos::RCP<Utility::OneDDistribution> d_free_gas_cross_section_distribution;
+
 // Energy grid from the ACE Table
 Teuchos::Array<double> d_energy_array;
+
+// Free gas beta distributions
+boost::unordered_map<double, Teuchos::Array<double> >
+  d_free_gas_beta_distributions;
+
+// Free gas alpha distributions
+boost::unordered_map< std::pair<double, double>, Teuchos::Array<double> >
+  d_free_gas_alpha_distributions;
+
+// Beta Function
+Teuchos::RCP<DataGen::FreeGasElasticMarginalBetaFunction> d_beta_function;
+
+// Alpha Function
+Teuchos::RCP<DataGen::FreeGasElasticMarginalAlphaFunction> d_alpha_function;
 
 };
 
