@@ -32,6 +32,7 @@
 #include "MonteCarlo_CellCollisionFluxEstimator.hpp"
 #include "MonteCarlo_MeshTrackLengthFluxEstimator.hpp"
 
+#include "MonteCarlo_ParticleResponse.hpp"
 using namespace MonteCarlo;
 %}
 
@@ -58,6 +59,10 @@ using namespace MonteCarlo;
 
 // Import the PyFrensie_ArraySharedPtr.i
 %include "PyFrensie_ArraySharedPtr.i"
+
+// Import the MonteCarlo_ParticleResponse.hpp
+%shared_ptr(MonteCarlo::ParticleResponse)
+%import "MonteCarlo_ParticleResponse.hpp"
 
 // Add a few general typedefs
 typedef unsigned int uint32_t;

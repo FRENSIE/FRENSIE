@@ -20,6 +20,7 @@
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_MasslessParticleState.hpp"
 #include "MonteCarlo_MassiveParticleState.hpp"
+#include "MonteCarlo_ChargedParticleState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ElectronState.hpp"
@@ -187,6 +188,13 @@ typedef unsigned long int uint64_t;
 
 %shared_ptr(MonteCarlo::MassiveParticleState)
 %include "MonteCarlo_MassiveParticleState.hpp"
+
+// ---------------------------------------------------------------------------//
+// Add ChargedParticleState support
+// ---------------------------------------------------------------------------//
+
+%shared_ptr(MonteCarlo::ChargedParticleState)
+%include "MonteCarlo_ChargedParticleState.hpp"
 
 // ---------------------------------------------------------------------------//
 // Add NeutronState support
