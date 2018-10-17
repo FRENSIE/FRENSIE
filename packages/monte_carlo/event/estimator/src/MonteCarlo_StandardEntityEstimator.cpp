@@ -70,7 +70,7 @@ Utility::ArrayView<const double> StandardEntityEstimator::getEntityTotalDataFirs
 {
   // Make sure the entity is assigned to the estimator
   testPrecondition( this->isEntityAssigned( entity_id ) );
-  
+
   const Estimator::FourEstimatorMomentsCollection& entity_collection =
     d_entity_total_estimator_moments_map.find( entity_id )->second;
 
@@ -84,7 +84,7 @@ Utility::ArrayView<const double> StandardEntityEstimator::getEntityTotalDataSeco
 {
   // Make sure the entity is assigned to the estimator
   testPrecondition( this->isEntityAssigned( entity_id ) );
-  
+
   const Estimator::FourEstimatorMomentsCollection& entity_collection =
     d_entity_total_estimator_moments_map.find( entity_id )->second;
 
@@ -98,7 +98,7 @@ Utility::ArrayView<const double> StandardEntityEstimator::getEntityTotalDataThir
 {
   // Make sure the entity is assigned to the estimator
   testPrecondition( this->isEntityAssigned( entity_id ) );
-  
+
   const Estimator::FourEstimatorMomentsCollection& entity_collection =
     d_entity_total_estimator_moments_map.find( entity_id )->second;
 
@@ -112,7 +112,7 @@ Utility::ArrayView<const double> StandardEntityEstimator::getEntityTotalDataFour
 {
   // Make sure the entity is assigned to the estimator
   testPrecondition( this->isEntityAssigned( entity_id ) );
-  
+
   const Estimator::FourEstimatorMomentsCollection& entity_collection =
     d_entity_total_estimator_moments_map.find( entity_id )->second;
 
@@ -300,7 +300,7 @@ void StandardEntityEstimator::reduceData( const Utility::Communicator& comm,
                        root_process,
                        0,
                        d_entity_total_estimator_moments_map );
-      } 
+      }
     }
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
                              "Unable to perform mpi reduction in "
@@ -308,7 +308,7 @@ void StandardEntityEstimator::reduceData( const Utility::Communicator& comm,
                              " for entity total data!" );
 
     comm.barrier();
-    
+
     // Reduce the total data
     try{
       this->reduceCollection( comm, root_process, d_total_estimator_moments );
@@ -343,13 +343,13 @@ void StandardEntityEstimator::reduceEntityCollections(
         {
           Utility::getCurrentScore<1>( entity_data.second, i ) +=
             Utility::getCurrentScore<1>( other_entity_data.second, i );
-          
+
           Utility::getCurrentScore<2>( entity_data.second, i ) +=
             Utility::getCurrentScore<2>( other_entity_data.second, i );
-          
+
           Utility::getCurrentScore<3>( entity_data.second, i ) +=
             Utility::getCurrentScore<3>( other_entity_data.second, i );
-          
+
           Utility::getCurrentScore<4>( entity_data.second, i ) +=
             Utility::getCurrentScore<4>( other_entity_data.second, i );
         }
@@ -449,9 +449,9 @@ void StandardEntityEstimator::addPartialHistoryPointContribution(
   testPrecondition( this->isEntityAssigned( entity_id ) );
   // Make sure that the particle type is assigned
   testPrecondition( this->isParticleTypeAssigned( particle_state_wrapper.getParticleState().getParticleType() ) );
-  
+
   const size_t thread_id = Utility::OpenMPProperties::getThreadId();
-    
+
   // Only add the contribution if the particle state is in the phase space
   if( this->isPointInEstimatorPhaseSpace( particle_state_wrapper ) )
   {
@@ -463,7 +463,7 @@ void StandardEntityEstimator::addPartialHistoryPointContribution(
       this->calculateBinIndicesOfPoint( particle_state_wrapper,
                                         r,
                                         bin_indices );
-      
+
       const double processed_contribution = contribution*
         this->evaluateResponseFunction(
                                 particle_state_wrapper.getParticleState(), r );
@@ -475,7 +475,7 @@ void StandardEntityEstimator::addPartialHistoryPointContribution(
                                       bin_indices[i],
                                       processed_contribution );
       }
-      
+
       bin_indices.clear();
     }
   }
@@ -501,9 +501,9 @@ void StandardEntityEstimator::addPartialHistoryRangeContribution(
   testPrecondition( this->isEntityAssigned( entity_id ) );
   // Make sure that the particle type is assigned
   testPrecondition( this->isParticleTypeAssigned( particle_state_wrapper.getParticleState().getParticleType() ) );
-  
+
   const size_t thread_id = Utility::OpenMPProperties::getThreadId();
-    
+
   // Only add the contribution if the particle state is in the phase space
   if( this->doesRangeIntersectEstimatorPhaseSpace( particle_state_wrapper ) )
   {
@@ -514,19 +514,17 @@ void StandardEntityEstimator::addPartialHistoryRangeContribution(
                                                 0,
                                                 bin_indices_and_weights );
 
-    //std::cout << bin_indices_and_weights << std::endl;
-    
     for( size_t r = 0; r < this->getNumberOfResponseFunctions(); ++r )
     {
       const size_t bin_index_shift = r*this->getNumberOfBins();
-      
+
       for( size_t i = 0; i < bin_indices_and_weights.size(); ++i )
       {
         const double processed_contribution = contribution*
           Utility::get<1>( bin_indices_and_weights[i] )*
           this->evaluateResponseFunction(
                                 particle_state_wrapper.getParticleState(), r );
-        
+
         const size_t complete_bin_index =
           Utility::get<0>( bin_indices_and_weights[i] ) + bin_index_shift;
 
@@ -597,12 +595,12 @@ void StandardEntityEstimator::commitHistoryContributionToTotalOfEntity(
 		    this->getNumberOfResponseFunctions() );
   // Make sure the contribution is valid
   testPrecondition( !Utility::QuantityTraits<double>::isnaninf( contribution ) );
-  
+
   Estimator::FourEstimatorMomentsCollection&
     entity_total_estimator_moments_collection =
     d_entity_total_estimator_moments_map[entity_id];
 
-  // Update the moments 
+  // Update the moments
   #pragma omp critical
   {
     entity_total_estimator_moments_collection.addRawScore( response_function_index, contribution );
@@ -642,7 +640,7 @@ void StandardEntityEstimator::addInfoToUpdateTracker(
 
   BinContributionMap::iterator entity_bin_data =
     thread_entity_bin_contribution_map.find( bin_index );
-  
+
   if( entity_bin_data != thread_entity_bin_contribution_map.end() )
     entity_bin_data->second += contribution;
   else
@@ -683,10 +681,10 @@ void StandardEntityEstimator::resetUpdateTracker( const size_t thread_id )
 {
   d_update_tracker[thread_id].clear();
 }
-  
+
 EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardEntityEstimator );
 
-} // end MonteCarlo namespace  
+} // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardEntityEstimator.cpp

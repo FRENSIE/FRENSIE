@@ -235,6 +235,51 @@ typedef unsigned int uint32_t;
 %shared_ptr( MonteCarlo::StandardEntityEstimator )
 %include "MonteCarlo_StandardEntityEstimator.hpp"
 
+//---------------------------------------------------------------------------//
+// Add StandardEntityEstimator Testing Struct
+//---------------------------------------------------------------------------//
+%shared_ptr( TestStandardEntityEstimator )
+%inline %{
+
+class TestStandardEntityEstimator : public MonteCarlo::StandardEntityEstimator
+{
+public:
+  TestStandardEntityEstimator( const unsigned long long id,
+			       const double multiplier,
+			       const std::vector<uint64_t>& entity_ids,
+			       const std::vector<double>& entity_norm_constants )
+    : MonteCarlo::StandardEntityEstimator( id,
+                                           multiplier,
+                                           entity_ids,
+                                           entity_norm_constants )
+  { /* ... */ }
+
+  ~TestStandardEntityEstimator()
+  { /* ... */ }
+
+  //! Check if the estimator is a cell estimator
+  bool isCellEstimator() const final override
+  { return false; }
+
+  //! Check if the estimator is a surface estimator
+  bool isSurfaceEstimator() const final override
+  { return false; }
+
+  //! Check if the estimator is a mesh estimator
+  bool isMeshEstimator() const final override
+  { return false; }
+
+  void printSummary( std::ostream& os ) const final override
+  { this->printImplementation( os, "Surface" ); }
+
+  // Allow public access to the standard entity estimator protected mem. funcs.
+  using MonteCarlo::StandardEntityEstimator::addPartialHistoryPointContribution;
+  using MonteCarlo::StandardEntityEstimator::addPartialHistoryRangeContribution;
+  using MonteCarlo::StandardEntityEstimator::assignDiscretization;
+};
+
+%}
+
 // ---------------------------------------------------------------------------//
 // Add StandardSurfaceEstimator support
 // ---------------------------------------------------------------------------//
