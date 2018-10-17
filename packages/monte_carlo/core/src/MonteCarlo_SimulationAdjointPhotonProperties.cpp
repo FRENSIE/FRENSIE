@@ -10,6 +10,7 @@
 #include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_SimulationAdjointPhotonProperties.hpp"
 #include "Utility_SortAlgorithms.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
@@ -33,8 +34,18 @@ SimulationAdjointPhotonProperties::SimulationAdjointPhotonProperties()
 void SimulationAdjointPhotonProperties::setMinAdjointPhotonEnergy( const double energy )
 {
   // Make sure the energy is valid
-  testPrecondition( energy >= s_absolute_min_adjoint_photon_energy );
-  testPrecondition( energy < d_max_adjoint_photon_energy );
+  TEST_FOR_EXCEPTION( energy < s_absolute_min_adjoint_photon_energy,
+                      std::runtime_error,
+                      "The min adjoint photon energy must be greater than or "
+                      "equal to "
+                      << Utility::toString(s_absolute_min_adjoint_photon_energy) <<
+                      "!" );
+  TEST_FOR_EXCEPTION( energy >= d_max_adjoint_photon_energy,
+                      std::runtime_error,
+                      "The min adjoint photon energy must be strictly less "
+                      "than the max adjoint photon energy ("
+                      << Utility::toString(d_max_adjoint_photon_energy) <<
+                      ")!" );
 
   d_min_adjoint_photon_energy = energy;
 }
@@ -55,8 +66,18 @@ double SimulationAdjointPhotonProperties::getAbsoluteMinAdjointPhotonEnergy()
 void SimulationAdjointPhotonProperties::setMaxAdjointPhotonEnergy( const double energy )
 {
   // Make sure the energy is valid
-  testPrecondition( energy > d_min_adjoint_photon_energy );
-  testPrecondition( energy <= s_absolute_max_adjoint_photon_energy );
+  TEST_FOR_EXCEPTION( energy <= d_min_adjoint_photon_energy,
+                      std::runtime_error,
+                      "The max adjoint photon energy must be strictly greater "
+                      "than the min adjoint photon energy ("
+                      << Utility::toString(d_min_adjoint_photon_energy) <<
+                      ")!" );
+  TEST_FOR_EXCEPTION( energy > s_absolute_max_adjoint_photon_energy,
+                      std::runtime_error,
+                      "The max adjoint photon energy must be less that or "
+                      "equal to "
+                      << Utility::toString(s_absolute_max_adjoint_photon_energy) <<
+                      "!" );
 
   d_max_adjoint_photon_energy = energy;
 }
@@ -78,7 +99,9 @@ void SimulationAdjointPhotonProperties::setNumberOfAdjointPhotonHashGridBins(
                                                           const unsigned bins )
 {
   // Make sure the number of bins is valid
-  testPrecondition( bins >= 1 );
+  TEST_FOR_EXCEPTION( bins == 0,
+                      std::runtime_error,
+                      "At least on hash grid bin must be assigned!" );
 
   d_num_adjoint_photon_hash_grid_bins = bins;
 }
@@ -110,16 +133,26 @@ void SimulationAdjointPhotonProperties::setCriticalAdjointPhotonLineEnergies(
                          const std::vector<double>& critical_line_energies )
 {
   // Make sure there is at least one energy
-  testPrecondition( critical_line_energies.size() > 0 );
+  TEST_FOR_EXCEPTION( critical_line_energies.empty(),
+                      std::runtime_error,
+                      "There must be at least one critical line energy!" );
   // Make sure the critical line energies are sorted
-  testPrecondition( Utility::Sort::isSortedAscending(
+  TEST_FOR_EXCEPTION( !Utility::Sort::isSortedAscending(
                                               critical_line_energies.begin(),
-                                              critical_line_energies.end() ) );
+                                              critical_line_energies.end() ),
+                      std::runtime_error,
+                      "The critical line energies must be sorted!" );
   // Make sure the critical line energies are valid
-  testPrecondition( critical_line_energies.back() <=
-                    d_max_adjoint_photon_energy );
-  testPrecondition( critical_line_energies.front() >=
-                    d_min_adjoint_photon_energy );
+  TEST_FOR_EXCEPTION( critical_line_energies.back() >
+                      d_max_adjoint_photon_energy,
+                      std::runtime_error,
+                      "The max critical line energy must be less than or "
+                      "or equal to the max adjoint photon energy!" );
+  TEST_FOR_EXCEPTION( critical_line_energies.front() <
+                      d_min_adjoint_photon_energy,
+                      std::runtime_error,
+                      "The min critical line energy must be greater than or "
+                      "equal to the min adjoint photon energy!" );
 
   d_critical_line_energies = critical_line_energies;
 }

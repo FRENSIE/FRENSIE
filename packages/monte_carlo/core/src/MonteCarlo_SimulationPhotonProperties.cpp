@@ -10,6 +10,7 @@
 #include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_SimulationPhotonProperties.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
@@ -40,8 +41,16 @@ SimulationPhotonProperties::SimulationPhotonProperties()
 void SimulationPhotonProperties::setMinPhotonEnergy( const double energy )
 {
   // Make sure the energy is valid
-  testPrecondition(energy >= s_absolute_min_photon_energy);
-  testPrecondition( energy < d_max_photon_energy );
+  TEST_FOR_EXCEPTION( energy < s_absolute_min_photon_energy,
+                      std::runtime_error,
+                      "The min photon energy must be greater than or equal to "
+                      << Utility::toString(s_absolute_min_photon_energy) <<
+                      "!" );
+  TEST_FOR_EXCEPTION( energy >= d_max_photon_energy,
+                      std::runtime_error,
+                      "The min photon energy must be strictly less than the "
+                      "max photon energy ("
+                      << Utility::toString(d_max_photon_energy) << ")!" );
 
   d_min_photon_energy = energy;
 }
@@ -62,8 +71,16 @@ double SimulationPhotonProperties::getAbsoluteMinPhotonEnergy()
 void SimulationPhotonProperties::setMaxPhotonEnergy( const double energy )
 {
   // Make sure the energy is valid
-  testPrecondition(energy > d_min_photon_energy );
-  testPrecondition(energy <= s_absolute_max_photon_energy);
+  TEST_FOR_EXCEPTION( energy <= d_min_photon_energy,
+                      std::runtime_error,
+                      "The max photon energy must be strictly greater than "
+                      "the min photon energy ("
+                      << Utility::toString(d_min_photon_energy) << ")!" );
+  TEST_FOR_EXCEPTION( energy > s_absolute_max_photon_energy,
+                      std::runtime_error,
+                      "The max photon energy must be less than or equal to "
+                      << Utility::toString(s_absolute_max_photon_energy) <<
+                      "!" );
 
   d_max_photon_energy = energy;
 }
@@ -84,7 +101,12 @@ double SimulationPhotonProperties::getAbsoluteMaxPhotonEnergy()
 void SimulationPhotonProperties::setKahnSamplingCutoffEnergy( const double energy )
 {
   // Make sure the energy is valid
-  testPrecondition( energy >= s_absolute_min_kahn_sampling_cutoff_energy );
+  TEST_FOR_EXCEPTION( energy < s_absolute_min_kahn_sampling_cutoff_energy,
+                      std::runtime_error,
+                      "The Kahn sampling cutoff energy must be greater than "
+                      "or equal to the theoretical cutoff energy ("
+                      << Utility::toString(s_absolute_min_kahn_sampling_cutoff_energy) <<
+                      ")!" );
 
   d_kahn_sampling_cutoff_energy = energy;
 }
@@ -106,7 +128,9 @@ void SimulationPhotonProperties::setNumberOfPhotonHashGridBins(
                                                           const unsigned bins )
 {
   // Make sure the number of bins is valid
-  testPrecondition( bins >= 1 );
+  TEST_FOR_EXCEPTION( bins == 0,
+                      std::runtime_error,
+                      "At least one hash grid bin must be set!" );
 
   d_num_photon_hash_grid_bins = bins;
 }

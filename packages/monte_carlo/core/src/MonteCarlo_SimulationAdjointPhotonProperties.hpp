@@ -60,8 +60,7 @@ public:
   unsigned getNumberOfAdjointPhotonHashGridBins() const;
 
   //! Set the incoherent adjoint model type
-  void setIncoherentAdjointModelType(
-                                      const IncoherentAdjointModelType model );
+  void setIncoherentAdjointModelType( const IncoherentAdjointModelType model );
 
   //! Return the incoherent adjoint model type
   IncoherentAdjointModelType getIncoherentAdjointModelType() const;
