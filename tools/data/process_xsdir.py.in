@@ -10,6 +10,7 @@
 from optparse import *
 import PyFrensie.Data as Data
 import PyFrensie.Utility as Utility
+import os.path
 
 # Parse the command-line arguments
 parser = OptionParser()
@@ -28,13 +29,18 @@ if __name__ == "__main__":
     if not options.log_file is None:
         Utility.initializeSynchronousLogs( options.log_file )
 
-    xsdir = Data.Xsdir( options.xsdir_file, True )
+    if os.path.isfile( options.xsdir_file ):
 
-    database = Data.ScatteringCenterPropertiesDatabase()
+      xsdir = Data.Xsdir( options.xsdir_file, True )
 
-    xsdir.exportData( database )
+      database = Data.ScatteringCenterPropertiesDatabase()
 
-    database.saveToFile( options.db_name, options.overwrite )
+      xsdir.exportData( database )
+
+      database.saveToFile( options.db_name, options.overwrite )
+
+    else:
+      print "Error: xsdir file (", options.xsdir_file, ") does not exist!"
 
 ##---------------------------------------------------------------------------##
 ## process_xsdir.py

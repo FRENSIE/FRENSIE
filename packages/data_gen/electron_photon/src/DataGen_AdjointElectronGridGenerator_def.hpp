@@ -21,54 +21,53 @@
 namespace DataGen{
 
 // Constructor
-/*! \details The Adjoint Electron Grid Generator should only be used for
- * adjoint bremsstrahlung and electroionization subshell reactions and requires
- * the proper forward electroatomic reaction. The primary energy grid should be
- * the incoming energy grid for the 2-D distribution of the electroatomic
- * reaction.The max energy will be used to test the input incoming energy grid
- * (if values in the input grid that are greater than the max energy are found
- * an exception will be thrown). The max incoming energy plus the max energy
- * nudge value will be used as the upper limit for the outgoing energy grid.
- * The max energy nudge value must be greater than 0.0 to avoid an invalid
+/*! \details The Adjoint Electron Grid Generator should only be used for adjoint
+ * bremsstrahlung and electroionization subshell reactions and requires
+ * functions for evaluating the forward cross section and pdf as well as a
+ * function to evaluate the minimum outgoing adjoint energy given an incoming
+ * adjoint energy. The forward cross section evaluator function should take the
+ * forward incoming energy. The forward pdf evaluator function should take the
+ * forward incoming energy and the forward outgoing electron energy. The minimum
+ * outgoing adjoint energy evaluator function should take the adjoint incoming
+ * energy. The primary energy grid should be the incoming energy grid for the
+ * 2-D distributions. The max energy will be used to test the input incoming
+ * energy grid (if values in the input grid that are greater than the max energy
+ * are found an exception will be thrown). The min_outgoing_adjoint_energy
+ * functor plus the min energy nudge value will be used to determine the
+ * lowering limits of integration when evaluating the adjoint cross section as
+ * well as set the minumum nudged outgoing energy for secondary distributions.
+ * The max energy nudge value must be greater than zero to avoid an invalid
  * outgoing energy grid at the max incoming energy (each outgoing energy grid
- * must have at least two distinct points). The incoming energy plus the energy
- * to outgoing energy nudge value will be used as the lower limit for the
- * outgoing energy grid. Setting a value of 0.0 means that every outgoing energy
- * grid will start at the corresponding energy. This can be problematic for log
- * interpolation since the adjoint electron cross section is zero when the
- * incoming energy is equal to the outgoing energy (for inelastic reactions).
- * By pushing the first outgoing energy slightly above the corresponding energy
- * with this value, that problem can be avoided (usually leading to smaller
- * grids that converge faster). Note: when generating grids for subshell
- * electroionization distributions the max energy nudge value should be greater
- * than the binding energy and the energy to outgoing energy nudge value should
- * be greater than or equal to the binding energy since the cross section goes
- * to zero when the incoming energy is equal to the outgoing energy minus the
- * binding energy.
+ * must have at least two distinct points).
  */
-template<typename ElectroatomicReaction, typename TwoDInterpPolicy>
-AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::AdjointElectronGridGenerator(
-      const std::shared_ptr<const ElectroatomicReaction>& electroatomic_reaction,
+template<typename TwoDInterpPolicy>
+AdjointElectronGridGenerator<TwoDInterpPolicy>::AdjointElectronGridGenerator(
+      const std::function<double(const double&)>& forward_cs_evaluator,
+      const std::function<double(const double&, const double&)>& forward_pdf_evaluator,
+      const std::function<double(const double&)>& min_outgoing_adjoint_energy,
       const std::vector<double>& primary_energy_grid,
       const double min_energy,
       const double max_energy,
+      const double min_energy_nudge_value,
       const double max_energy_nudge_value,
-      const double energy_to_outgoing_energy_nudge_value,
       const double convergence_tol,
       const double absolute_diff_tol,
       const double distance_tol )
   : Utility::TwoDGridGenerator<TwoDInterpPolicy>( convergence_tol,
                                                   absolute_diff_tol,
                                                   distance_tol ),
-    d_electroatomic_reaction( electroatomic_reaction ),
+    d_forward_cs_evaluator( forward_cs_evaluator ),
+    d_forward_pdf_evaluator( forward_pdf_evaluator ),
+    d_min_outgoing_adjoint_energy( min_outgoing_adjoint_energy ),
     d_primary_energy_grid( primary_energy_grid ),
     d_min_energy( min_energy ),
     d_max_energy( max_energy ),
-    d_nudged_max_energy( max_energy + max_energy_nudge_value ),
-    d_energy_to_outgoing_energy_nudge_value(  energy_to_outgoing_energy_nudge_value )
+    d_min_energy_nudge_value( min_energy_nudge_value ),
+    d_nudged_max_energy( d_min_outgoing_adjoint_energy(max_energy) + max_energy_nudge_value )
 {
-  // Make sure the reaction is valid
-  testPrecondition( electroatomic_reaction.use_count() > 0 );
+  // // Make sure the forward evaluators are valid
+  testPrecondition( forward_cs_evaluator );
+  testPrecondition( forward_pdf_evaluator );
 
   // Make sure the primary_energy_grid is valid
   testPrecondition( primary_energy_grid.size() > 0 );
@@ -81,11 +80,7 @@ AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::AdjointEle
   testPrecondition( min_energy < max_energy );
   // Make sure the max energy nudge value is valid
   testPrecondition( max_energy_nudge_value > 0.0 );
-  testPrecondition( max_energy + max_energy_nudge_value <= 1e5 );
-  // Make sure the energy to outgoing energy nudge value is valid
-  testPrecondition( energy_to_outgoing_energy_nudge_value >= 0.0 );
-  testPrecondition( energy_to_outgoing_energy_nudge_value <=
-                    max_energy_nudge_value );
+  testPrecondition( d_nudged_max_energy <= 1e5 );
 
   std::vector<double>::iterator start, end;
 
@@ -124,17 +119,35 @@ AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::AdjointEle
 }
 
 // Get the min energy
-template<typename ElectroatomicReaction, typename TwoDInterpPolicy>
-double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::getMinEnergy() const
+template<typename TwoDInterpPolicy>
+double AdjointElectronGridGenerator<TwoDInterpPolicy>::getMinEnergy() const
 {
   return d_min_energy;
 }
 
 // Get the max energy
-template<typename ElectroatomicReaction, typename TwoDInterpPolicy>
-double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::getMaxEnergy() const
+template<typename TwoDInterpPolicy>
+double AdjointElectronGridGenerator<TwoDInterpPolicy>::getMaxEnergy() const
 {
   return d_max_energy;
+}
+
+// Set the min energy nudge value
+/*! \details The min outgoing energy function plus the min energy nudge value
+ * will be used as the lower limit for the outgoing energy grid.
+ * Note: Roundoff error can sometimes cause min outgoing energy function to be
+ * slightly below the actual min outgoing energy. To ensure a non-zero pdf value
+ * at the min outgoing energy, the min energy nudge value should be at least
+ * slightly greater than zero.
+ */
+template<typename TwoDInterpPolicy>
+void AdjointElectronGridGenerator<TwoDInterpPolicy>::setMinEnergyNudgeValue(
+                                          const double min_energy_nudge_value )
+{
+  // Make sure the max energy nudge value is valid
+  testPrecondition( min_energy_nudge_value >= 0.0 );
+
+  d_min_energy_nudge_value = min_energy_nudge_value;
 }
 
 // Set the max energy nudge value
@@ -143,67 +156,47 @@ double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::get
  * greater than 0.0 to avoid an invalid outgoing energy grid at the max incoming
  * energy (each outgoing energy grid must have at least two distinct points).
  * Note: when generating grids for subshell electroionization distributions the
- * max energy nudge value should be greater than the binding energy since the
- * cross section goes to zero when the incoming energy is equal to the outgoing
- * energy minus the binding energy.
+ * min outgoing adjoint energy function should take into account the binding
+ * energy.
  */
-template<typename ElectroatomicReaction, typename TwoDInterpPolicy>
-void AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::setMaxEnergyNudgeValue(
+template<typename TwoDInterpPolicy>
+void AdjointElectronGridGenerator<TwoDInterpPolicy>::setMaxEnergyNudgeValue(
                                           const double max_energy_nudge_value )
 {
   // Make sure the max energy nudge value is valid
   testPrecondition( max_energy_nudge_value > 0.0 );
-  
-  d_nudged_max_energy = d_max_energy + max_energy_nudge_value;
+
+  d_nudged_max_energy = d_min_outgoing_adjoint_energy(d_max_energy) + max_energy_nudge_value;
 }
 
 // Get the nudged max energy
-template<typename ElectroatomicReaction, typename TwoDInterpPolicy>
-double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::getNudgedMaxEnergy() const
+template<typename TwoDInterpPolicy>
+double AdjointElectronGridGenerator<TwoDInterpPolicy>::getNudgedMaxEnergy() const
 {
   return d_nudged_max_energy;
 }
 
-// Set the incoming energy to max outgoing energy nudge value
-/*! \details The incoming energy plus the energy to outgoing energy nudge value
- * will be used as the lower limit for numerical integration and the basis for
- * the outgoing energy grid. Setting a value of 0.0 means that every outgoing
- * energy grid will start at the corresponding energy. This can be problematic
- * for log interpolation since the adjoint electron cross section is zero when
- * the incoming energy is equal to the outgoing energy (for inelastic reactions).
- * By pushing the first outgoing energy slightly above the corresponding
- * incoming energy with this value, that problem can be avoided
- * (usually leading to smaller grids that converge faster). Note: when
- * generating grids for subshell electroionization distributions the energy to
- * max energy nudge value should be greater than or equal to the binding energy
- * since the cross section goes to zero when the energy is equal to the max
- * energy minus the binding energy.
- */
-template<typename ElectroatomicReaction, typename TwoDInterpPolicy>
-void AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::setEnergyToOutgoingEnergyNudgeValue(
-                                const double  energy_to_outgoing_energy_nudge_value )
-{
-  // Make sure the energy to outgoing energy nudge value is valid
-  testPrecondition(  energy_to_outgoing_energy_nudge_value >= 0.0 );
-  
-  d_energy_to_outgoing_energy_nudge_value =  energy_to_outgoing_energy_nudge_value;
-}
-
 // Get the nudged energy
-template<typename ElectroatomicReaction, typename TwoDInterpPolicy>
-double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::getNudgedEnergy(
+template<typename TwoDInterpPolicy>
+double AdjointElectronGridGenerator<TwoDInterpPolicy>::getNudgedMinEnergy(
                                                     const double energy ) const
 {
-  return energy + d_energy_to_outgoing_energy_nudge_value;
+  return d_min_outgoing_adjoint_energy(energy) + d_min_energy_nudge_value;
 }
 
 // Evaluate the adjoint PDF
-template<typename ElectroatomicReaction, typename TwoDInterpPolicy>
-double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::evaluateAdjointPDF(
+template<typename TwoDInterpPolicy>
+double AdjointElectronGridGenerator<TwoDInterpPolicy>::evaluateAdjointPDF(
         const double incoming_adjoint_energy,
         const double outgoing_adjoint_energy,
         const double precision ) const
 {
+  testPrecondition( outgoing_adjoint_energy > incoming_adjoint_energy );
+
+  if( outgoing_adjoint_energy > this->getNudgedMaxEnergy() )
+  {
+    return 0.0;
+  }
 
   double adjoint_cross_section =
     this->evaluateAdjointCrossSection(
@@ -217,17 +210,17 @@ double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::eva
 }
 
 // Evaluate the adjoint PDF
-template<typename ElectroatomicReaction, typename TwoDInterpPolicy>
-double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::evaluateAdjointPDF(
+template<typename TwoDInterpPolicy>
+double AdjointElectronGridGenerator<TwoDInterpPolicy>::evaluateAdjointPDF(
         const double adjoint_cross_section,
         const double incoming_adjoint_energy,
         const double outgoing_adjoint_energy,
         const double precision ) const
 {
   double forward_differential_cs =
-    d_electroatomic_reaction->getDifferentialCrossSection(
-        outgoing_adjoint_energy,
-        incoming_adjoint_energy );
+    this->evaluateAdjointDifferentialCrossSection(
+        incoming_adjoint_energy,
+        outgoing_adjoint_energy );
 
   if ( forward_differential_cs > 0.0 )
     return forward_differential_cs/adjoint_cross_section;
@@ -235,32 +228,51 @@ double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::eva
     return 0.0;
 }
 
+// Return the differential cross section value at a given energy
+template<typename TwoDInterpPolicy>
+double AdjointElectronGridGenerator<TwoDInterpPolicy>::evaluateAdjointDifferentialCrossSection(
+      const double adjoint_incoming_energy,
+      const double adjoint_outgoing_energy ) const
+{
+  // Get the forward cross section at the adjoint outgoing energy
+  double forward_cs = d_forward_cs_evaluator( adjoint_outgoing_energy );
+
+  // Get the forward PDF
+  double forward_pdf = d_forward_pdf_evaluator( adjoint_outgoing_energy,
+                                                adjoint_incoming_energy );
+
+  return forward_cs*forward_pdf;
+}
+
 // Return the adjoint cross section value at a given energy
-template<typename ElectroatomicReaction, typename TwoDInterpPolicy>
-double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::evaluateAdjointCrossSection(
+/*/! \details The adjoint cross section is evaluating by integrating the adjoint
+ *   differential cross section from the min outgoing adjoint energy to the
+ *   nudged max adjoint energy. If the nudged max adjoint energy is not larger
+ *   than the min outgoing adjoint energy a cross section of zero will be
+ *   returned.
+ */
+template<typename TwoDInterpPolicy>
+double AdjointElectronGridGenerator<TwoDInterpPolicy>::evaluateAdjointCrossSection(
     const double incoming_adjoint_energy,
     const double precision ) const
 {
   // Make sure the energies are valid
-  testPrecondition( incoming_adjoint_energy > 0.0 );
+  testPrecondition( incoming_adjoint_energy >= this->getMinEnergy() );
 
   long double cross_section = 0.0;
 
-  // The nudged incoming energy
-  double nudged_start_energy = this->getNudgedEnergy( incoming_adjoint_energy );
+  // The start energy for integrating
+  double start_energy = this->getNudgedMinEnergy( incoming_adjoint_energy );
 
-  // If the nudge_incoming_energy >= d_nudged_max_energy return 0.0
-  if ( nudged_start_energy >= d_nudged_max_energy )
+  // If the start_energy >= d_nudged_max_energy return 0.0
+  if ( start_energy >= d_nudged_max_energy )
   {
     return 0.0;
   }
 
-  // Create boost rapper function for the adjoint electroatomic differential cross section
-  boost::function<double (double y)> diff_adjoint_cs_wrapper =
-    boost::bind( &ConstElectroatomicReaction::getDifferentialCrossSection,
-                         boost::cref( *d_electroatomic_reaction ),
-                         _1,
-                         incoming_adjoint_energy );
+  // Create rapper function for the adjoint electroatomic differential cross section
+  std::function<double (double y)> diff_adjoint_cs_wrapper =
+    [this, &incoming_adjoint_energy](double y){return this->evaluateAdjointDifferentialCrossSection(incoming_adjoint_energy, y);};
 
   long double cross_section_k, abs_error;
 
@@ -270,22 +282,22 @@ double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::eva
   // Turn of error and warning messages
   integrator.dontEstimateRoundoff();
 
-  // Find the integration point above the nudged incoming adjoint energy
+  // Find the integration point above the start_energy
   unsigned start_index =
     Utility::Search::binaryUpperBoundIndex(
               d_integration_points.begin(),
               d_integration_points.end(),
-              nudged_start_energy );
+              start_energy );
 
-  // Integrate from the nudged_start_energy to the next highest energy bin (if necessary)
-  if( d_integration_points[start_index] != nudged_start_energy && start_index > 0)
+  // Integrate from the start_energy to the next highest energy bin (if necessary)
+  if( d_integration_points[start_index] != start_energy && start_index > 0)
   {
     cross_section_k = 0.0;
     abs_error = 0.0;
 
     integrator.integrateAdaptively<51>(
         diff_adjoint_cs_wrapper,
-        (long double)nudged_start_energy,
+        (long double)start_energy,
         (long double)d_integration_points[start_index],
         cross_section_k,
         abs_error );
@@ -293,8 +305,7 @@ double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::eva
     cross_section += cross_section_k;
     abs_error += abs_error;
   }
-  
-  unsigned lower_bin_index = start_index;
+
   ++start_index;
 
   // Integrate through the energy bins above the given energy and below the max energy
@@ -302,9 +313,6 @@ double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::eva
   {
     cross_section_k = 0.0;
     abs_error = 0.0;
-
-    if ( d_integration_points[lower_bin_index] < d_integration_points[start_index-1] )
-      ++lower_bin_index;
 
     integrator.integrateAdaptively<51>(
         diff_adjoint_cs_wrapper,
@@ -316,6 +324,7 @@ double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::eva
     cross_section += cross_section_k;
     abs_error += abs_error;
   }
+
   return (double) cross_section;
 }
 
@@ -323,15 +332,15 @@ double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::eva
 /*! The std::function returned from this method can be used with a grid
  * generator to generate the primary energy grid.
  */
-template<typename ElectroatomicReaction, typename TwoDInterpPolicy>
+template<typename TwoDInterpPolicy>
 std::function<double (double)>
-AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::createAdjointCrossSectionFunction(
+AdjointElectronGridGenerator<TwoDInterpPolicy>::createAdjointCrossSectionFunction(
     const double cross_section_evaluation_tol ) const
 {
   // Make sure the cross_section_evaluation_tol is valid
   testPrecondition( cross_section_evaluation_tol > 0.0 );
 
-  typedef DataGen::AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy> DistType;
+  typedef DataGen::AdjointElectronGridGenerator<TwoDInterpPolicy> DistType;
 
   // The evaluateAdjointCrossSection method that we want to bind to is
   // overloaded. We have to disambiguate it for the bind to work.
@@ -343,26 +352,26 @@ AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::createAdjo
 
 // Generate and evaluate the distribution grid in place
 /*! \details The container must have a push_back method defined. The
- * function must have the following signature: double (double,double). 
+ * function must have the following signature: double (double,double).
  * The first function parameter must correspond to the primary value. It is
  * acceptable to pass an empty secondary grid (it will be initialized with the
  * initializeSecondaryGrid method).
  */
-template<typename ElectroatomicReaction, typename TwoDInterpPolicy>
-void AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::generateAndEvaluateDistribution(
+template<typename TwoDInterpPolicy>
+void AdjointElectronGridGenerator<TwoDInterpPolicy>::generateAndEvaluateDistribution(
   std::vector<double>& outgoing_energy_grid,
   std::vector<double>& evaluated_pdf,
   const double evaluation_tol,
   const double incoming_adjoint_energy,
   const double adjoint_cross_section ) const
-{ 
+{
   // Initialize the outgoing energy grid
   std::vector<double> initial_outgoing_energy_grid;
 
   this->initializeSecondaryGrid( initial_outgoing_energy_grid,
                                  incoming_adjoint_energy );
 
-  typedef DataGen::AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy> DistType;
+  typedef DataGen::AdjointElectronGridGenerator<TwoDInterpPolicy> DistType;
 
   // Create a function for this secondary grid
   std::function<double (double)> secondary_grid_function =
@@ -381,8 +390,8 @@ void AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::gener
 }
 
 // Generate and evaluate the distribution grid in place
-template<typename ElectroatomicReaction, typename TwoDInterpPolicy>
-void AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::generateAndEvaluateDistributionOnPrimaryEnergyGrid(
+template<typename TwoDInterpPolicy>
+void AdjointElectronGridGenerator<TwoDInterpPolicy>::generateAndEvaluateDistributionOnPrimaryEnergyGrid(
     std::map<double,std::vector<double> >& outgoing_energy_grid,
     std::map<double,std::vector<double> >& evaluated_pdf,
     const double evaluation_tol,
@@ -409,12 +418,11 @@ void AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::gener
 }
 
 // Initialize the max energy grid at an energy grid point
-/*! \details The min energy on the secondary grid should be slightly higher than
- * the NudgedEnergy to ensure a non-zero pdf value at the min energy. To ensure
- * this a set value of 1e-9 is always added to the NudgeEnergy.
+/*! \details The getNudgedMinEnergy as the lower bound of the
+ * secondary grid is used to ensure a non-zero pdf value at the lower bound.
  */
-template<typename ElectroatomicReaction, typename TwoDInterpPolicy>
-void AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::initializeSecondaryGrid(
+template<typename TwoDInterpPolicy>
+void AdjointElectronGridGenerator<TwoDInterpPolicy>::initializeSecondaryGrid(
                                           std::vector<double>& outgoing_energy_grid,
                                           const double energy ) const
 {
@@ -423,8 +431,7 @@ void AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::initi
 
   outgoing_energy_grid.resize( 2 );
 
-  
-  outgoing_energy_grid[0] = this->getNudgedEnergy( energy ) + 1e-9;
+  outgoing_energy_grid[0] = this->getNudgedMinEnergy( energy );
   outgoing_energy_grid[1] = this->getNudgedMaxEnergy();
 }
 

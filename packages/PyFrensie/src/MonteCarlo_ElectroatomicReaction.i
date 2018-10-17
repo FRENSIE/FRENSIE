@@ -8,6 +8,7 @@
 
 %{
 // FRENSIE Includes
+#include "Data_XSSEPRDataExtractor.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "MonteCarlo_MasslessParticleState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
@@ -36,6 +37,7 @@
 
 // #include "MonteCarlo_ElectroatomicReactionNativeFactoryHelpers.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
+#include "MonteCarlo_ElectroatomicReactionACEFactory.hpp"
 // #include "MonteCarlo_AdjointElectroatomicReactionNativeFactoryHelpers.hpp"
 // #include "MonteCarlo_AdjointElectroatomicReactionNativeFactory.hpp"
 // #include "MonteCarlo_CoupledElasticAdjointElectroatomicReaction.hpp"
@@ -62,6 +64,7 @@ using namespace MonteCarlo;
 %import(module="PyFrensie.MonteCarlo") MonteCarlo_ParticleState.i
 
 // shared_ptr Data Container handling
+%shared_ptr(Data::XSSEPRDataExtractor);
 %shared_ptr(Data::ElectronPhotonRelaxationDataContainer);
 
 // Import the explicit template instantiation helpers
@@ -527,6 +530,43 @@ using namespace MonteCarlo;
 // %cos_electron_function_interface_setup( MomentPreservingElasticReaction )
 // %electron_function_interface_setup( SubshellElectroionizationReaction )
 // %electron_function_interface_setup( BremsstrahlungReaction )
+
+//---------------------------------------------------------------------------//
+// Add support for the Electroatomic Reaction native factory
+//---------------------------------------------------------------------------//
+
+%inline %{
+
+  // Create a decoupled elastic scattering electroatomic reaction
+  std::shared_ptr<const MonteCarlo::DecoupledElasticElectroatomicReaction<Utility::LogLog> >
+  createDecoupledElasticReaction(
+      const Data::XSSEPRDataExtractor& raw_electroatom_data )
+  {
+    // Extract the common energy grid
+    std::shared_ptr<std::vector<double> > energy_grid( new std::vector<double> );
+    energy_grid->assign( raw_electroatom_data.extractElectronEnergyGrid().begin(),
+                         raw_electroatom_data.extractElectronEnergyGrid().end() );
+
+    // Construct the hash-based grid searcher
+    std::shared_ptr<const Utility::HashBasedGridSearcher<double>> grid_searcher(
+      new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
+                                energy_grid,
+                                energy_grid->size()/10 ) );
+
+    // Create the reaction
+    std::shared_ptr<const MonteCarlo::ElectroatomicReaction> reaction;
+    MonteCarlo::ElectroatomicReactionACEFactory::createDecoupledElasticReaction(
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction );
+
+    // Make sure the reaction was created correctly
+    testPostcondition( reaction.use_count() > 0 );
+
+    return std::dynamic_pointer_cast<const MonteCarlo::DecoupledElasticElectroatomicReaction<Utility::LogLog> >(reaction);
+  }
+%}
 
 /*//---------------------------------------------------------------------------//*/
 /*// Add support for the electron scattering distribution ACE factory helpers*/

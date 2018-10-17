@@ -305,6 +305,15 @@ auto RootNavigator::getCurrentCell() const -> EntityId
   return d_navigator->GetCurrentVolume()->GetUniqueID();
 }
 
+// Get the distance from the internal Root ray pos. to the nearest boundary in all directions
+auto RootNavigator::getDistanceToClosestBoundary() -> Length
+{
+  // Make sure that the internal ray is set
+  testPrecondition( this->isStateSet() );
+
+  return Length::from_value( d_navigator->Safety() );
+}
+
 // Get the distance from the internal Root ray pos. to the nearest boundary
 /*! \details The distance to the nearest boundary will be returned. Surfaces
  * aren't managed separately in Root (they are simply part of the cell

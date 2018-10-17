@@ -205,18 +205,17 @@ public:
   //! Return the electron TwoDGridPolicy (Unit-base Correlated by default)
   MonteCarlo::TwoDGridType getElectronTwoDGridPolicy() const;
 
+  //! Set the adjoint bremsstrahlung min energy nudge value
+  void setAdjointBremsstrahlungMinEnergyNudgeValue( const double min_energy_nudge_value );
+
+  //! Return the adjoint bremsstrahlung min energy nudge value
+  double getAdjointBremsstrahlungMinEnergyNudgeValue() const;
+
   //! Set the adjoint bremsstrahlung max energy nudge value
   void setAdjointBremsstrahlungMaxEnergyNudgeValue( const double max_energy_nudge_value );
 
   //! Return the adjoint bremsstrahlung max energy nudge value
   double getAdjointBremsstrahlungMaxEnergyNudgeValue() const;
-
-  //! Set the adjoint bremsstrahlung energy to outgoing energy nudge value
-  void setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(
-                          const double energy_to_outgoing_energy_nudge_value );
-
-  //! Return the adjoint bremsstrahlung energy to outgoing energy nudge value
-  double getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue() const;
 
   //! Set the adjoint bremsstrahlung cross section evaluation tolerance
   void setAdjointBremsstrahlungEvaluationTolerance( const double evaluation_tol );
@@ -241,6 +240,18 @@ public:
 
   //! Return the adjoint bremsstrahlung distance tolerance
   double getAdjointBremsstrahlungDistanceTolerance() const;
+
+  //! Set the adjoint electroionization min energy nudge value
+  void setAdjointElectroionizationMinEnergyNudgeValue( const double min_energy_nudge_value );
+
+  //! Return the adjoint electroionization min energy nudge value
+  double getAdjointElectroionizationMinEnergyNudgeValue() const;
+
+  //! Set the adjoint electroionization max energy nudge value
+  void setAdjointElectroionizationMaxEnergyNudgeValue( const double max_energy_nudge_value );
+
+  //! Return the adjoint electroionization max energy nudge value
+  double getAdjointElectroionizationMaxEnergyNudgeValue() const;
 
   //! Set the adjoint electroionization cross section evaluation tolerance
   void setAdjointElectroionizationEvaluationTolerance( const double evaluation_tol );

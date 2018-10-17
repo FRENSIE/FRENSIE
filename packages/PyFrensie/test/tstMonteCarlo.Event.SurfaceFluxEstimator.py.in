@@ -23,6 +23,7 @@ options,args = parser.parse_args()
 from testingHelpers import importPyFrensieModuleFromBuildDir
 MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
 Event = importPyFrensieModuleFromBuildDir('MonteCarlo.Event')
+ActiveRegion = importPyFrensieModuleFromBuildDir('MonteCarlo.ActiveRegion')
 
 #---------------------------------------------------------------------------#
 # Tests.
@@ -169,6 +170,43 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         self.assertEqual( len(entity_ids), 2 )
         self.assertTrue( 0 in entity_ids )
         self.assertTrue( 1 in entity_ids )
+
+#---------------------------------------------------------------------------#
+# Check that a response functions can be set
+    def testSetResponseFunctions(self):
+        "*Test MonteCarlo.Event.SurfaceFluxEstimator setResponseFunctions"
+        # Set the surface ids
+        surface_ids = [None] * ( 2 )
+        surface_ids[0] = 0
+        surface_ids[1] = 1
+
+        # Set the surface areas
+        surface_areas = [None] * ( 2 )
+        surface_areas[0] = 1.0
+        surface_areas[1] = 2.0
+        estimator = Event.WeightMultipliedSurfaceFluxEstimator( 0, 10.0, surface_ids, surface_areas )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        response_functions = [None] * ( 2 )
+        response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
+        response_functions[1] = response_functions[0]
+
+        estimator.setResponseFunctions( response_functions )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 2 )
+
+        estimator = Event.WeightAndEnergyMultipliedSurfaceFluxEstimator( 1, 10.0, surface_ids, surface_areas )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        response_functions = [None] * ( 2 )
+        response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
+        response_functions[1] = response_functions[0]
+
+        estimator.setResponseFunctions( response_functions )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 2 )
 
 #---------------------------------------------------------------------------#
 # Check that a partial history contribution can be added to the estimator

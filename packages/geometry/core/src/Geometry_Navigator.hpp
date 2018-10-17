@@ -217,6 +217,13 @@ public:
    */
   virtual EntityId getCurrentCell() const = 0;
 
+  /*! Get the distance from the internal ray pos. to the nearest boundary in all directions
+   *
+   * A std::runtime_error (or class derived from it) must be thrown if a ray
+   * tracing error occurs.
+   */
+  virtual Length getDistanceToClosestBoundary() = 0;
+
   /*! Fire the internal ray through the geometry
    *
    * A std::runtime_error (or class derived from it) must be thrown if a ray

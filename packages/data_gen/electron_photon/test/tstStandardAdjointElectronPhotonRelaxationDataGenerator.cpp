@@ -136,10 +136,10 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   FRENSIE_CHECK_EQUAL( generator.getDefaultElectronGridDistanceTolerance(), 1e-13 );
   FRENSIE_CHECK_EQUAL( generator.getElectronTabularEvaluationTolerance(),
                        1e-8 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungMinEnergyNudgeValue(),
+                       1e-9 );
   FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungMaxEnergyNudgeValue(),
-                       0.2 );
-  FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(),
-                       1e-7 );
+                       1e-2 );
   FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungEvaluationTolerance(),
                        1e-6 );
   FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungGridConvergenceTolerance(),
@@ -148,6 +148,10 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                        1e-16 );
   FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungDistanceTolerance(),
                        1e-8 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointElectroionizationMinEnergyNudgeValue(),
+                       1e-9 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointElectroionizationMaxEnergyNudgeValue(),
+                       1e-2 );
   FRENSIE_CHECK_EQUAL( generator.getAdjointElectroionizationEvaluationTolerance(),
                        1e-6 );
   FRENSIE_CHECK_EQUAL( generator.getAdjointElectroionizationGridConvergenceTolerance(),
@@ -191,10 +195,10 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   FRENSIE_CHECK_EQUAL( data_container.getAdjointElectronGridDistanceTolerance(), 1e-13 );
   FRENSIE_CHECK_EQUAL( data_container.getElectronTabularEvaluationTolerance(),
                        1e-8 );
+  FRENSIE_CHECK_EQUAL( data_container.getAdjointBremsstrahlungMinEnergyNudgeValue(),
+                       1e-9 );
   FRENSIE_CHECK_EQUAL( data_container.getAdjointBremsstrahlungMaxEnergyNudgeValue(),
-                       0.2 );
-  FRENSIE_CHECK_EQUAL( data_container.getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(),
-                       1e-7 );
+                       1e-2 );
   FRENSIE_CHECK_EQUAL( data_container.getAdjointBremsstrahlungEvaluationTolerance(),
                        1e-6 );
   FRENSIE_CHECK_EQUAL( data_container.getAdjointBremsstrahlungGridConvergenceTolerance(),
@@ -203,6 +207,10 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                        1e-16 );
   FRENSIE_CHECK_EQUAL( data_container.getAdjointBremsstrahlungDistanceTolerance(),
                        1e-8 );
+  FRENSIE_CHECK_EQUAL( data_container.getAdjointElectroionizationMinEnergyNudgeValue(),
+                       1e-9 );
+  FRENSIE_CHECK_EQUAL( data_container.getAdjointElectroionizationMaxEnergyNudgeValue(),
+                       1e-2 );
   FRENSIE_CHECK_EQUAL( data_container.getAdjointElectroionizationEvaluationTolerance(),
                        1e-6 );
   FRENSIE_CHECK_EQUAL( data_container.getAdjointElectroionizationGridConvergenceTolerance(),
@@ -267,10 +275,10 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   FRENSIE_CHECK_EQUAL( generator.getDefaultElectronGridDistanceTolerance(), 1e-13 );
   FRENSIE_CHECK_EQUAL( generator.getElectronTabularEvaluationTolerance(),
                        1e-8 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungMinEnergyNudgeValue(),
+                       1e-9 );
   FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungMaxEnergyNudgeValue(),
-                       0.2 );
-  FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(),
-                       1e-7 );
+                       1e-2 );
   FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungEvaluationTolerance(),
                        1e-6 );
   FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungGridConvergenceTolerance(),
@@ -279,6 +287,10 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                        1e-16 );
   FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungDistanceTolerance(),
                        1e-8 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointElectroionizationMinEnergyNudgeValue(),
+                       1e-9 );
+  FRENSIE_CHECK_EQUAL( generator.getAdjointElectroionizationMaxEnergyNudgeValue(),
+                       1e-2 );
   FRENSIE_CHECK_EQUAL( generator.getAdjointElectroionizationEvaluationTolerance(),
                        1e-6 );
   FRENSIE_CHECK_EQUAL( generator.getAdjointElectroionizationGridConvergenceTolerance(),
@@ -322,10 +334,10 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   FRENSIE_CHECK_EQUAL( data_container.getAdjointElectronGridDistanceTolerance(), 1e-13 );
   FRENSIE_CHECK_EQUAL( data_container.getElectronTabularEvaluationTolerance(),
                        1e-8 );
+  FRENSIE_CHECK_EQUAL( data_container.getAdjointBremsstrahlungMinEnergyNudgeValue(),
+                       1e-9 );
   FRENSIE_CHECK_EQUAL( data_container.getAdjointBremsstrahlungMaxEnergyNudgeValue(),
-                       0.2 );
-  FRENSIE_CHECK_EQUAL( data_container.getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(),
-                       1e-7 );
+                       1e-2 );
   FRENSIE_CHECK_EQUAL( data_container.getAdjointBremsstrahlungEvaluationTolerance(),
                        1e-6 );
   FRENSIE_CHECK_EQUAL( data_container.getAdjointBremsstrahlungGridConvergenceTolerance(),
@@ -334,6 +346,10 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                        1e-16 );
   FRENSIE_CHECK_EQUAL( data_container.getAdjointBremsstrahlungDistanceTolerance(),
                        1e-8 );
+  FRENSIE_CHECK_EQUAL( data_container.getAdjointElectroionizationMinEnergyNudgeValue(),
+                       1e-9 );
+  FRENSIE_CHECK_EQUAL( data_container.getAdjointElectroionizationMaxEnergyNudgeValue(),
+                       1e-2 );
   FRENSIE_CHECK_EQUAL( data_container.getAdjointElectroionizationEvaluationTolerance(),
                        1e-6 );
   FRENSIE_CHECK_EQUAL( data_container.getAdjointElectroionizationGridConvergenceTolerance(),
@@ -359,6 +375,10 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   data_container.setCutoffAngleCosine( 0.9 );
   data_container.setNumberOfAdjointMomentPreservingAngles( 1 );
 
+  data_container.setAdjointPhotonGridConvergenceTolerance( 0.001 );
+  data_container.setAdjointPhotonGridAbsoluteDifferenceTolerance( 1e-42 );
+  data_container.setAdjointPhotonGridDistanceTolerance( 1e-15 );
+
   data_container.setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance( 1e-3 );
   data_container.setAdjointPairProductionEnergyDistNormConstantNudgeValue( 1e-6 );
   data_container.setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance( 1e-3 );
@@ -377,13 +397,15 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   data_container.setElectronTabularEvaluationTolerance( 1e-4 );
   data_container.setElectronTwoDInterpPolicy( Utility::toString( MonteCarlo::LOGLOGLOG_INTERPOLATION ) );
   data_container.setElectronTwoDGridPolicy( Utility::toString( MonteCarlo::UNIT_BASE_CORRELATED_GRID ) );
+  data_container.setAdjointBremsstrahlungMinEnergyNudgeValue( 1e-9 );
   data_container.setAdjointBremsstrahlungMaxEnergyNudgeValue( 0.2 );
-  data_container.setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue( 1e-7 );
   data_container.setAdjointBremsstrahlungEvaluationTolerance( 1e-3 );
   data_container.setAdjointBremsstrahlungGridConvergenceTolerance( 0.5 );
   data_container.setAdjointBremsstrahlungAbsoluteDifferenceTolerance( 1e-12 );
   data_container.setAdjointBremsstrahlungDistanceTolerance( 1e-14 );
 
+  data_container.setAdjointElectroionizationMinEnergyNudgeValue( 1e-9 );
+  data_container.setAdjointElectroionizationMaxEnergyNudgeValue( 0.2 );
   data_container.setAdjointElectroionizationEvaluationTolerance( 1e-3 );
   data_container.setAdjointElectroionizationGridConvergenceTolerance( 0.5 );
   data_container.setAdjointElectroionizationAbsoluteDifferenceTolerance( 1e-12 );
@@ -448,10 +470,10 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectronGridDistanceTolerance(), 1e-9 );
   FRENSIE_CHECK_EQUAL( h_data_container.getElectronTabularEvaluationTolerance(),
                        1e-4 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungMinEnergyNudgeValue(),
+                       1e-9 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungMaxEnergyNudgeValue(),
                        0.2 );
-  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(),
-                       1e-7 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungEvaluationTolerance(),
                        1e-3 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungGridConvergenceTolerance(),
@@ -460,6 +482,10 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                        1e-12 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungDistanceTolerance(),
                        1e-14 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectroionizationMinEnergyNudgeValue(),
+                       1e-9 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectroionizationMaxEnergyNudgeValue(),
+                       0.2 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectroionizationEvaluationTolerance(),
                        1e-3 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectroionizationGridConvergenceTolerance(),
@@ -734,7 +760,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   generator_h->setAdjointIncoherentEvaluationTolerance( 1e-3 );
   generator_h->setAdjointIncoherentGridConvergenceTolerance( 0.5 );
   generator_h->setAdjointIncoherentGridAbsoluteDifferenceTolerance( 1e-42 );
-  generator_h->setAdjointIncoherentGridDistanceTolerance( 1e-15 );
+  generator_h->setAdjointIncoherentGridDistanceTolerance( 1e-18 );
 
   // Set default electron grid tolerances
   generator_h->setDefaultElectronGridConvergenceTolerance( 0.5 );
@@ -748,13 +774,15 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   generator_h->setCutoffAngleCosine( 0.9 );
   generator_h->setNumberOfMomentPreservingAngles( 1 );
 
-  generator_h->setAdjointBremsstrahlungMaxEnergyNudgeValue( 0.2 );
-  generator_h->setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue( 1e-7 );
+  generator_h->setAdjointBremsstrahlungMinEnergyNudgeValue( 1e-9 );
+  generator_h->setAdjointBremsstrahlungMaxEnergyNudgeValue( 1e-2 );
   generator_h->setAdjointBremsstrahlungEvaluationTolerance( 1e-3 );
   generator_h->setAdjointBremsstrahlungGridConvergenceTolerance( 0.5 );
   generator_h->setAdjointBremsstrahlungAbsoluteDifferenceTolerance( 1e-12 );
   generator_h->setAdjointBremsstrahlungDistanceTolerance( 1e-14 );
 
+  generator_h->setAdjointElectroionizationMinEnergyNudgeValue( 1e-9 );
+  generator_h->setAdjointElectroionizationMaxEnergyNudgeValue( 1e-2 );
   generator_h->setAdjointElectroionizationEvaluationTolerance( 1e-3 );
   generator_h->setAdjointElectroionizationGridConvergenceTolerance( 0.5 );
   generator_h->setAdjointElectroionizationAbsoluteDifferenceTolerance( 1e-12 );
@@ -794,7 +822,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
                        1e-42 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointIncoherentGridDistanceTolerance(),
-                       1e-15 );
+                       1e-18 );
 
   // Check the electron table data
   FRENSIE_CHECK_EQUAL( h_data_container.getCutoffAngleCosine(), 0.9 );
@@ -807,9 +835,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   FRENSIE_CHECK_EQUAL( h_data_container.getElectronTabularEvaluationTolerance(),
                        1e-7 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungMaxEnergyNudgeValue(),
-                       0.2 );
-  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(),
-                       1e-7 );
+                       1e-2 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungEvaluationTolerance(),
                        1e-3 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungGridConvergenceTolerance(),
@@ -994,7 +1020,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   // Check that adjoint photon energy grid
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointPhotonEnergyGrid().size(),
-                       856 );
+                       949 );
   FRENSIE_CHECK_FLOATING_EQUALITY( h_data_container.getAdjointPhotonEnergyGrid().front(),
                           1e-3,
                           1e-15 );
@@ -1004,7 +1030,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   // Check the adjoint Waller-Hartree incoherent cross section data
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointWallerHartreeIncoherentMaxEnergyGrid().size(),
-                       856 );
+                       949 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointWallerHartreeIncoherentMaxEnergyGrid().front().size(),
                        4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( h_data_container.getAdjointWallerHartreeIncoherentMaxEnergyGrid().front().front(),
@@ -1023,7 +1049,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                           1e-15 );
 
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointWallerHartreeIncoherentCrossSection().size(),
-                       856 );
+                       949 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointWallerHartreeIncoherentCrossSection().front().size(),
                        4 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointWallerHartreeIncoherentCrossSection().front().front(),
@@ -1041,7 +1067,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   // Check the adjoint impulse approx. incoherent cross section data
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointImpulseApproxIncoherentMaxEnergyGrid().size(),
-                       856 );
+                       949 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointImpulseApproxIncoherentMaxEnergyGrid().front().size(),
                        3 );
   FRENSIE_CHECK_FLOATING_EQUALITY( h_data_container.getAdjointImpulseApproxIncoherentMaxEnergyGrid().front().front(),
@@ -1060,7 +1086,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                           1e-15 );
 
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointImpulseApproxIncoherentCrossSection().size(),
-                       856 );
+                       949 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointImpulseApproxIncoherentCrossSection().front().size(),
                        3 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointImpulseApproxIncoherentCrossSection().front().front(),
@@ -1078,7 +1104,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   // Check the adjoint subshell impulse approx. incoherent cross section data
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid(1).size(),
-                       856 );
+                       949 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid(1).front().size(),
                        3 );
   FRENSIE_CHECK_FLOATING_EQUALITY( h_data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid(1).front().front(),
@@ -1097,7 +1123,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                           1e-15 );
 
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointImpulseApproxSubshellIncoherentCrossSection(1).size(),
-                       856 );
+                       949 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointImpulseApproxSubshellIncoherentCrossSection(1).front().size(),
                        3 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointImpulseApproxSubshellIncoherentCrossSection(1).front().front(),
@@ -1115,7 +1141,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   // Check the adjoint Waller-Hartree coherent cross section
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointWallerHartreeCoherentCrossSection().size(),
-                       856 );
+                       949 );
   FRENSIE_CHECK_FLOATING_EQUALITY( h_data_container.getAdjointWallerHartreeCoherentCrossSection().front(),
                           5.81790484064093394e-01,
                           1e-15 );
@@ -1125,7 +1151,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   // Check the adjoint Waller-Hartree total cross section
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointWallerHartreeTotalMaxEnergyGrid().size(),
-                       856 );
+                       949 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointWallerHartreeTotalMaxEnergyGrid().front().size(),
                        4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( h_data_container.getAdjointWallerHartreeTotalMaxEnergyGrid().front().front(),
@@ -1144,7 +1170,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                           1e-15 );
 
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointWallerHartreeTotalCrossSection().size(),
-                       856 );
+                       949 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointWallerHartreeTotalCrossSection().front().size(),
                        4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( h_data_container.getAdjointWallerHartreeTotalCrossSection().front().front(),
@@ -1164,7 +1190,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   // Check the adjoint impulse approx. total cross section
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointImpulseApproxTotalCrossSection().size(),
-                       856 );
+                       949 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointImpulseApproxTotalMaxEnergyGrid().front().size(),
                        3 );
   FRENSIE_CHECK_FLOATING_EQUALITY( h_data_container.getAdjointImpulseApproxTotalMaxEnergyGrid().front().front(),
@@ -1183,7 +1209,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                           1e-15 );
 
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointImpulseApproxTotalCrossSection().size(),
-                       856 );
+                       949 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointImpulseApproxTotalCrossSection().front().size(),
                        3 );
   FRENSIE_CHECK_FLOATING_EQUALITY( h_data_container.getAdjointImpulseApproxTotalCrossSection().front().front(),
@@ -1203,7 +1229,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   // Check the forward Waller-Hartee total cross section
   FRENSIE_CHECK_EQUAL( h_data_container.getWallerHartreeTotalCrossSection().size(),
-                       856 );
+                       949 );
   FRENSIE_CHECK_FLOATING_EQUALITY( h_data_container.getWallerHartreeTotalCrossSection().front(),
                           1.20745489798488403e+01,
                           1e-15 );
@@ -1213,7 +1239,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   // Check the forward impulse approx total cross section
   FRENSIE_CHECK_EQUAL( h_data_container.getImpulseApproxTotalCrossSection().size(),
-                       856 );
+                       949 );
   FRENSIE_CHECK_FLOATING_EQUALITY( h_data_container.getImpulseApproxTotalCrossSection().front(),
                           12.0133313565812934,
                           1e-15 );
@@ -1223,14 +1249,14 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   // Check the adjoint pair production energy distribution
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointPairProductionEnergyDistributionGrid().size(),
-                       425 );
+                       518 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointPairProductionEnergyDistributionGrid().front(),
                        2*Utility::PhysicalConstants::electron_rest_mass_energy );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointPairProductionEnergyDistributionGrid().back(),
                        20.0 );
 
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointPairProductionEnergyDistribution().size(),
-                       425 );
+                       518 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointPairProductionEnergyDistribution().front(),
                        0.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( h_data_container.getAdjointPairProductionEnergyDistribution().back(),
@@ -1239,14 +1265,14 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   // Check the adjoint pair production energy distribution norm constant data
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointPairProductionEnergyDistributionNormConstantGrid().size(),
-                       532 );
+                       552 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointPairProductionEnergyDistributionNormConstantGrid().front(),
                        2*Utility::PhysicalConstants::electron_rest_mass_energy );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointPairProductionEnergyDistributionNormConstantGrid().back(),
                        20.0 );
 
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointPairProductionEnergyDistributionNormConstant().size(),
-                       532 );
+                       552 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointPairProductionEnergyDistributionNormConstant().front(),
                        0.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( h_data_container.getAdjointPairProductionEnergyDistributionNormConstant().back(),
@@ -1255,14 +1281,14 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   // Check the adjoint triplet production energy distribution
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointTripletProductionEnergyDistributionGrid().size(),
-                       199 );
+                       244 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointTripletProductionEnergyDistributionGrid().front(),
                        4*Utility::PhysicalConstants::electron_rest_mass_energy );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointTripletProductionEnergyDistributionGrid().back(),
                        20.0 );
 
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointTripletProductionEnergyDistribution().size(),
-                       199 );
+                       244 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointTripletProductionEnergyDistribution().front(),
                        0.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( h_data_container.getAdjointTripletProductionEnergyDistribution().back(),
@@ -1303,13 +1329,15 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectronGridAbsoluteDifferenceTolerance(), 1e-16 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectronGridDistanceTolerance(), 1e-9 );
 
-  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungMaxEnergyNudgeValue(), 0.2 );
-  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(), 1e-7 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungMinEnergyNudgeValue(), 1e-9 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungMaxEnergyNudgeValue(), 1e-2 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungEvaluationTolerance(), 1e-3 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungGridConvergenceTolerance(), 0.5 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungAbsoluteDifferenceTolerance(), 1e-12 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungDistanceTolerance(), 1e-14 );
 
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectroionizationMinEnergyNudgeValue(), 1e-9 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectroionizationMaxEnergyNudgeValue(), 1e-2 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectroionizationEvaluationTolerance(), 1e-3 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectroionizationGridConvergenceTolerance(), 0.5 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectroionizationAbsoluteDifferenceTolerance(), 1e-12 );
@@ -1470,43 +1498,43 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   cross_section =
     h_data_container.getAdjointBremsstrahlungElectronCrossSection();
 
-  FRENSIE_CHECK_EQUAL( cross_section.front(), 4.427244458211502121e+01 );
-  FRENSIE_CHECK_EQUAL( cross_section.back(), 2.891819533322204649e-01 );
+  FRENSIE_CHECK_EQUAL( cross_section.front(), 4.420906922056859401e+01 );
+  FRENSIE_CHECK_EQUAL( cross_section.back(), 2.873816755338521323e-01 );
   FRENSIE_CHECK_EQUAL( cross_section.size(), 8-threshold );
 
-  FRENSIE_CHECK( !h_data_container.seperateAdjointBremsstrahlungEnergyGrid() );
+  FRENSIE_CHECK( !h_data_container.separateAdjointBremsstrahlungEnergyGrid() );
 
   std::vector<double> electron_bremsstrahlung_energy =
     h_data_container.getAdjointElectronBremsstrahlungEnergy( 1e-5 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( electron_bremsstrahlung_energy.front(),
-                          1e-5 + 1e-7 + 1e-9,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( electron_bremsstrahlung_energy.back(), 20.2 );
-  FRENSIE_CHECK_EQUAL( electron_bremsstrahlung_energy.size(), 38 );
+                                   1e-5 + 1e-7 + 1e-9,
+                                   1e-15 );
+  FRENSIE_CHECK_EQUAL( electron_bremsstrahlung_energy.back(), 2.001000010000000273e+01 );
+  FRENSIE_CHECK_EQUAL( electron_bremsstrahlung_energy.size(), 18 );
 
   electron_bremsstrahlung_energy =
     h_data_container.getAdjointElectronBremsstrahlungEnergy( 20.0 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( electron_bremsstrahlung_energy.front(),
-                          20.0 + 1e-7 + 1e-9,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( electron_bremsstrahlung_energy.back(), 20.2 );
-  FRENSIE_CHECK_EQUAL( electron_bremsstrahlung_energy.size(), 21 );
+                                   20.0 + 1e-7 + 1e-9,
+                                   1e-15 );
+  FRENSIE_CHECK_EQUAL( electron_bremsstrahlung_energy.back(), 2.001000010000000273e+01 );
+  FRENSIE_CHECK_EQUAL( electron_bremsstrahlung_energy.size(), 15 );
 
   std::vector<double> electron_bremsstrahlung_pdf =
     h_data_container.getAdjointElectronBremsstrahlungPDF( 1e-5 );
 
-  FRENSIE_CHECK_EQUAL( electron_bremsstrahlung_pdf.front(), 1.427896162367836805e+06 );
-  FRENSIE_CHECK_EQUAL( electron_bremsstrahlung_pdf.back(), 2.144857987275867663e-10 );
-  FRENSIE_CHECK_EQUAL( electron_bremsstrahlung_pdf.size(), 38 );
+  FRENSIE_CHECK_EQUAL( electron_bremsstrahlung_pdf.front(), 1.429943105158903636e+06 );
+  FRENSIE_CHECK_EQUAL( electron_bremsstrahlung_pdf.back(), 2.176234529677373358e-10 );
+  FRENSIE_CHECK_EQUAL( electron_bremsstrahlung_pdf.size(), 18 );
 
   electron_bremsstrahlung_pdf =
     h_data_container.getAdjointElectronBremsstrahlungPDF( 20.0 );
 
-  FRENSIE_CHECK_EQUAL( electron_bremsstrahlung_pdf.front(), 1.939776889015461085e+06 );
-  FRENSIE_CHECK_EQUAL( electron_bremsstrahlung_pdf.back(), 2.775315527637131022e-03 );
-  FRENSIE_CHECK_EQUAL( electron_bremsstrahlung_pdf.size(), 21 );
+  FRENSIE_CHECK_EQUAL( electron_bremsstrahlung_pdf.front(), 1.951928454561856342e+06 );
+  FRENSIE_CHECK_EQUAL( electron_bremsstrahlung_pdf.back(), 2.966315777350755911e-01 );
+  FRENSIE_CHECK_EQUAL( electron_bremsstrahlung_pdf.size(), 15 );
 
   // Check the electroionization data
   threshold =
@@ -1517,44 +1545,44 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
    cross_section =
      h_data_container.getAdjointElectroionizationCrossSection( 1u );
 
-  FRENSIE_CHECK_EQUAL( cross_section.front(), 4.599858431241171265e+10 );
-  FRENSIE_CHECK_EQUAL( cross_section.back(), 6.203546061164286948e+04 );
+  FRENSIE_CHECK_EQUAL( cross_section.front(), 4.631739660560436249e+10 );
+  FRENSIE_CHECK_EQUAL( cross_section.back(), 8.365802734960628732e+04 );
   FRENSIE_CHECK_EQUAL( cross_section.size(), 8-threshold );
 
-  FRENSIE_CHECK( !h_data_container.seperateAdjointElectroionizationEnergyGrid() );
+  FRENSIE_CHECK( !h_data_container.separateAdjointElectroionizationEnergyGrid() );
 
 
   std::vector<double> electroionization_recoil_energy =
     h_data_container.getAdjointElectroionizationRecoilEnergy( 1u, 1e-5 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( electroionization_recoil_energy.front(),
-                          1e-5 + 1.361e-5 + 1e-7 + 1e-9,
-                          1e-12 );
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.back(), 20.0 + 2.0*1.36100e-5 );
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.size(), 25 );
+                                   2.363269271930896741e-05,
+                                   1e-12 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.back(), 2.001001371000000262e+01 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.size(), 4 );
 
   electroionization_recoil_energy =
     h_data_container.getAdjointElectroionizationRecoilEnergy( 1u, 20.0 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( electroionization_recoil_energy.front(),
-                          20.0 + 1.361e-5 + 1e-7 + 1e-9,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.back(), 20.0 + 2.0*1.36100e-5 );
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.size(), 3 );
+                                   20.0 + 1.361e-5 + 1e-7 + 1e-9,
+                                   1e-15 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.back(), 2.001001371000000262e+01 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.size(), 11 );
 
   std::vector<double> electroionization_recoil_pdf =
     h_data_container.getAdjointElectroionizationRecoilPDF( 1u, 1e-5 );
 
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.front(), 2.883262476197421620e+02 );
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.back(), 4.674585918032569953e-02 );
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.size(), 25 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.front(), 2.934689179480291159e+02 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.back(), 4.667243469669442313e-02 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.size(), 4 );
 
   electroionization_recoil_pdf =
     h_data_container.getAdjointElectroionizationRecoilPDF( 1u, 20.0 );
 
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.front(), 2.160605686342868139e+05 );
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.back(), 2.251264540445400417e+04 );
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.size(), 3 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.front(), 1.602884375324310386e+05 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.back(), 3.320814623995649306e-02 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.size(), 11 );
 
   h_data_container.saveToFile( "test_h_aepr.xml", true);
 }

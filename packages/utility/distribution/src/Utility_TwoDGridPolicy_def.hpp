@@ -613,6 +613,8 @@ ReturnType UnitBase<_TwoDInterpPolicy>::evaluatePDF(
                         upper_bin_boundary->first,
                         x_indep_value,
                         y_indep_value,
+                        min_y_indep_functor(x_indep_value),
+                        max_y_indep_functor(x_indep_value),
                         lower_bin_boundary->second->getLowerBoundOfIndepVar(),
                         lower_bin_boundary->second->getUpperBoundOfIndepVar(),
                         upper_bin_boundary->second->getLowerBoundOfIndepVar(),

@@ -145,22 +145,22 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    evaluate_unit_base )
 {
   double pdf = unit_base_ionization_dist->evaluate( 8.829e-2, 1e-7 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.7059433323866402e+05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.705827064187504875e+05, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluate( 9.12175e-2, 4.275e-4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.2145110535548639e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.214612295192431368e+01, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluate( 1e-1, 1e-2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.7239569315597329e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.724216068618125014e-02, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluate( 1.0, 1.33136131511529e-1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.0413727753540816e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.041383244795287069e-04, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluate( 1.0, 9.7163E-02 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.9786207533174264e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.978639971990510892e-04, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluate( 1e5, 1.752970e2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.4497193189141911e-11, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.449719317907309385e-11, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -223,25 +223,25 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    evaluatePDF_unit_base )
 {
   double pdf = unit_base_ionization_dist->evaluatePDF( 8.829e-2, 1e-7 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.7059431425324091e+05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.705826874347286066e+05, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluatePDF( 9.12175e-2, 4.275e-4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.2145109130569701e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.214612154683611500e+01, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluatePDF( 1e-1, 1e-2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.7239567109895083e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.724215848015932251e-02, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluatePDF( 1.0, 1.33136131511529e-1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.0413724333040529e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.041382902741912105e-04, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluatePDF( 1.0, 9.7163E-02 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.9786201034182761e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.978639322085223699e-04, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluatePDF( 1e5, 1.752970e2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.4497177573288068e-11, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.449717756321954802e-11, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluatePDF( 1e5, 5e4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.2480895846405767e-15, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.248089584449132797e-15, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

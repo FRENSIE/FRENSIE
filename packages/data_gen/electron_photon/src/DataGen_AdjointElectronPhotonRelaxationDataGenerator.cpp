@@ -69,12 +69,14 @@ AdjointElectronPhotonRelaxationDataGenerator::AdjointElectronPhotonRelaxationDat
   d_data_container.setAdjointElectronGridDistanceTolerance( d_default_electron_grid_generator->getDistanceTolerance() );
 
   d_data_container.setElectronTabularEvaluationTolerance( 1e-8 );
-  d_data_container.setAdjointBremsstrahlungMaxEnergyNudgeValue( 0.2 );
-  d_data_container.setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue( 1e-7 );
+  d_data_container.setAdjointBremsstrahlungMinEnergyNudgeValue( 1e-9 );
+  d_data_container.setAdjointBremsstrahlungMaxEnergyNudgeValue( 1e-2 );
   d_data_container.setAdjointBremsstrahlungEvaluationTolerance( 1e-6 );
   d_data_container.setAdjointBremsstrahlungGridConvergenceTolerance( 0.001 );
   d_data_container.setAdjointBremsstrahlungAbsoluteDifferenceTolerance( 1e-16 );
   d_data_container.setAdjointBremsstrahlungDistanceTolerance( 1e-8 );
+  d_data_container.setAdjointElectroionizationMinEnergyNudgeValue( 1e-9 );
+  d_data_container.setAdjointElectroionizationMaxEnergyNudgeValue( 1e-2 );
   d_data_container.setAdjointElectroionizationEvaluationTolerance( 1e-6 );
   d_data_container.setAdjointElectroionizationGridConvergenceTolerance( 0.001 );
   d_data_container.setAdjointElectroionizationAbsoluteDifferenceTolerance( 1e-16 );
@@ -575,6 +577,22 @@ unsigned AdjointElectronPhotonRelaxationDataGenerator::getNumberOfMomentPreservi
   return d_data_container.getNumberOfAdjointMomentPreservingAngles();
 }
 
+// Set the adjoint bremsstrahlung min energy nudge value
+void AdjointElectronPhotonRelaxationDataGenerator::setAdjointBremsstrahlungMinEnergyNudgeValue(
+                                          const double min_energy_nudge_value )
+{
+  // Make sure the nudge value is valid
+  testPrecondition( min_energy_nudge_value > 0.0 );
+
+  d_data_container.setAdjointBremsstrahlungMinEnergyNudgeValue( min_energy_nudge_value );
+}
+
+// Return the adjoint bremsstrahlung min energy nudge value
+double AdjointElectronPhotonRelaxationDataGenerator::getAdjointBremsstrahlungMinEnergyNudgeValue() const
+{
+  return d_data_container.getAdjointBremsstrahlungMinEnergyNudgeValue();
+}
+
 // Set the adjoint bremsstrahlung max energy nudge value
 void AdjointElectronPhotonRelaxationDataGenerator::setAdjointBremsstrahlungMaxEnergyNudgeValue(
                                           const double max_energy_nudge_value )
@@ -589,23 +607,6 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointBremsstrahlungMaxEn
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointBremsstrahlungMaxEnergyNudgeValue() const
 {
   return d_data_container.getAdjointBremsstrahlungMaxEnergyNudgeValue();
-}
-
-// Set the adjoint bremsstrahlung energy to outgoing energy nudge value
-void AdjointElectronPhotonRelaxationDataGenerator::setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(
-                            const double energy_to_outgoing_energy_nudge_value )
-{
-  // Make sure the nudge value is valid
-  testPrecondition( energy_to_outgoing_energy_nudge_value >= 0.0 );
-
-  d_data_container.setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(
-    energy_to_outgoing_energy_nudge_value );
-}
-
-// Return the adjoint bremsstrahlung energy to outgoing energy nudge value
-double AdjointElectronPhotonRelaxationDataGenerator::getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue() const
-{
-  return d_data_container.getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue();
 }
 
 // Set the evaluation tolerance for the adjoint bremsstrahlung cross section
@@ -674,6 +675,38 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointBremsstrahlungDista
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointBremsstrahlungDistanceTolerance() const
 {
   return d_data_container.getAdjointBremsstrahlungDistanceTolerance();
+}
+
+// Set the adjoint electroionization min energy nudge value
+void AdjointElectronPhotonRelaxationDataGenerator::setAdjointElectroionizationMinEnergyNudgeValue(
+                                          const double min_energy_nudge_value )
+{
+  // Make sure the nudge value is valid
+  testPrecondition( min_energy_nudge_value > 0.0 );
+
+  d_data_container.setAdjointElectroionizationMinEnergyNudgeValue( min_energy_nudge_value );
+}
+
+// Return the adjoint electroionization min energy nudge value
+double AdjointElectronPhotonRelaxationDataGenerator::getAdjointElectroionizationMinEnergyNudgeValue() const
+{
+  return d_data_container.getAdjointElectroionizationMinEnergyNudgeValue();
+}
+
+// Set the adjoint electroionization max energy nudge value
+void AdjointElectronPhotonRelaxationDataGenerator::setAdjointElectroionizationMaxEnergyNudgeValue(
+                                          const double max_energy_nudge_value )
+{
+  // Make sure the nudge value is valid
+  testPrecondition( max_energy_nudge_value > 0.0 );
+
+  d_data_container.setAdjointElectroionizationMaxEnergyNudgeValue( max_energy_nudge_value );
+}
+
+// Return the adjoint electroionization max energy nudge value
+double AdjointElectronPhotonRelaxationDataGenerator::getAdjointElectroionizationMaxEnergyNudgeValue() const
+{
+  return d_data_container.getAdjointElectroionizationMaxEnergyNudgeValue();
 }
 
 // Set the evaluation tolerance for the adjoint electroionization cross section

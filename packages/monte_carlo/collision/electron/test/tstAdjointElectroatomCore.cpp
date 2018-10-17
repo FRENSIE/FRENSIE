@@ -83,21 +83,21 @@ FRENSIE_UNIT_TEST( AdjointElectroatomCore, getScatteringReactions )
                           b_reaction.getCrossSection( 1e-5 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          3.980092756766359940e+01 + 6.1243057898416743e+07,
+                          4.420906922056859401e+01 + 6.1243057898416743e+07,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 1e-3 ) +
                    b_reaction.getCrossSection( 1e-3 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          1.441998445400516893e+01 + 1.071196592417021282e+07,
+                          1.582521006440232370e+01 + 1.071196592417021282e+07,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 20.0 ) +
                    b_reaction.getCrossSection( 20.0 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          2.497134894717789044e-01 + 8.1829299836129925e+04,
+                          2.873816755338521323e-01 + 8.1829299836129925e+04,
                           1e-12 );
 }
 
@@ -185,7 +185,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomCore, getGridSearcher )
   FRENSIE_CHECK_EQUAL( grid_index, 17 );
 
   grid_index = grid_searcher.findLowerBinIndex( 20.0 );
-  FRENSIE_CHECK_EQUAL( grid_index, 83 );
+  FRENSIE_CHECK_EQUAL( grid_index, 62 );
 }
 
 //---------------------------------------------------------------------------//

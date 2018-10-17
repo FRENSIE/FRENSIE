@@ -100,6 +100,9 @@ public:
   //! Get the cell containing the internal Root ray position
   EntityId getCurrentCell() const override;
 
+  //! Get the distance from the internal Root ray pos. to the nearest boundary in all directions
+  Length getDistanceToClosestBoundary() override;
+
   //! Get the distance from the internal Root ray pos. to the nearest boundary
   Length fireRay( EntityId* surface_hit ) override;
 

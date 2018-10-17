@@ -16,20 +16,20 @@ namespace MonteCarlo{
 
 // Default constructor
 PositronState::PositronState()
-  : MassiveParticleState()
+  : ChargedParticleState()
 { /* ... */ }
 
 // Constructor
 PositronState::PositronState(
                         const ParticleState::historyNumberType history_number )
-  : MassiveParticleState( history_number, POSITRON, 1 )
+  : ChargedParticleState( history_number, POSITRON, 1 )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
 PositronState::PositronState( const PositronState& existing_positron_state,
                               const bool increment_generation_number,
                               const bool reset_collision_number )
-  : MassiveParticleState(existing_positron_state,
+  : ChargedParticleState(existing_positron_state,
                          POSITRON,
                          1,
                          Utility::PhysicalConstants::electron_rest_mass_energy,
@@ -41,7 +41,7 @@ PositronState::PositronState( const PositronState& existing_positron_state,
 PositronState::PositronState( const ParticleState& existing_base_state,
                               const bool increment_generation_number,
                               const bool reset_collision_number )
-  : MassiveParticleState(existing_base_state,
+  : ChargedParticleState(existing_base_state,
                          POSITRON,
                          1,
                          Utility::PhysicalConstants::electron_rest_mass_energy,

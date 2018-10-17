@@ -33,6 +33,7 @@ ParticleState::ParticleState()
     d_generation_number( 0 ),
     d_source_weight( 1.0 ),
     d_weight( 1.0 ),
+    d_ray_safety_distance( 0.0 ),
     d_source_cell( 0 ),
     d_lost( false ),
     d_gone( false ),
@@ -42,9 +43,9 @@ ParticleState::ParticleState()
 
 // Constructor
 ParticleState::ParticleState(
-			 const ParticleState::historyNumberType history_number,
-			 const ParticleType type,
-			 const chargeType charge )
+                         const ParticleState::historyNumberType history_number,
+                         const ParticleType type,
+                         const chargeType charge )
   : d_history_number( history_number ),
     d_particle_type( type ),
     d_source_id( 0 ),
@@ -57,6 +58,7 @@ ParticleState::ParticleState(
     d_generation_number( 0 ),
     d_source_weight( 1.0 ),
     d_weight( 1.0 ),
+    d_ray_safety_distance( 0.0 ),
     d_source_cell( 0 ),
     d_lost( false ),
     d_gone( false ),
@@ -71,10 +73,11 @@ ParticleState::ParticleState(
  * copied particle.
  */
 ParticleState::ParticleState( const ParticleState& existing_base_state,
-			      const ParticleType new_type,
-			      const chargeType new_charge,
-			      const bool increment_generation_number,
-			      const bool reset_collision_number )
+                              const ParticleType new_type,
+                              const chargeType new_charge,
+                              const bool increment_generation_number,
+                              const bool reset_collision_number,
+                              const raySafetyType ray_safety_distance )
   : d_history_number( existing_base_state.d_history_number ),
     d_particle_type( new_type ),
     d_source_id( existing_base_state.d_source_id ),
@@ -87,6 +90,7 @@ ParticleState::ParticleState( const ParticleState& existing_base_state,
     d_generation_number( existing_base_state.d_generation_number ),
     d_source_weight( existing_base_state.d_source_weight ),
     d_weight( existing_base_state.d_weight ),
+    d_ray_safety_distance( ray_safety_distance ),
     d_source_cell( existing_base_state.d_source_cell ),
     d_lost( false ),
     d_gone( false ),
@@ -109,7 +113,7 @@ ParticleState::ParticleState( const ParticleState& existing_base_state,
  * (e.g. state source).
  */
 ParticleState* ParticleState::clone(
-	      const ParticleState::historyNumberType new_history_number ) const
+              const ParticleState::historyNumberType new_history_number ) const
 {
   ParticleState* clone_state = this->clone();
 
@@ -190,8 +194,8 @@ const double* ParticleState::getPosition() const
 
 // Set the position of the particle
 void ParticleState::setPosition( const double x_position,
-				 const double y_position,
-				 const double z_position )
+                                 const double y_position,
+                                 const double z_position )
 {
   // Make sure the coordinates are valid
   testPrecondition( !QT::isnaninf( x_position ) );
@@ -199,7 +203,7 @@ void ParticleState::setPosition( const double x_position,
   testPrecondition( !QT::isnaninf( z_position ) );
 
   const double* current_direction = d_navigator->getDirection();
-  
+
   d_navigator->setState( Geometry::Navigator::Length::from_value(x_position),
                          Geometry::Navigator::Length::from_value(y_position),
                          Geometry::Navigator::Length::from_value(z_position),
@@ -234,8 +238,8 @@ const double* ParticleState::getDirection() const
 
 // Set the direction of the particle
 void ParticleState::setDirection( const double x_direction,
-				  const double y_direction,
-				  const double z_direction )
+                                  const double y_direction,
+                                  const double z_direction )
 {
   // Make sure the direction coordinates are valid
   testPrecondition( !QT::isnaninf( x_direction ) );
@@ -258,7 +262,7 @@ void ParticleState::setDirection( const double x_direction,
  * the new particle direction
  */
 void ParticleState::rotateDirection( const double polar_angle_cosine,
-				     const double azimuthal_angle )
+                                     const double azimuthal_angle )
 {
   // Make sure the current particle direction is valid (initialized)
   testPrecondition( Utility::isUnitVector( this->getDirection() ) );
@@ -285,7 +289,7 @@ void ParticleState::rotateDirection( const double polar_angle_cosine,
  * requested distance is traversed. All boundary crossing info will be lost.
  * If an exception occurs due to a navigator tracking error the particle
  * state will be set to lost. If the model boundary is reached, movement
- * of the particle will be stopped and the state will be set to gone. Be sure 
+ * of the particle will be stopped and the state will be set to gone. Be sure
  * to check that the particle state is still valid after calling this method.
  */
 void ParticleState::advance( double raw_distance )
@@ -297,9 +301,9 @@ void ParticleState::advance( double raw_distance )
 
   Geometry::Navigator::Length distance =
     Geometry::Navigator::Length::from_value( raw_distance );
-  
+
   Geometry::Navigator::Length distance_to_surface = d_navigator->fireRay();
-  
+
   while( distance > distance_to_surface )
   {
     // Try to advance the particle to the next cell boundary. If the
@@ -315,9 +319,9 @@ void ParticleState::advance( double raw_distance )
                                   "at cell " << this->getCell() <<
                                   " boundary! The particle has been reported "
                                   "as lost.\n" << exception.what() );
-      
+
       d_lost = true;
-      
+
       return;
     }
 
@@ -327,7 +331,7 @@ void ParticleState::advance( double raw_distance )
     // Determine the distance to the next surface
     if( !d_model->isTerminationCell( this->getCell() ) )
       distance_to_surface = d_navigator->fireRay();
-    
+
     // The particle has exited the model
     else
     {
@@ -488,6 +492,21 @@ void ParticleState::multiplyWeight( const double weight_factor )
   d_weight *= weight_factor;
 }
 
+// Return the ray safety distance ( i.e. distance to the closest boundary )
+double ParticleState::getRaySafetyDistance() const
+{
+  return d_ray_safety_distance;
+}
+
+// Set the ray safety distance ( i.e. distance to the closest boundary )
+void ParticleState::setRaySafetyDistance( const double safety_distance )
+{
+  // Make sure that the current safety distance is valid
+  testPrecondition( safety_distance >= 0.0 );
+
+  d_ray_safety_distance = safety_distance;
+}
+
 // Return if the particle is lost
 bool ParticleState::isLost() const
 {
@@ -526,16 +545,16 @@ void ParticleState::embedInModel(
 {
   // Make sure that the model is valid
   testPrecondition( model.get() );
-  
+
   // Cache the current particle position and direction
   const double position[3] = {d_navigator->getPosition()[0].value(),
                               d_navigator->getPosition()[1].value(),
                               d_navigator->getPosition()[2].value()};
-  
+
   const double direction[3] = {d_navigator->getDirection()[0],
                                d_navigator->getDirection()[1],
                                d_navigator->getDirection()[2]};
-  
+
   this->embedInModel( model, position, direction );
 }
 
@@ -549,12 +568,12 @@ void ParticleState::embedInModel(
 {
   // Make sure that the model is valid
   testPrecondition( model.get() );
-  
+
   // Cache the current particle position and direction
   const double position[3] = {d_navigator->getPosition()[0].value(),
                               d_navigator->getPosition()[1].value(),
                               d_navigator->getPosition()[2].value()};
-  
+
   const double direction[3] = {d_navigator->getDirection()[0],
                                d_navigator->getDirection()[1],
                                d_navigator->getDirection()[2]};
@@ -570,10 +589,10 @@ void ParticleState::embedInModel(
 {
   // Make sure that the model is valid
   testPrecondition( model.get() );
-  
+
   // Create the new navigator
   d_navigator.reset( model->createNavigatorAdvanced( this->createAdvanceCompleteCallback() ) );
-  
+
   // Cache the new model
   d_model = model;
 
@@ -586,13 +605,13 @@ void ParticleState::embedInModel(
   {
     FRENSIE_LOG_WARNING( "Attempt to embed particle in geometry model "
                          << model->getName() << " failed! \n"
-                         << exception.what() );                     
+                         << exception.what() );
     d_lost = true;
   }
 }
 
 // Embed the particle in the desired model at the desired position
-/*! \details The position must be inside of the cell. If it is not, the 
+/*! \details The position must be inside of the cell. If it is not, the
  * particle will become lost.
  */
 void ParticleState::embedInModel(
@@ -603,7 +622,7 @@ void ParticleState::embedInModel(
 {
   // Make sure that the model is valid
   testPrecondition( model.get() );
-  
+
   // Create the new navigator
   d_navigator.reset( model->createNavigatorAdvanced( this->createAdvanceCompleteCallback() ) );
 
@@ -620,7 +639,7 @@ void ParticleState::embedInModel(
     FRENSIE_LOG_WARNING( "Attempt to embed particle in geometry model "
                          << model->getName() << " failed! \n"
                          << exception.what() );
-    
+
     d_lost = true;
   }
 }
@@ -633,14 +652,14 @@ void ParticleState::extractFromModel()
     {d_navigator->getPosition()[0],
      d_navigator->getPosition()[1],
      d_navigator->getPosition()[2]};
-  
+
   const double direction[3] = {d_navigator->getDirection()[0],
                                d_navigator->getDirection()[1],
                                d_navigator->getDirection()[2]};
 
   // Create a dummy model
   d_source_cell = 0;
-  
+
   d_navigator.reset();
 
   d_model.reset( new Geometry::InfiniteMediumModel( d_source_cell ) );
@@ -663,7 +682,7 @@ bool ParticleState::isEmbeddedInModel( const Geometry::Model& model ) const
 
 // Create the navigator AdvanceComplete callback method
 // Note: We must "bind" the navigator to the particle state so that if we
-//       change the navigator state, the particle state also gets changed. 
+//       change the navigator state, the particle state also gets changed.
 //       Specifically, changes to the navigator's position must result in
 //       a change to the particle's time based on the distance traveled and
 //       the particle speed. Any navigator that the particle creates must use

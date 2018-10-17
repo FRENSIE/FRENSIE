@@ -35,13 +35,13 @@ class Logging(unittest.TestCase):
         # Set up the error logs
         filename1 = "test_log_1.txt";
         filename2 = "test_log_2.txt";
-        
+
         Utility.initializeSynchronousErrorLog( filename1 )
         Utility.initializeAsynchronousErrorLog( filename2 )
 
         # Log an error
         message = "test error"
-        
+
         Utility.logError( message )
         Utility.flushAllLogs()
 
@@ -56,7 +56,7 @@ class Logging(unittest.TestCase):
         Utility.initializeSynchronousErrorLog( filename1, True )
 
         message2 = "test error 2"
-        
+
         Utility.logError( message2 )
         Utility.flushAllLogs()
 
@@ -75,7 +75,7 @@ class Logging(unittest.TestCase):
 
         # Log a warning
         message = "test warning"
-        
+
         Utility.logWarning( message )
         Utility.flushAllLogs()
 
@@ -90,12 +90,12 @@ class Logging(unittest.TestCase):
         Utility.initializeSynchronousWarningLog( filename1, True )
 
         message2 = "test warning 2"
-        
+
         Utility.logWarning( message2 )
         Utility.flushAllLogs()
 
         self.assertTrue( message2 in f1.read() )
-        
+
     def testLogNotification(self):
         "*Test Utility.logNotification method"
         Utility.removeAllLogs()
@@ -109,7 +109,7 @@ class Logging(unittest.TestCase):
 
         # Log a warning
         message = "test notification"
-        
+
         Utility.logNotification( message )
         Utility.flushAllLogs()
 
@@ -124,8 +124,46 @@ class Logging(unittest.TestCase):
         Utility.initializeSynchronousNotificationLog( filename1, True )
 
         message2 = "test notification 2"
-        
+
         Utility.logNotification( message2 )
+        Utility.flushAllLogs()
+
+        self.assertTrue( message2 in f1.read() )
+
+    def testLogPartialNotification(self):
+        "*Test Utility.logPartialNotification method"
+        Utility.removeAllLogs()
+
+        # Set up the notification logs
+        filename1 = "test_log_1.txt"
+        filename2 = "test_log_2.txt"
+
+        Utility.initializeSynchronousNotificationLog( filename1 )
+        Utility.initializeAsynchronousNotificationLog( filename2 )
+
+        # Log a warning
+        message = "test notification"
+
+        Utility.logPartialNotification( "test " )
+        Utility.flushAllLogs()
+        Utility.logNotification( "notification" )
+        Utility.flushAllLogs()
+
+        f1 = open(filename1, "r")
+        self.assertTrue( message in f1.read() )
+
+        f2 = open(filename2, "r")
+        self.assertTrue( message in f2.read() )
+
+        # Append an notification to a previous log
+        Utility.removeAllLogs()
+        Utility.initializeSynchronousNotificationLog( filename1, True )
+
+        message2 = "test notification 2"
+
+        Utility.logPartialNotification( "test " )
+        Utility.flushAllLogs()
+        Utility.logNotification( "notification 2" )
         Utility.flushAllLogs()
 
         self.assertTrue( message2 in f1.read() )

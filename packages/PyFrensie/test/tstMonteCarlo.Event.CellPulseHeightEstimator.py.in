@@ -120,7 +120,7 @@ class CellPulseHeightEstimatorTestCase(unittest.TestCase):
         self.assertEqual( estimator.getNumberOfBins(), 2 )
 
 #---------------------------------------------------------------------------#
-# Check that a response function can be set
+# Check that a response functions can be set
     def testSetResponseFunctions(self):
         "*Test MonteCarlo.Event.CellPulseHeightEstimator setResponseFunctions"
 
@@ -147,6 +147,34 @@ class CellPulseHeightEstimatorTestCase(unittest.TestCase):
 
         # Response functions are not allowed with pulse height estimators
         estimator.setResponseFunctions( response_functions )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+#---------------------------------------------------------------------------#
+# Check that a response function can be added
+    def testAddResponseFunction(self):
+        "*Test MonteCarlo.Event.CellPulseHeightEstimator addResponseFunction"
+
+        estimator = Event.WeightMultipliedCellPulseHeightEstimator( 0, 10.0, [ 0, 1 ] )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        response_function = ActiveRegion.ParticleResponse.getDefault()
+        print response_function
+
+        # Response functions are not allowed with pulse height estimators
+        estimator.addResponseFunction( response_function )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        estimator = Event.WeightAndEnergyMultipliedCellPulseHeightEstimator( 1, 10.0, [ 0, 1 ] )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        response_function = ActiveRegion.ParticleResponse.getDefault()
+
+        # Response functions are not allowed with pulse height estimators
+        estimator.addResponseFunction( response_function )
 
         self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
 

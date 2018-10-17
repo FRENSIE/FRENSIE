@@ -8,7 +8,7 @@
 
 %define %utility_docstring
 "
-PyFrensie.Utility.Utility__init__ will be imported directly into the 
+PyFrensie.Utility.Utility__init__ will be imported directly into the
 PyFrensie.Utility module (see PyFrensie.Utility.__init__.py)
 "
 %enddef
@@ -51,7 +51,7 @@ _Utility__init__.initializeSynchronousLogs()
 #include <iostream>
 #include <fstream>
 #include <csignal>
-  
+
 #define NO_IMPORT_ARRAY
 #include "numpy_include.h"
 
@@ -83,7 +83,7 @@ _Utility__init__.initializeSynchronousLogs()
       file = boost::make_shared<std::ofstream>( filename, std::ofstream::app );
     else
       file = boost::make_shared<std::ofstream>( filename );
-    
+
     MACRO_NAME( file );
   }
 %}
@@ -142,7 +142,7 @@ instead of calling 'Utility.Prng.RandomNumberGenerator.createStreams()'.
   //! Infinite loop (used to test the sigint signal handler forwarding)
   void infiniteLoop()
   { while( true ); }
-  
+
   //! Initialize the random number generator
   void initFrensiePrng()
   {
@@ -178,6 +178,12 @@ instead of calling 'Utility.Prng.RandomNumberGenerator.createStreams()'.
   void logNotification( std::string notification_message )
   {
     FRENSIE_LOG_NOTIFICATION( notification_message );
+  }
+
+  //! Log a partial notification
+  void logPartialNotification( std::string notification_message )
+  {
+    FRENSIE_LOG_PARTIAL_NOTIFICATION( notification_message );
   }
 
   //! Create a list of ints from a string

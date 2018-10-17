@@ -29,11 +29,11 @@ SinglePhaseSpaceDimensionParticleResponseFunction<dimension>::SinglePhaseSpaceDi
   // Make sure that the response distribution pointer is valid
   testPrecondition( dimension_distribution.get() );
 
-  // Make sure that the response distribution is valid
-  TEST_FOR_EXCEPTION( !dimension_distribution->isContinuous(),
-                      std::runtime_error,
-                      "The dimension response distribution must be "
-                      "continuous!" );
+  // // Make sure that the response distribution is valid
+  // TEST_FOR_EXCEPTION( !dimension_distribution->isContinuous(),
+  //                     std::runtime_error,
+  //                     "The dimension response distribution must be "
+  //                     "continuous!" );
 }
 
 // Evaluate the response function at the desired phase space point

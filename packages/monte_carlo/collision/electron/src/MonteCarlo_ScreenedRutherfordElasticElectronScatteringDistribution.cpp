@@ -266,8 +266,12 @@ void ScreenedRutherfordElasticElectronScatteringDistribution::sampleAndRecordTri
         ( eta + ElasticTraits::delta_mu_peak * random_number );
 
   // Make sure the scattering angle cosine is valid
-  testPostcondition( scattering_angle_cosine >= ElasticTraits::mu_peak - 1e-14 );
-  testPostcondition( scattering_angle_cosine <= 1.0 );
+  testPostcondition( scattering_angle_cosine >= ElasticTraits::mu_peak - 1e-15 );
+  testPostcondition( scattering_angle_cosine <= 1.0+1e-15 );
+
+  // There will sometimes be roundoff error in which case the scattering angle
+  // cosine should never be greater than 1
+  scattering_angle_cosine = std::min( scattering_angle_cosine, 1.0 );
 }
 
 } // end MonteCarlo namespace

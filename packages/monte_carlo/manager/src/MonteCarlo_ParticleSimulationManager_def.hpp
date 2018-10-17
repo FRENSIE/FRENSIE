@@ -66,6 +66,67 @@
 
 namespace MonteCarlo{
 
+namespace Details{
+
+//! \brief The Ray Safety Helper class
+template<typename State>
+struct RaySafetyHelper
+{
+  //! Return the distance to the next surface hit in the particle's direction
+  static inline double getDistanceSurfaceHit(
+                                State& particle,
+                                Geometry::Model::EntityId& surface_hit,
+                                const double remaining_track_op )
+  {
+    return particle.navigator().fireRay( surface_hit ).value();
+  }
+
+  //! Update the ray safety distance
+  static inline void updateRaySafetyDistance(
+                                State& particle,
+                                const double op_to_collision_site )
+  { /* ... */ }
+};
+
+//! \brief The Ray Safety Helper class
+template<>
+struct RaySafetyHelper<MonteCarlo::ChargedParticleState>
+{
+  // Return the distance to the next surface hit in the particle's direction
+  static inline double getDistanceSurfaceHit(
+                                MonteCarlo::ChargedParticleState& particle,
+                                Geometry::Model::EntityId& surface_hit,
+                                const double remaining_track_op )
+  {
+    if ( particle.getRaySafetyDistance() < remaining_track_op )
+      return particle.navigator().fireRay( surface_hit ).value();
+    else
+      return std::numeric_limits<double>::infinity();
+  }
+
+  //! Update the ray safety distance
+  static inline void updateRaySafetyDistance(
+                                MonteCarlo::ChargedParticleState& particle,
+                                const double op_to_collision_site )
+  {
+    double new_ray_safety_distance =
+      particle.getRaySafetyDistance() - op_to_collision_site;
+
+    // Set the particle's new ray safety distance
+    if( new_ray_safety_distance > 0.0 )
+      particle.setRaySafetyDistance( new_ray_safety_distance );
+
+    // Set ray safety to distance to closest boundary in all directions
+    else
+    {
+      particle.setRaySafetyDistance( particle.navigator().getDistanceToClosestBoundary().value() );
+    }
+
+  }
+};
+
+} // end Details namespace
+
 // Simulate a resolved particle
 template<typename State>
 void ParticleSimulationManager::simulateParticle(
@@ -89,7 +150,7 @@ void ParticleSimulationManager::simulateParticle(
       FRENSIE_LOG_WARNING( particle.getParticleType() <<
                            " born below global cutoff energy. Check source "
                            "definition!\n" << particle );
-      
+
       particle.setAsGone();
     }
     else
@@ -182,7 +243,7 @@ void ParticleSimulationManager::simulateParticleTrack(
     // Fire a ray through the cell currently containing the particle
     try{
       distance_to_surface_hit =
-        particle.navigator().fireRay( surface_hit ).value();
+        Details::RaySafetyHelper<State>::getDistanceSurfaceHit( particle, surface_hit, remaining_track_op );
     }
     CATCH_LOST_PARTICLE_AND_BREAK( particle );
 
@@ -230,6 +291,9 @@ void ParticleSimulationManager::simulateParticleTrack(
       // Update the remaining subtrack mfp
       remaining_track_op -= op_to_surface_hit;
 
+      // Set the ray safety distance to zero
+      particle.setRaySafetyDistance( 0.0 );
+
       // After the first subtrack the particle can no longer be starting from
       // a source point
       subtrack_starting_from_source_point = false;
@@ -247,7 +311,7 @@ void ParticleSimulationManager::simulateParticleTrack(
       // Update the particle state before the collision (e.g. roulette/split
       // using weight window mesh)
       ParticleBank local_bank;
-      
+
       d_weight_windows->updateParticleState( particle, local_bank );
 
       // Undergo a collision with the material in the cell
@@ -290,7 +354,7 @@ void ParticleSimulationManager::simulateParticleTrack(
                                                       particle,
                                                       track_start_point,
                                                       particle.getPosition() );
-    
+
     d_event_handler->updateObserversFromParticleGoneGlobalEvent( particle );
   }
 }
@@ -330,7 +394,7 @@ void ParticleSimulationManager::advanceParticleToCellBoundary(
                                                               particle,
                                                               surface_to_cross,
                                                               surface_normal );
-                                                                     
+
   }
 
   // Update the observers: particle entering cell event
@@ -352,6 +416,9 @@ void ParticleSimulationManager::advanceParticleToCollisionSite(
   // Advance the particle
   particle.navigator().advanceBySubstep( *Utility::reinterpretAsQuantity<Geometry::Navigator::Length>( &distance_to_collision ) );
 
+  // Update the particle's ray safety distance
+  Details::RaySafetyHelper<State>::updateRaySafetyDistance( particle, op_to_collision_site );
+
   // Update the observers: particle subtrack ending in cell event
   d_event_handler->updateObserversFromParticleSubtrackEndingInCellEvent(
                                                        particle,
@@ -364,7 +431,7 @@ void ParticleSimulationManager::advanceParticleToCollisionSite(
                                                       track_start_position,
                                                       particle.getPosition() );
 }
-  
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_PARTICLE_SIMULATION_MANAGER_DEF_HPP

@@ -42,7 +42,7 @@ FRENSIE_UNIT_TEST(AdjointPairProductionEnergyDistributionNormConstantEvaluator,
     pp_edist_norm_pb_evaluator->evaluateEnergyDistributionNormConstant(
                                                                    2.0, 1e-3 );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( norm_constant, 0.717462372397138948, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( norm_constant, 7.174623720415926886e-01, 1e-15 );
 
   norm_constant =
     pp_edist_norm_pb_evaluator->evaluateEnergyDistributionNormConstant(
@@ -66,13 +66,13 @@ FRENSIE_UNIT_TEST(AdjointPairProductionEnergyDistributionNormConstantEvaluator,
     tp_edist_norm_pb_evaluator->evaluateEnergyDistributionNormConstant(
                                                                    3.0, 1e-3 );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( norm_constant, 0.000976815700301481319, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( norm_constant, 9.768023347495827929e-04, 1e-15 );
 
   norm_constant =
     tp_edist_norm_pb_evaluator->evaluateEnergyDistributionNormConstant(
                                                                   20.0, 1e-3 );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( norm_constant, 1.7787765108349336, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( norm_constant, 1.778776489388709248, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -90,7 +90,7 @@ FRENSIE_UNIT_TEST(AdjointPairProductionEnergyDistributionNormConstantEvaluator,
 
   norm_constant = evaluation_wrapper( 2.0 );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( norm_constant, 0.717462372397138948, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( norm_constant, 7.174623720415926886e-01, 1e-15 );
 
   norm_constant = evaluation_wrapper( 20.0 );
 
@@ -112,11 +112,11 @@ FRENSIE_UNIT_TEST(AdjointPairProductionEnergyDistributionNormConstantEvaluator,
 
   norm_constant = evaluation_wrapper( 3.0 );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( norm_constant, 0.000976815700301481319, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( norm_constant, 9.768023347495827929e-04, 1e-15 );
 
   norm_constant = evaluation_wrapper( 20.0 );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( norm_constant, 1.7787765108349336, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( norm_constant, 1.778776489388709248, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//

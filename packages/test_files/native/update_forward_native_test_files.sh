@@ -11,19 +11,18 @@ notes="This table was generated on $today. It is for testing only!"
 while getopts d: option
 do case "${option}"
    in
-       d) cross_section_directory=${OPTARG};;
+       d) database_directory=${OPTARG};;
    esac
 done
 
-if [ -d "$cross_section_directory" ]; then
+if [ -d "$database_directory" ]; then
 
     # Update Hydrogen data
     printf "Updating the H native test data...\n"
-    epr_generator --cross_sec_dir=$cross_section_directory --cross_sec_alias=H --min_photon_energy=1e-3 --max_photon_energy=20.0 --min_electron_energy=1e-5 --max_electron_energy=1e5 --occupation_num_tol=1e-3 --subshell_incoherent_tol=1e-3 --grid_convergence_tol=1e-3 --grid_absolute_diff_tol=1e-80 --grid_absolute_dist_tol=1e-18 --tabular_evaluation_tol=1e-15 --cutoff_angle_cosine=0.9 --number_of_moment_preserving_angles=1.0 --notes="$notes"
+    native_endl_to_native_epr.py --endl_file_name="$database_directory/endldata/endl_native_1.xml" --ace_table_name="1000.14p" --db_nam="$database_directory/database.xml" --output_file_name="test_epr_1_native.xml" --min_photon_energy=1e-3 --max_photon_energy=20.0 --min_electron_energy=1e-5 --max_electron_energy=1e5 --photon_grid_convergence_tol=1e-3 --photon_grid_abs_diff_tol=1e-80 --photon_grid_dist_tol=1e-18 --electron_grid_convergence_tol=1e-3 --electron_grid_abs_diff_tol=1e-80 --electron_grid_dist_tol=1e-18 --occupation_number_eval_tol=1e-3 --subshell_incoherent_eval_tol=1e-3 --tabular_evaluation_tol=1e-15 --cutoff_angle_cosine=0.9 --num_moment_preserving_angles=1 --overwrite --notes="$notes"
     if [ $? -eq 0 ]
     then
         printf "H native data updated successfully!\n\n"
-        mv epr_1_native.xml test_epr_1_native.xml
     else
         printf "H native data FAILED to update!\n"
         exit 1
@@ -31,11 +30,10 @@ if [ -d "$cross_section_directory" ]; then
 
     # Update Carbon data
     printf "Updating the C native test data...\n"
-    epr_generator --cross_sec_dir=$cross_section_directory --cross_sec_alias=C --min_photon_energy=1e-3 --max_photon_energy=20.0 --min_electron_energy=1e-5 --max_electron_energy=1e5 --occupation_num_tol=1e-3 --subshell_incoherent_tol=1e-3 --grid_convergence_tol=1e-3 --grid_absolute_diff_tol=1e-70 --grid_absolute_dist_tol=1e-18 --tabular_evaluation_tol=1e-15 --cutoff_angle_cosine=1.0 --number_of_moment_preserving_angles=0.0 --notes="$notes"
+    native_endl_to_native_epr.py --endl_file_name="$database_directory/endldata/endl_native_6.xml" --ace_table_name="6000.14p" --db_nam="$database_directory/database.xml" --output_file_name="test_epr_6_native.xml" --min_photon_energy=1e-3 --max_photon_energy=20.0 --min_electron_energy=1e-5 --max_electron_energy=1e5 --photon_grid_convergence_tol=1e-3 --photon_grid_abs_diff_tol=1e-70 --photon_grid_dist_tol=1e-18 --electron_grid_convergence_tol=1e-3 --electron_grid_abs_diff_tol=1e-70 --electron_grid_dist_tol=1e-18 --occupation_number_eval_tol=1e-3 --subshell_incoherent_eval_tol=1e-3 --tabular_evaluation_tol=1e-15 --cutoff_angle_cosine=1.0 --num_moment_preserving_angles=0 --overwrite --notes="$notes"
     if [ $? -eq 0 ]
     then
         printf "C native data updated successfully!\n\n"
-        mv epr_6_native.xml test_epr_6_native.xml
     else
         printf "C native data FAILED to update!\n"
         exit 1
@@ -43,11 +41,10 @@ if [ -d "$cross_section_directory" ]; then
 
     # Update Aluminum data
     printf "Updating the Al native test data...\n"
-    epr_generator --cross_sec_dir=$cross_section_directory --cross_sec_alias=Al --min_photon_energy=1e-3 --max_photon_energy=20.0 --min_electron_energy=1e-5 --max_electron_energy=1e5 --occupation_num_tol=1e-3 --subshell_incoherent_tol=1e-3 --grid_convergence_tol=1e-3 --grid_absolute_diff_tol=1e-60 --grid_absolute_dist_tol=1e-18 --tabular_evaluation_tol=1e-15 --cutoff_angle_cosine=0.9 --number_of_moment_preserving_angles=2.0 --notes="$notes"
+    native_endl_to_native_epr.py --endl_file_name="$database_directory/endldata/endl_native_13.xml" --ace_table_name="13000.14p" --db_nam="$database_directory/database.xml" --output_file_name="test_epr_13_native.xml" --min_photon_energy=1e-3 --max_photon_energy=20.0 --min_electron_energy=1e-5 --max_electron_energy=1e5 --photon_grid_convergence_tol=1e-3 --photon_grid_abs_diff_tol=1e-60 --photon_grid_dist_tol=1e-18 --electron_grid_convergence_tol=1e-3 --electron_grid_abs_diff_tol=1e-60 --electron_grid_dist_tol=1e-18 --occupation_number_eval_tol=1e-3 --subshell_incoherent_eval_tol=1e-3 --tabular_evaluation_tol=1e-15 --cutoff_angle_cosine=0.9 --num_moment_preserving_angles=2 --overwrite --notes="$notes"
     if [ $? -eq 0 ]
     then
         printf "Al native data updated successfully!\n\n"
-        mv epr_13_native.xml test_epr_13_native.xml
     else
         printf "Al native data FAILED to update!\n"
         exit 1
@@ -55,11 +52,10 @@ if [ -d "$cross_section_directory" ]; then
 
     # Update Silicon data
     printf "Updating the Si native test data...\n"
-    epr_generator --cross_sec_dir=$cross_section_directory --cross_sec_alias=Si --min_photon_energy=1e-3 --max_photon_energy=20.0 --min_electron_energy=1e-5 --max_electron_energy=1e5 --occupation_num_tol=1e-3 --subshell_incoherent_tol=1e-3 --grid_convergence_tol=1e-3 --grid_absolute_diff_tol=1e-60 --grid_absolute_dist_tol=1e-18 --tabular_evaluation_tol=1e-15 --cutoff_angle_cosine=0.9 --number_of_moment_preserving_angles=1.0 --notes="$notes"
+    native_endl_to_native_epr.py --endl_file_name="$database_directory/endldata/endl_native_14.xml" --ace_table_name="14000.14p" --db_nam="$database_directory/database.xml" --output_file_name="test_epr_14_native.xml" --min_photon_energy=1e-3 --max_photon_energy=20.0 --min_electron_energy=1e-5 --max_electron_energy=1e5 --photon_grid_convergence_tol=1e-3 --photon_grid_abs_diff_tol=1e-60 --photon_grid_dist_tol=1e-18 --electron_grid_convergence_tol=1e-3 --electron_grid_abs_diff_tol=1e-60 --electron_grid_dist_tol=1e-18 --occupation_number_eval_tol=1e-3 --subshell_incoherent_eval_tol=1e-3 --tabular_evaluation_tol=1e-15 --cutoff_angle_cosine=0.9 --num_moment_preserving_angles=1 --overwrite --notes="$notes"
     if [ $? -eq 0 ]
     then
         printf "Si native data updated successfully!\n\n"
-        mv epr_14_native.xml test_epr_14_native.xml
     else
         printf "Si native data FAILED to update!\n"
         exit 1
@@ -67,11 +63,10 @@ if [ -d "$cross_section_directory" ]; then
 
     # Update Lead data
     printf "Updating the Pb native test data...\n"
-    epr_generator --cross_sec_dir=$cross_section_directory --cross_sec_alias=Pb --min_photon_energy=1e-3 --max_photon_energy=20.0 --min_electron_energy=1e-5 --max_electron_energy=1e5 --occupation_num_tol=1e-3 --subshell_incoherent_tol=1e-3 --grid_convergence_tol=1e-3 --grid_absolute_diff_tol=1e-50 --grid_absolute_dist_tol=1e-18 --tabular_evaluation_tol=1e-15 --cutoff_angle_cosine=0.9 --number_of_moment_preserving_angles=2.0 --notes="$notes"
+    native_endl_to_native_epr.py --endl_file_name="$database_directory/endldata/endl_native_82.xml" --ace_table_name="82000.14p" --db_nam="$database_directory/database.xml" --output_file_name="test_epr_82_native.xml" --min_photon_energy=1e-3 --max_photon_energy=20.0 --min_electron_energy=1e-5 --max_electron_energy=1e5 --photon_grid_convergence_tol=1e-3 --photon_grid_abs_diff_tol=1e-50 --photon_grid_dist_tol=1e-18 --electron_grid_convergence_tol=1e-3 --electron_grid_abs_diff_tol=1e-50 --electron_grid_dist_tol=1e-18 --occupation_number_eval_tol=1e-3 --subshell_incoherent_eval_tol=1e-3 --tabular_evaluation_tol=1e-15 --cutoff_angle_cosine=0.9 --num_moment_preserving_angles=2 --overwrite --notes="$notes"
     if [ $? -eq 0 ]
     then
         printf "Pb native data updated successfully!\n\n"
-        mv epr_82_native.xml test_epr_82_native.xml
     else
         printf "Pb native data FAILED to update!\n"
         exit 1

@@ -13,14 +13,14 @@
 #include <boost/serialization/shared_ptr.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_MassiveParticleState.hpp"
+#include "MonteCarlo_ChargedParticleState.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_TypeNameTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The electron state class
-class ElectronState : public MonteCarlo::MassiveParticleState
+class ElectronState : public MonteCarlo::ChargedParticleState
 {
 
 private:
@@ -73,7 +73,7 @@ private:
   // Save the state to an archive
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MassiveParticleState); }
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ChargedParticleState); }
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;

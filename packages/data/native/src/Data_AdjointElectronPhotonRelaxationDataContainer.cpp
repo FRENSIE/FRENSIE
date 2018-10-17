@@ -260,16 +260,16 @@ double AdjointElectronPhotonRelaxationDataContainer::getElectronTabularEvaluatio
   return d_electron_tabular_evaluation_tol;
 }
 
+// Return the adjoint bremsstrahlung min energy nudge value
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointBremsstrahlungMinEnergyNudgeValue() const
+{
+  return d_adjoint_bremsstrahlung_min_energy_nudge_value;
+}
+
 // Return the adjoint bremsstrahlung max energy nudge value
 double AdjointElectronPhotonRelaxationDataContainer::getAdjointBremsstrahlungMaxEnergyNudgeValue() const
 {
   return d_adjoint_bremsstrahlung_max_energy_nudge_value;
-}
-
-// Return the adjoint bremsstrahlung energy to outgoing energy nudge value
-double AdjointElectronPhotonRelaxationDataContainer::getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue() const
-{
-  return d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value;
 }
 
 // Return the adjoint bremsstrahlung cross section evaluation tolerance
@@ -294,6 +294,18 @@ double AdjointElectronPhotonRelaxationDataContainer::getAdjointBremsstrahlungAbs
 double AdjointElectronPhotonRelaxationDataContainer::getAdjointBremsstrahlungDistanceTolerance() const
 {
   return d_adjoint_bremsstrahlung_distance_tol;
+}
+
+// Return the adjoint electroionization min energy nudge value
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationMinEnergyNudgeValue() const
+{
+  return d_adjoint_electroionization_min_energy_nudge_value;
+}
+
+// Return the adjoint electroionization max energy nudge value
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationMaxEnergyNudgeValue() const
+{
+  return d_adjoint_electroionization_max_energy_nudge_value;
 }
 
 // Return the adjoint electroionization cross section evaluation tolerance
@@ -797,11 +809,11 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationEnergyG
   return d_adjoint_electroionization_energy_grid.find( subshell )->second;
 }
 
-// Return if there is a seperate electroionization incoming electron energy grid for the scattering spectrum
+// Return if there is a separate electroionization incoming electron energy grid for the scattering spectrum
 /*! \details If the adjoint_electron_electroionization_energy_grid is empty, it is
  * assumed the electron energy grid should be used instead.
  */
-bool AdjointElectronPhotonRelaxationDataContainer::seperateAdjointElectroionizationEnergyGrid() const
+bool AdjointElectronPhotonRelaxationDataContainer::separateAdjointElectroionizationEnergyGrid() const
 {
   return !d_adjoint_electroionization_energy_grid.empty();
 }
@@ -815,7 +827,7 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationRecoilE
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the incoming_adjoint_energy is valid
-  if( this->seperateAdjointElectroionizationEnergyGrid() )
+  if( this->separateAdjointElectroionizationEnergyGrid() )
   {
     testPrecondition( incoming_adjoint_energy >= d_adjoint_electroionization_energy_grid.find( subshell )->second.front() );
     testPrecondition( incoming_adjoint_energy <= d_adjoint_electroionization_energy_grid.find( subshell )->second.back() );
@@ -838,7 +850,7 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationRecoilP
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the incoming_adjoint_energy is valid
-  if( this->seperateAdjointElectroionizationEnergyGrid() )
+  if( this->separateAdjointElectroionizationEnergyGrid() )
   {
     testPrecondition( incoming_adjoint_energy >= d_adjoint_electroionization_energy_grid.find( subshell )->second.front() );
     testPrecondition( incoming_adjoint_energy <= d_adjoint_electroionization_energy_grid.find( subshell )->second.back() );
@@ -859,11 +871,11 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointElectronBremsstrahlungEn
   return d_adjoint_electron_bremsstrahlung_energy_grid;
 }
 
-// Return if there is a seperate bremsstrahlung incoming electron energy grid for the scattering spectrum
+// Return if there is a separate bremsstrahlung incoming electron energy grid for the scattering spectrum
 /*! \details If the adjoint_electron_bremsstrahlung_energy_grid is empty, it is
  * assumed the electron energy grid should be used instead.
  */
-bool AdjointElectronPhotonRelaxationDataContainer::seperateAdjointBremsstrahlungEnergyGrid() const
+bool AdjointElectronPhotonRelaxationDataContainer::separateAdjointBremsstrahlungEnergyGrid() const
 {
   return d_adjoint_electron_bremsstrahlung_energy_grid.size() > 0;
 }
@@ -874,7 +886,7 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointElectronBremsstrahlungEn
 					        const double incoming_adjoint_energy ) const
 {
   // Make sure the incoming_adjoint_energy is valid
-  if( this->seperateAdjointBremsstrahlungEnergyGrid() )
+  if( this->separateAdjointBremsstrahlungEnergyGrid() )
   {
     testPrecondition( incoming_adjoint_energy >= d_adjoint_electron_bremsstrahlung_energy_grid.front() );
     testPrecondition( incoming_adjoint_energy <= d_adjoint_electron_bremsstrahlung_energy_grid.back() );
@@ -894,7 +906,7 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointElectronBremsstrahlungPD
 					        const double incoming_adjoint_energy ) const
 {
   // Make sure the incoming_adjoint_energy is valid
-  if( this->seperateAdjointBremsstrahlungEnergyGrid() )
+  if( this->separateAdjointBremsstrahlungEnergyGrid() )
   {
     testPrecondition( incoming_adjoint_energy >= d_adjoint_electron_bremsstrahlung_energy_grid.front() );
     testPrecondition( incoming_adjoint_energy <= d_adjoint_electron_bremsstrahlung_energy_grid.back() );
@@ -1318,6 +1330,17 @@ void AdjointElectronPhotonRelaxationDataContainer::setElectronTabularEvaluationT
   d_electron_tabular_evaluation_tol = tabular_evaluation_tol;
 }
 
+// Set the adjoint bremsstrahlung min energy nudge value
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungMinEnergyNudgeValue(
+    const double min_energy_nudge_value )
+{
+  // Make sure the min_energy_nudge_value is valid
+  testPrecondition( min_energy_nudge_value >= 0.0 );
+
+  d_adjoint_bremsstrahlung_min_energy_nudge_value =
+    min_energy_nudge_value;
+}
+
 // Set the adjoint bremsstrahlung max energy nudge value
 void AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungMaxEnergyNudgeValue(
     const double max_energy_nudge_value )
@@ -1327,17 +1350,6 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungMaxEn
 
   d_adjoint_bremsstrahlung_max_energy_nudge_value =
     max_energy_nudge_value;
-}
-
-// Set the adjoint bremsstrahlung energy to outgoing energy nudge value
-void AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(
-    const double energy_to_outgoing_energy_nudge_value )
-{
-  // Make sure the energy_to_outgoing_energy_nudge_value is valid
-  testPrecondition( energy_to_outgoing_energy_nudge_value >= 0.0 );
-
-  d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value =
-    energy_to_outgoing_energy_nudge_value;
 }
 
 // Set the adjoint bremsstrahlung cross section evaluation tolerance
@@ -1382,6 +1394,28 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungDista
 
   d_adjoint_bremsstrahlung_distance_tol =
     distance_tol;
+}
+
+// Set the adjoint electroionization min energy nudge value
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationMinEnergyNudgeValue(
+    const double min_energy_nudge_value )
+{
+  // Make sure the min_energy_nudge_value is valid
+  testPrecondition( min_energy_nudge_value >= 0.0 );
+
+  d_adjoint_electroionization_min_energy_nudge_value =
+    min_energy_nudge_value;
+}
+
+// Set the adjoint electroionization max energy nudge value
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationMaxEnergyNudgeValue(
+    const double max_energy_nudge_value )
+{
+  // Make sure the max_energy_nudge_value is valid
+  testPrecondition( max_energy_nudge_value >= 0.0 );
+
+  d_adjoint_electroionization_max_energy_nudge_value =
+    max_energy_nudge_value;
 }
 
 // Set the adjoint electroionization cross section evaluation tolerance
@@ -2179,7 +2213,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationRe
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the incoming_adjoint_energy is valid
-  if( this->seperateAdjointElectroionizationEnergyGrid() )
+  if( this->separateAdjointElectroionizationEnergyGrid() )
   {
     testPrecondition( incoming_adjoint_energy >= d_adjoint_electroionization_energy_grid.find( subshell )->second.front() );
     testPrecondition( incoming_adjoint_energy <= d_adjoint_electroionization_energy_grid.find( subshell )->second.back() );
@@ -2205,7 +2239,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationRe
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the incoming_adjoint_energy is valid
-  if( this->seperateAdjointElectroionizationEnergyGrid() )
+  if( this->separateAdjointElectroionizationEnergyGrid() )
   {
     testPrecondition( incoming_adjoint_energy >= d_adjoint_electroionization_energy_grid.find( subshell )->second.front() );
     testPrecondition( incoming_adjoint_energy <= d_adjoint_electroionization_energy_grid.find( subshell )->second.back() );
@@ -2262,7 +2296,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectronBremsstrahl
 		     const std::vector<double>&  adjoint_electron_bremsstrahlung_energy )
 {
   // Make sure the incoming_adjoint_energy is valid
-  if( this->seperateAdjointBremsstrahlungEnergyGrid() )
+  if( this->separateAdjointBremsstrahlungEnergyGrid() )
   {
     testPrecondition( incoming_adjoint_energy >= d_adjoint_electron_bremsstrahlung_energy_grid.front() );
     testPrecondition( incoming_adjoint_energy <= d_adjoint_electron_bremsstrahlung_energy_grid.back() );
@@ -2285,7 +2319,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectronBremsstrahl
 	 const std::vector<double>& adjoint_electron_bremsstrahlung_pdf )
 {
   // Make sure the incoming_adjoint_energy is valid
-  if( this->seperateAdjointBremsstrahlungEnergyGrid() )
+  if( this->separateAdjointBremsstrahlungEnergyGrid() )
   {
     testPrecondition( incoming_adjoint_energy >= d_adjoint_electron_bremsstrahlung_energy_grid.front() );
     testPrecondition( incoming_adjoint_energy <= d_adjoint_electron_bremsstrahlung_energy_grid.back() );

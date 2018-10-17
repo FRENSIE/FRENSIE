@@ -32,6 +32,7 @@
 #include "MonteCarlo_CellCollisionFluxEstimator.hpp"
 #include "MonteCarlo_MeshTrackLengthFluxEstimator.hpp"
 
+#include "MonteCarlo_ParticleResponse.hpp"
 using namespace MonteCarlo;
 %}
 
@@ -58,6 +59,10 @@ using namespace MonteCarlo;
 
 // Import the PyFrensie_ArraySharedPtr.i
 %include "PyFrensie_ArraySharedPtr.i"
+
+// Import the MonteCarlo_ParticleResponse.hpp
+%shared_ptr(MonteCarlo::ParticleResponse)
+%import "MonteCarlo_ParticleResponse.hpp"
 
 // Add a few general typedefs
 typedef unsigned int uint32_t;
@@ -133,7 +138,7 @@ typedef unsigned int uint32_t;
 
     bool conversion_success;
 
-    CONVERT_PYOBJECT_TO_VECTOR_OF_BASE_SHARED_PTR( raw_response_functions, response_functions, SWIGTYPE_p_std__shared_ptrT_ParticleResponse_const_t, conversion_success );
+    CONVERT_PYOBJECT_TO_VECTOR_OF_BASE_SHARED_PTR( raw_response_functions, response_functions, SWIGTYPE_p_std__shared_ptrT_MonteCarlo__ParticleResponse_t, conversion_success );
 
     if( conversion_success )
     {
@@ -150,8 +155,6 @@ typedef unsigned int uint32_t;
 %ignore *::setParticleTypes;
 %ignore *::getParticleTypes;
 %ignore *::setResponseFunctions;
-
-%template(ParticleResponseVector) std::vector< std::shared_ptr< ParticleResponse const >,std::allocator< std::shared_ptr< ParticleResponse const > > >;
 
 // Add a typemap for std::map<std::string,std::vector<double> >& processed data
 %typemap(in,numinputs=0) std::map<std::string,std::vector<double> >& processed_data (std::map<std::string,std::vector<double> > temp) "$1 = &temp;"
@@ -231,6 +234,51 @@ typedef unsigned int uint32_t;
 
 %shared_ptr( MonteCarlo::StandardEntityEstimator )
 %include "MonteCarlo_StandardEntityEstimator.hpp"
+
+//---------------------------------------------------------------------------//
+// Add StandardEntityEstimator Testing Struct
+//---------------------------------------------------------------------------//
+%shared_ptr( TestStandardEntityEstimator )
+%inline %{
+
+class TestStandardEntityEstimator : public MonteCarlo::StandardEntityEstimator
+{
+public:
+  TestStandardEntityEstimator( const unsigned long long id,
+			       const double multiplier,
+			       const std::vector<uint64_t>& entity_ids,
+			       const std::vector<double>& entity_norm_constants )
+    : MonteCarlo::StandardEntityEstimator( id,
+                                           multiplier,
+                                           entity_ids,
+                                           entity_norm_constants )
+  { /* ... */ }
+
+  ~TestStandardEntityEstimator()
+  { /* ... */ }
+
+  //! Check if the estimator is a cell estimator
+  bool isCellEstimator() const final override
+  { return false; }
+
+  //! Check if the estimator is a surface estimator
+  bool isSurfaceEstimator() const final override
+  { return false; }
+
+  //! Check if the estimator is a mesh estimator
+  bool isMeshEstimator() const final override
+  { return false; }
+
+  void printSummary( std::ostream& os ) const final override
+  { this->printImplementation( os, "Surface" ); }
+
+  // Allow public access to the standard entity estimator protected mem. funcs.
+  using MonteCarlo::StandardEntityEstimator::addPartialHistoryPointContribution;
+  using MonteCarlo::StandardEntityEstimator::addPartialHistoryRangeContribution;
+  using MonteCarlo::StandardEntityEstimator::assignDiscretization;
+};
+
+%}
 
 // ---------------------------------------------------------------------------//
 // Add StandardSurfaceEstimator support

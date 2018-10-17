@@ -145,11 +145,11 @@ public:
   //! Return the electron FullyTabularTwoDDistribution evaluation tolerance
   double getElectronTabularEvaluationTolerance() const;
 
+  //! Return the adjoint bremsstrahlung min energy nudge value
+  double getAdjointBremsstrahlungMinEnergyNudgeValue() const;
+
   //! Return the adjoint bremsstrahlung max energy nudge value
   double getAdjointBremsstrahlungMaxEnergyNudgeValue() const;
-
-  //! Return the adjoint bremsstrahlung energy to outgoing energy nudge value
-  double getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue() const;
 
   //! Return the adjoint bremsstrahlung cross section evaluation tolerance
   double getAdjointBremsstrahlungEvaluationTolerance() const;
@@ -162,6 +162,12 @@ public:
 
   //! Return the adjoint bremsstrahlung distance tolerance
   double getAdjointBremsstrahlungDistanceTolerance() const;
+
+  //! Return the adjoint electroionization min energy nudge value
+  double getAdjointElectroionizationMinEnergyNudgeValue() const;
+
+  //! Return the adjoint electroionization max energy nudge value
+  double getAdjointElectroionizationMaxEnergyNudgeValue() const;
 
   //! Return the adjoint electroionization cross section evaluation tolerance
   double getAdjointElectroionizationEvaluationTolerance() const;
@@ -388,8 +394,8 @@ public:
   const std::vector<double>& getAdjointElectroionizationEnergyGrid(
                            const unsigned subshell ) const;
 
-  //! Return if there is a seperate electroionization incoming electron energy grid for the scattering spectrum
-  bool seperateAdjointElectroionizationEnergyGrid() const;
+  //! Return if there is a separate electroionization incoming electron energy grid for the scattering spectrum
+  bool separateAdjointElectroionizationEnergyGrid() const;
 
   //! Return the electroionization recoil energy for a subshell and incoming energy
   const std::vector<double>& getAdjointElectroionizationRecoilEnergy(
@@ -404,8 +410,8 @@ public:
   //! Return the bremsstrahlung incoming electron energy grid for the scattering spectrum
   const std::vector<double>& getAdjointElectronBremsstrahlungEnergyGrid() const;
 
-  //! Return if there is a seperate bremsstrahlung incoming electron energy grid for the scattering spectrum
-  bool seperateAdjointBremsstrahlungEnergyGrid() const;
+  //! Return if there is a separate bremsstrahlung incoming electron energy grid for the scattering spectrum
+  bool separateAdjointBremsstrahlungEnergyGrid() const;
 
   //! Return the bremsstrahlung electron energy for an incoming electron energy
   const std::vector<double>& getAdjointElectronBremsstrahlungEnergy(
@@ -588,13 +594,13 @@ protected:
   //! Set the electron FullyTabularTwoDDistribution evaluation tolerance
   void setElectronTabularEvaluationTolerance( const double evaluation_tol );
 
+  //! Set the adjoint bremsstrahlung min energy nudge value
+  void setAdjointBremsstrahlungMinEnergyNudgeValue(
+    const double min_energy_nudge_value );
+
   //! Set the adjoint bremsstrahlung max energy nudge value
   void setAdjointBremsstrahlungMaxEnergyNudgeValue(
     const double max_energy_nudge_value );
-
-  //! Set the adjoint bremsstrahlung energy to outgoing energy nudge value
-  void setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(
-    const double energy_to_outgoing_energy_nudge_value );
 
   //! Set the adjoint bremsstrahlung cross section evaluation tolerance
   void setAdjointBremsstrahlungEvaluationTolerance(
@@ -610,6 +616,14 @@ protected:
 
   //! Set the adjoint bremsstrahlung distance tolerance
   void setAdjointBremsstrahlungDistanceTolerance( const double distance_tol );
+
+  //! Set the adjoint electroionization min energy nudge value
+  void setAdjointElectroionizationMinEnergyNudgeValue(
+    const double min_energy_nudge_value );
+
+  //! Set the adjoint electroionization max energy nudge value
+  void setAdjointElectroionizationMaxEnergyNudgeValue(
+    const double max_energy_nudge_value );
 
   //! Set the adjoint electroionization cross section evaluation tolerance
   void setAdjointElectroionizationEvaluationTolerance(
@@ -1113,11 +1127,11 @@ private:
   // The electron FullyTabularTwoDDistribution evaluation tolerance
   double d_electron_tabular_evaluation_tol;
 
+  // The adjoint bremsstrahlung min energy nudge value
+  double d_adjoint_bremsstrahlung_min_energy_nudge_value;
+
   // The adjoint bremsstrahlung max energy nudge value
   double d_adjoint_bremsstrahlung_max_energy_nudge_value;
-
-  // The adjoint bremsstrahlung energy to outgoing energy nudge value
-  double d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value;
 
   // The adjoint bremsstrahlung cross section evaluation tolerance
   double d_adjoint_bremsstrahlung_evaluation_tolerance;
@@ -1130,6 +1144,12 @@ private:
 
   // The adjoint bremsstrahlung distance tolerance
   double d_adjoint_bremsstrahlung_distance_tol;
+
+  // The adjoint electroionization min energy nudge value
+  double d_adjoint_electroionization_min_energy_nudge_value;
+
+  // The adjoint electroionization max energy nudge value
+  double d_adjoint_electroionization_max_energy_nudge_value;
 
   // The adjoint electroionization cross section evaluation tolerance
   double d_adjoint_electroionization_evaluation_tol;

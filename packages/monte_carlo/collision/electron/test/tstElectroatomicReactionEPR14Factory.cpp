@@ -14,6 +14,7 @@
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
@@ -61,6 +62,44 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionACEFactory,
   cross_section = reaction->getCrossSection( energy );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.11161e+06, 1e-12 );
+
+  // Make sure the screened Rutherford and cutoff can be sampled
+  MonteCarlo::ElectronState electron( 0 );
+  electron.setEnergy( 20.0 );
+  electron.setDirection( 0.0, 0.0, 1.0 );
+
+  MonteCarlo::ParticleBank bank;
+
+  Data::SubshellType shell_of_interaction;
+
+  // Set fake stream
+  std::vector<double> fake_stream( 5 );
+  fake_stream[0] = 0.0; // sample tabuar Cutoff distribution
+  fake_stream[1] = 0.0; // sample mu = -1
+  fake_stream[2] = 0.0; // sample the azimuthal angle
+  fake_stream[3] = 1.0-1e-15; // sample analytical screened Rutherford distribution
+  fake_stream[4] = 1.0-1e-15; // sample mu = 1
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  reaction->react( electron, bank, shell_of_interaction );
+
+  FRENSIE_CHECK_EQUAL( electron.getEnergy(), 20.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getZDirection(),
+                          -1.0,
+                          1e-15 );
+  FRENSIE_CHECK( bank.isEmpty() );
+  FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
+
+  electron.setDirection( 0.0, 0.0, 1.0 );
+  reaction->react( electron, bank, shell_of_interaction );
+
+  FRENSIE_CHECK_EQUAL( electron.getEnergy(), 20.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getZDirection(),
+                          1.0,
+                          1e-15 );
+  FRENSIE_CHECK( bank.isEmpty() );
+  FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 
   // Clear the reaction
   reaction.reset();
@@ -399,6 +438,9 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                 energy_grid->front(),
                 energy_grid->back(),
                 100 ) );
+
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();

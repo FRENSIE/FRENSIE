@@ -77,13 +77,13 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, getNumberOfEmitte
 FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, getCrossSection )
 {
   double cross_section = bremsstrahlung_reaction->getCrossSection( 1e-5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.980092756766359940e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.420906922056859401e+01, 1e-12 );
 
   cross_section = bremsstrahlung_reaction->getCrossSection( 2e-2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.490273650787403259, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.611838244690622535, 1e-12 );
 
   cross_section = bremsstrahlung_reaction->getCrossSection( 20.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.497134894717789044e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.873816755338521323e-01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

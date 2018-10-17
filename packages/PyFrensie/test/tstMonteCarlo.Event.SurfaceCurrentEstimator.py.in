@@ -23,6 +23,7 @@ options,args = parser.parse_args()
 from testingHelpers import importPyFrensieModuleFromBuildDir
 MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
 Event = importPyFrensieModuleFromBuildDir('MonteCarlo.Event')
+ActiveRegion = importPyFrensieModuleFromBuildDir('MonteCarlo.ActiveRegion')
 
 #---------------------------------------------------------------------------#
 # Tests.
@@ -51,7 +52,35 @@ class SurfaceCurrentEstimatorTestCase(unittest.TestCase):
         self.assertTrue( estimator.isSurfaceEstimator() )
         self.assertFalse( estimator.isMeshEstimator() )
 
-        # Check that the number of bins can be returned
+    # Check that a response functions can be set
+    def testSetResponseFunctions(self):
+        "*Test MonteCarlo.Event.SurfaceCurrentEstimator setResponseFunctions"
+
+        estimator = Event.WeightMultipliedSurfaceCurrentEstimator( 0, 10.0, [ 0, 1 ] )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        response_functions = [None] * ( 2 )
+        response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
+        response_functions[1] = response_functions[0]
+
+        estimator.setResponseFunctions( response_functions )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        estimator = Event.WeightAndEnergyMultipliedSurfaceCurrentEstimator( 1, 10.0, [ 0, 1 ] )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        response_functions = [None] * ( 2 )
+        response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
+        response_functions[1] = response_functions[0]
+
+        estimator.setResponseFunctions( response_functions )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+    # Check that the number of bins can be returned
     def testGetNumberOfBins(self):
         "*Test MonteCarlo.Event.SurfaceCurrentEstimator getNumberOfBins"
 

@@ -2263,7 +2263,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   FRENSIE_CHECK_EQUAL( moment_preserving_cross_sections.front(),
                        1.10632944155859441e+08 );
   FRENSIE_CHECK_EQUAL( moment_preserving_cross_sections.back(),
-                       2.20377008864894482e-03 );
+                       2.203770088648945250e-03 );
 }
 
 //---------------------------------------------------------------------------//

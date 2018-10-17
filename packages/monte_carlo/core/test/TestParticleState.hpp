@@ -31,7 +31,8 @@ public:
                                  MonteCarlo::PHOTON,
                                  1,
                                  increment_generation_number,
-                                 reset_collision_number )
+                                 reset_collision_number,
+                                 existing_base_state.getRaySafetyDistance() )
   { /* ... */ }
 
   ~TestParticleState()

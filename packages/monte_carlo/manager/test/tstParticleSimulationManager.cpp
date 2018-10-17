@@ -88,9 +88,9 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
                                         properties,
                                         unfilled_model,
                                         false ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSource> source;
-  
+
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
         source_component( new MonteCarlo::StandardNeutronSourceComponent(
@@ -101,7 +101,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
 
       source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
     }
-  
+
     std::shared_ptr<MonteCarlo::EventHandler> event_handler(
                                  new MonteCarlo::EventHandler( *properties ) );
 
@@ -115,7 +115,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
                                                               "test_sim",
                                                               "xml",
                                                               threads ) );
-  
+
     manager = factory->getManager();
   }
 
@@ -141,9 +141,9 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
                                         properties,
                                         unfilled_model,
                                         false ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSource> source;
-  
+
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
         source_component( new MonteCarlo::StandardNeutronSourceComponent(
@@ -154,7 +154,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
 
       source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
     }
-  
+
     std::shared_ptr<MonteCarlo::EventHandler> event_handler(
                                  new MonteCarlo::EventHandler( *properties ) );
 
@@ -168,7 +168,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
                                                               "test_sim",
                                                               "xml",
                                                               threads ) );
-  
+
     manager = factory->getManager();
   }
 
@@ -195,9 +195,9 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
                                         properties,
                                         unfilled_model,
                                         false ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSource> source;
-  
+
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
         source_component( new MonteCarlo::StandardNeutronSourceComponent(
@@ -208,7 +208,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
 
       source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
     }
-  
+
     std::shared_ptr<MonteCarlo::EventHandler> event_handler(
                                  new MonteCarlo::EventHandler( *properties ) );
 
@@ -222,7 +222,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
                                                               "test_sim",
                                                               "xml",
                                                               threads ) );
-  
+
     manager = factory->getManager();
   }
 
@@ -250,9 +250,9 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
                                         properties,
                                         unfilled_model,
                                         false ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSource> source;
-  
+
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
         source_component( new MonteCarlo::StandardNeutronSourceComponent(
@@ -263,7 +263,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
 
       source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
     }
-  
+
     std::shared_ptr<MonteCarlo::EventHandler> event_handler(
                                  new MonteCarlo::EventHandler( *properties ) );
 
@@ -277,7 +277,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
                                                               "test_sim",
                                                               "xml",
                                                               threads ) );
-  
+
     manager = factory->getManager();
   }
 
@@ -306,9 +306,9 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
                                         properties,
                                         unfilled_model,
                                         false ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSource> source;
-  
+
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
         source_component( new MonteCarlo::StandardNeutronSourceComponent(
@@ -319,7 +319,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
 
       source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
     }
-  
+
     std::shared_ptr<MonteCarlo::EventHandler> event_handler(
                                  new MonteCarlo::EventHandler( *properties ) );
 
@@ -333,7 +333,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
                                                               "test_sim",
                                                               "xml",
                                                               threads ) );
-  
+
     manager = factory->getManager();
   }
 
@@ -362,9 +362,9 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
                                         properties,
                                         unfilled_model,
                                         false ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSource> source;
-  
+
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
         source_component( new MonteCarlo::StandardNeutronSourceComponent(
@@ -375,7 +375,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
 
       source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
     }
-  
+
     std::shared_ptr<MonteCarlo::EventHandler> event_handler(
                                  new MonteCarlo::EventHandler( *properties ) );
 
@@ -389,7 +389,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
                                                               "test_sim",
                                                               "xml",
                                                               threads ) );
-  
+
     manager = factory->getManager();
   }
 
@@ -421,9 +421,9 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationName )
                                         properties,
                                         unfilled_model,
                                         false ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSource> source;
-  
+
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
         source_component( new MonteCarlo::StandardNeutronSourceComponent(
@@ -434,7 +434,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationName )
 
       source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
     }
-  
+
     std::shared_ptr<MonteCarlo::EventHandler> event_handler(
                                  new MonteCarlo::EventHandler( *properties ) );
 
@@ -448,7 +448,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationName )
                                                               "test_sim",
                                                               "xml",
                                                               threads ) );
-  
+
     manager = factory->getManager();
   }
 
@@ -481,9 +481,9 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationArchiveType )
                                         properties,
                                         unfilled_model,
                                         false ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSource> source;
-  
+
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
         source_component( new MonteCarlo::StandardNeutronSourceComponent(
@@ -494,7 +494,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationArchiveType )
 
       source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
     }
-  
+
     std::shared_ptr<MonteCarlo::EventHandler> event_handler(
                                  new MonteCarlo::EventHandler( *properties ) );
 
@@ -508,7 +508,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationArchiveType )
                                                               "test_sim",
                                                               "xml",
                                                               threads ) );
-  
+
     manager = factory->getManager();
   }
 
@@ -540,9 +540,9 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationNameAndArchiveType )
                                         properties,
                                         unfilled_model,
                                         false ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSource> source;
-  
+
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
         source_component( new MonteCarlo::StandardNeutronSourceComponent(
@@ -553,7 +553,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationNameAndArchiveType )
 
       source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
     }
-  
+
     std::shared_ptr<MonteCarlo::EventHandler> event_handler(
                                  new MonteCarlo::EventHandler( *properties ) );
 
@@ -567,7 +567,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationNameAndArchiveType )
                                                               "test_sim",
                                                               "xml",
                                                               threads ) );
-  
+
     manager = factory->getManager();
   }
 
@@ -602,9 +602,9 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, getModel )
                                         properties,
                                         unfilled_model,
                                         false ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSource> source;
-  
+
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
         source_component( new MonteCarlo::StandardNeutronSourceComponent(
@@ -615,7 +615,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, getModel )
 
       source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
     }
-  
+
     std::shared_ptr<MonteCarlo::EventHandler> event_handler(
                                  new MonteCarlo::EventHandler( *properties ) );
 
@@ -629,7 +629,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, getModel )
                                                               "test_sim",
                                                               "xml",
                                                               threads ) );
-  
+
     manager = factory->getManager();
   }
 
@@ -658,7 +658,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, getSource )
                                         properties,
                                         unfilled_model,
                                         false ) );
-  
+
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
         source_component( new MonteCarlo::StandardNeutronSourceComponent(
@@ -669,7 +669,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, getSource )
 
       source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
     }
-  
+
     std::shared_ptr<MonteCarlo::EventHandler> event_handler(
                                  new MonteCarlo::EventHandler( *properties ) );
 
@@ -683,7 +683,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, getSource )
                                                               "test_sim",
                                                               "xml",
                                                               threads ) );
-  
+
     manager = factory->getManager();
   }
 
@@ -714,7 +714,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, getEventHandler )
                                         false ) );
 
     std::shared_ptr<MonteCarlo::ParticleSource> source;
-    
+
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
         source_component( new MonteCarlo::StandardNeutronSourceComponent(
@@ -725,7 +725,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, getEventHandler )
 
       source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
     }
-  
+
     event_handler.reset( new MonteCarlo::EventHandler( *properties ) );
 
     std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
@@ -738,7 +738,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, getEventHandler )
                                                               "test_sim",
                                                               "xml",
                                                               threads ) );
-  
+
     manager = factory->getManager();
   }
 
@@ -765,9 +765,9 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, runSimulation_history_wall )
                                         properties,
                                         unfilled_model,
                                         false ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSource> source;
-  
+
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
         source_component( new MonteCarlo::StandardPhotonSourceComponent(
@@ -778,7 +778,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, runSimulation_history_wall )
 
       source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
     }
-  
+
     std::shared_ptr<MonteCarlo::EventHandler> event_handler(
                                  new MonteCarlo::EventHandler( *properties ) );
 
@@ -792,7 +792,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, runSimulation_history_wall )
                                                               "test_sim",
                                                               "xml",
                                                               threads ) );
-  
+
     manager = factory->getManager();
   }
 
@@ -811,7 +811,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, runSimulation_wall_time )
   {
     std::shared_ptr<MonteCarlo::SimulationProperties> properties(
                                         new MonteCarlo::SimulationProperties );
-    properties->setParticleMode( MonteCarlo::PHOTON_MODE );
+    properties->setParticleMode( MonteCarlo::ELECTRON_MODE );
     properties->setSimulationWallTime( 0.5 );
     properties->setMaxRendezvousBatchSize( 10 );
 
@@ -823,12 +823,12 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, runSimulation_wall_time )
                                         properties,
                                         unfilled_model,
                                         false ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSource> source;
-  
+
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
-        source_component( new MonteCarlo::StandardPhotonSourceComponent(
+        source_component( new MonteCarlo::StandardElectronSourceComponent(
                                                      0,
                                                      1.0,
                                                      unfilled_model,
@@ -836,7 +836,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, runSimulation_wall_time )
 
       source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
     }
-  
+
     std::shared_ptr<MonteCarlo::EventHandler> event_handler(
                                  new MonteCarlo::EventHandler( *properties ) );
 
@@ -850,7 +850,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, runSimulation_wall_time )
                                                               "test_sim",
                                                               "xml",
                                                               threads ) );
-  
+
     manager = factory->getManager();
   }
 
@@ -882,9 +882,9 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, runInterruptibleSimulation )
                                         properties,
                                         unfilled_model,
                                         false ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSource> source;
-  
+
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
         source_component( new MonteCarlo::StandardNeutronSourceComponent(
@@ -895,7 +895,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, runInterruptibleSimulation )
 
       source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
     }
-  
+
     std::shared_ptr<MonteCarlo::EventHandler> event_handler(
                                  new MonteCarlo::EventHandler( *properties ) );
 
@@ -909,7 +909,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, runInterruptibleSimulation )
                                                               "test_sim",
                                                               "xml",
                                                               threads ) );
-  
+
     manager = factory->getManager();
   }
 
@@ -925,7 +925,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, runInterruptibleSimulation )
       timer->start();
 
       while( timer->elapsed().count() < 0.2 );
-      
+
       timer->stop();
       timer.reset();
 
@@ -934,7 +934,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, runInterruptibleSimulation )
       std::raise( SIGINT );
     }
   }
-  
+
   FRENSIE_CHECK( manager->getNextHistory() > 0 );
   FRENSIE_CHECK( manager->getNumberOfRendezvous() > 0 );
 }
@@ -960,9 +960,9 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, printSimulationSummary )
                                         properties,
                                         unfilled_model,
                                         false ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSource> source;
-  
+
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
         source_component( new MonteCarlo::StandardPhotonSourceComponent(
@@ -973,7 +973,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, printSimulationSummary )
 
       source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
     }
-  
+
     std::shared_ptr<MonteCarlo::EventHandler> event_handler(
                                  new MonteCarlo::EventHandler( *properties ) );
 
@@ -987,7 +987,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, printSimulationSummary )
                                                               "test_sim",
                                                               "xml",
                                                               threads ) );
-  
+
     manager = factory->getManager();
   }
 
@@ -1016,9 +1016,9 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, logSimulationSummary )
                                         properties,
                                         unfilled_model,
                                         false ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSource> source;
-  
+
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
         source_component( new MonteCarlo::StandardPhotonSourceComponent(
@@ -1029,7 +1029,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, logSimulationSummary )
 
       source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
     }
-  
+
     std::shared_ptr<MonteCarlo::EventHandler> event_handler(
                                  new MonteCarlo::EventHandler( *properties ) );
 
@@ -1043,7 +1043,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, logSimulationSummary )
                                                               "test_sim",
                                                               "xml",
                                                               threads ) );
-  
+
     manager = factory->getManager();
   }
 
@@ -1058,10 +1058,10 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_basic )
 {
   FETCH_FROM_TABLE( std::string, archive_type );
   FETCH_FROM_TABLE( uint32_t, source_id );
-  
+
   uint64_t next_history;
   uint64_t rendezvous_number;
-  
+
   {
     std::shared_ptr<MonteCarlo::SimulationProperties> properties(
                                         new MonteCarlo::SimulationProperties );
@@ -1077,9 +1077,9 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_basic )
                                         properties,
                                         unfilled_model,
                                         false ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSource> source;
-  
+
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
         source_component( new MonteCarlo::StandardPhotonSourceComponent(
@@ -1090,7 +1090,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_basic )
 
       source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
     }
-  
+
     std::shared_ptr<MonteCarlo::EventHandler> event_handler(
                                  new MonteCarlo::EventHandler( *properties ) );
 
@@ -1102,7 +1102,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_basic )
                                                               "test_sim",
                                                               archive_type,
                                                               threads ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
       factory->getManager();
 
@@ -1147,10 +1147,10 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_add_histories )
 {
   FETCH_FROM_TABLE( std::string, archive_type );
   FETCH_FROM_TABLE( uint32_t, source_id );
-  
+
   uint64_t next_history;
   uint64_t rendezvous_number;
-  
+
   {
     std::shared_ptr<MonteCarlo::SimulationProperties> properties(
                                         new MonteCarlo::SimulationProperties );
@@ -1166,9 +1166,9 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_add_histories )
                                         properties,
                                         unfilled_model,
                                         false ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSource> source;
-  
+
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
         source_component( new MonteCarlo::StandardPhotonSourceComponent(
@@ -1179,7 +1179,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_add_histories )
 
       source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
     }
-  
+
     std::shared_ptr<MonteCarlo::EventHandler> event_handler(
                                  new MonteCarlo::EventHandler( *properties ) );
 
@@ -1191,7 +1191,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_add_histories )
                                                               "test_sim",
                                                               archive_type,
                                                               threads ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
       factory->getManager();
 
@@ -1236,10 +1236,10 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_new_wall_time )
 {
   FETCH_FROM_TABLE( std::string, archive_type );
   FETCH_FROM_TABLE( uint32_t, source_id );
-  
+
   uint64_t next_history;
   uint64_t rendezvous_number;
-  
+
   {
     std::shared_ptr<MonteCarlo::SimulationProperties> properties(
                                         new MonteCarlo::SimulationProperties );
@@ -1255,9 +1255,9 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_new_wall_time )
                                         properties,
                                         unfilled_model,
                                         false ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSource> source;
-  
+
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
         source_component( new MonteCarlo::StandardPhotonSourceComponent(
@@ -1268,7 +1268,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_new_wall_time )
 
       source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
     }
-  
+
     std::shared_ptr<MonteCarlo::EventHandler> event_handler(
                                  new MonteCarlo::EventHandler( *properties ) );
 
@@ -1280,7 +1280,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_new_wall_time )
                                                               "test_sim",
                                                               archive_type,
                                                               threads ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
       factory->getManager();
 
@@ -1326,10 +1326,10 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager,
 {
   FETCH_FROM_TABLE( std::string, archive_type );
   FETCH_FROM_TABLE( uint32_t, source_id );
-  
+
   uint64_t next_history;
   uint64_t rendezvous_number;
-  
+
   {
     std::shared_ptr<MonteCarlo::SimulationProperties> properties(
                                         new MonteCarlo::SimulationProperties );
@@ -1345,9 +1345,9 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager,
                                         properties,
                                         unfilled_model,
                                         false ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSource> source;
-  
+
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
         source_component( new MonteCarlo::StandardPhotonSourceComponent(
@@ -1358,7 +1358,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager,
 
       source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
     }
-  
+
     std::shared_ptr<MonteCarlo::EventHandler> event_handler(
                                  new MonteCarlo::EventHandler( *properties ) );
 
@@ -1370,7 +1370,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager,
                                                               "test_sim",
                                                               archive_type,
                                                               threads ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
       factory->getManager();
 
@@ -1417,10 +1417,10 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager,
 {
   FETCH_FROM_TABLE( std::string, archive_type );
   FETCH_FROM_TABLE( uint32_t, source_id );
-  
+
   uint64_t next_history;
   uint64_t rendezvous_number;
-  
+
   {
     std::shared_ptr<MonteCarlo::SimulationProperties> properties(
                                         new MonteCarlo::SimulationProperties );
@@ -1436,9 +1436,9 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager,
                                         properties,
                                         unfilled_model,
                                         false ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSource> source;
-  
+
     {
       std::shared_ptr<MonteCarlo::ParticleSourceComponent>
         source_component( new MonteCarlo::StandardPhotonSourceComponent(
@@ -1449,7 +1449,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager,
 
       source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
     }
-  
+
     std::shared_ptr<MonteCarlo::EventHandler> event_handler(
                                  new MonteCarlo::EventHandler( *properties ) );
 
@@ -1461,7 +1461,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager,
                                                               "test_sim",
                                                               archive_type,
                                                               threads ) );
-  
+
     std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
       factory->getManager();
 
@@ -1552,11 +1552,11 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     h_definition.setPhotoatomicDataProperties(
           h_properties.getSharedPhotoatomicDataProperties(
                        Data::PhotoatomicDataProperties::Native_EPR_FILE, 0 ) );
-    
+
     h_definition.setAdjointPhotoatomicDataProperties(
           h_properties.getSharedAdjointPhotoatomicDataProperties(
                 Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 0 ) );
-    
+
     h_definition.setElectroatomicDataProperties(
           h_properties.getSharedElectroatomicDataProperties(
                      Data::ElectroatomicDataProperties::Native_EPR_FILE, 0 ) );
@@ -1585,9 +1585,9 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   {
     std::shared_ptr<MonteCarlo::StandardParticleDistribution>
       tmp_particle_distribution( new MonteCarlo::StandardParticleDistribution( "test dist" ) );
-    
+
     particle_distribution = tmp_particle_distribution;
-  }                              
+  }
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
