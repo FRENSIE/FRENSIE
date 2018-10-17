@@ -21,9 +21,11 @@ parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
 options,args = parser.parse_args()
 
 from testingHelpers import importPyFrensieModuleFromBuildDir
+Distribution = importPyFrensieModuleFromBuildDir('Utility.Distribution')
 Geometry = importPyFrensieModuleFromBuildDir('Geometry')
 Mesh = importPyFrensieModuleFromBuildDir('Utility.Mesh')
 MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+ActiveRegion = importPyFrensieModuleFromBuildDir('MonteCarlo.ActiveRegion')
 Event = importPyFrensieModuleFromBuildDir('MonteCarlo.Event')
 
 #-----------------------------------------------------------------------------#
@@ -47,6 +49,15 @@ class EventHandlerTestCase(unittest.TestCase):
                                                               cell_ids,
                                                               cell_volumes )
       cls.estimator_1.setParticleTypes( [MonteCarlo.PHOTON] )
+
+      cls.estimator_1.setSourceEnergyDiscretization( [ 1.0, 2.0, 3.0 ] )
+
+      delta_energy = Distribution.DeltaDistribution( 1.0 )
+      response_functions = [None] * ( 2 )
+      response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
+      response_functions[1] = ActiveRegion.EnergyParticleResponseFunction( delta_energy )
+
+      cls.estimator_1.setResponseFunctions( response_functions )
 
       cls.estimator_2 = Event.WeightAndEnergyMultipliedCellCollisionFluxEstimator(
                                                               1,
@@ -86,7 +97,16 @@ class EventHandlerTestCase(unittest.TestCase):
                                                              1.0,
                                                              surface_ids,
                                                              surface_areas )
-      cls.estimator_7.setParticleTypes( [MonteCarlo.PHOTON] )
+      cls.estimator_7.setParticleTypes( [MonteCarlo.ELECTRON] )
+
+      cls.estimator_7.setSourceEnergyDiscretization( [ 1.0, 2.0, 3.0 ] )
+
+      delta_energy = Distribution.DeltaDistribution( 1.0 )
+      response_functions = [None] * ( 2 )
+      response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
+      response_functions[1] = ActiveRegion.EnergyParticleResponseFunction( delta_energy )
+
+      cls.estimator_7.setResponseFunctions( response_functions )
 
       cls.estimator_8 = Event.WeightAndEnergyMultipliedSurfaceFluxEstimator(
                                                              7,
@@ -100,6 +120,15 @@ class EventHandlerTestCase(unittest.TestCase):
                                                                1.0,
                                                                surface_ids )
       cls.estimator_9.setParticleTypes( [MonteCarlo.PHOTON] )
+
+      cls.estimator_9.setSourceEnergyDiscretization( [ 1.0, 2.0, 3.0 ] )
+
+      delta_energy = Distribution.DeltaDistribution( 1.0 )
+      response_functions = [None] * ( 2 )
+      response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
+      response_functions[1] = ActiveRegion.EnergyParticleResponseFunction( delta_energy )
+
+      cls.estimator_9.setResponseFunctions( response_functions )
 
       cls.estimator_10 = Event.WeightAndEnergyMultipliedSurfaceCurrentEstimator(
                                                                9,

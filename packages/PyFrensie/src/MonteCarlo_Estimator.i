@@ -138,7 +138,7 @@ typedef unsigned int uint32_t;
 
     bool conversion_success;
 
-    CONVERT_PYOBJECT_TO_VECTOR_OF_BASE_SHARED_PTR( raw_response_functions, response_functions, SWIGTYPE_p_std__shared_ptrT_ParticleResponse_const_t, conversion_success );
+    CONVERT_PYOBJECT_TO_VECTOR_OF_BASE_SHARED_PTR( raw_response_functions, response_functions, SWIGTYPE_p_std__shared_ptrT_MonteCarlo__ParticleResponse_t, conversion_success );
 
     if( conversion_success )
     {
@@ -155,8 +155,6 @@ typedef unsigned int uint32_t;
 %ignore *::setParticleTypes;
 %ignore *::getParticleTypes;
 %ignore *::setResponseFunctions;
-
-%template(ParticleResponseVector) std::vector< std::shared_ptr< ParticleResponse const >,std::allocator< std::shared_ptr< ParticleResponse const > > >;
 
 // Add a typemap for std::map<std::string,std::vector<double> >& processed data
 %typemap(in,numinputs=0) std::map<std::string,std::vector<double> >& processed_data (std::map<std::string,std::vector<double> > temp) "$1 = &temp;"
