@@ -185,6 +185,11 @@ class StandardEntityEstimatorTestCase(unittest.TestCase):
         estimator = initializeSurfaceEstimator()
 
         self.assertEqual( estimator.getNumberOfBins(), 16 )
+        self.assertEqual( estimator.getNumberOfBins( Event.OBSERVER_ENERGY_DIMENSION ), 2 )
+        self.assertEqual( estimator.getNumberOfBins( Event.OBSERVER_COSINE_DIMENSION ), 2 )
+        self.assertEqual( estimator.getNumberOfBins( Event.OBSERVER_COLLISION_NUMBER_DIMENSION ), 2 )
+        self.assertEqual( estimator.getNumberOfBins( Event.OBSERVER_TIME_DIMENSION ), 2 )
+        
 
 #-----------------------------------------------------------------------------#
     # Check that the dimensions with discretizations can be returned
