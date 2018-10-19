@@ -209,6 +209,7 @@ FRENSIE_UNIT_TEST( CellPulseHeightEstimator, updateFromParticleEvent )
   }
 
   MonteCarlo::PhotonState particle( 0ull );
+  particle.setSourceWeight( 1.0 );
   particle.setWeight( 1.0 );
   particle.setEnergy( 1.0 );
 
