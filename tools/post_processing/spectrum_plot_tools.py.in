@@ -21,6 +21,7 @@ def plotSpectralDataWithErrors( frensie_data_name,
                                 per_lethargy = False,
                                 top_ylims = None,
                                 bottom_ylims = None,
+                                xlims = None,
                                 legend_pos = None,
                                 output_plot_names = None ):
 
@@ -121,7 +122,10 @@ def plotSpectralDataWithErrors( frensie_data_name,
     ax[0].grid(True, linestyle=':', linewidth=1)
 
     # Set the x limits
-    ax[0].set_xlim( frensie_data["e_bins"][0], frensie_data["e_bins"][-1] )
+    if not xlims is None:
+        ax[0].set_xlim( xlims[0], xlims[-1] )
+    else:
+        ax[0].set_xlim( frensie_data["e_bins"][0], frensie_data["e_bins"][-1] )
 
     if not top_ylims is None:
         ax[0].set_ylim( top_ylims[0], top_ylims[1] )
@@ -152,7 +156,10 @@ def plotSpectralDataWithErrors( frensie_data_name,
     ax[1].grid(True, linestyle=':', linewidth=1)
 
     # Set the x limits
-    ax[1].set_xlim( frensie_data["e_bins"][0], frensie_data["e_bins"][-1] )
+    if not xlims is None:
+        ax[1].set_xlim( xlims[0], xlims[-1] )
+    else:
+        ax[1].set_xlim( frensie_data["e_bins"][0], frensie_data["e_bins"][-1] )
 
     if not bottom_ylims is None:
         ax[1].set_ylim( bottom_ylims[0], bottom_ylims[1] )
