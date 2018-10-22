@@ -60,8 +60,11 @@ IF(DOWNLOAD_NEEDED)
   IF(NOT "${RETURN_CODE}" STREQUAL "0")
     MESSAGE(FATAL_ERROR "Could not download the ENDL data!")
   ENDIF()
-
-  FIND_ENDL_FILES(eadl)
-  FIND_ENDL_FILES(epdl)
-  FIND_ENDL_FILES(eedl)
 ENDIF()
+
+# Always call the find macros - if the cache is deleted these files will need
+# to be found again even though DOWNLOAD_NEEDED will be false
+FIND_ENDL_FILES(eadl)
+FIND_ENDL_FILES(epdl)
+FIND_ENDL_FILES(eedl)
+

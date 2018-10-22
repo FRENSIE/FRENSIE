@@ -127,22 +127,60 @@ double calculateDopplerBroadenedEnergy(
 
   double final_energy;
 
-  double test_pz;
-
+  // This scattering process is energetically possible
   if( discriminant >= 0.0 && a != 0.0 )
   {
-    final_energy = 0.5*(-b + sqrt(discriminant))*initial_energy/a;
+    // The final energy is uniquely determined by the scattering angle cosine
+    // and the electron momentum projection. Unfortunately, I am unaware of
+    // a way to determine which of the two values is the correct one. We
+    // will simply calculate both final energies, then determine which one
+    // corresponds to the supplied electron momentum projection. 
+    const double sqrt_discriminant = sqrt(discriminant);
+    const double multiplier = 0.5*initial_energy/a;
 
-    test_pz = calculateElectronMomentumProjection( initial_energy,
-						   final_energy,
-						   scattering_angle_cosine );
+    const double final_energy_plus = multiplier*(-b + sqrt_discriminant);
+    const double final_energy_minus = multiplier*(-b - sqrt_discriminant);
 
-    // Check if the other final energy should be used instead
-    if( fabs( test_pz - electron_momentum_projection ) > 1e-6 )
-      final_energy = 0.5*(-b - sqrt(discriminant))*initial_energy/a;
+    // At least one energy must be less than the initial energy
+    testInvariant( final_energy_plus <= initial_energy ||
+                   final_energy_minus <= initial_energy );
+
+    double test_pz_plus = std::numeric_limits<double>::infinity();
+
+    if( final_energy_plus <= initial_energy )
+    {
+      test_pz_plus = calculateElectronMomentumProjection( initial_energy,
+                                                          final_energy_plus,
+                                                          scattering_angle_cosine );
+    }
+    
+    double test_pz_minus = std::numeric_limits<double>::infinity();
+
+    if( final_energy_minus <= initial_energy )
+    {
+      test_pz_minus = calculateElectronMomentumProjection( initial_energy,
+                                                           final_energy_minus,
+                                                           scattering_angle_cosine );
+    }
+
+    // Due to approximations used in our derivation of the electron
+    // momentum projection and floating-point roundoff, we will not get back
+    // the exact electron momentum projection that was supplied. Just take
+    // the one that is closest to the supplied projection.
+    const double diff_plus =
+      fabs( test_pz_plus - electron_momentum_projection );
+    
+    const double diff_minus =
+      fabs( test_pz_minus - electron_momentum_projection );
+
+    if( diff_plus < diff_minus )
+      final_energy = final_energy_plus;
+    else
+      final_energy = final_energy_minus;
 
     energetically_possible = true;
   }
+  // This scattering process is not energetically possible
   else
   {
     final_energy = 0.0;
@@ -154,11 +192,6 @@ double calculateDopplerBroadenedEnergy(
   testPostcondition( !Utility::QuantityTraits<double>::isnaninf( final_energy ));
   testPostcondition( final_energy < initial_energy );
   testPostcondition( final_energy >= 0.0 );
-  remember( (test_pz = calculateElectronMomentumProjection(
-						   initial_energy,
-						   final_energy,
-						   scattering_angle_cosine )));
-  testPostcondition( final_energy > 0.0 ? (fabs( test_pz - electron_momentum_projection ) <= 1e-6) : true );
 
   return final_energy;
 }

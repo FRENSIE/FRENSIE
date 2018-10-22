@@ -21,6 +21,7 @@ def plotSpectralDataWithErrors( frensie_data_name,
                                 per_lethargy = False,
                                 top_ylims = None,
                                 bottom_ylims = None,
+                                xlims = None,
                                 legend_pos = None,
                                 output_plot_names = None ):
 
@@ -86,11 +87,19 @@ def plotSpectralDataWithErrors( frensie_data_name,
     plt.subplots_adjust( top=0.95, bottom=0.1, hspace=0.0 )
 
     # Set up the top subplot
-    line1, = ax[0].semilogx(energy_mid_pts, test_normalized_mean, label=test_data_name )
+    if log_spacing:
+        line1, = ax[0].semilogx( energy_mid_pts, test_normalized_mean, label=test_data_name )
+    else:
+        line1, = ax[0].plot( energy_mid_pts, test_normalized_mean, label=test_data_name )
+        
     line1.set_color("black")
     line1.set_linewidth( 1 )
 
-    line2, = ax[0].semilogx(energy_mid_pts, frensie_normalized_mean, label=frensie_data_name )
+    if log_spacing:
+        line2, = ax[0].semilogx( energy_mid_pts, frensie_normalized_mean, label=frensie_data_name )
+    else:
+        line2, = ax[0].plot( energy_mid_pts, frensie_normalized_mean, label=frensie_data_name )
+        
     line2.set_dashes([2, 1, 2, 1])
     line2.set_color('r')
     line2.set_linewidth( 1 )
@@ -113,7 +122,10 @@ def plotSpectralDataWithErrors( frensie_data_name,
     ax[0].grid(True, linestyle=':', linewidth=1)
 
     # Set the x limits
-    ax[0].set_xlim( frensie_data["e_bins"][0], frensie_data["e_bins"][-1] )
+    if not xlims is None:
+        ax[0].set_xlim( xlims[0], xlims[-1] )
+    else:
+        ax[0].set_xlim( frensie_data["e_bins"][0], frensie_data["e_bins"][-1] )
 
     if not top_ylims is None:
         ax[0].set_ylim( top_ylims[0], top_ylims[1] )
@@ -133,7 +145,9 @@ def plotSpectralDataWithErrors( frensie_data_name,
         ax[0].spines[axis].set_linewidth(edge_thickness)
     
     # Set up the bottom subplot
-    ax[1].set_xscale("log")
+    if log_spacing:
+        ax[1].set_xscale("log")
+        
     ax[1].errorbar( energy_mid_pts, f_over_t, yerr=f_over_t_unc, capsize=1.5, fmt='o', ecolor="black", color="black", linewidth=0.5, markersize=1.9 )
     ax[1].set_ylabel( "F/" + test_data_name[0] )
     ax[1].set_xlabel( "Energy (MeV)" )
@@ -142,7 +156,10 @@ def plotSpectralDataWithErrors( frensie_data_name,
     ax[1].grid(True, linestyle=':', linewidth=1)
 
     # Set the x limits
-    ax[1].set_xlim( frensie_data["e_bins"][0], frensie_data["e_bins"][-1] )
+    if not xlims is None:
+        ax[1].set_xlim( xlims[0], xlims[-1] )
+    else:
+        ax[1].set_xlim( frensie_data["e_bins"][0], frensie_data["e_bins"][-1] )
 
     if not bottom_ylims is None:
         ax[1].set_ylim( bottom_ylims[0], bottom_ylims[1] )

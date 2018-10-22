@@ -11,6 +11,7 @@
 
 // Std Lib Includes
 #include <functional>
+#include <type_traits>
 
 //! Log lost particle details
 #define LOG_LOST_PARTICLE_DETAILS( particle )   \
@@ -69,7 +70,7 @@ namespace MonteCarlo{
 namespace Details{
 
 //! \brief The Ray Safety Helper class
-template<typename State>
+template<typename State, typename Enabled=void>
 struct RaySafetyHelper
 {
   //! Return the distance to the next surface hit in the particle's direction
@@ -89,8 +90,8 @@ struct RaySafetyHelper
 };
 
 //! \brief The Ray Safety Helper class
-template<>
-struct RaySafetyHelper<MonteCarlo::ChargedParticleState>
+template<typename State>
+struct RaySafetyHelper<State,typename std::enable_if<std::is_base_of<MonteCarlo::ChargedParticleState,State>::value>::type>
 {
   // Return the distance to the next surface hit in the particle's direction
   static inline double getDistanceSurfaceHit(
