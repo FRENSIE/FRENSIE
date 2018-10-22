@@ -18,6 +18,14 @@ BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightAndEnergyMultipliedCellTrackLeng
 EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightAndChargeMultipliedCellTrackLengthFluxEstimator );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> );
+
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightEnergyAndChargeMultipliedCellTrackLengthFluxEstimator );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
+
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CellTrackLengthFluxEstimator.cpp
 //---------------------------------------------------------------------------//

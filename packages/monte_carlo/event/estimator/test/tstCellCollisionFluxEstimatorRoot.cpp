@@ -30,7 +30,9 @@ std::shared_ptr<const Geometry::Model> model;
 FRENSIE_UNIT_TEST_TEMPLATE( CellCollisionFluxEstimator,
                             constructor,
                             MonteCarlo::WeightMultiplier,
-                            MonteCarlo::WeightAndEnergyMultiplier )
+                            MonteCarlo::WeightAndEnergyMultiplier,
+                            MonteCarlo::WeightAndChargeMultiplier,
+                            MonteCarlo::WeightEnergyAndChargeMultiplier )
 {
   FETCH_TEMPLATE_PARAM( 0, ContributionMultiplierPolicy );
 
@@ -73,7 +75,7 @@ FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   Geometry::RootModelProperties local_properties( test_root_geom_file_name );
-  
+
   std::shared_ptr<Geometry::RootModel> tmp_model =
     Geometry::RootModel::getInstance();
 

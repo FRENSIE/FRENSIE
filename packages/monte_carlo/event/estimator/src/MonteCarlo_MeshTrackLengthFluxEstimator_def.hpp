@@ -19,7 +19,7 @@ namespace MonteCarlo{
 template<typename ContributionMultiplierPolicy>
 MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::MeshTrackLengthFluxEstimator()
 { /* ... */ }
-  
+
 // Constructor
 template<typename ContributionMultiplierPolicy>
 MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::MeshTrackLengthFluxEstimator(
@@ -40,7 +40,7 @@ MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::MeshTrackLengthFluxE
   d_mesh->getElementVolumes( entity_volumes );
 
   this->assignEntities( entity_volumes );
-  
+
   this->assignUpdateMethod();
 }
 
@@ -92,12 +92,12 @@ void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGloba
   if( contribution_array.size() > 0 )
   {
     ObserverParticleStateWrapper particle_state_wrapper( particle );
-    
+
     for( size_t i = 0; i < contribution_array.size(); ++i )
     {
       double weighted_contribution = Utility::get<2>( contribution_array[i] )*
         ContributionMultiplierPolicy::multiplier( particle );
-      
+
       this->addPartialHistoryPointContribution(
                                       Utility::get<0>( contribution_array[i] ),
                                       particle_state_wrapper,
@@ -125,8 +125,8 @@ void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGloba
       std::sqrt( (end_point[0]-start_point[0])*(end_point[0]-start_point[0]) +
                  (end_point[1]-start_point[1])*(end_point[1]-start_point[1]) +
                  (end_point[2]-start_point[2])*(end_point[2]-start_point[2]) );
-                 
-    
+
+
     particle_state_wrapper.calculateStateTimesUsingParticleTimeAsEndTime( total_track_length );
 
     const double start_time = particle_state_wrapper.getStartTime();
@@ -149,10 +149,10 @@ void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGloba
 
       const double track_end_time =
         track_start_time + Utility::get<2>( contribution_array[i] )/particle.getSpeed();
-      
+
       particle_state_wrapper.setStartTime( track_start_time );
       particle_state_wrapper.setEndTime( track_end_time );
-      
+
       this->addPartialHistoryRangeContribution(
                                       Utility::get<0>( contribution_array[i] ),
                                       particle_state_wrapper,
@@ -172,9 +172,9 @@ void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::printSummary(
   // Collect some basic statistics regarding the mesh elements
   std::vector<unsigned long long> num_zero_elements(
                                   this->getNumberOfResponseFunctions(), 0ull );
-  std::vector<unsigned long long> num_elements_lte_1pc_re( 
+  std::vector<unsigned long long> num_elements_lte_1pc_re(
                                   this->getNumberOfResponseFunctions(), 0ull );
-  std::vector<unsigned long long> num_elements_lte_5pc_re( 
+  std::vector<unsigned long long> num_elements_lte_5pc_re(
                                   this->getNumberOfResponseFunctions(), 0ull );
   std::vector<unsigned long long> num_elements_lte_10pc_re(
                                   this->getNumberOfResponseFunctions(), 0ull );
@@ -267,7 +267,7 @@ template<typename ContributionMultiplierPolicy>
 void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportAsVtk() const
 {
   Utility::Mesh::TagNameSet bin_tag_name_set( {"mean: ", "relative_error: ", "fom: "} );
-                                             
+
   Utility::Mesh::TagNameSet total_tag_name_set( {"total_mean: ", "total_relative_error: ", "total_vov: ", "total_fom: "} );
 
   Utility::Mesh::MeshElementHandleDataMap element_data_map;
@@ -290,17 +290,17 @@ void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportAsVtk() c
 
     auto& entity_bin_mean_data = element_data_map[*element_it]["mean: "];
     entity_bin_mean_data.resize( mean.size() );
-    
+
     auto& entity_bin_re_data = element_data_map[*element_it]["relative_error: "];
     entity_bin_re_data.resize( relative_error.size() );
-    
+
     auto& entity_bin_fom_data = element_data_map[*element_it]["fom: "];
     entity_bin_fom_data.resize( figure_of_merit.size() );
-    
+
     for( size_t i = 0; i < mean.size(); ++i )
     {
       const std::string bin_name = this->getBinName( i );
-      
+
       entity_bin_mean_data[i] = std::make_pair( bin_name, mean[i] );
       entity_bin_re_data[i] = std::make_pair( bin_name, relative_error[i] );
       entity_bin_fom_data[i] = std::make_pair( bin_name, figure_of_merit[i] );
@@ -332,7 +332,7 @@ void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportAsVtk() c
     {
       const std::string& response_function_name =
         this->getResponseFunctionName( i );
-        
+
       entity_total_mean_data[i] =
         std::make_pair( response_function_name, total_mean[i] );
       entity_total_re_data[i] =
@@ -353,7 +353,7 @@ void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportAsVtk() c
   Utility::Mesh::TagNameSet tag_name_set( bin_tag_name_set );
   tag_name_set.insert( total_tag_name_set.begin(),
                        total_tag_name_set.end() );
-  
+
   d_mesh->exportData( output_name,
                       tag_name_set,
                       element_data_map );
@@ -377,7 +377,7 @@ void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignDiscretiz
   else if( bins->getDimension() == OBSERVER_TIME_DIMENSION )
   {
     StandardEntityEstimator::assignDiscretization( bins, true );
-    
+
     d_no_time_bins_update_method = false;
 
     this->assignUpdateMethod();
@@ -473,7 +473,7 @@ void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignUpdateMet
                                        std::placeholders::_3 );
   }
 }
-  
+
 } // end MonteCarlo namespace
 
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightMultipliedMeshTrackLengthFluxEstimator, MonteCarlo );
@@ -483,6 +483,14 @@ EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, MeshTrackLengthFluxEstimator<M
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndEnergyMultipliedMeshTrackLengthFluxEstimator, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MeshTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, MeshTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndChargeMultipliedMeshTrackLengthFluxEstimator, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MeshTrackLengthFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, MeshTrackLengthFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightEnergyAndChargeMultipliedMeshTrackLengthFluxEstimator, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MeshTrackLengthFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, MeshTrackLengthFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
 
 #endif // end MONTE_CARLO_MESH_TRACK_LENGTH_FLUX_ESTIMATOR_DEF_HPP
 

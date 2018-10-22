@@ -119,6 +119,14 @@ private:
   double calculateHistoryContribution( const double energy_deposition,
 				       WeightAndEnergyMultiplier );
 
+  // Calculate the estimator contribution from the entire history
+  double calculateHistoryContribution( const double energy_deposition,
+				       WeightAndChargeMultiplier );
+
+  // Calculate the estimator contribution from the entire history
+  double calculateHistoryContribution( const double energy_deposition,
+				       WeightEnergyAndChargeMultiplier );
+
   // Add info to update tracker
   void addInfoToUpdateTracker( const unsigned thread_id,
 			       const CellIdType cell_id,
@@ -142,7 +150,7 @@ private:
   void load( Archive& ar, const unsigned version );
 
   BOOST_SERIALIZATION_SPLIT_MEMBER();
-  
+
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
@@ -158,6 +166,12 @@ typedef CellPulseHeightEstimator<WeightMultiplier> WeightMultipliedCellPulseHeig
 
 //! The weight and energy multiplied cell pulse height estimator
 typedef CellPulseHeightEstimator<WeightAndEnergyMultiplier> WeightAndEnergyMultipliedCellPulseHeightEstimator;
+
+//! The weight and charge multiplied cell collision flux estimator
+typedef CellPulseHeightEstimator<MonteCarlo::WeightAndChargeMultiplier> WeightAndChargeMultipliedCellPulseHeightEstimator;
+
+//! The weight, energy, and charge multiplied cell collision flux estimator
+typedef CellPulseHeightEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> WeightEnergyAndChargeMultipliedCellPulseHeightEstimator;
 
 } // end MonteCarlo namespace
 

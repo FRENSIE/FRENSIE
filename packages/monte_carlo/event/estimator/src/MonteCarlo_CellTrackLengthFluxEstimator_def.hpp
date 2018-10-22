@@ -23,7 +23,7 @@ namespace MonteCarlo{
 template<typename ContributionMultiplierPolicy>
 CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::CellTrackLengthFluxEstimator()
 { /* ... */ }
-  
+
 // Constructor
 template<typename ContributionMultiplierPolicy>
 CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::CellTrackLengthFluxEstimator(
@@ -57,7 +57,7 @@ void CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromParti
   testPrecondition( this->isParticleTypeAssigned( particle.getParticleType() ) );
   // Make sure the cell is assigned to this estimator
   testPrecondition( this->isEntityAssigned( cell_of_subtrack ) );
-  
+
   const double contribution = track_length*
     ContributionMultiplierPolicy::multiplier( particle );
 
@@ -96,7 +96,7 @@ void CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignDiscretiz
 /*! \details This method does a very crude check that the response function
  * is spatially uniform (see the MonteCarlo::ParticleResponse::isSpatiallyUniform
  * details for the limitations of this method). If time bins have been set, the
- * response function must also be uniform over all of the specified time bins. 
+ * response function must also be uniform over all of the specified time bins.
  */
 template<typename ContributionMultiplierPolicy>
 void CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignResponseFunction(
@@ -124,6 +124,14 @@ EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, CellTrackLengthFluxEstimator<M
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndEnergyMultipliedCellTrackLengthFluxEstimator, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndChargeMultipliedCellTrackLengthFluxEstimator, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, CellTrackLengthFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightEnergyAndChargeMultipliedCellTrackLengthFluxEstimator, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, CellTrackLengthFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
 
 
 #endif // end MONTE_CARLO_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_DEF_HPP

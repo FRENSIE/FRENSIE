@@ -20,7 +20,7 @@ namespace MonteCarlo{
 template<typename ContributionMultiplierPolicy>
 SurfaceFluxEstimator<ContributionMultiplierPolicy>::SurfaceFluxEstimator()
 { /* ... */ }
-  
+
 // Constructor
 template<typename ContributionMultiplierPolicy>
 SurfaceFluxEstimator<ContributionMultiplierPolicy>::SurfaceFluxEstimator(
@@ -81,7 +81,7 @@ void SurfaceFluxEstimator<ContributionMultiplierPolicy>::updateFromParticleCross
 
   ObserverParticleStateWrapper particle_state_wrapper( particle );
   particle_state_wrapper.setAngleCosine( angle_cosine );
-  
+
   this->addPartialHistoryPointContribution( surface_crossing,
                                             particle_state_wrapper,
                                             contribution );
@@ -108,6 +108,14 @@ EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SurfaceFluxEstimator<MonteCarl
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndEnergyMultipliedSurfaceFluxEstimator, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndChargeMultipliedSurfaceFluxEstimator, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SurfaceFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightEnergyAndChargeMultipliedSurfaceFluxEstimator, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SurfaceFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
 
 
 #endif // end MONTE_CARLO_SURFACE_FLUX_ESTIMATOR_DEF_HPP

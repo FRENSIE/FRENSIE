@@ -55,6 +55,18 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         self.assertTrue( estimator.isSurfaceEstimator() )
         self.assertFalse( estimator.isMeshEstimator() )
 
+        estimator = Event.WeightAndChargeMultipliedSurfaceFluxEstimator( 2, 10.0, surface_ids, surface_areas )
+
+        self.assertFalse( estimator.isCellEstimator() )
+        self.assertTrue( estimator.isSurfaceEstimator() )
+        self.assertFalse( estimator.isMeshEstimator() )
+
+        estimator = Event.WeightEnergyAndChargeMultipliedSurfaceFluxEstimator( 3, 10.0, surface_ids, surface_areas )
+
+        self.assertFalse( estimator.isCellEstimator() )
+        self.assertTrue( estimator.isSurfaceEstimator() )
+        self.assertFalse( estimator.isMeshEstimator() )
+
     def testGetNumberOfBins(self):
         "*Test MonteCarlo.Event.SurfaceFluxEstimator getNumberOfBins"
 
@@ -142,6 +154,82 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         estimator.setCollisionNumberDiscretization( coll_bins )
         self.assertEqual( estimator.getNumberOfBins(), 16 )
 
+        estimator = Event.WeightAndChargeMultipliedSurfaceFluxEstimator( 2, 10.0, surface_ids, surface_areas )
+        self.assertEqual( estimator.getNumberOfBins(), 1 )
+
+        # Set the energy bins
+        energy_bin_boundaries = [None] * ( 3 )
+        energy_bin_boundaries[0] = 0.0
+        energy_bin_boundaries[1] = 0.1
+        energy_bin_boundaries[2] = 1.0
+
+        estimator.setEnergyDiscretization( energy_bin_boundaries )
+        self.assertEqual( estimator.getNumberOfBins(), 2 )
+
+        # Set the cosine bins
+        cosine_bins = [None] * ( 3 )
+        cosine_bins[0] = -1.0
+        cosine_bins[1] = 0.0
+        cosine_bins[2] = 1.0
+
+        estimator.setCosineDiscretization( cosine_bins )
+        self.assertEqual( estimator.getNumberOfBins(), 4 )
+
+        # Set the time bins
+        time_bins = [None] * ( 3 )
+        time_bins[0] = 0.0
+        time_bins[1] = 0.5
+        time_bins[2] = 1.0
+
+        estimator.setTimeDiscretization( time_bins )
+        self.assertEqual( estimator.getNumberOfBins(), 8 )
+
+        # Set the collision number bins
+        coll_bins = [None] * ( 2 )
+        coll_bins[0] = 0
+        coll_bins[1] = 2147483647
+
+        estimator.setCollisionNumberDiscretization( coll_bins )
+        self.assertEqual( estimator.getNumberOfBins(), 16 )
+
+        estimator = Event.WeightEnergyAndChargeMultipliedSurfaceFluxEstimator( 3, 10.0, surface_ids, surface_areas )
+        self.assertEqual( estimator.getNumberOfBins(), 1 )
+
+        # Set the energy bins
+        energy_bin_boundaries = [None] * ( 3 )
+        energy_bin_boundaries[0] = 0.0
+        energy_bin_boundaries[1] = 0.1
+        energy_bin_boundaries[2] = 1.0
+
+        estimator.setEnergyDiscretization( energy_bin_boundaries )
+        self.assertEqual( estimator.getNumberOfBins(), 2 )
+
+        # Set the cosine bins
+        cosine_bins = [None] * ( 3 )
+        cosine_bins[0] = -1.0
+        cosine_bins[1] = 0.0
+        cosine_bins[2] = 1.0
+
+        estimator.setCosineDiscretization( cosine_bins )
+        self.assertEqual( estimator.getNumberOfBins(), 4 )
+
+        # Set the time bins
+        time_bins = [None] * ( 3 )
+        time_bins[0] = 0.0
+        time_bins[1] = 0.5
+        time_bins[2] = 1.0
+
+        estimator.setTimeDiscretization( time_bins )
+        self.assertEqual( estimator.getNumberOfBins(), 8 )
+
+        # Set the collision number bins
+        coll_bins = [None] * ( 2 )
+        coll_bins[0] = 0
+        coll_bins[1] = 2147483647
+
+        estimator.setCollisionNumberDiscretization( coll_bins )
+        self.assertEqual( estimator.getNumberOfBins(), 16 )
+
 #---------------------------------------------------------------------------#
 # Check that the surface ids associated with the estimator can be returned
     def testGetEntityIds(self):
@@ -158,6 +246,8 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         surface_areas[1] = 2.0
         estimator_1 = Event.WeightMultipliedSurfaceFluxEstimator( 0, 10.0, surface_ids, surface_areas )
         estimator_2 = Event.WeightAndEnergyMultipliedSurfaceFluxEstimator( 1, 10.0, surface_ids, surface_areas )
+        estimator_3 = Event.WeightAndChargeMultipliedSurfaceFluxEstimator( 2, 10.0, surface_ids, surface_areas )
+        estimator_4 = Event.WeightEnergyAndChargeMultipliedSurfaceFluxEstimator( 3, 10.0, surface_ids, surface_areas )
 
         entity_ids = estimator_1.getEntityIds()
 
@@ -166,6 +256,18 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         self.assertTrue( 1 in entity_ids )
 
         entity_ids = estimator_2.getEntityIds()
+
+        self.assertEqual( len(entity_ids), 2 )
+        self.assertTrue( 0 in entity_ids )
+        self.assertTrue( 1 in entity_ids )
+
+        entity_ids = estimator_3.getEntityIds()
+
+        self.assertEqual( len(entity_ids), 2 )
+        self.assertTrue( 0 in entity_ids )
+        self.assertTrue( 1 in entity_ids )
+
+        entity_ids = estimator_4.getEntityIds()
 
         self.assertEqual( len(entity_ids), 2 )
         self.assertTrue( 0 in entity_ids )
@@ -208,6 +310,30 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
 
         self.assertEqual( estimator.getNumberOfResponseFunctions(), 2 )
 
+        estimator = Event.WeightAndChargeMultipliedSurfaceFluxEstimator( 2, 10.0, surface_ids, surface_areas )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        response_functions = [None] * ( 2 )
+        response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
+        response_functions[1] = response_functions[0]
+
+        estimator.setResponseFunctions( response_functions )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 2 )
+
+        estimator = Event.WeightEnergyAndChargeMultipliedSurfaceFluxEstimator( 3, 10.0, surface_ids, surface_areas )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        response_functions = [None] * ( 2 )
+        response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
+        response_functions[1] = response_functions[0]
+
+        estimator.setResponseFunctions( response_functions )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 2 )
+
 #---------------------------------------------------------------------------#
 # Check that a partial history contribution can be added to the estimator
     def testUpdateFromParticleCrossingSurfaceEvent(self):
@@ -225,6 +351,10 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         estimator_1_base = estimator_1
         estimator_2 = Event.WeightAndEnergyMultipliedSurfaceFluxEstimator( 1, 10.0, surface_ids, surface_areas )
         estimator_2_base = estimator_2
+        estimator_3 = Event.WeightMultipliedSurfaceFluxEstimator( 2, 10.0, surface_ids, surface_areas )
+        estimator_3_base = estimator_3
+        estimator_4 = Event.WeightAndEnergyMultipliedSurfaceFluxEstimator( 3, 10.0, surface_ids, surface_areas )
+        estimator_4_base = estimator_4
 
         # Set the energy bins
         energy_bin_boundaries = [None] * ( 3 )
@@ -233,6 +363,8 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         energy_bin_boundaries[2] = 1.0
         estimator_1_base.setEnergyDiscretization( energy_bin_boundaries )
         estimator_2_base.setEnergyDiscretization( energy_bin_boundaries )
+        estimator_3_base.setEnergyDiscretization( energy_bin_boundaries )
+        estimator_4_base.setEnergyDiscretization( energy_bin_boundaries )
 
         # Set the cosine bins
         cosine_bins = [None] * ( 3 )
@@ -241,6 +373,8 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         cosine_bins[2] = 1.0
         estimator_1_base.setCosineDiscretization( cosine_bins )
         estimator_2_base.setCosineDiscretization( cosine_bins )
+        estimator_3_base.setCosineDiscretization( cosine_bins )
+        estimator_4_base.setCosineDiscretization( cosine_bins )
 
         # Set the time bins
         time_bins = [None] * ( 3 )
@@ -249,6 +383,8 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         time_bins[2] = 2.0
         estimator_1_base.setTimeDiscretization(time_bins )
         estimator_2_base.setTimeDiscretization(time_bins )
+        estimator_3_base.setTimeDiscretization(time_bins )
+        estimator_4_base.setTimeDiscretization(time_bins )
 
         # Set the collision number bins
         collision_number_bins = [None] * ( 2 )
@@ -256,18 +392,24 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         collision_number_bins[1] = 1
         estimator_1_base.setCollisionNumberDiscretization( collision_number_bins )
         estimator_2_base.setCollisionNumberDiscretization( collision_number_bins )
+        estimator_3_base.setCollisionNumberDiscretization( collision_number_bins )
+        estimator_4_base.setCollisionNumberDiscretization( collision_number_bins )
 
         # Set the particle types
         particle_types = [None] * ( 1 )
-        particle_types[0] = MonteCarlo.PHOTON
+        particle_types[0] = MonteCarlo.ELECTRON
         estimator_1_base.setParticleTypes( particle_types )
         estimator_2_base.setParticleTypes( particle_types )
+        estimator_3_base.setParticleTypes( particle_types )
+        estimator_4_base.setParticleTypes( particle_types )
 
         self.assertFalse( estimator_1_base.hasUncommittedHistoryContribution() )
         self.assertFalse( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_3_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_4_base.hasUncommittedHistoryContribution() )
 
         # bin 0
-        particle = MonteCarlo.PhotonState( 0 )
+        particle = MonteCarlo.ElectronState( 0 )
         particle.setEnergy( 1.0 )
         particle.setTime( 2.0 )
 
@@ -277,8 +419,16 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
 
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
         self.assertTrue( estimator_1_base.hasUncommittedHistoryContribution() )
         self.assertTrue( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertTrue( estimator_3_base.hasUncommittedHistoryContribution() )
+        self.assertTrue( estimator_4_base.hasUncommittedHistoryContribution() )
 
         # bin 1
         particle.setEnergy( 0.1 )
@@ -290,6 +440,14 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
 
+        particle.setWeight( 1.0 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        particle.setWeight( 10.0 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
         # bin 2
         particle.setEnergy( 1.0 )
         particle.setWeight( 1.0 )
@@ -300,6 +458,12 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
 
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
         # bin 3
         particle.setEnergy( 0.1 )
 
@@ -309,6 +473,14 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         particle.setWeight( 10.0 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        particle.setWeight( 1.0 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        particle.setWeight( 10.0 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
 
         # bin 4
         particle.setEnergy( 1.0 )
@@ -321,6 +493,12 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
 
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
         # bin 5
         particle.setEnergy( 0.1 )
 
@@ -330,6 +508,14 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         particle.setWeight( 10.0 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        particle.setWeight( 1.0 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        particle.setWeight( 10.0 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
 
         # bin 6
         particle.setEnergy( 1.0 )
@@ -341,6 +527,12 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
 
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
         # bin 7
         particle.setEnergy( 0.1 )
 
@@ -350,6 +542,14 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         particle.setWeight( 10.0 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        particle.setWeight( 1.0 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        particle.setWeight( 10.0 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
 
         # bin 8
         particle.setEnergy( 1.0 )
@@ -363,6 +563,12 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
 
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
         # bin 9
         particle.setEnergy( 0.1 )
 
@@ -372,6 +578,14 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         particle.setWeight( 10.0 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        particle.setWeight( 1.0 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        particle.setWeight( 10.0 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
 
         # bin 10
         particle.setEnergy( 1.0 )
@@ -383,6 +597,12 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
 
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
         # bin 11
         particle.setEnergy( 0.1 )
 
@@ -392,6 +612,14 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         particle.setWeight( 10.0 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        particle.setWeight( 1.0 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        particle.setWeight( 10.0 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
 
         # bin 12
         particle.setEnergy( 1.0 )
@@ -404,6 +632,12 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
 
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
         # bin 13
         particle.setEnergy( 0.1 )
 
@@ -413,6 +647,14 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         particle.setWeight( 10.0 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        particle.setWeight( 1.0 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        particle.setWeight( 10.0 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
 
         # bin 14
         particle.setEnergy( 1.0 )
@@ -424,6 +666,12 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
 
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
         # bin 15
         particle.setEnergy( 0.1 )
 
@@ -434,12 +682,24 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
 
+        particle.setWeight( 1.0 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        particle.setWeight( 10.0 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
         # Commit the contributions
         estimator_1_base.commitHistoryContribution()
         estimator_2_base.commitHistoryContribution()
+        estimator_3_base.commitHistoryContribution()
+        estimator_4_base.commitHistoryContribution()
 
         self.assertFalse( estimator_1_base.hasUncommittedHistoryContribution() )
         self.assertFalse( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_3_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_4_base.hasUncommittedHistoryContribution() )
 
         Event.Estimator.setNumberOfHistories( 1.0 )
         Event.Estimator.setElapsedTime( 1.0 )
@@ -471,9 +731,34 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         self.assertSequenceEqual( list(entity_bin_first_moments), [ 2.0 ]*16 )
         self.assertSequenceEqual( list(entity_bin_second_moments), [ 4.0 ]*16 )
 
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 0 )
+
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments), [ -2.0 ]*16 )
+        self.assertSequenceEqual( list(entity_bin_second_moments), [ 4.0 ]*16 )
+
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 1 )
+
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 1 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments), [ -2.0 ]*16 )
+        self.assertSequenceEqual( list(entity_bin_second_moments), [ 4.0 ]*16 )
+
+        entity_bin_first_moments = estimator_4_base.getEntityBinDataFirstMoments( 0 )
+        entity_bin_second_moments = estimator_4_base.getEntityBinDataSecondMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments), [ -2.0 ]*16 )
+        self.assertSequenceEqual( list(entity_bin_second_moments), [ 4.0 ]*16 )
+
+        entity_bin_first_moments = estimator_4_base.getEntityBinDataFirstMoments( 1 )
+        entity_bin_second_moments = estimator_4_base.getEntityBinDataSecondMoments( 1 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments), [ -2.0 ]*16 )
+        self.assertSequenceEqual( list(entity_bin_second_moments), [ 4.0 ]*16 )
+
         # Check the total bin data moments
         total_bin_first_moments = estimator_1_base.getTotalBinDataFirstMoments()
-
         total_bin_second_moments = estimator_1_base.getTotalBinDataSecondMoments()
 
         self.assertSequenceEqual( list(total_bin_first_moments), [ 4.0 ]*16 )
@@ -483,6 +768,18 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         total_bin_second_moments = estimator_2_base.getTotalBinDataSecondMoments()
 
         self.assertSequenceEqual( list(total_bin_first_moments), [ 4.0 ]*16 )
+        self.assertSequenceEqual( list(total_bin_second_moments),[ 16.0 ]*16 )
+
+        total_bin_first_moments = estimator_3_base.getTotalBinDataFirstMoments()
+        total_bin_second_moments = estimator_3_base.getTotalBinDataSecondMoments()
+
+        self.assertSequenceEqual( list(total_bin_first_moments), [ -4.0 ]*16 )
+        self.assertSequenceEqual( list(total_bin_second_moments),[ 16.0 ]*16 )
+
+        total_bin_first_moments = estimator_4_base.getTotalBinDataFirstMoments()
+        total_bin_second_moments = estimator_4_base.getTotalBinDataSecondMoments()
+
+        self.assertSequenceEqual( list(total_bin_first_moments), [ -4.0 ]*16 )
         self.assertSequenceEqual( list(total_bin_second_moments),[ 16.0 ]*16 )
 
         # Check the entity total data moments
@@ -521,9 +818,49 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         entity_total_third_moments = estimator_2_base.getEntityTotalDataThirdMoments( 1 )
         entity_total_fourth_moments = estimator_2_base.getEntityTotalDataFourthMoments( 1 )
 
-        self.assertSequenceEqual( list(entity_total_first_moments), [ 32.0 ] )
+        self.assertSequenceEqual( list(entity_total_first_moments), [ -32.0 ] )
         self.assertSequenceEqual( list(entity_total_second_moments), [ 1024.0 ] )
-        self.assertSequenceEqual( list(entity_total_third_moments), [ 32768.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments), [ -32768.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments),[ 1048576.0 ] )
+
+        entity_total_first_moments = estimator_3_base.getEntityTotalDataFirstMoments( 0 )
+        entity_total_second_moments = estimator_3_base.getEntityTotalDataSecondMoments( 0 )
+        entity_total_third_moments = estimator_3_base.getEntityTotalDataThirdMoments( 0 )
+        entity_total_fourth_moments = estimator_3_base.getEntityTotalDataFourthMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments), [ -32.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments), [ 1024.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments), [ -32768.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments),[ 1048576.0 ] )
+
+        entity_total_first_moments = estimator_3_base.getEntityTotalDataFirstMoments( 1 )
+        entity_total_second_moments = estimator_3_base.getEntityTotalDataSecondMoments( 1 )
+        entity_total_third_moments = estimator_3_base.getEntityTotalDataThirdMoments( 1 )
+        entity_total_fourth_moments = estimator_3_base.getEntityTotalDataFourthMoments( 1 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments), [ -32.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments), [ 1024.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments), [ -32768.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments),[ 1048576.0 ] )
+
+        entity_total_first_moments = estimator_4_base.getEntityTotalDataFirstMoments( 0 )
+        entity_total_second_moments = estimator_4_base.getEntityTotalDataSecondMoments( 0 )
+        entity_total_third_moments = estimator_4_base.getEntityTotalDataThirdMoments( 0 )
+        entity_total_fourth_moments = estimator_4_base.getEntityTotalDataFourthMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments), [ -32.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments), [ 1024.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments), [ -32768.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments),[ 1048576.0 ] )
+
+        entity_total_first_moments = estimator_4_base.getEntityTotalDataFirstMoments( 1 )
+        entity_total_second_moments = estimator_4_base.getEntityTotalDataSecondMoments( 1 )
+        entity_total_third_moments = estimator_4_base.getEntityTotalDataThirdMoments( 1 )
+        entity_total_fourth_moments = estimator_4_base.getEntityTotalDataFourthMoments( 1 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments), [ -32.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments), [ 1024.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments), [ -32768.0 ] )
         self.assertSequenceEqual( list(entity_total_fourth_moments),[ 1048576.0 ] )
 
         # Check the total data moments
@@ -547,6 +884,26 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         self.assertSequenceEqual( list(total_third_moments),[ 262144.0 ] )
         self.assertSequenceEqual( list(total_fourth_moments),[ 16777216.0 ] )
 
+        total_first_moments = estimator_3_base.getTotalDataFirstMoments()
+        total_second_moments = estimator_3_base.getTotalDataSecondMoments()
+        total_third_moments = estimator_3_base.getTotalDataThirdMoments()
+        total_fourth_moments = estimator_3_base.getTotalDataFourthMoments()
+
+        self.assertSequenceEqual( list(total_first_moments),[ -64.0 ] )
+        self.assertSequenceEqual( list(total_second_moments),[ 4096.0 ] )
+        self.assertSequenceEqual( list(total_third_moments),[ -262144.0 ] )
+        self.assertSequenceEqual( list(total_fourth_moments),[ 16777216.0 ] )
+
+        total_first_moments = estimator_4_base.getTotalDataFirstMoments()
+        total_second_moments = estimator_4_base.getTotalDataSecondMoments()
+        total_third_moments = estimator_4_base.getTotalDataThirdMoments()
+        total_fourth_moments = estimator_4_base.getTotalDataFourthMoments()
+
+        self.assertSequenceEqual( list(total_first_moments),[ -64.0 ] )
+        self.assertSequenceEqual( list(total_second_moments),[ 4096.0 ] )
+        self.assertSequenceEqual( list(total_third_moments),[ -262144.0 ] )
+        self.assertSequenceEqual( list(total_fourth_moments),[ 16777216.0 ] )
+
 #---------------------------------------------------------------------------#
 # Check that a partial history contribution can be added to the estimator -
 # special case (|mu| < mu_cut)
@@ -564,49 +921,69 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         estimator_1_base = estimator_1
         estimator_2 = Event.WeightAndEnergyMultipliedSurfaceFluxEstimator( 1, 10.0, surface_ids, surface_areas, 0.1 )
         estimator_2_base = estimator_2
+        estimator_3 = Event.WeightMultipliedSurfaceFluxEstimator( 2, 10.0, surface_ids, surface_areas, 0.1 )
+        estimator_3_base = estimator_3
+        estimator_4 = Event.WeightAndEnergyMultipliedSurfaceFluxEstimator( 3, 10.0, surface_ids, surface_areas, 0.1 )
+        estimator_4_base = estimator_4
 
         # Set the cosine bins
         cosine_bins = [None] * ( 3 )
         cosine_bins[0] = -1.0
         cosine_bins[1] = 0.0
         cosine_bins[2] = 1.0
-        estimator_1_base.setCosineDiscretization(
-                       cosine_bins )
-        estimator_2_base.setCosineDiscretization(
-                       cosine_bins )
+        estimator_1_base.setCosineDiscretization( cosine_bins )
+        estimator_2_base.setCosineDiscretization( cosine_bins )
+        estimator_3_base.setCosineDiscretization( cosine_bins )
+        estimator_4_base.setCosineDiscretization( cosine_bins )
 
         # Set the particle types
         particle_types = [None] * ( 1 )
-        particle_types[0] = MonteCarlo.PHOTON
+        particle_types[0] = MonteCarlo.ELECTRON
+        estimator_1_base.setParticleTypes( particle_types )
+        estimator_2_base.setParticleTypes( particle_types )
         estimator_1_base.setParticleTypes( particle_types )
         estimator_2_base.setParticleTypes( particle_types )
 
         self.assertFalse( estimator_1_base.hasUncommittedHistoryContribution() )
         self.assertFalse( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_3_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_4_base.hasUncommittedHistoryContribution() )
 
         # bin 0
-        particle = MonteCarlo.PhotonState( 0 )
+        particle = MonteCarlo.ElectronState( 0 )
         particle.setEnergy( 0.1 )
 
         estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.05 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.01 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.05 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.01 )
 
         self.assertTrue( estimator_1_base.hasUncommittedHistoryContribution() )
         self.assertTrue( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertTrue( estimator_3_base.hasUncommittedHistoryContribution() )
+        self.assertTrue( estimator_4_base.hasUncommittedHistoryContribution() )
 
         # bin 1
         estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.01 )
         estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.05 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.01 )
+        estimator_4.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.05 )
 
         self.assertTrue( estimator_1_base.hasUncommittedHistoryContribution() )
         self.assertTrue( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertTrue( estimator_3_base.hasUncommittedHistoryContribution() )
+        self.assertTrue( estimator_4_base.hasUncommittedHistoryContribution() )
 
         # Commit the contributions
         estimator_1_base.commitHistoryContribution()
         estimator_2_base.commitHistoryContribution()
+        estimator_3_base.commitHistoryContribution()
+        estimator_4_base.commitHistoryContribution()
 
         self.assertFalse( estimator_1_base.hasUncommittedHistoryContribution() )
         self.assertFalse( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_3_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_4_base.hasUncommittedHistoryContribution() )
 
         Event.Estimator.setNumberOfHistories( 1.0 )
         Event.Estimator.setElapsedTime( 1.0 )
@@ -624,6 +1001,18 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         self.assertSequenceEqual( list(entity_bin_first_moments),[ 2.0 ]*2 )
         self.assertSequenceEqual( list(entity_bin_second_moments),[ 4.0 ]*2 )
 
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 0 )
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments),[ -20.0 ]*2 )
+        self.assertSequenceEqual( list(entity_bin_second_moments),[ 400.0 ]*2 )
+
+        entity_bin_first_moments = estimator_4_base.getEntityBinDataFirstMoments( 0 )
+        entity_bin_second_moments = estimator_4_base.getEntityBinDataSecondMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments),[ -2.0 ]*2 )
+        self.assertSequenceEqual( list(entity_bin_second_moments),[ 4.0 ]*2 )
+
         # Check the total bin data moments
         total_bin_first_moments = estimator_1_base.getTotalBinDataFirstMoments()
         total_bin_second_moments = estimator_1_base.getTotalBinDataSecondMoments()
@@ -635,6 +1024,18 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         total_bin_second_moments = estimator_2_base.getTotalBinDataSecondMoments()
 
         self.assertSequenceEqual( list(total_bin_first_moments),[ 2.0 ]*2 )
+        self.assertSequenceEqual( list(total_bin_second_moments),[ 4.0 ]*2 )
+
+        total_bin_first_moments = estimator_3_base.getTotalBinDataFirstMoments()
+        total_bin_second_moments = estimator_3_base.getTotalBinDataSecondMoments()
+
+        self.assertSequenceEqual( list(total_bin_first_moments),[ -20.0 ]*2 )
+        self.assertSequenceEqual( list(total_bin_second_moments),[ 400.0 ]*2 )
+
+        total_bin_first_moments = estimator_4_base.getTotalBinDataFirstMoments()
+        total_bin_second_moments = estimator_4_base.getTotalBinDataSecondMoments()
+
+        self.assertSequenceEqual( list(total_bin_first_moments),[ -2.0 ]*2 )
         self.assertSequenceEqual( list(total_bin_second_moments),[ 4.0 ]*2 )
 
         # Check the entity total data moments
@@ -658,6 +1059,26 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         self.assertSequenceEqual( list(entity_total_third_moments),[ 64.0 ] )
         self.assertSequenceEqual( list(entity_total_fourth_moments), [ 256.0 ] )
 
+        entity_total_first_moments = estimator_3_base.getEntityTotalDataFirstMoments( 0 )
+        entity_total_second_moments = estimator_3_base.getEntityTotalDataSecondMoments( 0 )
+        entity_total_third_moments = estimator_3_base.getEntityTotalDataThirdMoments( 0 )
+        entity_total_fourth_moments = estimator_3_base.getEntityTotalDataFourthMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments),[ -40.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments),[ 1600.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments),[ -64000.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments),[ 2560000.0 ] )
+
+        entity_total_first_moments = estimator_4_base.getEntityTotalDataFirstMoments( 0 )
+        entity_total_second_moments = estimator_4_base.getEntityTotalDataSecondMoments( 0 )
+        entity_total_third_moments = estimator_4_base.getEntityTotalDataThirdMoments( 0 )
+        entity_total_fourth_moments = estimator_4_base.getEntityTotalDataFourthMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments),[ -4.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments), [ 16.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments),[ -64.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments), [ 256.0 ] )
+
         # Check the total data moments
         total_first_moments = estimator_1_base.getTotalDataFirstMoments()
         total_second_moments = estimator_1_base.getTotalDataSecondMoments()
@@ -677,6 +1098,26 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         self.assertSequenceEqual( list(total_first_moments),[ 4.0 ] )
         self.assertSequenceEqual( list(total_second_moments), [ 16.0 ] )
         self.assertSequenceEqual( list(total_third_moments),[ 64.0 ] )
+        self.assertSequenceEqual( list(total_fourth_moments), [ 256.0 ] )
+
+        total_first_moments = estimator_3_base.getTotalDataFirstMoments()
+        total_second_moments = estimator_3_base.getTotalDataSecondMoments()
+        total_third_moments = estimator_3_base.getTotalDataThirdMoments()
+        total_fourth_moments = estimator_3_base.getTotalDataFourthMoments()
+
+        self.assertSequenceEqual( list(total_first_moments),[ -40.0 ] )
+        self.assertSequenceEqual( list(total_second_moments),[ 1600.0 ] )
+        self.assertSequenceEqual( list(total_third_moments),[ -64000.0 ] )
+        self.assertSequenceEqual( list(total_fourth_moments),[ 2560000.0 ] )
+
+        total_first_moments = estimator_4_base.getTotalDataFirstMoments()
+        total_second_moments = estimator_4_base.getTotalDataSecondMoments()
+        total_third_moments = estimator_4_base.getTotalDataThirdMoments()
+        total_fourth_moments = estimator_4_base.getTotalDataFourthMoments()
+
+        self.assertSequenceEqual( list(total_first_moments),[ -4.0 ] )
+        self.assertSequenceEqual( list(total_second_moments), [ 16.0 ] )
+        self.assertSequenceEqual( list(total_third_moments),[ -64.0 ] )
         self.assertSequenceEqual( list(total_fourth_moments), [ 256.0 ] )
 
 #-----------------------------------------------------------------------------#

@@ -18,6 +18,14 @@ BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightAndEnergyMultipliedCellCollision
 EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightAndChargeMultipliedCellCollisionFluxEstimator );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> );
+
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightEnergyAndChargeMultipliedCellCollisionFluxEstimator );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
+
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CellCollisionFluxEstimator.cpp
 //---------------------------------------------------------------------------//

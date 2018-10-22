@@ -22,7 +22,7 @@ namespace MonteCarlo{
 template<typename ContributionMultiplierPolicy>
 CellCollisionFluxEstimator<ContributionMultiplierPolicy>::CellCollisionFluxEstimator()
 { /* ... */ }
-  
+
 // Constructor
 template<typename ContributionMultiplierPolicy>
 CellCollisionFluxEstimator<ContributionMultiplierPolicy>::CellCollisionFluxEstimator(
@@ -87,6 +87,14 @@ EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, CellCollisionFluxEstimator<Mon
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndEnergyMultipliedCellCollisionFluxEstimator, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, CellCollisionFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndChargeMultipliedCellCollisionFluxEstimator, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, CellCollisionFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightEnergyAndChargeMultipliedCellCollisionFluxEstimator, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, CellCollisionFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
 
 #endif // end MONTE_CARLO_CELL_COLLISION_FLUX_ESTIMATOR_DEF_HPP
 

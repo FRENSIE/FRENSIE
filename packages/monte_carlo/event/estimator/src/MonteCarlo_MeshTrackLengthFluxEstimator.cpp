@@ -18,6 +18,14 @@ BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightAndEnergyMultipliedMeshTrackLeng
 EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MeshTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::MeshTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightAndChargeMultipliedMeshTrackLengthFluxEstimator );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MeshTrackLengthFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::MeshTrackLengthFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> );
+
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightEnergyAndChargeMultipliedMeshTrackLengthFluxEstimator );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MeshTrackLengthFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::MeshTrackLengthFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
+
 //---------------------------------------------------------------------------//
 // end MonteCarlo_MeshTrackLengthFluxEstimator.cpp
 //---------------------------------------------------------------------------//

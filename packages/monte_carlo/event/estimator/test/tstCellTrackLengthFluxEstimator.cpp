@@ -13,6 +13,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_CellTrackLengthFluxEstimator.hpp"
 #include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_ElectronState.hpp"
 #include "Utility_OpenMPProperties.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
 #include "ArchiveTestHelpers.hpp"
@@ -30,7 +31,9 @@ typedef TestArchiveHelper::TestArchives TestArchives;
 FRENSIE_UNIT_TEST_TEMPLATE( CellTrackLengthFluxEstimator,
                             check_type,
                             MonteCarlo::WeightMultiplier,
-                            MonteCarlo::WeightAndEnergyMultiplier )
+                            MonteCarlo::WeightAndEnergyMultiplier,
+                            MonteCarlo::WeightAndChargeMultiplier,
+                            MonteCarlo::WeightEnergyAndChargeMultiplier )
 {
   FETCH_TEMPLATE_PARAM( 0, ContributionMultiplierPolicy );
   std::shared_ptr<MonteCarlo::Estimator> estimator;
@@ -58,9 +61,13 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
 {
   std::shared_ptr<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> > estimator_1;
   std::shared_ptr<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> > estimator_2;
+  std::shared_ptr<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> > estimator_3;
+  std::shared_ptr<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> > estimator_4;
 
   std::shared_ptr<MonteCarlo::Estimator> estimator_1_base;
   std::shared_ptr<MonteCarlo::Estimator> estimator_2_base;
+  std::shared_ptr<MonteCarlo::Estimator> estimator_3_base;
+  std::shared_ptr<MonteCarlo::Estimator> estimator_4_base;
 
   {
     std::vector<MonteCarlo::StandardCellEstimator::CellIdType>
@@ -73,7 +80,6 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
 						       10.0,
 						       cell_ids,
 						       cell_norm_consts ) );
-
     estimator_1_base = estimator_1;
 
     estimator_2.reset( new MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier>(
@@ -82,6 +88,20 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
 						       cell_ids,
 						       cell_norm_consts ) );
     estimator_2_base = estimator_2;
+
+    estimator_3.reset( new MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndChargeMultiplier>(
+						       2u,
+						       10.0,
+						       cell_ids,
+						       cell_norm_consts ) );
+    estimator_3_base = estimator_3;
+
+    estimator_4.reset( new MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier>(
+						       3u,
+						       10.0,
+						       cell_ids,
+						       cell_norm_consts ) );
+    estimator_4_base = estimator_4;
 
     // Set the energy bins
     std::vector<double> energy_bin_boundaries( 3 );
@@ -92,6 +112,10 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
     estimator_1_base->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
 						       energy_bin_boundaries );
     estimator_2_base->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
+						       energy_bin_boundaries );
+    estimator_3_base->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
+						       energy_bin_boundaries );
+    estimator_4_base->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
 						       energy_bin_boundaries );
 
     // Set the time bins
@@ -105,6 +129,8 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
 
     estimator_1_base->setDiscretization( time_discretization );
     estimator_2_base->setDiscretization( time_discretization );
+    estimator_3_base->setDiscretization( time_discretization );
+    estimator_4_base->setDiscretization( time_discretization );
 
     // Set collision number bins
     std::vector<unsigned> collision_number_bins( 2 );
@@ -115,6 +141,10 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
 						       collision_number_bins );
     estimator_2_base->setDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>(
 						       collision_number_bins );
+    estimator_3_base->setDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>(
+						       collision_number_bins );
+    estimator_4_base->setDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>(
+						       collision_number_bins );
 
     // Set the particle types
     std::vector<MonteCarlo::ParticleType> particle_types( 1 );
@@ -122,10 +152,14 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
 
     estimator_1_base->setParticleTypes( particle_types );
     estimator_2_base->setParticleTypes( particle_types );
+    estimator_3_base->setParticleTypes( particle_types );
+    estimator_4_base->setParticleTypes( particle_types );
   }
 
   FRENSIE_CHECK( !estimator_1_base->hasUncommittedHistoryContribution() );
   FRENSIE_CHECK( !estimator_2_base->hasUncommittedHistoryContribution() );
+  FRENSIE_CHECK( !estimator_3_base->hasUncommittedHistoryContribution() );
+  FRENSIE_CHECK( !estimator_4_base->hasUncommittedHistoryContribution() );
 
   // bin 0, 2
   MonteCarlo::PhotonState particle( 0ull );
@@ -139,8 +173,16 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
   estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
   estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
 
+  estimator_3->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
+  estimator_3->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
+
+  estimator_4->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
+  estimator_4->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
+
   FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
   FRENSIE_CHECK( estimator_2->hasUncommittedHistoryContribution() );
+  FRENSIE_CHECK( estimator_3->hasUncommittedHistoryContribution() );
+  FRENSIE_CHECK( estimator_4->hasUncommittedHistoryContribution() );
 
   // bin 1, 3
   particle.setEnergy( 0.1 );
@@ -151,6 +193,14 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
   particle.setWeight( 10.0 );
   estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
   estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
+
+  particle.setWeight( 1.0 );
+  estimator_3->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
+  estimator_3->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
+
+  particle.setWeight( 10.0 );
+  estimator_4->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
+  estimator_4->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
 
   // bin 4, 6
   particle.incrementCollisionNumber();
@@ -163,6 +213,12 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
   estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
   estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
 
+  estimator_3->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
+  estimator_3->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
+
+  estimator_4->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
+  estimator_4->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
+
   // bin 5, 7
   particle.setEnergy( 0.1 );
 
@@ -173,12 +229,24 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
   estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
   estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
 
+  particle.setWeight( 1.0 );
+  estimator_3->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
+  estimator_3->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
+
+  particle.setWeight( 10.0 );
+  estimator_4->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
+  estimator_4->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
+
   // Commit the contributions
   estimator_1_base->commitHistoryContribution();
   estimator_2_base->commitHistoryContribution();
+  estimator_3_base->commitHistoryContribution();
+  estimator_4_base->commitHistoryContribution();
 
   FRENSIE_CHECK( !estimator_1_base->hasUncommittedHistoryContribution() );
   FRENSIE_CHECK( !estimator_2_base->hasUncommittedHistoryContribution() );
+  FRENSIE_CHECK( !estimator_3_base->hasUncommittedHistoryContribution() );
+  FRENSIE_CHECK( !estimator_4_base->hasUncommittedHistoryContribution() );
 
   MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( 1.0 );
   MonteCarlo::ParticleHistoryObserver::setElapsedTime( 1.0 );
@@ -228,6 +296,50 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
   FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
                        std::vector<double>( 8, 0.25 ) );
 
+  entity_bin_first_moments =
+    estimator_3_base->getEntityBinDataFirstMoments( 0 );
+
+  entity_bin_second_moments =
+    estimator_3_base->getEntityBinDataSecondMoments( 0 );
+
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( -8, 0.5 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 8, 0.25 ) );
+
+  entity_bin_first_moments =
+    estimator_3_base->getEntityBinDataFirstMoments( 1 );
+
+  entity_bin_second_moments =
+    estimator_3_base->getEntityBinDataSecondMoments( 1 );
+
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( -8, 0.5 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 8, 0.25 ) );
+
+  entity_bin_first_moments =
+    estimator_4_base->getEntityBinDataFirstMoments( 0 );
+
+  entity_bin_second_moments =
+    estimator_4_base->getEntityBinDataSecondMoments( 0 );
+
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( -8, 0.5 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 8, 0.25 ) );
+
+  entity_bin_first_moments =
+    estimator_4_base->getEntityBinDataFirstMoments( 1 );
+
+  entity_bin_second_moments =
+    estimator_4_base->getEntityBinDataSecondMoments( 1 );
+
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( -8, 0.5 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 8, 0.25 ) );
+
   // Check the total bin data moments
   Utility::ArrayView<const double> total_bin_first_moments =
     estimator_1_base->getTotalBinDataFirstMoments();
@@ -248,6 +360,28 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
 
   FRENSIE_CHECK_EQUAL( total_bin_first_moments,
                        std::vector<double>( 8, 1.0 ) );
+  FRENSIE_CHECK_EQUAL( total_bin_second_moments,
+                       std::vector<double>( 8, 1.0 ) );
+
+  total_bin_first_moments =
+    estimator_3_base->getTotalBinDataFirstMoments();
+
+  total_bin_second_moments =
+    estimator_3_base->getTotalBinDataSecondMoments();
+
+  FRENSIE_CHECK_EQUAL( total_bin_first_moments,
+                       std::vector<double>( -8, 1.0 ) );
+  FRENSIE_CHECK_EQUAL( total_bin_second_moments,
+                       std::vector<double>( 8, 1.0 ) );
+
+  total_bin_first_moments =
+    estimator_4_base->getTotalBinDataFirstMoments();
+
+  total_bin_second_moments =
+    estimator_4_base->getTotalBinDataSecondMoments();
+
+  FRENSIE_CHECK_EQUAL( total_bin_first_moments,
+                       std::vector<double>( -8, 1.0 ) );
   FRENSIE_CHECK_EQUAL( total_bin_second_moments,
                        std::vector<double>( 8, 1.0 ) );
 
@@ -336,6 +470,90 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
   FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
                        std::vector<double>( 1, 256.0 ) );
 
+  entity_total_first_moments =
+    estimator_3_base->getEntityTotalDataFirstMoments( 0 );
+
+  entity_total_second_moments =
+    estimator_3_base->getEntityTotalDataSecondMoments( 0 );
+
+  entity_total_third_moments =
+    estimator_3_base->getEntityTotalDataThirdMoments( 0 );
+
+  entity_total_fourth_moments =
+    estimator_3_base->getEntityTotalDataFourthMoments( 0 );
+
+  FRENSIE_CHECK_EQUAL( entity_total_first_moments,
+                       std::vector<double>( 1, -4.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_second_moments,
+                       std::vector<double>( 1, 16.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_third_moments,
+                       std::vector<double>( 1, -64.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
+                       std::vector<double>( 1, 256.0 ) );
+
+  entity_total_first_moments =
+    estimator_3_base->getEntityTotalDataFirstMoments( 1 );
+
+  entity_total_second_moments =
+    estimator_3_base->getEntityTotalDataSecondMoments( 1 );
+
+  entity_total_third_moments =
+    estimator_3_base->getEntityTotalDataThirdMoments( 1 );
+
+  entity_total_fourth_moments =
+    estimator_3_base->getEntityTotalDataFourthMoments( 1 );
+
+  FRENSIE_CHECK_EQUAL( entity_total_first_moments,
+                       std::vector<double>( 1, -4.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_second_moments,
+                       std::vector<double>( 1, 16.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_third_moments,
+                       std::vector<double>( 1, -64.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
+                       std::vector<double>( 1, 256.0 ) );
+
+  entity_total_first_moments =
+    estimator_4_base->getEntityTotalDataFirstMoments( 0 );
+
+  entity_total_second_moments =
+    estimator_4_base->getEntityTotalDataSecondMoments( 0 );
+
+  entity_total_third_moments =
+    estimator_4_base->getEntityTotalDataThirdMoments( 0 );
+
+  entity_total_fourth_moments =
+    estimator_4_base->getEntityTotalDataFourthMoments( 0 );
+
+  FRENSIE_CHECK_EQUAL( entity_total_first_moments,
+                       std::vector<double>( 1, -4.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_second_moments,
+                       std::vector<double>( 1, 16.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_third_moments,
+                       std::vector<double>( 1, -64.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
+                       std::vector<double>( 1, 256.0 ) );
+
+  entity_total_first_moments =
+    estimator_4_base->getEntityTotalDataFirstMoments( 1 );
+
+  entity_total_second_moments =
+    estimator_4_base->getEntityTotalDataSecondMoments( 1 );
+
+  entity_total_third_moments =
+    estimator_4_base->getEntityTotalDataThirdMoments( 1 );
+
+  entity_total_fourth_moments =
+    estimator_4_base->getEntityTotalDataFourthMoments( 1 );
+
+  FRENSIE_CHECK_EQUAL( entity_total_first_moments,
+                       std::vector<double>( 1, -4.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_second_moments,
+                       std::vector<double>( 1, 16.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_third_moments,
+                       std::vector<double>( 1, -64.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
+                       std::vector<double>( 1, 256.0 ) );
+
   // Check the total data moments
   Utility::ArrayView<const double> total_first_moments =
     estimator_1_base->getTotalDataFirstMoments();
@@ -371,6 +589,34 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
                        std::vector<double>( 1, 512.0 ) );
   FRENSIE_CHECK_EQUAL( total_fourth_moments,
                        std::vector<double>( 1, 4096.0 ) );
+
+  total_first_moments = estimator_3_base->getTotalDataFirstMoments();
+  total_second_moments = estimator_3_base->getTotalDataSecondMoments();
+  total_third_moments = estimator_3_base->getTotalDataThirdMoments();
+  total_fourth_moments = estimator_3_base->getTotalDataFourthMoments();
+
+  FRENSIE_CHECK_EQUAL( total_first_moments,
+                       std::vector<double>( 1, -8.0 ) );
+  FRENSIE_CHECK_EQUAL( total_second_moments,
+                       std::vector<double>( 1, 64.0 ) );
+  FRENSIE_CHECK_EQUAL( total_third_moments,
+                       std::vector<double>( 1, -512.0 ) );
+  FRENSIE_CHECK_EQUAL( total_fourth_moments,
+                       std::vector<double>( 1, 4096.0 ) );
+
+  total_first_moments = estimator_4_base->getTotalDataFirstMoments();
+  total_second_moments = estimator_4_base->getTotalDataSecondMoments();
+  total_third_moments = estimator_4_base->getTotalDataThirdMoments();
+  total_fourth_moments = estimator_4_base->getTotalDataFourthMoments();
+
+  FRENSIE_CHECK_EQUAL( total_first_moments,
+                       std::vector<double>( 1, -8.0 ) );
+  FRENSIE_CHECK_EQUAL( total_second_moments,
+                       std::vector<double>( 1, 64.0 ) );
+  FRENSIE_CHECK_EQUAL( total_third_moments,
+                       std::vector<double>( 1, -512.0 ) );
+  FRENSIE_CHECK_EQUAL( total_fourth_moments,
+                       std::vector<double>( 1, 4096.0 ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -380,9 +626,13 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
 {
   std::shared_ptr<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> > estimator_1;
   std::shared_ptr<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> > estimator_2;
+  std::shared_ptr<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> > estimator_3;
+  std::shared_ptr<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> > estimator_4;
 
   std::shared_ptr<MonteCarlo::Estimator> estimator_1_base;
   std::shared_ptr<MonteCarlo::Estimator> estimator_2_base;
+  std::shared_ptr<MonteCarlo::Estimator> estimator_3_base;
+  std::shared_ptr<MonteCarlo::Estimator> estimator_4_base;
 
   {
     std::vector<MonteCarlo::StandardCellEstimator::CellIdType>
@@ -405,6 +655,20 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
 						       cell_norm_consts ) );
     estimator_2_base = estimator_2;
 
+    estimator_3.reset( new MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndChargeMultiplier>(
+						       2u,
+						       10.0,
+						       cell_ids,
+						       cell_norm_consts ) );
+    estimator_3_base = estimator_3;
+
+    estimator_4.reset( new MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier>(
+						       3u,
+						       10.0,
+						       cell_ids,
+						       cell_norm_consts ) );
+    estimator_4_base = estimator_4;
+
     // Set the energy bins
     std::vector<double> energy_bin_boundaries( 3 );
     energy_bin_boundaries[0] = 0.0;
@@ -414,6 +678,10 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
     estimator_1_base->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
 						       energy_bin_boundaries );
     estimator_2_base->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
+						       energy_bin_boundaries );
+    estimator_3_base->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
+						       energy_bin_boundaries );
+    estimator_4_base->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
 						       energy_bin_boundaries );
 
     // Set the time bins
@@ -427,6 +695,8 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
 
     estimator_1_base->setDiscretization( time_discretization );
     estimator_2_base->setDiscretization( time_discretization );
+    estimator_3_base->setDiscretization( time_discretization );
+    estimator_4_base->setDiscretization( time_discretization );
 
     // Set collision number bins
     std::vector<unsigned> collision_number_bins( 2 );
@@ -437,21 +707,31 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
 						       collision_number_bins );
     estimator_2_base->setDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>(
 						       collision_number_bins );
+    estimator_3_base->setDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>(
+						       collision_number_bins );
+    estimator_4_base->setDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>(
+						       collision_number_bins );
 
     // Set the particle types
     std::vector<MonteCarlo::ParticleType> particle_types( 1 );
-    particle_types[0] = MonteCarlo::PHOTON;
+    particle_types[0] = MonteCarlo::ELECTRON;
 
     estimator_1_base->setParticleTypes( particle_types );
     estimator_2_base->setParticleTypes( particle_types );
-  
+    estimator_3_base->setParticleTypes( particle_types );
+    estimator_4_base->setParticleTypes( particle_types );
+
     // Enable thread support
     estimator_1_base->enableThreadSupport( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
     estimator_2_base->enableThreadSupport( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
+    estimator_3_base->enableThreadSupport( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
+    estimator_4_base->enableThreadSupport( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
   }
 
   FRENSIE_CHECK( !estimator_1_base->hasUncommittedHistoryContribution() );
   FRENSIE_CHECK( !estimator_2_base->hasUncommittedHistoryContribution() );
+  FRENSIE_CHECK( !estimator_3_base->hasUncommittedHistoryContribution() );
+  FRENSIE_CHECK( !estimator_4_base->hasUncommittedHistoryContribution() );
 
   unsigned threads =
     Utility::OpenMPProperties::getRequestedNumberOfThreads();
@@ -459,55 +739,87 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
   #pragma omp parallel num_threads( threads )
   {
     // bin 0, 2
-    MonteCarlo::PhotonState particle( 0ull );
+    MonteCarlo::ElectronState particle( 0ull );
     particle.setEnergy( 1.0 );
     particle.setTime( 3.33564095198152e-11 );
     particle.setWeight( 1.0 );
 
     estimator_1->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
     estimator_1->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
-    
+
     estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
     estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
-    
+
+    estimator_3->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
+    estimator_3->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
+
+    estimator_4->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
+    estimator_4->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
+
     // bin 1, 3
     particle.setEnergy( 0.1 );
-    
+
     estimator_1->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
     estimator_1->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
-    
+
     particle.setWeight( 10.0 );
     estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
     estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
-    
+
+    particle.setWeight( 1.0 );
+    estimator_3->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
+    estimator_3->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
+
+    particle.setWeight( 10.0 );
+    estimator_4->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
+    estimator_4->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
+
     // bin 4, 6
     particle.incrementCollisionNumber();
     particle.setEnergy( 1.0 );
     particle.setWeight( 1.0 );
-    
+
     estimator_1->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
     estimator_1->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
-    
+
     estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
     estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
-    
+
+    estimator_3->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
+    estimator_3->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
+
+    estimator_4->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
+    estimator_4->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
+
     // bin 5, 7
     particle.setEnergy( 0.1 );
-    
+
     estimator_1->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
     estimator_1->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
-    
+
     particle.setWeight( 10.0 );
     estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
     estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
-    
+
+    particle.setWeight( 1.0 );
+    estimator_3->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
+    estimator_3->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
+
+    particle.setWeight( 10.0 );
+    estimator_4->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
+    estimator_4->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
+
     // Commit the contributions
     estimator_1_base->commitHistoryContribution();
     estimator_2_base->commitHistoryContribution();
+    estimator_3_base->commitHistoryContribution();
+    estimator_4_base->commitHistoryContribution();
   }
 
   FRENSIE_CHECK( !estimator_1_base->hasUncommittedHistoryContribution() );
   FRENSIE_CHECK( !estimator_2_base->hasUncommittedHistoryContribution() );
+  FRENSIE_CHECK( !estimator_3_base->hasUncommittedHistoryContribution() );
+  FRENSIE_CHECK( !estimator_4_base->hasUncommittedHistoryContribution() );
 
   MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( threads );
   MonteCarlo::ParticleHistoryObserver::setElapsedTime( 1.0 );
@@ -557,6 +869,52 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
   FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
                        std::vector<double>( 8, 0.25*threads ) );
 
+  entity_bin_first_moments =
+    estimator_3_base->getEntityBinDataFirstMoments( 0 );
+
+  entity_bin_second_moments =
+    estimator_3_base->getEntityBinDataSecondMoments( 0 );
+  std::cout << std::setprecision(16) << std::scientific << "entity_bin_first_moments = \t" << entity_bin_first_moments << std::endl;
+  std::cout << std::setprecision(16) << std::scientific << "entity_bin_second_moments = \t" << entity_bin_second_moments << std::endl;
+
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( -8, 0.5*threads ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 8, 0.25*threads ) );
+
+  entity_bin_first_moments =
+    estimator_3_base->getEntityBinDataFirstMoments( 1 );
+
+  entity_bin_second_moments =
+    estimator_3_base->getEntityBinDataSecondMoments( 1 );
+
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( -8, 0.5*threads ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 8, 0.25*threads ) );
+
+  entity_bin_first_moments =
+    estimator_4_base->getEntityBinDataFirstMoments( 0 );
+
+  entity_bin_second_moments =
+    estimator_4_base->getEntityBinDataSecondMoments( 0 );
+
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( -8, 0.5*threads ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 8, 0.25*threads ) );
+
+  entity_bin_first_moments =
+    estimator_4_base->getEntityBinDataFirstMoments( 1 );
+
+  entity_bin_second_moments =
+    estimator_4_base->getEntityBinDataSecondMoments( 1 );
+
+  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
+                       std::vector<double>( -8, 0.5*threads ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 8, 0.25*threads ) );
+
   // Check the total bin data moments
   Utility::ArrayView<const double> total_bin_first_moments =
     estimator_1_base->getTotalBinDataFirstMoments();
@@ -577,6 +935,28 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
 
   FRENSIE_CHECK_EQUAL( total_bin_first_moments,
                        std::vector<double>( 8, 1.0*threads ) );
+  FRENSIE_CHECK_EQUAL( total_bin_second_moments,
+                       std::vector<double>( 8, 1.0*threads ) );
+
+  total_bin_first_moments =
+    estimator_3_base->getTotalBinDataFirstMoments();
+
+  total_bin_second_moments =
+    estimator_3_base->getTotalBinDataSecondMoments();
+
+  FRENSIE_CHECK_EQUAL( total_bin_first_moments,
+                       std::vector<double>( -8, 1.0*threads ) );
+  FRENSIE_CHECK_EQUAL( total_bin_second_moments,
+                       std::vector<double>( 8, 1.0*threads ) );
+
+  total_bin_first_moments =
+    estimator_4_base->getTotalBinDataFirstMoments();
+
+  total_bin_second_moments =
+    estimator_4_base->getTotalBinDataSecondMoments();
+
+  FRENSIE_CHECK_EQUAL( total_bin_first_moments,
+                       std::vector<double>( -8, 1.0*threads ) );
   FRENSIE_CHECK_EQUAL( total_bin_second_moments,
                        std::vector<double>( 8, 1.0*threads ) );
 
@@ -665,6 +1045,90 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
   FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
                        std::vector<double>( 1, 256.0*threads ) );
 
+  entity_total_first_moments =
+    estimator_3_base->getEntityTotalDataFirstMoments( 0 );
+
+  entity_total_second_moments =
+    estimator_3_base->getEntityTotalDataSecondMoments( 0 );
+
+  entity_total_third_moments =
+    estimator_3_base->getEntityTotalDataThirdMoments( 0 );
+
+  entity_total_fourth_moments =
+    estimator_3_base->getEntityTotalDataFourthMoments( 0 );
+
+  FRENSIE_CHECK_EQUAL( entity_total_first_moments,
+                       std::vector<double>( 1, -4.0*threads ) );
+  FRENSIE_CHECK_EQUAL( entity_total_second_moments,
+                       std::vector<double>( 1, 16.0*threads ) );
+  FRENSIE_CHECK_EQUAL( entity_total_third_moments,
+                       std::vector<double>( 1, -64.0*threads ) );
+  FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
+                       std::vector<double>( 1, 256.0*threads ) );
+
+  entity_total_first_moments =
+    estimator_3_base->getEntityTotalDataFirstMoments( 1 );
+
+  entity_total_second_moments =
+    estimator_3_base->getEntityTotalDataSecondMoments( 1 );
+
+  entity_total_third_moments =
+    estimator_3_base->getEntityTotalDataThirdMoments( 1 );
+
+  entity_total_fourth_moments =
+    estimator_3_base->getEntityTotalDataFourthMoments( 1 );
+
+  FRENSIE_CHECK_EQUAL( entity_total_first_moments,
+                       std::vector<double>( 1, -4.0*threads ) );
+  FRENSIE_CHECK_EQUAL( entity_total_second_moments,
+                       std::vector<double>( 1, 16.0*threads ) );
+  FRENSIE_CHECK_EQUAL( entity_total_third_moments,
+                       std::vector<double>( 1, -64.0*threads ) );
+  FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
+                       std::vector<double>( 1, 256.0*threads ) );
+
+  entity_total_first_moments =
+    estimator_4_base->getEntityTotalDataFirstMoments( 0 );
+
+  entity_total_second_moments =
+    estimator_4_base->getEntityTotalDataSecondMoments( 0 );
+
+  entity_total_third_moments =
+    estimator_4_base->getEntityTotalDataThirdMoments( 0 );
+
+  entity_total_fourth_moments =
+    estimator_4_base->getEntityTotalDataFourthMoments( 0 );
+
+  FRENSIE_CHECK_EQUAL( entity_total_first_moments,
+                       std::vector<double>( 1, -4.0*threads ) );
+  FRENSIE_CHECK_EQUAL( entity_total_second_moments,
+                       std::vector<double>( 1, 16.0*threads ) );
+  FRENSIE_CHECK_EQUAL( entity_total_third_moments,
+                       std::vector<double>( 1, -64.0*threads ) );
+  FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
+                       std::vector<double>( 1, 256.0*threads ) );
+
+  entity_total_first_moments =
+    estimator_4_base->getEntityTotalDataFirstMoments( 1 );
+
+  entity_total_second_moments =
+    estimator_4_base->getEntityTotalDataSecondMoments( 1 );
+
+  entity_total_third_moments =
+    estimator_4_base->getEntityTotalDataThirdMoments( 1 );
+
+  entity_total_fourth_moments =
+    estimator_4_base->getEntityTotalDataFourthMoments( 1 );
+
+  FRENSIE_CHECK_EQUAL( entity_total_first_moments,
+                       std::vector<double>( 1, -4.0*threads ) );
+  FRENSIE_CHECK_EQUAL( entity_total_second_moments,
+                       std::vector<double>( 1, 16.0*threads ) );
+  FRENSIE_CHECK_EQUAL( entity_total_third_moments,
+                       std::vector<double>( 1, -64.0*threads ) );
+  FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
+                       std::vector<double>( 1, 256.0*threads ) );
+
   // Check the total data moments
   Utility::ArrayView<const double> total_first_moments =
     estimator_1_base->getTotalDataFirstMoments();
@@ -700,6 +1164,34 @@ FRENSIE_UNIT_TEST( CellTrackLengthFluxEstimator,
                        std::vector<double>( 1, 512.0*threads ) );
   FRENSIE_CHECK_EQUAL( total_fourth_moments,
                        std::vector<double>( 1, 4096.0*threads ) );
+
+  total_first_moments = estimator_3_base->getTotalDataFirstMoments();
+  total_second_moments = estimator_3_base->getTotalDataSecondMoments();
+  total_third_moments = estimator_3_base->getTotalDataThirdMoments();
+  total_fourth_moments = estimator_3_base->getTotalDataFourthMoments();
+
+  FRENSIE_CHECK_EQUAL( total_first_moments,
+                       std::vector<double>( 1, -8.0*threads ) );
+  FRENSIE_CHECK_EQUAL( total_second_moments,
+                       std::vector<double>( 1, 64.0*threads ) );
+  FRENSIE_CHECK_EQUAL( total_third_moments,
+                       std::vector<double>( 1, -512.0*threads ) );
+  FRENSIE_CHECK_EQUAL( total_fourth_moments,
+                       std::vector<double>( 1, 4096.0*threads ) );
+
+  total_first_moments = estimator_4_base->getTotalDataFirstMoments();
+  total_second_moments = estimator_4_base->getTotalDataSecondMoments();
+  total_third_moments = estimator_4_base->getTotalDataThirdMoments();
+  total_fourth_moments = estimator_4_base->getTotalDataFourthMoments();
+
+  FRENSIE_CHECK_EQUAL( total_first_moments,
+                       std::vector<double>( 1, -8.0*threads ) );
+  FRENSIE_CHECK_EQUAL( total_second_moments,
+                       std::vector<double>( 1, 64.0*threads ) );
+  FRENSIE_CHECK_EQUAL( total_third_moments,
+                       std::vector<double>( 1, -512.0*threads ) );
+  FRENSIE_CHECK_EQUAL( total_fourth_moments,
+                       std::vector<double>( 1, 4096.0*threads ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -724,118 +1216,148 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceFluxEstimator,
 
     std::shared_ptr<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> > estimator_1;
     std::shared_ptr<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> > estimator_2;
+    std::shared_ptr<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> > estimator_3;
+    std::shared_ptr<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> > estimator_4;
 
     std::shared_ptr<MonteCarlo::Estimator> estimator_1_base;
     std::shared_ptr<MonteCarlo::Estimator> estimator_2_base;
+    std::shared_ptr<MonteCarlo::Estimator> estimator_3_base;
+    std::shared_ptr<MonteCarlo::Estimator> estimator_4_base;
 
     {
       std::vector<MonteCarlo::StandardCellEstimator::CellIdType>
         cell_ids( {0, 1} );
 
       std::vector<double> cell_norm_consts( {1.0, 2.0} );
-      
+
       estimator_1.reset( new MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier>(
 						       0u,
 						       1.0,
 						       cell_ids,
 						       cell_norm_consts ) );
-      
+
       estimator_1_base = estimator_1;
-      
+
       estimator_2.reset( new MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier>(
 						       1u,
 						       10.0,
 						       cell_ids,
 						       cell_norm_consts ) );
       estimator_2_base = estimator_2;
-      
+
+      estimator_3.reset( new MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndChargeMultiplier>(
+                    2u,
+                    10.0,
+                    cell_ids,
+                    cell_norm_consts ) );
+      estimator_3_base = estimator_3;
+
+      estimator_4.reset( new MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier>(
+                    3u,
+                    10.0,
+                    cell_ids,
+                    cell_norm_consts ) );
+      estimator_4_base = estimator_4;
+
       // Set the energy bins
       std::vector<double> energy_bin_boundaries( 3 );
       energy_bin_boundaries[0] = 0.0;
       energy_bin_boundaries[1] = 0.1;
       energy_bin_boundaries[2] = 1.0;
-      
+
       estimator_1_base->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
 						       energy_bin_boundaries );
       estimator_2_base->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
 						       energy_bin_boundaries );
+      estimator_3_base->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
+                    energy_bin_boundaries );
+      estimator_4_base->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
+                    energy_bin_boundaries );
 
       // Set the time bins
       std::vector<double> time_bin_boundaries( 3 );
       time_bin_boundaries[0] = 0.0;
       time_bin_boundaries[1] = 1.66782047599076e-11;
       time_bin_boundaries[2] = 3.33564095198152e-11;
-      
+
       std::shared_ptr<const MonteCarlo::ObserverPhaseSpaceDimensionDiscretization>
         time_discretization( new MonteCarlo::DefaultTypedObserverPhaseSpaceDimensionDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION>( time_bin_boundaries ) );
 
       estimator_1_base->setDiscretization( time_discretization );
       estimator_2_base->setDiscretization( time_discretization );
-      
+      estimator_3_base->setDiscretization( time_discretization );
+      estimator_4_base->setDiscretization( time_discretization );
+
       // Set collision number bins
       std::vector<unsigned> collision_number_bins( 2 );
       collision_number_bins[0] = 0u;
       collision_number_bins[1] = 1u;
-      
+
       estimator_1_base->setDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>(
 						       collision_number_bins );
       estimator_2_base->setDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>(
 						       collision_number_bins );
+    estimator_3_base->setDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>(
+						       collision_number_bins );
+    estimator_4_base->setDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>(
+						       collision_number_bins );
 
       // Set the particle types
       std::vector<MonteCarlo::ParticleType> particle_types( 1 );
-      particle_types[0] = MonteCarlo::PHOTON;
-      
+      particle_types[0] = MonteCarlo::ELECTRON;
+
       estimator_1_base->setParticleTypes( particle_types );
       estimator_2_base->setParticleTypes( particle_types );
+      estimator_3_base->setParticleTypes( particle_types );
+      estimator_4_base->setParticleTypes( particle_types );
     }
 
     // bin 0, 2
-    MonteCarlo::PhotonState particle( 0ull );
+    MonteCarlo::ElectronState particle( 0ull );
     particle.setEnergy( 1.0 );
     particle.setTime( 3.33564095198152e-11 );
     particle.setWeight( 1.0 );
-    
+
     estimator_1->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
     estimator_1->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
-    
+
     estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
     estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
-    
+
     FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_2->hasUncommittedHistoryContribution() );
-    
+
     // bin 1, 3
     particle.setEnergy( 0.1 );
-    
+
     estimator_1->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
     estimator_1->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
-    
+
     particle.setWeight( 10.0 );
     estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
     estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
-    
+
     // bin 4, 6
     particle.incrementCollisionNumber();
     particle.setEnergy( 1.0 );
     particle.setWeight( 1.0 );
-    
+
     estimator_1->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
     estimator_1->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
-    
+
     estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
     estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
-    
+
     // bin 5, 7
     particle.setEnergy( 0.1 );
-    
+
     estimator_1->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
     estimator_1->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
-    
+
     particle.setWeight( 10.0 );
     estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
     estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
-    
+
     // Commit the contributions
     estimator_1_base->commitHistoryContribution();
     estimator_2_base->commitHistoryContribution();
@@ -878,8 +1400,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceFluxEstimator,
     FRENSIE_CHECK_EQUAL( estimator_1_base->getNumberOfBins( MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION ), 2 );
     FRENSIE_CHECK_EQUAL( estimator_1_base->getNumberOfResponseFunctions(), 1 );
     FRENSIE_CHECK_EQUAL( estimator_1_base->getParticleTypes().size(), 1 );
-    FRENSIE_CHECK( estimator_1_base->getParticleTypes().find( MonteCarlo::PHOTON ) != estimator_1_base->getParticleTypes().end() );
-      
+    FRENSIE_CHECK( estimator_1_base->getParticleTypes().find( MonteCarlo::ELECTRON ) != estimator_1_base->getParticleTypes().end() );
+
     std::set<uint64_t> entity_ids;
 
     estimator_1->getEntityIds( entity_ids );
@@ -895,51 +1417,51 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceFluxEstimator,
     // Check the entity bin data moments
     Utility::ArrayView<const double> entity_bin_first_moments =
       estimator_1_base->getEntityBinDataFirstMoments( 0 );
-    
+
     Utility::ArrayView<const double> entity_bin_second_moments =
       estimator_1_base->getEntityBinDataSecondMoments( 0 );
-    
+
     FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
                          std::vector<double>( 8, 0.5 ) );
     FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
                          std::vector<double>( 8, 0.25 ) );
-    
+
     entity_bin_first_moments =
       estimator_1_base->getEntityBinDataFirstMoments( 1 );
-    
+
     entity_bin_second_moments =
       estimator_1_base->getEntityBinDataSecondMoments( 1 );
-    
+
     FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
                          std::vector<double>( 8, 0.5 ) );
     FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
                          std::vector<double>( 8, 0.25 ) );
-    
+
     // Check the total bin data moments
     Utility::ArrayView<const double> total_bin_first_moments =
       estimator_1_base->getTotalBinDataFirstMoments();
-    
+
     Utility::ArrayView<const double> total_bin_second_moments =
       estimator_1_base->getTotalBinDataSecondMoments();
-    
+
     FRENSIE_CHECK_EQUAL( total_bin_first_moments,
                          std::vector<double>( 8, 1.0 ) );
     FRENSIE_CHECK_EQUAL( total_bin_second_moments,
                          std::vector<double>( 8, 1.0 ) );
-    
+
     // Check the entity total data moments
     Utility::ArrayView<const double> entity_total_first_moments =
       estimator_1_base->getEntityTotalDataFirstMoments( 0 );
-    
+
     Utility::ArrayView<const double> entity_total_second_moments =
       estimator_1_base->getEntityTotalDataSecondMoments( 0 );
-    
+
     Utility::ArrayView<const double> entity_total_third_moments =
       estimator_1_base->getEntityTotalDataThirdMoments( 0 );
-    
+
     Utility::ArrayView<const double> entity_total_fourth_moments =
       estimator_1_base->getEntityTotalDataFourthMoments( 0 );
-    
+
     FRENSIE_CHECK_EQUAL( entity_total_first_moments,
                          std::vector<double>( 1, 4.0 ) );
     FRENSIE_CHECK_EQUAL( entity_total_second_moments,
@@ -948,19 +1470,19 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceFluxEstimator,
                          std::vector<double>( 1, 64.0 ) );
     FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
                          std::vector<double>( 1, 256.0 ) );
-    
+
     entity_total_first_moments =
       estimator_1_base->getEntityTotalDataFirstMoments( 1 );
-    
+
     entity_total_second_moments =
       estimator_1_base->getEntityTotalDataSecondMoments( 1 );
-    
+
     entity_total_third_moments =
       estimator_1_base->getEntityTotalDataThirdMoments( 1 );
-    
+
     entity_total_fourth_moments =
       estimator_1_base->getEntityTotalDataFourthMoments( 1 );
-    
+
     FRENSIE_CHECK_EQUAL( entity_total_first_moments,
                          std::vector<double>( 1, 4.0 ) );
     FRENSIE_CHECK_EQUAL( entity_total_second_moments,
@@ -969,20 +1491,20 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceFluxEstimator,
                          std::vector<double>( 1, 64.0 ) );
     FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
                          std::vector<double>( 1, 256.0 ) );
-    
+
     // Check the total data moments
     Utility::ArrayView<const double> total_first_moments =
       estimator_1_base->getTotalDataFirstMoments();
-    
+
     Utility::ArrayView<const double> total_second_moments =
       estimator_1_base->getTotalDataSecondMoments();
-    
+
     Utility::ArrayView<const double> total_third_moments =
       estimator_1_base->getTotalDataThirdMoments();
-    
+
     Utility::ArrayView<const double> total_fourth_moments =
       estimator_1_base->getTotalDataFourthMoments();
-    
+
     FRENSIE_CHECK_EQUAL( total_first_moments,
                          std::vector<double>( 1, 8.0 ) );
     FRENSIE_CHECK_EQUAL( total_second_moments,
@@ -992,7 +1514,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceFluxEstimator,
     FRENSIE_CHECK_EQUAL( total_fourth_moments,
                          std::vector<double>( 1, 4096.0 ) );
   }
-  
+
   {
     FRENSIE_CHECK( estimator_2.get() == estimator_2_base.get() );
 
@@ -1004,8 +1526,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceFluxEstimator,
     FRENSIE_CHECK_EQUAL( estimator_2_base->getNumberOfBins( MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION ), 2 );
     FRENSIE_CHECK_EQUAL( estimator_2_base->getNumberOfResponseFunctions(), 1 );
     FRENSIE_CHECK_EQUAL( estimator_2_base->getParticleTypes().size(), 1 );
-    FRENSIE_CHECK( estimator_2_base->getParticleTypes().find( MonteCarlo::PHOTON ) != estimator_2_base->getParticleTypes().end() );
-      
+    FRENSIE_CHECK( estimator_2_base->getParticleTypes().find( MonteCarlo::ELECTRON ) != estimator_2_base->getParticleTypes().end() );
+
     std::set<uint64_t> entity_ids;
 
     estimator_2->getEntityIds( entity_ids );
@@ -1021,21 +1543,21 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceFluxEstimator,
     // Check the entity bin data moments
     Utility::ArrayView<const double> entity_bin_first_moments =
       estimator_2_base->getEntityBinDataFirstMoments( 0 );
-    
+
     Utility::ArrayView<const double> entity_bin_second_moments =
       estimator_2_base->getEntityBinDataSecondMoments( 0 );
-    
+
     FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
                          std::vector<double>( 8, 0.5 ) );
     FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
                          std::vector<double>( 8, 0.25 ) );
-    
+
     entity_bin_first_moments =
       estimator_2_base->getEntityBinDataFirstMoments( 1 );
-    
+
     entity_bin_second_moments =
       estimator_2_base->getEntityBinDataSecondMoments( 1 );
-    
+
     FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
                          std::vector<double>( 8, 0.5 ) );
     FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
@@ -1044,10 +1566,10 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceFluxEstimator,
     // Check the total bin data moments
     Utility::ArrayView<const double> total_bin_first_moments =
       estimator_2_base->getTotalBinDataFirstMoments();
-    
+
     Utility::ArrayView<const double> total_bin_second_moments =
       estimator_2_base->getTotalBinDataSecondMoments();
-    
+
     FRENSIE_CHECK_EQUAL( total_bin_first_moments,
                          std::vector<double>( 8, 1.0 ) );
     FRENSIE_CHECK_EQUAL( total_bin_second_moments,
@@ -1056,16 +1578,16 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceFluxEstimator,
     // Check the entity total data moments
     Utility::ArrayView<const double> entity_total_first_moments =
       estimator_2_base->getEntityTotalDataFirstMoments( 0 );
-    
+
     Utility::ArrayView<const double> entity_total_second_moments =
       estimator_2_base->getEntityTotalDataSecondMoments( 0 );
-    
+
     Utility::ArrayView<const double> entity_total_third_moments =
       estimator_2_base->getEntityTotalDataThirdMoments( 0 );
-    
+
     Utility::ArrayView<const double> entity_total_fourth_moments =
       estimator_2_base->getEntityTotalDataFourthMoments( 0 );
-    
+
     FRENSIE_CHECK_EQUAL( entity_total_first_moments,
                          std::vector<double>( 1, 4.0 ) );
     FRENSIE_CHECK_EQUAL( entity_total_second_moments,
@@ -1074,19 +1596,19 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceFluxEstimator,
                          std::vector<double>( 1, 64.0 ) );
     FRENSIE_CHECK_EQUAL( entity_total_fourth_moments,
                          std::vector<double>( 1, 256.0 ) );
-    
+
     entity_total_first_moments =
       estimator_2_base->getEntityTotalDataFirstMoments( 1 );
-    
+
     entity_total_second_moments =
       estimator_2_base->getEntityTotalDataSecondMoments( 1 );
-    
+
     entity_total_third_moments =
       estimator_2_base->getEntityTotalDataThirdMoments( 1 );
-    
+
     entity_total_fourth_moments =
       estimator_2_base->getEntityTotalDataFourthMoments( 1 );
-    
+
     FRENSIE_CHECK_EQUAL( entity_total_first_moments,
                          std::vector<double>( 1, 4.0 ) );
     FRENSIE_CHECK_EQUAL( entity_total_second_moments,
@@ -1099,16 +1621,16 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceFluxEstimator,
     // Check the total data moments
     Utility::ArrayView<const double> total_first_moments =
       estimator_2_base->getTotalDataFirstMoments();
-    
+
     Utility::ArrayView<const double> total_second_moments =
       estimator_2_base->getTotalDataSecondMoments();
-    
+
     Utility::ArrayView<const double> total_third_moments =
       estimator_2_base->getTotalDataThirdMoments();
-    
+
     Utility::ArrayView<const double> total_fourth_moments =
       estimator_2_base->getTotalDataFourthMoments();
-    
+
     FRENSIE_CHECK_EQUAL( total_first_moments,
                          std::vector<double>( 1, 8.0 ) );
     FRENSIE_CHECK_EQUAL( total_second_moments,
