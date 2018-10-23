@@ -2081,9 +2081,6 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
 void StandardAdjointElectronPhotonRelaxationDataGenerator::initializeAdjointElectronUnionEnergyGrid(
      std::list<double>& union_energy_grid ) const
 {
-  // Add the min electron energy to the union energy grid
-  union_energy_grid.push_back( this->getMinElectronEnergy() );
-
   // Add the screened Rutherford threshold energy
   std::vector<double> forward_energy_grid = d_forward_epr_data->getElectronEnergyGrid();
   unsigned rutherford_threshold = d_forward_epr_data->getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
@@ -2112,11 +2109,23 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::initializeAdjointElec
     ++subshell;
   }
 
+  // Remove all energies less than or equal to the min electron energy
+  union_energy_grid.remove_if([max = this->getMaxElectronEnergy()](double n){ return n >= max; });
+
+  // Remove all energies greater than or equal to the max electron energy
+  union_energy_grid.remove_if([min = this->getMinElectronEnergy()](double n){ return n <= min; });
+
+  // Add the min electron energy to the union energy grid
+  union_energy_grid.push_back( this->getMinElectronEnergy() );
+
   // Add the max electron energy
   union_energy_grid.push_back( this->getMaxElectronEnergy() );
 
   // Sort the union energy grid
   union_energy_grid.sort();
+
+  // Make sure there are no repeated elements
+  union_energy_grid.unique();
 }
 
 // Find the lower and upper bin boundary for a min and max energy
