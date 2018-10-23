@@ -22,10 +22,6 @@ BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightAndChargeMultipliedCellPulseHeig
 EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndChargeMultiplier> );
 EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndChargeMultiplier> );
 
-BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightEnergyAndChargeMultipliedCellPulseHeightEstimator );
-EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
-EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
-
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CellPulseHeightEstimator.cpp
 //---------------------------------------------------------------------------//

@@ -13,60 +13,13 @@
 #include <iostream>
 
 // FRENSIE Includes
+#include "Utility_PhysicalConstants.hpp"
 #include "Utility_OpenMPProperties.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
-
-namespace Details{
-
-//! \brief The Pulse Height Helper class
-template<typename ContributionMultiplierPolicy>
-struct PulseHeightHelper
-{
-  //! Return the contribution to the pulse height estimator
-  static inline double getContribution( const ParticleState& particle )
-  {
-    return particle.getWeight()*particle.getEnergy();
-  }
-};
-
-//! \brief The Pulse Height Helper class
-template<>
-struct PulseHeightHelper<MonteCarlo::WeightAndEnergyMultiplier>
-{
-  //! Return the contribution to the pulse height estimator
-  static inline double getContribution( const ParticleState& particle )
-  {
-    return particle.getWeight()*particle.getEnergy();
-  }
-};
-
-//! \brief The Pulse Height Helper class
-template<>
-struct PulseHeightHelper<MonteCarlo::WeightAndChargeMultiplier>
-{
-  //! Return the contribution to the pulse height estimator
-  static inline double getContribution( const ParticleState& particle )
-  {
-    return particle.getWeight()*particle.getCharge();
-  }
-};
-
-//! \brief The Pulse Height Helper class
-template<>
-struct PulseHeightHelper<MonteCarlo::WeightEnergyAndChargeMultiplier>
-{
-  //! Return the contribution to the pulse height estimator
-  static inline double getContribution( const ParticleState& particle )
-  {
-    return particle.getWeight()*particle.getEnergy()*particle.getCharge();
-  }
-};
-
-} // end Details namespace
 
 // Default constructor
 template<typename ContributionMultiplierPolicy>
@@ -107,6 +60,31 @@ bool CellPulseHeightEstimator<ContributionMultiplierPolicy>::isMeshEstimator() c
   return false;
 }
 
+// Check and correct a positron contribution
+template<typename ContributionMultiplierPolicy>
+inline void CellPulseHeightEstimator<ContributionMultiplierPolicy>::checkAndCorrectPositronEnergyContribution(
+                                                 const ParticleState& particle,
+                                                 double& energy_contribution )
+{
+  // A special energy accounting must be done with positrons since they come
+  // about from pair production, which converts some of the photon's energy
+  // to mass energy. The positron will account for both the electron's and the
+  // positron's mass since it is easier to identify. Unfortunately, this can
+  // lead to an incorrect energy accounting if the positron leaves the cell
+  // and the electron does not (or vice versa). Given the very small mfp of
+  // electrons and positrons, this will usually not be a problem (be careful in
+  // very thin films)
+  if( particle.getParticleType() == POSITRON )
+  {
+    // Ingore source positrons (we only want progeny positrons)
+    if( particle.getGenerationNumber() > 0 )
+    {
+      energy_contribution +=
+        2*Utility::PhysicalConstants::electron_rest_mass_energy;
+    }
+  }
+}
+
 // Add current history estimator contribution
 /*! \details It is unsafe to call this function directly! This function will
  * be called by the appropriate dispatcher when an event of interest occurs.
@@ -115,20 +93,25 @@ bool CellPulseHeightEstimator<ContributionMultiplierPolicy>::isMeshEstimator() c
  */
 template<typename ContributionMultiplierPolicy>
 inline void CellPulseHeightEstimator<ContributionMultiplierPolicy>::updateFromParticleEnteringCellEvent(
-					       const ParticleState& particle,
-					       const CellIdType cell_entering )
+                                               const ParticleState& particle,
+                                               const CellIdType cell_entering )
 {
   // Make sure that the particle type is assigned
   testPrecondition( this->isParticleTypeAssigned( particle.getParticleType() ) );
 
   unsigned thread_id = Utility::OpenMPProperties::getThreadId();
 
-  double contribution =
-    Details::PulseHeightHelper<ContributionMultiplierPolicy>::getContribution( particle );
-  std::cout << std::setprecision(16) << std::scientific << "contribution = \t" << contribution << std::endl;
+  double energy_contribution = particle.getWeight()*particle.getEnergy();
 
+  this->checkAndCorrectPositronEnergyContribution( particle, energy_contribution );
 
-  this->addInfoToUpdateTracker( thread_id, cell_entering, contribution );
+  double charge_contribution = particle.getWeight()*particle.getCharge();
+
+  this->addInfoToUpdateTracker( thread_id,
+                                cell_entering,
+                                particle.getSourceWeight(),
+                                energy_contribution,
+                                charge_contribution );
 
   // Indicate that there is an uncommitted history contribution
   this->setHasUncommittedHistoryContribution( thread_id );
@@ -142,19 +125,26 @@ inline void CellPulseHeightEstimator<ContributionMultiplierPolicy>::updateFromPa
  */
 template<typename ContributionMultiplierPolicy>
 inline void CellPulseHeightEstimator<ContributionMultiplierPolicy>::updateFromParticleLeavingCellEvent(
-					        const ParticleState& particle,
-					        const CellIdType cell_leaving )
+                                                const ParticleState& particle,
+                                                const CellIdType cell_leaving )
 {
   // Make sure that the particle type is assigned
   testPrecondition( this->isParticleTypeAssigned( particle.getParticleType() ) );
   unsigned thread_id = Utility::OpenMPProperties::getThreadId();
 
-  double contribution =
-    -Details::PulseHeightHelper<ContributionMultiplierPolicy>::getContribution( particle );
+  double energy_contribution = particle.getWeight()*particle.getEnergy();
 
-  std::cout << std::setprecision(16) << std::scientific << "contribution = \t" << contribution << std::endl;
+  this->checkAndCorrectPositronEnergyContribution( particle, energy_contribution );
 
-  this->addInfoToUpdateTracker( thread_id, cell_leaving, contribution );
+  energy_contribution *= -1.0;
+
+  double charge_contribution = -particle.getWeight()*particle.getCharge();
+
+  this->addInfoToUpdateTracker( thread_id,
+                                cell_leaving,
+                                particle.getSourceWeight(),
+                                energy_contribution,
+                                charge_contribution );
 
   // Indicate that there is an uncommitted history contribution
   this->setHasUncommittedHistoryContribution( thread_id );
@@ -166,12 +156,14 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::commitHistoryContri
 {
   unsigned thread_id = Utility::OpenMPProperties::getThreadId();
 
-  typename SerialUpdateTracker::const_iterator
+  typename Utility::TupleElement<1,SerialUpdateTracker>::type::const_iterator
     cell_data, end_cell_data;
 
   this->getCellIteratorFromUpdateTracker( thread_id, cell_data, end_cell_data );
 
-  double deposition_in_all_cells = 0.0;
+  double energy_deposition_in_all_cells = 0.0;
+  double charge_deposition_in_all_cells = 0.0;
+  double source_weight = d_update_tracker[thread_id].first;
 
   size_t bin_index;
   double bin_contribution;
@@ -181,8 +173,10 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::commitHistoryContri
 
   while( cell_data != end_cell_data )
   {
+    // The energy deposited in the cell by this history must be multiplied by
+    // the source weight
     thread_dimension_values[OBSERVER_ENERGY_DIMENSION] =
-      boost::any( cell_data->second );
+      boost::any( Utility::get<0>(cell_data->second)*source_weight );
 
     if( this->isPointInEstimatorPhaseSpace( thread_dimension_values ) )
     {
@@ -193,8 +187,10 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::commitHistoryContri
                                         bin_indices );
 
       bin_contribution = this->calculateHistoryContribution(
-					      cell_data->second,
-					      ContributionMultiplierPolicy() );
+                                            Utility::get<0>(cell_data->second),
+                                            Utility::get<1>(cell_data->second),
+                                            source_weight,
+                                            ContributionMultiplierPolicy() );
 
       for( size_t i = 0; i < bin_indices.size(); ++i )
       {
@@ -204,15 +200,18 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::commitHistoryContri
       }
 
       // Add the energy deposition in this cell to the total energy deposition
-      deposition_in_all_cells += cell_data->second;
+      energy_deposition_in_all_cells += Utility::get<0>(cell_data->second);
+      charge_deposition_in_all_cells += Utility::get<1>(cell_data->second);
     }
 
     ++cell_data;
   }
 
   // Store the total energy deposition in the dimension values map
+  // The total energy deposited in all cells by this history must be multiplied
+  // by the source weight
   thread_dimension_values[OBSERVER_ENERGY_DIMENSION] =
-    boost::any( deposition_in_all_cells );
+    boost::any( energy_deposition_in_all_cells*source_weight );
 
   // Determine the pulse bin for the combination of all cells
   if( this->isPointInEstimatorPhaseSpace( thread_dimension_values ) )
@@ -224,8 +223,10 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::commitHistoryContri
                                       bin_indices );
 
     bin_contribution = this->calculateHistoryContribution(
-					      deposition_in_all_cells,
-					      ContributionMultiplierPolicy() );
+                                            energy_deposition_in_all_cells,
+                                            charge_deposition_in_all_cells,
+                                            source_weight,
+                                            ContributionMultiplierPolicy() );
 
     for( size_t i = 0; i < bin_indices.size(); ++i )
     {
@@ -244,7 +245,7 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::commitHistoryContri
 // Print the estimator data
 template<typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<ContributionMultiplierPolicy>::printSummary(
-						       std::ostream& os ) const
+                                                       std::ostream& os ) const
 {
   os << "Cell Pulse Height Estimator: " << this->getId() << "\n";
 
@@ -255,7 +256,7 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::printSummary(
 template<typename ContributionMultiplierPolicy>
 void
 CellPulseHeightEstimator<ContributionMultiplierPolicy>::enableThreadSupport(
-						   const unsigned num_threads )
+                                                   const unsigned num_threads )
 {
   // Make sure only the root thread calls this
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
@@ -281,7 +282,8 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::resetData()
   // Reset the update tracker
   for( size_t i = 0; i < d_update_tracker.size(); ++i )
   {
-    d_update_tracker[i].clear();
+    d_update_tracker[i].first = 0.0;
+    d_update_tracker[i].second.clear();
 
     this->unsetHasUncommittedHistoryContribution( i );
   }
@@ -347,10 +349,12 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::assignParticleType(
  */
 template<typename ContributionMultiplierPolicy>
 inline double CellPulseHeightEstimator<ContributionMultiplierPolicy>::calculateHistoryContribution(
-					        const double energy_deposition,
-						WeightMultiplier )
+                                                    const double,
+                                                    const double,
+                                                    const double source_weight,
+                                                    WeightMultiplier )
 {
-  return 1.0;
+  return source_weight;
 }
 
 // Calculate the estimator contribution from the entire history
@@ -361,84 +365,92 @@ inline double CellPulseHeightEstimator<ContributionMultiplierPolicy>::calculateH
  */
 template<typename ContributionMultiplierPolicy>
 inline double CellPulseHeightEstimator<ContributionMultiplierPolicy>::calculateHistoryContribution(
-					        const double energy_deposition,
-						WeightAndEnergyMultiplier )
+                                                const double energy_deposition,
+                                                const double,
+                                                const double source_weight,
+                                                WeightAndEnergyMultiplier )
 {
-  return energy_deposition;
+  return energy_deposition*source_weight;
 }
 
 // Calculate the estimator contribution from the entire history
 /*! \details The multiplier policy cannot be used directly since it only
  * operates on a particle state. The policy classes will instead be used as
- * tags for tag dispatching. This function returns the charge that has been
+ * tags for tag dispatching. This function returns the energy that has been
  * deposited in the cell(s) of interest for the entire history.
  */
 template<typename ContributionMultiplierPolicy>
 inline double CellPulseHeightEstimator<ContributionMultiplierPolicy>::calculateHistoryContribution(
-					        const double charge_deposition,
-						WeightAndChargeMultiplier )
+                                                const double,
+                                                const double charge_deposition,
+                                                const double source_weight,
+                                                WeightAndChargeMultiplier )
 {
-  return charge_deposition;
-}
-
-// Calculate the estimator contribution from the entire history
-/*! \details The multiplier policy cannot be used directly since it only
- * operates on a particle state. The policy classes will instead be used as
- * tags for tag dispatching. This function returns the energy*charge that has been
- * deposited in the cell(s) of interest for the entire history.
- */
-template<typename ContributionMultiplierPolicy>
-inline double CellPulseHeightEstimator<ContributionMultiplierPolicy>::calculateHistoryContribution(
-					        const double energy_charge_deposition,
-						WeightEnergyAndChargeMultiplier )
-{
-  return energy_charge_deposition;
+  // We simply check if the net charge is positive or negative (or zero)
+  if( charge_deposition > 0.0 )
+    return source_weight;
+  else if( charge_deposition < 0.0 )
+    return -source_weight;
+  else
+    return 0.0;
 }
 
 // Add info to update tracker
 template<typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<ContributionMultiplierPolicy>::addInfoToUpdateTracker(
-						   const unsigned thread_id,
-						   const CellIdType cell_id,
-						   const double contribution )
+                                             const unsigned thread_id,
+                                             const CellIdType cell_id,
+                                             const double source_weight,
+                                             const double energy_contribution,
+                                             const double charge_contribution )
 {
   // Make sure the thread id is valid
   testPrecondition( thread_id < d_update_tracker.size() );
 
   SerialUpdateTracker& thread_update_tracker = d_update_tracker[thread_id];
 
-  auto cell_it = thread_update_tracker.find( cell_id );
+  auto cell_it = thread_update_tracker.second.find( cell_id );
 
-  if( cell_it != thread_update_tracker.end() )
-    cell_it->second += contribution;
+  if( thread_update_tracker.first == 0.0 )
+    thread_update_tracker.first = source_weight;
+
+  if( cell_it != thread_update_tracker.second.end() )
+  {
+    Utility::get<0>( cell_it->second ) += energy_contribution;
+    Utility::get<1>( cell_it->second ) += charge_contribution;
+  }
   else
-    thread_update_tracker[cell_id] = contribution;
+  {
+    thread_update_tracker.second[cell_id] =
+      std::make_pair( energy_contribution, charge_contribution );
+  }
 }
 
 // Get the entity iterators from the update tracker
 template<typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<ContributionMultiplierPolicy>::getCellIteratorFromUpdateTracker(
-	         const unsigned thread_id,
-		 typename SerialUpdateTracker::const_iterator& start_cell,
-	         typename SerialUpdateTracker::const_iterator& end_cell ) const
+                 const unsigned thread_id,
+                 typename Utility::TupleElement<1,SerialUpdateTracker>::type::const_iterator& start_cell,
+                typename Utility::TupleElement<1,SerialUpdateTracker>::type::const_iterator& end_cell ) const
 {
   // Make sure the thread id is valid
   testPrecondition( thread_id < d_update_tracker.size() );
 
-  start_cell = d_update_tracker[thread_id].begin();
-  end_cell = d_update_tracker[thread_id].end();
+  start_cell = d_update_tracker[thread_id].second.begin();
+  end_cell = d_update_tracker[thread_id].second.end();
 }
 
 // Reset the update tracker
 template<typename ContributionMultiplierPolicy>
 void
 CellPulseHeightEstimator<ContributionMultiplierPolicy>::resetUpdateTracker(
-						     const unsigned thread_id )
+                                                     const unsigned thread_id )
 {
   // Make sure the thread id is valid
   testPrecondition( thread_id < d_update_tracker.size() );
 
-  d_update_tracker[thread_id].clear();
+  d_update_tracker[thread_id].first = 0.0;
+  d_update_tracker[thread_id].second.clear();
 }
 
 // Save the data to an archive
@@ -483,10 +495,6 @@ EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, CellPulseHeightEstimator<Monte
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndChargeMultipliedCellPulseHeightEstimator, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndChargeMultiplier> );
 EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, CellPulseHeightEstimator<MonteCarlo::WeightAndChargeMultiplier> );
-
-BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightEnergyAndChargeMultipliedCellPulseHeightEstimator, MonteCarlo );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
-EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, CellPulseHeightEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
 
 #endif // end MONTE_CARLO_CELL_PULSE_HEIGHT_ESTIMATOR_DEF_HPP
 

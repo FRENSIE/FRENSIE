@@ -105,10 +105,6 @@ BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndChargeMultipliedSurfaceC
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightAndChargeMultiplier> );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SurfaceCurrentEstimator<MonteCarlo::WeightAndChargeMultiplier> );
 
-BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightEnergyAndChargeMultipliedSurfaceCurrentEstimator, MonteCarlo );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
-EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SurfaceCurrentEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
-
 #endif // end MONTE_CARLO_SURFACE_CURRENT_ESTIMATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//

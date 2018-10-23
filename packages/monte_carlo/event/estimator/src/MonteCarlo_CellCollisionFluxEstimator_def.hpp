@@ -92,10 +92,6 @@ BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndChargeMultipliedCellColl
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, CellCollisionFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> );
 
-BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightEnergyAndChargeMultipliedCellCollisionFluxEstimator, MonteCarlo );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
-EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, CellCollisionFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
-
 #endif // end MONTE_CARLO_CELL_COLLISION_FLUX_ESTIMATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//

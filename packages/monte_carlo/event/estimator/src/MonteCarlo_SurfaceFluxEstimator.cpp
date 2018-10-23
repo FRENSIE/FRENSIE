@@ -22,10 +22,6 @@ BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightAndChargeMultipliedSurfaceFluxEs
 EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> );
 EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> );
 
-BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightEnergyAndChargeMultipliedSurfaceFluxEstimator );
-EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
-EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
-
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SurfaceFluxEstimator.cpp
 //---------------------------------------------------------------------------//

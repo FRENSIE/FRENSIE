@@ -90,10 +90,7 @@ typedef CellCollisionFluxEstimator<WeightMultiplier> WeightMultipliedCellCollisi
 typedef CellCollisionFluxEstimator<WeightAndEnergyMultiplier> WeightAndEnergyMultipliedCellCollisionFluxEstimator;
 
 //! The weight and charge multiplied cell collision flux estimator
-typedef CellCollisionFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> WeightAndChargeMultipliedCellCollisionFluxEstimator;
-
-//! The weight, energy, and charge multiplied cell collision flux estimator
-typedef CellCollisionFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> WeightEnergyAndChargeMultipliedCellCollisionFluxEstimator;
+typedef CellCollisionFluxEstimator<WeightAndChargeMultiplier> WeightAndChargeMultipliedCellCollisionFluxEstimator;
 
 } // end MonteCarlo namespace
 

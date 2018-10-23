@@ -22,8 +22,7 @@
 
 typedef std::tuple<MonteCarlo::WeightMultiplier,
                    MonteCarlo::WeightAndEnergyMultiplier,
-                   MonteCarlo::WeightAndChargeMultiplier,
-                   MonteCarlo::WeightEnergyAndChargeMultiplier
+                   MonteCarlo::WeightAndChargeMultiplier
                    > MultiplierPolicies;
 
 typedef TestArchiveHelper::TestArchives TestArchives;
@@ -170,11 +169,10 @@ FRENSIE_UNIT_TEST_TEMPLATE( CellPulseHeightEstimator,
 // Check that a partial history contribution can be added to the estimator
 FRENSIE_UNIT_TEST( CellPulseHeightEstimator, updateFromParticleEvent )
 {
-  std::shared_ptr<MonteCarlo::Estimator> estimator_1_base, estimator_2_base, estimator_3_base, estimator_4_base;
+  std::shared_ptr<MonteCarlo::Estimator> estimator_1_base, estimator_2_base, estimator_3_base;
   std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> > estimator_1;
   std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> > estimator_2;
   std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndChargeMultiplier> > estimator_3;
-  std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> > estimator_4;
 
   {
     // Set the entity ids
@@ -202,12 +200,6 @@ FRENSIE_UNIT_TEST( CellPulseHeightEstimator, updateFromParticleEvent )
 
     estimator_3_base = estimator_3;
 
-    estimator_4.reset( new MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier>(
-                                                                3ull,
-                                                                10.0,
-                                                                entity_ids ) );
-    estimator_4_base = estimator_4;
-
     // Set the energy bins
     std::vector<double> energy_bin_boundaries( 3 );
     energy_bin_boundaries[0] = 0.0;
@@ -220,8 +212,6 @@ FRENSIE_UNIT_TEST( CellPulseHeightEstimator, updateFromParticleEvent )
                                                        energy_bin_boundaries );
     estimator_3_base->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
                                                        energy_bin_boundaries );
-    estimator_4_base->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
-                                                       energy_bin_boundaries );
 
     std::vector<MonteCarlo::ParticleType> particle_types( 1 );
     particle_types[0] = MonteCarlo::ELECTRON;
@@ -229,66 +219,55 @@ FRENSIE_UNIT_TEST( CellPulseHeightEstimator, updateFromParticleEvent )
     estimator_1->setParticleTypes( particle_types );
     estimator_2->setParticleTypes( particle_types );
     estimator_3->setParticleTypes( particle_types );
-    estimator_4->setParticleTypes( particle_types );
   }
 
   MonteCarlo::ElectronState particle( 0ull );
+  particle.setSourceWeight( 1.0 );
   particle.setWeight( 1.0 );
   particle.setEnergy( 1.0 );
 
   FRENSIE_CHECK( !estimator_1_base->hasUncommittedHistoryContribution() );
   FRENSIE_CHECK( !estimator_2_base->hasUncommittedHistoryContribution() );
   FRENSIE_CHECK( !estimator_3_base->hasUncommittedHistoryContribution() );
-  FRENSIE_CHECK( !estimator_4_base->hasUncommittedHistoryContribution() );
 
   estimator_1->updateFromParticleEnteringCellEvent( particle, 0 );
   estimator_2->updateFromParticleEnteringCellEvent( particle, 0 );
   estimator_3->updateFromParticleEnteringCellEvent( particle, 0 );
-  estimator_4->updateFromParticleEnteringCellEvent( particle, 0 );
 
   FRENSIE_CHECK( estimator_1_base->hasUncommittedHistoryContribution() );
   FRENSIE_CHECK( estimator_2_base->hasUncommittedHistoryContribution() );
   FRENSIE_CHECK( estimator_3_base->hasUncommittedHistoryContribution() );
-  FRENSIE_CHECK( estimator_4_base->hasUncommittedHistoryContribution() );
 
   particle.setEnergy( 0.5 );
 
   estimator_1->updateFromParticleLeavingCellEvent( particle, 0 );
   estimator_2->updateFromParticleLeavingCellEvent( particle, 0 );
   estimator_3->updateFromParticleLeavingCellEvent( particle, 0 );
-  estimator_4->updateFromParticleLeavingCellEvent( particle, 0 );
 
   estimator_1->updateFromParticleEnteringCellEvent( particle, 1 );
   estimator_2->updateFromParticleEnteringCellEvent( particle, 1 );
   estimator_3->updateFromParticleEnteringCellEvent( particle, 1 );
-  estimator_4->updateFromParticleEnteringCellEvent( particle, 1 );
 
   FRENSIE_CHECK( estimator_1_base->hasUncommittedHistoryContribution() );
   FRENSIE_CHECK( estimator_2_base->hasUncommittedHistoryContribution() );
   FRENSIE_CHECK( estimator_3_base->hasUncommittedHistoryContribution() );
-  FRENSIE_CHECK( estimator_4_base->hasUncommittedHistoryContribution() );
 
   particle.setEnergy( 0.45 );
 
   estimator_1->updateFromParticleLeavingCellEvent( particle, 1 );
   estimator_2->updateFromParticleLeavingCellEvent( particle, 1 );
-  estimator_3->updateFromParticleLeavingCellEvent( particle, 1 );
-  estimator_4->updateFromParticleLeavingCellEvent( particle, 1 );
 
   FRENSIE_CHECK( estimator_1_base->hasUncommittedHistoryContribution() );
   FRENSIE_CHECK( estimator_2_base->hasUncommittedHistoryContribution() );
   FRENSIE_CHECK( estimator_3_base->hasUncommittedHistoryContribution() );
-  FRENSIE_CHECK( estimator_4_base->hasUncommittedHistoryContribution() );
 
   estimator_1_base->commitHistoryContribution();
   estimator_2_base->commitHistoryContribution();
   estimator_3_base->commitHistoryContribution();
-  estimator_4_base->commitHistoryContribution();
 
   FRENSIE_CHECK( !estimator_1_base->hasUncommittedHistoryContribution() );
   FRENSIE_CHECK( !estimator_2_base->hasUncommittedHistoryContribution() );
   FRENSIE_CHECK( !estimator_3_base->hasUncommittedHistoryContribution() );
-  FRENSIE_CHECK( !estimator_4_base->hasUncommittedHistoryContribution() );
 
   MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( 1.0 );
   MonteCarlo::ParticleHistoryObserver::setElapsedTime( 1.0 );
@@ -347,9 +326,9 @@ FRENSIE_UNIT_TEST( CellPulseHeightEstimator, updateFromParticleEvent )
     estimator_3_base->getEntityBinDataSecondMoments( 0 );
 
   FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
-                       std::vector<double>( {0.0, -1.0} ) );
+                       std::vector<double>( {0.0, 0.0} ) );
   FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
-                       std::vector<double>( {0.0, 1.0} ) );
+                       std::vector<double>( {0.0, 0.0} ) );
 
   entity_bin_first_moments =
     estimator_3_base->getEntityBinDataFirstMoments( 1 );
@@ -358,33 +337,9 @@ FRENSIE_UNIT_TEST( CellPulseHeightEstimator, updateFromParticleEvent )
     estimator_3_base->getEntityBinDataSecondMoments( 1 );
 
   FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
-                       std::vector<double>( {-1.0, 0.0} ) );
+                       std::vector<double>( {0.0, -1.0} ) );
   FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
-                       std::vector<double>( {1.0, 0.0} ) );
-
-  entity_bin_first_moments =
-    estimator_4_base->getEntityBinDataFirstMoments( 0 );
-
-  entity_bin_second_moments =
-    estimator_4_base->getEntityBinDataSecondMoments( 0 );
-
-  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
-                       std::vector<double>( {0.0, -0.5} ) );
-  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
-                       std::vector<double>( {0.0, 0.25} ) );
-
-  entity_bin_first_moments =
-    estimator_4_base->getEntityBinDataFirstMoments( 1 );
-
-  entity_bin_second_moments =
-    estimator_4_base->getEntityBinDataSecondMoments( 1 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( entity_bin_first_moments,
-                                   std::vector<double>( {-0.05, 0.0} ),
-                                   1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( entity_bin_second_moments,
-                                   std::vector<double>( {0.0025, 0.0} ),
-                                   1e-15 );
+                       std::vector<double>( {0.0, 1.0} ) );
 
   // Check the total bin data moments
   Utility::ArrayView<const double> total_bin_first_moments =
@@ -420,18 +375,6 @@ FRENSIE_UNIT_TEST( CellPulseHeightEstimator, updateFromParticleEvent )
                        std::vector<double>( {0.0, -1.0} ) );
   FRENSIE_CHECK_EQUAL( total_bin_second_moments,
                        std::vector<double>( {0.0, 1.0} ) );
-
-  total_bin_first_moments =
-    estimator_4_base->getTotalBinDataFirstMoments();
-
-  total_bin_second_moments =
-    estimator_4_base->getTotalBinDataSecondMoments();
-
-  FRENSIE_CHECK_EQUAL( total_bin_first_moments,
-                       std::vector<double>( {0.0, -0.55} ) );
-  FRENSIE_CHECK_FLOATING_EQUALITY( total_bin_second_moments,
-                                   std::vector<double>( {0.0, 0.3025} ),
-                                   1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -439,11 +382,10 @@ FRENSIE_UNIT_TEST( CellPulseHeightEstimator, updateFromParticleEvent )
 FRENSIE_UNIT_TEST( CellPulseHeightEstimator,
                    updateFromParticleEvent_thread_safe )
 {
-  std::shared_ptr<MonteCarlo::Estimator> estimator_1_base, estimator_2_base, estimator_3_base, estimator_4_base;
+  std::shared_ptr<MonteCarlo::Estimator> estimator_1_base, estimator_2_base, estimator_3_base;
   std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> > estimator_1;
   std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> > estimator_2;
   std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndChargeMultiplier> > estimator_3;
-  std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> > estimator_4;
 
   {
     // Set the entity ids
@@ -469,12 +411,6 @@ FRENSIE_UNIT_TEST( CellPulseHeightEstimator,
 
     estimator_3_base = estimator_3;
 
-    estimator_4.reset( new MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier>(
-                                                                3ull,
-                                                                10.0,
-                                                                entity_ids ) );
-    estimator_4_base = estimator_4;
-
     // Set the energy bins
     std::vector<double> energy_bin_boundaries( 3 );
     energy_bin_boundaries[0] = 0.0;
@@ -487,8 +423,6 @@ FRENSIE_UNIT_TEST( CellPulseHeightEstimator,
                                                        energy_bin_boundaries );
     estimator_3_base->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
                                                        energy_bin_boundaries );
-    estimator_4_base->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
-                                                       energy_bin_boundaries );
 
     std::vector<MonteCarlo::ParticleType> particle_types( 1 );
     particle_types[0] = MonteCarlo::ELECTRON;
@@ -496,12 +430,10 @@ FRENSIE_UNIT_TEST( CellPulseHeightEstimator,
     estimator_1->setParticleTypes( particle_types );
     estimator_2->setParticleTypes( particle_types );
     estimator_3->setParticleTypes( particle_types );
-    estimator_4->setParticleTypes( particle_types );
 
     estimator_1->enableThreadSupport( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
     estimator_2->enableThreadSupport( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
     estimator_3->enableThreadSupport( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
-    estimator_4->enableThreadSupport( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
   }
 
   unsigned threads =
@@ -516,31 +448,25 @@ FRENSIE_UNIT_TEST( CellPulseHeightEstimator,
     estimator_1->updateFromParticleEnteringCellEvent( particle, 0 );
     estimator_2->updateFromParticleEnteringCellEvent( particle, 0 );
     estimator_3->updateFromParticleEnteringCellEvent( particle, 0 );
-    estimator_4->updateFromParticleEnteringCellEvent( particle, 0 );
 
     particle.setEnergy( 0.5 );
 
     estimator_1->updateFromParticleLeavingCellEvent( particle, 0 );
     estimator_2->updateFromParticleLeavingCellEvent( particle, 0 );
     estimator_3->updateFromParticleEnteringCellEvent( particle, 0 );
-    estimator_4->updateFromParticleEnteringCellEvent( particle, 0 );
 
     estimator_1->updateFromParticleEnteringCellEvent( particle, 1 );
     estimator_2->updateFromParticleEnteringCellEvent( particle, 1 );
     estimator_3->updateFromParticleEnteringCellEvent( particle, 1 );
-    estimator_4->updateFromParticleEnteringCellEvent( particle, 1 );
 
     particle.setEnergy( 0.45 );
 
     estimator_1->updateFromParticleLeavingCellEvent( particle, 1 );
     estimator_2->updateFromParticleLeavingCellEvent( particle, 1 );
-    estimator_3->updateFromParticleLeavingCellEvent( particle, 1 );
-    estimator_4->updateFromParticleLeavingCellEvent( particle, 1 );
 
     estimator_1_base->commitHistoryContribution();
     estimator_2_base->commitHistoryContribution();
     estimator_3_base->commitHistoryContribution();
-    estimator_4_base->commitHistoryContribution();
   }
 
   MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( threads );
@@ -600,9 +526,9 @@ FRENSIE_UNIT_TEST( CellPulseHeightEstimator,
     estimator_3_base->getEntityBinDataSecondMoments( 0 );
 
   FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
-                       std::vector<double>( {0.0, -1.0*threads} ) );
+                       std::vector<double>( {0.0, 0.0} ) );
   FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
-                       std::vector<double>( {0.0, 1.0*threads} ) );
+                       std::vector<double>( {0.0, 0.0} ) );
 
   entity_bin_first_moments =
     estimator_3_base->getEntityBinDataFirstMoments( 1 );
@@ -611,33 +537,9 @@ FRENSIE_UNIT_TEST( CellPulseHeightEstimator,
     estimator_3_base->getEntityBinDataSecondMoments( 1 );
 
   FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
-                       std::vector<double>( {-1.0*threads, 0.0} ) );
+                       std::vector<double>( {0.0, -1.0*threads} ) );
   FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
-                       std::vector<double>( {1.0*threads, 0.0} ) );
-
-  entity_bin_first_moments =
-    estimator_4_base->getEntityBinDataFirstMoments( 0 );
-
-  entity_bin_second_moments =
-    estimator_4_base->getEntityBinDataSecondMoments( 0 );
-
-  FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
-                       std::vector<double>( {0.0, -0.5*threads} ) );
-  FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
-                       std::vector<double>( {0.0, 0.25*threads} ) );
-
-  entity_bin_first_moments =
-    estimator_4_base->getEntityBinDataFirstMoments( 1 );
-
-  entity_bin_second_moments =
-    estimator_4_base->getEntityBinDataSecondMoments( 1 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( entity_bin_first_moments,
-                                   std::vector<double>( {-0.05*threads, 0.0} ),
-                                   1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( entity_bin_second_moments,
-                                   std::vector<double>( {0.0025*threads, 0.0} ),
-                                   1e-15 );
+                       std::vector<double>( {0.0, 1.0*threads} ) );
 
   // Check the total bin data moments
   Utility::ArrayView<const double> total_bin_first_moments =
@@ -674,18 +576,6 @@ FRENSIE_UNIT_TEST( CellPulseHeightEstimator,
                        std::vector<double>( {0.0, -1.0*threads} ) );
   FRENSIE_CHECK_EQUAL( total_bin_second_moments,
                        std::vector<double>( {0.0, 1.0*threads} ) );
-
-  total_bin_first_moments =
-    estimator_4_base->getTotalBinDataFirstMoments();
-
-  total_bin_second_moments =
-    estimator_4_base->getTotalBinDataSecondMoments();
-
-  FRENSIE_CHECK_EQUAL( total_bin_first_moments,
-                       std::vector<double>( {0.0, -0.55*threads} ) );
-  FRENSIE_CHECK_FLOATING_EQUALITY( total_bin_second_moments,
-                                   std::vector<double>( {0.0, 0.3025*threads} ),
-                                   1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -708,11 +598,10 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceCurrentEstimator,
 
     createOArchive( archive_base_name, archive_ostream, oarchive );
 
-    std::shared_ptr<MonteCarlo::Estimator> estimator_1_base, estimator_2_base, estimator_3_base, estimator_4_base;
+    std::shared_ptr<MonteCarlo::Estimator> estimator_1_base, estimator_2_base, estimator_3_base;
     std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> > estimator_1;
     std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> > estimator_2;
     std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndChargeMultiplier> > estimator_3;
-    std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> > estimator_4;
 
     {
       // Set the entity ids
@@ -731,18 +620,12 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceCurrentEstimator,
                                                                 entity_ids ) );
       estimator_2_base = estimator_2;
 
-    estimator_3.reset( new MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndChargeMultiplier>(
-                                                                2ull,
-                                                                10.0,
-                                                                entity_ids ) );
+      estimator_3.reset( new MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndChargeMultiplier>(
+                                                                  2ull,
+                                                                  1.0,
+                                                                  entity_ids ) );
 
-    estimator_3_base = estimator_3;
-
-    estimator_4.reset( new MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier>(
-                                                                3ull,
-                                                                10.0,
-                                                                entity_ids ) );
-    estimator_4_base = estimator_4;
+      estimator_3_base = estimator_3;
 
       // Set the energy bins
       std::vector<double> energy_bin_boundaries( 3 );
@@ -756,20 +639,17 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceCurrentEstimator,
                                                        energy_bin_boundaries );
       estimator_3_base->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
                                                        energy_bin_boundaries );
-      estimator_4_base->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
-                                                       energy_bin_boundaries );
 
       std::vector<MonteCarlo::ParticleType> particle_types( 1 );
       particle_types[0] = MonteCarlo::PHOTON;
 
       estimator_1->setParticleTypes( particle_types );
-      estimator_3->setParticleTypes( particle_types );
 
       particle_types.push_back( MonteCarlo::ELECTRON );
       particle_types.push_back( MonteCarlo::POSITRON );
 
       estimator_2->setParticleTypes( particle_types );
-      estimator_4->setParticleTypes( particle_types );
+      estimator_3->setParticleTypes( particle_types );
     }
 
     MonteCarlo::PhotonState particle( 0ull );
@@ -779,31 +659,26 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceCurrentEstimator,
     estimator_1->updateFromParticleEnteringCellEvent( particle, 0 );
     estimator_2->updateFromParticleEnteringCellEvent( particle, 0 );
     estimator_3->updateFromParticleEnteringCellEvent( particle, 0 );
-    estimator_4->updateFromParticleEnteringCellEvent( particle, 0 );
 
     particle.setEnergy( 0.5 );
 
     estimator_1->updateFromParticleLeavingCellEvent( particle, 0 );
     estimator_2->updateFromParticleLeavingCellEvent( particle, 0 );
     estimator_3->updateFromParticleEnteringCellEvent( particle, 0 );
-    estimator_4->updateFromParticleEnteringCellEvent( particle, 0 );
 
     estimator_1->updateFromParticleEnteringCellEvent( particle, 1 );
     estimator_2->updateFromParticleEnteringCellEvent( particle, 1 );
     estimator_3->updateFromParticleEnteringCellEvent( particle, 1 );
-    estimator_4->updateFromParticleEnteringCellEvent( particle, 1 );
 
     particle.setEnergy( 0.45 );
 
     estimator_1->updateFromParticleLeavingCellEvent( particle, 1 );
     estimator_2->updateFromParticleLeavingCellEvent( particle, 1 );
     estimator_3->updateFromParticleLeavingCellEvent( particle, 1 );
-    estimator_4->updateFromParticleLeavingCellEvent( particle, 1 );
 
     estimator_1_base->commitHistoryContribution();
     estimator_2_base->commitHistoryContribution();
     estimator_3_base->commitHistoryContribution();
-    estimator_4_base->commitHistoryContribution();
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( estimator_1 ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( estimator_1_base ) );
@@ -811,8 +686,6 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceCurrentEstimator,
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( estimator_2_base ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( estimator_3 ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( estimator_3_base ) );
-    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( estimator_4 ) );
-    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( estimator_4_base ) );
   }
 
   // Copy the archive ostream to an istream
@@ -823,11 +696,10 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceCurrentEstimator,
 
   createIArchive( archive_istream, iarchive );
 
-  std::shared_ptr<MonteCarlo::Estimator> estimator_1_base, estimator_2_base, estimator_3_base, estimator_4_base;
+  std::shared_ptr<MonteCarlo::Estimator> estimator_1_base, estimator_2_base, estimator_3_base;
   std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> > estimator_1;
   std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> > estimator_2;
   std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndChargeMultiplier> > estimator_3;
-  std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> > estimator_4;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( estimator_1 ) );
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( estimator_1_base ) );
@@ -835,8 +707,6 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceCurrentEstimator,
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( estimator_2_base ) );
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( estimator_3 ) );
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( estimator_3_base ) );
-  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( estimator_4 ) );
-  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( estimator_4_base ) );
 
   iarchive.reset();
 
@@ -847,7 +717,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceCurrentEstimator,
     FRENSIE_CHECK_EQUAL( estimator_1_base->getNumberOfBins( MonteCarlo::OBSERVER_ENERGY_DIMENSION ), 2 );
     FRENSIE_CHECK_EQUAL( estimator_1_base->getNumberOfResponseFunctions(), 1 );
     FRENSIE_CHECK_EQUAL( estimator_1_base->getParticleTypes().size(), 1 );
-    FRENSIE_CHECK( estimator_1_base->getParticleTypes().find( MonteCarlo::ELECTRON ) != estimator_1_base->getParticleTypes().end() );
+    FRENSIE_CHECK( estimator_1_base->getParticleTypes().find( MonteCarlo::PHOTON ) != estimator_1_base->getParticleTypes().end() );
 
     std::set<uint64_t> entity_ids;
 
@@ -965,8 +835,10 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceCurrentEstimator,
     FRENSIE_CHECK_EQUAL( estimator_3_base->getNumberOfBins(), 2 );
     FRENSIE_CHECK_EQUAL( estimator_3_base->getNumberOfBins( MonteCarlo::OBSERVER_ENERGY_DIMENSION ), 2 );
     FRENSIE_CHECK_EQUAL( estimator_3_base->getNumberOfResponseFunctions(), 1 );
-    FRENSIE_CHECK_EQUAL( estimator_3_base->getParticleTypes().size(), 1 );
-    FRENSIE_CHECK( estimator_3_base->getParticleTypes().find( MonteCarlo::PHOTON ) != estimator_3_base->getParticleTypes().end() );
+    FRENSIE_CHECK_EQUAL( estimator_3_base->getParticleTypes().size(), 3 );
+    FRENSIE_CHECK( estimator_3_base->getParticleTypes().find( MonteCarlo::PHOTON ) != estimator_2_base->getParticleTypes().end() );
+    FRENSIE_CHECK( estimator_3_base->getParticleTypes().find( MonteCarlo::ELECTRON ) != estimator_2_base->getParticleTypes().end() );
+    FRENSIE_CHECK( estimator_3_base->getParticleTypes().find( MonteCarlo::POSITRON ) != estimator_2_base->getParticleTypes().end() );
 
     std::set<uint64_t> entity_ids;
 
@@ -1014,68 +886,6 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceCurrentEstimator,
                          std::vector<double>( {0.0, 0.0} ) );
     FRENSIE_CHECK_EQUAL( total_bin_second_moments,
                          std::vector<double>( {0.0, 0.0} ) );
-  }
-
-  {
-    FRENSIE_CHECK( estimator_4.get() == estimator_4_base.get() );
-    FRENSIE_CHECK_EQUAL( estimator_4_base->getMultiplier(), 10.0 );
-    FRENSIE_CHECK_EQUAL( estimator_4_base->getNumberOfBins(), 2 );
-    FRENSIE_CHECK_EQUAL( estimator_4_base->getNumberOfBins( MonteCarlo::OBSERVER_ENERGY_DIMENSION ), 2 );
-    FRENSIE_CHECK_EQUAL( estimator_4_base->getNumberOfResponseFunctions(), 1 );
-    FRENSIE_CHECK_EQUAL( estimator_4_base->getParticleTypes().size(), 3 );
-    FRENSIE_CHECK( estimator_4_base->getParticleTypes().find( MonteCarlo::PHOTON ) != estimator_4_base->getParticleTypes().end() );
-    FRENSIE_CHECK( estimator_4_base->getParticleTypes().find( MonteCarlo::ELECTRON ) != estimator_4_base->getParticleTypes().end() );
-    FRENSIE_CHECK( estimator_4_base->getParticleTypes().find( MonteCarlo::POSITRON ) != estimator_4_base->getParticleTypes().end() );
-
-    std::set<uint64_t> entity_ids;
-
-    estimator_4->getEntityIds( entity_ids );
-
-    FRENSIE_CHECK_EQUAL( entity_ids.size(), 2 );
-    FRENSIE_CHECK( entity_ids.find( 0 ) != entity_ids.end() );
-    FRENSIE_CHECK( entity_ids.find( 1 ) != entity_ids.end() );
-
-    FRENSIE_CHECK_EQUAL( estimator_4_base->getEntityNormConstant( 0 ), 1.0 );
-    FRENSIE_CHECK_EQUAL( estimator_4_base->getEntityNormConstant( 1 ), 1.0 );
-    FRENSIE_CHECK_EQUAL( estimator_4_base->getTotalNormConstant(), 1.0 );
-
-    // Check the entity bin data moments
-    Utility::ArrayView<const double> entity_bin_first_moments =
-      estimator_4_base->getEntityBinDataFirstMoments( 0 );
-
-    Utility::ArrayView<const double> entity_bin_second_moments =
-      estimator_4_base->getEntityBinDataSecondMoments( 0 );
-
-    FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
-                         std::vector<double>( {0.0, 0.5} ) );
-    FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
-                         std::vector<double>( {0.0, 0.25} ) );
-
-    entity_bin_first_moments =
-      estimator_4_base->getEntityBinDataFirstMoments( 1 );
-
-    entity_bin_second_moments =
-      estimator_4_base->getEntityBinDataSecondMoments( 1 );
-
-    FRENSIE_CHECK_FLOATING_EQUALITY( entity_bin_first_moments,
-                                     std::vector<double>( {0.05, 0.0} ),
-                                     1e-15 );
-    FRENSIE_CHECK_FLOATING_EQUALITY( entity_bin_second_moments,
-                                     std::vector<double>( {0.0025, 0.0} ),
-                                     1e-15 );
-
-    // Check the total bin data moments
-    Utility::ArrayView<const double> total_bin_first_moments =
-      estimator_4_base->getTotalBinDataFirstMoments();
-
-    Utility::ArrayView<const double> total_bin_second_moments =
-      estimator_4_base->getTotalBinDataSecondMoments();
-
-    FRENSIE_CHECK_EQUAL( total_bin_first_moments,
-                         std::vector<double>( {0.0, 0.55} ) );
-    FRENSIE_CHECK_FLOATING_EQUALITY( total_bin_second_moments,
-                                     std::vector<double>( {0.0, 0.3025} ),
-                                     1e-15 );
   }
 }
 

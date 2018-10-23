@@ -31,8 +31,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( CellCollisionFluxEstimator,
                             constructor,
                             MonteCarlo::WeightMultiplier,
                             MonteCarlo::WeightAndEnergyMultiplier,
-                            MonteCarlo::WeightAndChargeMultiplier,
-                            MonteCarlo::WeightEnergyAndChargeMultiplier )
+                            MonteCarlo::WeightAndChargeMultiplier )
 {
   FETCH_TEMPLATE_PARAM( 0, ContributionMultiplierPolicy );
 

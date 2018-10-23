@@ -61,12 +61,6 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         self.assertTrue( estimator.isSurfaceEstimator() )
         self.assertFalse( estimator.isMeshEstimator() )
 
-        estimator = Event.WeightEnergyAndChargeMultipliedSurfaceFluxEstimator( 3, 10.0, surface_ids, surface_areas )
-
-        self.assertFalse( estimator.isCellEstimator() )
-        self.assertTrue( estimator.isSurfaceEstimator() )
-        self.assertFalse( estimator.isMeshEstimator() )
-
     def testGetNumberOfBins(self):
         "*Test MonteCarlo.Event.SurfaceFluxEstimator getNumberOfBins"
 
@@ -192,44 +186,6 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         estimator.setCollisionNumberDiscretization( coll_bins )
         self.assertEqual( estimator.getNumberOfBins(), 16 )
 
-        estimator = Event.WeightEnergyAndChargeMultipliedSurfaceFluxEstimator( 3, 10.0, surface_ids, surface_areas )
-        self.assertEqual( estimator.getNumberOfBins(), 1 )
-
-        # Set the energy bins
-        energy_bin_boundaries = [None] * ( 3 )
-        energy_bin_boundaries[0] = 0.0
-        energy_bin_boundaries[1] = 0.1
-        energy_bin_boundaries[2] = 1.0
-
-        estimator.setEnergyDiscretization( energy_bin_boundaries )
-        self.assertEqual( estimator.getNumberOfBins(), 2 )
-
-        # Set the cosine bins
-        cosine_bins = [None] * ( 3 )
-        cosine_bins[0] = -1.0
-        cosine_bins[1] = 0.0
-        cosine_bins[2] = 1.0
-
-        estimator.setCosineDiscretization( cosine_bins )
-        self.assertEqual( estimator.getNumberOfBins(), 4 )
-
-        # Set the time bins
-        time_bins = [None] * ( 3 )
-        time_bins[0] = 0.0
-        time_bins[1] = 0.5
-        time_bins[2] = 1.0
-
-        estimator.setTimeDiscretization( time_bins )
-        self.assertEqual( estimator.getNumberOfBins(), 8 )
-
-        # Set the collision number bins
-        coll_bins = [None] * ( 2 )
-        coll_bins[0] = 0
-        coll_bins[1] = 2147483647
-
-        estimator.setCollisionNumberDiscretization( coll_bins )
-        self.assertEqual( estimator.getNumberOfBins(), 16 )
-
 #---------------------------------------------------------------------------#
 # Check that the surface ids associated with the estimator can be returned
     def testGetEntityIds(self):
@@ -247,7 +203,6 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         estimator_1 = Event.WeightMultipliedSurfaceFluxEstimator( 0, 10.0, surface_ids, surface_areas )
         estimator_2 = Event.WeightAndEnergyMultipliedSurfaceFluxEstimator( 1, 10.0, surface_ids, surface_areas )
         estimator_3 = Event.WeightAndChargeMultipliedSurfaceFluxEstimator( 2, 10.0, surface_ids, surface_areas )
-        estimator_4 = Event.WeightEnergyAndChargeMultipliedSurfaceFluxEstimator( 3, 10.0, surface_ids, surface_areas )
 
         entity_ids = estimator_1.getEntityIds()
 
@@ -262,12 +217,6 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         self.assertTrue( 1 in entity_ids )
 
         entity_ids = estimator_3.getEntityIds()
-
-        self.assertEqual( len(entity_ids), 2 )
-        self.assertTrue( 0 in entity_ids )
-        self.assertTrue( 1 in entity_ids )
-
-        entity_ids = estimator_4.getEntityIds()
 
         self.assertEqual( len(entity_ids), 2 )
         self.assertTrue( 0 in entity_ids )
@@ -311,18 +260,6 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         self.assertEqual( estimator.getNumberOfResponseFunctions(), 2 )
 
         estimator = Event.WeightAndChargeMultipliedSurfaceFluxEstimator( 2, 10.0, surface_ids, surface_areas )
-
-        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
-
-        response_functions = [None] * ( 2 )
-        response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
-        response_functions[1] = response_functions[0]
-
-        estimator.setResponseFunctions( response_functions )
-
-        self.assertEqual( estimator.getNumberOfResponseFunctions(), 2 )
-
-        estimator = Event.WeightEnergyAndChargeMultipliedSurfaceFluxEstimator( 3, 10.0, surface_ids, surface_areas )
 
         self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
 

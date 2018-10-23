@@ -35,6 +35,9 @@ estimator_1;
 std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedSurfaceFluxEstimator>
 estimator_2;
 
+std::shared_ptr<MonteCarlo::WeightAndChargeMultipliedSurfaceFluxEstimator>
+estimator_3;
+
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
@@ -46,7 +49,7 @@ FRENSIE_UNIT_TEST( ParticleCrossingSurfaceEventDispatcher, getEntityId )
 
   std::shared_ptr<MonteCarlo::ParticleCrossingSurfaceEventLocalDispatcher>
     dispatcher_1( new MonteCarlo::ParticleCrossingSurfaceEventLocalDispatcher( 1 ) );
-  
+
   FRENSIE_CHECK_EQUAL( dispatcher_0->getEntityId(), 0 );
   FRENSIE_CHECK_EQUAL( dispatcher_1->getEntityId(), 1 );
 }
@@ -57,7 +60,7 @@ FRENSIE_UNIT_TEST( ParticleCrossingSurfaceEventDispatcher, manage_observers )
 {
   std::shared_ptr<MonteCarlo::ParticleCrossingSurfaceEventLocalDispatcher>
     dispatcher_0( new MonteCarlo::ParticleCrossingSurfaceEventLocalDispatcher( 0 ) );
-  
+
   dispatcher_0->attachObserver( estimator_1 );
 
   FRENSIE_CHECK( estimator_1.use_count() > 1 );
@@ -104,22 +107,26 @@ FRENSIE_UNIT_TEST( ParticleCrossingSurfaceEventDispatcher,
 
   dispatcher_0->attachObserver( estimator_1->getParticleTypes(), estimator_1 );
   dispatcher_0->attachObserver( estimator_2->getParticleTypes(), estimator_2 );
+  dispatcher_0->attachObserver( estimator_3->getParticleTypes(), estimator_3 );
 
   dispatcher_1->attachObserver( estimator_1->getParticleTypes(), estimator_1 );
   dispatcher_1->attachObserver( estimator_2->getParticleTypes(), estimator_2 );
+  dispatcher_1->attachObserver( estimator_3->getParticleTypes(), estimator_3 );
 
   {
     MonteCarlo::PhotonState photon( 0ull );
     photon.setWeight( 1.0 );
     photon.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK( !estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_2->hasUncommittedHistoryContribution() );
-    
+    FRENSIE_CHECK( !estimator_3->hasUncommittedHistoryContribution() );
+
     dispatcher_0->dispatchParticleCrossingSurfaceEvent( photon, 0, 1.0 );
-    
+
     FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_3->hasUncommittedHistoryContribution() );
 
     MonteCarlo::ElectronState electron( 0ull );
     electron.setWeight( 1.0 );
@@ -129,9 +136,11 @@ FRENSIE_UNIT_TEST( ParticleCrossingSurfaceEventDispatcher,
 
     FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_3->hasUncommittedHistoryContribution() );
 
     estimator_1->commitHistoryContribution();
     estimator_2->commitHistoryContribution();
+    estimator_3->commitHistoryContribution();
 
     Utility::ArrayView<const double> first_moments, second_moments;
     first_moments = estimator_1->getEntityBinDataFirstMoments( 0 );
@@ -154,6 +163,18 @@ FRENSIE_UNIT_TEST( ParticleCrossingSurfaceEventDispatcher,
 
     first_moments = estimator_2->getEntityBinDataFirstMoments( 1 );
     second_moments = estimator_2->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = estimator_3->getEntityBinDataFirstMoments( 0 );
+    second_moments = estimator_3->getEntityBinDataSecondMoments( 0 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {-1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = estimator_3->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_3->getEntityBinDataSecondMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
@@ -163,14 +184,16 @@ FRENSIE_UNIT_TEST( ParticleCrossingSurfaceEventDispatcher,
     MonteCarlo::PhotonState photon( 0ull );
     photon.setWeight( 1.0 );
     photon.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK( !estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_2->hasUncommittedHistoryContribution() );
-    
+    FRENSIE_CHECK( !estimator_3->hasUncommittedHistoryContribution() );
+
     dispatcher_1->dispatchParticleCrossingSurfaceEvent( photon, 1, 1.0 );
-    
+
     FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_3->hasUncommittedHistoryContribution() );
 
     MonteCarlo::ElectronState electron( 0ull );
     electron.setWeight( 1.0 );
@@ -180,9 +203,11 @@ FRENSIE_UNIT_TEST( ParticleCrossingSurfaceEventDispatcher,
 
     FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_3->hasUncommittedHistoryContribution() );
 
     estimator_1->commitHistoryContribution();
     estimator_2->commitHistoryContribution();
+    estimator_3->commitHistoryContribution();
 
     Utility::ArrayView<const double> first_moments, second_moments;
     first_moments = estimator_1->getEntityBinDataFirstMoments( 0 );
@@ -207,6 +232,18 @@ FRENSIE_UNIT_TEST( ParticleCrossingSurfaceEventDispatcher,
     second_moments = estimator_2->getEntityBinDataSecondMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = estimator_3->getEntityBinDataFirstMoments( 0 );
+    second_moments = estimator_3->getEntityBinDataSecondMoments( 0 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {-1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = estimator_3->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_3->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {-1.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
   }
 }
@@ -237,6 +274,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleCrossingSurfaceEventDispatcher,
     std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedSurfaceFluxEstimator>
       local_estimator_2;
 
+    std::shared_ptr<MonteCarlo::WeightAndChargeMultipliedSurfaceFluxEstimator>
+      local_estimator_3;
+
     {
       // Set the entity ids
       std::vector<Geometry::Model::EntityId> surface_ids( {0, 1 } );
@@ -256,6 +296,14 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleCrossingSurfaceEventDispatcher,
                                                              surface_areas ) );
 
       local_estimator_2->setParticleTypes( std::vector<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
+
+      local_estimator_3.reset( new MonteCarlo::WeightAndChargeMultipliedSurfaceFluxEstimator(
+                                                             12,
+                                                             1.0,
+                                                             surface_ids,
+                                                             surface_areas ) );
+
+      local_estimator_3->setParticleTypes( std::vector<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
     }
 
     std::shared_ptr<MonteCarlo::ParticleCrossingSurfaceEventLocalDispatcher>
@@ -263,15 +311,18 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleCrossingSurfaceEventDispatcher,
 
     std::shared_ptr<MonteCarlo::ParticleCrossingSurfaceEventLocalDispatcher>
       dispatcher_1( new MonteCarlo::ParticleCrossingSurfaceEventLocalDispatcher( 1 ) );
-  
+
     dispatcher_0->attachObserver( local_estimator_1->getParticleTypes(), local_estimator_1 );
     dispatcher_0->attachObserver( local_estimator_2->getParticleTypes(), local_estimator_2 );
+    dispatcher_0->attachObserver( local_estimator_3->getParticleTypes(), local_estimator_3 );
 
     dispatcher_1->attachObserver( local_estimator_1->getParticleTypes(), local_estimator_1 );
     dispatcher_1->attachObserver( local_estimator_2->getParticleTypes(), local_estimator_2 );
+    dispatcher_1->attachObserver( local_estimator_3->getParticleTypes(), local_estimator_3 );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(local_estimator_1) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(local_estimator_2) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(local_estimator_3) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(dispatcher_0) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(dispatcher_1) );
   }
@@ -289,12 +340,16 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleCrossingSurfaceEventDispatcher,
 
   std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedSurfaceFluxEstimator>
     local_estimator_2;
-  
+
+  std::shared_ptr<MonteCarlo::WeightAndChargeMultipliedSurfaceFluxEstimator>
+    local_estimator_3;
+
   std::shared_ptr<MonteCarlo::ParticleCrossingSurfaceEventLocalDispatcher>
     dispatcher_0, dispatcher_1;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(local_estimator_1) );
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(local_estimator_2) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(local_estimator_3) );
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(dispatcher_0) );
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(dispatcher_1) );
 
@@ -303,19 +358,21 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleCrossingSurfaceEventDispatcher,
   {
     FRENSIE_CHECK_EQUAL( dispatcher_0->getEntityId(), 0 );
     FRENSIE_CHECK_EQUAL( dispatcher_0->getNumberOfObservers( MonteCarlo::PHOTON ), 1 );
-    FRENSIE_CHECK_EQUAL( dispatcher_0->getNumberOfObservers( MonteCarlo::ELECTRON ), 1 );
+    FRENSIE_CHECK_EQUAL( dispatcher_0->getNumberOfObservers( MonteCarlo::ELECTRON ), 2 );
 
     MonteCarlo::PhotonState photon( 0ull );
     photon.setWeight( 1.0 );
     photon.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK( !local_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !local_estimator_2->hasUncommittedHistoryContribution() );
-    
+    FRENSIE_CHECK( !local_estimator_3->hasUncommittedHistoryContribution() );
+
     dispatcher_0->dispatchParticleCrossingSurfaceEvent( photon, 0, 1.0 );
-    
+
     FRENSIE_CHECK( local_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !local_estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !local_estimator_3->hasUncommittedHistoryContribution() );
 
     MonteCarlo::ElectronState electron( 0ull );
     electron.setWeight( 1.0 );
@@ -325,9 +382,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleCrossingSurfaceEventDispatcher,
 
     FRENSIE_CHECK( local_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( local_estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( local_estimator_3->hasUncommittedHistoryContribution() );
 
     local_estimator_1->commitHistoryContribution();
     local_estimator_2->commitHistoryContribution();
+    local_estimator_3->commitHistoryContribution();
 
     Utility::ArrayView<const double> first_moments, second_moments;
     first_moments = local_estimator_1->getEntityBinDataFirstMoments( 0 );
@@ -353,24 +412,38 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleCrossingSurfaceEventDispatcher,
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = local_estimator_3->getEntityBinDataFirstMoments( 0 );
+    second_moments = local_estimator_3->getEntityBinDataSecondMoments( 0 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {-1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = local_estimator_3->getEntityBinDataFirstMoments( 1 );
+    second_moments = local_estimator_3->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
   }
 
   {
     FRENSIE_CHECK_EQUAL( dispatcher_1->getEntityId(), 1 );
     FRENSIE_CHECK_EQUAL( dispatcher_1->getNumberOfObservers( MonteCarlo::PHOTON ), 1 );
-    FRENSIE_CHECK_EQUAL( dispatcher_1->getNumberOfObservers( MonteCarlo::ELECTRON ), 1 );
+    FRENSIE_CHECK_EQUAL( dispatcher_1->getNumberOfObservers( MonteCarlo::ELECTRON ), 2 );
 
     MonteCarlo::PhotonState photon( 0ull );
     photon.setWeight( 1.0 );
     photon.setEnergy( 1.0 );
-    
+
     FRENSIE_CHECK( !local_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !local_estimator_2->hasUncommittedHistoryContribution() );
-    
+    FRENSIE_CHECK( !local_estimator_3->hasUncommittedHistoryContribution() );
+
     dispatcher_1->dispatchParticleCrossingSurfaceEvent( photon, 1, 1.0 );
-    
+
     FRENSIE_CHECK( local_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !local_estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !local_estimator_3->hasUncommittedHistoryContribution() );
 
     MonteCarlo::ElectronState electron( 0ull );
     electron.setWeight( 1.0 );
@@ -380,9 +453,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleCrossingSurfaceEventDispatcher,
 
     FRENSIE_CHECK( local_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( local_estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( local_estimator_3->hasUncommittedHistoryContribution() );
 
     local_estimator_1->commitHistoryContribution();
     local_estimator_2->commitHistoryContribution();
+    local_estimator_3->commitHistoryContribution();
 
     Utility::ArrayView<const double> first_moments, second_moments;
     first_moments = local_estimator_1->getEntityBinDataFirstMoments( 0 );
@@ -407,6 +482,18 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleCrossingSurfaceEventDispatcher,
     second_moments = local_estimator_2->getEntityBinDataSecondMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = local_estimator_3->getEntityBinDataFirstMoments( 0 );
+    second_moments = local_estimator_3->getEntityBinDataSecondMoments( 0 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {-1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = local_estimator_3->getEntityBinDataFirstMoments( 1 );
+    second_moments = local_estimator_3->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {-1.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
   }
 }
@@ -436,6 +523,14 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                                              surface_areas ) );
 
   estimator_2->setParticleTypes( std::vector<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
+
+  estimator_3.reset( new MonteCarlo::WeightAndChargeMultipliedSurfaceFluxEstimator(
+                                                             2,
+                                                             1.0,
+                                                             surface_ids,
+                                                             surface_areas ) );
+
+  estimator_3->setParticleTypes( std::vector<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();

@@ -81,10 +81,7 @@ typedef SurfaceCurrentEstimator<WeightMultiplier> WeightMultipliedSurfaceCurrent
 typedef SurfaceCurrentEstimator<WeightAndEnergyMultiplier> WeightAndEnergyMultipliedSurfaceCurrentEstimator;
 
 //! The weight and charge multiplied cell collision flux estimator
-typedef SurfaceCurrentEstimator<MonteCarlo::WeightAndChargeMultiplier> WeightAndChargeMultipliedSurfaceCurrentEstimator;
-
-//! The weight, energy, and charge multiplied cell collision flux estimator
-typedef SurfaceCurrentEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> WeightEnergyAndChargeMultipliedSurfaceCurrentEstimator;
+typedef SurfaceCurrentEstimator<WeightAndChargeMultiplier> WeightAndChargeMultipliedSurfaceCurrentEstimator;
 
 } // end MonteCarlo namespace
 

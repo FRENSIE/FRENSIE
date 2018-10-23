@@ -117,7 +117,7 @@ void EntityEstimator::reduceData( const Utility::Communicator& comm,
 {
   // Make sure the root process is valid
   testPrecondition( root_process < comm.size() );
-  
+
   // Only do the reduction if there is more than one process
   if( comm.size() > 1 )
   {
@@ -160,7 +160,7 @@ void EntityEstimator::reduceData( const Utility::Communicator& comm,
                              "bin data!" );
 
     comm.barrier();
-    
+
     // Reduce bin data of total
     try{
       this->reduceCollection( comm, root_process, d_estimator_total_bin_data );
@@ -190,12 +190,12 @@ void EntityEstimator::reduceEntityCollections(
       {
         const EntityEstimatorMomentsCollectionMap::value_type&
           other_entity_data = *other_entity_estimator_moments_maps[j].find( entity_data.first );
-        
+
         for( size_t i = 0; i < entity_data.second.size(); ++i )
         {
           Utility::getCurrentScore<1>( entity_data.second, i ) +=
             Utility::getCurrentScore<1>( other_entity_data.second, i );
-          
+
           Utility::getCurrentScore<2>( entity_data.second, i ) +=
             Utility::getCurrentScore<2>( other_entity_data.second, i );
         }
@@ -225,7 +225,7 @@ void EntityEstimator::assignEntities(
   // Calculate the total normalization constant
   this->calculateTotalNormalizationConstant();
 
-  // Resize the data 
+  // Resize the data
   this->resizeEntityEstimatorMapCollections();
   this->resizeEstimatorTotalCollection();
 }
@@ -433,7 +433,7 @@ void EntityEstimator::resizeEstimatorTotalCollection()
 }
 
 EXPLICIT_CLASS_SERIALIZE_INST( EntityEstimator );
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

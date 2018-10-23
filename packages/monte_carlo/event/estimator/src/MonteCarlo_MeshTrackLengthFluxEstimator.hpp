@@ -134,10 +134,7 @@ typedef MeshTrackLengthFluxEstimator<WeightMultiplier> WeightMultipliedMeshTrack
 typedef MeshTrackLengthFluxEstimator<WeightAndEnergyMultiplier> WeightAndEnergyMultipliedMeshTrackLengthFluxEstimator;
 
 //! The weight and charge multiplied cell collision flux estimator
-typedef MeshTrackLengthFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> WeightAndChargeMultipliedMeshTrackLengthFluxEstimator;
-
-//! The weight, energy, and charge multiplied cell collision flux estimator
-typedef MeshTrackLengthFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> WeightEnergyAndChargeMultipliedMeshTrackLengthFluxEstimator;
+typedef MeshTrackLengthFluxEstimator<WeightAndChargeMultiplier> WeightAndChargeMultipliedMeshTrackLengthFluxEstimator;
 
 } // end MonteCarlo namespace
 

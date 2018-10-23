@@ -488,10 +488,6 @@ BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndChargeMultipliedMeshTrac
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MeshTrackLengthFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, MeshTrackLengthFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> );
 
-BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightEnergyAndChargeMultipliedMeshTrackLengthFluxEstimator, MonteCarlo );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MeshTrackLengthFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
-EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, MeshTrackLengthFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
-
 #endif // end MONTE_CARLO_MESH_TRACK_LENGTH_FLUX_ESTIMATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//

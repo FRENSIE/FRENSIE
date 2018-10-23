@@ -45,56 +45,41 @@ estimator_2;
 std::shared_ptr<MonteCarlo::WeightAndChargeMultipliedCellCollisionFluxEstimator>
 estimator_3;
 
-std::shared_ptr<MonteCarlo::WeightEnergyAndChargeMultipliedCellCollisionFluxEstimator>
+std::shared_ptr<MonteCarlo::WeightMultipliedCellTrackLengthFluxEstimator>
 estimator_4;
 
-std::shared_ptr<MonteCarlo::WeightMultipliedCellTrackLengthFluxEstimator>
+std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedCellTrackLengthFluxEstimator>
 estimator_5;
 
-std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedCellTrackLengthFluxEstimator>
+std::shared_ptr<MonteCarlo::WeightAndChargeMultipliedCellTrackLengthFluxEstimator>
 estimator_6;
 
-std::shared_ptr<MonteCarlo::WeightAndChargeMultipliedCellTrackLengthFluxEstimator>
+std::shared_ptr<MonteCarlo::WeightMultipliedCellPulseHeightEstimator>
 estimator_7;
 
-std::shared_ptr<MonteCarlo::WeightEnergyAndChargeMultipliedCellTrackLengthFluxEstimator>
+std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedCellPulseHeightEstimator>
 estimator_8;
 
-std::shared_ptr<MonteCarlo::WeightMultipliedCellPulseHeightEstimator>
+std::shared_ptr<MonteCarlo::WeightAndChargeMultipliedCellPulseHeightEstimator>
 estimator_9;
 
-std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedCellPulseHeightEstimator>
+std::shared_ptr<MonteCarlo::WeightMultipliedSurfaceFluxEstimator>
 estimator_10;
 
-std::shared_ptr<MonteCarlo::WeightAndChargeMultipliedCellPulseHeightEstimator>
+std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedSurfaceFluxEstimator>
 estimator_11;
 
-std::shared_ptr<MonteCarlo::WeightEnergyAndChargeMultipliedCellPulseHeightEstimator>
+std::shared_ptr<MonteCarlo::WeightAndChargeMultipliedSurfaceFluxEstimator>
 estimator_12;
 
-std::shared_ptr<MonteCarlo::WeightMultipliedSurfaceFluxEstimator>
+std::shared_ptr<MonteCarlo::WeightMultipliedSurfaceCurrentEstimator>
 estimator_13;
 
-std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedSurfaceFluxEstimator>
+std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedSurfaceCurrentEstimator>
 estimator_14;
 
-std::shared_ptr<MonteCarlo::WeightAndChargeMultipliedSurfaceFluxEstimator>
-estimator_15;
-
-std::shared_ptr<MonteCarlo::WeightEnergyAndChargeMultipliedSurfaceFluxEstimator>
-estimator_16;
-
-std::shared_ptr<MonteCarlo::WeightMultipliedSurfaceCurrentEstimator>
-estimator_17;
-
-std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedSurfaceCurrentEstimator>
-estimator_18;
-
 std::shared_ptr<MonteCarlo::WeightAndChargeMultipliedSurfaceCurrentEstimator>
-estimator_19;
-
-std::shared_ptr<MonteCarlo::WeightEnergyAndChargeMultipliedSurfaceCurrentEstimator>
-estimator_20;
+estimator_15;
 
 std::shared_ptr<MonteCarlo::WeightMultipliedMeshTrackLengthFluxEstimator>
 mesh_estimator_1;
@@ -104,9 +89,6 @@ mesh_estimator_2;
 
 std::shared_ptr<MonteCarlo::WeightAndChargeMultipliedMeshTrackLengthFluxEstimator>
 mesh_estimator_3;
-
-std::shared_ptr<MonteCarlo::WeightEnergyAndChargeMultipliedMeshTrackLengthFluxEstimator>
-mesh_estimator_4;
 
 std::shared_ptr<MonteCarlo::ParticleTracker> particle_tracker;
 
@@ -331,41 +313,17 @@ FRENSIE_UNIT_TEST( EventHandler, addEstimator )
   FRENSIE_CHECK( event_handler.doesEstimatorExist( estimator_15->getId() ) );
   FRENSIE_CHECK_EQUAL( event_handler.getNumberOfEstimators(), 15 );
 
-  FRENSIE_REQUIRE_NO_THROW( event_handler.addEstimator( estimator_16 ) );
-  FRENSIE_CHECK( event_handler.doesEstimatorExist( estimator_16->getId() ) );
-  FRENSIE_CHECK_EQUAL( event_handler.getNumberOfEstimators(), 16 );
-
-  FRENSIE_REQUIRE_NO_THROW( event_handler.addEstimator( estimator_17 ) );
-  FRENSIE_CHECK( event_handler.doesEstimatorExist( estimator_17->getId() ) );
-  FRENSIE_CHECK_EQUAL( event_handler.getNumberOfEstimators(), 17 );
-
-  FRENSIE_REQUIRE_NO_THROW( event_handler.addEstimator( estimator_18 ) );
-  FRENSIE_CHECK( event_handler.doesEstimatorExist( estimator_18->getId() ) );
-  FRENSIE_CHECK_EQUAL( event_handler.getNumberOfEstimators(), 18 );
-
-  FRENSIE_REQUIRE_NO_THROW( event_handler.addEstimator( estimator_19 ) );
-  FRENSIE_CHECK( event_handler.doesEstimatorExist( estimator_19->getId() ) );
-  FRENSIE_CHECK_EQUAL( event_handler.getNumberOfEstimators(), 19 );
-
-  FRENSIE_REQUIRE_NO_THROW( event_handler.addEstimator( estimator_20 ) );
-  FRENSIE_CHECK( event_handler.doesEstimatorExist( estimator_20->getId() ) );
-  FRENSIE_CHECK_EQUAL( event_handler.getNumberOfEstimators(), 20 );
-
   FRENSIE_REQUIRE_NO_THROW( event_handler.addEstimator( mesh_estimator_1 ) );
   FRENSIE_CHECK( event_handler.doesEstimatorExist( mesh_estimator_1->getId() ) );
-  FRENSIE_CHECK_EQUAL( event_handler.getNumberOfEstimators(), 21 );
+  FRENSIE_CHECK_EQUAL( event_handler.getNumberOfEstimators(), 16 );
 
   FRENSIE_REQUIRE_NO_THROW( event_handler.addEstimator( mesh_estimator_2 ) );
   FRENSIE_CHECK( event_handler.doesEstimatorExist( mesh_estimator_2->getId() ) );
-  FRENSIE_CHECK_EQUAL( event_handler.getNumberOfEstimators(), 22 );
+  FRENSIE_CHECK_EQUAL( event_handler.getNumberOfEstimators(), 17 );
 
   FRENSIE_REQUIRE_NO_THROW( event_handler.addEstimator( mesh_estimator_3 ) );
   FRENSIE_CHECK( event_handler.doesEstimatorExist( mesh_estimator_3->getId() ) );
-  FRENSIE_CHECK_EQUAL( event_handler.getNumberOfEstimators(), 23 );
-
-  FRENSIE_REQUIRE_NO_THROW( event_handler.addEstimator( mesh_estimator_4 ) );
-  FRENSIE_CHECK( event_handler.doesEstimatorExist( mesh_estimator_4->getId() ) );
-  FRENSIE_CHECK_EQUAL( event_handler.getNumberOfEstimators(), 24 );
+  FRENSIE_CHECK_EQUAL( event_handler.getNumberOfEstimators(), 18 );
 
   // Check that an estimator that has no particle types set will cause an
   // exception
@@ -405,9 +363,7 @@ FRENSIE_UNIT_TEST( EventHandler, addEstimator_model_set )
 
     FRENSIE_CHECK_THROW( event_handler.addEstimator( local_estimator_2 ),
                          std::runtime_error );
-  }
 
-  {
     std::shared_ptr<MonteCarlo::WeightMultipliedCellTrackLengthFluxEstimator>
       local_estimator_3( new MonteCarlo::WeightMultipliedCellTrackLengthFluxEstimator(
                                                       102, 1.0, {1}, {1.0} ) );
@@ -415,44 +371,35 @@ FRENSIE_UNIT_TEST( EventHandler, addEstimator_model_set )
     local_estimator_3->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
 
     FRENSIE_CHECK_NO_THROW( event_handler.addEstimator( local_estimator_3 ) );
-
-    std::shared_ptr<MonteCarlo::WeightMultipliedCellTrackLengthFluxEstimator>
-      local_estimator_4( new MonteCarlo::WeightMultipliedCellTrackLengthFluxEstimator(
-                                                      103, 1.0, {2}, {1.0} ) );
-
-    local_estimator_4->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
-
-    FRENSIE_CHECK_THROW( event_handler.addEstimator( local_estimator_4 ),
-                         std::runtime_error );
   }
 
   {
     std::shared_ptr<MonteCarlo::WeightMultipliedCellPulseHeightEstimator>
-      local_estimator_5( new MonteCarlo::WeightMultipliedCellPulseHeightEstimator(
+      local_estimator_4( new MonteCarlo::WeightMultipliedCellPulseHeightEstimator(
                                                              104, 1.0, {1} ) );
+
+    local_estimator_4->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
+
+    FRENSIE_CHECK_NO_THROW( event_handler.addEstimator( local_estimator_4 ) );
+
+    std::shared_ptr<MonteCarlo::WeightMultipliedCellPulseHeightEstimator>
+      local_estimator_5( new MonteCarlo::WeightMultipliedCellPulseHeightEstimator(
+                                                             105, 1.0, {2} ) );
 
     local_estimator_5->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
 
-    FRENSIE_CHECK_NO_THROW( event_handler.addEstimator( local_estimator_5 ) );
-
-    std::shared_ptr<MonteCarlo::WeightMultipliedCellPulseHeightEstimator>
-      local_estimator_6( new MonteCarlo::WeightMultipliedCellPulseHeightEstimator(
-                                                             105, 1.0, {2} ) );
-
-    local_estimator_6->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
-
-    FRENSIE_CHECK_THROW( event_handler.addEstimator( local_estimator_6 ),
+    FRENSIE_CHECK_THROW( event_handler.addEstimator( local_estimator_5 ),
                          std::runtime_error );
   }
 
   {
     std::shared_ptr<MonteCarlo::WeightMultipliedSurfaceFluxEstimator>
-      local_estimator_7( new MonteCarlo::WeightMultipliedSurfaceFluxEstimator(
+      local_estimator_6( new MonteCarlo::WeightMultipliedSurfaceFluxEstimator(
                                                       106, 1.0, {1}, {1.0} ) );
 
-    local_estimator_7->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
+    local_estimator_6->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
 
-    FRENSIE_CHECK_THROW( event_handler.addEstimator( local_estimator_7 ),
+    FRENSIE_CHECK_THROW( event_handler.addEstimator( local_estimator_6 ),
                          std::runtime_error );
   }
 
@@ -625,51 +572,6 @@ FRENSIE_UNIT_TEST( EventHandler, getEstimator )
     FRENSIE_CHECK( &estimator == estimator_15.get() );
   }
 
-  event_handler.addEstimator( estimator_16 );
-
-  {
-    const MonteCarlo::Estimator& estimator =
-      event_handler.getEstimator( estimator_16->getId() );
-
-    FRENSIE_CHECK( &estimator == estimator_16.get() );
-  }
-
-  event_handler.addEstimator( estimator_17 );
-
-  {
-    const MonteCarlo::Estimator& estimator =
-      event_handler.getEstimator( estimator_17->getId() );
-
-    FRENSIE_CHECK( &estimator == estimator_17.get() );
-  }
-
-  event_handler.addEstimator( estimator_18 );
-
-  {
-    const MonteCarlo::Estimator& estimator =
-      event_handler.getEstimator( estimator_18->getId() );
-
-    FRENSIE_CHECK( &estimator == estimator_18.get() );
-  }
-
-  event_handler.addEstimator( estimator_19 );
-
-  {
-    const MonteCarlo::Estimator& estimator =
-      event_handler.getEstimator( estimator_19->getId() );
-
-    FRENSIE_CHECK( &estimator == estimator_19.get() );
-  }
-
-  event_handler.addEstimator( estimator_19 );
-
-  {
-    const MonteCarlo::Estimator& estimator =
-      event_handler.getEstimator( estimator_20->getId() );
-
-    FRENSIE_CHECK( &estimator == estimator_20.get() );
-  }
-
   event_handler.addEstimator( mesh_estimator_1 );
 
   {
@@ -695,15 +597,6 @@ FRENSIE_UNIT_TEST( EventHandler, getEstimator )
       event_handler.getEstimator( mesh_estimator_3->getId() );
 
     FRENSIE_CHECK( &estimator == mesh_estimator_3.get() );
-  }
-
-  event_handler.addEstimator( mesh_estimator_4 );
-
-  {
-    const MonteCarlo::Estimator& estimator =
-      event_handler.getEstimator( mesh_estimator_4->getId() );
-
-    FRENSIE_CHECK( &estimator == mesh_estimator_4.get() );
   }
 
 }
@@ -765,8 +658,8 @@ FRENSIE_UNIT_TEST( EventHandler, get_dispatcher )
   event_handler.addEstimator( estimator_4 );
   event_handler.addEstimator( estimator_5 );
   event_handler.addEstimator( estimator_6 );
-  event_handler.addEstimator( estimator_5 );
-  event_handler.addEstimator( estimator_6 );
+  event_handler.addEstimator( estimator_7 );
+  event_handler.addEstimator( estimator_8 );
   event_handler.addEstimator( estimator_9 );
   event_handler.addEstimator( estimator_10 );
   event_handler.addEstimator( estimator_11 );
@@ -774,44 +667,38 @@ FRENSIE_UNIT_TEST( EventHandler, get_dispatcher )
   event_handler.addEstimator( estimator_13 );
   event_handler.addEstimator( estimator_14 );
   event_handler.addEstimator( estimator_15 );
-  event_handler.addEstimator( estimator_16 );
-  event_handler.addEstimator( estimator_17 );
-  event_handler.addEstimator( estimator_18 );
-  event_handler.addEstimator( estimator_19 );
-  event_handler.addEstimator( estimator_20 );
   event_handler.addEstimator( mesh_estimator_1 );
   event_handler.addEstimator( mesh_estimator_2 );
   event_handler.addEstimator( mesh_estimator_3 );
-  event_handler.addEstimator( mesh_estimator_4 );
   event_handler.addParticleTracker( particle_tracker );
 
   FRENSIE_CHECK_EQUAL( event_handler.getParticleCollidingInCellEventDispatcher().getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::PHOTON ), 1 );
-  FRENSIE_CHECK_EQUAL( event_handler.getParticleCollidingInCellEventDispatcher().getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 1 );
+  FRENSIE_CHECK_EQUAL( event_handler.getParticleCollidingInCellEventDispatcher().getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 2 );
   FRENSIE_CHECK_EQUAL( event_handler.getParticleCollidingInCellEventDispatcher().getLocalDispatcher( 2 ).getNumberOfObservers( MonteCarlo::PHOTON ), 1 );
-  FRENSIE_CHECK_EQUAL( event_handler.getParticleCollidingInCellEventDispatcher().getLocalDispatcher( 2 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 1 );
+  FRENSIE_CHECK_EQUAL( event_handler.getParticleCollidingInCellEventDispatcher().getLocalDispatcher( 2 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 2 );
 
   FRENSIE_CHECK_EQUAL( event_handler.getParticleSubtrackEndingInCellEventDispatcher().getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::PHOTON ), 1 );
-  FRENSIE_CHECK_EQUAL( event_handler.getParticleSubtrackEndingInCellEventDispatcher().getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 1 );
+  FRENSIE_CHECK_EQUAL( event_handler.getParticleSubtrackEndingInCellEventDispatcher().getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 2 );
   FRENSIE_CHECK_EQUAL( event_handler.getParticleSubtrackEndingInCellEventDispatcher().getLocalDispatcher( 2 ).getNumberOfObservers( MonteCarlo::PHOTON ), 1 );
-  FRENSIE_CHECK_EQUAL( event_handler.getParticleSubtrackEndingInCellEventDispatcher().getLocalDispatcher( 2 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 1 );
+  FRENSIE_CHECK_EQUAL( event_handler.getParticleSubtrackEndingInCellEventDispatcher().getLocalDispatcher( 2 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 2 );
 
-  FRENSIE_CHECK_EQUAL( event_handler.getParticleEnteringCellEventDispatcher().getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::PHOTON ), 2 );
-  FRENSIE_CHECK_EQUAL( event_handler.getParticleEnteringCellEventDispatcher().getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 2 );
-  FRENSIE_CHECK_EQUAL( event_handler.getParticleEnteringCellEventDispatcher().getLocalDispatcher( 2 ).getNumberOfObservers( MonteCarlo::PHOTON ), 2 );
-  FRENSIE_CHECK_EQUAL( event_handler.getParticleEnteringCellEventDispatcher().getLocalDispatcher( 2 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 2 );
+  FRENSIE_CHECK_EQUAL( event_handler.getParticleEnteringCellEventDispatcher().getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::PHOTON ), 3 );
+  FRENSIE_CHECK_EQUAL( event_handler.getParticleEnteringCellEventDispatcher().getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 3 );
+  FRENSIE_CHECK_EQUAL( event_handler.getParticleEnteringCellEventDispatcher().getLocalDispatcher( 2 ).getNumberOfObservers( MonteCarlo::PHOTON ), 3 );
+  FRENSIE_CHECK_EQUAL( event_handler.getParticleEnteringCellEventDispatcher().getLocalDispatcher( 2 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 3 );
 
-  FRENSIE_CHECK_EQUAL( event_handler.getParticleLeavingCellEventDispatcher().getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::PHOTON ), 2 );
-  FRENSIE_CHECK_EQUAL( event_handler.getParticleLeavingCellEventDispatcher().getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 2 );
-  FRENSIE_CHECK_EQUAL( event_handler.getParticleLeavingCellEventDispatcher().getLocalDispatcher( 2 ).getNumberOfObservers( MonteCarlo::PHOTON ), 2 );
-  FRENSIE_CHECK_EQUAL( event_handler.getParticleLeavingCellEventDispatcher().getLocalDispatcher( 2 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 2 );
+  FRENSIE_CHECK_EQUAL( event_handler.getParticleLeavingCellEventDispatcher().getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::PHOTON ), 3 );
+  FRENSIE_CHECK_EQUAL( event_handler.getParticleLeavingCellEventDispatcher().getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 3 );
+  FRENSIE_CHECK_EQUAL( event_handler.getParticleLeavingCellEventDispatcher().getLocalDispatcher( 2 ).getNumberOfObservers( MonteCarlo::PHOTON ), 3 );
+  FRENSIE_CHECK_EQUAL( event_handler.getParticleLeavingCellEventDispatcher().getLocalDispatcher( 2 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 3 );
 
   FRENSIE_CHECK_EQUAL( event_handler.getParticleCrossingSurfaceEventDispatcher().getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::PHOTON ), 2 );
-  FRENSIE_CHECK_EQUAL( event_handler.getParticleCrossingSurfaceEventDispatcher().getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 2 );
+  FRENSIE_CHECK_EQUAL( event_handler.getParticleCrossingSurfaceEventDispatcher().getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 4 );
   FRENSIE_CHECK_EQUAL( event_handler.getParticleCrossingSurfaceEventDispatcher().getLocalDispatcher( 2 ).getNumberOfObservers( MonteCarlo::PHOTON ), 2 );
-  FRENSIE_CHECK_EQUAL( event_handler.getParticleCrossingSurfaceEventDispatcher().getLocalDispatcher( 2 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 2 );
+  FRENSIE_CHECK_EQUAL( event_handler.getParticleCrossingSurfaceEventDispatcher().getLocalDispatcher( 2 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 4 );
 
   FRENSIE_CHECK_EQUAL( event_handler.getParticleSubtrackEndingGlobalEventDispatcher().getNumberOfObservers( MonteCarlo::PHOTON ), 2 );
-  FRENSIE_CHECK_EQUAL( event_handler.getParticleSubtrackEndingGlobalEventDispatcher().getNumberOfObservers( MonteCarlo::ELECTRON ), 2 );
+  FRENSIE_CHECK_EQUAL( event_handler.getParticleSubtrackEndingGlobalEventDispatcher().getNumberOfObservers( MonteCarlo::ELECTRON ), 3 );
 
   FRENSIE_CHECK_EQUAL( event_handler.getParticleGoneGlobalEventDispatcher().getNumberOfObservers( MonteCarlo::PHOTON ), 1 );
   FRENSIE_CHECK_EQUAL( event_handler.getParticleGoneGlobalEventDispatcher().getNumberOfObservers( MonteCarlo::ELECTRON ), 1 );
@@ -867,8 +754,8 @@ FRENSIE_UNIT_TEST( EventHandler,
   event_handler.addEstimator( estimator_4 );
   event_handler.addEstimator( estimator_5 );
   event_handler.addEstimator( estimator_6 );
-  event_handler.addEstimator( estimator_5 );
-  event_handler.addEstimator( estimator_6 );
+  event_handler.addEstimator( estimator_7 );
+  event_handler.addEstimator( estimator_8 );
   event_handler.addEstimator( estimator_9 );
   event_handler.addEstimator( estimator_10 );
   event_handler.addEstimator( estimator_11 );
@@ -876,15 +763,9 @@ FRENSIE_UNIT_TEST( EventHandler,
   event_handler.addEstimator( estimator_13 );
   event_handler.addEstimator( estimator_14 );
   event_handler.addEstimator( estimator_15 );
-  event_handler.addEstimator( estimator_16 );
-  event_handler.addEstimator( estimator_17 );
-  event_handler.addEstimator( estimator_18 );
-  event_handler.addEstimator( estimator_19 );
-  event_handler.addEstimator( estimator_20 );
   event_handler.addEstimator( mesh_estimator_1 );
   event_handler.addEstimator( mesh_estimator_2 );
   event_handler.addEstimator( mesh_estimator_3 );
-  event_handler.addEstimator( mesh_estimator_4 );
   event_handler.addParticleTracker( particle_tracker );
 
   {
@@ -911,20 +792,40 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     event_handler.updateObserversFromParticleCollidingInCellEvent( photon, 1.0 );
 
     FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_3->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_4->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_5->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_6->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_7->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_8->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_9->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_10->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_11->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_12->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
+
+    MonteCarlo::ElectronState electron( 0ull );
+    electron.setWeight( 1.0 );
+    electron.setEnergy( 1.0 );
+    electron.embedInModel( local_model );
+
+    event_handler.updateObserversFromParticleCollidingInCellEvent( electron, 1.0 );
+
+    FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_3->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_4->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_5->hasUncommittedHistoryContribution() );
@@ -938,47 +839,9 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
-
-    MonteCarlo::ElectronState electron( 0ull );
-    electron.setWeight( 1.0 );
-    electron.setEnergy( 1.0 );
-    electron.embedInModel( local_model );
-
-    event_handler.updateObserversFromParticleCollidingInCellEvent( electron, 1.0 );
-
-    FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_2->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_4->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_5->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_6->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_7->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_8->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_9->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_10->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_11->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_12->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     event_handler.commitObserverHistoryContributions();
 
@@ -997,15 +860,9 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     Utility::ArrayView<const double> first_moments, second_moments;
     first_moments = estimator_1->getEntityBinDataFirstMoments( 1 );
@@ -1035,23 +892,11 @@ FRENSIE_UNIT_TEST( EventHandler,
     first_moments = estimator_3->getEntityBinDataFirstMoments( 1 );
     second_moments = estimator_3->getEntityBinDataSecondMoments( 1 );
 
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {-1.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
 
     first_moments = estimator_3->getEntityBinDataFirstMoments( 2 );
     second_moments = estimator_3->getEntityBinDataSecondMoments( 2 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
-
-    first_moments = estimator_4->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_4->getEntityBinDataSecondMoments( 1 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
-
-    first_moments = estimator_4->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_4->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
@@ -1081,20 +926,40 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     event_handler.updateObserversFromParticleCollidingInCellEvent( photon, 1.0 );
 
     FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_3->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_4->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_5->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_6->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_7->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_8->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_9->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_10->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_11->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_12->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
+
+    MonteCarlo::ElectronState electron( 0ull );
+    electron.setWeight( 1.0 );
+    electron.setEnergy( 1.0 );
+    electron.embedInModel( local_model );
+
+    event_handler.updateObserversFromParticleCollidingInCellEvent( electron, 1.0 );
+
+    FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_3->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_4->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_5->hasUncommittedHistoryContribution() );
@@ -1108,47 +973,9 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
-
-    MonteCarlo::ElectronState electron( 0ull );
-    electron.setWeight( 1.0 );
-    electron.setEnergy( 1.0 );
-    electron.embedInModel( local_model );
-
-    event_handler.updateObserversFromParticleCollidingInCellEvent( electron, 1.0 );
-
-    FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_2->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_4->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_5->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_6->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_7->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_8->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_9->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_10->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_11->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_12->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     event_handler.commitObserverHistoryContributions();
 
@@ -1167,15 +994,9 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     Utility::ArrayView<const double> first_moments, second_moments;
     first_moments = estimator_1->getEntityBinDataFirstMoments( 1 );
@@ -1205,25 +1026,13 @@ FRENSIE_UNIT_TEST( EventHandler,
     first_moments = estimator_3->getEntityBinDataFirstMoments( 1 );
     second_moments = estimator_3->getEntityBinDataSecondMoments( 1 );
 
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {-1.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
 
     first_moments = estimator_3->getEntityBinDataFirstMoments( 2 );
     second_moments = estimator_3->getEntityBinDataSecondMoments( 2 );
 
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
-
-    first_moments = estimator_4->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_4->getEntityBinDataSecondMoments( 1 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
-
-    first_moments = estimator_4->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_4->getEntityBinDataSecondMoments( 2 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {-1.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
   }
 }
@@ -1242,8 +1051,8 @@ FRENSIE_UNIT_TEST( EventHandler,
   event_handler.addEstimator( estimator_4 );
   event_handler.addEstimator( estimator_5 );
   event_handler.addEstimator( estimator_6 );
-  event_handler.addEstimator( estimator_5 );
-  event_handler.addEstimator( estimator_6 );
+  event_handler.addEstimator( estimator_7 );
+  event_handler.addEstimator( estimator_8 );
   event_handler.addEstimator( estimator_9 );
   event_handler.addEstimator( estimator_10 );
   event_handler.addEstimator( estimator_11 );
@@ -1251,15 +1060,9 @@ FRENSIE_UNIT_TEST( EventHandler,
   event_handler.addEstimator( estimator_13 );
   event_handler.addEstimator( estimator_14 );
   event_handler.addEstimator( estimator_15 );
-  event_handler.addEstimator( estimator_16 );
-  event_handler.addEstimator( estimator_17 );
-  event_handler.addEstimator( estimator_18 );
-  event_handler.addEstimator( estimator_19 );
-  event_handler.addEstimator( estimator_20 );
   event_handler.addEstimator( mesh_estimator_1 );
   event_handler.addEstimator( mesh_estimator_2 );
   event_handler.addEstimator( mesh_estimator_3 );
-  event_handler.addEstimator( mesh_estimator_4 );
   event_handler.addParticleTracker( particle_tracker );
 
   {
@@ -1281,24 +1084,17 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_12->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     event_handler.updateObserversFromParticleSubtrackEndingInCellEvent( photon, 1, 1.0 );
 
     FRENSIE_CHECK( !estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_4->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_5->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_4->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_5->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_6->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_7->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_8->hasUncommittedHistoryContribution() );
@@ -1308,16 +1104,9 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_12->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     MonteCarlo::ElectronState electron( 0ull );
     electron.setWeight( 1.0 );
@@ -1328,7 +1117,7 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_4->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_4->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_5->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_6->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_7->hasUncommittedHistoryContribution() );
@@ -1340,15 +1129,9 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     event_handler.commitObserverHistoryContributions();
 
@@ -1367,61 +1150,37 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     Utility::ArrayView<const double> first_moments, second_moments;
+    first_moments = estimator_4->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_4->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = estimator_4->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_4->getEntityBinDataSecondMoments( 2 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
     first_moments = estimator_5->getEntityBinDataFirstMoments( 1 );
     second_moments = estimator_5->getEntityBinDataSecondMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
 
-    first_moments = estimator_5->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_5->getEntityBinDataSecondMoments( 2 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
-
     first_moments = estimator_6->getEntityBinDataFirstMoments( 1 );
     second_moments = estimator_6->getEntityBinDataSecondMoments( 1 );
 
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {-1.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
 
-    first_moments = estimator_7->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_7->getEntityBinDataSecondMoments( 1 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
-
-    first_moments = estimator_7->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_7->getEntityBinDataSecondMoments( 2 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
-
-    first_moments = estimator_8->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_8->getEntityBinDataSecondMoments( 1 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
-
-    first_moments = estimator_9->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_9->getEntityBinDataSecondMoments( 2 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
-
-    first_moments = estimator_11->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_11->getEntityBinDataSecondMoments( 2 );
+    first_moments = estimator_6->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_6->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
@@ -1447,23 +1206,17 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     event_handler.updateObserversFromParticleSubtrackEndingInCellEvent( photon, 2, 1.0 );
 
     FRENSIE_CHECK( !estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_4->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_5->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_4->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_5->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_6->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_7->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_8->hasUncommittedHistoryContribution() );
@@ -1474,15 +1227,9 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     MonteCarlo::ElectronState electron( 0ull );
     electron.setWeight( 1.0 );
@@ -1493,11 +1240,11 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_4->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_4->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_5->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_6->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_7->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_8->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_7->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_8->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_9->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_10->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_11->hasUncommittedHistoryContribution() );
@@ -1505,15 +1252,9 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     event_handler.commitObserverHistoryContributions();
 
@@ -1532,17 +1273,23 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     Utility::ArrayView<const double> first_moments, second_moments;
+    first_moments = estimator_4->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_4->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = estimator_4->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_4->getEntityBinDataSecondMoments( 2 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
     first_moments = estimator_5->getEntityBinDataFirstMoments( 1 );
     second_moments = estimator_5->getEntityBinDataSecondMoments( 1 );
 
@@ -1558,37 +1305,13 @@ FRENSIE_UNIT_TEST( EventHandler,
     first_moments = estimator_6->getEntityBinDataFirstMoments( 1 );
     second_moments = estimator_6->getEntityBinDataSecondMoments( 1 );
 
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {-1.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
 
     first_moments = estimator_6->getEntityBinDataFirstMoments( 2 );
     second_moments = estimator_6->getEntityBinDataSecondMoments( 2 );
 
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
-
-    first_moments = estimator_7->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_7->getEntityBinDataSecondMoments( 1 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
-
-    first_moments = estimator_7->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_7->getEntityBinDataSecondMoments( 2 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
-
-    first_moments = estimator_8->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_8->getEntityBinDataSecondMoments( 1 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
-
-    first_moments = estimator_8->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_8->getEntityBinDataSecondMoments( 2 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {-1.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
   }
 }
@@ -1607,8 +1330,8 @@ FRENSIE_UNIT_TEST( EventHandler,
   event_handler.addEstimator( estimator_4 );
   event_handler.addEstimator( estimator_5 );
   event_handler.addEstimator( estimator_6 );
-  event_handler.addEstimator( estimator_5 );
-  event_handler.addEstimator( estimator_6 );
+  event_handler.addEstimator( estimator_7 );
+  event_handler.addEstimator( estimator_8 );
   event_handler.addEstimator( estimator_9 );
   event_handler.addEstimator( estimator_10 );
   event_handler.addEstimator( estimator_11 );
@@ -1616,15 +1339,9 @@ FRENSIE_UNIT_TEST( EventHandler,
   event_handler.addEstimator( estimator_13 );
   event_handler.addEstimator( estimator_14 );
   event_handler.addEstimator( estimator_15 );
-  event_handler.addEstimator( estimator_16 );
-  event_handler.addEstimator( estimator_17 );
-  event_handler.addEstimator( estimator_18 );
-  event_handler.addEstimator( estimator_19 );
-  event_handler.addEstimator( estimator_20 );
   event_handler.addEstimator( mesh_estimator_1 );
   event_handler.addEstimator( mesh_estimator_2 );
   event_handler.addEstimator( mesh_estimator_3 );
-  event_handler.addEstimator( mesh_estimator_4 );
   event_handler.addParticleTracker( particle_tracker );
 
   {
@@ -1647,15 +1364,9 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     event_handler.updateObserversFromParticleEnteringCellEvent( photon, 1 );
 
@@ -1665,24 +1376,18 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_4->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_5->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_6->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_7->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_8->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_7->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_8->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_9->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_10->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_11->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_12->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_10->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_11->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_12->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     photon.setEnergy( 1.0 );
 
@@ -1694,24 +1399,18 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_4->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_5->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_6->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_7->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_8->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_7->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_8->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_9->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_10->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_11->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_12->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_10->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_11->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_12->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     MonteCarlo::ElectronState electron( 0ull );
     electron.setWeight( 1.0 );
@@ -1725,24 +1424,18 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_4->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_5->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_6->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_7->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_8->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_7->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_8->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_9->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_10->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_11->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_12->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_10->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_11->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_12->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     electron.setEnergy( 1.0 );
 
@@ -1754,24 +1447,18 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_4->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_5->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_6->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_7->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_8->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_7->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_8->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_9->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_10->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_11->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_12->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_10->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_11->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_12->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     event_handler.commitObserverHistoryContributions();
 
@@ -1790,37 +1477,43 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     Utility::ArrayView<const double> first_moments, second_moments;
-    first_moments = estimator_9->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_9->getEntityBinDataSecondMoments( 1 );
+    first_moments = estimator_7->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_7->getEntityBinDataSecondMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
 
-    first_moments = estimator_9->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_9->getEntityBinDataSecondMoments( 2 );
+    first_moments = estimator_7->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_7->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
 
-    first_moments = estimator_10->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_10->getEntityBinDataSecondMoments( 1 );
+    first_moments = estimator_8->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_8->getEntityBinDataSecondMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0} ) );
 
-    first_moments = estimator_10->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_10->getEntityBinDataSecondMoments( 2 );
+    first_moments = estimator_8->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_8->getEntityBinDataSecondMoments( 2 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = estimator_9->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_9->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = estimator_9->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_9->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
@@ -1846,15 +1539,9 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     event_handler.updateObserversFromParticleEnteringCellEvent( photon, 2 );
 
@@ -1864,24 +1551,18 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_4->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_5->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_6->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_7->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_8->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_7->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_8->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_9->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_10->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_11->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_12->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_10->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_11->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_12->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     photon.setEnergy( 1.0 );
 
@@ -1893,24 +1574,18 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_4->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_5->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_6->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_7->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_8->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_7->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_8->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_9->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_10->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_11->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_12->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_10->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_11->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_12->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     MonteCarlo::ElectronState electron( 0ull );
     electron.setWeight( 1.0 );
@@ -1924,24 +1599,18 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_4->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_5->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_6->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_7->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_8->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_7->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_8->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_9->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_10->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_11->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_12->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_10->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_11->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_12->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     electron.setEnergy( 1.0 );
 
@@ -1953,24 +1622,18 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_4->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_5->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_6->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_7->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_8->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_7->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_8->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_9->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_10->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_11->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_12->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_10->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_11->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_12->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     event_handler.commitObserverHistoryContributions();
 
@@ -1989,37 +1652,31 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     Utility::ArrayView<const double> first_moments, second_moments;
-    first_moments = estimator_9->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_9->getEntityBinDataSecondMoments( 1 );
+    first_moments = estimator_7->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_7->getEntityBinDataSecondMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
 
-    first_moments = estimator_9->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_9->getEntityBinDataSecondMoments( 2 );
+    first_moments = estimator_7->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_7->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
 
-    first_moments = estimator_10->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_10->getEntityBinDataSecondMoments( 1 );
+    first_moments = estimator_8->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_8->getEntityBinDataSecondMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0} ) );
 
-    first_moments = estimator_10->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_10->getEntityBinDataSecondMoments( 2 );
+    first_moments = estimator_8->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_8->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0} ) );
@@ -2039,8 +1696,8 @@ FRENSIE_UNIT_TEST( EventHandler,
   event_handler.addEstimator( estimator_4 );
   event_handler.addEstimator( estimator_5 );
   event_handler.addEstimator( estimator_6 );
-  event_handler.addEstimator( estimator_5 );
-  event_handler.addEstimator( estimator_6 );
+  event_handler.addEstimator( estimator_7 );
+  event_handler.addEstimator( estimator_8 );
   event_handler.addEstimator( estimator_9 );
   event_handler.addEstimator( estimator_10 );
   event_handler.addEstimator( estimator_11 );
@@ -2048,15 +1705,9 @@ FRENSIE_UNIT_TEST( EventHandler,
   event_handler.addEstimator( estimator_13 );
   event_handler.addEstimator( estimator_14 );
   event_handler.addEstimator( estimator_15 );
-  event_handler.addEstimator( estimator_16 );
-  event_handler.addEstimator( estimator_17 );
-  event_handler.addEstimator( estimator_18 );
-  event_handler.addEstimator( estimator_19 );
-  event_handler.addEstimator( estimator_20 );
   event_handler.addEstimator( mesh_estimator_1 );
   event_handler.addEstimator( mesh_estimator_2 );
   event_handler.addEstimator( mesh_estimator_3 );
-  event_handler.addEstimator( mesh_estimator_4 );
   event_handler.addParticleTracker( particle_tracker );
 
   {
@@ -2082,15 +1733,9 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     event_handler.updateObserversFromParticleCrossingSurfaceEvent( photon, 1, surface_normal );
 
@@ -2103,21 +1748,15 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_7->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_8->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_9->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_10->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_10->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_11->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_12->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     MonteCarlo::ElectronState electron( 0ull );
     electron.setWeight( 1.0 );
@@ -2135,21 +1774,15 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_7->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_8->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_9->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_10->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_11->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_12->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_10->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_11->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_12->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     event_handler.commitObserverHistoryContributions();
 
@@ -2168,17 +1801,47 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     Utility::ArrayView<const double> first_moments, second_moments;
+    first_moments = estimator_10->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_10->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = estimator_10->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_10->getEntityBinDataSecondMoments( 2 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = estimator_11->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_11->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = estimator_11->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_11->getEntityBinDataSecondMoments( 2 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = estimator_12->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_12->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {-1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = estimator_12->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_12->getEntityBinDataSecondMoments( 2 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
     first_moments = estimator_13->getEntityBinDataFirstMoments( 1 );
     second_moments = estimator_13->getEntityBinDataSecondMoments( 1 );
 
@@ -2203,26 +1866,14 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
 
-    first_moments = estimator_17->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_17->getEntityBinDataSecondMoments( 1 );
+    first_moments = estimator_15->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_15->getEntityBinDataSecondMoments( 1 );
 
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {-1.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
 
-    first_moments = estimator_17->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_17->getEntityBinDataSecondMoments( 2 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
-
-    first_moments = estimator_18->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_18->getEntityBinDataSecondMoments( 1 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
-
-    first_moments = estimator_18->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_18->getEntityBinDataSecondMoments( 2 );
+    first_moments = estimator_15->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_15->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
@@ -2251,15 +1902,9 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     event_handler.updateObserversFromParticleCrossingSurfaceEvent( photon, 2, surface_normal );
 
@@ -2272,21 +1917,15 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_7->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_8->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_9->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_10->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_10->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_11->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_12->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     MonteCarlo::ElectronState electron( 0ull );
     electron.setWeight( 1.0 );
@@ -2304,21 +1943,15 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_7->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_8->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_9->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_10->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_11->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_12->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_10->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_11->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_12->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     event_handler.commitObserverHistoryContributions();
 
@@ -2337,17 +1970,47 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     Utility::ArrayView<const double> first_moments, second_moments;
+    first_moments = estimator_10->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_10->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = estimator_10->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_10->getEntityBinDataSecondMoments( 2 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = estimator_11->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_11->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = estimator_11->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_11->getEntityBinDataSecondMoments( 2 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = estimator_12->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_12->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {-1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = estimator_12->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_12->getEntityBinDataSecondMoments( 2 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {-1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
     first_moments = estimator_13->getEntityBinDataFirstMoments( 1 );
     second_moments = estimator_13->getEntityBinDataSecondMoments( 1 );
 
@@ -2372,28 +2035,16 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
 
-    first_moments = estimator_17->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_17->getEntityBinDataSecondMoments( 1 );
+    first_moments = estimator_15->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_15->getEntityBinDataSecondMoments( 1 );
 
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {-1.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
 
-    first_moments = estimator_17->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_17->getEntityBinDataSecondMoments( 2 );
+    first_moments = estimator_15->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_15->getEntityBinDataSecondMoments( 2 );
 
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
-
-    first_moments = estimator_18->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_18->getEntityBinDataSecondMoments( 1 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
-
-    first_moments = estimator_18->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_18->getEntityBinDataSecondMoments( 2 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {-1.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
   }
 }
@@ -2412,8 +2063,8 @@ FRENSIE_UNIT_TEST( EventHandler,
   event_handler.addEstimator( estimator_4 );
   event_handler.addEstimator( estimator_5 );
   event_handler.addEstimator( estimator_6 );
-  event_handler.addEstimator( estimator_5 );
-  event_handler.addEstimator( estimator_6 );
+  event_handler.addEstimator( estimator_7 );
+  event_handler.addEstimator( estimator_8 );
   event_handler.addEstimator( estimator_9 );
   event_handler.addEstimator( estimator_10 );
   event_handler.addEstimator( estimator_11 );
@@ -2421,15 +2072,9 @@ FRENSIE_UNIT_TEST( EventHandler,
   event_handler.addEstimator( estimator_13 );
   event_handler.addEstimator( estimator_14 );
   event_handler.addEstimator( estimator_15 );
-  event_handler.addEstimator( estimator_16 );
-  event_handler.addEstimator( estimator_17 );
-  event_handler.addEstimator( estimator_18 );
-  event_handler.addEstimator( estimator_19 );
-  event_handler.addEstimator( estimator_20 );
   event_handler.addEstimator( mesh_estimator_1 );
   event_handler.addEstimator( mesh_estimator_2 );
   event_handler.addEstimator( mesh_estimator_3 );
-  event_handler.addEstimator( mesh_estimator_4 );
   event_handler.addParticleTracker( particle_tracker );
 
   {
@@ -2457,15 +2102,9 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( mesh_estimator_2->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( mesh_estimator_3->hasUncommittedHistoryContribution() );
 
     electron.setAsGone();
 
@@ -2490,15 +2129,9 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( mesh_estimator_2->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( mesh_estimator_3->hasUncommittedHistoryContribution() );
 
     event_handler.updateObserversFromParticleSubtrackEndingGlobalEvent( photon, start_point, end_point );
 
@@ -2517,15 +2150,9 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     photon.setAsGone();
 
@@ -2548,15 +2175,9 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK( !estimator_13->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_14->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_15->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_16->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_17->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_18->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_19->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_20->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !mesh_estimator_3->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !mesh_estimator_4->hasUncommittedHistoryContribution() );
 
     Utility::ArrayView<const double> first_moments, second_moments;
     first_moments = mesh_estimator_1->getEntityBinDataFirstMoments( 0 );
@@ -2655,6 +2276,54 @@ FRENSIE_UNIT_TEST( EventHandler,
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
 
+    first_moments = mesh_estimator_3->getEntityBinDataFirstMoments( 0 );
+    second_moments = mesh_estimator_3->getEntityBinDataSecondMoments( 0 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {-1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = mesh_estimator_3->getEntityBinDataFirstMoments( 1 );
+    second_moments = mesh_estimator_3->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = mesh_estimator_3->getEntityBinDataFirstMoments( 2 );
+    second_moments = mesh_estimator_3->getEntityBinDataSecondMoments( 2 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = mesh_estimator_3->getEntityBinDataFirstMoments( 3 );
+    second_moments = mesh_estimator_3->getEntityBinDataSecondMoments( 3 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = mesh_estimator_3->getEntityBinDataFirstMoments( 4 );
+    second_moments = mesh_estimator_3->getEntityBinDataSecondMoments( 4 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {-1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = mesh_estimator_3->getEntityBinDataFirstMoments( 5 );
+    second_moments = mesh_estimator_3->getEntityBinDataSecondMoments( 5 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = mesh_estimator_3->getEntityBinDataFirstMoments( 6 );
+    second_moments = mesh_estimator_3->getEntityBinDataSecondMoments( 6 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = mesh_estimator_3->getEntityBinDataFirstMoments( 7 );
+    second_moments = mesh_estimator_3->getEntityBinDataSecondMoments( 7 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
     MonteCarlo::ParticleTracker::OverallHistoryMap history_map;
 
     particle_tracker->getHistoryData( history_map );
@@ -2679,8 +2348,8 @@ FRENSIE_UNIT_TEST( EventHandler,
   // event_handler.addEstimator( estimator_4 );
   // event_handler.addEstimator( estimator_5 );
   // event_handler.addEstimator( estimator_6 );
-  // event_handler.addEstimator( estimator_5 );
-  // event_handler.addEstimator( estimator_6 );
+  // event_handler.addEstimator( estimator_7 );
+  // event_handler.addEstimator( estimator_8 );
   // event_handler.addEstimator( estimator_9 );
   // event_handler.addEstimator( estimator_10 );
   // event_handler.addEstimator( estimator_11 );
@@ -2688,15 +2357,9 @@ FRENSIE_UNIT_TEST( EventHandler,
   // event_handler.addEstimator( estimator_13 );
   // event_handler.addEstimator( estimator_14 );
   // event_handler.addEstimator( estimator_15 );
-  // event_handler.addEstimator( estimator_16 );
-  // event_handler.addEstimator( estimator_17 );
-  // event_handler.addEstimator( estimator_18 );
-  // event_handler.addEstimator( estimator_19 );
-  // event_handler.addEstimator( estimator_20 );
   // event_handler.addEstimator( mesh_estimator_1 );
   // event_handler.addEstimator( mesh_estimator_2 );
   // event_handler.addEstimator( mesh_estimator_3 );
-  // event_handler.addEstimator( mesh_estimator_4 );
   // event_handler.addParticleTracker( particle_tracker );
 
 //   event_handler.resetObserverData();
@@ -2781,38 +2444,50 @@ FRENSIE_UNIT_TEST( EventHandler,
 //   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
 //   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
 
-//   first_moments = estimator_5->getEntityBinDataFirstMoments( 1 );
-//   second_moments = estimator_5->getEntityBinDataSecondMoments( 1 );
+//   first_moments = estimator_4->getEntityBinDataFirstMoments( 1 );
+//   second_moments = estimator_4->getEntityBinDataSecondMoments( 1 );
 
 //   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
 //   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
 
-//   first_moments = estimator_5->getEntityBinDataFirstMoments( 2 );
-//   second_moments = estimator_5->getEntityBinDataSecondMoments( 2 );
+//   first_moments = estimator_4->getEntityBinDataFirstMoments( 2 );
+//   second_moments = estimator_4->getEntityBinDataSecondMoments( 2 );
 
 //   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
 //   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
 
-//   first_moments = estimator_6->getEntityBinDataFirstMoments( 1 );
-//   second_moments = estimator_6->getEntityBinDataSecondMoments( 1 );
+//   first_moments = estimator_5->getEntityBinDataFirstMoments( 1 );
+//   second_moments = estimator_5->getEntityBinDataSecondMoments( 1 );
 
 //   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*threads} ) );
 //   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*threads} ) );
 
-//   first_moments = estimator_9->getEntityBinDataFirstMoments( 2 );
-//   second_moments = estimator_9->getEntityBinDataSecondMoments( 2 );
+//   first_moments = estimator_7->getEntityBinDataFirstMoments( 2 );
+//   second_moments = estimator_7->getEntityBinDataSecondMoments( 2 );
 
 //   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
 //   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
 
-//   first_moments = estimator_9->getEntityBinDataFirstMoments( 1 );
-//   second_moments = estimator_9->getEntityBinDataSecondMoments( 1 );
+//   first_moments = estimator_7->getEntityBinDataFirstMoments( 1 );
+//   second_moments = estimator_7->getEntityBinDataSecondMoments( 1 );
 
 //   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
 //   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
 
-//   first_moments = estimator_9->getEntityBinDataFirstMoments( 2 );
-//   second_moments = estimator_9->getEntityBinDataSecondMoments( 2 );
+//   first_moments = estimator_7->getEntityBinDataFirstMoments( 2 );
+//   second_moments = estimator_7->getEntityBinDataSecondMoments( 2 );
+
+//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+//   first_moments = estimator_8->getEntityBinDataFirstMoments( 1 );
+//   second_moments = estimator_8->getEntityBinDataSecondMoments( 1 );
+
+//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*threads} ) );
+//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*threads} ) );
+
+//   first_moments = estimator_8->getEntityBinDataFirstMoments( 2 );
+//   second_moments = estimator_8->getEntityBinDataSecondMoments( 2 );
 
 //   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
 //   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
@@ -2820,11 +2495,23 @@ FRENSIE_UNIT_TEST( EventHandler,
 //   first_moments = estimator_10->getEntityBinDataFirstMoments( 1 );
 //   second_moments = estimator_10->getEntityBinDataSecondMoments( 1 );
 
-//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*threads} ) );
-//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*threads} ) );
+//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
 
 //   first_moments = estimator_10->getEntityBinDataFirstMoments( 2 );
 //   second_moments = estimator_10->getEntityBinDataSecondMoments( 2 );
+
+//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+//   first_moments = estimator_11->getEntityBinDataFirstMoments( 1 );
+//   second_moments = estimator_11->getEntityBinDataSecondMoments( 1 );
+
+//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
+
+//   first_moments = estimator_11->getEntityBinDataFirstMoments( 2 );
+//   second_moments = estimator_11->getEntityBinDataSecondMoments( 2 );
 
 //   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
 //   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
@@ -2849,30 +2536,6 @@ FRENSIE_UNIT_TEST( EventHandler,
 
 //   first_moments = estimator_14->getEntityBinDataFirstMoments( 2 );
 //   second_moments = estimator_14->getEntityBinDataSecondMoments( 2 );
-
-//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
-//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
-
-//   first_moments = estimator_17->getEntityBinDataFirstMoments( 1 );
-//   second_moments = estimator_17->getEntityBinDataSecondMoments( 1 );
-
-//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
-//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
-
-//   first_moments = estimator_17->getEntityBinDataFirstMoments( 2 );
-//   second_moments = estimator_17->getEntityBinDataSecondMoments( 2 );
-
-//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
-//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
-
-//   first_moments = estimator_18->getEntityBinDataFirstMoments( 1 );
-//   second_moments = estimator_18->getEntityBinDataSecondMoments( 1 );
-
-//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
-//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
-
-//   first_moments = estimator_18->getEntityBinDataFirstMoments( 2 );
-//   second_moments = estimator_18->getEntityBinDataSecondMoments( 2 );
 
 //   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
 //   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
@@ -3060,53 +2723,77 @@ FRENSIE_UNIT_TEST( EventHandler,
 //   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*threads} ) );
 //   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*threads} ) );
 
+//   first_moments = estimator_4->getEntityBinDataFirstMoments( 1 );
+//   second_moments = estimator_4->getEntityBinDataSecondMoments( 1 );
+
+//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
+
+//   first_moments = estimator_4->getEntityBinDataFirstMoments( 2 );
+//   second_moments = estimator_4->getEntityBinDataSecondMoments( 2 );
+
+//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
+
 //   first_moments = estimator_5->getEntityBinDataFirstMoments( 1 );
 //   second_moments = estimator_5->getEntityBinDataSecondMoments( 1 );
-
-//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
-//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
-
-//   first_moments = estimator_5->getEntityBinDataFirstMoments( 2 );
-//   second_moments = estimator_5->getEntityBinDataSecondMoments( 2 );
-
-//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
-//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
-
-//   first_moments = estimator_6->getEntityBinDataFirstMoments( 1 );
-//   second_moments = estimator_6->getEntityBinDataSecondMoments( 1 );
 
 //   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*threads} ) );
 //   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*threads} ) );
 
-//   first_moments = estimator_9->getEntityBinDataFirstMoments( 2 );
-//   second_moments = estimator_9->getEntityBinDataSecondMoments( 2 );
+//   first_moments = estimator_7->getEntityBinDataFirstMoments( 2 );
+//   second_moments = estimator_7->getEntityBinDataSecondMoments( 2 );
 
 //   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
 //   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
 
-//   first_moments = estimator_9->getEntityBinDataFirstMoments( 1 );
-//   second_moments = estimator_9->getEntityBinDataSecondMoments( 1 );
+//   first_moments = estimator_7->getEntityBinDataFirstMoments( 1 );
+//   second_moments = estimator_7->getEntityBinDataSecondMoments( 1 );
 
 //   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
 //   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
 
-//   first_moments = estimator_9->getEntityBinDataFirstMoments( 2 );
-//   second_moments = estimator_9->getEntityBinDataSecondMoments( 2 );
+//   first_moments = estimator_7->getEntityBinDataFirstMoments( 2 );
+//   second_moments = estimator_7->getEntityBinDataSecondMoments( 2 );
 
 //   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
 //   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
+
+//   first_moments = estimator_8->getEntityBinDataFirstMoments( 1 );
+//   second_moments = estimator_8->getEntityBinDataSecondMoments( 1 );
+
+//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*threads} ) );
+//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*threads} ) );
+
+//   first_moments = estimator_8->getEntityBinDataFirstMoments( 2 );
+//   second_moments = estimator_8->getEntityBinDataSecondMoments( 2 );
+
+//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*threads} ) );
+//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*threads} ) );
 
 //   first_moments = estimator_10->getEntityBinDataFirstMoments( 1 );
 //   second_moments = estimator_10->getEntityBinDataSecondMoments( 1 );
 
-//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*threads} ) );
-//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*threads} ) );
+//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
 
 //   first_moments = estimator_10->getEntityBinDataFirstMoments( 2 );
 //   second_moments = estimator_10->getEntityBinDataSecondMoments( 2 );
 
-//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*threads} ) );
-//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*threads} ) );
+//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
+
+//   first_moments = estimator_11->getEntityBinDataFirstMoments( 1 );
+//   second_moments = estimator_11->getEntityBinDataSecondMoments( 1 );
+
+//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
+
+//   first_moments = estimator_11->getEntityBinDataFirstMoments( 2 );
+//   second_moments = estimator_11->getEntityBinDataSecondMoments( 2 );
+
+//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
+//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
 
 //   first_moments = estimator_13->getEntityBinDataFirstMoments( 1 );
 //   second_moments = estimator_13->getEntityBinDataSecondMoments( 1 );
@@ -3128,30 +2815,6 @@ FRENSIE_UNIT_TEST( EventHandler,
 
 //   first_moments = estimator_14->getEntityBinDataFirstMoments( 2 );
 //   second_moments = estimator_14->getEntityBinDataSecondMoments( 2 );
-
-//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
-//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
-
-//   first_moments = estimator_17->getEntityBinDataFirstMoments( 1 );
-//   second_moments = estimator_17->getEntityBinDataSecondMoments( 1 );
-
-//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
-//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
-
-//   first_moments = estimator_17->getEntityBinDataFirstMoments( 2 );
-//   second_moments = estimator_17->getEntityBinDataSecondMoments( 2 );
-
-//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
-//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
-
-//   first_moments = estimator_18->getEntityBinDataFirstMoments( 1 );
-//   second_moments = estimator_18->getEntityBinDataSecondMoments( 1 );
-
-//   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
-//   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
-
-//   first_moments = estimator_18->getEntityBinDataFirstMoments( 2 );
-//   second_moments = estimator_18->getEntityBinDataSecondMoments( 2 );
 
 //   FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*threads} ) );
 //   FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*threads} ) );
@@ -3276,8 +2939,8 @@ FRENSIE_UNIT_TEST( EventHandler, update_parallel )
   event_handler.addEstimator( estimator_4 );
   event_handler.addEstimator( estimator_5 );
   event_handler.addEstimator( estimator_6 );
-  event_handler.addEstimator( estimator_5 );
-  event_handler.addEstimator( estimator_6 );
+  event_handler.addEstimator( estimator_7 );
+  event_handler.addEstimator( estimator_8 );
   event_handler.addEstimator( estimator_9 );
   event_handler.addEstimator( estimator_10 );
   event_handler.addEstimator( estimator_11 );
@@ -3285,15 +2948,9 @@ FRENSIE_UNIT_TEST( EventHandler, update_parallel )
   event_handler.addEstimator( estimator_13 );
   event_handler.addEstimator( estimator_14 );
   event_handler.addEstimator( estimator_15 );
-  event_handler.addEstimator( estimator_16 );
-  event_handler.addEstimator( estimator_17 );
-  event_handler.addEstimator( estimator_18 );
-  event_handler.addEstimator( estimator_19 );
-  event_handler.addEstimator( estimator_20 );
   event_handler.addEstimator( mesh_estimator_1 );
   event_handler.addEstimator( mesh_estimator_2 );
   event_handler.addEstimator( mesh_estimator_3 );
-  event_handler.addEstimator( mesh_estimator_4 );
   event_handler.addParticleTracker( particle_tracker );
 
   event_handler.resetObserverData();
@@ -3390,38 +3047,50 @@ FRENSIE_UNIT_TEST( EventHandler, update_parallel )
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
 
-    first_moments = estimator_5->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_5->getEntityBinDataSecondMoments( 1 );
+    first_moments = estimator_4->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_4->getEntityBinDataSecondMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
 
-    first_moments = estimator_5->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_5->getEntityBinDataSecondMoments( 2 );
+    first_moments = estimator_4->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_4->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
 
-    first_moments = estimator_6->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_6->getEntityBinDataSecondMoments( 1 );
+    first_moments = estimator_5->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_5->getEntityBinDataSecondMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*comm->size()*threads} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*comm->size()*threads} ) );
 
-    first_moments = estimator_9->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_9->getEntityBinDataSecondMoments( 2 );
+    first_moments = estimator_7->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_7->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
 
-    first_moments = estimator_9->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_9->getEntityBinDataSecondMoments( 1 );
+    first_moments = estimator_7->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_7->getEntityBinDataSecondMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
 
-    first_moments = estimator_9->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_9->getEntityBinDataSecondMoments( 2 );
+    first_moments = estimator_7->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_7->getEntityBinDataSecondMoments( 2 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = estimator_8->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_8->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*comm->size()*threads} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*comm->size()*threads} ) );
+
+    first_moments = estimator_8->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_8->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
@@ -3429,11 +3098,23 @@ FRENSIE_UNIT_TEST( EventHandler, update_parallel )
     first_moments = estimator_10->getEntityBinDataFirstMoments( 1 );
     second_moments = estimator_10->getEntityBinDataSecondMoments( 1 );
 
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*comm->size()*threads} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*comm->size()*threads} ) );
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
 
     first_moments = estimator_10->getEntityBinDataFirstMoments( 2 );
     second_moments = estimator_10->getEntityBinDataSecondMoments( 2 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = estimator_11->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_11->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
+
+    first_moments = estimator_11->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_11->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
@@ -3458,30 +3139,6 @@ FRENSIE_UNIT_TEST( EventHandler, update_parallel )
 
     first_moments = estimator_14->getEntityBinDataFirstMoments( 2 );
     second_moments = estimator_14->getEntityBinDataSecondMoments( 2 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
-
-    first_moments = estimator_17->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_17->getEntityBinDataSecondMoments( 1 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
-
-    first_moments = estimator_17->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_17->getEntityBinDataSecondMoments( 2 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
-
-    first_moments = estimator_18->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_18->getEntityBinDataSecondMoments( 1 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
-
-    first_moments = estimator_18->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_18->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
@@ -3624,38 +3281,50 @@ FRENSIE_UNIT_TEST( EventHandler, update_parallel )
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
 
+    first_moments = estimator_4->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_4->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = estimator_4->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_4->getEntityBinDataSecondMoments( 2 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
     first_moments = estimator_5->getEntityBinDataFirstMoments( 1 );
     second_moments = estimator_5->getEntityBinDataSecondMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
 
-    first_moments = estimator_5->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_5->getEntityBinDataSecondMoments( 2 );
+    first_moments = estimator_7->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_7->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
 
-    first_moments = estimator_6->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_6->getEntityBinDataSecondMoments( 1 );
+    first_moments = estimator_7->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_7->getEntityBinDataSecondMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
 
-    first_moments = estimator_9->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_9->getEntityBinDataSecondMoments( 2 );
+    first_moments = estimator_7->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_7->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
 
-    first_moments = estimator_9->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_9->getEntityBinDataSecondMoments( 1 );
+    first_moments = estimator_8->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_8->getEntityBinDataSecondMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
 
-    first_moments = estimator_9->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_9->getEntityBinDataSecondMoments( 2 );
+    first_moments = estimator_8->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_8->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
@@ -3668,6 +3337,18 @@ FRENSIE_UNIT_TEST( EventHandler, update_parallel )
 
     first_moments = estimator_10->getEntityBinDataFirstMoments( 2 );
     second_moments = estimator_10->getEntityBinDataSecondMoments( 2 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = estimator_11->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_11->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = estimator_11->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_11->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
@@ -3692,30 +3373,6 @@ FRENSIE_UNIT_TEST( EventHandler, update_parallel )
 
     first_moments = estimator_14->getEntityBinDataFirstMoments( 2 );
     second_moments = estimator_14->getEntityBinDataSecondMoments( 2 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
-
-    first_moments = estimator_17->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_17->getEntityBinDataSecondMoments( 1 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
-
-    first_moments = estimator_17->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_17->getEntityBinDataSecondMoments( 2 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
-
-    first_moments = estimator_18->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_18->getEntityBinDataSecondMoments( 1 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
-
-    first_moments = estimator_18->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_18->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
@@ -3906,53 +3563,77 @@ FRENSIE_UNIT_TEST( EventHandler, update_parallel )
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*comm->size()*threads} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*comm->size()*threads} ) );
 
+    first_moments = estimator_4->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_4->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
+
+    first_moments = estimator_4->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_4->getEntityBinDataSecondMoments( 2 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
+
     first_moments = estimator_5->getEntityBinDataFirstMoments( 1 );
     second_moments = estimator_5->getEntityBinDataSecondMoments( 1 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
-
-    first_moments = estimator_5->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_5->getEntityBinDataSecondMoments( 2 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
-
-    first_moments = estimator_6->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_6->getEntityBinDataSecondMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*comm->size()*threads} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*comm->size()*threads} ) );
 
-    first_moments = estimator_9->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_9->getEntityBinDataSecondMoments( 2 );
+    first_moments = estimator_7->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_7->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
 
-    first_moments = estimator_9->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_9->getEntityBinDataSecondMoments( 1 );
+    first_moments = estimator_7->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_7->getEntityBinDataSecondMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
 
-    first_moments = estimator_9->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_9->getEntityBinDataSecondMoments( 2 );
+    first_moments = estimator_7->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_7->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
+
+    first_moments = estimator_8->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_8->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*comm->size()*threads} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*comm->size()*threads} ) );
+
+    first_moments = estimator_8->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_8->getEntityBinDataSecondMoments( 2 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*comm->size()*threads} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*comm->size()*threads} ) );
 
     first_moments = estimator_10->getEntityBinDataFirstMoments( 1 );
     second_moments = estimator_10->getEntityBinDataSecondMoments( 1 );
 
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*comm->size()*threads} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*comm->size()*threads} ) );
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
 
     first_moments = estimator_10->getEntityBinDataFirstMoments( 2 );
     second_moments = estimator_10->getEntityBinDataSecondMoments( 2 );
 
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {2.0*comm->size()*threads} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {4.0*comm->size()*threads} ) );
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
+
+    first_moments = estimator_11->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_11->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
+
+    first_moments = estimator_11->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_11->getEntityBinDataSecondMoments( 2 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
 
     first_moments = estimator_13->getEntityBinDataFirstMoments( 1 );
     second_moments = estimator_13->getEntityBinDataSecondMoments( 1 );
@@ -3974,30 +3655,6 @@ FRENSIE_UNIT_TEST( EventHandler, update_parallel )
 
     first_moments = estimator_14->getEntityBinDataFirstMoments( 2 );
     second_moments = estimator_14->getEntityBinDataSecondMoments( 2 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
-
-    first_moments = estimator_17->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_17->getEntityBinDataSecondMoments( 1 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
-
-    first_moments = estimator_17->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_17->getEntityBinDataSecondMoments( 2 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
-
-    first_moments = estimator_18->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_18->getEntityBinDataSecondMoments( 1 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
-
-    first_moments = estimator_18->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_18->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0*comm->size()*threads} ) );
@@ -4140,38 +3797,50 @@ FRENSIE_UNIT_TEST( EventHandler, update_parallel )
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
 
+    first_moments = estimator_4->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_4->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = estimator_4->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_4->getEntityBinDataSecondMoments( 2 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
     first_moments = estimator_5->getEntityBinDataFirstMoments( 1 );
     second_moments = estimator_5->getEntityBinDataSecondMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
 
-    first_moments = estimator_5->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_5->getEntityBinDataSecondMoments( 2 );
+    first_moments = estimator_7->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_7->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
 
-    first_moments = estimator_6->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_6->getEntityBinDataSecondMoments( 1 );
+    first_moments = estimator_7->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_7->getEntityBinDataSecondMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
 
-    first_moments = estimator_9->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_9->getEntityBinDataSecondMoments( 2 );
+    first_moments = estimator_7->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_7->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
 
-    first_moments = estimator_9->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_9->getEntityBinDataSecondMoments( 1 );
+    first_moments = estimator_8->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_8->getEntityBinDataSecondMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
 
-    first_moments = estimator_9->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_9->getEntityBinDataSecondMoments( 2 );
+    first_moments = estimator_8->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_8->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
@@ -4184,6 +3853,18 @@ FRENSIE_UNIT_TEST( EventHandler, update_parallel )
 
     first_moments = estimator_10->getEntityBinDataFirstMoments( 2 );
     second_moments = estimator_10->getEntityBinDataSecondMoments( 2 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = estimator_11->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_11->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = estimator_11->getEntityBinDataFirstMoments( 2 );
+    second_moments = estimator_11->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
@@ -4208,30 +3889,6 @@ FRENSIE_UNIT_TEST( EventHandler, update_parallel )
 
     first_moments = estimator_14->getEntityBinDataFirstMoments( 2 );
     second_moments = estimator_14->getEntityBinDataSecondMoments( 2 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
-
-    first_moments = estimator_17->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_17->getEntityBinDataSecondMoments( 1 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
-
-    first_moments = estimator_17->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_17->getEntityBinDataSecondMoments( 2 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
-
-    first_moments = estimator_18->getEntityBinDataFirstMoments( 1 );
-    second_moments = estimator_18->getEntityBinDataSecondMoments( 1 );
-
-    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
-    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
-
-    first_moments = estimator_18->getEntityBinDataFirstMoments( 2 );
-    second_moments = estimator_18->getEntityBinDataSecondMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
@@ -4352,8 +4009,8 @@ FRENSIE_UNIT_TEST( EventHandler, printObserverSummaries )
   event_handler.addEstimator( estimator_4 );
   event_handler.addEstimator( estimator_5 );
   event_handler.addEstimator( estimator_6 );
-  event_handler.addEstimator( estimator_5 );
-  event_handler.addEstimator( estimator_6 );
+  event_handler.addEstimator( estimator_7 );
+  event_handler.addEstimator( estimator_8 );
   event_handler.addEstimator( estimator_9 );
   event_handler.addEstimator( estimator_10 );
   event_handler.addEstimator( estimator_11 );
@@ -4361,15 +4018,9 @@ FRENSIE_UNIT_TEST( EventHandler, printObserverSummaries )
   event_handler.addEstimator( estimator_13 );
   event_handler.addEstimator( estimator_14 );
   event_handler.addEstimator( estimator_15 );
-  event_handler.addEstimator( estimator_16 );
-  event_handler.addEstimator( estimator_17 );
-  event_handler.addEstimator( estimator_18 );
-  event_handler.addEstimator( estimator_19 );
-  event_handler.addEstimator( estimator_20 );
   event_handler.addEstimator( mesh_estimator_1 );
   event_handler.addEstimator( mesh_estimator_2 );
   event_handler.addEstimator( mesh_estimator_3 );
-  event_handler.addEstimator( mesh_estimator_4 );
   event_handler.addParticleTracker( particle_tracker );
 
   event_handler.resetObserverData();
@@ -4400,8 +4051,8 @@ FRENSIE_UNIT_TEST( EventHandler, logObserverSummaries )
   event_handler.addEstimator( estimator_4 );
   event_handler.addEstimator( estimator_5 );
   event_handler.addEstimator( estimator_6 );
-  event_handler.addEstimator( estimator_5 );
-  event_handler.addEstimator( estimator_6 );
+  event_handler.addEstimator( estimator_7 );
+  event_handler.addEstimator( estimator_8 );
   event_handler.addEstimator( estimator_9 );
   event_handler.addEstimator( estimator_10 );
   event_handler.addEstimator( estimator_11 );
@@ -4409,15 +4060,9 @@ FRENSIE_UNIT_TEST( EventHandler, logObserverSummaries )
   event_handler.addEstimator( estimator_13 );
   event_handler.addEstimator( estimator_14 );
   event_handler.addEstimator( estimator_15 );
-  event_handler.addEstimator( estimator_16 );
-  event_handler.addEstimator( estimator_17 );
-  event_handler.addEstimator( estimator_18 );
-  event_handler.addEstimator( estimator_19 );
-  event_handler.addEstimator( estimator_20 );
   event_handler.addEstimator( mesh_estimator_1 );
   event_handler.addEstimator( mesh_estimator_2 );
   event_handler.addEstimator( mesh_estimator_3 );
-  event_handler.addEstimator( mesh_estimator_4 );
   event_handler.addParticleTracker( particle_tracker );
 
   event_handler.resetObserverData();
@@ -4471,52 +4116,52 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( EventHandler, archive, TestArchives )
     local_estimator_2->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
 
     std::shared_ptr<MonteCarlo::WeightMultipliedCellTrackLengthFluxEstimator>
-      local_estimator_5( new MonteCarlo::WeightMultipliedCellTrackLengthFluxEstimator(
+      local_estimator_4( new MonteCarlo::WeightMultipliedCellTrackLengthFluxEstimator(
                                               102, 1.0, {1, 2}, {1.0, 1.0} ) );
 
-    local_estimator_5->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
+    local_estimator_4->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
 
     std::shared_ptr<MonteCarlo::WeightMultipliedCellTrackLengthFluxEstimator>
-      local_estimator_6( new MonteCarlo::WeightMultipliedCellTrackLengthFluxEstimator(
+      local_estimator_5( new MonteCarlo::WeightMultipliedCellTrackLengthFluxEstimator(
                                               103, 1.0, {1, 2}, {1.0, 1.0} ) );
 
-    local_estimator_6->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
+    local_estimator_5->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
 
     std::shared_ptr<MonteCarlo::WeightMultipliedCellPulseHeightEstimator>
-      local_estimator_9( new MonteCarlo::WeightMultipliedCellPulseHeightEstimator(
+      local_estimator_7( new MonteCarlo::WeightMultipliedCellPulseHeightEstimator(
                                                           104, 1.0, {1, 2} ) );
 
-    local_estimator_9->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON, MonteCarlo::ELECTRON} ) );
+    local_estimator_7->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON, MonteCarlo::ELECTRON} ) );
 
     std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedCellPulseHeightEstimator>
-      local_estimator_10( new MonteCarlo::WeightAndEnergyMultipliedCellPulseHeightEstimator(
+      local_estimator_8( new MonteCarlo::WeightAndEnergyMultipliedCellPulseHeightEstimator(
                                                           105, 1.0, {1, 2} ) );
 
-    local_estimator_10->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON, MonteCarlo::ELECTRON} ) );
+    local_estimator_8->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON, MonteCarlo::ELECTRON} ) );
 
     std::shared_ptr<MonteCarlo::WeightMultipliedSurfaceFluxEstimator>
-      local_estimator_13( new MonteCarlo::WeightMultipliedSurfaceFluxEstimator(
+      local_estimator_10( new MonteCarlo::WeightMultipliedSurfaceFluxEstimator(
                                               106, 1.0, {1, 2}, {1.0, 1.0} ) );
+
+    local_estimator_10->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
+
+    std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedSurfaceFluxEstimator>
+      local_estimator_11( new MonteCarlo::WeightAndEnergyMultipliedSurfaceFluxEstimator(
+                                              107, 1.0, {1, 2}, {1.0, 1.0} ) );
+
+    local_estimator_11->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
+
+    std::shared_ptr<MonteCarlo::WeightMultipliedSurfaceCurrentEstimator>
+      local_estimator_13( new MonteCarlo::WeightMultipliedSurfaceCurrentEstimator(
+                                                          108, 1.0, {1, 2} ) );
 
     local_estimator_13->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
 
-    std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedSurfaceFluxEstimator>
-      local_estimator_14( new MonteCarlo::WeightAndEnergyMultipliedSurfaceFluxEstimator(
-                                              107, 1.0, {1, 2}, {1.0, 1.0} ) );
-
-    local_estimator_14->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
-
-    std::shared_ptr<MonteCarlo::WeightMultipliedSurfaceCurrentEstimator>
-      local_estimator_17( new MonteCarlo::WeightMultipliedSurfaceCurrentEstimator(
-                                                          108, 1.0, {1, 2} ) );
-
-    local_estimator_17->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
-
     std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedSurfaceCurrentEstimator>
-      local_estimator_18( new MonteCarlo::WeightAndEnergyMultipliedSurfaceCurrentEstimator(
+      local_estimator_14( new MonteCarlo::WeightAndEnergyMultipliedSurfaceCurrentEstimator(
                                                           109, 1.0, {1, 2} ) );
 
-    local_estimator_18->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
+    local_estimator_14->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
 
     std::shared_ptr<const Utility::Mesh> hex_mesh(
                            new Utility::StructuredHexMesh( {0.0, 1.0, 2.0},
@@ -4542,14 +4187,14 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( EventHandler, archive, TestArchives )
 
     event_handler.addEstimator( local_estimator_1 );
     event_handler.addEstimator( local_estimator_2 );
+    event_handler.addEstimator( local_estimator_4 );
     event_handler.addEstimator( local_estimator_5 );
-    event_handler.addEstimator( local_estimator_6 );
-    event_handler.addEstimator( local_estimator_9 );
+    event_handler.addEstimator( local_estimator_7 );
+    event_handler.addEstimator( local_estimator_8 );
     event_handler.addEstimator( local_estimator_10 );
+    event_handler.addEstimator( local_estimator_11 );
     event_handler.addEstimator( local_estimator_13 );
     event_handler.addEstimator( local_estimator_14 );
-    event_handler.addEstimator( local_estimator_17 );
-    event_handler.addEstimator( local_estimator_18 );
     event_handler.addEstimator( local_mesh_estimator_1 );
     event_handler.addEstimator( local_mesh_estimator_2 );
     event_handler.addParticleTracker( local_particle_tracker );
@@ -4902,57 +4547,90 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                                               cell_volumes ) );
   estimator_2->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
 
-  estimator_5.reset( new MonteCarlo::WeightMultipliedCellTrackLengthFluxEstimator(
+  estimator_3.reset( new MonteCarlo::WeightAndChargeMultipliedCellCollisionFluxEstimator(
                                                               2,
                                                               1.0,
                                                               cell_ids,
                                                               cell_volumes ) );
-  estimator_5->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
+  estimator_3->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
 
-  estimator_6.reset( new MonteCarlo::WeightAndEnergyMultipliedCellTrackLengthFluxEstimator(
+  estimator_4.reset( new MonteCarlo::WeightMultipliedCellTrackLengthFluxEstimator(
                                                               3,
+                                                              1.0,
+                                                              cell_ids,
+                                                              cell_volumes ) );
+  estimator_4->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
+
+  estimator_5.reset( new MonteCarlo::WeightAndEnergyMultipliedCellTrackLengthFluxEstimator(
+                                                              4,
                                                               10.0,
+                                                              cell_ids,
+                                                              cell_volumes ) );
+  estimator_5->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
+
+  estimator_6.reset( new MonteCarlo::WeightAndChargeMultipliedCellTrackLengthFluxEstimator(
+                                                              5,
+                                                              1.0,
                                                               cell_ids,
                                                               cell_volumes ) );
   estimator_6->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
 
-  estimator_9.reset( new MonteCarlo::WeightMultipliedCellPulseHeightEstimator(
-                                                              4,
+  estimator_7.reset( new MonteCarlo::WeightMultipliedCellPulseHeightEstimator(
+                                                              6,
+                                                              1.0,
+                                                              cell_ids ) );
+  estimator_7->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON, MonteCarlo::ELECTRON} ) );
+
+  estimator_8.reset( new MonteCarlo::WeightAndEnergyMultipliedCellPulseHeightEstimator(
+                                                              7,
+                                                              10.0,
+                                                              cell_ids ) );
+  estimator_8->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON, MonteCarlo::ELECTRON} ) );
+
+  estimator_9.reset( new MonteCarlo::WeightAndChargeMultipliedCellPulseHeightEstimator(
+                                                              8,
                                                               1.0,
                                                               cell_ids ) );
   estimator_9->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON, MonteCarlo::ELECTRON} ) );
 
-  estimator_10.reset( new MonteCarlo::WeightAndEnergyMultipliedCellPulseHeightEstimator(
-                                                              5,
-                                                              10.0,
-                                                              cell_ids ) );
-  estimator_10->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON, MonteCarlo::ELECTRON} ) );
-
-  estimator_13.reset( new MonteCarlo::WeightMultipliedSurfaceFluxEstimator(
-                                                             6,
+  estimator_10.reset( new MonteCarlo::WeightMultipliedSurfaceFluxEstimator(
+                                                             9,
                                                              1.0,
                                                              surface_ids,
                                                              surface_areas ) );
-  estimator_13->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
+  estimator_10->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
 
-  estimator_14.reset( new MonteCarlo::WeightAndEnergyMultipliedSurfaceFluxEstimator(
-                                                             7,
+  estimator_11.reset( new MonteCarlo::WeightAndEnergyMultipliedSurfaceFluxEstimator(
+                                                             10,
                                                              10.0,
                                                              surface_ids,
                                                              surface_areas ) );
-  estimator_14->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
+  estimator_11->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
 
-  estimator_17.reset( new MonteCarlo::WeightMultipliedSurfaceCurrentEstimator(
-                                                               8,
+  estimator_12.reset( new MonteCarlo::WeightAndChargeMultipliedSurfaceFluxEstimator(
+                                                             11,
+                                                             1.0,
+                                                             surface_ids,
+                                                             surface_areas ) );
+  estimator_12->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
+
+  estimator_13.reset( new MonteCarlo::WeightMultipliedSurfaceCurrentEstimator(
+                                                               12,
                                                                1.0,
                                                                surface_ids ) );
-  estimator_17->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
+  estimator_13->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
 
-  estimator_18.reset( new MonteCarlo::WeightAndEnergyMultipliedSurfaceCurrentEstimator(
-                                                               9,
+  estimator_14.reset( new MonteCarlo::WeightAndEnergyMultipliedSurfaceCurrentEstimator(
+                                                               13,
                                                                10.0,
                                                                surface_ids ) );
-  estimator_18->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
+  estimator_14->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
+
+  estimator_15.reset( new MonteCarlo::WeightAndChargeMultipliedSurfaceCurrentEstimator(
+                                                               14,
+                                                               1.0,
+                                                               surface_ids ) );
+  estimator_15->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
 
   std::shared_ptr<const Utility::Mesh> hex_mesh(
                            new Utility::StructuredHexMesh( {0.0, 1.0, 2.0},
@@ -4960,16 +4638,22 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                                            {0.0, 1.0, 2.0} ) );
 
   mesh_estimator_1.reset( new MonteCarlo::WeightMultipliedMeshTrackLengthFluxEstimator(
-                                                                  10,
+                                                                  15,
                                                                   1.0,
                                                                   hex_mesh ) );
   mesh_estimator_1->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
 
   mesh_estimator_2.reset( new MonteCarlo::WeightAndEnergyMultipliedMeshTrackLengthFluxEstimator(
-                                                                  11,
+                                                                  16,
                                                                   10.0,
                                                                   hex_mesh ) );
   mesh_estimator_2->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
+
+  mesh_estimator_3.reset( new MonteCarlo::WeightAndChargeMultipliedMeshTrackLengthFluxEstimator(
+                                                                  17,
+                                                                  1.0,
+                                                                  hex_mesh ) );
+  mesh_estimator_3->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
 
   particle_tracker.reset( new MonteCarlo::ParticleTracker( 0, 100 ) );
 

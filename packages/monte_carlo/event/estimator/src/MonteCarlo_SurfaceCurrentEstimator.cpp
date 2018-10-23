@@ -22,10 +22,6 @@ BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightAndChargeMultipliedSurfaceCurren
 EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightAndChargeMultiplier> );
 EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightAndChargeMultiplier> );
 
-BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::WeightEnergyAndChargeMultipliedSurfaceCurrentEstimator );
-EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
-EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> );
-
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SurfaceCurrentEstimator.cpp
 //---------------------------------------------------------------------------//

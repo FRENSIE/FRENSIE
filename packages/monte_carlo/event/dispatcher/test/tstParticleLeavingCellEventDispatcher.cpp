@@ -34,6 +34,9 @@ estimator_1;
 std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedCellPulseHeightEstimator>
 estimator_2;
 
+std::shared_ptr<MonteCarlo::WeightAndChargeMultipliedCellPulseHeightEstimator>
+estimator_3;
+
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
@@ -42,7 +45,7 @@ FRENSIE_UNIT_TEST( ParticleLeavingCellEventDispatcher, getLocalDispatcher )
 {
   std::shared_ptr<MonteCarlo::ParticleLeavingCellEventDispatcher>
     dispatcher( new MonteCarlo::ParticleLeavingCellEventDispatcher );
-  
+
   FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getEntityId(), 0 );
 
   FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getEntityId(), 1 );
@@ -154,22 +157,26 @@ FRENSIE_UNIT_TEST( ParticleLeavingCellEventDispatcher,
 
   dispatcher->attachObserver( 0, estimator_1->getParticleTypes(), estimator_1 );
   dispatcher->attachObserver( 0, estimator_2->getParticleTypes(), estimator_2 );
+  dispatcher->attachObserver( 0, estimator_3->getParticleTypes(), estimator_3 );
 
   dispatcher->attachObserver( 1, estimator_1->getParticleTypes(), estimator_1 );
   dispatcher->attachObserver( 1, estimator_2->getParticleTypes(), estimator_2 );
+  dispatcher->attachObserver( 1, estimator_3->getParticleTypes(), estimator_3 );
 
   {
     MonteCarlo::PhotonState photon( 0ull );
     photon.setWeight( 1.0 );
     photon.setEnergy( 2.0 );
-    
+
     FRENSIE_CHECK( !estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_3->hasUncommittedHistoryContribution() );
 
     estimator_1->updateFromParticleEnteringCellEvent( photon, 0 );
-    
+
     FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_3->hasUncommittedHistoryContribution() );
 
     photon.setEnergy( 1.0 );
 
@@ -183,13 +190,19 @@ FRENSIE_UNIT_TEST( ParticleLeavingCellEventDispatcher,
 
     FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_3->hasUncommittedHistoryContribution() );
 
     electron.setEnergy( 1.0 );
 
     dispatcher->dispatchParticleLeavingCellEvent( electron, 0 );
 
+    FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_3->hasUncommittedHistoryContribution() );
+
     estimator_1->commitHistoryContribution();
     estimator_2->commitHistoryContribution();
+    estimator_3->commitHistoryContribution();
 
     Utility::ArrayView<const double> first_moments, second_moments;
     first_moments = estimator_1->getEntityBinDataFirstMoments( 0 );
@@ -215,20 +228,34 @@ FRENSIE_UNIT_TEST( ParticleLeavingCellEventDispatcher,
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = estimator_3->getEntityBinDataFirstMoments( 0 );
+    second_moments = estimator_3->getEntityBinDataSecondMoments( 0 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = estimator_3->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_3->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
   }
 
   {
     MonteCarlo::PhotonState photon( 0ull );
     photon.setWeight( 1.0 );
     photon.setEnergy( 2.0 );
-    
+
     FRENSIE_CHECK( !estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_3->hasUncommittedHistoryContribution() );
 
     estimator_1->updateFromParticleEnteringCellEvent( photon, 1 );
-    
+
     FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_3->hasUncommittedHistoryContribution() );
 
     photon.setEnergy( 1.0 );
 
@@ -242,13 +269,19 @@ FRENSIE_UNIT_TEST( ParticleLeavingCellEventDispatcher,
 
     FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !estimator_3->hasUncommittedHistoryContribution() );
 
     electron.setEnergy( 1.0 );
 
     dispatcher->dispatchParticleLeavingCellEvent( electron, 1 );
 
+    FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_3->hasUncommittedHistoryContribution() );
+
     estimator_1->commitHistoryContribution();
     estimator_2->commitHistoryContribution();
+    estimator_3->commitHistoryContribution();
 
     Utility::ArrayView<const double> first_moments, second_moments;
     first_moments = estimator_1->getEntityBinDataFirstMoments( 0 );
@@ -271,6 +304,18 @@ FRENSIE_UNIT_TEST( ParticleLeavingCellEventDispatcher,
 
     first_moments = estimator_2->getEntityBinDataFirstMoments( 1 );
     second_moments = estimator_2->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = estimator_3->getEntityBinDataFirstMoments( 0 );
+    second_moments = estimator_3->getEntityBinDataSecondMoments( 0 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = estimator_3->getEntityBinDataFirstMoments( 1 );
+    second_moments = estimator_3->getEntityBinDataSecondMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
@@ -303,6 +348,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleLeavingCellEventDispatcher,
     std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedCellPulseHeightEstimator>
       local_estimator_2;
 
+    std::shared_ptr<MonteCarlo::WeightAndChargeMultipliedCellPulseHeightEstimator>
+      local_estimator_3;
+
     {
       // Set the entity ids
       std::vector<Geometry::Model::EntityId>
@@ -321,6 +369,13 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleLeavingCellEventDispatcher,
                                                                   cell_ids ) );
 
       local_estimator_2->setParticleTypes( std::vector<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
+
+      local_estimator_3.reset( new MonteCarlo::WeightAndChargeMultipliedCellPulseHeightEstimator(
+                                                                  12,
+                                                                  1.0,
+                                                                  cell_ids ) );
+
+      local_estimator_3->setParticleTypes( std::vector<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
     }
 
     std::shared_ptr<MonteCarlo::ParticleLeavingCellEventDispatcher>
@@ -328,12 +383,15 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleLeavingCellEventDispatcher,
 
     dispatcher->attachObserver( 0, local_estimator_1->getParticleTypes(), local_estimator_1 );
     dispatcher->attachObserver( 0, local_estimator_2->getParticleTypes(), local_estimator_2 );
+    dispatcher->attachObserver( 0, local_estimator_3->getParticleTypes(), local_estimator_3 );
 
     dispatcher->attachObserver( 1, local_estimator_1->getParticleTypes(), local_estimator_1 );
     dispatcher->attachObserver( 1, local_estimator_2->getParticleTypes(), local_estimator_2 );
+    dispatcher->attachObserver( 1, local_estimator_3->getParticleTypes(), local_estimator_3 );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(local_estimator_1) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(local_estimator_2) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(local_estimator_3) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(dispatcher) );
   }
 
@@ -351,30 +409,36 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleLeavingCellEventDispatcher,
   std::shared_ptr<MonteCarlo::WeightAndEnergyMultipliedCellPulseHeightEstimator>
     local_estimator_2;
 
+  std::shared_ptr<MonteCarlo::WeightAndChargeMultipliedCellPulseHeightEstimator>
+    local_estimator_3;
+
   std::shared_ptr<MonteCarlo::ParticleLeavingCellEventDispatcher>
     dispatcher;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(local_estimator_1) );
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(local_estimator_2) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(local_estimator_3) );
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(dispatcher) );
 
   iarchive.reset();
 
   {
     FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::PHOTON ), 1 );
-    FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 1 );
+    FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 2 );
 
     MonteCarlo::PhotonState photon( 0ull );
     photon.setWeight( 1.0 );
     photon.setEnergy( 2.0 );
-    
+
     FRENSIE_CHECK( !local_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !local_estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !local_estimator_3->hasUncommittedHistoryContribution() );
 
     local_estimator_1->updateFromParticleEnteringCellEvent( photon, 0 );
-    
+
     FRENSIE_CHECK( local_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !local_estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !local_estimator_3->hasUncommittedHistoryContribution() );
 
     photon.setEnergy( 1.0 );
 
@@ -388,13 +452,19 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleLeavingCellEventDispatcher,
 
     FRENSIE_CHECK( local_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( local_estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !local_estimator_3->hasUncommittedHistoryContribution() );
 
     electron.setEnergy( 1.0 );
 
     dispatcher->dispatchParticleLeavingCellEvent( electron, 0 );
 
+    FRENSIE_CHECK( local_estimator_1->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( local_estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( local_estimator_3->hasUncommittedHistoryContribution() );
+
     local_estimator_1->commitHistoryContribution();
     local_estimator_2->commitHistoryContribution();
+    local_estimator_3->commitHistoryContribution();
 
     Utility::ArrayView<const double> first_moments, second_moments;
     first_moments = local_estimator_1->getEntityBinDataFirstMoments( 0 );
@@ -420,23 +490,37 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleLeavingCellEventDispatcher,
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
+
+    first_moments = local_estimator_3->getEntityBinDataFirstMoments( 0 );
+    second_moments = local_estimator_3->getEntityBinDataSecondMoments( 0 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = local_estimator_3->getEntityBinDataFirstMoments( 1 );
+    second_moments = local_estimator_3->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {0.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {0.0} ) );
   }
 
   {
     FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::PHOTON ), 1 );
-    FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 1 );
+    FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 2 );
 
     MonteCarlo::PhotonState photon( 0ull );
     photon.setWeight( 1.0 );
     photon.setEnergy( 2.0 );
-    
+
     FRENSIE_CHECK( !local_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !local_estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !local_estimator_3->hasUncommittedHistoryContribution() );
 
     local_estimator_1->updateFromParticleEnteringCellEvent( photon, 1 );
-    
+
     FRENSIE_CHECK( local_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( !local_estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !local_estimator_3->hasUncommittedHistoryContribution() );
 
     photon.setEnergy( 1.0 );
 
@@ -450,13 +534,19 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleLeavingCellEventDispatcher,
 
     FRENSIE_CHECK( local_estimator_1->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( local_estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( !local_estimator_3->hasUncommittedHistoryContribution() );
 
     electron.setEnergy( 1.0 );
 
     dispatcher->dispatchParticleLeavingCellEvent( electron, 1 );
 
+    FRENSIE_CHECK( local_estimator_1->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( local_estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( local_estimator_3->hasUncommittedHistoryContribution() );
+
     local_estimator_1->commitHistoryContribution();
     local_estimator_2->commitHistoryContribution();
+    local_estimator_3->commitHistoryContribution();
 
     Utility::ArrayView<const double> first_moments, second_moments;
     first_moments = local_estimator_1->getEntityBinDataFirstMoments( 0 );
@@ -479,6 +569,18 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleLeavingCellEventDispatcher,
 
     first_moments = local_estimator_2->getEntityBinDataFirstMoments( 1 );
     second_moments = local_estimator_2->getEntityBinDataSecondMoments( 1 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = local_estimator_3->getEntityBinDataFirstMoments( 0 );
+    second_moments = local_estimator_3->getEntityBinDataSecondMoments( 0 );
+
+    FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
+    FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
+
+    first_moments = local_estimator_3->getEntityBinDataFirstMoments( 1 );
+    second_moments = local_estimator_3->getEntityBinDataSecondMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( {1.0} ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( {1.0} ) );
@@ -508,6 +610,13 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                                                   cell_ids ) );
 
   estimator_2->setParticleTypes( std::vector<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
+
+  estimator_3.reset( new MonteCarlo::WeightAndChargeMultipliedCellPulseHeightEstimator(
+                                                                  2,
+                                                                  1.0,
+                                                                  cell_ids ) );
+
+  estimator_3->setParticleTypes( std::vector<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();

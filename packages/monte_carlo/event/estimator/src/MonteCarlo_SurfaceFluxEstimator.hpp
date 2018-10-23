@@ -93,10 +93,7 @@ typedef SurfaceFluxEstimator<WeightMultiplier> WeightMultipliedSurfaceFluxEstima
 typedef SurfaceFluxEstimator<WeightAndEnergyMultiplier> WeightAndEnergyMultipliedSurfaceFluxEstimator;
 
 //! The weight and charge multiplied cell collision flux estimator
-typedef SurfaceFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> WeightAndChargeMultipliedSurfaceFluxEstimator;
-
-//! The weight, energy, and charge multiplied cell collision flux estimator
-typedef SurfaceFluxEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> WeightEnergyAndChargeMultipliedSurfaceFluxEstimator;
+typedef SurfaceFluxEstimator<WeightAndChargeMultiplier> WeightAndChargeMultipliedSurfaceFluxEstimator;
 
 } // end MonteCarlo namespace
 

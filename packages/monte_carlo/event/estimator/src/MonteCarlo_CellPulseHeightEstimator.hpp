@@ -21,6 +21,7 @@
 #include "Utility_Map.hpp"
 #include "Utility_Set.hpp"
 #include "Utility_Vector.hpp"
+#include "Utility_Tuple.hpp"
 
 namespace MonteCarlo{
 
@@ -36,11 +37,11 @@ namespace MonteCarlo{
  */
 template<typename ContributionMultiplierPolicy = WeightMultiplier>
 class CellPulseHeightEstimator : public EntityEstimator,
-				 public ParticleEnteringCellEventObserver,
-				 public ParticleLeavingCellEventObserver
+                                 public ParticleEnteringCellEventObserver,
+                                 public ParticleLeavingCellEventObserver
 {
   // Typedef for the serial update tracker
-  typedef std::unordered_map<Geometry::Model::EntityId,double>
+  typedef std::pair<double,std::unordered_map<Geometry::Model::EntityId,std::tuple<double,double> > >
   SerialUpdateTracker;
 
   // Typedef for the parallel update tracker
@@ -53,13 +54,13 @@ public:
 
   //! Typedef for event tags used for quick dispatcher registering
   typedef boost::mpl::vector<ParticleEnteringCellEventObserver::EventTag,
-			     ParticleLeavingCellEventObserver::EventTag>
+                             ParticleLeavingCellEventObserver::EventTag>
   EventTags;
 
   //! Constructor
   CellPulseHeightEstimator( const Id id,
-			    const double multiplier,
-			    const std::vector<CellIdType>& entity_ids );
+                            const double multiplier,
+                            const std::vector<CellIdType>& entity_ids );
 
   //! Destructor
   ~CellPulseHeightEstimator()
@@ -111,32 +112,41 @@ private:
   // Assign the particle type to the estimator
   void assignParticleType( const ParticleType particle_type ) final override;
 
-  // Calculate the estimator contribution from the entire history
-  double calculateHistoryContribution( const double energy_deposition,
-				       WeightMultiplier );
+  // Check and correct a positron contribution
+  static void checkAndCorrectPositronEnergyContribution(
+                                                 const ParticleState& particle,
+                                                 double& energy_contribution );
 
   // Calculate the estimator contribution from the entire history
-  double calculateHistoryContribution( const double energy_deposition,
-				       WeightAndEnergyMultiplier );
+  static double calculateHistoryContribution( const double energy_deposition,
+                                              const double charge_deposition,
+                                              const double source_weight,
+                                              WeightMultiplier );
 
   // Calculate the estimator contribution from the entire history
-  double calculateHistoryContribution( const double energy_deposition,
-				       WeightAndChargeMultiplier );
+  static double calculateHistoryContribution( const double energy_deposition,
+                                              const double charge_deposition,
+                                              const double source_weight,
+                                              WeightAndEnergyMultiplier );
 
   // Calculate the estimator contribution from the entire history
-  double calculateHistoryContribution( const double energy_deposition,
-				       WeightEnergyAndChargeMultiplier );
+  static double calculateHistoryContribution( const double energy_deposition,
+                                              const double charge_deposition,
+                                              const double source_weight,
+                                              WeightAndChargeMultiplier );
 
   // Add info to update tracker
   void addInfoToUpdateTracker( const unsigned thread_id,
-			       const CellIdType cell_id,
-			       const double contribution );
+                               const CellIdType cell_id,
+                               const double source_weight,
+                               const double energy_contribution,
+                               const double charge_contribution );
 
   // Get the entity iterators from the update tracker
   void getCellIteratorFromUpdateTracker(
-	        const unsigned thread_id,
-		typename SerialUpdateTracker::const_iterator& start_cell,
-	        typename SerialUpdateTracker::const_iterator& end_cell ) const;
+                const unsigned thread_id,
+                typename Utility::TupleElement<1,SerialUpdateTracker>::type::const_iterator& start_cell,
+                typename Utility::TupleElement<1,SerialUpdateTracker>::type::const_iterator& end_cell ) const;
 
   // Reset the update tracker
   void resetUpdateTracker( const unsigned thread_id );
@@ -167,11 +177,8 @@ typedef CellPulseHeightEstimator<WeightMultiplier> WeightMultipliedCellPulseHeig
 //! The weight and energy multiplied cell pulse height estimator
 typedef CellPulseHeightEstimator<WeightAndEnergyMultiplier> WeightAndEnergyMultipliedCellPulseHeightEstimator;
 
-//! The weight and charge multiplied cell collision flux estimator
-typedef CellPulseHeightEstimator<MonteCarlo::WeightAndChargeMultiplier> WeightAndChargeMultipliedCellPulseHeightEstimator;
-
-//! The weight, energy, and charge multiplied cell collision flux estimator
-typedef CellPulseHeightEstimator<MonteCarlo::WeightEnergyAndChargeMultiplier> WeightEnergyAndChargeMultipliedCellPulseHeightEstimator;
+//! The weight and charge multiplied cell pulse height estimator
+typedef CellPulseHeightEstimator<WeightAndChargeMultiplier> WeightAndChargeMultipliedCellPulseHeightEstimator;
 
 } // end MonteCarlo namespace
 
