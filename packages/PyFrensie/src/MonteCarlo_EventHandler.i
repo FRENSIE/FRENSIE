@@ -134,25 +134,37 @@ using namespace MonteCarlo;
 %include "MonteCarlo_EventHandler.hpp"
 
 // Add addEstimator function templates
+%template(addEstimator) MonteCarlo::EventHandler::addEstimator<MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightAndChargeMultiplier> >;
+
 %template(addEstimator) MonteCarlo::EventHandler::addEstimator<MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightAndEnergyMultiplier> >;
 
 %template(addEstimator) MonteCarlo::EventHandler::addEstimator<MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightMultiplier> >;
+
+%template(addEstimator) MonteCarlo::EventHandler::addEstimator<MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> >;
 
 %template(addEstimator) MonteCarlo::EventHandler::addEstimator<MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >;
 
 %template(addEstimator) MonteCarlo::EventHandler::addEstimator<MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightMultiplier> >;
 
+%template(addEstimator) MonteCarlo::EventHandler::addEstimator<MonteCarlo::MeshTrackLengthFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> >;
+
 %template(addEstimator) MonteCarlo::EventHandler::addEstimator<MonteCarlo::MeshTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >;
 
 %template(addEstimator) MonteCarlo::EventHandler::addEstimator<MonteCarlo::MeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> >;
+
+%template(addEstimator) MonteCarlo::EventHandler::addEstimator<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndChargeMultiplier> >;
 
 %template(addEstimator) MonteCarlo::EventHandler::addEstimator<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> >;
 
 %template(addEstimator) MonteCarlo::EventHandler::addEstimator<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> >;
 
+%template(addEstimator) MonteCarlo::EventHandler::addEstimator<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> >;
+
 %template(addEstimator) MonteCarlo::EventHandler::addEstimator<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >;
 
 %template(addEstimator) MonteCarlo::EventHandler::addEstimator<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> >;
+
+%template(addEstimator) MonteCarlo::EventHandler::addEstimator<MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightAndChargeMultiplier> >;
 
 %template(addEstimator) MonteCarlo::EventHandler::addEstimator<MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >;
 

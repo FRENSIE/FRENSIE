@@ -261,120 +261,117 @@ typedef unsigned int uint32_t;
 %shared_ptr( MonteCarlo::StandardCellEstimator)
 %include "MonteCarlo_StandardCellEstimator.hpp"
 
+//---------------------------------------------------------------------------//
+// Helper macro for the pre-include estimator class python interface
+//---------------------------------------------------------------------------//
+%define %pre_estimator_setup_helper( ESTIMATOR_NAME )
+
+// The weight multiplied ESTIMATOR_NAME
+%pre_template_setup_helper( ESTIMATOR_NAME<MonteCarlo::WeightMultiplier>, WeightMultiplied ## ESTIMATOR_NAME )
+
+// The weight and energy multiplied ESTIMATOR_NAME
+%pre_template_setup_helper( ESTIMATOR_NAME<MonteCarlo::WeightAndEnergyMultiplier>, WeightAndEnergyMultiplied ## ESTIMATOR_NAME )
+
+// The weight and charge multiplied ESTIMATOR_NAME
+%pre_template_setup_helper( ESTIMATOR_NAME<MonteCarlo::WeightAndChargeMultiplier>, WeightAndChargeMultiplied ## ESTIMATOR_NAME )
+
+%enddef
+
+//---------------------------------------------------------------------------//
+// Helper macro for the post-include estimator class python interface
+//---------------------------------------------------------------------------//
+%define %post_estimator_setup_helper( ESTIMATOR_NAME )
+
+// The weight multiplied ESTIMATOR_NAME
+%post_template_setup_helper( ESTIMATOR_NAME<MonteCarlo::WeightMultiplier>, WeightMultiplied ## ESTIMATOR_NAME )
+
+// The weight and energy multiplied ESTIMATOR_NAME
+%post_template_setup_helper( ESTIMATOR_NAME<MonteCarlo::WeightAndEnergyMultiplier>, WeightAndEnergyMultiplied ## ESTIMATOR_NAME )
+
+// The weight and charge multiplied ESTIMATOR_NAME
+%post_template_setup_helper( ESTIMATOR_NAME<MonteCarlo::WeightAndChargeMultiplier>, WeightAndChargeMultiplied ## ESTIMATOR_NAME )
+
+%enddef
+
 // ---------------------------------------------------------------------------//
 // Add SurfaceCurrentEstimator support
 // ---------------------------------------------------------------------------//
 
-// The weight multiplied surface current estimator
-%pre_template_setup_helper( SurfaceCurrentEstimator<MonteCarlo::WeightMultiplier>, WeightMultipliedSurfaceCurrentEstimator )
-
-// The weight and energy multiplied surface current estimator
-%pre_template_setup_helper( SurfaceCurrentEstimator<MonteCarlo::WeightAndEnergyMultiplier>, WeightAndEnergyMultipliedSurfaceCurrentEstimator )
+// The multiplied surface current estimators
+%pre_estimator_setup_helper( SurfaceCurrentEstimator )
 
 %shared_ptr( MonteCarlo::SurfaceCurrentEstimator )
 %include "MonteCarlo_SurfaceCurrentEstimator.hpp"
 
-// The weight multiplied surface current estimator
-%post_template_setup_helper( SurfaceCurrentEstimator<MonteCarlo::WeightMultiplier>, WeightMultipliedSurfaceCurrentEstimator )
-
-// The weight and energy multiplied surface current estimator
-%post_template_setup_helper( SurfaceCurrentEstimator<MonteCarlo::WeightAndEnergyMultiplier>, WeightAndEnergyMultipliedSurfaceCurrentEstimator )
+// The multiplied surface current estimators
+%post_estimator_setup_helper( SurfaceCurrentEstimator )
 
 // ---------------------------------------------------------------------------//
 // Add SurfaceFluxEstimator support
 // ---------------------------------------------------------------------------//
 
-// The weight multiplied surface flux estimator
-%pre_template_setup_helper( SurfaceFluxEstimator<MonteCarlo::WeightMultiplier>, WeightMultipliedSurfaceFluxEstimator )
-
-// The weight and energy multiplied surface flux estimator
-%pre_template_setup_helper( SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier>, WeightAndEnergyMultipliedSurfaceFluxEstimator )
+// The multiplied surface flux estimators
+%pre_estimator_setup_helper( SurfaceFluxEstimator )
 
 %include "MonteCarlo_SurfaceFluxEstimator.hpp"
 
-// The weight multiplied surface flux estimator
-%post_template_setup_helper( SurfaceFluxEstimator<MonteCarlo::WeightMultiplier>, WeightMultipliedSurfaceFluxEstimator )
-
-// The weight and energy multiplied surface flux estimator
-%post_template_setup_helper( SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier>, WeightAndEnergyMultipliedSurfaceFluxEstimator )
+// The multiplied surface flux estimators
+%post_estimator_setup_helper( SurfaceFluxEstimator )
 
 // ---------------------------------------------------------------------------//
 // Add CellPulseHeightEstimator support
 // ---------------------------------------------------------------------------//
 
-// The weight multiplied cell pulse height estimator
-%pre_template_setup_helper( CellPulseHeightEstimator<MonteCarlo::WeightMultiplier>, WeightMultipliedCellPulseHeightEstimator )
-
-// The weight and energy multiplied cell pulse height estimator
-%pre_template_setup_helper( CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier>, WeightAndEnergyMultipliedCellPulseHeightEstimator )
+// The multiplied cell pulse height estimators
+%pre_estimator_setup_helper( CellPulseHeightEstimator )
 
 %apply std::vector<long unsigned int>& INPUT { const std::vector<MonteCarlo::CellPulseHeightEstimator< MonteCarlo::WeightMultiplier >::CellIdType>& entity_ids }
 
 %apply std::vector<long unsigned int>& INPUT { const std::vector<MonteCarlo::CellPulseHeightEstimator< MonteCarlo::WeightAndEnergyMultiplier >::CellIdType>& entity_ids }
 
+%apply std::vector<long unsigned int>& INPUT { const std::vector<MonteCarlo::CellPulseHeightEstimator< MonteCarlo::WeightAndChargeMultiplier >::CellIdType>& entity_ids }
+
 %include "MonteCarlo_CellPulseHeightEstimator.hpp"
 
-// The weight multiplied cell pulse height estimator
-%post_template_setup_helper( CellPulseHeightEstimator<MonteCarlo::WeightMultiplier>, WeightMultipliedCellPulseHeightEstimator )
-
-// The weight and energy multiplied cell pulse height estimator
-%post_template_setup_helper( CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier>, WeightAndEnergyMultipliedCellPulseHeightEstimator )
+// The multiplied cell pulse height estimators
+%post_estimator_setup_helper( CellPulseHeightEstimator )
 
 // ---------------------------------------------------------------------------//
 // Add CellTrackLengthFluxEstimator support
 // ---------------------------------------------------------------------------//
 
-// The weight multiplied cell track length flux estimator
-%pre_template_setup_helper( CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier>, WeightMultipliedCellTrackLengthFluxEstimator )
-
-// The weight and energy multiplied cell track length flux estimator
-%pre_template_setup_helper( CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier>, WeightAndEnergyMultipliedCellTrackLengthFluxEstimator )
+// The multiplied cell track length flux estimators
+%pre_estimator_setup_helper( CellTrackLengthFluxEstimator )
 
 %include "MonteCarlo_CellTrackLengthFluxEstimator.hpp"
 
-// The weight multiplied cell track length flux estimator
-%post_template_setup_helper( CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier>, WeightMultipliedCellTrackLengthFluxEstimator )
-
-// The weight and energy multiplied cell track length flux estimator
-%post_template_setup_helper( CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier>, WeightAndEnergyMultipliedCellTrackLengthFluxEstimator )
-
+// The multiplied cell track length flux estimators
+%post_estimator_setup_helper( CellTrackLengthFluxEstimator )
 
 // ---------------------------------------------------------------------------//
 // Add CellCollisionFluxEstimator support
 // ---------------------------------------------------------------------------//
 
-// The weight multiplied cell collision flux estimator
-%pre_template_setup_helper( CellCollisionFluxEstimator<MonteCarlo::WeightMultiplier>, WeightMultipliedCellCollisionFluxEstimator )
-
-// The weight and energy multiplied cell collision flux estimator
-%pre_template_setup_helper( CellCollisionFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier>, WeightAndEnergyMultipliedCellCollisionFluxEstimator )
+// The multiplied cell collision flux estimators
+%pre_estimator_setup_helper( CellCollisionFluxEstimator )
 
 %include "MonteCarlo_CellCollisionFluxEstimator.hpp"
 
-// The weight multiplied cell collision flux estimator
-%post_template_setup_helper( CellCollisionFluxEstimator<MonteCarlo::WeightMultiplier>, WeightMultipliedCellCollisionFluxEstimator )
-
-// The weight and energy multiplied cell collision flux estimator
-%post_template_setup_helper( CellCollisionFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier>, WeightAndEnergyMultipliedCellCollisionFluxEstimator )
+// The multiplied cell collision flux estimators
+%post_estimator_setup_helper( CellCollisionFluxEstimator )
 
 
 // ---------------------------------------------------------------------------//
 // Add MeshTrackLengthFluxEstimator support
 // ---------------------------------------------------------------------------//
 
-// The weight multiplied cell collision flux estimator
-%pre_template_setup_helper( MeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier>, WeightMultipliedMeshTrackLengthFluxEstimator )
-
-// The weight and energy multiplied cell collision flux estimator
-%pre_template_setup_helper( MeshTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier>, WeightAndEnergyMultipliedMeshTrackLengthFluxEstimator )
+// The multiplied cell collision flux estimators
+%pre_estimator_setup_helper( MeshTrackLengthFluxEstimator )
 
 %include "MonteCarlo_MeshTrackLengthFluxEstimator.hpp"
 
-// The weight multiplied cell collision flux estimator
-%post_template_setup_helper( MeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier>, WeightMultipliedMeshTrackLengthFluxEstimator )
-
-// The weight and energy multiplied cell collision flux estimator
-%post_template_setup_helper( MeshTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier>, WeightAndEnergyMultipliedMeshTrackLengthFluxEstimator )
+// The multiplied cell collision flux estimators
+%post_estimator_setup_helper( MeshTrackLengthFluxEstimator )
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_Estimator.i
