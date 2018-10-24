@@ -286,6 +286,9 @@ public:
   //! Get the data container
   const Data::AdjointElectronPhotonRelaxationDataContainer& getDataContainer() const;
 
+  //! Get the shared data container
+  std::shared_ptr<const Data::AdjointElectronPhotonRelaxationDataContainer> getSharedDataContainer() const;
+
 protected:
 
   //! Set the min photon energy
@@ -321,7 +324,7 @@ private:
   const MonteCarlo::TwoDGridType convertStringToTwoDGridType( const std::string& raw_policy );
 
   // The adjoint electron-photon-relaxation volatile data container
-  Data::AdjointElectronPhotonRelaxationVolatileDataContainer d_data_container;
+  std::shared_ptr<Data::AdjointElectronPhotonRelaxationVolatileDataContainer> d_data_container;
 
   // The default photon grid generator
   std::unique_ptr<Utility::GridGenerator<Utility::LinLin> >

@@ -20,7 +20,7 @@ AdjointElectronPhotonRelaxationDataGenerator::AdjointElectronPhotonRelaxationDat
                                           const double max_photon_energy,
                                           const double min_electron_energy,
                                           const double max_electron_energy )
-  : d_data_container(),
+  : d_data_container( new Data::AdjointElectronPhotonRelaxationVolatileDataContainer ),
     d_default_photon_grid_generator(
            new Utility::GridGenerator<Utility::LinLin>( 1e-3, 1e-13, 1e-13 ) ),
     d_default_electron_grid_generator(
@@ -38,53 +38,53 @@ AdjointElectronPhotonRelaxationDataGenerator::AdjointElectronPhotonRelaxationDat
   testPrecondition( min_electron_energy < max_electron_energy );
 
   // Set the atomic number and weight
-  d_data_container.setAtomicNumber( atomic_number );
-  d_data_container.setAtomicWeight( atomic_weight );
+  d_data_container->setAtomicNumber( atomic_number );
+  d_data_container->setAtomicWeight( atomic_weight );
 
   // Set some default photon tolerances and values
-  d_data_container.setMinPhotonEnergy( min_photon_energy );
-  d_data_container.setMaxPhotonEnergy( max_photon_energy );
+  d_data_container->setMinPhotonEnergy( min_photon_energy );
+  d_data_container->setMaxPhotonEnergy( max_photon_energy );
 
-  d_data_container.setAdjointPhotonGridConvergenceTolerance( d_default_photon_grid_generator->getConvergenceTolerance() );
-  d_data_container.setAdjointPhotonGridAbsoluteDifferenceTolerance( d_default_photon_grid_generator->getAbsoluteDifferenceTolerance() );
-  d_data_container.setAdjointPhotonGridDistanceTolerance( d_default_photon_grid_generator->getDistanceTolerance() );
+  d_data_container->setAdjointPhotonGridConvergenceTolerance( d_default_photon_grid_generator->getConvergenceTolerance() );
+  d_data_container->setAdjointPhotonGridAbsoluteDifferenceTolerance( d_default_photon_grid_generator->getAbsoluteDifferenceTolerance() );
+  d_data_container->setAdjointPhotonGridDistanceTolerance( d_default_photon_grid_generator->getDistanceTolerance() );
 
-  d_data_container.setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance( 1e-3 );
-  d_data_container.setAdjointPairProductionEnergyDistNormConstantNudgeValue( 1e-6 );
-  d_data_container.setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance( 1e-3 );
-  d_data_container.setAdjointTripletProductionEnergyDistNormConstantNudgeValue( 1e-6 );
-  d_data_container.setAdjointIncoherentMaxEnergyNudgeValue( 0.2 );
-  d_data_container.setAdjointIncoherentEnergyToMaxEnergyNudgeValue( 1e-6 );
-  d_data_container.setAdjointIncoherentEvaluationTolerance( 0.001 );
-  d_data_container.setAdjointIncoherentGridConvergenceTolerance( 0.001 );
-  d_data_container.setAdjointIncoherentGridAbsoluteDifferenceTolerance( 1e-20 );
-  d_data_container.setAdjointIncoherentGridDistanceTolerance( 1e-14 );
+  d_data_container->setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance( 1e-3 );
+  d_data_container->setAdjointPairProductionEnergyDistNormConstantNudgeValue( 1e-6 );
+  d_data_container->setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance( 1e-3 );
+  d_data_container->setAdjointTripletProductionEnergyDistNormConstantNudgeValue( 1e-6 );
+  d_data_container->setAdjointIncoherentMaxEnergyNudgeValue( 0.2 );
+  d_data_container->setAdjointIncoherentEnergyToMaxEnergyNudgeValue( 1e-6 );
+  d_data_container->setAdjointIncoherentEvaluationTolerance( 0.001 );
+  d_data_container->setAdjointIncoherentGridConvergenceTolerance( 0.001 );
+  d_data_container->setAdjointIncoherentGridAbsoluteDifferenceTolerance( 1e-20 );
+  d_data_container->setAdjointIncoherentGridDistanceTolerance( 1e-14 );
 
   // Set some default electron tolerances and values
-  d_data_container.setMinElectronEnergy( min_electron_energy );
-  d_data_container.setMaxElectronEnergy( max_electron_energy );
+  d_data_container->setMinElectronEnergy( min_electron_energy );
+  d_data_container->setMaxElectronEnergy( max_electron_energy );
 
-  d_data_container.setAdjointElectronGridConvergenceTolerance( d_default_electron_grid_generator->getConvergenceTolerance() );
-  d_data_container.setAdjointElectronGridAbsoluteDifferenceTolerance( d_default_electron_grid_generator->getAbsoluteDifferenceTolerance() );
-  d_data_container.setAdjointElectronGridDistanceTolerance( d_default_electron_grid_generator->getDistanceTolerance() );
+  d_data_container->setAdjointElectronGridConvergenceTolerance( d_default_electron_grid_generator->getConvergenceTolerance() );
+  d_data_container->setAdjointElectronGridAbsoluteDifferenceTolerance( d_default_electron_grid_generator->getAbsoluteDifferenceTolerance() );
+  d_data_container->setAdjointElectronGridDistanceTolerance( d_default_electron_grid_generator->getDistanceTolerance() );
 
-  d_data_container.setElectronTabularEvaluationTolerance( 1e-8 );
-  d_data_container.setAdjointBremsstrahlungMinEnergyNudgeValue( 1e-9 );
-  d_data_container.setAdjointBremsstrahlungMaxEnergyNudgeValue( 1e-2 );
-  d_data_container.setAdjointBremsstrahlungEvaluationTolerance( 1e-6 );
-  d_data_container.setAdjointBremsstrahlungGridConvergenceTolerance( 0.001 );
-  d_data_container.setAdjointBremsstrahlungAbsoluteDifferenceTolerance( 1e-16 );
-  d_data_container.setAdjointBremsstrahlungDistanceTolerance( 1e-8 );
-  d_data_container.setAdjointElectroionizationMinEnergyNudgeValue( 1e-9 );
-  d_data_container.setAdjointElectroionizationMaxEnergyNudgeValue( 1e-2 );
-  d_data_container.setAdjointElectroionizationEvaluationTolerance( 1e-6 );
-  d_data_container.setAdjointElectroionizationGridConvergenceTolerance( 0.001 );
-  d_data_container.setAdjointElectroionizationAbsoluteDifferenceTolerance( 1e-16 );
-  d_data_container.setAdjointElectroionizationDistanceTolerance( 1e-8 );
-  d_data_container.setCutoffAngleCosine( 1.0 );
-  d_data_container.setNumberOfAdjointMomentPreservingAngles( 0 );
-  d_data_container.setElectronTwoDInterpPolicy( Utility::toString( MonteCarlo::LOGLOGLOG_INTERPOLATION ) );
-  d_data_container.setElectronTwoDGridPolicy( Utility::toString( MonteCarlo::UNIT_BASE_CORRELATED_GRID ) );
+  d_data_container->setElectronTabularEvaluationTolerance( 1e-8 );
+  d_data_container->setAdjointBremsstrahlungMinEnergyNudgeValue( 1e-9 );
+  d_data_container->setAdjointBremsstrahlungMaxEnergyNudgeValue( 1e-2 );
+  d_data_container->setAdjointBremsstrahlungEvaluationTolerance( 1e-6 );
+  d_data_container->setAdjointBremsstrahlungGridConvergenceTolerance( 0.001 );
+  d_data_container->setAdjointBremsstrahlungAbsoluteDifferenceTolerance( 1e-16 );
+  d_data_container->setAdjointBremsstrahlungDistanceTolerance( 1e-8 );
+  d_data_container->setAdjointElectroionizationMinEnergyNudgeValue( 1e-9 );
+  d_data_container->setAdjointElectroionizationMaxEnergyNudgeValue( 1e-2 );
+  d_data_container->setAdjointElectroionizationEvaluationTolerance( 1e-6 );
+  d_data_container->setAdjointElectroionizationGridConvergenceTolerance( 0.001 );
+  d_data_container->setAdjointElectroionizationAbsoluteDifferenceTolerance( 1e-16 );
+  d_data_container->setAdjointElectroionizationDistanceTolerance( 1e-8 );
+  d_data_container->setCutoffAngleCosine( 1.0 );
+  d_data_container->setNumberOfAdjointMomentPreservingAngles( 0 );
+  d_data_container->setElectronTwoDInterpPolicy( Utility::toString( MonteCarlo::LOGLOGLOG_INTERPOLATION ) );
+  d_data_container->setElectronTwoDGridPolicy( Utility::toString( MonteCarlo::UNIT_BASE_CORRELATED_GRID ) );
 
   // Have the default grid generators throw exception on dirty convergence
   d_default_photon_grid_generator->throwExceptionOnDirtyConvergence();
@@ -94,17 +94,17 @@ AdjointElectronPhotonRelaxationDataGenerator::AdjointElectronPhotonRelaxationDat
 // Constructor (existing data container)
 AdjointElectronPhotonRelaxationDataGenerator::AdjointElectronPhotonRelaxationDataGenerator(
                            const boost::filesystem::path& file_name_with_path )
-  : d_data_container( file_name_with_path ),
+  : d_data_container( new Data::AdjointElectronPhotonRelaxationVolatileDataContainer(file_name_with_path ) ),
     d_default_photon_grid_generator( new Utility::GridGenerator<Utility::LinLin>(
-                   d_data_container.getAdjointPhotonGridConvergenceTolerance(),
-                   d_data_container.getAdjointPhotonGridAbsoluteDifferenceTolerance(),
-                   d_data_container.getAdjointPhotonGridDistanceTolerance() ) ),
+                   d_data_container->getAdjointPhotonGridConvergenceTolerance(),
+                   d_data_container->getAdjointPhotonGridAbsoluteDifferenceTolerance(),
+                   d_data_container->getAdjointPhotonGridDistanceTolerance() ) ),
     d_default_electron_grid_generator( new Utility::GridGenerator<Utility::LogLog>(
-                 d_data_container.getAdjointElectronGridConvergenceTolerance(),
-                 d_data_container.getAdjointElectronGridAbsoluteDifferenceTolerance(),
-                 d_data_container.getAdjointElectronGridDistanceTolerance() ) ),
-    d_two_d_interp( this->convertStringToTwoDInterpType( d_data_container.getElectronTwoDInterpPolicy() ) ),
-    d_two_d_grid( this->convertStringToTwoDGridType( d_data_container.getElectronTwoDGridPolicy() ) )
+                 d_data_container->getAdjointElectronGridConvergenceTolerance(),
+                 d_data_container->getAdjointElectronGridAbsoluteDifferenceTolerance(),
+                 d_data_container->getAdjointElectronGridDistanceTolerance() ) ),
+    d_two_d_interp( this->convertStringToTwoDInterpType( d_data_container->getElectronTwoDInterpPolicy() ) ),
+    d_two_d_grid( this->convertStringToTwoDGridType( d_data_container->getElectronTwoDGridPolicy() ) )
 {
   // Have the default grid generators throw exception on dirty convergence
   d_default_photon_grid_generator->throwExceptionOnDirtyConvergence();
@@ -114,19 +114,19 @@ AdjointElectronPhotonRelaxationDataGenerator::AdjointElectronPhotonRelaxationDat
 // Set the table notes
 void AdjointElectronPhotonRelaxationDataGenerator::setNotes( const std::string& notes )
 {
-  d_data_container.setNotes( notes );
+  d_data_container->setNotes( notes );
 }
 
 // Return the table notes
 const std::string& AdjointElectronPhotonRelaxationDataGenerator::getNotes() const
 {
-  return d_data_container.getNotes();
+  return d_data_container->getNotes();
 }
 
 // Get the atomic number
 unsigned AdjointElectronPhotonRelaxationDataGenerator::getAtomicNumber() const
 {
-  return d_data_container.getAtomicNumber();
+  return d_data_container->getAtomicNumber();
 }
 
 ///////////////////////
@@ -140,13 +140,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setMinPhotonEnergy(
   // Make sure the min photon energy is valid
   testPrecondition( min_photon_energy > 0.0 );
 
-  d_data_container.setMinPhotonEnergy( min_photon_energy );
+  d_data_container->setMinPhotonEnergy( min_photon_energy );
 }
 
 // Return the min photon energy
 double AdjointElectronPhotonRelaxationDataGenerator::getMinPhotonEnergy() const
 {
-  return d_data_container.getMinPhotonEnergy();
+  return d_data_container->getMinPhotonEnergy();
 }
 
 // Set the max photon energy
@@ -154,15 +154,15 @@ void AdjointElectronPhotonRelaxationDataGenerator::setMaxPhotonEnergy(
                                                const double max_photon_energy )
 {
   // Make sure the max photon energy is valid
-  testPrecondition( d_data_container.getMinPhotonEnergy() < max_photon_energy );
+  testPrecondition( d_data_container->getMinPhotonEnergy() < max_photon_energy );
 
-  d_data_container.setMaxPhotonEnergy( max_photon_energy );
+  d_data_container->setMaxPhotonEnergy( max_photon_energy );
 }
 
 // Return the max photon energy
 double AdjointElectronPhotonRelaxationDataGenerator::getMaxPhotonEnergy() const
 {
-  return d_data_container.getMaxPhotonEnergy();
+  return d_data_container->getMaxPhotonEnergy();
 }
 
 // Set the default photon grid convergence tolerance
@@ -180,7 +180,7 @@ void AdjointElectronPhotonRelaxationDataGenerator::setDefaultPhotonGridConvergen
                       "1.0!" );
 
   d_default_photon_grid_generator->setConvergenceTolerance( convergence_tol );
-  d_data_container.setAdjointPhotonGridConvergenceTolerance( convergence_tol );
+  d_data_container->setAdjointPhotonGridConvergenceTolerance( convergence_tol );
 }
 
 // Get the default photon grid convergence tolerance
@@ -204,7 +204,7 @@ void AdjointElectronPhotonRelaxationDataGenerator::setDefaultPhotonGridAbsoluteD
                       "and 1.0!" );
 
   d_default_photon_grid_generator->setAbsoluteDifferenceTolerance(absolute_diff_tol);
-  d_data_container.setAdjointPhotonGridAbsoluteDifferenceTolerance( absolute_diff_tol );
+  d_data_container->setAdjointPhotonGridAbsoluteDifferenceTolerance( absolute_diff_tol );
 }
 
 // Get the default photon grid absolute difference tolerance
@@ -226,7 +226,7 @@ void AdjointElectronPhotonRelaxationDataGenerator::setDefaultPhotonGridDistanceT
                       "The distance tolerance must be between 0.0 and 1.0!" );
 
   d_default_photon_grid_generator->setDistanceTolerance( distance_tol );
-  d_data_container.setAdjointPhotonGridDistanceTolerance( distance_tol );
+  d_data_container->setAdjointPhotonGridDistanceTolerance( distance_tol );
 }
 
 // Get the default photon grid distance tolerance
@@ -243,13 +243,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointPairProductionEnerg
   testPrecondition( evaluation_tol > 0.0 );
   testPrecondition( evaluation_tol < 1.0 );
 
-  d_data_container.setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance( evaluation_tol );
+  d_data_container->setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance( evaluation_tol );
 }
 
 // Get the adjoint pair production energy dist. norm const. evaluation tol
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance() const
 {
-  return d_data_container.getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance();
+  return d_data_container->getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance();
 }
 
 // Set the adjoint pair production energy dist. norm const. nudge value
@@ -259,13 +259,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointPairProductionEnerg
   // Make sure the nudge value is valid
   testPrecondition( nudge_value >= 0.0 );
 
-  d_data_container.setAdjointPairProductionEnergyDistNormConstantNudgeValue( nudge_value );
+  d_data_container->setAdjointPairProductionEnergyDistNormConstantNudgeValue( nudge_value );
 }
 
 // Get the adjoint pair production energy dist. norm const. nudge value
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointPairProductionEnergyDistNormConstantNudgeValue() const
 {
-  return d_data_container.getAdjointPairProductionEnergyDistNormConstantNudgeValue();
+  return d_data_container->getAdjointPairProductionEnergyDistNormConstantNudgeValue();
 }
 
 // Set the adjoint triplet production energy dist. norm const. evaluation tol.
@@ -276,13 +276,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointTripletProductionEn
   testPrecondition( evaluation_tol > 0.0 );
   testPrecondition( evaluation_tol < 1.0 );
 
-  d_data_container.setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance( evaluation_tol );
+  d_data_container->setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance( evaluation_tol );
 }
 
 // Get the adjoint triplet production energy dist. norm const. evaluation tol
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance() const
 {
-  return d_data_container.getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance( );
+  return d_data_container->getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance( );
 }
 
 // Set the adjoint triplet production energy dist. norm const. nudge value
@@ -292,13 +292,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointTripletProductionEn
   // Make sure the nudge value is valid
   testPrecondition( nudge_value >= 0.0 );
 
-  d_data_container.setAdjointTripletProductionEnergyDistNormConstantNudgeValue( nudge_value );
+  d_data_container->setAdjointTripletProductionEnergyDistNormConstantNudgeValue( nudge_value );
 }
 
 // Get the adjoint triplet production energy dist. norm const. nudge value
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointTripletProductionEnergyDistNormConstantNudgeValue() const
 {
-  return d_data_container.getAdjointTripletProductionEnergyDistNormConstantNudgeValue();
+  return d_data_container->getAdjointTripletProductionEnergyDistNormConstantNudgeValue();
 }
 
 // Set the adjoint incoherent max energy nudge value
@@ -308,13 +308,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointIncoherentMaxEnergy
   // Make sure the nudge value is valid
   testPrecondition( max_energy_nudge_value > 0.0 );
 
-  d_data_container.setAdjointIncoherentMaxEnergyNudgeValue( max_energy_nudge_value );
+  d_data_container->setAdjointIncoherentMaxEnergyNudgeValue( max_energy_nudge_value );
 }
 
 // Return the adjoint incoherent max energy nudge value
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointIncoherentMaxEnergyNudgeValue() const
 {
-  return d_data_container.getAdjointIncoherentMaxEnergyNudgeValue();
+  return d_data_container->getAdjointIncoherentMaxEnergyNudgeValue();
 }
 
 // Set the adjoint incoherent energy to max energy nudge value
@@ -324,13 +324,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointIncoherentEnergyToM
   // Make sure the nudge value is valid
   testPrecondition( energy_to_max_energy_nudge_value >= 0.0 );
 
-  d_data_container.setAdjointIncoherentEnergyToMaxEnergyNudgeValue( energy_to_max_energy_nudge_value );
+  d_data_container->setAdjointIncoherentEnergyToMaxEnergyNudgeValue( energy_to_max_energy_nudge_value );
 }
 
 // Return the adjoint incoherent energy to max energy nudge value
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointIncoherentEnergyToMaxEnergyNudgeValue() const
 {
-  return d_data_container.getAdjointIncoherentEnergyToMaxEnergyNudgeValue();
+  return d_data_container->getAdjointIncoherentEnergyToMaxEnergyNudgeValue();
 }
 
 // Set the adjoint incoherent cross section evaluation tolerance
@@ -341,13 +341,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointIncoherentEvaluatio
   testPrecondition( evaluation_tol > 0.0 );
   testPrecondition( evaluation_tol < 1.0 );
 
-  d_data_container.setAdjointIncoherentEvaluationTolerance( evaluation_tol );
+  d_data_container->setAdjointIncoherentEvaluationTolerance( evaluation_tol );
 }
 
 // Return the adjoint incoherent cross section evaluation tolerance
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointIncoherentEvaluationTolerance() const
 {
-  return d_data_container.getAdjointIncoherentEvaluationTolerance();
+  return d_data_container->getAdjointIncoherentEvaluationTolerance();
 }
 
 // Set the adjoint incoherent grid convergence tolerance
@@ -358,13 +358,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointIncoherentGridConve
   testPrecondition( convergence_tol <= 1.0 );
   testPrecondition( convergence_tol > 0.0 );
 
-  d_data_container.setAdjointIncoherentGridConvergenceTolerance( convergence_tol );
+  d_data_container->setAdjointIncoherentGridConvergenceTolerance( convergence_tol );
 }
 
 // Return the adjoint incoherent grid convergence tolerance
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointIncoherentGridConvergenceTolerance() const
 {
-  return d_data_container.getAdjointIncoherentGridConvergenceTolerance();
+  return d_data_container->getAdjointIncoherentGridConvergenceTolerance();
 }
 
 // Set the adjoint incoherent grid absolute difference tolerance
@@ -375,13 +375,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointIncoherentGridAbsol
   testPrecondition( absolute_diff_tol <= 1.0 );
   testPrecondition( absolute_diff_tol >= 0.0 );
 
-  d_data_container.setAdjointIncoherentGridAbsoluteDifferenceTolerance( absolute_diff_tol );
+  d_data_container->setAdjointIncoherentGridAbsoluteDifferenceTolerance( absolute_diff_tol );
 }
 
 // Get the adjoint incoherent grid absolute difference tolerance
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointIncoherentGridAbsoluteDifferenceTolerance() const
 {
-  return d_data_container.getAdjointIncoherentGridAbsoluteDifferenceTolerance();
+  return d_data_container->getAdjointIncoherentGridAbsoluteDifferenceTolerance();
 }
 
 // Set the adjoint incoherent grid distance tolerance
@@ -392,13 +392,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointIncoherentGridDista
   testPrecondition( distance_tol <= 1.0 );
   testPrecondition( distance_tol >= 0.0 );
 
-  d_data_container.setAdjointIncoherentGridDistanceTolerance( distance_tol );
+  d_data_container->setAdjointIncoherentGridDistanceTolerance( distance_tol );
 }
 
 // Get the adjoint incoherent grid distance tolerance
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointIncoherentGridDistanceTolerance() const
 {
-  return d_data_container.getAdjointIncoherentGridDistanceTolerance();
+  return d_data_container->getAdjointIncoherentGridDistanceTolerance();
 }
 
 /////////////////////////
@@ -412,13 +412,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setMinElectronEnergy(
   // Make sure the min electron energy is valid
   testPrecondition( min_electron_energy > 0.0 );
 
-  d_data_container.setMinElectronEnergy( min_electron_energy );
+  d_data_container->setMinElectronEnergy( min_electron_energy );
 }
 
 // Return the min electron energy
 double AdjointElectronPhotonRelaxationDataGenerator::getMinElectronEnergy() const
 {
-  return d_data_container.getMinElectronEnergy();
+  return d_data_container->getMinElectronEnergy();
 }
 
 // Set the max electron energy
@@ -426,16 +426,16 @@ void AdjointElectronPhotonRelaxationDataGenerator::setMaxElectronEnergy(
                                              const double max_electron_energy )
 {
   // Make sure the max electron energy is valid
-  testPrecondition( d_data_container.getMinElectronEnergy() <
+  testPrecondition( d_data_container->getMinElectronEnergy() <
                     max_electron_energy );
 
-  d_data_container.setMaxElectronEnergy( max_electron_energy );
+  d_data_container->setMaxElectronEnergy( max_electron_energy );
 }
 
 // Return the max electron energy
 double AdjointElectronPhotonRelaxationDataGenerator::getMaxElectronEnergy() const
 {
-  return d_data_container.getMaxElectronEnergy();
+  return d_data_container->getMaxElectronEnergy();
 }
 
 // Set the default electron grid convergence tolerance
@@ -453,7 +453,7 @@ void AdjointElectronPhotonRelaxationDataGenerator::setDefaultElectronGridConverg
                       "1.0!" );
 
   d_default_electron_grid_generator->setConvergenceTolerance( convergence_tol );
-  d_data_container.setAdjointElectronGridConvergenceTolerance( convergence_tol );
+  d_data_container->setAdjointElectronGridConvergenceTolerance( convergence_tol );
 }
 
 // Get the default electron grid convergence tolerance
@@ -477,7 +477,7 @@ void AdjointElectronPhotonRelaxationDataGenerator::setDefaultElectronGridAbsolut
                       "and 1.0!" );
 
   d_default_electron_grid_generator->setAbsoluteDifferenceTolerance(absolute_diff_tol);
-  d_data_container.setAdjointElectronGridAbsoluteDifferenceTolerance( absolute_diff_tol );
+  d_data_container->setAdjointElectronGridAbsoluteDifferenceTolerance( absolute_diff_tol );
 }
 
 // Get the default electron grid absolute difference tolerance
@@ -499,7 +499,7 @@ void AdjointElectronPhotonRelaxationDataGenerator::setDefaultElectronGridDistanc
                       "The distance tolerance must be between 0.0 and 1.0!" );
 
   d_default_electron_grid_generator->setDistanceTolerance( distance_tol );
-  d_data_container.setAdjointElectronGridDistanceTolerance( distance_tol );
+  d_data_container->setAdjointElectronGridDistanceTolerance( distance_tol );
 }
 
 // Get the default electron grid distance tolerance
@@ -516,13 +516,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setElectronTabularEvaluationT
   testPrecondition( tabular_evaluation_tol < 1.0 );
   testPrecondition( tabular_evaluation_tol > 0.0 );
 
-  d_data_container.setElectronTabularEvaluationTolerance( tabular_evaluation_tol );
+  d_data_container->setElectronTabularEvaluationTolerance( tabular_evaluation_tol );
 }
 
 // Get the electron FullyTabularTwoDDistribution evaluation tolerance
 double AdjointElectronPhotonRelaxationDataGenerator::getElectronTabularEvaluationTolerance() const
 {
-  return d_data_container.getElectronTabularEvaluationTolerance();
+  return d_data_container->getElectronTabularEvaluationTolerance();
 }
 
 // Set the electron TwoDInterpPolicy (LogLogLog by default)
@@ -530,7 +530,7 @@ void AdjointElectronPhotonRelaxationDataGenerator::setElectronTwoDInterpPolicy(
                     const MonteCarlo::TwoDInterpolationType two_d_interp )
 {
   d_two_d_interp = two_d_interp;
-  d_data_container.setElectronTwoDInterpPolicy( Utility::toString( two_d_interp ) );
+  d_data_container->setElectronTwoDInterpPolicy( Utility::toString( two_d_interp ) );
 }
 
 // Return the electron TwoDInterpPolicy (LogLogLog by default)
@@ -544,7 +544,7 @@ void AdjointElectronPhotonRelaxationDataGenerator::setElectronTwoDGridPolicy(
                     const MonteCarlo::TwoDGridType two_d_grid )
 {
   d_two_d_grid = two_d_grid;
-  d_data_container.setElectronTwoDGridPolicy( Utility::toString( two_d_grid ) );
+  d_data_container->setElectronTwoDGridPolicy( Utility::toString( two_d_grid ) );
 }
 
 // Return the electron TwoDGridPolicy (Unit-base Correlated by default)
@@ -556,25 +556,25 @@ MonteCarlo::TwoDGridType AdjointElectronPhotonRelaxationDataGenerator::getElectr
 // Set the cutoff angle cosine above which screened rutherford is used
 void AdjointElectronPhotonRelaxationDataGenerator::setCutoffAngleCosine( const double angle_cutoff )
 {
-  d_data_container.setCutoffAngleCosine( angle_cutoff );
+  d_data_container->setCutoffAngleCosine( angle_cutoff );
 }
 
 // Get the cutoff angle cosine above which screened rutherford is used
 double AdjointElectronPhotonRelaxationDataGenerator::getCutoffAngleCosine() const
 {
-  return d_data_container.getCutoffAngleCosine();
+  return d_data_container->getCutoffAngleCosine();
 }
 
 // Set the number of moment preserving angles
 void AdjointElectronPhotonRelaxationDataGenerator::setNumberOfMomentPreservingAngles( const unsigned number_of_angles )
 {
-  d_data_container.setNumberOfAdjointMomentPreservingAngles( number_of_angles );
+  d_data_container->setNumberOfAdjointMomentPreservingAngles( number_of_angles );
 }
 
 // Get the number of moment preserving angles
 unsigned AdjointElectronPhotonRelaxationDataGenerator::getNumberOfMomentPreservingAngles() const
 {
-  return d_data_container.getNumberOfAdjointMomentPreservingAngles();
+  return d_data_container->getNumberOfAdjointMomentPreservingAngles();
 }
 
 // Set the adjoint bremsstrahlung min energy nudge value
@@ -584,13 +584,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointBremsstrahlungMinEn
   // Make sure the nudge value is valid
   testPrecondition( min_energy_nudge_value > 0.0 );
 
-  d_data_container.setAdjointBremsstrahlungMinEnergyNudgeValue( min_energy_nudge_value );
+  d_data_container->setAdjointBremsstrahlungMinEnergyNudgeValue( min_energy_nudge_value );
 }
 
 // Return the adjoint bremsstrahlung min energy nudge value
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointBremsstrahlungMinEnergyNudgeValue() const
 {
-  return d_data_container.getAdjointBremsstrahlungMinEnergyNudgeValue();
+  return d_data_container->getAdjointBremsstrahlungMinEnergyNudgeValue();
 }
 
 // Set the adjoint bremsstrahlung max energy nudge value
@@ -600,13 +600,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointBremsstrahlungMaxEn
   // Make sure the nudge value is valid
   testPrecondition( max_energy_nudge_value > 0.0 );
 
-  d_data_container.setAdjointBremsstrahlungMaxEnergyNudgeValue( max_energy_nudge_value );
+  d_data_container->setAdjointBremsstrahlungMaxEnergyNudgeValue( max_energy_nudge_value );
 }
 
 // Return the adjoint bremsstrahlung max energy nudge value
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointBremsstrahlungMaxEnergyNudgeValue() const
 {
-  return d_data_container.getAdjointBremsstrahlungMaxEnergyNudgeValue();
+  return d_data_container->getAdjointBremsstrahlungMaxEnergyNudgeValue();
 }
 
 // Set the evaluation tolerance for the adjoint bremsstrahlung cross section
@@ -617,13 +617,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointBremsstrahlungEvalu
   testPrecondition( evaluation_tolerance > 0.0 );
   testPrecondition( evaluation_tolerance < 1.0 );
 
-  d_data_container.setAdjointBremsstrahlungEvaluationTolerance( evaluation_tolerance );
+  d_data_container->setAdjointBremsstrahlungEvaluationTolerance( evaluation_tolerance );
 }
 
 // Get the evaluation tolerance for the adjoint bremsstrahlung cross section
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointBremsstrahlungEvaluationTolerance() const
 {
-  return d_data_container.getAdjointBremsstrahlungEvaluationTolerance();
+  return d_data_container->getAdjointBremsstrahlungEvaluationTolerance();
 }
 
 // Set the adjoint bremsstrahlung grid convergence tolerance
@@ -634,13 +634,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointBremsstrahlungGridC
   testPrecondition( convergence_tol <= 1.0 );
   testPrecondition( convergence_tol > 0.0 );
 
-  d_data_container.setAdjointBremsstrahlungGridConvergenceTolerance( convergence_tol );
+  d_data_container->setAdjointBremsstrahlungGridConvergenceTolerance( convergence_tol );
 }
 
 // Return the adjoint bremsstrahlung grid convergence tolerance
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointBremsstrahlungGridConvergenceTolerance() const
 {
-  return d_data_container.getAdjointBremsstrahlungGridConvergenceTolerance();
+  return d_data_container->getAdjointBremsstrahlungGridConvergenceTolerance();
 }
 
 // Set the adjoint bremsstrahlung absolute difference tolerance
@@ -651,13 +651,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointBremsstrahlungAbsol
   testPrecondition( absolute_diff_tol <= 1.0 );
   testPrecondition( absolute_diff_tol >= 0.0 );
 
-  d_data_container.setAdjointBremsstrahlungAbsoluteDifferenceTolerance( absolute_diff_tol );
+  d_data_container->setAdjointBremsstrahlungAbsoluteDifferenceTolerance( absolute_diff_tol );
 }
 
 // Get the adjoint bremsstrahlung absolute difference tolerance
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointBremsstrahlungAbsoluteDifferenceTolerance() const
 {
-  return d_data_container.getAdjointBremsstrahlungAbsoluteDifferenceTolerance();
+  return d_data_container->getAdjointBremsstrahlungAbsoluteDifferenceTolerance();
 }
 
 // Set the adjoint bremsstrahlung distance tolerance
@@ -668,13 +668,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointBremsstrahlungDista
   testPrecondition( distance_tol <= 1.0 );
   testPrecondition( distance_tol >= 0.0 );
 
-  d_data_container.setAdjointBremsstrahlungDistanceTolerance( distance_tol );
+  d_data_container->setAdjointBremsstrahlungDistanceTolerance( distance_tol );
 }
 
 // Get the adjoint bremsstrahlung distance tolerance
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointBremsstrahlungDistanceTolerance() const
 {
-  return d_data_container.getAdjointBremsstrahlungDistanceTolerance();
+  return d_data_container->getAdjointBremsstrahlungDistanceTolerance();
 }
 
 // Set the adjoint electroionization min energy nudge value
@@ -684,13 +684,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointElectroionizationMi
   // Make sure the nudge value is valid
   testPrecondition( min_energy_nudge_value > 0.0 );
 
-  d_data_container.setAdjointElectroionizationMinEnergyNudgeValue( min_energy_nudge_value );
+  d_data_container->setAdjointElectroionizationMinEnergyNudgeValue( min_energy_nudge_value );
 }
 
 // Return the adjoint electroionization min energy nudge value
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointElectroionizationMinEnergyNudgeValue() const
 {
-  return d_data_container.getAdjointElectroionizationMinEnergyNudgeValue();
+  return d_data_container->getAdjointElectroionizationMinEnergyNudgeValue();
 }
 
 // Set the adjoint electroionization max energy nudge value
@@ -700,13 +700,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointElectroionizationMa
   // Make sure the nudge value is valid
   testPrecondition( max_energy_nudge_value > 0.0 );
 
-  d_data_container.setAdjointElectroionizationMaxEnergyNudgeValue( max_energy_nudge_value );
+  d_data_container->setAdjointElectroionizationMaxEnergyNudgeValue( max_energy_nudge_value );
 }
 
 // Return the adjoint electroionization max energy nudge value
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointElectroionizationMaxEnergyNudgeValue() const
 {
-  return d_data_container.getAdjointElectroionizationMaxEnergyNudgeValue();
+  return d_data_container->getAdjointElectroionizationMaxEnergyNudgeValue();
 }
 
 // Set the evaluation tolerance for the adjoint electroionization cross section
@@ -717,13 +717,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointElectroionizationEv
   testPrecondition( evaluation_tolerance > 0.0 );
   testPrecondition( evaluation_tolerance < 1.0 );
 
-  d_data_container.setAdjointElectroionizationEvaluationTolerance( evaluation_tolerance );
+  d_data_container->setAdjointElectroionizationEvaluationTolerance( evaluation_tolerance );
 }
 
 // Get the evaluation tolerance for the adjoint electroionization cross section
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointElectroionizationEvaluationTolerance() const
 {
-  return d_data_container.getAdjointElectroionizationEvaluationTolerance();
+  return d_data_container->getAdjointElectroionizationEvaluationTolerance();
 }
 
 // Set the adjoint electroionization grid convergence tolerance
@@ -734,13 +734,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointElectroionizationGr
   testPrecondition( convergence_tol <= 1.0 );
   testPrecondition( convergence_tol > 0.0 );
 
-  d_data_container.setAdjointElectroionizationGridConvergenceTolerance( convergence_tol );
+  d_data_container->setAdjointElectroionizationGridConvergenceTolerance( convergence_tol );
 }
 
 // Return the adjoint electroionization grid convergence tolerance
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointElectroionizationGridConvergenceTolerance() const
 {
-  return d_data_container.getAdjointElectroionizationGridConvergenceTolerance();
+  return d_data_container->getAdjointElectroionizationGridConvergenceTolerance();
 }
 
 // Set the adjoint electroionization absolute difference tolerance
@@ -751,13 +751,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointElectroionizationAb
   testPrecondition( absolute_diff_tol <= 1.0 );
   testPrecondition( absolute_diff_tol >= 0.0 );
 
-  d_data_container.setAdjointElectroionizationAbsoluteDifferenceTolerance( absolute_diff_tol );
+  d_data_container->setAdjointElectroionizationAbsoluteDifferenceTolerance( absolute_diff_tol );
 }
 
 // Get the adjoint electroionization absolute difference tolerance
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointElectroionizationAbsoluteDifferenceTolerance() const
 {
-  return d_data_container.getAdjointElectroionizationAbsoluteDifferenceTolerance();
+  return d_data_container->getAdjointElectroionizationAbsoluteDifferenceTolerance();
 }
 
 // Set the adjoint electroionization distance tolerance
@@ -768,13 +768,13 @@ void AdjointElectronPhotonRelaxationDataGenerator::setAdjointElectroionizationDi
   testPrecondition( distance_tol <= 1.0 );
   testPrecondition( distance_tol >= 0.0 );
 
-  d_data_container.setAdjointElectroionizationDistanceTolerance( distance_tol );
+  d_data_container->setAdjointElectroionizationDistanceTolerance( distance_tol );
 }
 
 // Get the adjoint electroionization distance tolerance
 double AdjointElectronPhotonRelaxationDataGenerator::getAdjointElectroionizationDistanceTolerance() const
 {
-  return d_data_container.getAdjointElectroionizationDistanceTolerance();
+  return d_data_container->getAdjointElectroionizationDistanceTolerance();
 }
 
 // Convert string to TwoDInterpolationType
@@ -845,6 +845,13 @@ AdjointElectronPhotonRelaxationDataGenerator::getDefaultElectronGridGenerator() 
 const Data::AdjointElectronPhotonRelaxationDataContainer&
 AdjointElectronPhotonRelaxationDataGenerator::getDataContainer() const
 {
+  return *d_data_container;
+}
+
+// Get the shared data container
+std::shared_ptr<const Data::AdjointElectronPhotonRelaxationDataContainer>
+AdjointElectronPhotonRelaxationDataGenerator::getSharedDataContainer() const
+{
   return d_data_container;
 }
 
@@ -852,7 +859,7 @@ AdjointElectronPhotonRelaxationDataGenerator::getDataContainer() const
 Data::AdjointElectronPhotonRelaxationVolatileDataContainer&
 AdjointElectronPhotonRelaxationDataGenerator::getVolatileDataContainer()
 {
-  return d_data_container;
+  return *d_data_container;
 }
 
 } // end DataGen
