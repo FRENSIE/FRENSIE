@@ -378,15 +378,11 @@ FRENSIE_UNIT_TEST( EventHandler, addEstimator_model_set )
       local_estimator_4( new MonteCarlo::WeightMultipliedCellPulseHeightEstimator(
                                                              104, 1.0, {1} ) );
 
-    local_estimator_4->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
-
     FRENSIE_CHECK_NO_THROW( event_handler.addEstimator( local_estimator_4 ) );
 
     std::shared_ptr<MonteCarlo::WeightMultipliedCellPulseHeightEstimator>
       local_estimator_5( new MonteCarlo::WeightMultipliedCellPulseHeightEstimator(
                                                              105, 1.0, {2} ) );
-
-    local_estimator_5->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
 
     FRENSIE_CHECK_THROW( event_handler.addEstimator( local_estimator_5 ),
                          std::runtime_error );
@@ -4579,19 +4575,16 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                                               6,
                                                               1.0,
                                                               cell_ids ) );
-  estimator_7->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON, MonteCarlo::ELECTRON} ) );
 
   estimator_8.reset( new MonteCarlo::WeightAndEnergyMultipliedCellPulseHeightEstimator(
                                                               7,
                                                               10.0,
                                                               cell_ids ) );
-  estimator_8->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON, MonteCarlo::ELECTRON} ) );
 
   estimator_9.reset( new MonteCarlo::WeightAndChargeMultipliedCellPulseHeightEstimator(
                                                               8,
                                                               1.0,
                                                               cell_ids ) );
-  estimator_9->setParticleTypes( std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON, MonteCarlo::ELECTRON} ) );
 
   estimator_10.reset( new MonteCarlo::WeightMultipliedSurfaceFluxEstimator(
                                                              9,

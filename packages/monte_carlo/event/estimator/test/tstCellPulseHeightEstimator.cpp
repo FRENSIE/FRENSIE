@@ -148,6 +148,8 @@ FRENSIE_UNIT_TEST_TEMPLATE( CellPulseHeightEstimator,
   estimator->setParticleTypes( particle_types );
 
   FRENSIE_CHECK( estimator->isParticleTypeAssigned( MonteCarlo::PHOTON ) );
+  FRENSIE_CHECK( estimator->isParticleTypeAssigned( MonteCarlo::ELECTRON ) );
+  FRENSIE_CHECK( estimator->isParticleTypeAssigned( MonteCarlo::POSITRON ) );
   FRENSIE_CHECK( !estimator->isParticleTypeAssigned( MonteCarlo::NEUTRON ) );
   FRENSIE_CHECK( !estimator->isParticleTypeAssigned( MonteCarlo::ADJOINT_PHOTON ) );
   FRENSIE_CHECK( !estimator->isParticleTypeAssigned( MonteCarlo::ADJOINT_NEUTRON ) );
@@ -212,14 +214,20 @@ FRENSIE_UNIT_TEST( CellPulseHeightEstimator, updateFromParticleEvent )
                                                        energy_bin_boundaries );
     estimator_3_base->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
                                                        energy_bin_boundaries );
-
-    std::vector<MonteCarlo::ParticleType> particle_types( 1 );
-    particle_types[0] = MonteCarlo::ELECTRON;
-
-    estimator_1->setParticleTypes( particle_types );
-    estimator_2->setParticleTypes( particle_types );
-    estimator_3->setParticleTypes( particle_types );
   }
+
+  FRENSIE_CHECK_EQUAL( estimator_1_base->getParticleTypes().size(), 3 );
+  FRENSIE_CHECK( estimator_1_base->getParticleTypes().find( MonteCarlo::PHOTON ) != estimator_1_base->getParticleTypes().end() );
+  FRENSIE_CHECK( estimator_1_base->getParticleTypes().find( MonteCarlo::ELECTRON ) != estimator_1_base->getParticleTypes().end() );
+  FRENSIE_CHECK( estimator_1_base->getParticleTypes().find( MonteCarlo::POSITRON ) != estimator_1_base->getParticleTypes().end() );
+  FRENSIE_CHECK_EQUAL( estimator_2_base->getParticleTypes().size(), 3 );
+  FRENSIE_CHECK( estimator_2_base->getParticleTypes().find( MonteCarlo::PHOTON ) != estimator_2_base->getParticleTypes().end() );
+  FRENSIE_CHECK( estimator_2_base->getParticleTypes().find( MonteCarlo::ELECTRON ) != estimator_2_base->getParticleTypes().end() );
+  FRENSIE_CHECK( estimator_2_base->getParticleTypes().find( MonteCarlo::POSITRON ) != estimator_2_base->getParticleTypes().end() );
+  FRENSIE_CHECK_EQUAL( estimator_3_base->getParticleTypes().size(), 3 );
+  FRENSIE_CHECK( estimator_3_base->getParticleTypes().find( MonteCarlo::PHOTON ) != estimator_3_base->getParticleTypes().end() );
+  FRENSIE_CHECK( estimator_3_base->getParticleTypes().find( MonteCarlo::ELECTRON ) != estimator_3_base->getParticleTypes().end() );
+  FRENSIE_CHECK( estimator_3_base->getParticleTypes().find( MonteCarlo::POSITRON ) != estimator_3_base->getParticleTypes().end() );
 
   MonteCarlo::ElectronState particle( 0ull );
   particle.setSourceWeight( 1.0 );
@@ -424,17 +432,23 @@ FRENSIE_UNIT_TEST( CellPulseHeightEstimator,
     estimator_3_base->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
                                                        energy_bin_boundaries );
 
-    std::vector<MonteCarlo::ParticleType> particle_types( 1 );
-    particle_types[0] = MonteCarlo::ELECTRON;
-
-    estimator_1->setParticleTypes( particle_types );
-    estimator_2->setParticleTypes( particle_types );
-    estimator_3->setParticleTypes( particle_types );
-
     estimator_1->enableThreadSupport( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
     estimator_2->enableThreadSupport( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
     estimator_3->enableThreadSupport( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
   }
+
+  FRENSIE_CHECK_EQUAL( estimator_1_base->getParticleTypes().size(), 3 );
+  FRENSIE_CHECK( estimator_1_base->getParticleTypes().find( MonteCarlo::PHOTON ) != estimator_1_base->getParticleTypes().end() );
+  FRENSIE_CHECK( estimator_1_base->getParticleTypes().find( MonteCarlo::ELECTRON ) != estimator_1_base->getParticleTypes().end() );
+  FRENSIE_CHECK( estimator_1_base->getParticleTypes().find( MonteCarlo::POSITRON ) != estimator_1_base->getParticleTypes().end() );
+  FRENSIE_CHECK_EQUAL( estimator_2_base->getParticleTypes().size(), 3 );
+  FRENSIE_CHECK( estimator_2_base->getParticleTypes().find( MonteCarlo::PHOTON ) != estimator_2_base->getParticleTypes().end() );
+  FRENSIE_CHECK( estimator_2_base->getParticleTypes().find( MonteCarlo::ELECTRON ) != estimator_2_base->getParticleTypes().end() );
+  FRENSIE_CHECK( estimator_2_base->getParticleTypes().find( MonteCarlo::POSITRON ) != estimator_2_base->getParticleTypes().end() );
+  FRENSIE_CHECK_EQUAL( estimator_3_base->getParticleTypes().size(), 3 );
+  FRENSIE_CHECK( estimator_3_base->getParticleTypes().find( MonteCarlo::PHOTON ) != estimator_3_base->getParticleTypes().end() );
+  FRENSIE_CHECK( estimator_3_base->getParticleTypes().find( MonteCarlo::ELECTRON ) != estimator_3_base->getParticleTypes().end() );
+  FRENSIE_CHECK( estimator_3_base->getParticleTypes().find( MonteCarlo::POSITRON ) != estimator_3_base->getParticleTypes().end() );
 
   unsigned threads =
     Utility::OpenMPProperties::getRequestedNumberOfThreads();
@@ -639,17 +653,6 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceCurrentEstimator,
                                                        energy_bin_boundaries );
       estimator_3_base->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(
                                                        energy_bin_boundaries );
-
-      std::vector<MonteCarlo::ParticleType> particle_types( 1 );
-      particle_types[0] = MonteCarlo::PHOTON;
-
-      estimator_1->setParticleTypes( particle_types );
-
-      particle_types.push_back( MonteCarlo::ELECTRON );
-      particle_types.push_back( MonteCarlo::POSITRON );
-
-      estimator_2->setParticleTypes( particle_types );
-      estimator_3->setParticleTypes( particle_types );
     }
 
     MonteCarlo::PhotonState particle( 0ull );
@@ -716,8 +719,10 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceCurrentEstimator,
     FRENSIE_CHECK_EQUAL( estimator_1_base->getNumberOfBins(), 2 );
     FRENSIE_CHECK_EQUAL( estimator_1_base->getNumberOfBins( MonteCarlo::OBSERVER_ENERGY_DIMENSION ), 2 );
     FRENSIE_CHECK_EQUAL( estimator_1_base->getNumberOfResponseFunctions(), 1 );
-    FRENSIE_CHECK_EQUAL( estimator_1_base->getParticleTypes().size(), 1 );
+    FRENSIE_CHECK_EQUAL( estimator_1_base->getParticleTypes().size(), 3 );
     FRENSIE_CHECK( estimator_1_base->getParticleTypes().find( MonteCarlo::PHOTON ) != estimator_1_base->getParticleTypes().end() );
+    FRENSIE_CHECK( estimator_1_base->getParticleTypes().find( MonteCarlo::ELECTRON ) != estimator_1_base->getParticleTypes().end() );
+    FRENSIE_CHECK( estimator_1_base->getParticleTypes().find( MonteCarlo::POSITRON ) != estimator_1_base->getParticleTypes().end() );
 
     std::set<uint64_t> entity_ids;
 

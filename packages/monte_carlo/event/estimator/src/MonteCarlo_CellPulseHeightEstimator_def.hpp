@@ -37,7 +37,12 @@ CellPulseHeightEstimator<ContributionMultiplierPolicy>::CellPulseHeightEstimator
     ParticleLeavingCellEventObserver(),
     d_update_tracker( 1 ),
     d_dimension_values( 1 )
-{ /* ... */ }
+{
+  // Set the particle types to photon, electron, positron
+  Estimator::assignParticleType( PHOTON );
+  Estimator::assignParticleType( ELECTRON );
+  Estimator::assignParticleType( POSITRON );
+}
 
 // Check if the estimator is a cell estimator
 template<typename ContributionMultiplierPolicy>
@@ -326,20 +331,13 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::assignResponseFunct
 template<typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<ContributionMultiplierPolicy>::assignParticleType( const ParticleType particle_type )
 {
-  if( particle_type == PHOTON ||
-      particle_type == ELECTRON ||
-      particle_type == POSITRON )
-    Estimator::assignParticleType( particle_type );
-  else
-  {
-    FRENSIE_LOG_TAGGED_WARNING( "Estimator",
-                                "cannot assign particle type "
-                                << particle_type << " to a pulse height "
-                                "estimator (only photons and charged "
-                                "particles can contribute). Pulse height "
-                                "estimator " << this->getId() << " will "
-                                "ignore this request." );
-  }
+  FRENSIE_LOG_TAGGED_WARNING( "Estimator",
+                              "the particle types assigned to a cell pulse "
+                              "height estimator are always PHOTON, ELECTRON "
+                              "and POSITRON. Pulse height estimator "
+                              << this->getId() <<
+                              " will ignore this request." );
+
 }
 
 // Calculate the estimator contribution from the entire history

@@ -175,12 +175,14 @@ FRENSIE_UNIT_TEST( ParticleEnteringCellEventDispatcher,
     dispatcher->dispatchParticleEnteringCellEvent( photon, 0 );
 
     FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_2->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_3->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_3->hasUncommittedHistoryContribution() );
 
     photon.setEnergy( 1.0 );
 
     estimator_1->updateFromParticleLeavingCellEvent( photon, 0 );
+    estimator_2->updateFromParticleLeavingCellEvent( photon, 0 );
+    estimator_3->updateFromParticleLeavingCellEvent( photon, 0 );
 
     MonteCarlo::ElectronState electron( 0ull );
     electron.setWeight( 1.0 );
@@ -192,7 +194,7 @@ FRENSIE_UNIT_TEST( ParticleEnteringCellEventDispatcher,
     FRENSIE_CHECK( estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_3->hasUncommittedHistoryContribution() );
 
-    electron.setEnergy( 1.0 );
+    electron.setEnergy( 2.0 );
 
     estimator_2->updateFromParticleLeavingCellEvent( electron, 0 );
 
@@ -250,12 +252,14 @@ FRENSIE_UNIT_TEST( ParticleEnteringCellEventDispatcher,
     dispatcher->dispatchParticleEnteringCellEvent( photon, 1 );
 
     FRENSIE_CHECK( estimator_1->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_2->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !estimator_3->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( estimator_3->hasUncommittedHistoryContribution() );
 
     photon.setEnergy( 1.0 );
 
     estimator_1->updateFromParticleLeavingCellEvent( photon, 1 );
+    estimator_2->updateFromParticleLeavingCellEvent( photon, 1 );
+    estimator_3->updateFromParticleLeavingCellEvent( photon, 1 );
 
     MonteCarlo::ElectronState electron( 0ull );
     electron.setWeight( 1.0 );
@@ -267,7 +271,7 @@ FRENSIE_UNIT_TEST( ParticleEnteringCellEventDispatcher,
     FRENSIE_CHECK( estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( estimator_3->hasUncommittedHistoryContribution() );
 
-    electron.setEnergy( 1.0 );
+    electron.setEnergy( 2.0 );
 
     estimator_2->updateFromParticleLeavingCellEvent( electron, 1 );
 
@@ -353,21 +357,15 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleEnteringCellEventDispatcher,
                                                                   1.0,
                                                                   cell_ids ) );
 
-      local_estimator_1->setParticleTypes( std::vector<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
-
       local_estimator_2.reset( new MonteCarlo::WeightAndEnergyMultipliedCellPulseHeightEstimator(
                                                                   11,
                                                                   10.0,
                                                                   cell_ids ) );
 
-      local_estimator_2->setParticleTypes( std::vector<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
-
       local_estimator_3.reset( new MonteCarlo::WeightAndChargeMultipliedCellPulseHeightEstimator(
                                                                   12,
                                                                   1.0,
                                                                   cell_ids ) );
-
-      local_estimator_3->setParticleTypes( std::vector<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
     }
 
     std::shared_ptr<MonteCarlo::ParticleEnteringCellEventDispatcher>
@@ -415,8 +413,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleEnteringCellEventDispatcher,
   iarchive.reset();
 
   {
-    FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::PHOTON ), 1 );
-    FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 2 );
+    FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::PHOTON ), 3 );
+    FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 3 );
+    FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers( MonteCarlo::POSITRON ), 3 );
 
     MonteCarlo::PhotonState photon( 0ull );
     photon.setWeight( 1.0 );
@@ -429,12 +428,14 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleEnteringCellEventDispatcher,
     dispatcher->dispatchParticleEnteringCellEvent( photon, 0 );
 
     FRENSIE_CHECK( local_estimator_1->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !local_estimator_2->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !local_estimator_3->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( local_estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( local_estimator_3->hasUncommittedHistoryContribution() );
 
     photon.setEnergy( 1.0 );
 
     local_estimator_1->updateFromParticleLeavingCellEvent( photon, 0 );
+    local_estimator_2->updateFromParticleLeavingCellEvent( photon, 0 );
+    local_estimator_3->updateFromParticleLeavingCellEvent( photon, 0 );
 
     MonteCarlo::ElectronState electron( 0ull );
     electron.setWeight( 1.0 );
@@ -446,7 +447,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleEnteringCellEventDispatcher,
     FRENSIE_CHECK( local_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( local_estimator_3->hasUncommittedHistoryContribution() );
 
-    electron.setEnergy( 1.0 );
+    electron.setEnergy( 2.0 );
 
     local_estimator_2->updateFromParticleLeavingCellEvent( electron, 0 );
 
@@ -493,8 +494,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleEnteringCellEventDispatcher,
   }
 
   {
-    FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::PHOTON ), 1 );
-    FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 2 );
+    FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::PHOTON ), 3 );
+    FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::ELECTRON ), 3 );
+    FRENSIE_CHECK_EQUAL( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers( MonteCarlo::POSITRON ), 3 );
 
     MonteCarlo::PhotonState photon( 0ull );
     photon.setWeight( 1.0 );
@@ -507,12 +509,14 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleEnteringCellEventDispatcher,
     dispatcher->dispatchParticleEnteringCellEvent( photon, 1 );
 
     FRENSIE_CHECK( local_estimator_1->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !local_estimator_2->hasUncommittedHistoryContribution() );
-    FRENSIE_CHECK( !local_estimator_3->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( local_estimator_2->hasUncommittedHistoryContribution() );
+    FRENSIE_CHECK( local_estimator_3->hasUncommittedHistoryContribution() );
 
     photon.setEnergy( 1.0 );
 
     local_estimator_1->updateFromParticleLeavingCellEvent( photon, 1 );
+    local_estimator_2->updateFromParticleLeavingCellEvent( photon, 1 );
+    local_estimator_3->updateFromParticleLeavingCellEvent( photon, 1 );
 
     MonteCarlo::ElectronState electron( 0ull );
     electron.setWeight( 1.0 );
@@ -524,7 +528,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleEnteringCellEventDispatcher,
     FRENSIE_CHECK( local_estimator_2->hasUncommittedHistoryContribution() );
     FRENSIE_CHECK( local_estimator_3->hasUncommittedHistoryContribution() );
 
-    electron.setEnergy( 1.0 );
+    electron.setEnergy( 2.0 );
 
     local_estimator_2->updateFromParticleLeavingCellEvent( electron, 1 );
 
@@ -587,21 +591,15 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                                                   1.0,
                                                                   cell_ids ) );
 
-  estimator_1->setParticleTypes( std::vector<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
-
   estimator_2.reset( new MonteCarlo::WeightAndEnergyMultipliedCellPulseHeightEstimator(
                                                                   1,
                                                                   10.0,
                                                                   cell_ids ) );
 
-  estimator_2->setParticleTypes( std::vector<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
-
   estimator_3.reset( new MonteCarlo::WeightAndChargeMultipliedCellPulseHeightEstimator(
                                                                   2,
                                                                   1.0,
                                                                   cell_ids ) );
-
-  estimator_3->setParticleTypes( std::vector<MonteCarlo::ParticleType>( {MonteCarlo::ELECTRON} ) );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
