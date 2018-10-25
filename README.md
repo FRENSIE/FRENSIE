@@ -164,8 +164,8 @@ are described.
 15. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/hdf5/lib:$LD_LIBRARY_PATH`
 16. run `exec bash`
 
-### Building Python, NumPy, H5Py
-1. run `sudo apt-get install python python-dev python-numpy python-h5py`
+### Building Python and NumPy
+1. run `sudo apt-get install python python-dev python-numpy`
 
 ### Building SWIG
 **Basic:**
@@ -207,7 +207,7 @@ are described.
 ### Building MOAB - optional
 1. create a moab directory (e.g. software/moab)
 2. move to the moab directory
-3. run `git clone https://aprobinson@bitbucket.org/aprobinson/moab.git`
+3. run `git clone https://bitbucket.org/aprobinson/moab.git`
 4. move to the moab directory (e.g. software/moab/moab)
 5. run `git checkout Version5.0`
 6. run `autoreconf -fi`
