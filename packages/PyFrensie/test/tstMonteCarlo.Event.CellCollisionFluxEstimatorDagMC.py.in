@@ -73,12 +73,12 @@ class CellCollisionFluxEstimatorDagMCTestCase(unittest.TestCase):
         self.assertTrue( estimator.isEntityAssigned( 7 ) )
         self.assertAlmostEqual( estimator.getEntityNormConstant( 7 ),
                                    2.482476000774601346e+02,
-                                   delta=1e-15 )
+                                   delta=1e-11 )
 
         self.assertTrue( estimator.isEntityAssigned( 9 ) )
         self.assertAlmostEqual( estimator.getEntityNormConstant( 9 ),
                                    1.887322331807171395e+03,
-                                   delta=1e-15 )
+                                   delta=1e-11 )
 
         self.assertTrue( estimator.isEntityAssigned( 13 ) )
         self.assertAlmostEqual( estimator.getEntityNormConstant( 13 ),

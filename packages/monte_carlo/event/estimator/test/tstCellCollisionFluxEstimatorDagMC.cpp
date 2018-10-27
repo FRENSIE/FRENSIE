@@ -63,12 +63,12 @@ FRENSIE_UNIT_TEST_TEMPLATE( CellCollisionFluxEstimator,
   FRENSIE_REQUIRE( estimator->isEntityAssigned( 7 ) );
   FRENSIE_CHECK_FLOATING_EQUALITY( estimator->getEntityNormConstant( 7 ),
                                    2.482476000774601346e+02,
-                                   1e-15 );
+                                   1e-13 );
 
   FRENSIE_REQUIRE( estimator->isEntityAssigned( 9 ) );
   FRENSIE_CHECK_FLOATING_EQUALITY( estimator->getEntityNormConstant( 9 ),
                                    1.887322331807171395e+03,
-                                   1e-15 );
+                                   1e-13 );
 
   FRENSIE_REQUIRE( estimator->isEntityAssigned( 13 ) );
   FRENSIE_CHECK_FLOATING_EQUALITY( estimator->getEntityNormConstant( 13 ),
