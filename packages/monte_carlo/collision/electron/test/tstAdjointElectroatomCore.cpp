@@ -281,7 +281,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     size_t b_threshold_index =
         data_container.getAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex();
 
-    std::shared_ptr<const MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution>
+    std::shared_ptr<MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution>
         b_distribution;
 
     double evaluation_tol = 1e-7;

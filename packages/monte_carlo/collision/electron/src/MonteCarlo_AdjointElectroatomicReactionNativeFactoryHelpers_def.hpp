@@ -218,6 +218,7 @@ createSubshellElectroionizationReaction(
       grid_searcher,
       subshell,
       reaction,
+      std::make_shared<const std::vector<double> >(),
       evaluation_tol );
 
   // Make sure the reaction was created correctly
@@ -251,6 +252,7 @@ createSubshellElectroionizationReactions(
       energy_grid,
       grid_searcher,
       reactions,
+      std::make_shared<const std::vector<double> >(),
       evaluation_tol );
 
   return reactions;
@@ -286,6 +288,7 @@ createBremsstrahlungReaction(
       energy_grid,
       grid_searcher,
       reaction,
+      std::make_shared<const std::vector<double> >(),
       evaluation_tol );
 
   // Make sure the reaction was created correctly

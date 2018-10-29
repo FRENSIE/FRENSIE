@@ -268,6 +268,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
         energy_grid,
         grid_searcher,
         reactions,
+        std::make_shared<const std::vector<double> >(),
         evaluation_tol );
 
   FRENSIE_CHECK_EQUAL( reactions.size(), 1 );
@@ -301,6 +302,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
         energy_grid,
         grid_searcher,
         reaction,
+        std::make_shared<const std::vector<double> >(),
         evaluation_tol );
 
   // Test reaction properties

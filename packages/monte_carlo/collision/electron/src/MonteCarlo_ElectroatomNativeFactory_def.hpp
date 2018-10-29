@@ -181,7 +181,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
                       reaction_pointers,
                       properties.getElectronEvaluationTolerance() );
 
-    for( unsigned i = 0; i < reaction_pointers.size(); ++i )
+    for( size_t i = 0; i < reaction_pointers.size(); ++i )
     {
       scattering_reactions[reaction_pointers[i]->getReactionType()] =
         reaction_pointers[i];

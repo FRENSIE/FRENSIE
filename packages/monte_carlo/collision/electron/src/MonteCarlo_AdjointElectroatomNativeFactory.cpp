@@ -21,6 +21,10 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
         const SimulationAdjointElectronProperties& properties,
         std::shared_ptr<const AdjointElectroatomCore>& adjoint_electroatom_core )
 {
+  std::shared_ptr<const std::vector<double> > critical_line_energies =
+    std::make_shared<const std::vector<double> >(
+      properties.getCriticalAdjointElectronLineEnergies() );
+
   // Extract the common energy grid used for this atom
   std::shared_ptr<std::vector<double> > energy_grid( new std::vector<double> );
   energy_grid->assign(
@@ -106,6 +110,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
                         energy_grid,
                         grid_searcher,
                         reaction_pointer,
+                        critical_line_energies,
                         properties.getAdjointElectronEvaluationTolerance() );
     }
     else if( electron_interp == "Lin-Lin-Log" )
@@ -115,6 +120,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
                         energy_grid,
                         grid_searcher,
                         reaction_pointer,
+                        critical_line_energies,
                         properties.getAdjointElectronEvaluationTolerance() );
     }
     else if( electron_interp == "Lin-Lin-Lin" )
@@ -124,6 +130,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
                         energy_grid,
                         grid_searcher,
                         reaction_pointer,
+                        critical_line_energies,
                         properties.getAdjointElectronEvaluationTolerance() );
     }
     else
@@ -161,6 +168,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
                                 energy_grid,
                                 grid_searcher,
                                 electroionization_reactions,
+                                critical_line_energies,
                                 properties.getAdjointElectronEvaluationTolerance() );
     }
     else if( electron_interp == "Lin-Lin-Log" )
@@ -170,6 +178,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
                                 energy_grid,
                                 grid_searcher,
                                 electroionization_reactions,
+                                critical_line_energies,
                                 properties.getAdjointElectronEvaluationTolerance() );
     }
     else if( electron_interp == "Lin-Lin-Lin" )
@@ -179,6 +188,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
                                 energy_grid,
                                 grid_searcher,
                                 electroionization_reactions,
+                                critical_line_energies,
                                 properties.getAdjointElectronEvaluationTolerance() );
     }
     else
@@ -200,7 +210,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
   adjoint_electroatom_core.reset(
     new AdjointElectroatomCore( energy_grid,
                                 grid_searcher,
-                                std::make_shared<const std::vector<double> >(),
+                                critical_line_energies,
                                 total_forward_reaction,
                                 scattering_reactions,
                                 AdjointElectroatomCore::ConstReactionMap(),

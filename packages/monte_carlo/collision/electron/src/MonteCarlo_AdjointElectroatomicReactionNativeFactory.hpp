@@ -134,6 +134,7 @@ public:
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     const unsigned subshell,
     std::shared_ptr<const AdjointElectroatomicReaction>& electroionization_subshell_reaction,
+    const std::shared_ptr<const std::vector<double> >& critical_line_energies,
     const double evaluation_tol );
 
   //! Create the subshell electroionization adjoint electroatomic reactions
@@ -146,6 +147,7 @@ public:
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     std::vector<std::shared_ptr<const AdjointElectroatomicReaction> >&
         electroionization_subshell_reactions,
+    const std::shared_ptr<const std::vector<double> >& critical_line_energies,
     const double evaluation_tol );
 
   //! Create the bremsstrahlung adjoint electroatomic reaction
@@ -157,6 +159,7 @@ public:
     const std::shared_ptr<const std::vector<double> >& energy_grid,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     std::shared_ptr<const AdjointElectroatomicReaction>& bremsstrahlung_reaction,
+    const std::shared_ptr<const std::vector<double> >& critical_line_energies,
     const double evaluation_tol );
 
   //! Create the forward total reaction (only used to get the cross section)
