@@ -171,7 +171,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
   // Create the reaction
   mp_elastic_reaction.reset(
-      new MonteCarlo::MomentPreservingElasticAdjointElectroatomicReaction<Utility::LinLin>(
+      new MonteCarlo::MomentPreservingElasticAdjointElectroatomicReaction<Utility::LogLog>(
                 energy_grid,
                 cross_section,
                 threshold_index,

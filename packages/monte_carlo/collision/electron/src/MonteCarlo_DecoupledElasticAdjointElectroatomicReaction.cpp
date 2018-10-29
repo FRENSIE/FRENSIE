@@ -15,15 +15,9 @@ namespace MonteCarlo{
 EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticAdjointElectroatomicReaction<Utility::LinLin,false> );
 EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticAdjointElectroatomicReaction<Utility::LinLin,true> );
 
-EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticAdjointElectroatomicReaction<Utility::LinLog,false> );
-EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticAdjointElectroatomicReaction<Utility::LinLog,true> );
-
-EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticAdjointElectroatomicReaction<Utility::LogLin,false> );
-EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticAdjointElectroatomicReaction<Utility::LogLin,true> );
-
 EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticAdjointElectroatomicReaction<Utility::LogLog,false> );
 EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticAdjointElectroatomicReaction<Utility::LogLog,true> );
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

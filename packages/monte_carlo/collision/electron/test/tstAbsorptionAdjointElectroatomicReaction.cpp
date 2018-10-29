@@ -138,7 +138,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create the reaction
     absorption_reaction.reset(
-      new MonteCarlo::AbsorptionAdjointElectroatomicReaction<Utility::LinLin>(
+      new MonteCarlo::AbsorptionAdjointElectroatomicReaction<Utility::LogLog>(
         energy_grid,
         cross_section,
         data_container.getAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex(),

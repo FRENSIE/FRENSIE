@@ -73,7 +73,7 @@ void AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction(
     evaluation_tol );
 
   elastic_reaction.reset(
-    new CoupledElasticAdjointElectroatomicReaction<Utility::LinLin>(
+    new CoupledElasticAdjointElectroatomicReaction<Utility::LogLog>(
       energy_grid,
       total_cross_section,
       raw_adjoint_electroatom_data.getAdjointTotalElasticCrossSectionThresholdEnergyIndex(),
@@ -142,7 +142,7 @@ void AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
 
 
   elastic_reaction.reset(
-    new DecoupledElasticAdjointElectroatomicReaction<Utility::LinLin>(
+    new DecoupledElasticAdjointElectroatomicReaction<Utility::LogLog>(
                                         energy_grid,
                                         total_cross_section,
                                         sampling_ratios,
@@ -258,7 +258,7 @@ void AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction(
 
   // Create the hybrid elastic reaction
   elastic_reaction.reset(
-    new HybridElasticAdjointElectroatomicReaction<Utility::LinLin>(
+    new HybridElasticAdjointElectroatomicReaction<Utility::LogLog>(
             energy_grid,
             hybrid_cross_section,
             hybrid_threshold_energy_index,
@@ -307,7 +307,7 @@ void AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction(
     raw_adjoint_electroatom_data.getAdjointCutoffElasticCrossSectionThresholdEnergyIndex();
 
   elastic_reaction.reset(
-    new CutoffElasticAdjointElectroatomicReaction<Utility::LinLin>(
+    new CutoffElasticAdjointElectroatomicReaction<Utility::LogLog>(
                           energy_grid,
                           elastic_cross_section,
                           threshold_energy_index,
@@ -362,7 +362,7 @@ void AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticRea
     moment_preserving_cross_sections.end() );
 
   elastic_reaction.reset(
-    new MomentPreservingElasticAdjointElectroatomicReaction<Utility::LinLin>(
+    new MomentPreservingElasticAdjointElectroatomicReaction<Utility::LogLog>(
                           energy_grid,
                           elastic_cross_section,
                           threshold_energy_index,
@@ -418,7 +418,7 @@ void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationR
 
   // Create the subshell electroelectric reaction
   electroionization_subshell_reaction.reset(
-      new ElectroionizationSubshellAdjointElectroatomicReaction<Utility::LinLin>(
+      new ElectroionizationSubshellAdjointElectroatomicReaction<Utility::LogLog>(
               energy_grid,
               subshell_cross_section,
               threshold_energy_index,
@@ -512,7 +512,7 @@ void AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
 
   // Create the bremsstrahlung reaction
   bremsstrahlung_reaction =
-    std::make_shared<BremsstrahlungAdjointElectroatomicReaction<Utility::LinLin> >(
+    std::make_shared<BremsstrahlungAdjointElectroatomicReaction<Utility::LogLog> >(
                           energy_grid,
                           bremsstrahlung_cross_section,
                           threshold_energy_index,

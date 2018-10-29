@@ -208,12 +208,6 @@ void DecoupledElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_s
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticAdjointElectroatomicReaction<Utility::LinLin,false> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticAdjointElectroatomicReaction<Utility::LinLin,true> );
 
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticAdjointElectroatomicReaction<Utility::LinLog,false> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticAdjointElectroatomicReaction<Utility::LinLog,true> );
-
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticAdjointElectroatomicReaction<Utility::LogLin,false> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticAdjointElectroatomicReaction<Utility::LogLin,true> );
-
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticAdjointElectroatomicReaction<Utility::LogLog,false> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticAdjointElectroatomicReaction<Utility::LogLog,true> );
 

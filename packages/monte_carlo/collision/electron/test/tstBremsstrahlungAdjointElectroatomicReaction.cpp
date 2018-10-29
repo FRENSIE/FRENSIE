@@ -149,7 +149,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create the reaction
     bremsstrahlung_reaction.reset(
-      new MonteCarlo::BremsstrahlungAdjointElectroatomicReaction<Utility::LinLin>(
+      new MonteCarlo::BremsstrahlungAdjointElectroatomicReaction<Utility::LogLog>(
         energy_grid,
         cross_section,
         data_container.getAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex(),

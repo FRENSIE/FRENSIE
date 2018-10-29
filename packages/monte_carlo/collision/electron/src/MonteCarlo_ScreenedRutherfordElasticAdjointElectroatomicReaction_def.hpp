@@ -100,12 +100,6 @@ void ScreenedRutherfordElasticAdjointElectroatomicReaction<InterpPolicy,processe
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticAdjointElectroatomicReaction<Utility::LinLin,false> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticAdjointElectroatomicReaction<Utility::LinLin,true> );
 
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticAdjointElectroatomicReaction<Utility::LinLog,false> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticAdjointElectroatomicReaction<Utility::LinLog,true> );
-
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticAdjointElectroatomicReaction<Utility::LogLin,false> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticAdjointElectroatomicReaction<Utility::LogLin,true> );
-
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticAdjointElectroatomicReaction<Utility::LogLog,false> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticAdjointElectroatomicReaction<Utility::LogLog,true> );
 

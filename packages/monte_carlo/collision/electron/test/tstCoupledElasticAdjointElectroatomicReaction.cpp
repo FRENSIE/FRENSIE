@@ -23,7 +23,7 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<MonteCarlo::CoupledElasticAdjointElectroatomicReaction<Utility::LinLin> > coupled_elastic_reaction;
+std::shared_ptr<MonteCarlo::CoupledElasticAdjointElectroatomicReaction<Utility::LogLog> > coupled_elastic_reaction;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -163,7 +163,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create the reaction
     coupled_elastic_reaction.reset(
-      new MonteCarlo::CoupledElasticAdjointElectroatomicReaction<Utility::LinLin>(
+      new MonteCarlo::CoupledElasticAdjointElectroatomicReaction<Utility::LogLog>(
         energy_grid,
         total_cross_section,
         data_container.getAdjointTotalElasticCrossSectionThresholdEnergyIndex(),

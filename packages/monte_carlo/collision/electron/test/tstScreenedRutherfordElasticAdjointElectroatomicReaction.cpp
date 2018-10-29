@@ -163,7 +163,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create the reaction
     rutherford_elastic_reaction.reset(
-      new MonteCarlo::ScreenedRutherfordElasticAdjointElectroatomicReaction<Utility::LinLin>(
+      new MonteCarlo::ScreenedRutherfordElasticAdjointElectroatomicReaction<Utility::LogLog>(
                 energy_grid,
                 cross_section,
                 threshold_index,

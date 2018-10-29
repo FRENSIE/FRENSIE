@@ -266,7 +266,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create the atomic excitation reaction
     std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction> ae_reaction(
-        new MonteCarlo::AtomicExcitationAdjointElectroatomicReaction<Utility::LinLin>(
+        new MonteCarlo::AtomicExcitationAdjointElectroatomicReaction<Utility::LogLog>(
             energy_grid,
             ae_cross_section,
             ae_threshold_index,
@@ -295,7 +295,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create the bremsstrahlung scattering reaction
     std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction> b_reaction(
-            new MonteCarlo::BremsstrahlungAdjointElectroatomicReaction<Utility::LinLin>(
+            new MonteCarlo::BremsstrahlungAdjointElectroatomicReaction<Utility::LogLog>(
             energy_grid,
             b_cross_section,
             b_threshold_index,

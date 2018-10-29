@@ -15,15 +15,9 @@ namespace MonteCarlo{
 EXPLICIT_TEMPLATE_CLASS_INST( ElectroionizationAdjointElectroatomicReaction<Utility::LinLin,false> );
 EXPLICIT_TEMPLATE_CLASS_INST( ElectroionizationAdjointElectroatomicReaction<Utility::LinLin,true> );
 
-EXPLICIT_TEMPLATE_CLASS_INST( ElectroionizationAdjointElectroatomicReaction<Utility::LinLog,false> );
-EXPLICIT_TEMPLATE_CLASS_INST( ElectroionizationAdjointElectroatomicReaction<Utility::LinLog,true> );
-
-EXPLICIT_TEMPLATE_CLASS_INST( ElectroionizationAdjointElectroatomicReaction<Utility::LogLin,false> );
-EXPLICIT_TEMPLATE_CLASS_INST( ElectroionizationAdjointElectroatomicReaction<Utility::LogLin,true> );
-
 EXPLICIT_TEMPLATE_CLASS_INST( ElectroionizationAdjointElectroatomicReaction<Utility::LogLog,false> );
 EXPLICIT_TEMPLATE_CLASS_INST( ElectroionizationAdjointElectroatomicReaction<Utility::LogLog,true> );
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

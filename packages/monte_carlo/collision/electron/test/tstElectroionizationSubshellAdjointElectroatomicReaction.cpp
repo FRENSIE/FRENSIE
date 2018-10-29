@@ -25,7 +25,7 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<MonteCarlo::ElectroionizationSubshellAdjointElectroatomicReaction<Utility::LinLin> >
+std::shared_ptr<MonteCarlo::ElectroionizationSubshellAdjointElectroatomicReaction<Utility::LogLog> >
     first_subshell_reaction, last_subshell_reaction;
 
 double max_ionization_subshell_adjoint_energy;
@@ -220,7 +220,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create the subshell electroelectric reaction
     first_subshell_reaction.reset(
-        new MonteCarlo::ElectroionizationSubshellAdjointElectroatomicReaction<Utility::LinLin, false>(
+        new MonteCarlo::ElectroionizationSubshellAdjointElectroatomicReaction<Utility::LogLog, false>(
                 energy_grid,
                 subshell_cross_section,
                 threshold_energy_index,
@@ -263,7 +263,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create the subshell electroelectric reaction
     last_subshell_reaction.reset(
-        new MonteCarlo::ElectroionizationSubshellAdjointElectroatomicReaction<Utility::LinLin, false>(
+        new MonteCarlo::ElectroionizationSubshellAdjointElectroatomicReaction<Utility::LogLog, false>(
                 energy_grid,
                 subshell_cross_section,
                 threshold_energy_index,

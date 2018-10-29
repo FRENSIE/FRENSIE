@@ -183,7 +183,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create the reaction
     elastic_reaction.reset(
-      new MonteCarlo::CutoffElasticAdjointElectroatomicReaction<Utility::LinLin>(
+      new MonteCarlo::CutoffElasticAdjointElectroatomicReaction<Utility::LogLog>(
                 energy_grid,
                 elastic_cross_section,
                 elastic_threshold_index,
@@ -206,7 +206,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create the reaction
     cutoff_elastic_reaction.reset(
-      new MonteCarlo::CutoffElasticAdjointElectroatomicReaction<Utility::LinLin>(
+      new MonteCarlo::CutoffElasticAdjointElectroatomicReaction<Utility::LogLog>(
                 energy_grid,
                 cutoff_cross_section,
                 elastic_threshold_index,

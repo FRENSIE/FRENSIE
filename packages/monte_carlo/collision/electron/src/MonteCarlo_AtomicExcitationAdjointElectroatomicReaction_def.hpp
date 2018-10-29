@@ -99,12 +99,6 @@ void AtomicExcitationAdjointElectroatomicReaction<InterpPolicy,processed_cross_s
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AtomicExcitationAdjointElectroatomicReaction<Utility::LinLin,false> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AtomicExcitationAdjointElectroatomicReaction<Utility::LinLin,true> );
 
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AtomicExcitationAdjointElectroatomicReaction<Utility::LinLog,false> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AtomicExcitationAdjointElectroatomicReaction<Utility::LinLog,true> );
-
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AtomicExcitationAdjointElectroatomicReaction<Utility::LogLin,false> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AtomicExcitationAdjointElectroatomicReaction<Utility::LogLin,true> );
-
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AtomicExcitationAdjointElectroatomicReaction<Utility::LogLog,false> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AtomicExcitationAdjointElectroatomicReaction<Utility::LogLog,true> );
 

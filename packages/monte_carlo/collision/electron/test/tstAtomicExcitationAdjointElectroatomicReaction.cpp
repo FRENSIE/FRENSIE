@@ -148,7 +148,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create the reaction
     excitation_reaction.reset(
-      new MonteCarlo::AtomicExcitationAdjointElectroatomicReaction<Utility::LinLin>(
+      new MonteCarlo::AtomicExcitationAdjointElectroatomicReaction<Utility::LogLog>(
         energy_grid,
         cross_section,
         data_container.getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex(),

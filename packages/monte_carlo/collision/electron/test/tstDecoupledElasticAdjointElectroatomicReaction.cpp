@@ -22,7 +22,7 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<MonteCarlo::DecoupledElasticAdjointElectroatomicReaction<Utility::LinLin> > decoupled_elastic_reaction;
+std::shared_ptr<MonteCarlo::DecoupledElasticAdjointElectroatomicReaction<Utility::LogLog> > decoupled_elastic_reaction;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -234,7 +234,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create the reaction
     decoupled_elastic_reaction.reset(
-      new MonteCarlo::DecoupledElasticAdjointElectroatomicReaction<Utility::LinLin>(
+      new MonteCarlo::DecoupledElasticAdjointElectroatomicReaction<Utility::LogLog>(
             energy_grid,
             total_cross_section,
             sampling_ratios,

@@ -55,7 +55,7 @@ void AdjointElectroatomicReactionNativeFactory::createScreenedRutherfordElasticR
 
 
   elastic_reaction.reset(
-    new ScreenedRutherfordElasticAdjointElectroatomicReaction<Utility::LinLin>(
+    new ScreenedRutherfordElasticAdjointElectroatomicReaction<Utility::LogLog>(
                           energy_grid,
                           elastic_cross_section,
                           threshold_energy_index,
@@ -80,7 +80,7 @@ void AdjointElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
   // Atomic Excitation cross section
   std::shared_ptr<std::vector<double> >
     atomic_excitation_cross_section( new std::vector<double> );
-  
+
   atomic_excitation_cross_section->assign(
     raw_adjoint_electroatom_data.getAdjointAtomicExcitationCrossSection().begin(),
     raw_adjoint_electroatom_data.getAdjointAtomicExcitationCrossSection().end() );
@@ -98,7 +98,7 @@ void AdjointElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
                                                  energy_loss_distribution );
 
   atomic_excitation_reaction.reset(
-    new AtomicExcitationAdjointElectroatomicReaction<Utility::LinLin>(
+    new AtomicExcitationAdjointElectroatomicReaction<Utility::LogLog>(
                                                 energy_grid,
                                                 atomic_excitation_cross_section,
                                                 threshold_energy_index,
