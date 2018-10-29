@@ -23,7 +23,7 @@ namespace MonteCarlo{
 template<typename ContributionMultiplierPolicy>
 SurfaceCurrentEstimator<ContributionMultiplierPolicy>::SurfaceCurrentEstimator()
 { /* ... */ }
-  
+
 // Constructor
 template<typename ContributionMultiplierPolicy>
 SurfaceCurrentEstimator<ContributionMultiplierPolicy>::SurfaceCurrentEstimator(
@@ -100,6 +100,10 @@ EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SurfaceCurrentEstimator<MonteC
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndEnergyMultipliedSurfaceCurrentEstimator, MonteCarlo );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SurfaceCurrentEstimator<MonteCarlo::WeightAndEnergyMultiplier> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightAndChargeMultipliedSurfaceCurrentEstimator, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightAndChargeMultiplier> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SurfaceCurrentEstimator<MonteCarlo::WeightAndChargeMultiplier> );
 
 #endif // end MONTE_CARLO_SURFACE_CURRENT_ESTIMATOR_DEF_HPP
 

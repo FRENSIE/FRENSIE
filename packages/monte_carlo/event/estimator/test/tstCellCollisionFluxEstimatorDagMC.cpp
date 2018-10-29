@@ -30,7 +30,8 @@ std::shared_ptr<const Geometry::Model> model;
 FRENSIE_UNIT_TEST_TEMPLATE( CellCollisionFluxEstimator,
                             constructor,
                             MonteCarlo::WeightMultiplier,
-                            MonteCarlo::WeightAndEnergyMultiplier )
+                            MonteCarlo::WeightAndEnergyMultiplier,
+                            MonteCarlo::WeightAndChargeMultiplier )
 {
   FETCH_TEMPLATE_PARAM( 0, ContributionMultiplierPolicy );
 

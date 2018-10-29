@@ -66,89 +66,129 @@ class EventHandlerTestCase(unittest.TestCase):
                                                               cell_volumes )
       cls.estimator_2.setParticleTypes( [MonteCarlo.ELECTRON] )
 
-      cls.estimator_3 = Event.WeightMultipliedCellTrackLengthFluxEstimator(
+
+      cls.estimator_3 = Event.WeightAndChargeMultipliedCellCollisionFluxEstimator(
                                                               2,
                                                               1.0,
                                                               cell_ids,
                                                               cell_volumes )
-      cls.estimator_3.setParticleTypes( [MonteCarlo.PHOTON] )
+      cls.estimator_3.setParticleTypes( [MonteCarlo.ELECTRON] )
 
-      cls.estimator_4 = Event.WeightAndEnergyMultipliedCellTrackLengthFluxEstimator(
+      cls.estimator_4 = Event.WeightMultipliedCellTrackLengthFluxEstimator(
                                                               3,
+                                                              1.0,
+                                                              cell_ids,
+                                                              cell_volumes )
+      cls.estimator_4.setParticleTypes( [MonteCarlo.PHOTON] )
+
+      cls.estimator_5 = Event.WeightAndEnergyMultipliedCellTrackLengthFluxEstimator(
+                                                              4,
                                                               10.0,
                                                               cell_ids,
                                                               cell_volumes )
-      cls.estimator_4.setParticleTypes( [MonteCarlo.ELECTRON] )
+      cls.estimator_5.setParticleTypes( [MonteCarlo.ELECTRON] )
 
-      cls.estimator_5 = Event.WeightMultipliedCellPulseHeightEstimator(
-                                                              4,
+      cls.estimator_6 = Event.WeightAndChargeMultipliedCellTrackLengthFluxEstimator(
+                                                              5,
+                                                              1.0,
+                                                              cell_ids,
+                                                              cell_volumes )
+      cls.estimator_6.setParticleTypes( [MonteCarlo.ELECTRON] )
+
+      cls.estimator_7 = Event.WeightMultipliedCellPulseHeightEstimator(
+                                                              6,
                                                               1.0,
                                                               cell_ids )
-      cls.estimator_5.setParticleTypes( [MonteCarlo.PHOTON, MonteCarlo.ELECTRON] )
+      cls.estimator_7.setParticleTypes( [MonteCarlo.PHOTON, MonteCarlo.ELECTRON] )
 
-      cls.estimator_6 = Event.WeightAndEnergyMultipliedCellPulseHeightEstimator(
-                                                              5,
+      cls.estimator_8 = Event.WeightAndEnergyMultipliedCellPulseHeightEstimator(
+                                                              7,
                                                               10.0,
                                                               cell_ids )
-      cls.estimator_6.setParticleTypes( [MonteCarlo.PHOTON, MonteCarlo.ELECTRON] )
+      cls.estimator_8.setParticleTypes( [MonteCarlo.PHOTON, MonteCarlo.ELECTRON] )
 
-      cls.estimator_7 = Event.WeightMultipliedSurfaceFluxEstimator(
-                                                             6,
+      cls.estimator_9 = Event.WeightAndChargeMultipliedCellPulseHeightEstimator(
+                                                              8,
+                                                              1.0,
+                                                              cell_ids )
+      cls.estimator_9.setParticleTypes( [MonteCarlo.PHOTON, MonteCarlo.ELECTRON] )
+
+      cls.estimator_10 = Event.WeightMultipliedSurfaceFluxEstimator(
+                                                             9,
                                                              1.0,
                                                              surface_ids,
                                                              surface_areas )
-      cls.estimator_7.setParticleTypes( [MonteCarlo.ELECTRON] )
+      cls.estimator_10.setParticleTypes( [MonteCarlo.ELECTRON] )
 
-      cls.estimator_7.setSourceEnergyDiscretization( [ 1.0, 2.0, 3.0 ] )
+      cls.estimator_10.setSourceEnergyDiscretization( [ 1.0, 2.0, 3.0 ] )
 
       delta_energy = Distribution.DeltaDistribution( 1.0 )
       response_functions = [None] * ( 2 )
       response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
       response_functions[1] = ActiveRegion.EnergyParticleResponseFunction( delta_energy )
 
-      cls.estimator_7.setResponseFunctions( response_functions )
+      cls.estimator_10.setResponseFunctions( response_functions )
 
-      cls.estimator_8 = Event.WeightAndEnergyMultipliedSurfaceFluxEstimator(
-                                                             7,
+      cls.estimator_11 = Event.WeightAndEnergyMultipliedSurfaceFluxEstimator(
+                                                             10,
                                                              10.0,
                                                              surface_ids,
                                                              surface_areas )
-      cls.estimator_8.setParticleTypes( [MonteCarlo.ELECTRON] )
+      cls.estimator_11.setParticleTypes( [MonteCarlo.ELECTRON] )
 
-      cls.estimator_9 = Event.WeightMultipliedSurfaceCurrentEstimator(
-                                                               8,
+      cls.estimator_12 = Event.WeightAndChargeMultipliedSurfaceFluxEstimator(
+                                                             11,
+                                                             1.0,
+                                                             surface_ids,
+                                                             surface_areas )
+      cls.estimator_12.setParticleTypes( [MonteCarlo.ELECTRON] )
+
+      cls.estimator_13 = Event.WeightMultipliedSurfaceCurrentEstimator(
+                                                               12,
                                                                1.0,
                                                                surface_ids )
-      cls.estimator_9.setParticleTypes( [MonteCarlo.PHOTON] )
+      cls.estimator_13.setParticleTypes( [MonteCarlo.PHOTON] )
 
-      cls.estimator_9.setSourceEnergyDiscretization( [ 1.0, 2.0, 3.0 ] )
+      cls.estimator_13.setSourceEnergyDiscretization( [ 1.0, 2.0, 3.0 ] )
 
       delta_energy = Distribution.DeltaDistribution( 1.0 )
       response_functions = [None] * ( 2 )
       response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
       response_functions[1] = ActiveRegion.EnergyParticleResponseFunction( delta_energy )
 
-      cls.estimator_9.setResponseFunctions( response_functions )
+      cls.estimator_13.setResponseFunctions( response_functions )
 
-      cls.estimator_10 = Event.WeightAndEnergyMultipliedSurfaceCurrentEstimator(
-                                                               9,
+      cls.estimator_14 = Event.WeightAndEnergyMultipliedSurfaceCurrentEstimator(
+                                                               13,
                                                                10.0,
                                                                surface_ids )
-      cls.estimator_10.setParticleTypes( [MonteCarlo.ELECTRON] )
+      cls.estimator_14.setParticleTypes( [MonteCarlo.ELECTRON] )
+
+      cls.estimator_15 = Event.WeightAndChargeMultipliedSurfaceCurrentEstimator(
+                                                               14,
+                                                               1.0,
+                                                               surface_ids )
+      cls.estimator_15.setParticleTypes( [MonteCarlo.ELECTRON] )
 
       hex_mesh = Mesh.StructuredHexMesh( [0.0, 1.0, 2.0], [0.0, 1.0, 2.0], [0.0, 1.0, 2.0] )
 
       cls.mesh_estimator_1 = Event.WeightMultipliedMeshTrackLengthFluxEstimator(
-                                                                  10,
+                                                                  15,
                                                                   1.0,
                                                                   hex_mesh )
       cls.mesh_estimator_1.setParticleTypes( [MonteCarlo.PHOTON] )
 
       cls.mesh_estimator_2 = Event.WeightAndEnergyMultipliedMeshTrackLengthFluxEstimator(
-                                                                  11,
+                                                                  16,
                                                                   10.0,
                                                                   hex_mesh )
       cls.mesh_estimator_2.setParticleTypes( [MonteCarlo.ELECTRON] )
+
+      cls.mesh_estimator_3 = Event.WeightAndChargeMultipliedMeshTrackLengthFluxEstimator(
+                                                                  17,
+                                                                  1.0,
+                                                                  hex_mesh )
+      cls.mesh_estimator_3.setParticleTypes( [MonteCarlo.ELECTRON] )
 
       cls.particle_tracker = Event.ParticleTracker( 0, 100 )
 
@@ -199,13 +239,37 @@ class EventHandlerTestCase(unittest.TestCase):
         self.assertTrue( event_handler.doesEstimatorExist( self.estimator_10.getId() ) )
         self.assertEqual( event_handler.getNumberOfEstimators(), 10 )
 
+        event_handler.addEstimator( self.estimator_11 )
+        self.assertTrue( event_handler.doesEstimatorExist( self.estimator_11.getId() ) )
+        self.assertEqual( event_handler.getNumberOfEstimators(), 11 )
+
+        event_handler.addEstimator( self.estimator_12 )
+        self.assertTrue( event_handler.doesEstimatorExist( self.estimator_12.getId() ) )
+        self.assertEqual( event_handler.getNumberOfEstimators(), 12 )
+
+        event_handler.addEstimator( self.estimator_13 )
+        self.assertTrue( event_handler.doesEstimatorExist( self.estimator_13.getId() ) )
+        self.assertEqual( event_handler.getNumberOfEstimators(), 13 )
+
+        event_handler.addEstimator( self.estimator_14 )
+        self.assertTrue( event_handler.doesEstimatorExist( self.estimator_14.getId() ) )
+        self.assertEqual( event_handler.getNumberOfEstimators(), 14 )
+
+        event_handler.addEstimator( self.estimator_15 )
+        self.assertTrue( event_handler.doesEstimatorExist( self.estimator_15.getId() ) )
+        self.assertEqual( event_handler.getNumberOfEstimators(), 15 )
+
         event_handler.addEstimator( self.mesh_estimator_1 )
         self.assertTrue( event_handler.doesEstimatorExist( self.mesh_estimator_1.getId() ) )
-        self.assertEqual( event_handler.getNumberOfEstimators(), 11 )
+        self.assertEqual( event_handler.getNumberOfEstimators(), 16 )
 
         event_handler.addEstimator( self.mesh_estimator_2 )
         self.assertTrue( event_handler.doesEstimatorExist( self.mesh_estimator_2.getId() ) )
-        self.assertEqual( event_handler.getNumberOfEstimators(), 12 )
+        self.assertEqual( event_handler.getNumberOfEstimators(), 17 )
+
+        event_handler.addEstimator( self.mesh_estimator_3 )
+        self.assertTrue( event_handler.doesEstimatorExist( self.mesh_estimator_3.getId() ) )
+        self.assertEqual( event_handler.getNumberOfEstimators(), 18 )
 
         with self.assertRaises(RuntimeError):
           # Check that an estimator that has no particle types set will
@@ -334,6 +398,26 @@ class EventHandlerTestCase(unittest.TestCase):
         estimator = event_handler.getEstimator( self.estimator_10.getId() )
         self.assertTrue( estimator.getId() == self.estimator_10.getId() )
 
+        event_handler.addEstimator( self.estimator_11 )
+        estimator = event_handler.getEstimator( self.estimator_11.getId() )
+        self.assertTrue( estimator.getId() == self.estimator_11.getId() )
+
+        event_handler.addEstimator( self.estimator_12 )
+        estimator = event_handler.getEstimator( self.estimator_12.getId() )
+        self.assertTrue( estimator.getId() == self.estimator_12.getId() )
+
+        event_handler.addEstimator( self.estimator_13 )
+        estimator = event_handler.getEstimator( self.estimator_13.getId() )
+        self.assertTrue( estimator.getId() == self.estimator_13.getId() )
+
+        event_handler.addEstimator( self.estimator_14 )
+        estimator = event_handler.getEstimator( self.estimator_14.getId() )
+        self.assertTrue( estimator.getId() == self.estimator_14.getId() )
+
+        event_handler.addEstimator( self.estimator_15 )
+        estimator = event_handler.getEstimator( self.estimator_15.getId() )
+        self.assertTrue( estimator.getId() == self.estimator_15.getId() )
+
         event_handler.addEstimator( self.mesh_estimator_1 )
         estimator = event_handler.getEstimator( self.mesh_estimator_1.getId() )
         self.assertTrue( estimator.getId() == self.mesh_estimator_1.getId() )
@@ -341,6 +425,10 @@ class EventHandlerTestCase(unittest.TestCase):
         event_handler.addEstimator( self.mesh_estimator_2 )
         estimator = event_handler.getEstimator( self.mesh_estimator_2.getId() )
         self.assertTrue( estimator.getId() == self.mesh_estimator_2.getId() )
+
+        event_handler.addEstimator( self.mesh_estimator_3 )
+        estimator = event_handler.getEstimator( self.mesh_estimator_3.getId() )
+        self.assertTrue( estimator.getId() == self.mesh_estimator_3.getId() )
 
 #-----------------------------------------------------------------------------#
     # Check that particle trackers can be added

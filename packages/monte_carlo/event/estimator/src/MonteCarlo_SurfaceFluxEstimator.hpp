@@ -92,6 +92,9 @@ typedef SurfaceFluxEstimator<WeightMultiplier> WeightMultipliedSurfaceFluxEstima
 //! The weight and energy multiplied surface flux estimator
 typedef SurfaceFluxEstimator<WeightAndEnergyMultiplier> WeightAndEnergyMultipliedSurfaceFluxEstimator;
 
+//! The weight and charge multiplied cell collision flux estimator
+typedef SurfaceFluxEstimator<WeightAndChargeMultiplier> WeightAndChargeMultipliedSurfaceFluxEstimator;
+
 } // end MonteCarlo namespace
 
 BOOST_SERIALIZATION_CLASS1_VERSION( SurfaceFluxEstimator, MonteCarlo, 0 );

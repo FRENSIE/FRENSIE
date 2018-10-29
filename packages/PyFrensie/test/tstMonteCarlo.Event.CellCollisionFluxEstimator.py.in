@@ -56,6 +56,16 @@ class CellCollisionFluxEstimatorTestCase(unittest.TestCase):
         self.assertFalse( estimator.isSurfaceEstimator() )
         self.assertFalse( estimator.isMeshEstimator() )
 
+        estimator = Event.WeightAndChargeMultipliedCellCollisionFluxEstimator(
+                   2,
+                   1.0,
+                   cell_ids,
+                   cell_norm_consts )
+
+        self.assertTrue( estimator.isCellEstimator() )
+        self.assertFalse( estimator.isSurfaceEstimator() )
+        self.assertFalse( estimator.isMeshEstimator() )
+
     def testUpdateFromParticleCollidingInCellEvent(self):
         "*Test MonteCarlo.Event.CellCollisionFluxEstimator updateFromParticleCollidingInCellEvent"
         cell_ids = [0, 1]
@@ -76,6 +86,13 @@ class CellCollisionFluxEstimatorTestCase(unittest.TestCase):
                    cell_norm_consts )
         estimator_2_base = estimator_2
 
+        estimator_3 = Event.WeightAndChargeMultipliedCellCollisionFluxEstimator(
+                   2,
+                   1.0,
+                   cell_ids,
+                   cell_norm_consts )
+        estimator_3_base = estimator_3
+
         # Set the energy bins
         energy_bin_boundaries = [None] * ( 3 )
         energy_bin_boundaries[0] = 0.0
@@ -84,6 +101,7 @@ class CellCollisionFluxEstimatorTestCase(unittest.TestCase):
 
         estimator_1_base.setEnergyDiscretization( energy_bin_boundaries )
         estimator_2_base.setEnergyDiscretization( energy_bin_boundaries )
+        estimator_3_base.setEnergyDiscretization( energy_bin_boundaries )
 
         # Set the time bins
         time_bin_boundaries = [None] * ( 3 )
@@ -93,6 +111,7 @@ class CellCollisionFluxEstimatorTestCase(unittest.TestCase):
 
         estimator_1_base.setTimeDiscretization( time_bin_boundaries )
         estimator_2_base.setTimeDiscretization( time_bin_boundaries )
+        estimator_3_base.setTimeDiscretization( time_bin_boundaries )
 
         # Set collision number bins
         collision_number_bins = [None] * ( 2 )
@@ -101,19 +120,22 @@ class CellCollisionFluxEstimatorTestCase(unittest.TestCase):
 
         estimator_1_base.setCollisionNumberDiscretization( collision_number_bins )
         estimator_2_base.setCollisionNumberDiscretization( collision_number_bins )
+        estimator_3_base.setCollisionNumberDiscretization( collision_number_bins )
 
         # Set the particle types
         particle_types = [None] * ( 1 )
-        particle_types[0] = MonteCarlo.PHOTON
+        particle_types[0] = MonteCarlo.ELECTRON
 
         estimator_1_base.setParticleTypes( particle_types )
         estimator_2_base.setParticleTypes( particle_types )
+        estimator_3_base.setParticleTypes( particle_types )
 
         self.assertFalse( estimator_1_base.hasUncommittedHistoryContribution() )
         self.assertFalse( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_3_base.hasUncommittedHistoryContribution() )
 
         # bin 0
-        particle = MonteCarlo.PhotonState( 0 )
+        particle = MonteCarlo.ElectronState( 0 )
         particle.setWeight( 1.0 )
         particle.setEnergy( 1.0 )
         particle.setTime( 2.0 )
@@ -124,8 +146,12 @@ class CellCollisionFluxEstimatorTestCase(unittest.TestCase):
         estimator_2.updateFromParticleCollidingInCellEvent( particle, 0, 1.0 )
         estimator_2.updateFromParticleCollidingInCellEvent( particle, 1, 1.0 )
 
+        estimator_3.updateFromParticleCollidingInCellEvent( particle, 0, 1.0 )
+        estimator_3.updateFromParticleCollidingInCellEvent( particle, 1, 1.0 )
+
         self.assertTrue( estimator_1.hasUncommittedHistoryContribution() )
         self.assertTrue( estimator_2.hasUncommittedHistoryContribution() )
+        self.assertTrue( estimator_3.hasUncommittedHistoryContribution() )
 
         # bin 1
         particle.setEnergy( 0.1 )
@@ -136,6 +162,10 @@ class CellCollisionFluxEstimatorTestCase(unittest.TestCase):
         particle.setWeight( 10.0 )
         estimator_2.updateFromParticleCollidingInCellEvent( particle, 0, 1.0 )
         estimator_2.updateFromParticleCollidingInCellEvent( particle, 1, 1.0 )
+
+        particle.setWeight( 1.0 )
+        estimator_3.updateFromParticleCollidingInCellEvent( particle, 0, 1.0 )
+        estimator_3.updateFromParticleCollidingInCellEvent( particle, 1, 1.0 )
 
         # bin 2
         particle.setTime( 1.0 )
@@ -148,6 +178,9 @@ class CellCollisionFluxEstimatorTestCase(unittest.TestCase):
         estimator_2.updateFromParticleCollidingInCellEvent( particle, 0, 1.0 )
         estimator_2.updateFromParticleCollidingInCellEvent( particle, 1, 1.0 )
 
+        estimator_3.updateFromParticleCollidingInCellEvent( particle, 0, 1.0 )
+        estimator_3.updateFromParticleCollidingInCellEvent( particle, 1, 1.0 )
+
         # bin 3
         particle.setEnergy( 0.1 )
 
@@ -157,6 +190,10 @@ class CellCollisionFluxEstimatorTestCase(unittest.TestCase):
         particle.setWeight( 10.0 )
         estimator_2.updateFromParticleCollidingInCellEvent( particle, 0, 1.0 )
         estimator_2.updateFromParticleCollidingInCellEvent( particle, 1, 1.0 )
+
+        particle.setWeight( 1.0 )
+        estimator_3.updateFromParticleCollidingInCellEvent( particle, 0, 1.0 )
+        estimator_3.updateFromParticleCollidingInCellEvent( particle, 1, 1.0 )
 
         # bin 4
         particle.incrementCollisionNumber()
@@ -170,6 +207,9 @@ class CellCollisionFluxEstimatorTestCase(unittest.TestCase):
         estimator_2.updateFromParticleCollidingInCellEvent( particle, 0, 1.0 )
         estimator_2.updateFromParticleCollidingInCellEvent( particle, 1, 1.0 )
 
+        estimator_3.updateFromParticleCollidingInCellEvent( particle, 0, 1.0 )
+        estimator_3.updateFromParticleCollidingInCellEvent( particle, 1, 1.0 )
+
         # bin 5
         particle.setEnergy( 0.1 )
 
@@ -179,6 +219,10 @@ class CellCollisionFluxEstimatorTestCase(unittest.TestCase):
         particle.setWeight( 10.0 )
         estimator_2.updateFromParticleCollidingInCellEvent( particle, 0, 1.0 )
         estimator_2.updateFromParticleCollidingInCellEvent( particle, 1, 1.0 )
+
+        particle.setWeight( 1.0 )
+        estimator_3.updateFromParticleCollidingInCellEvent( particle, 0, 1.0 )
+        estimator_3.updateFromParticleCollidingInCellEvent( particle, 1, 1.0 )
 
         # bin 6
         particle.setTime( 1.0 )
@@ -191,6 +235,9 @@ class CellCollisionFluxEstimatorTestCase(unittest.TestCase):
         estimator_2.updateFromParticleCollidingInCellEvent( particle, 0, 1.0 )
         estimator_2.updateFromParticleCollidingInCellEvent( particle, 1, 1.0 )
 
+        estimator_3.updateFromParticleCollidingInCellEvent( particle, 0, 1.0 )
+        estimator_3.updateFromParticleCollidingInCellEvent( particle, 1, 1.0 )
+
         # bin 7
         particle.setEnergy( 0.1 )
 
@@ -201,12 +248,18 @@ class CellCollisionFluxEstimatorTestCase(unittest.TestCase):
         estimator_2.updateFromParticleCollidingInCellEvent( particle, 0, 1.0 )
         estimator_2.updateFromParticleCollidingInCellEvent( particle, 1, 1.0 )
 
+        particle.setWeight( 1.0 )
+        estimator_3.updateFromParticleCollidingInCellEvent( particle, 0, 1.0 )
+        estimator_3.updateFromParticleCollidingInCellEvent( particle, 1, 1.0 )
+
         # Commit the contributions
         estimator_1_base.commitHistoryContribution()
         estimator_2_base.commitHistoryContribution()
+        estimator_3_base.commitHistoryContribution()
 
         self.assertFalse( estimator_1_base.hasUncommittedHistoryContribution() )
         self.assertFalse( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_3_base.hasUncommittedHistoryContribution() )
 
         Event.ParticleHistoryObserver.setNumberOfHistories( 1.0 )
         Event.ParticleHistoryObserver.setElapsedTime( 1.0 )
@@ -236,6 +289,18 @@ class CellCollisionFluxEstimatorTestCase(unittest.TestCase):
         self.assertSequenceEqual( list(entity_bin_first_moments), [ 1.0 ]*8 )
         self.assertSequenceEqual( list(entity_bin_second_moments), [ 1.0 ]*8 )
 
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 0 )
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments), [ -1.0 ]*8 )
+        self.assertSequenceEqual( list(entity_bin_second_moments), [ 1.0 ]*8 )
+
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 1 )
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 1 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments), [ -1.0 ]*8 )
+        self.assertSequenceEqual( list(entity_bin_second_moments), [ 1.0 ]*8 )
+
         # Check the total bin data moments
         total_bin_first_moments = estimator_1_base.getTotalBinDataFirstMoments()
         total_bin_second_moments = estimator_1_base.getTotalBinDataSecondMoments()
@@ -247,6 +312,12 @@ class CellCollisionFluxEstimatorTestCase(unittest.TestCase):
         total_bin_second_moments = estimator_2_base.getTotalBinDataSecondMoments()
 
         self.assertSequenceEqual( list(total_bin_first_moments), [ 2.0 ]*8 )
+        self.assertSequenceEqual( list(total_bin_second_moments), [ 4.0 ]*8 )
+
+        total_bin_first_moments = estimator_3_base.getTotalBinDataFirstMoments()
+        total_bin_second_moments = estimator_3_base.getTotalBinDataSecondMoments()
+
+        self.assertSequenceEqual( list(total_bin_first_moments), [ -2.0 ]*8 )
         self.assertSequenceEqual( list(total_bin_second_moments), [ 4.0 ]*8 )
 
         # Check  the entity total data moments
@@ -290,6 +361,26 @@ class CellCollisionFluxEstimatorTestCase(unittest.TestCase):
         self.assertSequenceEqual( list(entity_total_third_moments), [ 512.0 ]*1 )
         self.assertSequenceEqual( list(entity_total_fourth_moments), [ 4096.0 ]*1 )
 
+        entity_total_first_moments = estimator_3_base.getEntityTotalDataFirstMoments( 0 )
+        entity_total_second_moments = estimator_3_base.getEntityTotalDataSecondMoments( 0 )
+        entity_total_third_moments = estimator_3_base.getEntityTotalDataThirdMoments( 0 )
+        entity_total_fourth_moments = estimator_3_base.getEntityTotalDataFourthMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments), [ -8.0 ]*1 )
+        self.assertSequenceEqual( list(entity_total_second_moments), [ 64.0 ]*1 )
+        self.assertSequenceEqual( list(entity_total_third_moments), [ -512.0 ]*1 )
+        self.assertSequenceEqual( list(entity_total_fourth_moments), [ 4096.0 ]*1 )
+
+        entity_total_first_moments = estimator_3_base.getEntityTotalDataFirstMoments( 1 )
+        entity_total_second_moments = estimator_3_base.getEntityTotalDataSecondMoments( 1 )
+        entity_total_third_moments = estimator_3_base.getEntityTotalDataThirdMoments( 1 )
+        entity_total_fourth_moments = estimator_3_base.getEntityTotalDataFourthMoments( 1 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments), [ -8.0 ]*1 )
+        self.assertSequenceEqual( list(entity_total_second_moments), [ 64.0 ]*1 )
+        self.assertSequenceEqual( list(entity_total_third_moments), [ -512.0 ]*1 )
+        self.assertSequenceEqual( list(entity_total_fourth_moments), [ 4096.0 ]*1 )
+
         # Check the total data moments
         total_first_moments = estimator_1_base.getTotalDataFirstMoments()
         total_second_moments = estimator_1_base.getTotalDataSecondMoments()
@@ -309,6 +400,16 @@ class CellCollisionFluxEstimatorTestCase(unittest.TestCase):
         self.assertSequenceEqual( list(total_first_moments), [ 16.0 ]*1 )
         self.assertSequenceEqual( list(total_second_moments), [ 256.0 ]*1 )
         self.assertSequenceEqual( list(total_third_moments), [ 4096.0 ]*1 )
+        self.assertSequenceEqual( list(total_fourth_moments), [ 65536.0 ]*1 )
+
+        total_first_moments = estimator_3_base.getTotalDataFirstMoments()
+        total_second_moments = estimator_3_base.getTotalDataSecondMoments()
+        total_third_moments = estimator_3_base.getTotalDataThirdMoments()
+        total_fourth_moments = estimator_3_base.getTotalDataFourthMoments()
+
+        self.assertSequenceEqual( list(total_first_moments), [ -16.0 ]*1 )
+        self.assertSequenceEqual( list(total_second_moments), [ 256.0 ]*1 )
+        self.assertSequenceEqual( list(total_third_moments), [ -4096.0 ]*1 )
         self.assertSequenceEqual( list(total_fourth_moments), [ 65536.0 ]*1 )
 
 #-----------------------------------------------------------------------------#

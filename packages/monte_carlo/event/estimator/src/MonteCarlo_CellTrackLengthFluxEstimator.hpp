@@ -96,6 +96,9 @@ typedef CellTrackLengthFluxEstimator<WeightMultiplier> WeightMultipliedCellTrack
 //! The weight and energy multiplied cell track length flux estimator
 typedef CellTrackLengthFluxEstimator<WeightAndEnergyMultiplier> WeightAndEnergyMultipliedCellTrackLengthFluxEstimator;
 
+//! The weight and charge multiplied cell collision flux estimator
+typedef CellTrackLengthFluxEstimator<WeightAndChargeMultiplier> WeightAndChargeMultipliedCellTrackLengthFluxEstimator;
+
 } // end MonteCarlo namespace
 
 BOOST_SERIALIZATION_CLASS1_VERSION( CellTrackLengthFluxEstimator, MonteCarlo, 0 );

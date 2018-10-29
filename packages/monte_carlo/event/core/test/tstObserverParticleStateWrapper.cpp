@@ -47,12 +47,24 @@ FRENSIE_UNIT_TEST( ObserverParticleStateWrapper, setgetAngleCosine )
 // Check that the particle start time can be set
 FRENSIE_UNIT_TEST( ObserverParticleStateWrapper, setStartTime )
 {
-  MonteCarlo::PhotonState photon( 1ull );
 
-  MonteCarlo::ObserverParticleStateWrapper particle_wrapper( photon );
-  particle_wrapper.setStartTime( 1.0 );
+  {
+    MonteCarlo::PhotonState photon( 1ull );
 
-  FRENSIE_CHECK_EQUAL( particle_wrapper.getStartTime(), 1.0 );
+    MonteCarlo::ObserverParticleStateWrapper particle_wrapper( photon );
+    particle_wrapper.setStartTime( 1.0 );
+
+    FRENSIE_CHECK_EQUAL( particle_wrapper.getStartTime(), 1.0 );
+  }
+
+  {
+    MonteCarlo::ElectronState electron( 1ull );
+
+    MonteCarlo::ObserverParticleStateWrapper particle_wrapper( electron );
+    particle_wrapper.setStartTime( 1.0 );
+
+    FRENSIE_CHECK_EQUAL( particle_wrapper.getStartTime(), 1.0 );
+  }
 }
 
 //---------------------------------------------------------------------------//

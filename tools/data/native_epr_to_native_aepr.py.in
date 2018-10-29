@@ -48,7 +48,7 @@ def createGenerator( epr_file_name,
     if min_photon_energy is None:
         generator = DataGenEP.StandardAdjointElectronPhotonRelaxationDataGenerator( epr_data_container )
     else:
-        generator = DataGenEp.StandardAdjointElectronPhotonRelaxationDataGenerator( epr_data_container, min_photon_energy, max_photon_energy, min_electron_energy, max_electron_energy )
+        generator = DataGenEP.StandardAdjointElectronPhotonRelaxationDataGenerator( epr_data_container, min_photon_energy, max_photon_energy, min_electron_energy, max_electron_energy )
 
     return generator
 
@@ -75,12 +75,14 @@ def setGeneratorOptions( generator,
                          tabular_evaluation_tol,
                          electron_two_d_interp_policy,
                          electron_two_d_grid_policy,
+                         bremss_min_energy_nudge_val,
                          bremss_max_energy_nudge_val,
-                         bremss_energy_to_outgoing_energy_nudge_val,
                          bremss_eval_tol,
                          bremss_grid_convergence_tol,
-                         bremss_abs_diff_tol,
-                         bremss_dist_tol,
+                         bremss_grid_abs_diff_tol,
+                         bremss_grid_dist_tol,
+                         electroion_min_energy_nudge_val,
+                         electroion_max_energy_nudge_val,
                          electroion_eval_tol,
                          electroion_grid_convergence_tol,
                          electroion_grid_abs_diff_tol,
@@ -167,23 +169,24 @@ def setGeneratorOptions( generator,
             sys.exit(1)
 
     if not electron_two_d_grid_policy is None:
-        if electron_two_d_grid_policy == "CorrelatedGrid":
+        if electron_two_d_grid_policy == "Correlated":
             generator.setElectronTwoDGridPolicy( MonteCarlo.CORRELATED_GRID )
-        elif electron_two_d_grid_policy == "UnitBaseCorrelatedGrid":
+        elif electron_two_d_grid_policy == "UnitBaseCorrelated":
             generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
-        elif electron_two_d_grid_policy == "DirectGrid":
-            generator.setElectronTwoDGridPolicy( MonteCarlo.DIRECT_GRID )
-        elif electron_two_d_grid_policy == "UnitBaseGrid":
+        elif electron_two_d_grid_policy == "Direct":
+            print "Electron 2D grid policy", electron_two_d_grid_policy, "is currently not supported!"
+            sys.exit(1)
+        elif electron_two_d_grid_policy == "UnitBase":
             generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_GRID )
         else:
             print "Electron 2D grid policy", electron_two_d_grid_policy, "is not valid!"
             sys.exit(1)
 
+    if not bremss_min_energy_nudge_val is None:
+        generator.setAdjointBremsstrahlungMinEnergyNudgeValue( bremss_min_energy_nudge_val )
+
     if not bremss_max_energy_nudge_val is None:
         generator.setAdjointBremsstrahlungMaxEnergyNudgeValue( bremss_max_energy_nudge_val )
-
-    if not bremss_energy_to_outgoing_energy_nudge_val is None:
-        generator.setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue( bremss_energy_to_outgoing_energy_nudge_val )
 
     if not bremss_eval_tol is None:
         generator.setAdjointBremsstrahlungEvaluationTolerance( bremss_eval_tol )
@@ -191,11 +194,17 @@ def setGeneratorOptions( generator,
     if not bremss_grid_convergence_tol is None:
         generator.setAdjointBremsstrahlungGridConvergenceTolerance( bremss_grid_convergence_tol )
 
-    if not bremss_abs_diff_tol is None:
-        generator.setAdjointBremsstrahlungAbsoluteDifferenceTolerance( bremss_abs_diff_tol )
+    if not bremss_grid_abs_diff_tol is None:
+        generator.setAdjointBremsstrahlungAbsoluteDifferenceTolerance( bremss_grid_abs_diff_tol )
 
-    if not bremss_dist_tol is None:
-        generator.setAdjointBremsstrahlungDistanceTolerance( bremss_dist_tol )
+    if not bremss_grid_dist_tol is None:
+        generator.setAdjointBremsstrahlungDistanceTolerance( bremss_grid_dist_tol )
+
+    if not electroion_min_energy_nudge_val is None:
+        generator.setAdjointElectroionizationMinEnergyNudgeValue( electroion_min_energy_nudge_val )
+
+    if not electroion_max_energy_nudge_val is None:
+        generator.setAdjointElectroionizationMaxEnergyNudgeValue( electroion_max_energy_nudge_val )
 
     if not electroion_eval_tol is None:
         generator.setAdjointElectroionizationEvaluationTolerance( electroion_eval_tol )
@@ -242,16 +251,18 @@ def generateData( epr_file_name,
                   tabular_evaluation_tol = None,
                   electron_two_d_interp_policy = None,
                   electron_two_d_grid_policy = None,
+                  bremss_min_energy_nudge_val = None,
                   bremss_max_energy_nudge_val = None,
-                  bremss_energy_to_outgoing_energy_nudge_val = None,
                   bremss_eval_tol = None,
                   bremss_grid_convergence_tol = None,
-                  bremss_abs_diff_tol = None,
-                  bremss_dist_tol = None,
+                  bremss_grid_abs_diff_tol = None,
+                  bremss_grid_dist_tol = None,
+                  electroion_min_energy_nudge_val = None,
+                  electroion_max_energy_nudge_val = None,
                   electroion_eval_tol = None,
                   electroion_grid_convergence_tol = None,
                   electroion_grid_abs_diff_tol = None,
-                  electroion_grid_dist_tol ):
+                  electroion_grid_dist_tol = None ):
 
     # Verify the energy limits
     verifyEnergyLimits( min_photon_energy,
@@ -289,12 +300,14 @@ def generateData( epr_file_name,
                          tabular_evaluation_tol,
                          electron_two_d_interp_policy,
                          electron_two_d_grid_policy,
+                         bremss_min_energy_nudge_val,
                          bremss_max_energy_nudge_val,
-                         bremss_energy_to_outgoing_energy_nudge_val,
                          bremss_eval_tol,
                          bremss_grid_convergence_tol,
-                         bremss_abs_diff_tol,
-                         bremss_dist_tol,
+                         bremss_grid_abs_diff_tol,
+                         bremss_grid_dist_tol,
+                         electroion_min_energy_nudge_val,
+                         electroion_max_energy_nudge_val,
                          electroion_eval_tol,
                          electroion_grid_convergence_tol,
                          electroion_grid_abs_diff_tol,
@@ -337,8 +350,8 @@ def addToDatabase( path_to_data_file,
 
     atom_properties = database.getAtomProperties( zaid.atom() )
 
-    atom_properties.setPhotoatomicDataProperties( photoatomic_data_properties )
-    atom_properties.setElectroatomicDataProperties( electroatomic_data_properties )
+    atom_properties.setAdjointPhotoatomicDataProperties( photoatomic_data_properties )
+    atom_properties.setAdjointElectroatomicDataProperties( electroatomic_data_properties )
 
 if __name__ == "__main__":
 
@@ -399,25 +412,29 @@ if __name__ == "__main__":
     parser.add_option("--cutoff_angle_cosine", type="float", dest="cutoff_angle_cosine",
                       help="the electron cutoff angle cosine")
     parser.add_option("--num_moment_preserving_angles", type="int", dest="num_moment_preserving_angles",
-                      help="The number of moment preserving angles for electrons")                         
+                      help="The number of moment preserving angles for electrons")
     parser.add_option("--tabular_evaluation_tol", type="float", dest="tabular_evaluation_tol",
                       help="The tabular evaluation tolerance")
     parser.add_option("--electron_two_d_interp_policy", type="string", dest="electron_two_d_interp_policy",
                       help="The electron 2D interpolation policy (e.g. LogLogLog)")
     parser.add_option("--electron_two_d_grid_policy", type="string", dest="electron_two_d_grid_policy",
                       help="The electron 2D grid policy")
+    parser.add_option("--bremss_min_energy_nudge_val", type="float", dest="bremss_min_energy_nudge_val",
+                      help="The bremsstrahlung min energy nudge value")
     parser.add_option("--bremss_max_energy_nudge_val", type="float", dest="bremss_max_energy_nudge_val",
                       help="The bremsstrahlung max energy nudge value")
-    parser.add_option("--bremss_energy_to_outgoing_energy_nudge_val", type="float", dest="bremss_energy_to_outgoing_energy_nudge_val",
-                      help="the bremsstrahlung energy to outgoing energy nudge value")
     parser.add_option("--bremss_eval_tol", type="float", dest="bremss_eval_tol",
                       help="The bremsstrahlung evaluation tolerance")
     parser.add_option("--bremss_grid_convergence_tol", type="float", dest="bremss_grid_convergence_tol",
                       help="The bremsstrahlung grid convergence tolerance")
-    parser.add_option("--bremss_abs_diff_tol", type="float", dest="bremss_abs_diff_tol",
-                      help="The bremsstrahlung absolute difference tolerance")
-    parser.add_option("--bremss_dist_tol", type="float", dest="bremss_dist_tol",
-                      help="The bremsstrahlung distance tolerance")
+    parser.add_option("--bremss_grid_abs_diff_tol", type="float", dest="bremss_grid_abs_diff_tol",
+                      help="The bremsstrahlung grid absolute difference tolerance")
+    parser.add_option("--bremss_grid_dist_tol", type="float", dest="bremss_grid_dist_tol",
+                      help="The bremsstrahlung grid distance tolerance")
+    parser.add_option("--electroion_min_energy_nudge_val", type="float", dest="electroion_min_energy_nudge_val",
+                      help="The electroionization min energy nudge value")
+    parser.add_option("--electroion_max_energy_nudge_val", type="float", dest="electroion_max_energy_nudge_val",
+                      help="The electroionization max energy nudge value")
     parser.add_option("--electroion_eval_tol", type="float", dest="electroion_eval_tol",
                       help="The electroionization evaluation tolerance")
     parser.add_option("--electroion_grid_convergence_tol", type="float", dest="electroion_grid_convergence_tol",
@@ -428,7 +445,7 @@ if __name__ == "__main__":
                       help="The electroionization grid distance tolerance")
     parser.add_option("--notes", type="string", dest="notes",
                       help="data generation notes")
-    
+
     options,args = parser.parse_args()
 
     # The epr file name and the output file name must be specified
@@ -470,12 +487,14 @@ if __name__ == "__main__":
                   options.tabular_evaluation_tol,
                   options.electron_two_d_interp_policy,
                   options.electron_two_d_grid_policy,
+                  options.bremss_min_energy_nudge_val,
                   options.bremss_max_energy_nudge_val,
-                  options.bremss_energy_to_outgoing_energy_nudge_val,
                   options.bremss_eval_tol,
                   options.bremss_grid_convergence_tol,
-                  options.bremss_abs_diff_tol,
-                  options.bremss_dist_tol,
+                  options.bremss_grid_abs_diff_tol,
+                  options.bremss_grid_dist_tol,
+                  options.electroion_min_energy_nudge_val,
+                  options.electroion_max_energy_nudge_val,
                   options.electroion_eval_tol,
                   options.electroion_grid_convergence_tol,
                   options.electroion_grid_abs_diff_tol,

@@ -67,7 +67,7 @@ AdjointElectroatomFactory::AdjointElectroatomFactory(
       {
         d_adjoint_electroatomic_table_name_map[Data::AdjointElectroatomicDataProperties::Native_EPR_FILE];
       }
-      
+
       this->createAdjointElectroatomFromNativeTable(
                                          data_directory,
                                          *adjoint_electroatom_name,
@@ -134,6 +134,28 @@ void AdjointElectroatomFactory::createAdjointElectroatomFromNativeTable(
     // Create the native data container
     Data::AdjointElectronPhotonRelaxationDataContainer
       data_container( native_file_path );
+
+    // Make sure the min adjoint electron energy are within the energy grid limits
+    TEST_FOR_EXCEPTION( properties.getMinAdjointElectronEnergy() < data_container.getAdjointElectronEnergyGrid().front(),
+                        std::runtime_error,
+                        "The minimum adjoint electron energy "
+                        << properties.getMinAdjointElectronEnergy() <<
+                        " was set below the minimum energy in the adjoint "
+                        "electron energy grid "
+                        << data_container.getAdjointElectronEnergyGrid().front() <<
+                        ". Please rerun the simulation with a valid minimum "
+                        "adjoint electron energy!" );
+
+    // Make sure the max adjoint electron energy are within the energy grid limits
+    TEST_FOR_EXCEPTION( properties.getMaxAdjointElectronEnergy() > data_container.getAdjointElectronEnergyGrid().back(),
+                        std::runtime_error,
+                        "The maximum adjoint electron energy "
+                        << properties.getMaxAdjointElectronEnergy() <<
+                        " was set above the maximum energy in the adjoint "
+                        "electron energy grid "
+                        << data_container.getAdjointElectronEnergyGrid().back() <<
+                        ". Please rerun the simulation with a valid maximum "
+                        "adjoint electron energy!" );
 
     // Initialize the new adjoint electroatom
     AdjointElectroatomNameMap::mapped_type& adjoint_electroatom =

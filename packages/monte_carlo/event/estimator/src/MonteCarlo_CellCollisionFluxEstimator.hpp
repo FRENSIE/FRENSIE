@@ -89,6 +89,9 @@ typedef CellCollisionFluxEstimator<WeightMultiplier> WeightMultipliedCellCollisi
 //! The weight and energy multiplied cell collision flux estimator
 typedef CellCollisionFluxEstimator<WeightAndEnergyMultiplier> WeightAndEnergyMultipliedCellCollisionFluxEstimator;
 
+//! The weight and charge multiplied cell collision flux estimator
+typedef CellCollisionFluxEstimator<WeightAndChargeMultiplier> WeightAndChargeMultipliedCellCollisionFluxEstimator;
+
 } // end MonteCarlo namespace
 
 BOOST_SERIALIZATION_CLASS1_VERSION( CellCollisionFluxEstimator, MonteCarlo, 0 );

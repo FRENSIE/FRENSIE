@@ -154,6 +154,15 @@ void ParticleSimulationManager::simulateParticle(
 
       particle.setAsGone();
     }
+    // Check if the particle energy is above the max energy
+    if( particle.getEnergy() > d_properties->getMaxParticleEnergy<State>() )
+    {
+      FRENSIE_LOG_WARNING( particle.getParticleType() <<
+                           " born above global max energy. Check source "
+                           "definition!\n" << particle );
+
+      particle.setAsGone();
+    }
     else
     {
       this->simulateParticleTrack(
@@ -170,6 +179,12 @@ void ParticleSimulationManager::simulateParticle(
   {
     // Check if the particle energy is below the cutoff
     if( particle.getEnergy() < d_properties->getMinParticleEnergy<State>() )
+    {
+      particle.setAsGone();
+      break;
+    }
+    // Check if the particle energy is above the max energy
+    if( particle.getEnergy() > d_properties->getMaxParticleEnergy<State>() )
     {
       particle.setAsGone();
       break;

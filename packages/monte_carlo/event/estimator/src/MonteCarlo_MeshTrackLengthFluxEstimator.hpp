@@ -66,7 +66,7 @@ public:
 
   //! Print the estimator data summary
   void printSummary( std::ostream& os ) const final override;
-  
+
 protected:
 
   //! Default constructor
@@ -75,7 +75,7 @@ protected:
   //! Assign discretization to an estimator dimension
   void assignDiscretization( const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins,
                              const bool range_dimension ) final override;
-  
+
 
   //! Assign the particle type to the estimator
   void assignParticleType( const ParticleType particle_type ) final override;
@@ -112,7 +112,7 @@ private:
   void load( Archive& ar, const unsigned version );
 
   BOOST_SERIALIZATION_SPLIT_MEMBER();
-  
+
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
@@ -132,7 +132,10 @@ typedef MeshTrackLengthFluxEstimator<WeightMultiplier> WeightMultipliedMeshTrack
 
 //! The weight and energy multiplied mesh track length flux estimator
 typedef MeshTrackLengthFluxEstimator<WeightAndEnergyMultiplier> WeightAndEnergyMultipliedMeshTrackLengthFluxEstimator;
-  
+
+//! The weight and charge multiplied cell collision flux estimator
+typedef MeshTrackLengthFluxEstimator<WeightAndChargeMultiplier> WeightAndChargeMultipliedMeshTrackLengthFluxEstimator;
+
 } // end MonteCarlo namespace
 
 BOOST_SERIALIZATION_CLASS1_VERSION( MeshTrackLengthFluxEstimator, MonteCarlo, 0 );

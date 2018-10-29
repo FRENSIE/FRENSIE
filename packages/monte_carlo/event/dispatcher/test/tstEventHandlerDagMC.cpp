@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstEventHandler.cpp
+//! \file   tstEventHandlerDagMC.cpp
 //! \author Alex Robinson
 //! \brief  Event handler unit tests
 //!
@@ -255,7 +255,7 @@ FRENSIE_UNIT_TEST( EventHandler, geometry_constructor )
   FRENSIE_REQUIRE( event_handler.doesEstimatorExist( 4 ) );
   FRENSIE_REQUIRE_NO_THROW( dynamic_cast<MonteCarlo::WeightMultipliedCellPulseHeightEstimator&>( event_handler.getEstimator( 4 ) ) );
   FRENSIE_CHECK_EQUAL( event_handler.getEstimator( 4 ).getParticleTypes(),
-                       std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON} ) );
+                       std::set<MonteCarlo::ParticleType>( {MonteCarlo::PHOTON, MonteCarlo::ELECTRON, MonteCarlo::POSITRON} ) );
   FRENSIE_CHECK( event_handler.getEstimator( 4 ).isEntityAssigned( 9 ) );
   FRENSIE_CHECK( event_handler.getEstimator( 4 ).isEntityAssigned( 88 ) );
 
@@ -325,12 +325,12 @@ FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   Geometry::DagMCModelProperties local_properties( test_dagmc_geom_file_name );
-  
+
   local_properties.setTerminationCellPropertyName( "graveyard" );
   local_properties.setMaterialPropertyName( "mat" );
   local_properties.setDensityPropertyName( "rho" );
   local_properties.setEstimatorPropertyName( "tally" );
-  
+
   model.reset( new Geometry::DagMCModel( local_properties ) );
 }
 

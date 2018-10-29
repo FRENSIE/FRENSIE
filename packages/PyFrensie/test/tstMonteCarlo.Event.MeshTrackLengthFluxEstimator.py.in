@@ -66,6 +66,8 @@ class HexMeshTrackLengthFluxEstimatorTestCase(unittest.TestCase):
 
         estimator = Event.WeightAndEnergyMultipliedMeshTrackLengthFluxEstimator( 1, 1.0, self.hex_mesh )
 
+        estimator = Event.WeightAndChargeMultipliedMeshTrackLengthFluxEstimator( 2, 1.0, self.hex_mesh )
+
     def testCheck_type(self):
         "*Test MonteCarlo.Event.HexMeshTrackLengthFluxEstimator check_type"
 
@@ -76,6 +78,12 @@ class HexMeshTrackLengthFluxEstimatorTestCase(unittest.TestCase):
         self.assertTrue( estimator.isMeshEstimator() )
 
         estimator = Event.WeightAndEnergyMultipliedMeshTrackLengthFluxEstimator( 1, 1.0, self.hex_mesh )
+
+        self.assertFalse( estimator.isCellEstimator() )
+        self.assertFalse( estimator.isSurfaceEstimator() )
+        self.assertTrue( estimator.isMeshEstimator() )
+
+        estimator = Event.WeightAndChargeMultipliedMeshTrackLengthFluxEstimator( 2, 1.0, self.hex_mesh )
 
         self.assertFalse( estimator.isCellEstimator() )
         self.assertFalse( estimator.isSurfaceEstimator() )
@@ -127,6 +135,48 @@ class HexMeshTrackLengthFluxEstimatorTestCase(unittest.TestCase):
         self.assertEqual( estimator.getNumberOfBins(), 8 )
 
         estimator = Event.WeightAndEnergyMultipliedMeshTrackLengthFluxEstimator(1,1.0,self.hex_mesh)
+
+        energy_bin_boundaries = [None] *( 3 )
+        energy_bin_boundaries[0] = 0.0
+        energy_bin_boundaries[1] = 0.1
+        energy_bin_boundaries[2] = 1.0
+
+        estimator.setEnergyDiscretization( energy_bin_boundaries )
+
+        self.assertEqual( estimator.getNumberOfBins(Event.OBSERVER_ENERGY_DIMENSION), 2 )
+        self.assertEqual( estimator.getNumberOfBins(), 2 )
+
+        time_bin_boundaries = [None] *( 3 )
+        time_bin_boundaries[0] = 0.0
+        time_bin_boundaries[1] = 1.0
+        time_bin_boundaries[2] = 2.0
+
+        estimator.setTimeDiscretization( time_bin_boundaries )
+
+        self.assertEqual( estimator.getNumberOfBins(Event.OBSERVER_TIME_DIMENSION), 2 )
+        self.assertEqual( estimator.getNumberOfBins(), 4 )
+
+        collision_number_bins = [None] *( 2 )
+        collision_number_bins[0] = 0
+        collision_number_bins[1] = 10
+
+        estimator.setCollisionNumberDiscretization( collision_number_bins )
+
+        self.assertEqual( estimator.getNumberOfBins( Event.OBSERVER_COLLISION_NUMBER_DIMENSION ), 2 )
+        self.assertEqual( estimator.getNumberOfBins(), 8 )
+
+        # Make sure cosine bins cannot be set
+        cosine_bin_boundaries = [None] * ( 3 )
+        cosine_bin_boundaries[0] = -1.0
+        cosine_bin_boundaries[1] = 0.0
+        cosine_bin_boundaries[2] = 1.0
+
+        estimator.setCosineDiscretization( cosine_bin_boundaries )
+
+        self.assertEqual( estimator.getNumberOfBins( Event.OBSERVER_COSINE_DIMENSION ), 1 )
+        self.assertEqual( estimator.getNumberOfBins(), 8 )
+
+        estimator = Event.WeightAndChargeMultipliedMeshTrackLengthFluxEstimator(2,1.0,self.hex_mesh)
 
         energy_bin_boundaries = [None] *( 3 )
         energy_bin_boundaries[0] = 0.0
@@ -227,6 +277,33 @@ class HexMeshTrackLengthFluxEstimatorTestCase(unittest.TestCase):
         self.assertFalse( estimator.isParticleTypeAssigned( MonteCarlo.ADJOINT_PHOTON ) )
         self.assertFalse( estimator.isParticleTypeAssigned( MonteCarlo.ADJOINT_NEUTRON ) )
 
+        estimator = Event.WeightAndChargeMultipliedMeshTrackLengthFluxEstimator(2,1.0,self.hex_mesh)
+
+        particle_types = [None] * ( 4 )
+        particle_types[0] = MonteCarlo.PHOTON
+        particle_types[1] = MonteCarlo.NEUTRON
+        particle_types[2] = MonteCarlo.ADJOINT_PHOTON
+        particle_types[3] = MonteCarlo.ADJOINT_NEUTRON
+
+        # All but the first particle type should be ignored
+        estimator.setParticleTypes( particle_types )
+
+        self.assertTrue( estimator.isParticleTypeAssigned( MonteCarlo.PHOTON ) )
+        self.assertFalse( estimator.isParticleTypeAssigned( MonteCarlo.NEUTRON ) )
+        self.assertFalse( estimator.isParticleTypeAssigned( MonteCarlo.ADJOINT_PHOTON ) )
+        self.assertFalse( estimator.isParticleTypeAssigned( MonteCarlo.ADJOINT_NEUTRON ) )
+
+        particle_types[0] = MonteCarlo.NEUTRON
+        particle_types[1] = MonteCarlo.PHOTON
+
+        # All particle types should be ignored
+        estimator.setParticleTypes( particle_types )
+
+        self.assertTrue( estimator.isParticleTypeAssigned( MonteCarlo.PHOTON ) )
+        self.assertFalse( estimator.isParticleTypeAssigned( MonteCarlo.NEUTRON ) )
+        self.assertFalse( estimator.isParticleTypeAssigned( MonteCarlo.ADJOINT_PHOTON ) )
+        self.assertFalse( estimator.isParticleTypeAssigned( MonteCarlo.ADJOINT_NEUTRON ) )
+
 #---------------------------------------------------------------------------#
     # Check that a partial history contribution can be added to the estimator
     def testUpdateFromGlobalParticleSubtrackEndingEvent(self):
@@ -240,6 +317,10 @@ class HexMeshTrackLengthFluxEstimatorTestCase(unittest.TestCase):
 
         estimator_2_base = estimator_2
 
+        estimator_3 = Event.WeightAndChargeMultipliedMeshTrackLengthFluxEstimator(2,1.0,self.hex_mesh)
+
+        estimator_3_base = estimator_3
+
         # Set the energy bins
         energy_bin_boundaries = [None] *( 3 )
         energy_bin_boundaries[0] = 0.0
@@ -248,6 +329,7 @@ class HexMeshTrackLengthFluxEstimatorTestCase(unittest.TestCase):
 
         estimator_1_base.setEnergyDiscretization( energy_bin_boundaries )
         estimator_2_base.setEnergyDiscretization( energy_bin_boundaries )
+        estimator_3_base.setEnergyDiscretization( energy_bin_boundaries )
 
         # Set the time bins
         time_bin_boundaries = [None] *( 3 )
@@ -263,9 +345,11 @@ class HexMeshTrackLengthFluxEstimatorTestCase(unittest.TestCase):
 
         estimator_1_base.setParticleTypes( particle_types )
         estimator_2_base.setParticleTypes( particle_types )
+        estimator_3_base.setParticleTypes( particle_types )
 
         self.assertFalse( estimator_1_base.hasUncommittedHistoryContribution() )
         self.assertFalse( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_3_base.hasUncommittedHistoryContribution() )
 
         track_length = 2.0
         volume = 1.0
@@ -327,8 +411,18 @@ class HexMeshTrackLengthFluxEstimatorTestCase(unittest.TestCase):
         estimator_2.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_4a, end_point_4a )
         estimator_2.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_4b, end_point_4b )
 
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_1a, end_point_1a )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_1b, end_point_1b )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_2a, end_point_2a )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_2b, end_point_2b )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_3a, end_point_3a )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_3b, end_point_3b )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_4a, end_point_4a )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_4b, end_point_4b )
+
         self.assertTrue( estimator_1.hasUncommittedHistoryContribution() )
         self.assertTrue( estimator_2.hasUncommittedHistoryContribution() )
+        self.assertTrue( estimator_3.hasUncommittedHistoryContribution() )
 
         # bin 1, 3
         particle.setEnergy( 0.1 )
@@ -353,12 +447,24 @@ class HexMeshTrackLengthFluxEstimatorTestCase(unittest.TestCase):
         estimator_2.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_4a, end_point_4a )
         estimator_2.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_4b, end_point_4b )
 
+        particle.setWeight( 1.0 )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_1a, end_point_1a )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_1b, end_point_1b )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_2a, end_point_2a )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_2b, end_point_2b )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_3a, end_point_3a )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_3b, end_point_3b )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_4a, end_point_4a )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_4b, end_point_4b )
+
         # Commit the contributions
         estimator_1_base.commitHistoryContribution()
         estimator_2_base.commitHistoryContribution()
+        estimator_3_base.commitHistoryContribution()
 
         self.assertFalse( estimator_1_base.hasUncommittedHistoryContribution() )
         self.assertFalse( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_3_base.hasUncommittedHistoryContribution() )
 
         Event.ParticleHistoryObserver.setNumberOfHistories( 1.0 )
         Event.ParticleHistoryObserver.setElapsedTime( 1.0 )
@@ -460,6 +566,54 @@ class HexMeshTrackLengthFluxEstimatorTestCase(unittest.TestCase):
         self.assertSequenceEqual( list(entity_bin_first_moments), 2*[ 2.0 ] )
         self.assertSequenceEqual( list(entity_bin_second_moments), 2*[ 4.0 ] )
 
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 0 )
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments), 2*[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_bin_second_moments), 2*[ 0.0 ] )
+
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 1 )
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 1 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments), 2*[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_bin_second_moments), 2*[ 0.0 ] )
+
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 2 )
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 2 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments), 2*[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_bin_second_moments), 2*[ 0.0 ] )
+
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 3 )
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 3 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments), 2*[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_bin_second_moments), 2*[ 0.0 ] )
+
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 4 )
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 4 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments), 2*[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_bin_second_moments), 2*[ 0.0 ] )
+
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 5 )
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 5 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments), 2*[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_bin_second_moments), 2*[ 0.0 ] )
+
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 6 )
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 6 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments), 2*[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_bin_second_moments), 2*[ 0.0 ] )
+
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 7 )
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 7 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments), 2*[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_bin_second_moments), 2*[ 0.0 ] )
+
         # Check the total bin data moments
         total_bin_first_moments = estimator_1_base.getTotalBinDataFirstMoments()
 
@@ -474,6 +628,13 @@ class HexMeshTrackLengthFluxEstimatorTestCase(unittest.TestCase):
 
         self.assertEqual( list(total_bin_first_moments), 2*[ 16.0 ] )
         self.assertEqual( list(total_bin_second_moments), 2*[ 256.0 ] )
+
+        total_bin_first_moments = estimator_3_base.getTotalBinDataFirstMoments()
+
+        total_bin_second_moments = estimator_3_base.getTotalBinDataSecondMoments()
+
+        self.assertEqual( list(total_bin_first_moments), 2*[ 0.0 ] )
+        self.assertEqual( list(total_bin_second_moments), 2*[ 0.0 ] )
 
         # Check the entity total data moments
         entity_total_first_moments = estimator_1_base.getEntityTotalDataFirstMoments( 0 )
@@ -636,6 +797,86 @@ class HexMeshTrackLengthFluxEstimatorTestCase(unittest.TestCase):
         self.assertSequenceEqual( list(entity_total_third_moments),[ 64.0 ] )
         self.assertSequenceEqual( list(entity_total_fourth_moments),[ 256.0 ] )
 
+        entity_total_first_moments = estimator_3_base.getEntityTotalDataFirstMoments( 0 )
+        entity_total_second_moments = estimator_3_base.getEntityTotalDataSecondMoments( 0 )
+        entity_total_third_moments = estimator_3_base.getEntityTotalDataThirdMoments( 0 )
+        entity_total_fourth_moments = estimator_3_base.getEntityTotalDataFourthMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments),[ 0.0 ] )
+
+        entity_total_first_moments = estimator_3_base.getEntityTotalDataFirstMoments( 1 )
+        entity_total_second_moments = estimator_3_base.getEntityTotalDataSecondMoments( 1 )
+        entity_total_third_moments = estimator_3_base.getEntityTotalDataThirdMoments( 1 )
+        entity_total_fourth_moments = estimator_3_base.getEntityTotalDataFourthMoments( 1 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments),[ 0.0 ] )
+
+        entity_total_first_moments = estimator_3_base.getEntityTotalDataFirstMoments( 2 )
+        entity_total_second_moments = estimator_3_base.getEntityTotalDataSecondMoments( 2 )
+        entity_total_third_moments = estimator_3_base.getEntityTotalDataThirdMoments( 2 )
+        entity_total_fourth_moments = estimator_3_base.getEntityTotalDataFourthMoments( 2 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments),[ 0.0 ] )
+
+        entity_total_first_moments = estimator_3_base.getEntityTotalDataFirstMoments( 3 )
+        entity_total_second_moments = estimator_3_base.getEntityTotalDataSecondMoments( 3 )
+        entity_total_third_moments = estimator_3_base.getEntityTotalDataThirdMoments( 3 )
+        entity_total_fourth_moments = estimator_3_base.getEntityTotalDataFourthMoments( 3 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments),[ 0.0 ] )
+
+        entity_total_first_moments = estimator_3_base.getEntityTotalDataFirstMoments( 4 )
+        entity_total_second_moments = estimator_3_base.getEntityTotalDataSecondMoments( 4 )
+        entity_total_third_moments = estimator_3_base.getEntityTotalDataThirdMoments( 4 )
+        entity_total_fourth_moments = estimator_3_base.getEntityTotalDataFourthMoments( 4 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments),[ 0.0 ] )
+
+        entity_total_first_moments = estimator_3_base.getEntityTotalDataFirstMoments( 5 )
+        entity_total_second_moments = estimator_3_base.getEntityTotalDataSecondMoments( 5 )
+        entity_total_third_moments = estimator_3_base.getEntityTotalDataThirdMoments( 5 )
+        entity_total_fourth_moments = estimator_3_base.getEntityTotalDataFourthMoments( 5 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments),[ 0.0 ] )
+
+        entity_total_first_moments = estimator_3_base.getEntityTotalDataFirstMoments( 6 )
+        entity_total_second_moments = estimator_3_base.getEntityTotalDataSecondMoments( 6 )
+        entity_total_third_moments = estimator_3_base.getEntityTotalDataThirdMoments( 6 )
+        entity_total_fourth_moments = estimator_3_base.getEntityTotalDataFourthMoments( 6 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments),[ 0.0 ] )
+
+        entity_total_first_moments = estimator_3_base.getEntityTotalDataFirstMoments( 7 )
+        entity_total_second_moments = estimator_3_base.getEntityTotalDataSecondMoments( 7 )
+        entity_total_third_moments = estimator_3_base.getEntityTotalDataThirdMoments( 7 )
+        entity_total_fourth_moments = estimator_3_base.getEntityTotalDataFourthMoments( 7 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments),[ 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments),[ 0.0 ] )
+
         # Check the total data moments
         total_first_moments = estimator_1_base.getTotalDataFirstMoments()
 
@@ -659,6 +900,16 @@ class HexMeshTrackLengthFluxEstimatorTestCase(unittest.TestCase):
         self.assertEqual( list(total_second_moments),[ 1024.0 ] )
         self.assertEqual( list(total_third_moments),[ 32768.0 ] )
         self.assertEqual( list(total_fourth_moments),[ 1048576.0 ] )
+
+        total_first_moments = estimator_3_base.getTotalDataFirstMoments()
+        total_second_moments = estimator_3_base.getTotalDataSecondMoments()
+        total_third_moments = estimator_3_base.getTotalDataThirdMoments()
+        total_fourth_moments = estimator_3_base.getTotalDataFourthMoments()
+
+        self.assertEqual( list(total_first_moments),[ 0.0 ] )
+        self.assertEqual( list(total_second_moments),[ 0.0 ] )
+        self.assertEqual( list(total_third_moments),[ 0.0 ] )
+        self.assertEqual( list(total_fourth_moments),[ 0.0 ] )
 
 #---------------------------------------------------------------------------#
 # Test the TetMeshTrackLengthFluxEstimator class
@@ -849,6 +1100,10 @@ class TetMeshTrackLengthFluxEstimatorTestCase(unittest.TestCase):
 
         estimator_2_base = estimator_2
 
+        estimator_3 = Event.WeightAndChargeMultipliedMeshTrackLengthFluxEstimator(2,1.0,self.tet_mesh)
+
+        estimator_3_base = estimator_3
+
         # Set the energy bins
         energy_bin_boundaries = [None] * ( 3 )
         energy_bin_boundaries[0] = 0.0
@@ -857,6 +1112,7 @@ class TetMeshTrackLengthFluxEstimatorTestCase(unittest.TestCase):
 
         estimator_1_base.setEnergyDiscretization( energy_bin_boundaries )
         estimator_2_base.setEnergyDiscretization( energy_bin_boundaries )
+        estimator_3_base.setEnergyDiscretization( energy_bin_boundaries )
 
         # Set the time bins
         time_bin_boundaries = [None] * ( 3 )
@@ -872,6 +1128,7 @@ class TetMeshTrackLengthFluxEstimatorTestCase(unittest.TestCase):
 
         estimator_1_base.setParticleTypes( particle_types )
         estimator_2_base.setParticleTypes( particle_types )
+        estimator_3_base.setParticleTypes( particle_types )
 
         # Known contributions and values
         track_length = 0.6123724356957940
@@ -916,8 +1173,16 @@ class TetMeshTrackLengthFluxEstimatorTestCase(unittest.TestCase):
         estimator_2.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_5, end_point_5 )
         estimator_2.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_6, end_point_6 )
 
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_1, end_point_1 )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_2, end_point_2 )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_3, end_point_3 )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_4, end_point_4 )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_5, end_point_5 )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_6, end_point_6 )
+
         self.assertTrue( estimator_1.hasUncommittedHistoryContribution() )
         self.assertTrue( estimator_2.hasUncommittedHistoryContribution() )
+        self.assertTrue( estimator_3.hasUncommittedHistoryContribution() )
 
         # bin 1, 3
         particle.setEnergy( 0.1 )
@@ -938,12 +1203,23 @@ class TetMeshTrackLengthFluxEstimatorTestCase(unittest.TestCase):
         estimator_2.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_5, end_point_5 )
         estimator_2.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_6, end_point_6 )
 
+        particle.setWeight( 1.0 )
+
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_1, end_point_1 )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_2, end_point_2 )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_3, end_point_3 )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_4, end_point_4 )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_5, end_point_5 )
+        estimator_3.updateFromGlobalParticleSubtrackEndingEvent( particle, start_point_6, end_point_6 )
+
         # Commit the contributions
         estimator_1_base.commitHistoryContribution()
         estimator_2_base.commitHistoryContribution()
+        estimator_3_base.commitHistoryContribution()
 
         self.assertFalse( estimator_1_base.hasUncommittedHistoryContribution() )
         self.assertFalse( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_3_base.hasUncommittedHistoryContribution() )
 
         Event.ParticleHistoryObserver.setNumberOfHistories( 1.0 )
         Event.ParticleHistoryObserver.setElapsedTime( 1.0 )
@@ -1033,6 +1309,42 @@ class TetMeshTrackLengthFluxEstimatorTestCase(unittest.TestCase):
         assertSequenceAlmostEqual( list(entity_bin_first_moments), 2*[ 0.6123724356957940 ], 1e-15 )
         assertSequenceAlmostEqual( list(entity_bin_second_moments), 2*[ 0.3749999999999994 ], 1e-14 )
 
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 5764607523034234881 )
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 5764607523034234881 )
+
+        assertSequenceAlmostEqual( list(entity_bin_first_moments), 2*[ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_bin_second_moments), 2*[ 0.0 ], 1e-14 )
+
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 5764607523034234882 )
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 5764607523034234882 )
+
+        assertSequenceAlmostEqual( list(entity_bin_first_moments), 2*[ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_bin_second_moments), 2*[ 0.0 ], 1e-14 )
+
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 5764607523034234883 )
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 5764607523034234883 )
+
+        assertSequenceAlmostEqual( list(entity_bin_first_moments), 2*[ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_bin_second_moments), 2*[ 0.0 ], 1e-14 )
+
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 5764607523034234884 )
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 5764607523034234884 )
+
+        assertSequenceAlmostEqual( list(entity_bin_first_moments), 2*[ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_bin_second_moments), 2*[ 0.0 ], 1e-14 )
+
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 5764607523034234885 )
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 5764607523034234885 )
+
+        assertSequenceAlmostEqual( list(entity_bin_first_moments), 2*[ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_bin_second_moments), 2*[ 0.0 ], 1e-14 )
+
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 5764607523034234886 )
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 5764607523034234886 )
+
+        assertSequenceAlmostEqual( list(entity_bin_first_moments), 2*[ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_bin_second_moments), 2*[ 0.0 ], 1e-14 )
+
         # Check the total bin data moments
         total_bin_first_moments = estimator_1_base.getTotalBinDataFirstMoments()
         total_bin_second_moments = estimator_1_base.getTotalBinDataSecondMoments()
@@ -1045,6 +1357,12 @@ class TetMeshTrackLengthFluxEstimatorTestCase(unittest.TestCase):
 
         assertSequenceAlmostEqual( list(total_bin_first_moments), 2*[ 3.674234614174764 ], 1e-15 )
         assertSequenceAlmostEqual( list(total_bin_second_moments), 2*[ 13.499999999999979 ], 1e-14 )
+
+        total_bin_first_moments = estimator_3_base.getTotalBinDataFirstMoments()
+        total_bin_second_moments = estimator_3_base.getTotalBinDataSecondMoments()
+
+        assertSequenceAlmostEqual( list(total_bin_first_moments), 2*[ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(total_bin_second_moments), 2*[ 0.0 ], 1e-14 )
 
         # Check the entity total data moments
         entity_total_first_moments = estimator_1_base.getEntityTotalDataFirstMoments( 5764607523034234881 )
@@ -1203,6 +1521,66 @@ class TetMeshTrackLengthFluxEstimatorTestCase(unittest.TestCase):
         assertSequenceAlmostEqual( list(entity_total_third_moments), [ 1.8371173070873792 ], 1e-14 )
         assertSequenceAlmostEqual( list(entity_total_fourth_moments), [ 2.249999999999993 ], 1e-14 )
 
+        entity_total_first_moments = estimator_3_base.getEntityTotalDataFirstMoments( 5764607523034234881 )
+        entity_total_second_moments = estimator_3_base.getEntityTotalDataSecondMoments( 5764607523034234881 )
+        entity_total_third_moments = estimator_3_base.getEntityTotalDataThirdMoments( 5764607523034234881 )
+        entity_total_fourth_moments = estimator_3_base.getEntityTotalDataFourthMoments( 5764607523034234881 )
+
+        assertSequenceAlmostEqual( list(entity_total_first_moments), [ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_second_moments), [ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_third_moments), [ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_fourth_moments), [ 0.0 ], 1e-15 )
+
+        entity_total_first_moments = estimator_3_base.getEntityTotalDataFirstMoments( 5764607523034234882 )
+        entity_total_second_moments = estimator_3_base.getEntityTotalDataSecondMoments( 5764607523034234882 )
+        entity_total_third_moments = estimator_3_base.getEntityTotalDataThirdMoments( 5764607523034234882 )
+        entity_total_fourth_moments = estimator_3_base.getEntityTotalDataFourthMoments( 5764607523034234882 )
+
+        assertSequenceAlmostEqual( list(entity_total_first_moments), [ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_second_moments), [ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_third_moments), [ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_fourth_moments), [ 0.0 ], 1e-15 )
+
+        entity_total_first_moments = estimator_3_base.getEntityTotalDataFirstMoments( 5764607523034234883 )
+        entity_total_second_moments = estimator_3_base.getEntityTotalDataSecondMoments( 5764607523034234883 )
+        entity_total_third_moments = estimator_3_base.getEntityTotalDataThirdMoments( 5764607523034234883 )
+        entity_total_fourth_moments = estimator_3_base.getEntityTotalDataFourthMoments( 5764607523034234883 )
+
+        assertSequenceAlmostEqual( list(entity_total_first_moments), [ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_second_moments), [ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_third_moments), [ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_fourth_moments), [ 0.0 ], 1e-15 )
+
+        entity_total_first_moments = estimator_3_base.getEntityTotalDataFirstMoments( 5764607523034234884 )
+        entity_total_second_moments = estimator_3_base.getEntityTotalDataSecondMoments( 5764607523034234884 )
+        entity_total_third_moments = estimator_3_base.getEntityTotalDataThirdMoments( 5764607523034234884 )
+        entity_total_fourth_moments = estimator_3_base.getEntityTotalDataFourthMoments( 5764607523034234884 )
+
+        assertSequenceAlmostEqual( list(entity_total_first_moments), [ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_second_moments), [ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_third_moments), [ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_fourth_moments), [ 0.0 ], 1e-15 )
+
+        entity_total_first_moments = estimator_3_base.getEntityTotalDataFirstMoments( 5764607523034234885 )
+        entity_total_second_moments = estimator_3_base.getEntityTotalDataSecondMoments( 5764607523034234885 )
+        entity_total_third_moments = estimator_3_base.getEntityTotalDataThirdMoments( 5764607523034234885 )
+        entity_total_fourth_moments = estimator_3_base.getEntityTotalDataFourthMoments( 5764607523034234885 )
+
+        assertSequenceAlmostEqual( list(entity_total_first_moments), [ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_second_moments), [ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_third_moments), [ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_fourth_moments), [ 0.0 ], 1e-15 )
+
+        entity_total_first_moments = estimator_3_base.getEntityTotalDataFirstMoments( 5764607523034234886 )
+        entity_total_second_moments = estimator_3_base.getEntityTotalDataSecondMoments( 5764607523034234886 )
+        entity_total_third_moments = estimator_3_base.getEntityTotalDataThirdMoments( 5764607523034234886 )
+        entity_total_fourth_moments = estimator_3_base.getEntityTotalDataFourthMoments( 5764607523034234886 )
+
+        assertSequenceAlmostEqual( list(entity_total_first_moments), [ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_second_moments), [ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_third_moments), [ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(entity_total_fourth_moments), [ 0.0 ], 1e-15 )
+
         # Check the total data moments
         total_first_moments = estimator_1_base.getTotalDataFirstMoments()
         total_second_moments = estimator_1_base.getTotalDataSecondMoments()
@@ -1223,6 +1601,16 @@ class TetMeshTrackLengthFluxEstimatorTestCase(unittest.TestCase):
         assertSequenceAlmostEqual( list(total_second_moments), [ 53.999999999999915 ], 1e-14 )
         assertSequenceAlmostEqual( list(total_third_moments), [ 396.8173383308739 ], 1e-14 )
         assertSequenceAlmostEqual( list(total_fourth_moments), [ 2915.9999999999905 ], 1e-14 )
+
+        total_first_moments = estimator_3_base.getTotalDataFirstMoments()
+        total_second_moments = estimator_3_base.getTotalDataSecondMoments()
+        total_third_moments = estimator_3_base.getTotalDataThirdMoments()
+        total_fourth_moments = estimator_3_base.getTotalDataFourthMoments()
+
+        assertSequenceAlmostEqual( list(total_first_moments), [ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(total_second_moments), [ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(total_third_moments), [ 0.0 ], 1e-15 )
+        assertSequenceAlmostEqual( list(total_fourth_moments), [ 0.0 ], 1e-15 )
 
 #-----------------------------------------------------------------------------#
 # Custom main
