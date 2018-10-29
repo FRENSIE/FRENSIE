@@ -20,10 +20,14 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
+#include "MonteCarlo_AdjointElectronProbeState.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
+
+std::shared_ptr<MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution>
+    first_subshell_distribution, last_subshell_distribution;
 
 std::shared_ptr<MonteCarlo::ElectroionizationSubshellAdjointElectroatomicReaction<Utility::LogLog> >
     first_subshell_reaction, last_subshell_reaction;
@@ -134,20 +138,82 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, getCro
 // Check that the first_subshell reaction can be simulated
 FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, react )
 {
-  MonteCarlo::AdjointElectronState electron( 0 );
-  electron.setEnergy( 20.0 );
-  electron.setDirection( 0.0, 0.0, 1.0 );
+  MonteCarlo::AdjointElectronState adjoint_electron( 0 );
+  adjoint_electron.setEnergy( 20.0 );
+  adjoint_electron.setDirection( 0.0, 0.0, 1.0 );
 
   MonteCarlo::ParticleBank bank;
 
   Data::SubshellType shell_of_interaction;
 
-  first_subshell_reaction->react( electron, bank, shell_of_interaction );
+  first_subshell_reaction->react( adjoint_electron, bank, shell_of_interaction );
 
-  FRENSIE_CHECK( electron.getEnergy() > 20.0 );
-  FRENSIE_CHECK( electron.getZDirection() < 1.0 );
+  FRENSIE_CHECK( adjoint_electron.getEnergy() > 20.0 );
+  FRENSIE_CHECK( adjoint_electron.getZDirection() < 1.0 );
   FRENSIE_CHECK( bank.isEmpty() );
   FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::K_SUBSHELL );
+
+  adjoint_electron.setWeight( 1.0 );
+  adjoint_electron.setEnergy( 1e-5 );
+  adjoint_electron.setDirection( 0.0, 0.0, 1.0 );
+
+  first_subshell_reaction->react( adjoint_electron, bank, shell_of_interaction );
+
+  FRENSIE_CHECK( adjoint_electron.getEnergy() > 1e-5 );
+  FRENSIE_CHECK( adjoint_electron.getZDirection() < 1.0 );
+  FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::K_SUBSHELL );
+
+  FRENSIE_CHECK_EQUAL( bank.size(), 3 );
+
+  double pdf = first_subshell_distribution->evaluatePDF( 1e-5, 0.08 );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 0.08 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
+
+  bank.pop();
+
+  pdf = first_subshell_distribution->evaluatePDF(
+                1e-5, Utility::PhysicalConstants::electron_rest_mass_energy );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(),
+                       Utility::PhysicalConstants::electron_rest_mass_energy );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
+
+  bank.pop();
+
+  pdf = first_subshell_distribution->evaluatePDF( 1e-5, 1.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
+
+  bank.pop();
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  // Generate a probe with energy 1.0
+  adjoint_electron.setWeight( 1.0 );
+  adjoint_electron.setEnergy( 0.9 );
+  adjoint_electron.setDirection( 0.0, 0.0, 1.0 );
+
+  first_subshell_reaction->react( adjoint_electron,
+                                  bank,
+                                  shell_of_interaction );
+
+  FRENSIE_CHECK_EQUAL( bank.size(), 1 );
+
+  pdf = first_subshell_distribution->evaluatePDF( 0.9, 1.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
+
+  bank.pop();
+
+  // Make sure that probes do not generate more probe particles
+  MonteCarlo::AdjointElectronProbeState adjoint_electron_probe( 0 );
+  adjoint_electron_probe.setEnergy( 0.3 );
+  adjoint_electron_probe.setDirection( 0.0, 0.0, 1.0 );
+
+  first_subshell_reaction->react( adjoint_electron_probe,
+                                  bank,
+                                  shell_of_interaction );
+
+  FRENSIE_CHECK_EQUAL( bank.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -203,10 +269,6 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
         data_container->getAdjointElectroionizationCrossSectionThresholdEnergyIndex(
         *shell );
 
-    // The electroionization subshell distribution
-    std::shared_ptr<MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution>
-        electroionization_subshell_distribution;
-
     double evaluation_tol = 1e-7;
 
     // Create the electroionization subshell distribution
@@ -214,8 +276,19 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
         *data_container,
         *shell,
         data_container->getSubshellBindingEnergy( *shell ),
-        electroionization_subshell_distribution,
+        first_subshell_distribution,
         evaluation_tol );
+
+    // Add critical line energies
+    std::shared_ptr<std::vector<double> >
+      critical_line_energies( new std::vector<double>(3) );
+
+    (*critical_line_energies)[0] = 0.08;
+    (*critical_line_energies)[1] =
+      Utility::PhysicalConstants::electron_rest_mass_energy;
+    (*critical_line_energies)[2] = 1.0;
+
+    first_subshell_distribution->setCriticalLineEnergies( critical_line_energies );
 
 
     // Create the subshell electroelectric reaction
@@ -226,7 +299,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                 threshold_energy_index,
                 grid_searcher,
                 subshell_type,
-                electroionization_subshell_distribution ) );
+                first_subshell_distribution ) );
   }
 
   // Create the distribution for the last subshell
@@ -250,15 +323,11 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
         data_container->getAdjointElectroionizationCrossSectionThresholdEnergyIndex(
         *shell );
 
-    // The electroionization subshell distribution
-    std::shared_ptr<MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution>
-        electroionization_subshell_distribution;
-
     MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
         *data_container,
         *shell,
         data_container->getSubshellBindingEnergy( *shell ),
-        electroionization_subshell_distribution,
+        last_subshell_distribution,
         evaluation_tol );
 
     // Create the subshell electroelectric reaction
@@ -269,7 +338,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                 threshold_energy_index,
                 grid_searcher,
                 subshell_type,
-                electroionization_subshell_distribution ) );
+                last_subshell_distribution ) );
 
   }
   // Initialize the random number generator
