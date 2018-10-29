@@ -225,7 +225,7 @@ FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check if an energy is above the scattering window
 FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
-		   isEnergyAboveScattringWindow )
+		   isEnergyAboveScatteringWindow )
 {
   FRENSIE_CHECK( !distribution->isEnergyAboveScatteringWindow( 0.1, 0.0718 ) );
 

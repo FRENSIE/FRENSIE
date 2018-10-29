@@ -24,7 +24,7 @@ typedef MonteCarlo::BremsstrahlungAdjointElectronScatteringDistributionNativeFac
 
 std::unique_ptr<Data::AdjointElectronPhotonRelaxationDataContainer> data_container;
 
-std::shared_ptr<const MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution>
+std::shared_ptr<MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution>
   brem_distribution;
 
 //---------------------------------------------------------------------------//

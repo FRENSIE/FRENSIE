@@ -21,7 +21,7 @@ BremsstrahlungAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
     const size_t threshold_energy_index,
-    const std::shared_ptr<const BremsstrahlungAdjointElectronScatteringDistribution>&
+    const std::shared_ptr<BremsstrahlungAdjointElectronScatteringDistribution>&
             bremsstrahlung_distribution )
   : BaseType( incoming_energy_grid,
               cross_section,
@@ -35,11 +35,11 @@ BremsstrahlungAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>
 // Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 BremsstrahlungAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::BremsstrahlungAdjointElectroatomicReaction(
-       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
-       const std::shared_ptr<const std::vector<double> >& cross_section,
-       const size_t threshold_energy_index,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
-       const std::shared_ptr<const BremsstrahlungAdjointElectronScatteringDistribution>&
+    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+    const std::shared_ptr<const std::vector<double> >& cross_section,
+    const size_t threshold_energy_index,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+    const std::shared_ptr<BremsstrahlungAdjointElectronScatteringDistribution>&
             bremsstrahlung_distribution )
   : BaseType( incoming_energy_grid,
               cross_section,
@@ -49,6 +49,22 @@ BremsstrahlungAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>
 {
   // Make sure the energy gain distribution data is valid
   testPrecondition( bremsstrahlung_distribution.use_count() > 0 );
+}
+
+// Set the critical line energies
+template<typename InterpPolicy, bool processed_cross_section>
+void BremsstrahlungAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::setCriticalLineEnergies(
+                const std::shared_ptr<const std::vector<double> >& critical_line_energies )
+{
+  d_bremsstrahlung_distribution->setCriticalLineEnergies( critical_line_energies );
+}
+
+// Get the critical line energies
+template<typename InterpPolicy, bool processed_cross_section>
+const std::vector<double>&
+BremsstrahlungAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::getCriticalLineEnergies() const
+{
+  return d_bremsstrahlung_distribution->getCriticalLineEnergies();
 }
 
 // Return the number of adjoint photons emitted from the rxn at the given energy
@@ -91,9 +107,6 @@ void BremsstrahlungAdjointElectroatomicReaction<InterpPolicy,processed_cross_sec
                                                          shell_of_interaction);
 
   electron.incrementCollisionNumber();
-
-  // The shell of interaction is currently ignored
-  shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 }
 
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( BremsstrahlungAdjointElectroatomicReaction<Utility::LinLin,false> );

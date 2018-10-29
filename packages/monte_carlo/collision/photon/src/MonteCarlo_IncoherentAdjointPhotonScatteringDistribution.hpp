@@ -25,7 +25,7 @@ class IncoherentAdjointPhotonScatteringDistribution : public AdjointPhotonScatte
 
 protected:
 
-  //! Typedef for ArrayRCP const iterator
+  //! Typedef for line energy const iterator
   typedef std::vector<double>::const_iterator LineEnergyIterator;
 
 public:
@@ -47,7 +47,7 @@ public:
 
   //! Get the critical line energies
   const std::vector<double>& getCriticalLineEnergies() const;
-                               
+
   //! Set the max energy
   void setMaxEnergy( const double max_energy );
 

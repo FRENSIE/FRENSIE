@@ -128,7 +128,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     Data::AdjointElectronPhotonRelaxationDataContainer data_container =
       Data::AdjointElectronPhotonRelaxationDataContainer( test_native_file_name );
 
-    std::shared_ptr<const MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution>
+    std::shared_ptr<MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution>
         scattering_distribution;
 
     double evaluation_tol = 1e-7;
