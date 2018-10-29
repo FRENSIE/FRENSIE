@@ -81,7 +81,7 @@ FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectroatomicReaction, getCrossSection
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 6.1243057898416743e+07, 1e-12 );
 
   cross_section = excitation_reaction->getCrossSection( 1e-3 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.071196592417021282e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.050234737111856416e+07, 1e-12 );
 
   cross_section = excitation_reaction->getCrossSection( 20.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.1829299836129925e+04, 1e-12 );

@@ -87,7 +87,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
 
   energy = 1e-3;
   cross_section = atom->getTotalCrossSection( energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.927406016313648596e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.841091382164378092e+07, 1e-12 );
 
   energy = 20.0;
   cross_section = atom->getTotalCrossSection( energy );
@@ -113,7 +113,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 6.1243057898416743e+07, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.071196592417021282e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.050234737111856416e+07, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 20.0, reaction );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.1829299836129925e+04, 1e-12 );
@@ -125,7 +125,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.420906922056859401e+01, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.582521006440232370e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.557600066977331110e+01, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 20.0, reaction );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.873816755338521323e-01, 1e-12 );
@@ -155,7 +155,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.7336893667900169e+08, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.012785238320980221e+06, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.951042357070542872e+06, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 20.0, reaction );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.053930205497564110, 1e-12 );
@@ -176,7 +176,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.631739660560436249e+10, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.654929317543522827e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.595750851745400578e+07, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 20.0, reaction );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.365802734960628732e+04, 1e-12 );
@@ -238,7 +238,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomFactory,
 
   energy = 1e-3;
   cross_section = atom->getTotalCrossSection( energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.861967258747846484e+08, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.844220061412123442e+08, 1e-12 );
 
   energy = 20.0;
   cross_section = atom->getTotalCrossSection( energy );
@@ -263,7 +263,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomFactory,
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 5.9000914445996724e+07, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.551078672865766287e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.527949473545904458e+07, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 20.0, reaction );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.2407699864974697e+05, 1e-12 );
@@ -275,7 +275,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomFactory,
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 9.383502051677240843e+02, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.895527476397335249e+02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.879585026121019951e+02, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 20.0, reaction );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.536969105953957637, 1e-12 );
@@ -287,7 +287,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomFactory,
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.06351e+09, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 5.312233690656514466e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 5.282253794701296091e+07, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 20.0, reaction );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.4129048986120211e+05, 1e-12 );
@@ -326,7 +326,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomFactory,
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.635900173662700176e+09, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.857736617572578415e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.812026426565172896e+07, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 20.0, reaction );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.334578964645907581e+04, 1e-12 );
@@ -337,7 +337,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomFactory,
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.383647764060156860e+11, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.637282228662768751e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.607004651897343248e+07, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 20.0, reaction );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.111803641061245871e+05, 1e-12 );

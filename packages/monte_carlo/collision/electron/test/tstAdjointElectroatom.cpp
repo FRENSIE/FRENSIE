@@ -97,7 +97,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatom, getTotalCrossSection )
 
   cross_section = electroatom->getTotalCrossSection( 1e-3 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          1.582521006440232370e+01 + 1.071196592417021282e+07,
+                          1.557600066977331110e+01 + 1.050234737111856416e+07,
                           1e-12 );
 
   cross_section = electroatom->getTotalCrossSection( 20.0 );
@@ -163,7 +163,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatom, getReactionCrossSection )
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 6.1243057898416743e+07, 1e-12 );
 
   cross_section = electroatom->getReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.071196592417021282e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.050234737111856416e+07, 1e-12 );
 
   cross_section = electroatom->getReactionCrossSection( 20.0, reaction );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.1829299836129925e+04, 1e-12 );
@@ -176,7 +176,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatom, getReactionCrossSection )
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.420906922056859401e+01, 1e-12 );
 
   cross_section = electroatom->getReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.582521006440232370e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.557600066977331110e+01, 1e-12 );
 
   cross_section = electroatom->getReactionCrossSection( 20.0, reaction );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.873816755338521323e-01, 1e-12 );
@@ -203,7 +203,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatom, getReactionCrossSection )
 
   cross_section = electroatom->getReactionCrossSection( 1e-3, reaction );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          1.582521006440232370e+01 + 1.071196592417021282e+07,
+                          1.557600066977331110e+01 + 1.050234737111856416e+07,
                           1e-12 );
 
   cross_section = electroatom->getReactionCrossSection( 20.0, reaction );

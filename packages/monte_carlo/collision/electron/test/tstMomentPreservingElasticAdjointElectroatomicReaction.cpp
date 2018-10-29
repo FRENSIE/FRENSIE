@@ -91,7 +91,7 @@ FRENSIE_UNIT_TEST( MomentPreservingElasticAdjointElectroatomicReaction,
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.2217606103336416e+07, 1e-12 );
 
   cross_section = mp_elastic_reaction->getCrossSection( 1.0E-03 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.696297499655022053e+06, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.651784305723777972e+06, 1e-12 );
 
   cross_section = mp_elastic_reaction->getCrossSection( 20.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.051440287719986433, 1e-12 );

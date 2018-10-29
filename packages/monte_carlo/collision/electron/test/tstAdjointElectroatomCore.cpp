@@ -90,7 +90,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomCore, getScatteringReactions )
                    b_reaction.getCrossSection( 1e-3 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          1.582521006440232370e+01 + 1.071196592417021282e+07,
+                          1.557600066977331110e+01 + 1.050234737111856416e+07,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 20.0 ) +

@@ -48,7 +48,7 @@ FRENSIE_UNIT_TEST( AdjointElectronMaterial, getMacroscopicTotalCrossSection )
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.665353570771184540e+10*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicTotalCrossSection( 1e-3 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.013600025347673148e+07*num_density, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.926416226694965735e+07*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicTotalCrossSection( 20.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.785097370823987876e+05*num_density, 1e-12 );
@@ -93,7 +93,7 @@ FRENSIE_UNIT_TEST( AdjointElectronMaterial, getMacroscopicReactionCrossSection )
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 6.1243057898416743e+07*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.071196592417021282e+07*num_density, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.050234737111856416e+07*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection( 20.0, reaction );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.1829299836129925e+04*num_density, 1e-12 );
@@ -105,7 +105,7 @@ FRENSIE_UNIT_TEST( AdjointElectronMaterial, getMacroscopicReactionCrossSection )
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.420906922056859401e+01*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.582521006440232370e+01*num_density, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.557600066977331110e+01*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection( 20.0, reaction );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.873816755338521323e-01*num_density, 1e-12 );
@@ -117,7 +117,7 @@ FRENSIE_UNIT_TEST( AdjointElectronMaterial, getMacroscopicReactionCrossSection )
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.74896e+08*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.874725328661224805e+06*num_density, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.804290802376420237e+06*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection( 20.0, reaction );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.3022122514987041e+04*num_density, 1e-12 );
@@ -156,7 +156,7 @@ FRENSIE_UNIT_TEST( AdjointElectronMaterial, getMacroscopicReactionCrossSection )
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.631739660560436249e+10*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.654929317543522827e+07*num_density, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.595750851745400578e+07*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection( 20.0, reaction );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.365802734960628732e+04*num_density, 1e-12 );

@@ -80,7 +80,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, getCrossSection )
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.420906922056859401e+01, 1e-12 );
 
   cross_section = bremsstrahlung_reaction->getCrossSection( 2e-2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.611838244690622535, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.595836278017287224, 1e-12 );
 
   cross_section = bremsstrahlung_reaction->getCrossSection( 20.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.873816755338521323e-01, 1e-12 );
