@@ -50,6 +50,7 @@ class SimulationAdjointElectronPropertiesTestCase(unittest.TestCase):
         self.assertEqual( properties.getAdjointElectronEvaluationTolerance(), 1e-12 )
         self.assertEqual( properties.getAdjointElasticCutoffAngleCosine(), 1.0 )
         self.assertEqual( properties.getNumberOfAdjointElectronHashGridBins(), 500 )
+        self.assertEqual( len(properties.getCriticalAdjointElectronLineEnergies()), 0 )
 
     def testSetMinAdjointElectronEnergy(self):
         "*Test MonteCarlo.SimulationAdjointElectronProperties setMinAdjointElectronEnergy"
@@ -170,6 +171,15 @@ class SimulationAdjointElectronPropertiesTestCase(unittest.TestCase):
 
         properties.setNumberOfAdjointElectronHashGridBins( 750 )
         self.assertEqual( properties.getNumberOfAdjointElectronHashGridBins(), 750 )
+
+    def testGetCriticalAdjointElectronLineEnergies(self):
+        "*Test MonteCarlo.SimulationAdjointElectronProperties setCriticalAdjointElectronLineEnergies"
+        properties = MonteCarlo.SimulationAdjointElectronProperties()
+
+        critical_line_energies = (1.0, 10.0)
+        properties.setCriticalAdjointElectronLineEnergies( critical_line_energies )
+        self.assertEqual( properties.getCriticalAdjointElectronLineEnergies(),
+                          critical_line_energies )
 
 #-----------------------------------------------------------------------------#
 # Custom main

@@ -48,6 +48,7 @@ FRENSIE_UNIT_TEST( SimulationAdjointElectronProperties, defaults )
                        1.0 );
   FRENSIE_CHECK_EQUAL( properties.getNumberOfAdjointElectronHashGridBins(),
                        500 );
+  FRENSIE_CHECK_EQUAL( properties.getCriticalAdjointElectronLineEnergies().size(), 0 );
 
 }
 
@@ -251,6 +252,23 @@ FRENSIE_UNIT_TEST( SimulationAdjointElectronProperties,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the critical line energies can be set
+FRENSIE_UNIT_TEST( SimulationAdjointElectronProperties,
+                   getCriticalAdjointElectronLineEnergies )
+{
+  MonteCarlo::SimulationAdjointElectronProperties properties;
+
+  std::vector<double> critical_line_energies( 2 );
+  critical_line_energies[0] = 1.0;
+  critical_line_energies[1] = 10.0;
+
+  properties.setCriticalAdjointElectronLineEnergies( critical_line_energies );
+
+  FRENSIE_CHECK_EQUAL( properties.getCriticalAdjointElectronLineEnergies(),
+                       critical_line_energies );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the properties can be archived
 FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationAdjointElectronProperties,
                                    archive,
@@ -285,6 +303,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationAdjointElectronProperties,
     custom_properties.setAdjointCoupledElasticSamplingMode( MonteCarlo::TWO_D_UNION );
     custom_properties.setAdjointElasticCutoffAngleCosine( 0.9 );
     custom_properties.setNumberOfAdjointElectronHashGridBins( 750 );
+    custom_properties.setCriticalAdjointElectronLineEnergies( std::vector<double>({1.0, 10.0}) );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( default_properties ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( custom_properties ) );
@@ -322,6 +341,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationAdjointElectronProperties,
                        1.0 );
   FRENSIE_CHECK_EQUAL( default_properties.getNumberOfAdjointElectronHashGridBins(),
                        500 );
+  FRENSIE_CHECK_EQUAL( default_properties.getCriticalAdjointElectronLineEnergies().size(), 0 );
 
   MonteCarlo::SimulationAdjointElectronProperties custom_properties;
 
@@ -347,6 +367,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationAdjointElectronProperties,
                        0.9 );
   FRENSIE_CHECK_EQUAL( custom_properties.getNumberOfAdjointElectronHashGridBins(),
                        750 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getCriticalAdjointElectronLineEnergies(),
+                       std::vector<double>({1.0, 10.0}) );
 }
 
 //---------------------------------------------------------------------------//

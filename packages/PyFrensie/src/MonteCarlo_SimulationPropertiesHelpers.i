@@ -289,6 +289,13 @@ MonteCarlo::PROPERTIES::setAtomicExcitationModeOff;
 %feature("autodoc", "isAtomicExcitationModeOn(PROPERTIES self) -> bool")
 MonteCarlo::PROPERTIES::isAtomicExcitationModeOn;
 
+// Set/get the critical line energies
+%feature("autodoc", "setCriticalAdjointElectronLineEnergies(PROPERTIES self, const std::vector<double>& critical_line_energies) -> void")
+MonteCarlo::PROPERTIES::setCriticalAdjointElectronLineEnergies;
+
+%feature("autodoc", "getCriticalAdjointElectronLineEnergies(PROPERTIES self) -> const std::vector<double>&")
+MonteCarlo::PROPERTIES::getCriticalAdjointElectronLineEnergies;
+
 %atomic_simulation_properties_setup_helper( PROPERTIES )
 
 %enddef
