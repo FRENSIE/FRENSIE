@@ -25,7 +25,7 @@ typedef MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributi
 
 std::unique_ptr<Data::AdjointElectronPhotonRelaxationDataContainer> data_container;
 
-std::shared_ptr<const MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution>
+std::shared_ptr<MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution>
   native_distribution;
 
 double max_energy = 2.00100137100000026e+01;

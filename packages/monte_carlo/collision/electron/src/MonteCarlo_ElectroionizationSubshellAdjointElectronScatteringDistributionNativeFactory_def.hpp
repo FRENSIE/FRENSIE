@@ -19,7 +19,7 @@ void ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroionization_data,
     const unsigned subshell,
     const double binding_energy,
-    std::shared_ptr<const ElectroionizationSubshellAdjointElectronScatteringDistribution>&
+    std::shared_ptr<ElectroionizationSubshellAdjointElectronScatteringDistribution>&
       electroionization_subshell_distribution,
     const double evaluation_tol )
 {

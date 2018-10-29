@@ -204,7 +204,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
         *shell );
 
     // The electroionization subshell distribution
-    std::shared_ptr<const MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution>
+    std::shared_ptr<MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution>
         electroionization_subshell_distribution;
 
     double evaluation_tol = 1e-7;
@@ -251,7 +251,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
         *shell );
 
     // The electroionization subshell distribution
-    std::shared_ptr<const MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution>
+    std::shared_ptr<MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution>
         electroionization_subshell_distribution;
 
     MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLin,Utility::UnitBaseCorrelated>(

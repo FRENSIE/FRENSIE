@@ -26,7 +26,7 @@ class ElectroionizationAdjointElectroatomicReaction : public StandardReactionBas
 private:
 
   // Typedef for the base class type
-typedef StandardReactionBaseImpl<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section> 
+typedef StandardReactionBaseImpl<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section>
     BaseType;
 
 public:
@@ -54,7 +54,7 @@ public:
 
   //! Return the number of adjoint electrons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedAdjointElectrons( const double energy ) const override;
-  
+
   //! Return the number of adjoint positrons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedAdjointPositrons( const double energy ) const override;
 

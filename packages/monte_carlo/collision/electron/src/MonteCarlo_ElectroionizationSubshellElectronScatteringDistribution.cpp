@@ -78,8 +78,8 @@ double ElectroionizationSubshellElectronScatteringDistribution::getMaxSecondaryE
 // Evaluate the distribution for a given incoming and outgoing energy
 /*! \details The outgoing energy can either be for the primary or secondary
  * (knock-on) electron. The PDF should be sampled with a correlated sampling
- * routine that samples the upper and lower distributions with a knock on energy
- * that has an equivalent ratio to the max knock on energy.
+ * routine that samples the upper and lower distributions with a knock-on energy
+ * that has an equivalent ratio to the max knock-on energy.
  */
 double ElectroionizationSubshellElectronScatteringDistribution::evaluate(
                      const double incoming_energy,
@@ -122,8 +122,8 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluate(
 // Evaluate the PDF value for a given incoming and outgoing energy
 /*! \details The outgoing energy can either be for the primary or secondary
  * (knock-on) electron. The PDF should be sampled with a correlated sampling
- * routine that samples the upper and lower distributions with a knock on energy
- * that has an equivalent ratio to the max knock on energy.
+ * routine that samples the upper and lower distributions with a knock-on energy
+ * that has an equivalent ratio to the max knock-on energy.
  */
 double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
                      const double incoming_energy,
@@ -140,7 +140,7 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
   // Assume the lower of the two outgoing energies is the knock-on electron
   double knock_on_energy = std::min( outgoing_energy_1, outgoing_energy_2 );
 
-  // Make sure the knock on energy is above the min outgoing energy
+  // Make sure the knock-on energy is above the min outgoing energy
   if ( knock_on_energy < this->getMinSecondaryEnergyAtIncomingEnergy( incoming_energy ) )
     return 0.0;
 
@@ -167,8 +167,8 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
 // Evaluate the CDF value for a given incoming and outgoing energy
 /*! \details The outgoing energy can either be for the primary or secondary
  * (knock-on) electron. The PDF should be sampled with a correlated sampling
- * routine that samples the upper and lower distributions with a knock on energy
- * that has an equivalent ratio to the max knock on energy.
+ * routine that samples the upper and lower distributions with a knock-on energy
+ * that has an equivalent ratio to the max knock-on energy.
  */
 double ElectroionizationSubshellElectronScatteringDistribution::evaluateCDF(
                      const double incoming_energy,
@@ -208,7 +208,7 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluateCDF(
             max_energy_functor );
 }
 
-// Sample an knock on energy and direction from the distribution
+// Sample a knock-on energy and direction from the distribution
 /*! \details It is possible to sample a knock_on_energy that is greater than the
  * available energy. When this is the case, the knock_on_energy is assumed to be
  * the max available energy (E_{in} - E_b) and the outgoing energy is assumed to
@@ -234,7 +234,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
       std::min( incoming_energy - d_binding_energy, knock_on_energy );
   }
 
-  // Calculate the outgoing angle cosine for the knock on electron
+  // Calculate the outgoing angle cosine for the knock-on electron
   knock_on_angle_cosine = outgoingAngle( incoming_energy,
                                          knock_on_energy );
 
@@ -242,7 +242,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
 //  testPostcondition( incoming_energy - d_binding_energy >= knock_on_energy );
 }
 
-// Sample an knock on energy and direction from the distribution
+// Sample a knock-on energy and direction from the distribution
 void ElectroionizationSubshellElectronScatteringDistribution::samplePrimaryAndSecondary(
                const double incoming_energy,
                double& outgoing_energy,
@@ -250,12 +250,12 @@ void ElectroionizationSubshellElectronScatteringDistribution::samplePrimaryAndSe
                double& scattering_angle_cosine,
                double& knock_on_angle_cosine ) const
 {
-  // Sample energy and angle cosine for the knock on electron
+  // Sample energy and angle cosine for the knock-on electron
   this->sample( incoming_energy, knock_on_energy, knock_on_angle_cosine );
 
   /* NOTE: When calculating the outgoing energy the binding energy should be
    * subtracted from the incoming energy first to ensure a non-negative result.
-   * Otherwise, for the max knock on energy ( ie: (E_in - E_b)/2 ), roundoff
+   * Otherwise, for the max knock-on energy ( ie: (E_in - E_b)/2 ), roundoff
    * error can sometimes cause a negative outgoing energy to be calculated.
    */
   outgoing_energy =
@@ -274,7 +274,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::samplePrimaryAndSe
   testPostcondition( scattering_angle_cosine >= 0.0 );
 }
 
-// Sample an knock on energy and direction and record the number of trials
+// Sample a knock-on energy and direction and record the number of trials
 void ElectroionizationSubshellElectronScatteringDistribution::sampleAndRecordTrials(
                               const double incoming_energy,
                               double& knock_on_energy,
@@ -290,7 +290,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::sampleAndRecordTri
 void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
                                 ElectronState& electron,
                                 ParticleBank& bank,
-                                Data::SubshellType& shell_of_interaction ) const
+                                Data::SubshellType& ) const
 {
   // The energy of the outgoing and knock-on electron
   double outgoing_energy, knock_on_energy;
@@ -354,7 +354,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterPositron(
   // The angle cosine of the outgoing and knock-on electron
   double scattering_angle_cosine, knock_on_angle_cosine;
 
-  // Sample energy and angle cosine for the knock on electron
+  // Sample energy and angle cosine for the knock-on electron
   this->samplePositron( positron.getEnergy(),
                         knock_on_energy,
                         knock_on_angle_cosine );
@@ -436,14 +436,14 @@ double ElectroionizationSubshellElectronScatteringDistribution::outgoingAngle(
   return angle_cosine;
 }
 
-// Sample an knock on energy and direction from the distribution
+// Sample a knock-on energy and direction from the distribution
 /*! \details For electro-ionization the knock-on electron is indistinguishable
  *  from the incident electron and the electron with the lower energy is assumed
  *  to be the knock-on electron. The sampled knock-on energy is limited to half
  *  the maximum energy loss. For positro-ionization the knock-on electron is
  *  distinguishable from the positron and must be sampled from the full energy
  *  loss range, which is symmetrical. If the random number used for sampling is
- *  greater than half then the knock- on energy is greater than half the maximum
+ *  greater than half then the knock-on energy is greater than half the maximum
  *  energy loss and the sampled value must be added to the half the maximum
  *  energy loss to obtain the knock-on energy.
  */
@@ -496,7 +496,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::samplePositron(
       std::min( incoming_energy - d_binding_energy, knock_on_energy );
   }
 
-  // Calculate the outgoing angle cosine for the knock on electron
+  // Calculate the outgoing angle cosine for the knock-on electron
   knock_on_angle_cosine = outgoingAngle( incoming_energy,
                                          knock_on_energy );
 

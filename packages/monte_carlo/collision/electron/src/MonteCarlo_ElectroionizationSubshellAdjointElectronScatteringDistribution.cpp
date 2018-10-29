@@ -10,6 +10,7 @@
 #include "MonteCarlo_ElectroionizationSubshellAdjointElectronScatteringDistribution.hpp"
 #include "MonteCarlo_KinematicHelpers.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
+#include "MonteCarlo_AdjointElectronProbeState.hpp"
 
 namespace MonteCarlo{
 
@@ -19,17 +20,54 @@ ElectroionizationSubshellAdjointElectronScatteringDistribution::Electroionizatio
         electroionization_subshell_distribution,
     const double& binding_energy )
   : d_ionization_subshell_dist( electroionization_subshell_distribution ),
-    d_binding_energy( binding_energy )
+    d_binding_energy( binding_energy ),
+    d_critical_line_energies( new std::vector<double>( 1, 0.0 ) )
 {
   // Make sure the arrays are valid
   testPrecondition( d_ionization_subshell_dist.use_count() > 0 );
   testPrecondition( binding_energy > 0.0 );
 }
 
+// Set the critical line energies
+/*! \details The critical line energies must be sorted. It is acceptable for
+ * some or all of them to be above the max energy.
+ */
+void ElectroionizationSubshellAdjointElectronScatteringDistribution::setCriticalLineEnergies(
+    const std::shared_ptr<const std::vector<double> >& critical_line_energies )
+{
+  // Make sure the critical line energies are valid
+  testPrecondition( critical_line_energies.get() );
+  testPrecondition( critical_line_energies->size() > 0 );
+  testPrecondition( Utility::Sort::isSortedAscending(
+					     critical_line_energies->begin(),
+					     critical_line_energies->end() ) );
+
+  d_critical_line_energies = critical_line_energies;
+}
+
+// Get the critical line energies
+const std::vector<double>&
+ElectroionizationSubshellAdjointElectronScatteringDistribution::getCriticalLineEnergies() const
+{
+  return *d_critical_line_energies;
+}
+
 // Return the binding energy
 double ElectroionizationSubshellAdjointElectronScatteringDistribution::getBindingEnergy() const
 {
   return d_binding_energy;
+}
+
+// Return the min incoming energy
+double ElectroionizationSubshellAdjointElectronScatteringDistribution::getMinEnergy() const
+{
+  return d_ionization_subshell_dist->getLowerBoundOfPrimaryIndepVar();
+}
+
+// Return the Max incoming energy
+double ElectroionizationSubshellAdjointElectronScatteringDistribution::getMaxEnergy() const
+{
+  return d_ionization_subshell_dist->getUpperBoundOfPrimaryIndepVar();
 }
 
 // Evaluate the distribution for a given incoming and outgoing energy
@@ -75,21 +113,21 @@ double ElectroionizationSubshellAdjointElectronScatteringDistribution::evaluateC
 }
 
 
-// Sample an knock on energy and direction from the distribution
+// Sample an outgoing energy and direction from the distribution
 void ElectroionizationSubshellAdjointElectronScatteringDistribution::sample(
                const double incoming_energy,
                double& outgoing_energy,
                double& outgoing_angle_cosine ) const
 {
-  // Sample knock-on electron energy
+  // Sample outgoing adjoint electron energy
   outgoing_energy =
       d_ionization_subshell_dist->sampleSecondaryConditional( incoming_energy );
 
-  // Calculate the outgoing angle cosine for the knock on electron
+  // Calculate the outgoing angle cosine for the adjoint electron
   outgoing_angle_cosine = outgoingAngle( incoming_energy, outgoing_energy );
 }
 
-// Sample an knock on energy and direction and record the number of trials
+// Sample an outgoing energy and direction and record the number of trials
 void ElectroionizationSubshellAdjointElectronScatteringDistribution::sampleAndRecordTrials(
                               const double incoming_energy,
                               double& outgoing_energy,
@@ -101,24 +139,27 @@ void ElectroionizationSubshellAdjointElectronScatteringDistribution::sampleAndRe
   this->sample( incoming_energy, outgoing_energy, outgoing_angle_cosine );
 }
 
-// Randomly scatter the electron
+// Randomly scatter the adjoint electron
 void ElectroionizationSubshellAdjointElectronScatteringDistribution::scatterAdjointElectron(
-        AdjointElectronState& electron,
+        AdjointElectronState& adjoint_electron,
         ParticleBank& bank,
-        Data::SubshellType& shell_of_interaction ) const
+        Data::SubshellType& ) const
 {
+  // Generate probe particles
+  this->createProbeParticles( adjoint_electron, bank );
+
   // The energy and angle cosine of the outgoing electron
   double outgoing_energy, scattering_angle_cosine;
 
   // Sample the distribution
-  this->sample( electron.getEnergy(), outgoing_energy, scattering_angle_cosine );
+  this->sample( adjoint_electron.getEnergy(), outgoing_energy, scattering_angle_cosine );
 
   // Set the outgoing electron energy
-  electron.setEnergy( outgoing_energy );
+  adjoint_electron.setEnergy( outgoing_energy );
 
   // Set the new direction of the primary electron
-  electron.rotateDirection( scattering_angle_cosine,
-                            this->sampleAzimuthalAngle() );
+  adjoint_electron.rotateDirection( scattering_angle_cosine,
+                                    this->sampleAzimuthalAngle() );
 }
 
 // Calculate the outgoing angle cosine
@@ -136,6 +177,165 @@ double ElectroionizationSubshellAdjointElectronScatteringDistribution::outgoingA
   // Calculate the plane of scattering
   return sqrt( energy_ratio*( normalized_outgoing_energy + 2.0 )/
              ( energy_ratio*normalized_outgoing_energy + 2.0 ) );
+}
+
+// Check if an energy is in the scattering window
+bool ElectroionizationSubshellAdjointElectronScatteringDistribution::isEnergyInScatteringWindow(
+                                            const double energy_of_interest,
+                                            const double initial_energy ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( initial_energy > 0.0 );
+  // Make sure the energy of interest is valid
+  testPrecondition( energy_of_interest >= 0.0 );
+
+  if( energy_of_interest > this->getMaxEnergy() )
+    return false;
+  else
+  {
+    if( this->isEnergyAboveScatteringWindow( energy_of_interest,
+                                             initial_energy ) )
+      return false;
+    else
+      return true;
+  }
+}
+
+// Check if an energy is above the scattering window
+/*! \details An adjoint electroionization interaction can only occur when enough
+ * energy is transferred to the electron to free it from its subshell. This
+ * sets an upper limit for the window to energy_of_interest - binding_energy.
+ */
+bool ElectroionizationSubshellAdjointElectronScatteringDistribution::isEnergyAboveScatteringWindow(
+                                           const double energy_of_interest,
+                                           const double initial_energy ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( initial_energy > 0.0 );
+  // Make sure the energy of interest is valid
+  testPrecondition( energy_of_interest >= 0.0 );
+
+  return initial_energy > energy_of_interest - d_binding_energy;
+}
+
+// Create a probe particle
+/*! \details This procedure will generate a probe particle (if physically
+ * possible) even if the incoming particle is a probe (be careful about
+ * create probe cascades).
+ */
+void ElectroionizationSubshellAdjointElectronScatteringDistribution::createProbeParticle(
+                                  const double energy_of_interest,
+                                  const AdjointElectronState& adjoint_electron,
+                                  ParticleBank& bank ) const
+{
+  // Make sure the energy of interest is valid
+  testPrecondition( energy_of_interest > 0.0 );
+  testPrecondition( energy_of_interest <= this->getMaxEnergy() );
+  // Make sure the adjoint electron energy is valid
+  testPrecondition( adjoint_electron.getEnergy() <= this->getMaxEnergy() );
+  // Make sure the energy of interest is in the scattering window
+  testPrecondition( this->isEnergyInScatteringWindow(
+                                                energy_of_interest,
+                                                adjoint_electron.getEnergy() ) );
+
+  // Only generate the probe if the energy is in the scattering window
+  if( this->isEnergyInScatteringWindow( energy_of_interest,
+                                        adjoint_electron.getEnergy() ) )
+  {
+    const double weight_mult =
+      this->evaluatePDF( adjoint_electron.getEnergy(), energy_of_interest );
+
+    // Create the probe with the desired energy and modified weight
+    auto probe = std::make_shared<AdjointElectronProbeState>( adjoint_electron );
+
+    // Calculate the outgoing angle cosine for the adjoint electron
+    double scattering_angle_cosine =
+      outgoingAngle( adjoint_electron.getEnergy(), energy_of_interest );
+
+    probe->setEnergy( energy_of_interest );
+    probe->rotateDirection( scattering_angle_cosine,
+                            this->sampleAzimuthalAngle() );
+    probe->multiplyWeight( weight_mult );
+    probe->activate();
+
+    // Add the probe to the bank
+    bank.push( probe );
+  }
+}
+
+// Create the probe particles
+/*! \details Currently, probe cascades are not allowed (only non-probe states
+ * can generate new probe states).
+ */
+void ElectroionizationSubshellAdjointElectronScatteringDistribution::createProbeParticles(
+                                      const AdjointElectronState& adjoint_electron,
+                                      ParticleBank& bank ) const
+{
+  // Avoid probe cascades
+  if( !adjoint_electron.isProbe() )
+  {
+    // Find the critical line energies in the scattering window
+    LineEnergyIterator line_energy, end_line_energy;
+
+    this->getCriticalLineEnergiesInScatteringWindow(adjoint_electron.getEnergy(),
+                                                    line_energy,
+                                                    end_line_energy );
+
+    while( line_energy != end_line_energy )
+    {
+      this->createProbeParticle( *line_energy, adjoint_electron, bank );
+
+      ++line_energy;
+    }
+  }
+}
+
+// Return only the critical line energies that can be scattered into
+void ElectroionizationSubshellAdjointElectronScatteringDistribution::getCriticalLineEnergiesInScatteringWindow(
+                                         const double energy,
+                                         LineEnergyIterator& start_energy,
+                                         LineEnergyIterator& end_energy ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( energy > 0.0 );
+
+  if( this->getMinEnergy() > energy )
+  {
+    start_energy = d_critical_line_energies->end();
+    end_energy = start_energy;
+  }
+  else if( this->isEnergyAboveScatteringWindow( d_critical_line_energies->back(), energy ) )
+  {
+    start_energy = d_critical_line_energies->end();
+    end_energy = start_energy;
+  }
+  else
+  {
+    start_energy = d_critical_line_energies->begin();
+
+    while( start_energy != d_critical_line_energies->end() )
+    {
+      if( this->isEnergyInScatteringWindow( *start_energy, energy ) )
+        break;
+
+      ++start_energy;
+    }
+
+    end_energy = start_energy;
+
+    if( start_energy != d_critical_line_energies->end() )
+    {
+      ++end_energy;
+
+      while( end_energy != d_critical_line_energies->end() )
+      {
+        if( !this->isEnergyInScatteringWindow( *end_energy, energy ) )
+          break;
+
+        ++end_energy;
+      }
+    }
+  }
 }
 
 } // end MonteCarlo namespace
