@@ -458,7 +458,7 @@ void Atom<AtomCore>::collideAnalogue( ParticleStateType& particle,
   double absorption_cross_section =
     this->getAtomicAbsorptionCrossSection( particle.getEnergy(),
                                             energy_grid_bin );
-
+  
   double scaled_random_number =
     Utility::RandomNumberGenerator::getRandomNumber<double>()*
     (scattering_cross_section+absorption_cross_section);
@@ -593,10 +593,11 @@ void Atom<AtomCore>::sampleAbsorptionReaction( const double scaled_random_number
 
 // Sample a scattering reaction
 template<typename AtomCore>
-void Atom<AtomCore>::sampleScatteringReaction( const double scaled_random_number,
-                                     unsigned energy_grid_bin,
-                                     ParticleStateType& particle,
-                                     ParticleBank& bank ) const
+void Atom<AtomCore>::sampleScatteringReaction(
+                                             const double scaled_random_number,
+                                             unsigned energy_grid_bin,
+                                             ParticleStateType& particle,
+                                             ParticleBank& bank ) const
 {
   double partial_cross_section = 0.0;
 

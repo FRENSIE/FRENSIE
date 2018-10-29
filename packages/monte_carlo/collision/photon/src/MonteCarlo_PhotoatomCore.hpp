@@ -30,10 +30,10 @@ namespace MonteCarlo{
  * share the photoatomic data without copying that data (even if each
  * photo-nuclide has its own copy of the photoatom core object).
  */
-class PhotoatomCore : public AtomCore<PhotoatomicReactionType,PhotoatomicReaction,PhotonState,std::unordered_map,std::unordered_set>
+class PhotoatomCore : public AtomCore<PhotoatomicReactionType,PhotoatomicReaction,PhotonState,std::map,std::set>
 {
   // Typedef for the base type
-  typedef AtomCore<PhotoatomicReactionType,PhotoatomicReaction,PhotonState,std::unordered_map,std::unordered_set> BaseType;
+  typedef AtomCore<PhotoatomicReactionType,PhotoatomicReaction,PhotonState,std::map,std::set> BaseType;
 
 public:
 

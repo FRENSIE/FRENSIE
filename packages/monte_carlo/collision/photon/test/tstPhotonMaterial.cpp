@@ -360,7 +360,7 @@ FRENSIE_UNIT_TEST( PhotonMaterial, collideAnalogue )
   // Set up the random number stream
   std::vector<double> fake_stream( 9 );
   fake_stream[0] = 0.5; // select the pb atom
-  fake_stream[1] = 0.9; // select the incoherent reaction
+  fake_stream[1] = 0.1; // select the incoherent reaction
   fake_stream[2] = 0.001; // sample from first term of koblinger's method
   fake_stream[3] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[4] = 0.5; // accept x in scattering function rejection loop
@@ -396,7 +396,7 @@ FRENSIE_UNIT_TEST( PhotonMaterial, collideSurvivalBias )
   // Set up the random number stream
   std::vector<double> fake_stream( 9 );
   fake_stream[0] = 0.5; // select the pb atom
-  fake_stream[1] = 0.9; // select the incoherent reaction
+  fake_stream[1] = 0.1; // select the incoherent reaction
   fake_stream[2] = 0.001; // sample from first term of koblinger's method
   fake_stream[3] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[4] = 0.5; // accept x in scattering function rejection loop
