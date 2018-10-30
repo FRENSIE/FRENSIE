@@ -1820,7 +1820,7 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         self.assertAlmostEqual(
           filled_model.getAdjointElectronMacroscopicTotalCrossSection(
                     cell, energy ),
-          1.9879702995907314e+05,
+          1.987787741728153487e+05,
           10 )
 
         self.assertAlmostEqual(
