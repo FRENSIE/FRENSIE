@@ -204,11 +204,13 @@ FRENSIE_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
 
   // Set up the random number stream
   std::vector<double> fake_stream( 4 );
-  fake_stream[0] = 0.9; // select the incoherent reaction
+  fake_stream[0] = 0.1; // select the incoherent reaction
   fake_stream[1] = 0.001; // sample from first term of koblinger's method
   fake_stream[2] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[3] = 0.5; // accept x in scattering function rejection loop
   fake_stream[4] = 0.5; // azimuthal_angle = pi
+
+  
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -393,7 +395,7 @@ FRENSIE_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
 
   // Set up the random number stream
   std::vector<double> fake_stream( 9 );
-  fake_stream[0] = 0.9; // select the incoherent reaction
+  fake_stream[0] = 0.1; // select the incoherent reaction
   fake_stream[1] = 0.001; // sample from first term of koblinger's method
   fake_stream[2] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[3] = 0.5; // accept x in scattering function rejection loop

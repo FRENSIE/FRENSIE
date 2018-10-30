@@ -5,7 +5,7 @@ MACRO(ENABLE_MOAB_SUPPORT)
 
   # Add the user supplied Moab prefix to help find Moab
   IF(DEFINED MOAB_PREFIX)
-    SET(CMAKE_PREFIX_PATH ${MOAB_PREFIX}/lib ${CMAKE_PREFIX_PATH})
+    SET(CMAKE_PREFIX_PATH ${MOAB_PREFIX}/lib ${MOAB_PREFIX}/lib/cmake/MOAB/ ${CMAKE_PREFIX_PATH})
   ELSE()
     MESSAGE(FATAL_ERROR "The MOAB_PREFIX must be set currently.")
   ENDIF()

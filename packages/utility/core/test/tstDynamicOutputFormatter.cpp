@@ -908,7 +908,7 @@ BOOST_AUTO_TEST_CASE( formatStandardNoteKeywords,
                        "\E[1;36;49m note:\E[0m this is a test!" );
 #else
     BOOST_CHECK_EQUAL( formatter.getFormattedOutput(),
-                       "note: this is a test!" );
+                       " note: this is a test!" );
 #endif
   }
 
@@ -1518,7 +1518,7 @@ BOOST_AUTO_TEST_CASE( formatStandardFilenameKeywords,
                        "These are test files:\E[1;29;49m include/test.hpp\E[0m,\E[1;29;49m /home/src/test.cpp:1111\E[0m" );
 #else
     BOOST_CHECK_EQUAL( formatter.getFormattedOutput(),
-                       "These are test files: include/test.hpp, home/src/test.cpp:1111" );
+                       "These are test files: include/test.hpp, /home/src/test.cpp:1111" );
 #endif
   }
 }

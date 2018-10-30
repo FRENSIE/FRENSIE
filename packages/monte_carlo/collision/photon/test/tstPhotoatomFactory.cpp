@@ -215,7 +215,7 @@ FRENSIE_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_basic )
 
   // Set up the random number stream
   std::vector<double> fake_stream( 4 );
-  fake_stream[0] = 0.9; // select the incoherent reaction
+  fake_stream[0] = 0.1; // select the incoherent reaction
   fake_stream[1] = 0.001; // sample from first term of koblinger's method
   fake_stream[2] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[3] = 0.5; // accept x in scattering function rejection loop
@@ -391,7 +391,7 @@ FRENSIE_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_basic )
   photon.setDirection( 0.0, 0.0, 1.0 );
 
   std::vector<double> fake_stream( 4 );
-  fake_stream[0] = 0.9; // select the incoherent reaction
+  fake_stream[0] = 0.1; // select the incoherent reaction
   fake_stream[1] = 0.001; // sample from first term of koblinger's method
   fake_stream[2] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[3] = 0.5; // accept x in scattering function rejection loop
@@ -592,7 +592,7 @@ FRENSIE_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_doppler )
 
   // Set up the random number stream
   std::vector<double> fake_stream( 8 );
-  fake_stream[0] = 0.9; // select the incoherent reaction
+  fake_stream[0] = 0.1; // select the incoherent reaction
   fake_stream[1] = 0.001; // sample from first term of koblinger's method
   fake_stream[2] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[3] = 0.5; // accept x in scattering function rejection loop
@@ -769,7 +769,7 @@ FRENSIE_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_doppler )
   photon.setDirection( 0.0, 0.0, 1.0 );
 
   std::vector<double> fake_stream( 7 );
-  fake_stream[0] = 0.9; // select the incoherent reaction
+  fake_stream[0] = 0.1; // select the incoherent reaction
   fake_stream[1] = 0.001; // sample from first term of koblinger's method
   fake_stream[2] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[3] = 0.5; // accept x in scattering function rejection loop
