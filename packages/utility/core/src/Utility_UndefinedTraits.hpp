@@ -34,7 +34,7 @@ struct VerboseUndefinedTraits
   //! This type should be used as the default value of typedefsw
   struct DesiredTypeIsMissingSpecialization{};
 
-  //! This function should not compile if there is any attemp to instantiate!
+  //! This function should not compile if there is any attempt to instantiate!
   static inline Traits<T> notDefined() { return T::This_type_is_missing_a_specialization(); }
 };
 

@@ -25,7 +25,7 @@ namespace MonteCarlo{
 StandardParticleDistribution::StandardParticleDistribution()
   : StandardParticleDistribution( "standard particle distribution" )
 { /* ... */ }
-  
+
 // Basic Constructor
 StandardParticleDistribution::StandardParticleDistribution(
                                                       const std::string& name )
@@ -68,14 +68,14 @@ StandardParticleDistribution::StandardParticleDistribution(
   // Make sure that the conversion policies are valid
   testPrecondition( spatial_coord_conversion_policy.get() );
   testPrecondition( directional_coord_conversion_policy.get() );
-  
+
   // Initialize the distribution
   this->reset();
 }
 
 // Set a dimension distribution
-/*! \details This will destroy the current dependency tree. You will not be 
- * able to evaluate or sample from the particle distribution until the 
+/*! \details This will destroy the current dependency tree. You will not be
+ * able to evaluate or sample from the particle distribution until the
  * dependency tree has been constructed again. If multiple dimension
  * distributions must be set, construct the tree after setting all of them
  * so that the tree isn't constructed multiple times.
@@ -86,11 +86,11 @@ void StandardParticleDistribution::setDimensionDistribution(
 {
   // Make sure that the distribution is valid
   testPrecondition( dimension_distribution.get() );
-  
+
   // Add the distribution to the dimension distribution map
   d_dimension_distributions[dimension_distribution->getDimension()] =
     dimension_distribution;
-    
+
   // The dependency tree needs to be constructed again.
   if( d_ready )
     d_ready = false;
@@ -106,7 +106,7 @@ void StandardParticleDistribution::setEnergy( const double energy )
 {
   std::shared_ptr<const Utility::UnivariateDistribution>
     raw_energy_distribution( new Utility::DeltaDistribution( energy ) );
-  
+
   this->setDimensionDistribution( std::shared_ptr<PhaseSpaceDimensionDistribution>( new IndependentPhaseSpaceDimensionDistribution<ENERGY_DIMENSION>( raw_energy_distribution ) ) );
 }
 
@@ -120,15 +120,15 @@ void StandardParticleDistribution::setTime( const double time )
 {
   std::shared_ptr<const Utility::UnivariateDistribution>
     raw_time_distribution( new Utility::DeltaDistribution( time ) );
-  
+
   this->setDimensionDistribution( std::shared_ptr<PhaseSpaceDimensionDistribution>( new IndependentPhaseSpaceDimensionDistribution<TIME_DIMENSION>( raw_time_distribution ) ) );
 }
 
 // Set the position of the distribution
-/*! \details This method can be used to quickly set up a point distribution 
+/*! \details This method can be used to quickly set up a point distribution
  * (in the spatial dimensions). The position specified must be in global
  * coordinates. This will destroy the current dependency
- * tree. You will not be able to evaluate or sample from the particle 
+ * tree. You will not be able to evaluate or sample from the particle
  * distribution until the dependency tree has been constructed again.
  */
 void StandardParticleDistribution::setPosition( const double x_position,
@@ -142,25 +142,25 @@ void StandardParticleDistribution::setPosition( const double x_position,
   d_spatial_coord_conversion_policy->convertFromCartesianSpatialCoordinates(
       x_position, y_position, z_position,
       primary_spatial_coord, secondary_spatial_coord, tertiary_spatial_coord );
-  
+
   std::shared_ptr<const Utility::UnivariateDistribution>
     raw_spatial_distribution(
                      new Utility::DeltaDistribution( primary_spatial_coord ) );
-  
+
   d_dimension_distributions[PRIMARY_SPATIAL_DIMENSION].reset(
      new IndependentPhaseSpaceDimensionDistribution<PRIMARY_SPATIAL_DIMENSION>(
                                                   raw_spatial_distribution ) );
 
   raw_spatial_distribution.reset(
                    new Utility::DeltaDistribution( secondary_spatial_coord ) );
-  
+
   d_dimension_distributions[SECONDARY_SPATIAL_DIMENSION].reset(
    new IndependentPhaseSpaceDimensionDistribution<SECONDARY_SPATIAL_DIMENSION>(
                                                   raw_spatial_distribution ) );
 
   raw_spatial_distribution.reset(
                     new Utility::DeltaDistribution( tertiary_spatial_coord ) );
-  
+
   d_dimension_distributions[TERTIARY_SPATIAL_DIMENSION].reset(
     new IndependentPhaseSpaceDimensionDistribution<TERTIARY_SPATIAL_DIMENSION>(
                                                   raw_spatial_distribution ) );
@@ -170,11 +170,11 @@ void StandardParticleDistribution::setPosition( const double x_position,
 }
 
 // Set the position of the distribution
-/*! \details This method can be used to quickly set up a point distribution 
+/*! \details This method can be used to quickly set up a point distribution
  * (in the spatial dimensions). The position specified must be in global
  * coordinates. This will destroy the current dependency
- * tree. You will not be able to evaluate or sample from the particle 
- * distribution until the dependency tree has been constructed again. 
+ * tree. You will not be able to evaluate or sample from the particle
+ * distribution until the dependency tree has been constructed again.
  */
 void StandardParticleDistribution::setPosition( const double position[3] )
 {
@@ -184,9 +184,9 @@ void StandardParticleDistribution::setPosition( const double position[3] )
 // Set the direction of the distribution
 /*! \details This method can be used to quickly set up a mono-directional
  * distribution (in the directional dimensions). The direction must be in
- * cartesian coordinates. This will destroy the current 
- * dependency tree. You will not be able to evaluate or sample from the 
- * particle distribution until the dependency tree has been constructed again. 
+ * cartesian coordinates. This will destroy the current
+ * dependency tree. You will not be able to evaluate or sample from the
+ * particle distribution until the dependency tree has been constructed again.
  */
 void StandardParticleDistribution::setDirection( const double x_direction,
                                                  const double y_direction,
@@ -200,7 +200,7 @@ void StandardParticleDistribution::setDirection( const double x_direction,
   Utility::normalizeVector( normalized_x_direction,
                             normalized_y_direction,
                             normalized_z_direction );
-  
+
   double primary_directional_coord,
     secondary_directional_coord,
     tertiary_directional_coord;
@@ -212,25 +212,25 @@ void StandardParticleDistribution::setDirection( const double x_direction,
                                         primary_directional_coord,
                                         secondary_directional_coord,
                                         tertiary_directional_coord );
-  
+
   std::shared_ptr<const Utility::UnivariateDistribution>
     raw_directional_distribution(
                  new Utility::DeltaDistribution( primary_directional_coord ) );
-  
+
   d_dimension_distributions[PRIMARY_DIRECTIONAL_DIMENSION].reset(
      new IndependentPhaseSpaceDimensionDistribution<PRIMARY_DIRECTIONAL_DIMENSION>(
                                               raw_directional_distribution ) );
 
   raw_directional_distribution.reset(
                new Utility::DeltaDistribution( secondary_directional_coord ) );
-  
+
   d_dimension_distributions[SECONDARY_DIRECTIONAL_DIMENSION].reset(
    new IndependentPhaseSpaceDimensionDistribution<SECONDARY_DIRECTIONAL_DIMENSION>(
                                               raw_directional_distribution ) );
 
   raw_directional_distribution.reset(
                 new Utility::DeltaDistribution( tertiary_directional_coord ) );
-  
+
   d_dimension_distributions[TERTIARY_DIRECTIONAL_DIMENSION].reset(
     new IndependentPhaseSpaceDimensionDistribution<TERTIARY_DIRECTIONAL_DIMENSION>(
                                               raw_directional_distribution ) );
@@ -241,10 +241,10 @@ void StandardParticleDistribution::setDirection( const double x_direction,
 
 // Set the direction of the distribution
 /*! \details This method can be used to quickly set up a mono-directional
- * distribution (in the directional dimensions). The direction must be in 
- * cartesian coordinates. This will destroy the current 
- * dependency tree. You will not be able to evaluate or sample from the 
- * particle distribution until the dependency tree has been constructed again. 
+ * distribution (in the directional dimensions). The direction must be in
+ * cartesian coordinates. This will destroy the current
+ * dependency tree. You will not be able to evaluate or sample from the
+ * particle distribution until the dependency tree has been constructed again.
  */
 void StandardParticleDistribution::setDirection( const double direction[3] )
 {
@@ -253,11 +253,11 @@ void StandardParticleDistribution::setDirection( const double direction[3] )
 
 // Construct the dimension distribution dependency tree
 /*! \details This method assigns dependent dimension distributions to the
- * required parent dimension distribution, which forms a tree. This tree is 
- * primarily used for sampling from dimension distributions in the correct 
- * order (parent first, then children i.e. top-down tree traversal). The 
+ * required parent dimension distribution, which forms a tree. This tree is
+ * primarily used for sampling from dimension distributions in the correct
+ * order (parent first, then children i.e. top-down tree traversal). The
  * independent dimensions are also identified since they are considered the top
- * of the tree. If the dependency tree has already been constructed this 
+ * of the tree. If the dependency tree has already been constructed this
  * method will do nothing.
  */
 void StandardParticleDistribution::constructDimensionDistributionDependencyTree()
@@ -267,7 +267,7 @@ void StandardParticleDistribution::constructDimensionDistributionDependencyTree(
     // Clear the independent dimensions set - it will be created along with
     // the tree
     d_independent_dimensions.clear();
-    
+
     DimensionDistributionMap::iterator parent_distribution_it,
       parent_distribution_end;
 
@@ -283,10 +283,10 @@ void StandardParticleDistribution::constructDimensionDistributionDependencyTree(
         d_independent_dimensions.insert(
                               parent_distribution_it->second->getDimension() );
       }
-      
+
       // Purge any dependendent distributions from the parent
       parent_distribution_it->second->removeDependentDistributions();
-      
+
       DimensionDistributionMap::iterator potential_child_distribution_it,
       potential_child_distribution_end;
 
@@ -359,7 +359,7 @@ void StandardParticleDistribution::checkDependencyTreeForOrphans()
 }
 
 // Reset the distribution
-/*! \details Each dimension will use its default distribution. The 
+/*! \details Each dimension will use its default distribution. The
  * default distribution for a dimension is dependent on the coordinate
  * conversion policy that has been set for the particle distribution.
  */
@@ -390,25 +390,25 @@ void StandardParticleDistribution::reset()
                                    new Utility::DeltaDistribution( 1.0 ) ) ) );
 
   // Construct the dependency tree
-  this->constructDimensionDistributionDependencyTree();  
+  this->constructDimensionDistributionDependencyTree();
 }
 
 // Reset the spatial distributions
 void StandardParticleDistribution::resetSpatialDistributions()
 {
   // The spatial distribution will model a point at the origin by default
-  std::shared_ptr<const Utility::UnivariateDistribution> raw_spatial_distribution( 
+  std::shared_ptr<const Utility::UnivariateDistribution> raw_spatial_distribution(
                                        new Utility::DeltaDistribution( 0.0 ) );
-    
+
   d_dimension_distributions[PRIMARY_SPATIAL_DIMENSION].reset(
      new IndependentPhaseSpaceDimensionDistribution<PRIMARY_SPATIAL_DIMENSION>(
                                                   raw_spatial_distribution ) );
-                                   
-  
+
+
   d_dimension_distributions[SECONDARY_SPATIAL_DIMENSION].reset(
    new IndependentPhaseSpaceDimensionDistribution<SECONDARY_SPATIAL_DIMENSION>(
                                                   raw_spatial_distribution ) );
-  
+
   d_dimension_distributions[TERTIARY_SPATIAL_DIMENSION].reset(
     new IndependentPhaseSpaceDimensionDistribution<TERTIARY_SPATIAL_DIMENSION>(
                                                   raw_spatial_distribution ) );
@@ -424,13 +424,13 @@ void StandardParticleDistribution::resetDirectionalDistributions()
       Utility::CARTESIAN_DIRECTIONAL_COORDINATE_SYSTEM )
   {
     std::shared_ptr<const Utility::UnivariateDistribution>
-      raw_directional_distribution( 
+      raw_directional_distribution(
                           new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
-  
+
     d_dimension_distributions[PRIMARY_DIRECTIONAL_DIMENSION].reset(
      new IndependentPhaseSpaceDimensionDistribution<PRIMARY_DIRECTIONAL_DIMENSION>(
                                               raw_directional_distribution ) );
-    
+
     d_dimension_distributions[SECONDARY_DIRECTIONAL_DIMENSION].reset(
      new IndependentPhaseSpaceDimensionDistribution<SECONDARY_DIRECTIONAL_DIMENSION>(
                                               raw_directional_distribution ) );
@@ -440,7 +440,7 @@ void StandardParticleDistribution::resetDirectionalDistributions()
   }
   // If the local directional coordinate system is spherical an isotropic
   // distribution will be created by default
-  else 
+  else
   {
     d_dimension_distributions[PRIMARY_DIRECTIONAL_DIMENSION].reset(
      new IndependentPhaseSpaceDimensionDistribution<PRIMARY_DIRECTIONAL_DIMENSION>(
@@ -451,7 +451,7 @@ void StandardParticleDistribution::resetDirectionalDistributions()
                  std::shared_ptr<const Utility::UnivariateDistribution>(
                       new Utility::UniformDistribution(
                             0.0, 2*Utility::PhysicalConstants::pi, 1.0 ) ) ) );
-    
+
     d_dimension_distributions[TERTIARY_DIRECTIONAL_DIMENSION].reset(
      new IndependentPhaseSpaceDimensionDistribution<TERTIARY_DIRECTIONAL_DIMENSION>(
                  std::shared_ptr<const Utility::UnivariateDistribution>(
@@ -471,8 +471,8 @@ std::string StandardParticleDistribution::getDimensionDistributionTypeName(
 
 // Check if the distribution is spatially uniform (somewhere)
 /*! \details This method will simply check if the region where the
- * spatial distributions are defined correspond to uniform spatial 
- * distribution of particles. 
+ * spatial distributions are defined correspond to uniform spatial
+ * distribution of particles.
  */
 bool StandardParticleDistribution::isSpatiallyUniform() const
 {
@@ -496,11 +496,11 @@ bool StandardParticleDistribution::isSpatiallyUniform() const
   {
     // Note: we really need to check that this distribution has a form of
     //       f(x) ~ x^2
-    // \todo add more accurate check for a uniform spatial particle distribution in spherical coordiantes
+    // \todo add more accurate check for a uniform spatial particle distribution in spherical coordinates
     if( !d_dimension_distributions.find( PRIMARY_SPATIAL_DIMENSION )->second->hasForm( Utility::POWER_DISTRIBUTION ) )
       return false;
   }
-  
+
   // Check the secondary spatial dimension distribution
   if( !d_dimension_distributions.find( SECONDARY_SPATIAL_DIMENSION )->second->isUniform() )
     return false;
@@ -514,7 +514,7 @@ bool StandardParticleDistribution::isSpatiallyUniform() const
 
 // Check if the distribution is directionally uniform (isotropic)
 /*! \details This method will simply check if the solid angle where
- * the directional distributions are defined correspond to an isotropic 
+ * the directional distributions are defined correspond to an isotropic
  * distribution of particle directions.
  */
 bool StandardParticleDistribution::isDirectionallyUniform() const
@@ -545,18 +545,18 @@ void StandardParticleDistribution::initializeDimensionCounters(
   trials[PRIMARY_SPATIAL_DIMENSION] = 0;
   trials[SECONDARY_SPATIAL_DIMENSION] = 0;
   trials[TERTIARY_SPATIAL_DIMENSION] = 0;
-  
+
   trials[PRIMARY_DIRECTIONAL_DIMENSION] = 0;
   trials[SECONDARY_DIRECTIONAL_DIMENSION] = 0;
   trials[TERTIARY_DIRECTIONAL_DIMENSION] = 0;
-  
+
   trials[ENERGY_DIMENSION] = 0;
   trials[TIME_DIMENSION] = 0;
   trials[WEIGHT_DIMENSION] = 0;
 }
 
 // Evaluate the distribution at the desired phase space point
-/*! \details The dimension distribution dependency tree must be constructed 
+/*! \details The dimension distribution dependency tree must be constructed
  * before the particle distribution can be evaluated. All dimensions except
  * for the weight dimension will be used.
  */
@@ -576,7 +576,7 @@ double StandardParticleDistribution::evaluate(
   // Evaluate the distribution at the phase space point
   DimensionDistributionMap::const_iterator
     dimension_dist_it = d_dimension_distributions.begin();
-  
+
   // Each dimension distribution will be evaluated individually (without
   // cascading to dependent distributions)
   while( dimension_dist_it != d_dimension_distributions.end() )
@@ -586,7 +586,7 @@ double StandardParticleDistribution::evaluate(
       distribution_value *=
         dimension_dist_it->second->evaluateWithoutCascade( phase_space_point );
     }
-    
+
     ++dimension_dist_it;
   }
 
@@ -594,7 +594,7 @@ double StandardParticleDistribution::evaluate(
 }
 
 // Sample a particle state from the distribution
-/*! \details The dimension distribution dependency tree must be constructed 
+/*! \details The dimension distribution dependency tree must be constructed
  * before the particle distribution can be evaluated.
  */
 void StandardParticleDistribution::sample( ParticleState& particle ) const
@@ -607,12 +607,12 @@ void StandardParticleDistribution::sample( ParticleState& particle ) const
     std::bind<void>( &PhaseSpaceDimensionDistribution::sampleWithCascade,
                      std::placeholders::_1,
                      std::placeholders::_2 );
-  
+
   this->sampleImpl( dimension_sample_functor, particle );
 }
 
 // Sample a particle state from the dist. and record the number of trials
-/*! \details The dimension distribution dependency tree must be constructed 
+/*! \details The dimension distribution dependency tree must be constructed
  * before the particle distribution can be evaluated.
  */
 void StandardParticleDistribution::sampleAndRecordTrials(
@@ -634,7 +634,7 @@ void StandardParticleDistribution::sampleAndRecordTrials(
 }
 
 // Sample a particle state with the desired dimension value
-/*! \details The dimension distribution dependency tree must be constructed 
+/*! \details The dimension distribution dependency tree must be constructed
  * before the particle distribution can be evaluated.
  */
 void StandardParticleDistribution::sampleWithDimensionValue(
@@ -658,7 +658,7 @@ void StandardParticleDistribution::sampleWithDimensionValue(
 }
 
 // Sample a particle state with the desired dim. value and record trials
-/*! \details The dimension distribution dependency tree must be constructed 
+/*! \details The dimension distribution dependency tree must be constructed
  * before the particle distribution can be evaluated.
  */
 void StandardParticleDistribution::sampleWithDimensionValueAndRecordTrials(

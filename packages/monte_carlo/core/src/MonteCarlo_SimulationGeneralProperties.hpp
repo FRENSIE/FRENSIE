@@ -159,7 +159,7 @@ void SimulationGeneralProperties::save( Archive& ar, const unsigned version ) co
   ar & BOOST_SERIALIZATION_NVP( d_max_batch_size );
   ar & BOOST_SERIALIZATION_NVP( d_number_of_batches_per_processor );
 
-  // We cannot safely serialize inf to all arhcive types - create a flag that
+  // We cannot safely serialize inf to all archive types - create a flag that
   // records if the simulation wall time is inf
   const bool __inf_wall_time__ =
     (d_wall_time == Utility::QuantityTraits<double>::inf());

@@ -552,7 +552,7 @@ public:
   //! Return the bremsstrahlung average energy of the secondary electron
   const std::vector<double>& getBremsstrahlungAverageElectronEnergy() const;
 
-  //! Return the bremsstrahlung average energy of the secondary electron inerpolation type
+  //! Return the bremsstrahlung average energy of the secondary electron interpolation type
   const std::string& getBremsstrahlungAverageElectronEnergyInterpType() const;
 
 //---------------------------------------------------------------------------//

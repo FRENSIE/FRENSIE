@@ -28,7 +28,7 @@ void IArchivableObject<DerivedType>::loadFromFile( const boost::filesystem::path
 {
   this->loadFromFileImpl( archive_name_with_path );
 }
-  
+
 // Load the archived object (implementation)
 /*! \details The file extension will be used to determine the archive type
  * (e.g. .xml, .txt, .bin, .h5fa)
@@ -102,11 +102,11 @@ template<typename T>
 const boost::archive::detail::basic_pointer_iserializer* IArchivableObject<DerivedType>::resetBpisPointer( const std::string& extension ) const
 {
   const boost::archive::detail::basic_pointer_iserializer* bpis;
-  
+
   if( extension == ".xml" )
   {
     bpis = boost::serialization::singleton<boost::archive::detail::iserializer<boost::archive::xml_iarchive, T > >::get_const_instance().get_bpis_ptr();
-    
+
     if( bpis != NULL )
     {
       boost::serialization::singleton<boost::archive::detail::iserializer<boost::archive::xml_iarchive, T > >::get_mutable_instance().set_bpis( NULL );
@@ -115,7 +115,7 @@ const boost::archive::detail::basic_pointer_iserializer* IArchivableObject<Deriv
   else if( extension == ".txt" )
   {
     bpis = boost::serialization::singleton<boost::archive::detail::iserializer<boost::archive::text_iarchive, T > >::get_const_instance().get_bpis_ptr();
-    
+
     if( bpis != NULL )
     {
       boost::serialization::singleton<boost::archive::detail::iserializer<boost::archive::text_iarchive, T > >::get_mutable_instance().set_bpis( NULL );
@@ -124,7 +124,7 @@ const boost::archive::detail::basic_pointer_iserializer* IArchivableObject<Deriv
   else if( extension == ".bin" )
   {
     bpis = boost::serialization::singleton<boost::archive::detail::iserializer<boost::archive::binary_iarchive, T > >::get_const_instance().get_bpis_ptr();
-    
+
     if( bpis != NULL )
     {
       boost::serialization::singleton<boost::archive::detail::iserializer<boost::archive::binary_iarchive, T > >::get_mutable_instance().set_bpis( NULL );
@@ -134,7 +134,7 @@ const boost::archive::detail::basic_pointer_iserializer* IArchivableObject<Deriv
   else if( extension == ".h5fa" )
   {
     bpis = boost::serialization::singleton<boost::archive::detail::iserializer<Utility::HDF5IArchive, T > >::get_const_instance().get_bpis_ptr();
-    
+
     if( bpis != NULL )
     {
       boost::serialization::singleton<boost::archive::detail::iserializer<Utility::HDF5IArchive, T > >::get_mutable_instance().set_bpis( NULL );

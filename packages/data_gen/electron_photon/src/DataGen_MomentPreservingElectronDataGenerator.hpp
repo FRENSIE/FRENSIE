@@ -2,7 +2,7 @@
 //!
 //! \file   DataGen_MomentPreservingElectronDataGenerator.hpp
 //! \author Luke Kersting
-//! \brief  The moment preserving electron scattering data generator bazse decl.
+//! \brief  The moment preserving electron scattering data generator base decl.
 //!
 //---------------------------------------------------------------------------//
 

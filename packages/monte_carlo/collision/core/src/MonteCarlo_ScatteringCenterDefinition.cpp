@@ -19,13 +19,13 @@ namespace MonteCarlo{
 // Default constructor
 ScatteringCenterDefinition::ScatteringCenterDefinition()
 { /* ... */ }
-  
+
 // Basic Constructor
 ScatteringCenterDefinition::ScatteringCenterDefinition(
                                                        const Data::ZAID& zaid )
   : ScatteringCenterDefinition( zaid.toName(), zaid )
 { /* ... */ }
-  
+
 // Constructor
 ScatteringCenterDefinition::ScatteringCenterDefinition(
                                                        const std::string& name,
@@ -69,7 +69,7 @@ void ScatteringCenterDefinition::setAtomicWeight( const double atomic_weight )
   TEST_FOR_EXCEPTION( atomic_weight <= 0.0,
                       std::runtime_error,
                       "The atomic weight ratio must be greater than 0.0!" );
-  
+
   d_atomic_weight_ratio =
     atomic_weight/Utility::PhysicalConstants::neutron_rest_mass_amu;
 }
@@ -81,7 +81,7 @@ void ScatteringCenterDefinition::setAtomicWeightRatio(
   TEST_FOR_EXCEPTION( atomic_weight_ratio <= 0.0,
                       std::runtime_error,
                       "The atomic weight ratio must be greater than 0.0!" );
-  
+
   d_atomic_weight_ratio = atomic_weight_ratio;
 }
 
@@ -116,7 +116,7 @@ void ScatteringCenterDefinition::setPhotoatomicDataProperties(
   {
     this->verifyConsistentAtom( properties->atom(),
                                 "photoatomic data properties" );
-    
+
     d_photoatomic_data_properties = properties;
   }
 }
@@ -143,7 +143,7 @@ const Data::PhotoatomicDataProperties& ScatteringCenterDefinition::getPhotoatomi
   // Get the atomic weight
   if( atomic_weight )
     *atomic_weight = this->getAtomicWeight( *d_photoatomic_data_properties );
-  
+
   return *d_photoatomic_data_properties;
 }
 
@@ -162,7 +162,7 @@ void ScatteringCenterDefinition::setAdjointPhotoatomicDataProperties(
   {
     this->verifyConsistentAtom( properties->atom(),
                                 "adjoint photoatomic data properties" );
-    
+
     d_adjoint_photoatomic_data_properties = properties;
   }
 }
@@ -209,7 +209,7 @@ void ScatteringCenterDefinition::setElectroatomicDataProperties(
   {
     this->verifyConsistentAtom( properties->atom(),
                                 "electroatomic data properties" );
-    
+
     d_electroatomic_data_properties = properties;
   }
 }
@@ -233,7 +233,7 @@ const Data::ElectroatomicDataProperties& ScatteringCenterDefinition::getElectroa
   // Get the atomic weight
   if( atomic_weight )
     *atomic_weight = this->getAtomicWeight( *d_electroatomic_data_properties );
-  
+
   return *d_electroatomic_data_properties;
 }
 
@@ -251,8 +251,8 @@ void ScatteringCenterDefinition::setAdjointElectroatomicDataProperties(
   if( properties )
   {
     this->verifyConsistentAtom( properties->atom(),
-                                "adjoint aelectroatomic data properties" );
-    
+                                "adjoint electroatomic data properties" );
+
     d_adjoint_electroatomic_data_properties = properties;
   }
 }
@@ -301,7 +301,7 @@ void ScatteringCenterDefinition::setNuclearDataProperties(
                                 "nuclear data properties" );
     this->verifyConsistentTemp( properties->evaluationTemperatureInMeV(),
                                 "nuclear data properties" );
-    
+
     d_nuclear_data_properties = properties;
   }
 }
@@ -328,7 +328,7 @@ const Data::NuclearDataProperties& ScatteringCenterDefinition::getNuclearDataPro
     *atomic_weight_ratio =
       this->getAtomicWeightRatio( *d_nuclear_data_properties );
   }
-  
+
   return *d_nuclear_data_properties;
 }
 
@@ -349,7 +349,7 @@ void ScatteringCenterDefinition::setThermalNuclearDataProperties(
                                 "thermal nuclear data properties" );
     this->verifyConsistentTemp( properties->evaluationTemperatureInMeV(),
                                 "thermal nuclear data properties" );
-    
+
     d_thermal_nuclear_data_properties = properties;
   }
 }
@@ -390,7 +390,7 @@ void ScatteringCenterDefinition::setAdjointNuclearDataProperties(
                                 "adjoint nuclear data properties" );
     this->verifyConsistentTemp( properties->evaluationTemperatureInMeV(),
                                 "adjoint nuclear data properties" );
-    
+
     d_adjoint_nuclear_data_properties = properties;
   }
 }
@@ -439,7 +439,7 @@ void ScatteringCenterDefinition::setAdjointThermalNuclearDataProperties(
                                 "adjoint thermal nuclear data properties" );
     this->verifyConsistentTemp( properties->evaluationTemperatureInMeV(),
                                 "adjoint thermal nuclear data properties" );
-    
+
     d_adjoint_thermal_nuclear_data_properties = properties;
   }
 }
@@ -478,7 +478,7 @@ void ScatteringCenterDefinition::setPhotonuclearDataProperties(
   {
     this->verifyConsistentZaid( properties->zaid(),
                                 "photonuclear data properties" );
-    
+
     d_photonuclear_data_properties = properties;
   }
 }
@@ -502,7 +502,7 @@ const Data::PhotonuclearDataProperties& ScatteringCenterDefinition::getPhotonucl
   // Get the atomic weight
   if( atomic_weight )
     *atomic_weight = this->getAtomicWeight( *d_photonuclear_data_properties );
-  
+
   return *d_photonuclear_data_properties;
 }
 
@@ -521,7 +521,7 @@ void ScatteringCenterDefinition::setAdjointPhotonuclearDataProperties(
   {
     this->verifyConsistentZaid( properties->zaid(),
                                 "adjoint photonuclear data properties" );
-  
+
     d_adjoint_photonuclear_data_properties = properties;
   }
 }
@@ -631,7 +631,7 @@ inline void atomicDataPropertiesToStreamImpl(
       os << properties->atom();
     else
       os << Utility::BoldMagenta(Utility::toString( properties->atom() ));
-    
+
     os << " "
        << properties->fileType() << " version "
        << properties->fileVersion();
@@ -736,14 +736,14 @@ inline void thermalNuclearDataPropertiesToStreamImpl(
 
     if( !properties->tableName().empty() )
       os << " (" << Utility::Italicized(properties->tableName()) << ")";
-    
+
     os << " located at "
        << Utility::Bold(properties->filePath().string()) << "\n";
   }
   else
     os << "Not Set\n";
 }
-  
+
 } // end Details namespace
 
 // Place the object in an output stream
@@ -770,7 +770,7 @@ void ScatteringCenterDefinition::toStream( std::ostream& os ) const
 }
 
 EXPLICIT_CLASS_SAVE_LOAD_INST( ScatteringCenterDefinition );
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
