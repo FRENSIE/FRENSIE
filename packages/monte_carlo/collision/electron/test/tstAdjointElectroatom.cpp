@@ -87,7 +87,20 @@ FRENSIE_UNIT_TEST( AdjointElectroatom, getTemperature )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the total cross section can be returned (brem and exciation only)
+// Check that the critical line energies can be returned
+FRENSIE_UNIT_TEST( AdjointElectroatom, getCriticalLineEnergies )
+{
+  const std::vector<double>& critical_line_energies =
+    electroatom->getCriticalLineEnergies();
+
+  FRENSIE_REQUIRE_EQUAL( critical_line_energies.size(), 2 );
+  FRENSIE_CHECK_EQUAL( critical_line_energies[0],
+                       Utility::PhysicalConstants::electron_rest_mass_energy );
+  FRENSIE_CHECK_EQUAL( critical_line_energies[1], 20.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the total cross section can be returned (brem and excitation only)
 FRENSIE_UNIT_TEST( AdjointElectroatom, getTotalCrossSection )
 {
   double cross_section = electroatom->getTotalCrossSection( 1e-5 );
@@ -401,8 +414,8 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                          100 ) );
 
     // Get void reaction
-    std::shared_ptr<const std::vector<double> > void_cross_section(
-                         new std::vector<double>( energy_grid->size(), 0.0 ) );
+    auto void_cross_section = std::make_shared<const std::vector<double> >(
+      energy_grid->size(), 0.0 );
 
     std::shared_ptr<const MonteCarlo::ElectroatomicReaction> void_reaction(
      new MonteCarlo::AbsorptionElectroatomicReaction<Utility::LinLin,false>(
@@ -423,8 +436,8 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                        total_forward_reaction );
 
     // Atomic Excitation cross section
-    std::shared_ptr<const std::vector<double> > ae_cross_section(
-       new std::vector<double>( data_container.getAdjointAtomicExcitationCrossSection() ) );
+    auto ae_cross_section = std::make_shared<const std::vector<double> >(
+      data_container.getAdjointAtomicExcitationCrossSection() );
 
     size_t ae_threshold_index =
         data_container.getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex();
@@ -448,8 +461,8 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
 
     // Bremsstrahlung cross section
-    std::shared_ptr<const std::vector<double> > b_cross_section(
-       new std::vector<double>( data_container.getAdjointBremsstrahlungElectronCrossSection() ) );
+    auto b_cross_section = std::make_shared<const std::vector<double> >(
+      data_container.getAdjointBremsstrahlungElectronCrossSection() );
 
     size_t b_threshold_index =
         data_container.getAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex();
@@ -465,6 +478,13 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
         data_container.getAdjointElectronEnergyGrid(),
         b_distribution,
         evaluation_tol );
+
+    auto critical_line_energies = std::make_shared<std::vector<double> >(2);
+    (*critical_line_energies)[0] =
+      Utility::PhysicalConstants::electron_rest_mass_energy;
+    (*critical_line_energies)[1] = 20.0;
+
+    b_distribution->setCriticalLineEnergies( critical_line_energies );
 
     // Create the bremsstrahlung scattering reaction
     std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction> b_reaction(
@@ -490,7 +510,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                     1.00794,
                     energy_grid,
                     grid_searcher,
-                    std::make_shared<const std::vector<double> >(),
+                    critical_line_energies,
                     total_forward_reaction,
                     scattering_reactions,
                     absorption_reactions,

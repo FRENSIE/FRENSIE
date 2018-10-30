@@ -67,7 +67,7 @@ FRENSIE_UNIT_TEST( AdjointPhotonMaterial, doesEnergyHaveLineEnergyReaction )
 FRENSIE_UNIT_TEST( AdjointPhotonMaterial, getMacroscopicTotalCrossSection )
 {
   double cross_section = material->getMacroscopicTotalCrossSection( 1e-3 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.156795677265385791e+00, 1e-12 );
 
   cross_section = material->getMacroscopicTotalCrossSection( 1.0 );
@@ -90,7 +90,7 @@ FRENSIE_UNIT_TEST( AdjointPhotonMaterial,
   FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = material->getMacroscopicTotalLineEnergyCrossSection( Utility::PhysicalConstants::electron_rest_mass_energy );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.293906832870189261e-01, 1e-12 );
 
   cross_section = material->getMacroscopicTotalLineEnergyCrossSection( 0.52 );
@@ -105,7 +105,7 @@ FRENSIE_UNIT_TEST( AdjointPhotonMaterial,
 {
   double cross_section =
     material->getMacroscopicTotalForwardCrossSection( 1e-3 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.568234049641858064e+03, 1e-12 );
 
   cross_section = material->getMacroscopicTotalForwardCrossSection( 1.0 );
@@ -141,7 +141,7 @@ FRENSIE_UNIT_TEST( AdjointPhotonMaterial,
 FRENSIE_UNIT_TEST( AdjointPhotonMaterial, getAdjointWeightFactor )
 {
   double weight_factor = material->getAdjointWeightFactor( 1e-3 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( weight_factor, 0.00137530216089743699, 1e-12 );
 
   weight_factor = material->getAdjointWeightFactor( 1.0 );
@@ -154,12 +154,12 @@ FRENSIE_UNIT_TEST( AdjointPhotonMaterial, getAdjointWeightFactor )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the adjoing line energy weight factor can be returned
+// Check that the adjoint line energy weight factor can be returned
 FRENSIE_UNIT_TEST( AdjointPhotonMaterial, getAdjointLineEnergyWeightFactor )
 {
   double weight_factor =
     material->getAdjointLineEnergyWeightFactor( 0.51 );
-  
+
   FRENSIE_CHECK_EQUAL( weight_factor, 0.0 );
 
   weight_factor = material->getAdjointLineEnergyWeightFactor( Utility::PhysicalConstants::electron_rest_mass_energy );
@@ -299,9 +299,9 @@ FRENSIE_UNIT_TEST( AdjointPhotonMaterial, collideAnalogue )
   fake_stream[8] = 0.49; // accept
   fake_stream[9] = 0.909; // accept based on scattering function
   fake_stream[10] = 0.0;
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   MonteCarlo::AdjointPhotonState adjoint_photon( 0 );
   adjoint_photon.setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy/10.0 );
   adjoint_photon.setDirection( 0.0, 0.0, 1.0 );
@@ -329,7 +329,7 @@ FRENSIE_UNIT_TEST( AdjointPhotonMaterial, collideAnalogue )
   fake_stream[6] = 0.0;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   adjoint_photon.setEnergy( 4.95936772145E-03 );
   adjoint_photon.setDirection( 0.0, 0.0, 1.0 );
   adjoint_photon.setWeight( 1.0 );
@@ -364,9 +364,9 @@ FRENSIE_UNIT_TEST( AdjointPhotonMaterial, collideSurvivalBias )
   fake_stream[8] = 0.49; // accept
   fake_stream[9] = 0.909; // accept based on scattering function
   fake_stream[10] = 0.0;
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   MonteCarlo::AdjointPhotonState adjoint_photon( 0 );
   adjoint_photon.setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy/10.0 );
   adjoint_photon.setDirection( 0.0, 0.0, 1.0 );
@@ -394,7 +394,7 @@ FRENSIE_UNIT_TEST( AdjointPhotonMaterial, collideSurvivalBias )
   fake_stream[6] = 0.0;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   adjoint_photon.setEnergy( 4.95936772145E-03 );
   adjoint_photon.setDirection( 0.0, 0.0, 1.0 );
   adjoint_photon.setWeight( 1.0 );
@@ -413,7 +413,6 @@ FRENSIE_UNIT_TEST( AdjointPhotonMaterial, collideSurvivalBias )
 
 //---------------------------------------------------------------------------//
 // Check that an adjoint photon at a line energy can collide with the material
-//! \details This unit test is dependent on the version of boost being used.
 FRENSIE_UNIT_TEST( AdjointPhotonMaterial, collideAtLineEnergy )
 {
   // Sample the pair production reaction
@@ -423,9 +422,9 @@ FRENSIE_UNIT_TEST( AdjointPhotonMaterial, collideAtLineEnergy )
   fake_stream[2] = 0.0;
   fake_stream[3] = 0.5;
   fake_stream[4] = 0.0;
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   std::unique_ptr<MonteCarlo::AdjointPhotonProbeState>
     adjoint_photon( new MonteCarlo::AdjointPhotonProbeState( 0 ) );
   adjoint_photon->setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy );
@@ -439,7 +438,7 @@ FRENSIE_UNIT_TEST( AdjointPhotonMaterial, collideAtLineEnergy )
   FRENSIE_CHECK( adjoint_photon->isGone() );
   FRENSIE_CHECK_EQUAL( adjoint_photon->getWeight(), 1.0 );
   FRENSIE_CHECK_EQUAL( bank.size(), 1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(),
                                    2*Utility::PhysicalConstants::electron_rest_mass_energy,
                                    1e-15 );
   FRENSIE_CHECK_EQUAL( bank.top().getWeight(), 1.0 );
@@ -454,7 +453,7 @@ FRENSIE_UNIT_TEST( AdjointPhotonMaterial, collideAtLineEnergy )
   fake_stream[4] = 0.0;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   adjoint_photon.reset( new MonteCarlo::AdjointPhotonProbeState( 0 ) );
   adjoint_photon->setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy );
   adjoint_photon->setDirection( 0.0, 0.0, 1.0 );
@@ -465,7 +464,7 @@ FRENSIE_UNIT_TEST( AdjointPhotonMaterial, collideAtLineEnergy )
   FRENSIE_CHECK( adjoint_photon->isGone() );
   FRENSIE_CHECK_EQUAL( adjoint_photon->getWeight(), 1.0 );
   FRENSIE_CHECK_EQUAL( bank.size(), 1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(),
                                    4*Utility::PhysicalConstants::electron_rest_mass_energy,
                                    1e-15 );
   FRENSIE_CHECK_EQUAL( bank.top().getWeight(), 1.0 );
@@ -534,8 +533,8 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                                  adjoint_photoatom_definitions,
                                                  properties,
                                                  true );
-    
-    MonteCarlo::AdjointPhotoatomFactory::AdjointPhotoatomNameMap 
+
+    MonteCarlo::AdjointPhotoatomFactory::AdjointPhotoatomNameMap
       adjoint_photoatom_map;
 
     factory.createAdjointPhotoatomMap( adjoint_photoatom_map );
@@ -543,7 +542,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Assign the atom fractions and names
     std::vector<double> atom_fractions( 1 );
     std::vector<std::string> atom_names( 1 );
-    
+
     atom_fractions[0] = -1.0; // weight fraction
     atom_names[0] = "Si-Native";
 
@@ -552,9 +551,9 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                                            -1.0,
                                                            adjoint_photoatom_map,
                                                            atom_fractions,
-                                                           atom_names ) ); 
+                                                           atom_names ) );
   }
-  
+
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 }

@@ -117,7 +117,7 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, doesEnergyHaveLineEnergyReaction )
 FRENSIE_UNIT_TEST( AdjointPhotoatom, getTotalCrossSection )
 {
   double cross_section = adjoint_photoatom->getTotalCrossSection( 1e-3 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 100.584831294850716, 1e-12 );
 
   cross_section = adjoint_photoatom->getTotalCrossSection( 1.0 );
@@ -135,7 +135,7 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, getTotalCrossSection )
 FRENSIE_UNIT_TEST( AdjointPhotoatom, getAtomicTotalCrossSection )
 {
   double cross_section = adjoint_photoatom->getAtomicTotalCrossSection( 1e-3 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 100.584831294850716, 1e-12 );
 
   cross_section = adjoint_photoatom->getAtomicTotalCrossSection( 1.0 );
@@ -154,7 +154,7 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, getNuclearTotalCrossSection )
 {
   double cross_section =
     adjoint_photoatom->getNuclearTotalCrossSection( 1e-3 );
-  
+
   FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = adjoint_photoatom->getNuclearTotalCrossSection( 1.0 );
@@ -177,7 +177,7 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, getTotalLineEnergyCrossSection )
   FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = adjoint_photoatom->getTotalLineEnergyCrossSection( Utility::PhysicalConstants::electron_rest_mass_energy );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 15.3615415024052222, 1e-12 );
 
   cross_section = adjoint_photoatom->getTotalLineEnergyCrossSection( 0.52 );
@@ -192,7 +192,7 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, getTotalForwardCrossSection )
 {
   double cross_section =
     adjoint_photoatom->getTotalForwardCrossSection( 1e-3 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 73136.5325778411352, 1e-12 );
 
   cross_section = adjoint_photoatom->getTotalForwardCrossSection( 1.0 );
@@ -211,7 +211,7 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, getAtomicTotalForwardCrossSection )
 {
   double cross_section =
     adjoint_photoatom->getAtomicTotalForwardCrossSection( 1e-3 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 73136.5325778411352, 1e-12 );
 
   cross_section = adjoint_photoatom->getAtomicTotalForwardCrossSection( 1.0 );
@@ -230,7 +230,7 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, getNuclearTotalForwardCrossSection )
 {
   double cross_section =
     adjoint_photoatom->getNuclearTotalForwardCrossSection( 1e-3 );
-  
+
   FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = adjoint_photoatom->getNuclearTotalForwardCrossSection( 1.0 );
@@ -247,7 +247,7 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, getNuclearTotalForwardCrossSection )
 FRENSIE_UNIT_TEST( AdjointPhotoatom, getAdjointWeightFactor )
 {
   double weight_factor = adjoint_photoatom->getAdjointWeightFactor( 1e-3 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( weight_factor, 0.00137530216089743699, 1e-12 );
 
   weight_factor = adjoint_photoatom->getAdjointWeightFactor( 1.0 );
@@ -266,7 +266,7 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, getAtomicAdjointWeightFactor )
 {
   double weight_factor =
     adjoint_photoatom->getAtomicAdjointWeightFactor( 1e-3 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( weight_factor, 0.00137530216089743699, 1e-12 );
 
   weight_factor = adjoint_photoatom->getAtomicAdjointWeightFactor( 1.0 );
@@ -285,7 +285,7 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, getNuclearAdjointWeightFactor )
 {
   double weight_factor =
     adjoint_photoatom->getNuclearAdjointWeightFactor( 1e-3 );
-  
+
   FRENSIE_CHECK_EQUAL( weight_factor, 1.0 );
 
   weight_factor = adjoint_photoatom->getNuclearAdjointWeightFactor( 1.0 );
@@ -304,7 +304,7 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, getAdjointLineEnergyWeightFactor )
 {
   double weight_factor =
     adjoint_photoatom->getAdjointLineEnergyWeightFactor( 0.51 );
-  
+
   FRENSIE_CHECK_EQUAL( weight_factor, 0.0 );
 
   weight_factor = adjoint_photoatom->getAdjointLineEnergyWeightFactor( Utility::PhysicalConstants::electron_rest_mass_energy );
@@ -538,9 +538,9 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, collideAnalogue )
   fake_stream[7] = 0.49; // accept
   fake_stream[8] = 0.909; // accept based on scattering function
   fake_stream[9] = 0.0;
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   MonteCarlo::AdjointPhotonState adjoint_photon( 0 );
   adjoint_photon.setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy/10.0 );
   adjoint_photon.setDirection( 0.0, 0.0, 1.0 );
@@ -567,7 +567,7 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, collideAnalogue )
   fake_stream[5] = 0.0;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   adjoint_photon.setEnergy( 4.95936772145E-03 );
   adjoint_photon.setDirection( 0.0, 0.0, 1.0 );
   adjoint_photon.setWeight( 1.0 );
@@ -600,9 +600,9 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, collideSurvivalBias )
   fake_stream[7] = 0.49; // accept
   fake_stream[8] = 0.909; // accept based on scattering function
   fake_stream[9] = 0.0;
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   MonteCarlo::AdjointPhotonState adjoint_photon( 0 );
   adjoint_photon.setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy/10.0 );
   adjoint_photon.setDirection( 0.0, 0.0, 1.0 );
@@ -629,7 +629,7 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, collideSurvivalBias )
   fake_stream[5] = 0.0;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   adjoint_photon.setEnergy( 4.95936772145E-03 );
   adjoint_photon.setDirection( 0.0, 0.0, 1.0 );
   adjoint_photon.setWeight( 1.0 );
@@ -648,21 +648,17 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, collideSurvivalBias )
 
 //---------------------------------------------------------------------------//
 // Check that a line energy collision can be modeled
-//! \details This unit test is dependent on the version of boost being used.
 FRENSIE_UNIT_TEST( AdjointPhotoatom, collideAtLineEnergy )
 {
   // Sample the pair production reaction
   std::vector<double> fake_stream( 4 );
-  // if( BOOST_VERSION < 106000 )
-  //fake_stream[0] = 0.95; // select pair production (for boost below version 1.60)
-  // else
-  fake_stream[0] = 0.05; // select pair production (for boost above version 1.60)
+  fake_stream[0] = 0.05; // select pair production
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.5;
   fake_stream[3] = 0.0;
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   std::unique_ptr<MonteCarlo::AdjointPhotonProbeState>
     adjoint_photon( new MonteCarlo::AdjointPhotonProbeState( 0 ) );
   adjoint_photon->setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy );
@@ -675,23 +671,20 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, collideAtLineEnergy )
 
   FRENSIE_CHECK( adjoint_photon->isGone() );
   FRENSIE_CHECK_EQUAL( bank.size(), 1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(),
                           2*Utility::PhysicalConstants::electron_rest_mass_energy,
                           1e-15 );
 
   bank.pop();
 
   // Sample the triplet production reaction
-  // if( BOOST_VERSION < 106000 )
-  //fake_stream[0] = 0.96; // select triplet production (for boost below version 1.60)
-  // else
-  fake_stream[0] = 0.04; // select triplet production (for boost above version 1.60)
+  fake_stream[0] = 0.04; // select triplet production
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.5;
   fake_stream[3] = 0.0;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   adjoint_photon.reset( new MonteCarlo::AdjointPhotonProbeState( 0 ) );
   adjoint_photon->setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy );
   adjoint_photon->setDirection( 0.0, 0.0, 1.0 );
@@ -701,7 +694,7 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, collideAtLineEnergy )
 
   FRENSIE_CHECK( adjoint_photon->isGone() );
   FRENSIE_CHECK_EQUAL( bank.size(), 1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(),
                                    4*Utility::PhysicalConstants::electron_rest_mass_energy,
                                    1e-15 );
 
@@ -777,7 +770,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   (*critical_line_energies)[0] =
     Utility::PhysicalConstants::electron_rest_mass_energy;
   (*critical_line_energies)[1] = 20.0;
-  
+
   {
     std::vector<std::shared_ptr<const MonteCarlo::AdjointPhotoatomicReaction> >
       incoherent_reactions;
@@ -814,7 +807,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   {
     MonteCarlo::AdjointPhotoatom::ConstReactionMap& me_line_energy_reactions =
       line_energy_reactions[Utility::PhysicalConstants::electron_rest_mass_energy];
-    
+
     std::shared_ptr<const MonteCarlo::LineEnergyAdjointPhotoatomicReaction> reaction;
 
     MonteCarlo::AdjointPhotoatomicReactionNativeFactory::createPairProductionReaction(
@@ -825,7 +818,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     me_line_energy_reactions[reaction->getReactionType()] = reaction;
 
-    
+
     MonteCarlo::AdjointPhotoatomicReactionNativeFactory::createTripletProductionReaction(
                                                                 data_container,
                                                                 energy_grid,

@@ -32,6 +32,17 @@ FRENSIE_UNIT_TEST( AdjointElectronMaterial, getId )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the critical line energies can be returned
+FRENSIE_UNIT_TEST( AdjointElectronMaterial, getCriticalLineEnergies )
+{
+  const std::vector<double>& critical_line_energies =
+    material->getCriticalLineEnergies();
+
+  FRENSIE_REQUIRE_EQUAL( critical_line_energies.size(), 1 );
+  FRENSIE_REQUIRE_EQUAL( critical_line_energies[0], 20.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the number density can be returned
 FRENSIE_UNIT_TEST( AdjointElectronMaterial, getNumberDensity )
 {
@@ -335,6 +346,10 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     MonteCarlo::SimulationProperties properties;
 
+    std::vector<double> user_critical_line_energies( 1 );
+    user_critical_line_energies[0] = 20.0;
+
+    properties.setCriticalAdjointElectronLineEnergies( user_critical_line_energies );
     properties.setAdjointBremsstrahlungAngularDistributionFunction(
                                              MonteCarlo::DIPOLE_DISTRIBUTION );
     properties.setAdjointElasticCutoffAngleCosine( 1.0 );
