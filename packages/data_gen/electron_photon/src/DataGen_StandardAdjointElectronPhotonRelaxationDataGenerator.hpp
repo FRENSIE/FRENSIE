@@ -208,7 +208,9 @@ private:
 
   // Initialize the electron union energy grid
   void initializeAdjointElectronUnionEnergyGrid(
-     std::list<double>& union_energy_grid ) const;
+     std::list<double>& union_energy_grid,
+     std::map<unsigned,std::shared_ptr<ElectronGridGenerator> > ionization_grid_generators,
+     std::shared_ptr<ElectronGridGenerator> brem_grid_generator ) const;
 
   // Create the inelastic cross section distribution
   void createForwardInelasticElectronCrossSectionDistribution(

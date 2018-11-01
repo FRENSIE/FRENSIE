@@ -260,6 +260,9 @@ void ElectroionizationSubshellAdjointElectronScatteringDistribution::createProbe
 
     // Add the probe to the bank
     bank.push( probe );
+
+    // Make sure the weight multiplier is valid
+    testPostcondition( weight_mult > 0.0 );
   }
 }
 

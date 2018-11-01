@@ -30,7 +30,7 @@ public:
   AdjointElectronGridGenerator(
       const std::function<double(const double&)>& forward_cs_evaluator,
       const std::function<double(const double&, const double&)>& forward_pdf_evaluator,
-      const std::function<double(const double&)>& min_outgoing_adjoint_energy,
+      const std::function<double(const double&)>& min_energy_gain_function,
       const std::vector<double>& primary_energy_grid,
       const double min_energy = 1e-5,
       const double max_energy = 20.0,
@@ -121,8 +121,8 @@ private:
   // Function for evaluating the forward pdf
   std::function<double(const double&, const double&)> d_forward_pdf_evaluator;
 
-  // Functor to calculate the min outgoing adjoint energy
-  std::function<double(const double&)> d_min_outgoing_adjoint_energy;
+  // Functor to calculate the min adjoint energy gain
+  std::function<double(const double&)> d_min_energy_gain_function;
 
   // The primary incoming energy grid of the forward electronatomic reaction
   std::vector<double> d_primary_energy_grid;
