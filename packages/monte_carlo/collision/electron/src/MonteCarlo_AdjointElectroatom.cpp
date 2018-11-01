@@ -45,7 +45,7 @@ AdjointElectroatom::AdjointElectroatom(
                                              absorption_reactions,
                                              line_energy_reactions,
                                              false,
-                                             Utility::LinLin() ) );
+                                             Utility::LogLog() ) );
 
   // Make sure the reactions have a shared energy grid
   testPostcondition( this->getCore().hasSharedEnergyGrid() );

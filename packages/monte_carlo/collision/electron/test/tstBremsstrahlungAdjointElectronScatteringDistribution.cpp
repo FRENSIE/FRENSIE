@@ -76,8 +76,9 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   FRENSIE_CHECK( !distribution->isEnergyAboveScatteringWindow( 0.1, 1e-5 ) );
 
-  FRENSIE_CHECK( !distribution->isEnergyAboveScatteringWindow( 0.1, 0.1 ) );
-  FRENSIE_CHECK( distribution->isEnergyAboveScatteringWindow( 0.1, 0.11 ) );
+  FRENSIE_CHECK( !distribution->isEnergyAboveScatteringWindow( 0.1, 0.1 - 2e-7 ) );
+
+  FRENSIE_CHECK( distribution->isEnergyAboveScatteringWindow( 0.1, 0.1 ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -89,9 +90,9 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   FRENSIE_CHECK( distribution->isEnergyInScatteringWindow( 0.1, 1e-5 ));
 
-  FRENSIE_CHECK( distribution->isEnergyInScatteringWindow( 0.1, 0.1 ) );
+  FRENSIE_CHECK( distribution->isEnergyInScatteringWindow( 0.1, 0.1 - 2e-7 ) );
 
-  FRENSIE_CHECK( !distribution->isEnergyInScatteringWindow( 0.1, 0.11 ) );
+  FRENSIE_CHECK( !distribution->isEnergyInScatteringWindow( 0.1, 0.1 ) );
 
   FRENSIE_CHECK( !distribution->isEnergyInScatteringWindow( 21.0, 1.0 ) );
 

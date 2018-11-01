@@ -58,7 +58,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomCore, getTotalForwardReaction )
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.97832E+01, 1e-12 );
 
   cross_section = total_forward_reaction.getCrossSection( 1e-3 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.075323346040028706e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.034967894439161196e+07, 1e-12 );
 
   cross_section = total_forward_reaction.getCrossSection( 20.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.6467035552999546e+05, 1e-12 );
