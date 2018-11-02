@@ -47,7 +47,7 @@ SurfaceFluxEstimator<ContributionMultiplierPolicy>::SurfaceFluxEstimator(
 
 // Add estimator contribution from a portion of the current history
 /*! \details It is unsafe to call this function directly! This function will
- * be called by the appropriate dispatcher whan an event of interest occurs.
+ * be called by the appropriate dispatcher when an event of interest occurs.
  * If calling this function directly, make sure that the cell of surface of
  * interest is actually assigned to this estimator (otherwise seg. faults are
  * likely!).

@@ -1269,23 +1269,6 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   FRENSIE_FLUSH_ALL_LOGS();
 
   //---------------------------------------------------------------------------//
-  // Generate Grid Points For The Forward Inelastic Electron Cross Section Data
-  //---------------------------------------------------------------------------//
-
-  // Create the inelastic cross section distribution
-  std::shared_ptr<const Utility::UnivariateDistribution>
-    forward_inelastic_electron_cross_section;
-
-  this->createForwardInelasticElectronCrossSectionDistribution(
-            forward_inelastic_electron_cross_section );
-
-  // Bind the distribution
-  boost::function<double (double pz)> forward_inelastic_grid_function =
-    boost::bind( &Utility::UnivariateDistribution::evaluate,
-                 boost::cref( *forward_inelastic_electron_cross_section ),
-                 _1 );
-
-  //---------------------------------------------------------------------------//
   // Generate Grid Points For The Adjoint Atomic Excitation Cross Section Data
   //---------------------------------------------------------------------------//
 
@@ -1512,6 +1495,20 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 //---------------------------------------------------------------------------//
 // Set The Forward Inelastic Cross Section Data
 //---------------------------------------------------------------------------//
+
+  // Create the inelastic cross section distribution
+  std::shared_ptr<const Utility::UnivariateDistribution>
+    forward_inelastic_electron_cross_section;
+
+  this->createForwardInelasticElectronCrossSectionDistribution(
+            forward_inelastic_electron_cross_section );
+
+  // Bind the distribution
+  boost::function<double (double pz)> forward_inelastic_grid_function =
+    boost::bind( &Utility::UnivariateDistribution::evaluate,
+                 boost::cref( *forward_inelastic_electron_cross_section ),
+                 _1 );
+
   FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
                                     Utility::Italicized( "forward inelastic electron" )
                                     << " cross section ... " );
@@ -1661,7 +1658,7 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::createForwardInelasticElec
   unsigned brem_threshold_index =
     d_forward_epr_data->getBremsstrahlungCrossSectionThresholdEnergyIndex();
 
-  // Extract the total elastic cross section data
+  // Extract the total electroionization subshell cross section data
   std::map<unsigned,std::vector<double> > i_cross_sections;
   std::map<unsigned,unsigned> i_threshold_index;
 

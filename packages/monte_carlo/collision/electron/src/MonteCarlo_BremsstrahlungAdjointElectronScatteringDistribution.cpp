@@ -221,7 +221,7 @@ void BremsstrahlungAdjointElectronScatteringDistribution::createProbeParticle(
                                         adjoint_electron.getEnergy() ) )
   {
     const double weight_mult =
-      this->evaluatePDF( adjoint_electron.getEnergy(), energy_of_interest );
+      this->evaluate( adjoint_electron.getEnergy(), energy_of_interest );
 
     // Create the probe with the desired energy and modified weight
     std::shared_ptr<AdjointElectronProbeState> probe(

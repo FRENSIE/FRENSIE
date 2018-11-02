@@ -215,14 +215,14 @@ double AdjointElectronGridGenerator<TwoDInterpPolicy>::evaluateAdjointPDF(
         const double adjoint_cross_section,
         const double incoming_adjoint_energy,
         const double outgoing_adjoint_energy,
-        const double precision ) const
+        const double ) const
 {
   double forward_differential_cs =
     this->evaluateAdjointDifferentialCrossSection(
         incoming_adjoint_energy,
         outgoing_adjoint_energy );
 
-  if ( forward_differential_cs > 0.0 )
+  if ( forward_differential_cs > 0.0 && adjoint_cross_section > 0.0 )
     return forward_differential_cs/adjoint_cross_section;
   else
     return 0.0;

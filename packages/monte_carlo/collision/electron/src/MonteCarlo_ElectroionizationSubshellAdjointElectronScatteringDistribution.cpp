@@ -249,7 +249,7 @@ void ElectroionizationSubshellAdjointElectronScatteringDistribution::createProbe
                                         adjoint_electron.getEnergy() ) )
   {
     const double weight_mult =
-      this->evaluatePDF( adjoint_electron.getEnergy(), energy_of_interest );
+      this->evaluate( adjoint_electron.getEnergy(), energy_of_interest );
 
     // Create the probe with the desired energy and modified weight
     auto probe = std::make_shared<AdjointElectronProbeState>( adjoint_electron );
