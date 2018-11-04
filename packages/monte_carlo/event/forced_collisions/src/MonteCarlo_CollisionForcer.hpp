@@ -40,6 +40,9 @@ class CollisionForcer
 
 public:
 
+  //! The entity id type
+  typedef uint64_t EntityId;
+
   //! This method can be used to simulate a generated particle for the desired optical path
   typedef std::function<void(ParticleState&,ParticleBank&,const double)>
   SimulateParticleForOpticalPath;
@@ -57,7 +60,7 @@ public:
   
   //! Return the cells where collisions will be forced
   virtual void getCells( const ParticleType particle_type,
-                         std::set<Geometry::Model::EntityId>& cells ) const = 0;
+                         std::set<EntityId>& cells ) const = 0;
 
   //! Return the particle types that will have forced collisions
   virtual void getParticleTypes( std::set<ParticleType>& particle_types ) const = 0;
@@ -67,7 +70,7 @@ public:
 
   //! Update the particle state and bank
   virtual void forceCollision(
-          const Geometry::Model::EntityId cell_entering,
+          const EntityId cell_entering,
           const double optical_path_to_next_cell,
           const SimulateParticleForOpticalPath& simulate_particle_track_method,
           ParticleState& particle,
@@ -86,8 +89,8 @@ private:
   
 } // end MonteCarlo namespace
 
-BOOST_CLASS_VERSION( MonteCarlo::CollisionForcer, 0 );
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::CollisionForcer );
+BOOST_SERIALIZATION_CLASS_VERSION( CollisionForcer, MonteCarlo, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( CollisionForcer, MonteCarlo );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, CollisionForcer );
 
 #endif // end MONTE_CARLO_COLLISION_FORCER_HPP
