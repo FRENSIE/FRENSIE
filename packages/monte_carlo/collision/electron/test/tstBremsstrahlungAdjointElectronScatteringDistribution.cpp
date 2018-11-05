@@ -342,13 +342,13 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
   FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
   FRENSIE_CHECK_EQUAL( bank.size(), 4 );
 
-  double pdf = distribution->evaluatePDF( 1.1e-05, 0.08 );
+  double pdf = distribution->evaluate( 1.1e-05, 0.08 );
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 0.08 );
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
 
   bank.pop();
 
-  pdf = distribution->evaluatePDF(
+  pdf = distribution->evaluate(
               1.1e-05, Utility::PhysicalConstants::electron_rest_mass_energy );
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(),
                        Utility::PhysicalConstants::electron_rest_mass_energy );
@@ -356,13 +356,13 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   bank.pop();
 
-  pdf = distribution->evaluatePDF( 1.1e-05, 1.0 );
+  pdf = distribution->evaluate( 1.1e-05, 1.0 );
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 1.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
 
   bank.pop();
 
-  pdf = distribution->evaluatePDF( 1.1e-05, 5.0 );
+  pdf = distribution->evaluate( 1.1e-05, 5.0 );
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 5.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
 
@@ -381,7 +381,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   FRENSIE_CHECK_EQUAL( bank.size(), 1 );
 
-  pdf = distribution->evaluatePDF( 4.9, 5.0 );
+  pdf = distribution->evaluate( 4.9, 5.0 );
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 5.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
 
