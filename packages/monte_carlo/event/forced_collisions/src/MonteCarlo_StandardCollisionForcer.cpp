@@ -24,12 +24,12 @@ StandardCollisionForcer::StandardCollisionForcer()
 void StandardCollisionForcer::setForcedCollisionCells(
                            const MonteCarlo::FilledGeometryModel& model,
                            const ParticleType particle_type,
-                           const std::vector<Geometry::Model::EntityId>& cells,
+                           const std::vector<CellIdType>& cells,
                            const double generation_probability )
 {
   this->setForcedCollisionCells( model,
                                  particle_type,
-                                 std::set<Geometry::Model::EntityId>( cells.begin(), cells.end() ),
+                                 std::set<CellIdType>( cells.begin(), cells.end() ),
                                  generation_probability );
 }
 
@@ -37,7 +37,7 @@ void StandardCollisionForcer::setForcedCollisionCells(
 void StandardCollisionForcer::setForcedCollisionCells(
                            const MonteCarlo::FilledGeometryModel& model,
                            const ParticleType particle_type,
-                           const std::set<Geometry::Model::EntityId>& cells,
+                           const std::set<CellIdType>& cells,
                            const double generation_probability )
 {
   ForcedCollisionCellData& particle_forced_collision_cell_data =
@@ -70,7 +70,7 @@ void StandardCollisionForcer::setForcedCollisionCells(
 // Return the cells where collisions will be forced
 void StandardCollisionForcer::getCells(
                              const ParticleType particle_type,
-                             std::set<Geometry::Model::EntityId>& cells ) const
+                             std::set<CellIdType>& cells ) const
 {
   ParticleTypeForcedCollisionCellMap::const_iterator particle_type_data_it =
     d_forced_collision_cells.find( particle_type );
@@ -89,7 +89,7 @@ void StandardCollisionForcer::getParticleTypes(
   ParticleTypeForcedCollisionCellMap::const_iterator particle_type_data_it =
     d_forced_collision_cells.begin();
 
-  while( particle_type_data_it != d_forced_collision_cells.begin() )
+  while( particle_type_data_it != d_forced_collision_cells.end() )
   {
     particle_types.insert( particle_type_data_it->first );
 
@@ -111,8 +111,11 @@ double StandardCollisionForcer::getGenerationProbability(
 }
 
 // Update the particle state and bank
+/*! \details This method should only be called if the particle is guaranteed 
+ * to pass through the current cell.
+ */
 void StandardCollisionForcer::forceCollision(
-          const Geometry::Model::EntityId cell_entering,
+          const CellIdType cell_entering,
           const double optical_path_to_next_cell,
           const SimulateParticleForOpticalPath& simulate_particle_track_method,
           ParticleState& particle,
@@ -181,7 +184,7 @@ void StandardCollisionForcer::forceCollision(
   
 } // end MonteCarlo namespace
 
-BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::StandardCollisionForcer );
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( StandardCollisionForcer, MonteCarlo );
 EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo::StandardCollisionForcer );
 
 //---------------------------------------------------------------------------//

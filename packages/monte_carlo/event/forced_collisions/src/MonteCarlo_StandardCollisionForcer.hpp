@@ -25,6 +25,9 @@ class StandardCollisionForcer : public CollisionForcer
 
 public:
 
+  //! The entity id type
+  typedef CollisionForcer::CellIdType CellIdType;
+
   //! This method can be used to simulate a generated particle for the desired optical path
   typedef std::function<void(ParticleState&,ParticleBank&,const double)>
   SimulateParticleForOpticalPath;
@@ -37,22 +40,20 @@ public:
   { /* ... */ }
 
   //! Set the cells where collision will be forced for the specified particle type
-  void setForcedCollisionCells(
-                           const MonteCarlo::FilledGeometryModel& model,
-                           const ParticleType particle_type,
-                           const std::vector<Geometry::Model::EntityId>& cells,
-                           const double generation_probability = 1.0 );
+  void setForcedCollisionCells( const MonteCarlo::FilledGeometryModel& model,
+                                const ParticleType particle_type,
+                                const std::vector<CellIdType>& cells,
+                                const double generation_probability = 1.0 );
 
   //! Set the cells where collision will be forced for the specified particle type
-  void setForcedCollisionCells(
-                           const MonteCarlo::FilledGeometryModel& model,
-                           const ParticleType particle_type,
-                           const std::set<Geometry::Model::EntityId>& cells,
-                           const double generation_probability = 1.0 );
+  void setForcedCollisionCells( const MonteCarlo::FilledGeometryModel& model,
+                                const ParticleType particle_type,
+                                const std::set<CellIdType>& cells,
+                                const double generation_probability = 1.0 );
   
   //! Return the cells where collisions will be forced
   void getCells( const ParticleType particle_type,
-                 std::set<Geometry::Model::EntityId>& cells ) const final override;
+                 std::set<CellIdType>& cells_set ) const final override;
 
   //! Return the particle types that will have forced collisions
   void getParticleTypes( std::set<ParticleType>& particle_types ) const final override;
@@ -62,7 +63,7 @@ public:
 
   //! Update the particle state and bank
   void forceCollision(
-          const Geometry::Model::EntityId cell_entering,
+          const CellIdType cell_entering,
           const double optical_path_to_next_cell,
           const SimulateParticleForOpticalPath& simulate_particle_track_method,
           ParticleState& particle,
@@ -84,7 +85,7 @@ private:
   friend class boost::serialization::access;
   
   // The forced collision cells
-  typedef std::pair<std::unordered_set<Geometry::Model::EntityId>,double> ForcedCollisionCellData;
+  typedef std::pair<std::unordered_set<CellIdType>,double> ForcedCollisionCellData;
   typedef std::map<ParticleType,ForcedCollisionCellData> ParticleTypeForcedCollisionCellMap;
   ParticleTypeForcedCollisionCellMap d_forced_collision_cells;
 };
@@ -93,6 +94,7 @@ private:
 template<typename Archive>
 void StandardCollisionForcer::save( Archive& ar, const unsigned version ) const
 {
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( CollisionForcer );
   ar & BOOST_SERIALIZATION_NVP( d_forced_collision_cells );
 }
 
@@ -100,12 +102,13 @@ void StandardCollisionForcer::save( Archive& ar, const unsigned version ) const
 template<typename Archive>
 void StandardCollisionForcer::load( Archive& ar, const unsigned version )
 {
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( CollisionForcer );
   ar & BOOST_SERIALIZATION_NVP( d_forced_collision_cells );
 }
 
 } // end MonteCarlo namespace
 
-BOOST_CLASS_VERSION( MonteCarlo::StandardCollisionForcer, 0 );
+BOOST_SERIALIZATION_CLASS_VERSION( StandardCollisionForcer, MonteCarlo, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardCollisionForcer, MonteCarlo );
 EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, StandardCollisionForcer );
 

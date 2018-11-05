@@ -196,6 +196,23 @@ double calculateDopplerBroadenedEnergy(
   return final_energy;
 }
 
+// Calculate the scattering angle cosine
+double calculateScatteringAngleCosine(
+                                     const double initial_energy,
+                                     const double final_energy,
+                                     const double electron_momentum_projection,
+                                     bool& energetically_possible )
+{
+  // Make sure the initial energy is valid
+  testPrecondition( initial_energy > 0.0 );
+  // Make sure that the final energy is valid
+  testPrecondition( final_energy < initial_energy );
+  // Make sure the electron momentum projection is valid
+  testPrecondition( electron_momentum_projection >= -1.0 );
+
+  
+}
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
