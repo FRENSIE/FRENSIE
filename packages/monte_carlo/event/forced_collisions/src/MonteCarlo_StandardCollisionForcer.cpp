@@ -24,12 +24,12 @@ StandardCollisionForcer::StandardCollisionForcer()
 void StandardCollisionForcer::setForcedCollisionCells(
                            const MonteCarlo::FilledGeometryModel& model,
                            const ParticleType particle_type,
-                           const std::vector<EntityId>& cells,
+                           const std::vector<CellIdType>& cells,
                            const double generation_probability )
 {
   this->setForcedCollisionCells( model,
                                  particle_type,
-                                 std::set<EntityId>( cells.begin(), cells.end() ),
+                                 std::set<CellIdType>( cells.begin(), cells.end() ),
                                  generation_probability );
 }
 
@@ -37,7 +37,7 @@ void StandardCollisionForcer::setForcedCollisionCells(
 void StandardCollisionForcer::setForcedCollisionCells(
                            const MonteCarlo::FilledGeometryModel& model,
                            const ParticleType particle_type,
-                           const std::set<EntityId>& cells,
+                           const std::set<CellIdType>& cells,
                            const double generation_probability )
 {
   ForcedCollisionCellData& particle_forced_collision_cell_data =
@@ -70,7 +70,7 @@ void StandardCollisionForcer::setForcedCollisionCells(
 // Return the cells where collisions will be forced
 void StandardCollisionForcer::getCells(
                              const ParticleType particle_type,
-                             std::set<EntityId>& cells ) const
+                             std::set<CellIdType>& cells ) const
 {
   ParticleTypeForcedCollisionCellMap::const_iterator particle_type_data_it =
     d_forced_collision_cells.find( particle_type );
@@ -115,7 +115,7 @@ double StandardCollisionForcer::getGenerationProbability(
  * to pass through the current cell.
  */
 void StandardCollisionForcer::forceCollision(
-          const EntityId cell_entering,
+          const CellIdType cell_entering,
           const double optical_path_to_next_cell,
           const SimulateParticleForOpticalPath& simulate_particle_track_method,
           ParticleState& particle,

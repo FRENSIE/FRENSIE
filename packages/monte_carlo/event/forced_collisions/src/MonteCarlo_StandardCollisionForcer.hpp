@@ -26,7 +26,7 @@ class StandardCollisionForcer : public CollisionForcer
 public:
 
   //! The entity id type
-  typedef CollisionForcer::EntityId EntityId;
+  typedef CollisionForcer::CellIdType CellIdType;
 
   //! This method can be used to simulate a generated particle for the desired optical path
   typedef std::function<void(ParticleState&,ParticleBank&,const double)>
@@ -42,18 +42,18 @@ public:
   //! Set the cells where collision will be forced for the specified particle type
   void setForcedCollisionCells( const MonteCarlo::FilledGeometryModel& model,
                                 const ParticleType particle_type,
-                                const std::vector<EntityId>& cells,
+                                const std::vector<CellIdType>& cells,
                                 const double generation_probability = 1.0 );
 
   //! Set the cells where collision will be forced for the specified particle type
   void setForcedCollisionCells( const MonteCarlo::FilledGeometryModel& model,
                                 const ParticleType particle_type,
-                                const std::set<EntityId>& cells,
+                                const std::set<CellIdType>& cells,
                                 const double generation_probability = 1.0 );
   
   //! Return the cells where collisions will be forced
   void getCells( const ParticleType particle_type,
-                 std::set<EntityId>& cells ) const final override;
+                 std::set<CellIdType>& cells_set ) const final override;
 
   //! Return the particle types that will have forced collisions
   void getParticleTypes( std::set<ParticleType>& particle_types ) const final override;
@@ -63,7 +63,7 @@ public:
 
   //! Update the particle state and bank
   void forceCollision(
-          const Geometry::Model::EntityId cell_entering,
+          const CellIdType cell_entering,
           const double optical_path_to_next_cell,
           const SimulateParticleForOpticalPath& simulate_particle_track_method,
           ParticleState& particle,
@@ -85,7 +85,7 @@ private:
   friend class boost::serialization::access;
   
   // The forced collision cells
-  typedef std::pair<std::unordered_set<EntityId>,double> ForcedCollisionCellData;
+  typedef std::pair<std::unordered_set<CellIdType>,double> ForcedCollisionCellData;
   typedef std::map<ParticleType,ForcedCollisionCellData> ParticleTypeForcedCollisionCellMap;
   ParticleTypeForcedCollisionCellMap d_forced_collision_cells;
 };

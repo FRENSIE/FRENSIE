@@ -31,7 +31,7 @@ FRENSIE_UNIT_TEST( DefaultCollisionForcer, getCells )
   std::shared_ptr<const MonteCarlo::CollisionForcer> collision_forcer =
     MonteCarlo::CollisionForcer::getDefault();
 
-  std::set<MonteCarlo::CollisionForcer::EntityId> cells;
+  std::set<MonteCarlo::CollisionForcer::CellIdType> cells;
 
   collision_forcer->getCells( MonteCarlo::PHOTON, cells );
 
@@ -192,7 +192,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardCollisionForcer,
 
   iarchive.reset();
 
-  std::set<MonteCarlo::CollisionForcer::EntityId> cells;
+  std::set<MonteCarlo::CollisionForcer::CellIdType> cells;
 
   collision_forcer->getCells( MonteCarlo::PHOTON, cells );
 

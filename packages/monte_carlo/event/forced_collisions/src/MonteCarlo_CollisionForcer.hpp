@@ -40,8 +40,8 @@ class CollisionForcer
 
 public:
 
-  //! The entity id type
-  typedef uint64_t EntityId;
+  //! The cell id type
+  typedef uint64_t CellIdType;
 
   //! This method can be used to simulate a generated particle for the desired optical path
   typedef std::function<void(ParticleState&,ParticleBank&,const double)>
@@ -60,7 +60,7 @@ public:
   
   //! Return the cells where collisions will be forced
   virtual void getCells( const ParticleType particle_type,
-                         std::set<EntityId>& cells ) const = 0;
+                         std::set<CellIdType>& cells_set ) const = 0;
 
   //! Return the particle types that will have forced collisions
   virtual void getParticleTypes( std::set<ParticleType>& particle_types ) const = 0;
@@ -70,7 +70,7 @@ public:
 
   //! Update the particle state and bank
   virtual void forceCollision(
-          const EntityId cell_entering,
+          const CellIdType cell_entering,
           const double optical_path_to_next_cell,
           const SimulateParticleForOpticalPath& simulate_particle_track_method,
           ParticleState& particle,

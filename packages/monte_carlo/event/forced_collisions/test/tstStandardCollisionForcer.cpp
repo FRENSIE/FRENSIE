@@ -45,15 +45,15 @@ FRENSIE_UNIT_TEST( StandardCollisionForcer,
   std::shared_ptr<MonteCarlo::StandardCollisionForcer>
     collision_forcer( new MonteCarlo::StandardCollisionForcer );
 
-  std::vector<MonteCarlo::StandardCollisionForcer::EntityId> cells( {1} );
-  std::set<MonteCarlo::StandardCollisionForcer::EntityId>
+  std::vector<MonteCarlo::StandardCollisionForcer::CellIdType> cells( {1} );
+  std::set<MonteCarlo::StandardCollisionForcer::CellIdType>
     cells_set( cells.begin(), cells.end() );
 
   collision_forcer->setForcedCollisionCells( *filled_model,
                                              MonteCarlo::PHOTON,
                                              cells );
 
-  std::set<MonteCarlo::StandardCollisionForcer::EntityId> test_cells;
+  std::set<MonteCarlo::StandardCollisionForcer::CellIdType> test_cells;
 
   collision_forcer->getCells( MonteCarlo::PHOTON, test_cells );
 
@@ -114,8 +114,8 @@ FRENSIE_UNIT_TEST( StandardCollisionForcer,
   std::shared_ptr<MonteCarlo::StandardCollisionForcer>
     collision_forcer( new MonteCarlo::StandardCollisionForcer );
 
-  std::vector<MonteCarlo::StandardCollisionForcer::EntityId> cells( {1} );
-  std::set<MonteCarlo::StandardCollisionForcer::EntityId>
+  std::vector<MonteCarlo::StandardCollisionForcer::CellIdType> cells( {1} );
+  std::set<MonteCarlo::StandardCollisionForcer::CellIdType>
     cells_set( cells.begin(), cells.end() );
 
   collision_forcer->setForcedCollisionCells( *filled_model,
@@ -123,7 +123,7 @@ FRENSIE_UNIT_TEST( StandardCollisionForcer,
                                              cells,
                                              0.5 );
 
-  std::set<MonteCarlo::StandardCollisionForcer::EntityId> test_cells;
+  std::set<MonteCarlo::StandardCollisionForcer::CellIdType> test_cells;
 
   collision_forcer->getCells( MonteCarlo::PHOTON, test_cells );
 
@@ -187,7 +187,7 @@ FRENSIE_UNIT_TEST( StandardCollisionForcer,
   std::shared_ptr<MonteCarlo::StandardCollisionForcer>
     collision_forcer( new MonteCarlo::StandardCollisionForcer );
 
-  std::set<MonteCarlo::StandardCollisionForcer::EntityId> cells( {1} );
+  std::set<MonteCarlo::StandardCollisionForcer::CellIdType> cells( {1} );
 
   collision_forcer->setForcedCollisionCells( *filled_model,
                                              MonteCarlo::PHOTON,
@@ -493,7 +493,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardCollisionForcer,
       std::shared_ptr<MonteCarlo::StandardCollisionForcer>
         tmp_collision_forcer( new MonteCarlo::StandardCollisionForcer );
 
-      std::set<MonteCarlo::StandardCollisionForcer::EntityId> cells( {1} );
+      std::set<MonteCarlo::StandardCollisionForcer::CellIdType> cells( {1} );
     
       tmp_collision_forcer->setForcedCollisionCells( *filled_model,
                                                      MonteCarlo::PHOTON,
@@ -544,8 +544,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardCollisionForcer,
   FRENSIE_CHECK( collision_forcer.get() == base_collision_forcer.get() );
 
   {
-    std::set<MonteCarlo::StandardCollisionForcer::EntityId> cells( {1} );
-    std::set<MonteCarlo::StandardCollisionForcer::EntityId> test_cells;
+    std::set<MonteCarlo::StandardCollisionForcer::CellIdType> cells( {1} );
+    std::set<MonteCarlo::StandardCollisionForcer::CellIdType> test_cells;
 
     base_collision_forcer->getCells( MonteCarlo::PHOTON, test_cells );
 

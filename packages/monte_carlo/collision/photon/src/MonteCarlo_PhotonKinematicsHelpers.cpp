@@ -209,6 +209,8 @@ double calculateScatteringAngleCosine(
   testPrecondition( final_energy < initial_energy );
   // Make sure the electron momentum projection is valid
   testPrecondition( electron_momentum_projection >= -1.0 );
+
+  
 }
 
 } // end MonteCarlo namespace
