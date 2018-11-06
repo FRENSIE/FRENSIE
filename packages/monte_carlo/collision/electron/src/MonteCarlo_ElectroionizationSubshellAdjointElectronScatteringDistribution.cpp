@@ -203,8 +203,9 @@ bool ElectroionizationSubshellAdjointElectronScatteringDistribution::isEnergyInS
 
 // Check if an energy is above the scattering window
 /*! \details An adjoint electroionization interaction can only occur when enough
- * energy is transferred to the electron to free it from its subshell. This
- * sets an upper limit for the window to energy_of_interest - binding_energy.
+ * energy is transferred to the electron to free it from its subshell. This sets
+ * an upper limit for the window to slightly above energy_of_interest -
+ * binding_energy since the tabular data does not go to zero.
  */
 bool ElectroionizationSubshellAdjointElectronScatteringDistribution::isEnergyAboveScatteringWindow(
                                            const double energy_of_interest,
@@ -215,7 +216,10 @@ bool ElectroionizationSubshellAdjointElectronScatteringDistribution::isEnergyAbo
   // Make sure the energy of interest is valid
   testPrecondition( energy_of_interest >= 0.0 );
 
-  return initial_energy > energy_of_interest - d_binding_energy;
+  double min_outgoing_energy =
+    d_ionization_subshell_dist->getLowerBoundOfSecondaryConditionalIndepVar( initial_energy );
+
+  return min_outgoing_energy > energy_of_interest;
 }
 
 // Create a probe particle
@@ -243,7 +247,7 @@ void ElectroionizationSubshellAdjointElectronScatteringDistribution::createProbe
                                         adjoint_electron.getEnergy() ) )
   {
     const double weight_mult =
-      this->evaluatePDF( adjoint_electron.getEnergy(), energy_of_interest );
+      this->evaluate( adjoint_electron.getEnergy(), energy_of_interest );
 
     // Create the probe with the desired energy and modified weight
     auto probe = std::make_shared<AdjointElectronProbeState>( adjoint_electron );

@@ -549,7 +549,7 @@ void AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
 
   // Create the total forward reaction
   total_forward_reaction.reset(
-     new AbsorptionElectroatomicReaction<Utility::LinLin,false>(
+     new AbsorptionElectroatomicReaction<Utility::LogLog,false>(
                                                energy_grid,
                                                total_forward_cross_section,
                                                0u,

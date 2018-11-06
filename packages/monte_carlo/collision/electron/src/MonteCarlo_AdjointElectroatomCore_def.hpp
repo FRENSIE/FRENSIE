@@ -18,12 +18,9 @@
 namespace MonteCarlo{
 
 // Constructor
-/*! \details Care must be taken when setting the critical line energies,
- * scattering reactions and line energy reactions. The critical line energies
- * must correspond to the critical line energies that are being used by the
- * scattering reactions. In addition, every line energy reaction
- * must have a corresponding critical line energy. Without a critical line 
- * energy the line energy reaction will never occur.
+/*! \details Care must be taken when setting the critical line energies and
+ * scattering reactions. The critical line energies must correspond to the
+ * critical line energies that are being used by the scattering reactions.
  */
 template<typename InterpPolicy>
 AdjointElectroatomCore::AdjointElectroatomCore(
@@ -88,7 +85,7 @@ AdjointElectroatomCore::AdjointElectroatomCore(
                                         TOTAL_ADJOINT_ELECTROATOMIC_REACTION );
   }
 }
-  
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_ADJOINT_ELECTROATOM_CORE_DEF_HPP

@@ -213,7 +213,7 @@ double AdjointElectronGridGenerator<TwoDInterpPolicy>::evaluateAdjointPDF(
         const double adjoint_cross_section,
         const double incoming_adjoint_energy,
         const double outgoing_adjoint_energy,
-        const double precision ) const
+        const double ) const
 {
   double forward_differential_cs =
     this->evaluateAdjointDifferentialCrossSection(
@@ -406,7 +406,7 @@ void AdjointElectronGridGenerator<TwoDInterpPolicy>::generateAndEvaluateDistribu
   {
     double incoming_energy = primary_energy_grid[i + threshold_index];
 
-    if( incoming_energy >= this->getMaxEnergy() )
+    if( this->getNudgedMinEnergy( incoming_energy ) >= this->getMaxEnergy() )
     {
       outgoing_energy_grid[incoming_energy] = std::vector<double>(2, 0.0);
       evaluated_pdf[incoming_energy] = std::vector<double>(2, 0.0);
@@ -439,6 +439,8 @@ void AdjointElectronGridGenerator<TwoDInterpPolicy>::initializeSecondaryGrid(
 
   outgoing_energy_grid[0] = this->getNudgedMinEnergy( energy );
   outgoing_energy_grid[1] = this->getMaxEnergy();
+
+  testPostcondition( outgoing_energy_grid[0] < outgoing_energy_grid[1] )
 }
 
 } // end DataGen namespace

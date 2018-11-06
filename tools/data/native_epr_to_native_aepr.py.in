@@ -328,7 +328,8 @@ def addToDatabase( path_to_data_file,
                    path_to_database,
                    database,
                    atomic_number,
-                   atomic_weight ):
+                   atomic_weight,
+                   version_number = 0 ):
 
     zaid = Data.ZAID(atomic_number*1000)
 
@@ -337,12 +338,12 @@ def addToDatabase( path_to_data_file,
     photoatomic_data_properties = \
         Native.NativeEPRAdjointPhotoatomicDataProperties( atomic_weight,
                                                           relative_path,
-                                                          0,
+                                                          version_number,
                                                           zaid.atom() )
     electroatomic_data_properties = \
         Native.NativeEPRAdjointElectroatomicDataProperties( atomic_weight,
                                                             relative_path,
-                                                            0,
+                                                            version_number,
                                                             zaid.atom() )
 
     if not database.doAtomPropertiesExist( zaid.atom() ):

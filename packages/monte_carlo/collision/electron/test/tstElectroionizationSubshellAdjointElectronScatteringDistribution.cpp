@@ -295,8 +295,9 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 
   FRENSIE_CHECK( !distribution->isEnergyAboveScatteringWindow( 0.1, 1e-5 ) );
 
-  FRENSIE_CHECK( !distribution->isEnergyAboveScatteringWindow( 0.1, 0.1 - binding_energy ) );
-  FRENSIE_CHECK( distribution->isEnergyAboveScatteringWindow( 0.1, 0.1 ) );
+  FRENSIE_CHECK( !distribution->isEnergyAboveScatteringWindow( 0.1, 0.1 - binding_energy - 2e-7 ) );
+
+  FRENSIE_CHECK( distribution->isEnergyAboveScatteringWindow( 0.1, 0.1 - binding_energy ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -308,9 +309,9 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 
   FRENSIE_CHECK( distribution->isEnergyInScatteringWindow( 0.1, 1e-5 ));
 
-  FRENSIE_CHECK( distribution->isEnergyInScatteringWindow( 0.1, 0.1 - binding_energy ) );
+  FRENSIE_CHECK( distribution->isEnergyInScatteringWindow( 0.1, 0.1 - binding_energy - 2e-7 ) );
 
-  FRENSIE_CHECK( !distribution->isEnergyInScatteringWindow( 0.1, 0.1 ) );
+  FRENSIE_CHECK( !distribution->isEnergyInScatteringWindow( 0.1, 0.1 - binding_energy ) );
 
   FRENSIE_CHECK( !distribution->isEnergyInScatteringWindow( 21.0, 1.0 ) );
 
