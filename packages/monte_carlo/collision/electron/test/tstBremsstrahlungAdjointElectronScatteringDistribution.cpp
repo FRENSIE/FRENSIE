@@ -429,11 +429,12 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     energy_grid = data_container->getAdjointElectronEnergyGrid();
 
   // Get the function data
-  std::vector<double> primary_grid( energy_grid.size() );
+  size_t size = energy_grid.size()-1;
+  std::vector<double> primary_grid( size );
   std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
-    secondary_dists( energy_grid.size() );
+    secondary_dists( size );
 
-  for( unsigned n = 0; n < energy_grid.size(); ++n )
+  for( unsigned n = 0; n < size; ++n )
   {
     primary_grid[n] = energy_grid[n];
 
