@@ -237,7 +237,7 @@ void ParticleSimulationManager::simulateParticleTrack(
                      std::placeholders::_1,
                      std::placeholders::_2,
                      std::placeholders::_3,
-                     std::ref( subtrack_starting_from_source_point ) );
+                     false );
 
   // Surface information
   Geometry::Model::EntityId surface_hit;
@@ -267,7 +267,7 @@ void ParticleSimulationManager::simulateParticleTrack(
     if( !d_model->isCellVoid<State>( particle.getCell() ) )
     {
       cell_total_macro_cross_section =
-        d_model->getMacroscopicTotalCrossSectionQuick( particle );
+        d_model->getMacroscopicTotalForwardCrossSectionQuick( particle );
     }
     else
       cell_total_macro_cross_section = 0.0;
@@ -279,14 +279,19 @@ void ParticleSimulationManager::simulateParticleTrack(
     if( op_to_surface_hit < remaining_track_op )
     {
       // Force a collision - if required
-      if( subtrack_starting_from_source_point ||
-          subtrack_starting_from_cell_boundary )
+      // Ignore void cells
+      if( op_to_surface_hit > 0.0 )
       {
-        d_collision_forcer->forceCollision( particle.getCell(),
-                                            op_to_surface_hit,
-                                            simulate_unresolved_particle_track,
-                                            particle,
-                                            bank );
+        // Only force a collision when the particle enters the cell
+        if( subtrack_starting_from_source_point ||
+            subtrack_starting_from_cell_boundary )
+        {
+          d_collision_forcer->forceCollision( particle.getCell(),
+                                              op_to_surface_hit,
+                                              simulate_unresolved_particle_track,
+                                              particle,
+                                              bank );
+        }
       }
 
       try{
