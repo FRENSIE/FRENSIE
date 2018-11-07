@@ -480,6 +480,36 @@ class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
 
         Utility.OpenMPProperties.setNumberOfThreads( 1 )
 
+#-----------------------------------------------------------------------------#
+    # Check that a particle simulation manager factory can be constructed
+    def testSetCollisionForcer(self):
+        "*Test MonteCarlo.Manager.ParticleSimulationManagerFactory constructor_neutron_photon_electron_mode"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE )
+        properties.setNumberOfHistories( 5 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+        source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
+
+        collision_forcer = Event.StandardCollisionForcer()
+        collision_forcer.setForcedCollisionCells( model, MonteCarlo.PHOTON, [1] )
+
+        factory.setCollisionForcer( collision_forcer )
+
+        Utility.OpenMPProperties.setNumberOfThreads( 1 )     
+
 # #-----------------------------------------------------------------------------#
 #     # Check that a particle simulation manager factory can be constructed and
 #     # weight windows can be set

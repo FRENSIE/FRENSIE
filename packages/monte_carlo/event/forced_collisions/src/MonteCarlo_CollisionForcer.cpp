@@ -27,8 +27,7 @@ public:
   { /* ... */ }
 
   //! Return the cells where collisions will be forced
-  void getCells( const ParticleType,
-                 std::set<Geometry::Model::EntityId>& ) const final override
+  void getCells( const ParticleType, std::set<CellIdType>& ) const final override
   { /* ... */ }
 
   //! Return the particle types that will have forced collisions
@@ -40,7 +39,7 @@ public:
   { return 0.0; }
 
   //! Update the particle state and bank
-  void forceCollision( const Geometry::Model::EntityId,
+  void forceCollision( const CellIdType,
                        const double,
                        const SimulateParticleForOpticalPath&,
                        ParticleState&,

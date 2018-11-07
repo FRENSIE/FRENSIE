@@ -71,6 +71,9 @@ monte_carlo/event subpackage.
 // Add EventHandler support
 %include "MonteCarlo_EventHandler.i"
 
+ // Add CollisionForcer support
+%include "MonteCarlo_CollisionForcer.i"
+
 //---------------------------------------------------------------------------//
 // Turn off the exception handling
 //---------------------------------------------------------------------------//

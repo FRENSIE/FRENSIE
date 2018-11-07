@@ -1,4 +1,4 @@
-#! ${PYTHON_EXECUTABLE
+#! ${PYTHON_EXECUTABLE}
 #-----------------------------------------------------------------------------#
 ## MonteCarlo.Event.ParticleTracker class unit tests
 #  \file   tstMonteCarlo.Event.ParticleTracker.py

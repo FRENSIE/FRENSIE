@@ -458,6 +458,11 @@ ADD_TEST(PyFrensie.MonteCarlo.Event.ParticleTracker_test ${PYTHON_EXECUTABLE} ts
 PyFrensie_MAKE_TEST(tstMonteCarlo.Event.EventHandler)
 ADD_TEST(PyFrensie.MonteCarlo.Event.EventHandler_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.EventHandler.py)
 
+# Add the MonteCarlo.Event.CollisionForcer unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Event.CollisionForcer)
+ADD_TEST(PyFrensie.MonteCarlo.Event.CollisionForcer_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Event.CollisionForcer.py --database_path=${COLLISION_DATABASE_XML_FILE})
+ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Event.CollisionForcer ${COLLISION_DATABASE_XML_FILE_TARGET} )
+
 # Add the MonteCarlo.Manager.ParticleSimulationManagerFactory unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.Manager.ParticleSimulationManagerFactory)
 ADD_TEST(PyFrensie.MonteCarlo.Manager.ParticleSimulationManagerFactory_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Manager.ParticleSimulationManagerFactory.py --database_path=${COLLISION_DATABASE_XML_FILE} --threads=1 )
