@@ -249,6 +249,9 @@ void ElectroionizationSubshellAdjointElectronScatteringDistribution::createProbe
     const double weight_mult =
       this->evaluate( adjoint_electron.getEnergy(), energy_of_interest );
 
+    // Make sure the weight multiplier is valid
+    testPrecondition( weight_mult > 0.0 );
+
     // Create the probe with the desired energy and modified weight
     auto probe = std::make_shared<AdjointElectronProbeState>( adjoint_electron );
 
@@ -264,9 +267,6 @@ void ElectroionizationSubshellAdjointElectronScatteringDistribution::createProbe
 
     // Add the probe to the bank
     bank.push( probe );
-
-    // Make sure the weight multiplier is valid
-    testPostcondition( weight_mult > 0.0 );
   }
 }
 

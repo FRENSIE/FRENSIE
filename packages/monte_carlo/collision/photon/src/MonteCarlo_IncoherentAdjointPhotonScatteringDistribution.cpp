@@ -162,7 +162,7 @@ double IncoherentAdjointPhotonScatteringDistribution::evaluateIntegratedCrossSec
 						 const double max_energy,
 						 const double precision ) const
 {
-  return d_integrated_cs_evaluator( incoming_energy, max_energy, precision );  
+  return d_integrated_cs_evaluator( incoming_energy, max_energy, precision );
 }
 
 // Evaluate the integrated cross section (b)
@@ -432,6 +432,9 @@ void IncoherentAdjointPhotonScatteringDistribution::createProbeParticle(
     const double weight_mult =
       this->evaluatePDF( adjoint_photon.getEnergy(), scattering_angle_cosine )*
       pdf_conversion;
+
+    // Make sure the weight multiplication factor is valid
+    testPrecondition( weight_mult > 0.0 );
 
     // Create the probe with the desired energy and modified weight
     std::shared_ptr<AdjointPhotonProbeState> probe(

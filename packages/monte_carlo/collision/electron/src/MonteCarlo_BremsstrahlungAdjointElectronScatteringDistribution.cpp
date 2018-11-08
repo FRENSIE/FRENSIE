@@ -223,6 +223,9 @@ void BremsstrahlungAdjointElectronScatteringDistribution::createProbeParticle(
     const double weight_mult =
       this->evaluate( adjoint_electron.getEnergy(), energy_of_interest );
 
+    // make sure the weight multiplier is valid
+    testPrecondition( weight_mult > 0.0 );
+
     // Create the probe with the desired energy and modified weight
     std::shared_ptr<AdjointElectronProbeState> probe(
                                new AdjointElectronProbeState( adjoint_electron ) );
@@ -237,9 +240,6 @@ void BremsstrahlungAdjointElectronScatteringDistribution::createProbeParticle(
 
     // Add the probe to the bank
     bank.push( probe );
-
-    // make sure the weight multiplier is valid
-    testPostcondition( weight_mult > 0.0 );
   }
 }
 

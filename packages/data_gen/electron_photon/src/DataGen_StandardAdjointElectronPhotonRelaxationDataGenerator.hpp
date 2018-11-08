@@ -212,10 +212,10 @@ private:
      std::map<unsigned,std::shared_ptr<ElectronGridGenerator> > ionization_grid_generators,
      std::shared_ptr<ElectronGridGenerator> brem_grid_generator ) const;
 
-  // Create the inelastic cross section distribution
-  void createForwardInelasticElectronCrossSectionDistribution(
-    std::shared_ptr<const Utility::UnivariateDistribution>&
-        forward_inelastic_electron_cross_section_distribution ) const;
+  // Create the inelastic cross section evaluator
+  std::function<double(const double&)> createForwardInelasticElectronCrossSectionEvaluator(
+    const std::shared_ptr<const std::vector<double> >& forward_electron_energy_grid,
+    const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher ) const;
 
   // Create the adjoint atomic excitation cross section distribution
   void createAdjointAtomicExcitationCrossSectionDistribution(

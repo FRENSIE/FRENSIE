@@ -193,6 +193,9 @@ void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::crea
     const double weight_mult = pdf_conversion*
       (d_compton_profile->evaluate( pz ).value()/adjoint_occupation_number);
 
+    // Make sure the weight multiplication factor is valid
+    testPrecondition( weight_mult > 0.0 );
+
     // Create the probe with the desired energy and modified weight
     std::shared_ptr<AdjointPhotonProbeState> probe(
                                new AdjointPhotonProbeState( adjoint_photon ) );
