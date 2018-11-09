@@ -43,6 +43,8 @@ FRENSIE_UNIT_TEST( SimulationProperties, defaults )
   FRENSIE_CHECK_EQUAL( properties.getMaxNeutronEnergy(), 20.0 );
   FRENSIE_CHECK_EQUAL( properties.getAbsoluteMaxNeutronEnergy(), 20.0 );
   FRENSIE_CHECK( properties.isUnresolvedResonanceProbabilityTableModeOn() );
+  FRENSIE_CHECK_SMALL( properties.getNeutronRouletteThresholdWeight(), 1e-30 );
+  FRENSIE_CHECK_SMALL( properties.getNeutronRouletteSurvivalWeight(), 1e-30 );
 
   // Photon properties
   FRENSIE_CHECK_EQUAL( properties.getAbsoluteMinPhotonEnergy(), 1e-3 );
@@ -56,6 +58,8 @@ FRENSIE_UNIT_TEST( SimulationProperties, defaults )
   FRENSIE_CHECK( properties.isAtomicRelaxationModeOn( MonteCarlo::PHOTON ) );
   FRENSIE_CHECK( !properties.isDetailedPairProductionModeOn() );
   FRENSIE_CHECK( !properties.isPhotonuclearInteractionModeOn() );
+  FRENSIE_CHECK_SMALL( properties.getPhotonRouletteThresholdWeight(), 1e-30 );
+  FRENSIE_CHECK_SMALL( properties.getPhotonRouletteSurvivalWeight(), 1e-30 );
 
   // Adjoint Photon properties
   FRENSIE_CHECK_EQUAL( properties.getAbsoluteMinAdjointPhotonEnergy(), 1e-3 );
@@ -67,10 +71,12 @@ FRENSIE_UNIT_TEST( SimulationProperties, defaults )
   FRENSIE_CHECK_EQUAL( properties.getIncoherentAdjointModelType(),
                        MonteCarlo::DB_IMPULSE_INCOHERENT_ADJOINT_MODEL );
   FRENSIE_CHECK_EQUAL( properties.getCriticalAdjointPhotonLineEnergies().size(), 0 );
+  FRENSIE_CHECK_SMALL( properties.getAdjointPhotonRouletteThresholdWeight(), 1e-30 );
+  FRENSIE_CHECK_SMALL( properties.getAdjointPhotonRouletteSurvivalWeight(), 1e-30 );
 
   // Electron properties
   FRENSIE_CHECK_EQUAL( properties.getAbsoluteMinElectronEnergy(), 1.5e-5 );
-  FRENSIE_CHECK_EQUAL( properties.getMinElectronEnergy(), 1.5e-5 );
+  FRENSIE_CHECK_EQUAL( properties.getMinElectronEnergy(), 1e-4 );
   FRENSIE_CHECK_EQUAL( properties.getMaxElectronEnergy(), 20.0 );
   FRENSIE_CHECK_EQUAL( properties.getAbsoluteMaxElectronEnergy(), 1.0e5 );
   FRENSIE_CHECK( properties.isAtomicRelaxationModeOn( MonteCarlo::ELECTRON ) );
@@ -86,10 +92,32 @@ FRENSIE_UNIT_TEST( SimulationProperties, defaults )
   FRENSIE_CHECK_EQUAL( properties.getBremsstrahlungAngularDistributionFunction(),
                        MonteCarlo::TWOBS_DISTRIBUTION );
   FRENSIE_CHECK_EQUAL( properties.getElasticElectronDistributionMode(),
-                       MonteCarlo::DECOUPLED_DISTRIBUTION );
+                       MonteCarlo::COUPLED_DISTRIBUTION );
   FRENSIE_CHECK_EQUAL( properties.getCoupledElasticSamplingMode(),
-                       MonteCarlo::TWO_D_UNION );
+                       MonteCarlo::MODIFIED_TWO_D_UNION );
   FRENSIE_CHECK_EQUAL( properties.getElasticCutoffAngleCosine(), 1.0 );
+  FRENSIE_CHECK_SMALL( properties.getElectronRouletteThresholdWeight(), 1e-30 );
+  FRENSIE_CHECK_SMALL( properties.getElectronRouletteSurvivalWeight(), 1e-30 );
+
+  // Adjoint Electron properties
+  FRENSIE_CHECK_EQUAL( properties.getAbsoluteMinAdjointElectronEnergy(), 1.5e-5 );
+  FRENSIE_CHECK_EQUAL( properties.getMinAdjointElectronEnergy(), 1e-4 );
+  FRENSIE_CHECK_EQUAL( properties.getMaxAdjointElectronEnergy(), 20.0 );
+  FRENSIE_CHECK_EQUAL( properties.getAbsoluteMaxAdjointElectronEnergy(), 20.0 );
+  FRENSIE_CHECK( properties.isAdjointElasticModeOn() );
+  FRENSIE_CHECK( properties.isAdjointElectroionizationModeOn() );
+  FRENSIE_CHECK( properties.isAdjointBremsstrahlungModeOn() );
+  FRENSIE_CHECK( properties.isAdjointAtomicExcitationModeOn() );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointElectronEvaluationTolerance(), 1e-7 );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointBremsstrahlungAngularDistributionFunction(),
+                       MonteCarlo::TWOBS_DISTRIBUTION );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointElasticElectronDistributionMode(),
+                       MonteCarlo::COUPLED_DISTRIBUTION );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointCoupledElasticSamplingMode(),
+                       MonteCarlo::MODIFIED_TWO_D_UNION );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointElasticCutoffAngleCosine(), 1.0 );
+  FRENSIE_CHECK_SMALL( properties.getAdjointElectronRouletteThresholdWeight(), 1e-30 );
+  FRENSIE_CHECK_SMALL( properties.getAdjointElectronRouletteSurvivalWeight(), 1e-30 );
 }
 
 //---------------------------------------------------------------------------//
@@ -105,7 +133,9 @@ FRENSIE_UNIT_TEST( SimulationProperties, getMinParticleEnergy )
   FRENSIE_CHECK_EQUAL( properties.getMinParticleEnergy<MonteCarlo::AdjointPhotonState>(),
                        1e-3 );
   FRENSIE_CHECK_EQUAL( properties.getMinParticleEnergy<MonteCarlo::ElectronState>(),
-                       1.5e-5 );
+                       1e-4 );
+  FRENSIE_CHECK_EQUAL( properties.getMinParticleEnergy<MonteCarlo::AdjointElectronState>(),
+                       1e-4 );
 }
 
 //---------------------------------------------------------------------------//
@@ -121,6 +151,8 @@ FRENSIE_UNIT_TEST( SimulationProperties, getMaxParticleEnergy )
   FRENSIE_CHECK_EQUAL( properties.getMaxParticleEnergy<MonteCarlo::AdjointPhotonState>(),
                        20.0 );
   FRENSIE_CHECK_EQUAL( properties.getMaxParticleEnergy<MonteCarlo::ElectronState>(),
+                       20.0 );
+  FRENSIE_CHECK_EQUAL( properties.getMaxParticleEnergy<MonteCarlo::AdjointElectronState>(),
                        20.0 );
 }
 
@@ -145,6 +177,42 @@ FRENSIE_UNIT_TEST( SimulationProperties, setAtomicRelaxationModeOffOn )
   properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
 
   FRENSIE_CHECK( properties.isAtomicRelaxationModeOn( MonteCarlo::ELECTRON ) );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the roulette threshold weight can be returned
+FRENSIE_UNIT_TEST( SimulationProperties, getRouletteThresholdWeight )
+{
+  MonteCarlo::SimulationProperties properties;
+
+  FRENSIE_CHECK_SMALL( properties.getRouletteThresholdWeight<MonteCarlo::NeutronState>(),
+                       1e-30 );
+  FRENSIE_CHECK_SMALL( properties.getRouletteThresholdWeight<MonteCarlo::PhotonState>(),
+                       1e-30 );
+  FRENSIE_CHECK_SMALL( properties.getRouletteThresholdWeight<MonteCarlo::AdjointPhotonState>(),
+                       1e-30 );
+  FRENSIE_CHECK_SMALL( properties.getRouletteThresholdWeight<MonteCarlo::ElectronState>(),
+                       1e-30 );
+  FRENSIE_CHECK_SMALL( properties.getRouletteThresholdWeight<MonteCarlo::AdjointElectronState>(),
+                       1e-30 );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the roulette threshold weight can be returned
+FRENSIE_UNIT_TEST( SimulationProperties, getRouletteSurvivalWeight )
+{
+  MonteCarlo::SimulationProperties properties;
+
+  FRENSIE_CHECK_SMALL( properties.getRouletteSurvivalWeight<MonteCarlo::NeutronState>(),
+                       1e-30 );
+  FRENSIE_CHECK_SMALL( properties.getRouletteSurvivalWeight<MonteCarlo::PhotonState>(),
+                       1e-30 );
+  FRENSIE_CHECK_SMALL( properties.getRouletteSurvivalWeight<MonteCarlo::AdjointPhotonState>(),
+                       1e-30 );
+  FRENSIE_CHECK_SMALL( properties.getRouletteSurvivalWeight<MonteCarlo::ElectronState>(),
+                       1e-30 );
+  FRENSIE_CHECK_SMALL( properties.getRouletteSurvivalWeight<MonteCarlo::AdjointElectronState>(),
+                       1e-30 );
 }
 
 //---------------------------------------------------------------------------//
@@ -221,7 +289,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationProperties,
   FRENSIE_CHECK_EQUAL( properties.getCriticalAdjointPhotonLineEnergies().size(), 0 );
 
   FRENSIE_CHECK_EQUAL( properties.getAbsoluteMinElectronEnergy(), 1.5e-5 );
-  FRENSIE_CHECK_EQUAL( properties.getMinElectronEnergy(), 1.5e-5 );
+  FRENSIE_CHECK_EQUAL( properties.getMinElectronEnergy(), 1e-4 );
   FRENSIE_CHECK_EQUAL( properties.getMaxElectronEnergy(), 20.0 );
   FRENSIE_CHECK_EQUAL( properties.getAbsoluteMaxElectronEnergy(), 1.0e5 );
   FRENSIE_CHECK( properties.isAtomicRelaxationModeOn( MonteCarlo::ELECTRON ) );
@@ -237,10 +305,27 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationProperties,
   FRENSIE_CHECK_EQUAL( properties.getBremsstrahlungAngularDistributionFunction(),
                        MonteCarlo::TWOBS_DISTRIBUTION );
   FRENSIE_CHECK_EQUAL( properties.getElasticElectronDistributionMode(),
-                       MonteCarlo::DECOUPLED_DISTRIBUTION );
+                       MonteCarlo::COUPLED_DISTRIBUTION );
   FRENSIE_CHECK_EQUAL( properties.getCoupledElasticSamplingMode(),
-                       MonteCarlo::TWO_D_UNION );
+                       MonteCarlo::MODIFIED_TWO_D_UNION );
   FRENSIE_CHECK_EQUAL( properties.getElasticCutoffAngleCosine(), 1.0 );
+
+  FRENSIE_CHECK_EQUAL( properties.getAbsoluteMinAdjointElectronEnergy(), 1.5e-5 );
+  FRENSIE_CHECK_EQUAL( properties.getMinElectronEnergy(), 1e-4 );
+  FRENSIE_CHECK_EQUAL( properties.getMaxAdjointElectronEnergy(), 20.0 );
+  FRENSIE_CHECK_EQUAL( properties.getAbsoluteMaxAdjointElectronEnergy(), 20.0 );
+  FRENSIE_CHECK( properties.isAdjointElasticModeOn() );
+  FRENSIE_CHECK( properties.isAdjointElectroionizationModeOn() );
+  FRENSIE_CHECK( properties.isAdjointBremsstrahlungModeOn() );
+  FRENSIE_CHECK( properties.isAdjointAtomicExcitationModeOn() );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointElectronEvaluationTolerance(), 1e-7 );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointBremsstrahlungAngularDistributionFunction(),
+                       MonteCarlo::TWOBS_DISTRIBUTION );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointElasticElectronDistributionMode(),
+                       MonteCarlo::COUPLED_DISTRIBUTION );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointCoupledElasticSamplingMode(),
+                       MonteCarlo::MODIFIED_TWO_D_UNION );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointElasticCutoffAngleCosine(), 1.0 );
 }
 
 //---------------------------------------------------------------------------//

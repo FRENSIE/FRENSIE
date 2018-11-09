@@ -52,6 +52,8 @@ class SimulationElectronPropertiesTestCase(unittest.TestCase):
         self.assertEqual( properties.getBremsstrahlungAngularDistributionFunction(),
                           MonteCarlo.TWOBS_DISTRIBUTION )
         self.assertTrue(properties.isAtomicExcitationModeOn() )
+        self.assertEqual( properties.getElectronRouletteThresholdWeight(), 0.0 )
+        self.assertEqual( properties.getElectronRouletteSurvivalWeight(), 0.0 )
 
     def testSetMinElectronEnergy(self):
         "*Test MonteCarlo.SimulationElectronProperties setMinElectronEnergy"
@@ -255,6 +257,26 @@ class SimulationElectronPropertiesTestCase(unittest.TestCase):
 
         properties.setAtomicExcitationModeOn()
         self.assertTrue(properties.isAtomicExcitationModeOn() )
+
+    def testGetElectronRouletteThresholdWeight(self):
+        "*Test MonteCarlo.SimulationElectronProperties setElectronRouletteThresholdWeight"
+        properties = MonteCarlo.SimulationElectronProperties()
+
+        weight = 1e-14
+        properties.setElectronRouletteThresholdWeight( weight )
+
+        self.assertEqual( properties.getElectronRouletteThresholdWeight(),
+                          weight )
+
+    def testGetElectronRouletteSurvivalWeight(self):
+        "*Test MonteCarlo.SimulationElectronProperties setElectronRouletteSurvivalWeight"
+        properties = MonteCarlo.SimulationElectronProperties()
+
+        double weight = 1e-12
+        properties.setElectronRouletteSurvivalWeight( weight )
+
+        self.assertEqual( properties.getElectronRouletteSurvivalWeight(),
+                          weight )
 
 #-----------------------------------------------------------------------------#
 # Custom main

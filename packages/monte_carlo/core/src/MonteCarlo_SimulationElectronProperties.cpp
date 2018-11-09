@@ -21,7 +21,7 @@ const double SimulationElectronProperties::s_absolute_max_electron_energy = 1.0e
 
 // Constructor
 SimulationElectronProperties::SimulationElectronProperties()
-  : d_min_electron_energy( s_absolute_min_electron_energy ),
+  : d_min_electron_energy( 1e-4 ),
     d_max_electron_energy( 20.0 ),
     d_evaluation_tol( 1e-7 ),
     d_electron_interpolation_type( LOGLOGLOG_INTERPOLATION ),
@@ -30,15 +30,17 @@ SimulationElectronProperties::SimulationElectronProperties()
     d_atomic_relaxation_mode_on( true ),
     d_elastic_mode_on( true ),
     d_elastic_interpolation_type( LOGLOGLOG_INTERPOLATION ),
-    d_elastic_distribution_mode( DECOUPLED_DISTRIBUTION ),
-    d_coupled_elastic_sampling_method( TWO_D_UNION ),
+    d_elastic_distribution_mode( COUPLED_DISTRIBUTION ),
+    d_coupled_elastic_sampling_method( MODIFIED_TWO_D_UNION ),
     d_elastic_cutoff_angle_cosine( 1.0 ),
     d_bremsstrahlung_mode_on( true ),
     d_bremsstrahlung_interpolation_type( LOGLOGLOG_INTERPOLATION ),
     d_bremsstrahlung_angular_distribution_function( TWOBS_DISTRIBUTION ),
     d_electroionization_mode_on( true ),
     d_electroionization_interpolation_type( LOGLOGLOG_INTERPOLATION ),
-    d_atomic_excitation_mode_on( true )
+    d_atomic_excitation_mode_on( true ),
+    d_threshold_weight( 0.0 ),
+    d_survival_weight()
 { /* ... */ }
 
 // Set the minimum electron energy (MeV)
@@ -293,6 +295,41 @@ void SimulationElectronProperties::setAtomicExcitationModeOn()
 bool SimulationElectronProperties::isAtomicExcitationModeOn() const
 {
   return d_atomic_excitation_mode_on;
+}
+
+// Set the cutoff roulette threshold weight
+void SimulationElectronProperties::setElectronRouletteThresholdWeight(
+      const double threshold_weight )
+{
+  // Make sure the weights are valid
+  testPrecondition( threshold_weight > 0.0 );
+
+  d_threshold_weight = threshold_weight;
+}
+
+// Return the cutoff roulette threshold weight
+double SimulationElectronProperties::getElectronRouletteThresholdWeight() const
+{
+  return d_threshold_weight;
+}
+
+// Set the cutoff roulette threshold weight
+/*! \details The survival weight should be set after the threshold weight to
+ * ensure the weight is valid.
+ */
+void SimulationElectronProperties::setElectronRouletteSurvivalWeight(
+      const double survival_weight )
+{
+  // Make sure the weights are valid
+  testPrecondition( survival_weight > d_threshold_weight );
+
+  d_survival_weight = survival_weight;
+}
+
+// Return the cutoff roulette survival weight
+double SimulationElectronProperties::getElectronRouletteSurvivalWeight() const
+{
+  return d_survival_weight;
 }
 
 EXPLICIT_CLASS_SERIALIZE_INST( SimulationElectronProperties );

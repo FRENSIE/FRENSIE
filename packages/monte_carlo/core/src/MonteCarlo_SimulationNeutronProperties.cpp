@@ -25,7 +25,9 @@ SimulationNeutronProperties::SimulationNeutronProperties()
     d_max_neutron_energy( s_absolute_max_neutron_energy ),
     d_num_neutron_hash_grid_bins( 1000 ),
     d_free_gas_threshold( 400.0 ),
-    d_unresolved_resonance_probability_table_mode_on( true )
+    d_unresolved_resonance_probability_table_mode_on( true ),
+    d_threshold_weight( 0.0 ),
+    d_survival_weight()
 { /* ... */ }
 
 // Set the minimum neutron energy (MeV)
@@ -120,6 +122,41 @@ void SimulationNeutronProperties::setUnresolvedResonanceProbabilityTableModeOff(
 bool SimulationNeutronProperties::isUnresolvedResonanceProbabilityTableModeOn() const
 {
   return d_unresolved_resonance_probability_table_mode_on;
+}
+
+// Set the cutoff roulette threshold weight
+void SimulationNeutronProperties::setNeutronRouletteThresholdWeight(
+      const double threshold_weight )
+{
+  // Make sure the weights are valid
+  testPrecondition( threshold_weight > 0.0 );
+
+  d_threshold_weight = threshold_weight;
+}
+
+// Return the cutoff roulette threshold weight
+double SimulationNeutronProperties::getNeutronRouletteThresholdWeight() const
+{
+  return d_threshold_weight;
+}
+
+// Set the cutoff roulette threshold weight
+/*! \details The survival weight should be set after the threshold weight to
+ * ensure the weight is valid.
+ */
+void SimulationNeutronProperties::setNeutronRouletteSurvivalWeight(
+      const double survival_weight )
+{
+  // Make sure the weights are valid
+  testPrecondition( survival_weight > d_threshold_weight );
+
+  d_survival_weight = survival_weight;
+}
+
+// Return the cutoff roulette survival weight
+double SimulationNeutronProperties::getNeutronRouletteSurvivalWeight() const
+{
+  return d_survival_weight;
 }
 
 EXPLICIT_CLASS_SERIALIZE_INST( SimulationNeutronProperties );

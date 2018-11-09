@@ -62,7 +62,7 @@ void StandardWeightCutoffRoulette::getParticleTypes(
 }
 
 // Roulette the particle weight based on the threshold and survival weights
-/*! \brief The survival probabilty of the particle is set to
+/*! \details The survival probabilty of the particle is set to
  * 'particle weight'/'survival weight'. If the particle survives its new weight
  * is set to the 'survival weight'.
  */

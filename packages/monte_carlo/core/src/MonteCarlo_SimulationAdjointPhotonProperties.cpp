@@ -27,7 +27,9 @@ SimulationAdjointPhotonProperties::SimulationAdjointPhotonProperties()
     d_max_adjoint_photon_energy( s_absolute_max_adjoint_photon_energy ),
     d_num_adjoint_photon_hash_grid_bins( 500 ),
     d_incoherent_adjoint_model_type( DB_IMPULSE_INCOHERENT_ADJOINT_MODEL ),
-    d_critical_line_energies()
+    d_critical_line_energies(),
+    d_threshold_weight( 0.0 ),
+    d_survival_weight()
 { /* ... */ }
 
 // Set the minimum adjoint photon energy (MeV)
@@ -162,6 +164,41 @@ const std::vector<double>&
 SimulationAdjointPhotonProperties::getCriticalAdjointPhotonLineEnergies() const
 {
   return d_critical_line_energies;
+}
+
+// Set the cutoff roulette threshold weight
+void SimulationAdjointPhotonProperties::setAdjointPhotonRouletteThresholdWeight(
+      const double threshold_weight )
+{
+  // Make sure the weights are valid
+  testPrecondition( threshold_weight > 0.0 );
+
+  d_threshold_weight = threshold_weight;
+}
+
+// Return the cutoff roulette threshold weight
+double SimulationAdjointPhotonProperties::getAdjointPhotonRouletteThresholdWeight() const
+{
+  return d_threshold_weight;
+}
+
+// Set the cutoff roulette threshold weight
+/*! \details The survival weight should be set after the threshold weight to
+ * ensure the weight is valid.
+ */
+void SimulationAdjointPhotonProperties::setAdjointPhotonRouletteSurvivalWeight(
+      const double survival_weight )
+{
+  // Make sure the weights are valid
+  testPrecondition( survival_weight > d_threshold_weight );
+
+  d_survival_weight = survival_weight;
+}
+
+// Return the cutoff roulette survival weight
+double SimulationAdjointPhotonProperties::getAdjointPhotonRouletteSurvivalWeight() const
+{
+  return d_survival_weight;
 }
 
 EXPLICIT_CLASS_SERIALIZE_INST( SimulationAdjointPhotonProperties );

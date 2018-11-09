@@ -28,8 +28,8 @@ FRENSIE_UNIT_TEST( SimulationAdjointElectronProperties, defaults )
 {
   MonteCarlo::SimulationAdjointElectronProperties properties;
 
-  FRENSIE_CHECK_EQUAL( properties.getAbsoluteMinAdjointElectronEnergy(), 1e-5 );
-  FRENSIE_CHECK_EQUAL( properties.getMinAdjointElectronEnergy(), 1e-5 );
+  FRENSIE_CHECK_EQUAL( properties.getAbsoluteMinAdjointElectronEnergy(), 1.5e-5 );
+  FRENSIE_CHECK_EQUAL( properties.getMinAdjointElectronEnergy(), 1e-4 );
   FRENSIE_CHECK_EQUAL( properties.getMaxAdjointElectronEnergy(), 20.0 );
   FRENSIE_CHECK_EQUAL( properties.getAbsoluteMaxAdjointElectronEnergy(), 20.0 );
   FRENSIE_CHECK( properties.isAdjointElasticModeOn() );
@@ -43,13 +43,14 @@ FRENSIE_UNIT_TEST( SimulationAdjointElectronProperties, defaults )
   FRENSIE_CHECK_EQUAL(
              properties.getAdjointBremsstrahlungAngularDistributionFunction(),
              MonteCarlo::TWOBS_DISTRIBUTION );
-  FRENSIE_CHECK_EQUAL( properties.getAdjointElectronEvaluationTolerance(), 1e-12 );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointElectronEvaluationTolerance(), 1e-7 );
   FRENSIE_CHECK_EQUAL( properties.getAdjointElasticCutoffAngleCosine(),
                        1.0 );
   FRENSIE_CHECK_EQUAL( properties.getNumberOfAdjointElectronHashGridBins(),
                        500 );
   FRENSIE_CHECK_EQUAL( properties.getCriticalAdjointElectronLineEnergies().size(), 0 );
-
+  FRENSIE_CHECK_SMALL( properties.getAdjointElectronRouletteThresholdWeight(), 1e-30 );
+  FRENSIE_CHECK_SMALL( properties.getAdjointElectronRouletteSurvivalWeight(), 1e-30 );
 }
 
 //---------------------------------------------------------------------------//
@@ -147,7 +148,7 @@ FRENSIE_UNIT_TEST( SimulationAdjointElectronProperties,
 {
   MonteCarlo::SimulationAdjointElectronProperties properties;
 
-  FRENSIE_CHECK_EQUAL( properties.getAdjointElectronEvaluationTolerance(), 1e-12 );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointElectronEvaluationTolerance(), 1e-7 );
 
   properties.setAdjointElectronEvaluationTolerance( 1e-4 );
 
@@ -269,6 +270,36 @@ FRENSIE_UNIT_TEST( SimulationAdjointElectronProperties,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the critical line energies can be set
+FRENSIE_UNIT_TEST( SimulationAdjointElectronProperties,
+                   getAdjointElectronRouletteThresholdWeight )
+{
+  MonteCarlo::SimulationAdjointElectronProperties properties;
+
+  double weight = 1e-14;
+
+  properties.setAdjointElectronRouletteThresholdWeight( weight );
+
+  FRENSIE_CHECK_EQUAL( properties.getAdjointElectronRouletteThresholdWeight(),
+                       weight );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the critical line energies can be set
+FRENSIE_UNIT_TEST( SimulationAdjointElectronProperties,
+                   getAdjointElectronRouletteSurvivalWeight )
+{
+  MonteCarlo::SimulationAdjointElectronProperties properties;
+
+  double weight = 1e-12;
+
+  properties.setAdjointElectronRouletteSurvivalWeight( weight );
+
+  FRENSIE_CHECK_EQUAL( properties.getAdjointElectronRouletteSurvivalWeight(),
+                       weight );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the properties can be archived
 FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationAdjointElectronProperties,
                                    archive,
@@ -304,6 +335,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationAdjointElectronProperties,
     custom_properties.setAdjointElasticCutoffAngleCosine( 0.9 );
     custom_properties.setNumberOfAdjointElectronHashGridBins( 750 );
     custom_properties.setCriticalAdjointElectronLineEnergies( std::vector<double>({1.0, 10.0}) );
+    custom_properties.setAdjointElectronRouletteThresholdWeight( 1e-15 );
+    custom_properties.setAdjointElectronRouletteSurvivalWeight( 1e-13 );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( default_properties ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( custom_properties ) );
@@ -321,8 +354,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationAdjointElectronProperties,
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( default_properties ) );
 
-  FRENSIE_CHECK_EQUAL( default_properties.getAbsoluteMinAdjointElectronEnergy(), 1e-5 );
-  FRENSIE_CHECK_EQUAL( default_properties.getMinAdjointElectronEnergy(), 1e-5 );
+  FRENSIE_CHECK_EQUAL( default_properties.getAbsoluteMinAdjointElectronEnergy(), 1.5e-5 );
+  FRENSIE_CHECK_EQUAL( default_properties.getMinAdjointElectronEnergy(), 1e-4 );
   FRENSIE_CHECK_EQUAL( default_properties.getMaxAdjointElectronEnergy(), 20.0 );
   FRENSIE_CHECK_EQUAL( default_properties.getAbsoluteMaxAdjointElectronEnergy(), 20.0 );
   FRENSIE_CHECK( default_properties.isAdjointElasticModeOn() );
@@ -336,18 +369,20 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationAdjointElectronProperties,
   FRENSIE_CHECK_EQUAL(
              default_properties.getAdjointBremsstrahlungAngularDistributionFunction(),
              MonteCarlo::TWOBS_DISTRIBUTION );
-  FRENSIE_CHECK_EQUAL( default_properties.getAdjointElectronEvaluationTolerance(), 1e-12 );
+  FRENSIE_CHECK_EQUAL( default_properties.getAdjointElectronEvaluationTolerance(), 1e-7 );
   FRENSIE_CHECK_EQUAL( default_properties.getAdjointElasticCutoffAngleCosine(),
                        1.0 );
   FRENSIE_CHECK_EQUAL( default_properties.getNumberOfAdjointElectronHashGridBins(),
                        500 );
   FRENSIE_CHECK_EQUAL( default_properties.getCriticalAdjointElectronLineEnergies().size(), 0 );
+  FRENSIE_CHECK_SMALL( default_properties.getAdjointElectronRouletteThresholdWeight(), 1e-30 );
+  FRENSIE_CHECK_SMALL( default_properties.getAdjointElectronRouletteSurvivalWeight(), 1e-30  );
 
   MonteCarlo::SimulationAdjointElectronProperties custom_properties;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( custom_properties ) );
 
-  FRENSIE_CHECK_EQUAL( custom_properties.getAbsoluteMinAdjointElectronEnergy(), 1e-5 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getAbsoluteMinAdjointElectronEnergy(), 1.5e-5 );
   FRENSIE_CHECK_EQUAL( custom_properties.getMinAdjointElectronEnergy(), 1e-2 );
   FRENSIE_CHECK_EQUAL( custom_properties.getMaxAdjointElectronEnergy(), 15.0 );
   FRENSIE_CHECK_EQUAL( custom_properties.getAbsoluteMaxAdjointElectronEnergy(), 20.0 );
@@ -369,6 +404,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationAdjointElectronProperties,
                        750 );
   FRENSIE_CHECK_EQUAL( custom_properties.getCriticalAdjointElectronLineEnergies(),
                        std::vector<double>({1.0, 10.0}) );
+  FRENSIE_CHECK_EQUAL( custom_properties.getAdjointElectronRouletteThresholdWeight(), 1e-15 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getAdjointElectronRouletteSurvivalWeight(), 1e-13 );
 }
 
 //---------------------------------------------------------------------------//
