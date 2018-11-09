@@ -938,7 +938,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, runInterruptibleSimulation )
   FRENSIE_CHECK( manager->getNextHistory() > 0 );
   FRENSIE_CHECK( manager->getNumberOfRendezvous() > 0 );
 }
-#endif // end HAVE_FRENSIE_OPEMP
+#endif // end HAVE_FRENSIE_OPENMP
 
 //---------------------------------------------------------------------------//
 // Check that a particle simulation summary can be printed
