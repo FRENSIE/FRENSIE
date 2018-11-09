@@ -51,6 +51,8 @@ class SimulationAdjointElectronPropertiesTestCase(unittest.TestCase):
         self.assertEqual( properties.getAdjointElasticCutoffAngleCosine(), 1.0 )
         self.assertEqual( properties.getNumberOfAdjointElectronHashGridBins(), 500 )
         self.assertEqual( len(properties.getCriticalAdjointElectronLineEnergies()), 0 )
+        self.assertEqual( properties.getAdjointElectronRouletteThresholdWeight(), 0.0 )
+        self.assertEqual( properties.getAdjointElectronRouletteSurvivalWeight(), 0.0 )
 
     def testSetMinAdjointElectronEnergy(self):
         "*Test MonteCarlo.SimulationAdjointElectronProperties setMinAdjointElectronEnergy"
@@ -180,6 +182,27 @@ class SimulationAdjointElectronPropertiesTestCase(unittest.TestCase):
         properties.setCriticalAdjointElectronLineEnergies( critical_line_energies )
         self.assertEqual( properties.getCriticalAdjointElectronLineEnergies(),
                           critical_line_energies )
+
+    def testGetAdjointElectronRouletteThresholdWeight(self):
+        "*Test MonteCarlo.SimulationAdjointElectronProperties setAdjointElectronRouletteThresholdWeight"
+        properties = MonteCarlo.SimulationAdjointElectronProperties()
+
+        weight = 1e-14
+        properties.setAdjointElectronRouletteThresholdWeight( weight )
+
+        self.assertEqual( properties.getAdjointElectronRouletteThresholdWeight(),
+                          weight )
+
+    def testGetAdjointElectronRouletteSurvivalWeight(self):
+        "*Test MonteCarlo.SimulationAdjointElectronProperties setAdjointElectronRouletteSurvivalWeight"
+        properties = MonteCarlo.SimulationAdjointElectronProperties()
+
+        double weight = 1e-12
+        properties.setAdjointElectronRouletteSurvivalWeight( weight )
+
+        self.assertEqual( properties.getAdjointElectronRouletteSurvivalWeight(),
+                          weight )
+}
 
 #-----------------------------------------------------------------------------#
 # Custom main

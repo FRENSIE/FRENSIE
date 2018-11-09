@@ -67,6 +67,14 @@ public:
   //! Return if atomic relaxation mode is on
   bool isAtomicRelaxationModeOn( const ParticleType particle ) const;
 
+  //! Return the cutoff roulette threshold weight
+  template<typename ParticleType>
+  double getRouletteThresholdWeight() const;
+
+  //! Return the cutoff roulette survival weight
+  template<typename ParticleType>
+  double getRouletteSurvivalWeight() const;
+
 private:
 
   // Save/load the state to an archive

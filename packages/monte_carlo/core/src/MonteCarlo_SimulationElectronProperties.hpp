@@ -162,6 +162,18 @@ public:
   //! Return if atomic excitation mode is on
   bool isAtomicExcitationModeOn() const;
 
+  //! Set the cutoff roulette threshold weight
+  void setElectronRouletteThresholdWeight( const double threshold_weight );
+
+  //! Return the cutoff roulette threshold weight
+  double getElectronRouletteThresholdWeight() const;
+
+  //! Set the cutoff roulette survival weight
+  void setElectronRouletteSurvivalWeight( const double survival_weight );
+
+  //! Return the cutoff roulette survival weight
+  double getElectronRouletteSurvivalWeight() const;
+
 private:
 
   // Save the state to an archive
@@ -231,6 +243,12 @@ private:
 
   // The atomic excitation electron scattering mode (true = on - default, false = off)
   bool d_atomic_excitation_mode_on;
+
+  // The roulette threshold weight
+  double d_threshold_weight;
+
+  // The roulette survival weight
+  double d_survival_weight;
 };
 
 // Save/load the state to an archive
@@ -256,6 +274,8 @@ void SimulationElectronProperties::serialize( Archive& ar,
   ar & BOOST_SERIALIZATION_NVP( d_bremsstrahlung_interpolation_type );
   ar & BOOST_SERIALIZATION_NVP( d_bremsstrahlung_angular_distribution_function );
   ar & BOOST_SERIALIZATION_NVP( d_atomic_excitation_mode_on );
+  ar & BOOST_SERIALIZATION_NVP( d_threshold_weight );
+  ar & BOOST_SERIALIZATION_NVP( d_survival_weight );
 }
 
 } // end MonteCarlo namespace

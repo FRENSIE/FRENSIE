@@ -165,13 +165,13 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, react 
 
   FRENSIE_CHECK_EQUAL( bank.size(), 3 );
 
-  double pdf = first_subshell_distribution->evaluatePDF( 1e-5, 0.08 );
+  double pdf = first_subshell_distribution->evaluate( 1e-5, 0.08 );
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 0.08 );
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
 
   bank.pop();
 
-  pdf = first_subshell_distribution->evaluatePDF(
+  pdf = first_subshell_distribution->evaluate(
                 1e-5, Utility::PhysicalConstants::electron_rest_mass_energy );
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(),
                        Utility::PhysicalConstants::electron_rest_mass_energy );
@@ -179,7 +179,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, react 
 
   bank.pop();
 
-  pdf = first_subshell_distribution->evaluatePDF( 1e-5, 1.0 );
+  pdf = first_subshell_distribution->evaluate( 1e-5, 1.0 );
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 1.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
 
@@ -198,7 +198,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, react 
 
   FRENSIE_CHECK_EQUAL( bank.size(), 1 );
 
-  pdf = first_subshell_distribution->evaluatePDF( 0.9, 1.0 );
+  pdf = first_subshell_distribution->evaluate( 0.9, 1.0 );
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 1.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
 

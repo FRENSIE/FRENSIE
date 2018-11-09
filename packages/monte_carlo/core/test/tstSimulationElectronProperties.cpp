@@ -32,7 +32,7 @@ FRENSIE_UNIT_TEST( SimulationElectronProperties, defaults )
 {
   MonteCarlo::SimulationElectronProperties properties;
 
-  FRENSIE_CHECK_EQUAL( properties.getMinElectronEnergy(), 1.5e-5 );
+  FRENSIE_CHECK_EQUAL( properties.getMinElectronEnergy(), 1e-4 );
   FRENSIE_CHECK_EQUAL( properties.getMaxElectronEnergy(), 20.0 );
   FRENSIE_CHECK_EQUAL( properties.getElectronEvaluationTolerance(), 1e-7 );
   FRENSIE_CHECK_EQUAL( properties.getElectronTwoDInterpPolicy(),
@@ -42,15 +42,17 @@ FRENSIE_UNIT_TEST( SimulationElectronProperties, defaults )
   FRENSIE_CHECK( properties.isAtomicRelaxationModeOn() );
   FRENSIE_CHECK( properties.isElasticModeOn() );
   FRENSIE_CHECK_EQUAL( properties.getElasticElectronDistributionMode(),
-                       MonteCarlo::DECOUPLED_DISTRIBUTION );
+                       MonteCarlo::COUPLED_DISTRIBUTION );
   FRENSIE_CHECK_EQUAL( properties.getCoupledElasticSamplingMode(),
-                       MonteCarlo::TWO_D_UNION );
+                       MonteCarlo::MODIFIED_TWO_D_UNION );
   FRENSIE_CHECK_EQUAL( properties.getElasticCutoffAngleCosine(), 1.0 );
   FRENSIE_CHECK( properties.isElectroionizationModeOn() );
   FRENSIE_CHECK( properties.isBremsstrahlungModeOn() );
   FRENSIE_CHECK_EQUAL( properties.getBremsstrahlungAngularDistributionFunction(),
                        MonteCarlo::TWOBS_DISTRIBUTION );
   FRENSIE_CHECK( properties.isAtomicExcitationModeOn() );
+  FRENSIE_CHECK_SMALL( properties.getElectronRouletteThresholdWeight(), 1e-30 );
+  FRENSIE_CHECK_SMALL( properties.getElectronRouletteSurvivalWeight(), 1e-30 );
 }
 
 //---------------------------------------------------------------------------//
@@ -193,11 +195,11 @@ FRENSIE_UNIT_TEST( SimulationElectronProperties, setElasticElectronDistributionM
   MonteCarlo::SimulationElectronProperties properties;
 
   FRENSIE_CHECK_EQUAL( properties.getElasticElectronDistributionMode(),
-                       MonteCarlo::DECOUPLED_DISTRIBUTION );
+                       MonteCarlo::COUPLED_DISTRIBUTION );
 
   MonteCarlo::ElasticElectronDistributionType mode;
 
-  mode = MonteCarlo::COUPLED_DISTRIBUTION;
+  mode = MonteCarlo::DECOUPLED_DISTRIBUTION;
   properties.setElasticElectronDistributionMode( mode );
   FRENSIE_CHECK_EQUAL( properties.getElasticElectronDistributionMode(),
                        mode );
@@ -225,7 +227,7 @@ FRENSIE_UNIT_TEST( SimulationElectronProperties, setCoupledElasticSamplingMode )
   MonteCarlo::SimulationElectronProperties properties;
 
   FRENSIE_CHECK_EQUAL( properties.getCoupledElasticSamplingMode(),
-                       MonteCarlo::TWO_D_UNION );
+                       MonteCarlo::MODIFIED_TWO_D_UNION );
 
   MonteCarlo::CoupledElasticSamplingMethod mode;
 
@@ -336,6 +338,36 @@ FRENSIE_UNIT_TEST( SimulationElectronProperties, setAtomicExcitationModeOffOn )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the critical line energies can be set
+FRENSIE_UNIT_TEST( SimulationElectronProperties,
+                   getElectronRouletteThresholdWeight )
+{
+  MonteCarlo::SimulationElectronProperties properties;
+
+  double weight = 1e-14;
+
+  properties.setElectronRouletteThresholdWeight( weight );
+
+  FRENSIE_CHECK_EQUAL( properties.getElectronRouletteThresholdWeight(),
+                       weight );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the critical line energies can be set
+FRENSIE_UNIT_TEST( SimulationElectronProperties,
+                   getElectronRouletteSurvivalWeight )
+{
+  MonteCarlo::SimulationElectronProperties properties;
+
+  double weight = 1e-12;
+
+  properties.setElectronRouletteSurvivalWeight( weight );
+
+  FRENSIE_CHECK_EQUAL( properties.getElectronRouletteSurvivalWeight(),
+                       weight );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the properties can be archived
 FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationElectronProperties,
                                    archive,
@@ -372,6 +404,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationElectronProperties,
     custom_properties.setBremsstrahlungModeOff();
     custom_properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
     custom_properties.setAtomicExcitationModeOff();
+    custom_properties.setElectronRouletteThresholdWeight( 1e-15 );
+    custom_properties.setElectronRouletteSurvivalWeight( 1e-13 );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( default_properties ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( custom_properties ) );
@@ -389,7 +423,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationElectronProperties,
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( default_properties ) );
 
-  FRENSIE_CHECK_EQUAL( default_properties.getMinElectronEnergy(), 1.5e-5 );
+  FRENSIE_CHECK_EQUAL( default_properties.getMinElectronEnergy(), 1e-4 );
   FRENSIE_CHECK_EQUAL( default_properties.getMaxElectronEnergy(), 20.0 );
   FRENSIE_CHECK_EQUAL( default_properties.getElectronEvaluationTolerance(), 1e-7 );
   FRENSIE_CHECK_EQUAL( default_properties.getElectronTwoDInterpPolicy(),
@@ -399,15 +433,17 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationElectronProperties,
   FRENSIE_CHECK( default_properties.isAtomicRelaxationModeOn() );
   FRENSIE_CHECK( default_properties.isElasticModeOn() );
   FRENSIE_CHECK_EQUAL( default_properties.getElasticElectronDistributionMode(),
-                       MonteCarlo::DECOUPLED_DISTRIBUTION );
+                       MonteCarlo::COUPLED_DISTRIBUTION );
   FRENSIE_CHECK_EQUAL( default_properties.getCoupledElasticSamplingMode(),
-                       MonteCarlo::TWO_D_UNION );
+                       MonteCarlo::MODIFIED_TWO_D_UNION );
   FRENSIE_CHECK_EQUAL( default_properties.getElasticCutoffAngleCosine(), 1.0 );
   FRENSIE_CHECK( default_properties.isElectroionizationModeOn() );
   FRENSIE_CHECK( default_properties.isBremsstrahlungModeOn() );
   FRENSIE_CHECK_EQUAL( default_properties.getBremsstrahlungAngularDistributionFunction(),
                        MonteCarlo::TWOBS_DISTRIBUTION );
   FRENSIE_CHECK( default_properties.isAtomicExcitationModeOn() );
+  FRENSIE_CHECK_SMALL( default_properties.getElectronRouletteThresholdWeight(), 1e-30 );
+  FRENSIE_CHECK_SMALL( default_properties.getElectronRouletteSurvivalWeight(), 1e-30  );
 
   MonteCarlo::SimulationElectronProperties custom_properties;
 
@@ -432,6 +468,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationElectronProperties,
   FRENSIE_CHECK_EQUAL( custom_properties.getBremsstrahlungAngularDistributionFunction(),
                        MonteCarlo::DIPOLE_DISTRIBUTION );
   FRENSIE_CHECK( !custom_properties.isAtomicExcitationModeOn() );
+  FRENSIE_CHECK_EQUAL( custom_properties.getElectronRouletteThresholdWeight(), 1e-15 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getElectronRouletteSurvivalWeight(), 1e-13 );
 }
 
 //---------------------------------------------------------------------------//

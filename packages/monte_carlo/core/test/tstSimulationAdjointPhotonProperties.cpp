@@ -27,7 +27,7 @@ typedef TestArchiveHelper::TestArchives TestArchives;
 FRENSIE_UNIT_TEST( SimulationAdjointPhotonProperties, defaults )
 {
   MonteCarlo::SimulationAdjointPhotonProperties properties;
-  
+
   FRENSIE_CHECK_EQUAL( properties.getAbsoluteMinAdjointPhotonEnergy(), 1e-3 );
   FRENSIE_CHECK_EQUAL( properties.getMinAdjointPhotonEnergy(), 1e-3 );
   FRENSIE_CHECK_EQUAL( properties.getMaxAdjointPhotonEnergy(), 20.0 );
@@ -37,6 +37,8 @@ FRENSIE_UNIT_TEST( SimulationAdjointPhotonProperties, defaults )
   FRENSIE_CHECK_EQUAL( properties.getIncoherentAdjointModelType(),
                        MonteCarlo::DB_IMPULSE_INCOHERENT_ADJOINT_MODEL );
   FRENSIE_CHECK_EQUAL( properties.getCriticalAdjointPhotonLineEnergies().size(), 0 );
+  FRENSIE_CHECK_SMALL( properties.getAdjointPhotonRouletteThresholdWeight(), 1e-30 );
+  FRENSIE_CHECK_SMALL( properties.getAdjointPhotonRouletteSurvivalWeight(), 1e-30 );
 }
 
 //---------------------------------------------------------------------------//
@@ -45,7 +47,7 @@ FRENSIE_UNIT_TEST( SimulationAdjointPhotonProperties,
                    setMinAdjointPhotonEnergy )
 {
   MonteCarlo::SimulationAdjointPhotonProperties properties;
-  
+
   properties.setMinAdjointPhotonEnergy( 1e-2 );
 
   FRENSIE_CHECK_EQUAL( properties.getMinAdjointPhotonEnergy(), 1e-2 );
@@ -57,7 +59,7 @@ FRENSIE_UNIT_TEST( SimulationAdjointPhotonProperties,
                    setMaxAdjointPhotonEnergy )
 {
   MonteCarlo::SimulationAdjointPhotonProperties properties;
-  
+
   properties.setMaxAdjointPhotonEnergy( 15.0 );
 
   FRENSIE_CHECK_EQUAL( properties.getMaxAdjointPhotonEnergy(), 15.0 );
@@ -69,7 +71,7 @@ FRENSIE_UNIT_TEST( SimulationAdjointPhotonProperties,
                    setNumberOfAdjointPhotonHashGridBins )
 {
   MonteCarlo::SimulationAdjointPhotonProperties properties;
-  
+
   properties.setNumberOfAdjointPhotonHashGridBins( 750 );
 
   FRENSIE_CHECK_EQUAL( properties.getNumberOfAdjointPhotonHashGridBins(),
@@ -82,7 +84,7 @@ FRENSIE_UNIT_TEST( SimulationAdjointPhotonProperties,
                    setIncoherentAdjointModelType )
 {
   MonteCarlo::SimulationAdjointPhotonProperties properties;
-  
+
   properties.setIncoherentAdjointModelType(
                                      MonteCarlo::KN_INCOHERENT_ADJOINT_MODEL );
 
@@ -100,11 +102,41 @@ FRENSIE_UNIT_TEST( SimulationAdjointPhotonProperties,
   std::vector<double> critical_line_energies( 2 );
   critical_line_energies[0] = 1.0;
   critical_line_energies[1] = 10.0;
-  
+
   properties.setCriticalAdjointPhotonLineEnergies( critical_line_energies );
 
   FRENSIE_CHECK_EQUAL( properties.getCriticalAdjointPhotonLineEnergies(),
                        critical_line_energies );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the critical line energies can be set
+FRENSIE_UNIT_TEST( SimulationAdjointPhotonProperties,
+                   getAdjointPhotonRouletteThresholdWeight )
+{
+  MonteCarlo::SimulationAdjointPhotonProperties properties;
+
+  double weight = 1e-14;
+
+  properties.setAdjointPhotonRouletteThresholdWeight( weight );
+
+  FRENSIE_CHECK_EQUAL( properties.getAdjointPhotonRouletteThresholdWeight(),
+                       weight );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the critical line energies can be set
+FRENSIE_UNIT_TEST( SimulationAdjointPhotonProperties,
+                   getAdjointPhotonRouletteSurvivalWeight )
+{
+  MonteCarlo::SimulationAdjointPhotonProperties properties;
+
+  double weight = 1e-12;
+
+  properties.setAdjointPhotonRouletteSurvivalWeight( weight );
+
+  FRENSIE_CHECK_EQUAL( properties.getAdjointPhotonRouletteSurvivalWeight(),
+                       weight );
 }
 
 //---------------------------------------------------------------------------//
@@ -136,7 +168,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationAdjointPhotonProperties,
     custom_properties.setIncoherentAdjointModelType(
                                      MonteCarlo::KN_INCOHERENT_ADJOINT_MODEL );
     custom_properties.setCriticalAdjointPhotonLineEnergies( std::vector<double>({1.0, 10.0}) );
-        
+    custom_properties.setAdjointPhotonRouletteThresholdWeight( 1e-15 );
+    custom_properties.setAdjointPhotonRouletteSurvivalWeight( 1e-13 );
+
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( default_properties ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( custom_properties ) );
   }
@@ -162,6 +196,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationAdjointPhotonProperties,
   FRENSIE_CHECK_EQUAL( default_properties.getIncoherentAdjointModelType(),
                        MonteCarlo::DB_IMPULSE_INCOHERENT_ADJOINT_MODEL );
   FRENSIE_CHECK_EQUAL( default_properties.getCriticalAdjointPhotonLineEnergies().size(), 0 );
+  FRENSIE_CHECK_SMALL( default_properties.getAdjointPhotonRouletteThresholdWeight(), 1e-30 );
+  FRENSIE_CHECK_SMALL( default_properties.getAdjointPhotonRouletteSurvivalWeight(), 1e-30  );
 
   MonteCarlo::SimulationAdjointPhotonProperties custom_properties;
 
@@ -177,6 +213,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationAdjointPhotonProperties,
                        MonteCarlo::KN_INCOHERENT_ADJOINT_MODEL );
   FRENSIE_CHECK_EQUAL( custom_properties.getCriticalAdjointPhotonLineEnergies(),
                        std::vector<double>({1.0, 10.0}) );
+  FRENSIE_CHECK_EQUAL( custom_properties.getAdjointPhotonRouletteThresholdWeight(), 1e-15 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getAdjointPhotonRouletteSurvivalWeight(), 1e-13 );
 }
 
 //---------------------------------------------------------------------------//

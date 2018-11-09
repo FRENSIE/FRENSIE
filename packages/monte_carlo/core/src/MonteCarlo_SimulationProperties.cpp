@@ -51,7 +51,7 @@ void SimulationProperties::setAtomicRelaxationModeOn(
                      "and electrons!" );
   }
 }
-  
+
 // Return if atomic relaxation mode is on
 bool SimulationProperties::isAtomicRelaxationModeOn(
                                             const ParticleType particle ) const
@@ -70,7 +70,7 @@ bool SimulationProperties::isAtomicRelaxationModeOn(
 }
 
 EXPLICIT_CLASS_SERIALIZE_INST( SimulationProperties );
-  
+
 } // end MonteCarlo namespace
 
 BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::SimulationProperties );

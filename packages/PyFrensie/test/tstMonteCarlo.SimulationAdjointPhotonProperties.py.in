@@ -41,6 +41,8 @@ class SimulationAdjointPhotonPropertiesTestCase(unittest.TestCase):
         self.assertEqual( properties.getIncoherentAdjointModelType(),
                           MonteCarlo.DB_IMPULSE_INCOHERENT_ADJOINT_MODEL )
         self.assertEqual( len(properties.getCriticalAdjointPhotonLineEnergies()), 0 )
+        self.assertEqual( properties.getAdjointPhotonRouletteThresholdWeight(), 0.0 )
+        self.assertEqual( properties.getAdjointPhotonRouletteSurvivalWeight(), 0.0 )
 
     def testSetMinAdjointPhotonEnergy(self):
         "*Test MonteCarlo.SimulationAdjointPhotonProperties setMinAdjointPhotonEnergy"
@@ -79,6 +81,26 @@ class SimulationAdjointPhotonPropertiesTestCase(unittest.TestCase):
         properties.setCriticalAdjointPhotonLineEnergies( critical_line_energies )
         self.assertEqual( properties.getCriticalAdjointPhotonLineEnergies(),
                           critical_line_energies )
+
+    def testGetAdjointPhotonRouletteThresholdWeight(self):
+        "*Test MonteCarlo.SimulationAdjointPhotonProperties setAdjointPhotonRouletteThresholdWeight"
+        properties = MonteCarlo.SimulationAdjointPhotonProperties()
+
+        weight = 1e-14
+        properties.setAdjointPhotonRouletteThresholdWeight( weight )
+
+        self.assertEqual( properties.getAdjointPhotonRouletteThresholdWeight(),
+                          weight )
+
+    def testGetAdjointPhotonRouletteSurvivalWeight(self):
+        "*Test MonteCarlo.SimulationAdjointPhotonProperties setAdjointPhotonRouletteSurvivalWeight"
+        properties = MonteCarlo.SimulationAdjointPhotonProperties()
+
+        double weight = 1e-12
+        properties.setAdjointPhotonRouletteSurvivalWeight( weight )
+
+        self.assertEqual( properties.getAdjointPhotonRouletteSurvivalWeight(),
+                          weight )
 
 #-----------------------------------------------------------------------------#
 # Custom main

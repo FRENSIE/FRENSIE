@@ -190,11 +190,17 @@ void ParticleSimulationManager::simulateParticle(
       break;
     }
 
-    this->simulateParticleTrack(
-              particle,
-              bank,
-              d_transport_kernel->sampleOpticalPathLengthToNextCollisionSite(),
-              false );
+    // Roulette the particle if it is below the threshold weight
+    d_weight_roulette->rouletteParticleWeight( particle );
+
+    if( particle )
+    {
+      this->simulateParticleTrack(
+                particle,
+                bank,
+                d_transport_kernel->sampleOpticalPathLengthToNextCollisionSite(),
+                false );
+    }
   }
 }
 

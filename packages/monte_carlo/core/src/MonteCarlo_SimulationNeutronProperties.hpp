@@ -75,6 +75,18 @@ public:
   //! Return if unresolved resonance probability table mode is on
   bool isUnresolvedResonanceProbabilityTableModeOn() const;
 
+  //! Set the cutoff roulette threshold weight
+  void setNeutronRouletteThresholdWeight( const double threshold_weight );
+
+  //! Return the cutoff roulette threshold weight
+  double getNeutronRouletteThresholdWeight() const;
+
+  //! Set the cutoff roulette survival weight
+  void setNeutronRouletteSurvivalWeight( const double survival_weight );
+
+  //! Return the cutoff roulette survival weight
+  double getNeutronRouletteSurvivalWeight() const;
+
 private:
 
   // Save/load the state to an archive
@@ -106,6 +118,12 @@ private:
   // The unresolved resonance probability table mode
   // (true = on - default, false = off)
   bool d_unresolved_resonance_probability_table_mode_on;
+
+  // The roulette threshold weight
+  double d_threshold_weight;
+
+  // The roulette survival weight
+  double d_survival_weight;
 };
 
 // Save/load the state to an archive
@@ -118,6 +136,8 @@ void SimulationNeutronProperties::serialize( Archive& ar,
   ar & BOOST_SERIALIZATION_NVP( d_num_neutron_hash_grid_bins );
   ar & BOOST_SERIALIZATION_NVP( d_free_gas_threshold );
   ar & BOOST_SERIALIZATION_NVP( d_unresolved_resonance_probability_table_mode_on );
+  ar & BOOST_SERIALIZATION_NVP( d_threshold_weight );
+  ar & BOOST_SERIALIZATION_NVP( d_survival_weight );
 }
 
 } // end MonteCarlo namespace
