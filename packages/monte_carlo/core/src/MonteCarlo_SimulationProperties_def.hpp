@@ -106,71 +106,87 @@ inline double SimulationProperties::getMaxParticleEnergy<AdjointElectronState>()
 }
 
 // Return the cutoff roulette threshold weight
+template<typename ParticleType>
+double SimulationProperties::getRouletteThresholdWeight() const
+{
+  THROW_EXCEPTION( std::logic_error,
+                   "Error: the particle type is not supported!" );
+}
+
+// Return the cutoff roulette threshold weight
 template<>
-double SimulationProperties::getRouletteThresholdWeight<NeutronState>() const
+inline double SimulationProperties::getRouletteThresholdWeight<NeutronState>() const
 {
   return this->getNeutronRouletteThresholdWeight();
 }
 
 // Return the cutoff roulette threshold weight
 template<>
-double SimulationProperties::getRouletteThresholdWeight<PhotonState>() const
+inline double SimulationProperties::getRouletteThresholdWeight<PhotonState>() const
 {
   return this->getPhotonRouletteThresholdWeight();
 }
 
 // Return the cutoff roulette threshold weight
 template<>
-double SimulationProperties::getRouletteThresholdWeight<AdjointPhotonState>() const
+inline double SimulationProperties::getRouletteThresholdWeight<AdjointPhotonState>() const
 {
   return this->getAdjointPhotonRouletteThresholdWeight();
 }
 
 // Return the cutoff roulette threshold weight
 template<>
-double SimulationProperties::getRouletteThresholdWeight<ElectronState>() const
+inline double SimulationProperties::getRouletteThresholdWeight<ElectronState>() const
 {
   return this->getElectronRouletteThresholdWeight();
 }
 
 // Return the cutoff roulette threshold weight
 template<>
-double SimulationProperties::getRouletteThresholdWeight<AdjointElectronState>() const
+inline double SimulationProperties::getRouletteThresholdWeight<AdjointElectronState>() const
 {
   return this->getAdjointElectronRouletteThresholdWeight();
 }
 
 // Return the cutoff roulette survival weight
+template<typename ParticleType>
+double SimulationProperties::getRouletteSurvivalWeight() const
+{
+  THROW_EXCEPTION( std::logic_error,
+                   "Error: the particle type is not supported!" );
+}
+
+// Return the cutoff roulette survival weight
 template<>
-double SimulationProperties::getRouletteSurvivalWeight<NeutronState>() const
+inline double SimulationProperties::getRouletteSurvivalWeight<NeutronState>() const
 {
   return this->getNeutronRouletteSurvivalWeight();
 }
 
 // Return the cutoff roulette threshold weight
 template<>
-double SimulationProperties::getRouletteSurvivalWeight<PhotonState>() const
+inline double SimulationProperties::getRouletteSurvivalWeight<PhotonState>() const
 {
   return this->getPhotonRouletteSurvivalWeight();
 }
 
 // Return the cutoff roulette threshold weight
 template<>
-double SimulationProperties::getRouletteSurvivalWeight<AdjointPhotonState>() const
+inline double SimulationProperties::getRouletteSurvivalWeight<AdjointPhotonState>() const
 {
   return this->getAdjointPhotonRouletteSurvivalWeight();
 }
 
 // Return the cutoff roulette threshold weight
 template<>
-double SimulationProperties::getRouletteSurvivalWeight<ElectronState>() const
+inline double SimulationProperties::getRouletteSurvivalWeight<ElectronState>() const
 {
   return this->getElectronRouletteSurvivalWeight();
 }
 
 // Return the cutoff roulette threshold weight
 template<>
-double SimulationProperties::getRouletteSurvivalWeight<AdjointElectronState>() const
+inline double SimulationProperties::getRouletteSurvivalWeight<AdjointElectronState>() const
 {
   return this->getAdjointElectronRouletteSurvivalWeight();
 }
