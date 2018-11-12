@@ -129,12 +129,13 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
       Data::AdjointElectronPhotonRelaxationDataContainer( test_native_file_name );
 
     // Get the energy grid
-    std::shared_ptr<const std::vector<double> > energy_grid(
-       new std::vector<double>(  data_container.getAdjointElectronEnergyGrid() ) );
+    auto energy_grid = std::make_shared<const std::vector<double> >( data_container.getAdjointElectronEnergyGrid() );
 
     // Get the cross section (use the brem cross sections as a filler)
-    std::shared_ptr<const std::vector<double> > cross_section(
-       new std::vector<double>( data_container.getAdjointBremsstrahlungElectronCrossSection() ) );
+    std::vector<double> temp = data_container.getAdjointBremsstrahlungElectronCrossSection();
+    temp.back() = temp[temp.size()-2]/2.0;
+
+    auto cross_section = std::make_shared<const std::vector<double> >( temp );
 
     // Create the reaction
     absorption_reaction.reset(

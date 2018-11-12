@@ -500,7 +500,7 @@ void AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
 
   BremsstrahlungFactory::createBremsstrahlungDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
         raw_adjoint_electroatom_data,
-        raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid(),
+        raw_adjoint_electroatom_data.getAdjointElectronBremsstrahlungEnergyGrid(),
         bremsstrahlung_distribution,
         evaluation_tol );
 

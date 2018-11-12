@@ -1575,25 +1575,33 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     data_container.setAdjointBremsstrahlungElectronCrossSection( cross_section );
     data_container.setAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex( threshold );
 
-    std::map<double,std::vector<double> > brem_energy_grid, brem_pdf;
+    std::map<double,std::vector<double> > brem_energies, brem_pdfs;
     brem_grid_generator->generateAndEvaluateDistributionOnPrimaryEnergyGrid(
-      brem_energy_grid,
-      brem_pdf,
+      brem_energies,
+      brem_pdfs,
       this->getAdjointBremsstrahlungEvaluationTolerance(),
       energy_grid,
       cross_section,
       threshold );
 
-    /* It is impossible for the adjoint electron to scatter above the max
-     * energy. Therefore, the distribution at the max energy will always be zero
-     * To handle this the distribution is thrown out.
-     */
-    brem_energy_grid.erase(this->getMaxElectronEnergy() );
-    brem_pdf.erase(this->getMaxElectronEnergy() );
+    // Check if the brem energy grid is different than the union energy grid
+    if( energy_grid.size() != brem_energies.size() )
+    {
+      std::vector<double> brem_energy_grid;
+      for ( auto element : brem_energies )
+      {
+        brem_energy_grid.push_back( element.first );
+      }
+
+      std::sort(brem_energy_grid.begin(), brem_energy_grid.end(),
+          [] (double& a, double& b) { return a < b; });
+
+      data_container.setAdjointElectronBremsstrahlungEnergyGrid(brem_energy_grid);
+    }
 
     // Set the adjoint bremsstrahlung scattering distribution
-    data_container.setAdjointElectronBremsstrahlungEnergy( brem_energy_grid );
-    data_container.setAdjointElectronBremsstrahlungPDF( brem_pdf );
+    data_container.setAdjointElectronBremsstrahlungEnergy( brem_energies );
+    data_container.setAdjointElectronBremsstrahlungPDF( brem_pdfs );
   }
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
@@ -1634,27 +1642,35 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
     double binding_energy = data_container.getSubshellBindingEnergy( *shell );
 
-    std::map<double,std::vector<double> > ionization_energy_grid, ionization_pdf;
+    std::map<double,std::vector<double> > ionization_energies, ionization_pdf;
     ionization_grid_generators.find( *shell )->second->generateAndEvaluateDistributionOnPrimaryEnergyGrid(
-      ionization_energy_grid,
+      ionization_energies,
       ionization_pdf,
       this->getAdjointElectroionizationEvaluationTolerance(),
       energy_grid,
       cross_section,
       threshold );
 
-    /* It is impossible for the adjoint electron to scatter above the max
-     * energy. Therefore, the distribution at the max energy will always be zero
-     * To handle this the distribution is thrown out.
-     */
-    ionization_energy_grid.erase(this->getMaxElectronEnergy() );
-    ionization_pdf.erase(this->getMaxElectronEnergy() );
+    // Check if the ionization energy grid is different than the union energy grid
+    if( energy_grid.size() != ionization_energies.size() )
+    {
+      std::vector<double> ionization_energy_grid;
+      for ( auto element : ionization_energies )
+      {
+        ionization_energy_grid.push_back( element.first );
+      }
+
+      std::sort(ionization_energy_grid.begin(), ionization_energy_grid.end(),
+          [] (double& a, double& b) { return a < b; });
+
+      data_container.setAdjointElectroionizationEnergyGrid(*shell, ionization_energy_grid);
+    }
 
     // Set the adjoint bremsstrahlung scattering distribution
     data_container.setAdjointElectroionizationRecoilPDF( *shell, ionization_pdf );
     data_container.setAdjointElectroionizationRecoilEnergy(
       *shell,
-      ionization_energy_grid );
+      ionization_energies );
   }
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );

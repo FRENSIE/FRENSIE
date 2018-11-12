@@ -216,7 +216,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
                                 AdjointElectroatomCore::ConstReactionMap(),
                                 AdjointElectroatomCore::ConstLineEnergyReactionMap(),
                                 false,
-                                Utility::LinLin() ) );
+                                Utility::LogLog() ) );
 }
 
 // Create a adjoint electroatom

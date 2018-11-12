@@ -131,17 +131,9 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   data_container.reset( new Data::AdjointElectronPhotonRelaxationDataContainer(
                              test_native_file_name ) );
 
-  // Get the energy grid
-  std::vector<double> energy_grid;
-
-  if ( data_container->separateAdjointBremsstrahlungEnergyGrid() )
-    energy_grid = data_container->getAdjointElectronBremsstrahlungEnergyGrid();
-  else
-    energy_grid = data_container->getAdjointElectronEnergyGrid();
-
   BremFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
             *data_container,
-            energy_grid,
+            data_container->getAdjointElectronBremsstrahlungEnergyGrid(),
             brem_distribution );
 
   // Initialize the random number generator

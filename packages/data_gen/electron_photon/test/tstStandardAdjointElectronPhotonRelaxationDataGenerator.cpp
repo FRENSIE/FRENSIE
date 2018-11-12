@@ -1503,7 +1503,12 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   FRENSIE_CHECK_EQUAL( cross_section.back(), 0.0 );
   FRENSIE_CHECK_EQUAL( cross_section.size(), 9-threshold );
 
-  FRENSIE_CHECK( !h_data_container.separateAdjointBremsstrahlungEnergyGrid() );
+  FRENSIE_REQUIRE( h_data_container.separateAdjointBremsstrahlungEnergyGrid() );
+
+  energy_grid = h_data_container.getAdjointElectronBremsstrahlungEnergyGrid();
+  FRENSIE_CHECK_EQUAL( energy_grid.front(), 1.0e-5 );
+  FRENSIE_CHECK_EQUAL( energy_grid.back(), 1.999997898919999884e+01 );
+  FRENSIE_CHECK_EQUAL( energy_grid.size(), 8 );
 
   std::vector<double> electron_bremsstrahlung_energy =
     h_data_container.getAdjointElectronBremsstrahlungEnergy( 1e-5 );
@@ -1550,7 +1555,12 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   FRENSIE_CHECK_EQUAL( cross_section.back(), 0.0 );
   FRENSIE_CHECK_EQUAL( cross_section.size(), 9-threshold );
 
-  FRENSIE_CHECK( !h_data_container.separateAdjointElectroionizationEnergyGrid() );
+  FRENSIE_CHECK( h_data_container.separateAdjointElectroionizationEnergyGrid() );
+
+  energy_grid = h_data_container.getAdjointElectroionizationEnergyGrid( 1u );
+  FRENSIE_CHECK_EQUAL( energy_grid.front(), 1.0e-5 );
+  FRENSIE_CHECK_EQUAL( energy_grid.back(), 1.999997898919999884e+01 );
+  FRENSIE_CHECK_EQUAL( energy_grid.size(), 8 );
 
 
   std::vector<double> electroionization_recoil_energy =

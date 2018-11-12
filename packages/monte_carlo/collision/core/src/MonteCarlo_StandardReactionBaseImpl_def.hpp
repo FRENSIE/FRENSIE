@@ -18,7 +18,7 @@
 namespace MonteCarlo{
 
 namespace Details{
-  
+
 /*! \brief The standard reaction base impl interp policy helper class
  */
 template<typename InterpPolicy, bool processed_cross_section>
@@ -41,7 +41,7 @@ struct StandardReactionBaseImplInterpPolicyHelper
                                    cross_section_0,
                                    processed_slope );
   }
-  
+
   //! Return the energy of interest from the processed grid
   static inline double returnEnergyOfInterest( const double processed_energy )
   {
@@ -55,9 +55,9 @@ struct StandardReactionBaseImplInterpPolicyHelper
   }
 };
 
-/*! \brief Specialization of the standard reaction base impl interp policy 
+/*! \brief Specialization of the standard reaction base impl interp policy
  * helper class for unprocessed grids
- */  
+ */
 template<typename InterpPolicy>
 struct StandardReactionBaseImplInterpPolicyHelper<InterpPolicy,false>
 {
@@ -75,8 +75,8 @@ struct StandardReactionBaseImplInterpPolicyHelper<InterpPolicy,false>
                                       cross_section_0,
                                       cross_section_1 );
   }
-  
-  //! Return the energy of interest 
+
+  //! Return the energy of interest
   static inline double returnEnergyOfInterest( const double processed_energy )
   {
     return processed_energy;
@@ -158,7 +158,7 @@ struct StandardReactionBaseImplGetCrossSectionHelper
       }
     }
   }
-    
+
   //! Implementation of the getCrossSection method for the first cross section bin
   template<bool processed_cross_section>
   static inline double getCrossSectionImplFirstCSBin( const double energy_0,
@@ -193,7 +193,7 @@ struct StandardReactionBaseImplGetCrossSectionHelper
            InterpPolicyHelper::returnCrossSectionOfInterest(cross_section_1) );
     }
   }
-    
+
   //! Implementation of the getCrossSection method
   template<bool processed_cross_section>
   static inline double getCrossSectionImpl( const double energy_0,
@@ -203,7 +203,7 @@ struct StandardReactionBaseImplGetCrossSectionHelper
                                             const double cross_section_1 )
   {
     typedef StandardReactionBaseImplInterpPolicyHelper<InterpPolicy,processed_cross_section> InterpPolicyHelper;
-    
+
     return InterpPolicyHelper::calculateInterpolatedCrossSection(
                                                              energy_0,
                                                              energy_1,
@@ -213,7 +213,7 @@ struct StandardReactionBaseImplGetCrossSectionHelper
   }
 };
 
-/*! \brief The standard reaction base impl get cross section helper 
+/*! \brief The standard reaction base impl get cross section helper
  * specialization for Utility::LinLin
  * \details This helper class should only be used by the
  * MonteCarlo::StandardReactionBaseImpl class.
@@ -225,9 +225,9 @@ private:
 
   // This type
   typedef StandardReactionBaseImplGetCrossSectionHelper<Utility::LinLin> ThisType;
-  
+
 public:
-  
+
   //! Implementation of the getCrossSection method for the first bin
   template<bool processed_cross_section>
   static inline double getCrossSectionImplFirstBin( const double energy_0,
@@ -257,7 +257,7 @@ public:
                                                                    cross_section_0,
                                                                    cross_section_1 );
   }
-  
+
   //! Implementation of the getCrossSection method
   template<bool processed_cross_section>
   static inline double getCrossSectionImpl( const double energy_0,
@@ -372,7 +372,7 @@ double StandardReactionBaseImpl<ReactionBase,InterpPolicy,processed_cross_sectio
   testPrecondition( this->isEnergyWithinEnergyGrid( energy ) );
 
   size_t energy_index = d_grid_searcher->findLowerBinIndex( energy );
-  
+
   return StandardReactionBaseImpl<ReactionBase,InterpPolicy,processed_cross_section>::getCrossSection( energy, energy_index );
 }
 
@@ -471,6 +471,15 @@ template<typename ReactionBase,
 void StandardReactionBaseImpl<ReactionBase,InterpPolicy,processed_cross_section>::setMaxEnergyIndex()
 {
   d_max_energy_index = d_threshold_energy_index + d_cross_section->size() - 1;
+}
+
+// Set the max energy index
+template<typename ReactionBase,
+         typename InterpPolicy,
+         bool processed_cross_section>
+void StandardReactionBaseImpl<ReactionBase,InterpPolicy,processed_cross_section>::setMaxEnergyIndex( const size_t max_energy_index )
+{
+  d_max_energy_index = max_energy_index;
 }
 
 // Set the get cross section first bin implementation method

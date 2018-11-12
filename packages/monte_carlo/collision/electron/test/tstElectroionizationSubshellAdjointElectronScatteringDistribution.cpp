@@ -412,18 +412,20 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   data_container.reset( new Data::AdjointElectronPhotonRelaxationDataContainer(
                              test_native_file_name ) );
 
-  // Set binding energy
-  binding_energy = 1.361E-05;
+  // Get the first subshell
+  unsigned shell = *(data_container->getSubshells().begin());
 
+  // Get binding energy
+  binding_energy = data_container->getSubshellBindingEnergy( shell );
+
+  // Get the energy grid
   std::vector<double> energy_grid =
-    data_container->getAdjointElectronEnergyGrid();
+    data_container->getAdjointElectroionizationEnergyGrid( shell );
 
   // Create the scattering function
   std::vector<double> primary_grid( energy_grid.size() );
   std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
     secondary_dists( energy_grid.size() );
-
-  std::set<unsigned> subshells = data_container->getSubshells();
 
   for( unsigned n = 0; n < energy_grid.size(); ++n )
   {
@@ -432,13 +434,13 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Get the recoil energy distribution at the incoming energy
     std::vector<double> recoil_energy(
       data_container->getAdjointElectroionizationRecoilEnergy(
-        *subshells.begin(),
+        shell,
         energy_grid[n] ) );
 
     // Get the recoil energy pdf at the incoming energy
     std::vector<double> pdf(
       data_container->getAdjointElectroionizationRecoilPDF(
-        *subshells.begin(),
+        shell,
         energy_grid[n] ) );
 
     secondary_dists[n].reset(

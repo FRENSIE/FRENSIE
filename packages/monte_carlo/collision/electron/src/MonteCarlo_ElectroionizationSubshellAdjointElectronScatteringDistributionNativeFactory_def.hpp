@@ -23,20 +23,16 @@ void ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory
       electroionization_subshell_distribution,
     const double evaluation_tol )
 {
-  // Get the energies for which knock-on sampling tables are given
-  std::vector<double> energy_grid =
-        raw_electroionization_data.getAdjointElectronEnergyGrid();
-
   // Subshell distribution
   std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> subshell_distribution;
 
   // Create the subshell distribution
   ThisType::createSubshellDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
-                                raw_electroionization_data,
-                                energy_grid,
-                                subshell,
-                                subshell_distribution,
-                                evaluation_tol );
+    raw_electroionization_data,
+    raw_electroionization_data.getAdjointElectroionizationEnergyGrid( subshell ),
+    subshell,
+    subshell_distribution,
+    evaluation_tol );
 
   electroionization_subshell_distribution.reset(
     new ElectroionizationSubshellAdjointElectronScatteringDistribution(

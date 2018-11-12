@@ -388,6 +388,10 @@ void AdjointElectronGridGenerator<TwoDInterpPolicy>::generateAndEvaluateDistribu
 }
 
 // Generate and evaluate the distribution grid in place
+/*! \details If the nudged min energy of a primary energy is greater than or
+ *  equal to the max energy then it is assumed the distribution is zero and it
+ *  is not included in the distribution.
+ */
 template<typename TwoDInterpPolicy>
 void AdjointElectronGridGenerator<TwoDInterpPolicy>::generateAndEvaluateDistributionOnPrimaryEnergyGrid(
     std::map<double,std::vector<double> >& outgoing_energy_grid,
@@ -406,12 +410,7 @@ void AdjointElectronGridGenerator<TwoDInterpPolicy>::generateAndEvaluateDistribu
   {
     double incoming_energy = primary_energy_grid[i + threshold_index];
 
-    if( this->getNudgedMinEnergy( incoming_energy ) >= this->getMaxEnergy() )
-    {
-      outgoing_energy_grid[incoming_energy] = std::vector<double>(2, 0.0);
-      evaluated_pdf[incoming_energy] = std::vector<double>(2, 0.0);
-    }
-    else
+    if( this->getNudgedMinEnergy( incoming_energy ) < this->getMaxEnergy() )
     {
       this->generateAndEvaluateDistribution(
               outgoing_energy_grid[incoming_energy],

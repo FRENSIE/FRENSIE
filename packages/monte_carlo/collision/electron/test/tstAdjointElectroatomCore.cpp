@@ -361,7 +361,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Create the Bremsstrahlung distribution
     BremsstrahlungNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
         data_container,
-        data_container.getAdjointElectronEnergyGrid(),
+        data_container.getAdjointElectronBremsstrahlungEnergyGrid(),
         b_distribution,
         evaluation_tol );
 

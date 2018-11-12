@@ -48,7 +48,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomNativeFactory,
 
   {
     std::vector<double> user_critical_line_energies( 1 );
-    user_critical_line_energies[0] = 20.0;
+    user_critical_line_energies[0] = 10.0;
 
     properties.setAdjointBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
     properties.setAdjointElasticCutoffAngleCosine( cutoff_angle_cosine );
@@ -73,7 +73,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomNativeFactory,
 
   // Check that the critical line energies were constructed correctly
   FRENSIE_CHECK_EQUAL( atom_core->getCriticalLineEnergies().size(), 1 );
-  FRENSIE_CHECK_EQUAL( atom_core->getCriticalLineEnergies()[0], 20.0 );
+  FRENSIE_CHECK_EQUAL( atom_core->getCriticalLineEnergies()[0], 10.0 );
 
   // Check that the total forward reaction was constructed correctly
   FRENSIE_CHECK_EQUAL( atom_core->getTotalForwardReaction().getThresholdEnergy(),
@@ -96,7 +96,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomNativeFactory,
       scattering_reactions.find( MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION )->second;
 
     FRENSIE_CHECK_EQUAL( reaction->getThresholdEnergy(), 1e-5 );
-    FRENSIE_CHECK_EQUAL( reaction->getMaxEnergy(), 20.0 );
+    FRENSIE_CHECK_EQUAL( reaction->getMaxEnergy(), 1.999998020190000148e+01 );
 
     std::shared_ptr<const MonteCarlo::ElectroionizationSubshellAdjointElectroatomicReaction<Utility::LogLog> > subshell_reaction =
       std::dynamic_pointer_cast<const MonteCarlo::ElectroionizationSubshellAdjointElectroatomicReaction<Utility::LogLog> >( reaction );
@@ -107,7 +107,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomNativeFactory,
     reaction = scattering_reactions.find( MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION )->second;
 
     FRENSIE_CHECK_EQUAL( reaction->getThresholdEnergy(), 1e-5 );
-    FRENSIE_CHECK_EQUAL( reaction->getMaxEnergy(), 20.0 );
+    FRENSIE_CHECK_EQUAL( reaction->getMaxEnergy(), 1.999998020190000148e+01 );
 
     std::shared_ptr<const MonteCarlo::BremsstrahlungAdjointElectroatomicReaction<Utility::LogLog> > brem_reaction =
       std::dynamic_pointer_cast<const MonteCarlo::BremsstrahlungAdjointElectroatomicReaction<Utility::LogLog> >( reaction );

@@ -451,10 +451,6 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
     grid_generator.evaluateAdjointPDF( max_energy - brem_min_function(max_energy), max_energy, 1.0e-4 );
   FRENSIE_CHECK_EQUAL( diff_cross_section, 0.0 );
 
-  std::cout << std::setprecision(16) << std::scientific << "max_energy - brem_min_function(max_energy) = \t" << max_energy - brem_min_function(max_energy) << std::endl;
-  std::cout << std::setprecision(16) << std::scientific << "max_energy - brem_min_function(max_energy) - 1e-7 = \t" << max_energy - brem_min_function(max_energy) -1e-7 << std::endl;
-  std::cout << std::setprecision(16) << std::scientific << "grid_generator.getNudgedMaxEnergy() = \t" << grid_generator.getNudgedMaxEnergy() << std::endl;
-
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( grid_generator.getNudgedMaxEnergy(), max_energy, 1.0e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
@@ -482,10 +478,6 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
                                    1.288756226071499977,
                                    1e-5 );
-
-  std::cout << std::setprecision(16) << std::scientific << "max_energy - brem_min_function2(max_energy) = \t" << max_energy - brem_min_function2(max_energy) << std::endl;
-  std::cout << std::setprecision(16) << std::scientific << "max_energy - brem_min_function2(max_energy) - 1e-7 = \t" << max_energy - brem_min_function2(max_energy) - 1e-7 << std::endl;
-  std::cout << std::setprecision(16) << std::scientific << "grid_generator.getNudgedMaxEnergy() = \t" << grid_generator.getNudgedMaxEnergy() << std::endl;
 
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( grid_generator.getNudgedMaxEnergy(), max_energy, 1.0e-4 );
@@ -519,14 +511,16 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
                   distance_tol );
 
   // Set the primary energy grid
-  std::vector<double> primary_energy_grid(2);
+  std::vector<double> primary_energy_grid(3);
   primary_energy_grid[0] = 0.01;
   primary_energy_grid[1] = 1.0;
+  primary_energy_grid[2] = 20.0;
 
   // cross section values
-  std::vector<double> cross_sections(2);
+  std::vector<double> cross_sections(3);
   cross_sections[0] = 1.0;
   cross_sections[1] = 1.0;
+  cross_sections[2] = 0.0;
 
 
   std::map<double,std::vector<double> > outgoing_energy_grid, pdf;

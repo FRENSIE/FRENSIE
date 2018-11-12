@@ -23,14 +23,14 @@ namespace MonteCarlo{
 /*! The standard reaction base impl
  * \details This class inherits from the desired base class and implements
  * some standard features that are used by many reaction classes (
- * e.g. MonteCarlo::PhotoatomicReaction, MonteCarlo::NuclearReaction, etc.). 
+ * e.g. MonteCarlo::PhotoatomicReaction, MonteCarlo::NuclearReaction, etc.).
  * Use the InterpPolicy template parameter and the processed_cross_section
  * template parameter to customize the behavior of this class. Raw cross
  * section data from the EPDL library would use the Utility::LogLog policy with
  * processed_cross_section = false. Processed cross section data from an
  * ACE photon library would use the Utility::LogLog policy with
- * processed_cross_section = true. Cross section data from a ACE neutron 
- * library or a native library would use Utility::LinLin with 
+ * processed_cross_section = true. Cross section data from a ACE neutron
+ * library or a native library would use Utility::LinLin with
  * processed_cross_section = false.
  */
 template<typename ReactionBase,
@@ -84,7 +84,10 @@ protected:
   double getCrossSectionImpl( const std::vector<double>& cross_section,
                               const double energy,
                               const size_t bin_index ) const;
-    
+
+  // Set the max energy index manually
+  void setMaxEnergyIndex( const size_t max_energy_index );
+
 private:
 
   // Set the max energy index

@@ -186,7 +186,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     MonteCarlo::BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
         data_container,
-        data_container.getAdjointElectronEnergyGrid(),
+        data_container.getAdjointElectronBremsstrahlungEnergyGrid(),
         scattering_distribution,
         evaluation_tol );
 

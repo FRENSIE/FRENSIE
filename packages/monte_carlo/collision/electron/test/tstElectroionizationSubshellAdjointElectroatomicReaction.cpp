@@ -130,8 +130,11 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, getCro
   cross_section = last_subshell_reaction->getCrossSection( 1.5 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.163594314167905832e+05, 1e-12 );
 
-  cross_section = last_subshell_reaction->getCrossSection( 20.0 );
+  cross_section = last_subshell_reaction->getCrossSection( 19.9 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.111803641061245871e+05, 1e-12 );
+
+  cross_section = last_subshell_reaction->getCrossSection( 20.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -139,7 +142,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, getCro
 FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, react )
 {
   MonteCarlo::AdjointElectronState adjoint_electron( 0 );
-  adjoint_electron.setEnergy( 20.0 );
+  adjoint_electron.setEnergy( 19.9 );
   adjoint_electron.setDirection( 0.0, 0.0, 1.0 );
 
   MonteCarlo::ParticleBank bank;
@@ -148,7 +151,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, react 
 
   first_subshell_reaction->react( adjoint_electron, bank, shell_of_interaction );
 
-  FRENSIE_CHECK( adjoint_electron.getEnergy() > 20.0 );
+  FRENSIE_CHECK( adjoint_electron.getEnergy() > 19.9 );
   FRENSIE_CHECK( adjoint_electron.getZDirection() < 1.0 );
   FRENSIE_CHECK( bank.isEmpty() );
   FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::K_SUBSHELL );
