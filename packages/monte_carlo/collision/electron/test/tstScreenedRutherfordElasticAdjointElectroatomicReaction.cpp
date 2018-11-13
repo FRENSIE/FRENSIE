@@ -96,7 +96,7 @@ FRENSIE_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction,
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.574552047073666472, 1e-12 );
 
   cross_section = rutherford_elastic_reaction->getCrossSection( 20.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.2717394891258004e+04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.271739489125800355e+04, 1e-12 );
 }
 
 

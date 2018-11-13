@@ -1210,6 +1210,18 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
     this->getVolatileDataContainer();
 
+  // Create the atomic excitation evaluators
+  std::function<double(const double&)> adjoint_excitation_cross_section_evaluator,
+    adjoint_excitation_energy_gain_evaluator;
+
+  double excitation_max_energy;
+  this->createAdjointAtomicExcitationEvaluators(
+          forward_electron_energy_grid,
+          forward_grid_searcher,
+          adjoint_excitation_cross_section_evaluator,
+          adjoint_excitation_energy_gain_evaluator,
+          excitation_max_energy );
+
   // Create he adjoint bremsstrahlung grid generator
   std::shared_ptr<ElectronGridGenerator> brem_grid_generator;
 
@@ -1238,7 +1250,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
   this->initializeAdjointElectronUnionEnergyGrid( union_energy_grid,
                                                   ionization_grid_generators,
-                                                  brem_grid_generator );
+                                                  brem_grid_generator,
+                                                  excitation_max_energy );
 
   //---------------------------------------------------------------------------//
   // Generate Grid Points For The Elastic Cross Section Data
@@ -1300,19 +1313,6 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   //---------------------------------------------------------------------------//
   // Generate Grid Points For The Adjoint Atomic Excitation Cross Section Data
   //---------------------------------------------------------------------------//
-
-  // Create the atomic excitation evaluators
-  std::function<double(const double&)> adjoint_excitation_cross_section_evaluator,
-    adjoint_excitation_energy_gain_evaluator;
-
-  double excitation_max_energy;
-  this->createAdjointAtomicExcitationEvaluators(
-          forward_electron_energy_grid,
-          forward_grid_searcher,
-          adjoint_excitation_cross_section_evaluator,
-          adjoint_excitation_energy_gain_evaluator,
-          excitation_max_energy );
-
 
   FRENSIE_LOG_PARTIAL_NOTIFICATION( "     Adding Atomic Excitation data to the grid ... ");
   FRENSIE_FLUSH_ALL_LOGS();
@@ -2108,7 +2108,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
 void StandardAdjointElectronPhotonRelaxationDataGenerator::initializeAdjointElectronUnionEnergyGrid(
      std::list<double>& union_energy_grid,
      std::map<unsigned,std::shared_ptr<ElectronGridGenerator> > ionization_grid_generators,
-     std::shared_ptr<ElectronGridGenerator> brem_grid_generator ) const
+     std::shared_ptr<ElectronGridGenerator> brem_grid_generator,
+     const double excitation_max_energy ) const
 {
   // Add the screened Rutherford threshold energy
   std::vector<double> forward_energy_grid = d_forward_epr_data->getElectronEnergyGrid();
@@ -2129,6 +2130,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::initializeAdjointElec
 
   // Add the nudged max energy for a bremsstrahlung reaction
   union_energy_grid.push_back( brem_grid_generator->getNudgedMaxEnergy() );
+
+  // Add the max energy for a atomic excitation reaction
+  union_energy_grid.push_back( excitation_max_energy );
 
   // Remove all energies less than or equal to the min electron energy
   union_energy_grid.remove_if([max = this->getMaxElectronEnergy()](double n){ return n >= max; });

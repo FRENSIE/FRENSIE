@@ -3106,136 +3106,136 @@ FRENSIE_UNIT_TEST( FilledGeometryModel, get_cross_section_adjoint_electron_mode 
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
            filled_model.getMacroscopicTotalCrossSection( adjoint_electron ),
-           1.987787741728153487e+05,
+           1.987788970096517878e+05,
            1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
          filled_model.getMacroscopicTotalCrossSectionQuick( adjoint_electron ),
-         1.987787741728153487e+05,
+         1.987788970096517878e+05,
          1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
        filled_model.getMacroscopicTotalCrossSection<MonteCarlo::AdjointElectronState>(
                     adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-       1.987787741728153487e+05,
+       1.987788970096517878e+05,
        1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
        filled_model.getMacroscopicTotalCrossSectionQuick<MonteCarlo::AdjointElectronState>(
                     adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-       1.987787741728153487e+05,
+       1.987788970096517878e+05,
        1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
        filled_model.getMacroscopicTotalForwardCrossSection( adjoint_electron ),
-       1.962265079183985072e+05,
+       1.962265424494750623e+05,
        1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
        filled_model.getMacroscopicTotalForwardCrossSectionQuick( adjoint_electron ),
-       1.962265079183985072e+05,
+       1.962265424494750623e+05,
        1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSection<MonteCarlo::AdjointElectronState>(
                     adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-      1.962265079183985072e+05,
+      1.962265424494750623e+05,
       1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSectionQuick<MonteCarlo::AdjointElectronState>(
                     adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-      1.962265079183985072e+05,
+      1.962265424494750623e+05,
       1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getAdjointWeightFactor( adjoint_electron ),
-      1.013006735336074993,
+      1.013007183066653161,
       1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getAdjointWeightFactorQuick( adjoint_electron ),
-      1.013006735336074993,
+      1.013007183066653161,
       1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getAdjointWeightFactor<MonteCarlo::AdjointElectronState>(
                 adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-      1.013006735336074993,
+      1.013007183066653161,
       1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getAdjointWeightFactorQuick<MonteCarlo::AdjointElectronState>(
                     adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-      1.013006735336074993,
+      1.013007183066653161,
       1e-15 );
 
     adjoint_electron.setEnergy( 10.0 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalCrossSection( adjoint_electron ),
-      1.790767917589432909e+05,
+      1.790769988882588805e+05,
       1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalCrossSectionQuick( adjoint_electron ),
-      1.790767917589432909e+05,
+      1.790769988882588805e+05,
       1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalCrossSection<MonteCarlo::AdjointElectronState>(
                   adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-      1.790767917589432909e+05,
+      1.790769988882588805e+05,
       1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalCrossSectionQuick<MonteCarlo::AdjointElectronState>(
                   adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-      1.790767917589432909e+05,
+      1.790769988882588805e+05,
       1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
        filled_model.getMacroscopicTotalForwardCrossSection( adjoint_electron ),
-       1.781250875084729050e+05,
+       1.781251807890355703e+05,
        1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
        filled_model.getMacroscopicTotalForwardCrossSectionQuick( adjoint_electron ),
-       1.781250875084729050e+05,
+       1.781251807890355703e+05,
        1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSection<MonteCarlo::AdjointElectronState>(
                     adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-      1.781250875084729050e+05,
+      1.781251807890355703e+05,
       1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getMacroscopicTotalForwardCrossSectionQuick<MonteCarlo::AdjointElectronState>(
                     adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-      1.781250875084729050e+05,
+      1.781251807890355703e+05,
       1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
                        filled_model.getAdjointWeightFactor( adjoint_electron ),
-                       1.005342898430436449,
+                       1.005343534782713322,
                        1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
                   filled_model.getAdjointWeightFactorQuick( adjoint_electron ),
-                  1.005342898430436449,
+                  1.005343534782713322,
                   1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
          filled_model.getAdjointWeightFactor<MonteCarlo::AdjointElectronState>(
                     adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-         1.005342898430436449,
+         1.005343534782713322,
           1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY(
       filled_model.getAdjointWeightFactorQuick<MonteCarlo::AdjointElectronState>(
                     adjoint_electron.getCell(), adjoint_electron.getEnergy() ),
-      1.005342898430436449,
+      1.005343534782713322,
       1e-15 );
 
     const std::vector<double>& critical_line_energies =

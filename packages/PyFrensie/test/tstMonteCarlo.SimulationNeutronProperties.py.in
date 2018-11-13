@@ -96,7 +96,7 @@ class SimulationNeutronPropertiesTestCase(unittest.TestCase):
         "*Test MonteCarlo.SimulationNeutronProperties setNeutronRouletteSurvivalWeight"
         properties = MonteCarlo.SimulationNeutronProperties()
 
-        double weight = 1e-12
+        weight = 1e-12
         properties.setNeutronRouletteSurvivalWeight( weight )
 
         self.assertEqual( properties.getNeutronRouletteSurvivalWeight(),
