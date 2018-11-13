@@ -280,7 +280,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatom, collideAnalogue )
 {
   std::shared_ptr<MonteCarlo::AdjointElectronState> electron(
                         new MonteCarlo::AdjointElectronState( 0 ) );
-  electron->setEnergy( 20 );
+  electron->setEnergy( 19.0 );
   electron->setDirection( 0.0, 0.0, 1.0 );
   electron->setWeight( 1.0 );
 
