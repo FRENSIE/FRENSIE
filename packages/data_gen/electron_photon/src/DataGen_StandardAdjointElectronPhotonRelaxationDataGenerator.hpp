@@ -217,12 +217,15 @@ private:
     const std::shared_ptr<const std::vector<double> >& forward_electron_energy_grid,
     const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher ) const;
 
-  // Create the adjoint atomic excitation cross section distribution
-  void createAdjointAtomicExcitationCrossSectionDistribution(
+  // Create the adjoint atomic excitation evaluators
+  void createAdjointAtomicExcitationEvaluators(
     const std::shared_ptr<const std::vector<double> >& forward_electron_energy_grid,
     const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
-    std::shared_ptr<const Utility::UnivariateDistribution>&
-        adjoint_excitation_cross_section_distribution );
+    std::function<double(const double&)>&
+        adjoint_excitation_cross_section_evaluator,
+    std::function<double(const double&)>&
+        adjoint_excitation_energy_gain_evaluator,
+    double& excitation_max_energy ) const;
 
   // Create the adjoint bremsstrahlung grid generator
   void createAdjointBremsstrahlungGridGenerator(
