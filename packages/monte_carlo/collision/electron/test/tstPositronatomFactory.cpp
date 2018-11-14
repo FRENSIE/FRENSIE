@@ -780,8 +780,8 @@ FRENSIE_UNIT_TEST( PositronatomFactory, createPositronatomMap_native_2BS_brem )
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.8698e3, 1e-12 );
 
 
-  // Test that the decoupled elastic cross section can be returned
-  reaction = MonteCarlo::DECOUPLED_ELASTIC_POSITRONATOMIC_REACTION;
+  // Test that the coupled elastic cross section can be returned
+  reaction = MonteCarlo::COUPLED_ELASTIC_POSITRONATOMIC_REACTION;
   cross_section = atom->getReactionCrossSection( 1.0e5, reaction );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.11161e+06, 1e-12 );
 
@@ -804,8 +804,8 @@ FRENSIE_UNIT_TEST( PositronatomFactory, createPositronatomMap_native_2BS_brem )
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.48924e+09, 1e-12 );
 
 
-  // Test that the coupled elastic cross section can be returned
-  reaction = MonteCarlo::COUPLED_ELASTIC_POSITRONATOMIC_REACTION;
+  // Test that the decoupled elastic cross section can be returned
+  reaction = MonteCarlo::DECOUPLED_ELASTIC_POSITRONATOMIC_REACTION;
   cross_section = atom->getReactionCrossSection( 1e5, reaction );
   FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
@@ -1103,8 +1103,8 @@ FRENSIE_UNIT_TEST( PositronatomFactory, createPositronatomMap_native_ionization_
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.8698e3, 1e-12 );
 
 
-  // Test that the decoupled elastic cross section can be returned
-  reaction = MonteCarlo::DECOUPLED_ELASTIC_POSITRONATOMIC_REACTION;
+  // Test that the coupled elastic cross section can be returned
+  reaction = MonteCarlo::COUPLED_ELASTIC_POSITRONATOMIC_REACTION;
   cross_section = atom->getReactionCrossSection( 1.0e5, reaction );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.11161e+06, 1e-12 );
 
@@ -1127,8 +1127,8 @@ FRENSIE_UNIT_TEST( PositronatomFactory, createPositronatomMap_native_ionization_
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.48924e+09, 1e-12 );
 
 
-  // Test that the coupled elastic cross section can be returned
-  reaction = MonteCarlo::COUPLED_ELASTIC_POSITRONATOMIC_REACTION;
+  // Test that the decoupled elastic cross section can be returned
+  reaction = MonteCarlo::DECOUPLED_ELASTIC_POSITRONATOMIC_REACTION;
   cross_section = atom->getReactionCrossSection( 1e5, reaction );
   FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
