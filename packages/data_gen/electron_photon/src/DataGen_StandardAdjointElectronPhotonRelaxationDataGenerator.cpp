@@ -1916,21 +1916,63 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
 
   if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLIN_INTERPOLATION )
   {
-    distribution.reset(
-      new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLin> >(
-                  energy_grid,
-                  secondary_dists,
-                  1e-6,
-                  this->getElectronTabularEvaluationTolerance() ) );
+    if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_CORRELATED_GRID )
+    {
+      distribution.reset(
+        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLin> >(
+                    energy_grid,
+                    secondary_dists,
+                    1e-6,
+                    this->getElectronTabularEvaluationTolerance() ) );
+    }
+    else if( this->getElectronTwoDGridPolicy() == MonteCarlo::CORRELATED_GRID )
+    {
+      distribution.reset(
+        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::Correlated<Utility::LinLinLin> >(
+                    energy_grid,
+                    secondary_dists,
+                    1e-6,
+                    this->getElectronTabularEvaluationTolerance() ) );
+    }
+    else if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_GRID )
+    {
+      distribution.reset(
+        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LinLinLin> >(
+                    energy_grid,
+                    secondary_dists,
+                    1e-6,
+                    this->getElectronTabularEvaluationTolerance() ) );
+    }
   }
   else if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
-    distribution.reset(
-      new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
-                  energy_grid,
-                  secondary_dists,
-                  1e-6,
-                  this->getElectronTabularEvaluationTolerance() ) );
+    if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_CORRELATED_GRID )
+    {
+      distribution.reset(
+        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
+                    energy_grid,
+                    secondary_dists,
+                    1e-6,
+                    this->getElectronTabularEvaluationTolerance() ) );
+    }
+    else if( this->getElectronTwoDGridPolicy() == MonteCarlo::CORRELATED_GRID )
+    {
+      distribution.reset(
+        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::Correlated<Utility::LogLogLog> >(
+                    energy_grid,
+                    secondary_dists,
+                    1e-6,
+                    this->getElectronTabularEvaluationTolerance() ) );
+    }
+    else if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_GRID )
+    {
+      distribution.reset(
+        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogLog> >(
+                    energy_grid,
+                    secondary_dists,
+                    1e-6,
+                    this->getElectronTabularEvaluationTolerance() ) );
+    }
   }
   else
   {
@@ -2047,21 +2089,63 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
 
   if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLIN_INTERPOLATION )
   {
-    distribution.reset(
-      new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLin> >(
-              energy_grid,
-              secondary_dists,
-              1e-6,
-              this->getElectronTabularEvaluationTolerance() ) );
+    if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_CORRELATED_GRID )
+    {
+      distribution.reset(
+        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLin> >(
+                energy_grid,
+                secondary_dists,
+                1e-6,
+                this->getElectronTabularEvaluationTolerance() ) );
+    }
+    else if( this->getElectronTwoDGridPolicy() == MonteCarlo::CORRELATED_GRID )
+    {
+      distribution.reset(
+        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::Correlated<Utility::LinLinLin> >(
+                energy_grid,
+                secondary_dists,
+                1e-6,
+                this->getElectronTabularEvaluationTolerance() ) );
+    }
+    else if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_GRID )
+    {
+      distribution.reset(
+        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LinLinLin> >(
+                energy_grid,
+                secondary_dists,
+                1e-6,
+                this->getElectronTabularEvaluationTolerance() ) );
+    }
   }
   else if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
-    distribution.reset(
-      new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
-              energy_grid,
-              secondary_dists,
-              1e-6,
-              this->getElectronTabularEvaluationTolerance() ) );
+    if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_CORRELATED_GRID )
+    {
+      distribution.reset(
+        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
+                energy_grid,
+                secondary_dists,
+                1e-6,
+                this->getElectronTabularEvaluationTolerance() ) );
+    }
+    else if( this->getElectronTwoDGridPolicy() == MonteCarlo::CORRELATED_GRID )
+    {
+      distribution.reset(
+        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::Correlated<Utility::LogLogLog> >(
+                energy_grid,
+                secondary_dists,
+                1e-6,
+                this->getElectronTabularEvaluationTolerance() ) );
+    }
+    else if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_GRID )
+    {
+      distribution.reset(
+        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogLog> >(
+                energy_grid,
+                secondary_dists,
+                1e-6,
+                this->getElectronTabularEvaluationTolerance() ) );
+    }
   }
   else
   {

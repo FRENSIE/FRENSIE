@@ -118,8 +118,6 @@ MonteCarlo::ElectroatomicReactionType reaction;
   cross_section = atom->getReactionCrossSection( 1.0e-5,reaction );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.8698e3, 1e-12 );
 
-
-
   // Test that the coupled elastic cross section can be returned
   reaction = MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION;
   cross_section = atom->getReactionCrossSection( 1.0e5, reaction );
