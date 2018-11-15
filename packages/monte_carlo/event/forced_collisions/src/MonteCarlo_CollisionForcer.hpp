@@ -57,6 +57,21 @@ public:
   //! Destructor
   virtual ~CollisionForcer()
   { /* ... */ }
+
+  //! Check if forced collision cells have been specified for the particle type
+  template<typename ParticleStateType>
+  bool hasForcedCollisionCells() const;
+
+  //! Check if forced collision cells have been specified for the particle type
+  virtual bool hasForcedCollisionCells( const ParticleType particle_type ) const = 0;
+
+  //! Check if a cell is a forced collision cell
+  template<typename ParticleStateType>
+  void isForcedCollisionCell( const CellIdType cell_id ) const;
+
+  //! Check if a cell is a forced collision cell
+  virtual void isForcedCollisionCell( const ParticleType particle_type,
+                                      const CellIdType cell_id ) const = 0;
   
   //! Return the cells where collisions will be forced
   virtual void getCells( const ParticleType particle_type,
@@ -86,6 +101,20 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 };
+
+// Check if forced collision cells have been specified for the particle type
+template<typename ParticleStateType>
+inline bool CollisionForcer::hasForcedCollisionCells() const
+{
+  return this->hasForcedCollisionCells( ParticleStateType::type );
+}
+
+// Check if a cell is a forced collision cell
+template<typename ParticleStateType>
+inline void CollisionForcer::isForcedCollisionCell( const CellIdType cell_id ) const
+{
+  return this->isForcedCollisionCell( ParticleStateType::type, cell_id );
+}
   
 } // end MonteCarlo namespace
 

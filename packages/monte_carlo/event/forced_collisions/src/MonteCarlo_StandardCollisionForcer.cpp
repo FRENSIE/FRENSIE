@@ -111,8 +111,13 @@ double StandardCollisionForcer::getGenerationProbability(
 }
 
 // Update the particle state and bank
-/*! \details This method should only be called if the particle is guaranteed 
- * to pass through the current cell.
+/*! \details The particle state that is passed in will become the uncollided 
+ * branch of this track. It must be tracked through the current cell before 
+ * a new collision distance is sampled. If a particle for the collided branch 
+ * is created (determined by the generation probability specified for this 
+ * cell) that particle history will be simulated to the forced collision site
+ * and the subsequent collision will be simulated before it and any of its
+ * progeny are banked.
  */
 void StandardCollisionForcer::forceCollision(
           const CellIdType cell_entering,
@@ -121,64 +126,56 @@ void StandardCollisionForcer::forceCollision(
           ParticleState& particle,
           ParticleBank& bank ) const
 {
+  // Make sure that this is a forced collision cell
+  testPrecondition( this->isForcedCollisionCell( particle.getParticleType(),
+                                                 cell_entering ) );
   // Make sure that the optical path to the next cell is valid
   testPrecondition( optical_path_to_next_cell > 0.0 );
 
-  ParticleTypeForcedCollisionCellMap::const_iterator particle_data_it =
-    d_forced_collision_cells.find( particle.getParticleType() );
+  const ForcedCollisionCellData& particle_forced_collision_cell_data =
+    d_forced_collision_cells.find( particle.getParticleType() )->second;
+
+  // Clone the particle before updating its weight
+  std::shared_ptr<ParticleState> collided_particle;
+
+  if( Utility::RandomNumberGenerator::getRandomNumber<double>() <=
+      Utility::get<1>( particle_forced_collision_cell_data ) )
+    collided_particle.reset( particle.clone() );
+
+  // Calculate the probability that a collision does not occur in the
+  // current cell
+  const double pass_through_probability =
+    std::exp(-optical_path_to_next_cell);
   
-  if( particle_data_it != d_forced_collision_cells.end() )
+  // Update the particle weight by the probability that the particle does
+  // not collide
+  particle.multiplyWeight( pass_through_probability );
+
+  if( collided_particle )
   {
-    const ForcedCollisionCellData& particle_forced_collision_cell_data =
-      particle_data_it->second;
+    // Update the collided particle weight by the probability that the
+    // particle does collide
+    collided_particle->multiplyWeight( (1.0 - pass_through_probability)/Utility::get<1>( particle_forced_collision_cell_data ) );
+    
+    // Sample the optical path to the collision within the current cell
+    const double optical_path_to_forced_collision =
+      -std::log( 1.0 - Utility::RandomNumberGenerator::getRandomNumber<double>()*(1.0 - pass_through_probability) );
 
-    // A forced collision cell has been entered
-    if( Utility::get<0>( particle_forced_collision_cell_data ).find( cell_entering ) !=
-        Utility::get<0>( particle_forced_collision_cell_data ).end() )
-    {
-      // Clone the particle before updating its weight
-      std::shared_ptr<ParticleState> collided_particle;
+    ParticleBank local_bank;
 
-      if( Utility::RandomNumberGenerator::getRandomNumber<double>() <=
-          Utility::get<1>( particle_forced_collision_cell_data ) )
-        collided_particle.reset( particle.clone() );
+    // Simulate the collided particle track to the sampled collision sight
+    // and then undergo a collision
+    simulate_particle_track_method( *collided_particle,
+                                    local_bank,
+                                    optical_path_to_forced_collision );
 
-      // Calculate the probability that a collision does not occur in the
-      // current cell
-      const double pass_through_probability =
-        std::exp(-optical_path_to_next_cell);
-  
-      // Update the particle weight by the probability that the particle does
-      // not collide
-      particle.multiplyWeight( pass_through_probability );
+    // Add the collided particle to the bank
+    bank.push( collided_particle );
 
-      if( collided_particle )
-      {
-        // Update the collided particle weight by the probability that the
-        // particle does collide
-        collided_particle->multiplyWeight( (1.0 - pass_through_probability)/Utility::get<1>( particle_forced_collision_cell_data ) );
-
-        // Sample the optical path to the collision within the current cell
-        const double optical_path_to_forced_collision =
-          -std::log( 1.0 - Utility::RandomNumberGenerator::getRandomNumber<double>()*(1.0 - pass_through_probability) );
-
-        ParticleBank local_bank;
-
-        // Simulate the collided particle track to the sampled collision sight
-        // and then undergo a collision
-        simulate_particle_track_method( *collided_particle,
-                                        local_bank,
-                                        optical_path_to_forced_collision );
-
-        // Add the collided particle to the bank
-        bank.push( collided_particle );
-
-        // Add the local bank to the bank (doing this last ensures that the
-        // collided particle will be simulated before its progeny, assuming
-        // that no bank sorting occurs)
-        bank.splice( local_bank );
-      }
-    }
+    // Add the local bank to the bank (doing this last ensures that the
+    // collided particle will be simulated before its progeny, assuming
+    // that no bank sorting occurs)
+    bank.splice( local_bank );
   }
 }
   

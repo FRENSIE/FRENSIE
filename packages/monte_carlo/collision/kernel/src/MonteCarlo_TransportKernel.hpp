@@ -32,9 +32,16 @@ public:
   //! Sample the optical path length traveled by a particle before a collision
   static double sampleOpticalPathLengthToNextCollisionSite();
 
+  //! Sample a simple distance to the next collision site
+  template<typename ParticleStateType>
+  double sampleSimpleDistanceToNextCollisionSite(
+                   const ParticleStateType& particle,
+                   double* cell_macroscopic_total_cross_section = NULL ) const;
+
   //! Sample the the distance to the next collision
   template<typename ParticleStateType>
-  double sampleDistanceToNextCollisionSite( const ParticleStateType& particle ) const;
+  double sampleDistanceToNextCollisionSite(
+                                     const ParticleStateType& particle ) const;
 
   //! Check if the transport kernel is defined on the model of interest
   bool isDefinedOnModel( const FilledGeometryModel& model ) const;
@@ -45,7 +52,52 @@ private:
   std::shared_ptr<const FilledGeometryModel> d_model;
 };
 
+// Sample a simple distance to the next collision site
+/*! \details This method assumes that the current cell material extends to
+ * infinity in the direction of particle travel. This method should only be
+ * used when particle tracks are simulated using the "alternative" algorithm 
+ * (each time a new cell is entered the distance to collision is re-sampled).
+ * To avoid multiple macroscopic total cross section lookups, a double memory
+ * address can be passed to store the cross section used by this method.
+ */
+template<typename ParticleStateType>
+double sampleSimpleDistanceToNextCollisionSite(
+                           const ParticleStateType& particle,
+                           double* cell_macroscopic_total_cross_section ) const
+{
+  // Make sure that the particle is embedded in the model that the
+  // transport kernel is defined in.
+  testPrecondition( particle.isEmbeddedInModel( *d_model ) );
+
+  // Get the macroscopic total cross section (default to void cell) 
+  double macroscopic_total_cross_section = 0.0;
+
+  // The sampled distance to collision (default to void cell distance
+  // to collision)
+  double distance_to_collision = std::numeric_limits<double>::infinity();
+
+  if( !d_model->isCellVoid<ParticleStateType>( particle.getCell() ) )
+  {
+    macroscopic_total_cross_section =
+      d_model->getMacroscopicTotalForwardCrossSectionQuick<ParticleStateType>(
+                                    particle.getCell(), particle.getEnergy() );
+
+    distance_to_collision = this->sampleOpticalPathLengthToNextCollisionSite()/
+      macroscopic_total_cross_section;
+  }
+
+  if( cell_macroscopic_total_cross_section != NULL )
+    *cell_macroscopic_total_cross_section = macroscopic_total_cross_section;
+
+  return distance_to_collision;
+}
+
 // Sample the the distance to the next collision
+/* \details This method will sample an optical path and then convert it to
+ * distance by tracking a particle clone through the geometry and converting
+ * distances to surface crossings to optical paths using the cell macroscopic
+ * total cross section.
+ */
 template<typename ParticleStateType>
 double TransportKernel::sampleDistanceToNextCollisionSite(
                                       const ParticleStateType& particle ) const

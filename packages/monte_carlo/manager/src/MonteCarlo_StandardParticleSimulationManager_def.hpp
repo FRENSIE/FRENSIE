@@ -106,13 +106,25 @@ void StandardParticleSimulationManager<mode>::addSimulateParticleFunction()
   
   // Make sure that the state is compatible with the mode
   testPrecondition( MonteCarlo::isParticleTypeCompatible<mode>( particle_type ) );
-  
-  d_simulate_particle_function_map[particle_type] =
-    std::bind<void>( &ParticleSimulationManager::simulateParticle<State>,
-                     std::ref( *this ),
-                     std::placeholders::_1,
-                     std::placeholders::_2,
-                     std::placeholders::_3 );
+
+  if( this->getCollisionForcer().hasForcedCollisionCells<State>() )
+  {
+    d_simulate_particle_function_map[particle_type] =
+      std::bind<void>( &ParticleSimulationManager::simulateParticleAlternative<State>,
+                       std::ref( *this ),
+                       std::placeholders::_1,
+                       std::placeholders::_2,
+                       std::placeholders::_3 );
+  }
+  else
+  {
+    d_simulate_particle_function_map[particle_type] =
+      std::bind<void>( &ParticleSimulationManager::simulateParticle<State>,
+                       std::ref( *this ),
+                       std::placeholders::_1,
+                       std::placeholders::_2,
+                       std::placeholders::_3 );
+  }
 }
 
 } // end MonteCarlo namespace
