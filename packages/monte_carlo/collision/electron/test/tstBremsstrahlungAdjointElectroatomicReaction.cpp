@@ -14,10 +14,14 @@
 #include "MonteCarlo_BremsstrahlungAdjointElectroatomicReaction.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
+#include "MonteCarlo_AdjointElectronProbeState.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
+
+std::shared_ptr<MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution>
+    scattering_distribution;
 
 std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction>
     bremsstrahlung_reaction;
@@ -80,7 +84,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, getCrossSection )
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.420906922056859401e+01, 1e-12 );
 
   cross_section = bremsstrahlung_reaction->getCrossSection( 2e-2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.611838244690622535, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.595836278017287224, 1e-12 );
 
   cross_section = bremsstrahlung_reaction->getCrossSection( 20.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.873816755338521323e-01, 1e-12 );
@@ -90,20 +94,70 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, getCrossSection )
 // Check that the bremsstrahlung reaction can be simulated
 FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, react )
 {
-  MonteCarlo::AdjointElectronState electron( 0 );
-  electron.setEnergy( 1e-5 );
-  electron.setDirection( 0.0, 0.0, 1.0 );
+  MonteCarlo::AdjointElectronState adjoint_electron( 0 );
+  adjoint_electron.setEnergy( 1e-5 );
+  adjoint_electron.setDirection( 0.0, 0.0, 1.0 );
 
   MonteCarlo::ParticleBank bank;
 
   Data::SubshellType shell_of_interaction;
 
-  bremsstrahlung_reaction->react( electron, bank, shell_of_interaction );
+  bremsstrahlung_reaction->react( adjoint_electron, bank, shell_of_interaction );
 
-  FRENSIE_CHECK( electron.getEnergy() > 1e-5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
-  FRENSIE_CHECK( bank.isEmpty() );
+  FRENSIE_CHECK( adjoint_electron.getEnergy() > 1e-5 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getZDirection(), 1.0, 1e-12 );
   FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
+  FRENSIE_CHECK_EQUAL( bank.size(), 3 );
+
+  double pdf = scattering_distribution->evaluate( 1e-5, 0.08 );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 0.08 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
+
+  bank.pop();
+
+  pdf = scattering_distribution->evaluate(
+              1e-5, Utility::PhysicalConstants::electron_rest_mass_energy );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(),
+                       Utility::PhysicalConstants::electron_rest_mass_energy );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
+
+  bank.pop();
+
+  pdf = scattering_distribution->evaluate( 1e-5, 1.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
+
+  bank.pop();
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  // Generate a probe with energy 1.0
+  adjoint_electron.setWeight( 1.0 );
+  adjoint_electron.setEnergy( 0.9 );
+  adjoint_electron.setDirection( 0.0, 0.0, 1.0 );
+
+  bremsstrahlung_reaction->react( adjoint_electron,
+                                  bank,
+                                  shell_of_interaction );
+
+  FRENSIE_CHECK_EQUAL( bank.size(), 1 );
+
+  pdf = scattering_distribution->evaluate( 0.9, 1.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
+
+  bank.pop();
+
+  // Make sure that probes do not generate more probe particles
+  MonteCarlo::AdjointElectronProbeState adjoint_electron_probe( 0 );
+  adjoint_electron_probe.setEnergy( 0.3 );
+  adjoint_electron_probe.setDirection( 0.0, 0.0, 1.0 );
+
+  bremsstrahlung_reaction->react( adjoint_electron_probe,
+                                  bank,
+                                  shell_of_interaction );
+
+  FRENSIE_CHECK_EQUAL( bank.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -128,9 +182,6 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     Data::AdjointElectronPhotonRelaxationDataContainer data_container =
       Data::AdjointElectronPhotonRelaxationDataContainer( test_native_file_name );
 
-    std::shared_ptr<const MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution>
-        scattering_distribution;
-
     double evaluation_tol = 1e-7;
 
     MonteCarlo::BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
@@ -138,6 +189,17 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
         data_container.getAdjointElectronEnergyGrid(),
         scattering_distribution,
         evaluation_tol );
+
+    // Add critical line energies
+    std::shared_ptr<std::vector<double> >
+      critical_line_energies( new std::vector<double>(3) );
+
+    (*critical_line_energies)[0] = 0.08;
+    (*critical_line_energies)[1] =
+      Utility::PhysicalConstants::electron_rest_mass_energy;
+    (*critical_line_energies)[2] = 1.0;
+
+    scattering_distribution->setCriticalLineEnergies( critical_line_energies );
 
     // Get the energy grid
     std::shared_ptr<const std::vector<double> > energy_grid(
@@ -149,7 +211,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create the reaction
     bremsstrahlung_reaction.reset(
-      new MonteCarlo::BremsstrahlungAdjointElectroatomicReaction<Utility::LinLin>(
+      new MonteCarlo::BremsstrahlungAdjointElectroatomicReaction<Utility::LogLog>(
         energy_grid,
         cross_section,
         data_container.getAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex(),

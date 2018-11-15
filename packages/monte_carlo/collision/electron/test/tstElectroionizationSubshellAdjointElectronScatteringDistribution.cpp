@@ -15,6 +15,34 @@
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
+#include "MonteCarlo_AdjointElectronProbeState.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Structs
+//---------------------------------------------------------------------------//
+class TestElectroionizationSubshellAdjointElectronScatteringDistribution : public MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution
+{
+public:
+
+  // Constructor
+  TestElectroionizationSubshellAdjointElectronScatteringDistribution(
+    const std::shared_ptr<const BasicBivariateDist>&
+      electroionization_subshell_scattering_distribution,
+    const double& binding_energy )
+    : MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution(
+        electroionization_subshell_scattering_distribution,
+        binding_energy )
+  { /* ... */ }
+
+  // Destructor
+  ~TestElectroionizationSubshellAdjointElectronScatteringDistribution()
+  { /* ... */ }
+
+  using MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution::LineEnergyIterator;
+  using MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution::isEnergyAboveScatteringWindow;
+  using MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution::isEnergyInScatteringWindow;
+  using MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution::getCriticalLineEnergiesInScatteringWindow;
+};
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -22,10 +50,11 @@
 
 std::shared_ptr<Data::AdjointElectronPhotonRelaxationDataContainer> data_container;
 
-std::shared_ptr<const MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution>
-  native_distribution, linlinlog_native_distribution;
+std::shared_ptr<TestElectroionizationSubshellAdjointElectronScatteringDistribution>
+  distribution;
 
 double max_energy = 2.00100137100000026e+01;
+double binding_energy;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -34,7 +63,6 @@ double max_energy = 2.00100137100000026e+01;
 FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistribution,
                    getBindingEnergy )
 {
-  double binding_energy = native_distribution->getBindingEnergy();
   FRENSIE_CHECK_EQUAL( binding_energy, 1.361E-05 );
 }
 
@@ -46,23 +74,23 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
   double pdf;
 
   // Check below the first bin
-  pdf = native_distribution->evaluate( 9.99e-6, 2.3711E-5 );
+  pdf = distribution->evaluate( 9.99e-6, 2.3711E-5 );
   FRENSIE_CHECK_SMALL( pdf, 1e-12 );
 
   // Check the first bin
-  pdf = native_distribution->evaluate( 1e-5, 2.3711E-5 );
+  pdf = distribution->evaluate( 1e-5, 2.3711E-5 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.934678614674178334e+02, 1e-12 );
 
   // Check between two bins
-  pdf = native_distribution->evaluate( 1.1e-5, 0.2 );
+  pdf = distribution->evaluate( 1.1e-5, 0.2 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.234527427223312684e-01, 1e-6 );
 
   // Check the last bin
-  pdf = native_distribution->evaluate( 20.0, max_energy );
+  pdf = distribution->evaluate( 20.0, max_energy );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 3.320814623995649306e-02, 1e-12 );
 
   // Check above the last bin
-  pdf = native_distribution->evaluate( 20.01, 22.1 );
+  pdf = distribution->evaluate( 20.01, 22.1 );
   FRENSIE_CHECK_SMALL( pdf, 1e-12 );
 }
 
@@ -74,23 +102,23 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
   double pdf;
 
   // Check below the first bin
-  pdf = native_distribution->evaluatePDF( 9.99e-6, 2.3711E-5 );
+  pdf = distribution->evaluatePDF( 9.99e-6, 2.3711E-5 );
   FRENSIE_CHECK_SMALL( pdf, 1e-12 );
 
   // Check the first bin
-  pdf = native_distribution->evaluatePDF( 1e-5, 2.3711E-5 );
+  pdf = distribution->evaluatePDF( 1e-5, 2.3711E-5 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 6.815449275126789530e+01, 1e-12 );
 
   // Check between two bins
-  pdf = native_distribution->evaluatePDF( 1.1e-5, 0.2 );
+  pdf = distribution->evaluatePDF( 1.1e-5, 0.2 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.761373083573519932e-02, 1e-6 );
 
   // Check the last bin
-  pdf = native_distribution->evaluatePDF( 20.0, max_energy );
+  pdf = distribution->evaluatePDF( 20.0, max_energy );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.774405344052893199e-02, 1e-12 );
 
   // Check above the last bin
-  pdf = native_distribution->evaluatePDF( 20.01, 22.1 );
+  pdf = distribution->evaluatePDF( 20.01, 22.1 );
   FRENSIE_CHECK_SMALL( pdf, 1e-12 );
 }
 
@@ -102,23 +130,23 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
   double cdf;
 
   // Check below the first bin
-  cdf = native_distribution->evaluateCDF( 9.99e-6, 1.361e-5 );
+  cdf = distribution->evaluateCDF( 9.99e-6, 1.361e-5 );
   FRENSIE_CHECK_SMALL( cdf, 1e-12 );
 
   // Check the first bin
-  cdf = native_distribution->evaluateCDF( 1e-5, 0.2 );
+  cdf = distribution->evaluateCDF( 1e-5, 0.2 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 7.558656613661461909e-01, 1e-12 );
 
   // Check between two bins
-  cdf = native_distribution->evaluateCDF( 1.1e-5, 0.2 );
+  cdf = distribution->evaluateCDF( 1.1e-5, 0.2 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 7.825076444255860686e-01, 1e-6 );
 
   // Check the last bin
-  cdf = native_distribution->evaluateCDF( 20.0, max_energy );
+  cdf = distribution->evaluateCDF( 20.0, max_energy );
   FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 1.0, 1e-12 );
 
   // Check above the last bin
-  cdf = native_distribution->evaluateCDF( 20.01, 22.1 );
+  cdf = distribution->evaluateCDF( 20.01, 22.1 );
   FRENSIE_CHECK_SMALL( cdf, 1e-12 );
 }
 
@@ -136,9 +164,9 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
   double scattering_angle_cosine, outgoing_energy, incoming_energy = 1e-5;
 
   // sample the electron
-  native_distribution->sample( incoming_energy,
-                               outgoing_energy,
-                               scattering_angle_cosine );
+  distribution->sample( incoming_energy,
+                        outgoing_energy,
+                        scattering_angle_cosine );
 
   // Test scattered electron
   FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 8.053779903521432471e-02, 1e-10 );
@@ -159,10 +187,10 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
   double outgoing_energy, scattering_angle_cosine;
 
   // sample the electron
-  native_distribution->sampleAndRecordTrials( incoming_energy,
-                                              outgoing_energy,
-                                              scattering_angle_cosine,
-                                              trials );
+  distribution->sampleAndRecordTrials( incoming_energy,
+                                       outgoing_energy,
+                                       scattering_angle_cosine,
+                                       trials );
 
   // Test trials
   FRENSIE_CHECK_EQUAL( trials, 1.0 );
@@ -186,96 +214,182 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
   MonteCarlo::ParticleBank bank;
   Data::SubshellType shell_of_interaction;
 
-  MonteCarlo::AdjointElectronState electron( 0 );
-  electron.setEnergy( 1e-5 );
-  electron.setDirection( 0.0, 0.0, 1.0 );
+  MonteCarlo::AdjointElectronState adjoint_electron( 0 );
+  adjoint_electron.setEnergy( 1e-5 );
+  adjoint_electron.setDirection( 0.0, 0.0, 1.0 );
 
-  // Analytically scatter electron
-  native_distribution->scatterAdjointElectron( electron,
-                                               bank,
-                                               shell_of_interaction );
+  // Scatter the adjoint electron
+  distribution->scatterAdjointElectron( adjoint_electron,
+                                        bank,
+                                        shell_of_interaction );
 
-  // Test original electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getZDirection(), 8.053779903521432471e-02, 1e-10 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getEnergy(), 1.544016247609883603e-03, 1e-12 );
+  // Test the adjoint electron
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getZDirection(), 8.053779903521432471e-02, 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getEnergy(), 1.544016247609883603e-03, 1e-12 );
+
+  FRENSIE_CHECK_EQUAL( bank.size(), 4 );
+
+  double pdf = distribution->evaluate( 1e-5, 0.08 );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 0.08 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
+
+  bank.pop();
+
+  pdf = distribution->evaluate(
+                1e-5, Utility::PhysicalConstants::electron_rest_mass_energy );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(),
+                       Utility::PhysicalConstants::electron_rest_mass_energy );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
+
+  bank.pop();
+
+  pdf = distribution->evaluate( 1e-5, 1.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
+
+  bank.pop();
+
+  pdf = distribution->evaluate( 1e-5, 5.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 5.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
+
+  bank.pop();
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  // Generate a probe with energy 5.0
+  adjoint_electron.setWeight( 1.0 );
+  adjoint_electron.setEnergy( 4.9 );
+  adjoint_electron.setDirection( 0.0, 0.0, 1.0 );
+
+  distribution->scatterAdjointElectron( adjoint_electron,
+                                        bank,
+                                        shell_of_interaction );
+
+  FRENSIE_CHECK_EQUAL( bank.size(), 1 );
+
+  pdf = distribution->evaluate( 4.9, 5.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 5.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
+
+  bank.pop();
+
+  // Make sure that probes do not generate more probe particles
+  MonteCarlo::AdjointElectronProbeState adjoint_electron_probe( 0 );
+  adjoint_electron_probe.setEnergy( 0.3 );
+  adjoint_electron_probe.setDirection( 0.0, 0.0, 1.0 );
+
+  distribution->scatterAdjointElectron( adjoint_electron_probe,
+                                        bank,
+                                        shell_of_interaction );
+
+  FRENSIE_CHECK_EQUAL( bank.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the screening angle can be evaluated
+// Check if an energy is above the scattering window
 FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistribution,
-                   sample_LinLinLog )
+                   isEnergyAboveScatteringWindow )
 {
-  // Set fake random number stream
-  std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 0.0;
+  FRENSIE_CHECK( !distribution->isEnergyAboveScatteringWindow( 0.1, 9.9999e-6 ) );
 
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  FRENSIE_CHECK( !distribution->isEnergyAboveScatteringWindow( 0.1, 1e-5 ) );
 
-  double scattering_angle_cosine, outgoing_energy, incoming_energy = 1e-3;
+  FRENSIE_CHECK( !distribution->isEnergyAboveScatteringWindow( 0.1, 0.1 - binding_energy - 2e-7 ) );
 
-  // sample the electron
-  linlinlog_native_distribution->sample( incoming_energy,
-                                         outgoing_energy,
-                                         scattering_angle_cosine );
-
-  // Test scattered electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.870975958837813202e-01, 1e-10 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.026339381365953384e-03, 1e-12 );
+  FRENSIE_CHECK( distribution->isEnergyAboveScatteringWindow( 0.1, 0.1 - binding_energy ) );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the screening angle can be evaluated
+// Check if an energy is in the scattering window
 FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistribution,
-                   sampleAndRecordTrials_LinLinLog )
+                   isEnergyInScatteringWindow )
 {
-  // Set fake random number stream
-  std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 0.0;
+  FRENSIE_CHECK( distribution->isEnergyInScatteringWindow( 0.1, 9.9999e-6 ) );
 
-  MonteCarlo::AdjointElectronScatteringDistribution::Counter trials = 0.0;
-  double incoming_energy = 1e-3;
-  double outgoing_energy, scattering_angle_cosine;
+  FRENSIE_CHECK( distribution->isEnergyInScatteringWindow( 0.1, 1e-5 ));
 
-  // sample the electron
-  linlinlog_native_distribution->sampleAndRecordTrials( incoming_energy,
-                                                        outgoing_energy,
-                                                        scattering_angle_cosine,
-                                                        trials );
+  FRENSIE_CHECK( distribution->isEnergyInScatteringWindow( 0.1, 0.1 - binding_energy - 2e-7 ) );
 
-  // Test trials
-  FRENSIE_CHECK_EQUAL( trials, 1.0 );
+  FRENSIE_CHECK( !distribution->isEnergyInScatteringWindow( 0.1, 0.1 - binding_energy ) );
 
-  // Test scattered electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.870975958837813202e-01, 1e-10 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.026339381365953384e-03, 1e-12 );
+  FRENSIE_CHECK( !distribution->isEnergyInScatteringWindow( 21.0, 1.0 ) );
+
+  FRENSIE_CHECK( !distribution->isEnergyInScatteringWindow( 21.0, 21.0 - binding_energy ) );
+
+  FRENSIE_CHECK( !distribution->isEnergyInScatteringWindow( 21.0, 21.0 ) );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the screening angle can be evaluated
+// Check that the critical line energies in scattering window can be returned
 FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistribution,
-                   scatterAdjointElectron_LinLinLog )
+                   getCriticalLineEnergiesInScatteringWindow )
 {
-  // Set fake random number stream
-  std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 0.0;
+  TestElectroionizationSubshellAdjointElectronScatteringDistribution::LineEnergyIterator
+    start_energy, end_energy;
 
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  distribution->getCriticalLineEnergiesInScatteringWindow( 9.9999e-6,
+                                                           start_energy,
+                                                           end_energy );
 
-  MonteCarlo::ParticleBank bank;
-  Data::SubshellType shell_of_interaction;
+  FRENSIE_CHECK_EQUAL( start_energy, end_energy );
 
-  MonteCarlo::AdjointElectronState electron( 0 );
-  electron.setEnergy( 1e-3 );
-  electron.setDirection( 0.0, 0.0, 1.0 );
+  distribution->getCriticalLineEnergiesInScatteringWindow( 1e-5,
+                                                           start_energy,
+                                                           end_energy );
 
-  // Analytically scatter electron
-  linlinlog_native_distribution->scatterAdjointElectron( electron,
-                                                         bank,
-                                                         shell_of_interaction );
+  FRENSIE_CHECK_EQUAL( *start_energy, 0.08 );
+  FRENSIE_CHECK_EQUAL( *end_energy, 21.0 );
+  FRENSIE_CHECK_EQUAL( std::distance( start_energy, end_energy ), 4 );
 
-  // Test original electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getZDirection(), 9.870975958837813202e-01, 1e-10 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getEnergy(), 1.026339381365953384e-03, 1e-12 );
+  distribution->getCriticalLineEnergiesInScatteringWindow( 0.18,
+                                                           start_energy,
+                                                           end_energy );
+
+  FRENSIE_CHECK_EQUAL( *start_energy,
+                       Utility::PhysicalConstants::electron_rest_mass_energy );
+  FRENSIE_CHECK_EQUAL( *end_energy, 21.0 );
+  FRENSIE_CHECK_EQUAL( std::distance( start_energy, end_energy), 3 );
+
+  distribution->getCriticalLineEnergiesInScatteringWindow( 0.21,
+                                                           start_energy,
+                                                           end_energy );
+
+  FRENSIE_CHECK_EQUAL( *start_energy,
+                       Utility::PhysicalConstants::electron_rest_mass_energy );
+  FRENSIE_CHECK_EQUAL( *end_energy, 21.0 );
+  FRENSIE_CHECK_EQUAL( std::distance( start_energy, end_energy ), 3 );
+
+  distribution->getCriticalLineEnergiesInScatteringWindow( 0.25,
+                                                           start_energy,
+                                                           end_energy );
+
+  FRENSIE_CHECK_EQUAL( *start_energy,
+                       Utility::PhysicalConstants::electron_rest_mass_energy );
+  FRENSIE_CHECK_EQUAL( *end_energy, 21.0 );
+  FRENSIE_CHECK_EQUAL( std::distance( start_energy, end_energy ), 3 );
+
+  distribution->getCriticalLineEnergiesInScatteringWindow( 0.52,
+                                                           start_energy,
+                                                           end_energy );
+
+  FRENSIE_CHECK_EQUAL( *start_energy, 1.0 );
+  FRENSIE_CHECK_EQUAL( *end_energy, 21.0 );
+  FRENSIE_CHECK_EQUAL( std::distance( start_energy, end_energy ), 2 );
+
+  distribution->getCriticalLineEnergiesInScatteringWindow( 1.1,
+                                                           start_energy,
+                                                           end_energy );
+
+  FRENSIE_CHECK_EQUAL( *start_energy, 5.0 );
+  FRENSIE_CHECK_EQUAL( *end_energy, 21.0 );
+  FRENSIE_CHECK_EQUAL( std::distance( start_energy, end_energy ), 1 );
+
+  distribution->getCriticalLineEnergiesInScatteringWindow( 5.1,
+                                                           start_energy,
+                                                           end_energy );
+
+  FRENSIE_CHECK_EQUAL( std::distance( start_energy, end_energy ), 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -299,7 +413,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                              test_native_file_name ) );
 
   // Set binding energy
-  double binding_energy = 1.361E-05;
+  binding_energy = 1.361E-05;
 
   std::vector<double> energy_grid =
     data_container->getAdjointElectronEnergyGrid();
@@ -334,22 +448,6 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
   double evaluation_tol = 1e-10;
 
-  { // Create the LinLinLog scattering function
-  std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> subshell_distribution(
-     new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLog> >(
-                                                            primary_grid,
-                                                            secondary_dists,
-                                                            1e-6,
-                                                            evaluation_tol ) );
-
-  linlinlog_native_distribution.reset(
-     new MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution(
-            subshell_distribution,
-            binding_energy ) );
-
-  }
-
-  { // Create the LogLogLog scattering function
   std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> subshell_distribution(
      new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
                                                             primary_grid,
@@ -357,12 +455,24 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                                             1e-6,
                                                             evaluation_tol ) );
 
-  native_distribution.reset(
-     new MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution(
+  distribution.reset(
+     new TestElectroionizationSubshellAdjointElectronScatteringDistribution(
             subshell_distribution,
             binding_energy ) );
 
-  }
+  // Create the scattering distribution
+  std::shared_ptr<std::vector<double> >
+    critical_line_energies( new std::vector<double>( 5 ) );
+
+  (*critical_line_energies)[0] = 0.08;
+  (*critical_line_energies)[1] =
+    Utility::PhysicalConstants::electron_rest_mass_energy;
+  (*critical_line_energies)[2] = 1.0;
+  (*critical_line_energies)[3] = 5.0;
+  (*critical_line_energies)[4] = 21.0;
+
+  distribution->setCriticalLineEnergies( critical_line_energies );
+
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

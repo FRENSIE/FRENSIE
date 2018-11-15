@@ -483,7 +483,7 @@ FRENSIE_UNIT_TEST( ParticleState, advance )
 }
 
 //---------------------------------------------------------------------------//
-// Test if the particle can be embeded inside of a geometry model
+// Test if the particle can be embedded inside of a geometry model
 FRENSIE_UNIT_TEST( ParticleState, embedInModel )
 {
   TestParticleState particle( 1ull );

@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_GEN_ADJOINT_PAIR_PRODUCTION_ENERGY_DISTRIBUTION_NORM_CONSTANT_EVALUTOR_DEF_HPP
-#define DATA_GEN_ADJOINT_PAIR_PRODUCTION_ENERGY_DISTRIBUTION_NORM_CONSTANT_EVALUTOR_DEF_HPP
+#ifndef DATA_GEN_ADJOINT_PAIR_PRODUCTION_ENERGY_DISTRIBUTION_NORM_CONSTANT_EVALUATOR_DEF_HPP
+#define DATA_GEN_ADJOINT_PAIR_PRODUCTION_ENERGY_DISTRIBUTION_NORM_CONSTANT_EVALUATOR_DEF_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_PairProductionPhotoatomicReaction.hpp"
@@ -52,7 +52,7 @@ AdjointPairProductionEnergyDistributionNormConstantEvaluator::createEvaluator(
 
 } // end DataGen namespace
 
-#endif // end DATA_GEN_ADJOINT_PAIR_PRODUCTION_ENERGY_DISTRIBUTION_NORM_CONSTANT_EVALUTOR_DEF_HPP
+#endif // end DATA_GEN_ADJOINT_PAIR_PRODUCTION_ENERGY_DISTRIBUTION_NORM_CONSTANT_EVALUATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end DataGen_AdjointPairProductionEnergyDistributionNormConstantEvaluator_def.hpp

@@ -58,7 +58,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomCore, getTotalForwardReaction )
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.97832E+01, 1e-12 );
 
   cross_section = total_forward_reaction.getCrossSection( 1e-3 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.075323346040028706e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.034967894439161196e+07, 1e-12 );
 
   cross_section = total_forward_reaction.getCrossSection( 20.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.6467035552999546e+05, 1e-12 );
@@ -90,7 +90,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomCore, getScatteringReactions )
                    b_reaction.getCrossSection( 1e-3 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          1.582521006440232370e+01 + 1.071196592417021282e+07,
+                          1.557600066977331110e+01 + 1.050234737111856416e+07,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 20.0 ) +
@@ -172,6 +172,19 @@ FRENSIE_UNIT_TEST( AdjointElectroatomCore, getReactionTyeps )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the critical line energies can be returned
+FRENSIE_UNIT_TEST( AdjointElectroatomCore, getCriticalLineEnergies )
+{
+  const std::vector<double>& line_energies =
+    electroatom_core->getCriticalLineEnergies();
+
+  FRENSIE_REQUIRE_EQUAL( line_energies.size(), 2 );
+  FRENSIE_CHECK_EQUAL( line_energies[0],
+                       Utility::PhysicalConstants::electron_rest_mass_energy );
+  FRENSIE_CHECK_EQUAL( line_energies[1], 20.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the grid searcher can be returned
 FRENSIE_UNIT_TEST( AdjointElectroatomCore, getGridSearcher )
 {
@@ -193,6 +206,65 @@ FRENSIE_UNIT_TEST( AdjointElectroatomCore, getGridSearcher )
 FRENSIE_UNIT_TEST( AdjointElectroatomCore, hasSharedEnergyGrid )
 {
   FRENSIE_CHECK( electroatom_core->hasSharedEnergyGrid() );
+}
+
+//---------------------------------------------------------------------------//
+// Check the copy constructor
+FRENSIE_UNIT_TEST( AdjointElectroatomCore, copy_constructor )
+{
+  MonteCarlo::AdjointElectroatomCore core_copy( *electroatom_core );
+
+  FRENSIE_CHECK_EQUAL( electroatom_core->getCriticalLineEnergies(),
+                       core_copy.getCriticalLineEnergies() );
+
+  const MonteCarlo::ElectroatomicReaction& total_forward_reaction =
+    core_copy.getTotalForwardReaction();
+
+  FRENSIE_CHECK_EQUAL( total_forward_reaction.getReactionType(),
+                       MonteCarlo::TOTAL_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_FLOATING_EQUALITY( total_forward_reaction.getThresholdEnergy(),
+                          1e-5,
+                          1e-15 );
+
+  const MonteCarlo::AdjointElectroatomCore::ConstReactionMap&
+    scattering_reactions = core_copy.getScatteringReactions();
+
+  FRENSIE_CHECK_EQUAL( scattering_reactions.size(), 2 );
+  FRENSIE_CHECK( scattering_reactions.count( MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( scattering_reactions.count( MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION ) );
+
+  const MonteCarlo::AdjointElectroatomCore::ConstReactionMap&
+    absorption_reactions = core_copy.getAbsorptionReactions();
+
+  FRENSIE_CHECK_EQUAL( absorption_reactions.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check the assignment operator
+FRENSIE_UNIT_TEST( AdjointElectroatomCore, assignment_operator )
+{
+  MonteCarlo::AdjointElectroatomCore core_copy = *electroatom_core;
+
+  const MonteCarlo::ElectroatomicReaction& total_forward_reaction =
+    core_copy.getTotalForwardReaction();
+
+  FRENSIE_CHECK_EQUAL( total_forward_reaction.getReactionType(),
+                       MonteCarlo::TOTAL_ELECTROATOMIC_REACTION );
+  FRENSIE_CHECK_FLOATING_EQUALITY( total_forward_reaction.getThresholdEnergy(),
+                          1e-5,
+                          1e-15 );
+
+  const MonteCarlo::AdjointElectroatomCore::ConstReactionMap&
+    scattering_reactions = core_copy.getScatteringReactions();
+
+  FRENSIE_CHECK_EQUAL( scattering_reactions.size(), 2 );
+  FRENSIE_CHECK( scattering_reactions.count( MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( scattering_reactions.count( MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION ) );
+
+  const MonteCarlo::AdjointElectroatomCore::ConstReactionMap&
+    absorption_reactions = core_copy.getAbsorptionReactions();
+
+  FRENSIE_CHECK_EQUAL( absorption_reactions.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -266,7 +338,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create the atomic excitation reaction
     std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction> ae_reaction(
-        new MonteCarlo::AtomicExcitationAdjointElectroatomicReaction<Utility::LinLin>(
+        new MonteCarlo::AtomicExcitationAdjointElectroatomicReaction<Utility::LogLog>(
             energy_grid,
             ae_cross_section,
             ae_threshold_index,
@@ -281,7 +353,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     size_t b_threshold_index =
         data_container.getAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex();
 
-    std::shared_ptr<const MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution>
+    std::shared_ptr<MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution>
         b_distribution;
 
     double evaluation_tol = 1e-7;
@@ -293,9 +365,16 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
         b_distribution,
         evaluation_tol );
 
+    auto critical_line_energies = std::make_shared<std::vector<double> >(2);
+    (*critical_line_energies)[0] =
+      Utility::PhysicalConstants::electron_rest_mass_energy;
+    (*critical_line_energies)[1] = 20.0;
+
+    b_distribution->setCriticalLineEnergies( critical_line_energies );
+
     // Create the bremsstrahlung scattering reaction
     std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction> b_reaction(
-            new MonteCarlo::BremsstrahlungAdjointElectroatomicReaction<Utility::LinLin>(
+            new MonteCarlo::BremsstrahlungAdjointElectroatomicReaction<Utility::LogLog>(
             energy_grid,
             b_cross_section,
             b_threshold_index,
@@ -313,7 +392,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     electroatom_core.reset( new MonteCarlo::AdjointElectroatomCore(
         energy_grid,
         grid_searcher,
-        std::make_shared<const std::vector<double> >(),
+        critical_line_energies,
         total_forward_reaction,
         scattering_reactions,
         absorption_reactions,

@@ -84,15 +84,9 @@ void AbsorptionAdjointElectroatomicReaction<InterpPolicy,processed_cross_section
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointElectroatomicReaction<Utility::LinLin,false> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointElectroatomicReaction<Utility::LinLin,true> );
 
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointElectroatomicReaction<Utility::LinLog,false> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointElectroatomicReaction<Utility::LinLog,true> );
-
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointElectroatomicReaction<Utility::LogLin,false> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointElectroatomicReaction<Utility::LogLin,true> );
-
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointElectroatomicReaction<Utility::LogLog,false> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointElectroatomicReaction<Utility::LogLog,true> );
-  
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_ABSORPTION_ADJOINT_ELECTROATOMIC_REACTION_DEF_HPP

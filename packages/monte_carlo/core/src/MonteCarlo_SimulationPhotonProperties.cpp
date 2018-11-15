@@ -34,7 +34,9 @@ SimulationPhotonProperties::SimulationPhotonProperties()
     d_incoherent_model_type( COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL ),
     d_atomic_relaxation_mode_on( true ),
     d_detailed_pair_production_mode_on( false ),
-    d_photonuclear_interaction_mode_on( false )
+    d_photonuclear_interaction_mode_on( false ),
+    d_threshold_weight( 0.0 ),
+    d_survival_weight()
 { /* ... */ }
 
 // Set the minimum photon energy (MeV)
@@ -206,6 +208,41 @@ void SimulationPhotonProperties::setPhotonuclearInteractionModeOn()
 bool SimulationPhotonProperties::isPhotonuclearInteractionModeOn() const
 {
   return d_photonuclear_interaction_mode_on;
+}
+
+// Set the cutoff roulette threshold weight
+void SimulationPhotonProperties::setPhotonRouletteThresholdWeight(
+      const double threshold_weight )
+{
+  // Make sure the weights are valid
+  testPrecondition( threshold_weight > 0.0 );
+
+  d_threshold_weight = threshold_weight;
+}
+
+// Return the cutoff roulette threshold weight
+double SimulationPhotonProperties::getPhotonRouletteThresholdWeight() const
+{
+  return d_threshold_weight;
+}
+
+// Set the cutoff roulette threshold weight
+/*! \details The survival weight should be set after the threshold weight to
+ * ensure the weight is valid.
+ */
+void SimulationPhotonProperties::setPhotonRouletteSurvivalWeight(
+      const double survival_weight )
+{
+  // Make sure the weights are valid
+  testPrecondition( survival_weight > d_threshold_weight );
+
+  d_survival_weight = survival_weight;
+}
+
+// Return the cutoff roulette survival weight
+double SimulationPhotonProperties::getPhotonRouletteSurvivalWeight() const
+{
+  return d_survival_weight;
 }
 
 EXPLICIT_CLASS_SERIALIZE_INST( SimulationPhotonProperties );

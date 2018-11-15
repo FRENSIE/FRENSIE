@@ -55,7 +55,7 @@ void ParticleState::save( Archive& ar, const unsigned version ) const
   ar & boost::serialization::make_nvp( "d_z_direction", d_navigator->getDirection()[2] );
 
   // We will not use the cell when we set the internal ray because the
-  // particle may not be embeded in the same geometry as it was when it
+  // particle may not be embedded in the same geometry as it was when it
   // was archived.
 }
 
@@ -93,7 +93,7 @@ void ParticleState::load( Archive& ar, const unsigned version )
   ar & boost::serialization::make_nvp( "d_z_direction", direction[2] );
 
   // We will not use the cell when we set the internal ray because the
-  // particle may not be embeded in the same geometry as it was when it
+  // particle may not be embedded in the same geometry as it was when it
   // was archived.
   d_navigator->setState( position, direction );
 }

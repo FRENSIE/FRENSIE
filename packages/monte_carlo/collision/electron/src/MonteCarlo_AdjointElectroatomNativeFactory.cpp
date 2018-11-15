@@ -21,6 +21,10 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
         const SimulationAdjointElectronProperties& properties,
         std::shared_ptr<const AdjointElectroatomCore>& adjoint_electroatom_core )
 {
+  std::shared_ptr<const std::vector<double> > critical_line_energies =
+    std::make_shared<const std::vector<double> >(
+      properties.getCriticalAdjointElectronLineEnergies() );
+
   // Extract the common energy grid used for this atom
   std::shared_ptr<std::vector<double> > energy_grid( new std::vector<double> );
   energy_grid->assign(
@@ -41,6 +45,9 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
   std::string electron_interp =
     raw_adjoint_electroatom_data.getElectronTwoDInterpPolicy();
 
+  std::string electron_grid =
+    raw_adjoint_electroatom_data.getElectronTwoDGridPolicy();
+
   // Create the elastic scattering reaction
   if ( properties.isAdjointElasticModeOn() )
   {
@@ -48,33 +55,56 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
 
     if( electron_interp == "Log-Log-Log" )
     {
-      ThisType::createElasticElectroatomCore<Utility::LogNudgedLogCosLog,Utility::Correlated>(
-                                                raw_adjoint_electroatom_data,
-                                                energy_grid,
-                                                grid_searcher,
-                                                properties,
-                                                elastic_reaction,
-                                                scattering_reactions );
-    }
-    else if( electron_interp == "Lin-Lin-Log" )
-    {
-      ThisType::createElasticElectroatomCore<Utility::LinLinLog,Utility::Correlated>(
-                                                raw_adjoint_electroatom_data,
-                                                energy_grid,
-                                                grid_searcher,
-                                                properties,
-                                                elastic_reaction,
-                                                scattering_reactions );
+      if ( electron_grid == "Unit-base Correlated" || electron_grid == "Correlated" )
+      {
+        ThisType::createElasticElectroatomCore<Utility::LogNudgedLogCosLog,Utility::Correlated>(
+                                                  raw_adjoint_electroatom_data,
+                                                  energy_grid,
+                                                  grid_searcher,
+                                                  properties,
+                                                  elastic_reaction,
+                                                  scattering_reactions );
+      }
+      else if( electron_grid == "Unit-base" || electron_grid == "Direct" )
+      {
+        ThisType::createElasticElectroatomCore<Utility::LogNudgedLogCosLog,Utility::Direct>(
+                                                  raw_adjoint_electroatom_data,
+                                                  energy_grid,
+                                                  grid_searcher,
+                                                  properties,
+                                                  elastic_reaction,
+                                                  scattering_reactions );
+      }
     }
     else if( electron_interp == "Lin-Lin-Lin" )
     {
-      ThisType::createElasticElectroatomCore<Utility::LinLinLin,Utility::Correlated>(
+      if ( electron_grid == "Unit-base Correlated" || electron_grid == "Correlated" )
+      {
+        ThisType::createElasticElectroatomCore<Utility::LinLinLin,Utility::Correlated>(
                                                 raw_adjoint_electroatom_data,
                                                 energy_grid,
                                                 grid_searcher,
                                                 properties,
                                                 elastic_reaction,
                                                 scattering_reactions );
+      }
+      else if( electron_grid == "Unit-base" || electron_grid == "Direct" )
+      {
+        ThisType::createElasticElectroatomCore<Utility::LinLinLin,Utility::Direct>(
+                                                raw_adjoint_electroatom_data,
+                                                energy_grid,
+                                                grid_searcher,
+                                                properties,
+                                                elastic_reaction,
+                                                scattering_reactions );
+      }
+      else
+      {
+        THROW_EXCEPTION( std::runtime_error,
+                        "the 2D grid policy "
+                        << electron_grid <<
+                        " is not currently supported!" );
+      }
     }
     else
     {
@@ -101,30 +131,83 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
 
     if( electron_interp == "Log-Log-Log" )
     {
-      AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+      if ( electron_grid == "Unit-base Correlated" )
+      {
+        AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+                         raw_adjoint_electroatom_data,
+                        energy_grid,
+                        grid_searcher,
+                        reaction_pointer,
+                        critical_line_energies,
+                        properties.getAdjointElectronEvaluationTolerance() );
+      }
+      else if( electron_grid == "Correlated" )
+      {
+        AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog,Utility::Correlated>(
                         raw_adjoint_electroatom_data,
                         energy_grid,
                         grid_searcher,
                         reaction_pointer,
+                        critical_line_energies,
                         properties.getAdjointElectronEvaluationTolerance() );
-    }
-    else if( electron_interp == "Lin-Lin-Log" )
-    {
-      AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
-                        raw_adjoint_electroatom_data,
+      }
+      else if( electron_grid == "Unit-base" )
+      {
+        AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog,Utility::UnitBase>(
+                         raw_adjoint_electroatom_data,
                         energy_grid,
                         grid_searcher,
                         reaction_pointer,
+                        critical_line_energies,
                         properties.getAdjointElectronEvaluationTolerance() );
+      }
+      else
+      {
+        THROW_EXCEPTION( std::runtime_error,
+                        "the 2D grid policy "
+                        << electron_grid <<
+                        " is not currently supported!" );
+      }
     }
     else if( electron_interp == "Lin-Lin-Lin" )
     {
-      AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
+      if ( electron_grid == "Unit-base Correlated" )
+      {
+        AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
                         raw_adjoint_electroatom_data,
                         energy_grid,
                         grid_searcher,
                         reaction_pointer,
+                        critical_line_energies,
                         properties.getAdjointElectronEvaluationTolerance() );
+      }
+      else if( electron_grid == "Correlated" )
+      {
+        AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLin,Utility::Correlated>(
+                        raw_adjoint_electroatom_data,
+                        energy_grid,
+                        grid_searcher,
+                        reaction_pointer,
+                        critical_line_energies,
+                        properties.getAdjointElectronEvaluationTolerance() );
+      }
+      else if( electron_grid == "Unit-base" )
+      {
+        AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLin,Utility::UnitBase>(
+                        raw_adjoint_electroatom_data,
+                        energy_grid,
+                        grid_searcher,
+                        reaction_pointer,
+                        critical_line_energies,
+                        properties.getAdjointElectronEvaluationTolerance() );
+      }
+      else
+      {
+        THROW_EXCEPTION( std::runtime_error,
+                        "the 2D grid policy "
+                        << electron_grid <<
+                        " is not currently supported!" );
+      }
     }
     else
     {
@@ -154,32 +237,88 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
     std::vector<std::shared_ptr<const AdjointElectroatomicReaction> >
         electroionization_reactions;
 
+  if ( electron_grid == "Unit-base Correlated" || electron_grid == "Correlated" ||
+       electron_grid == "Unit-base" || electron_grid == "Direct" )
+
     if( electron_interp == "Log-Log-Log" )
     {
-      AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
-                                raw_adjoint_electroatom_data,
-                                energy_grid,
-                                grid_searcher,
-                                electroionization_reactions,
-                                properties.getAdjointElectronEvaluationTolerance() );
-    }
-    else if( electron_interp == "Lin-Lin-Log" )
-    {
-      AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
-                                raw_adjoint_electroatom_data,
-                                energy_grid,
-                                grid_searcher,
-                                electroionization_reactions,
-                                properties.getAdjointElectronEvaluationTolerance() );
+      if ( electron_grid == "Unit-base Correlated" )
+      {
+        AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+                                  raw_adjoint_electroatom_data,
+                                  energy_grid,
+                                  grid_searcher,
+                                  electroionization_reactions,
+                                  critical_line_energies,
+                                  properties.getAdjointElectronEvaluationTolerance() );
+      }
+      else if( electron_grid == "Correlated" )
+      {
+        AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LogLogLog,Utility::Correlated>(
+                                  raw_adjoint_electroatom_data,
+                                  energy_grid,
+                                  grid_searcher,
+                                  electroionization_reactions,
+                                  critical_line_energies,
+                                  properties.getAdjointElectronEvaluationTolerance() );
+      }
+      else if( electron_grid == "Unit-base" )
+      {
+        AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LogLogLog,Utility::UnitBase>(
+                                  raw_adjoint_electroatom_data,
+                                  energy_grid,
+                                  grid_searcher,
+                                  electroionization_reactions,
+                                  critical_line_energies,
+                                  properties.getAdjointElectronEvaluationTolerance() );
+      }
+      else
+      {
+        THROW_EXCEPTION( std::runtime_error,
+                        "the 2D grid policy "
+                        << electron_grid <<
+                        " is not currently supported!" );
+      }
     }
     else if( electron_interp == "Lin-Lin-Lin" )
     {
-      AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
-                                raw_adjoint_electroatom_data,
-                                energy_grid,
-                                grid_searcher,
-                                electroionization_reactions,
-                                properties.getAdjointElectronEvaluationTolerance() );
+      if ( electron_grid == "Unit-base Correlated" )
+      {
+        AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
+                                  raw_adjoint_electroatom_data,
+                                  energy_grid,
+                                  grid_searcher,
+                                  electroionization_reactions,
+                                  critical_line_energies,
+                                  properties.getAdjointElectronEvaluationTolerance() );
+      }
+      else if( electron_grid == "Correlated" )
+      {
+        AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLin,Utility::Correlated>(
+                                  raw_adjoint_electroatom_data,
+                                  energy_grid,
+                                  grid_searcher,
+                                  electroionization_reactions,
+                                  critical_line_energies,
+                                  properties.getAdjointElectronEvaluationTolerance() );
+      }
+      else if( electron_grid == "Unit-base" )
+      {
+        AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLin,Utility::UnitBase>(
+                                  raw_adjoint_electroatom_data,
+                                  energy_grid,
+                                  grid_searcher,
+                                  electroionization_reactions,
+                                  critical_line_energies,
+                                  properties.getAdjointElectronEvaluationTolerance() );
+      }
+      else
+      {
+        THROW_EXCEPTION( std::runtime_error,
+                        "the 2D grid policy "
+                        << electron_grid <<
+                        " is not currently supported!" );
+      }
     }
     else
     {
@@ -200,7 +339,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
   adjoint_electroatom_core.reset(
     new AdjointElectroatomCore( energy_grid,
                                 grid_searcher,
-                                std::make_shared<const std::vector<double> >(),
+                                critical_line_energies,
                                 total_forward_reaction,
                                 scattering_reactions,
                                 AdjointElectroatomCore::ConstReactionMap(),

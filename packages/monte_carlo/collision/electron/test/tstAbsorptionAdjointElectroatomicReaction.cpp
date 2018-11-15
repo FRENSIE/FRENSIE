@@ -82,7 +82,7 @@ FRENSIE_UNIT_TEST( AbsorptionAdjointElectroatomicReaction, getCrossSection )
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.420906922056859401e+01, 1e-12 );
 
   cross_section = absorption_reaction->getCrossSection( 2e-2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.611838244690622535, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.595836278017287224, 1e-12 );
 
   cross_section = absorption_reaction->getCrossSection( 20.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.873816755338521323e-01, 1e-12 );
@@ -138,7 +138,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create the reaction
     absorption_reaction.reset(
-      new MonteCarlo::AbsorptionAdjointElectroatomicReaction<Utility::LinLin>(
+      new MonteCarlo::AbsorptionAdjointElectroatomicReaction<Utility::LogLog>(
         energy_grid,
         cross_section,
         data_container.getAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex(),

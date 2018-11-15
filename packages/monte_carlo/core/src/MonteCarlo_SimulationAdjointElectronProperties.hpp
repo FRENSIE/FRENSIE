@@ -129,6 +129,25 @@ public:
   //! Get the number of adjoint electron hash grid bins
   unsigned getNumberOfAdjointElectronHashGridBins() const;
 
+  //! Set the critical line energies
+  void setCriticalAdjointElectronLineEnergies(
+                        const std::vector<double>& critical_line_energies );
+
+  //! Get the critical line energies
+  const std::vector<double>& getCriticalAdjointElectronLineEnergies() const;
+
+  //! Set the cutoff roulette threshold weight
+  void setAdjointElectronRouletteThresholdWeight( const double threshold_weight );
+
+  //! Return the cutoff roulette threshold weight
+  double getAdjointElectronRouletteThresholdWeight() const;
+
+  //! Set the cutoff roulette survival weight
+  void setAdjointElectronRouletteSurvivalWeight( const double survival_weight );
+
+  //! Return the cutoff roulette survival weight
+  double getAdjointElectronRouletteSurvivalWeight() const;
+
 private:
 
   // Save the state to an archive
@@ -180,6 +199,15 @@ private:
 
   // The number of adjoint electron hash grid bins
   unsigned d_num_adjoint_electron_hash_grid_bins;
+
+  // The critical line energies
+  std::vector<double> d_critical_line_energies;
+
+  // The roulette threshold weight
+  double d_threshold_weight;
+
+  // The roulette survival weight
+  double d_survival_weight;
 };
 
 // Save/load the state to an archive
@@ -199,6 +227,9 @@ void SimulationAdjointElectronProperties::serialize( Archive& ar,
   ar & BOOST_SERIALIZATION_NVP( d_adjoint_elastic_distribution_mode );
   ar & BOOST_SERIALIZATION_NVP( d_coupled_elastic_sampling_method );
   ar & BOOST_SERIALIZATION_NVP( d_num_adjoint_electron_hash_grid_bins );
+  ar & BOOST_SERIALIZATION_NVP( d_critical_line_energies );
+  ar & BOOST_SERIALIZATION_NVP( d_threshold_weight );
+  ar & BOOST_SERIALIZATION_NVP( d_survival_weight );
 }
 
 } // end MonteCarlo namespace

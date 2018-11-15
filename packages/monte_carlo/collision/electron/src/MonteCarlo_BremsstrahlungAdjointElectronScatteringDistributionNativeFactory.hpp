@@ -26,7 +26,7 @@ public:
   static void createBremsstrahlungDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::vector<double>& adjoint_energy_grid,
-    std::shared_ptr<const BremsstrahlungAdjointElectronScatteringDistribution>&
+    std::shared_ptr<BremsstrahlungAdjointElectronScatteringDistribution>&
         scattering_distribution,
     const double evaluation_tol = 1e-7 );
 

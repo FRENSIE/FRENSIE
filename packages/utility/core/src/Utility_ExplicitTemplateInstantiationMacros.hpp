@@ -23,9 +23,9 @@
 
 #if !defined SWIG
 
-/*! Declare an external explicit instantiation of template class 
+/*! Declare an external explicit instantiation of template class
  * \details This can only be called once for a given instantiation. It is
- * therefor recommneded that it is called in the header file.
+ * therefor recommended that it is called in the header file.
  * \ingroup explicit_instantiation_macros
  */
 #define EXTERN_EXPLICIT_TEMPLATE_CLASS_INST_ALWAYS( ... )       \

@@ -22,7 +22,7 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<MonteCarlo::HybridElasticAdjointElectroatomicReaction<Utility::LinLin> >
+std::shared_ptr<MonteCarlo::HybridElasticAdjointElectroatomicReaction<Utility::LogLog> >
     hybrid_elastic_reaction;
 
 //---------------------------------------------------------------------------//
@@ -91,7 +91,7 @@ FRENSIE_UNIT_TEST( HybridElasticAdjointElectroatomicReaction,
 
   cross_section = hybrid_elastic_reaction->getCrossSection( 1e-3 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                                   2.012785236585153267e+06,
+                                   1.951042366659260122e+06,
                                    1e-12 );
 
   ratio = 8.1709618153675321e-06;
@@ -240,7 +240,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create the reaction
     hybrid_elastic_reaction.reset(
-      new MonteCarlo::HybridElasticAdjointElectroatomicReaction<Utility::LinLin>(
+      new MonteCarlo::HybridElasticAdjointElectroatomicReaction<Utility::LogLog>(
             energy_grid,
             hybrid_cross_section,
             hybrid_threshold_energy_index,

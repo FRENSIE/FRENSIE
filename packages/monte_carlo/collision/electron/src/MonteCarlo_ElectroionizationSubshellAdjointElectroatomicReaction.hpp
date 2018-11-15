@@ -34,7 +34,7 @@ public:
     const std::shared_ptr<const std::vector<double> >& cross_section,
     const size_t threshold_energy_index,
     const Data::SubshellType interaction_subshell,
-    const std::shared_ptr<const ElectroionizationSubshellAdjointElectronScatteringDistribution>&
+    const std::shared_ptr<ElectroionizationSubshellAdjointElectronScatteringDistribution>&
             electroionization_subshell_distribution );
 
   //! Constructor
@@ -44,13 +44,20 @@ public:
     const size_t threshold_energy_index,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     const Data::SubshellType interaction_subshell,
-    const std::shared_ptr<const ElectroionizationSubshellAdjointElectronScatteringDistribution>&
+    const std::shared_ptr<ElectroionizationSubshellAdjointElectronScatteringDistribution>&
             electroionization_subshell_distribution );
 
 
   //! Destructor
   ~ElectroionizationSubshellAdjointElectroatomicReaction()
   { /* ... */ }
+
+  //! Set the critical line energies
+  void setCriticalLineEnergies(
+   const std::shared_ptr<const std::vector<double> >& critical_line_energies );
+
+  //! Get the critical line energies
+  const std::vector<double>& getCriticalLineEnergies() const;
 
   //! Simulate the reaction
   void react( AdjointElectronState& electron,
@@ -65,7 +72,7 @@ public:
 
 private:
   // The electroionization distribution
-  std::shared_ptr<const ElectroionizationSubshellAdjointElectronScatteringDistribution>
+  std::shared_ptr<ElectroionizationSubshellAdjointElectronScatteringDistribution>
     d_electroionization_subshell_distribution;
 
   // The interaction subshell

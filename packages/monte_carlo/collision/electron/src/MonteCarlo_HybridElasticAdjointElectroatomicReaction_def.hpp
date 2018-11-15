@@ -111,12 +111,6 @@ void HybridElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_sect
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticAdjointElectroatomicReaction<Utility::LinLin,false> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticAdjointElectroatomicReaction<Utility::LinLin,true> );
 
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticAdjointElectroatomicReaction<Utility::LinLog,false> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticAdjointElectroatomicReaction<Utility::LinLog,true> );
-
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticAdjointElectroatomicReaction<Utility::LogLin,false> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticAdjointElectroatomicReaction<Utility::LogLin,true> );
-
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticAdjointElectroatomicReaction<Utility::LogLog,false> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticAdjointElectroatomicReaction<Utility::LogLog,true> );
 

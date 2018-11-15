@@ -19,6 +19,7 @@
 #include "MonteCarlo_EventHandler.hpp"
 #include "MonteCarlo_WeightWindow.hpp"
 #include "MonteCarlo_CollisionForcer.hpp"
+#include "MonteCarlo_StandardWeightCutoffRoulette.hpp"
 #include "MonteCarlo_ParticleSource.hpp"
 #include "MonteCarlo_FilledGeometryModel.hpp"
 #include "MonteCarlo_CollisionKernel.hpp"
@@ -165,6 +166,24 @@ protected:
 
 private:
 
+  // Set the cutoff weight roulette
+  void setCutoffWeightRoulette();
+
+  // Set the neutron cutoff weight roulette
+  void setNeutronCutoffWeightRoulette();
+
+  // Set the photon cutoff weight roulette
+  void setPhotonCutoffWeightRoulette();
+
+  // Set the adjoint photon cutoff weight roulette
+  void setAdjointPhotonCutoffWeightRoulette();
+
+  // Set the electron cutoff weight roulette
+  void setElectronCutoffWeightRoulette();
+
+  // Set the adjoint electron cutoff weight roulette
+  void setAdjointElectronCutoffWeightRoulette();
+
   // Simulate an unresolved particle track
   template<typename State>
   void simulateUnresolvedParticleTrack(
@@ -227,6 +246,9 @@ private:
 
   // The collision forcer
   std::shared_ptr<const CollisionForcer> d_collision_forcer;
+
+  // The weight cutoff roulette
+  std::shared_ptr<StandardWeightCutoffRoulette> d_weight_roulette;
 
   // The simulation properties
   std::shared_ptr<const SimulationProperties> d_properties;

@@ -1,0 +1,9 @@
+FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_event_weight_cutoff)
+
+FRENSIE_ADD_TEST_EXECUTABLE(DefaultWeightCutoffRoulette DEPENDS tstDefaultWeightCutoffRoulette.cpp)
+FRENSIE_ADD_TEST(DefaultWeightCutoffRoulette)
+
+FRENSIE_ADD_TEST_EXECUTABLE(StandardWeightCutoffRoulette DEPENDS tstStandardWeightCutoffRoulette.cpp )
+FRENSIE_ADD_TEST(StandardWeightCutoffRoulette )
+
+FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_event_weight_cutoff)

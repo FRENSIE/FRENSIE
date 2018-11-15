@@ -44,6 +44,8 @@ class SimulationPhotonPropertiesTestCase(unittest.TestCase):
         self.assertTrue(properties.isAtomicRelaxationModeOn() )
         self.assertFalse(properties.isDetailedPairProductionModeOn() )
         self.assertFalse(properties.isPhotonuclearInteractionModeOn() )
+        self.assertEqual( properties.getPhotonRouletteThresholdWeight(), 0.0 )
+        self.assertEqual( properties.getPhotonRouletteSurvivalWeight(), 0.0 )
 
     def testSetMinPhotonEnergy(self):
         "*Test MonteCarlo.SimulationPhotonProperties setMinPhotonEnergy"
@@ -110,6 +112,26 @@ class SimulationPhotonPropertiesTestCase(unittest.TestCase):
 
         properties.setPhotonuclearInteractionModeOff()
         self.assertFalse(properties.isPhotonuclearInteractionModeOn() )
+
+    def testGetPhotonRouletteThresholdWeight(self):
+        "*Test MonteCarlo.SimulationPhotonProperties setPhotonRouletteThresholdWeight"
+        properties = MonteCarlo.SimulationPhotonProperties()
+
+        weight = 1e-14
+        properties.setPhotonRouletteThresholdWeight( weight )
+
+        self.assertEqual( properties.getPhotonRouletteThresholdWeight(),
+                          weight )
+
+    def testGetPhotonRouletteSurvivalWeight(self):
+        "*Test MonteCarlo.SimulationPhotonProperties setPhotonRouletteSurvivalWeight"
+        properties = MonteCarlo.SimulationPhotonProperties()
+
+        double weight = 1e-12
+        properties.setPhotonRouletteSurvivalWeight( weight )
+
+        self.assertEqual( properties.getPhotonRouletteSurvivalWeight(),
+                          weight )
 
 #-----------------------------------------------------------------------------#
 # Custom main

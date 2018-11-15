@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_GEN_ADJOINT_PAIR_PRODUCTION_ENERGY_DISTRIBUTION_NORM_CONSTANT_EVALUTOR_HPP
-#define DATA_GEN_ADJOINT_PAIR_PRODUCTION_ENERGY_DISTRIBUTION_NORM_CONSTANT_EVALUTOR_HPP
+#ifndef DATA_GEN_ADJOINT_PAIR_PRODUCTION_ENERGY_DISTRIBUTION_NORM_CONSTANT_EVALUATOR_HPP
+#define DATA_GEN_ADJOINT_PAIR_PRODUCTION_ENERGY_DISTRIBUTION_NORM_CONSTANT_EVALUATOR_HPP
 
 // Std Lib Includes
 #include <memory>
@@ -61,7 +61,7 @@ private:
   // The pair production cross section
   std::unique_ptr<const MonteCarlo::PhotoatomicReaction> d_pair_production_cs;
 };
-  
+
 } // end DataGen namespace
 
 //---------------------------------------------------------------------------//
@@ -72,7 +72,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end DATA_GEN_ADJOINT_PAIR_PRODUCTION_ENERGY_DISTRIBUTION_NORM_CONSTANT_EVALUTOR_HPP
+#endif // end DATA_GEN_ADJOINT_PAIR_PRODUCTION_ENERGY_DISTRIBUTION_NORM_CONSTANT_EVALUATOR_HPP
 
 //---------------------------------------------------------------------------//
 // end DataGen_AdjointPairProductionEnergyDistributionNormContstantEvaluator.hpp

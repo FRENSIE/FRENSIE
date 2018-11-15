@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Data_XSSELectronDataExtractor.hpp
+//! \file   Data_XSSElectronDataExtractor.hpp
 //! \author Luke Kersting
 //! \brief  XSS array (from ace table) electron condensed history extractor dec
 //!

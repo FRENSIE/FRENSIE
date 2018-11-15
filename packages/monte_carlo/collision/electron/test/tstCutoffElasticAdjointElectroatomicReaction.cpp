@@ -88,7 +88,7 @@ FRENSIE_UNIT_TEST( CutoffElasticAdjointElectroatomicReaction, getCrossSection )
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.74896E+08, 1e-12 );
 
   cross_section = elastic_reaction->getCrossSection( 1.0E-03 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.874725328661224805e+06, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.804290802376420237e+06, 1e-12 );
 
   cross_section = elastic_reaction->getCrossSection( 20.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.0472762372903748E+02, 1e-12 );
@@ -106,7 +106,7 @@ FRENSIE_UNIT_TEST( CutoffElasticAdjointElectroatomicReaction,
 
   ratio = cutoff_distribution->evaluateCutoffCrossSectionRatio( 1.0E-03 );
   cross_section = cutoff_elastic_reaction->getCrossSection( 1.0E-03 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.874725328661224805e+06*ratio, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.804290802376420237e+06*ratio, 1e-12 );
 
   ratio = cutoff_distribution->evaluateCutoffCrossSectionRatio( 20.0 );
   cross_section = cutoff_elastic_reaction->getCrossSection( 20.0 );
@@ -183,7 +183,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create the reaction
     elastic_reaction.reset(
-      new MonteCarlo::CutoffElasticAdjointElectroatomicReaction<Utility::LinLin>(
+      new MonteCarlo::CutoffElasticAdjointElectroatomicReaction<Utility::LogLog>(
                 energy_grid,
                 elastic_cross_section,
                 elastic_threshold_index,
@@ -206,7 +206,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create the reaction
     cutoff_elastic_reaction.reset(
-      new MonteCarlo::CutoffElasticAdjointElectroatomicReaction<Utility::LinLin>(
+      new MonteCarlo::CutoffElasticAdjointElectroatomicReaction<Utility::LogLog>(
                 energy_grid,
                 cutoff_cross_section,
                 elastic_threshold_index,

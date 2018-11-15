@@ -40,6 +40,8 @@ class SimulationNeutronPropertiesTestCase(unittest.TestCase):
         self.assertEqual( properties.getAbsoluteMaxNeutronEnergy(), 20.0 )
         self.assertEqual( properties.getFreeGasThreshold(), 400.0 )
         self.assertTrue( properties.isUnresolvedResonanceProbabilityTableModeOn() )
+        self.assertEqual( properties.getNeutronRouletteThresholdWeight(), 0.0 )
+        self.assertEqual( properties.getNeutronRouletteSurvivalWeight(), 0.0 )
 
 
     def testSetMinNeutronEnergy(self):
@@ -79,6 +81,26 @@ class SimulationNeutronPropertiesTestCase(unittest.TestCase):
 
         properties.setUnresolvedResonanceProbabilityTableModeOn()
         self.assertTrue(properties.isUnresolvedResonanceProbabilityTableModeOn() )
+
+    def testGetNeutronRouletteThresholdWeight(self):
+        "*Test MonteCarlo.SimulationNeutronProperties setNeutronRouletteThresholdWeight"
+        properties = MonteCarlo.SimulationNeutronProperties()
+
+        weight = 1e-14
+        properties.setNeutronRouletteThresholdWeight( weight )
+
+        self.assertEqual( properties.getNeutronRouletteThresholdWeight(),
+                          weight )
+
+    def testGetNeutronRouletteSurvivalWeight(self):
+        "*Test MonteCarlo.SimulationNeutronProperties setNeutronRouletteSurvivalWeight"
+        properties = MonteCarlo.SimulationNeutronProperties()
+
+        double weight = 1e-12
+        properties.setNeutronRouletteSurvivalWeight( weight )
+
+        self.assertEqual( properties.getNeutronRouletteSurvivalWeight(),
+                          weight )
 
 #-----------------------------------------------------------------------------#
 # Custom main

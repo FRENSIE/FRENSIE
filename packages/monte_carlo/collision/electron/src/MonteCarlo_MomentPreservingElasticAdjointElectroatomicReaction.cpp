@@ -14,15 +14,9 @@ namespace MonteCarlo{
 EXPLICIT_TEMPLATE_CLASS_INST( MomentPreservingElasticAdjointElectroatomicReaction<Utility::LinLin,false> );
 EXPLICIT_TEMPLATE_CLASS_INST( MomentPreservingElasticAdjointElectroatomicReaction<Utility::LinLin,true> );
 
-EXPLICIT_TEMPLATE_CLASS_INST( MomentPreservingElasticAdjointElectroatomicReaction<Utility::LinLog,false> );
-EXPLICIT_TEMPLATE_CLASS_INST( MomentPreservingElasticAdjointElectroatomicReaction<Utility::LinLog,true> );
-
-EXPLICIT_TEMPLATE_CLASS_INST( MomentPreservingElasticAdjointElectroatomicReaction<Utility::LogLin,false> );
-EXPLICIT_TEMPLATE_CLASS_INST( MomentPreservingElasticAdjointElectroatomicReaction<Utility::LogLin,true> );
-
 EXPLICIT_TEMPLATE_CLASS_INST( MomentPreservingElasticAdjointElectroatomicReaction<Utility::LogLog,false> );
 EXPLICIT_TEMPLATE_CLASS_INST( MomentPreservingElasticAdjointElectroatomicReaction<Utility::LogLog,true> );
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

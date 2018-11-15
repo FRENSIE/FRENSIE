@@ -65,7 +65,8 @@ ParticleSimulationManager::ParticleSimulationManager(
     d_rendezvous_batch_size( 0 ),
     d_batch_size( 0 ),
     d_end_simulation( false ),
-    d_exit_simulation( false )
+    d_exit_simulation( false ),
+    d_weight_roulette( std::make_shared<StandardWeightCutoffRoulette>() )
 {
   // Make sure that the simulation name is valid
   testPrecondition( simulation_name.size() > 0 );
@@ -104,6 +105,9 @@ ParticleSimulationManager::ParticleSimulationManager(
 
   if( d_batch_size > d_properties->getMaxBatchSize() )
     d_batch_size = d_properties->getMaxBatchSize();
+
+  // Set the cutoff weight roulette
+  this->setCutoffWeightRoulette();
 }
 
 // Return the next history that will be completed
@@ -224,6 +228,100 @@ void ParticleSimulationManager::setSimulationNameAndArchiveType(
   this->basicRendezvous();
 }
 
+// Set the cutoff weight roulette
+void ParticleSimulationManager::setCutoffWeightRoulette()
+{
+  if( d_properties->getParticleMode() == NEUTRON_MODE )
+  {
+    this->setNeutronCutoffWeightRoulette();
+  }
+  else if( d_properties->getParticleMode() == NEUTRON_PHOTON_MODE )
+  {
+    this->setNeutronCutoffWeightRoulette();
+    this->setPhotonCutoffWeightRoulette();
+  }
+  else if( d_properties->getParticleMode() == NEUTRON_PHOTON_ELECTRON_MODE )
+  {
+    this->setNeutronCutoffWeightRoulette();
+    this->setPhotonCutoffWeightRoulette();
+    this->setElectronCutoffWeightRoulette();
+  }
+  else if( d_properties->getParticleMode() == PHOTON_MODE )
+  {
+    this->setPhotonCutoffWeightRoulette();
+  }
+  else if( d_properties->getParticleMode() == PHOTON_ELECTRON_MODE )
+  {
+    this->setPhotonCutoffWeightRoulette();
+    this->setElectronCutoffWeightRoulette();
+  }
+  else if( d_properties->getParticleMode() == ADJOINT_PHOTON_MODE )
+  {
+    this->setAdjointPhotonCutoffWeightRoulette();
+  }
+  else if( d_properties->getParticleMode() == ADJOINT_ELECTRON_MODE )
+  {
+    this->setAdjointElectronCutoffWeightRoulette();
+  }
+}
+
+
+
+// Set the neutron cutoff weight roulette
+void ParticleSimulationManager::setNeutronCutoffWeightRoulette()
+{
+  if ( d_properties->getRouletteSurvivalWeight<NeutronState>() > 0.0 )
+  {
+    d_weight_roulette->setCutoffWeights( NEUTRON,
+                                         d_properties->getRouletteThresholdWeight<NeutronState>(),
+                                         d_properties->getRouletteSurvivalWeight<NeutronState>() );
+  }
+}
+
+// Set the photon cutoff weight roulette
+void ParticleSimulationManager::setPhotonCutoffWeightRoulette()
+{
+  if ( d_properties->getRouletteSurvivalWeight<PhotonState>() > 0.0 )
+  {
+    d_weight_roulette->setCutoffWeights( PHOTON,
+                                         d_properties->getRouletteThresholdWeight<PhotonState>(),
+                                         d_properties->getRouletteSurvivalWeight<PhotonState>() );
+  }
+}
+
+// Set the adjoint photon cutoff weight roulette
+void ParticleSimulationManager::setAdjointPhotonCutoffWeightRoulette()
+{
+  if ( d_properties->getRouletteSurvivalWeight<AdjointPhotonState>() > 0.0 )
+  {
+    d_weight_roulette->setCutoffWeights( ADJOINT_PHOTON,
+                                         d_properties->getRouletteThresholdWeight<AdjointPhotonState>(),
+                                         d_properties->getRouletteSurvivalWeight<AdjointPhotonState>() );
+  }
+}
+
+// Set the electron cutoff weight roulette
+void ParticleSimulationManager::setElectronCutoffWeightRoulette()
+{
+  if ( d_properties->getRouletteSurvivalWeight<ElectronState>() > 0.0 )
+  {
+    d_weight_roulette->setCutoffWeights( ELECTRON,
+                                         d_properties->getRouletteThresholdWeight<ElectronState>(),
+                                         d_properties->getRouletteSurvivalWeight<ElectronState>() );
+  }
+}
+
+// Set the adjoint electron cutoff weight roulette
+void ParticleSimulationManager::setAdjointElectronCutoffWeightRoulette()
+{
+  if ( d_properties->getRouletteSurvivalWeight<AdjointElectronState>() > 0.0 )
+  {
+    d_weight_roulette->setCutoffWeights( ADJOINT_ELECTRON,
+                                         d_properties->getRouletteThresholdWeight<AdjointElectronState>(),
+                                         d_properties->getRouletteSurvivalWeight<AdjointElectronState>() );
+  }
+}
+
 // Run the simulation set up by the user
 void ParticleSimulationManager::runSimulation()
 {
@@ -254,7 +352,7 @@ void ParticleSimulationManager::runSimulation()
       this->incrementNextHistory( d_batch_size );
     }
     // End or exit the simulation if requested (from signal handler)
-    else 
+    else
       break;
 
     // Exit the simulation if requested (from signal handler)
@@ -288,7 +386,7 @@ void ParticleSimulationManager::runSimulation()
   {
     FRENSIE_LOG_NOTIFICATION( "Simulation terminated. " );
   }
-  
+
   FRENSIE_FLUSH_ALL_LOGS();
 }
 
@@ -449,7 +547,7 @@ void ParticleSimulationManager::runSimulationBatch(
 
       // Initialize the random number generator for this history
       Utility::RandomNumberGenerator::initialize( history );
-      
+
       // Sample a particle state from the source
       try{
         d_source->sampleParticleState( source_bank, history );
@@ -457,45 +555,45 @@ void ParticleSimulationManager::runSimulationBatch(
       catch( const Geometry::GeometryError& exception )
       {
         LOG_LOST_PARTICLE_DETAILS( source_bank.top() );
-        
+
         FRENSIE_LOG_NESTED_ERROR( exception.what() );
-        
+
         continue;
       }
       catch( const std::runtime_error& exception )
       {
         FRENSIE_LOG_NESTED_ERROR( exception.what() );
-        
+
         continue;
       }
       // The source has likely been constructed incorrectly
       catch( const std::logic_error& exception )
       {
         FRENSIE_LOG_ERROR( "There is an issue with the source!" );
-        
+
         FRENSIE_LOG_NESTED_ERROR( exception.what() );
 
         d_exit_simulation = true;
-        
+
         continue;
       }
-      
+
       // Simulate the particles generated by the source first
       while( source_bank.size() > 0 )
       {
         this->simulateUnresolvedParticle( source_bank.top(), bank, true );
-        
+
         source_bank.pop();
       }
-      
+
       // This history only ends when the particle bank is empty
       while( bank.size() > 0 )
       {
         this->simulateUnresolvedParticle( bank.top(), bank, false );
-        
+
         bank.pop();
       }
-      
+
       // History complete - commit all observer history contributions
       d_event_handler->commitObserverHistoryContributions();
     }
@@ -513,18 +611,18 @@ void ParticleSimulationManager::signalHandler( int signal )
   {
     static int number_of_signals_handled = 0;
     ++number_of_signals_handled;
-      
+
     if( number_of_signals_handled == 1 )
     {
       FRENSIE_LOG_NOTIFICATION( " Terminating simulation at next "
                                 "rendezvous ..." );
-      
+
       d_end_simulation = true;
     }
     else if( number_of_signals_handled == 2 )
     {
       FRENSIE_LOG_NOTIFICATION( " Terminating simulation immediately ..." );
-      
+
       d_exit_simulation = true;
     }
   }

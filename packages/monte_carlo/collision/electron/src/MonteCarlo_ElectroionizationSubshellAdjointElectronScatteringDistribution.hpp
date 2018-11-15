@@ -24,6 +24,11 @@ namespace MonteCarlo{
 class ElectroionizationSubshellAdjointElectronScatteringDistribution : public AdjointElectronScatteringDistribution
 {
 
+protected:
+
+  //! Typedef for line energy const iterator
+  typedef std::vector<double>::const_iterator LineEnergyIterator;
+
 public:
 
   //! Typedef for this type
@@ -42,8 +47,22 @@ public:
   virtual ~ElectroionizationSubshellAdjointElectronScatteringDistribution()
   { /* ... */ }
 
+  //! Set the critical line energies
+  void setCriticalLineEnergies(
+                             const std::shared_ptr<const std::vector<double> >&
+                             critical_line_energies );
+
+  //! Get the critical line energies
+  const std::vector<double>& getCriticalLineEnergies() const;
+
   //! Return the binding energy
   double getBindingEnergy() const;
+
+  //! Return the min incoming energy
+  double getMinEnergy() const;
+
+  //! Return the Max incoming energy
+  double getMaxEnergy() const;
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
@@ -73,6 +92,31 @@ public:
                                ParticleBank& bank,
                                Data::SubshellType& shell_of_interaction ) const;
 
+protected:
+
+  //! Check if an energy is above the scattering window
+  virtual bool isEnergyAboveScatteringWindow( const double energy_of_interest,
+                                              const double initial_energy ) const;
+
+  //! Check if an energy is in the scattering window
+  bool isEnergyInScatteringWindow( const double energy_of_interest,
+                                   const double initial_energy ) const;
+
+  // Return only the critical line energies that can be scattered into
+  void getCriticalLineEnergiesInScatteringWindow(
+                                        const double energy,
+                                        LineEnergyIterator& start_energy,
+                                        LineEnergyIterator& end_energy ) const;
+
+  //! Create a probe particle
+  virtual void createProbeParticle( const double energy_of_interest,
+                                    const AdjointElectronState& adjoint_electron,
+                                    ParticleBank& bank ) const;
+
+  //! Create the probe particles
+  void createProbeParticles( const AdjointElectronState& adjoint_electron,
+                             ParticleBank& bank ) const;
+
 private:
 
   // adjoint electroionization subshell scattering cross sections
@@ -80,6 +124,9 @@ private:
 
   // Subshell binding energy
   double d_binding_energy;
+
+  // The critical line energies
+  std::shared_ptr<const std::vector<double> > d_critical_line_energies;
 
   // Calculate the outgoing angle cosine
   double outgoingAngle( const double incoming_energy,

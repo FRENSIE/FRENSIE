@@ -99,12 +99,6 @@ void CoupledElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_sec
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CoupledElasticAdjointElectroatomicReaction<Utility::LinLin,false> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CoupledElasticAdjointElectroatomicReaction<Utility::LinLin,true> );
 
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CoupledElasticAdjointElectroatomicReaction<Utility::LinLog,false> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CoupledElasticAdjointElectroatomicReaction<Utility::LinLog,true> );
-
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CoupledElasticAdjointElectroatomicReaction<Utility::LogLin,false> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CoupledElasticAdjointElectroatomicReaction<Utility::LogLin,true> );
-
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CoupledElasticAdjointElectroatomicReaction<Utility::LogLog,false> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CoupledElasticAdjointElectroatomicReaction<Utility::LogLog,true> );
 

@@ -19,6 +19,11 @@ namespace MonteCarlo{
 class BremsstrahlungAdjointElectronScatteringDistribution : public AdjointElectronScatteringDistribution
 {
 
+protected:
+
+  //! Typedef for line energy const iterator
+  typedef std::vector<double>::const_iterator LineEnergyIterator;
+
 public:
 
   //! Typedef for the adjoint bremsstrahlung distribution
@@ -31,6 +36,14 @@ public:
   //! Destructor
   virtual ~BremsstrahlungAdjointElectronScatteringDistribution()
   { /* ... */ }
+
+  //! Set the critical line energies
+  void setCriticalLineEnergies(
+                             const std::shared_ptr<const std::vector<double> >&
+                             critical_line_energies );
+
+  //! Get the critical line energies
+  const std::vector<double>& getCriticalLineEnergies() const;
 
   //! Return the min incoming energy
   double getMinEnergy() const;
@@ -66,10 +79,38 @@ public:
                                ParticleBank& bank,
                                Data::SubshellType& shell_of_interaction ) const;
 
+protected:
+
+  //! Check if an energy is above the scattering window
+  virtual bool isEnergyAboveScatteringWindow( const double energy_of_interest,
+                                              const double initial_energy ) const;
+
+  //! Check if an energy is in the scattering window
+  bool isEnergyInScatteringWindow( const double energy_of_interest,
+                                   const double initial_energy ) const;
+
+  // Return only the critical line energies that can be scattered into
+  void getCriticalLineEnergiesInScatteringWindow(
+                                        const double energy,
+                                        LineEnergyIterator& start_energy,
+                                        LineEnergyIterator& end_energy ) const;
+
+  //! Create a probe particle
+  virtual void createProbeParticle( const double energy_of_interest,
+                                    const AdjointElectronState& adjoint_electron,
+                                    ParticleBank& bank ) const;
+
+  //! Create the probe particles
+  void createProbeParticles( const AdjointElectronState& adjoint_electron,
+                             ParticleBank& bank ) const;
+
 private:
 
   // bremsstrahlung scattering distribution
   std::shared_ptr<const BasicBivariateDist> d_adjoint_brem_scatter_dist;
+
+  // The critical line energies
+  std::shared_ptr<const std::vector<double> > d_critical_line_energies;
 };
 
 } // end MonteCarlo namespace

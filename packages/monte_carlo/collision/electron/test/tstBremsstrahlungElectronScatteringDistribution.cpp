@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstBremsstrahlungElectronScatteringScatteringDistribution.cpp
+//! \file   tstBremsstrahlungElectronScatteringDistribution.cpp
 //! \author Luke Kersting
 //! \brief  Bremsstrahlung electron scattering distribution unit tests
 //!
@@ -563,5 +563,5 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstBremsstrahlungElectronScatteringScatteringDistribution.cpp
+// end tstBremsstrahlungElectronScatteringDistribution.cpp
 //---------------------------------------------------------------------------//

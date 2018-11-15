@@ -128,7 +128,7 @@ namespace boost{
 
 namespace serialization{
 
-//! Serializate the MonteCarlo::AdjointPhotoatomicReactionType enums
+//! Serialize the MonteCarlo::AdjointPhotoatomicReactionType enums
 template<typename Archive>
 void serialize( Archive& archive,
                 MonteCarlo::AdjointPhotoatomicReactionType& type,

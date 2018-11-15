@@ -27,7 +27,7 @@ ElectroionizationSubshellAdjointElectroatomicReaction<InterpPolicy,processed_cro
     const std::shared_ptr<const std::vector<double> >& cross_section,
     const size_t threshold_energy_index,
     const Data::SubshellType interaction_subshell,
-    const std::shared_ptr<const ElectroionizationSubshellAdjointElectronScatteringDistribution>&
+    const std::shared_ptr<ElectroionizationSubshellAdjointElectronScatteringDistribution>&
             electroionization_subshell_distribution )
   : BaseType( incoming_energy_grid,
               cross_section,
@@ -54,7 +54,7 @@ ElectroionizationSubshellAdjointElectroatomicReaction<InterpPolicy,processed_cro
     const size_t threshold_energy_index,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     const Data::SubshellType interaction_subshell,
-    const std::shared_ptr<const ElectroionizationSubshellAdjointElectronScatteringDistribution>&
+    const std::shared_ptr<ElectroionizationSubshellAdjointElectronScatteringDistribution>&
             electroionization_subshell_distribution )
   : BaseType( incoming_energy_grid,
               cross_section,
@@ -72,6 +72,22 @@ ElectroionizationSubshellAdjointElectroatomicReaction<InterpPolicy,processed_cro
 
   // Make sure the distribution data is valid
   testPrecondition( electroionization_subshell_distribution.use_count() > 0 );
+}
+
+// Set the critical line energies
+template<typename InterpPolicy, bool processed_cross_section>
+void ElectroionizationSubshellAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::setCriticalLineEnergies(
+                const std::shared_ptr<const std::vector<double> >& critical_line_energies )
+{
+  d_electroionization_subshell_distribution->setCriticalLineEnergies( critical_line_energies );
+}
+
+// Get the critical line energies
+template<typename InterpPolicy, bool processed_cross_section>
+const std::vector<double>&
+ElectroionizationSubshellAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::getCriticalLineEnergies() const
+{
+  return d_electroionization_subshell_distribution->getCriticalLineEnergies();
 }
 
 // Simulate the reaction

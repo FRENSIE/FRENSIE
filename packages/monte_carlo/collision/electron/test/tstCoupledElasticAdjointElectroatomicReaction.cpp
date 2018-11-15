@@ -23,7 +23,7 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<MonteCarlo::CoupledElasticAdjointElectroatomicReaction<Utility::LinLin> > coupled_elastic_reaction;
+std::shared_ptr<MonteCarlo::CoupledElasticAdjointElectroatomicReaction<Utility::LogLog> > coupled_elastic_reaction;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -86,7 +86,7 @@ FRENSIE_UNIT_TEST( CoupledElasticAdjointElectroatomicReaction,
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.74896E+08, 1e-12 );
 
   cross_section = coupled_elastic_reaction->getCrossSection( 1.0E-03 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.874725328661224805e+06, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.804290802376420237e+06, 1e-12 );
 
   cross_section = coupled_elastic_reaction->getCrossSection( 20.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.3022122514987041e+04, 1e-12 );
@@ -163,7 +163,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create the reaction
     coupled_elastic_reaction.reset(
-      new MonteCarlo::CoupledElasticAdjointElectroatomicReaction<Utility::LinLin>(
+      new MonteCarlo::CoupledElasticAdjointElectroatomicReaction<Utility::LogLog>(
         energy_grid,
         total_cross_section,
         data_container.getAdjointTotalElasticCrossSectionThresholdEnergyIndex(),

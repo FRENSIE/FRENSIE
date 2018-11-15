@@ -27,7 +27,7 @@ typedef TestArchiveHelper::TestArchives TestArchives;
 FRENSIE_UNIT_TEST( SimulationPhotonProperties, defaults )
 {
   MonteCarlo::SimulationPhotonProperties properties;
-  
+
   FRENSIE_CHECK_EQUAL( properties.getAbsoluteMinPhotonEnergy(), 1e-3 );
   FRENSIE_CHECK_EQUAL( properties.getMinPhotonEnergy(), 1e-3 );
   FRENSIE_CHECK_EQUAL( properties.getMaxPhotonEnergy(), 20.0 );
@@ -39,6 +39,8 @@ FRENSIE_UNIT_TEST( SimulationPhotonProperties, defaults )
   FRENSIE_CHECK( properties.isAtomicRelaxationModeOn() );
   FRENSIE_CHECK( !properties.isDetailedPairProductionModeOn() );
   FRENSIE_CHECK( !properties.isPhotonuclearInteractionModeOn() );
+  FRENSIE_CHECK_SMALL( properties.getPhotonRouletteThresholdWeight(), 1e-30 );
+  FRENSIE_CHECK_SMALL( properties.getPhotonRouletteSurvivalWeight(), 1e-30 );
 }
 
 //---------------------------------------------------------------------------//
@@ -46,7 +48,7 @@ FRENSIE_UNIT_TEST( SimulationPhotonProperties, defaults )
 FRENSIE_UNIT_TEST( SimulationPhotonProperties, setMinPhotonEnergy )
 {
   MonteCarlo::SimulationPhotonProperties properties;
-  
+
   properties.setMinPhotonEnergy( 1e-2 );
 
   FRENSIE_CHECK_EQUAL( properties.getMinPhotonEnergy(), 1e-2 );
@@ -57,7 +59,7 @@ FRENSIE_UNIT_TEST( SimulationPhotonProperties, setMinPhotonEnergy )
 FRENSIE_UNIT_TEST( SimulationPhotonProperties, setMaxPhotonEnergy )
 {
   MonteCarlo::SimulationPhotonProperties properties;
-  
+
   properties.setMaxPhotonEnergy( 15.0 );
 
   FRENSIE_CHECK_EQUAL( properties.getMaxPhotonEnergy(), 15.0 );
@@ -68,7 +70,7 @@ FRENSIE_UNIT_TEST( SimulationPhotonProperties, setMaxPhotonEnergy )
 FRENSIE_UNIT_TEST( SimulationPhotonProperties, setKahnSamplingCutoffEnergy )
 {
   MonteCarlo::SimulationPhotonProperties properties;
-  
+
   properties.setKahnSamplingCutoffEnergy( 2.5 );
 
   FRENSIE_CHECK_EQUAL( properties.getKahnSamplingCutoffEnergy(), 2.5 );
@@ -79,7 +81,7 @@ FRENSIE_UNIT_TEST( SimulationPhotonProperties, setKahnSamplingCutoffEnergy )
 FRENSIE_UNIT_TEST( SimulationPhotonProperties, setNumberOfPhotonHashGridBins )
 {
   MonteCarlo::SimulationPhotonProperties properties;
-  
+
   properties.setNumberOfPhotonHashGridBins( 500 );
 
   FRENSIE_CHECK_EQUAL( properties.getNumberOfPhotonHashGridBins(), 500 );
@@ -90,7 +92,7 @@ FRENSIE_UNIT_TEST( SimulationPhotonProperties, setNumberOfPhotonHashGridBins )
 FRENSIE_UNIT_TEST( SimulationPhotonProperties, setIncoherentModelType )
 {
   MonteCarlo::SimulationPhotonProperties properties;
-  
+
   properties.setIncoherentModelType( MonteCarlo::KN_INCOHERENT_MODEL );
 
   FRENSIE_CHECK_EQUAL( properties.getIncoherentModelType(),
@@ -108,7 +110,7 @@ FRENSIE_UNIT_TEST( SimulationPhotonProperties, setAtomicRelaxationModeOffOn )
   FRENSIE_CHECK( !properties.isAtomicRelaxationModeOn() );
 
   properties.setAtomicRelaxationModeOn();
-  
+
   FRENSIE_CHECK( properties.isAtomicRelaxationModeOn() );
 }
 
@@ -123,7 +125,7 @@ FRENSIE_UNIT_TEST( SimulationPhotonProperties, setDetailedPairProductionModeOnOf
   FRENSIE_CHECK( properties.isDetailedPairProductionModeOn() );
 
   properties.setDetailedPairProductionModeOff();
-  
+
   FRENSIE_CHECK( !properties.isDetailedPairProductionModeOn() );
 }
 
@@ -138,8 +140,38 @@ FRENSIE_UNIT_TEST( SimulationPhotonProperties, setPhotonuclearInteractionModeOnO
   FRENSIE_CHECK( properties.isPhotonuclearInteractionModeOn() );
 
   properties.setPhotonuclearInteractionModeOff();
-  
+
   FRENSIE_CHECK( !properties.isPhotonuclearInteractionModeOn() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the critical line energies can be set
+FRENSIE_UNIT_TEST( SimulationPhotonProperties,
+                   getPhotonRouletteThresholdWeight )
+{
+  MonteCarlo::SimulationPhotonProperties properties;
+
+  double weight = 1e-14;
+
+  properties.setPhotonRouletteThresholdWeight( weight );
+
+  FRENSIE_CHECK_EQUAL( properties.getPhotonRouletteThresholdWeight(),
+                       weight );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the critical line energies can be set
+FRENSIE_UNIT_TEST( SimulationPhotonProperties,
+                   getPhotonRouletteSurvivalWeight )
+{
+  MonteCarlo::SimulationPhotonProperties properties;
+
+  double weight = 1e-12;
+
+  properties.setPhotonRouletteSurvivalWeight( weight );
+
+  FRENSIE_CHECK_EQUAL( properties.getPhotonRouletteSurvivalWeight(),
+                       weight );
 }
 
 //---------------------------------------------------------------------------//
@@ -173,6 +205,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationPhotonProperties,
     custom_properties.setAtomicRelaxationModeOff();
     custom_properties.setDetailedPairProductionModeOn();
     custom_properties.setPhotonuclearInteractionModeOn();
+    custom_properties.setPhotonRouletteThresholdWeight( 1e-15 );
+    custom_properties.setPhotonRouletteSurvivalWeight( 1e-13 );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( default_properties ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( custom_properties ) );
@@ -201,6 +235,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationPhotonProperties,
   FRENSIE_CHECK( default_properties.isAtomicRelaxationModeOn() );
   FRENSIE_CHECK( !default_properties.isDetailedPairProductionModeOn() );
   FRENSIE_CHECK( !default_properties.isPhotonuclearInteractionModeOn() );
+  FRENSIE_CHECK_SMALL( default_properties.getPhotonRouletteThresholdWeight(), 1e-30 );
+  FRENSIE_CHECK_SMALL( default_properties.getPhotonRouletteSurvivalWeight(), 1e-30  );
 
   MonteCarlo::SimulationPhotonProperties custom_properties;
 
@@ -217,6 +253,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationPhotonProperties,
   FRENSIE_CHECK( !custom_properties.isAtomicRelaxationModeOn() );
   FRENSIE_CHECK( custom_properties.isDetailedPairProductionModeOn() );
   FRENSIE_CHECK( custom_properties.isPhotonuclearInteractionModeOn() );
+  FRENSIE_CHECK_EQUAL( custom_properties.getPhotonRouletteThresholdWeight(), 1e-15 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getPhotonRouletteSurvivalWeight(), 1e-13 );
 }
 
 //---------------------------------------------------------------------------//

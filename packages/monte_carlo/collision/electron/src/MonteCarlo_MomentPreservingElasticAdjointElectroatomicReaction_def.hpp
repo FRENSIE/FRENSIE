@@ -101,12 +101,6 @@ void MomentPreservingElasticAdjointElectroatomicReaction<InterpPolicy,processed_
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MomentPreservingElasticAdjointElectroatomicReaction<Utility::LinLin,false> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MomentPreservingElasticAdjointElectroatomicReaction<Utility::LinLin,true> );
 
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MomentPreservingElasticAdjointElectroatomicReaction<Utility::LinLog,false> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MomentPreservingElasticAdjointElectroatomicReaction<Utility::LinLog,true> );
-
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MomentPreservingElasticAdjointElectroatomicReaction<Utility::LogLin,false> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MomentPreservingElasticAdjointElectroatomicReaction<Utility::LogLin,true> );
-
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MomentPreservingElasticAdjointElectroatomicReaction<Utility::LogLog,false> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MomentPreservingElasticAdjointElectroatomicReaction<Utility::LogLog,true> );
 

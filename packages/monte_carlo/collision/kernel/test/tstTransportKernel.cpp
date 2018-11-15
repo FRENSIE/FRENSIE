@@ -600,11 +600,11 @@ FRENSIE_UNIT_TEST( TransportKernel,
     Utility::RandomNumberGenerator::setFakeStream( {0.5, 0.25} );
 
     FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleDistanceToNextCollisionSite( adjoint_electron ),
-                                     3.532088794909267672e-06,
+                                     3.532382999182725021e-06,
                                      1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleDistanceToNextCollisionSite( adjoint_electron ),
-                                     1.465949300669967403e-06,
+                                     1.466071406475900448e-06,
                                      1e-15 );
 
     Utility::RandomNumberGenerator::unsetFakeStream();
