@@ -321,7 +321,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffCrossSectio
   // Calculate the ratio of the cutoff to the total cross section
   std::vector<double> cross_section_ratio( raw_energy_grid->size() );
   std::vector<double> energy_grid( raw_energy_grid->size() );
-  
+
   for( unsigned n = 0; n < energy_grid.size(); ++n )
   {
     // Get the energy

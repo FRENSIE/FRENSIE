@@ -48,18 +48,12 @@ void AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction(
                                                       energy_grid->end() ) );
 
   // Cutoff elastic cross section
-  std::shared_ptr<std::vector<double> >
-    cutoff_cross_section( new std::vector<double> );
-  cutoff_cross_section->assign(
-    raw_adjoint_electroatom_data.getAdjointCutoffElasticCrossSection().begin(),
-    raw_adjoint_electroatom_data.getAdjointCutoffElasticCrossSection().end() );
+  auto cutoff_cross_section = std::make_shared<std::vector<double> >(
+    raw_adjoint_electroatom_data.getAdjointCutoffElasticCrossSection() );
 
   // Total elastic cross section
-  std::shared_ptr<std::vector<double> >
-    total_cross_section( new std::vector<double> );
-  total_cross_section->assign(
-    raw_adjoint_electroatom_data.getAdjointTotalElasticCrossSection().begin(),
-    raw_adjoint_electroatom_data.getAdjointTotalElasticCrossSection().end() );
+  auto total_cross_section = std::make_shared<std::vector<double> >(
+    raw_adjoint_electroatom_data.getAdjointTotalElasticCrossSection() );
 
   // Create the coupled elastic scattering distribution
   std::shared_ptr<const CoupledElasticElectronScatteringDistribution> distribution;
