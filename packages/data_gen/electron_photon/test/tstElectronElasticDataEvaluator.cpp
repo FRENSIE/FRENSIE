@@ -43,7 +43,7 @@ FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
                        MonteCarlo::UNIT_BASE_CORRELATED_GRID );
   FRENSIE_CHECK_EQUAL( evaluator.getCoupledElasticSamplingMethod(),
                        MonteCarlo::MODIFIED_TWO_D_UNION );
-  FRENSIE_CHECK_EQUAL( evaluator.isGenerateNewDistributionAtMaxEnergyOn(),
+  FRENSIE_CHECK_EQUAL( evaluator.isGenerateNewDistributionAtMinAndMaxEnergyOn(),
                        false );
 }
 
@@ -65,7 +65,7 @@ FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator, constructor_endl )
                        MonteCarlo::CORRELATED_GRID );
   FRENSIE_CHECK_EQUAL( evaluator.getCoupledElasticSamplingMethod(),
                        MonteCarlo::TWO_D_UNION );
-  FRENSIE_CHECK_EQUAL( evaluator.isGenerateNewDistributionAtMaxEnergyOn(),
+  FRENSIE_CHECK_EQUAL( evaluator.isGenerateNewDistributionAtMinAndMaxEnergyOn(),
                        true );
 }
 
@@ -87,7 +87,7 @@ FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator, constructor_native )
                        MonteCarlo::CORRELATED_GRID );
   FRENSIE_CHECK_EQUAL( evaluator.getCoupledElasticSamplingMethod(),
                        MonteCarlo::TWO_D_UNION );
-  FRENSIE_CHECK_EQUAL( evaluator.isGenerateNewDistributionAtMaxEnergyOn(),
+  FRENSIE_CHECK_EQUAL( evaluator.isGenerateNewDistributionAtMinAndMaxEnergyOn(),
                        true );
 }
 
@@ -193,19 +193,19 @@ FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
 //---------------------------------------------------------------------------//
 // Check that GenerateNewDistributionAtMaxEnergy can be set
 FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
-                   setGenerateNewDistributionAtMaxEnergyOffOn )
+                   setGenerateNewDistributionAtMinAndMaxEnergyOffOn )
 {
   DataGen::ElectronElasticDataEvaluator evaluator( h_endl_data_container );
 
-  FRENSIE_CHECK_EQUAL( evaluator.isGenerateNewDistributionAtMaxEnergyOn(),
+  FRENSIE_CHECK_EQUAL( evaluator.isGenerateNewDistributionAtMinAndMaxEnergyOn(),
                        false );
 
-  evaluator.setGenerateNewDistributionAtMaxEnergyOn();
-  FRENSIE_CHECK_EQUAL( evaluator.isGenerateNewDistributionAtMaxEnergyOn(),
+  evaluator.setGenerateNewDistributionAtMinAndMaxEnergyOn();
+  FRENSIE_CHECK_EQUAL( evaluator.isGenerateNewDistributionAtMinAndMaxEnergyOn(),
                        true );
 
-  evaluator.setGenerateNewDistributionAtMaxEnergyOff();
-  FRENSIE_CHECK_EQUAL( evaluator.isGenerateNewDistributionAtMaxEnergyOn(),
+  evaluator.setGenerateNewDistributionAtMinAndMaxEnergyOff();
+  FRENSIE_CHECK_EQUAL( evaluator.isGenerateNewDistributionAtMinAndMaxEnergyOn(),
                        false );
 }
 
@@ -402,6 +402,63 @@ FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
 //---------------------------------------------------------------------------//
 // Check that the elastic secondary distribution can be evaluated
 FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
+                   evaluateElasticSecondaryDistribution_higher_min_energy )
+{
+  DataGen::ElectronElasticDataEvaluator evaluator( h_endl_data_container, true );
+
+  evaluator.setMinEnergy( 1.5e-3 );
+  evaluator.setCutoffAngleCosine( 1.0 );
+  evaluator.setNumberOfMomentPreservingAngles( 1 );
+  evaluator.setTabularEvaluationTolerance( 1e-7 );
+  evaluator.setElectronTwoDInterpPolicy( MonteCarlo::LOGLOGLOG_INTERPOLATION );
+  evaluator.setElectronTwoDGridPolicy( MonteCarlo::UNIT_BASE_CORRELATED_GRID );
+
+  std::vector<double> angular_grid, moment_preserving_cross_section_reduction;
+  std::map<double,std::vector<double> > cutoff_elastic_angles, cutoff_elastic_pdf, moment_preserving_angles, moment_preserving_weights;
+
+  // Create the coupled elastic distribution (combined Cutoff and Screened Rutherford)
+  evaluator.evaluateElasticSecondaryDistribution(
+      angular_grid,
+      cutoff_elastic_angles,
+      cutoff_elastic_pdf,
+      moment_preserving_cross_section_reduction,
+      moment_preserving_angles,
+      moment_preserving_weights );
+
+  FRENSIE_CHECK_EQUAL( angular_grid.size(), 15 );
+  FRENSIE_CHECK_EQUAL( angular_grid.front(), 1.0e-3 );
+  FRENSIE_CHECK_EQUAL( angular_grid.back(), 1.0e+5 );
+
+  std::vector<double> elastic_angles = cutoff_elastic_angles[1.0e-3];
+
+  FRENSIE_CHECK_EQUAL( elastic_angles.front(), -1.0 );
+  FRENSIE_CHECK_EQUAL( elastic_angles.back(), 0.999999 );
+  FRENSIE_CHECK_EQUAL( elastic_angles.size(), 30 );
+
+  elastic_angles = cutoff_elastic_angles[1.0e+5];
+
+  FRENSIE_CHECK_EQUAL( elastic_angles.front(), -1.0 );
+  FRENSIE_CHECK_EQUAL( elastic_angles.back(), 0.999999 );
+  FRENSIE_CHECK_EQUAL( elastic_angles.size(), 96 );
+
+  std::vector<double> elastic_pdf = cutoff_elastic_pdf[1.0e-3];
+
+  FRENSIE_CHECK_EQUAL( elastic_pdf.front(), 2.93923e-03 );
+  FRENSIE_CHECK_EQUAL( elastic_pdf.back(), 6.21102e+01 );
+  FRENSIE_CHECK_EQUAL( elastic_pdf.size(), 30 );
+
+  elastic_pdf = cutoff_elastic_pdf[1.0e+5];
+
+  FRENSIE_CHECK_EQUAL( elastic_pdf.front(), 6.25670e-13 );
+  FRENSIE_CHECK_EQUAL( elastic_pdf.back(), 9.86945e+5 );
+  FRENSIE_CHECK_EQUAL( elastic_pdf.size(), 96 );
+
+  FRENSIE_REQUIRE( moment_preserving_angles.size() == 0 )
+}
+
+//---------------------------------------------------------------------------//
+// Check that the elastic secondary distribution can be evaluated
+FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
                    evaluateElasticSecondaryDistribution_lower_max_energy )
 {
   DataGen::ElectronElasticDataEvaluator evaluator( h_endl_data_container );
@@ -464,13 +521,14 @@ FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
 {
   DataGen::ElectronElasticDataEvaluator evaluator( h_native_data_container );
 
+  evaluator.setMinEnergy( 1e-4 );
   evaluator.setMaxEnergy( 20.0 );
   evaluator.setCutoffAngleCosine( 0.9 );
   evaluator.setNumberOfMomentPreservingAngles( 1 );
   evaluator.setTabularEvaluationTolerance( 1e-7 );
   evaluator.setElectronTwoDInterpPolicy( MonteCarlo::LOGLOGLOG_INTERPOLATION );
   evaluator.setElectronTwoDGridPolicy( MonteCarlo::UNIT_BASE_CORRELATED_GRID );
-  evaluator.setGenerateNewDistributionAtMaxEnergyOn();
+  evaluator.setGenerateNewDistributionAtMinAndMaxEnergyOn();
 
   std::vector<double> angular_grid, mp_cross_section_reduction;
   std::map<double,std::vector<double> > cutoff_elastic_angles, cutoff_elastic_pdf, moment_preserving_angles, moment_preserving_weights;
@@ -485,10 +543,10 @@ FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
       moment_preserving_weights );
 
   FRENSIE_CHECK_EQUAL( angular_grid.size(), 12 );
-  FRENSIE_CHECK_EQUAL( angular_grid.front(), 1.0e-5 );
+  FRENSIE_CHECK_EQUAL( angular_grid.front(), 1e-4 );
   FRENSIE_CHECK_EQUAL( angular_grid.back(), 20.0 );
 
-  std::vector<double> elastic_angles = cutoff_elastic_angles[1.0e-5];
+  std::vector<double> elastic_angles = cutoff_elastic_angles[1e-4];
 
   FRENSIE_CHECK_EQUAL( elastic_angles.front(), -1.0 );
   FRENSIE_CHECK_EQUAL( elastic_angles.back(), 0.999999 );
@@ -500,10 +558,10 @@ FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
   FRENSIE_CHECK_EQUAL( elastic_angles.back(), 0.999999 );
   FRENSIE_CHECK_EQUAL( elastic_angles.size(), 95 );
 
-  std::vector<double> elastic_pdf = cutoff_elastic_pdf[1.0e-5];
+  std::vector<double> elastic_pdf = cutoff_elastic_pdf[1e-4];
 
-  FRENSIE_CHECK_EQUAL( elastic_pdf.front(), 0.5 );
-  FRENSIE_CHECK_EQUAL( elastic_pdf.back(), 0.5 );
+  FRENSIE_CHECK_EQUAL( elastic_pdf.front(), 5.844104724870039999e-03 );
+  FRENSIE_CHECK_EQUAL( elastic_pdf.back(), 9.920145715224548688e-01 );
   FRENSIE_CHECK_EQUAL( elastic_pdf.size(), 2 );
 
   elastic_pdf = cutoff_elastic_pdf[20.0];
@@ -514,10 +572,10 @@ FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
 
   FRENSIE_REQUIRE( moment_preserving_angles.size() > 0 )
 
-  std::vector<double> discrete_angles = moment_preserving_angles[1.0e-5];
+  std::vector<double> discrete_angles = moment_preserving_angles[1e-3];
 
-  FRENSIE_CHECK_EQUAL( discrete_angles.front(), 9.333333333266671250e-01 );
-  FRENSIE_CHECK_EQUAL( discrete_angles.back(), 9.333333333266671250e-01 );
+  FRENSIE_CHECK_EQUAL( discrete_angles.front(), 9.563120131506376298e-01 );
+  FRENSIE_CHECK_EQUAL( discrete_angles.back(), 9.563120131506376298e-01 );
   FRENSIE_CHECK_EQUAL( discrete_angles.size(), 1 );
 
   discrete_angles = moment_preserving_angles[20.0];
@@ -526,7 +584,7 @@ FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
   FRENSIE_CHECK_EQUAL( discrete_angles.back(), 9.931382017989757172e-01 );
   FRENSIE_CHECK_EQUAL( discrete_angles.size(), 1 );
 
-  std::vector<double> discrete_weights = moment_preserving_weights[1.0e-5];
+  std::vector<double> discrete_weights = moment_preserving_weights[1e-3];
 
   FRENSIE_CHECK_EQUAL( discrete_weights.front(), 1.0 );
   FRENSIE_CHECK_EQUAL( discrete_weights.back(), 1.0 );
@@ -538,7 +596,7 @@ FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
   FRENSIE_CHECK_EQUAL( discrete_weights.back(), 1.0 );
   FRENSIE_CHECK_EQUAL( discrete_weights.size(), 1 );
 
-  FRENSIE_CHECK_EQUAL( mp_cross_section_reduction.front(), 7.50007499925003707e-01 );
+  FRENSIE_CHECK_EQUAL( mp_cross_section_reduction.front(), 7.468356002340779121e-01 );
   FRENSIE_CHECK_EQUAL( mp_cross_section_reduction.back(), 4.935491711992172245e-05 );
   FRENSIE_CHECK_EQUAL( mp_cross_section_reduction.size(), 12 );
 }

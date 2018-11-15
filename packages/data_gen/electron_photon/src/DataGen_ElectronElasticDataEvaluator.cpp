@@ -32,7 +32,7 @@ ElectronElasticDataEvaluator::ElectronElasticDataEvaluator(
     const MonteCarlo::TwoDGridType two_d_grid,
     const MonteCarlo::TwoDInterpolationType two_d_interp,
     const MonteCarlo::CoupledElasticSamplingMethod sampling_method,
-    const bool generate_new_distribution_at_max_energy )
+    const bool generate_new_distribution_at_min_and_max_energy )
   :  d_min_energy( min_energy ),
      d_max_energy( max_energy ),
      d_cutoff_angle_cosine( cutoff_angle_cosine ),
@@ -41,7 +41,7 @@ ElectronElasticDataEvaluator::ElectronElasticDataEvaluator(
      d_two_d_grid( two_d_grid ),
      d_two_d_interp( two_d_interp ),
      d_sampling_method( sampling_method ),
-     d_generate_new_distribution_at_max_energy( generate_new_distribution_at_max_energy ),
+     d_generate_new_distribution_at_min_and_max_energy( generate_new_distribution_at_min_and_max_energy ),
      d_atomic_number( data_container->getAtomicNumber() ),
      d_energy_grid( std::make_shared<const std::vector<double> >( data_container->getElasticEnergyGrid() ) ),
      d_cutoff_cross_section( std::make_shared<const std::vector<double> >( data_container->getCutoffElasticCrossSection() ) ),
@@ -101,15 +101,13 @@ ElectronElasticDataEvaluator::ElectronElasticDataEvaluator(
    * be in terms of angle_cosine. This for loop flips the distribution and
    * changes the variables to angle_cosine.
    */
-  std::vector<double>::iterator energy = d_angular_energy_grid.begin();
-
-  for ( energy; energy != d_angular_energy_grid.end(); ++energy )
+  for ( double energy : d_angular_energy_grid )
   {
-    calculateElasticAngleCosine(
-        data_container->getCutoffElasticAnglesAtEnergy( *energy ),
-        data_container->getCutoffElasticPDFAtEnergy( *energy ),
-        elastic_angle[*energy],
-        elastic_pdf[*energy] );
+    this->calculateElasticAngleCosine(
+        data_container->getCutoffElasticAnglesAtEnergy( energy ),
+        data_container->getCutoffElasticPDFAtEnergy( energy ),
+        elastic_angle[energy],
+        elastic_pdf[energy] );
   }
 
   d_elastic_angle = elastic_angle;
@@ -127,7 +125,7 @@ ElectronElasticDataEvaluator::ElectronElasticDataEvaluator(
     const MonteCarlo::TwoDGridType two_d_grid,
     const MonteCarlo::TwoDInterpolationType two_d_interp,
     const MonteCarlo::CoupledElasticSamplingMethod sampling_method,
-    const bool generate_new_distribution_at_max_energy )
+    const bool generate_new_distribution_at_min_and_max_energy )
   :  d_min_energy( min_energy ),
      d_max_energy( max_energy ),
      d_cutoff_angle_cosine( cutoff_angle_cosine ),
@@ -136,7 +134,7 @@ ElectronElasticDataEvaluator::ElectronElasticDataEvaluator(
      d_two_d_grid( two_d_grid ),
      d_two_d_interp( two_d_interp ),
      d_sampling_method( sampling_method ),
-     d_generate_new_distribution_at_max_energy( generate_new_distribution_at_max_energy ),
+     d_generate_new_distribution_at_min_and_max_energy( generate_new_distribution_at_min_and_max_energy ),
      d_atomic_number( data_container->getAtomicNumber() ),
      d_energy_grid( std::make_shared<const std::vector<double> >( data_container->getElectronEnergyGrid() ) ),
      d_cutoff_cross_section( std::make_shared<const std::vector<double> >( data_container->getCutoffElasticCrossSection() ) ),
@@ -172,6 +170,26 @@ ElectronElasticDataEvaluator::ElectronElasticDataEvaluator(
                          ") will be used instead." );
   }
 
+  TEST_FOR_EXCEPTION( d_angular_energy_grid.front() > d_energy_grid->front(),
+                      std::runtime_error,
+                      "The min angular energy grid point " <<
+                      d_angular_energy_grid.front() <<
+                      " must be greater than the min energy grid point " <<
+                      d_energy_grid->front() << "!" );
+
+  TEST_FOR_EXCEPTION( d_angular_energy_grid.back() < d_max_energy,
+                      std::runtime_error,
+                      "The max angular energy grid point " <<
+                      d_angular_energy_grid.back() <<
+                      " cannot be less than the max energy " <<
+                      d_max_energy << "!" );
+  TEST_FOR_EXCEPTION( d_energy_grid->back() < d_max_energy,
+                      std::runtime_error,
+                      "The max energy grid point " <<
+                      d_energy_grid->back() <<
+                      " cannot be less than the max energy " <<
+                      d_max_energy << "!" );
+
   TEST_FOR_EXCEPTION( this->getCutoffAngleCosine() > 1.0,
                       std::runtime_error,
                       "The cutoff angle cosine must be between -1.0 and "
@@ -194,8 +212,8 @@ ElectronElasticDataEvaluator::ElectronElasticDataEvaluator(
 // Basic Constructor from Native data file
 ElectronElasticDataEvaluator::ElectronElasticDataEvaluator(
     const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>& data_container,
-    const bool generate_new_distribution_at_max_energy )
-  :  d_generate_new_distribution_at_max_energy( generate_new_distribution_at_max_energy ),
+    const bool generate_new_distribution_at_min_and_max_energy )
+  :  d_generate_new_distribution_at_min_and_max_energy( generate_new_distribution_at_min_and_max_energy ),
      d_min_energy( data_container->getMinElectronEnergy() ),
      d_max_energy( data_container->getMaxElectronEnergy() ),
      d_cutoff_angle_cosine( data_container->getCutoffAngleCosine() ),
@@ -387,22 +405,22 @@ MonteCarlo::CoupledElasticSamplingMethod ElectronElasticDataEvaluator::getCouple
   return d_sampling_method;
 }
 
-// Turn generate new distribution at max energy off (off by default)
-void ElectronElasticDataEvaluator::setGenerateNewDistributionAtMaxEnergyOff()
+// Turn generate new distribution at the min and max energy off (off by default)
+void ElectronElasticDataEvaluator::setGenerateNewDistributionAtMinAndMaxEnergyOff()
 {
-  d_generate_new_distribution_at_max_energy = false;
+  d_generate_new_distribution_at_min_and_max_energy = false;
 }
 
-// Turn generate new distribution at max energy on (off by default)
-void ElectronElasticDataEvaluator::setGenerateNewDistributionAtMaxEnergyOn()
+// Turn generate new distribution at the min and max energy on (off by default)
+void ElectronElasticDataEvaluator::setGenerateNewDistributionAtMinAndMaxEnergyOn()
 {
-  d_generate_new_distribution_at_max_energy = true;
+  d_generate_new_distribution_at_min_and_max_energy = true;
 }
 
-// Return if generate new distribution at max energy is on (off by default)
-bool ElectronElasticDataEvaluator::isGenerateNewDistributionAtMaxEnergyOn() const
+// Return if generate new distribution at the min and max energy is on (off by default)
+bool ElectronElasticDataEvaluator::isGenerateNewDistributionAtMinAndMaxEnergyOn() const
 {
-  return d_generate_new_distribution_at_max_energy;
+  return d_generate_new_distribution_at_min_and_max_energy;
 }
 
 // Evaluate the electron elastic secondary distribution
@@ -469,12 +487,12 @@ void ElectronElasticDataEvaluator::createCutoffCrossSectionEvaluator(
   std::shared_ptr<MonteCarlo::ElectroatomicReaction>& cross_section_evaluator ) const
 {
   // Create the hash-based grid searcher
-  std::shared_ptr<Utility::HashBasedGridSearcher<double> > forward_grid_searcher(
-       new Utility::StandardHashBasedGridSearcher<std::vector<double>,false>(
+  std::shared_ptr<Utility::HashBasedGridSearcher<double> > forward_grid_searcher =
+   std::make_shared<Utility::StandardHashBasedGridSearcher<std::vector<double>,false> >(
                          d_energy_grid,
                          d_energy_grid->front(),
                          d_energy_grid->back(),
-                         d_energy_grid->size()/10 + 1 ) );
+                         d_energy_grid->size()/10 + 1 );
 
   // Create the reaction
   cross_section_evaluator.reset(
@@ -500,12 +518,12 @@ void ElectronElasticDataEvaluator::createTotalCrossSectionEvaluator(
   std::shared_ptr<MonteCarlo::ElectroatomicReaction>& cross_section_evaluator ) const
 {
   // Create the hash-based grid searcher
-  std::shared_ptr<Utility::HashBasedGridSearcher<double> > forward_grid_searcher(
-       new Utility::StandardHashBasedGridSearcher<std::vector<double>,false>(
+  std::shared_ptr<Utility::HashBasedGridSearcher<double> > forward_grid_searcher =
+   std::make_shared<Utility::StandardHashBasedGridSearcher<std::vector<double>,false> >(
                          d_energy_grid,
                          d_energy_grid->front(),
                          d_energy_grid->back(),
-                         d_energy_grid->size()/10 + 1 ) );
+                         d_energy_grid->size()/10 + 1 );
 
   // Create the reaction
   cross_section_evaluator.reset(
@@ -561,21 +579,151 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistribution(
   std::map<double,std::vector<double> >& elastic_angle,
   std::map<double,std::vector<double> >& elastic_pdf ) const
 {
-  // Check if the max energy is the same as the angular energy grid max energy
-  if( d_max_energy < d_angular_energy_grid.back() )
+  angular_energy_grid.clear();
+  elastic_angle.clear();
+  elastic_pdf.clear();
+
+  // Get the upper boundary of the min energy
+  auto energy_bin =
+    Utility::Search::binaryLowerBound( d_angular_energy_grid.begin(),
+                                       d_angular_energy_grid.end(),
+                                       d_min_energy );
+
+  // Create new distribution at min energy
+  if( *energy_bin != d_min_energy && this->isGenerateNewDistributionAtMinAndMaxEnergyOn() )
   {
-    // Get the elastic cutoff data
-    elastic_pdf = d_elastic_pdf;
-    elastic_angle = d_elastic_angle;
+    // Set the min energy
+    angular_energy_grid.push_back( d_min_energy );
 
-    // Get the upper boundary of the max energy
-    auto energy_bin =
-      Utility::Search::binaryUpperBound( d_angular_energy_grid.begin(),
-                                         d_angular_energy_grid.end(),
-                                         d_max_energy );
+    std::vector<double> angles, pdf;
+    double max_cutoff_angle_cosine = 1.0;
 
-    if( *energy_bin != d_max_energy && this->isGenerateNewDistributionAtMaxEnergyOn() )
+    // Get the angular grid and pdf at the max energy
+    if( d_two_d_grid == MonteCarlo::DIRECT_GRID ||
+        d_two_d_grid == MonteCarlo::UNIT_BASE_GRID )
     {
+      if ( d_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
+      {
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogNudgedLogCosLog,Utility::Direct>(
+          angles,
+          pdf,
+          d_elastic_angle,
+          d_elastic_pdf,
+          d_min_energy,
+          max_cutoff_angle_cosine,
+          d_tabular_evaluation_tol );
+      }
+      else if ( d_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
+      {
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Direct>(
+          angles,
+          pdf,
+          d_elastic_angle,
+          d_elastic_pdf,
+          d_min_energy,
+          max_cutoff_angle_cosine,
+          d_tabular_evaluation_tol );
+      }
+      else if ( d_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
+      {
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Direct>(
+          angles,
+          pdf,
+          d_elastic_angle,
+          d_elastic_pdf,
+          d_min_energy,
+          max_cutoff_angle_cosine,
+          d_tabular_evaluation_tol );
+      }
+      else
+      {
+        THROW_EXCEPTION( std::runtime_error,
+                          "the desired 2D interpolation policy " <<
+                          d_two_d_interp <<
+                          " is currently not supported!" );
+      }
+    }
+    else if( d_two_d_grid == MonteCarlo::CORRELATED_GRID ||
+            d_two_d_grid == MonteCarlo::UNIT_BASE_CORRELATED_GRID )
+    {
+      if ( d_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
+      {
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogNudgedLogCosLog,Utility::Correlated>(
+          angles,
+          pdf,
+          d_elastic_angle,
+          d_elastic_pdf,
+          d_min_energy,
+          max_cutoff_angle_cosine,
+          d_tabular_evaluation_tol );
+      }
+      else if ( d_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
+      {
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
+          angles,
+          pdf,
+          d_elastic_angle,
+          d_elastic_pdf,
+          d_min_energy,
+          max_cutoff_angle_cosine,
+          d_tabular_evaluation_tol );
+      }
+      else if ( d_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
+      {
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
+          angles,
+          pdf,
+          d_elastic_angle,
+          d_elastic_pdf,
+          d_min_energy,
+          max_cutoff_angle_cosine,
+          d_tabular_evaluation_tol );
+      }
+      else
+      {
+        THROW_EXCEPTION( std::runtime_error,
+                          "the desired 2D interpolation policy " <<
+                          d_two_d_interp <<
+                          " is currently not supported!" );
+      }
+    }
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                        "the desired 2D grid policy " <<
+                        d_two_d_grid <<
+                        " is currently not supported!" );
+    }
+
+    // Set the distribution at the min energy
+    elastic_angle[d_min_energy] = angles;
+    elastic_pdf[d_min_energy] = pdf;
+
+    // Advance energy bin to the first energy greater than the min energy
+    ++energy_bin;
+  }
+
+  // Add all distribution between the min (or before) and max energy
+  for( energy_bin; energy_bin != d_angular_energy_grid.end(); ++energy_bin )
+  {
+    // Make sure the energy bins don't go above the max energy
+    if ( *energy_bin > d_max_energy )
+      break;
+
+    // Set the distribution at the energy bin
+    angular_energy_grid.push_back( *energy_bin );
+    elastic_angle[*energy_bin] = d_elastic_angle.at(*energy_bin);
+    elastic_pdf[*energy_bin] = d_elastic_pdf.at(*energy_bin);
+  }
+
+  if( angular_energy_grid.back() != d_max_energy )
+  {
+    // Create a distribution at the max energy
+    if( this->isGenerateNewDistributionAtMinAndMaxEnergyOn() )
+    {
+      // Set the max energy
+      angular_energy_grid.push_back( d_max_energy );
+
       std::vector<double> angles, pdf;
       double max_cutoff_angle_cosine = 1.0;
 
@@ -588,8 +736,8 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistribution(
           MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogNudgedLogCosLog,Utility::Direct>(
             angles,
             pdf,
-            elastic_angle,
-            elastic_pdf,
+            d_elastic_angle,
+            d_elastic_pdf,
             d_max_energy,
             max_cutoff_angle_cosine,
             d_tabular_evaluation_tol );
@@ -599,8 +747,8 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistribution(
           MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Direct>(
             angles,
             pdf,
-            elastic_angle,
-            elastic_pdf,
+            d_elastic_angle,
+            d_elastic_pdf,
             d_max_energy,
             max_cutoff_angle_cosine,
             d_tabular_evaluation_tol );
@@ -610,8 +758,8 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistribution(
           MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Direct>(
             angles,
             pdf,
-            elastic_angle,
-            elastic_pdf,
+            d_elastic_angle,
+            d_elastic_pdf,
             d_max_energy,
             max_cutoff_angle_cosine,
             d_tabular_evaluation_tol );
@@ -619,9 +767,9 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistribution(
         else
         {
           THROW_EXCEPTION( std::runtime_error,
-                           "the desired 2D interpolation policy " <<
-                           d_two_d_interp <<
-                           " is currently not supported!" );
+                            "the desired 2D interpolation policy " <<
+                            d_two_d_interp <<
+                            " is currently not supported!" );
         }
       }
       else if( d_two_d_grid == MonteCarlo::CORRELATED_GRID ||
@@ -632,8 +780,8 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistribution(
           MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogNudgedLogCosLog,Utility::Correlated>(
             angles,
             pdf,
-            elastic_angle,
-            elastic_pdf,
+            d_elastic_angle,
+            d_elastic_pdf,
             d_max_energy,
             max_cutoff_angle_cosine,
             d_tabular_evaluation_tol );
@@ -643,8 +791,8 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistribution(
           MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
             angles,
             pdf,
-            elastic_angle,
-            elastic_pdf,
+            d_elastic_angle,
+            d_elastic_pdf,
             d_max_energy,
             max_cutoff_angle_cosine,
             d_tabular_evaluation_tol );
@@ -654,8 +802,8 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistribution(
           MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
             angles,
             pdf,
-            elastic_angle,
-            elastic_pdf,
+            d_elastic_angle,
+            d_elastic_pdf,
             d_max_energy,
             max_cutoff_angle_cosine,
             d_tabular_evaluation_tol );
@@ -663,50 +811,31 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistribution(
         else
         {
           THROW_EXCEPTION( std::runtime_error,
-                           "the desired 2D interpolation policy " <<
-                           d_two_d_interp <<
-                           " is currently not supported!" );
+                            "the desired 2D interpolation policy " <<
+                            d_two_d_interp <<
+                            " is currently not supported!" );
         }
       }
       else
       {
         THROW_EXCEPTION( std::runtime_error,
-                         "the desired 2D grid policy " <<
-                         d_two_d_grid <<
-                         " is currently not supported!" );
+                          "the desired 2D grid policy " <<
+                          d_two_d_grid <<
+                          " is currently not supported!" );
       }
 
+      // Set the distribution at the min energy
       elastic_angle[d_max_energy] = angles;
       elastic_pdf[d_max_energy] = pdf;
-
-      // Set new angular energy grid
-      std::vector<double> temp_grid( d_angular_energy_grid.begin(), energy_bin );
-      angular_energy_grid = temp_grid;
-      angular_energy_grid.push_back( d_max_energy );
     }
+    // Add the distribution right above the max energy
     else
     {
-      // Add an additional distribution above the max energy for interpolation
-      ++energy_bin;
-
-      // Set new angular energy grid
-      std::vector<double> temp_grid( d_angular_energy_grid.begin(), energy_bin );
-      angular_energy_grid = temp_grid;
-
+      // Set the distribution at the energy bin right above the max energy
+      angular_energy_grid.push_back( *energy_bin );
+      elastic_angle[*energy_bin] = d_elastic_angle.at(*energy_bin);
+      elastic_pdf[*energy_bin] = d_elastic_pdf.at(*energy_bin);
     }
-
-    // Erase all distributions above the max electron energy
-    for( energy_bin; energy_bin != d_angular_energy_grid.end(); ++energy_bin )
-    {
-      elastic_angle.erase( *energy_bin );
-      elastic_pdf.erase( *energy_bin );
-    }
-  }
-  else
-  {
-    angular_energy_grid = d_angular_energy_grid;
-    elastic_angle = d_elastic_angle;
-    elastic_pdf = d_elastic_pdf;
   }
 }
 
@@ -839,14 +968,14 @@ void ElectronElasticDataEvaluator::evaluateMomentPreservingElasticData(
   }
 
   // Construct the hash-based grid searcher for this atom
-  std::shared_ptr<Utility::HashBasedGridSearcher<double> > grid_searcher(
-     new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
+  std::shared_ptr<Utility::HashBasedGridSearcher<double> > grid_searcher =
+    std::make_shared<Utility::StandardHashBasedGridSearcher<std::vector<double>, false> >(
              d_energy_grid,
-             100u ) );
+             100u );
 
   // Create the elastic traits
-  std::shared_ptr<MonteCarlo::ElasticElectronTraits> elastic_traits(
-    new MonteCarlo::ElasticElectronTraits( d_atomic_number ) );
+  auto elastic_traits =
+    std::make_shared<MonteCarlo::ElasticElectronTraits>( d_atomic_number );
 
 
   // Get the screened Rutherford cross section threshold energy index
@@ -860,9 +989,8 @@ void ElectronElasticDataEvaluator::evaluateMomentPreservingElasticData(
     rutherford_threshold_index );
 
   // Create the moment evaluator of the elastic scattering distribution
-  std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator> moments_evaluator;
-  moments_evaluator.reset(
-    new DataGen::ElasticElectronMomentsEvaluator(
+  auto moments_evaluator =
+    std::make_shared<DataGen::ElasticElectronMomentsEvaluator>(
         elastic_angle,
         d_energy_grid,
         grid_searcher,
@@ -871,7 +999,7 @@ void ElectronElasticDataEvaluator::evaluateMomentPreservingElasticData(
         rutherford_threshold_index,
         coupled_distribution,
         elastic_traits,
-        this->getCutoffAngleCosine() ) );
+        this->getCutoffAngleCosine() );
 
   // Moment preserving discrete angles and weights
   std::vector<double> discrete_angles, weights;
@@ -935,8 +1063,8 @@ void ElectronElasticDataEvaluator::calculateDiscreteAnglesAndWeights(
                                             precision );
 
   // Use radau quadrature to find the discrete angles and weights from the moments
-  std::shared_ptr<Utility::SloanRadauQuadrature> radau_quadrature(
-      new Utility::SloanRadauQuadrature( legendre_moments ) );
+  auto radau_quadrature =
+    std::make_shared<Utility::SloanRadauQuadrature>( legendre_moments );
 
   radau_quadrature->getRadauNodesAndWeights( discrete_angles,
                                              weights,
@@ -948,9 +1076,9 @@ void ElectronElasticDataEvaluator::calculateDiscreteAnglesAndWeights(
 
   // Re-normalize weights and set the cross_section_reduction to the sum of the weights
   cross_section_reduction = 0.0;
-  for( int i = 0; i < weights.size(); ++i )
+  for( auto weight : weights )
   {
-    cross_section_reduction += weights[i];
+    cross_section_reduction += weight;
   }
 
   for( int i = 0; i < weights.size(); ++i )
