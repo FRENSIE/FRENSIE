@@ -38,7 +38,7 @@ FreeGasElasticCrossSectionFactory::FreeGasElasticCrossSectionFactory(
   this->convertCrossSectionToZeroTemperature();
 
   // Set the cutoff energy for upscattering from thermal treatment
-  d_energy_cutoff = 500*d_A*d_kT;
+  d_energy_cutoff = Utility::calculateBetaMax( d_A )*d_kT;
 }
 
 // Accessor for zero-temperature elastic cross section
@@ -188,6 +188,17 @@ void FreeGasElasticCrossSectionFactory::generateFreeGasCrossSection()
       d_energy_array,
       d_free_gas_cross_section ) );
 }
+
+// Generate the free gas beta distribution
+void FreeGasElasticCrossSectionFactory::generateFreeGasBetaDistribution()
+{
+}
+
+// Generate the free gas alpha distribution
+void FreeGasElasticCrossSectionFactory::generateFreeGasAlphaDistribution()
+{
+}
+
 
 } // end DataGen namespace
 

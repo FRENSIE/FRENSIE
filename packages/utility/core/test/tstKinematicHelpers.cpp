@@ -95,7 +95,7 @@ TEUCHOS_UNIT_TEST( KinematicHelpers, calculateBetaMin )
 
   double beta_min = Utility::calculateBetaMin( E, kT );
   
-  TEST_FLOATING_EQUALITY( beta_min, (1e-11-E)/kT, 1e-12 );
+  TEST_FLOATING_EQUALITY( beta_min, (0.0-E)/kT, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -144,6 +144,68 @@ TEUCHOS_UNIT_TEST( KinematicHelpers, calculateAlphaMax )
   TEST_FLOATING_EQUALITY( alpha_max, 230.55556113174, 1e-12 );
 }
 
+// ----------------------- Adjoint S(alpha,beta) --------------------------- //
+
+//---------------------------------------------------------------------------//
+TEUCHOS_UNIT_TEST( KinematicHelpers, calculateAdjointBetaMin )
+{
+  double E = 1e-6;
+  double kT = 2.53010e-8;
+  double A = 0.999167;
+
+  double beta_min = Utility::calculateAdjointBetaMin( A );
+  
+  TEST_FLOATING_EQUALITY( beta_min, -500*A, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+TEUCHOS_UNIT_TEST( KinematicHelpers, calculateAdjointBetaMax )
+{
+  double E = 1e-6;
+  double kT = 2.53010e-8;
+
+  double beta_max = Utility::calculateAdjointBetaMax( E, kT );
+  
+  TEST_FLOATING_EQUALITY( beta_max, E/kT, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+TEUCHOS_UNIT_TEST( KinematicHelpers, calculateAdjointAlphaMin )
+{
+  double E = 1e-6;
+  double kT = 2.53010e-8;
+  double beta = 0.0;
+  double A = 0.999167;
+
+  double alpha_min = Utility::calculateAdjointAlphaMin( E, beta, A, kT );
+
+  TEST_FLOATING_EQUALITY( alpha_min, 0.0, 1e-12 );
+
+  beta = 1.0;
+
+  alpha_min = Utility::calculateAdjointAlphaMin( E, beta, A, kT );
+
+  TEST_FLOATING_EQUALITY( alpha_min, 0.0064118968568421955, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+TEUCHOS_UNIT_TEST( KinematicHelpers, calculateAdjointAlphaMax )
+{
+  double E = 1e-6;
+  double kT = 2.53010e-8;
+  double beta = 0.0;
+  double A = 0.999167;
+
+  double alpha_min = Utility::calculateAdjointAlphaMax( E, beta, A, kT );
+
+  TEST_FLOATING_EQUALITY( alpha_min, 158.22832211651578, 1e-12 );
+
+  beta = 1.0;
+
+  alpha_min = Utility::calculateAdjointAlphaMax( E, beta, A, kT );
+
+  TEST_FLOATING_EQUALITY( alpha_min, 156.22024283072392, 1e-12 );
+}
 
 //---------------------------------------------------------------------------//
 // end tstKinematicHelpers.cpp
