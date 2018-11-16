@@ -266,14 +266,6 @@ TEUCHOS_UNIT_TEST( AdjointFreeGasElasticScatteringKernelFactor,
 					  -0.9,
 					  sab_function->getAtomicWeightRatio(),
 					  sab_function->getTemperature() );
-
-	std::cout << " " << std::endl;
-	std::cout << " " << std::endl;
-	std::cout << "Beta Min: " << beta_min << std::endl;
-	std::cout << "Beta Max: " << beta_max << std::endl;
-	std::cout << "Alpha Min (beta_dagger = 0): " << alpha_min << std::endl;
-	std::cout << "Alpha Max (beta_dagger = 0): " << alpha_max << std::endl;
-	std::cout << " " << std::endl;
   
   double sab_value = (*sab_function)( alpha_min, -0.9, 2.53010e-8 );
   

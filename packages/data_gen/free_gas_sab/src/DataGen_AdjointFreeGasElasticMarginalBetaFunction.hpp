@@ -19,7 +19,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "DataGen_FreeGasElasticSAlphaBetaFunction.hpp"
+#include "DataGen_AdjointFreeGasElasticSAlphaBetaFunction.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_Tuple.hpp"
 
@@ -50,6 +50,9 @@ public:
 
   //! Get the lower beta limit
   double getBetaMin() const;
+
+  //! Get the lower beta limit
+  double getBetaMax() const;
   
   //! Get the normalization constant
   double getNormalizationConstant() const;
@@ -76,7 +79,7 @@ private:
   Utility::GaussKronrodIntegrator d_beta_gkq_set;
 
   // The free gas elastic S(alpha,beta) function
-  FreeGasElasticSAlphaBetaFunction d_sab_function;
+  AdjointFreeGasElasticSAlphaBetaFunction d_sab_function;
 
   // The energy value (MeV)
   double d_E;
@@ -89,6 +92,9 @@ private:
 
   // The beta min value
   double d_beta_min;
+
+  // The beta min value
+  double d_beta_max;
 
   // The normalization constant
   double d_norm_constant;

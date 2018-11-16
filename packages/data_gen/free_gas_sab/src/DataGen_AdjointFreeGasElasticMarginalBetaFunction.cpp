@@ -40,6 +40,7 @@ AdjointFreeGasElasticMarginalBetaFunction::AdjointFreeGasElasticMarginalBetaFunc
     d_A( A ),
     d_kT( kT ),
     d_beta_min( 0.0 ),
+    d_beta_max( 0.0 ),
     d_norm_constant( 1.0 ),
     d_cached_cdf_values()
 {
@@ -68,7 +69,13 @@ double AdjointFreeGasElasticMarginalBetaFunction::getBetaMin() const
 {
   return d_beta_min;
 }
-  
+
+// Get the lower beta limit
+double AdjointFreeGasElasticMarginalBetaFunction::getBetaMax() const
+{
+  return d_beta_max;
+} 
+
 // Get the normalization constant
 double AdjointFreeGasElasticMarginalBetaFunction::getNormalizationConstant() const
 {
@@ -130,7 +137,7 @@ double AdjointFreeGasElasticMarginalBetaFunction::evaluateCDF( const double beta
 void AdjointFreeGasElasticMarginalBetaFunction::updateCachedValues()
 {
   d_beta_min = Utility::calculateAdjointBetaMin( d_A );
-  double beta_max = Utility::calculateAdjointBetaMax( d_E, d_kT );
+  d_beta_max = Utility::calculateAdjointBetaMax( d_E, d_kT );
   
   // Calculate the norm constant
   double norm_constant_error;
@@ -140,7 +147,7 @@ void AdjointFreeGasElasticMarginalBetaFunction::updateCachedValues()
   
   d_beta_gkq_set.integrateAdaptively<15>( d_integrated_sab_function,
   					 d_beta_min,
-  					 beta_max,
+  					 d_beta_max,
   					 d_norm_constant,
   					 norm_constant_error );
   

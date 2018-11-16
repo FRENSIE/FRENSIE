@@ -16,7 +16,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "DataGen_FreeGasElasticSAlphaBetaFunction.hpp"
+#include "DataGen_AdjointFreeGasElasticSAlphaBetaFunction.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_Tuple.hpp"
 
@@ -70,7 +70,7 @@ private:
   Utility::GaussKronrodIntegrator d_gkq_set;
 
   // The free gas elastic S(alpha,beta) function
-  FreeGasElasticSAlphaBetaFunction d_sab_function;
+  AdjointFreeGasElasticSAlphaBetaFunction d_sab_function;
 
   // The beta value
   double d_beta;

@@ -104,9 +104,7 @@ double AdjointFreeGasElasticSAlphaBetaFunction::evaluateIntegrand(
   remember( double alpha_max = Utility::calculateAdjointAlphaMax(E,beta,d_A,d_kT) );
   testPrecondition( alpha <= alpha_max );
   // Make sure the cm angle is valid
-
-  std::cout << "Calculated mu_cm: " << mu_cm << std::endl; 
-
+  
   testPrecondition( mu_cm >= -1.0 );
   testPrecondition( mu_cm <= 1.0 );
   
@@ -214,10 +212,6 @@ double AdjointFreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
   // approximate form for S(alpha,beta) when this occurs
   if( alpha >= alpha_min && alpha <= alpha_max )
   {
-    std::cout << "Alpha: " << alpha << std::endl;
-    std::cout << "Beta: " << beta << std::endl;
-    std::cout << "E: " << E << std::endl;
-
     if( alpha > 0.0 )
     {
       boost::function<double (double mu_cm)> integrand = 
@@ -232,9 +226,6 @@ double AdjointFreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
       double value_error, lower_limit, upper_limit;
       
       this->findLimits( alpha, beta, E, lower_limit, upper_limit );
-      
-      std::cout << "Lower limit: " << lower_limit << std::endl;
-      std::cout << "Upper limit: " << upper_limit << std::endl;
 
       try
       {

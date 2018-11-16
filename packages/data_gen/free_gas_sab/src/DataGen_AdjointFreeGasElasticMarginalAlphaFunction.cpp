@@ -45,7 +45,7 @@ AdjointFreeGasElasticMarginalAlphaFunction::AdjointFreeGasElasticMarginalAlphaFu
   testPrecondition( A > 0.0 );
   testPrecondition( kT > 0.0 );
   testPrecondition( E > 0.0 );
-  testPrecondition( beta >= Utility::calculateBetaMin( E, kT ) );
+  testPrecondition( beta >= Utility::calculateAdjointBetaMin( A ) );
   
   updateCachedValues();
 }
@@ -57,7 +57,8 @@ void AdjointFreeGasElasticMarginalAlphaFunction::setIndependentVariables(
 {
   // Make sure beta is valid
   remember( double kT = d_sab_function.getTemperature() );
-  testPrecondition( beta >= Utility::calculateBetaMin( E, kT ) );
+  remember( double A = d_sab_function.getAtomicWeightRatio() );
+  testPrecondition( beta >= Utility::calculateAdjointBetaMin( A ) );
 
   d_beta = beta;
   d_E = E;
@@ -137,7 +138,6 @@ void AdjointFreeGasElasticMarginalAlphaFunction::updateCachedValues()
   double kT = d_sab_function.getTemperature();
 
   d_alpha_min = Utility::calculateAdjointAlphaMin( d_E, d_beta, A, kT );
-
   d_alpha_max = Utility::calculateAdjointAlphaMax( d_E, d_beta, A, kT );
 
   // Calculate the norm constant
