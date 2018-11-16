@@ -97,13 +97,16 @@ double AdjointFreeGasElasticSAlphaBetaFunction::evaluateIntegrand(
   // Make sure the energy is valid
   testPrecondition( E > 0.0 );
   // Make sure beta is valid
-  testPrecondition( beta >= Utility::calculateBetaMin( E, d_kT ) );
+  testPrecondition( beta >= Utility::calculateAdjointBetaMin( d_A ) );
   // Make sure alpha is valid
-  remember( double alpha_min = Utility::calculateAlphaMin(E,beta,d_A,d_kT) );
+  remember( double alpha_min = Utility::calculateAdjointAlphaMin(E,beta,d_A,d_kT) );
   testPrecondition( alpha >= alpha_min );
-  remember( double alpha_max = Utility::calculateAlphaMax(E,beta,d_A,d_kT) );
+  remember( double alpha_max = Utility::calculateAdjointAlphaMax(E,beta,d_A,d_kT) );
   testPrecondition( alpha <= alpha_max );
   // Make sure the cm angle is valid
+
+  std::cout << "Calculated mu_cm: " << mu_cm << std::endl; 
+
   testPrecondition( mu_cm >= -1.0 );
   testPrecondition( mu_cm <= 1.0 );
   
@@ -203,7 +206,7 @@ double AdjointFreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
   double alpha_min = Utility::calculateAdjointAlphaMin(E,beta,d_A,d_kT);
   double alpha_max = Utility::calculateAdjointAlphaMax(E,beta,d_A,d_kT);
   double value;
-  
+
   // Test for special condition (alpha = 0.0)
   // Note: alpha = 0.0 can only occur when beta = 0.0. The S(alpha,beta)
   // function has an integrable singularity at alpha = 0.0. As alpha
@@ -211,6 +214,10 @@ double AdjointFreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
   // approximate form for S(alpha,beta) when this occurs
   if( alpha >= alpha_min && alpha <= alpha_max )
   {
+    std::cout << "Alpha: " << alpha << std::endl;
+    std::cout << "Beta: " << beta << std::endl;
+    std::cout << "E: " << E << std::endl;
+
     if( alpha > 0.0 )
     {
       boost::function<double (double mu_cm)> integrand = 
@@ -226,6 +233,9 @@ double AdjointFreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
       
       this->findLimits( alpha, beta, E, lower_limit, upper_limit );
       
+      std::cout << "Lower limit: " << lower_limit << std::endl;
+      std::cout << "Upper limit: " << upper_limit << std::endl;
+
       try
       {
 	d_gkq_set.integrateAdaptively<15>( integrand,
@@ -243,7 +253,7 @@ double AdjointFreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
         // Approximate S(alpha,beta) function
         value = d_average_zero_temp_elastic_cross_section/
           ((d_A+1)*(d_A+1)*sqrt(alpha))*
-          exp( -(alpha + beta)*(alpha + beta)/(4*alpha) );
+          exp( -(alpha + -1*beta)*(alpha + -1*beta)/(4*alpha) );
 
         if( value > std::numeric_limits<double>::max() )
         {
@@ -273,7 +283,7 @@ double AdjointFreeGasElasticSAlphaBetaFunction::calculateExpArgConst(
 							 const double beta,
 							 const double E ) const
 {
-  return -d_A*E/d_kT + -(d_A+1.0)/2.0*(beta - d_A*alpha);
+  return -d_A*E/d_kT + -(d_A+1.0)/2.0*(-1*beta - d_A*alpha);
 }
 
 // Calculate the exponential argument multiplier
@@ -290,7 +300,7 @@ double AdjointFreeGasElasticSAlphaBetaFunction::calculateBesselArgMult(
 							 const double E ) const
 {
   double bessel_arg_mult_arg = 
-    4.0*d_A*alpha*E/d_kT - (beta - d_A*alpha)*(beta - d_A*alpha);
+    4.0*d_A*alpha*E/d_kT - (-1*beta - d_A*alpha)*(-1*beta - d_A*alpha);
       
   // When alpha ~ alpha_min, alpha ~ alpha_max or beta ~ beta_min,
   // a very small negative argument is possible due to roundoff-set it to 0
@@ -312,7 +322,7 @@ void AdjointFreeGasElasticSAlphaBetaFunction::findLimits(
   std::list<double> search_grid;
 
   double arg1 = 4*d_A*alpha*E/d_kT - 
-    (beta - d_A*alpha)*(beta - d_A*alpha);
+    (-1*beta - d_A*alpha)*(-1*beta - d_A*alpha);
   double arg2 = (d_A + 1)*(d_A + 1)*alpha*alpha;
   
   double estimated_peak_mu_cm = (arg1 - arg2)/(arg1 + arg2);
