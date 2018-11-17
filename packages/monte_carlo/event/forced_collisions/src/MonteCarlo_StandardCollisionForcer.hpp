@@ -50,6 +50,13 @@ public:
                                 const ParticleType particle_type,
                                 const std::set<CellIdType>& cells,
                                 const double generation_probability = 1.0 );
+
+  //! Check if forced collision cells have been specified for the particle type
+  bool hasForcedCollisionCells( const ParticleType particle_type ) const final override;
+
+  //! Check if a cell is a forced collision cell
+  bool isForcedCollisionCell( const ParticleType particle_type,
+                              const CellIdType cell_id ) const final override;
   
   //! Return the cells where collisions will be forced
   void getCells( const ParticleType particle_type,

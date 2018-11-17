@@ -61,7 +61,7 @@ private:
  * address can be passed to store the cross section used by this method.
  */
 template<typename ParticleStateType>
-double sampleSimpleDistanceToNextCollisionSite(
+double TransportKernel::sampleSimpleDistanceToNextCollisionSite(
                            const ParticleStateType& particle,
                            double* cell_macroscopic_total_cross_section ) const
 {

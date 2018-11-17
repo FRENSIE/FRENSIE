@@ -226,7 +226,7 @@ private:
 
   // Simulate an resolved particle track using the "alternative" method
   template<typename State>
-  void simulateParticleTrackAlternative( ParticleState& unresolved_particle,
+  void simulateParticleTrackAlternative( State& unresolved_particle,
                                          ParticleBank& bank,
                                          const double optical_path,
                                          const bool starting_from_source );

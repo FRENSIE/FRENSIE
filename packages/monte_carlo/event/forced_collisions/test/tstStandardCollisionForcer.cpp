@@ -45,9 +45,16 @@ FRENSIE_UNIT_TEST( StandardCollisionForcer,
   std::shared_ptr<MonteCarlo::StandardCollisionForcer>
     collision_forcer( new MonteCarlo::StandardCollisionForcer );
 
+  std::shared_ptr<const MonteCarlo::CollisionForcer> base_collision_forcer =
+    collision_forcer;
+
   std::vector<MonteCarlo::StandardCollisionForcer::CellIdType> cells( {1} );
   std::set<MonteCarlo::StandardCollisionForcer::CellIdType>
     cells_set( cells.begin(), cells.end() );
+
+  FRENSIE_CHECK( !collision_forcer->hasForcedCollisionCells( MonteCarlo::PHOTON ) );
+  FRENSIE_CHECK( !collision_forcer->isForcedCollisionCell( MonteCarlo::PHOTON, 1 ) );
+  FRENSIE_CHECK( !base_collision_forcer->isForcedCollisionCell<MonteCarlo::PhotonState>( 1 ) );
 
   collision_forcer->setForcedCollisionCells( *filled_model,
                                              MonteCarlo::PHOTON,
@@ -57,10 +64,17 @@ FRENSIE_UNIT_TEST( StandardCollisionForcer,
 
   collision_forcer->getCells( MonteCarlo::PHOTON, test_cells );
 
+  FRENSIE_CHECK( collision_forcer->hasForcedCollisionCells( MonteCarlo::PHOTON ) );
+  FRENSIE_CHECK( collision_forcer->isForcedCollisionCell( MonteCarlo::PHOTON, 1 ) );
+  FRENSIE_CHECK( base_collision_forcer->isForcedCollisionCell<MonteCarlo::PhotonState>( 1 ) );
   FRENSIE_CHECK_EQUAL( cells_set, test_cells );
   FRENSIE_CHECK_EQUAL( collision_forcer->getGenerationProbability( MonteCarlo::PHOTON ), 1.0 );
 
   test_cells.clear();
+
+  FRENSIE_CHECK( !collision_forcer->hasForcedCollisionCells( MonteCarlo::NEUTRON ) );
+  FRENSIE_CHECK( !collision_forcer->isForcedCollisionCell( MonteCarlo::NEUTRON, 1 ) );
+  FRENSIE_CHECK( !base_collision_forcer->isForcedCollisionCell<MonteCarlo::NeutronState>( 1 ) );
 
   collision_forcer->setForcedCollisionCells( *filled_model,
                                              MonteCarlo::NEUTRON,
@@ -68,10 +82,17 @@ FRENSIE_UNIT_TEST( StandardCollisionForcer,
 
   collision_forcer->getCells( MonteCarlo::NEUTRON, test_cells );
 
+  FRENSIE_CHECK( collision_forcer->hasForcedCollisionCells( MonteCarlo::NEUTRON ) );
+  FRENSIE_CHECK( collision_forcer->isForcedCollisionCell( MonteCarlo::NEUTRON, 1 ) );
+  FRENSIE_CHECK( base_collision_forcer->isForcedCollisionCell<MonteCarlo::NeutronState>( 1 ) );
   FRENSIE_CHECK_EQUAL( cells_set, test_cells );
   FRENSIE_CHECK_EQUAL( collision_forcer->getGenerationProbability( MonteCarlo::NEUTRON ), 1.0 );
 
   test_cells.clear();
+
+  FRENSIE_CHECK( !collision_forcer->hasForcedCollisionCells( MonteCarlo::ELECTRON ) );
+  FRENSIE_CHECK( !collision_forcer->isForcedCollisionCell( MonteCarlo::ELECTRON, 1 ) );
+  FRENSIE_CHECK( !base_collision_forcer->isForcedCollisionCell<MonteCarlo::ElectronState>( 1 ) );
 
   collision_forcer->setForcedCollisionCells( *filled_model,
                                              MonteCarlo::ELECTRON,
@@ -79,10 +100,17 @@ FRENSIE_UNIT_TEST( StandardCollisionForcer,
 
   collision_forcer->getCells( MonteCarlo::ELECTRON, test_cells );
 
+  FRENSIE_CHECK( collision_forcer->hasForcedCollisionCells( MonteCarlo::ELECTRON ) );
+  FRENSIE_CHECK( collision_forcer->isForcedCollisionCell( MonteCarlo::ELECTRON, 1 ) );
+  FRENSIE_CHECK( base_collision_forcer->isForcedCollisionCell<MonteCarlo::ElectronState>( 1 ) );
   FRENSIE_CHECK_EQUAL( cells_set, test_cells );
   FRENSIE_CHECK_EQUAL( collision_forcer->getGenerationProbability( MonteCarlo::ELECTRON ), 1.0 );
 
   test_cells.clear();
+
+  FRENSIE_CHECK( !collision_forcer->hasForcedCollisionCells( MonteCarlo::POSITRON ) );
+  FRENSIE_CHECK( !collision_forcer->isForcedCollisionCell( MonteCarlo::POSITRON, 1 ) );
+  FRENSIE_CHECK( !base_collision_forcer->isForcedCollisionCell<MonteCarlo::PositronState>( 1 ) );
 
   collision_forcer->setForcedCollisionCells( *filled_model,
                                              MonteCarlo::POSITRON,
@@ -90,6 +118,9 @@ FRENSIE_UNIT_TEST( StandardCollisionForcer,
 
   collision_forcer->getCells( MonteCarlo::POSITRON, test_cells );
 
+  FRENSIE_CHECK( collision_forcer->hasForcedCollisionCells( MonteCarlo::POSITRON ) );
+  FRENSIE_CHECK( collision_forcer->isForcedCollisionCell( MonteCarlo::POSITRON, 1 ) );
+  FRENSIE_CHECK( base_collision_forcer->isForcedCollisionCell<MonteCarlo::PositronState>( 1 ) );
   FRENSIE_CHECK_EQUAL( cells_set, test_cells );
   FRENSIE_CHECK_EQUAL( collision_forcer->getGenerationProbability( MonteCarlo::POSITRON ), 1.0 );
 

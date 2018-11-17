@@ -67,6 +67,31 @@ void StandardCollisionForcer::setForcedCollisionCells(
     generation_probability;
 }
 
+// Check if forced collision cells have been specified for the particle type
+bool StandardCollisionForcer::hasForcedCollisionCells(
+                                       const ParticleType particle_type ) const
+{
+  return d_forced_collision_cells.find( particle_type ) !=
+    d_forced_collision_cells.end();
+}
+
+// Check if a cell is a forced collision cell
+bool StandardCollisionForcer::isForcedCollisionCell(
+                                              const ParticleType particle_type,
+                                              const CellIdType cell_id ) const
+{
+  ParticleTypeForcedCollisionCellMap::const_iterator particle_type_data_it =
+    d_forced_collision_cells.find( particle_type );
+
+  if( particle_type_data_it != d_forced_collision_cells.end() )
+  {
+    return particle_type_data_it->second.first.find( cell_id ) !=
+      particle_type_data_it->second.first.end();
+  }
+  else
+    return false;
+}
+  
 // Return the cells where collisions will be forced
 void StandardCollisionForcer::getCells(
                              const ParticleType particle_type,

@@ -67,10 +67,10 @@ public:
 
   //! Check if a cell is a forced collision cell
   template<typename ParticleStateType>
-  void isForcedCollisionCell( const CellIdType cell_id ) const;
+  bool isForcedCollisionCell( const CellIdType cell_id ) const;
 
   //! Check if a cell is a forced collision cell
-  virtual void isForcedCollisionCell( const ParticleType particle_type,
+  virtual bool isForcedCollisionCell( const ParticleType particle_type,
                                       const CellIdType cell_id ) const = 0;
   
   //! Return the cells where collisions will be forced
@@ -111,7 +111,7 @@ inline bool CollisionForcer::hasForcedCollisionCells() const
 
 // Check if a cell is a forced collision cell
 template<typename ParticleStateType>
-inline void CollisionForcer::isForcedCollisionCell( const CellIdType cell_id ) const
+inline bool CollisionForcer::isForcedCollisionCell( const CellIdType cell_id ) const
 {
   return this->isForcedCollisionCell( ParticleStateType::type, cell_id );
 }
