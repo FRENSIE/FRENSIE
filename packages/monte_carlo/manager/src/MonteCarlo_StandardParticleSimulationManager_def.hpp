@@ -107,7 +107,7 @@ void StandardParticleSimulationManager<mode>::addSimulateParticleFunction()
   // Make sure that the state is compatible with the mode
   testPrecondition( MonteCarlo::isParticleTypeCompatible<mode>( particle_type ) );
 
-  if( this->getCollisionForcer().hasForcedCollisionCells<State>() )
+  if( this->getCollisionForcer().hasForcedCollisionCells( particle_type ) )
   {
     d_simulate_particle_function_map[particle_type] =
       std::bind<void>( &ParticleSimulationManager::simulateParticleAlternative<State>,
