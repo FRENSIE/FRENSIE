@@ -210,10 +210,13 @@ private:
   void initializeAdjointElectronUnionEnergyGrid(
      std::list<double>& union_energy_grid ) const;
 
-  // Create the inelastic cross section distribution
-  void createForwardInelasticElectronCrossSectionDistribution(
-    std::shared_ptr<const Utility::UnivariateDistribution>&
-        forward_inelastic_electron_cross_section_distribution ) const;
+// Create the inelastic cross section evaluators
+void createForwardInelasticElectronCrossSectionEvaluators(
+    const std::shared_ptr<const std::vector<double> >& forward_electron_energy_grid,
+    const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
+    std::function<double (const double&)>& forward_brem_electron_xs_evaluator,
+    std::function<double (const double&)>& forward_ionization_electron_xs_evaluator,
+    std::function<double (const double&)>& forward_excitation_electron_xs_evaluator ) const;
 
   // Create the adjoint atomic excitation cross section distribution
   void createAdjointAtomicExcitationCrossSectionDistribution(

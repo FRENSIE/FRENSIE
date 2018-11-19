@@ -1832,25 +1832,25 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         self.assertAlmostEqual(
           filled_model.getAdjointElectronMacroscopicTotalForwardCrossSection(
                     cell, energy ),
-          1.962265079183985072e+05,
+          1.962264561458093813e+05,
           10 )
 
         self.assertAlmostEqual(
           filled_model.getAdjointElectronMacroscopicTotalForwardCrossSectionQuick(
                     cell, energy ),
-          1.962265079183985072e+05,
+          1.962264561458093813e+05,
           10 )
 
         self.assertAlmostEqual(
           filled_model.getAdjointElectronWeightFactor(
                     cell, energy ),
-          1.013006735336074993,
+          1.013007002608809382,
           10 )
 
         self.assertAlmostEqual(
           filled_model.getAdjointElectronWeightFactorQuick(
                     cell, energy ),
-          1.013006735336074993,
+          1.013007002608809382,
           10 )
 
         energy = 10.0
@@ -1872,25 +1872,25 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         self.assertAlmostEqual(
           filled_model.getAdjointElectronMacroscopicTotalForwardCrossSection(
                     cell, energy ),
-          1.781250875084729050e+05,
+          1.781250860939461854e+05,
           10 )
 
         self.assertAlmostEqual(
           filled_model.getAdjointElectronMacroscopicTotalForwardCrossSectionQuick(
                     cell, energy ),
-          1.781250875084729050e+05,
+          1.781250860939461854e+05,
           10 )
 
         self.assertAlmostEqual(
           filled_model.getAdjointElectronWeightFactor(
                     cell, energy ),
-          1.005342898430436449,
+          1.005342906414064430,
           10 )
 
         self.assertAlmostEqual(
           filled_model.getAdjointElectronWeightFactorQuick(
                     cell, energy ),
-          1.005342898430436449,
+          1.005342906414064430,
           10 )
 
     # Check that the Critical Line Energies can be returned

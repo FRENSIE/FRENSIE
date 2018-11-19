@@ -1447,17 +1447,43 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   FRENSIE_CHECK_EQUAL( discrete_weights.back(), 1.0 );
   FRENSIE_CHECK_EQUAL( discrete_weights.size(), 1 );
 
-  // Check the forward inelastic cross section data
+  // Check the forward brem cross section data
   threshold =
-    h_data_container.getForwardInelasticElectronCrossSectionThresholdEnergyIndex();
+    h_data_container.getForwardBremsstrahlungElectronCrossSectionThresholdEnergyIndex();
 
   FRENSIE_CHECK_EQUAL( threshold, 0 );
 
   cross_section =
-    h_data_container.getForwardInelasticElectronCrossSection();
+    h_data_container.getForwardBremsstrahlungElectronCrossSection();
 
-  FRENSIE_CHECK_EQUAL( cross_section.front(), 1.066988293768338561e+08 );
-  FRENSIE_CHECK_EQUAL( cross_section.back(), 1.64670355529995461e+05 );
+  FRENSIE_CHECK_EQUAL( cross_section.front(), 3.844810302593046458e+01 );
+  FRENSIE_CHECK_EQUAL( cross_section.back(), 9.717679999999999652e-01 );
+  FRENSIE_CHECK_EQUAL( cross_section.size(), 7-threshold );
+
+  // Check the forward electroionization cross section data
+  threshold =
+    h_data_container.getForwardElectroionizationElectronCrossSectionThresholdEnergyIndex();
+
+  FRENSIE_CHECK_EQUAL( threshold, 0 );
+
+  cross_section =
+    h_data_container.getForwardElectroionizationElectronCrossSection();
+
+  FRENSIE_CHECK_EQUAL( cross_section.front(), 4.526009092873083055e+07 );
+  FRENSIE_CHECK_EQUAL( cross_section.back(), 8.284008376199545455e+04 );
+  FRENSIE_CHECK_EQUAL( cross_section.size(), 7-threshold );
+
+  // Check the forward atomic excitation cross section data
+  threshold =
+    h_data_container.getForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex();
+
+  FRENSIE_CHECK_EQUAL( threshold, 0 );
+
+  cross_section =
+    h_data_container.getForwardAtomicExcitationElectronCrossSection();
+
+  FRENSIE_CHECK_EQUAL( cross_section.front(), 6.14387e+07 );
+  FRENSIE_CHECK_EQUAL( cross_section.back(), 8.18293e+04 );
   FRENSIE_CHECK_EQUAL( cross_section.size(), 7-threshold );
 
 
