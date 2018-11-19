@@ -43,7 +43,7 @@ MassiveParticleState::MassiveParticleState(
                    new_charge,
                    increment_generation_number,
                    reset_collision_number,
-                   existing_base_state.getRaySafetyDistance() ),
+                   existing_base_state.getRaySafetyOpticalPath() ),
     d_speed( MonteCarlo::calculateRelativisticSpeed(
                                             new_rest_mass_energy,
                                             existing_base_state.getEnergy() ) )
@@ -65,7 +65,7 @@ MassiveParticleState::MassiveParticleState(
                    new_charge,
                    increment_generation_number,
                    reset_collision_number,
-                   existing_state.getRaySafetyDistance() ),
+                   existing_state.getRaySafetyOpticalPath() ),
     d_speed()
 {
   // Make sure the new rest mass energy is valid

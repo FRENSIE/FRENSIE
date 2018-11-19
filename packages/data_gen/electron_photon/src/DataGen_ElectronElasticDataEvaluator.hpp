@@ -44,7 +44,7 @@ public:
       MonteCarlo::LOGLOGLOG_INTERPOLATION,
     const MonteCarlo::CoupledElasticSamplingMethod sampling_method =
       MonteCarlo::MODIFIED_TWO_D_UNION,
-    const bool generate_new_distribution_at_max_energy = false );
+    const bool generate_new_distribution_at_min_and_max_energy = false );
 
   //! Constructor from Native data file
   ElectronElasticDataEvaluator(
@@ -60,12 +60,12 @@ public:
       MonteCarlo::LOGLOGLOG_INTERPOLATION,
     const MonteCarlo::CoupledElasticSamplingMethod sampling_method =
       MonteCarlo::MODIFIED_TWO_D_UNION,
-    const bool generate_new_distribution_at_max_energy = false );
+    const bool generate_new_distribution_at_min_and_max_energy = false );
 
   //! Basic Constructor from Native data file
   ElectronElasticDataEvaluator(
     const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>& data_container,
-    const bool generate_new_distribution_at_max_energy = false );
+    const bool generate_new_distribution_at_min_and_max_energy = false );
 
   //! Destructor
   ~ElectronElasticDataEvaluator()
@@ -119,14 +119,14 @@ public:
   //! Return the CoupledElasticSamplingMethod
   MonteCarlo::CoupledElasticSamplingMethod getCoupledElasticSamplingMethod() const;
 
-  //! Set generate new distribution at max energy off (off by default)
-  void setGenerateNewDistributionAtMaxEnergyOff();
+  //! Set generate new distribution at the min and max energy off (off by default)
+  void setGenerateNewDistributionAtMinAndMaxEnergyOff();
 
-  //! Set generate new distribution at max energy on (off by default)
-  void setGenerateNewDistributionAtMaxEnergyOn();
+  //! Set generate new distribution at the min and max energy on (off by default)
+  void setGenerateNewDistributionAtMinAndMaxEnergyOn();
 
-  //! Return if generate new distribution at max energy is on (off by default)
-  bool isGenerateNewDistributionAtMaxEnergyOn() const;
+  //! Return if generate new distribution at the min and max energy is on (off by default)
+  bool isGenerateNewDistributionAtMinAndMaxEnergyOn() const;
 
   //! Evaluate the electron elastic secondary distribution
   void evaluateElasticSecondaryDistribution(
@@ -248,7 +248,7 @@ private:
   std::map<double,std::vector<double> > d_elastic_pdf;
 
   // If true a new secondary distribution will be generated at the max energy
-  bool d_generate_new_distribution_at_max_energy;
+  bool d_generate_new_distribution_at_min_and_max_energy;
 
 };
 

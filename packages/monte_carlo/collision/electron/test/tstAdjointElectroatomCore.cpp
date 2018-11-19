@@ -290,35 +290,75 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
         test_native_file_name );
 
     // Create the atomic excitation, bremsstrahlung cross sections
-    std::shared_ptr<const std::vector<double> > energy_grid(
-       new std::vector<double>( data_container.getAdjointElectronEnergyGrid() ) );
+    auto energy_grid = std::make_shared<const std::vector<double> >(
+        data_container.getAdjointElectronEnergyGrid() );
 
     // Create the hash-based grid searcher
-    std::shared_ptr<Utility::HashBasedGridSearcher<double> > grid_searcher(
-       new Utility::StandardHashBasedGridSearcher<std::vector<double>,false>(
+    std::shared_ptr<Utility::HashBasedGridSearcher<double> > grid_searcher
+      = std::make_shared<Utility::StandardHashBasedGridSearcher<std::vector<double>,false> >(
                                              energy_grid,
-                                             100 ) );
+                                             100 );
 
     // Get void reaction
-    std::shared_ptr<const std::vector<double> > void_cross_section(
-                         new std::vector<double>( energy_grid->size(), 0.0 ) );
+    auto void_cross_section = std::make_shared<const std::vector<double> >(
+        energy_grid->size(), 0.0 );
 
-    std::shared_ptr<const MonteCarlo::ElectroatomicReaction> void_reaction(
-     new MonteCarlo::AbsorptionElectroatomicReaction<Utility::LinLin,false>(
+    std::shared_ptr<const MonteCarlo::ElectroatomicReaction> void_reaction =
+      std::make_shared<MonteCarlo::AbsorptionElectroatomicReaction<Utility::LinLin,false> >(
                        energy_grid,
                        void_cross_section,
                        0u,
                        grid_searcher,
-                       MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION ) );
+                       MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION );
+
+    std::function<double (const double&)> forward_elastic_xs_evaluator =
+      [void_reaction]( const double& energy){
+        return void_reaction->getCrossSection(energy);
+      };
+
+    std::vector<std::vector<double> > forward_inelastic_xs;
+
+    std::vector<double> cross_section =
+      data_container.getForwardBremsstrahlungElectronCrossSection();
+
+    for( unsigned j = 0; j < data_container.getForwardBremsstrahlungElectronCrossSectionThresholdEnergyIndex(); ++j )
+    {
+      auto it = cross_section.begin();
+      it = cross_section.insert(it, 0.0);
+    }
+
+    forward_inelastic_xs.push_back( cross_section );
+
+    cross_section =
+      data_container.getForwardAtomicExcitationElectronCrossSection();
+
+    for( unsigned j = 0; j < data_container.getForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex(); ++j )
+    {
+      auto it = cross_section.begin();
+      it = cross_section.insert(it, 0.0);
+    }
+
+    forward_inelastic_xs.push_back( cross_section );
+
+    cross_section =
+      data_container.getForwardElectroionizationElectronCrossSection();
+
+    for( unsigned j = 0; j < data_container.getForwardElectroionizationElectronCrossSectionThresholdEnergyIndex(); ++j )
+    {
+      auto it = cross_section.begin();
+      it = cross_section.insert(it, 0.0);
+    }
+
+    forward_inelastic_xs.push_back( cross_section );
 
     // Create the total forward reaction
     std::shared_ptr<const MonteCarlo::ElectroatomicReaction> total_forward_reaction;
 
     MonteCarlo::AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
-                                       data_container,
+                                       forward_inelastic_xs,
                                        energy_grid,
                                        grid_searcher,
-                                       void_reaction,
+                                       forward_elastic_xs_evaluator,
                                        total_forward_reaction );
 
     // Atomic Excitation cross section

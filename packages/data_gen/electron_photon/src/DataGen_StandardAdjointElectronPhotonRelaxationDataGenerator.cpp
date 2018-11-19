@@ -1509,27 +1509,54 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 // Set The Forward Inelastic Cross Section Data
 //---------------------------------------------------------------------------//
 
-  // Create the inelastic cross section evaluator
-  auto forward_inelastic_grid_function =
-    this->createForwardInelasticElectronCrossSectionEvaluator(
-        forward_electron_energy_grid,
-        forward_grid_searcher );
+  // Create the inelastic cross section evaluators
+  std::function<double (const double&)>
+    forward_brem_electron_xs_evaluator, forward_ionization_electron_xs_evaluator, forward_excitation_electron_xs_evaluator;
+
+  this->createForwardInelasticElectronCrossSectionEvaluators(
+            forward_electron_energy_grid,
+            forward_grid_searcher,
+            forward_brem_electron_xs_evaluator,
+            forward_ionization_electron_xs_evaluator,
+            forward_excitation_electron_xs_evaluator );
 
   FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
                                     Utility::Italicized( "forward inelastic electron" )
                                     << " cross section ... " );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  std::vector<double> forward_inelastic_cross_section;
+  std::vector<double> forward_cross_section;
   this->createCrossSectionOnUnionEnergyGrid(
       union_energy_grid,
-      forward_inelastic_grid_function,
-      forward_inelastic_cross_section,
+      forward_brem_electron_xs_evaluator,
+      forward_cross_section,
       threshold );
 
-  data_container.setForwardInelasticElectronCrossSection(
-    forward_inelastic_cross_section );
-  data_container.setForwardInelasticElectronCrossSectionThresholdEnergyIndex(
+  data_container.setForwardBremsstrahlungElectronCrossSection(
+    forward_cross_section );
+  data_container.setForwardBremsstrahlungElectronCrossSectionThresholdEnergyIndex(
+    threshold );
+
+  this->createCrossSectionOnUnionEnergyGrid(
+      union_energy_grid,
+      forward_ionization_electron_xs_evaluator,
+      forward_cross_section,
+      threshold );
+
+  data_container.setForwardElectroionizationElectronCrossSection(
+    forward_cross_section );
+  data_container.setForwardElectroionizationElectronCrossSectionThresholdEnergyIndex(
+    threshold );
+
+  this->createCrossSectionOnUnionEnergyGrid(
+      union_energy_grid,
+      forward_excitation_electron_xs_evaluator,
+      forward_cross_section,
+      threshold );
+
+  data_container.setForwardAtomicExcitationElectronCrossSection(
+    forward_cross_section );
+  data_container.setForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex(
     threshold );
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
@@ -1700,11 +1727,14 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 }
 
-// Create the inelastic cross section evaluator
-std::function<double(const double&)>
-StandardAdjointElectronPhotonRelaxationDataGenerator::createForwardInelasticElectronCrossSectionEvaluator(
+// Create the inelastic cross section distribution
+void
+StandardAdjointElectronPhotonRelaxationDataGenerator::createForwardInelasticElectronCrossSectionEvaluators(
     const std::shared_ptr<const std::vector<double> >& forward_electron_energy_grid,
-    const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher ) const
+    const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
+    std::function<double (const double&)>& forward_brem_electron_xs_evaluator,
+    std::function<double (const double&)>& forward_ionization_electron_xs_evaluator,
+    std::function<double (const double&)>& forward_excitation_electron_xs_evaluator ) const
 {
   // Create the atomic excitation reaction
   auto excitation_reaction =
@@ -1740,26 +1770,27 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::createForwardInelasticElec
     ++i;
   }
 
-  // Create the forward cross section evaluator
-  std::function<double(const double&)> cs_evaluator =
-    [ ionization_reactions, brem_reaction, excitation_reaction ]( const double& energy ){
-
-    double cross_section = 0.0;
-
-    // Add electro-ionization subshell cross sections
-    for ( size_t i = 0; i < ionization_reactions.size(); ++i )
-      cross_section += ionization_reactions[i]->getCrossSection( energy );
-
-    // Add atomic excitation cross section
-    cross_section += excitation_reaction->getCrossSection( energy );
-
-    // Add bremsstrahlung cross section
-    cross_section += brem_reaction->getCrossSection( energy );
-
-    return cross_section;
+  // Create the forward cross section evaluators
+  forward_brem_electron_xs_evaluator = [ brem_reaction ]( const double& energy ){
+      return brem_reaction->getCrossSection( energy );
   };
 
-  return cs_evaluator;
+  forward_ionization_electron_xs_evaluator =
+    [ ionization_reactions ]( const double& energy ){
+
+      double cross_section = 0.0;
+
+      // Add electro-ionization subshell cross sections
+      for ( size_t i = 0; i < ionization_reactions.size(); ++i )
+        cross_section += ionization_reactions[i]->getCrossSection( energy );
+
+      return cross_section;
+  };
+
+  forward_excitation_electron_xs_evaluator =
+    [ excitation_reaction ]( const double& energy ){
+      return excitation_reaction->getCrossSection( energy );
+  };
 }
 
 // Create the adjoint atomic excitation evaluators

@@ -78,7 +78,7 @@ class SimulationPropertiesTestCase(unittest.TestCase):
 
         # Electron properties
         self.assertEqual( properties.getAbsoluteMinElectronEnergy(), 1.5e-5 )
-        self.assertEqual( properties.getMinElectronEnergy(), 1.0e-4 )
+        self.assertEqual( properties.getMinElectronEnergy(), 1e-4 )
         self.assertEqual( properties.getMaxElectronEnergy(), 20.0 )
         self.assertEqual( properties.getAbsoluteMaxElectronEnergy(), 1.0e5 )
         self.assertTrue( properties.isAtomicRelaxationModeOn( MonteCarlo.ELECTRON ) )

@@ -425,14 +425,53 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                        grid_searcher,
                        MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION) );
 
+  std::function<double (const double&)> forward_elastic_xs_evaluator =
+    [void_reaction]( const double& energy){
+      return void_reaction->getCrossSection(energy);
+    };
+
+  std::vector<std::vector<double> > forward_inelastic_xs;
+    std::vector<double> cross_section =
+      data_container.getForwardBremsstrahlungElectronCrossSection();
+
+    for( unsigned j = 0; j < data_container.getForwardBremsstrahlungElectronCrossSectionThresholdEnergyIndex(); ++j )
+    {
+      auto it = cross_section.begin();
+      it = cross_section.insert(it, 0.0);
+    }
+
+    forward_inelastic_xs.push_back( cross_section );
+
+    cross_section =
+      data_container.getForwardAtomicExcitationElectronCrossSection();
+
+    for( unsigned j = 0; j < data_container.getForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex(); ++j )
+    {
+      auto it = cross_section.begin();
+      it = cross_section.insert(it, 0.0);
+    }
+
+    forward_inelastic_xs.push_back( cross_section );
+
+    cross_section =
+      data_container.getForwardElectroionizationElectronCrossSection();
+
+    for( unsigned j = 0; j < data_container.getForwardElectroionizationElectronCrossSectionThresholdEnergyIndex(); ++j )
+    {
+      auto it = cross_section.begin();
+      it = cross_section.insert(it, 0.0);
+    }
+
+    forward_inelastic_xs.push_back( cross_section );
+
     // Create the total forward reaction
     std::shared_ptr<const MonteCarlo::ElectroatomicReaction> total_forward_reaction;
 
     MonteCarlo::AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
-                                       data_container,
+                                       forward_inelastic_xs,
                                        energy_grid,
                                        grid_searcher,
-                                       void_reaction,
+                                       forward_elastic_xs_evaluator,
                                        total_forward_reaction );
 
     // Atomic Excitation cross section

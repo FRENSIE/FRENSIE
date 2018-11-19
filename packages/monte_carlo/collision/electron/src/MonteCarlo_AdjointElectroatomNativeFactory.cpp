@@ -48,6 +48,9 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
   std::string electron_grid =
     raw_adjoint_electroatom_data.getElectronTwoDGridPolicy();
 
+  std::vector<std::vector<double> > forward_inelastic_cross_sections;
+  std::function<double (const double&)> forward_elastic_xs_evaluator;
+
   // Create the elastic scattering reaction
   if ( properties.isAdjointElasticModeOn() )
   {
@@ -114,18 +117,31 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
                        " is not currently supported!" );
     }
 
-    // Create the total forward reaction
-    AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
-        raw_adjoint_electroatom_data,
-        energy_grid,
-        grid_searcher,
-        elastic_reaction,
-        total_forward_reaction );
+    // Set the forward elastic reaction cross section evaluator
+    forward_elastic_xs_evaluator = [elastic_reaction](const double& energy ){
+      return elastic_reaction->getCrossSection( energy );
+    };
+  }
+  else
+  {
+    // Set a zero forward elastic reaction cross section evaluator
+    forward_elastic_xs_evaluator = [](const double& ){ return 0.0; };
   }
 
   // Create the bremsstrahlung scattering reaction
   if ( properties.isAdjointBremsstrahlungModeOn() )
   {
+    std::vector<double> cross_section =
+      raw_adjoint_electroatom_data.getForwardBremsstrahlungElectronCrossSection();
+
+    for( unsigned j = 0; j < raw_adjoint_electroatom_data.getForwardBremsstrahlungElectronCrossSectionThresholdEnergyIndex(); ++j )
+    {
+      auto it = cross_section.begin();
+      it = cross_section.insert(it, 0.0);
+    }
+
+    forward_inelastic_cross_sections.push_back( cross_section );
+
     AdjointElectroatomCore::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION];
 
@@ -134,7 +150,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
       if ( electron_grid == "Unit-base Correlated" )
       {
         AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
-                         raw_adjoint_electroatom_data,
+                        raw_adjoint_electroatom_data,
                         energy_grid,
                         grid_searcher,
                         reaction_pointer,
@@ -221,6 +237,17 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
   // Create the atomic excitation scattering reaction
   if ( properties.isAdjointAtomicExcitationModeOn() )
   {
+    std::vector<double> cross_section =
+      raw_adjoint_electroatom_data.getForwardAtomicExcitationElectronCrossSection();
+
+    for( unsigned j = 0; j < raw_adjoint_electroatom_data.getForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex(); ++j )
+    {
+      auto it = cross_section.begin();
+      it = cross_section.insert(it, 0.0);
+    }
+
+    forward_inelastic_cross_sections.push_back( cross_section );
+
     AdjointElectroatomCore::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION];
 
@@ -234,6 +261,17 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
   // Create the subshell electroionization reactions
   if ( properties.isAdjointElectroionizationModeOn() )
   {
+    std::vector<double> cross_section =
+      raw_adjoint_electroatom_data.getForwardElectroionizationElectronCrossSection();
+
+    for( unsigned j = 0; j < raw_adjoint_electroatom_data.getForwardElectroionizationElectronCrossSectionThresholdEnergyIndex(); ++j )
+    {
+      auto it = cross_section.begin();
+      it = cross_section.insert(it, 0.0);
+    }
+
+    forward_inelastic_cross_sections.push_back( cross_section );
+
     std::vector<std::shared_ptr<const AdjointElectroatomicReaction> >
         electroionization_reactions;
 
@@ -334,6 +372,14 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
         electroionization_reactions[i];
     }
   }
+
+  // Create the total forward reaction
+  AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
+      forward_inelastic_cross_sections,
+      energy_grid,
+      grid_searcher,
+      forward_elastic_xs_evaluator,
+      total_forward_reaction );
 
   // Create the electroatom core
   adjoint_electroatom_core.reset(

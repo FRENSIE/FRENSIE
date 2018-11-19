@@ -33,7 +33,7 @@ class SimulationElectronPropertiesTestCase(unittest.TestCase):
         "*Test MonteCarlo.SimulationElectronProperties defaults"
         properties = MonteCarlo.SimulationElectronProperties()
 
-        self.assertEqual( properties.getMinElectronEnergy(), 1.0e-4 )
+        self.assertEqual( properties.getMinElectronEnergy(), 1.e-4 )
         self.assertEqual( properties.getMaxElectronEnergy(), 20.0 )
         self.assertEqual( properties.getElectronEvaluationTolerance(), 1e-7 )
         self.assertEqual( properties.getElectronTwoDInterpPolicy(),

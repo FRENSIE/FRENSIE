@@ -26,6 +26,14 @@ public:
   ~DefaultCollisionForcer()
   { /* ... */ }
 
+  //! Check if forced collision cells have been specified for the particle type
+  bool hasForcedCollisionCells( const ParticleType ) const final override
+  { return false; }
+
+  //! Check if a cell is a forced collision cell
+  virtual bool isForcedCollisionCell( const ParticleType, const CellIdType ) const final override
+  { return false; }
+
   //! Return the cells where collisions will be forced
   void getCells( const ParticleType, std::set<CellIdType>& ) const final override
   { /* ... */ }

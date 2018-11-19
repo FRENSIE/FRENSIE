@@ -162,5 +162,39 @@ FRENSIE_UNIT_TEST( PhotonKinematicsHelpers, calculateDopplerBroadenedEnergy )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the scattering angle can be calculated
+FRENSIE_UNIT_TEST( PhotonKinematicsHelpers, calculateScatteringAngleCosine )
+{
+  bool possible;
+
+  double mu = MonteCarlo::calculateScatteringAngleCosine(
+                                      1.0, 0.5109989101300001, 1.0, possible );
+
+  FRENSIE_CHECK( possible );
+  FRENSIE_CHECK_FLOATING_EQUALITY( mu, -1.0, 1e-15 );
+
+  mu = MonteCarlo::calculateScatteringAngleCosine(
+                                      1.0, 0.7637187226885975, 1.0, possible );
+
+  FRENSIE_CHECK( possible );
+  FRENSIE_CHECK_SMALL( mu, 1e-15 );
+
+  mu = MonteCarlo::calculateScatteringAngleCosine( 1.0, 0.0, -1.0, possible );
+
+  FRENSIE_CHECK( !possible );
+  FRENSIE_CHECK_EQUAL( mu, 0.0 );
+
+  mu = MonteCarlo::calculateScatteringAngleCosine( 0.1, 0.06991664095581906491, -0.016, possible );
+
+  FRENSIE_CHECK( possible );
+  FRENSIE_CHECK_FLOATING_EQUALITY( mu, -1.0, 1e-15 );
+
+  mu = MonteCarlo::calculateScatteringAngleCosine( 0.1, 0.06938244760315788, -0.14, possible );
+
+  FRENSIE_CHECK( possible );
+  FRENSIE_CHECK_SMALL( mu, 1e-14 );
+}
+
+//---------------------------------------------------------------------------//
 // end tstPhotonKinematicsHelpers.cpp
 //---------------------------------------------------------------------------//

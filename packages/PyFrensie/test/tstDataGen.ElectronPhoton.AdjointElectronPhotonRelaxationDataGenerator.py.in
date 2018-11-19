@@ -802,6 +802,45 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         self.assertEqual( discrete_weights[-1], 1.0 )
         self.assertEqual( len( discrete_weights ), 1 )
 
+        # Check the forward brem cross section data
+        threshold =
+          h_data_container.getForwardBremsstrahlungElectronCrossSectionThresholdEnergyIndex()
+
+        self.assertEqual( threshold, 0 )
+
+        cross_section =
+          h_data_container.getForwardBremsstrahlungElectronCrossSection()
+
+        self.assertEqual( cross_section.front(), 3.844810302593046458e+01 )
+        self.assertEqual( cross_section.back(), 9.717679999999999652e-01 )
+        self.assertEqual( cross_section.size(), 8-threshold )
+
+         # Check the forward electroionization cross section data
+        threshold =
+          h_data_container.getForwardElectroionizationElectronCrossSectionThresholdEnergyIndex()
+
+        self.assertEqual( threshold, 0 )
+
+        cross_section =
+          h_data_container.getForwardElectroionizationElectronCrossSection()
+
+        self.assertEqual( cross_section.front(), 4.526009092873083055e+07 )
+        self.assertEqual( cross_section.back(), 8.284008376199545455e+04 )
+        self.assertEqual( cross_section.size(), 8-threshold )
+
+         # Check the forward atomic excitation cross section data
+        threshold =
+          h_data_container.getForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex()
+
+        self.assertEqual( threshold, 0 )
+
+        cross_section =
+          h_data_container.getForwardAtomicExcitationElectronCrossSection()
+
+        self.assertEqual( cross_section.front(), 6.14387e+07 )
+        self.assertEqual( cross_section.back(), 8.18293e+04 )
+        self.assertEqual( cross_section.size(), 8-threshold )
+
         # Check the forward inelastic cross section data
         threshold = h_data_container.getForwardInelasticElectronCrossSectionThresholdEnergyIndex()
 

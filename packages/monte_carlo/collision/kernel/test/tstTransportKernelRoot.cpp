@@ -40,6 +40,95 @@ std::shared_ptr<const Geometry::Model> unfilled_model;
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distance to the next collision site can be sampled
+FRENSIE_UNIT_TEST( TransportKernel,
+                   sampleSimpleDistanceToNextCollisionSite_forward )
+{
+  std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
+  properties->setParticleMode( MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE );
+
+  std::shared_ptr<MonteCarlo::MaterialDefinitionDatabase>
+    material_definition_database( new MonteCarlo::MaterialDefinitionDatabase );
+
+  material_definition_database->addDefinition( "Water @ 293.6K", 1,
+                                               {"H1 @ 293.6K", "O16 @ 293.6K"},
+                                               {2.0,           1.0} );
+  
+  std::shared_ptr<const MonteCarlo::FilledGeometryModel> filled_model;
+
+  filled_model.reset( new MonteCarlo::FilledGeometryModel(
+                                        test_scattering_center_database_name,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        true ) );
+
+  MonteCarlo::TransportKernel transport_kernel( filled_model );
+
+  FRENSIE_REQUIRE( transport_kernel.isDefinedOnModel( *filled_model ) );
+
+  {
+    MonteCarlo::NeutronState neutron( 1ull );
+    neutron.setPosition( 0.0, 0.0, 0.0 );
+    neutron.setDirection( 0.0, 0.0, 1.0 );
+    neutron.embedInModel( *filled_model );
+    neutron.setEnergy( 1.0 );
+
+    Utility::RandomNumberGenerator::setFakeStream( {0.7274682069659875, 0.7534030360583935} );
+
+    FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleSimpleDistanceToNextCollisionSite( neutron ),
+                                     2.335758236673843,
+                                     1e-12 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleSimpleDistanceToNextCollisionSite( neutron ),
+                                     2.515431947187215744e+00,
+                                     1e-12 );
+
+    Utility::RandomNumberGenerator::unsetFakeStream();
+  }
+
+  {
+    MonteCarlo::PhotonState photon( 1ull );
+    photon.setPosition( 0.0, 0.0, 0.0 );
+    photon.setDirection( 0.0, 0.0, 1.0 );
+    photon.embedInModel( *filled_model );
+    photon.setEnergy( 1.0 );
+
+    Utility::RandomNumberGenerator::setFakeStream( {0.14785621103378865, 0.18126924692201818} );
+
+    FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleSimpleDistanceToNextCollisionSite( photon ),
+                                     2.265164756868025,
+                                     1e-12 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleSimpleDistanceToNextCollisionSite( photon ),
+                                     2.831455946085031705e+00,
+                                     1e-12 );
+
+    Utility::RandomNumberGenerator::unsetFakeStream();
+  }
+
+  {
+    MonteCarlo::ElectronState electron( 1ull );
+    electron.setPosition( 0.0, 0.0, 0.0 );
+    electron.setDirection( 0.0, 0.0, 1.0 );
+    electron.embedInModel( *filled_model );
+    electron.setEnergy( 1.0 );
+
+    Utility::RandomNumberGenerator::setFakeStream( {0.5, 0.75} );
+
+    FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleSimpleDistanceToNextCollisionSite( electron ),
+                                     1.7048714719550108e-05,
+                                     1e-12 );
+
+    FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleSimpleDistanceToNextCollisionSite( electron ),
+                                     3.4097429439100215e-05,
+                                     1e-12 );
+    
+
+    Utility::RandomNumberGenerator::unsetFakeStream();
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distance to the next collision site can be sampled
 FRENSIE_UNIT_TEST( TransportKernel, sampleDistanceToNextCollisionSite_forward )
 {
   std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
@@ -121,6 +210,54 @@ FRENSIE_UNIT_TEST( TransportKernel, sampleDistanceToNextCollisionSite_forward )
                                      3.4097429439100215e-05,
                                      1e-12 );
     
+
+    Utility::RandomNumberGenerator::unsetFakeStream();
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that the simple sdistance to the next collision site can be sampled
+FRENSIE_UNIT_TEST( TransportKernel,
+                   sampleSimpleDistanceToNextCollisionSite_adjoint )
+{
+  std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
+  properties->setParticleMode( MonteCarlo::ADJOINT_PHOTON_MODE );
+
+  std::shared_ptr<MonteCarlo::MaterialDefinitionDatabase>
+    material_definition_database( new MonteCarlo::MaterialDefinitionDatabase );
+
+  material_definition_database->addDefinition( "H @ 293.6K", 1,
+                                               {"H1 @ 293.6K"}, {1.0} );
+  
+  std::shared_ptr<const MonteCarlo::FilledGeometryModel> filled_model;
+
+  filled_model.reset( new MonteCarlo::FilledGeometryModel(
+                                        test_scattering_center_database_name,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        true ) );
+
+  MonteCarlo::TransportKernel transport_kernel( filled_model );
+
+  FRENSIE_REQUIRE( transport_kernel.isDefinedOnModel( *filled_model ) );
+
+  {
+    MonteCarlo::AdjointPhotonState adjoint_photon( 1ull );
+    adjoint_photon.setPosition( 0.0, 0.0, 0.0 );
+    adjoint_photon.setDirection( 0.0, 0.0, 1.0 );
+    adjoint_photon.embedInModel( *filled_model );
+    adjoint_photon.setEnergy( 1.0 );
+
+    Utility::RandomNumberGenerator::setFakeStream( {0.2591817793182821, 0.29531191028128656} );
+
+    FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleSimpleDistanceToNextCollisionSite( adjoint_photon ),
+                                     2.3770673234915742,
+                                     1e-12 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleSimpleDistanceToNextCollisionSite( adjoint_photon ),
+                                     2.773245210740169941e+00,
+                                     1e-12 );
 
     Utility::RandomNumberGenerator::unsetFakeStream();
   }

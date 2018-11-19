@@ -420,6 +420,12 @@ void ParticleSimulationManager::runInterruptibleSimulation()
   }
 }
 
+// Get the collision forcer
+const CollisionForcer& ParticleSimulationManager::getCollisionForcer() const
+{
+  return *d_collision_forcer;
+}
+
 // Enable thread support
 void ParticleSimulationManager::enableThreadSupport()
 {

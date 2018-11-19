@@ -50,7 +50,18 @@ public:
                                 const ParticleType particle_type,
                                 const std::set<CellIdType>& cells,
                                 const double generation_probability = 1.0 );
-  
+
+  // using CollisionForcer::hasForcedCollisionCells;
+
+  //! Check if forced collision cells have been specified for the particle type
+  bool hasForcedCollisionCells( const ParticleType particle_type ) const final override;
+
+  // using CollisionForcer::hasForcedCollisionCells;
+
+  //! Check if a cell is a forced collision cell
+  bool isForcedCollisionCell( const ParticleType particle_type,
+                              const CellIdType cell_id ) const final override;
+
   //! Return the cells where collisions will be forced
   void getCells( const ParticleType particle_type,
                  std::set<CellIdType>& cells_set ) const final override;
@@ -83,7 +94,7 @@ private:
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
-  
+
   // The forced collision cells
   typedef std::pair<std::unordered_set<CellIdType>,double> ForcedCollisionCellData;
   typedef std::map<ParticleType,ForcedCollisionCellData> ParticleTypeForcedCollisionCellMap;

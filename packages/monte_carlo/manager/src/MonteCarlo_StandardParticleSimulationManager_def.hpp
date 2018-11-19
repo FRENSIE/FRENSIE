@@ -17,6 +17,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleModeTypeTraits.hpp"
+#include "MonteCarlo_CollisionForcer.hpp"
+#include "MonteCarlo_StandardCollisionForcer.hpp"
 
 namespace MonteCarlo{
 
@@ -73,7 +75,7 @@ StandardParticleSimulationManager<mode>::StandardParticleSimulationManager(
                                properties,
                                next_history,
                                rendezvous_number )
-{ 
+{
   Details::ModeInitializationHelper<typename boost::mpl::begin<typename ParticleModeTypeTraits<mode>::ActiveParticles>::type,typename boost::mpl::end<typename ParticleModeTypeTraits<mode>::ActiveParticles>::type>::initializeSimulateParticleFunctions( *this );
 }
 
@@ -103,16 +105,28 @@ template<typename State>
 void StandardParticleSimulationManager<mode>::addSimulateParticleFunction()
 {
   constexpr const ParticleType particle_type = State::type;
-  
+
   // Make sure that the state is compatible with the mode
   testPrecondition( MonteCarlo::isParticleTypeCompatible<mode>( particle_type ) );
-  
-  d_simulate_particle_function_map[particle_type] =
-    std::bind<void>( &ParticleSimulationManager::simulateParticle<State>,
-                     std::ref( *this ),
-                     std::placeholders::_1,
-                     std::placeholders::_2,
-                     std::placeholders::_3 );
+
+  if( this->getCollisionForcer().hasForcedCollisionCells( particle_type ) )
+  {
+    d_simulate_particle_function_map[particle_type] =
+      std::bind<void>( &ParticleSimulationManager::simulateParticleAlternative<State>,
+                       std::ref( *this ),
+                       std::placeholders::_1,
+                       std::placeholders::_2,
+                       std::placeholders::_3 );
+  }
+  else
+  {
+    d_simulate_particle_function_map[particle_type] =
+      std::bind<void>( &ParticleSimulationManager::simulateParticle<State>,
+                       std::ref( *this ),
+                       std::placeholders::_1,
+                       std::placeholders::_2,
+                       std::placeholders::_3 );
+  }
 }
 
 } // end MonteCarlo namespace

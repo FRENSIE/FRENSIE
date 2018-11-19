@@ -468,11 +468,23 @@ public:
   //! Return the atomic excitation cross section threshold energy bin index
   unsigned getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex() const;
 
-  //! Return the forward inelastic electron cross section
-  const std::vector<double>& getForwardInelasticElectronCrossSection() const;
+  //! Return the forward bremsstrahlung electron cross section
+  const std::vector<double>& getForwardBremsstrahlungElectronCrossSection() const;
 
-  //! Return the forward inelastic electron cross section threshold energy bin index
-  unsigned getForwardInelasticElectronCrossSectionThresholdEnergyIndex() const;
+  //! Return the forward bremsstrahlung electron cross section threshold energy bin index
+  unsigned getForwardBremsstrahlungElectronCrossSectionThresholdEnergyIndex() const;
+
+  //! Return the forward electroionization electron cross section
+  const std::vector<double>& getForwardElectroionizationElectronCrossSection() const;
+
+  //! Return the forward electroionization electron cross section threshold energy bin index
+  unsigned getForwardElectroionizationElectronCrossSectionThresholdEnergyIndex() const;
+
+  //! Return the forward atomic excitation electron cross section
+  const std::vector<double>& getForwardAtomicExcitationElectronCrossSection() const;
+
+  //! Return the forward atomic excitation electron cross section threshold energy bin index
+  unsigned getForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex() const;
 
 protected:
 
@@ -1004,12 +1016,28 @@ protected:
   void setAdjointAtomicExcitationCrossSectionThresholdEnergyIndex(
                                 const unsigned index );
 
-  //! Set the forward inelastic electron cross section
-  void setForwardInelasticElectronCrossSection(
+  //! Set the forward bremsstrahlung electron cross section
+  void setForwardBremsstrahlungElectronCrossSection(
            const std::vector<double>& forward_inelastic_electron_cross_section );
 
-  //! Set the forward inelastic electron cross section threshold energy bin index
-  void setForwardInelasticElectronCrossSectionThresholdEnergyIndex(
+  //! Set the forward bremsstrahlung electron cross section threshold energy bin index
+  void setForwardBremsstrahlungElectronCrossSectionThresholdEnergyIndex(
+                                const unsigned index );
+
+  //! Set the forward electroionization electron cross section
+  void setForwardElectroionizationElectronCrossSection(
+           const std::vector<double>& forward_inelastic_electron_cross_section );
+
+  //! Set the forward electroionization electron cross section threshold energy bin index
+  void setForwardElectroionizationElectronCrossSectionThresholdEnergyIndex(
+                                const unsigned index );
+
+  //! Set the forward atomic excitation electron cross section
+  void setForwardAtomicExcitationElectronCrossSection(
+           const std::vector<double>& forward_inelastic_electron_cross_section );
+
+  //! Set the forward atomic excitation electron cross section threshold energy bin index
+  void setForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex(
                                 const unsigned index );
 
 private:
@@ -1398,11 +1426,23 @@ private:
   // The atomic excitation electron cross section threshold energy index
   unsigned d_adjoint_atomic_excitation_cross_section_threshold_index;
 
-  // The forward inelastic electron cross section (b)
-  std::vector<double> d_forward_inelastic_electron_cross_section;
+  // The forward bremsstrahlung electron cross section (b)
+  std::vector<double> d_forward_bremsstrahlung_electron_cross_section;
 
-  // The forward inelastic electron cross section threshold energy index
-  unsigned d_forward_inelastic_electron_cross_section_threshold_index;
+  // The forward bremsstrahlung electron cross section threshold energy index
+  unsigned d_forward_bremsstrahlung_electron_cross_section_threshold_index;
+
+  // The forward electroionization electron cross section (b)
+  std::vector<double> d_forward_electroionization_electron_cross_section;
+
+  // The forward electroionization electron cross section threshold energy index
+  unsigned d_forward_electroionization_electron_cross_section_threshold_index;
+
+  // The forward atomic excitation electron cross section (b)
+  std::vector<double> d_forward_atomic_excitation_electron_cross_section;
+
+  // The forward atomic excitation electron cross section threshold energy index
+  unsigned d_forward_atomic_excitation_electron_cross_section_threshold_index;
 
 };
 

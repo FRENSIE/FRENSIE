@@ -213,10 +213,13 @@ private:
      std::shared_ptr<ElectronGridGenerator> brem_grid_generator,
      const double excitation_max_energy ) const;
 
-  // Create the inelastic cross section evaluator
-  std::function<double(const double&)> createForwardInelasticElectronCrossSectionEvaluator(
+// Create the inelastic cross section evaluators
+void createForwardInelasticElectronCrossSectionEvaluators(
     const std::shared_ptr<const std::vector<double> >& forward_electron_energy_grid,
-    const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher ) const;
+    const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
+    std::function<double (const double&)>& forward_brem_electron_xs_evaluator,
+    std::function<double (const double&)>& forward_ionization_electron_xs_evaluator,
+    std::function<double (const double&)>& forward_excitation_electron_xs_evaluator ) const;
 
   // Create the adjoint atomic excitation evaluators
   void createAdjointAtomicExcitationEvaluators(
