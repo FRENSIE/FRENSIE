@@ -60,8 +60,8 @@ public:
   //! Typedef for weight type
   typedef double weightType;
 
-  //! Typedef for ray safety distance type
-  typedef double raySafetyType;
+  //! Typedef for ray safety optical path type
+  typedef double raySafetyOPType;
 
 private:
 
@@ -84,7 +84,7 @@ public:
                  const chargeType new_charge,
                  const bool increment_generation_number,
                  const bool reset_collision_number,
-                 const raySafetyType ray_safety_distance );
+                 const raySafetyOPType ray_safety_op );
 
   //! Destructor
   virtual ~ParticleState()
@@ -228,11 +228,11 @@ public:
   //! Multiply the weight of the particle by a factor
   void multiplyWeight( const double weight_factor );
 
-  //! Set the ray safety distance ( i.e. distance to the closest boundary )
-  void setRaySafetyDistance( const raySafetyType safety_distance );
+  //! Set the ray safety op ( i.e. op to the closest boundary )
+  void setRaySafetyOpticalPath( const raySafetyOPType safety_op );
 
-  //! Return the ray safety distance ( i.e. distance to the closest boundary )
-  raySafetyType getRaySafetyDistance() const;
+  //! Return the ray safety op (i.e. optical path to the closest boundary)
+  raySafetyOPType getRaySafetyOpticalPath() const;
 
   //! Return if the particle is lost
   bool isLost() const;
@@ -351,8 +351,8 @@ private:
   // The weight of the particle
   weightType d_weight;
 
-  // The ray safety distance ( i.e. distance to the closest boundary )
-  raySafetyType d_ray_safety_distance;
+  // The ray safety op (i.e. optical path to the closest boundary)
+  raySafetyOPType d_ray_safety_op;
 
   // The source (starting) cell of the particle (history)
   Geometry::Model::EntityId d_source_cell;

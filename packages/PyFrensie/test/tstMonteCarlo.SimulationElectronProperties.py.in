@@ -33,7 +33,7 @@ class SimulationElectronPropertiesTestCase(unittest.TestCase):
         "*Test MonteCarlo.SimulationElectronProperties defaults"
         properties = MonteCarlo.SimulationElectronProperties()
 
-        self.assertEqual( properties.getMinElectronEnergy(), 1.5e-5 )
+        self.assertEqual( properties.getMinElectronEnergy(), 1.e-4 )
         self.assertEqual( properties.getMaxElectronEnergy(), 20.0 )
         self.assertEqual( properties.getElectronEvaluationTolerance(), 1e-7 )
         self.assertEqual( properties.getElectronTwoDInterpPolicy(),
@@ -43,9 +43,9 @@ class SimulationElectronPropertiesTestCase(unittest.TestCase):
         self.assertTrue(properties.isAtomicRelaxationModeOn() )
         self.assertTrue(properties.isElasticModeOn() )
         self.assertEqual( properties.getElasticElectronDistributionMode(),
-                          MonteCarlo.DECOUPLED_DISTRIBUTION )
+                          MonteCarlo.COUPLED_DISTRIBUTION )
         self.assertEqual( properties.getCoupledElasticSamplingMode(),
-                          MonteCarlo.TWO_D_UNION )
+                          MonteCarlo.MODIFIED_TWO_D_UNION )
         self.assertEqual( properties.getElasticCutoffAngleCosine(), 1.0 )
         self.assertTrue(properties.isElectroionizationModeOn() )
         self.assertTrue(properties.isBremsstrahlungModeOn() )
@@ -163,7 +163,7 @@ class SimulationElectronPropertiesTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationElectronProperties()
 
         self.assertEqual( properties.getElasticElectronDistributionMode(),
-                          MonteCarlo.DECOUPLED_DISTRIBUTION )
+                          MonteCarlo.COUPLED_DISTRIBUTION )
 
         mode = MonteCarlo.COUPLED_DISTRIBUTION
         properties.setElasticElectronDistributionMode( mode )
@@ -186,7 +186,7 @@ class SimulationElectronPropertiesTestCase(unittest.TestCase):
         properties = MonteCarlo.SimulationElectronProperties()
 
         self.assertEqual( properties.getCoupledElasticSamplingMode(),
-                          MonteCarlo.TWO_D_UNION )
+                          MonteCarlo.MODIFIED_TWO_D_UNION )
 
         mode = MonteCarlo.ONE_D_UNION
         properties.setCoupledElasticSamplingMode( mode )
@@ -272,7 +272,7 @@ class SimulationElectronPropertiesTestCase(unittest.TestCase):
         "*Test MonteCarlo.SimulationElectronProperties setElectronRouletteSurvivalWeight"
         properties = MonteCarlo.SimulationElectronProperties()
 
-        double weight = 1e-12
+        weight = 1e-12
         properties.setElectronRouletteSurvivalWeight( weight )
 
         self.assertEqual( properties.getElectronRouletteSurvivalWeight(),

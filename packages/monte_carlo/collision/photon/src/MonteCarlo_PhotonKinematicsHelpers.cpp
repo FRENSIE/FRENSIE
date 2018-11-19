@@ -223,20 +223,29 @@ double calculateScatteringAngleCosine(
     return 0.0;
   }
 
-  const double initial_energy_sqr = initial_energy*initial_energy;
-  const double final_energy_sqr = final_energy*final_energy;
+  const double initial_energy_ratio = initial_energy/Utility::PhysicalConstants::electron_rest_mass_energy;
+  const double initial_energy_ratio_sqr =
+    initial_energy_ratio*initial_energy_ratio;
+  
+  const double final_energy_ratio = final_energy/Utility::PhysicalConstants::electron_rest_mass_energy;
+  const double final_energy_ratio_sqr = final_energy_ratio*final_energy_ratio;
+  
   const double pz_sqr =
     electron_momentum_projection*electron_momentum_projection;
-  const double arg = final_energy - initial_energy +
-    initial_energy*final_energy;
+  const double arg = final_energy_ratio - initial_energy_ratio +
+    initial_energy_ratio*final_energy_ratio;
 
-  const double a = -initial_energy_sqr*final_energy_sqr;
-  const double b = -2*initial_energy*final_energy*(pz_sqr*pz_sqr - arg);
-  const double c = pz_sqr*(initial_energy_sqr + final_energy_sqr) - arg*arg;
+  const double a = initial_energy_ratio_sqr*final_energy_ratio_sqr;
+  const double b = 2*initial_energy_ratio*final_energy_ratio*
+    (pz_sqr*pz_sqr - arg);
+  const double c = -pz_sqr*(initial_energy_ratio_sqr + final_energy_ratio_sqr)
+    + arg*arg;
 
   double discriminant = b*b - 4*a*c;
 
   double scattering_angle_cosine;
+
+  energetically_possible = true;
 
   // This scattering process is energetically possible
   if( discriminant >= 0.0 && a != 0.0 )
@@ -252,50 +261,57 @@ double calculateScatteringAngleCosine(
     const double scattering_angle_cosine_plus =
       multiplier*(-b + sqrt_discriminant);
     const double scattering_angle_cosine_minus =
-      multiplier*(-b + sqrt_discriminant);
-
-    // At least one scattering angle cosine must be in the range [-1,1]
-    testInvariant( (scattering_angle_cosine_plus >= -1.0 ||
-                    scattering_angle_cosine_plus <= 1.0) ||
-                   (scattering_angle_cosine_minus >= -1.0 ||
-                    scattering_angle_cosine_minus <= 1.0 ) );
+      multiplier*(-b - sqrt_discriminant);
     
-    double test_pz_plus = std::numeric_limits<double>::infinity();
-    
-    if( scattering_angle_cosine_plus >= -1.0 ||
-        scattering_angle_cosine_plus <= 1.0 )
+    // Due to rounding error, both values may be below -1.0
+    if( scattering_angle_cosine_plus < -1.0 &&
+        scattering_angle_cosine_minus < -1.0 )
     {
-      test_pz_plus = calculateElectronMomentumProjection( initial_energy,
-                                                          final_energy,
-                                                          scattering_angle_cosine_plus );
+      scattering_angle_cosine = -1.0;
     }
-
-    double test_pz_minus = std::numeric_limits<double>::infinity();
-    
-    if( scattering_angle_cosine_minus >= -1.0 ||
-        scattering_angle_cosine_minus <= 1.0 )
+    // Due to rounding error, both values may be above 1.0
+    else if( scattering_angle_cosine_plus > 1.0 &&
+             scattering_angle_cosine_minus > 1.0 )
     {
-      test_pz_minus = calculateElectronMomentumProjection( initial_energy,
-                                                           final_energy,
-                                                           scattering_angle_cosine_minus );
+      scattering_angle_cosine = 1.0;
     }
-
-    // Due to approximations used in our derivation of the electron momentum
-    // projection and the floating-point roundoff, we will not get back the
-    // exact electron momentum projection that was supplied. Just take the
-    // one that is closest to the supplied projection.
-    const double diff_plus =
-      fabs( test_pz_plus - electron_momentum_projection );
-
-    const double diff_minus =
-      fabs( test_pz_minus - electron_momentum_projection );
-
-    if( diff_plus < diff_minus )
-      scattering_angle_cosine = scattering_angle_cosine_plus;
     else
-      scattering_angle_cosine = scattering_angle_cosine_minus;
+    {
+      double test_pz_plus = std::numeric_limits<double>::infinity();
+    
+      if( scattering_angle_cosine_plus >= -1.0 &&
+          scattering_angle_cosine_plus <= 1.0 )
+      {
+        test_pz_plus = calculateElectronMomentumProjection( initial_energy,
+                                                            final_energy,
+                                                            scattering_angle_cosine_plus );
+      }
 
-    energetically_possible = true;
+      double test_pz_minus = std::numeric_limits<double>::infinity();
+      
+      if( scattering_angle_cosine_minus >= -1.0 &&
+          scattering_angle_cosine_minus <= 1.0 )
+      {
+        test_pz_minus = calculateElectronMomentumProjection( initial_energy,
+                                                             final_energy,
+                                                             scattering_angle_cosine_minus );
+      }
+
+      // Due to approximations used in our derivation of the electron momentum
+      // projection and the floating-point roundoff, we will not get back the
+      // exact electron momentum projection that was supplied. Just take the
+      // one that is closest to the supplied projection.
+      const double diff_plus =
+        fabs( test_pz_plus - electron_momentum_projection );
+      
+      const double diff_minus =
+        fabs( test_pz_minus - electron_momentum_projection );
+      
+      if( diff_plus < diff_minus )
+        scattering_angle_cosine = scattering_angle_cosine_plus;
+      else
+        scattering_angle_cosine = scattering_angle_cosine_minus;
+    }
   }
   // This scattering process is not energetically possible
   else

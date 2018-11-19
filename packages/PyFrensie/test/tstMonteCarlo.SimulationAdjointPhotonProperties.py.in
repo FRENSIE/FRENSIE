@@ -96,7 +96,7 @@ class SimulationAdjointPhotonPropertiesTestCase(unittest.TestCase):
         "*Test MonteCarlo.SimulationAdjointPhotonProperties setAdjointPhotonRouletteSurvivalWeight"
         properties = MonteCarlo.SimulationAdjointPhotonProperties()
 
-        double weight = 1e-12
+        weight = 1e-12
         properties.setAdjointPhotonRouletteSurvivalWeight( weight )
 
         self.assertEqual( properties.getAdjointPhotonRouletteSurvivalWeight(),

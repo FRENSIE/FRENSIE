@@ -136,6 +136,15 @@ protected:
                          ParticleBank& bank,
                          const bool source_particle );
 
+  //! Simulate a resolved particle using the "alternative" tracking method
+  template<typename State>
+  void simulateParticleAlternative( ParticleState& unresolved_particle,
+                                    ParticleBank& bank,
+                                    const bool source_particle );
+
+  //! Get the collision forcer
+  const CollisionForcer& getCollisionForcer() const;
+
   //! Enable thread support
   void enableThreadSupport();
 
@@ -184,6 +193,14 @@ private:
   // Set the adjoint electron cutoff weight roulette
   void setAdjointElectronCutoffWeightRoulette();
 
+  // Simulate a resolved particle implementation
+  template<typename State, typename SimulateParticleTrackMethod>
+  void simulateParticleImpl( ParticleState& unresolved_particle,
+                             ParticleBank& bank,
+                             const bool source_particle,
+                             const SimulateParticleTrackMethod&
+                             simulate_particle_track );
+
   // Simulate an unresolved particle track
   template<typename State>
   void simulateUnresolvedParticleTrack(
@@ -199,6 +216,21 @@ private:
                               const double optical_path,
                               const bool starting_from_source );
 
+  // Simulate an unresolved particle track using the "alternative" method
+  template<typename State>
+  void simulateUnresolvedParticleTrackAlternative(
+                                            ParticleState& unresolved_particle,
+                                            ParticleBank& bank,
+                                            const double optical_path,
+                                            const bool starting_from_source );
+
+  // Simulate an resolved particle track using the "alternative" method
+  template<typename State>
+  void simulateParticleTrackAlternative( State& unresolved_particle,
+                                         ParticleBank& bank,
+                                         const double optical_path,
+                                         const bool starting_from_source );
+
   // Advance a particle to the cell boundary
   template<typename State>
   void advanceParticleToCellBoundary(
@@ -209,11 +241,17 @@ private:
   // Advance a particle to a collision site
   template<typename State>
   void advanceParticleToCollisionSite(
-                                  State& particle,
-                                  const double op_to_collision_site,
-                                  const double cell_total_macro_cross_section,
-                                  const double track_start_position[3] );
+                               State& particle,
+                               const double op_to_collision_site,
+                               const double cell_total_macro_cross_section,
+                               const double track_start_position[3],
+                               bool& global_subtrack_ending_event_dispatched );
 
+  // Collide with the cell material
+  template<typename State>
+  void collideWithCellMaterial( State& particle,
+                                ParticleBank& bank );
+  
   // Conduct a basic rendezvous
   void basicRendezvous() const;
 
