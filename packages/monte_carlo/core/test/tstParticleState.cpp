@@ -363,14 +363,14 @@ FRENSIE_UNIT_TEST( ParticleState, multiplyWeight )
 }
 
 //---------------------------------------------------------------------------//
-// Set/get the ray safety optical path of a particle
-FRENSIE_UNIT_TEST( ParticleState, setRaySafetyOpticalPath )
+// Set/get the ray safety distance of a particle
+FRENSIE_UNIT_TEST( ParticleState, setRaySafetyDistance )
 {
   TestParticleState particle( 1ull );
 
-  particle.setRaySafetyOpticalPath( 1.0 );
+  particle.setRaySafetyDistance( 1.0 );
 
-  FRENSIE_CHECK_EQUAL( particle.getRaySafetyOpticalPath(), 1.0 );
+  FRENSIE_CHECK_EQUAL( particle.getRaySafetyDistance(), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -597,7 +597,7 @@ FRENSIE_UNIT_TEST( ParticleState, copy_constructor )
   particle_gen_a.incrementCollisionNumber();
   particle_gen_a.setSourceWeight( 1.0 );
   particle_gen_a.setWeight( 0.5 );
-  particle_gen_a.setRaySafetyOpticalPath( 1.0 );
+  particle_gen_a.setRaySafetyDistance( 1.0 );
 
   // Create a second generation particle with the same collision number
   TestParticleState particle_gen_b( particle_gen_a, true );
@@ -634,8 +634,8 @@ FRENSIE_UNIT_TEST( ParticleState, copy_constructor )
                  particle_gen_a.getSourceWeight() );
   FRENSIE_CHECK_EQUAL( particle_gen_b.getWeight(),
                  particle_gen_a.getWeight() );
-  FRENSIE_CHECK_EQUAL( particle_gen_b.getRaySafetyOpticalPath(),
-                 particle_gen_a.getRaySafetyOpticalPath() );
+  FRENSIE_CHECK_EQUAL( particle_gen_b.getRaySafetyDistance(),
+                 particle_gen_a.getRaySafetyDistance() );
   FRENSIE_CHECK_EQUAL( particle_gen_b.getSourceCell(),
                  particle_gen_a.getSourceCell() );
   FRENSIE_CHECK_EQUAL( particle_gen_b.getCell(),
@@ -729,7 +729,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleState, archive, TestArchives )
     particle.incrementCollisionNumber();
     particle.setSourceWeight( 1.0 );
     particle.setWeight( 0.25 );
-    particle.setRaySafetyOpticalPath( 0.5 );
+    particle.setRaySafetyDistance( 0.5 );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( particle ) );
   }
@@ -764,7 +764,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleState, archive, TestArchives )
   FRENSIE_CHECK_EQUAL( particle.getGenerationNumber(), 0.0 );
   FRENSIE_CHECK_EQUAL( particle.getSourceWeight(), 1.0 );
   FRENSIE_CHECK_EQUAL( particle.getWeight(), 0.25 );
-  FRENSIE_CHECK_EQUAL( particle.getRaySafetyOpticalPath(), 0.5 );
+  FRENSIE_CHECK_EQUAL( particle.getRaySafetyDistance(), 0.5 );
   FRENSIE_CHECK_EQUAL( particle.getHistoryNumber(), 1ull );
 }
 

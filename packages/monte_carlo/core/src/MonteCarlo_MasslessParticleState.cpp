@@ -39,7 +39,7 @@ MasslessParticleState::MasslessParticleState(
                    new_charge,
                    increment_generation_number,
                    reset_collision_number,
-                   existing_base_state.getRaySafetyOpticalPath() )
+                   existing_base_state.getRaySafetyDistance() )
 { /* ... */ }
 
 // Return the speed of the particle (cm/s)

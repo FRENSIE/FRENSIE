@@ -83,10 +83,9 @@ struct RaySafetyHelper
   }
 
   //! Update the ray safety distance
-  static inline void updateRaySafetyOpticalPath(
-                                 State& particle,
-                                 const double op_to_collision_site,
-                                 const double macroscopic_total_cross_section )
+  static inline void updateRaySafetyDistance(
+                                 State&,
+                                 const double )
   { /* ... */ }
 };
 
@@ -100,29 +99,28 @@ struct RaySafetyHelper<State,typename std::enable_if<std::is_base_of<MonteCarlo:
                                         Geometry::Model::EntityId& surface_hit,
                                         const double remaining_track_op )
   {
-    if ( particle.getRaySafetyOpticalPath() < remaining_track_op )
+    if ( particle.getRaySafetyDistance() < remaining_track_op )
       return particle.navigator().fireRay( surface_hit ).value();
     else
       return std::numeric_limits<double>::infinity();
   }
 
   //! Update the ray safety distance
-  static inline void updateRaySafetyOpticalPath(
+  static inline void updateRaySafetyDistance(
                                 MonteCarlo::ChargedParticleState& particle,
-                                const double op_to_collision_site,
-                                const double macroscopic_total_cross_section )
+                                const double distance_to_collision_site )
   {
-    double new_ray_safety_op =
-      particle.getRaySafetyOpticalPath() - op_to_collision_site;
+    double new_ray_safety_distance =
+      particle.getRaySafetyDistance() - distance_to_collision_site;
 
     // Set the particle's new ray safety distance
-    if( new_ray_safety_op > 0.0 )
-      particle.setRaySafetyOpticalPath( new_ray_safety_op );
+    if( new_ray_safety_distance > 0.0 )
+      particle.setRaySafetyDistance( new_ray_safety_distance );
 
-    // Set ray safety to optical path to closest boundary in all directions
+    // Set ray safety distance to closest boundary in all directions
     else
     {
-      particle.setRaySafetyOpticalPath( particle.navigator().getDistanceToClosestBoundary().value()*macroscopic_total_cross_section );
+      particle.setRaySafetyDistance( particle.navigator().getDistanceToClosestBoundary().value() );
     }
 
   }
@@ -275,7 +273,7 @@ void ParticleSimulationManager::simulateParticleTrack(
   double remaining_track_op = optical_path;
   double op_to_surface_hit;
   double distance_to_surface_hit;
-  
+
   double track_start_point[3] = {particle.getXPosition(),
                                  particle.getYPosition(),
                                  particle.getZPosition()};
@@ -303,13 +301,6 @@ void ParticleSimulationManager::simulateParticleTrack(
   // Ray trace until the necessary number of optical paths have been traveled
   while( true )
   {
-    // Fire a ray through the cell currently containing the particle
-    try{
-      distance_to_surface_hit =
-        Details::RaySafetyHelper<State>::getDistanceToSurfaceHit( particle, surface_hit, remaining_track_op );
-    }
-    CATCH_LOST_PARTICLE_AND_BREAK( particle );
-
     // Get the total cross section for the cell
     if( !d_model->isCellVoid<State>( particle.getCell() ) )
     {
@@ -318,6 +309,15 @@ void ParticleSimulationManager::simulateParticleTrack(
     }
     else
       cell_total_macro_cross_section = 0.0;
+
+    double cell_distance_to_collision = remaining_track_op/cell_total_macro_cross_section;
+
+    // Fire a ray through the cell currently containing the particle
+    try{
+      distance_to_surface_hit =
+        Details::RaySafetyHelper<State>::getDistanceToSurfaceHit( particle, surface_hit, cell_distance_to_collision );
+    }
+    CATCH_LOST_PARTICLE_AND_BREAK( particle );
 
     // Convert the distance to the surface to optical path
     op_to_surface_hit = distance_to_surface_hit*cell_total_macro_cross_section;
@@ -344,7 +344,7 @@ void ParticleSimulationManager::simulateParticleTrack(
       remaining_track_op -= op_to_surface_hit;
 
       // Set the ray safety distance to zero
-      particle.setRaySafetyOpticalPath( 0.0 );
+      particle.setRaySafetyDistance( 0.0 );
 
       // After the first subtrack the particle can no longer be starting from
       // a source point
@@ -357,9 +357,14 @@ void ParticleSimulationManager::simulateParticleTrack(
     {
       this->advanceParticleToCollisionSite( particle,
                                             remaining_track_op,
-                                            cell_total_macro_cross_section,
+                                            cell_distance_to_collision,
                                             track_start_point,
                                             global_subtrack_ending_event_dispatched );
+
+      // Update the particle's ray safety distance
+      Details::RaySafetyHelper<State>::updateRaySafetyDistance(
+                                                  particle,
+                                                  cell_distance_to_collision );
 
       this->collideWithCellMaterial( particle, bank );
 
@@ -408,7 +413,7 @@ void ParticleSimulationManager::simulateParticleTrackAlternative(
   double cell_op_to_collision = initial_optical_path;
   double cell_distance_to_collision;
   double distance_to_surface_hit;
-  
+
   double track_start_point[3] = {particle.getXPosition(),
                                  particle.getYPosition(),
                                  particle.getZPosition()};
@@ -442,8 +447,7 @@ void ParticleSimulationManager::simulateParticleTrackAlternative(
   {
     // Fire a ray through the cell currently containing the particle
     try{
-      distance_to_surface_hit =
-        Details::RaySafetyHelper<State>::getDistanceToSurfaceHit( particle, surface_hit, cell_op_to_collision );
+      distance_to_surface_hit = particle.navigator().fireRay( surface_hit ).value();
     }
     CATCH_LOST_PARTICLE_AND_BREAK( particle );
 
@@ -468,7 +472,7 @@ void ParticleSimulationManager::simulateParticleTrackAlternative(
         track_start_point[0] = particle.getXPosition();
         track_start_point[1] = particle.getYPosition();
         track_start_point[2] = particle.getZPosition();
-        
+
         d_collision_forcer->forceCollision(
                         particle.getCell(),
                         cell_total_macro_cross_section*distance_to_surface_hit,
@@ -486,7 +490,7 @@ void ParticleSimulationManager::simulateParticleTrackAlternative(
         cell_distance_to_collision =
           std::numeric_limits<double>::infinity();
       }
-      
+
       // Normal cell
       else
       {
@@ -494,12 +498,12 @@ void ParticleSimulationManager::simulateParticleTrackAlternative(
           cell_op_to_collision/cell_total_macro_cross_section;
       }
     }
-    
+
     // Void cell
     else
     {
       cell_total_macro_cross_section = 0.0;
-      
+
       cell_distance_to_collision = std::numeric_limits<double>::infinity();
     }
 
@@ -520,9 +524,9 @@ void ParticleSimulationManager::simulateParticleTrackAlternative(
 
         break;
       }
-      
+
       // Set the ray safety distance to zero
-      particle.setRaySafetyOpticalPath( 0.0 );
+      particle.setRaySafetyDistance( 0.0 );
 
       // After the first subtrack the particle can no longer be starting from
       // a source point, but it will be starting from a cell boundary
@@ -539,7 +543,7 @@ void ParticleSimulationManager::simulateParticleTrackAlternative(
     {
       this->advanceParticleToCollisionSite( particle,
                                             cell_op_to_collision,
-                                            cell_total_macro_cross_section,
+                                            cell_distance_to_collision,
                                             track_start_point,
                                             global_subtrack_ending_event_dispatched );
 
@@ -609,22 +613,12 @@ template<typename State>
 void ParticleSimulationManager::advanceParticleToCollisionSite(
                                    State& particle,
                                    const double op_to_collision_site,
-                                   const double cell_total_macro_cross_section,
+                                   const double distance_to_collision,
                                    const double track_start_position[3],
                                    bool& global_subtrack_ending_event_dispatched )
 {
-  // Calculate the distance to the collision site
-  double distance_to_collision =
-    op_to_collision_site/cell_total_macro_cross_section;
-
   // Advance the particle
   particle.navigator().advanceBySubstep( *Utility::reinterpretAsQuantity<Geometry::Navigator::Length>( &distance_to_collision ) );
-
-  // Update the particle's ray safety distance
-  Details::RaySafetyHelper<State>::updateRaySafetyOpticalPath(
-                                              particle,
-                                              op_to_collision_site,
-                                              cell_total_macro_cross_section );
 
   // Update the observers: particle subtrack ending in cell event
   d_event_handler->updateObserversFromParticleSubtrackEndingInCellEvent(
@@ -647,7 +641,7 @@ void ParticleSimulationManager::collideWithCellMaterial( State& particle,
                                                          ParticleBank& bank )
 {
   ParticleBank local_bank;
-  
+
   // Undergo a collision with the material in the cell
   try{
     d_collision_kernel->collideWithCellMaterial( particle, local_bank );
@@ -655,7 +649,7 @@ void ParticleSimulationManager::collideWithCellMaterial( State& particle,
   CATCH_LOST_PARTICLE( particle );
 
   // Apply the weight windows to the original particle and to each of its
-  // progeny  
+  // progeny
   if( particle )
   {
     d_weight_windows->updateParticleState( particle, bank );
@@ -672,12 +666,12 @@ void ParticleSimulationManager::collideWithCellMaterial( State& particle,
     }
 
     std::shared_ptr<ParticleState> local_particle;
-    
+
     local_bank.pop( local_particle );
 
     // If the particle wasn't Rouletted, add it to the bank
     if( local_particle )
-    {      
+    {
       bank.push( local_particle );
       bank.splice( split_particle_bank );
     }
