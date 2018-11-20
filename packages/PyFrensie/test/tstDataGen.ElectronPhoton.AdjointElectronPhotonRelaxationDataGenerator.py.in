@@ -802,17 +802,38 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         self.assertEqual( discrete_weights[-1], 1.0 )
         self.assertEqual( len( discrete_weights ), 1 )
 
-        # Check the forward inelastic cross section data
-        threshold = h_data_container.getForwardInelasticElectronCrossSectionThresholdEnergyIndex()
+        # Check the forward brem cross section data
+        threshold = h_data_container.getForwardBremsstrahlungElectronCrossSectionThresholdEnergyIndex()
 
         self.assertEqual( threshold, 0 )
 
-        cross_section = h_data_container.getForwardInelasticElectronCrossSection()
+        cross_section = h_data_container.getForwardBremsstrahlungElectronCrossSection()
 
         self.assertEqual( cross_section[0], 2.97832e+01 )
-        self.assertEqual( cross_section[-1], 1.64670355529995461e+05 )
+        self.assertEqual( cross_section[-1], 9.71768e-01 )
         self.assertEqual( len( cross_section ), 8-threshold )
 
+        # Check the forward electroionization cross section data
+        threshold = h_data_container.getForwardElectroionizationElectronCrossSectionThresholdEnergyIndex()
+
+        self.assertEqual( threshold, 1 )
+
+        cross_section = h_data_container.getForwardElectroionizationElectronCrossSection()
+
+        self.assertEqual( cross_section[0], 4.0427802764032364e+07 )
+        self.assertEqual( cross_section[-1], 8.284008376199545e+04 )
+        self.assertEqual( len( cross_section ), 8-threshold )
+
+        # Check the forward atomic excitation cross section data
+        threshold = h_data_container.getForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex()
+
+        self.assertEqual( threshold, 1 )
+
+        cross_section = h_data_container.getForwardAtomicExcitationElectronCrossSection()
+
+        self.assertEqual( cross_section[0], 5.398785827404625e+07 )
+        self.assertEqual( cross_section[-1], 8.18293e+04 )
+        self.assertEqual( len( cross_section ), 8-threshold )
 
         # Check the atomic excitation data
         threshold = h_data_container.getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex()
