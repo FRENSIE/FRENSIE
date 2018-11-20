@@ -113,7 +113,7 @@ FRENSIE_UNIT_TEST( ElectronState, clone )
   particle->setEnergy( 1.0 );
   particle->setTime( 0.5 );
   particle->setWeight( 0.25 );
-  particle->setRaySafetyOpticalPath( 1.5 );
+  particle->setRaySafetyDistance( 1.5 );
 
   boost::shared_ptr<MonteCarlo::ParticleState> particle_clone(
 							   particle->clone() );
@@ -130,7 +130,7 @@ FRENSIE_UNIT_TEST( ElectronState, clone )
   FRENSIE_CHECK_EQUAL( particle_clone->getCollisionNumber(), 0 );
   FRENSIE_CHECK_EQUAL( particle_clone->getGenerationNumber(), 0 );
   FRENSIE_CHECK_EQUAL( particle_clone->getWeight(), 0.25 );
-  FRENSIE_CHECK_EQUAL( particle_clone->getRaySafetyOpticalPath(), 1.5 );
+  FRENSIE_CHECK_EQUAL( particle_clone->getRaySafetyDistance(), 1.5 );
   FRENSIE_CHECK_EQUAL( particle_clone->getHistoryNumber(), 0ull );
   FRENSIE_CHECK_EQUAL( particle_clone->getParticleType(),
 		       MonteCarlo::ELECTRON );
@@ -147,7 +147,7 @@ FRENSIE_UNIT_TEST( ElectronState, clone_new_hist )
   particle->setEnergy( 1.0 );
   particle->setTime( 0.5 );
   particle->setWeight( 0.25 );
-  particle->setRaySafetyOpticalPath( 1.5 );
+  particle->setRaySafetyDistance( 1.5 );
 
   boost::shared_ptr<MonteCarlo::ParticleState> particle_clone(
 						    particle->clone( 10ull ) );
@@ -164,7 +164,7 @@ FRENSIE_UNIT_TEST( ElectronState, clone_new_hist )
   FRENSIE_CHECK_EQUAL( particle_clone->getCollisionNumber(), 0 );
   FRENSIE_CHECK_EQUAL( particle_clone->getGenerationNumber(), 0 );
   FRENSIE_CHECK_EQUAL( particle_clone->getWeight(), 0.25 );
-  FRENSIE_CHECK_EQUAL( particle_clone->getRaySafetyOpticalPath(), 1.5 );
+  FRENSIE_CHECK_EQUAL( particle_clone->getRaySafetyDistance(), 1.5 );
   FRENSIE_CHECK_EQUAL( particle_clone->getHistoryNumber(), 10ull );
   FRENSIE_CHECK_EQUAL( particle_clone->getParticleType(),
 		       MonteCarlo::ELECTRON );
@@ -181,7 +181,7 @@ FRENSIE_UNIT_TEST( ElectronState, copy_constructor )
   particle_gen_a.setTime( 1.0 );
   particle_gen_a.incrementCollisionNumber();
   particle_gen_a.setWeight( 0.5 );
-  particle_gen_a.setRaySafetyOpticalPath( 1.5 );
+  particle_gen_a.setRaySafetyDistance( 1.5 );
 
   MonteCarlo::ElectronState particle_gen_a_copy( particle_gen_a );
 
@@ -211,8 +211,8 @@ FRENSIE_UNIT_TEST( ElectronState, copy_constructor )
 		 particle_gen_a.getGenerationNumber() );
   FRENSIE_CHECK_EQUAL( particle_gen_a_copy.getWeight(),
 		 particle_gen_a.getWeight() );
-  FRENSIE_CHECK_EQUAL( particle_gen_a_copy.getRaySafetyOpticalPath(),
-		 particle_gen_a.getRaySafetyOpticalPath() );
+  FRENSIE_CHECK_EQUAL( particle_gen_a_copy.getRaySafetyDistance(),
+		 particle_gen_a.getRaySafetyDistance() );
 
   //Create a second generation particle with the same collision number
   MonteCarlo::ElectronState particle_gen_b( particle_gen_a, true );
@@ -243,8 +243,8 @@ FRENSIE_UNIT_TEST( ElectronState, copy_constructor )
 		 particle_gen_a.getGenerationNumber()+1u );
   FRENSIE_CHECK_EQUAL( particle_gen_b.getWeight(),
 		 particle_gen_a.getWeight() );
-  FRENSIE_CHECK_EQUAL( particle_gen_b.getRaySafetyOpticalPath(),
-		 particle_gen_a.getRaySafetyOpticalPath() );
+  FRENSIE_CHECK_EQUAL( particle_gen_b.getRaySafetyDistance(),
+		 particle_gen_a.getRaySafetyDistance() );
 
   // Create a third generation particle and reset the collision counter
   MonteCarlo::ElectronState particle_gen_c( particle_gen_b, true, true );
@@ -274,8 +274,8 @@ FRENSIE_UNIT_TEST( ElectronState, copy_constructor )
 		 particle_gen_b.getGenerationNumber()+1u );
   FRENSIE_CHECK_EQUAL( particle_gen_c.getWeight(),
 		 particle_gen_b.getWeight() );
-  FRENSIE_CHECK_EQUAL( particle_gen_c.getRaySafetyOpticalPath(),
-		 particle_gen_b.getRaySafetyOpticalPath() );
+  FRENSIE_CHECK_EQUAL( particle_gen_c.getRaySafetyDistance(),
+		 particle_gen_b.getRaySafetyDistance() );
 }
 
 //---------------------------------------------------------------------------//
@@ -289,7 +289,7 @@ FRENSIE_UNIT_TEST( ElectronState, assignment_operator )
   particle_gen_a.setTime( 1.0 );
   particle_gen_a.incrementCollisionNumber();
   particle_gen_a.setWeight( 0.5 );
-  particle_gen_a.setRaySafetyOpticalPath( 1.5 );
+  particle_gen_a.setRaySafetyDistance( 1.5 );
 
   MonteCarlo::ElectronState particle_gen_a_copy = particle_gen_a;
 
@@ -317,8 +317,8 @@ FRENSIE_UNIT_TEST( ElectronState, assignment_operator )
 		 particle_gen_a.getGenerationNumber() );
   FRENSIE_CHECK_EQUAL( particle_gen_a_copy.getWeight(),
 		 particle_gen_a.getWeight() );
-  FRENSIE_CHECK_EQUAL( particle_gen_a_copy.getRaySafetyOpticalPath(),
-		 particle_gen_a.getRaySafetyOpticalPath() );
+  FRENSIE_CHECK_EQUAL( particle_gen_a_copy.getRaySafetyDistance(),
+		 particle_gen_a.getRaySafetyDistance() );
 }
 
 //---------------------------------------------------------------------------//
@@ -346,7 +346,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ElectronState, archive, TestArchives )
     particle.setTime( 0.5 );
     particle.incrementCollisionNumber();
     particle.setWeight( 0.25 );
-    particle.setRaySafetyOpticalPath( 1.5 );
+    particle.setRaySafetyDistance( 1.5 );
 
     std::shared_ptr<MonteCarlo::ParticleState>
       shared_particle( particle.clone() );
@@ -379,7 +379,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ElectronState, archive, TestArchives )
   FRENSIE_CHECK_EQUAL( particle.getCollisionNumber(), 1.0 );
   FRENSIE_CHECK_EQUAL( particle.getGenerationNumber(), 0.0 );
   FRENSIE_CHECK_EQUAL( particle.getWeight(), 0.25 );
-  FRENSIE_CHECK_EQUAL( particle.getRaySafetyOpticalPath(), 1.5 );
+  FRENSIE_CHECK_EQUAL( particle.getRaySafetyDistance(), 1.5 );
   FRENSIE_CHECK_EQUAL( particle.getHistoryNumber(), 1ull );
   FRENSIE_CHECK_EQUAL( particle.getParticleType(),
 		       MonteCarlo::ELECTRON );
@@ -400,7 +400,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ElectronState, archive, TestArchives )
   FRENSIE_CHECK_EQUAL( shared_particle->getCollisionNumber(), 1.0 );
   FRENSIE_CHECK_EQUAL( shared_particle->getGenerationNumber(), 0.0 );
   FRENSIE_CHECK_EQUAL( shared_particle->getWeight(), 0.25 );
-  FRENSIE_CHECK_EQUAL( shared_particle->getRaySafetyOpticalPath(), 1.5 );
+  FRENSIE_CHECK_EQUAL( shared_particle->getRaySafetyDistance(), 1.5 );
   FRENSIE_CHECK_EQUAL( shared_particle->getHistoryNumber(), 1ull );
   FRENSIE_CHECK_EQUAL( shared_particle->getParticleType(),
 		       MonteCarlo::ELECTRON );

@@ -243,7 +243,7 @@ private:
   void advanceParticleToCollisionSite(
                                State& particle,
                                const double op_to_collision_site,
-                               const double cell_total_macro_cross_section,
+                               const double distance_to_collision_site,
                                const double track_start_position[3],
                                bool& global_subtrack_ending_event_dispatched );
 
@@ -251,7 +251,7 @@ private:
   template<typename State>
   void collideWithCellMaterial( State& particle,
                                 ParticleBank& bank );
-  
+
   // Conduct a basic rendezvous
   void basicRendezvous() const;
 

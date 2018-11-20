@@ -43,7 +43,7 @@ void ParticleState::save( Archive& ar, const unsigned version ) const
   ar & BOOST_SERIALIZATION_NVP( d_generation_number );
   ar & BOOST_SERIALIZATION_NVP( d_source_weight );
   ar & BOOST_SERIALIZATION_NVP( d_weight );
-  ar & BOOST_SERIALIZATION_NVP( d_ray_safety_op );
+  ar & BOOST_SERIALIZATION_NVP( d_ray_safety_distance );
   ar & BOOST_SERIALIZATION_NVP( d_source_cell );
   ar & BOOST_SERIALIZATION_NVP( d_lost );
   ar & BOOST_SERIALIZATION_NVP( d_gone );
@@ -75,7 +75,7 @@ void ParticleState::load( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_NVP( d_generation_number );
   ar & BOOST_SERIALIZATION_NVP( d_source_weight );
   ar & BOOST_SERIALIZATION_NVP( d_weight );
-  ar & BOOST_SERIALIZATION_NVP( d_ray_safety_op );
+  ar & BOOST_SERIALIZATION_NVP( d_ray_safety_distance );
   ar & BOOST_SERIALIZATION_NVP( d_source_cell );
   ar & BOOST_SERIALIZATION_NVP( d_lost );
   ar & BOOST_SERIALIZATION_NVP( d_gone );
