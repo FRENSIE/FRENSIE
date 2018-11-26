@@ -125,8 +125,8 @@ double IncoherentAdjointPhotonScatteringDistribution::evaluatePDF(
   testPrecondition( incoming_energy <= d_max_energy );
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >=
-		    calculateMinScatteringAngleCosine( incoming_energy,
-						       d_max_energy ) );
+		    MonteCarlo::calculateMinScatteringAngleCosine( incoming_energy,
+                                                                   d_max_energy ) );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   return this->evaluatePDF( incoming_energy,
@@ -421,9 +421,20 @@ void IncoherentAdjointPhotonScatteringDistribution::createProbeParticle(
   if( this->isEnergyInScatteringWindow( energy_of_interest,
 					adjoint_photon.getEnergy() ) )
   {
-    const double scattering_angle_cosine =
-      calculateScatteringAngleCosineAdjoint( adjoint_photon.getEnergy(),
-					     energy_of_interest );
+    double scattering_angle_cosine;
+
+    if( energy_of_interest == d_max_energy )
+    {
+      scattering_angle_cosine =
+        MonteCarlo::calculateMinScatteringAngleCosine( adjoint_photon.getEnergy(),
+						       d_max_energy );
+    }
+    else
+    {
+      scattering_angle_cosine = 
+        MonteCarlo::calculateScatteringAngleCosineAdjoint( adjoint_photon.getEnergy(),
+                                                           energy_of_interest );
+    }
 
     const double pdf_conversion =
       Utility::PhysicalConstants::electron_rest_mass_energy/
