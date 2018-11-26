@@ -372,9 +372,14 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
   // Calculate the scattering angle cosine
   scattering_angle_cosine = 1.0 - (1.0 - inverse_energy_gain_ratio)/alpha;
 
+  const double min_scattering_angle_cosine =
+    calculateMinScatteringAngleCosine( incoming_energy, d_max_energy );
+  
   // Check for roundoff error
-  if( fabs( scattering_angle_cosine ) > 1.0 )
-    scattering_angle_cosine = copysign( 1.0, scattering_angle_cosine );
+  if( scattering_angle_cosine > 1.0 )
+    scattering_angle_cosine = 1.0;
+  else if( scattering_angle_cosine < min_scattering_angle_cosine )
+    scattering_angle_cosine = min_scattering_angle_cosine;
 
   // Make sure all of the branching values were positive
   testPostcondition( term_1 >= 0.0 );
@@ -390,9 +395,7 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
   // Make sure the sampled energy is valid
   testPostcondition( outgoing_energy >= incoming_energy );
   // Make sure the scattering angle cosine is valid
-  testPostcondition( scattering_angle_cosine >=
-		    calculateMinScatteringAngleCosine( incoming_energy,
-						       d_max_energy ) );
+  testPostcondition( scattering_angle_cosine >= min_scattering_angle_cosine );
   testPostcondition( scattering_angle_cosine <= 1.0 );
 }
 
