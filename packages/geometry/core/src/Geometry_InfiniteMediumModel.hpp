@@ -75,6 +75,14 @@ public:
   //! Create a raw, heap-allocated navigator (no callback)
   InfiniteMediumNavigator* createNavigatorAdvanced() const override;
 
+  //! Check if the model has been initialized
+  bool isInitialized() const final override;
+
+protected:
+
+  //! Initialize the model just-in-time
+  void initializeJustInTime() final override;
+
 private:
 
   // Save the model to an archive

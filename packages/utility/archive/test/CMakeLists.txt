@@ -38,4 +38,7 @@ ENDIF()
 FRENSIE_ADD_TEST_EXECUTABLE(PolymorphicHDF5Archive DEPENDS tstPolymorphicHDF5Archive.cpp)
 FRENSIE_ADD_TEST(PolymorphicHDF5Archive)
 
+FRENSIE_ADD_TEST_EXECUTABLE(JustInTimeInitializer DEPENDS tstJustInTimeInitializer.cpp)
+FRENSIE_ADD_TEST(JustInTimeInitializer)
+
 FRENSIE_FINALIZE_PACKAGE_TESTS(utility_archive)

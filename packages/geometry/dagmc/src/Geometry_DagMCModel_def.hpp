@@ -17,6 +17,7 @@
 #include <unordered_set>
 
 // FRENSIE Includes
+#include "Utility_JustInTimeInitializer.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_DesignByContract.hpp"
@@ -107,7 +108,7 @@ void DagMCModel::load( Archive& ar, const unsigned version )
   // Load the model properties only - all other data must be reinitialized
   ar & BOOST_SERIALIZATION_NVP( d_model_properties );
 
-  this->initialize( true );
+  Utility::JustInTimeInitializer::getInstance().addObject( *this );
 }
 
 } // end Geometry namespace

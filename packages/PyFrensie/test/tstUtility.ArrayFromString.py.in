@@ -1,6 +1,6 @@
 #! ${PYTHON_EXECUTABLE}
 #-----------------------------------------------------------------------------#
-## Utility.Prng module unit tests
+## Utility.ArrayFromString module unit tests
 #  \file   tstUtility.ArrayFromString.py
 #  \author Alex Robinson
 #  \brief  Unit tests for the Utility module
@@ -115,7 +115,7 @@ if __name__ == "__main__":
 
     print >>sys.stderr, \
         "\n**************************************\n" + \
-        "Testing MonteCarlo.Model \n" + \
+        "Testing Utility.ArrayFromString \n" + \
         "**************************************\n"
     result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
 
