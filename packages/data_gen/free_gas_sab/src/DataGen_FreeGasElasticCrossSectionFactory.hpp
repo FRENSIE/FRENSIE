@@ -66,6 +66,9 @@ public:
   void getUnmodifiedElasticCrossSection(
       Teuchos::Array<double>& unmodified_cross_section );
 
+  // Beta Test
+  void extractTestBeta( double energy );
+
 private: 
   
   // Extract the cross section from the specified 

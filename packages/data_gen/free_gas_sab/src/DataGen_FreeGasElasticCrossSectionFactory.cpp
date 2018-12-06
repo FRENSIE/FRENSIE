@@ -35,7 +35,9 @@ FreeGasElasticCrossSectionFactory::FreeGasElasticCrossSectionFactory(
 
   // Extract and convert the ACE elastic scattering cross section
   this->extractCrossSectionFromACE();
+  this->extractAngularDistributionFromACE();
   this->convertCrossSectionToZeroTemperature();
+  this->generateFreeGasCrossSection();
 
   // Set the cutoff energy for upscattering from thermal treatment
   d_energy_cutoff = Utility::calculateBetaMax( d_A )*d_kT;
@@ -100,30 +102,23 @@ void FreeGasElasticCrossSectionFactory::extractCrossSectionFromACE()
 // Extract the angular distribution from ACE (if exists)
 void FreeGasElasticCrossSectionFactory::extractAngularDistributionFromACE()
 {
-  if (false)
-  {
-    return;
-  }
-  else
-  {
-    // Initialize the scattering probability distribution
-    Teuchos::RCP<Utility::TabularOneDDistribution> isotropic_distribution(
-          new Utility::UniformDistribution( -1.0, 1.0, 0.5 ) );
+  // Initialize the scattering probability distribution
+  Teuchos::RCP<Utility::TabularOneDDistribution> isotropic_distribution(
+        new Utility::UniformDistribution( -1.0, 1.0, 0.5 ) );
 
-    // Initialize the scattering distribution
-    MonteCarlo::NuclearScatteringAngularDistribution::AngularDistribution
-      distribution( 2 );
+  // Initialize the scattering distribution
+  MonteCarlo::NuclearScatteringAngularDistribution::AngularDistribution
+    distribution( 2 );
 
-    distribution[0].first = 0.0;
-    distribution[0].second = isotropic_distribution;
-    
-    distribution[1].first = 20.0;
-    distribution[1].second = isotropic_distribution;
+  distribution[0].first = 0.0;
+  distribution[0].second = isotropic_distribution;
+  
+  distribution[1].first = 20.0;
+  distribution[1].second = isotropic_distribution;
 
-    d_ace_angular_distribution.reset( 
-        new MonteCarlo::NuclearScatteringAngularDistribution(
-                      distribution ) );
-  }
+  d_ace_angular_distribution.reset( 
+      new MonteCarlo::NuclearScatteringAngularDistribution(
+                    distribution ) );
 }
 
 // Convert cross section to zero-temperature cross section
@@ -187,6 +182,33 @@ void FreeGasElasticCrossSectionFactory::generateFreeGasCrossSection()
     new Utility::TabularDistribution<Utility::LinLin>( 
       d_energy_array,
       d_free_gas_cross_section ) );
+}
+
+// Extract Beta Distribution for Testing
+void FreeGasElasticCrossSectionFactory::extractTestBeta( double energy )
+{
+  double E = energy;
+
+  if ( E < d_energy_cutoff )
+  {
+    d_beta_function.reset( new DataGen::FreeGasElasticMarginalBetaFunction(
+                  d_zero_temperature_cross_section_distribution, 
+                  d_ace_angular_distribution,
+                  d_A,
+                  d_kT,
+                  E ) );
+
+    double beta_min = d_beta_function->getBetaMin();
+    double beta_max = -10*beta_min;
+    double beta_space = (beta_max - beta_min)/(100);
+
+    for (int k = 0; k < 101; ++k)
+    {
+      double beta = beta_min + k*beta_space; 
+      double   Ep = d_kT*beta + E;
+      std::cout << E << " " << Ep << " " << (*d_beta_function)(beta)*d_beta_function->getNormalizationConstant() << std::endl;
+    }
+  }
 }
 
 // Generate the free gas beta distribution

@@ -99,6 +99,25 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the energy grid can be returned
+TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
+		   testDoubleDifferentialCrossSection )
+{
+  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
+                            test_neutron_ace_file_name,
+                            table_name,
+                            1u ) );
+
+  double kT = 2.53010e-8;
+  std::vector<double> energy_array = {0.1*kT, 0.2*kT, 0.3*kT, 0.4*kT, 0.5*kT, 0.6*kT, 0.7*kT, 0.8*kT, 0.9*kT, 1.0*kT, 1.1*kT, 1.2*kT, 1.3*kT, 1.4*kT, 1.5*kT, 1.6*kT, 1.7*kT, 1.8*kT, 1.9*kT, 2.0*kT };
+
+  for (int i = 0; i < energy_array.size(); ++i)
+  {
+    free_gas_factory->extractTestBeta( energy_array[i] );
+  }
+}
+
+//---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )

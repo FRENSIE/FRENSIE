@@ -244,7 +244,7 @@ double AdjointFreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
         // Approximate S(alpha,beta) function
         value = d_average_zero_temp_elastic_cross_section/
           ((d_A+1)*(d_A+1)*sqrt(alpha))*
-          exp( -(alpha + -1*beta)*(alpha + -1*beta)/(4*alpha) );
+          exp( -(alpha + -1.0*beta)*(alpha + -1.0*beta)/(4*alpha) );
 
         if( value > std::numeric_limits<double>::max() )
         {
@@ -274,7 +274,7 @@ double AdjointFreeGasElasticSAlphaBetaFunction::calculateExpArgConst(
 							 const double beta,
 							 const double E ) const
 {
-  return -d_A*E/d_kT + -(d_A+1.0)/2.0*(-1*beta - d_A*alpha);
+  return -d_A*E/d_kT + -(d_A+1.0)/2.0*(-1.0*beta - d_A*alpha);
 }
 
 // Calculate the exponential argument multiplier
@@ -291,7 +291,7 @@ double AdjointFreeGasElasticSAlphaBetaFunction::calculateBesselArgMult(
 							 const double E ) const
 {
   double bessel_arg_mult_arg = 
-    4.0*d_A*alpha*E/d_kT - (-1*beta - d_A*alpha)*(-1*beta - d_A*alpha);
+    4.0*d_A*alpha*E/d_kT - (-1.0*beta - d_A*alpha)*(-1.0*beta - d_A*alpha);
       
   // When alpha ~ alpha_min, alpha ~ alpha_max or beta ~ beta_min,
   // a very small negative argument is possible due to roundoff-set it to 0
@@ -313,7 +313,7 @@ void AdjointFreeGasElasticSAlphaBetaFunction::findLimits(
   std::list<double> search_grid;
 
   double arg1 = 4*d_A*alpha*E/d_kT - 
-    (-1*beta - d_A*alpha)*(-1*beta - d_A*alpha);
+    (-1.0*beta - d_A*alpha)*(-1.0*beta - d_A*alpha);
   double arg2 = (d_A + 1)*(d_A + 1)*alpha*alpha;
   
   double estimated_peak_mu_cm = (arg1 - arg2)/(arg1 + arg2);
