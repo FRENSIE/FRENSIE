@@ -202,10 +202,12 @@ void FreeGasElasticCrossSectionFactory::extractTestBeta( double energy )
     double beta_max = -10*beta_min;
     double beta_space = (beta_max - beta_min)/(100);
 
-    for (int k = 0; k < 101; ++k)
+    std::vector<double> e_out = {0.1*d_kT, 0.2*d_kT, 0.3*d_kT, 0.4*d_kT, 0.5*d_kT, 0.6*d_kT, 0.7*d_kT, 0.8*d_kT, 0.9*d_kT, 1.0*d_kT, 1.1*d_kT, 1.2*d_kT, 1.3*d_kT, 1.4*d_kT, 1.5*d_kT, 1.6*d_kT, 1.7*d_kT, 1.8*d_kT, 1.9*d_kT, 2.0*d_kT };
+
+    for (int k = 0; k < 20; ++k)
     {
-      double beta = beta_min + k*beta_space; 
-      double   Ep = d_kT*beta + E;
+      double beta = (e_out[k] - E)/d_kT;
+      double   Ep = e_out[k];
       std::cout << E << " " << Ep << " " << (*d_beta_function)(beta)*d_beta_function->getNormalizationConstant() << std::endl;
     }
   }
