@@ -22,6 +22,7 @@
 #include "Geometry_RootNavigator.hpp"
 #include "Geometry_PointLocation.hpp"
 #include "Geometry_Model.hpp"
+#include "Utility_JustInTimeInitializer.hpp"
 #include "Utility_Map.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_DesignByContract.hpp"
@@ -47,7 +48,7 @@ public:
   {/* ... */}
 
   //! Check if the Root model has been initialized
-  bool isInitialized() const;
+  bool isInitialized() const final override;
 
   //! Initialize the Root model
   void initialize( const RootModelProperties& model_properties,
@@ -109,6 +110,11 @@ public:
   //! Create a raw, heap-allocated navigator
   RootNavigator* createNavigatorAdvanced() const override;
 
+protected:
+
+  //! Initialize the model just-in-time
+  void initializeJustInTime() final override;
+
 private:
 
   // Constructor
@@ -153,6 +159,9 @@ private:
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
+
+  // Declare the Utility::JustInTimeInitializer object as a friend
+  friend class Utility::JustInTimeInitializer;
 
   // Declare the RootNavigator as a friend
   friend class RootNavigator;

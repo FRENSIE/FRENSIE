@@ -38,6 +38,12 @@ RootModel::RootModel()
   : d_manager( NULL )
 { /* ... */ }
 
+// Initialize the model just-in-time
+void RootModel::initializeJustInTime()
+{
+  this->initialize( *d_model_properties );
+}
+
 // Check if root has been initialized
 bool RootModel::isInitialized() const
 {

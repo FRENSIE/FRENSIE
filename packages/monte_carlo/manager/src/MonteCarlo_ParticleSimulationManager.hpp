@@ -84,6 +84,9 @@ public:
   void setSimulationNameAndArchiveType( const std::string& new_name,
                                         const std::string& archive_type );
 
+  //! Initialize the manager
+  void initialize();
+
   //! Run the simulation set up by the user
   virtual void runSimulation();
 

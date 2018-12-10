@@ -232,8 +232,7 @@ void FilledGeometryModel::load( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_NVP( d_properties );
   ar & BOOST_SERIALIZATION_NVP( d_unfilled_model );
 
-  // Fill the geometry
-  this->fillGeometry( false );
+  Utility::JustInTimeInitializer::getInstance().addObject( *this );  
 }
 
 } // end MonteCarlo namespace

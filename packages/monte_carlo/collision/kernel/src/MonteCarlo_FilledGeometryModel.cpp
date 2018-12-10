@@ -36,6 +36,12 @@ void FilledGeometryModel::setDefaultDatabasePath(
 
 // Default constructor
 FilledGeometryModel::FilledGeometryModel()
+  : d_database_path(),
+    d_scattering_center_definitions(),
+    d_material_definitions(),
+    d_properties(),
+    d_unfilled_model(),
+    d_filled( false )
 { /* ... */ }
 
 // Constructor
@@ -58,7 +64,8 @@ FilledGeometryModel::FilledGeometryModel(
     d_scattering_center_definitions( scattering_center_definitions ),
     d_material_definitions( material_definitions ),
     d_properties( properties ),
-    d_unfilled_model( geometry_model )
+    d_unfilled_model( geometry_model ),
+    d_filled( false )
 {
   // Make sure that the scattering center definitions are valid
   testPrecondition( scattering_center_definitions.get() );
@@ -365,6 +372,20 @@ void FilledGeometryModel::fillGeometry( const bool verbose )
                              "Could not fill the model with adjoint electron "
                              "materials!" );
   }
+
+  d_filled = true;
+}
+
+// Check if the model is initialized
+bool FilledGeometryModel::isInitialized() const
+{
+  return d_filled;
+}
+
+// Initialize the geometry just-in-time
+void FilledGeometryModel::initializeJustInTime()
+{
+  this->fillGeometry( false );
 }
 
 EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo::FilledGeometryModel );

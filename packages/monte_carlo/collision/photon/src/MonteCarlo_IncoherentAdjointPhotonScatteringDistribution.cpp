@@ -125,8 +125,8 @@ double IncoherentAdjointPhotonScatteringDistribution::evaluatePDF(
   testPrecondition( incoming_energy <= d_max_energy );
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >=
-		    calculateMinScatteringAngleCosine( incoming_energy,
-						       d_max_energy ) );
+		    MonteCarlo::calculateMinScatteringAngleCosine( incoming_energy,
+                                                                   d_max_energy ) );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   return this->evaluatePDF( incoming_energy,
@@ -301,86 +301,132 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
   const double min_inverse_energy_gain_ratio =
     calculateMinInverseEnergyGainRatio( incoming_energy, d_max_energy );
 
-  const double term_1 = -3.0*log(min_inverse_energy_gain_ratio)*
-    (1.0 - min_inverse_energy_gain_ratio)*alpha*alpha;
-
-  const double term_2 = 3.0/2.0*alpha*alpha*
-    (1.0 - min_inverse_energy_gain_ratio*min_inverse_energy_gain_ratio);
-
-  const double term_3_arg = min_inverse_energy_gain_ratio - 1.0 + alpha;
-
-  const double term_3 = alpha*alpha*alpha - term_3_arg*term_3_arg*term_3_arg;
-
-  const double all_terms = term_1+term_2+term_3;
+  const double branch_value = (1.0 - min_inverse_energy_gain_ratio)/
+    (1.0 + min_inverse_energy_gain_ratio);
 
   double inverse_energy_gain_ratio;
-
-  double random_number_1, random_number_2;
-
+  
   while( true )
   {
-    ++trials;
-
-    random_number_1 =
+    const double random_number_1 =
       Utility::RandomNumberGenerator::getRandomNumber<double>();
-    random_number_2 =
+    const double random_number_2 =
+      Utility::RandomNumberGenerator::getRandomNumber<double>();
+    const double random_number_3 =
       Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-    if( random_number_1 < term_1/all_terms )
+    inverse_energy_gain_ratio = min_inverse_energy_gain_ratio +
+      random_number_2*(1.0 - min_inverse_energy_gain_ratio);
+
+    scattering_angle_cosine = 1.0 - (1.0 - inverse_energy_gain_ratio)/alpha;
+
+    // Evaluate branch 1 rejection function
+    if( random_number_1 <= branch_value )
     {
-      inverse_energy_gain_ratio =
-	pow( min_inverse_energy_gain_ratio, random_number_2 );
-
-      const double rejection_value = (1.0 - inverse_energy_gain_ratio)/
-	(1.0 - min_inverse_energy_gain_ratio);
-
-      double random_number_3 =
-	Utility::RandomNumberGenerator::getRandomNumber<double>();
-
-      if( random_number_3 < rejection_value )
-	break;
+      const double rejection_value =
+        min_inverse_energy_gain_ratio/(1.0-min_inverse_energy_gain_ratio)*
+        (1.0/inverse_energy_gain_ratio - 1.0);
+      
+      if( random_number_3 <= rejection_value )
+        break;
     }
-    else if( random_number_1 < (term_1+term_2)/all_terms )
-    {
-      const double arg = 1.0 - min_inverse_energy_gain_ratio;
-
-      inverse_energy_gain_ratio =
-	sqrt( random_number_2*arg*arg +
-	      min_inverse_energy_gain_ratio*min_inverse_energy_gain_ratio );
-
-      break;
-    }
+    // Evaluate branch 2 rejection function
     else
     {
-      const double term_3_arg_cubed = term_3_arg*term_3_arg*term_3_arg;
+      const double rejection_value =
+        0.5*(scattering_angle_cosine*scattering_angle_cosine +
+             inverse_energy_gain_ratio);
 
-      const double arg = random_number_2*
-	(alpha*alpha*alpha - term_3_arg_cubed) + term_3_arg_cubed;
-
-      if( arg < 0.0 )
-	inverse_energy_gain_ratio = 1.0 - alpha - pow( fabs(arg), 1/3.0 );
-      else
-	inverse_energy_gain_ratio = 1.0 - alpha + pow( arg, 1/3.0 );
-
-      break;
+      if( random_number_3 <= rejection_value )
+        break;
     }
   }
+
+  // const double term_1 = -3.0*log(min_inverse_energy_gain_ratio)*
+  //   (1.0 - min_inverse_energy_gain_ratio)*alpha*alpha;
+
+  // const double term_2 = 3.0/2.0*alpha*alpha*
+  //   (1.0 - min_inverse_energy_gain_ratio*min_inverse_energy_gain_ratio);
+
+  // const double term_3_arg = min_inverse_energy_gain_ratio - 1.0 + alpha;
+
+  // const double term_3 = alpha*alpha*alpha - term_3_arg*term_3_arg*term_3_arg;
+
+  // const double all_terms = term_1+term_2+term_3;
+
+  // double inverse_energy_gain_ratio;
+
+  // double random_number_1, random_number_2;
+
+  // while( true )
+  // {
+  //   ++trials;
+
+  //   random_number_1 =
+  //     Utility::RandomNumberGenerator::getRandomNumber<double>();
+  //   random_number_2 =
+  //     Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+  //   if( random_number_1 < term_1/all_terms )
+  //   {
+  //     inverse_energy_gain_ratio =
+  //       pow( min_inverse_energy_gain_ratio, random_number_2 );
+
+  //     const double rejection_value = (1.0 - inverse_energy_gain_ratio)/
+  //       (1.0 - min_inverse_energy_gain_ratio);
+
+  //     double random_number_3 =
+  //       Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+  //     if( random_number_3 < rejection_value )
+  //       break;
+  //   }
+  //   else if( random_number_1 < (term_1+term_2)/all_terms )
+  //   {
+  //     const double arg = 1.0 - min_inverse_energy_gain_ratio;
+
+  //     inverse_energy_gain_ratio =
+  //       sqrt( random_number_2*arg*arg +
+  //             min_inverse_energy_gain_ratio*min_inverse_energy_gain_ratio );
+
+  //     break;
+  //   }
+  //   else
+  //   {
+  //     const double term_3_arg_cubed = term_3_arg*term_3_arg*term_3_arg;
+
+  //     const double arg = random_number_2*
+  //       (alpha*alpha*alpha - term_3_arg_cubed) + term_3_arg_cubed;
+
+  //     if( arg < 0.0 )
+  //       inverse_energy_gain_ratio = 1.0 - alpha - pow( fabs(arg), 1/3.0 );
+  //     else
+  //       inverse_energy_gain_ratio = 1.0 - alpha + pow( arg, 1/3.0 );
+
+  //     break;
+  //   }
+  // }
+
+  // Calculate the scattering angle cosine
+  // scattering_angle_cosine = 1.0 - (1.0 - inverse_energy_gain_ratio)/alpha;
 
   // Calculate the outgoing energy
   outgoing_energy = incoming_energy/inverse_energy_gain_ratio;
 
-  // Calculate the scattering angle cosine
-  scattering_angle_cosine = 1.0 - (1.0 - inverse_energy_gain_ratio)/alpha;
-
+  const double min_scattering_angle_cosine =
+    calculateMinScatteringAngleCosine( incoming_energy, d_max_energy );
+  
   // Check for roundoff error
-  if( fabs( scattering_angle_cosine ) > 1.0 )
-    scattering_angle_cosine = copysign( 1.0, scattering_angle_cosine );
+  if( scattering_angle_cosine > 1.0 )
+    scattering_angle_cosine = 1.0;
+  else if( scattering_angle_cosine < min_scattering_angle_cosine )
+    scattering_angle_cosine = min_scattering_angle_cosine;
 
   // Make sure all of the branching values were positive
-  testPostcondition( term_1 >= 0.0 );
-  testPostcondition( term_2 >= 0.0 );
-  testPostcondition( term_3 >= 0.0 );
-  testPostcondition( all_terms > 0.0 );
+  // testPostcondition( term_1 >= 0.0 );
+  // testPostcondition( term_2 >= 0.0 );
+  // testPostcondition( term_3 >= 0.0 );
+  // testPostcondition( all_terms > 0.0 );
   // Make sure the sampled value is valid
   testPostcondition( !Utility::QuantityTraits<double>::isnaninf(
 						 inverse_energy_gain_ratio ) );
@@ -390,9 +436,7 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
   // Make sure the sampled energy is valid
   testPostcondition( outgoing_energy >= incoming_energy );
   // Make sure the scattering angle cosine is valid
-  testPostcondition( scattering_angle_cosine >=
-		    calculateMinScatteringAngleCosine( incoming_energy,
-						       d_max_energy ) );
+  testPostcondition( scattering_angle_cosine >= min_scattering_angle_cosine );
   testPostcondition( scattering_angle_cosine <= 1.0 );
 }
 
@@ -421,9 +465,20 @@ void IncoherentAdjointPhotonScatteringDistribution::createProbeParticle(
   if( this->isEnergyInScatteringWindow( energy_of_interest,
 					adjoint_photon.getEnergy() ) )
   {
-    const double scattering_angle_cosine =
-      calculateScatteringAngleCosineAdjoint( adjoint_photon.getEnergy(),
-					     energy_of_interest );
+    double scattering_angle_cosine;
+
+    if( energy_of_interest == d_max_energy )
+    {
+      scattering_angle_cosine =
+        MonteCarlo::calculateMinScatteringAngleCosine( adjoint_photon.getEnergy(),
+						       d_max_energy );
+    }
+    else
+    {
+      scattering_angle_cosine = 
+        MonteCarlo::calculateScatteringAngleCosineAdjoint( adjoint_photon.getEnergy(),
+                                                           energy_of_interest );
+    }
 
     const double pdf_conversion =
       Utility::PhysicalConstants::electron_rest_mass_energy/

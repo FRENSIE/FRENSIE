@@ -3285,6 +3285,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
     FRENSIE_FLUSH_ALL_LOGS();
   }
 
+  Utility::JustInTimeInitializer::getInstance().activate();
+
   // Copy the archive ostream to an istream
   std::istringstream archive_istream( archive_ostream.str() );
 
@@ -3298,6 +3300,14 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( filled_model ) );
 
   iarchive.reset();
+
+  FRENSIE_REQUIRE( !filled_model->isInitialized() );
+
+  FRENSIE_REQUIRE_EQUAL( Utility::JustInTimeInitializer::getInstance().getNumberOfObjects(), 1 );
+
+  FRENSIE_REQUIRE_NO_THROW( Utility::JustInTimeInitializer::getInstance().initializeObjectsAndClear() );
+
+  FRENSIE_REQUIRE( filled_model->isInitialized() );
 
   FRENSIE_CHECK( !filled_model->isTerminationCell( 1 ) );
 
@@ -3324,6 +3334,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
 
   // FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_POSITRON ) );
   // FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointPositronState>( 1 ) );
+
+  Utility::JustInTimeInitializer::getInstance().deactivate();
 }
 
 //---------------------------------------------------------------------------//
@@ -3379,6 +3391,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( filled_model ) );
 
   iarchive.reset();
+
+  FRENSIE_REQUIRE( filled_model->isInitialized() );
 
   FRENSIE_CHECK( !filled_model->isTerminationCell( 1 ) );
 
@@ -3447,6 +3461,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
     FRENSIE_FLUSH_ALL_LOGS();
   }
 
+  Utility::JustInTimeInitializer::getInstance().activate();
+
   // Copy the archive ostream to an istream
   std::istringstream archive_istream( archive_ostream.str() );
 
@@ -3460,6 +3476,14 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( filled_model ) );
 
   iarchive.reset();
+
+  FRENSIE_REQUIRE( !filled_model->isInitialized() );
+
+  FRENSIE_REQUIRE_EQUAL( Utility::JustInTimeInitializer::getInstance().getNumberOfObjects(), 1 );
+
+  FRENSIE_REQUIRE_NO_THROW( Utility::JustInTimeInitializer::getInstance().initializeObjectsAndClear() );
+
+  FRENSIE_REQUIRE( filled_model->isInitialized() );
 
   FRENSIE_CHECK( !filled_model->isTerminationCell( 1 ) );
 
@@ -3486,6 +3510,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
 
   // FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_POSITRON ) );
   // FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointPositronState>( 1 ) );
+
+  Utility::JustInTimeInitializer::getInstance().deactivate();
 }
 
 //---------------------------------------------------------------------------//
@@ -3528,6 +3554,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
     FRENSIE_FLUSH_ALL_LOGS();
   }
 
+  Utility::JustInTimeInitializer::getInstance().activate();
+
   // Copy the archive ostream to an istream
   std::istringstream archive_istream( archive_ostream.str() );
 
@@ -3541,6 +3569,14 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( filled_model ) );
 
   iarchive.reset();
+
+  FRENSIE_REQUIRE( !filled_model->isInitialized() );
+
+  FRENSIE_REQUIRE_EQUAL( Utility::JustInTimeInitializer::getInstance().getNumberOfObjects(), 1 );
+
+  FRENSIE_REQUIRE_NO_THROW( Utility::JustInTimeInitializer::getInstance().initializeObjectsAndClear() );
+
+  FRENSIE_REQUIRE( filled_model->isInitialized() );
 
   FRENSIE_CHECK( !filled_model->isTerminationCell( 1 ) );
 
@@ -3567,6 +3603,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
 
   // FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_POSITRON ) );
   // FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointPositronState>( 1 ) );
+
+  Utility::JustInTimeInitializer::getInstance().deactivate();
 }
 
 //---------------------------------------------------------------------------//
@@ -3609,6 +3647,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
     FRENSIE_FLUSH_ALL_LOGS();
   }
 
+  Utility::JustInTimeInitializer::getInstance().activate();
+
   // Copy the archive ostream to an istream
   std::istringstream archive_istream( archive_ostream.str() );
 
@@ -3622,6 +3662,14 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( filled_model ) );
 
   iarchive.reset();
+
+  FRENSIE_REQUIRE( !filled_model->isInitialized() );
+
+  FRENSIE_REQUIRE_EQUAL( Utility::JustInTimeInitializer::getInstance().getNumberOfObjects(), 1 );
+
+  FRENSIE_REQUIRE_NO_THROW( Utility::JustInTimeInitializer::getInstance().initializeObjectsAndClear() );
+
+  FRENSIE_REQUIRE( filled_model->isInitialized() );
 
   FRENSIE_CHECK( !filled_model->isTerminationCell( 1 ) );
 
@@ -3648,6 +3696,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
 
   // FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_POSITRON ) );
   // FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointPositronState>( 1 ) );
+
+  Utility::JustInTimeInitializer::getInstance().deactivate();
 }
 
 //---------------------------------------------------------------------------//
@@ -3690,6 +3740,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
     FRENSIE_FLUSH_ALL_LOGS();
   }
 
+  Utility::JustInTimeInitializer::getInstance().activate();
+
   // Copy the archive ostream to an istream
   std::istringstream archive_istream( archive_ostream.str() );
 
@@ -3703,6 +3755,14 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( filled_model ) );
 
   iarchive.reset();
+
+  FRENSIE_REQUIRE( !filled_model->isInitialized() );
+
+  FRENSIE_REQUIRE_EQUAL( Utility::JustInTimeInitializer::getInstance().getNumberOfObjects(), 1 );
+
+  FRENSIE_REQUIRE_NO_THROW( Utility::JustInTimeInitializer::getInstance().initializeObjectsAndClear() );
+
+  FRENSIE_REQUIRE( filled_model->isInitialized() );
 
   FRENSIE_CHECK( !filled_model->isTerminationCell( 1 ) );
 
@@ -3729,6 +3789,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
 
   // FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_POSITRON ) );
   // FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointPositronState>( 1 ) );
+  
+  Utility::JustInTimeInitializer::getInstance().deactivate();
 }
 
 //---------------------------------------------------------------------------//
@@ -3780,6 +3842,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
     FRENSIE_FLUSH_ALL_LOGS();
   }
 
+  Utility::JustInTimeInitializer::getInstance().activate();
+
   // Copy the archive ostream to an istream
   std::istringstream archive_istream( archive_ostream.str() );
 
@@ -3793,6 +3857,14 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( filled_model ) );
 
   iarchive.reset();
+
+  FRENSIE_REQUIRE( !filled_model->isInitialized() );
+
+  FRENSIE_REQUIRE_EQUAL( Utility::JustInTimeInitializer::getInstance().getNumberOfObjects(), 1 );
+
+  FRENSIE_REQUIRE_NO_THROW( Utility::JustInTimeInitializer::getInstance().initializeObjectsAndClear() );
+
+  FRENSIE_REQUIRE( filled_model->isInitialized() );
 
   FRENSIE_CHECK( !filled_model->isTerminationCell( 1 ) );
 
@@ -3819,6 +3891,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
 
   // FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_POSITRON ) );
   // FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointPositronState>( 1 ) );
+
+  Utility::JustInTimeInitializer::getInstance().deactivate();
 }
 
 //---------------------------------------------------------------------------//
@@ -3861,6 +3935,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
     FRENSIE_FLUSH_ALL_LOGS();
   }
 
+  Utility::JustInTimeInitializer::getInstance().activate();
+
   // Copy the archive ostream to an istream
   std::istringstream archive_istream( archive_ostream.str() );
 
@@ -3874,6 +3950,14 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( filled_model ) );
 
   iarchive.reset();
+
+  FRENSIE_REQUIRE( !filled_model->isInitialized() );
+
+  FRENSIE_REQUIRE_EQUAL( Utility::JustInTimeInitializer::getInstance().getNumberOfObjects(), 1 );
+
+  FRENSIE_REQUIRE_NO_THROW( Utility::JustInTimeInitializer::getInstance().initializeObjectsAndClear() );
+
+  FRENSIE_REQUIRE( filled_model->isInitialized() );
 
   FRENSIE_CHECK( !filled_model->isTerminationCell( 1 ) );
 
@@ -3900,6 +3984,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
 
   // FRENSIE_CHECK( !filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_POSITRON ) );
   // FRENSIE_CHECK( !filled_model->isCellVoid<MonteCarlo::AdjointPositronState>( 1 ) );
+
+  Utility::JustInTimeInitializer::getInstance().deactivate();
 }
 
 //---------------------------------------------------------------------------//
