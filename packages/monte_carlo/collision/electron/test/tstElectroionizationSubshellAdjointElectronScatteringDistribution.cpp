@@ -67,6 +67,42 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 }
 
 //---------------------------------------------------------------------------//
+// Check that the min energy can be returned
+FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistribution,
+                   getMinEnergy )
+{
+  FRENSIE_CHECK_EQUAL( distribution->getMinEnergy(), 1e-5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the max energy can be returned
+FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistribution,
+                   getMaxEnergy )
+{
+  FRENSIE_CHECK_EQUAL( distribution->getMaxEnergy(), 1.999997898919999884e+01 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the min outgoing energy can be returned
+FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistribution,
+                   getOutgoingMinEnergy )
+{
+  FRENSIE_CHECK_EQUAL( distribution->getOutgoingMinEnergy( 1e-5 ), 2.363269271930896741e-05 );
+
+  FRENSIE_CHECK_EQUAL( distribution->getOutgoingMinEnergy( 1.999997898919999884e+01 ), 1.99999927002e+01 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the max outgoing energy can be returned
+FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistribution,
+                   getOutgoingMaxEnergy )
+{
+  FRENSIE_CHECK_EQUAL( distribution->getOutgoingMaxEnergy( 1e-5 ), 20.0 );
+
+  FRENSIE_CHECK_EQUAL( distribution->getOutgoingMaxEnergy( 1.999997898919999884e+01 ), 20.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated for a given incoming and knock-on energy
 FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistribution,
                    evaluate )
@@ -76,6 +112,12 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
   // Check below the first bin
   pdf = distribution->evaluate( 9.99e-6, 2.3711E-5 );
   FRENSIE_CHECK_SMALL( pdf, 1e-12 );
+
+  pdf = distribution->evaluate( 1e-5, 0.01 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.589136052076667909e+02, 1e-12 );
+
+  pdf = distribution->evaluate( 0.00996, 0.01 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.216127148874571503e+03, 1e-12 );
 
   // Check the first bin
   pdf = distribution->evaluate( 1e-5, 2.3711E-5 );
@@ -104,6 +146,9 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
   // Check below the first bin
   pdf = distribution->evaluatePDF( 9.99e-6, 2.3711E-5 );
   FRENSIE_CHECK_SMALL( pdf, 1e-12 );
+
+  pdf = distribution->evaluate( 0.00996, 0.01 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.216127148874571503e+03, 1e-12 );
 
   // Check the first bin
   pdf = distribution->evaluatePDF( 1e-5, 2.3711E-5 );
@@ -229,16 +274,15 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 
   FRENSIE_CHECK_EQUAL( bank.size(), 4 );
 
-  double pdf = distribution->evaluate( 1e-5, 0.08 );
-  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 0.08 );
+  double pdf = distribution->evaluate( 1e-5, 0.01 );
+
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 0.01 );
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
 
   bank.pop();
 
-  pdf = distribution->evaluate(
-                1e-5, Utility::PhysicalConstants::electron_rest_mass_energy );
-  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(),
-                       Utility::PhysicalConstants::electron_rest_mass_energy );
+  pdf = distribution->evaluate( 1e-5, 0.08 );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 0.08 );
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
 
   bank.pop();
@@ -305,9 +349,17 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistribution,
                    isEnergyInScatteringWindow )
 {
-  FRENSIE_CHECK( distribution->isEnergyInScatteringWindow( 0.1, 9.9999e-6 ) );
+  FRENSIE_CHECK( !distribution->isEnergyInScatteringWindow( 0.01, 9.9999e-6 ));
 
-  FRENSIE_CHECK( distribution->isEnergyInScatteringWindow( 0.1, 1e-5 ));
+  FRENSIE_CHECK( distribution->isEnergyInScatteringWindow( 0.01, 1e-5 ) );
+
+  FRENSIE_CHECK( distribution->isEnergyInScatteringWindow( 0.01, 0.005 ));
+
+  FRENSIE_CHECK( distribution->isEnergyInScatteringWindow( 0.01, 0.00996 ));
+
+  FRENSIE_CHECK( !distribution->isEnergyInScatteringWindow( 0.1, 9.9999e-6 ) );
+
+  FRENSIE_CHECK( distribution->isEnergyInScatteringWindow( 0.1, 1e-5 ) );
 
   FRENSIE_CHECK( distribution->isEnergyInScatteringWindow( 0.1, 0.1 - binding_energy - 2e-7 ) );
 
@@ -338,16 +390,15 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
                                                            start_energy,
                                                            end_energy );
 
-  FRENSIE_CHECK_EQUAL( *start_energy, 0.08 );
+  FRENSIE_CHECK_EQUAL( *start_energy, 0.01 );
   FRENSIE_CHECK_EQUAL( *end_energy, 21.0 );
   FRENSIE_CHECK_EQUAL( std::distance( start_energy, end_energy ), 4 );
 
-  distribution->getCriticalLineEnergiesInScatteringWindow( 0.18,
+  distribution->getCriticalLineEnergiesInScatteringWindow( 0.02,
                                                            start_energy,
                                                            end_energy );
 
-  FRENSIE_CHECK_EQUAL( *start_energy,
-                       Utility::PhysicalConstants::electron_rest_mass_energy );
+  FRENSIE_CHECK_EQUAL( *start_energy, 0.08 );
   FRENSIE_CHECK_EQUAL( *end_energy, 21.0 );
   FRENSIE_CHECK_EQUAL( std::distance( start_energy, end_energy), 3 );
 
@@ -355,19 +406,17 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
                                                            start_energy,
                                                            end_energy );
 
-  FRENSIE_CHECK_EQUAL( *start_energy,
-                       Utility::PhysicalConstants::electron_rest_mass_energy );
+  FRENSIE_CHECK_EQUAL( *start_energy, 1.0 );
   FRENSIE_CHECK_EQUAL( *end_energy, 21.0 );
-  FRENSIE_CHECK_EQUAL( std::distance( start_energy, end_energy ), 3 );
+  FRENSIE_CHECK_EQUAL( std::distance( start_energy, end_energy ), 2 );
 
   distribution->getCriticalLineEnergiesInScatteringWindow( 0.25,
                                                            start_energy,
                                                            end_energy );
 
-  FRENSIE_CHECK_EQUAL( *start_energy,
-                       Utility::PhysicalConstants::electron_rest_mass_energy );
+  FRENSIE_CHECK_EQUAL( *start_energy, 1.0 );
   FRENSIE_CHECK_EQUAL( *end_energy, 21.0 );
-  FRENSIE_CHECK_EQUAL( std::distance( start_energy, end_energy ), 3 );
+  FRENSIE_CHECK_EQUAL( std::distance( start_energy, end_energy ), 2 );
 
   distribution->getCriticalLineEnergiesInScatteringWindow( 0.52,
                                                            start_energy,
@@ -466,9 +515,8 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   std::shared_ptr<std::vector<double> >
     critical_line_energies( new std::vector<double>( 5 ) );
 
-  (*critical_line_energies)[0] = 0.08;
-  (*critical_line_energies)[1] =
-    Utility::PhysicalConstants::electron_rest_mass_energy;
+  (*critical_line_energies)[0] = 0.01;
+  (*critical_line_energies)[1] = 0.08;
   (*critical_line_energies)[2] = 1.0;
   (*critical_line_energies)[3] = 5.0;
   (*critical_line_energies)[4] = 21.0;

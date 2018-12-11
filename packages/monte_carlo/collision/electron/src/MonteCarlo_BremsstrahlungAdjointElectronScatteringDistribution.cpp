@@ -58,6 +58,18 @@ double BremsstrahlungAdjointElectronScatteringDistribution::getMaxEnergy() const
   return d_adjoint_brem_scatter_dist->getUpperBoundOfPrimaryIndepVar();
 }
 
+// Return the max outgoing energy
+double BremsstrahlungAdjointElectronScatteringDistribution::getOutgoingMinEnergy( const double incoming_energy ) const
+{
+  return d_adjoint_brem_scatter_dist->getLowerBoundOfSecondaryConditionalIndepVar( incoming_energy );
+}
+
+// Return the max outgoing energy
+double BremsstrahlungAdjointElectronScatteringDistribution::getOutgoingMaxEnergy( const double incoming_energy ) const
+{
+  return d_adjoint_brem_scatter_dist->getUpperBoundOfSecondaryConditionalIndepVar( incoming_energy );
+}
+
 // Evaluate the distribution
 double BremsstrahlungAdjointElectronScatteringDistribution::evaluate(
         const double incoming_energy,
@@ -167,7 +179,7 @@ bool BremsstrahlungAdjointElectronScatteringDistribution::isEnergyInScatteringWi
   // Make sure the energy of interest is valid
   testPrecondition( energy_of_interest >= 0.0 );
 
-  if( energy_of_interest > this->getMaxEnergy() )
+  if( energy_of_interest > this->getOutgoingMaxEnergy( initial_energy ) )
     return false;
   else
   {
@@ -190,8 +202,7 @@ bool BremsstrahlungAdjointElectronScatteringDistribution::isEnergyAboveScatterin
   // Make sure the energy of interest is valid
   testPrecondition( energy_of_interest >= 0.0 );
 
-  double min_outgoing_energy =
-    d_adjoint_brem_scatter_dist->getLowerBoundOfSecondaryConditionalIndepVar( initial_energy );
+  double min_outgoing_energy = this->getOutgoingMinEnergy( initial_energy );
 
   return min_outgoing_energy > energy_of_interest;
 }
@@ -208,7 +219,7 @@ void BremsstrahlungAdjointElectronScatteringDistribution::createProbeParticle(
 {
   // Make sure the energy of interest is valid
   testPrecondition( energy_of_interest > 0.0 );
-  testPrecondition( energy_of_interest <= this->getMaxEnergy() );
+  testPrecondition( energy_of_interest <= this->getOutgoingMaxEnergy( adjoint_electron.getEnergy() ) );
   // Make sure the adjoint electron energy is valid
   testPrecondition( adjoint_electron.getEnergy() <= this->getMaxEnergy() );
   // Make sure the energy of interest is in the scattering window

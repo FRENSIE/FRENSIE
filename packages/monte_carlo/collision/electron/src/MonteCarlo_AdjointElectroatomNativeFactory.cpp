@@ -26,16 +26,13 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
       properties.getCriticalAdjointElectronLineEnergies() );
 
   // Extract the common energy grid used for this atom
-  std::shared_ptr<std::vector<double> > energy_grid( new std::vector<double> );
-  energy_grid->assign(
-    raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().begin(),
-    raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().end() );
+  auto energy_grid = std::make_shared<std::vector<double> >(
+    raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid() );
 
   // Construct the hash-based grid searcher for this atom
-  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> grid_searcher(
-         new Utility::StandardHashBasedGridSearcher<std::vector<double>,false>(
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> grid_searcher = std::make_shared<Utility::StandardHashBasedGridSearcher<std::vector<double>,false> >(
                      energy_grid,
-                     properties.getNumberOfAdjointElectronHashGridBins() ) );
+                     properties.getNumberOfAdjointElectronHashGridBins() );
 
   std::shared_ptr<const ElectroatomicReaction> total_forward_reaction;
 
@@ -139,6 +136,9 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
       auto it = cross_section.begin();
       it = cross_section.insert(it, 0.0);
     }
+
+    // Make sure the cross section is the right size
+    testPostcondition( cross_section.size() == energy_grid->size() );
 
     forward_inelastic_cross_sections.push_back( cross_section );
 
@@ -246,6 +246,9 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
       it = cross_section.insert(it, 0.0);
     }
 
+    // Make sure the cross section is the right size
+    testPostcondition( cross_section.size() == energy_grid->size() );
+
     forward_inelastic_cross_sections.push_back( cross_section );
 
     AdjointElectroatomCore::ConstReactionMap::mapped_type& reaction_pointer =
@@ -270,13 +273,13 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
       it = cross_section.insert(it, 0.0);
     }
 
+    // Make sure the cross section is the right size
+    testPostcondition( cross_section.size() == energy_grid->size() );
+
     forward_inelastic_cross_sections.push_back( cross_section );
 
     std::vector<std::shared_ptr<const AdjointElectroatomicReaction> >
         electroionization_reactions;
-
-  if ( electron_grid == "Unit-base Correlated" || electron_grid == "Correlated" ||
-       electron_grid == "Unit-base" || electron_grid == "Direct" )
 
     if( electron_interp == "Log-Log-Log" )
     {

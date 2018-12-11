@@ -68,6 +68,26 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the min outgoing energy can be returned
+FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
+                   getOutgoingMinEnergy )
+{
+  FRENSIE_CHECK_FLOATING_EQUALITY( distribution->getOutgoingMinEnergy( 1e-5 ), 1.0101e-05, 1e-12 );
+
+  FRENSIE_CHECK_EQUAL( distribution->getOutgoingMinEnergy( 1.999997898919999884e+01 ), 1.99999790902e+01 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the max outgoing energy can be returned
+FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
+                   getOutgoingMaxEnergy )
+{
+  FRENSIE_CHECK_EQUAL( distribution->getOutgoingMaxEnergy( 1e-5 ), 20.0 );
+
+  FRENSIE_CHECK_EQUAL( distribution->getOutgoingMaxEnergy( 1.999997898919999884e+01 ), 20.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check if an energy is above the scattering window
 FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
                    isEnergyAboveScatteringWindow )
@@ -86,7 +106,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
                    isEnergyInScatteringWindow )
 {
-  FRENSIE_CHECK( distribution->isEnergyInScatteringWindow( 0.1, 9.9999e-6 ) );
+  FRENSIE_CHECK( !distribution->isEnergyInScatteringWindow( 0.1, 9.9999e-6 ) );
 
   FRENSIE_CHECK( distribution->isEnergyInScatteringWindow( 0.1, 1e-5 ));
 
