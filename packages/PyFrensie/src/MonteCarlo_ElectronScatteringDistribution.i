@@ -159,6 +159,15 @@
 %include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 
 //---------------------------------------------------------------------------//
+// Add support for the AtomicExcitationElectronScatteringDistribution
+//---------------------------------------------------------------------------//
+
+// Add use of std::shared_ptr
+%shared_ptr(MonteCarlo::AtomicExcitationElectronScatteringDistribution)
+// Include the class
+%include "MonteCarlo_AtomicExcitationElectronScatteringDistribution.hpp"
+
+//---------------------------------------------------------------------------//
 // Add support for the Electron Scattering Distributions native factory
 //---------------------------------------------------------------------------//
 
@@ -353,6 +362,26 @@ std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDis
       binding_energy,
       distribution,
       evaluation_tol );
+
+  // Make sure the distribution was created correctly
+  testPostcondition( distribution.use_count() > 0 );
+
+  return distribution;
+}
+
+//----------------------------------------------------------------------------//
+//      ****ATOMIC EXCITATION DISTRIBUTION****
+//----------------------------------------------------------------------------//
+
+//! Create a atomic excitation distribution
+std::shared_ptr<const MonteCarlo::AtomicExcitationElectronScatteringDistribution> createAtomicExcitationDistribution(
+    const Data::ElectronPhotonRelaxationDataContainer& data_container )
+{
+  std::shared_ptr<const MonteCarlo::AtomicExcitationElectronScatteringDistribution>
+    distribution;
+
+  MonteCarlo::AtomicExcitationElectronScatteringDistributionNativeFactory::createAtomicExcitationDistribution(
+    data_container, distribution );
 
   // Make sure the distribution was created correctly
   testPostcondition( distribution.use_count() > 0 );
