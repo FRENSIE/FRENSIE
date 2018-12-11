@@ -835,6 +835,27 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         self.assertEqual( cross_section[-1], 8.18293e+04 )
         self.assertEqual( len( cross_section ), 9-threshold )
 
+        # Check the forward electroionization cross section data
+        threshold = h_data_container.getForwardElectroionizationElectronCrossSectionThresholdEnergyIndex()
+
+        self.assertEqual( threshold, 1 )
+
+        cross_section = h_data_container.getForwardElectroionizationElectronCrossSection()
+
+        self.assertEqual( cross_section[0], 4.0427802764032364e+07 )
+        self.assertEqual( cross_section[-1], 8.284008376199545e+04 )
+        self.assertEqual( len( cross_section ), 8-threshold )
+
+        # Check the forward atomic excitation cross section data
+        threshold = h_data_container.getForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex()
+
+        self.assertEqual( threshold, 1 )
+
+        cross_section = h_data_container.getForwardAtomicExcitationElectronCrossSection()
+
+        self.assertEqual( cross_section[0], 5.398785827404625e+07 )
+        self.assertEqual( cross_section[-1], 8.18293e+04 )
+        self.assertEqual( len( cross_section ), 8-threshold )
 
         # Check the atomic excitation data
         threshold =  h_data_container.getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex()

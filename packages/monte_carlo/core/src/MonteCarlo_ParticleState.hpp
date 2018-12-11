@@ -351,7 +351,7 @@ private:
   // The weight of the particle
   weightType d_weight;
 
-  // The ray safety op (i.e. distance to the closest boundary)
+  // The ray safety distance (i.e. distance to the closest boundary)
   raySafetyDistanceType d_ray_safety_distance;
 
   // The source (starting) cell of the particle (history)

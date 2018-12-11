@@ -77,7 +77,7 @@ struct RaySafetyHelper
   static inline double getDistanceToSurfaceHit(
                                 State& particle,
                                 Geometry::Model::EntityId& surface_hit,
-                                const double remaining_track_op )
+                                const double )
   {
     return particle.navigator().fireRay( surface_hit ).value();
   }
@@ -97,9 +97,9 @@ struct RaySafetyHelper<State,typename std::enable_if<std::is_base_of<MonteCarlo:
   static inline double getDistanceToSurfaceHit(
                                         State& particle,
                                         Geometry::Model::EntityId& surface_hit,
-                                        const double remaining_track_op )
+                                        const double remaining_track )
   {
-    if ( particle.getRaySafetyDistance() < remaining_track_op )
+    if ( particle.getRaySafetyDistance() < remaining_track )
       return particle.navigator().fireRay( surface_hit ).value();
     else
       return std::numeric_limits<double>::infinity();
