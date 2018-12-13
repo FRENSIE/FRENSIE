@@ -708,6 +708,21 @@ ElectronPhotonRelaxationDataContainer::getElectroionizationEnergyGrid(
   return d_electroionization_energy_grid.find( subshell )->second;
 }
 
+// Return if the electroionization recoil electron spectrums are given in ratio form
+const bool ElectronPhotonRelaxationDataContainer::isElectroionizationInRatioForm() const
+{
+  for (auto& shell_map : d_electroionization_recoil_energy )
+  {
+    for (auto& energy_map : shell_map.second )
+    {
+      if ( energy_map.second.back() != 1.0 )
+        return false;
+    }
+  }
+
+  return true;
+}
+
 // Return the electroionization recoil interpolation policy
 const std::string&
 ElectronPhotonRelaxationDataContainer::getElectroionizationRecoilInterpPolicy() const

@@ -1065,6 +1065,8 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getElectroionizationRecoilEnergy(subshell, energy),
                        recoil_energy );
+
+  FRENSIE_CHECK( !epr_data_container.isElectroionizationInRatioForm() );
 }
 
 //---------------------------------------------------------------------------//
@@ -1087,6 +1089,40 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getElectroionizationRecoilPDF( subshell, energy ),
                        recoil_pdf );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electroionization recoil energy can be set as a ratio
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setElectroionizationRecoilEnergy_ratio )
+{
+  std::vector<double> energy_ratios( 3 );
+  energy_ratios[0] = 0.1;
+  energy_ratios[1] = 0.5;
+  energy_ratios[2] = 1.0;
+
+  unsigned subshell = 1;
+  double energy_bin1 = 1.0;
+  double energy_bin2 = 2.0;
+
+  std::map<double,std::vector<double> > recoil_energy_ratios;
+
+  recoil_energy_ratios[energy_bin1] = energy_ratios;
+  recoil_energy_ratios[energy_bin2] = energy_ratios;
+
+  epr_data_container.setElectroionizationRecoilEnergy(
+                                subshell,
+                                recoil_energy_ratios );
+
+  FRENSIE_CHECK_EQUAL(
+    epr_data_container.getElectroionizationRecoilEnergy(subshell, energy_bin1),
+    energy_ratios );
+
+  FRENSIE_CHECK_EQUAL(
+    epr_data_container.getElectroionizationRecoilEnergy(subshell, energy_bin2),
+    energy_ratios );
+
+  FRENSIE_CHECK( epr_data_container.isElectroionizationInRatioForm() );
 }
 
 //---------------------------------------------------------------------------//
@@ -1113,6 +1149,8 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   FRENSIE_CHECK_EQUAL(
     epr_data_container.getElectroionizationRecoilEnergy(subshell, energy_bin),
     energy );
+
+  FRENSIE_CHECK( !epr_data_container.isElectroionizationInRatioForm() );
 }
 
 //---------------------------------------------------------------------------//
