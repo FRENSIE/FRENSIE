@@ -88,6 +88,7 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createEl
     new ElectroionizationSubshellElectronScatteringDistribution(
         subshell_distribution,
         binding_energies[shell_index],
+        false,
         true,
         false ) );
 }
@@ -120,6 +121,7 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createEl
     new ElectroionizationSubshellElectronScatteringDistribution(
         subshell_distribution,
         binding_energy,
+        false,
         true,
         false ) );
 }

@@ -42,6 +42,7 @@ public:
     const std::shared_ptr<const BasicBivariateDist>&
       electroionization_subshell_scattering_distribution,
     const double binding_energy,
+    const bool treat_distribution_as_ratio = false,
     const bool bank_secondary_particles = true,
     const bool limit_knock_on_energy_range = true );
 
@@ -52,11 +53,11 @@ public:
   //! Return the binding energy
   double getBindingEnergy() const;
 
-  //! Return the min secondary (knock-on) electron energy for a given incoming electron energy
-  double getMinSecondaryEnergyAtIncomingEnergy( const double energy ) const;
+  //! Return the min secondary (knock-on) electron energy
+  double getMinSecondaryEnergy( const double energy ) const;
 
-  //! Return the max secondary (knock-on) electron energy for a given incoming electron energy
-  double getMaxSecondaryEnergyAtIncomingEnergy( const double energy ) const;
+  //! Return the max secondary (knock-on) electron energy
+  double getMaxSecondaryEnergy( const double energy ) const;
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
@@ -73,7 +74,7 @@ public:
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
                double& knock_on_energy,
-               double& knock_on_angle_cosine  ) const override;
+               double& knock_on_angle_cosine ) const override;
 
   // Sample the distribution
   void samplePrimaryAndSecondary( const double incoming_energy,
@@ -122,6 +123,24 @@ private:
 
   // Limit energy range of the knock-on electron
   bool d_limit_knock_on_energy_range;
+
+  // The evaluate function pointer
+  std::function<double ( const double, const double )> d_evaluate;
+
+  // The evaluate PDF function pointer
+  std::function<double ( const double, const double )> d_evaluate_pdf;
+
+  // The evaluate CDF function pointer
+  std::function<double ( const double, const double )> d_evaluate_cdf;
+
+  // The sample function pointer
+  std::function<double ( const double )> d_sample;
+
+  // The sample function pointer
+  std::function<void ( const double, double&, double& )> d_sample_primary_and_secondary;
+
+  // The sample positron function pointer
+  std::function<double ( const double, double& )> d_sample_positron;
 };
 
 } // end MonteCarlo namespace
