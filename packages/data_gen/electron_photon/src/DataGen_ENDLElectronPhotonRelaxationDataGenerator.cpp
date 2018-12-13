@@ -291,19 +291,19 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRelaxationData()
                           std::runtime_error,
                           "There are radiative transitions and not "
                           "non-radiative transitions!" );
-      
+
       const std::map<unsigned,double>& radiative_transition_probs =
         d_endl_data_container->getRadiativeTransitionProbability( subshell );
-      
+
       const std::map<unsigned,double>& radiative_transition_energies =
         d_endl_data_container->getRadiativeTransitionEnergy( subshell );
-      
+
       const std::map<unsigned,std::map<unsigned,double> >& non_radiative_transition_probs =
         d_endl_data_container->getNonRadiativeTransitionProbability( subshell );
-      
+
       const std::map<unsigned,std::map<unsigned,double> >& non_radiative_transition_energies =
         d_endl_data_container->getNonRadiativeTransitionEnergy( subshell );
-      
+
       std::vector<std::pair<unsigned,unsigned> > relaxation_vacancies;
       std::vector<double> relaxation_particle_energies, relaxation_probabilities;
 
@@ -313,7 +313,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRelaxationData()
         relaxation_probabilities.push_back( radiative_transition_probs_data.second );
         relaxation_particle_energies.push_back( radiative_transition_energies.find( radiative_transition_probs_data.first )->second );
       }
-      
+
       for( auto&& non_radiative_transition_probs_data : non_radiative_transition_probs )
       {
         TEST_FOR_EXCEPTION( non_radiative_transition_energies.find( non_radiative_transition_probs_data.first ) == non_radiative_transition_energies.end(),
@@ -322,25 +322,25 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRelaxationData()
                             "for vacancy " << subshell << " transitioning to "
                             << non_radiative_transition_probs_data.first <<
                             "!" );
-      
+
         std::map<unsigned,double>::const_iterator data_it =
           non_radiative_transition_probs_data.second.begin();
-        
+
         std::map<unsigned,double>::const_iterator data_end =
           non_radiative_transition_probs_data.second.end();
-        
+
         while( data_it != data_end )
         {
           relaxation_vacancies.push_back( std::make_pair( non_radiative_transition_probs_data.first, data_it->first ) );
           relaxation_probabilities.push_back( data_it->second );
-          
+
           TEST_FOR_EXCEPTION( non_radiative_transition_energies.find( non_radiative_transition_probs_data.first )->second.find( data_it->first ) == non_radiative_transition_energies.find( non_radiative_transition_probs_data.first )->second.end(),
                               std::runtime_error,
                               "There are no non-radiative transition energies "
                               "for vacancy " << subshell << " transitioning to "
                               << non_radiative_transition_probs_data.first <<
                               " and " << data_it->first << "!" );
-        
+
           relaxation_particle_energies.push_back( non_radiative_transition_energies.find( non_radiative_transition_probs_data.first )->second.find( data_it->first )->second );
 
           ++data_it;
@@ -348,7 +348,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRelaxationData()
       }
 
       data_container.setSubshellRelaxationTransitions( subshell, relaxation_vacancies.size() );
-      
+
       data_container.setSubshellRelaxationVacancies( subshell, relaxation_vacancies );
       data_container.setSubshellRelaxationParticleEnergies( subshell, relaxation_particle_energies );
       data_container.setSubshellRelaxationProbabilities( subshell, relaxation_probabilities );
@@ -1282,19 +1282,63 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronData()
   data_container.setElectroionizationRecoilInterpPolicy( "Lin-Lin" );
 
   // Loop through electroionization data for every subshell
-  for ( shell; shell != data_container.getSubshells().end(); ++shell )
+  for ( auto&& shell : data_container.getSubshells() )
   {
-    data_container.setElectroionizationEnergyGrid(
-        *shell,
-        d_endl_data_container->getElectroionizationRecoilEnergyGrid( *shell ) );
+    auto energy_grid = d_endl_data_container->getElectroionizationRecoilEnergyGrid( shell );
 
-    data_container.setElectroionizationRecoilEnergy(
-        *shell,
-        d_endl_data_container->getElectroionizationRecoilEnergy( *shell ) );
+    data_container.setElectroionizationEnergyGrid( shell, energy_grid );
 
-    data_container.setElectroionizationRecoilPDF(
-        *shell,
-        d_endl_data_container->getElectroionizationRecoilPDF( *shell ) );
+    if ( this->isElectroionizationRatioModeOn() )
+    {
+      double binding_energy = d_endl_data_container->getSubshellBindingEnergy( shell );
+
+      for ( unsigned i = 0; i < energy_grid.size(); ++i )
+      {
+        auto recoil_ratios =
+          d_endl_data_container->getElectroionizationRecoilEnergyAtEnergy( shell, energy_grid[i] );
+
+        auto recoil_pdfs =
+          d_endl_data_container->getElectroionizationRecoilPDFAtEnergy( shell, energy_grid[i] );
+
+        double max_recoil_energy = recoil_ratios.back();
+
+        /*! \details If the incoming energy is non-physical then it should be
+         *  increased such that the physical max recoil energy is equal to the
+         *  tabulated max recoil energy.
+         */
+        if ( 0.5*(energy_grid[i] - binding_energy) <= 0.0 )
+        {
+          energy_grid[i] = 2.0*max_recoil_energy + binding_energy;
+        }
+
+        // Divide the recoil energies by the max recoil energy
+        for ( unsigned i = 0; i < recoil_ratios.size(); ++i )
+          recoil_ratios[i] /= max_recoil_energy;
+
+        data_container.setElectroionizationRecoilEnergyAtIncomingEnergy(
+            shell,
+            energy_grid[i],
+            recoil_ratios );
+
+        data_container.setElectroionizationRecoilPDFAtIncomingEnergy(
+            shell,
+            energy_grid[i],
+            recoil_pdfs );
+      }
+    }
+    else
+    {
+      data_container.setElectroionizationRecoilEnergy(
+          shell,
+          d_endl_data_container->getElectroionizationRecoilEnergy( shell ) );
+
+      data_container.setElectroionizationRecoilPDF(
+          shell,
+          d_endl_data_container->getElectroionizationRecoilPDF( shell ) );
+    }
+
+    // Reset the energy grid in case it has been modified
+    data_container.setElectroionizationEnergyGrid( shell, energy_grid );
   }
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );

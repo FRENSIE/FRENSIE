@@ -127,6 +127,15 @@ public:
   //! Get the number of moment preserving angles
   double getNumberOfMomentPreservingAngles() const;
 
+  //! Set electroionization to be stored as a ratio mode on (Default off)
+  void setElectroionizationRatioModeOn();
+
+  //! Set electroionization to be stored as a ratio mode off (Default off)
+  void setElectroionizationRatioModeOff();
+
+  //! Return if the electroionization ratio mode is on (default off)
+  bool isElectroionizationRatioModeOn();
+
   //! Set the FullyTabularTwoDDistribution evaluation tolerance
   void setTabularEvaluationTolerance( const double evaluation_tolerance );
 
@@ -197,6 +206,9 @@ private:
   // The default electron grid generator
   std::unique_ptr<Utility::GridGenerator<Utility::LogLog> >
   d_default_electron_grid_generator;
+
+  // The electroionization ratio mode bollean
+  bool d_electroionization_ratio_mode;
 
   // The electron TwoDInterpPolicy (LogLogLog - default)
   MonteCarlo::TwoDInterpolationType d_two_d_interp;

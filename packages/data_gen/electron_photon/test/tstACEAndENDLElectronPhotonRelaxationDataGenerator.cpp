@@ -347,6 +347,7 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
     raw_data_generator->setPhotonThresholdEnergyNudgeFactor( 1.0001 );
     raw_data_generator->setCutoffAngleCosine( 0.9 );
     raw_data_generator->setNumberOfMomentPreservingAngles( 1 );
+    raw_data_generator->setElectroionizationRatioModeOn();
     raw_data_generator->setTabularEvaluationTolerance( 1e-7 );
     raw_data_generator->setElectronTwoDInterpPolicy( MonteCarlo::LINLINLIN_INTERPOLATION );
     raw_data_generator->setElectronTwoDGridPolicy( MonteCarlo::UNIT_BASE_CORRELATED_GRID );
@@ -759,7 +760,7 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
 
   FRENSIE_CHECK_EQUAL( threshold, 3 );
   FRENSIE_CHECK_EQUAL( data_container.getElectronEnergyGrid()[threshold],
-                       1.361000000000E-05 );
+                       1.361E-05 );
 
   cross_section =
     data_container.getElectroionizationCrossSection( 1u );
@@ -771,35 +772,35 @@ FRENSIE_UNIT_TEST( ACEAndENDLElectronPhotonRelaxationDataGenerator,
   std::vector<double> electroionization_energy_grid =
     data_container.getElectroionizationEnergyGrid( 1u );
 
-  FRENSIE_CHECK_EQUAL( electroionization_energy_grid.front(), 1.36100e-5 );
+  FRENSIE_CHECK_EQUAL( electroionization_energy_grid.front(), 1.36659732e-05 );
   FRENSIE_CHECK_EQUAL( electroionization_energy_grid.back(), 1.00000e+5 );
   FRENSIE_CHECK_EQUAL( electroionization_energy_grid.size(), 8 );
 
   FRENSIE_CHECK_EQUAL( data_container.getElectroionizationRecoilInterpPolicy(), "Lin-Lin" );
 
   std::vector<double> electroionization_recoil_energy =
-    data_container.getElectroionizationRecoilEnergy( 1u, 1.36100e-5 );
+    data_container.getElectroionizationRecoilEnergy( 1u, electroionization_energy_grid.front() );
 
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.front(), 2.79866e-9 );
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.back(), 2.79866e-8 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.front(), 0.1 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.back(), 1.0 );
   FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.size(), 2 );
 
   electroionization_recoil_energy =
-    data_container.getElectroionizationRecoilEnergy( 1u, 1.00000e+5 );
+    data_container.getElectroionizationRecoilEnergy( 1u, electroionization_energy_grid.back() );
 
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.front(), 1.00000e-7 );
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.back(), 5.00000e+4 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.front(), 2e-12 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.back(), 1.0 );
   FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.size(), 147 );
 
   std::vector<double> electroionization_recoil_pdf =
-    data_container.getElectroionizationRecoilPDF( 1u, 1.36100e-5 );
+    data_container.getElectroionizationRecoilPDF( 1u, electroionization_energy_grid.front() );
 
   FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.front(), 3.97015e+7 );
   FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.back(), 3.97015e+7 );
   FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.size(), 2 );
 
   electroionization_recoil_pdf =
-    data_container.getElectroionizationRecoilPDF( 1u, 1.00000e+5 );
+    data_container.getElectroionizationRecoilPDF( 1u, electroionization_energy_grid.back() );
 
   FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.front(), 1.61897e+5 );
   FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.back(), 2.77550e-15 );

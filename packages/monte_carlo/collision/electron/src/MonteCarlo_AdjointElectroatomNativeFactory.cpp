@@ -275,9 +275,6 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
     std::vector<std::shared_ptr<const AdjointElectroatomicReaction> >
         electroionization_reactions;
 
-  if ( electron_grid == "Unit-base Correlated" || electron_grid == "Correlated" ||
-       electron_grid == "Unit-base" || electron_grid == "Direct" )
-
     if( electron_interp == "Log-Log-Log" )
     {
       if ( electron_grid == "Unit-base Correlated" )
