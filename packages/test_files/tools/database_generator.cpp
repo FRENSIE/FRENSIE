@@ -38,7 +38,7 @@ void addBEPRACEFile( const boost::filesystem::path& ace_test_data_dir,
 void addC12PhotonuclearACEFile(
                           const boost::filesystem::path& ace_test_data_dir,
                           Data::ScatteringCenterPropertiesDatabase& database );
-  
+
 //! Add the "test_c_epr_ace_file.txt" properties
 void addCEPRACEFile( const boost::filesystem::path& ace_test_data_dir,
                      Data::ScatteringCenterPropertiesDatabase& database );
@@ -63,7 +63,7 @@ void addH2PhotonuclearACEFile(
 //! Add the "test_h_epr14_ace_file.txt" properties
 void addHEPR14ACEFile( const boost::filesystem::path& ace_test_data_dir,
                        Data::ScatteringCenterPropertiesDatabase& database );
-  
+
 //! Add the "test_h_epr_ace_file.txt" properties
 void addHEPRACEFile( const boost::filesystem::path& ace_test_data_dir,
                      Data::ScatteringCenterPropertiesDatabase& database );
@@ -129,6 +129,10 @@ void addCNativeAEPRFile( const boost::filesystem::path& native_test_data_dir,
 //! Add the "test_epr_13_native.xml" properties
 void addAlNativeEPRFile( const boost::filesystem::path& native_test_data_dir,
                          Data::ScatteringCenterPropertiesDatabase& database );
+
+//! Add the "test_epr_13_native_ratio.xml" properties
+void addAlNativeRatioEPRFile( const boost::filesystem::path& native_test_data_dir,
+                              Data::ScatteringCenterPropertiesDatabase& database );
 
 //! Add the "test_aepr_13_native.xml" properties
 void addAlNativeAEPRFile( const boost::filesystem::path& native_test_data_dir,
@@ -232,6 +236,7 @@ void addAlNativeTestFiles( const boost::filesystem::path& native_test_data_dir,
                            Data::ScatteringCenterPropertiesDatabase& database )
 {
   Details::addAlNativeEPRFile( native_test_data_dir, database );
+  Details::addAlNativeRatioEPRFile( native_test_data_dir, database );
   Details::addAlNativeAEPRFile( native_test_data_dir, database );
 }
 
@@ -268,7 +273,7 @@ int main( int argc, char** argv )
       ("database_name,o",
        boost::program_options::value<std::string>()->default_value("database.xml"),
        "Set the database output file name");
-    
+
     // Parse the command line arguments
     boost::program_options::store(
          boost::program_options::command_line_parser(argc, argv).options(command_line_options).run(),
@@ -300,7 +305,7 @@ int main( int argc, char** argv )
                       "The ace test data directory is not valid!" );
 
   ace_test_data_dir = boost::filesystem::relative( ace_test_data_dir );
-                                                   
+
 
   // Set the native test data directory path
   TEST_FOR_EXCEPTION( !command_line_arguments.count( "native_dir" ),
@@ -318,7 +323,7 @@ int main( int argc, char** argv )
 
   // Initialize the database
   Data::ScatteringCenterPropertiesDatabase database;
-  
+
   // Add the ace data properties
   addHACETestFiles( ace_test_data_dir, database );
   addBACETestFiles( ace_test_data_dir, database );
@@ -347,7 +352,7 @@ void addTestAuEPR14ACEFile( const boost::filesystem::path& ace_test_data_dir,
 {
   boost::filesystem::path ace_test_data_file = ace_test_data_dir;
   ace_test_data_file /= "test_au_epr14_ace_file.txt";
-  
+
   TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
                       std::runtime_error,
                       "The \"test_au_epr14_ace_file.txt\" data file could not "
@@ -355,7 +360,7 @@ void addTestAuEPR14ACEFile( const boost::filesystem::path& ace_test_data_dir,
 
   if( !database.doAtomPropertiesExist( Data::Au_ATOM ) )
     database.initializeAtomProperties( Data::Au_ATOM, 195.275000 );
-    
+
   Data::AtomProperties& atom_properties =
     database.getAtomProperties( Data::Au_ATOM );
 
@@ -368,7 +373,7 @@ void addTestAuEPR14ACEFile( const boost::filesystem::path& ace_test_data_dir,
                                                             ace_test_data_file,
                                                             1,
                                                             "79000.14p" ) );
-    
+
   atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
 
   std::shared_ptr<const Data::ElectroatomicDataProperties>
@@ -585,7 +590,7 @@ void addH1ACEFile( const boost::filesystem::path& ace_test_data_dir,
                                                             ace_test_data_file,
                                                             1,
                                                             "1001.70c" ) );
-  
+
   nuclide_properties.setNuclearDataProperties( nuclear_properties );
 }
 
@@ -644,7 +649,7 @@ void addH2PhotonuclearACEFile(
                                                             ace_test_data_file,
                                                             1,
                                                             "1002.24u" ) );
-  
+
   nuclide_properties.setPhotonuclearDataProperties( photonuclear_properties );
 }
 
@@ -654,7 +659,7 @@ void addHEPR14ACEFile( const boost::filesystem::path& ace_test_data_dir,
 {
   boost::filesystem::path ace_test_data_file = ace_test_data_dir;
   ace_test_data_file /= "test_h_epr14_ace_file.txt";
-  
+
   TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
                       std::runtime_error,
                       "The \"test_h_epr14_ace_file.txt\" data file could not "
@@ -675,7 +680,7 @@ void addHEPR14ACEFile( const boost::filesystem::path& ace_test_data_dir,
                                                             ace_test_data_file,
                                                             1,
                                                             "1000.14p" ) );
-    
+
   atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
 
   std::shared_ptr<const Data::ElectroatomicDataProperties>
@@ -687,14 +692,14 @@ void addHEPR14ACEFile( const boost::filesystem::path& ace_test_data_dir,
 
   atom_properties.setElectroatomicDataProperties( electroatomic_properties );
 }
-  
+
 // Add the "test_h_epr_ace_file.txt" properties
 void addHEPRACEFile( const boost::filesystem::path& ace_test_data_dir,
                      Data::ScatteringCenterPropertiesDatabase& database )
 {
   boost::filesystem::path ace_test_data_file = ace_test_data_dir;
   ace_test_data_file /= "test_h_epr_ace_file.txt";
-  
+
   TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
                       std::runtime_error,
                       "The \"test_h_epr_ace_file.txt\" data file could not "
@@ -715,7 +720,7 @@ void addHEPRACEFile( const boost::filesystem::path& ace_test_data_dir,
                                                             ace_test_data_file,
                                                             1,
                                                             "1000.12p" ) );
-    
+
   atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
 
   std::shared_ptr<const Data::ElectroatomicDataProperties>
@@ -777,7 +782,7 @@ void addO16ACEFile( const boost::filesystem::path& ace_test_data_dir,
                                                             ace_test_data_file,
                                                             1,
                                                             "8016.70c" ) );
-  
+
   nuclide_properties.setNuclearDataProperties( nuclear_properties );
 }
 
@@ -845,7 +850,7 @@ void addPb208ACEFile( const boost::filesystem::path& ace_test_data_dir,
                                                             ace_test_data_file,
                                                             1,
                                                             "82208.70c" ) );
-  
+
   nuclide_properties.setNuclearDataProperties( nuclear_properties );
 }
 
@@ -1018,7 +1023,7 @@ void addU238ACEFile( const boost::filesystem::path& ace_test_data_dir,
                                                             ace_test_data_file,
                                                             1,
                                                             "92238.70c" ) );
-  
+
   nuclide_properties.setNuclearDataProperties( nuclear_properties );
 }
 
@@ -1240,7 +1245,7 @@ void addAlNativeEPRFile( const boost::filesystem::path& native_test_data_dir,
                       "path)!" );
 
   Data::AtomProperties::AtomicWeight atomic_weight = 2.6982e+01*amu;
-  
+
   if( !database.doAtomPropertiesExist( Data::Al_ATOM ) )
     database.initializeAtomProperties( Data::Al_ATOM, atomic_weight );
 
@@ -1266,6 +1271,46 @@ void addAlNativeEPRFile( const boost::filesystem::path& native_test_data_dir,
   atom_properties.setElectroatomicDataProperties( electroatomic_properties );
 }
 
+// Add the "test_epr_13_native_ratio.xml" properties
+void addAlNativeRatioEPRFile( const boost::filesystem::path& native_test_data_dir,
+                              Data::ScatteringCenterPropertiesDatabase& database )
+{
+  boost::filesystem::path native_test_data_file = native_test_data_dir;
+  native_test_data_file /= "test_epr_13_native_ratio.xml";
+
+  TEST_FOR_EXCEPTION( !boost::filesystem::exists( native_test_data_file ),
+                      std::runtime_error,
+                      "The \"test_epr_13_native_ratio.xml\" data file could "
+                      "not be found (check native test data directory "
+                      "path)!" );
+
+  Data::AtomProperties::AtomicWeight atomic_weight = 2.6982e+01*amu;
+
+  if( !database.doAtomPropertiesExist( Data::Al_ATOM ) )
+    database.initializeAtomProperties( Data::Al_ATOM, atomic_weight );
+
+  Data::AtomProperties& atom_properties =
+    database.getAtomProperties( Data::Al_ATOM );
+
+  std::shared_ptr<const Data::PhotoatomicDataProperties>
+    photoatomic_properties( new Data::NativeEPRPhotoatomicDataProperties(
+                                                         atomic_weight,
+                                                         native_test_data_file,
+                                                         1,
+                                                         Data::Al_ATOM ) );
+
+  atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
+
+  std::shared_ptr<const Data::ElectroatomicDataProperties>
+    electroatomic_properties( new Data::NativeEPRElectroatomicDataProperties(
+                                                         atomic_weight,
+                                                         native_test_data_file,
+                                                         1,
+                                                         Data::Al_ATOM ) );
+
+  atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+}
+
 // Add the "test_aepr_13_native.xml" properties
 void addAlNativeAEPRFile( const boost::filesystem::path& native_test_data_dir,
                           Data::ScatteringCenterPropertiesDatabase& database )
@@ -1280,7 +1325,7 @@ void addAlNativeAEPRFile( const boost::filesystem::path& native_test_data_dir,
                       "path)!" );
 
   Data::AtomProperties::AtomicWeight atomic_weight = 2.6982e+01*amu;
-  
+
   if( !database.doAtomPropertiesExist( Data::Al_ATOM ) )
     database.initializeAtomProperties( Data::Al_ATOM, atomic_weight );
 
@@ -1320,7 +1365,7 @@ void addSiNativeEPRFile( const boost::filesystem::path& native_test_data_dir,
                       "path)!" );
 
   Data::AtomProperties::AtomicWeight atomic_weight = 2.8085e+01*amu;
-  
+
   if( !database.doAtomPropertiesExist( Data::Si_ATOM ) )
     database.initializeAtomProperties( Data::Si_ATOM, atomic_weight );
 
@@ -1360,7 +1405,7 @@ void addSiNativeAEPRFile( const boost::filesystem::path& native_test_data_dir,
                       "path)!" );
 
   Data::AtomProperties::AtomicWeight atomic_weight = 2.8085e+01*amu;
-  
+
   if( !database.doAtomPropertiesExist( Data::Si_ATOM ) )
     database.initializeAtomProperties( Data::Si_ATOM, atomic_weight );
 
@@ -1400,7 +1445,7 @@ void addPbNativeEPRFile( const boost::filesystem::path& native_test_data_dir,
                       "path)!" );
 
   Data::AtomProperties::AtomicWeight atomic_weight = 2.072e+02*amu;
-  
+
   if( !database.doAtomPropertiesExist( Data::Pb_ATOM ) )
     database.initializeAtomProperties( Data::Pb_ATOM, atomic_weight );
 
@@ -1425,7 +1470,7 @@ void addPbNativeEPRFile( const boost::filesystem::path& native_test_data_dir,
 
   atom_properties.setElectroatomicDataProperties( electroatomic_properties );
 }
-  
+
 } // end Details namespace
 
 //---------------------------------------------------------------------------//

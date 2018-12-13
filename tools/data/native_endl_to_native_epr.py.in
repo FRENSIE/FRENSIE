@@ -101,6 +101,7 @@ def setGeneratorOptions( generator,
                          photon_threshold_energy_nudge_factor,
                          cutoff_angle_cosine,
                          num_moment_preserving_angles,
+                         electroionization_ratio_mode,
                          tabular_evaluation_tol,
                          electron_two_d_interp_policy,
                          electron_two_d_grid_policy,
@@ -139,6 +140,9 @@ def setGeneratorOptions( generator,
 
     if not num_moment_preserving_angles is None:
         generator.setNumberOfMomentPreservingAngles( num_moment_preserving_angles )
+
+    if electroionization_ratio_mode == True:
+        generator.setElectroionizationRatioModeOn()
 
     if not tabular_evaluation_tol is None:
         generator.setTabularEvaluationTolerance( tabular_evaluation_tol )
@@ -202,6 +206,7 @@ def generateData( endl_file_name,
                   photon_threshold_energy_nudge_factor = None,
                   cutoff_angle_cosine = None,
                   num_moment_preserving_angles = None,
+                  electroionization_ratio_mode = False,
                   tabular_evaluation_tol = None,
                   electron_two_d_interp_policy = None,
                   electron_two_d_grid_policy = None ):
@@ -234,6 +239,7 @@ def generateData( endl_file_name,
                          photon_threshold_energy_nudge_factor,
                          cutoff_angle_cosine,
                          num_moment_preserving_angles,
+                         electroionization_ratio_mode,
                          tabular_evaluation_tol,
                          electron_two_d_interp_policy,
                          electron_two_d_grid_policy,
@@ -255,7 +261,8 @@ def addToDatabase( path_to_data_file,
                    atomic_number,
                    atomic_weight,
                    force_update,
-                   database_save_required ):
+                   database_save_required,
+                   version = 0 ):
 
     zaid = Data.ZAID(atomic_number*1000)
 
@@ -269,17 +276,17 @@ def addToDatabase( path_to_data_file,
     photoatomic_data_properties = \
                 Native.NativeEPRPhotoatomicDataProperties( atomic_weight,
                                                            relative_path,
-                                                           0,
+                                                           version,
                                                            zaid.atom() )
 
     electroatomic_data_properties = \
                 Native.NativeEPRElectroatomicDataProperties( atomic_weight,
                                                              relative_path,
-                                                             0,
+                                                             version,
                                                              zaid.atom() )
 
     # Check if the native file data has been added to the database
-    if atom_properties.photoatomicDataAvailable( Data.PhotoatomicDataProperties.Native_EPR_FILE, 0 ):
+    if atom_properties.photoatomicDataAvailable( Data.PhotoatomicDataProperties.Native_EPR_FILE, version ):
         if force_update:
             print "Warning: native photoatomic data properties for atomic number", atomic_number, "already exist! They will be overwritten."
             atom_properties.setPhotoatomicDataProperties( photoatomic_data_properties )
@@ -287,9 +294,9 @@ def addToDatabase( path_to_data_file,
     else:
         atom_properties.setPhotoatomicDataProperties( photoatomic_data_properties )
         database_save_required = True
-        
+
     # Check if the native file exists
-    if atom_properties.electroatomicDataAvailable( Data.ElectroatomicDataProperties.Native_EPR_FILE, 0 ):
+    if atom_properties.electroatomicDataAvailable( Data.ElectroatomicDataProperties.Native_EPR_FILE, version ):
         if force_update:
             print "Warning: native electroatomic data properties for atomic number", atomic_number, "already exist! They will be overwritten."
             atom_properties.setElectroatomicDataProperties( electroatomic_data_properties )
@@ -313,6 +320,8 @@ if __name__ == "__main__":
                       help="the database name (with extension)")
     parser.add_option("-o", "--output_file_name", type="string", dest="output_file_name",
                       help="the output file name (with extension)")
+    parser.add_option("--version", type="int", dest="version",
+                      help="the output file version", default=0)
     parser.add_option("--overwrite", action="store_true", dest="overwrite", default=False,
                       help="Overwrite an existing output file")
     parser.add_option("--add_to_db", action="store_true", dest="add_to_db", default=False,
@@ -349,6 +358,8 @@ if __name__ == "__main__":
                       help="The electron cutoff angle cosine")
     parser.add_option("--num_moment_preserving_angles", type="int", dest="num_moment_preserving_angles",
                       help="The number of moment preserving angles for electrons")
+    parser.add_option("--electroionization_ratio_mode", action="store_true", dest="electroionization_ratio_mode", default=False,
+                      help="Generate the electroionization spectrum in ratio form")
     parser.add_option("--tabular_evaluation_tol", type="float", dest="tabular_evaluation_tol",
                       help="The tabular evaluation tolerance")
     parser.add_option("--electron_two_d_interp_policy", type="string", dest="electron_two_d_interp_policy",
@@ -388,6 +399,7 @@ if __name__ == "__main__":
                   options.photon_threshold_energy_nudge_factor,
                   options.cutoff_angle_cosine,
                   options.num_moment_preserving_angles,
+                  options.electroionization_ratio_mode,
                   options.tabular_evaluation_tol,
                   options.electron_two_d_interp_policy,
                   options.electron_two_d_grid_policy )
@@ -406,7 +418,8 @@ if __name__ == "__main__":
                        data_container.getAtomicNumber(),
                        data_container.getAtomicWeight(),
                        True,
-                       True )
+                       True,
+                       options.version )
 
         database.saveToFile( options.db_name, True )
 
