@@ -44,7 +44,7 @@ void AtomicExcitationAdjointElectronScatteringDistributionNativeFactory::createE
 
   // Create the energy gain distribution
   energy_gain_function.reset(
-    new Utility::TabularDistribution<Utility::LinLin>( energy_grid,
+    new Utility::TabularDistribution<Utility::LogLog>( energy_grid,
                                                        energy_gain ) );
 }
 
