@@ -318,6 +318,9 @@ public:
   const std::vector<double>& getMomentPreservingElasticWeights(
                                 const double incoming_energy ) const;
 
+  //! Return if the electroionization recoil electron spectrums are given in ratio form
+  const bool isElectroionizationInRatioForm() const;
+
   //! Return the electroionization energy grid for the recoil electron spectrum for a subshell
   const std::vector<double>& getElectroionizationEnergyGrid(
                                 const unsigned subshell ) const;
@@ -995,7 +998,7 @@ private:
 
   // There are average heating numbers
   bool d_has_average_photon_heating_numbers;
-  
+
   // The average heating numbers
   std::vector<double> d_average_photon_heating_numbers;
 

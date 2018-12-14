@@ -82,6 +82,9 @@ void BatchedDistributedStandardParticleSimulationManager<mode>::runInterruptible
 template<ParticleModeType mode>
 void BatchedDistributedStandardParticleSimulationManager<mode>::runSimulation()
 {
+  // Make sure that all objects are initialized before running the simulation
+  Utility::JustInTimeInitializer::getInstance().initializeObjectsAndClear();
+  
   d_comm->barrier();
 
   FRENSIE_FLUSH_ALL_LOGS();

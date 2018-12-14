@@ -846,6 +846,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DagMCModel, archive, TestArchives )
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( base_model ) );
   }
 
+  Utility::JustInTimeInitializer::getInstance().activate();
+
   // Copy the archive ostream to an istream
   std::istringstream archive_istream( archive_ostream.str() );
 
@@ -864,11 +866,18 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DagMCModel, archive, TestArchives )
 
   iarchive.reset();
 
+  FRENSIE_REQUIRE( !model->isInitialized() );
+
   const Geometry::DagMCModelProperties& cached_properties =
     model->getModelProperties();
 
   FRENSIE_CHECK( cached_properties.getModelFileName().find( "test_geom.h5m" ) <
                  cached_properties.getModelFileName().size() );
+
+  // Initialize the model
+  FRENSIE_CHECK_EQUAL( Utility::JustInTimeInitializer::getInstance().getNumberOfObjects(), 1 );
+
+  FRENSIE_REQUIRE_NO_THROW( Utility::JustInTimeInitializer::getInstance().initializeObjectsAndClear() );
 
   Geometry::Model::CellIdSet cells;
   base_model->getCells( cells, true, true );

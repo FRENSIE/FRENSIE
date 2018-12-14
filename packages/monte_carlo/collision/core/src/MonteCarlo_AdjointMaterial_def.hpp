@@ -125,7 +125,7 @@ double AdjointMaterial<ScatteringCenter>::getAdjointWeightFactor( const double e
   if( macroscopic_total_forward_cross_section > 0.0 )
   {
     weight_factor = this->getMacroscopicTotalCrossSection( energy )/
-      this->getMacroscopicTotalForwardCrossSection( energy );
+      macroscopic_total_forward_cross_section;
   }
   else
     weight_factor = 1.0;
@@ -152,7 +152,7 @@ double AdjointMaterial<ScatteringCenter>::getAdjointLineEnergyWeightFactor( cons
   if( macroscopic_total_forward_cross_section > 0.0 )
   {
     weight_factor = this->getMacroscopicTotalLineEnergyCrossSection( energy )/
-      this->getMacroscopicTotalForwardCrossSection( energy );
+      macroscopic_total_forward_cross_section;
   }
   else
     weight_factor = 1.0;
@@ -164,9 +164,9 @@ double AdjointMaterial<ScatteringCenter>::getAdjointLineEnergyWeightFactor( cons
 }
 
 // Collide with a scattering center and survival bias
-/*! \details There are no absorption reactions associated with adjoint 
+/*! \details There are no absorption reactions associated with adjoint
  * particles so this method is identical to the analogue method.
- */ 
+ */
 template<typename ScatteringCenter>
 inline void AdjointMaterial<ScatteringCenter>::collideSurvivalBias(
                                            ParticleStateType& adjoint_particle,
@@ -181,7 +181,7 @@ inline void AdjointMaterial<ScatteringCenter>::collideSurvivalBias(
  * particle's energy.
  */
 template<typename ScatteringCenter>
-void AdjointMaterial<ScatteringCenter>::collideAtLineEnergy( 
+void AdjointMaterial<ScatteringCenter>::collideAtLineEnergy(
                                            ParticleStateType& adjoint_particle,
                                            ParticleBank& bank ) const
 {
@@ -205,7 +205,7 @@ size_t AdjointMaterial<ScatteringCenter>::sampleCollisionAtomAtLineEnergy( const
                  d_macroscopic_total_line_energy_cs_evaluation_functor,
                  s_total_line_energy_cs_evaluation_functor );
 }
-  
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_ADJOINT_MATERIAL_DEF_HPP

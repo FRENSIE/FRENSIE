@@ -18,6 +18,7 @@
 #include <TGeoMaterial.h>
 
 // FRENSIE Includes
+#include "Utility_JustInTimeInitializer.hpp"
 #include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
@@ -68,12 +69,9 @@ void RootModel::load( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Model );
 
   // Load the model properties only - all other data must be reinitialized
-  decltype(d_model_properties) cached_model_properties;
+  ar & BOOST_SERIALIZATION_NVP( d_model_properties );
 
-  ar & boost::serialization::make_nvp( "d_model_properties",
-                                       cached_model_properties );
-
-  this->initialize( *cached_model_properties );
+  Utility::JustInTimeInitializer::getInstance().addObject( *this );
 }
 
 } // end Geometry namespace

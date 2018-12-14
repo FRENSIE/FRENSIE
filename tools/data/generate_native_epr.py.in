@@ -196,13 +196,14 @@ def generateNativeEPRLibrary( endl_directory,
                           electron_two_d_grid_policy = element_parameters[21] )
 
             # Update the database
-            addToDatabase( output_file_path,
-                           path.dirname( db_name ),
-                           database,
-                           data_container.getAtomicNumber(),
-                           data_container.getAtomicWeight() )
-
-            database_save_required = True
+            database_save_required = \
+                addToDatabase( output_file_path,
+                               path.dirname( db_name ),
+                               database,
+                               data_container.getAtomicNumber(),
+                               data_container.getAtomicWeight(),
+                               True,
+                               database_save_required )
 
             notification_string = "done."
 
@@ -211,6 +212,19 @@ def generateNativeEPRLibrary( endl_directory,
             if not log_file is None:
                 sys.stdout.write(notification_string + "\n")
                 sys.stdout.flush()
+
+        else:
+            data_container = Native.ElectronPhotonRelaxationDataContainer( output_file_path )
+
+            # Update the database
+            database_save_required = \
+                addToDatabase( output_file_path,
+                               path.dirname( db_name ),
+                               database,
+                               data_container.getAtomicNumber(),
+                               data_container.getAtomicWeight(),
+                               False,
+                               database_save_required )
 
     # Save the updated database
     if database_save_required:

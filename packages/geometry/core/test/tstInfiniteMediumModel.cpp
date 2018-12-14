@@ -263,6 +263,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( InfiniteMediumModel,
     Geometry::InfiniteMediumModel model( 100 );
 
     FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( model ) );
+    FRENSIE_CHECK( model.isInitialized() );
     FRENSIE_CHECK( model.doesCellExist( 1 ) );
     FRENSIE_CHECK( !model.doesCellExist( 100 ) );
     
@@ -286,6 +287,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( InfiniteMediumModel,
     std::unique_ptr<Geometry::Model> unique_model;
 
     FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( unique_model ) );
+    FRENSIE_CHECK( unique_model->isInitialized() );
     FRENSIE_CHECK( unique_model->doesCellExist( 2 ) );
 
     Geometry::Model::CellIdMatIdMap cell_id_mat_id_map;
@@ -308,6 +310,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( InfiniteMediumModel,
     std::shared_ptr<Geometry::Model> shared_model;
 
     FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( shared_model ) );
+    FRENSIE_CHECK( shared_model->isInitialized() );
     FRENSIE_CHECK( shared_model->doesCellExist( 3 ) );
 
     Geometry::Model::CellIdMatIdMap cell_id_mat_id_map;

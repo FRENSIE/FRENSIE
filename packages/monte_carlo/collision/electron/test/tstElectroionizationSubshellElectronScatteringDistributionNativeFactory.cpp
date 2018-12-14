@@ -42,59 +42,6 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the min secondary (knock-on) electron energy can be returned
-FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNativeFactory,
-                   getMinSecondaryEnergyAtIncomingEnergy )
-{
-  // Get min energy
-  double min_energy =
-    native_distribution->getMinSecondaryEnergyAtIncomingEnergy( 8.829E-02 );
-  FRENSIE_CHECK_EQUAL( min_energy, 0.0 );
-
-  // Get min energy
-  min_energy =
-    native_distribution->getMinSecondaryEnergyAtIncomingEnergy( 8.829E-02 + 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( min_energy, 4.9960036108132044e-16, 1e-12 );
-
-  // Get min energy
-  min_energy =
-    native_distribution->getMinSecondaryEnergyAtIncomingEnergy( 1e5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
-
-  // Get min energy
-  min_energy =
-    native_distribution->getMinSecondaryEnergyAtIncomingEnergy( 2.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the max secondary (knock-on) electron energy can be returned
-FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNativeFactory,
-                   getMaxSecondaryEnergyAtIncomingEnergy )
-{
-  // Get max energy
-  double max_energy =
-    native_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 8.829E-02 );
-
-  // Test original electron
-  FRENSIE_CHECK_EQUAL( max_energy, 0.0 );
-
-  // Get max energy
-  max_energy =
-    native_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 1e5 );
-
-  // Test original electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( max_energy, 4.9999955855E+04, 1e-12 );
-
-  // Get max energy
-  max_energy =
-    native_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 2.0 );
-
-  // Test original electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( max_energy, 9.55855E-01, 1e-12 );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated for a given incoming and knock-on energy
 FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNativeFactory,
                    evaluatePDF )
@@ -400,8 +347,8 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
   FRENSIE_CHECK_FLOATING_EQUALITY( positron.getEnergy(), 0.8711427865388850, 1e-12 );
 
   // Test knock-on positron
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(), 2.7784345450149228e-01, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 4.0567213460968893e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(), 2.778434545019752844e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 4.056721346111552551e-02, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

@@ -15,6 +15,7 @@
 #include "MonteCarlo_ParticleSimulationManagerFactory.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_OpenMPProperties.hpp"
+#include "Utility_JustInTimeInitializer.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_DesignByContract.hpp"
 
@@ -149,6 +150,9 @@ void ParticleSimulationManager::incrementNextHistory( const uint64_t increment_s
 // Return the model
 const FilledGeometryModel& ParticleSimulationManager::getModel() const
 {
+  // Make sure that the model is initialized before it is returned
+  Utility::JustInTimeInitializer::getInstance().initializeObjectsAndClear();
+  
   return *d_model;
 }
 
@@ -322,9 +326,21 @@ void ParticleSimulationManager::setAdjointElectronCutoffWeightRoulette()
   }
 }
 
+// Initialize the manager
+/*! \details This method does not need to be called. Initialize will happen
+ * just-in-time.
+ */
+void ParticleSimulationManager::initialize()
+{
+  Utility::JustInTimeInitializer::getInstance().initializeObjectsAndClear();
+}
+
 // Run the simulation set up by the user
 void ParticleSimulationManager::runSimulation()
 {
+  // Make sure that all objects are initialized before running the simulation
+  Utility::JustInTimeInitializer::getInstance().initializeObjectsAndClear();
+  
   FRENSIE_LOG_NOTIFICATION( "Simulation started. " );
   FRENSIE_FLUSH_ALL_LOGS();
 

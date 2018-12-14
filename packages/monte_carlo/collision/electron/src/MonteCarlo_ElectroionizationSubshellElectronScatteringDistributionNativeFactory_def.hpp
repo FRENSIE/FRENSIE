@@ -53,7 +53,8 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
   electroionization_subshell_distribution.reset(
     new ElectroionizationSubshellElectronScatteringDistribution(
             subshell_distribution,
-            binding_energy ) );
+            binding_energy,
+            raw_electroionization_data.isElectroionizationInRatioForm() ) );
 }
 
 // Create the subshell recoil distribution
@@ -76,7 +77,7 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
   std::vector<double> primary_grid( energy_grid.size() );
   std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
     secondary_dists( energy_grid.size() );
-  
+
   for( size_t n = 0; n < energy_grid.size(); ++n )
   {
     primary_grid[n] = energy_grid[n];

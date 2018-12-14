@@ -28,6 +28,7 @@ namespace Geometry{
 
 // Default constructor
 DagMCModel::DagMCModel()
+  : d_dagmc( NULL )
 { /* ... */ }
 
 // Constructor
@@ -41,6 +42,26 @@ DagMCModel::DagMCModel( const DagMCModelProperties& model_properties,
     d_model_properties( new DagMCModelProperties( model_properties ) )
 { 
   this->initialize( suppress_dagmc_output );
+}
+
+// Destructor
+DagMCModel::~DagMCModel()
+{
+  if( d_dagmc )
+    delete d_dagmc;
+}
+    
+
+// Initialize the model just-in-time
+void DagMCModel::initializeJustInTime()
+{
+  this->initialize( true );
+}
+
+// Check if the model has been initialized
+bool DagMCModel::isInitialized() const
+{
+  return d_dagmc != NULL;
 }
 
 // Initialize the model
