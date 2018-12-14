@@ -1273,17 +1273,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   //---------------------------------------------------------------------------//
 
   // Create the cross section distribution
-  std::shared_ptr<const Utility::UnivariateDistribution> adjoint_excitation_cross_section;
+  std::function<double (const double&)> adjoint_excitation_cross_section, adjoint_excitation_energy_gain;
+
   this->createAdjointAtomicExcitationCrossSectionDistribution(
           forward_electron_energy_grid,
           forward_grid_searcher,
-          adjoint_excitation_cross_section );
-
-  // Bind the distribution
-  boost::function<double (double pz)> atomic_excitation_grid_function =
-    boost::bind( &Utility::UnivariateDistribution::evaluate,
-                 boost::cref( *adjoint_excitation_cross_section ),
-                 _1 );
+          adjoint_excitation_cross_section,
+          adjoint_excitation_energy_gain );
 
   Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
     this->getVolatileDataContainer();
@@ -1291,12 +1287,12 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   FRENSIE_LOG_PARTIAL_NOTIFICATION( "     Adding Atomic Excitation data to the grid ... ");
   FRENSIE_FLUSH_ALL_LOGS();
 
-  // Generate atomic excitation (don't generate new grid points above the last grid point)
+  // Generate atomic excitation
   this->getDefaultElectronGridGenerator().refineInPlace(
     union_energy_grid,
-    atomic_excitation_grid_function,
+    adjoint_excitation_cross_section,
     this->getMinElectronEnergy(),
-    data_container.getAdjointAtomicExcitationEnergyGrid().back() );
+    this->getMaxElectronEnergy() );
 
   FRENSIE_LOG_NOTIFICATION( "done" );
   FRENSIE_FLUSH_ALL_LOGS();
@@ -1556,16 +1552,30 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
                                     << " cross section ... " );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  std::vector<double> excitation_cross_section;
-  this->createCrossSectionOnUnionEnergyGrid(
-      union_energy_grid,
-      atomic_excitation_grid_function,
-      excitation_cross_section,
-      threshold );
+  {
+    std::vector<double> excitation_cross_section;
+    this->createCrossSectionOnUnionEnergyGrid(
+        union_energy_grid,
+        adjoint_excitation_cross_section,
+        excitation_cross_section,
+        threshold );
 
-  data_container.setAdjointAtomicExcitationCrossSection( excitation_cross_section );
-  data_container.setAdjointAtomicExcitationCrossSectionThresholdEnergyIndex( threshold );
-  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
+    data_container.setAdjointAtomicExcitationCrossSection( excitation_cross_section );
+    data_container.setAdjointAtomicExcitationCrossSectionThresholdEnergyIndex( threshold );
+
+    std::vector<double> excitation_energy_gain( energy_grid.size() );
+    for ( unsigned i = 0; i < energy_grid.size(); ++i )
+    {
+      excitation_energy_gain[i] = adjoint_excitation_energy_gain( energy_grid[i] );
+    }
+
+    // Set the adjoint bremsstrahlung scattering distribution
+    data_container.setAdjointAtomicExcitationEnergyGrid( energy_grid );
+    data_container.setAdjointAtomicExcitationEnergyGain( excitation_energy_gain );
+  }
+
+    FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
+
 
 //---------------------------------------------------------------------------//
 // Set Bremsstrahlung Data
@@ -1730,120 +1740,67 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::createForwardInelasticElec
 void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicExcitationCrossSectionDistribution(
     const std::shared_ptr<const std::vector<double> >& forward_electron_energy_grid,
     const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
-    std::shared_ptr<const Utility::UnivariateDistribution>&
-      adjoint_excitation_cross_section_distribution )
+    std::function<double (const double&)>& adjoint_excitation_xs_evaluator,
+    std::function<double (const double&)>& adjoint_excitation_energy_gain_evaluator )
 {
   // Extract the atomic excitation cross section data
-  std::shared_ptr<std::vector<double> > atomic_excitation_cross_section(
-       new std::vector<double>( d_forward_epr_data->getAtomicExcitationCrossSection() ) );
+  auto atomic_excitation_cross_section = std::make_shared<std::vector<double> >(
+        d_forward_epr_data->getAtomicExcitationCrossSection() );
 
-  std::shared_ptr<MonteCarlo::ElectroatomicReaction> atomic_excitation_reaction(
-    new MonteCarlo::VoidElectroatomicReaction<Utility::LogLog>(
+  std::shared_ptr<MonteCarlo::ElectroatomicReaction> atomic_excitation_reaction
+    = std::make_shared<MonteCarlo::VoidElectroatomicReaction<Utility::LogLog> >(
         forward_electron_energy_grid,
         atomic_excitation_cross_section,
         d_forward_epr_data->getAtomicExcitationCrossSectionThresholdEnergyIndex(),
-        forward_grid_searcher ) );
+        forward_grid_searcher );
 
-  // Find the upper and lower boundary bins for the min and max energy
-  std::vector<double>::const_iterator energy_grid_start, energy_grid_end;
-  this->findLowerAndUpperBinBoundary(
-          this->getMinElectronEnergy(),
-          this->getMaxElectronEnergy(),
-          d_forward_epr_data->getAtomicExcitationEnergyGrid(),
-          energy_grid_start,
-          energy_grid_end );
-  ++energy_grid_end;
+  // Get the energy grid and energy gain
+  auto energy_grid = d_forward_epr_data->getAtomicExcitationEnergyGrid();
+  auto energy_gain = d_forward_epr_data->getAtomicExcitationEnergyLoss();
 
-  // Get the index of the energy_grid_start
-  unsigned start_index = std::distance(
-    d_forward_epr_data->getAtomicExcitationEnergyGrid().begin(),
-    energy_grid_start );
-
-  std::vector<double>::const_iterator energy_gain_start =
-    d_forward_epr_data->getAtomicExcitationEnergyLoss().begin();
-
-  // Advance the energy_gain_start to the same index as the energy_grid_start
-  std::advance( energy_gain_start, start_index );
-
-  // Make sure the first adjoint energy grid point is above the min electron energy
-  while ( *energy_grid_start - *energy_gain_start < this->getMinElectronEnergy() )
+  // Remove the first adjoint energy of 0.0
+  if ( energy_grid.front() - energy_gain.front() <= 0.0 )
   {
-    ++energy_grid_start;
-    ++energy_gain_start;
+    energy_grid.erase(energy_grid.begin());
+    energy_gain.erase(energy_gain.begin());
+
+    /* NOTE: It is possible that by eliminating the first data point the min
+       tabulated adjoint energy is above the min electron energy. If this is the
+       case an error should be thrown.
+    */
+    testPrecondition( energy_grid.front() - energy_gain.front() <=
+                      this->getMinElectronEnergy() );
   }
 
-  // Include the energy right below the min electron energy for interpolation purposes
-  --energy_grid_start;
-  --energy_gain_start;
+  std::vector<double> cross_section( energy_grid.size() );
 
-  // Get the index of the energy_grid_start
-  unsigned end_index = std::distance(
-    d_forward_epr_data->getAtomicExcitationEnergyGrid().begin(),
-    energy_grid_end );
-
-  std::vector<double>::const_iterator energy_gain_end =
-    d_forward_epr_data->getAtomicExcitationEnergyLoss().begin();
-
-  // Advance the energy_gain_end to the same index as the energy_grid_end
-  std::advance( energy_gain_end, end_index );
-
-  std::vector<double> adjoint_excitation_energy_gain(
-    energy_gain_start,
-    energy_gain_end );
-
-  std::vector<double> adjoint_excitation_energy_grid(
-    energy_grid_start,
-    energy_grid_end );
-
-  std::vector<double> adjoint_excitation_cross_section(
-    adjoint_excitation_energy_gain.size() );
-
-  // calculate the adjoint incoming energy grid from the forward incoming energy grid and energy loss
-  for ( int i = 0; i < adjoint_excitation_energy_grid.size(); ++i )
+  // Calculate the adjoint cross section and energy grid
+  for ( unsigned i = 0; i < energy_grid.size(); ++i )
   {
     // Evaluate the cross section at the forward energy
-    adjoint_excitation_cross_section[i] =
-      atomic_excitation_reaction->getCrossSection( adjoint_excitation_energy_grid[i] );
+    cross_section[i] = atomic_excitation_reaction->getCrossSection( energy_grid[i] );
 
-    // Calculate the adjoint energy grid point at the forward energy
-    adjoint_excitation_energy_grid[i] -= adjoint_excitation_energy_gain[i];
+    // Calculate the adjoint energy from the forward energy and energy gain
+    energy_grid[i] -= energy_gain[i];
   }
 
-  Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
-    this->getVolatileDataContainer();
+  // Create the adjoint atomic excitation energy gain function
+  auto function =
+    std::make_shared<Utility::TabularDistribution<Utility::LogLog> >(
+        energy_grid, energy_gain );
 
-  // Set atomic excitation energy grid (adjoint energy grid = forward energy grid - forward energy loss)
-  data_container.setAdjointAtomicExcitationEnergyGrid(
-    adjoint_excitation_energy_grid );
+  adjoint_excitation_energy_gain_evaluator = [function](const double& energy){
+    return function->evaluate(energy);
+  };
 
-  // Set atomic excitation energy gain (adjoint energy gain = forward energy loss)
-  data_container.setAdjointAtomicExcitationEnergyGain(
-    adjoint_excitation_energy_gain );
+  // Create the adjoint atomic excitation cross section function
+  function =
+    std::make_shared<Utility::TabularDistribution<Utility::LogLog> >(
+        energy_grid, cross_section );
 
-  // Make sure the adjoint cross section data included data up to the max electron energy
-  for ( energy_grid_end; energy_grid_end != d_forward_epr_data->getAtomicExcitationEnergyGrid().end(); )
-  {
-    // Evaluate the cross section at the forward energy
-    adjoint_excitation_cross_section.push_back(
-      atomic_excitation_reaction->getCrossSection( *energy_grid_end ) );
-
-    // Calculate the adjoint energy grid point at the forward energy
-    adjoint_excitation_energy_grid.push_back( *energy_grid_end - *energy_gain_end );
-
-    if( adjoint_excitation_energy_grid.back() >= this->getMaxElectronEnergy() )
-      break;
-    else
-    {
-      ++energy_grid_end;
-      ++energy_gain_end;
-    }
-  }
-
-  adjoint_excitation_cross_section_distribution.reset(
-    new Utility::TabularDistribution<Utility::LogLog>(
-      adjoint_excitation_energy_grid,
-      adjoint_excitation_cross_section ) );
-
+  adjoint_excitation_xs_evaluator = [function](const double& energy){
+    return function->evaluate(energy);
+  };
 }
 
 // Create the adjoint bremsstrahlung grid generator

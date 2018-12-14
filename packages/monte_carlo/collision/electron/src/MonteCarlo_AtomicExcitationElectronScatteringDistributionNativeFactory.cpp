@@ -42,7 +42,7 @@ void AtomicExcitationElectronScatteringDistributionNativeFactory::createEnergyLo
         data_container.getAtomicExcitationEnergyGrid() );
 
   // Extract the energy loss for atomic excitation
-  std::vector<double> energy_loss (
+  std::vector<double> energy_loss(
         data_container.getAtomicExcitationEnergyLoss() );
 
   energy_loss_function.reset(

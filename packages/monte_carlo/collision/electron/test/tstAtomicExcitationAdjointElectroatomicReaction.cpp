@@ -92,14 +92,14 @@ FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectroatomicReaction, getCrossSection
 FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectroatomicReaction, react )
 {
   MonteCarlo::AdjointElectronState electron( 0 );
-  electron.setEnergy( 9.2946e-06 );
+  electron.setEnergy( 1e-05 );
   electron.setDirection( 0.0, 0.0, 1.0 );
 
   MonteCarlo::ParticleBank bank;
 
   Data::SubshellType shell_of_interaction;
 
-  double final_energy = 9.2946e-06 + 1.57054e-05;
+  double final_energy = 1e-05 + 1.58091206224871714e-05;
 
   excitation_reaction->react( electron, bank, shell_of_interaction );
 

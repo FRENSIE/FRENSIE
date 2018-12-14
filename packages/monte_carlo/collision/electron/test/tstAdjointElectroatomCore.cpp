@@ -198,7 +198,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomCore, getGridSearcher )
   FRENSIE_CHECK_EQUAL( grid_index, 17 );
 
   grid_index = grid_searcher.findLowerBinIndex( 20.0 );
-  FRENSIE_CHECK_EQUAL( grid_index, 62 );
+  FRENSIE_CHECK_EQUAL( grid_index, 61 );
 }
 
 //---------------------------------------------------------------------------//

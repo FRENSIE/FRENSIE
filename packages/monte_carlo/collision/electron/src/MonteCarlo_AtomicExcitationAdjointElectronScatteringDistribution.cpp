@@ -40,6 +40,8 @@ void AtomicExcitationAdjointElectronScatteringDistribution::sample(
 
   // Calculate outgoing energy
   outgoing_energy = incoming_energy + energy_gain;
+
+  testPostcondition( energy_gain > 0.0 );
 }
 
 // Sample an outgoing energy and direction and record the number of trials
