@@ -19,13 +19,34 @@
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
+// Testing Structs
+//---------------------------------------------------------------------------//
+class TestAtomicExcitationAdjointElectronScatteringDistribution : public MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution
+{
+public:
+
+  // Constructor
+  TestAtomicExcitationAdjointElectronScatteringDistribution(
+    const std::shared_ptr<const Utility::UnivariateDistribution>& dist )
+    : MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution( dist )
+  { /* ... */ }
+
+  // Destructor
+  ~TestAtomicExcitationAdjointElectronScatteringDistribution()
+  { /* ... */ }
+
+  using MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution::isEnergyInNudgeWindow;
+  using MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution::nudgeEnergyToLineEnergy;
+};
+
+//---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
 std::shared_ptr<MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution>
   ace_ae_distribution;
 
-std::shared_ptr<MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution>
+std::shared_ptr<TestAtomicExcitationAdjointElectronScatteringDistribution>
   native_ae_distribution;
 
 //---------------------------------------------------------------------------//
@@ -186,6 +207,30 @@ FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getEnergy(), final_energy, 1e-12 );
   FRENSIE_CHECK_EQUAL( adjoint_electron.getZDirection(), 1.0 );
 
+  // Scatter into line energy at 1.0 MeV
+  adjoint_electron.setEnergy( 9.99979472645e-01 );
+
+  // Scatter the adjoint electron
+  native_ae_distribution->scatterAdjointElectron( adjoint_electron,
+                                                  bank,
+                                                  shell_of_interaction );
+
+  // Test
+  FRENSIE_CHECK_EQUAL( adjoint_electron.getEnergy(), 1.0 );
+  FRENSIE_CHECK_EQUAL( adjoint_electron.getZDirection(), 1.0 );
+
+  // Scatter just below line energy at 1.0 MeV
+  adjoint_electron.setEnergy( 9.99979472640e-01 );
+
+  // Scatter the adjoint electron
+  native_ae_distribution->scatterAdjointElectron( adjoint_electron,
+                                                  bank,
+                                                  shell_of_interaction );
+
+  // Test
+  FRENSIE_CHECK_EQUAL( adjoint_electron.getEnergy(), 9.999999899996040442e-01 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getEnergy(), 1.0, 1e-7 );
+  FRENSIE_CHECK_EQUAL( adjoint_electron.getZDirection(), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -247,7 +292,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create the energy gain distributions
     std::shared_ptr<Utility::UnivariateDistribution> energy_gain_function(
-      new Utility::TabularDistribution<Utility::LinLin>( adjoint_energy_grid,
+      new Utility::TabularDistribution<Utility::LogLog>( adjoint_energy_grid,
                                                          energy_loss ) );
 
     // Create the distribution
@@ -263,9 +308,9 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   // Create the Native distribution
   {
     // Create the native data file container
-    std::shared_ptr<Data::AdjointElectronPhotonRelaxationDataContainer>
-      data_container( new Data::AdjointElectronPhotonRelaxationDataContainer(
-        test_native_file_name ) );
+    auto data_container =
+      std::make_shared<Data::AdjointElectronPhotonRelaxationDataContainer>(
+        test_native_file_name );
 
     // Get the adjoint atomic excitation energy grid
     std::vector<double> energy_grid(
@@ -276,14 +321,21 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
       data_container->getAdjointAtomicExcitationEnergyGain() );
 
     // Create the energy gain distribution
-    std::shared_ptr<Utility::UnivariateDistribution> energy_gain_function(
-      new Utility::TabularDistribution<Utility::LinLin>( energy_grid,
-                                                         energy_gain ) );
+    std::shared_ptr<Utility::UnivariateDistribution> energy_gain_function =
+      std::make_shared<Utility::TabularDistribution<Utility::LogLog> >( energy_grid,
+                                                         energy_gain );
 
     // Create the distribution
     native_ae_distribution.reset(
-      new MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution(
+      new TestAtomicExcitationAdjointElectronScatteringDistribution(
            energy_gain_function ) );
+
+    // Create the scattering distribution
+    auto critical_line_energies = std::make_shared<std::vector<double> >( 1 );
+
+    (*critical_line_energies)[0] = 1.0;
+
+    native_ae_distribution->setCriticalLineEnergies( critical_line_energies );
   }
 
   // Initialize the random number generator
