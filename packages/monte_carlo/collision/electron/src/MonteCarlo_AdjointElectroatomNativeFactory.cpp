@@ -255,7 +255,8 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
                                raw_adjoint_electroatom_data,
                                energy_grid,
                                grid_searcher,
-                               reaction_pointer );
+                               reaction_pointer,
+                               critical_line_energies );
   }
 
   // Create the subshell electroionization reactions

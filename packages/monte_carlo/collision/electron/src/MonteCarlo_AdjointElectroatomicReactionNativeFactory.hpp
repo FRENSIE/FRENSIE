@@ -122,7 +122,8 @@ public:
         raw_adjoint_electroatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
-    std::shared_ptr<const AdjointElectroatomicReaction>& atomic_excitation_reaction );
+    std::shared_ptr<const AdjointElectroatomicReaction>& atomic_excitation_reaction,
+    const std::shared_ptr<const std::vector<double> >& critical_line_energies );
 
   //! Create the subshell electroionization adjoint electroatomic reaction
   template<typename TwoDInterpPolicy = Utility::LogLogLog,

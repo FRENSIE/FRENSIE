@@ -33,6 +33,14 @@ public:
   virtual ~AtomicExcitationAdjointElectronScatteringDistribution()
   { /* ... */ }
 
+  //! Set the critical line energies
+  void setCriticalLineEnergies(
+                             const std::shared_ptr<const std::vector<double> >&
+                             critical_line_energies );
+
+  //! Get the critical line energies
+  const std::vector<double>& getCriticalLineEnergies() const;
+
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
                    const double scattering_angle_cosine ) const
@@ -59,10 +67,25 @@ public:
                                ParticleBank& bank,
                                Data::SubshellType& shell_of_interaction ) const;
 
+protected:
+
+  //! Check if an energy is in the nudge window
+  bool isEnergyInNudgeWindow( const double energy_of_interest,
+                              const double energy ) const;
+
+  // Nudge the energy to a critical line energy if possible
+  void nudgeEnergyToLineEnergy( double& energy ) const;
+
 private:
 
   // adjoint atomic excitation energy gain tables
   AtomicDistribution d_energy_gain_distribution;
+
+  // The critical line energies
+  std::shared_ptr<const std::vector<double> > d_critical_line_energies;
+
+  // The probe particle window nudge tolerance
+  double d_nudge_tol;
 
 };
 

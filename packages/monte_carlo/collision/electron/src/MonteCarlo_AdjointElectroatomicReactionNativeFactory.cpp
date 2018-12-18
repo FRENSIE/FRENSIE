@@ -62,11 +62,12 @@ void AdjointElectroatomicReactionNativeFactory::createScreenedRutherfordElasticR
 
 // Create an atomic excitation adjoint electroatomic reaction
 void AdjointElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
-            const Data::AdjointElectronPhotonRelaxationDataContainer&
-                raw_adjoint_electroatom_data,
-            const std::shared_ptr<const std::vector<double> >& energy_grid,
-            const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
-            std::shared_ptr<const AdjointElectroatomicReaction>& atomic_excitation_reaction )
+      const Data::AdjointElectronPhotonRelaxationDataContainer&
+          raw_adjoint_electroatom_data,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      std::shared_ptr<const AdjointElectroatomicReaction>& atomic_excitation_reaction,
+      const std::shared_ptr<const std::vector<double> >& critical_line_energies )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().size() ==
@@ -83,12 +84,18 @@ void AdjointElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
     raw_adjoint_electroatom_data.getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex();
 
   // Create the energy gain distribution
-  std::shared_ptr<const AtomicExcitationAdjointElectronScatteringDistribution>
+  std::shared_ptr<AtomicExcitationAdjointElectronScatteringDistribution>
     energy_gain_distribution;
 
   AtomicExcitationAdjointElectronScatteringDistributionNativeFactory::createAtomicExcitationDistribution(
                                                  raw_adjoint_electroatom_data,
                                                  energy_gain_distribution );
+
+  // Assign the critical line energies
+  if( critical_line_energies->size() > 0 )
+  {
+    energy_gain_distribution->setCriticalLineEnergies( critical_line_energies );
+  }
 
   atomic_excitation_reaction.reset(
     new AtomicExcitationAdjointElectroatomicReaction<Utility::LogLog>(

@@ -21,7 +21,7 @@
 typedef MonteCarlo::AtomicExcitationAdjointElectronScatteringDistributionNativeFactory
             AtomicNativeFactory;
 
-std::shared_ptr<const MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution>
+std::shared_ptr<MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution>
   native_ae_distribution;
 
 //---------------------------------------------------------------------------//

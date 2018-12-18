@@ -481,7 +481,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     size_t ae_threshold_index =
         data_container.getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex();
 
-    std::shared_ptr<const MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution>
+    std::shared_ptr<MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution>
         ae_distribution;
 
     // Create the atomic excitation distribution

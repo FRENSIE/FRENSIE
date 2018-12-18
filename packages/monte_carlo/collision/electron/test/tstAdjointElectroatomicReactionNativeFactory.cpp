@@ -229,7 +229,8 @@ FRENSIE_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
                                *data_container,
                                energy_grid,
                                grid_searcher,
-                               reaction);
+                               reaction,
+                               std::make_shared<const std::vector<double> >() );
 
   // Test reaction properties
   FRENSIE_CHECK_EQUAL( reaction->getReactionType(),

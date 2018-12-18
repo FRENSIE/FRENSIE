@@ -131,7 +131,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     Data::AdjointElectronPhotonRelaxationDataContainer data_container =
       Data::AdjointElectronPhotonRelaxationDataContainer( test_native_file_name );
 
-    std::shared_ptr<const MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution>
+    std::shared_ptr<MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution>
         scattering_distribution;
 
     MonteCarlo::AtomicExcitationAdjointElectronScatteringDistributionNativeFactory::createAtomicExcitationDistribution(
@@ -139,12 +139,12 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
       scattering_distribution );
 
     // Get the energy grid
-    std::shared_ptr<const std::vector<double> > energy_grid(
-       new std::vector<double>( data_container.getAdjointElectronEnergyGrid() ) );
+    auto energy_grid =
+       std::make_shared<const std::vector<double> >( data_container.getAdjointElectronEnergyGrid() );
 
     // Get the cross section
-    std::shared_ptr<const std::vector<double> > cross_section(
-       new std::vector<double>( data_container.getAdjointAtomicExcitationCrossSection() ) );
+    auto cross_section =
+      std::make_shared<const std::vector<double> >( data_container.getAdjointAtomicExcitationCrossSection() );
 
     // Create the reaction
     excitation_reaction.reset(

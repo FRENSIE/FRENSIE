@@ -16,7 +16,7 @@ namespace MonteCarlo{
 // Create a Atomic Excitation adjoint distribution
 void AtomicExcitationAdjointElectronScatteringDistributionNativeFactory::createAtomicExcitationDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    std::shared_ptr<const AtomicExcitationAdjointElectronScatteringDistribution>&
+    std::shared_ptr<AtomicExcitationAdjointElectronScatteringDistribution>&
         scattering_distribution )
 {
   // Create the scattering function
