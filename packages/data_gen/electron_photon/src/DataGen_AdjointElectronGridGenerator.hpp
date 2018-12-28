@@ -30,7 +30,7 @@ public:
   AdjointElectronGridGenerator(
       const std::function<double(const double&)>& forward_cs_evaluator,
       const std::function<double(const double&, const double&)>& forward_pdf_evaluator,
-      const std::function<double(const double&)>& min_outgoing_adjoint_energy,
+      const std::function<double(const double&)>& min_energy_gain_function,
       const std::vector<double>& primary_energy_grid,
       const double min_energy = 1e-5,
       const double max_energy = 20.0,
@@ -38,30 +38,33 @@ public:
       const double max_energy_nudge_value = 1e-2,
       const double convergence_tol = 0.001,
       const double absolute_diff_tol = 1e-10,
-      const double distance_tol = 1e-8 );
+      const double distance_tol = 1e-8,
+      const bool electron_scatter_above_max_energy_mode = true );
 
   //! Destructor
   virtual ~AdjointElectronGridGenerator()
   { /* ... */ }
 
   //! Get the min energy
-  double getMinEnergy() const;
+  double getMinIncomingEnergy() const;
 
-  //! Get the max energy
-  double getMaxEnergy() const;
+  //! Get the max incoming energy
+  double getMaxIncomingEnergy() const;
 
-  //! Set the min energy nudge value
-  void setMinEnergyNudgeValue( const double min_energy_nudge_value );
+  //! Get the min outgoing energy
+  double getMinOutgoingEnergy() const;
 
-  //! Set the max energy nudge value
-  void setMaxEnergyNudgeValue( const double max_energy_nudge_value );
+  //! Get the max outgoing energy
+  double getMaxOutgoingEnergy() const;
+
+  //! Return the min energy nudge value
+  double getMinEnergyNudgeValue() const;
+
+  //! Return the max energy nudge value
+  double getMaxEnergyNudgeValue() const;
 
   //! Get the nudged minimum outgoing adjoint energy
   double getNudgedMinEnergy( const double energy ) const;
-
-  //! Get the nudged maximum outgoing adjoint energy
-  double getNudgedMaxEnergy() const;
-
 
   //! Evaluate the adjoint PDF value
   double evaluateAdjointPDF(
@@ -121,8 +124,8 @@ private:
   // Function for evaluating the forward pdf
   std::function<double(const double&, const double&)> d_forward_pdf_evaluator;
 
-  // Functor to calculate the min outgoing adjoint energy
-  std::function<double(const double&)> d_min_outgoing_adjoint_energy;
+  // Functor to calculate the min adjoint energy gain
+  std::function<double(const double&)> d_min_energy_gain_function;
 
   // The primary incoming energy grid of the forward electronatomic reaction
   std::vector<double> d_primary_energy_grid;
@@ -130,17 +133,29 @@ private:
   // The energies used as integration points
   std::vector<double> d_integration_points;
 
-  // The min electron energy
-  double d_min_energy;
+  // The min table incoming energy
+  double d_min_incoming_energy;
 
-  // The max table energy (highest energy grid point)
-  double d_max_energy;
+  // The max table incoming energy
+  double d_max_incoming_energy;
+
+  // The min table outgoing energy
+  double d_min_outgoing_energy;
+
+  // The max table outgoing energy
+  double d_max_outgoing_energy;
 
   // The max table energy nudge value
   double d_nudged_max_energy;
 
   // The min energy nudge value
   double d_min_energy_nudge_value;
+
+  // The max energy nudge value
+  double d_max_energy_nudge_value;
+
+  // The electron scatter above max energy mode
+  bool d_electron_scatter_above_max_energy_mode;
 };
 
 } // end DataGen namespace

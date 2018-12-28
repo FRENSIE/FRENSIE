@@ -228,7 +228,7 @@ FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
                                                   shell_of_interaction );
 
   // Test
-  FRENSIE_CHECK_EQUAL( adjoint_electron.getEnergy(), 9.999999899996040442e-01 );
+  FRENSIE_CHECK_EQUAL( adjoint_electron.getEnergy(), 9.999999899996029340e-01 );
   FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getEnergy(), 1.0, 1e-7 );
   FRENSIE_CHECK_EQUAL( adjoint_electron.getZDirection(), 1.0 );
 }

@@ -1045,11 +1045,11 @@ FRENSIE_UNIT_TEST( TransportKernel,
     Utility::RandomNumberGenerator::setFakeStream( {0.5, 0.25} );
 
     FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleSimpleDistanceToNextCollisionSite( adjoint_electron ),
-                                     3.532383931170272782e-06,
+                                     3.532383933300203197e-06,
                                      1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleSimpleDistanceToNextCollisionSite( adjoint_electron ),
-                                     1.466071793285681440e-06,
+                                     1.466071794169682505e-06,
                                      1e-15 );
 
     Utility::RandomNumberGenerator::unsetFakeStream();
@@ -1155,11 +1155,11 @@ FRENSIE_UNIT_TEST( TransportKernel,
     Utility::RandomNumberGenerator::setFakeStream( {0.5, 0.25} );
 
     FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleDistanceToNextCollisionSite( adjoint_electron ),
-                                     3.532383931170272782e-06,
+                                     3.532383933300203197e-06,
                                      1e-15 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleDistanceToNextCollisionSite( adjoint_electron ),
-                                     1.466071793285681440e-06,
+                                     1.466071794169682505e-06,
                                      1e-15 );
 
     Utility::RandomNumberGenerator::unsetFakeStream();

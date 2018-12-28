@@ -27,7 +27,7 @@ std::shared_ptr<const CoupledElasticElectronScatteringDistribution> createCouple
     cutoff_cross_section( new std::vector<double> ),
     total_cross_section( new std::vector<double> ),
     energy_grid( new std::vector<double> );
-  
+
   cutoff_cross_section->assign(
     data_container.getAdjointCutoffElasticCrossSection().begin(),
     data_container.getAdjointCutoffElasticCrossSection().end() );
@@ -154,7 +154,7 @@ std::shared_ptr<const BremsstrahlungAdjointElectronScatteringDistribution> creat
 
   BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
     data_container,
-    data_container.getAdjointElectronEnergyGrid(),
+    data_container.getAdjointElectronBremsstrahlungEnergyGrid(),
     distribution,
     evaluation_tol );
 

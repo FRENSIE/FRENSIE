@@ -161,8 +161,8 @@ class AdjointScreenedRutherfordElasticReactionTestCase(unittest.TestCase):
         self.assertTrue( self.reaction.getCrossSection(energy) == 0.0 )
         energy = 20.0
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                1.2717394891258004e+04,
-                                delta=1e-9*1.2717394891258004e+04 )
+                                1.271739489125800355e+04,
+                                delta=1e-9*1.271739489125800355e+04 )
 
 #-----------------------------------------------------------------------------#
 # Test the moment preserving adjoint electroatomic reaction
@@ -209,16 +209,16 @@ class AdjointAtomicExcitationReactionTestCase(unittest.TestCase):
         "*Test MonteCarlo.Collision.createAtomicExcitationReaction getCrossSection method"
         energy = 1e-5
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                6.1243057898416743e+07,
-                                delta=1e-12*6.1243057898416743e+07 )
+                                6.124055828282346576e+07,
+                                delta=1e-12*6.124055828282346576e+07 )
         energy = 1e-3
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                1.050234737111856416e+07,
-                                delta=1e-12*1.050234737111856416e+07 )
+                                1.050254326707092859e+07,
+                                delta=1e-12*1.050254326707092859e+07 )
         energy = 20.0
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                8.1829299836129925e+04,
-                                delta=1e-9*8.1829299836129925e+04 )
+                                0.0,
+                                delta=1e-9*0.0 )
 
 #-----------------------------------------------------------------------------#
 # Test the subshell electroionization adjoint electroatomic reactions
@@ -239,16 +239,16 @@ class AdjointSubshellElectroionizationReactionsTestCase(unittest.TestCase):
         # Test first subshell
         energy = 1e-5
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                4.631739660560436249e+10,
-                                delta=1e-12*4.631739660560436249e+10 )
+                                4.629578195234655762e+10,
+                                delta=1e-12*4.629578195234655762e+10 )
         energy = 1e-3
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                1.595750851745400578e+07,
-                                delta=1e-12*1.595750851745400578e+07 )
+                                1.595480829753698967e+07,
+                                delta=1e-12*1.595480829753698967e+07 )
         energy = 20.0
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                8.365802734960628732e+04,
-                                delta=1e-9*8.365802734960628732e+04 )
+                                0.0,
+                                delta=1e-9*0.0 )
 
 
 #-----------------------------------------------------------------------------#
@@ -268,16 +268,16 @@ class AdjointBremsstrahlungReactionTestCase(unittest.TestCase):
         "*Test MonteCarlo.Collision.createBremsstrahlungReaction getCrossSection method"
         energy = 1e-5
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                4.420906922056859401e+01,
-                                delta=1e-12*4.420906922056859401e+01 )
+                                4.420906922047235810e+01,
+                                delta=1e-12*4.420906922047235810e+01 )
         energy = 1.0e-3
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                1.557600066977331110e+01,
-                                delta=1e-12*1.557600066977331110e+01 )
+                                1.557600066967186692e+01,
+                                delta=1e-12*1.557600066967186692e+01 )
         energy = 20.0
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                2.873816755338521323e-01,
-                                delta=1e-9*2.873816755338521323e-01 )
+                                0.0,
+                                delta=1e-9*0.0 )
 
 #-----------------------------------------------------------------------------#
 # Custom main

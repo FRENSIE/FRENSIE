@@ -32,11 +32,10 @@ FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionNativeFa
                    sample )
 {
   MonteCarlo::AdjointElectronState electron( 0 );
-  electron.setEnergy( 1.52422504085124348e+01 );
+  electron.setEnergy( 1.99999789891999988e+01 );
   electron.setDirection( 0.0, 0.0, 1.0 );
 
   double outgoing_energy,scattering_angle_cosine;
-  double final_energy = electron.getEnergy() + 2.10069182636912224e-05;
 
   // sample distribution
   native_ae_distribution->sample( electron.getEnergy(),
@@ -44,7 +43,7 @@ FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionNativeFa
                                   scattering_angle_cosine );
 
   // Test
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, final_energy, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 20.0, 1e-12 );
   FRENSIE_CHECK_EQUAL( scattering_angle_cosine, 1.0 );
 
 }
@@ -55,11 +54,10 @@ FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionNativeFa
                    sampleAndRecordTrials )
 {
   MonteCarlo::AdjointElectronState electron( 0 );
-  electron.setEnergy( 1.52422504085124348e+01 );
+  electron.setEnergy( 1.99999789891999988e+01 );
   electron.setDirection( 0.0, 0.0, 1.0 );
 
   double outgoing_energy,scattering_angle_cosine;
-  double final_energy = electron.getEnergy() + 2.10069182636912224e-05;
   MonteCarlo::AdjointElectronScatteringDistribution::Counter trials = 10;
 
   // sample distribution
@@ -69,7 +67,7 @@ FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionNativeFa
                                                  trials );
 
   // Test
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, final_energy, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 20.0, 1e-12 );
   FRENSIE_CHECK_EQUAL( scattering_angle_cosine, 1.0 );
   FRENSIE_CHECK_EQUAL( trials, 11 );
 }
@@ -82,11 +80,10 @@ FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionNativeFa
   MonteCarlo::ParticleBank bank;
 
   MonteCarlo::AdjointElectronState adjoint_electron( 0 );
-  adjoint_electron.setEnergy( 1.52422504085124348e+01 );
+  adjoint_electron.setEnergy( 1.99999789891999988e+01 );
   adjoint_electron.setDirection( 0.0, 0.0, 1.0 );
 
   Data::SubshellType shell_of_interaction;
-  double final_energy = adjoint_electron.getEnergy() + 2.10069182636912224e-05;
 
   // Scatter the adjoint electron
   native_ae_distribution->scatterAdjointElectron( adjoint_electron,
@@ -94,7 +91,7 @@ FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionNativeFa
                                                   shell_of_interaction );
 
   // Test
-  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getEnergy(), final_energy, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getEnergy(), 20.0, 1e-12 );
   FRENSIE_CHECK_EQUAL( adjoint_electron.getZDirection(), 1.0 );
 
 }

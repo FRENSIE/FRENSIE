@@ -21,6 +21,10 @@
 namespace MonteCarlo{
 
 // Basic Constructor
+/*! \details If the last couple of cross section values are zero the max energy
+ *  index will be set to the last non-zero cross section value. All energies
+ *  above the max energy index will return a cross section of zero.
+ */
 template<typename InterpPolicy, bool processed_cross_section>
 ElectroionizationSubshellAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::ElectroionizationSubshellAdjointElectroatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
@@ -43,10 +47,22 @@ ElectroionizationSubshellAdjointElectroatomicReaction<InterpPolicy,processed_cro
 
   // Make sure the distribution data is valid
   testPrecondition( electroionization_subshell_distribution.use_count() > 0 );
+
+  // Set the max energy index
+  size_t max_energy_index = incoming_energy_grid->size() - threshold_energy_index - 1;
+
+  while( cross_section->at(max_energy_index) == 0.0 )
+    --max_energy_index;
+
+  this->setMaxEnergyIndex( max_energy_index );
 }
 
 
 // Constructor
+/*! \details If the last couple of cross section values are zero the max energy
+ *  index will be set to the last non-zero cross section value. All energies
+ *  above the max energy index will return a cross section of zero.
+ */
 template<typename InterpPolicy, bool processed_cross_section>
 ElectroionizationSubshellAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::ElectroionizationSubshellAdjointElectroatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
@@ -72,6 +88,14 @@ ElectroionizationSubshellAdjointElectroatomicReaction<InterpPolicy,processed_cro
 
   // Make sure the distribution data is valid
   testPrecondition( electroionization_subshell_distribution.use_count() > 0 );
+
+  // Set the max energy index
+  size_t max_energy_index = incoming_energy_grid->size() - threshold_energy_index - 1;
+
+  while( cross_section->at(max_energy_index) == 0.0 )
+    --max_energy_index;
+
+  this->setMaxEnergyIndex( max_energy_index );
 }
 
 // Set the critical line energies

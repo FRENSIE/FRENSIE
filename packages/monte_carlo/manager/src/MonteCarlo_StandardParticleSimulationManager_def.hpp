@@ -17,6 +17,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleModeTypeTraits.hpp"
+#include "MonteCarlo_CollisionForcer.hpp"
+#include "MonteCarlo_StandardCollisionForcer.hpp"
 
 namespace MonteCarlo{
 

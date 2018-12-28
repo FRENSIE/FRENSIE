@@ -229,7 +229,7 @@ public:
   void multiplyWeight( const double weight_factor );
 
   //! Set the ray safety distance ( i.e. distance to the closest boundary )
-  void setRaySafetyDistance( const raySafetyDistanceType safety_distance );
+  void setRaySafetyDistance( const raySafetyDistanceType ray_safety_distance );
 
   //! Return the ray safety distance (i.e. distance to the closest boundary)
   raySafetyDistanceType getRaySafetyDistance() const;

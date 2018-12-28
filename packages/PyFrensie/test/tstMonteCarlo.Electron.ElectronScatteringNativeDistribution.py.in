@@ -930,6 +930,43 @@ class ElectroionizationSubshellElectronScatteringDistributionTestCase(unittest.T
                                 4.999967451873526443e+04,
                                 delta=tol*4.999967451873526443e+04)
 
+
+
+
+#-----------------------------------------------------------------------------#
+# Test the atomic excitation electron scattering distribution
+class AtomicExcitationElectronScatteringDistributionTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Electron atomic excitation electron scattering distribution"
+
+    def setUp(self):
+        self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
+        self.dist = Electron.createAtomicExcitationDistribution( self.data )
+
+    def testSample(self):
+        "*Test MonteCarlo.Electron.createAtomicExcitationDistribution sample method"
+        random_numbers = [ 0.5, 0.5 ]
+        Prng.RandomNumberGenerator.setFakeStream(random_numbers)
+        energy = 1e-3
+        tol = 1e-12
+        outgoing_energy, scattering_angle_cosine = self.dist.sample( energy )
+        self.assertAlmostEqual( scattering_angle_cosine,
+                                1.0,
+                                delta=tol*1.0 )
+        self.assertAlmostEqual( outgoing_energy,
+                                9.807273e-4,
+                                delta=tol*9.807273e-4 )
+
+
+        energy = 1e5
+        Prng.RandomNumberGenerator.setFakeStream(random_numbers)
+        outgoing_energy, scattering_angle_cosine = self.dist.sample( energy )
+        self.assertAlmostEqual( scattering_angle_cosine,
+                                1.0,
+                                delta=tol*1.0 )
+        self.assertAlmostEqual( outgoing_energy,
+                                99999.9999789223,
+                                delta=tol*99999.9999789223 )
+
 #-----------------------------------------------------------------------------#
 # Custom main
 #-----------------------------------------------------------------------------#
@@ -950,6 +987,7 @@ if __name__ == "__main__":
     # suite.addTest(unittest.makeSuite(BremsstrahlungElectronScatteringDistributionTestCase_dipole))
     # suite.addTest(unittest.makeSuite(BremsstrahlungElectronScatteringDistributionTestCase_2bs))
     # suite.addTest(unittest.makeSuite(ElectroionizationSubshellElectronScatteringDistributionTestCase))
+    suite.addTest(unittest.makeSuite(AtomicExcitationElectronScatteringDistributionTestCase))
 
 
     print >>sys.stderr, \

@@ -1345,8 +1345,9 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   std::vector<double> energy_grid = h_data_container.getAdjointElectronEnergyGrid();
   FRENSIE_CHECK_EQUAL( energy_grid.front(), 1e-4 );
+  // FRENSIE_CHECK_EQUAL( energy_grid[energy_grid.size()-2], 1.999997898919999884e+01 );
   FRENSIE_CHECK_EQUAL( energy_grid.back(), 20.0 );
-  FRENSIE_CHECK_EQUAL( energy_grid.size(), 6 );
+  FRENSIE_CHECK_EQUAL( energy_grid.size(), 5 );
 
    std::vector<double> cross_section;
    unsigned threshold;
@@ -1361,7 +1362,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   FRENSIE_CHECK_EQUAL( cross_section.front(), 2.77811e+07 );
   FRENSIE_CHECK_EQUAL( cross_section.back(), 304.72762372903747519 );
-  FRENSIE_CHECK_EQUAL( cross_section.size(), 6-threshold );
+  FRENSIE_CHECK_EQUAL( cross_section.size(), 5-threshold );
 
   threshold =
      h_data_container.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
@@ -1373,7 +1374,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   FRENSIE_CHECK_EQUAL( cross_section.front(), 2.574552047073666472 );
   FRENSIE_CHECK_EQUAL( cross_section.back(), 1.271739489125800355e+04 );
-  FRENSIE_CHECK_EQUAL( cross_section.size(), 6-threshold );
+  FRENSIE_CHECK_EQUAL( cross_section.size(), 5-threshold );
 
   std::vector<double> angular_grid =
     h_data_container.getAdjointElasticAngularEnergyGrid();
@@ -1458,7 +1459,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   FRENSIE_CHECK_EQUAL( cross_section.front(), 3.844810302593046458e+01 );
   FRENSIE_CHECK_EQUAL( cross_section.back(), 9.717679999999999652e-01 );
-  FRENSIE_CHECK_EQUAL( cross_section.size(), 6-threshold );
+  FRENSIE_CHECK_EQUAL( cross_section.size(), 5-threshold );
 
   // Check the forward electroionization cross section data
   threshold =
@@ -1471,7 +1472,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   FRENSIE_CHECK_EQUAL( cross_section.front(), 4.526009092873083055e+07 );
   FRENSIE_CHECK_EQUAL( cross_section.back(), 8.284008376199545455e+04 );
-  FRENSIE_CHECK_EQUAL( cross_section.size(), 6-threshold );
+  FRENSIE_CHECK_EQUAL( cross_section.size(), 5-threshold );
 
   // Check the forward atomic excitation cross section data
   threshold =
@@ -1484,8 +1485,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   FRENSIE_CHECK_EQUAL( cross_section.front(), 6.14387e+07 );
   FRENSIE_CHECK_EQUAL( cross_section.back(), 8.18293e+04 );
-  FRENSIE_CHECK_EQUAL( cross_section.size(), 6-threshold );
-
+  FRENSIE_CHECK_EQUAL( cross_section.size(), 5-threshold );
 
   // Check the atomic excitation data
   threshold =
@@ -1498,21 +1498,21 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   FRENSIE_CHECK_EQUAL( cross_section.front(), 5.604276223025090247e+07 );
   FRENSIE_CHECK_EQUAL( cross_section.back(), 8.18292998361299251e+04 );
-  FRENSIE_CHECK_EQUAL( cross_section.size(), 6-threshold );
+  FRENSIE_CHECK_EQUAL( cross_section.size(), 5-threshold );
 
   std::vector<double> atomic_excitation_energy_grid =
     h_data_container.getAdjointAtomicExcitationEnergyGrid();
 
   FRENSIE_CHECK_FLOATING_EQUALITY( atomic_excitation_energy_grid.front(), 1e-4, 1e-13 );
   FRENSIE_CHECK_FLOATING_EQUALITY( atomic_excitation_energy_grid.back(), 20.0, 1e-15 );
-  FRENSIE_CHECK_EQUAL( atomic_excitation_energy_grid.size(), 6 );
+  FRENSIE_CHECK_EQUAL( atomic_excitation_energy_grid.size(), 5 );
 
   std::vector<double> atomic_excitation_energy_gain =
     h_data_container.getAdjointAtomicExcitationEnergyGain();
 
   FRENSIE_CHECK_EQUAL( atomic_excitation_energy_gain.front(), 1.833469974398140752e-05 );
   FRENSIE_CHECK_EQUAL( atomic_excitation_energy_gain.back(), 2.101080001930054575e-05 );
-  FRENSIE_CHECK_EQUAL( atomic_excitation_energy_gain.size(), 6 );
+  FRENSIE_CHECK_EQUAL( atomic_excitation_energy_gain.size(), 5 );
 
 
   // Check the bremsstrahlung data
@@ -1526,9 +1526,9 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   FRENSIE_CHECK_EQUAL( cross_section.front(), 3.746719747304488379e+01 );
   FRENSIE_CHECK_EQUAL( cross_section.back(), 2.873816755338521323e-01 );
-  FRENSIE_CHECK_EQUAL( cross_section.size(), 6-threshold );
+  FRENSIE_CHECK_EQUAL( cross_section.size(), 5-threshold );
 
-  FRENSIE_CHECK( !h_data_container.separateAdjointBremsstrahlungEnergyGrid() );
+  FRENSIE_REQUIRE( !h_data_container.separateAdjointBremsstrahlungEnergyGrid() );
 
   std::vector<double> electron_bremsstrahlung_energy =
     h_data_container.getAdjointElectronBremsstrahlungEnergy( 1e-4 );
@@ -1568,15 +1568,14 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   FRENSIE_CHECK_EQUAL( threshold, 0 );
 
-   cross_section =
+  cross_section =
      h_data_container.getAdjointElectroionizationCrossSection( 1u );
 
-  FRENSIE_CHECK_EQUAL( cross_section.front(), 6.597669934672541618e+08 );
+  FRENSIE_CHECK_EQUAL( cross_section.front(), 6.597670370816965103e+08 );
   FRENSIE_CHECK_EQUAL( cross_section.back(), 8.365802734960628732e+04 );
-  FRENSIE_CHECK_EQUAL( cross_section.size(), 6-threshold );
+  FRENSIE_CHECK_EQUAL( cross_section.size(), 5-threshold );
 
   FRENSIE_CHECK( !h_data_container.separateAdjointElectroionizationEnergyGrid() );
-
 
   std::vector<double> electroionization_recoil_energy =
     h_data_container.getAdjointElectroionizationRecoilEnergy( 1u, 1e-4 );
@@ -1599,8 +1598,8 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   std::vector<double> electroionization_recoil_pdf =
     h_data_container.getAdjointElectroionizationRecoilPDF( 1u, 1e-4 );
 
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.front(), 9.391396004676191296e+03 );
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.back(), 4.324522699216572924e-02 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.front(), 9.391395383850238431e+03 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.back(), 4.324522413340445293e-02 );
   FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.size(), 6 );
 
   electroionization_recoil_pdf =

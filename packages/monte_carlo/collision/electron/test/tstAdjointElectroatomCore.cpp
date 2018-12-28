@@ -83,21 +83,21 @@ FRENSIE_UNIT_TEST( AdjointElectroatomCore, getScatteringReactions )
                           b_reaction.getCrossSection( 1e-5 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          4.420906922056859401e+01 + 6.1243057898416743e+07,
+                          4.420906922047235810e+01 + 6.124055828282346576e+07,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 1e-3 ) +
                    b_reaction.getCrossSection( 1e-3 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          1.557600066977331110e+01 + 1.050234737111856416e+07,
+                          1.557600066967186692e+01 + 1.050254326707092859e+07,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 20.0 ) +
                    b_reaction.getCrossSection( 20.0 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          2.873816755338521323e-01 + 8.1829299836129925e+04,
+                          1.31456359576732545e-01 + 8.18292998361299251e+04,
                           1e-12 );
 }
 
@@ -198,7 +198,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomCore, getGridSearcher )
   FRENSIE_CHECK_EQUAL( grid_index, 17 );
 
   grid_index = grid_searcher.findLowerBinIndex( 20.0 );
-  FRENSIE_CHECK_EQUAL( grid_index, 61 );
+  FRENSIE_CHECK_EQUAL( grid_index, 93 );
 }
 
 //---------------------------------------------------------------------------//
@@ -304,7 +304,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
         energy_grid->size(), 0.0 );
 
     std::shared_ptr<const MonteCarlo::ElectroatomicReaction> void_reaction =
-      std::make_shared<MonteCarlo::AbsorptionElectroatomicReaction<Utility::LogLog,false> >(
+      std::make_shared<MonteCarlo::AbsorptionElectroatomicReaction<Utility::LinLin,false> >(
                        energy_grid,
                        void_cross_section,
                        0u,
@@ -407,7 +407,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Create the Bremsstrahlung distribution
     BremsstrahlungNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
         data_container,
-        data_container.getAdjointElectronEnergyGrid(),
+        data_container.getAdjointElectronBremsstrahlungEnergyGrid(),
         b_distribution,
         evaluation_tol );
 
@@ -429,7 +429,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     scattering_reactions[b_reaction->getReactionType()] = b_reaction;
 
-    // Create a test  adjoint electroatom core
+    // Create a test adjoint electroatom core
     electroatom_core.reset( new MonteCarlo::AdjointElectroatomCore(
         energy_grid,
         grid_searcher,

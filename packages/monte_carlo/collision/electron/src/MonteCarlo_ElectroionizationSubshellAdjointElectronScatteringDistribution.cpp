@@ -64,10 +64,22 @@ double ElectroionizationSubshellAdjointElectronScatteringDistribution::getMinEne
   return d_ionization_subshell_dist->getLowerBoundOfPrimaryIndepVar();
 }
 
-// Return the Max incoming energy
+// Return the max incoming energy
 double ElectroionizationSubshellAdjointElectronScatteringDistribution::getMaxEnergy() const
 {
   return d_ionization_subshell_dist->getUpperBoundOfPrimaryIndepVar();
+}
+
+// Return the max outgoing energy
+double ElectroionizationSubshellAdjointElectronScatteringDistribution::getOutgoingMinEnergy( const double incoming_energy ) const
+{
+  return d_ionization_subshell_dist->getLowerBoundOfSecondaryConditionalIndepVar( incoming_energy );
+}
+
+// Return the max outgoing energy
+double ElectroionizationSubshellAdjointElectronScatteringDistribution::getOutgoingMaxEnergy( const double incoming_energy ) const
+{
+  return d_ionization_subshell_dist->getUpperBoundOfSecondaryConditionalIndepVar( incoming_energy );
 }
 
 // Evaluate the distribution for a given incoming and outgoing energy
@@ -189,7 +201,7 @@ bool ElectroionizationSubshellAdjointElectronScatteringDistribution::isEnergyInS
   // Make sure the energy of interest is valid
   testPrecondition( energy_of_interest >= 0.0 );
 
-  if( energy_of_interest > this->getMaxEnergy() )
+  if( energy_of_interest > this->getOutgoingMaxEnergy( initial_energy ) )
     return false;
   else
   {
@@ -216,12 +228,9 @@ bool ElectroionizationSubshellAdjointElectronScatteringDistribution::isEnergyAbo
   // Make sure the energy of interest is valid
   testPrecondition( energy_of_interest >= 0.0 );
 
-  double min_outgoing_energy =
-    d_ionization_subshell_dist->getLowerBoundOfSecondaryConditionalIndepVar( initial_energy );
+  double min_outgoing_energy = this->getOutgoingMinEnergy( initial_energy );
 
   return min_outgoing_energy > energy_of_interest;
-
-  return initial_energy > energy_of_interest - d_binding_energy;
 }
 
 // Create a probe particle
@@ -236,7 +245,7 @@ void ElectroionizationSubshellAdjointElectronScatteringDistribution::createProbe
 {
   // Make sure the energy of interest is valid
   testPrecondition( energy_of_interest > 0.0 );
-  testPrecondition( energy_of_interest <= this->getMaxEnergy() );
+  testPrecondition( energy_of_interest <= this->getOutgoingMaxEnergy( adjoint_electron.getEnergy() ) );
   // Make sure the adjoint electron energy is valid
   testPrecondition( adjoint_electron.getEnergy() <= this->getMaxEnergy() );
   // Make sure the energy of interest is in the scattering window
@@ -250,6 +259,9 @@ void ElectroionizationSubshellAdjointElectronScatteringDistribution::createProbe
   {
     const double weight_mult =
       this->evaluate( adjoint_electron.getEnergy(), energy_of_interest );
+
+    // Make sure the weight multiplier is valid
+    testPrecondition( weight_mult > 0.0 );
 
     // Create the probe with the desired energy and modified weight
     auto probe = std::make_shared<AdjointElectronProbeState>( adjoint_electron );
@@ -266,9 +278,6 @@ void ElectroionizationSubshellAdjointElectronScatteringDistribution::createProbe
 
     // Add the probe to the bank
     bank.push( probe );
-
-    // make sure the weight multiplier is valid
-    testPostcondition( weight_mult );
   }
 }
 
@@ -286,9 +295,9 @@ void ElectroionizationSubshellAdjointElectronScatteringDistribution::createProbe
     // Find the critical line energies in the scattering window
     LineEnergyIterator line_energy, end_line_energy;
 
-    this->getCriticalLineEnergiesInScatteringWindow(adjoint_electron.getEnergy(),
-                                                    line_energy,
-                                                    end_line_energy );
+    this->getCriticalLineEnergiesInScatteringWindow( adjoint_electron.getEnergy(),
+                                                     line_energy,
+                                                     end_line_energy );
 
     while( line_energy != end_line_energy )
     {

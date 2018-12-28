@@ -78,13 +78,13 @@ FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectroatomicReaction, getNumberOfEmit
 FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectroatomicReaction, getCrossSection )
 {
   double cross_section = excitation_reaction->getCrossSection( 1e-5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 6.1243057898416743e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 6.124055828282346576e+07, 1e-12 );
 
   cross_section = excitation_reaction->getCrossSection( 1e-3 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.050234737111856416e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.050254326707092859e+07, 1e-12 );
 
   cross_section = excitation_reaction->getCrossSection( 20.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.1829299836129925e+04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.182929983612992510e+04, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -92,18 +92,16 @@ FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectroatomicReaction, getCrossSection
 FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectroatomicReaction, react )
 {
   MonteCarlo::AdjointElectronState electron( 0 );
-  electron.setEnergy( 1e-05 );
+  electron.setEnergy( 1.99999789891999988e+01 );
   electron.setDirection( 0.0, 0.0, 1.0 );
 
   MonteCarlo::ParticleBank bank;
 
   Data::SubshellType shell_of_interaction;
 
-  double final_energy = 1e-05 + 1.58091206224871714e-05;
-
   excitation_reaction->react( electron, bank, shell_of_interaction );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getEnergy(), final_energy, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getEnergy(), 20.0, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
   FRENSIE_CHECK( bank.isEmpty() );
   FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::UNKNOWN_SUBSHELL );

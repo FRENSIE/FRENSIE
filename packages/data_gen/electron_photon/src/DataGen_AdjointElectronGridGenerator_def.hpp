@@ -32,8 +32,8 @@ namespace DataGen{
  * energy. The primary energy grid should be the incoming energy grid for the
  * 2-D distributions. The max energy will be used to test the input incoming
  * energy grid (if values in the input grid that are greater than the max energy
- * are found an exception will be thrown). The min_outgoing_adjoint_energy
- * functor plus the min energy nudge value will be used to determine the
+ * are found an exception will be thrown). The min_energy_gain_function
+ * functor minus the min energy nudge value will be used to determine the
  * lowering limits of integration when evaluating the adjoint cross section as
  * well as set the minumum nudged outgoing energy for secondary distributions.
  * The max energy nudge value must be greater than zero to avoid an invalid
@@ -44,7 +44,7 @@ template<typename TwoDInterpPolicy>
 AdjointElectronGridGenerator<TwoDInterpPolicy>::AdjointElectronGridGenerator(
       const std::function<double(const double&)>& forward_cs_evaluator,
       const std::function<double(const double&, const double&)>& forward_pdf_evaluator,
-      const std::function<double(const double&)>& min_outgoing_adjoint_energy,
+      const std::function<double(const double&)>& min_energy_gain_function,
       const std::vector<double>& primary_energy_grid,
       const double min_energy,
       const double max_energy,
@@ -52,18 +52,22 @@ AdjointElectronGridGenerator<TwoDInterpPolicy>::AdjointElectronGridGenerator(
       const double max_energy_nudge_value,
       const double convergence_tol,
       const double absolute_diff_tol,
-      const double distance_tol )
+      const double distance_tol,
+      const bool electron_scatter_above_max_energy_mode )
   : Utility::TwoDGridGenerator<TwoDInterpPolicy>( convergence_tol,
                                                   absolute_diff_tol,
                                                   distance_tol ),
     d_forward_cs_evaluator( forward_cs_evaluator ),
     d_forward_pdf_evaluator( forward_pdf_evaluator ),
-    d_min_outgoing_adjoint_energy( min_outgoing_adjoint_energy ),
+    d_min_energy_gain_function( min_energy_gain_function ),
     d_primary_energy_grid( primary_energy_grid ),
-    d_min_energy( min_energy ),
-    d_max_energy( max_energy ),
+    d_min_incoming_energy( min_energy ),
+    d_max_incoming_energy( 0.0 ),
+    d_min_outgoing_energy( min_energy + d_min_energy_gain_function(min_energy) + min_energy_nudge_value ),
+    d_max_outgoing_energy( 0.0 ),
     d_min_energy_nudge_value( min_energy_nudge_value ),
-    d_nudged_max_energy( d_min_outgoing_adjoint_energy(max_energy) + max_energy_nudge_value )
+    d_max_energy_nudge_value( min_energy_nudge_value ),
+    d_electron_scatter_above_max_energy_mode(electron_scatter_above_max_energy_mode)
 {
   // // Make sure the forward evaluators are valid
   testPrecondition( forward_cs_evaluator );
@@ -77,103 +81,84 @@ AdjointElectronGridGenerator<TwoDInterpPolicy>::AdjointElectronGridGenerator(
 
   // Make sure the min, max energies are valid
   testPrecondition( min_energy > 0.0 );
+  testPrecondition( max_energy <= 1e5 );
   testPrecondition( min_energy < max_energy );
-  // Make sure the max energy nudge value is valid
+  // Make sure the min, max energy nudge value is valid
+  testPrecondition( min_energy_nudge_value > 0.0 );
   testPrecondition( max_energy_nudge_value > 0.0 );
-  testPrecondition( d_nudged_max_energy <= 1e5 );
+
+  // Set the max energy
+  if( electron_scatter_above_max_energy_mode )
+  {
+    d_max_incoming_energy = max_energy;
+    d_max_outgoing_energy = max_energy + d_min_energy_gain_function(max_energy) + max_energy_nudge_value;
+  }
+  else
+  {
+    d_max_incoming_energy = max_energy - d_min_energy_gain_function(max_energy) - max_energy_nudge_value;
+    d_max_outgoing_energy = max_energy;
+  }
+
+  testPostcondition( d_max_outgoing_energy <= 1e5 );
 
   std::vector<double>::iterator start, end;
 
-  if ( d_min_energy <= d_primary_energy_grid.front() )
+  if ( d_min_outgoing_energy <= d_primary_energy_grid.front() )
   {
     start = d_primary_energy_grid.begin();
   }
   else
   {
-    // Find the location of the first grid point that is > the min energy
+    // Find the location of the first grid point that is > the min_outgoing_energy
     start = std::upper_bound( d_primary_energy_grid.begin(),
                               d_primary_energy_grid.end(),
-                              d_min_energy );
+                              d_min_outgoing_energy );
 
-    // iterate back to the first grid point <= the min energy
+    // iterate back to the first grid point <= the min_outgoing_energy
     --start;
   }
 
-  // Find the location of the first grid point that is >= the max energy
+  // Find the location of the first grid point that is >= the max outgoing energy
   end = std::lower_bound( start,
                           d_primary_energy_grid.end(),
-                          d_max_energy );
+                          d_max_outgoing_energy );
 
-  // iterate forward one so the first grid point that is >= the max energy is assigned
+  // iterate forward one to the first grid point that is >= the max outgoing energy is assigned
   ++end;
 
   d_integration_points.assign( start, end );
 
   // Replace the lower and upper bins with the min and max electron energies
-  d_integration_points.front() = d_min_energy;
-  d_integration_points.back() = d_max_energy;
-
-  // If necessary add the nudged max energy to the end of the energy grid
-  if ( d_nudged_max_energy != d_max_energy )
-    d_integration_points.push_back( d_nudged_max_energy );
+  d_integration_points.front() = d_min_outgoing_energy;
+  d_integration_points.back() = d_max_outgoing_energy;
 }
 
-// Get the min energy
+// Get the min incoming energy
 template<typename TwoDInterpPolicy>
-double AdjointElectronGridGenerator<TwoDInterpPolicy>::getMinEnergy() const
+double AdjointElectronGridGenerator<TwoDInterpPolicy>::getMinIncomingEnergy() const
 {
-  return d_min_energy;
+  return d_min_incoming_energy;
 }
 
-// Get the max energy
+// Get the max incoming energy
 template<typename TwoDInterpPolicy>
-double AdjointElectronGridGenerator<TwoDInterpPolicy>::getMaxEnergy() const
+double AdjointElectronGridGenerator<TwoDInterpPolicy>::getMaxIncomingEnergy() const
 {
-  return d_max_energy;
+  return d_max_incoming_energy;
 }
 
-// Set the min energy nudge value
-/*! \details The min outgoing energy function plus the min energy nudge value
- * will be used as the lower limit for the outgoing energy grid.
- * Note: Roundoff error can sometimes cause min outgoing energy function to be
- * slightly below the actual min outgoing energy. To ensure a non-zero pdf value
- * at the min outgoing energy, the min energy nudge value should be at least
- * slightly greater than zero.
- */
+// Get the min outgoing energy
 template<typename TwoDInterpPolicy>
-void AdjointElectronGridGenerator<TwoDInterpPolicy>::setMinEnergyNudgeValue(
-                                          const double min_energy_nudge_value )
+double AdjointElectronGridGenerator<TwoDInterpPolicy>::getMinOutgoingEnergy() const
 {
-  // Make sure the max energy nudge value is valid
-  testPrecondition( min_energy_nudge_value >= 0.0 );
-
-  d_min_energy_nudge_value = min_energy_nudge_value;
+  return d_min_outgoing_energy;
 }
 
-// Set the max energy nudge value
-/*! \details The max energy plus the max energy nudge value will be used as the
- * upper limit for the outgoing energy grid. The max energy nudge value must be
- * greater than 0.0 to avoid an invalid outgoing energy grid at the max incoming
- * energy (each outgoing energy grid must have at least two distinct points).
- * Note: when generating grids for subshell electroionization distributions the
- * min outgoing adjoint energy function should take into account the binding
- * energy.
- */
+// Get the max outgoing energy
 template<typename TwoDInterpPolicy>
-void AdjointElectronGridGenerator<TwoDInterpPolicy>::setMaxEnergyNudgeValue(
-                                          const double max_energy_nudge_value )
+double AdjointElectronGridGenerator<TwoDInterpPolicy>::getMaxOutgoingEnergy() const
 {
-  // Make sure the max energy nudge value is valid
-  testPrecondition( max_energy_nudge_value > 0.0 );
-
-  d_nudged_max_energy = d_min_outgoing_adjoint_energy(d_max_energy) + max_energy_nudge_value;
-}
-
-// Get the nudged max energy
-template<typename TwoDInterpPolicy>
-double AdjointElectronGridGenerator<TwoDInterpPolicy>::getNudgedMaxEnergy() const
-{
-  return d_nudged_max_energy;
+  return d_max_outgoing_energy;
 }
 
 // Get the nudged energy
@@ -181,7 +166,7 @@ template<typename TwoDInterpPolicy>
 double AdjointElectronGridGenerator<TwoDInterpPolicy>::getNudgedMinEnergy(
                                                     const double energy ) const
 {
-  return d_min_outgoing_adjoint_energy(energy) + d_min_energy_nudge_value;
+  return energy + d_min_energy_gain_function(energy) + d_min_energy_nudge_value;
 }
 
 // Evaluate the adjoint PDF
@@ -193,7 +178,8 @@ double AdjointElectronGridGenerator<TwoDInterpPolicy>::evaluateAdjointPDF(
 {
   testPrecondition( outgoing_adjoint_energy > incoming_adjoint_energy );
 
-  if( outgoing_adjoint_energy > this->getNudgedMaxEnergy() )
+  if( outgoing_adjoint_energy > this->getMaxOutgoingEnergy() ||
+      incoming_adjoint_energy > this->getMaxIncomingEnergy() )
   {
     return 0.0;
   }
@@ -257,15 +243,15 @@ double AdjointElectronGridGenerator<TwoDInterpPolicy>::evaluateAdjointCrossSecti
     const double precision ) const
 {
   // Make sure the energies are valid
-  testPrecondition( incoming_adjoint_energy >= this->getMinEnergy() );
+  testPrecondition( incoming_adjoint_energy >= this->getMinIncomingEnergy() );
 
   long double cross_section = 0.0;
 
   // The start energy for integrating
   double start_energy = this->getNudgedMinEnergy( incoming_adjoint_energy );
 
-  // If the start_energy >= d_nudged_max_energy return 0.0
-  if ( start_energy >= d_nudged_max_energy )
+  // If the start_energy > d_max_energy return 0.0
+  if ( start_energy > this->getMaxOutgoingEnergy() )
   {
     return 0.0;
   }
@@ -390,6 +376,10 @@ void AdjointElectronGridGenerator<TwoDInterpPolicy>::generateAndEvaluateDistribu
 }
 
 // Generate and evaluate the distribution grid in place
+/*! \details If the nudged min energy of a primary energy is greater than or
+ *  equal to the max energy then it is assumed the distribution is zero and it
+ *  is not included in the distribution.
+ */
 template<typename TwoDInterpPolicy>
 void AdjointElectronGridGenerator<TwoDInterpPolicy>::generateAndEvaluateDistributionOnPrimaryEnergyGrid(
     std::map<double,std::vector<double> >& outgoing_energy_grid,
@@ -408,16 +398,19 @@ void AdjointElectronGridGenerator<TwoDInterpPolicy>::generateAndEvaluateDistribu
   {
     double incoming_energy = primary_energy_grid[i + threshold_index];
 
-    this->generateAndEvaluateDistribution(
-            outgoing_energy_grid[incoming_energy],
-            evaluated_pdf[incoming_energy],
-            evaluation_tol,
-            incoming_energy,
-            adjoint_cross_sections[i] );
+    if( this->getNudgedMinEnergy( incoming_energy ) < this->getMaxOutgoingEnergy() )
+    {
+      this->generateAndEvaluateDistribution(
+              outgoing_energy_grid[incoming_energy],
+              evaluated_pdf[incoming_energy],
+              evaluation_tol,
+              incoming_energy,
+              adjoint_cross_sections[i] );
+    }
   }
 }
 
-// Initialize the max energy grid at an energy grid point
+// Initialize the secondary energy grid at an energy grid point
 /*! \details The getNudgedMinEnergy as the lower bound of the
  * secondary grid is used to ensure a non-zero pdf value at the lower bound.
  */
@@ -427,12 +420,14 @@ void AdjointElectronGridGenerator<TwoDInterpPolicy>::initializeSecondaryGrid(
                                           const double energy ) const
 {
   // Make sure the energy is valid
-  testPrecondition( energy <= d_max_energy );
+  testPrecondition( energy <= this->getMaxIncomingEnergy() );
 
   outgoing_energy_grid.resize( 2 );
 
   outgoing_energy_grid[0] = this->getNudgedMinEnergy( energy );
-  outgoing_energy_grid[1] = this->getNudgedMaxEnergy();
+  outgoing_energy_grid[1] = this->getMaxOutgoingEnergy();
+
+  testPostcondition( outgoing_energy_grid[0] < outgoing_energy_grid[1] )
 }
 
 } // end DataGen namespace

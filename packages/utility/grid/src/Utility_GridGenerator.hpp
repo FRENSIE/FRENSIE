@@ -31,8 +31,8 @@ public:
 
   //! Constructor
   GridGenerator( const double convergence_tol = 0.001,
-		 const double absolute_diff_tol = 1e-12,
-		 const double distance_tol = 1e-14 );
+                 const double absolute_diff_tol = 1e-12,
+                 const double distance_tol = 1e-14 );
 
   //! Destructor
   ~GridGenerator()
@@ -68,7 +68,7 @@ public:
   //! Generate the grid in place
   template<typename STLCompliantContainer, typename Functor>
   void generateInPlace( STLCompliantContainer& grid,
-			const Functor& function ) const;
+                        const Functor& function ) const;
 
   //! Refine the grid in place between an min and max value
   template<typename STLCompliantContainer, typename Functor>
@@ -79,16 +79,26 @@ public:
 
   //! Generate the grid in place (return evaluated function on grid)
   template<typename STLCompliantContainerA,
-	   typename STLCompliantContainerB,
-	   typename Functor>
+           typename STLCompliantContainerB,
+           typename Functor>
   void generateAndEvaluateInPlace( STLCompliantContainerA& grid,
-				   STLCompliantContainerB& evaluated_function,
-				   const Functor& function ) const;
+                                   STLCompliantContainerB& evaluated_function,
+                                   const Functor& function ) const;
+
+  //! Generate the grid in place between an min and max value (return evaluated function on grid)
+  template<typename STLCompliantContainerA,
+           typename STLCompliantContainerB,
+           typename Functor>
+  void generateAndEvaluateInPlace( STLCompliantContainerA& grid,
+                                   STLCompliantContainerB& evaluated_function,
+                                   const Functor& function,
+                                   const double min_value,
+                                   const double max_value ) const;
 
   //! Refine the grid in place between min and max (return evaluated function on grid)
   template<typename STLCompliantContainerA,
-	   typename STLCompliantContainerB,
-	   typename Functor>
+           typename STLCompliantContainerB,
+           typename Functor>
   void refineAndEvaluateInPlace(
         STLCompliantContainerA& grid,
         STLCompliantContainerB& evaluated_function,
@@ -98,21 +108,21 @@ public:
 
   //! Generate the grid
   template<typename STLCompliantContainerA,
-	   typename STLCompliantContainerB,
-	   typename Functor>
+           typename STLCompliantContainerB,
+           typename Functor>
   void generate( STLCompliantContainerA& grid,
-		 const STLCompliantContainerB& initial_grid_points,
-		 const Functor& evaluated_function ) const;
+                 const STLCompliantContainerB& initial_grid_points,
+                 const Functor& evaluated_function ) const;
 
   //! Generate the grid (return evaluated function on grid)
   template<typename STLCompliantContainerA,
-	   typename STLCompliantContainerB,
-	   typename STLCompliantContainerC,
-	   typename Functor>
+           typename STLCompliantContainerB,
+           typename STLCompliantContainerC,
+           typename Functor>
   void generateAndEvaluate( STLCompliantContainerA& grid,
-			    STLCompliantContainerB& evaluated_function,
-			    const STLCompliantContainerC& initial_grid_points,
-			    const Functor& function ) const;
+                            STLCompliantContainerB& evaluated_function,
+                            const STLCompliantContainerC& initial_grid_points,
+                            const Functor& function ) const;
 
 private:
 
@@ -131,7 +141,7 @@ private:
 
   // The distance tolerance
   double d_distance_tol;
-  
+
   // Throw exception on dirty convergence
   bool d_throw_exceptions;
 };

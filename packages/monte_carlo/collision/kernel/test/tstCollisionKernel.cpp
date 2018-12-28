@@ -445,6 +445,7 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_electron_mod
   std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
   properties->setParticleMode( MonteCarlo::ADJOINT_ELECTRON_MODE );
   properties->setMaxAdjointElectronEnergy( 20.0 );
+  properties->setAdjointElasticModeOff();
 
   std::shared_ptr<const MonteCarlo::FilledGeometryModel> filled_model;
 
@@ -478,8 +479,17 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_electron_mod
     // The adjoint electron's weight will be multiplied by the adjoint weight
     // factor before the collision occurs.
     FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getWeight(),
-                                     1.002202071011602857,
+                                     1.003855782346014136,
                                      1e-15 );
+
+    // Test a collision at max energy
+    adjoint_electron.setEnergy( 20.0 );
+    adjoint_electron.setWeight( 1.0 );
+
+    FRENSIE_REQUIRE_NO_THROW( collision_kernel.collideWithCellMaterial( adjoint_electron, bank ) );
+    FRENSIE_CHECK_GREATER_OR_EQUAL( adjoint_electron.getEnergy(), 20.0 );
+    FRENSIE_CHECK_EQUAL( adjoint_electron.getWeight(), 1.012036221983196427 );
+    FRENSIE_CHECK( !adjoint_electron.isGone() );
   }
 
   // Check survival bias mode
@@ -504,7 +514,7 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_electron_mod
     // The adjoint electron's weight will be multiplied by the adjoint weight
     // factor before the collision occurs.
     FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getWeight(),
-                                     1.002202071011602857,
+                                     1.003855782346014136,
                                      1e-15 );
   }
 }

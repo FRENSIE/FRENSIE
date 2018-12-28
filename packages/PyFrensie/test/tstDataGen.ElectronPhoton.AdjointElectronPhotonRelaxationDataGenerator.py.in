@@ -717,7 +717,7 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         energy_grid = h_data_container.getAdjointElectronEnergyGrid()
         self.assertEqual( energy_grid[0], 1.0e-5 )
         self.assertEqual( energy_grid[-1], 20.0 )
-        self.assertEqual( len( energy_grid ), 7 )
+        self.assertEqual( len( energy_grid ), 6 )
 
         # Check the elastic data
         threshold = h_data_container.getAdjointCutoffElasticCrossSectionThresholdEnergyIndex()
@@ -728,7 +728,7 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
 
         self.assertEqual( cross_section[0], 2.74896e+8 )
         self.assertEqual( cross_section[-1], 304.72762372903747519 )
-        self.assertEqual( len( cross_section ), 7-threshold )
+        self.assertEqual( len( cross_section ), 6-threshold )
 
         threshold = h_data_container.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex()
 
@@ -738,7 +738,7 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
 
         self.assertEqual( cross_section[0], 2.574552047073666472 )
         self.assertEqual( cross_section[-1], 1.271739489125800355e+04 )
-        self.assertEqual( len( cross_section ), 7-threshold )
+        self.assertEqual( len( cross_section ), 6-threshold )
 
         angular_grid = h_data_container.getAdjointElasticAngularEnergyGrid()
 
@@ -810,8 +810,30 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         cross_section = h_data_container.getForwardBremsstrahlungElectronCrossSection()
 
         self.assertEqual( cross_section[0], 2.97832e+01 )
-        self.assertEqual( cross_section[-1], 9.71768e-01 )
-        self.assertEqual( len( cross_section ), 7-threshold )
+        self.assertEqual( cross_section[-1], 9.717679999999999652e-01 )
+        self.assertEqual( len( cross_section ), 6-threshold )
+
+         # Check the forward electroionization cross section data
+        threshold = h_data_container.getForwardElectroionizationElectronCrossSectionThresholdEnergyIndex()
+
+        self.assertEqual( threshold, 1 )
+
+        cross_section = h_data_container.getForwardElectroionizationElectronCrossSection()
+
+        self.assertEqual( cross_section[0], 4.0427802764032364e+07 )
+        self.assertEqual( cross_section[-1], 8.284008376199545455e+04 )
+        self.assertEqual( len( cross_section ), 6-threshold )
+
+         # Check the forward atomic excitation cross section data
+        threshold = h_data_container.getForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex()
+
+        self.assertEqual( threshold, 1 )
+
+        cross_section = h_data_container.getForwardAtomicExcitationElectronCrossSection()
+
+        self.assertEqual( cross_section[0], 5.398785827404625e+07 )
+        self.assertEqual( cross_section[-1], 8.18293e+04 )
+        self.assertEqual( len( cross_section ), 6-threshold )
 
         # Check the forward electroionization cross section data
         threshold = h_data_container.getForwardElectroionizationElectronCrossSectionThresholdEnergyIndex()
@@ -822,7 +844,7 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
 
         self.assertEqual( cross_section[0], 4.0427802764032364e+07 )
         self.assertEqual( cross_section[-1], 8.284008376199545e+04 )
-        self.assertEqual( len( cross_section ), 7-threshold )
+        self.assertEqual( len( cross_section ), 6-threshold )
 
         # Check the forward atomic excitation cross section data
         threshold = h_data_container.getForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex()
@@ -833,30 +855,30 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
 
         self.assertEqual( cross_section[0], 5.398785827404625e+07 )
         self.assertEqual( cross_section[-1], 8.18293e+04 )
-        self.assertEqual( len( cross_section ), 7-threshold )
+        self.assertEqual( len( cross_section ), 6-threshold )
 
         # Check the atomic excitation data
-        threshold = h_data_container.getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex()
+        threshold =  h_data_container.getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex()
 
         self.assertEqual( threshold, 0 )
 
         cross_section = h_data_container.getAdjointAtomicExcitationCrossSection()
 
-        self.assertEqual( cross_section[0], 6.12430578984167427e+07 )
+        self.assertEqual( cross_section[0], 6.1240558282823466e+07 )
         self.assertEqual( cross_section[-1], 8.18292998361299251e+04 )
-        self.assertEqual( len( cross_section ), 7-threshold )
+        self.assertEqual( len( cross_section ), 6-threshold )
 
         atomic_excitation_energy_grid = h_data_container.getAdjointAtomicExcitationEnergyGrid()
 
         self.assertAlmostEqual( atomic_excitation_energy_grid[0], 1e-5, delta=1e-13 )
         self.assertAlmostEqual( atomic_excitation_energy_grid[-1], 20.0, delta=1e-15 )
-        self.assertEqual( len( atomic_excitation_energy_grid ), 7 )
+        self.assertEqual( len( atomic_excitation_energy_grid ), 6 )
 
         atomic_excitation_energy_gain = h_data_container.getAdjointAtomicExcitationEnergyGain()
 
         self.assertEqual( atomic_excitation_energy_gain[0], 1.580912062248717e-05 )
         self.assertEqual( atomic_excitation_energy_gain[-1], 2.101080001930054575e-05 )
-        self.assertEqual( len( atomic_excitation_energy_gain ), 7 )
+        self.assertEqual( len( atomic_excitation_energy_gain ), 6 )
 
 
         # Check the bremsstrahlung data
@@ -866,28 +888,31 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
 
         cross_section = h_data_container.getAdjointBremsstrahlungElectronCrossSection()
 
-        self.assertEqual( cross_section[0], 4.420906922056859401e+01 )
+        self.assertEqual( cross_section[0], 4.4209069220568594e+01 )
         self.assertEqual( cross_section[-1], 2.873816755338521323e-01 )
-        self.assertEqual( len( cross_section ), 7-threshold )
+        self.assertEqual( len( cross_section ), 6-threshold )
 
-        self.assertFalse( h_data_container.separateAdjointBremsstrahlungEnergyGrid() )
+        brem_energy_grid = h_data_container.getAdjointElectronBremsstrahlungEnergyGrid()
+        self.assertEqual( brem_energy_grid[0], 1.0e-5 )
+        self.assertEqual( brem_energy_grid[-1], 20.0 )
+        self.assertEqual( len( brem_energy_grid ), 6 )
 
         electron_bremsstrahlung_energy = h_data_container.getAdjointElectronBremsstrahlungEnergy( 1e-5 )
 
         self.assertAlmostEqual( electron_bremsstrahlung_energy[0], 1e-5 + 1e-7 + 1e-9, delta=1e-15 )
-        self.assertEqual( electron_bremsstrahlung_energy[-1], 2.001000010000000273e+01 )
+        self.assertEqual( electron_bremsstrahlung_energy[-1], 20.010000100000003 )
         self.assertEqual( len( electron_bremsstrahlung_energy ), 18 )
 
         electron_bremsstrahlung_energy = h_data_container.getAdjointElectronBremsstrahlungEnergy( 20.0 )
 
         self.assertAlmostEqual( electron_bremsstrahlung_energy[0], 20.0 + 1e-7 + 1e-9, delta=1e-15 )
-        self.assertEqual( electron_bremsstrahlung_energy[-1], 2.001000010000000273e+01 )
+        self.assertEqual( electron_bremsstrahlung_energy[-1], 20.010000100000003 )
         self.assertEqual( len( electron_bremsstrahlung_energy ), 15 )
 
         electron_bremsstrahlung_pdf = h_data_container.getAdjointElectronBremsstrahlungPDF( 1e-5 )
 
-        self.assertEqual( electron_bremsstrahlung_pdf[0], 1.429943105158903636e+06 )
-        self.assertEqual( electron_bremsstrahlung_pdf[-1], 2.176234529677373358e-10 )
+        self.assertEqual( electron_bremsstrahlung_pdf[0], 1.4299431051589036e+06 )
+        self.assertEqual( electron_bremsstrahlung_pdf[-1], 2.1762345296773734e-10 )
         self.assertEqual( len( electron_bremsstrahlung_pdf ), 18 )
 
         electron_bremsstrahlung_pdf = h_data_container.getAdjointElectronBremsstrahlungPDF( 20.0 )
@@ -903,12 +928,11 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
 
         cross_section = h_data_container.getAdjointElectroionizationCrossSection( 1 )
 
-        self.assertEqual( cross_section[0], 4.631739660560436249e+10 )
+        self.assertEqual( cross_section[0], 4.631739978638764e+10 )
         self.assertEqual( cross_section[-1], 8.365802734960628732e+04 )
-        self.assertEqual( len( cross_section ), 7-threshold )
+        self.assertEqual( len( cross_section ), 6-threshold )
 
         self.assertFalse( h_data_container.separateAdjointElectroionizationEnergyGrid() )
-
 
         electroionization_recoil_energy = h_data_container.getAdjointElectroionizationRecoilEnergy( 1, 1e-5 )
 
@@ -924,8 +948,8 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
 
         electroionization_recoil_pdf = h_data_container.getAdjointElectroionizationRecoilPDF( 1, 1e-5 )
 
-        self.assertEqual( electroionization_recoil_pdf[0], 2.934689179480291159e+02 )
-        self.assertEqual( electroionization_recoil_pdf[-1], 4.667243469669442313e-02 )
+        self.assertEqual( electroionization_recoil_pdf[0], 2.9346889779445763e+02 )
+        self.assertEqual( electroionization_recoil_pdf[-1], 4.6672431491529616e-02 )
         self.assertEqual( len( electroionization_recoil_pdf ), 4 )
 
         electroionization_recoil_pdf = h_data_container.getAdjointElectroionizationRecoilPDF( 1, 20.0 )

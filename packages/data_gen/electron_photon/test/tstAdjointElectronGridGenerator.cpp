@@ -44,63 +44,181 @@ double distance_tol = 1e-8;
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the min energy can be returned
-FRENSIE_UNIT_TEST( AdjointElectronGridGenerator, getMinEnergy )
+FRENSIE_UNIT_TEST( AdjointElectronGridGenerator, getMinIncomingEnergy )
 {
-  DataGen::AdjointElectronGridGenerator<Utility::LogLogLog>
-  grid_generator( brem_cs_evaluator,
-                  brem_pdf_evaluator,
-                  brem_min_function,
-                  brem_energy_grid );
+  {
+    DataGen::AdjointElectronGridGenerator<Utility::LogLogLog>
+    grid_generator( brem_cs_evaluator,
+                    brem_pdf_evaluator,
+                    brem_min_function,
+                    brem_energy_grid );
 
-  FRENSIE_CHECK_EQUAL( grid_generator.getMinEnergy(), 1e-5 );
+    FRENSIE_CHECK_EQUAL( grid_generator.getMinIncomingEnergy(), 1e-5 );
+  }
+
+  {
+    DataGen::AdjointElectronGridGenerator<Utility::LogLogLog>
+    grid_generator( ionization_cs_evaluator,
+                    ionization_pdf_evaluator,
+                    ionization_min_function,
+                    ionization_energy_grid,
+                    min_energy,
+                    max_energy,
+                    min_energy_nudge_value,
+                    max_energy_nudge_value,
+                    convergence_tol,
+                    absolute_diff_tol,
+                    distance_tol,
+                    false );
+
+    FRENSIE_CHECK_EQUAL( grid_generator.getMinIncomingEnergy(), 1e-5 );
+  }
 }
 
 //---------------------------------------------------------------------------//
 // Check that the max energy can be returned
-FRENSIE_UNIT_TEST( AdjointElectronGridGenerator, getMaxEnergy )
+FRENSIE_UNIT_TEST( AdjointElectronGridGenerator, getMaxIncomingEnergy )
 {
-  DataGen::AdjointElectronGridGenerator<Utility::LogLogLog>
-  grid_generator( brem_cs_evaluator,
-                  brem_pdf_evaluator,
-                  brem_min_function,
-                  brem_energy_grid );
+  {
+    DataGen::AdjointElectronGridGenerator<Utility::LogLogLog>
+    grid_generator( brem_cs_evaluator,
+                    brem_pdf_evaluator,
+                    brem_min_function,
+                    brem_energy_grid );
 
-  FRENSIE_CHECK_EQUAL( grid_generator.getMaxEnergy(), 20.0 );
+    FRENSIE_CHECK_EQUAL( grid_generator.getMaxIncomingEnergy(), 20.0 );
+  }
+
+  {
+    DataGen::AdjointElectronGridGenerator<Utility::LogLogLog>
+    grid_generator( ionization_cs_evaluator,
+                    ionization_pdf_evaluator,
+                    ionization_min_function,
+                    ionization_energy_grid,
+                    min_energy,
+                    max_energy,
+                    min_energy_nudge_value,
+                    max_energy_nudge_value,
+                    convergence_tol,
+                    absolute_diff_tol,
+                    distance_tol,
+                    false );
+
+    double max_energy = 20.0 - ionization_min_function(20.0) - max_energy_nudge_value;
+    FRENSIE_CHECK_EQUAL( grid_generator.getMaxIncomingEnergy(), max_energy );
+  }
 }
 
 //---------------------------------------------------------------------------//
-// Check that the min energy nudge value can be set
-FRENSIE_UNIT_TEST( AdjointElectronGridGenerator, setMinEnergyNudgeValue )
+// Check that the min energy can be returned
+FRENSIE_UNIT_TEST( AdjointElectronGridGenerator, getMinOutgoingEnergy )
 {
-  DataGen::AdjointElectronGridGenerator<Utility::LogLogLog>
-  grid_generator( brem_cs_evaluator,
-                  brem_pdf_evaluator,
-                  brem_min_function,
-                  brem_energy_grid );
+  {
+    DataGen::AdjointElectronGridGenerator<Utility::LogLogLog>
+    grid_generator( brem_cs_evaluator,
+                    brem_pdf_evaluator,
+                    brem_min_function,
+                    brem_energy_grid );
 
-  double energy = 1.0;
-  FRENSIE_CHECK_EQUAL( grid_generator.getNudgedMinEnergy( energy ), brem_min_function(energy) + 1e-9 );
+    double min_energy = 1e-5 + brem_min_function(1e-5) + 1e-9;
 
-  grid_generator.setMinEnergyNudgeValue( 0.5 );
+    FRENSIE_CHECK_EQUAL( grid_generator.getMinOutgoingEnergy(), min_energy );
+  }
 
-  FRENSIE_CHECK_EQUAL( grid_generator.getNudgedMinEnergy (energy ), brem_min_function(energy) + 0.5 );
+  {
+    DataGen::AdjointElectronGridGenerator<Utility::LogLogLog>
+    grid_generator( ionization_cs_evaluator,
+                    ionization_pdf_evaluator,
+                    ionization_min_function,
+                    ionization_energy_grid,
+                    min_energy,
+                    max_energy,
+                    min_energy_nudge_value,
+                    max_energy_nudge_value,
+                    convergence_tol,
+                    absolute_diff_tol,
+                    distance_tol,
+                    false );
+
+    double min_energy = 1e-5 + ionization_min_function(1e-5) + min_energy_nudge_value;
+
+    FRENSIE_CHECK_EQUAL( grid_generator.getMinOutgoingEnergy(), min_energy );
+  }
 }
 
 //---------------------------------------------------------------------------//
-// Check that the max energy nudge value can be set
-FRENSIE_UNIT_TEST( AdjointElectronGridGenerator, setMaxEnergyNudgeValue )
+// Check that the max energy can be returned
+FRENSIE_UNIT_TEST( AdjointElectronGridGenerator, getMaxOutgoingEnergy )
 {
-  DataGen::AdjointElectronGridGenerator<Utility::LogLogLog>
-  grid_generator( brem_cs_evaluator,
-                  brem_pdf_evaluator,
-                  brem_min_function,
-                  brem_energy_grid );
+  {
+    DataGen::AdjointElectronGridGenerator<Utility::LogLogLog>
+    grid_generator( brem_cs_evaluator,
+                    brem_pdf_evaluator,
+                    brem_min_function,
+                    brem_energy_grid );
 
-  FRENSIE_CHECK_EQUAL( grid_generator.getNudgedMaxEnergy(), brem_min_function(max_energy) + 1e-2 );
+    double max_energy = 20.0 + brem_min_function(20.0) + 1e-2;
+    FRENSIE_CHECK_EQUAL( grid_generator.getMaxOutgoingEnergy(), max_energy );
+  }
 
-  grid_generator.setMaxEnergyNudgeValue( 0.5 );
+  {
+    DataGen::AdjointElectronGridGenerator<Utility::LogLogLog>
+    grid_generator( ionization_cs_evaluator,
+                    ionization_pdf_evaluator,
+                    ionization_min_function,
+                    ionization_energy_grid,
+                    min_energy,
+                    max_energy,
+                    min_energy_nudge_value,
+                    max_energy_nudge_value,
+                    convergence_tol,
+                    absolute_diff_tol,
+                    distance_tol,
+                    false );
 
-  FRENSIE_CHECK_EQUAL( grid_generator.getNudgedMaxEnergy(), brem_min_function(max_energy) + 0.5 );
+    FRENSIE_CHECK_EQUAL( grid_generator.getMaxOutgoingEnergy(), 20.0 );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that the nudged min energy can be returned
+FRENSIE_UNIT_TEST( AdjointElectronGridGenerator, getNudgedMinEnergy )
+{
+  {
+    DataGen::AdjointElectronGridGenerator<Utility::LogLogLog>
+    grid_generator( brem_cs_evaluator,
+                    brem_pdf_evaluator,
+                    brem_min_function,
+                    brem_energy_grid );
+
+    FRENSIE_CHECK_EQUAL( grid_generator.getNudgedMinEnergy(1e-5),
+                         1.010128918305179141e-05 );
+
+    FRENSIE_CHECK_EQUAL( grid_generator.getNudgedMinEnergy(1.0),
+                         1.000000113241543920 );
+  }
+
+  {
+    DataGen::AdjointElectronGridGenerator<Utility::LogLogLog>
+    grid_generator( ionization_cs_evaluator,
+                    ionization_pdf_evaluator,
+                    ionization_min_function,
+                    ionization_energy_grid,
+                    min_energy,
+                    max_energy,
+                    min_energy_nudge_value,
+                    max_energy_nudge_value,
+                    convergence_tol,
+                    absolute_diff_tol,
+                    distance_tol,
+                    false );
+
+    FRENSIE_CHECK_EQUAL( grid_generator.getNudgedMinEnergy(1e-5),
+                         2.881704197261944681e-05 );
+
+    FRENSIE_CHECK_EQUAL( grid_generator.getNudgedMinEnergy(1.0),
+                         1.000006621027896614 );
+  }
 }
 
 //---------------------------------------------------------------------------//
@@ -129,11 +247,11 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
   diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( 1.361E-05, 1.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 9.074774563401691914e+08, 1e-5 );
 
-  diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( max_energy, ionization_min_function(max_energy) );
-  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 1.679082410396810722e+10, 1e-5 );
+  diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( max_energy - ionization_min_function(max_energy), max_energy );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 1.677795147002715302e+10, 1e-5 );
 
-  diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( max_energy, ionization_min_function(max_energy) + max_energy_nudge_value );
-  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 6.566927885730202675e+09, 1e-5 );
+  diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( max_energy - ionization_min_function(max_energy) - max_energy_nudge_value, max_energy );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 6.566908820591508865e+09, 1e-5 );
 
   diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( 1.2686300708196014e-04, 2.6912428420799615e-04 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 5.908052197644835472e+09, 1e-5 );
@@ -160,10 +278,10 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
   diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( 1.361E-05, 1.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 1.814954912687950611e+09, 1e-5 );
 
-  diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( max_energy, ionization_min_function2(max_energy) + 1e-7 );
+  diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( max_energy - ionization_min_function2(max_energy) - 1e-7, max_energy );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 3.247690014705084610e+10, 1e-5 );
 
-  diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( max_energy, ionization_min_function2(max_energy) + max_energy_nudge_value );
+  diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( max_energy - ionization_min_function2(max_energy) - max_energy_nudge_value, max_energy );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cs, 3.143296104297618866e+10, 1e-5 );
 
   diff_cs = grid_generator.evaluateAdjointDifferentialCrossSection( 1.2686300708196014e-04, 2.6912428420799615e-04 );
@@ -198,32 +316,36 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
                   max_energy_nudge_value,
                   convergence_tol,
                   absolute_diff_tol,
-                  distance_tol );
+                  distance_tol,
+                  false );
 
   cross_section = grid_generator.evaluateAdjointCrossSection( 1.361E-05, precision );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                                   1.777122424737315369e+10,
+                                   1.777121659933414078e+10,
                                    1e-5 );
 
   cross_section = grid_generator.evaluateAdjointCrossSection( 1.88E-05, precision );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                                   1.069683412382569504e+10,
+                                   1.069682969348882866e+10,
                                    1e-5 );
 
   cross_section = grid_generator.evaluateAdjointCrossSection( 1.123900E-02, precision );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                                   8.293196907407618128e+05,
+                                   8.293196792698425706e+05,
                                    1e-5 );
 
   cross_section = grid_generator.evaluateAdjointCrossSection( 8.75350E-01, precision );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                                   9.257089639227419684e+04,
+                                   9.257089636843552580e+04,
+                                   1e-5 );
+
+  cross_section = grid_generator.evaluateAdjointCrossSection( grid_generator.getMaxIncomingEnergy(), precision );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
+                                   1.565821957825130312e+03,
                                    1e-5 );
 
   cross_section = grid_generator.evaluateAdjointCrossSection( max_energy, precision );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                                   1.565791552649094683e+03,
-                                   1e-5 );
+  FRENSIE_CHECK_SMALL( cross_section, 1e-10 );
   }
 
   // Native Electroionization using knock-on electron energy
@@ -261,49 +383,13 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
                                    2.006028644547107979e+05,
                                    1e-5 );
 
-  cross_section = grid_generator.evaluateAdjointCrossSection( max_energy, precision );
+  cross_section = grid_generator.evaluateAdjointCrossSection( grid_generator.getMaxIncomingEnergy(), precision );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
                                    6.463571615338125412e+03,
                                    1e-5 );
   }
 
   // Native Bremsstrahlung using outgoing electron energy
-  {
-  DataGen::AdjointElectronGridGenerator<Utility::LogLogLog>
-  grid_generator( brem_cs_evaluator,
-                  brem_pdf_evaluator2,
-                  brem_min_function,
-                  brem_energy_grid,
-                  min_energy,
-                  max_energy,
-                  min_energy_nudge_value,
-                  max_energy_nudge_value,
-                  convergence_tol,
-                  absolute_diff_tol,
-                  distance_tol );
-
-  cross_section = grid_generator.evaluateAdjointCrossSection( 1.0e-5, precision );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                                   4.419045880325039377e+01,
-                                   1e-5 );
-
-  cross_section = grid_generator.evaluateAdjointCrossSection( 5.0e-4, precision );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                                   2.539025467746390063e+01,
-                                   1e-5 );
-
-  cross_section = grid_generator.evaluateAdjointCrossSection( 1.0, precision );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                                   5.314322204321942911e-01,
-                                   1e-5 );
-
-  cross_section = grid_generator.evaluateAdjointCrossSection( 20.0, precision );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                                   4.099421494041196462e-02,
-                                   1e-5 );
-  }
-
-  // Native Bremsstrahlung using brem photon energy
   {
   DataGen::AdjointElectronGridGenerator<Utility::LogLogLog>
   grid_generator( brem_cs_evaluator,
@@ -319,6 +405,35 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
                   distance_tol );
 
   cross_section = grid_generator.evaluateAdjointCrossSection( 1.0e-5, precision );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.420872141083074069e+01, 1e-5 );
+
+  cross_section = grid_generator.evaluateAdjointCrossSection( 5.0e-4, precision );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.555840691004135223e+01, 1e-5 );
+
+  cross_section = grid_generator.evaluateAdjointCrossSection( 1.0, precision );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 5.359830752981595836e-01, 1e-5 );
+
+  cross_section = grid_generator.evaluateAdjointCrossSection( grid_generator.getMaxIncomingEnergy(), precision );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.890506422971592992e-02, 1e-5 );
+  }
+
+  // Native Bremsstrahlung using brem photon energy
+  {
+  DataGen::AdjointElectronGridGenerator<Utility::LogLogLog>
+  grid_generator( brem_cs_evaluator,
+                  brem_pdf_evaluator2,
+                  brem_min_function2,
+                  brem_energy_grid,
+                  min_energy,
+                  max_energy,
+                  min_energy_nudge_value,
+                  1e-7,
+                  convergence_tol,
+                  absolute_diff_tol,
+                  distance_tol,
+                  false );
+
+  cross_section = grid_generator.evaluateAdjointCrossSection( 1.0e-5, precision );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
                                    4.420872141083074069e+01,
                                    1e-5 );
@@ -330,13 +445,16 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
 
   cross_section = grid_generator.evaluateAdjointCrossSection( 1.0, precision );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                                   5.359830752981605828e-01,
+                                   5.359830752972599699e-01,
                                    1e-5 );
 
-  cross_section = grid_generator.evaluateAdjointCrossSection( 20.0, precision );
+  cross_section = grid_generator.evaluateAdjointCrossSection( grid_generator.getMaxIncomingEnergy(), precision );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                                   3.890506422971592992e-02,
+                                   3.890506421667147552e-02,
                                    1e-5 );
+
+  cross_section = grid_generator.evaluateAdjointCrossSection( max_energy, precision );
+  FRENSIE_CHECK_SMALL( cross_section, 1e-10 );
   }
 }
 
@@ -365,19 +483,19 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 1e-2, 0.019992531061237977, 1.0e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
-                                   2.105414400255800969e-02,
+                                   2.105414434556859837e-02,
                                    1e-5 );
 
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 1e-2, 0.020001807385767029, 1.0e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
-                                   2.103491283074325133e-02,
+                                   2.103491317344060446e-02,
                                    1e-6 );
 
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 1e-2, 0.020011088014413269, 1.0e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
-                                   2.101569663835305829e-02,
+                                   2.101569698073727302e-02,
                                    1.0e-5 );
   }
 
@@ -394,24 +512,25 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
                   max_energy_nudge_value,
                   convergence_tol,
                   absolute_diff_tol,
-                  distance_tol );
+                  distance_tol,
+                  false );
 
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 1e-2, 0.019992531061237977, 1.0e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
-                                   1.087944283318578384e-02,
+                                   1.087944289803643300e-02,
                                    1e-5 );
 
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 1e-2, 0.020001807385767029, 1.0e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
-                                   1.086064735460050452e-02,
+                                   1.086064741933911830e-02,
                                    1e-6 );
 
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 1e-2, 0.020011088014413269, 1.0e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
-                                   1.084736247100938876e-02,
+                                   1.084736253566881241e-02,
                                    1.0e-5 );
   }
 
@@ -428,21 +547,22 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
                   max_energy_nudge_value,
                   convergence_tol,
                   absolute_diff_tol,
-                  distance_tol );
+                  distance_tol,
+                  false );
 
   diff_cross_section = grid_generator.evaluateAdjointPDF( 5.0e-4, 5.0e-3, 1.0e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
-                                   1.263138411731402622e+00,
+                                   1.263138411731402844,
                                    1e-5 );
 
   diff_cross_section =
-    grid_generator.evaluateAdjointPDF( max_energy, brem_min_function(max_energy), 1.0e-4 );
+    grid_generator.evaluateAdjointPDF( max_energy, max_energy + brem_min_function(max_energy), 1.0e-4 );
   FRENSIE_CHECK_EQUAL( diff_cross_section, 0.0 );
 
   diff_cross_section =
-    grid_generator.evaluateAdjointPDF( max_energy, brem_min_function(max_energy) + 1e-7, 1.0e-4 );
+    grid_generator.evaluateAdjointPDF( grid_generator.getMaxIncomingEnergy(), max_energy, 1.0e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
-                                   5.012229236877605319e+06,
+                                   3.652973130746881478e+06,
                                    1e-5 );
   }
 
@@ -468,15 +588,27 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
                                    1e-5 );
 
   diff_cross_section =
-    grid_generator.evaluateAdjointPDF( max_energy, brem_min_function(max_energy), 1.0e-4 );
+    grid_generator.evaluateAdjointPDF( max_energy,
+                                       max_energy + brem_min_function(max_energy),
+                                       1.0e-4 );
+
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
                                    4.981947039197102189e+06,
                                    1e-5 );
 
   diff_cross_section =
-    grid_generator.evaluateAdjointPDF( max_energy, brem_min_function(max_energy) + 1e-7, 1.0e-4 );
+    grid_generator.evaluateAdjointPDF(
+        max_energy, max_energy + brem_min_function(max_energy) + 1e-7, 1.0e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
                                    3.218078669097255915e+06,
+                                   1e-5 );
+
+  diff_cross_section =
+    grid_generator.evaluateAdjointPDF( max_energy,
+                                       grid_generator.getMaxOutgoingEnergy(),
+                                       1.0e-4 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section,
+                                   3.065768482789271977e+06,
                                    1e-5 );
   }
 }
@@ -501,14 +633,16 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
                   distance_tol );
 
   // Set the primary energy grid
-  std::vector<double> primary_energy_grid(2);
+  std::vector<double> primary_energy_grid(3);
   primary_energy_grid[0] = 0.01;
   primary_energy_grid[1] = 1.0;
+  primary_energy_grid[2] = 20.0;
 
   // cross section values
-  std::vector<double> cross_sections(2);
+  std::vector<double> cross_sections(3);
   cross_sections[0] = 1.0;
   cross_sections[1] = 1.0;
+  cross_sections[2] = 1.0;
 
 
   std::map<double,std::vector<double> > outgoing_energy_grid, pdf;
@@ -523,11 +657,12 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
           0 );
 
   // Check the generated outgoing energy grid
-  FRENSIE_CHECK_EQUAL( outgoing_energy_grid[0.01].size(), 512 );
+  size_t length = outgoing_energy_grid[0.01].size();
+  FRENSIE_CHECK_EQUAL( length, 512 );
   FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[0.01].front(),
                                    1.000016099117129707e-02,
                                    1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[0.01].back(), 2.000000038495000609e+01, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[0.01].back(), 2.000000038495000609e+01, 1e-15 );
 
   // Check the evaluated pdf
   FRENSIE_CHECK_EQUAL( pdf[0.01].size(), 512 );
@@ -539,11 +674,12 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
                                    1e-6 );
 
   // Check the generated max energy grid
-  FRENSIE_CHECK_EQUAL( outgoing_energy_grid[1.0].size(), 443 );
+  length = outgoing_energy_grid[1.0].size();
+  FRENSIE_CHECK_EQUAL( length, 443 );
   FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[1.0].front(),
                                    1.000000113241543920,
                                    1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[1.0].back(), 2.000000038495000609e+01, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[1.0].back(), 2.000000038495000609e+01, 1e-15 );
 
   // Check the evaluated cross section
   FRENSIE_CHECK_EQUAL( pdf[1.0].size(), 443 );
@@ -552,6 +688,23 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
                                    1e-6 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf[1.0].back(),
                                    3.764014372082443752e-06,
+                                   1e-6 );
+
+  // Check the generated max energy grid
+  length = outgoing_energy_grid[20.0].size();
+  FRENSIE_CHECK_EQUAL( length, 2 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[20.0].front(),
+                                   2.000000018595000739e+01,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[20.0].back(), 2.000000038495000609e+01, 1e-15 );
+
+  // Check the evaluated cross section
+  FRENSIE_CHECK_EQUAL( pdf[20.0].size(), 2 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf[20.0].front(),
+                                   4.085492886782182031e+05,
+                                   1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf[20.0].back(),
+                                   2.308004754598780128e+05,
                                    1e-6 );
   }
 
@@ -567,7 +720,8 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
                   max_energy_nudge_value,
                   convergence_tol,
                   absolute_diff_tol,
-                  distance_tol );
+                  distance_tol,
+                  false );
 
   // Set the primary energy grid
   std::vector<double> primary_energy_grid(2);
@@ -595,7 +749,7 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
   FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[0.01].front(),
                                    1.0000101e-02,
                                    1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[0.01].back(), 2.00000003e+01, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[0.01].back(), 20.0, 1e-12 );
 
   // Check the evaluated pdf
   FRENSIE_CHECK_EQUAL( pdf[0.01].size(), 454 );
@@ -611,7 +765,7 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
   FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[1.0].front(),
                                    1.000000101,
                                    1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[1.0].back(), 2.00000003e+01, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[1.0].back(), 20.0, 1e-12 );
 
   // Check the evaluated cross section
   FRENSIE_CHECK_EQUAL( pdf[1.0].size(), 481 );
@@ -641,7 +795,8 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
                   max_energy_nudge_value,
                   convergence_tol,
                   absolute_diff_tol,
-                  distance_tol );
+                  distance_tol,
+                  false );
 
   // Set the primary energy grid
   std::vector<double> primary_energy_grid(8);
@@ -652,7 +807,7 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
   primary_energy_grid[4] = 1e-1;
   primary_energy_grid[5] = 1.0;
   primary_energy_grid[6] = 10.0;
-  primary_energy_grid[7] = 20.0;
+  primary_energy_grid[7] = grid_generator.getMaxIncomingEnergy();
 
   // cross section values
   std::vector<double> cross_sections(8);
@@ -682,7 +837,7 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
   FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[0.01].front(),
                                    1.001888424818502855e-02,
                                    1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[0.01].back(), 2.000001017484025922e+01, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[0.01].back(), 20.0, 1e-12 );
 
   // Check the evaluated pdf
   FRENSIE_CHECK_EQUAL( pdf[0.01].size(), 458 );
@@ -698,7 +853,7 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
   FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[1.0].front(),
                                    1.000006621027896614,
                                    1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[1.0].back(), 2.000001017484025922e+01, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[1.0].back(), 20.0, 1e-12 );
 
   // Check the evaluated cross section
   FRENSIE_CHECK_EQUAL( pdf[1.0].size(), 557 );
@@ -707,6 +862,23 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
                                    1e-6 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf[1.0].back(),
                                    1.291431156080828924e-01,
+                                   1e-6 );
+
+  // Check the generated max energy grid
+  double energy = grid_generator.getMaxIncomingEnergy();
+  FRENSIE_CHECK_EQUAL( outgoing_energy_grid[energy].size(), 2 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[energy].front(),
+                                   1.999999980099552133e+01,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[energy].back(), 20.0, 1e-12 );
+
+  // Check the evaluated cross section
+  FRENSIE_CHECK_EQUAL( pdf[energy].size(), 2 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf[energy].front(),
+                                   1.468280773376235580e+10,
+                                   1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf[energy].back(),
+                                   6.566908820591508865e+09,
                                    1e-6 );
   }
 
@@ -725,14 +897,16 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
                   distance_tol );
 
   // Set the primary energy grid
-  std::vector<double> primary_energy_grid(2);
+  std::vector<double> primary_energy_grid(3);
   primary_energy_grid[0] = 0.01;
   primary_energy_grid[1] = 1.0;
+  primary_energy_grid[2] = 20.0;
 
   // cross section values
-  std::vector<double> cross_sections(2);
+  std::vector<double> cross_sections(3);
   cross_sections[0] = 1.0;
   cross_sections[1] = 1.0;
+  cross_sections[2] = 1.0;
 
   std::map<double,std::vector<double> > outgoing_energy_grid, pdf;
 
@@ -775,6 +949,22 @@ FRENSIE_UNIT_TEST( AdjointElectronGridGenerator,
                                    1e-6 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf[1.0].back(),
                                    2.524135049327990155e-01,
+                                   1e-6 );
+
+  // Check the generated max energy grid
+  FRENSIE_CHECK_EQUAL( outgoing_energy_grid[20.0].size(), 2 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[20.0].front(),
+                                   2.000000662100000071e+01,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy_grid[20.0].back(), 2.000000681999999941e+01, 1e-6 );
+
+  // Check the evaluated cross section
+  FRENSIE_CHECK_EQUAL( pdf[20.0].size(), 2 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf[20.0].front(),
+                                   3.357074481094580841e+10,
+                                   1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf[20.0].back(),
+                                   3.143296104297618866e+10,
                                    1e-6 );
   }
 }
@@ -820,9 +1010,6 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create bremsstrahlung data
     {
-      // Create the min adjoint energy function for bremsstrahlung
-      brem_min_function = [](const double& energy){return energy + 1e-7;};
-
       // Create the bremsstrahlung reaction
       std::shared_ptr<const MonteCarlo::VoidElectroatomicReaction<Utility::LogLog, false>> h_brem_reaction(
         new MonteCarlo::VoidElectroatomicReaction<Utility::LogLog, false>(
@@ -873,10 +1060,10 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
       std::shared_ptr<const Utility::TabularUnivariateDistribution> max_energy_distribution(
           new const Utility::TabularDistribution<Utility::LogLog>( brem_max_energy_grid,
-                                                                  brem_energy_grid ) );
+                                                                   brem_energy_grid ) );
 
-      // Create the min adjoint energy function for brem
-      brem_min_function = [max_energy_distribution](const double& energy){return max_energy_distribution->evaluate(energy);};
+      // Create the min adjoint energy gain function for brem
+      brem_min_function = [max_energy_distribution](const double& energy){return max_energy_distribution->evaluate(energy) - energy;};
 
       // Create the scattering function
       std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> brem_distribution(
@@ -892,7 +1079,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
 
       // Create the min adjoint energy function for bremsstrahlung
-      brem_min_function2 = [](const double& energy){return energy + 1e-7;};
+      brem_min_function2 = [](const double& energy){return 1e-7;};
 
       std::shared_ptr<const MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LogLog> > full_brem_reaction;
 
@@ -1045,10 +1232,10 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
       std::shared_ptr<const Utility::TabularUnivariateDistribution> max_energy_distribution(
           new const Utility::TabularDistribution<Utility::LogLog>( ionization_max_energy_grid,
-                                                                  ionization_energy_grid ) );
+                                                                   ionization_energy_grid ) );
 
       // Create the min adjoint energy function for electroionization
-      ionization_min_function = [max_energy_distribution](const double& energy){return max_energy_distribution->evaluate(energy);};
+      ionization_min_function = [max_energy_distribution](const double& energy){return max_energy_distribution->evaluate(energy) - energy;};
 
       // Create the scattering function
       std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> ionization_distribution(
@@ -1090,10 +1277,10 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
       std::shared_ptr<const Utility::TabularUnivariateDistribution> min_energy_distribution(
           new const Utility::TabularDistribution<Utility::LogLog>( ionization_max_energy_grid,
-                                                                  ionization_min_energy_grid ) );
+                                                                   ionization_min_energy_grid ) );
 
       // Create the min adjoint energy function for electroionization
-      ionization_min_function2 = [min_energy_distribution](const double& energy){return min_energy_distribution->evaluate(energy) + binding_energy + energy;};
+      ionization_min_function2 = [min_energy_distribution](const double& energy){return min_energy_distribution->evaluate(energy) + binding_energy;};
 
       // Create the scattering function
       std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> ionization_distribution2(

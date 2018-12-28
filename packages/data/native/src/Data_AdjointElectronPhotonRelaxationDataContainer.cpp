@@ -806,7 +806,10 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationEnergyG
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
 
-  return d_adjoint_electroionization_energy_grid.find( subshell )->second;
+  if ( this->separateAdjointElectroionizationEnergyGrid() )
+    return d_adjoint_electroionization_energy_grid.find( subshell )->second;
+  else
+    return this->getAdjointElectronEnergyGrid();
 }
 
 // Return if there is a separate electroionization incoming electron energy grid for the scattering spectrum
@@ -868,7 +871,10 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationRecoilP
 const std::vector<double>&
 AdjointElectronPhotonRelaxationDataContainer::getAdjointElectronBremsstrahlungEnergyGrid() const
 {
-  return d_adjoint_electron_bremsstrahlung_energy_grid;
+    if ( this->separateAdjointBremsstrahlungEnergyGrid() )
+      return d_adjoint_electron_bremsstrahlung_energy_grid;
+    else
+      return this->getAdjointElectronEnergyGrid();
 }
 
 // Return if there is a separate bremsstrahlung incoming electron energy grid for the scattering spectrum

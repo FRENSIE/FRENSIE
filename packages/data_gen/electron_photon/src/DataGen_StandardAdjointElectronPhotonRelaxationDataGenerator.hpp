@@ -208,7 +208,10 @@ private:
 
   // Initialize the electron union energy grid
   void initializeAdjointElectronUnionEnergyGrid(
-     std::list<double>& union_energy_grid ) const;
+     std::list<double>& union_energy_grid,
+     std::map<unsigned,std::shared_ptr<ElectronGridGenerator> > ionization_grid_generators,
+     std::shared_ptr<ElectronGridGenerator> brem_grid_generator,
+     const double excitation_max_energy ) const;
 
 // Create the inelastic cross section evaluators
 void createForwardInelasticElectronCrossSectionEvaluators(
@@ -218,12 +221,13 @@ void createForwardInelasticElectronCrossSectionEvaluators(
     std::function<double (const double&)>& forward_ionization_electron_xs_evaluator,
     std::function<double (const double&)>& forward_excitation_electron_xs_evaluator ) const;
 
-  // Create the adjoint atomic excitation cross section distribution
-  void createAdjointAtomicExcitationCrossSectionDistribution(
+  // Create the adjoint atomic excitation evaluators
+  void createAdjointAtomicExcitationEvaluators(
     const std::shared_ptr<const std::vector<double> >& forward_electron_energy_grid,
     const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
     std::function<double (const double&)>& adjoint_excitation_xs_evaluator,
-    std::function<double (const double&)>& adjoint_excitation_energy_gain_evaluator );
+    std::function<double (const double&)>& adjoint_excitation_energy_gain_evaluator,
+    double& excitation_max_energy ) const;
 
   // Create the adjoint bremsstrahlung grid generator
   void createAdjointBremsstrahlungGridGenerator(

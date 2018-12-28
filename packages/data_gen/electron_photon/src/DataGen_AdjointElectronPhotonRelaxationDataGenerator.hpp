@@ -156,6 +156,15 @@ public:
   //! Return the max electron energy
   double getMaxElectronEnergy() const;
 
+  //! Set the electron scatter above max energy mode is on (on by default)
+  void setElectronScatterAboveMaxModeOn();
+
+  //! Set the electron scatter above max energy mode is off (on by default)
+  void setElectronScatterAboveMaxModeOff();
+
+  //! Return if the electron scatter above max energy mode is on
+  bool isElectronScatterAboveMaxModeOn() const;
+
   //! Set the default electron grid convergence tolerance
   void setDefaultElectronGridConvergenceTolerance( const double convergence_tol );
 
@@ -339,6 +348,8 @@ private:
 
   // The electron TwoDGridPolicy (Unit-base Correlated - default)
   MonteCarlo::TwoDGridType d_two_d_grid;
+
+  bool d_scatter_above_max;
 };
 
 } // end DataGen namespace

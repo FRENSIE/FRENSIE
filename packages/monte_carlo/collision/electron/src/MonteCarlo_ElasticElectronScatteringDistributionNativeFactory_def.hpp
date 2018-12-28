@@ -29,25 +29,11 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
     const CoupledElasticSamplingMethod& sampling_method,
     const double evaluation_tol )
 {
-  std::shared_ptr<std::vector<double> >
-    cutoff_cross_section( new std::vector<double> ),
-    total_cross_section( new std::vector<double> ),
-    energy_grid( new std::vector<double> );
-
-  cutoff_cross_section->assign(
-        data_container.getCutoffElasticCrossSection().begin(),
-        data_container.getCutoffElasticCrossSection().end() );
-  total_cross_section->assign(
-        data_container.getTotalElasticCrossSection().begin(),
-        data_container.getTotalElasticCrossSection().end() );
-  energy_grid->assign( data_container.getElectronEnergyGrid().begin(),
-                       data_container.getElectronEnergyGrid().end() );
-
   ThisType::createCoupledElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
     coupled_elastic_distribution,
-    cutoff_cross_section,
-    total_cross_section,
-    energy_grid,
+    std::make_shared<const std::vector<double> >( data_container.getCutoffElasticCrossSection() ),
+    std::make_shared<const std::vector<double> >( data_container.getTotalElasticCrossSection() ),
+    std::make_shared<const std::vector<double> >( data_container.getElectronEnergyGrid() ),
     data_container.getCutoffElasticAngles(),
     data_container.getCutoffElasticPDF(),
     data_container.getElasticAngularEnergyGrid(),
@@ -327,12 +313,12 @@ void ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservi
             data_container.getAdjointMomentPreservingCrossSectionReduction() ) );
 
   // Get the cutoff elastic cross sections
-  std::shared_ptr<const std::vector<double> > cutoff_cross_sections(
-     new std::vector<double>( data_container.getAdjointCutoffElasticCrossSection() ) );
+  auto cutoff_cross_sections = std::make_shared<const std::vector<double> >(
+    data_container.getAdjointCutoffElasticCrossSection() );
 
   // Get the total elastic cross sections
-  std::shared_ptr<const std::vector<double> > total_cross_sections(
-     new std::vector<double>( data_container.getAdjointTotalElasticCrossSection() ) );
+  auto total_cross_sections = std::make_shared<const std::vector<double> >(
+    data_container.getAdjointTotalElasticCrossSection() );
 
   ThisType::calculateMomentPreservingCrossSections(
               cutoff_distribution,
@@ -405,14 +391,13 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
 
   // Create the cross section ratios
   std::shared_ptr<const Utility::UnivariateDistribution> cross_section_ratios;
-  createCutoffCrossSectionRatios( energy_grid,
-                                  cutoff_cross_section,
-                                  total_cross_section,
-                                  cross_section_ratios );
+  ThisType::createCutoffCrossSectionRatios( energy_grid,
+                                            cutoff_cross_section,
+                                            total_cross_section,
+                                            cross_section_ratios );
 
   // Create the Elastic electron traits
-  std::shared_ptr<const ElasticTraits> elastic_traits(
-    new ElasticTraits( atomic_number ) );
+  auto elastic_traits = std::make_shared<const ElasticTraits>( atomic_number );
 
   // Create the scattering function
   std::shared_ptr<BasicBivariateDist> scattering_function;
@@ -672,13 +657,13 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
     double fuzzy_bound_tol = 1e-6;
 
     // Create the BasicBivariateDistribution between the two distributions
-    std::shared_ptr<BasicBivariateDist> scattering_function(
-       new MonteCarlo::ElasticBasicBivariateDistribution<TwoDGridPolicy<TwoDInterpPolicy> >(
+    std::shared_ptr<BasicBivariateDist> scattering_function =
+       std::make_shared<MonteCarlo::ElasticBasicBivariateDistribution<TwoDGridPolicy<TwoDInterpPolicy> > >(
                                                             primary_grid,
                                                             secondary_dists,
                                                             max_angle_cosine,
                                                             fuzzy_bound_tol,
-                                                            evaluation_tol ) );
+                                                            evaluation_tol );
 
     // Use the angular grid for the energy bin closes to the energy
     if ( energy - lower_bin->first <= upper_bin->first - energy )
@@ -847,7 +832,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledScattering
 
     // Get the ratio of the cutoff to total elastic cross section
     double cutoff_ratio = cross_section_ratios->evaluate( energy_grid[n] );
-
 
     // Create coupled elastic distribution
     secondary_dists[n].reset(

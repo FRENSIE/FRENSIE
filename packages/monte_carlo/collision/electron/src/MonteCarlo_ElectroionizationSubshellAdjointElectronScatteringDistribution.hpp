@@ -61,8 +61,14 @@ public:
   //! Return the min incoming energy
   double getMinEnergy() const;
 
-  //! Return the Max incoming energy
+  //! Return the max incoming energy
   double getMaxEnergy() const;
+
+  //! Return the min outgoing energy
+  double getOutgoingMinEnergy( const double incoming_energy ) const;
+
+  //! Return the max outgoing energy
+  double getOutgoingMaxEnergy( const double incoming_energy ) const;
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,

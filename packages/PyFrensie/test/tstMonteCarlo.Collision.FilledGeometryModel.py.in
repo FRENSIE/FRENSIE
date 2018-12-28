@@ -1820,37 +1820,37 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         self.assertAlmostEqual(
           filled_model.getAdjointElectronMacroscopicTotalCrossSection(
                     cell, energy ),
-          1.987787741728153487e+05,
+          1.987787719695187989e+05,
           10 )
 
         self.assertAlmostEqual(
           filled_model.getAdjointElectronMacroscopicTotalCrossSectionQuick(
                     cell, energy ),
-          1.987787741728153487e+05,
+          1.987787719695187989e+05,
           10 )
 
         self.assertAlmostEqual(
           filled_model.getAdjointElectronMacroscopicTotalForwardCrossSection(
                     cell, energy ),
-          1.962264561458093813e+05,
+          1.962264560274902324e+05,
           10 )
 
         self.assertAlmostEqual(
           filled_model.getAdjointElectronMacroscopicTotalForwardCrossSectionQuick(
                     cell, energy ),
-          1.962264561458093813e+05,
+          1.962264560274902324e+05,
           10 )
 
         self.assertAlmostEqual(
           filled_model.getAdjointElectronWeightFactor(
                     cell, energy ),
-          1.013007002608809382,
+          1.013006991991288963,
           10 )
 
         self.assertAlmostEqual(
           filled_model.getAdjointElectronWeightFactorQuick(
                     cell, energy ),
-          1.013007002608809382,
+          1.013006991991288963,
           10 )
 
         energy = 10.0
@@ -1858,13 +1858,13 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         self.assertAlmostEqual(
           filled_model.getAdjointElectronMacroscopicTotalCrossSection(
                     cell, energy ),
-          1.790767917589432909e+05,
+          1.790767921847959224e+05,
           10 )
 
         self.assertAlmostEqual(
           filled_model.getAdjointElectronMacroscopicTotalCrossSectionQuick(
                     cell, energy ),
-          1.790767917589432909e+05,
+          1.790767921847959224e+05,
           10 )
 
         print filled_model.getAdjointElectronMacroscopicTotalForwardCrossSection(
@@ -1872,25 +1872,25 @@ class FilledGeometryModelTestCase(unittest.TestCase):
         self.assertAlmostEqual(
           filled_model.getAdjointElectronMacroscopicTotalForwardCrossSection(
                     cell, energy ),
-          1.781250860939461854e+05,
+          1.781250859381078626e+05,
           10 )
 
         self.assertAlmostEqual(
           filled_model.getAdjointElectronMacroscopicTotalForwardCrossSectionQuick(
                     cell, energy ),
-          1.781250860939461854e+05,
+          1.781250859381078626e+05,
           10 )
 
         self.assertAlmostEqual(
           filled_model.getAdjointElectronWeightFactor(
                     cell, energy ),
-          1.005342906414064430,
+          1.005342909684370678,
           10 )
 
         self.assertAlmostEqual(
           filled_model.getAdjointElectronWeightFactorQuick(
                     cell, energy ),
-          1.005342906414064430,
+          1.005342909684370678,
           10 )
 
     # Check that the Critical Line Energies can be returned

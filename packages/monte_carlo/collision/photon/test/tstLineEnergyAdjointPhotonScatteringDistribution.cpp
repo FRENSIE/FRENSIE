@@ -195,10 +195,10 @@ FRENSIE_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( full_distribution->evaluateJointPDF( Utility::PhysicalConstants::electron_rest_mass_energy, 20.0, -1.0 ),
                           4.286468992381434889e-02,
                           1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( full_distribution->evaluateJointPDF( Utility::PhysicalConstants::electron_rest_mass_energy, 20.0, 0.0 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_distribution->evaluateJointPDF( Utility::PhysicalConstants::electron_rest_mass_energy, 20.0, -1.0 ),
                           4.286468992381434889e-02,
                           1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( full_distribution->evaluateJointPDF( Utility::PhysicalConstants::electron_rest_mass_energy, 20.0, 1.0 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_distribution->evaluateJointPDF( Utility::PhysicalConstants::electron_rest_mass_energy, 20.0, -1.0 ),
                           4.286468992381434889e-02,
                           1e-15 );
 

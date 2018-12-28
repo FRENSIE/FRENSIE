@@ -105,17 +105,17 @@ FRENSIE_UNIT_TEST( AdjointElectroatom, getTotalCrossSection )
 {
   double cross_section = electroatom->getTotalCrossSection( 1e-5 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          4.420906922056859401e+01 + 6.1243057898416743e+07,
+                          4.420906922047235810e+01 + 6.124055828282346576e+07,
                           1e-12 );
 
   cross_section = electroatom->getTotalCrossSection( 1e-3 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          1.557600066977331110e+01 + 1.050234737111856416e+07,
+                          1.557600066967186692e+01 + 1.050254326707092859e+07,
                           1e-12 );
 
   cross_section = electroatom->getTotalCrossSection( 20.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          2.873816755338521323e-01 + 8.1829299836129925e+04,
+                          1.31456359576732545e-01 + 8.18292998361299251e+04,
                           1e-12 );
 }
 
@@ -173,26 +173,26 @@ FRENSIE_UNIT_TEST( AdjointElectroatom, getReactionCrossSection )
   reaction = MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION;
 
   cross_section = electroatom->getReactionCrossSection( 1e-5, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 6.1243057898416743e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 6.124055828282346576e+07, 1e-12 );
 
   cross_section = electroatom->getReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.050234737111856416e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.050254326707092859e+07, 1e-12 );
 
   cross_section = electroatom->getReactionCrossSection( 20.0, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.1829299836129925e+04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.18292998361299251e+04, 1e-12 );
 
 
   // Bremsstrahlung
   reaction = MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION;
 
   cross_section = electroatom->getReactionCrossSection( 1e-5, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.420906922056859401e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.420906922047235810e+01, 1e-12 );
 
   cross_section = electroatom->getReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.557600066977331110e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.557600066967186692e+01, 1e-12 );
 
   cross_section = electroatom->getReactionCrossSection( 20.0, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.873816755338521323e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.31456359576732545e-01, 1e-12 );
 
 
   // Cutoff Elastic
@@ -211,17 +211,17 @@ FRENSIE_UNIT_TEST( AdjointElectroatom, getReactionCrossSection )
 
   cross_section = electroatom->getReactionCrossSection( 1e-5, reaction );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          4.420906922056859401e+01 + 6.1243057898416743e+07,
+                          4.420906922047235810e+01 + 6.124055828282346576e+07,
                           1e-12 );
 
   cross_section = electroatom->getReactionCrossSection( 1e-3, reaction );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          1.557600066977331110e+01 + 1.050234737111856416e+07,
+                          1.557600066967186692e+01 + 1.050254326707092859e+07,
                           1e-12 );
 
   cross_section = electroatom->getReactionCrossSection( 20.0, reaction );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          2.873816755338521323e-01 + 8.1829299836129925e+04,
+                          1.31456359576732545e-01 + 8.18292998361299251e+04,
                           1e-12 );
 }
 
@@ -280,7 +280,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatom, collideAnalogue )
 {
   std::shared_ptr<MonteCarlo::AdjointElectronState> electron(
                         new MonteCarlo::AdjointElectronState( 0 ) );
-  electron->setEnergy( 20 );
+  electron->setEnergy( 19.0 );
   electron->setDirection( 0.0, 0.0, 1.0 );
   electron->setWeight( 1.0 );
 
@@ -514,7 +514,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
      // Create the Bremsstrahlung distribution
     BremsstrahlungNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
         data_container,
-        data_container.getAdjointElectronEnergyGrid(),
+        data_container.getAdjointElectronBremsstrahlungEnergyGrid(),
         b_distribution,
         evaluation_tol );
 

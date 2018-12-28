@@ -165,7 +165,7 @@ class SimulationElectronPropertiesTestCase(unittest.TestCase):
         self.assertEqual( properties.getElasticElectronDistributionMode(),
                           MonteCarlo.COUPLED_DISTRIBUTION )
 
-        mode = MonteCarlo.COUPLED_DISTRIBUTION
+        mode = MonteCarlo.DECOUPLED_DISTRIBUTION
         properties.setElasticElectronDistributionMode( mode )
         self.assertEqual( properties.getElasticElectronDistributionMode(), mode )
 
@@ -196,7 +196,7 @@ class SimulationElectronPropertiesTestCase(unittest.TestCase):
         properties.setCoupledElasticSamplingMode( mode )
         self.assertEqual( properties.getCoupledElasticSamplingMode(), mode )
 
-        mode = MonteCarlo.MODIFIED_TWO_D_UNION
+        mode = MonteCarlo.TWO_D_UNION
         properties.setCoupledElasticSamplingMode( mode )
         self.assertEqual( properties.getCoupledElasticSamplingMode(), mode )
 

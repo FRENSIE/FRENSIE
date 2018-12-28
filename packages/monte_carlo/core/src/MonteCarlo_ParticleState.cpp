@@ -499,12 +499,12 @@ auto ParticleState::getRaySafetyDistance() const -> raySafetyDistanceType
 }
 
 // Set the ray safety distance (i.e. distance to the closest boundary)
-void ParticleState::setRaySafetyDistance( const raySafetyDistanceType safety_distance )
+void ParticleState::setRaySafetyDistance( const raySafetyDistanceType ray_safety_distance )
 {
   // Make sure that the current safety distance is valid
-  testPrecondition( safety_distance >= 0.0 );
+  testPrecondition( ray_safety_distance >= 0.0 );
 
-  d_ray_safety_distance = safety_distance;
+  d_ray_safety_distance = ray_safety_distance;
 }
 
 // Return if the particle is lost

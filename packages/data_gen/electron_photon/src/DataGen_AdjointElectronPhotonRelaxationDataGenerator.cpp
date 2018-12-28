@@ -26,7 +26,8 @@ AdjointElectronPhotonRelaxationDataGenerator::AdjointElectronPhotonRelaxationDat
     d_default_electron_grid_generator(
            new Utility::GridGenerator<Utility::LogLog>( 1e-3, 1e-13, 1e-13 ) ),
     d_two_d_interp( MonteCarlo::LOGLOGLOG_INTERPOLATION ),
-    d_two_d_grid( MonteCarlo::UNIT_BASE_CORRELATED_GRID )
+    d_two_d_grid( MonteCarlo::UNIT_BASE_CORRELATED_GRID ),
+    d_scatter_above_max( true )
 {
   // Make sure the atomic number is valid
   testPrecondition( atomic_number <= 100u );
@@ -436,6 +437,24 @@ void AdjointElectronPhotonRelaxationDataGenerator::setMaxElectronEnergy(
 double AdjointElectronPhotonRelaxationDataGenerator::getMaxElectronEnergy() const
 {
   return d_data_container->getMaxElectronEnergy();
+}
+
+// Set the electron scatter above max energy mode is on (on by default)
+void AdjointElectronPhotonRelaxationDataGenerator::setElectronScatterAboveMaxModeOn()
+{
+  d_scatter_above_max = true;
+}
+
+// Set the electron scatter above max energy mode is off (on by default)
+void AdjointElectronPhotonRelaxationDataGenerator::setElectronScatterAboveMaxModeOff()
+{
+  d_scatter_above_max = false;
+}
+
+// Return if the electron scatter above max energy mode is on
+bool AdjointElectronPhotonRelaxationDataGenerator::isElectronScatterAboveMaxModeOn() const
+{
+  return d_scatter_above_max;
 }
 
 // Set the default electron grid convergence tolerance

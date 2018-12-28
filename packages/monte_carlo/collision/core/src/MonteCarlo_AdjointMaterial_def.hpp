@@ -117,23 +117,16 @@ double AdjointMaterial<ScatteringCenter>::getAdjointWeightFactor( const double e
   testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
-  double weight_factor;
-
   double macroscopic_total_forward_cross_section =
     this->getMacroscopicTotalForwardCrossSection( energy );
 
   if( macroscopic_total_forward_cross_section > 0.0 )
   {
-    weight_factor = this->getMacroscopicTotalCrossSection( energy )/
+    return this->getMacroscopicTotalCrossSection( energy )/
       macroscopic_total_forward_cross_section;
   }
   else
-    weight_factor = 1.0;
-
-  // Make sure that the weight factor is valid
-  testPrecondition( weight_factor > 0.0 );
-
-  return weight_factor;
+    return 1.0;
 }
 
 // Return the adjoint line energy weight factor
@@ -144,23 +137,16 @@ double AdjointMaterial<ScatteringCenter>::getAdjointLineEnergyWeightFactor( cons
   testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
-  double weight_factor;
-
   double macroscopic_total_forward_cross_section =
     this->getMacroscopicTotalForwardCrossSection( energy );
 
   if( macroscopic_total_forward_cross_section > 0.0 )
   {
-    weight_factor = this->getMacroscopicTotalLineEnergyCrossSection( energy )/
+    return this->getMacroscopicTotalLineEnergyCrossSection( energy )/
       macroscopic_total_forward_cross_section;
   }
   else
-    weight_factor = 1.0;
-
-  // Make sure the weight factor is valid
-  testPostcondition( weight_factor >= 0.0 );
-
-  return weight_factor;
+    return 1.0;
 }
 
 // Collide with a scattering center and survival bias
