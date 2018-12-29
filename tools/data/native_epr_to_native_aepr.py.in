@@ -73,6 +73,7 @@ def setGeneratorOptions( generator,
                          cutoff_angle_cosine,
                          num_moment_preserving_angles,
                          tabular_evaluation_tol,
+                         electron_scatter_above_max_mode_on,
                          electron_two_d_interp_policy,
                          electron_two_d_grid_policy,
                          bremss_min_energy_nudge_val,
@@ -146,6 +147,9 @@ def setGeneratorOptions( generator,
 
     if not tabular_evaluation_tol is None:
         generator.setElectronTabularEvaluationTolerance( tabular_evaluation_tol )
+
+    if not electron_scatter_above_max_mode_on is False:
+        generator.setElectronScatterAboveMaxModeOff()
 
     if not electron_two_d_interp_policy is None:
         if electron_two_d_interp_policy == "LinLinLin":
@@ -249,6 +253,7 @@ def generateData( epr_file_name,
                   cutoff_angle_cosine = None,
                   num_moment_preserving_angles = None,
                   tabular_evaluation_tol = None,
+                  electron_scatter_above_max_mode_on = None,
                   electron_two_d_interp_policy = None,
                   electron_two_d_grid_policy = None,
                   bremss_min_energy_nudge_val = None,
@@ -298,6 +303,7 @@ def generateData( epr_file_name,
                          cutoff_angle_cosine,
                          num_moment_preserving_angles,
                          tabular_evaluation_tol,
+                         electron_scatter_above_max_mode_on,
                          electron_two_d_interp_policy,
                          electron_two_d_grid_policy,
                          bremss_min_energy_nudge_val,
@@ -416,6 +422,8 @@ if __name__ == "__main__":
                       help="The number of moment preserving angles for electrons")
     parser.add_option("--tabular_evaluation_tol", type="float", dest="tabular_evaluation_tol",
                       help="The tabular evaluation tolerance")
+    parser.add_option("--electron_scatter_above_max_mode_off", action="store_true", dest="electron_scatter_above_max_mode", default=True,
+                      help="Don't allow adjoint electrons to scatter above the max energy.")
     parser.add_option("--electron_two_d_interp_policy", type="string", dest="electron_two_d_interp_policy",
                       help="The electron 2D interpolation policy (e.g. LogLogLog)")
     parser.add_option("--electron_two_d_grid_policy", type="string", dest="electron_two_d_grid_policy",
@@ -486,6 +494,7 @@ if __name__ == "__main__":
                   options.cutoff_angle_cosine,
                   options.num_moment_preserving_angles,
                   options.tabular_evaluation_tol,
+                  options.electron_scatter_above_max_mode,
                   options.electron_two_d_interp_policy,
                   options.electron_two_d_grid_policy,
                   options.bremss_min_energy_nudge_val,
