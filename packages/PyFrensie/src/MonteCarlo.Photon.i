@@ -20,10 +20,45 @@ monte_carlo/collision/photon subpackage.
 %{
 // FRENSIE Includes
 #include "PyFrensie_PythonTypeTraits.hpp"
+
+#include "Geometry_InfiniteMediumModel.hpp"
+#include "Geometry_AdvancedModel.hpp"
+
+#include "Data_NativeEPRPhotoatomicDataProperties.hpp"
+#include "Data_NativeEPRElectroatomicDataProperties.hpp"
+#include "Data_ACEPhotoatomicDataProperties.hpp"
+#include "Data_ACEElectroatomicDataProperties.hpp"
+#include "Data_NativeMomentPreservingElectroatomicDataProperties.hpp"
+#include "Data_NativeEPRAdjointPhotoatomicDataProperties.hpp"
+#include "Data_NativeEPRAdjointElectroatomicDataProperties.hpp"
+#include "Data_NuclearDataProperties.hpp"
+#include "Data_ACENuclearDataProperties.hpp"
+#include "Data_ThermalNuclearDataProperties.hpp"
+#include "Data_ACEThermalNuclearDataProperties.hpp"
+#include "Data_PhotonuclearDataProperties.hpp"
+#include "Data_ACEPhotonuclearDataProperties.hpp"
+
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
+#include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
+  
 #include "MonteCarlo_PhotonScatteringDistribution.hpp"
+#include "MonteCarlo_AdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_IncoherentAdjointPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_SubshellIncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionACEFactory.hpp"
+#include "MonteCarlo_DopplerBroadenedPhotonEnergyDistributionACEFactory.hpp"
+#include "MonteCarlo_DopplerBroadenedPhotonEnergyDistributionNativeFactory.hpp"
+#include "MonteCarlo_CoherentScatteringDistribution.hpp"
+#include "MonteCarlo_CoherentScatteringDistributionACEFactory.hpp"
+#include "MonteCarlo_CoherentScatteringDistributionNativeFactory.hpp"
+
+#include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_AdjointPhotonState.hpp"
+#include "MonteCarlo_ElectronState.hpp"
+#include "MonteCarlo_AdjointElectronState.hpp"
+#include "MonteCarlo_PositronState.hpp"
 
 using namespace MonteCarlo;
 %}
@@ -42,7 +77,6 @@ using namespace MonteCarlo;
 %import "Data.ACE.i"
 %import "Data.Native.i"
 %import "MonteCarlo_ParticleState.i"
-%import "MonteCarlo_ParticleBank.i"
 %import "MonteCarlo_IncoherentModelType.hpp"
 
 // Standard exception handling
@@ -75,12 +109,18 @@ using namespace MonteCarlo;
 
 // Add a few general typemaps
 %apply Utility::DistributionTraits::Counter& INOUT { Utility::DistributionTraits::Counter& trials };
-%apply Utility::DistributionTraits::double& OUTPUT { double& outgoing_energy };
-%apply Utility::DistributionTraits::double& OUTPUT { double& scattering_angle_cosine };
+%apply double OUTPUT { double& outgoing_energy };
+%apply double OUTPUT { double& scattering_angle_cosine };
 %apply MonteCarlo::PhotonState& INOUT { MonteCarlo::PhotonState& photon };
 %apply MonteCarlo::AdjointPhotonState& INOUT { MonteCarlo::AdjointPhotonState& photon };
 %apply MonteCarlo::ParticleBank& INOUT { MonteCarlo::ParticleBank& bank };
 %apply Data::SubshellType& OUTPUT { Data::SubshellType& shell_of_interaction };
+
+//---------------------------------------------------------------------------//
+// Scattering Distribution Support
+//---------------------------------------------------------------------------//
+%shared_ptr( MonteCarlo::ScatteringDistribution )
+%include "MonteCarlo_ScatteringDistribution.hpp"
 
 //---------------------------------------------------------------------------//
 // Photon Scattering Distribution Support
@@ -114,7 +154,20 @@ using namespace MonteCarlo;
 //---------------------------------------------------------------------------//
 // Doppler Broadened Photon Energy Distribution Support
 //---------------------------------------------------------------------------//
+%shared_ptr( MonteCarlo::DopplerBroadenedPhotonEnergyDistribution )
 %include "MonteCarlo_DopplerBroadenedPhotonEnergyDistribution.hpp"
+
+//---------------------------------------------------------------------------//
+// Complete Doppler Broadened Photon Energy Distribution
+//---------------------------------------------------------------------------//
+%shared_ptr( MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution )
+%include "MonteCarlo_CompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+
+//---------------------------------------------------------------------------//
+// Subshell Doppler Broadened Photon Energy Distribution
+//---------------------------------------------------------------------------//
+%shared_ptr( MonteCarlo::SubshellDopplerBroadenedPhotonEnergyDistribution );
+%include "MonteCarlo_SubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
 
 //---------------------------------------------------------------------------//
 // Doppler Broadened Photon Energy Distribution ACE Factory Support
@@ -147,7 +200,10 @@ using namespace MonteCarlo;
 //---------------------------------------------------------------------------//
 // Subshell Incoherent Adjoint Photon Scattering Distribution Support
 //---------------------------------------------------------------------------//
+%ignore MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution::SubshellIncoherentAdjointPhotonScatteringDistribution;
+
 %shared_ptr( MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution )
+
 %include "MonteCarlo_SubshellIncoherentAdjointPhotonScatteringDistribution.hpp"
 
 //---------------------------------------------------------------------------//
@@ -170,7 +226,6 @@ using namespace MonteCarlo;
 //---------------------------------------------------------------------------//
 %apply std::shared_ptr<const CoherentScatteringDistribution>& OUTPUT { std::shared_ptr<const CoherentScatteringDistribution>& coherent_distribution };
 
-%shared_ptr( MonteCarlo::CoherentScatteringDistributionFactory )
 %include "MonteCarlo_CoherentScatteringDistributionFactory.hpp"
 
 //---------------------------------------------------------------------------//
