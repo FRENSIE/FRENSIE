@@ -1581,21 +1581,24 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     data_container.setAdjointAtomicExcitationCrossSectionThresholdEnergyIndex( threshold );
 
 
-    // // Make sure the energy gain is greater than zero
-    // unsigned size = energy_grid.size();
-    // while( adjoint_excitation_energy_gain_evaluator( energy_grid[size-1] ) <= 0.0 )
-    // {
-    //   --size;
-    // }
-
-    std::vector<double> excitation_energy_gain( energy_grid.size() );
-    for ( unsigned i = 0; i < energy_grid.size(); ++i )
+    // Make sure the energy gain is greater than zero
+    unsigned size = energy_grid.size();
+    while( excitation_max_energy < energy_grid[size-1] )
     {
+      --size;
+    }
+    testPostcondition( excitation_max_energy == energy_grid[size-1] );
+
+    std::vector<double> excitation_energy_gain( size );
+    std::vector<double> excitation_energy_grid( size );
+    for ( unsigned i = 0; i < size; ++i )
+    {
+      excitation_energy_grid[i] = energy_grid[i];
       excitation_energy_gain[i] = adjoint_excitation_energy_gain_evaluator( energy_grid[i] );
     }
 
     // Set the adjoint bremsstrahlung scattering distribution
-    data_container.setAdjointAtomicExcitationEnergyGrid( energy_grid );
+    data_container.setAdjointAtomicExcitationEnergyGrid( excitation_energy_grid );
     data_container.setAdjointAtomicExcitationEnergyGain( excitation_energy_gain );
   }
 
