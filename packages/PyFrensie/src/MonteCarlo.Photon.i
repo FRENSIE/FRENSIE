@@ -137,7 +137,12 @@ using namespace MonteCarlo;
 //---------------------------------------------------------------------------//
 // Incoherent Photon Scattering Distribution Factory Support
 //---------------------------------------------------------------------------//
-%apply std::shared_ptr<const IncoherentPhotonScatteringDistribution>& OUTPUT { std::shared_ptr<const IncoherentPhotonScatteringDistribution>& incoherent_distribution };
+%typemap(in,numinputs=0) std::shared_ptr<const MonteCarlo::IncoherentPhotonScatteringDistribution>& incoherent_distribution (std::shared_ptr<const MonteCarlo::IncoherentPhotonScatteringDistribution> temp ) "$1 = &temp;"
+
+%typemap(argout) std::shared_ptr<const MonteCarlo::IncoherentPhotonScatteringDistribution>& incoherent_distribution {
+  std::shared_ptr< const MonteCarlo::IncoherentPhotonScatteringDistribution > *smartresult = *$1 ? new std::shared_ptr< const MonteCarlo::IncoherentPhotonScatteringDistribution >(*$1) : 0;
+  %append_output(SWIG_NewPointerObj(SWIG_as_voidptr(smartresult), SWIGTYPE_p_std__shared_ptrT_MonteCarlo__IncoherentPhotonScatteringDistribution_t, SWIG_POINTER_OWN));
+}
 
 %include "MonteCarlo_IncoherentPhotonScatteringDistributionFactory.hpp"
 

@@ -1,0 +1,78 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory class unit tests
+#  \file   tstMonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory.py
+#  \author Alex Robinson
+#  \brief  Unit tests for the MonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-f", "--test_ace_file", type="string", dest="test_ace_file",
+                  help="the ace file used for testing")
+parser.add_option("-t", "--test_ace_table", type="string", dest="test_ace_table",
+                  help="the name of the ace table used for testing")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+ACE = importPyFrensieModuleFromBuildDir('Data.ACE')
+MonteCarlo = importPyFrensieModuleFromBuildDir( 'MonteCarlo' )
+Photon = importPyFrensieModuleFromBuildDir('MonteCarlo.Photon')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Check that a Klein-Nishina distribution can be created
+class IncoherentPhotonScatteringDistributionACEFactoryTestCase(unittest.TestCase):
+    "TestCase for MonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory class"
+    @classmethod
+    def setUpClass(cls):
+        ace_file = ACE.ACEFileHandler( options.test_ace_file, options.test_ace_table, 1 )
+        cls.xss_extractor = ACE.XSSEPRDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
+
+    def testCreateKleinNishinaDistribution(self):
+        "*Test MonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory.createDistribution (Klein-Nishina)"
+        dist = Photon.IncoherentPhotonScatteringDistributionACEFactory.createDistribution( self.xss_extractor, MonteCarlo.KN_INCOHERENT_MODEL, 3.0 );
+        
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, 1.0 ), 4.9893440508834e-1, delta=1e-12 )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(IncoherentPhotonScatteringDistributionACEFactoryTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************************************************\n" +\
+        "Testing MonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory \n" + \
+        "**************************************************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+        
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory.py
+#-----------------------------------------------------------------------------#
