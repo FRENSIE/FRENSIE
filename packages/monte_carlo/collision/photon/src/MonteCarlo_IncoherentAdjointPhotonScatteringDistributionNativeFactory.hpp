@@ -45,6 +45,7 @@ public:
                 std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
                 incoherent_adjoint_distribution,
                 const IncoherentAdjointModelType incoherent_adjoint_model,
+                const AdjointKleinNishinaSamplingType adjoint_kn_sampling,
                 const double max_energy,
                 const unsigned endf_subshell = 0u );
 
@@ -55,6 +56,7 @@ public:
         std::shared_ptr<SubshellIncoherentAdjointPhotonScatteringDistribution>&
         incoherent_adjoint_distribution,
         const IncoherentAdjointModelType incoherent_adjoint_model,
+        const AdjointKleinNishinaSamplingType adjoint_kn_sampling,
         const double max_energy,
         const unsigned endf_subshell );
 
@@ -64,6 +66,7 @@ private:
   static void createWallerHartreeDistribution(
           const Data::AdjointElectronPhotonRelaxationDataContainer&
           raw_adjoint_photoatom_data,
+          const AdjointKleinNishinaSamplingType adjoint_kn_sampling,
           const double max_energy,
           std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
           incoherent_adjoint_distribution );
@@ -73,6 +76,7 @@ private:
   static void createSubshellDistribution(
           const Data::AdjointElectronPhotonRelaxationDataContainer&
           raw_adjoint_photoatom_data,
+          const AdjointKleinNishinaSamplingType adjoint_kn_sampling,
           const unsigned endf_subshell,
           const double max_energy,
           std::shared_ptr<BaseDistributionType>&
@@ -81,12 +85,13 @@ private:
   //! Create a Doppler broadened subshell incoherent adjoint distribution
   template<typename BaseDistributionType>
   static void createDopplerBroadenedSubshellDistribution(
-                      const Data::AdjointElectronPhotonRelaxationDataContainer&
-                      raw_adjoint_photoatom_data,
-                      const unsigned endf_subshell,
-                      const double max_energy,
-                      std::shared_ptr<BaseDistributionType>&
-                      incoherent_adjoint_distribution );
+                     const Data::AdjointElectronPhotonRelaxationDataContainer&
+                     raw_adjoint_photoatom_data,
+                     const AdjointKleinNishinaSamplingType adjoint_kn_sampling,
+                     const unsigned endf_subshell,
+                     const double max_energy,
+                     std::shared_ptr<BaseDistributionType>&
+                     incoherent_adjoint_distribution );
 
 private:
 

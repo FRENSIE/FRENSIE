@@ -23,13 +23,15 @@ DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::DopplerBr
      const double num_electrons_in_subshell,
      const double binding_energy,
      const std::shared_ptr<const OccupationNumber>& occupation_number,
-     const std::shared_ptr<const ComptonProfile>& compton_profile )
+     const std::shared_ptr<const ComptonProfile>& compton_profile,
+     const AdjointKleinNishinaSamplingType sampling_type )
   : SubshellIncoherentAdjointPhotonScatteringDistribution(
                                                      max_energy,
                                                      interaction_subshell,
                                                      num_electrons_in_subshell,
                                                      binding_energy,
-                                                     occupation_number ),
+                                                     occupation_number,
+                                                     sampling_type ),
     d_compton_profile( compton_profile )
 {
   // Make sure the binding energy is valid

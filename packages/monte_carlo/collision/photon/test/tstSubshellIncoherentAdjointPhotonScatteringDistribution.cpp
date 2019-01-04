@@ -509,21 +509,23 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Create the Subshell incoherent adjoint photon scattering distribution
     distribution_s1.reset(
          new MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution(
-                                20.0,
-                                Data::convertENDFDesignatorToSubshellEnum( 1 ),
-                                data_container.getSubshellOccupancy( 1 ),
-                                data_container.getSubshellBindingEnergy( 1 ),
-                                occupation_number_obj_s1 ) );
+                        20.0,
+                        Data::convertENDFDesignatorToSubshellEnum( 1 ),
+                        data_container.getSubshellOccupancy( 1 ),
+                        data_container.getSubshellBindingEnergy( 1 ),
+                        occupation_number_obj_s1,
+                        MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING ) );
 
     base_distribution_s1 = distribution_s1;
 
     distribution_s5.reset(
          new MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution(
-                                20.0,
-                                Data::convertENDFDesignatorToSubshellEnum( 5 ),
-                                data_container.getSubshellOccupancy( 5 ),
-                                data_container.getSubshellBindingEnergy( 5 ),
-                                occupation_number_obj_s5 ) );
+                        20.0,
+                        Data::convertENDFDesignatorToSubshellEnum( 5 ),
+                        data_container.getSubshellOccupancy( 5 ),
+                        data_container.getSubshellBindingEnergy( 5 ),
+                        occupation_number_obj_s5,
+                        MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING ) );
 
     // Set the critical line energies
     std::shared_ptr<std::vector<double> >

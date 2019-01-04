@@ -36,6 +36,8 @@ std::unique_ptr<std::ifstream> archive_istream;
 // Check that a model can be initialized from an archive
 FRENSIE_UNIT_TEST( RootModel, iarchive )
 {
+  Utility::JustInTimeInitializer::getInstance().activate();
+  
   std::unique_ptr<boost::archive::xml_iarchive>
     iarchive( new boost::archive::xml_iarchive( *archive_istream ) );
 
@@ -44,6 +46,19 @@ FRENSIE_UNIT_TEST( RootModel, iarchive )
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( model ) );
 
   iarchive.reset();
+
+  FRENSIE_REQUIRE( !model->isInitialized() );
+
+  const Geometry::RootModelProperties& cached_properties =
+    model->getModelProperties();
+
+  FRENSIE_CHECK( cached_properties.getModelFileName().find( "basic_root_geometry.root" ) <
+                 cached_properties.getModelFileName().size() );
+
+  // Initialize the model
+  FRENSIE_CHECK_EQUAL( Utility::JustInTimeInitializer::getInstance().getNumberOfObjects(), 1 );
+
+  FRENSIE_REQUIRE_NO_THROW( Utility::JustInTimeInitializer::getInstance().initializeObjectsAndClear() );
 
   // Get all cells
   Geometry::Model::CellIdSet cells;

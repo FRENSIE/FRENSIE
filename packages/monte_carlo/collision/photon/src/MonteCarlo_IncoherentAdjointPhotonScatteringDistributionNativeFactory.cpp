@@ -30,6 +30,7 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDistribut
           std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
           incoherent_adjoint_distribution,
           const IncoherentAdjointModelType incoherent_adjoint_model,
+          const AdjointKleinNishinaSamplingType adjoint_kn_sampling,
           const double max_energy,
           const unsigned endf_subshell )
 {
@@ -41,14 +42,17 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDistribut
   {
     case KN_INCOHERENT_ADJOINT_MODEL:
     {
-      ThisType::createKleinNishinaDistribution(incoherent_adjoint_distribution,
-                                               max_energy );
+      ThisType::createKleinNishinaDistribution(
+                                             adjoint_kn_sampling,
+                                             max_energy,
+                                             incoherent_adjoint_distribution );
       break;
     }
     case WH_INCOHERENT_ADJOINT_MODEL:
     {
       ThisType::createWallerHartreeDistribution(
                                              raw_adjoint_photoatom_data,
+                                             adjoint_kn_sampling,
                                              max_energy,
                                              incoherent_adjoint_distribution );
       break;
@@ -56,6 +60,7 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDistribut
     case IMPULSE_INCOHERENT_ADJOINT_MODEL:
     {
       ThisType::createSubshellDistribution( raw_adjoint_photoatom_data,
+                                            adjoint_kn_sampling,
                                             endf_subshell,
                                             max_energy,
                                             incoherent_adjoint_distribution );
@@ -66,6 +71,7 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDistribut
     {
       ThisType::createDopplerBroadenedSubshellDistribution(
                                              raw_adjoint_photoatom_data,
+                                             adjoint_kn_sampling,
                                              endf_subshell,
                                              max_energy,
                                              incoherent_adjoint_distribution );
@@ -88,6 +94,7 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createSubshellD
         std::shared_ptr<SubshellIncoherentAdjointPhotonScatteringDistribution>&
         incoherent_adjoint_distribution,
         const IncoherentAdjointModelType incoherent_adjoint_model,
+        const AdjointKleinNishinaSamplingType adjoint_kn_sampling,
         const double max_energy,
         const unsigned endf_subshell )
 {
@@ -100,6 +107,7 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createSubshellD
     case IMPULSE_INCOHERENT_ADJOINT_MODEL:
     {
       ThisType::createSubshellDistribution( raw_adjoint_photoatom_data,
+                                            adjoint_kn_sampling,
                                             endf_subshell,
                                             max_energy,
                                             incoherent_adjoint_distribution );
@@ -110,6 +118,7 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createSubshellD
     {
       ThisType::createDopplerBroadenedSubshellDistribution(
                                              raw_adjoint_photoatom_data,
+                                             adjoint_kn_sampling,
                                              endf_subshell,
                                              max_energy,
                                              incoherent_adjoint_distribution );
@@ -138,11 +147,12 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createSubshellD
 
 // Create a Waller-Hartree incoherent adjoint distribution
 void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createWallerHartreeDistribution(
-          const Data::AdjointElectronPhotonRelaxationDataContainer&
-          raw_adjoint_photoatom_data,
-          const double max_energy,
-          std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
-          incoherent_adjoint_distribution )
+                const Data::AdjointElectronPhotonRelaxationDataContainer&
+                raw_adjoint_photoatom_data,
+                const AdjointKleinNishinaSamplingType adjoint_kn_sampling,
+                const double max_energy,
+                std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
+                incoherent_adjoint_distribution )
 {
   // Make sure the max energy is valid
   testPrecondition( max_energy <= SimulationAdjointPhotonProperties::getAbsoluteMaxAdjointPhotonEnergy() );
@@ -156,9 +166,10 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createWallerHar
 
   // Create the distribution
   incoherent_adjoint_distribution.reset(
-                          new WHIncoherentAdjointPhotonScatteringDistribution(
+                  new WHIncoherentAdjointPhotonScatteringDistribution(
                                                        max_energy,
-                                                       scattering_function ) );
+                                                       scattering_function,
+                                                       adjoint_kn_sampling ) );
 }
 
 // Create the scattering function

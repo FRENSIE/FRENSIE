@@ -944,6 +944,8 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_basic )
   std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
     factory->getManager();
 
+  manager->initialize();
+  
   FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
 
   if( Utility::GlobalMPISession::rank() == 0 )

@@ -35,6 +35,11 @@ PyFrensie_MAKE_TEST(tstUtility.ArrayFromString)
 ADD_TEST(PyFrensie.Utility.ArrayFromString_test tstUtility.ArrayFromString.py)
 SET_PROPERTY(TEST PyFrensie.Utility.ArrayFromString_test PROPERTY LABELS pyfrensie)
 
+# Add the Utility just-in-time initialization unit tests
+PyFrensie_MAKE_TEST(tstUtility.JustInTimeInitialization)
+ADD_TEST(PyFrensie.Utility.JustInTimeInitialization_test tstUtility.JustInTimeInitialization.py)
+SET_PROPERTY(TEST PyFrensie.Utility.JustInTimeInitialization_test PROPERTY LABELS pyfrensie)
+
 IF(HAVE_FRENSIE_MPI)
   # Add the Utility_GlobalMPISession unit tests
   PyFrensie_MAKE_TEST(tstUtility.MPI.GlobalMPISessionInit)

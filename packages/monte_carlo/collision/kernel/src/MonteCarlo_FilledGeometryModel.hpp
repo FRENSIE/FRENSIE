@@ -24,6 +24,7 @@
 #include "MonteCarlo_MaterialDefinitionDatabase.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "Geometry_Model.hpp"
+#include "Utility_JustInTimeInitializer.hpp"
 #include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
@@ -208,6 +209,9 @@ public:
   //! Convert to a shared unfilled model
   operator std::shared_ptr<const Geometry::Model>() const;
 
+  //! Check if the model is initialized
+  bool isInitialized() const;
+
 private:
 
   //! Default constructor
@@ -218,6 +222,9 @@ private:
 
   // Fill the geometry
   void fillGeometry( const bool verbose );
+
+  // Initialize the geometry just-in-time
+  void initializeJustInTime();
 
   // Save the object to an archive
   template<typename Archive>
@@ -231,6 +238,9 @@ private:
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
+
+  // Declare the Utility::JustInTimeInitializer object as a friend
+  friend class Utility::JustInTimeInitializer;
 
   // The default path to the cross section database
   static boost::filesystem::path s_default_database_path;
@@ -250,6 +260,9 @@ private:
 
   // The unfilled model
   std::shared_ptr<const Geometry::Model> d_unfilled_model;
+
+  // Records if the model is filled
+  bool d_filled;
 };
   
 } // end MonteCarlo namespace

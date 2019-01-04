@@ -25,6 +25,7 @@
 #include "Geometry_DagMCNavigator.hpp"
 #include "Geometry_PointLocation.hpp"
 #include "Geometry_AdvancedModel.hpp"
+#include "Utility_JustInTimeInitializer.hpp"
 #include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_Map.hpp"
 #include "Utility_Set.hpp"
@@ -48,8 +49,7 @@ public:
               const bool suppress_dagmc_output = true );
 
   //! Destructor
-  ~DagMCModel()
-  { /* ... */ }
+  ~DagMCModel();
 
   //! Get the model properties
   const DagMCModelProperties& getModelProperties() const;
@@ -113,6 +113,13 @@ public:
   //! Create a raw, heap-allocated navigator
   DagMCNavigator* createNavigatorAdvanced() const override;
 
+  //! Check if the model has been initialized
+  bool isInitialized() const final override;
+
+protected:
+
+  //! Initialize the model just-in-time
+  void initializeJustInTime() final override;
 
 private:
 
@@ -222,6 +229,9 @@ private:
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
+
+  // Declare the Utility::JustInTimeInitializer object as a friend
+  friend class Utility::JustInTimeInitializer;
 
   // Declare the DagMCNavigator as a friend
   friend class DagMCNavigator;

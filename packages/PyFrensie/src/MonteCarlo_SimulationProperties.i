@@ -13,6 +13,7 @@
 #include "MonteCarlo_ParticleModeType.hpp"
 #include "MonteCarlo_IncoherentModelType.hpp"
 #include "MonteCarlo_IncoherentAdjointModelType.hpp"
+#include "MonteCarlo_AdjointKleinNishinaSamplingType.hpp"
 #include "MonteCarlo_TwoDInterpolationType.hpp"
 #include "MonteCarlo_TwoDGridType.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
@@ -92,6 +93,9 @@ using namespace MonteCarlo;
 
 // Import the IncoherentAdjointModelType
 %include "MonteCarlo_IncoherentAdjointModelType.hpp"
+
+// Import the AdjointKleinNishinaSamplingType
+%include "MonteCarlo_AdjointKleinNishinaSamplingType.hpp"
 
 // Import the TwoDInterpolationType
 %include "MonteCarlo_TwoDInterpolationType.hpp"

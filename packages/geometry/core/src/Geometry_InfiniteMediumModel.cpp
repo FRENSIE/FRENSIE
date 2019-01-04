@@ -128,6 +128,16 @@ InfiniteMediumNavigator* InfiniteMediumModel::createNavigatorAdvanced() const
   return new InfiniteMediumNavigator( d_cell );
 }
 
+// Check if the model has been initialized
+bool InfiniteMediumModel::isInitialized() const
+{
+  return true;
+}
+
+// Initialize the model just-in-time
+void InfiniteMediumModel::initializeJustInTime()
+{ /* ... */ }
+  
 } // end Geometry namespace
 
 EXPLICIT_CLASS_SAVE_LOAD_INST( Geometry::InfiniteMediumModel );

@@ -776,12 +776,13 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
       incoherent_reactions;
 
     MonteCarlo::AdjointPhotoatomicReactionNativeFactory::createIncoherentReactions(
-                                       data_container,
-                                       energy_grid,
-                                       grid_searcher,
-                                       incoherent_reactions,
-                                       MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
-                                       critical_line_energies );
+                            data_container,
+                            energy_grid,
+                            grid_searcher,
+                            incoherent_reactions,
+                            MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
+                            MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING,
+                            critical_line_energies );
 
     scattering_reactions[incoherent_reactions[0]->getReactionType()] =
       incoherent_reactions[0];

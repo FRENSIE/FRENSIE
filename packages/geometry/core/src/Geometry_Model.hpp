@@ -164,6 +164,14 @@ public:
           const Navigator::AdvanceCompleteCallback& advance_complete_callback =
           Navigator::AdvanceCompleteCallback() ) const;
 
+  //! Check if the model has been initialized
+  virtual bool isInitialized() const = 0;  
+
+protected:
+
+  //! Initialize the model just-in-time
+  virtual void initializeJustInTime() = 0;
+
 private:
 
   // Save the model to an archive

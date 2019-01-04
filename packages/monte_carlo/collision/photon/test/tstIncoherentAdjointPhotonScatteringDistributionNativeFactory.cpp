@@ -35,10 +35,11 @@ FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistributionNativeFactory,
     distribution;
 
   MonteCarlo::IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDistribution(
-                                       *data_container,
-                                       distribution,
-                                       MonteCarlo::KN_INCOHERENT_ADJOINT_MODEL,
-                                       20.0 );
+                            *data_container,
+                            distribution,
+                            MonteCarlo::KN_INCOHERENT_ADJOINT_MODEL,
+                            MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING,
+                            20.0 );
 
   // Test the distribution
   FRENSIE_CHECK( distribution.get() != NULL );
@@ -81,10 +82,11 @@ FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistributionNativeFactory,
     distribution;
 
   MonteCarlo::IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDistribution(
-                                       *data_container,
-                                       distribution,
-                                       MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
-                                       20.0 );
+                            *data_container,
+                            distribution,
+                            MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
+                            MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING,
+                            20.0 );
   
   // Test the distribution
   FRENSIE_CHECK( distribution.get() != NULL );
@@ -127,11 +129,12 @@ FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistributionNativeFactory,
     distribution;
 
   MonteCarlo::IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDistribution(
-                                  *data_container,
-                                  distribution,
-                                  MonteCarlo::IMPULSE_INCOHERENT_ADJOINT_MODEL,
-                                  20.0,
-                                  Data::K_SUBSHELL );
+                            *data_container,
+                            distribution,
+                            MonteCarlo::IMPULSE_INCOHERENT_ADJOINT_MODEL,
+                            MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING,
+                            20.0,
+                            Data::K_SUBSHELL );
   
   // Test the distribution
   FRENSIE_CHECK( distribution.get() != NULL );
@@ -203,11 +206,12 @@ FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistributionNativeFactory,
     distribution;
 
   MonteCarlo::IncoherentAdjointPhotonScatteringDistributionNativeFactory::createSubshellDistribution(
-                                  *data_container,
-                                  distribution,
-                                  MonteCarlo::IMPULSE_INCOHERENT_ADJOINT_MODEL,
-                                  20.0,
-                                  Data::K_SUBSHELL );
+                            *data_container,
+                            distribution,
+                            MonteCarlo::IMPULSE_INCOHERENT_ADJOINT_MODEL,
+                            MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING,
+                            20.0,
+                            Data::K_SUBSHELL );
   
   // Test the distribution
   FRENSIE_CHECK( distribution.get() != NULL );
@@ -282,11 +286,12 @@ FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistributionNativeFactory,
     distribution;
 
   MonteCarlo::IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDistribution(
-                               *data_container,
-                               distribution,
-                               MonteCarlo::DB_IMPULSE_INCOHERENT_ADJOINT_MODEL,
-                               20.0,
-                               Data::K_SUBSHELL );
+                            *data_container,
+                            distribution,
+                            MonteCarlo::DB_IMPULSE_INCOHERENT_ADJOINT_MODEL,
+                            MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING,
+                            20.0,
+                            Data::K_SUBSHELL );
   
   // Test the distribution
   FRENSIE_CHECK( distribution.get() != NULL );
@@ -359,11 +364,12 @@ FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistributionNativeFactory,
     distribution;
 
   MonteCarlo::IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDistribution(
-                               *data_container,
-                               distribution,
-                               MonteCarlo::DB_IMPULSE_INCOHERENT_ADJOINT_MODEL,
-                               20.0,
-                               Data::K_SUBSHELL );
+                            *data_container,
+                            distribution,
+                            MonteCarlo::DB_IMPULSE_INCOHERENT_ADJOINT_MODEL,
+                            MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING,
+                            20.0,
+                            Data::K_SUBSHELL );
   
   // Test the distribution
   FRENSIE_CHECK( distribution.get() != NULL );
@@ -436,19 +442,21 @@ FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistributionNativeFactory,
     distribution;
 
   FRENSIE_CHECK_THROW( MonteCarlo::IncoherentAdjointPhotonScatteringDistributionNativeFactory::createSubshellDistribution(
-                               *data_container,
-                               distribution,
-                               MonteCarlo::KN_INCOHERENT_ADJOINT_MODEL,
-                               20.0,
-                               Data::K_SUBSHELL ),
+                            *data_container,
+                            distribution,
+                            MonteCarlo::KN_INCOHERENT_ADJOINT_MODEL,
+                            MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING,
+                            20.0,
+                            Data::K_SUBSHELL ),
                        std::logic_error );
 
   FRENSIE_CHECK_THROW( MonteCarlo::IncoherentAdjointPhotonScatteringDistributionNativeFactory::createSubshellDistribution(
-                               *data_container,
-                               distribution,
-                               MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
-                               20.0,
-                               Data::K_SUBSHELL ),
+                            *data_container,
+                            distribution,
+                            MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
+                            MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING,
+                            20.0,
+                            Data::K_SUBSHELL ),
                        std::logic_error );
 
 }

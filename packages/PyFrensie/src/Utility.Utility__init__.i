@@ -56,6 +56,7 @@ _Utility__init__.initializeSynchronousLogs()
 #include "numpy_include.h"
 
 #include "PyFrensie_PythonTypeTraits.hpp"
+#include "Utility_JustInTimeInitializer.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_Vector.hpp"
@@ -198,6 +199,24 @@ instead of calling 'Utility.Prng.RandomNumberGenerator.createStreams()'.
   {
     return PyFrensie::convertToPython(
                     Utility::fromString<std::vector<double> >( list_string ) );
+  }
+
+  //! Activate just-in-time initialization
+  void activateJustInTimeInitialization()
+  {
+    Utility::JustInTimeInitializer::getInstance().activate();
+  }
+
+  //! Deactivate just-in-time initialization
+  void deactivateJustInTimeInitialization()
+  {
+    Utility::JustInTimeInitializer::getInstance().deactivate();
+  }
+
+  //! Check if just-in-time initialization is active
+  bool isJustInTimeInitializationActive()
+  {
+    return Utility::JustInTimeInitializer::getInstance().isActive();
   }
 %}
 

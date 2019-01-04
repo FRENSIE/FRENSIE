@@ -69,6 +69,7 @@ void AdjointPhotoatomicReactionNativeFactory::createIncoherentReactions(
     std::vector<std::shared_ptr<const AdjointPhotoatomicReaction> >&
     incoherent_adjoint_reactions,
     const IncoherentAdjointModelType incoherent_adjoint_model,
+    const AdjointKleinNishinaSamplingType adjoint_kn_sampling,
     const std::shared_ptr<const std::vector<double> >& critical_line_energies )
 {
   // Make sure the energy grid is valid
@@ -107,6 +108,7 @@ void AdjointPhotoatomicReactionNativeFactory::createIncoherentReactions(
                                                     raw_adjoint_photoatom_data,
                                                     distribution,
                                                     incoherent_adjoint_model,
+                                                    adjoint_kn_sampling,
                                                     energy_grid->back() );
 
     // Create the incoherent adjoint reaction
@@ -162,6 +164,7 @@ void AdjointPhotoatomicReactionNativeFactory::createIncoherentReactions(
                                                     raw_adjoint_photoatom_data,
                                                     distribution,
                                                     incoherent_adjoint_model,
+                                                    adjoint_kn_sampling,
                                                     energy_grid->back(),
                                                     *subshell_it );
 
