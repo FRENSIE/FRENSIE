@@ -15,8 +15,9 @@ namespace MonteCarlo{
 
 // Constructor
 KleinNishinaAdjointPhotonScatteringDistribution::KleinNishinaAdjointPhotonScatteringDistribution(
-						      const double max_energy )
-  : IncoherentAdjointPhotonScatteringDistribution( max_energy )
+                      const double max_energy,
+                      const AdjointKleinNishinaSamplingType sampling_type )
+  : IncoherentAdjointPhotonScatteringDistribution( max_energy, sampling_type )
 { /* ... */ }
 
 // Evaluate the distribution

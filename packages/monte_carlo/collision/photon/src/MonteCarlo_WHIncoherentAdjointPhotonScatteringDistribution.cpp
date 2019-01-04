@@ -19,9 +19,10 @@ namespace MonteCarlo{
 // Constructor
 WHIncoherentAdjointPhotonScatteringDistribution::WHIncoherentAdjointPhotonScatteringDistribution(
      const double max_energy,
-     const std::shared_ptr<const ScatteringFunction>& scattering_function )
-  : IncoherentAdjointPhotonScatteringDistribution( max_energy ),
-    d_scattering_function( scattering_function )
+     const std::shared_ptr<const ScatteringFunction>& scattering_function,
+     const AdjointKleinNishinaSamplingType sampling_type )
+  : IncoherentAdjointPhotonScatteringDistribution( max_energy, sampling_type ),
+    d_scattering_function( scattering_function )    
 {
   // Make sure the scattering function is valid
   testPrecondition( scattering_function.get() );

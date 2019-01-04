@@ -260,10 +260,11 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     scattering_distribution;
 
   MonteCarlo::IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDistribution(
-                                       data_container,
-                                       scattering_distribution,
-                                       MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
-                                       20.0 );
+                            data_container,
+                            scattering_distribution,
+                            MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
+                            MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING,
+                            20.0 );
 
   // Create the reaction
   std::shared_ptr<MonteCarlo::IncoherentAdjointPhotoatomicReaction<Utility::LinLin,false> > complete_reaction(

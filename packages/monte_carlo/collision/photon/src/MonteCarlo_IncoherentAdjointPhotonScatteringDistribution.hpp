@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_AdjointKleinNishinaSamplingType.hpp"
 #include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_Vector.hpp"
 
@@ -34,7 +35,10 @@ public:
   typedef AdjointPhotonScatteringDistribution::Counter Counter;
 
   //! Constructor
-  IncoherentAdjointPhotonScatteringDistribution( const double max_energy );
+  IncoherentAdjointPhotonScatteringDistribution(
+                          const double max_energy,
+                          const AdjointKleinNishinaSamplingType sampling_type =
+                          TWO_BRANCH_REJECTION_ADJOINT_KN_SAMPLING );
 
   //! Destructor
   virtual ~IncoherentAdjointPhotonScatteringDistribution()
@@ -105,10 +109,10 @@ protected:
 
   //! Basic sampling implementation
   void sampleAndRecordTrialsAdjointKleinNishina(
-					    const double incoming_energy,
-					    double& outgoing_energy,
-					    double& scattering_angle_cosine,
-					    Counter& trials ) const;
+                                               const double incoming_energy,
+                                               double& outgoing_energy,
+					       double& scattering_angle_cosine,
+                                               Counter& trials ) const;
 
   //! Check if an energy is below the scattering window
   virtual bool isEnergyBelowScatteringWindow(
@@ -141,6 +145,20 @@ protected:
 
 private:
 
+  //! Basic sampling implementation
+  void sampleAndRecordTrialsAdjointKleinNishinaTwoBranch(
+					       const double incoming_energy,
+                                               double& outgoing_energy,
+					       double& scattering_angle_cosine,
+                                               Counter& trials ) const;
+
+  //! Basic sampling implementation
+  void sampleAndRecordTrialsAdjointKleinNishinaThreeBranch(
+					       const double incoming_energy,
+                                               double& outgoing_energy,
+					       double& scattering_angle_cosine,
+                                               Counter& trials ) const;
+
   // The maximum energy
   double d_max_energy;
 
@@ -149,6 +167,9 @@ private:
 
   // The integrated cross section evaluator
   std::function<double(double,double,double)> d_integrated_cs_evaluator;
+
+  // The klein-nishina sampling method
+  std::function<void(const double,double&,double&,Counter&)> d_klein_nishina_sampling_method;
 };
 
 } // end MonteCarlo namespace

@@ -27,6 +27,7 @@ SimulationAdjointPhotonProperties::SimulationAdjointPhotonProperties()
     d_max_adjoint_photon_energy( s_absolute_max_adjoint_photon_energy ),
     d_num_adjoint_photon_hash_grid_bins( 500 ),
     d_incoherent_adjoint_model_type( DB_IMPULSE_INCOHERENT_ADJOINT_MODEL ),
+    d_adjoint_kn_sampling_type( TWO_BRANCH_REJECTION_ADJOINT_KN_SAMPLING ),
     d_critical_line_energies(),
     d_threshold_weight( 0.0 ),
     d_survival_weight()
@@ -125,6 +126,19 @@ void SimulationAdjointPhotonProperties::setIncoherentAdjointModelType(
 IncoherentAdjointModelType SimulationAdjointPhotonProperties::getIncoherentAdjointModelType() const
 {
   return d_incoherent_adjoint_model_type;
+}
+
+// Set the adjoint Klein-Nishina sampling type
+AdjointKleinNishinaSamplingType SimulationAdjointPhotonProperties::setAdjointKleinNishinaSamplingType(
+                          const AdjointKleinNishinaSamplingType sampling_type )
+{
+  d_adjoint_kn_sampling_type = sampling_type;
+}
+
+// Return the adjoint Klein-Nishina sampling type
+AdjointKleinNishinaSamplingType SimulationAdjointPhotonProperties::getAdjointKleinNishinaSamplingType() const
+{
+  return d_adjoint_kn_sampling_type;
 }
 
 // Set the critical line energies
