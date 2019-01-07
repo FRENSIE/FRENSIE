@@ -108,13 +108,29 @@ using namespace MonteCarlo;
 %feature("autodoc", "1");
 
 // Add a few general typemaps
+%typemap(in,numinputs=0) double& outgoing_energy (double temp) "$1 = &temp;"
+
+%typemap(argout) double& outgoing_energy {
+  %append_output(PyFrensie::convertToPython( *$1 ));
+}
+
+%typemap(in,numinputs=0) double& scattering_angle_cosine (double temp) "$1 = &temp;"
+
+%typemap(argout) double& scattering_angle_cosine {
+  %append_output(PyFrensie::convertToPython( *$1 ));
+}
+
 %apply Utility::DistributionTraits::Counter& INOUT { Utility::DistributionTraits::Counter& trials };
-%apply double OUTPUT { double& outgoing_energy };
-%apply double OUTPUT { double& scattering_angle_cosine };
-%apply MonteCarlo::PhotonState& INOUT { MonteCarlo::PhotonState& photon };
-%apply MonteCarlo::AdjointPhotonState& INOUT { MonteCarlo::AdjointPhotonState& photon };
-%apply MonteCarlo::ParticleBank& INOUT { MonteCarlo::ParticleBank& bank };
-%apply Data::SubshellType& OUTPUT { Data::SubshellType& shell_of_interaction };
+
+%typemap(in,numinputs=0) Data::SubshellType& shell_of_interaction (Data::SubshellType temp) "$1 = &temp;"
+
+%typemap(argout) Data::SubshellType& shell_of_interaction {
+  %append_output(PyFrensie::convertToPython( static_cast<int>( *$1 ) ));
+}
+
+// %apply MonteCarlo::PhotonState& INOUT { MonteCarlo::PhotonState& photon };
+// %apply MonteCarlo::AdjointPhotonState& INOUT { MonteCarlo::AdjointPhotonState& photon };
+// %apply MonteCarlo::ParticleBank& INOUT { MonteCarlo::ParticleBank& bank };
 
 //---------------------------------------------------------------------------//
 // Scattering Distribution Support
