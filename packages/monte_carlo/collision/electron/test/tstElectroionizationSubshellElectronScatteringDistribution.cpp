@@ -133,7 +133,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.978639971990510892e-04, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluate( 1e5, 1.752970e2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.449719317907309385e-11, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.449719318914194985e-11, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -211,10 +211,10 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.978639322085223699e-04, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluatePDF( 1e5, 1.752970e2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.449717756321954802e-11, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.449717757328819723e-11, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluatePDF( 1e5, 5e4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.248089584449132797e-15, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.248089584640566462e-15, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

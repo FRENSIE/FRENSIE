@@ -224,6 +224,94 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        1e-15 );
 }
 
+//---------------------------------------------------------------------------//
+// Check that the bremsstrahlung_evaluation_tolerance can be set
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setBremsstrahlungEvaluationTolerance )
+{
+  epr_data_container.setBremsstrahlungEvaluationTolerance( 1e-3 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getBremsstrahlungEvaluationTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the bremsstrahlung_convergence_tolerance can be set
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setBremsstrahlungGridConvergenceTolerance )
+{
+  epr_data_container.setBremsstrahlungGridConvergenceTolerance( 1e-3 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getBremsstrahlungGridConvergenceTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the bremsstrahlung_absolute_diff_tol can be set
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setBremsstrahlungAbsoluteDifferenceTolerance )
+{
+  epr_data_container.setBremsstrahlungAbsoluteDifferenceTolerance( 1e-3 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getBremsstrahlungAbsoluteDifferenceTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the bremsstrahlung_distance_tol can be set
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setBremsstrahlungDistanceTolerance )
+{
+  epr_data_container.setBremsstrahlungDistanceTolerance( 1e-3 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getBremsstrahlungDistanceTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electroionization_evaluation_tolerance can be set
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setElectroionizationEvaluationTolerance )
+{
+  epr_data_container.setElectroionizationEvaluationTolerance( 1e-3 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getElectroionizationEvaluationTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electroionization_convergence_tolerance can be set
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setElectroionizationGridConvergenceTolerance )
+{
+  epr_data_container.setElectroionizationGridConvergenceTolerance( 1e-3 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getElectroionizationGridConvergenceTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electroionization_absolute_diff_tol can be set
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setElectroionizationAbsoluteDifferenceTolerance )
+{
+  epr_data_container.setElectroionizationAbsoluteDifferenceTolerance( 1e-3 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getElectroionizationAbsoluteDifferenceTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electroionization_distance_tol can be set
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setElectroionizationDistanceTolerance )
+{
+  epr_data_container.setElectroionizationDistanceTolerance( 1e-3 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getElectroionizationDistanceTolerance(),
+                       1e-3 );
+}
+
 // Relaxation Tests
 
 //---------------------------------------------------------------------------//

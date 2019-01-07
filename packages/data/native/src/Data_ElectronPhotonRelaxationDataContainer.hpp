@@ -113,6 +113,30 @@ public:
   //! Return the electron union energy grid distance tolerance
   double getElectronGridDistanceTolerance() const;
 
+  //! Return the bremsstrahlung cross section evaluation tolerance
+  double getBremsstrahlungEvaluationTolerance() const;
+
+  //! Return the bremsstrahlung grid convergence tolerance
+  double getBremsstrahlungGridConvergenceTolerance() const;
+
+  //! Return the bremsstrahlung absolute difference tolerance
+  double getBremsstrahlungAbsoluteDifferenceTolerance() const;
+
+  //! Return the bremsstrahlung distance tolerance
+  double getBremsstrahlungDistanceTolerance() const;
+
+  //! Return the electroionization cross section evaluation tolerance
+  double getElectroionizationEvaluationTolerance() const;
+
+  //! Return the electroionization grid convergence tolerance
+  double getElectroionizationGridConvergenceTolerance() const;
+
+  //! Return the electroionization absolute difference tolerance
+  double getElectroionizationAbsoluteDifferenceTolerance() const;
+
+  //! Return the electroionization distance tolerance
+  double getElectroionizationDistanceTolerance() const;
+
 //---------------------------------------------------------------------------//
 // GET RELAXATION DATA
 //---------------------------------------------------------------------------//
@@ -328,10 +352,18 @@ public:
   //! Return the electroionization recoil interpolation policy
   const std::string& getElectroionizationRecoilInterpPolicy() const;
 
+  //! Return the electroionization recoil energy for a subshell
+  const std::map<double,std::vector<double> >& getElectroionizationRecoilEnergy(
+                                const unsigned subshell ) const;
+
   //! Return the electroionization recoil energy for a subshell and incoming energy
   const std::vector<double>& getElectroionizationRecoilEnergy(
                                 const unsigned subshell,
                                 const double incoming_energy ) const;
+
+  //! Return the electroionization recoil energy pdf for a subshell
+  const std::map<double,std::vector<double> >& getElectroionizationRecoilPDF(
+                                const unsigned subshell ) const;
 
   //! Return the electroionization recoil energy pdf for a subshell and incoming energy
   const std::vector<double>& getElectroionizationRecoilPDF(
@@ -344,9 +376,15 @@ public:
   //! Return the bremsstrahlung photon interpolation policy
   const std::string& getBremsstrahlungPhotonInterpPolicy() const;
 
+  //! Return the bremsstrahlung photon energy
+  const std::map<double,std::vector<double> >& getBremsstrahlungPhotonEnergy() const;
+
   //! Return the bremsstrahlung photon energy for an incoming energy
   const std::vector<double>& getBremsstrahlungPhotonEnergy(
                                 const double incoming_energy ) const;
+
+  //! Return the bremsstrahlung photon energy pdf
+  const std::map<double,std::vector<double> >& getBremsstrahlungPhotonPDF() const;
 
   //! Return the bremsstrahlung photon energy pdf for an incoming energy
   const std::vector<double>& getBremsstrahlungPhotonPDF(
@@ -489,6 +527,36 @@ protected:
 
   //! Set the electron union energy grid distance tolerance
   void setElectronGridDistanceTolerance( const double grid_distance_tol );
+
+  //! Set the bremsstrahlung cross section evaluation tolerance
+  void setBremsstrahlungEvaluationTolerance(
+    const double evaluation_tolerance );
+
+  //! Set the bremsstrahlung grid convergence tolerance
+  void setBremsstrahlungGridConvergenceTolerance(
+    const double convergence_tolerance );
+
+  //! Set the bremsstrahlung absolute difference tolerance
+  void setBremsstrahlungAbsoluteDifferenceTolerance(
+    const double absolute_diff_tol );
+
+  //! Set the bremsstrahlung distance tolerance
+  void setBremsstrahlungDistanceTolerance( const double distance_tol );
+
+  //! Set the electroionization cross section evaluation tolerance
+  void setElectroionizationEvaluationTolerance(
+    const double evaluation_tol );
+
+  //! Set the electroionization grid convergence tolerance
+  void setElectroionizationGridConvergenceTolerance(
+    const double convergence_tol );
+
+  //! Set the electroionization absolute difference tolerance
+  void setElectroionizationAbsoluteDifferenceTolerance(
+    const double absolute_diff_tol );
+
+  //! Set the electroionization distance tolerance
+  void setElectroionizationDistanceTolerance( const double distance_tol );
 
 //---------------------------------------------------------------------------//
 // SET RELAXATION DATA
@@ -931,6 +999,30 @@ private:
 
   // The electron union energy grid distance tolerance
   double d_electron_grid_distance_tol;
+
+  // The bremsstrahlung cross section evaluation tolerance
+  double d_bremsstrahlung_evaluation_tolerance;
+
+  // The bremsstrahlung grid convergence tolerance
+  double d_bremsstrahlung_convergence_tolerance;
+
+  // The bremsstrahlung absolute difference tolerance
+  double d_bremsstrahlung_absolute_diff_tol;
+
+  // The bremsstrahlung distance tolerance
+  double d_bremsstrahlung_distance_tol;
+
+  // The electroionization cross section evaluation tolerance
+  double d_electroionization_evaluation_tol;
+
+  // The electroionization grid convergence tolerance
+  double d_electroionization_convergence_tol;
+
+  // The electroionization absolute difference tolerance
+  double d_electroionization_absolute_diff_tol;
+
+  // The electroionization distance tolerance
+  double d_electroionization_distance_tol;
 
 //---------------------------------------------------------------------------//
 // RELAXATION DATA

@@ -332,8 +332,6 @@ double AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionization
   return d_adjoint_electroionization_distance_tol;
 }
 
-
-
 //---------------------------------------------------------------------------//
 // GET RELAXATION DATA
 //---------------------------------------------------------------------------//

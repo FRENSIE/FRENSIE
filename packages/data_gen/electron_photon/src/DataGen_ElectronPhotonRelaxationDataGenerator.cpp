@@ -26,6 +26,7 @@ ElectronPhotonRelaxationDataGenerator::ElectronPhotonRelaxationDataGenerator(
     d_default_electron_grid_generator(
            new Utility::GridGenerator<Utility::LogLog>( 1e-3, 1e-13, 1e-13 ) ),
     d_electroionization_ratio_mode( false ),
+    d_refine_secondary_electron_grid_mode( false ),
     d_two_d_interp( MonteCarlo::LOGLOGLOG_INTERPOLATION ),
     d_two_d_grid( MonteCarlo::UNIT_BASE_CORRELATED_GRID )
 {
@@ -65,6 +66,16 @@ ElectronPhotonRelaxationDataGenerator::ElectronPhotonRelaxationDataGenerator(
   d_data_container->setElectronTwoDInterpPolicy( Utility::toString( d_two_d_interp ) );
   d_data_container->setElectronTwoDGridPolicy( Utility::toString( d_two_d_grid ) );
 
+  d_data_container->setBremsstrahlungEvaluationTolerance( 1e-7 );
+  d_data_container->setBremsstrahlungGridConvergenceTolerance( d_default_electron_grid_generator->getConvergenceTolerance() );
+  d_data_container->setBremsstrahlungAbsoluteDifferenceTolerance( 1e-20 );
+  d_data_container->setBremsstrahlungDistanceTolerance( d_default_electron_grid_generator->getDistanceTolerance() );
+
+  d_data_container->setElectroionizationEvaluationTolerance( 1e-7 );
+  d_data_container->setElectroionizationGridConvergenceTolerance( d_default_electron_grid_generator->getConvergenceTolerance() );
+  d_data_container->setElectroionizationAbsoluteDifferenceTolerance( 1e-20 );
+  d_data_container->setElectroionizationDistanceTolerance( d_default_electron_grid_generator->getDistanceTolerance() );
+
   // Have the default grid generators throw exception on dirty convergence
   d_default_photon_grid_generator->throwExceptionOnDirtyConvergence();
   d_default_electron_grid_generator->throwExceptionOnDirtyConvergence();
@@ -75,6 +86,7 @@ ElectronPhotonRelaxationDataGenerator::ElectronPhotonRelaxationDataGenerator(
                            const boost::filesystem::path& file_name_with_path )
   : d_data_container( new Data::ElectronPhotonRelaxationVolatileDataContainer( file_name_with_path ) ),
     d_electroionization_ratio_mode( d_data_container->isElectroionizationInRatioForm() ),
+    d_refine_secondary_electron_grid_mode( false ),
     d_default_photon_grid_generator( new Utility::GridGenerator<Utility::LinLin>(
                    d_data_container->getPhotonGridConvergenceTolerance(),
                    d_data_container->getPhotonGridAbsoluteDifferenceTolerance(),
@@ -399,6 +411,160 @@ void ElectronPhotonRelaxationDataGenerator::setNumberOfMomentPreservingAngles(
 double ElectronPhotonRelaxationDataGenerator::getNumberOfMomentPreservingAngles() const
 {
   return d_data_container->getNumberOfMomentPreservingAngles();
+}
+
+// Set refine secondary electron grids mode on (Default off)
+void ElectronPhotonRelaxationDataGenerator::setRefineSecondaryElectronGridsModeOn()
+{
+  d_refine_secondary_electron_grid_mode = true;
+}
+
+// Set refine secondary electron grids mode off (Default off)
+void ElectronPhotonRelaxationDataGenerator::setRefineSecondaryElectronGridsModeOff()
+{
+  d_refine_secondary_electron_grid_mode = false;
+}
+
+// Return if the refine secondary electron grids mode is on (default off)
+bool ElectronPhotonRelaxationDataGenerator::isRefineSecondaryElectronGridsModeOn()
+{
+  return d_refine_secondary_electron_grid_mode;
+}
+
+// Set the evaluation tolerance for the bremsstrahlung cross section
+void ElectronPhotonRelaxationDataGenerator::setBremsstrahlungEvaluationTolerance(
+                                            const double evaluation_tolerance )
+{
+  // Make sure the evaluation tolerance is valid
+  testPrecondition( evaluation_tolerance > 0.0 );
+  testPrecondition( evaluation_tolerance < 1.0 );
+
+  d_data_container->setBremsstrahlungEvaluationTolerance( evaluation_tolerance );
+}
+
+// Get the evaluation tolerance for the bremsstrahlung cross section
+double ElectronPhotonRelaxationDataGenerator::getBremsstrahlungEvaluationTolerance() const
+{
+  return d_data_container->getBremsstrahlungEvaluationTolerance();
+}
+
+// Set the bremsstrahlung grid convergence tolerance
+void ElectronPhotonRelaxationDataGenerator::setBremsstrahlungGridConvergenceTolerance(
+                                                 const double convergence_tol )
+{
+  // Make sure the convergence tolerance is valid
+  testPrecondition( convergence_tol <= 1.0 );
+  testPrecondition( convergence_tol > 0.0 );
+
+  d_data_container->setBremsstrahlungGridConvergenceTolerance( convergence_tol );
+}
+
+// Return the bremsstrahlung grid convergence tolerance
+double ElectronPhotonRelaxationDataGenerator::getBremsstrahlungGridConvergenceTolerance() const
+{
+  return d_data_container->getBremsstrahlungGridConvergenceTolerance();
+}
+
+// Set the bremsstrahlung absolute difference tolerance
+void ElectronPhotonRelaxationDataGenerator::setBremsstrahlungAbsoluteDifferenceTolerance(
+                                               const double absolute_diff_tol )
+{
+  // Make sure the absolute difference tolerance is valid
+  testPrecondition( absolute_diff_tol <= 1.0 );
+  testPrecondition( absolute_diff_tol >= 0.0 );
+
+  d_data_container->setBremsstrahlungAbsoluteDifferenceTolerance( absolute_diff_tol );
+}
+
+// Get the bremsstrahlung absolute difference tolerance
+double ElectronPhotonRelaxationDataGenerator::getBremsstrahlungAbsoluteDifferenceTolerance() const
+{
+  return d_data_container->getBremsstrahlungAbsoluteDifferenceTolerance();
+}
+
+// Set the bremsstrahlung distance tolerance
+void ElectronPhotonRelaxationDataGenerator::setBremsstrahlungDistanceTolerance(
+                                                    const double distance_tol )
+{
+  // Make sure the distance tolerance is valid
+  testPrecondition( distance_tol <= 1.0 );
+  testPrecondition( distance_tol >= 0.0 );
+
+  d_data_container->setBremsstrahlungDistanceTolerance( distance_tol );
+}
+
+// Get the bremsstrahlung distance tolerance
+double ElectronPhotonRelaxationDataGenerator::getBremsstrahlungDistanceTolerance() const
+{
+  return d_data_container->getBremsstrahlungDistanceTolerance();
+}
+
+// Set the evaluation tolerance for the electroionization cross section
+void ElectronPhotonRelaxationDataGenerator::setElectroionizationEvaluationTolerance(
+                                            const double evaluation_tolerance )
+{
+  // Make sure the evaluation tolerance is valid
+  testPrecondition( evaluation_tolerance > 0.0 );
+  testPrecondition( evaluation_tolerance < 1.0 );
+
+  d_data_container->setElectroionizationEvaluationTolerance( evaluation_tolerance );
+}
+
+// Get the evaluation tolerance for the electroionization cross section
+double ElectronPhotonRelaxationDataGenerator::getElectroionizationEvaluationTolerance() const
+{
+  return d_data_container->getElectroionizationEvaluationTolerance();
+}
+
+// Set the electroionization grid convergence tolerance
+void ElectronPhotonRelaxationDataGenerator::setElectroionizationGridConvergenceTolerance(
+                                                 const double convergence_tol )
+{
+  // Make sure the convergence tolerance is valid
+  testPrecondition( convergence_tol <= 1.0 );
+  testPrecondition( convergence_tol > 0.0 );
+
+  d_data_container->setElectroionizationGridConvergenceTolerance( convergence_tol );
+}
+
+// Return the electroionization grid convergence tolerance
+double ElectronPhotonRelaxationDataGenerator::getElectroionizationGridConvergenceTolerance() const
+{
+  return d_data_container->getElectroionizationGridConvergenceTolerance();
+}
+
+// Set the electroionization absolute difference tolerance
+void ElectronPhotonRelaxationDataGenerator::setElectroionizationAbsoluteDifferenceTolerance(
+                                               const double absolute_diff_tol )
+{
+  // Make sure the absolute difference tolerance is valid
+  testPrecondition( absolute_diff_tol <= 1.0 );
+  testPrecondition( absolute_diff_tol >= 0.0 );
+
+  d_data_container->setElectroionizationAbsoluteDifferenceTolerance( absolute_diff_tol );
+}
+
+// Get the electroionization absolute difference tolerance
+double ElectronPhotonRelaxationDataGenerator::getElectroionizationAbsoluteDifferenceTolerance() const
+{
+  return d_data_container->getElectroionizationAbsoluteDifferenceTolerance();
+}
+
+// Set the electroionization distance tolerance
+void ElectronPhotonRelaxationDataGenerator::setElectroionizationDistanceTolerance(
+                                                    const double distance_tol )
+{
+  // Make sure the distance tolerance is valid
+  testPrecondition( distance_tol <= 1.0 );
+  testPrecondition( distance_tol >= 0.0 );
+
+  d_data_container->setElectroionizationDistanceTolerance( distance_tol );
+}
+
+// Get the electroionization distance tolerance
+double ElectronPhotonRelaxationDataGenerator::getElectroionizationDistanceTolerance() const
+{
+  return d_data_container->getElectroionizationDistanceTolerance();
 }
 
 // Set electroionization to be stored as a ratio mode on (Default off)

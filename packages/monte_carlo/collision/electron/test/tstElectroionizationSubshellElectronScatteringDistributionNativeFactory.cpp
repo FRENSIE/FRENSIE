@@ -23,7 +23,7 @@
 std::unique_ptr<Data::ElectronPhotonRelaxationDataContainer> data_container;
 
 std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
-  native_distribution, direct_native_distribution;
+  native_distribution, correlated_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -52,19 +52,19 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
   FRENSIE_CHECK_SMALL( pdf, 1e-12 );
 
   pdf = native_distribution->evaluatePDF( 8.829e-2 + 3e-8, 1.0001e-08 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.0003754845021108e+08, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 6.309062395972730964e+07, 1e-6 );
 
   pdf = native_distribution->evaluatePDF( 9.12175e-2, 4.275e-4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 6.7244825069878232e+02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 6.892154402763227381e+02, 1e-12 );
 
   pdf = native_distribution->evaluatePDF( 1e-1, 1e-2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.7348902024846652e+02, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.229192404740651341e+02, 1e-6 );
 
   pdf = native_distribution->evaluatePDF( 1.0, 1.33136131511529e-1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.5701193026053988, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.596981832839621696, 1e-12 );
 
   pdf = native_distribution->evaluatePDF( 1.0, 9.71630E-02 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.38239950812861E+00, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.38239950812861, 1e-12 );
 
   pdf = native_distribution->evaluatePDF( 1.0e5, 1.752970E+02 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 4.98650620153625E-07, 1e-12 );
@@ -137,12 +137,12 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
                                                   knock_on_angle_cosine );
 
   // Test original electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 1.1086341090801404e-02, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 9.9896875190139731e-06, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 1.108646994216100704e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 9.989919733568915780e-06, 1e-12 );
 
   // Test knock-on electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 3.5620169782643124e-04, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 1.0312480982149415e-08, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 3.521684211997691072e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 1.008026642720748622e-08, 1e-12 );
 
   // sample the electron
   native_distribution->samplePrimaryAndSecondary( incoming_energy,
@@ -177,7 +177,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
          scattering_angle_cosine, knock_on_angle_cosine;
 
   // sample the electron
-  direct_native_distribution->samplePrimaryAndSecondary( incoming_energy,
+  correlated_distribution->samplePrimaryAndSecondary( incoming_energy,
                                                         outgoing_energy,
                                                         knock_on_energy,
                                                         scattering_angle_cosine,
@@ -192,7 +192,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
   FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 9.9920072216264089e-16, 1e-12 );
 
   // sample the electron
-  direct_native_distribution->samplePrimaryAndSecondary( incoming_energy,
+  correlated_distribution->samplePrimaryAndSecondary( incoming_energy,
                                                         outgoing_energy,
                                                         knock_on_energy,
                                                         scattering_angle_cosine,
@@ -290,7 +290,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
     electron.setDirection( 0.0, 0.0, 1.0 );
 
     // Analytically scatter electron
-    direct_native_distribution->scatterElectron( electron,
+    correlated_distribution->scatterElectron( electron,
                                                 bank,
                                                 shell_of_interaction );
 
@@ -307,7 +307,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
     electron.setDirection( 0.0, 0.0, 1.0 );
 
     // Analytically scatter electron
-    direct_native_distribution->scatterElectron( electron,
+    correlated_distribution->scatterElectron( electron,
                                                 bank,
                                                 shell_of_interaction );
 
@@ -371,7 +371,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellPositronScatteringDistributionNative
     positron.setDirection( 0.0, 0.0, 1.0 );
 
     // Analytically scatter positron
-    direct_native_distribution->scatterPositron( positron,
+    correlated_distribution->scatterPositron( positron,
                                                  bank,
                                                  shell_of_interaction );
 
@@ -389,7 +389,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellPositronScatteringDistributionNative
     positron.setDirection( 0.0, 0.0, 1.0 );
 
     // Analytically scatter positron
-    direct_native_distribution->scatterPositron( positron,
+    correlated_distribution->scatterPositron( positron,
                                                  bank,
                                                  shell_of_interaction );
 
@@ -429,7 +429,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   std::set<unsigned> subshells = data_container->getSubshells();
 
   // Create the electroionization subshell distribution
-  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
+  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
     *data_container,
     *subshells.begin(),
     binding_energy,
@@ -440,7 +440,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     *data_container,
     *subshells.begin(),
     binding_energy,
-    direct_native_distribution );
+    correlated_distribution );
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

@@ -33,21 +33,40 @@ public:
     const double binding_energy,
     std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
       electroionization_subshell_distribution,
-    const double evaluation_tol = 1e-7 );
+    const double evaluation_tol = 1e-7,
+    const unsigned max_number_of_iterations = 500,
+    const bool renormalize_max_knock_on_energy = false );
+
+  //! Create a electroionization subshell distribution
+  template <typename TwoDInterpPolicy = Utility::LogLogLog,
+            template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
+  static void createElectroionizationSubshellDistribution(
+      const std::map<double,std::vector<double> >& recoil_energy_data,
+      const std::map<double,std::vector<double> >& recoil_pdf_data,
+      const std::vector<double> energy_grid,
+      const double binding_energy,
+      std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
+        electroionization_subshell_distribution,
+      const double evaluation_tol = 1e-7,
+      const unsigned max_number_of_iterations = 500,
+      const bool in_ratio_form = false,
+      const bool renormalize_max_knock_on_energy = false );
 
 //protected:
-
 
   //! Create the electroionization subshell distribution function
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
             template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
   static void createSubshellDistribution(
-    const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const std::map<double,std::vector<double> >& recoil_energy_data,
+    const std::map<double,std::vector<double> >& recoil_pdf_data,
     const std::vector<double> energy_grid,
-    const unsigned subshell,
+    const double binding_energy,
     std::shared_ptr<const Utility::FullyTabularBasicBivariateDistribution>&
-      subshell_distribution,
-    const double evaluation_tol );
+        subshell_distribution,
+    const double evaluation_tol,
+    const unsigned max_number_of_iterations,
+    const bool renormalize_max_knock_on_energy = false );
 };
 
 } // end MonteCarlo namespace

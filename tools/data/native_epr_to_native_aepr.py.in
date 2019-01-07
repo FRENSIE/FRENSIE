@@ -148,8 +148,13 @@ def setGeneratorOptions( generator,
     if not tabular_evaluation_tol is None:
         generator.setElectronTabularEvaluationTolerance( tabular_evaluation_tol )
 
-    if not electron_scatter_above_max_mode_on is False:
+    if electron_scatter_above_max_mode_on is False:
         generator.setElectronScatterAboveMaxModeOff()
+
+    if generator.isElectronScatterAboveMaxModeOn():
+      print "Data will be generated to allow electrons to scatter above the max energy!"
+    else:
+      print "Data will be generated to allow electrons to scatter to the max energy but not above it!"
 
     if not electron_two_d_interp_policy is None:
         if electron_two_d_interp_policy == "LinLinLin":

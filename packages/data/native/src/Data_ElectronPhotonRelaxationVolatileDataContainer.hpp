@@ -47,6 +47,14 @@ public:
   using ElectronPhotonRelaxationDataContainer::setElectronGridConvergenceTolerance;
   using ElectronPhotonRelaxationDataContainer::setElectronGridAbsoluteDifferenceTolerance;
   using ElectronPhotonRelaxationDataContainer::setElectronGridDistanceTolerance;
+  using ElectronPhotonRelaxationDataContainer::setBremsstrahlungEvaluationTolerance;
+  using ElectronPhotonRelaxationDataContainer::setBremsstrahlungGridConvergenceTolerance;
+  using ElectronPhotonRelaxationDataContainer::setBremsstrahlungAbsoluteDifferenceTolerance;
+  using ElectronPhotonRelaxationDataContainer::setBremsstrahlungDistanceTolerance;
+  using ElectronPhotonRelaxationDataContainer::setElectroionizationEvaluationTolerance;
+  using ElectronPhotonRelaxationDataContainer::setElectroionizationGridConvergenceTolerance;
+  using ElectronPhotonRelaxationDataContainer::setElectroionizationAbsoluteDifferenceTolerance;
+  using ElectronPhotonRelaxationDataContainer::setElectroionizationDistanceTolerance;
 
   // Relaxation functions
   using ElectronPhotonRelaxationDataContainer::setSubshells;

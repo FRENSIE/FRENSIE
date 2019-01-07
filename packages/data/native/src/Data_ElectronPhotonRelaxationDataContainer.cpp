@@ -202,6 +202,54 @@ double ElectronPhotonRelaxationDataContainer::getElectronGridDistanceTolerance()
   return d_electron_grid_distance_tol;
 }
 
+// Return the bremsstrahlung cross section evaluation tolerance
+double ElectronPhotonRelaxationDataContainer::getBremsstrahlungEvaluationTolerance() const
+{
+  return d_bremsstrahlung_evaluation_tolerance;
+}
+
+// Return the bremsstrahlung grid convergence tolerance
+double ElectronPhotonRelaxationDataContainer::getBremsstrahlungGridConvergenceTolerance() const
+{
+  return d_bremsstrahlung_convergence_tolerance;
+}
+
+// Return the bremsstrahlung absolute difference tolerance
+double ElectronPhotonRelaxationDataContainer::getBremsstrahlungAbsoluteDifferenceTolerance() const
+{
+  return d_bremsstrahlung_absolute_diff_tol;
+}
+
+// Return the bremsstrahlung distance tolerance
+double ElectronPhotonRelaxationDataContainer::getBremsstrahlungDistanceTolerance() const
+{
+  return d_bremsstrahlung_distance_tol;
+}
+
+// Return the electroionization cross section evaluation tolerance
+double ElectronPhotonRelaxationDataContainer::getElectroionizationEvaluationTolerance() const
+{
+  return d_electroionization_evaluation_tol;
+}
+
+// Return the electroionization grid convergence tolerance
+double ElectronPhotonRelaxationDataContainer::getElectroionizationGridConvergenceTolerance() const
+{
+  return d_electroionization_convergence_tol;
+}
+
+// Return the electroionization absolute difference tolerance
+double ElectronPhotonRelaxationDataContainer::getElectroionizationAbsoluteDifferenceTolerance() const
+{
+  return d_electroionization_absolute_diff_tol;
+}
+
+// Return the electroionization distance tolerance
+double ElectronPhotonRelaxationDataContainer::getElectroionizationDistanceTolerance() const
+{
+  return d_electroionization_distance_tol;
+}
+
 //---------------------------------------------------------------------------//
 // GET RELAXATION DATA
 //---------------------------------------------------------------------------//
@@ -730,6 +778,17 @@ ElectronPhotonRelaxationDataContainer::getElectroionizationRecoilInterpPolicy() 
   return d_electroionization_recoil_interp;
 }
 
+// Return the electroionization recoil energy for a subshell
+const std::map<double,std::vector<double> >&
+ElectronPhotonRelaxationDataContainer::getElectroionizationRecoilEnergy(
+                           const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+
+  return d_electroionization_recoil_energy.find( subshell )->second;
+}
+
 // Return the electroionization recoil energy for a subshell and energy bin
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getElectroionizationRecoilEnergy(
@@ -747,6 +806,17 @@ ElectronPhotonRelaxationDataContainer::getElectroionizationRecoilEnergy(
             d_electroionization_energy_grid.find( subshell )->second.back() );
 
   return d_electroionization_recoil_energy.find( subshell )->second.find( incoming_energy )->second;
+}
+
+// Return the electroionization recoil energy pdf for a subshell
+const std::map<double,std::vector<double> >&
+ElectronPhotonRelaxationDataContainer::getElectroionizationRecoilPDF(
+                           const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+
+  return d_electroionization_recoil_pdf.find( subshell )->second;
 }
 
 // Return the electroionization recoil energy pdf for a subshell and energy bin
@@ -782,6 +852,13 @@ ElectronPhotonRelaxationDataContainer::getBremsstrahlungPhotonInterpPolicy() con
   return d_bremsstrahlung_photon_interp;
 }
 
+// Return the bremsstrahlung photon energy
+const std::map<double,std::vector<double> >&
+ElectronPhotonRelaxationDataContainer::getBremsstrahlungPhotonEnergy() const
+{
+  return d_bremsstrahlung_photon_energy;
+}
+
 // Return the bremsstrahlung photon energy for an incoming energy
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getBremsstrahlungPhotonEnergy(
@@ -792,6 +869,13 @@ ElectronPhotonRelaxationDataContainer::getBremsstrahlungPhotonEnergy(
   testPrecondition( incoming_energy <= d_bremsstrahlung_energy_grid.back() );
 
   return d_bremsstrahlung_photon_energy.find( incoming_energy )->second;
+}
+
+// Return the bremsstrahlung photon pdf
+const std::map<double,std::vector<double> >&
+ElectronPhotonRelaxationDataContainer::getBremsstrahlungPhotonPDF() const
+{
+  return d_bremsstrahlung_photon_pdf;
 }
 
 // Return the bremsstrahlung photon pdf for an incoming energy
@@ -1130,6 +1214,86 @@ void ElectronPhotonRelaxationDataContainer::setElectronGridDistanceTolerance(
   testPrecondition( grid_distance_tol >= 0.0 );
 
   d_electron_grid_distance_tol = grid_distance_tol;
+}
+
+// Set the bremsstrahlung cross section evaluation tolerance
+void ElectronPhotonRelaxationDataContainer::setBremsstrahlungEvaluationTolerance(
+    const double evaluation_tolerance )
+{
+  // Make sure the evaluation_tolerance is valid
+  testPrecondition( evaluation_tolerance > 0.0 );
+
+  d_bremsstrahlung_evaluation_tolerance = evaluation_tolerance;
+}
+
+// Set the bremsstrahlung grid convergence tolerance
+void ElectronPhotonRelaxationDataContainer::setBremsstrahlungGridConvergenceTolerance(
+    const double convergence_tolerance )
+{
+  // Make sure the convergence_tolerance is valid
+  testPrecondition( convergence_tolerance > 0.0 );
+
+  d_bremsstrahlung_convergence_tolerance = convergence_tolerance;
+}
+
+// Set the bremsstrahlung absolute difference tolerance
+void ElectronPhotonRelaxationDataContainer::setBremsstrahlungAbsoluteDifferenceTolerance(
+    const double absolute_diff_tol )
+{
+  // Make sure the absolute_diff_tol is valid
+  testPrecondition( absolute_diff_tol > 0.0 );
+
+  d_bremsstrahlung_absolute_diff_tol = absolute_diff_tol;
+}
+
+// Set the bremsstrahlung distance tolerance
+void ElectronPhotonRelaxationDataContainer::setBremsstrahlungDistanceTolerance(
+    const double distance_tol )
+{
+  // Make sure the distance_tol is valid
+  testPrecondition( distance_tol > 0.0 );
+
+  d_bremsstrahlung_distance_tol = distance_tol;
+}
+
+// Set the electroionization cross section evaluation tolerance
+void ElectronPhotonRelaxationDataContainer::setElectroionizationEvaluationTolerance(
+    const double evaluation_tol )
+{
+  // Make sure the evaluation_tol is valid
+  testPrecondition( evaluation_tol > 0.0 );
+
+  d_electroionization_evaluation_tol = evaluation_tol;
+}
+
+// Set the electroionization grid convergence tolerance
+void ElectronPhotonRelaxationDataContainer::setElectroionizationGridConvergenceTolerance(
+    const double convergence_tol )
+{
+  // Make sure the convergence_tol is valid
+  testPrecondition( convergence_tol > 0.0 );
+
+  d_electroionization_convergence_tol = convergence_tol;
+}
+
+// Set the electroionization absolute difference tolerance
+void ElectronPhotonRelaxationDataContainer::setElectroionizationAbsoluteDifferenceTolerance(
+    const double absolute_diff_tol )
+{
+  // Make sure the absolute_diff_tol is valid
+  testPrecondition( absolute_diff_tol > 0.0 );
+
+  d_electroionization_absolute_diff_tol = absolute_diff_tol;
+}
+
+// Set the electroionization distance tolerance
+void ElectronPhotonRelaxationDataContainer::setElectroionizationDistanceTolerance(
+    const double distance_tol )
+{
+  // Make sure the distance_tol is valid
+  testPrecondition( distance_tol > 0.0 );
+
+  d_electroionization_distance_tol = distance_tol;
 }
 
 //---------------------------------------------------------------------------//

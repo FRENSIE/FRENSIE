@@ -2,7 +2,7 @@
 <!DOCTYPE boost_serialization>
 <boost_serialization signature="serialization::archive" version="16">
 <container class_id="0" tracking_level="1" version="0" object_id="_0">
-	<notes>This table was generated on Wed Oct 10 16:18:47 CDT 2018. It is for testing only!</notes>
+	<notes>This table was generated on Mon Jan  7 11:22:56 CST 2019. It is for testing only!</notes>
 	<atomic_number>13</atomic_number>
 	<atomic_weight>2.69815000000000005e+01</atomic_weight>
 	<min_photon_energy>1.00000000000000002e-03</min_photon_energy>
@@ -21,6 +21,14 @@
 	<electron_grid_convergence_tol>1.00000000000000002e-03</electron_grid_convergence_tol>
 	<electron_grid_absolute_diff_tol>9.99999999999999970e-61</electron_grid_absolute_diff_tol>
 	<electron_grid_distance_tol>1.00000000000000007e-18</electron_grid_distance_tol>
+	<bremsstrahlung_evaluation_tolerance>9.99999999999999955e-08</bremsstrahlung_evaluation_tolerance>
+	<bremsstrahlung_convergence_tolerance>1.00000000000000002e-03</bremsstrahlung_convergence_tolerance>
+	<bremsstrahlung_absolute_diff_tol>1.00000000000000003e-13</bremsstrahlung_absolute_diff_tol>
+	<bremsstrahlung_distance_tol>1.00000000000000003e-13</bremsstrahlung_distance_tol>
+	<electroionization_evaluation_tol>9.99999999999999955e-08</electroionization_evaluation_tol>
+	<electroionization_convergence_tol>1.00000000000000002e-03</electroionization_convergence_tol>
+	<electroionization_absolute_diff_tol>1.00000000000000003e-13</electroionization_absolute_diff_tol>
+	<electroionization_distance_tol>1.00000000000000003e-13</electroionization_distance_tol>
 	<subshells>
 		<count>7</count>
 		<item_version>0</item_version>

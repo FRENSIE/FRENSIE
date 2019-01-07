@@ -178,6 +178,12 @@ private:
         const std::vector<double>& raw_cross_section,
         std::shared_ptr<const Utility::UnivariateDistribution>& cross_section ) const;
 
+  // Set the bremsstrahlung secondary grid data
+  void setRefinedBremsstrahlungDistributionData();
+
+  // Set the electroionization subshell secondary grid data
+  void setRefinedElectroionizationSubshellDistributionData();
+
   // Add binding energies to union energy grid
   void addBindingEnergiesToUnionEnergyGrid(
                                   const double min_energy,

@@ -105,6 +105,7 @@ def setGeneratorOptions( generator,
                          tabular_evaluation_tol,
                          electron_two_d_interp_policy,
                          electron_two_d_grid_policy,
+                         electron_secondary_grid_refinement,
                          notes ):
 
     # Set the generator options
@@ -181,6 +182,9 @@ def setGeneratorOptions( generator,
             print "Electron 2D grid policy", electron_two_d_grid_policy, "is not valid!"
             sys.exit(1)
 
+    if electron_secondary_grid_refinement is True:
+      generator.setRefineSecondaryElectronGridsModeOn()
+
     if not notes is None:
         generator.setNotes( notes )
 
@@ -208,6 +212,7 @@ def generateData( endl_file_name,
                   num_moment_preserving_angles = None,
                   electroionization_ratio_mode = False,
                   tabular_evaluation_tol = None,
+                  electron_secondary_grid_refinement = False,
                   electron_two_d_interp_policy = None,
                   electron_two_d_grid_policy = None ):
 
@@ -243,6 +248,7 @@ def generateData( endl_file_name,
                          tabular_evaluation_tol,
                          electron_two_d_interp_policy,
                          electron_two_d_grid_policy,
+                         electron_secondary_grid_refinement,
                          notes )
 
     # Populate the data
@@ -288,7 +294,7 @@ def addToDatabase( path_to_data_file,
     # Check if the native file data has been added to the database
     if atom_properties.photoatomicDataAvailable( Data.PhotoatomicDataProperties.Native_EPR_FILE, version ):
         if force_update:
-            print "Warning: native photoatomic data properties for atomic number", atomic_number, "already exist! They will be overwritten."
+            print "Warning: native photoatomic data properties for atomic number", atomic_number, "and version", version, "already exist! They will be overwritten."
             atom_properties.setPhotoatomicDataProperties( photoatomic_data_properties )
             database_save_required = True
     else:
@@ -298,7 +304,7 @@ def addToDatabase( path_to_data_file,
     # Check if the native file exists
     if atom_properties.electroatomicDataAvailable( Data.ElectroatomicDataProperties.Native_EPR_FILE, version ):
         if force_update:
-            print "Warning: native electroatomic data properties for atomic number", atomic_number, "already exist! They will be overwritten."
+            print "Warning: native electroatomic data properties for atomic number", atomic_number, "and version", version, "already exist! They will be overwritten."
             atom_properties.setElectroatomicDataProperties( electroatomic_data_properties )
             database_save_required = True
     else:
@@ -362,6 +368,8 @@ if __name__ == "__main__":
                       help="Generate the electroionization spectrum in ratio form")
     parser.add_option("--tabular_evaluation_tol", type="float", dest="tabular_evaluation_tol",
                       help="The tabular evaluation tolerance")
+    parser.add_option("--electron_secondary_grid_refinement", action="store_true", dest="electron_secondary_grid_refinement", default=False,
+                      help="Refine the electron secondary grids")
     parser.add_option("--electron_two_d_interp_policy", type="string", dest="electron_two_d_interp_policy",
                       help="The electron 2D interpolation policy (e.g. LogLogLog)")
     parser.add_option("--electron_two_d_grid_policy", type="string", dest="electron_two_d_grid_policy",
@@ -401,6 +409,7 @@ if __name__ == "__main__":
                   options.num_moment_preserving_angles,
                   options.electroionization_ratio_mode,
                   options.tabular_evaluation_tol,
+                  options.electron_secondary_grid_refinement,
                   options.electron_two_d_interp_policy,
                   options.electron_two_d_grid_policy )
 

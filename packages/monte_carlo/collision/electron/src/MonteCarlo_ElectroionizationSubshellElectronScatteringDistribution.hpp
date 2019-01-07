@@ -53,6 +53,12 @@ public:
   //! Return the binding energy
   double getBindingEnergy() const;
 
+  //! Return the min primary electron energy
+  double getMinEnergy() const;
+
+  //! Return the max primary electron energy
+  double getMaxEnergy() const;
+
   //! Return the min secondary (knock-on) electron energy
   double getMinSecondaryEnergy( const double energy ) const;
 
@@ -123,6 +129,12 @@ private:
 
   // Limit energy range of the knock-on electron
   bool d_limit_knock_on_energy_range;
+
+  // The min secondary (knock-on) electron energy function pointer
+  std::function<double ( const double )> d_min_energy_functor;
+
+  // The max secondary (knock-on) electron energy function pointer
+  std::function<double ( const double )> d_max_energy_functor;
 
   // The evaluate function pointer
   std::function<double ( const double, const double )> d_evaluate;

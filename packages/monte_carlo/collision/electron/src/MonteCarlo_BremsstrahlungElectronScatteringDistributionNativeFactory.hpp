@@ -26,22 +26,25 @@ public:
 
   //! Create a simple dipole bremsstrahlung distribution
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
-            template<typename> class TwoDGridPolicy = Utility::UnitBase>
+            template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
   static void createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const std::vector<double>& bremsstrahlung_energy_grid,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const double evaluation_tol = 1e-7 );
+    const double evaluation_tol = 1e-7,
+    const unsigned max_number_of_iterations = 500 );
 
   //! Create a simple dipole bremsstrahlung distribution
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
             template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
   static void createBremsstrahlungDistribution(
-    const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const std::map<double,std::vector<double> >& photon_energy_data,
+    const std::map<double,std::vector<double> >& photon_pdf_data,
+    const std::vector<double>& energy_grid,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const double evaluation_tol = 1e-7 );
+    const double evaluation_tol = 1e-7,
+    const unsigned max_number_of_iterations = 500 );
 
   //! Create a detailed 2BS bremsstrahlung distribution
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
@@ -51,29 +54,32 @@ public:
     const int atomic_number,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const double evaluation_tol = 1e-7 );
+    const double evaluation_tol = 1e-7,
+    const unsigned max_number_of_iterations = 500 );
 
   //! Create a detailed 2BS bremsstrahlung distribution
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
             template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
   static void createBremsstrahlungDistribution(
-    const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const std::map<double,std::vector<double> >& photon_energy_data,
+    const std::map<double,std::vector<double> >& photon_pdf_data,
+    const std::vector<double>& energy_grid,
     const int atomic_number,
-    const std::vector<double>& bremsstrahlung_energy_grid,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const double evaluation_tol = 1e-7 );
+    const double evaluation_tol = 1e-7,
+    const unsigned max_number_of_iterations = 500 );
 
   //! Create the energy loss function
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
             template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
   static void createEnergyLossFunction(
-    const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const std::vector<double> bremsstrahlung_energy_grid,
-    std::shared_ptr<const Utility::FullyTabularBasicBivariateDistribution>&
-        energy_loss_function,
-    const double evaluation_tol = 1e-7 );
-
+    const std::map<double,std::vector<double> >& photon_energy_data,
+    const std::map<double,std::vector<double> >& photon_pdf_data,
+    const std::vector<double>& energy_grid,
+    std::shared_ptr<const Utility::FullyTabularBasicBivariateDistribution>& energy_loss_function,
+    const double evaluation_tol,
+    const unsigned max_number_of_iterations );
 };
 
 } // end MonteCarlo namespace

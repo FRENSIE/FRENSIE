@@ -1191,7 +1191,6 @@ private:
   // The adjoint electroionization distance tolerance
   double d_adjoint_electroionization_distance_tol;
 
-
 //---------------------------------------------------------------------------//
 // RELAXATION DATA
 //---------------------------------------------------------------------------//
