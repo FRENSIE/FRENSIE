@@ -30,8 +30,10 @@ public:
 
   //! Constructor
   WHIncoherentAdjointPhotonScatteringDistribution(
-        const double max_energy,
-        const std::shared_ptr<const ScatteringFunction>& scattering_function );
+          const double max_energy,
+          const std::shared_ptr<const ScatteringFunction>& scattering_function,
+          const AdjointKleinNishinaSamplingType sampling_type =
+          TWO_BRANCH_REJECTION_ADJOINT_KN_SAMPLING );
 
   //! Destructor
   virtual ~WHIncoherentAdjointPhotonScatteringDistribution()

@@ -17,6 +17,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentAdjointModelType.hpp"
+#include "MonteCarlo_AdjointKleinNishinaSamplingType.hpp"
 #include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_Vector.hpp"
 
@@ -65,6 +66,13 @@ public:
   //! Return the incoherent adjoint model type
   IncoherentAdjointModelType getIncoherentAdjointModelType() const;
 
+  //! Set the adjoint Klein-Nishina sampling type
+  AdjointKleinNishinaSamplingType setAdjointKleinNishinaSamplingType(
+                         const AdjointKleinNishinaSamplingType sampling_type );
+
+  //! Return the adjoint Klein-Nishina sampling type
+  AdjointKleinNishinaSamplingType getAdjointKleinNishinaSamplingType() const;
+
   //! Set the critical line energies
   void setCriticalAdjointPhotonLineEnergies(
                         const std::vector<double>& critical_line_energies );
@@ -111,6 +119,9 @@ private:
   // The incoherent adjoint model
   IncoherentAdjointModelType d_incoherent_adjoint_model_type;
 
+  // The adjoint klein-nishina sampling type
+  AdjointKleinNishinaSamplingType d_adjoint_kn_sampling_type;
+
   // The critical line energies
   std::vector<double> d_critical_line_energies;
 
@@ -130,6 +141,7 @@ void SimulationAdjointPhotonProperties::serialize( Archive& ar,
   ar & BOOST_SERIALIZATION_NVP( d_max_adjoint_photon_energy );
   ar & BOOST_SERIALIZATION_NVP( d_num_adjoint_photon_hash_grid_bins );
   ar & BOOST_SERIALIZATION_NVP( d_incoherent_adjoint_model_type );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_kn_sampling_type );
   ar & BOOST_SERIALIZATION_NVP( d_critical_line_energies );
   ar & BOOST_SERIALIZATION_NVP( d_threshold_weight );
   ar & BOOST_SERIALIZATION_NVP( d_survival_weight );

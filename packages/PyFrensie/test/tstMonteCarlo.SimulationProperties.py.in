@@ -74,6 +74,8 @@ class SimulationPropertiesTestCase(unittest.TestCase):
         self.assertEqual( properties.getNumberOfAdjointPhotonHashGridBins(), 500 )
         self.assertEqual( properties.getIncoherentAdjointModelType(),
                           MonteCarlo.DB_IMPULSE_INCOHERENT_ADJOINT_MODEL )
+        self.assertEqual( properties.getAdjointKleinNishinaSamplingType(),
+                          MonteCarlo.TWO_BRANCH_REJECTION_ADJOINT_KN_SAMPLING )
         self.assertEqual( len(properties.getCriticalAdjointPhotonLineEnergies()), 0 )
 
         # Electron properties

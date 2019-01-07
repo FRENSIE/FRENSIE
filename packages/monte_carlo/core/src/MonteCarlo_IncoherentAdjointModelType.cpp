@@ -13,7 +13,7 @@
 
 namespace Utility{
   
-// Convert a MonteCarlo:: to a string
+// Convert a MonteCarlo::IncoherentAdjointModelType to a string
 std::string ToStringTraits<MonteCarlo::IncoherentAdjointModelType>::toString( const MonteCarlo::IncoherentAdjointModelType type )
 {
   switch( type )

@@ -18,23 +18,51 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
 IncoherentAdjointPhotonScatteringDistribution::IncoherentAdjointPhotonScatteringDistribution(
-						      const double max_energy )
+                      const double max_energy,
+                      const AdjointKleinNishinaSamplingType sampling_type )
   : d_max_energy( max_energy ),
     d_critical_line_energies( new std::vector<double>( 1, 0.0 ) ),
     d_integrated_cs_evaluator( std::bind<double>( &IncoherentAdjointPhotonScatteringDistribution::evaluateIntegratedCrossSectionImpl,
                                                   this,
                                                   std::placeholders::_1,
                                                   std::placeholders::_2,
-                                                  std::placeholders::_3 ) )
+                                                  std::placeholders::_3 ) ),
+    d_klein_nishina_sampling_method()
 {
   // Make sure the max energy is valid
   testPrecondition( max_energy > 0.0 );
+
+  switch( sampling_type )
+  {
+    case TWO_BRANCH_REJECTION_ADJOINT_KN_SAMPLING:
+      d_klein_nishina_sampling_method = std::bind<void>( &IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjointKleinNishinaTwoBranch,
+                                                         this,
+                                                         std::placeholders::_1,
+                                                         std::placeholders::_2,
+                                                         std::placeholders::_3,
+                                                         std::placeholders::_4 );
+      break;
+    case THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING:
+      d_klein_nishina_sampling_method = std::bind<void>( &IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjointKleinNishinaThreeBranch,
+                                                         this,
+                                                         std::placeholders::_1,
+                                                         std::placeholders::_2,
+                                                         std::placeholders::_3,
+                                                         std::placeholders::_4 );
+      break;
+    default:
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                       "The Klein-Nishina sampling type is not supported!" );
+    }
+  }
 }
 
 // Set the critical line energies
@@ -286,10 +314,23 @@ double IncoherentAdjointPhotonScatteringDistribution::evaluateAdjointKleinNishin
 
 // Basic sampling implementation
 void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjointKleinNishina(
-					    const double incoming_energy,
-					    double& outgoing_energy,
-					    double& scattering_angle_cosine,
-					    Counter& trials ) const
+                                               const double incoming_energy,
+                                               double& outgoing_energy,
+					       double& scattering_angle_cosine,
+                                               Counter& trials ) const
+{
+  d_klein_nishina_sampling_method( incoming_energy,
+                                   outgoing_energy,
+                                   scattering_angle_cosine,
+                                   trials );
+}
+
+// Basic sampling implementation
+void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjointKleinNishinaTwoBranch(
+					       const double incoming_energy,
+                                               double& outgoing_energy,
+					       double& scattering_angle_cosine,
+                                               Counter& trials ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
@@ -308,6 +349,8 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
 
   while( true )
   {
+    ++trials;
+    
     const double random_number_1 =
       Utility::RandomNumberGenerator::getRandomNumber<double>();
     const double random_number_2 =
@@ -342,73 +385,127 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
     }
   }
 
-  // const double term_1 = -3.0*log(min_inverse_energy_gain_ratio)*
-  //   (1.0 - min_inverse_energy_gain_ratio)*alpha*alpha;
+  // Calculate the scattering angle cosine
+  scattering_angle_cosine = 1.0 - (1.0 - inverse_energy_gain_ratio)/alpha;
 
-  // const double term_2 = 3.0/2.0*alpha*alpha*
-  //   (1.0 - min_inverse_energy_gain_ratio*min_inverse_energy_gain_ratio);
+  // Calculate the outgoing energy
+  outgoing_energy = incoming_energy/inverse_energy_gain_ratio;
 
-  // const double term_3_arg = min_inverse_energy_gain_ratio - 1.0 + alpha;
+  const double min_scattering_angle_cosine =
+    calculateMinScatteringAngleCosine( incoming_energy, d_max_energy );
+  
+  // Check for roundoff error
+  if( scattering_angle_cosine > 1.0 )
+    scattering_angle_cosine = 1.0;
+  else if( scattering_angle_cosine < min_scattering_angle_cosine )
+    scattering_angle_cosine = min_scattering_angle_cosine;
 
-  // const double term_3 = alpha*alpha*alpha - term_3_arg*term_3_arg*term_3_arg;
+  // Make sure the sampled value is valid
+  testPostcondition( !Utility::QuantityTraits<double>::isnaninf(
+						 inverse_energy_gain_ratio ) );
+  testPostcondition( inverse_energy_gain_ratio <= 1.0 );
+  testPostcondition( inverse_energy_gain_ratio >=
+		     min_inverse_energy_gain_ratio );
+  // Make sure the sampled energy is valid
+  testPostcondition( outgoing_energy >= incoming_energy );
+  // Make sure the scattering angle cosine is valid
+  testPostcondition( scattering_angle_cosine >= min_scattering_angle_cosine );
+  testPostcondition( scattering_angle_cosine <= 1.0 );
+}
 
-  // const double all_terms = term_1+term_2+term_3;
+// Basic sampling implementation
+void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjointKleinNishinaThreeBranch(
+					       const double incoming_energy,
+                                               double& outgoing_energy,
+					       double& scattering_angle_cosine,
+                                               Counter& trials ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( incoming_energy <= d_max_energy );
 
-  // double inverse_energy_gain_ratio;
+  const double alpha = incoming_energy/
+    Utility::PhysicalConstants::electron_rest_mass_energy;
 
-  // double random_number_1, random_number_2;
+  const double min_inverse_energy_gain_ratio =
+    calculateMinInverseEnergyGainRatio( incoming_energy, d_max_energy );
 
-  // while( true )
-  // {
-  //   ++trials;
+  const double branch_value = (1.0 - min_inverse_energy_gain_ratio)/
+    (1.0 + min_inverse_energy_gain_ratio);
 
-  //   random_number_1 =
-  //     Utility::RandomNumberGenerator::getRandomNumber<double>();
-  //   random_number_2 =
-  //     Utility::RandomNumberGenerator::getRandomNumber<double>();
+  const double term_1 = -3.0*log(min_inverse_energy_gain_ratio)*
+    (1.0 - min_inverse_energy_gain_ratio)*alpha*alpha;
 
-  //   if( random_number_1 < term_1/all_terms )
-  //   {
-  //     inverse_energy_gain_ratio =
-  //       pow( min_inverse_energy_gain_ratio, random_number_2 );
+  const double term_2 = 3.0/2.0*alpha*alpha*
+    (1.0 - min_inverse_energy_gain_ratio*min_inverse_energy_gain_ratio);
 
-  //     const double rejection_value = (1.0 - inverse_energy_gain_ratio)/
-  //       (1.0 - min_inverse_energy_gain_ratio);
+  const double term_3_arg = min_inverse_energy_gain_ratio - 1.0 + alpha;
 
-  //     double random_number_3 =
-  //       Utility::RandomNumberGenerator::getRandomNumber<double>();
+  const double term_3 = alpha*alpha*alpha - term_3_arg*term_3_arg*term_3_arg;
 
-  //     if( random_number_3 < rejection_value )
-  //       break;
-  //   }
-  //   else if( random_number_1 < (term_1+term_2)/all_terms )
-  //   {
-  //     const double arg = 1.0 - min_inverse_energy_gain_ratio;
+  const double all_terms = term_1+term_2+term_3;
 
-  //     inverse_energy_gain_ratio =
-  //       sqrt( random_number_2*arg*arg +
-  //             min_inverse_energy_gain_ratio*min_inverse_energy_gain_ratio );
+  // Make sure all of the branching values were positive
+  testInvariant( term_1 >= 0.0 );
+  testInvariant( term_2 >= 0.0 );
+  testInvariant( term_3 >= 0.0 );
+  testInvariant( all_terms > 0.0 );
 
-  //     break;
-  //   }
-  //   else
-  //   {
-  //     const double term_3_arg_cubed = term_3_arg*term_3_arg*term_3_arg;
+  double inverse_energy_gain_ratio;
 
-  //     const double arg = random_number_2*
-  //       (alpha*alpha*alpha - term_3_arg_cubed) + term_3_arg_cubed;
+  double random_number_1, random_number_2;
 
-  //     if( arg < 0.0 )
-  //       inverse_energy_gain_ratio = 1.0 - alpha - pow( fabs(arg), 1/3.0 );
-  //     else
-  //       inverse_energy_gain_ratio = 1.0 - alpha + pow( arg, 1/3.0 );
+  while( true )
+  {
+    ++trials;
 
-  //     break;
-  //   }
-  // }
+    random_number_1 =
+      Utility::RandomNumberGenerator::getRandomNumber<double>();
+    random_number_2 =
+      Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+    if( random_number_1 < term_1/all_terms )
+    {
+      inverse_energy_gain_ratio =
+        pow( min_inverse_energy_gain_ratio, random_number_2 );
+
+      const double rejection_value = (1.0 - inverse_energy_gain_ratio)/
+        (1.0 - min_inverse_energy_gain_ratio);
+
+      double random_number_3 =
+        Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+      if( random_number_3 < rejection_value )
+        break;
+    }
+    else if( random_number_1 < (term_1+term_2)/all_terms )
+    {
+      const double arg = 1.0 - min_inverse_energy_gain_ratio;
+
+      inverse_energy_gain_ratio =
+        sqrt( random_number_2*arg*arg +
+              min_inverse_energy_gain_ratio*min_inverse_energy_gain_ratio );
+
+      break;
+    }
+    else
+    {
+      const double term_3_arg_cubed = term_3_arg*term_3_arg*term_3_arg;
+
+      const double arg = random_number_2*
+        (alpha*alpha*alpha - term_3_arg_cubed) + term_3_arg_cubed;
+
+      if( arg < 0.0 )
+        inverse_energy_gain_ratio = 1.0 - alpha - pow( fabs(arg), 1/3.0 );
+      else
+        inverse_energy_gain_ratio = 1.0 - alpha + pow( arg, 1/3.0 );
+
+      break;
+    }
+  }
 
   // Calculate the scattering angle cosine
-  // scattering_angle_cosine = 1.0 - (1.0 - inverse_energy_gain_ratio)/alpha;
+  scattering_angle_cosine = 1.0 - (1.0 - inverse_energy_gain_ratio)/alpha;
 
   // Calculate the outgoing energy
   outgoing_energy = incoming_energy/inverse_energy_gain_ratio;
@@ -422,11 +519,6 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
   else if( scattering_angle_cosine < min_scattering_angle_cosine )
     scattering_angle_cosine = min_scattering_angle_cosine;
 
-  // Make sure all of the branching values were positive
-  // testPostcondition( term_1 >= 0.0 );
-  // testPostcondition( term_2 >= 0.0 );
-  // testPostcondition( term_3 >= 0.0 );
-  // testPostcondition( all_terms > 0.0 );
   // Make sure the sampled value is valid
   testPostcondition( !Utility::QuantityTraits<double>::isnaninf(
 						 inverse_energy_gain_ratio ) );

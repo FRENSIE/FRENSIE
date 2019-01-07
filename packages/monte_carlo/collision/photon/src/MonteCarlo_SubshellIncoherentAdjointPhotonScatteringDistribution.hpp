@@ -37,7 +37,9 @@ public:
       const Data::SubshellType interaction_subshell,
       const double num_electrons_in_subshell,
       const double binding_energy,
-      const std::shared_ptr<const OccupationNumber>& occupation_number );
+      const std::shared_ptr<const OccupationNumber>& occupation_number,
+      const AdjointKleinNishinaSamplingType sampling_type =
+      TWO_BRANCH_REJECTION_ADJOINT_KN_SAMPLING );
 
   //! Destructor
   virtual ~SubshellIncoherentAdjointPhotonScatteringDistribution()

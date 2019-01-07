@@ -26,9 +26,10 @@ protected:
 
   //! Create a Klein-Nishina distribution
   static void createKleinNishinaDistribution(
-          std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
-          incoherent_adjoint_distribution,
-          const double max_energy );
+                const AdjointKleinNishinaSamplingType adjoint_kn_sampling,
+                const double max_energy,
+                std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
+                incoherent_adjoint_distribution );
 };
   
 } // end MonteCarlo namespace

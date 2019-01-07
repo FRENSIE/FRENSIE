@@ -66,12 +66,13 @@ void AdjointPhotoatomNativeFactory::createAdjointPhotoatomCore(
       incoherent_reactions;
 
     AdjointPhotoatomicReactionNativeFactory::createIncoherentReactions(
-                                    raw_adjoint_photoatom_data,
-                                    energy_grid,
-                                    grid_searcher,
-                                    incoherent_reactions,
-                                    properties.getIncoherentAdjointModelType(),
-                                    critical_line_energies );
+                               raw_adjoint_photoatom_data,
+                               energy_grid,
+                               grid_searcher,
+                               incoherent_reactions,
+                               properties.getIncoherentAdjointModelType(),
+                               properties.getAdjointKleinNishinaSamplingType(),
+                               critical_line_energies );
 
     for( size_t i = 0; i < incoherent_reactions.size(); ++i )
     {

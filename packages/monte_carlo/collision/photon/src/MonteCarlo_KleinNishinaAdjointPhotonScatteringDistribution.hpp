@@ -24,7 +24,10 @@ public:
   typedef IncoherentAdjointPhotonScatteringDistribution::Counter Counter;
 
   //! Constructor
-  KleinNishinaAdjointPhotonScatteringDistribution( const double max_energy );
+  KleinNishinaAdjointPhotonScatteringDistribution(
+              const double max_energy,
+              const AdjointKleinNishinaSamplingType sampling_type =
+              TWO_BRANCH_REJECTION_ADJOINT_KN_SAMPLING );
 
   //! Destructor
   ~KleinNishinaAdjointPhotonScatteringDistribution()

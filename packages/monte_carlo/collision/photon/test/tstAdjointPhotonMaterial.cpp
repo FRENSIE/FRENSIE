@@ -526,6 +526,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     properties.setMaxAdjointPhotonEnergy( 20.0 );
     properties.setNumberOfAdjointPhotonHashGridBins( 100 );
     properties.setIncoherentAdjointModelType( MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL );
+    properties.setAdjointKleinNishinaSamplingType( MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING );
 
     // Create the factories
     MonteCarlo::AdjointPhotoatomFactory factory( data_directory,

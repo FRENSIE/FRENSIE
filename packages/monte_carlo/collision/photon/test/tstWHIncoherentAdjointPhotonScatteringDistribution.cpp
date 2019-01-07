@@ -26,7 +26,7 @@
 //---------------------------------------------------------------------------//
 
 std::shared_ptr<MonteCarlo::AdjointPhotonScatteringDistribution> 
-  distribution;
+  distribution, distribution_three_branch;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -162,7 +162,7 @@ FRENSIE_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  distribution->sample(
+  distribution_three_branch->sample(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
 		    scattering_angle_cosine );
@@ -170,7 +170,7 @@ FRENSIE_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.05677765668111111, 1e-15 );
   FRENSIE_CHECK_SMALL( scattering_angle_cosine, 1e-15 );
 
-  distribution->sample(
+  distribution_three_branch->sample(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
 		    scattering_angle_cosine );
@@ -178,7 +178,7 @@ FRENSIE_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.06289961773671575, 1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, -0.8759615953640392, 1e-15 );
 
-  distribution->sample(
+  distribution_three_branch->sample(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
 		    scattering_angle_cosine );
@@ -192,7 +192,55 @@ FRENSIE_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled from and trials can be recorded
 FRENSIE_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
-		   sampleAndRecordTrials )
+		   sampleAndRecordTrials_two_branch )
+{
+  double outgoing_energy, scattering_angle_cosine;
+  MonteCarlo::AdjointPhotonScatteringDistribution::Counter trials = 0;
+
+  // Set the fake stream
+  std::vector<double> fake_stream( 12 );
+  fake_stream[0] = 0.1; // branch 1
+  fake_stream[1] = 0.5; // select x = 0.9
+  fake_stream[2] = 0.44; // accept
+  fake_stream[3] = 0.91; // reject based on scattering function
+  fake_stream[4] = 0.11; // branch 1
+  fake_stream[5] = 0.5; // select x = 0.9
+  fake_stream[6] = 0.44; // accept
+  fake_stream[7] = 0.909; // accept based on scattering function
+  fake_stream[8] = 0.12; // branch 2
+  fake_stream[9] = 0.0620192023179805; // select x = 0.8124038404635961
+  fake_stream[10] = 0.78; // accept
+  fake_stream[11] = 0.9921; // accept based on scattering function
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  distribution->sampleAndRecordTrials(
+		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
+		    outgoing_energy,
+		    scattering_angle_cosine,
+		    trials );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.05677765668111111, 1e-15 );
+  FRENSIE_CHECK_SMALL( scattering_angle_cosine, 1e-15 );
+  FRENSIE_CHECK_EQUAL( trials, 2 );
+
+  distribution->sampleAndRecordTrials(
+		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
+		    outgoing_energy,
+		    scattering_angle_cosine,
+		    trials );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.06289961773671575, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, -0.8759615953640392, 1e-15 );
+  FRENSIE_CHECK_EQUAL( trials, 3 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled from and trials can be recorded
+FRENSIE_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
+		   sampleAndRecordTrials_three_branch )
 {
   double outgoing_energy, scattering_angle_cosine;
   MonteCarlo::AdjointPhotonScatteringDistribution::Counter trials = 0;
@@ -219,7 +267,7 @@ FRENSIE_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  distribution->sampleAndRecordTrials(
+  distribution_three_branch->sampleAndRecordTrials(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
 		    scattering_angle_cosine,
@@ -229,7 +277,7 @@ FRENSIE_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
   FRENSIE_CHECK_SMALL( scattering_angle_cosine, 1e-15 );
   FRENSIE_CHECK_EQUAL( 1.0/trials, 0.5 );
 
-  distribution->sampleAndRecordTrials(
+  distribution_three_branch->sampleAndRecordTrials(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
 		    scattering_angle_cosine,
@@ -239,7 +287,7 @@ FRENSIE_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, -0.8759615953640392, 1e-15 );
   FRENSIE_CHECK_EQUAL( 2.0/trials, 2.0/3.0 );
 
-  distribution->sampleAndRecordTrials(
+  distribution_three_branch->sampleAndRecordTrials(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
 		    scattering_angle_cosine,
@@ -268,13 +316,13 @@ FRENSIE_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
 
   // Set the fake stream
   std::vector<double> fake_stream( 9 );
-  fake_stream[0] = 0.15; // branch 1
-  fake_stream[1] = 0.4721647344828152; // select x = 0.9
-  fake_stream[2] = 0.49; // accept
+  fake_stream[0] = 0.11; // branch 1
+  fake_stream[1] = 0.5; // select x = 0.9
+  fake_stream[2] = 0.44; // accept
   fake_stream[3] = 0.91; // reject based on scattering function
-  fake_stream[4] = 0.15; // branch 1
-  fake_stream[5] = 0.4721647344828152; // select x = 0.9
-  fake_stream[6] = 0.49; // accept
+  fake_stream[4] = 0.11; // branch 1
+  fake_stream[5] = 0.5; // select x = 0.9
+  fake_stream[6] = 0.44; // accept
   fake_stream[7] = 0.909; // accept based on scattering function
   fake_stream[8] = 0.0;
 
@@ -285,8 +333,8 @@ FRENSIE_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
 				      shell_of_interaction );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon.getEnergy(),
-			  0.05677765668111111,
-			  1e-15 );
+                                   0.05677765668111111,
+                                   1e-15 );
   FRENSIE_CHECK_SMALL( adjoint_photon.getZDirection(), 1e-15 );
   FRENSIE_CHECK_EQUAL( bank.size(), 0 );
   FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
@@ -304,8 +352,8 @@ FRENSIE_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
   FRENSIE_CHECK_EQUAL( bank.size(), 1 );
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 0.08 );
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
-			  31.7162862019685967,
-			  1e-14 );
+                                   31.7162862019685967,
+                                   1e-14 );
 
   bank.pop();
 
@@ -321,8 +369,8 @@ FRENSIE_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(),
 		       Utility::PhysicalConstants::electron_rest_mass_energy );
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
-			  1.43055314362791086,
-			  1e-15 );
+                                   1.43055314362791086,
+                                   1e-15 );
 
   bank.pop();
 
@@ -338,15 +386,15 @@ FRENSIE_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(),
 		       Utility::PhysicalConstants::electron_rest_mass_energy );
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
-			  0.401104057813784276,
-			  1e-15 );
+                                   0.401104057813784276,
+                                   1e-15 );
 
   bank.pop();
 
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 1.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
-			  0.203384875392762621,
-			  1e-15 );
+                                   0.203384875392762621,
+                                   1e-15 );
 
   bank.pop();
 
@@ -403,12 +451,6 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     std::vector<double> scat_func_values( jince_block( scatt_func_size,
 							  scatt_func_size ) );
 
-    std::cout.precision( 18 );
-    for( unsigned i = 0; i < recoil_momentum.size(); ++i )
-    {
-      std::cout << recoil_momentum[i] << " " << scat_func_values[i] << std::endl;
-    }
-
     std::shared_ptr<Utility::UnitAwareUnivariateDistribution<Utility::Units::InverseAngstrom,void> > raw_scattering_function(
     new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseAngstrom,void>( 
 							  recoil_momentum,
@@ -426,15 +468,28 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
       Utility::PhysicalConstants::electron_rest_mass_energy;
     (*critical_line_energies)[2] = 1.0;
 
+    // Create the scattering distribution (two branch sampling)
     std::shared_ptr<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>
       incoherent_base_dist( 
+              new MonteCarlo::WHIncoherentAdjointPhotonScatteringDistribution( 
+			20.0,
+                        scattering_function,
+                        MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING ) );
+
+    incoherent_base_dist->setCriticalLineEnergies( critical_line_energies );
+
+    
+    distribution_three_branch = incoherent_base_dist;
+
+    // Create the scattering distribution (three branch sampling)
+    incoherent_base_dist.reset( 
               new MonteCarlo::WHIncoherentAdjointPhotonScatteringDistribution( 
 						       20.0,
 						       scattering_function ) );
 
     incoherent_base_dist->setCriticalLineEnergies( critical_line_energies );
 
-    // Create the scattering distribution
+    
     distribution = incoherent_base_dist;
   }
 

@@ -22,12 +22,13 @@ namespace MonteCarlo{
 // Create a subshell incoherent adjoint distribution
 template<typename BaseDistributionType>
 void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createSubshellDistribution(
-                      const Data::AdjointElectronPhotonRelaxationDataContainer&
-                      raw_adjoint_photoatom_data,
-                      const unsigned endf_subshell,
-                      const double max_energy,
-                      std::shared_ptr<BaseDistributionType>&
-                      incoherent_adjoint_distribution )
+                     const Data::AdjointElectronPhotonRelaxationDataContainer&
+                     raw_adjoint_photoatom_data,
+                     const AdjointKleinNishinaSamplingType adjoint_kn_sampling,
+                     const unsigned endf_subshell,
+                     const double max_energy,
+                     std::shared_ptr<BaseDistributionType>&
+                     incoherent_adjoint_distribution )
 {
   // Make sure the max energy is valid
   testPrecondition( max_energy <= SimulationAdjointPhotonProperties::getAbsoluteMaxAdjointPhotonEnergy() );
@@ -56,18 +57,20 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createSubshellD
           subshell,
           raw_adjoint_photoatom_data.getSubshellOccupancy( endf_subshell ),
           raw_adjoint_photoatom_data.getSubshellBindingEnergy( endf_subshell ),
-          occupation_number ) );                 
+          occupation_number,
+          adjoint_kn_sampling ) );
 }
 
 // Create a Doppler broadened subshell incoherent adjoint distribution
 template<typename BaseDistributionType>
 void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDopplerBroadenedSubshellDistribution(
-                      const Data::AdjointElectronPhotonRelaxationDataContainer&
-                      raw_adjoint_photoatom_data,
-                      const unsigned endf_subshell,
-                      const double max_energy,
-                      std::shared_ptr<BaseDistributionType>&
-                      incoherent_adjoint_distribution )
+                     const Data::AdjointElectronPhotonRelaxationDataContainer&
+                     raw_adjoint_photoatom_data,
+                     const AdjointKleinNishinaSamplingType adjoint_kn_sampling,
+                     const unsigned endf_subshell,
+                     const double max_energy,
+                     std::shared_ptr<BaseDistributionType>&
+                     incoherent_adjoint_distribution )
 {
   // Make sure the max energy is valid
   testPrecondition( max_energy <= SimulationAdjointPhotonProperties::getAbsoluteMaxAdjointPhotonEnergy() );
@@ -104,7 +107,8 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDopplerBr
           raw_adjoint_photoatom_data.getSubshellOccupancy( endf_subshell ),
           raw_adjoint_photoatom_data.getSubshellBindingEnergy( endf_subshell ),
           occupation_number,
-          compton_profile ) );                 
+          compton_profile,
+          adjoint_kn_sampling ) );
 }
   
 } // end MonteCarlo namespace

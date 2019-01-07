@@ -22,8 +22,9 @@ SubshellIncoherentAdjointPhotonScatteringDistribution::SubshellIncoherentAdjoint
       const Data::SubshellType interaction_subshell,
       const double num_electrons_in_subshell,
       const double binding_energy,
-      const std::shared_ptr<const OccupationNumber>& occupation_number )
-  : IncoherentAdjointPhotonScatteringDistribution( max_energy ),
+      const std::shared_ptr<const OccupationNumber>& occupation_number,
+      const AdjointKleinNishinaSamplingType sampling_type )
+  : IncoherentAdjointPhotonScatteringDistribution( max_energy, sampling_type ),
     d_subshell( interaction_subshell ),
     d_num_electrons_in_subshell( num_electrons_in_subshell ),
     d_binding_energy( binding_energy ),

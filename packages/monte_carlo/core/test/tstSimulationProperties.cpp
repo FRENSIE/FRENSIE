@@ -70,6 +70,8 @@ FRENSIE_UNIT_TEST( SimulationProperties, defaults )
                        500 );
   FRENSIE_CHECK_EQUAL( properties.getIncoherentAdjointModelType(),
                        MonteCarlo::DB_IMPULSE_INCOHERENT_ADJOINT_MODEL );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointKleinNishinaSamplingType(),
+                       MonteCarlo::TWO_BRANCH_REJECTION_ADJOINT_KN_SAMPLING );
   FRENSIE_CHECK_EQUAL( properties.getCriticalAdjointPhotonLineEnergies().size(), 0 );
   FRENSIE_CHECK_SMALL( properties.getAdjointPhotonRouletteThresholdWeight(), 1e-30 );
   FRENSIE_CHECK_SMALL( properties.getAdjointPhotonRouletteSurvivalWeight(), 1e-30 );
@@ -286,6 +288,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationProperties,
                        500 );
   FRENSIE_CHECK_EQUAL( properties.getIncoherentAdjointModelType(),
                        MonteCarlo::DB_IMPULSE_INCOHERENT_ADJOINT_MODEL );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointKleinNishinaSamplingType(),
+                       MonteCarlo::TWO_BRANCH_REJECTION_ADJOINT_KN_SAMPLING );
   FRENSIE_CHECK_EQUAL( properties.getCriticalAdjointPhotonLineEnergies().size(), 0 );
 
   FRENSIE_CHECK_EQUAL( properties.getAbsoluteMinElectronEnergy(), 1.5e-5 );
