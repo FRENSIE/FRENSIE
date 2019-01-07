@@ -427,7 +427,7 @@ if __name__ == "__main__":
                       help="The number of moment preserving angles for electrons")
     parser.add_option("--tabular_evaluation_tol", type="float", dest="tabular_evaluation_tol",
                       help="The tabular evaluation tolerance")
-    parser.add_option("--electron_scatter_above_max_mode_off", action="store_true", dest="electron_scatter_above_max_mode", default=True,
+    parser.add_option("--electron_scatter_above_max_mode_off", action="store_false", dest="electron_scatter_above_max_mode", default=True,
                       help="Don't allow adjoint electrons to scatter above the max energy.")
     parser.add_option("--electron_two_d_interp_policy", type="string", dest="electron_two_d_interp_policy",
                       help="The electron 2D interpolation policy (e.g. LogLogLog)")
