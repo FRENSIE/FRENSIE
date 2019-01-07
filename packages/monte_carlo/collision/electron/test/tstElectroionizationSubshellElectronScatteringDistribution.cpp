@@ -94,19 +94,19 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    evaluate_unit_base_correlated )
 {
   double pdf = unit_correlated_ionization_dist->evaluate( 8.829e-2, 1e-7 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.6866000434174901e+05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.686609585545175651e+05, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluate( 9.12175e-2, 4.275e-4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.6794064728877693e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.679251358474245848e+01, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluate( 1e-1, 1e-2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.9611321793168750e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.960842280963701056e-02, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluate( 1.0, 1.33136131511529e-1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.1815828429294956e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.181572340246931117e-04, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluate( 1.0, 9.7163E-02 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.4636700787675897e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.463650607155497925e-04, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluate( 1e5, 1.752970e2 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.4497193189141950e-11, 1e-12 );
@@ -118,19 +118,19 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    evaluate_unit_base )
 {
   double pdf = unit_base_ionization_dist->evaluate( 8.829e-2, 1e-7 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.705827064187504875e+05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.705943332386640250e+05, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluate( 9.12175e-2, 4.275e-4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.214612295192431368e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.214511053554863906e+01, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluate( 1e-1, 1e-2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.724216068618125014e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.723956931559732925e-02, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluate( 1.0, 1.33136131511529e-1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.041383244795287069e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.041372775354081575e-04, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluate( 1.0, 9.7163E-02 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.978639971990510892e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.978620753317426450e-04, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluate( 1e5, 1.752970e2 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.449719318914194985e-11, 1e-12 );
@@ -169,19 +169,19 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    evaluatePDF_unit_base_correlated )
 {
   double pdf = unit_correlated_ionization_dist->evaluatePDF( 8.829e-2, 1e-7 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.6865999321744699e+05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.686609474301526207e+05, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluatePDF( 9.12175e-2, 4.275e-4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.6794063002002872e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.679251185801403778e+01, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluatePDF( 1e-1, 1e-2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.9611317283132534e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.960841830018341184e-02, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluatePDF( 1.0, 1.33136131511529e-1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.1815824201618231e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.181571917482869945e-04, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluatePDF( 1.0, 9.7163E-02 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.4636692194095449e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.463649747804036948e-04, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluatePDF( 1e5, 1.752970e2 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.4497177573288197e-11, 1e-12 );
@@ -196,19 +196,19 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    evaluatePDF_unit_base )
 {
   double pdf = unit_base_ionization_dist->evaluatePDF( 8.829e-2, 1e-7 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.705826874347286066e+05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.705943142532409111e+05, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluatePDF( 9.12175e-2, 4.275e-4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.214612154683611500e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.214510913056970054e+01, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluatePDF( 1e-1, 1e-2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.724215848015932251e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.723956710989508340e-02, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluatePDF( 1.0, 1.33136131511529e-1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.041382902741912105e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.041372433304052866e-04, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluatePDF( 1.0, 9.7163E-02 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.978639322085223699e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.978620103418276112e-04, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluatePDF( 1e5, 1.752970e2 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.449717757328819723e-11, 1e-12 );
@@ -253,19 +253,19 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   FRENSIE_CHECK_SMALL( cdf, 1e-12 );
 
   cdf = unit_correlated_ionization_dist->evaluateCDF( 9.12175e-2, 4.275e-4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.9364828663505689e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.936486081837607731e-01, 1e-12 );
 
   cdf = unit_correlated_ionization_dist->evaluateCDF( 1e-1, 1e-2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.9984273751835129e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.998427516770949097e-01, 1e-12 );
 
   cdf = unit_correlated_ionization_dist->evaluateCDF( 1.0, 1.33136131511529e-1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.9998825717709872e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.999882572442484463e-01, 1e-12 );
 
   cdf = unit_correlated_ionization_dist->evaluateCDF( 1.0, 9.7163E-02 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.9998150891124138e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.999815090034120946e-01, 1e-12 );
 
   cdf = unit_correlated_ionization_dist->evaluateCDF( 1e5, 1.752970e2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.9999998501226084e-01, 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.999999850122608391e-01, 1e-10 );
 
   cdf = unit_correlated_ionization_dist->evaluateCDF( 1e5, 5e4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 1.0, 1e-10 );
@@ -367,8 +367,8 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                                      knock_on_angle_cosine );
 
   // Test knock-on electron at the max random number
-  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 6.7795576315906780e-01, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 2.7765e-05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 6.680945582865727150e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 2.696314156988142391e-05, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

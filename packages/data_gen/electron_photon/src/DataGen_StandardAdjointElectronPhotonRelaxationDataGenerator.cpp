@@ -2073,7 +2073,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
         this->getAdjointBremsstrahlungMaxEnergyNudgeValue(),
         this->getAdjointBremsstrahlungGridConvergenceTolerance(),
         this->getAdjointBremsstrahlungAbsoluteDifferenceTolerance(),
-        this->getAdjointBremsstrahlungDistanceTolerance() ) );
+        this->getAdjointBremsstrahlungDistanceTolerance(),
+        this->isElectronScatterAboveMaxModeOn() ) );
 }
 
 // Create the adjoint electroionization subshell grid generator
@@ -2258,7 +2259,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
         this->getAdjointElectroionizationMaxEnergyNudgeValue(),
         this->getAdjointElectroionizationGridConvergenceTolerance(),
         this->getAdjointElectroionizationAbsoluteDifferenceTolerance(),
-        this->getAdjointElectroionizationDistanceTolerance() ) );
+        this->getAdjointElectroionizationDistanceTolerance(),
+        this->isElectronScatterAboveMaxModeOn() ) );
 }
 
 // Initialize the electron union energy grid

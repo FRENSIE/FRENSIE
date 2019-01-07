@@ -210,11 +210,11 @@ ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshe
     d_max_energy_functor =
       [this](const double& energy){
 
-        // return d_electroionization_shell_distribution->getUpperBoundOfSecondaryConditionalIndepVar( energy );
-        if ( energy > d_binding_energy )
-          return 0.5*( energy - d_binding_energy );
-        else
-          return 0.0;
+        return d_electroionization_shell_distribution->getUpperBoundOfSecondaryConditionalIndepVar( energy );
+        // if ( energy > d_binding_energy )
+        //   return 0.5*( energy - d_binding_energy );
+        // else
+        //   return 0.0;
       };
 
     // Set the evaluate function
