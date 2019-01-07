@@ -268,7 +268,7 @@ FRENSIE_UNIT_TEST( PositronionizationSubshellPositronatomicReaction,
 
 
   // Last subshell
-  double diff_cross_section =
+  diff_cross_section =
     native_last_subshell_reaction->getDifferentialCrossSection(
         0.0025118800000459599528,
         0.0012514500000459765489 );
