@@ -2104,7 +2104,7 @@ FRENSIE_CHECK_FLOATING_EQUALITY(
     data_container.getElectroionizationRecoilEnergy( 1u, 1e5 );
 
   FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.front(), 1e-7 );
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.back(), 4.999999985449500673e+04 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.back(), 4.999999985449499945e+04 );
   FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.size(), 128 );
 
   std::vector<double> electroionization_recoil_pdf =

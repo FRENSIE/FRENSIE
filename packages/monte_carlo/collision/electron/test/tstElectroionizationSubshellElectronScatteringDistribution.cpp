@@ -70,7 +70,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    evaluate_ace )
 {
   double pdf = ace_ionization_dist->evaluate( 8.829e-2, 5e-8 );
-  FRENSIE_CHECK_SMALL( pdf, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.111111111111111194e+07, 1e-12 );
 
   pdf = ace_ionization_dist->evaluate( 9.12175e-2, 4.275e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 683.2234482287432229, 1e-12 );
@@ -142,7 +142,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    evaluatePDF_ace )
 {
   double pdf = ace_ionization_dist->evaluatePDF( 8.829e-2, 5e-8 );
-  FRENSIE_CHECK_SMALL( pdf, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.111111111111111194e+07, 1e-12 );
 
   pdf = ace_ionization_dist->evaluatePDF( 9.12175e-2, 4.275e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 683.2234482287432229, 1e-12 );
@@ -187,7 +187,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.4497177573288197e-11, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluatePDF( 1e5, 5e4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.2480895846405665e-15, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.248089584532416393e-15, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -214,7 +214,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.449717757328819723e-11, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluatePDF( 1e5, 5e4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.248089584640566462e-15, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.248089584532416393e-15, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -223,7 +223,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    evaluateCDF_ace )
 {
   double cdf = ace_ionization_dist->evaluateCDF( 8.829e-2, 5e-8 );
-  FRENSIE_CHECK_SMALL( cdf, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 4.444444444444444753e-01, 1e-12 );
 
   cdf = ace_ionization_dist->evaluateCDF( 9.12175e-2, 4.275e-4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 2.92009701772965E-01, 1e-12 );
@@ -681,7 +681,10 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   ace_ionization_dist.reset(
         new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
-                            binding_energies[subshell] ) );
+                            binding_energies[subshell],
+                            false,
+                            true,
+                            false ) );
 
   // Clear setup data
   ace_file_handler.reset();

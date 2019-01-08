@@ -118,6 +118,74 @@ private:
                        double& knock_on_energy,
                        double& knock_on_angle_cosine ) const;
 
+// Get knock-on energy
+double getKnockOnEnergy( const double incoming_energy,
+                         const double outgoing_energy_1 ) const;
+
+// Get knock-on energy
+double getKnockOnEnergyRatio( const double incoming_energy,
+                              const double outgoing_energy_1 ) const;
+
+// Return the distribution min secondary energy
+double getDistributionMinSecondaryEnergy( const double incoming_energy );
+
+// Return the physical min secondary energy
+double getPhysicalMinSecondaryEnergy( const double incoming_energy );
+
+// Return the distribution min secondary energy
+double getDistributionMaxSecondaryEnergy( const double incoming_energy );
+
+// Return the physical min secondary energy
+double getPhysicalMaxSecondaryEnergy( const double incoming_energy );
+
+// Evaluate the distribution for a given incoming and outgoing energy
+double evaluateKnockOn( const double incoming_energy,
+                        const double outgoing_energy_1 ) const;
+
+// Evaluate the distribution for a given incoming and outgoing energy
+double evaluateKnockOnRatio( const double incoming_energy,
+                             const double outgoing_energy_1 ) const;
+
+// Evaluate the PDF value for a given incoming and outgoing energy
+double evaluateKnockOnPDF( const double incoming_energy,
+                           const double outgoing_energy_1 ) const;
+
+// Evaluate the PDF value for a given incoming and outgoing energy
+double evaluateKnockOnRatioPDF( const double incoming_energy,
+                                const double outgoing_energy_1 ) const;
+
+// Evaluate the CDF value for a given incoming and outgoing energy
+double evaluateKnockOnCDF( const double incoming_energy,
+                           const double outgoing_energy_1 ) const;
+
+// Evaluate the CDF value for a given incoming and outgoing energy
+double evaluateKnockOnRatioCDF( const double incoming_energy,
+                                const double outgoing_energy_1 ) const;
+
+// Sample a knock-on energy
+double sampleKnockOn( const double incoming_energy ) const;
+
+// Sample a knock-on energy
+double sampleKnockOnRatio( const double incoming_energy ) const;
+
+// Sample a knock-on energy and primary energy
+void sampleKnockOn( const double incoming_energy,
+                    double& outgoing_energy,
+                    double& knock_on_energy ) const;
+
+// Sample a knock-on energy and primary energy
+void sampleKnockOnRatio( const double incoming_energy,
+                         double& outgoing_energy,
+                         double& knock_on_energy ) const;
+
+// Sample a knock-on energy
+double sampleKnockOnPositron( const double incoming_energy,
+                              double scaled_random_number ) const;
+
+// Sample a knock-on energy
+double sampleKnockOnRatioPositron( const double incoming_energy,
+                                   double scaled_random_number ) const;
+
   // electroionization subshell scattering cross sections
   std::shared_ptr<const BasicBivariateDist> d_electroionization_shell_distribution;
 

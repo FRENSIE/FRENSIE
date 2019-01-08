@@ -45,317 +45,70 @@ ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshe
   if ( treat_distribution_as_ratio )
   {
     // Get the functor for the min secondary energy
-    d_min_energy_functor =
-      [this](const double& energy){
-        return d_electroionization_shell_distribution->getLowerBoundOfSecondaryConditionalIndepVar( energy );
-      };
+    d_min_energy_functor = [this](const double& energy){
+      return this->getDistributionMinSecondaryEnergy( energy ); };
 
     // Get the functor for the max secondary energy
-    d_max_energy_functor =
-      [this](const double& energy){
-        return d_electroionization_shell_distribution->getUpperBoundOfSecondaryConditionalIndepVar( energy );
-      };
+    d_max_energy_functor = [this](const double& energy){
+      return this->getDistributionMaxSecondaryEnergy( energy ); };
 
     // Set the evaluate function
     d_evaluate = [this]( const double incoming_energy, const double outgoing_energy_1 ){
-
-      // Calculate the available energy
-      double available_energy = incoming_energy - d_binding_energy;
-
-      // calculate the energy of the second outgoing electron
-      double outgoing_energy_2 = available_energy - outgoing_energy_1;
-
-      if ( outgoing_energy_2 <= 0.0 )
-        return 0.0;
-
-      // Assume the lower of the two outgoing energies is the knock-on electron
-      double knock_on_energy_ratio =
-        0.5*std::min( outgoing_energy_1, outgoing_energy_2 )/available_energy;
-
-      // evaluate the distribution
-      return d_electroionization_shell_distribution->evaluate(
-                incoming_energy,
-                knock_on_energy_ratio );
-    };
+      return this->evaluateKnockOnRatio( incoming_energy, outgoing_energy_1 ); };
 
     // Set the evaluate PDF function
     d_evaluate_pdf = [this]( const double incoming_energy, const double outgoing_energy_1 ){
-
-      // Calculate the available energy
-      double available_energy = incoming_energy - d_binding_energy;
-
-      // calculate the energy of the second outgoing electron
-      double outgoing_energy_2 = available_energy - outgoing_energy_1;
-
-      if ( outgoing_energy_2 <= 0.0 )
-        return 0.0;
-
-      // Assume the lower of the two outgoing energies is the knock-on electron
-      double knock_on_energy_ratio =
-        0.5*std::min( outgoing_energy_1, outgoing_energy_2 )/available_energy;
-
-      // evaluate the distribution
-      return d_electroionization_shell_distribution->evaluateSecondaryConditionalPDF(
-                incoming_energy,
-                knock_on_energy_ratio );
-    };
+      return this->evaluateKnockOnRatioPDF( incoming_energy, outgoing_energy_1 ); };
 
     // Set the evaluate CDF function
     d_evaluate_cdf = [this]( const double incoming_energy, const double outgoing_energy_1 ){
-
-      // Calculate the available energy
-      double available_energy = incoming_energy - d_binding_energy;
-
-      // calculate the energy of the second outgoing electron
-      double outgoing_energy_2 = available_energy - outgoing_energy_1;
-
-      if ( outgoing_energy_2 <= 0.0 )
-        return 0.0;
-
-      // Assume the lower of the two outgoing energies is the knock-on electron
-      double knock_on_energy_ratio =
-        0.5*std::min( outgoing_energy_1, outgoing_energy_2 )/available_energy;
-
-      // evaluate the distribution
-      return d_electroionization_shell_distribution->evaluateSecondaryConditionalCDF(
-                incoming_energy,
-                knock_on_energy_ratio );
-    };
+      return this->evaluateKnockOnRatioCDF( incoming_energy, outgoing_energy_1 ); };
 
     // Set the sample function
     d_sample = [this]( const double incoming_energy ){
-
-      // Sample knock-on electron energy
-      double knock_on_energy_ratio =
-        d_electroionization_shell_distribution->sampleSecondaryConditional(
-          incoming_energy );
-
-      return 0.5*knock_on_energy_ratio*( incoming_energy - d_binding_energy );
-    };
+      return this->sampleKnockOnRatio( incoming_energy ); };
 
     // The sample secondary and primary function
     d_sample_primary_and_secondary = [this]( const double incoming_energy, double& outgoing_energy, double& knock_on_energy ){
-
-      // Calculate the available energy
-      double available_energy = incoming_energy - d_binding_energy;
-
-      // Sample ratio of energy loss
-      double energy_loss_ratio =
-        0.5*d_electroionization_shell_distribution->sampleSecondaryConditional(
-          incoming_energy );
-
-      // Calculate the knock-on energy
-      knock_on_energy = energy_loss_ratio*available_energy;
-      // Calculate the outgoing energy
-      outgoing_energy = (1.0- energy_loss_ratio)*available_energy;
-    };
+      this->sampleKnockOnRatio( incoming_energy, outgoing_energy, knock_on_energy ); };
 
     // The sample positron function
     d_sample_positron = [this]( const double incoming_energy, double& scaled_random_number ){
-
-      // Calculate the available energy
-      double available_energy = incoming_energy - d_binding_energy;
-
-      // The knock-on energy is less than half the maximum energy loss
-      if ( scaled_random_number <= 1.0 )
-      {
-        if( scaled_random_number == 1.0 )
-          scaled_random_number -= 1e-12;
-
-        // Sample knock-on electron energy
-        double energy_loss_ratio =
-        0.5*d_electroionization_shell_distribution->sampleSecondaryConditionalWithRandomNumber(
-          incoming_energy,
-          scaled_random_number );
-
-        return energy_loss_ratio*available_energy;
-      }
-      // The knock-on energy is greater than half the maximum energy loss
-      else
-      {
-        // Rescale the random number
-        scaled_random_number = 2.0 - scaled_random_number;
-
-        // Sample knock-on energy above half the maximum energy loss
-        double energy_loss_ratio =
-        0.5*d_electroionization_shell_distribution->sampleSecondaryConditionalWithRandomNumber(
-          incoming_energy,
-          scaled_random_number );
-
-        return (1.0- energy_loss_ratio)*available_energy;
-      }
-    };
-
+      return this->sampleKnockOnRatioPositron( incoming_energy, scaled_random_number ); };
   }
   else
   {
     // Get the functor for the min secondary energy
-    d_min_energy_functor =
-      [this](const double& energy){
-        if ( energy > d_binding_energy )
-        {
-          double min_energy =
-            d_electroionization_shell_distribution->getLowerBoundOfSecondaryConditionalIndepVar( energy );
-
-          double max_energy = 0.5*( energy - d_binding_energy );
-
-          // If the min energy is greater than the max, return the max energy
-          return std::min( min_energy, max_energy );
-        }
-        else
-          return 0.0;
-      };
+    d_min_energy_functor = [this](const double& energy){
+      return this->getPhysicalMinSecondaryEnergy( energy ); };
 
     // Get the functor for the max secondary energy
-    d_max_energy_functor =
-      [this](const double& energy){
-
-        return d_electroionization_shell_distribution->getUpperBoundOfSecondaryConditionalIndepVar( energy );
-        // if ( energy > d_binding_energy )
-        //   return 0.5*( energy - d_binding_energy );
-        // else
-        //   return 0.0;
-      };
+    d_max_energy_functor = [this](const double& energy){
+      return this->getDistributionMaxSecondaryEnergy( energy ); };
 
     // Set the evaluate function
     d_evaluate = [this]( const double incoming_energy, const double outgoing_energy_1 ){
-
-      // calculate the energy of the second outgoing electron
-      double outgoing_energy_2 = ( incoming_energy - d_binding_energy ) - outgoing_energy_1;
-
-      if ( outgoing_energy_2 <= 0.0 )
-        return 0.0;
-
-      // Assume the lower of the two outgoing energies is the knock-on electron
-      double knock_on_energy = std::min( outgoing_energy_1, outgoing_energy_2 );
-
-      // evaluate the distribution
-      return d_electroionization_shell_distribution->evaluate(
-                incoming_energy,
-                knock_on_energy,
-                d_min_energy_functor,
-                d_max_energy_functor );
-    };
+      return this->evaluateKnockOn( incoming_energy, outgoing_energy_1 ); };
 
     // Set the evaluate PDF function
     d_evaluate_pdf = [this]( const double incoming_energy, const double outgoing_energy_1 ){
-      // calculate the energy of the second outgoing electron
-      double outgoing_energy_2 = ( incoming_energy - d_binding_energy ) - outgoing_energy_1;
-
-      // Assume the lower of the two outgoing energies is the knock-on electron
-      double knock_on_energy = std::min( outgoing_energy_1, outgoing_energy_2 );
-
-      // Make sure the knock-on energy is above the min outgoing energy
-      if ( knock_on_energy < d_min_energy_functor( incoming_energy ) )
-        return 0.0;
-
-      // evaluate the distribution
-      return d_electroionization_shell_distribution->evaluateSecondaryConditionalPDF(
-                incoming_energy,
-                knock_on_energy,
-                d_min_energy_functor,
-                d_max_energy_functor );
-
-    };
+      return this->evaluateKnockOnPDF( incoming_energy, outgoing_energy_1 ); };
 
     // Set the evaluate CDF function
     d_evaluate_cdf = [this]( const double incoming_energy, const double outgoing_energy_1 ){
-
-      // calculate the energy of the second outgoing electron
-      double outgoing_energy_2 = ( incoming_energy - d_binding_energy ) - outgoing_energy_1;
-
-      if ( outgoing_energy_2 <= 0.0 )
-        return 0.0;
-
-      // Assume the lower of the two outgoing energies is the knock-on electron
-      double knock_on_energy = std::min( outgoing_energy_1, outgoing_energy_2 );
-
-      // evaluate the distribution
-      return d_electroionization_shell_distribution->evaluateSecondaryConditionalCDF(
-                incoming_energy,
-                knock_on_energy,
-                d_min_energy_functor,
-                d_max_energy_functor );
-    };
+      return this->evaluateKnockOnCDF( incoming_energy, outgoing_energy_1 ); };
 
     // Set the sample function
     d_sample = [this]( const double incoming_energy ){
-
-      // Sample knock-on electron energy
-      double knock_on_energy =
-        d_electroionization_shell_distribution->sampleSecondaryConditional(
-          incoming_energy,
-          d_min_energy_functor,
-          d_max_energy_functor );
-
-      if( d_limit_knock_on_energy_range )
-      {
-        knock_on_energy =
-          std::min( incoming_energy - d_binding_energy, knock_on_energy );
-      }
-
-      return knock_on_energy;
-    };
+      return this->sampleKnockOn( incoming_energy ); };
 
     // The sample secondary and primary function
     d_sample_primary_and_secondary = [this]( const double incoming_energy, double& outgoing_energy, double& knock_on_energy ){
-      // Sample the knock-on energy
-      knock_on_energy = d_sample(incoming_energy);
-
-      /* NOTE: When calculating the outgoing energy the binding energy should be
-      * subtracted from the incoming energy first to ensure a non-negative result.
-      * Otherwise, for the max knock-on energy ( ie: (E_in - E_b)/2 ), roundoff
-      * error can sometimes cause a negative outgoing energy to be calculated.
-      */
-      outgoing_energy =
-          std::max(0.0, (incoming_energy - d_binding_energy) - knock_on_energy );
-    };
+      this->sampleKnockOn( incoming_energy, outgoing_energy, knock_on_energy ); };
 
     // The sample positron function
     d_sample_positron = [this]( const double incoming_energy, double& scaled_random_number ){
-
-      double knock_on_energy;
-
-      // The knock-on energy is less than half the maximum energy loss
-      if ( scaled_random_number <= 1.0 )
-      {
-        if( scaled_random_number == 1.0 )
-          scaled_random_number -= 1e-12;
-
-        // Sample knock-on electron energy
-        knock_on_energy =
-        d_electroionization_shell_distribution->sampleSecondaryConditionalWithRandomNumber(
-          incoming_energy,
-          scaled_random_number,
-          d_min_energy_functor,
-          d_max_energy_functor );
-      }
-      // The knock-on energy is greater than half the maximum energy loss
-      else
-      {
-        // Rescale the random number
-        scaled_random_number = 2.0 - scaled_random_number;
-
-        // Sample knock-on energy above half the maximum energy loss
-        double energy_above_half =
-        d_electroionization_shell_distribution->sampleSecondaryConditionalWithRandomNumber(
-          incoming_energy,
-          scaled_random_number,
-          d_min_energy_functor,
-          d_max_energy_functor );
-
-        knock_on_energy = energy_above_half + d_max_energy_functor( incoming_energy );
-      }
-
-
-      if( d_limit_knock_on_energy_range )
-      {
-        knock_on_energy =
-          std::min( incoming_energy - d_binding_energy, knock_on_energy );
-      }
-
-      return knock_on_energy;
-    };
+      return this->sampleKnockOnPositron( incoming_energy, scaled_random_number ); };
   }
 }
 
@@ -688,6 +441,339 @@ void ElectroionizationSubshellElectronScatteringDistribution::samplePositron(
   positron_angle_cosine = outgoingAngle( incoming_energy, positron_energy );
 
   testPostcondition( positron_energy > 0.0 );
+}
+
+// Get knock-on energy
+double ElectroionizationSubshellElectronScatteringDistribution::getKnockOnEnergy(
+                     const double incoming_energy,
+                     const double outgoing_energy_1 ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( outgoing_energy_1 > 0.0 );
+  testPrecondition( incoming_energy > outgoing_energy_1 );
+
+  if( outgoing_energy_1 > d_max_energy_functor( incoming_energy ) )
+  {
+    // calculate the energy of the second outgoing electron
+    double outgoing_energy_2 = (incoming_energy - d_binding_energy) - outgoing_energy_1;
+
+    if ( outgoing_energy_2 <= 0.0 )
+      return 0.0;
+
+    return outgoing_energy_2;
+  }
+  else
+    return outgoing_energy_1;
+}
+
+// Get knock-on energy
+double ElectroionizationSubshellElectronScatteringDistribution::getKnockOnEnergyRatio(
+                     const double incoming_energy,
+                     const double outgoing_energy_1 ) const
+{
+  return 2.0*getKnockOnEnergy( incoming_energy, outgoing_energy_1 )/
+                                          (incoming_energy - d_binding_energy);
+}
+
+
+// Return the distribution min secondary energy
+double ElectroionizationSubshellElectronScatteringDistribution::getDistributionMinSecondaryEnergy( const double incoming_energy )
+{
+  return d_electroionization_shell_distribution->getLowerBoundOfSecondaryConditionalIndepVar( incoming_energy );
+}
+
+// Return the physical min secondary energy
+double ElectroionizationSubshellElectronScatteringDistribution::getPhysicalMinSecondaryEnergy( const double incoming_energy )
+{
+  if( incoming_energy > d_binding_energy )
+  {
+    double min_energy =
+      d_electroionization_shell_distribution->getLowerBoundOfSecondaryConditionalIndepVar( incoming_energy );
+
+    double max_energy = d_max_energy_functor( incoming_energy );
+
+    // If the min energy is greater than the max, return the max energy
+    return std::min( min_energy, max_energy );
+  }
+  else
+    return 0.0;
+}
+
+// Return the distribution min secondary energy
+double ElectroionizationSubshellElectronScatteringDistribution::getDistributionMaxSecondaryEnergy( const double incoming_energy )
+{
+  return d_electroionization_shell_distribution->getUpperBoundOfSecondaryConditionalIndepVar( incoming_energy );
+}
+
+// Return the physical min secondary energy
+double ElectroionizationSubshellElectronScatteringDistribution::getPhysicalMaxSecondaryEnergy( const double incoming_energy )
+{
+  if ( incoming_energy > d_binding_energy )
+    return 0.5*( incoming_energy - d_binding_energy );
+  else
+    return 0.0;
+}
+
+// Evaluate the distribution for a given incoming and outgoing energy
+double ElectroionizationSubshellElectronScatteringDistribution::evaluateKnockOn(
+                     const double incoming_energy,
+                     const double outgoing_energy_1 ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( outgoing_energy_1 > 0.0 );
+  testPrecondition( incoming_energy > outgoing_energy_1 );
+
+  // evaluate the distribution
+  return d_electroionization_shell_distribution->evaluate(
+            incoming_energy,
+            this->getKnockOnEnergy( incoming_energy, outgoing_energy_1 ),
+            d_min_energy_functor,
+            d_max_energy_functor );
+}
+
+// Evaluate the distribution for a given incoming and outgoing energy
+double ElectroionizationSubshellElectronScatteringDistribution::evaluateKnockOnRatio(
+                     const double incoming_energy,
+                     const double outgoing_energy_1 ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( outgoing_energy_1 > 0.0 );
+  testPrecondition( incoming_energy > outgoing_energy_1 );
+
+  // evaluate the distribution
+  return d_electroionization_shell_distribution->evaluate(
+            incoming_energy,
+            this->getKnockOnEnergyRatio( incoming_energy, outgoing_energy_1 ) );
+}
+
+// Evaluate the PDF value for a given incoming and outgoing energy
+double ElectroionizationSubshellElectronScatteringDistribution::evaluateKnockOnPDF(
+                     const double incoming_energy,
+                     const double outgoing_energy_1 ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( outgoing_energy_1 > 0.0 );
+  testPrecondition( incoming_energy > outgoing_energy_1 );
+
+  // evaluate the PDF
+  return d_electroionization_shell_distribution->evaluateSecondaryConditionalPDF(
+            incoming_energy,
+            this->getKnockOnEnergy( incoming_energy, outgoing_energy_1 ),
+            d_min_energy_functor,
+            d_max_energy_functor );
+}
+
+// Evaluate the PDF value for a given incoming and outgoing energy
+double ElectroionizationSubshellElectronScatteringDistribution::evaluateKnockOnRatioPDF(
+                     const double incoming_energy,
+                     const double outgoing_energy_1 ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( outgoing_energy_1 > 0.0 );
+  testPrecondition( incoming_energy > outgoing_energy_1 );
+
+  // evaluate the PDF
+  return d_electroionization_shell_distribution->evaluateSecondaryConditionalPDF(
+            incoming_energy,
+            this->getKnockOnEnergyRatio( incoming_energy, outgoing_energy_1 ) );
+}
+
+// Evaluate the CDF value for a given incoming and outgoing energy
+double ElectroionizationSubshellElectronScatteringDistribution::evaluateKnockOnCDF(
+                     const double incoming_energy,
+                     const double outgoing_energy_1 ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( outgoing_energy_1 > 0.0 );
+  testPrecondition( incoming_energy > outgoing_energy_1 );
+
+  // evaluate the CDF
+  return d_electroionization_shell_distribution->evaluateSecondaryConditionalCDF(
+            incoming_energy,
+            this->getKnockOnEnergy( incoming_energy, outgoing_energy_1 ),
+            d_min_energy_functor,
+            d_max_energy_functor );
+}
+
+// Evaluate the CDF value for a given incoming and outgoing energy
+double ElectroionizationSubshellElectronScatteringDistribution::evaluateKnockOnRatioCDF(
+                     const double incoming_energy,
+                     const double outgoing_energy_1 ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( outgoing_energy_1 > 0.0 );
+  testPrecondition( incoming_energy > outgoing_energy_1 );
+
+  // evaluate the CDF
+  return d_electroionization_shell_distribution->evaluateSecondaryConditionalCDF(
+            incoming_energy,
+            this->getKnockOnEnergyRatio( incoming_energy, outgoing_energy_1 ) );
+}
+
+
+// Sample a knock-on energy
+double ElectroionizationSubshellElectronScatteringDistribution::sampleKnockOn(
+               const double incoming_energy ) const
+{
+  // Sample knock-on electron energy
+  double knock_on_energy =
+    d_electroionization_shell_distribution->sampleSecondaryConditional(
+      incoming_energy,
+      d_min_energy_functor,
+      d_max_energy_functor );
+
+  if( d_limit_knock_on_energy_range )
+  {
+    knock_on_energy =
+      std::min( incoming_energy - d_binding_energy, knock_on_energy );
+  }
+
+  return knock_on_energy;
+}
+
+// Sample a knock-on energy
+double ElectroionizationSubshellElectronScatteringDistribution::sampleKnockOnRatio(
+               const double incoming_energy ) const
+{
+  testPrecondition( incoming_energy >= d_binding_energy );
+
+  // Sample knock-on electron energy
+  double knock_on_energy_ratio =
+    d_electroionization_shell_distribution->sampleSecondaryConditional(
+      incoming_energy );
+
+  return 0.5*knock_on_energy_ratio*( incoming_energy - d_binding_energy );
+}
+
+// Sample a knock-on energy and primary energy
+void ElectroionizationSubshellElectronScatteringDistribution::sampleKnockOn(
+               const double incoming_energy,
+               double& outgoing_energy,
+               double& knock_on_energy ) const
+{
+  // Sample the knock-on energy
+  knock_on_energy = d_sample(incoming_energy);
+
+  /* NOTE: When calculating the outgoing energy the binding energy should be
+  * subtracted from the incoming energy first to ensure a non-negative result.
+  * Otherwise, for the max knock-on energy ( ie: (E_in - E_b)/2 ), roundoff
+  * error can sometimes cause a negative outgoing energy to be calculated.
+  */
+  outgoing_energy =
+      std::max(0.0, (incoming_energy - d_binding_energy) - knock_on_energy );
+}
+
+// Sample a knock-on energy and primary energy
+void ElectroionizationSubshellElectronScatteringDistribution::sampleKnockOnRatio(
+               const double incoming_energy,
+               double& outgoing_energy,
+               double& knock_on_energy ) const
+{
+  // Calculate the available energy
+  double available_energy = incoming_energy - d_binding_energy;
+
+  // Sample ratio of energy loss
+  double energy_loss_ratio =
+    0.5*d_electroionization_shell_distribution->sampleSecondaryConditional(
+      incoming_energy );
+
+  // Calculate the knock-on energy
+  knock_on_energy = energy_loss_ratio*available_energy;
+  // Calculate the outgoing energy
+  outgoing_energy = (1.0- energy_loss_ratio)*available_energy;
+}
+
+// Sample a knock-on energy
+double ElectroionizationSubshellElectronScatteringDistribution::sampleKnockOnPositron(
+               const double incoming_energy,
+               double scaled_random_number ) const
+{
+  double knock_on_energy;
+
+  // The knock-on energy is less than half the maximum energy loss
+  if ( scaled_random_number <= 1.0 )
+  {
+    if( scaled_random_number == 1.0 )
+      scaled_random_number -= 1e-12;
+
+    // Sample knock-on electron energy
+    knock_on_energy =
+    d_electroionization_shell_distribution->sampleSecondaryConditionalWithRandomNumber(
+      incoming_energy,
+      scaled_random_number,
+      d_min_energy_functor,
+      d_max_energy_functor );
+  }
+  // The knock-on energy is greater than half the maximum energy loss
+  else
+  {
+    // Rescale the random number
+    scaled_random_number = 2.0 - scaled_random_number;
+
+    // Sample knock-on energy above half the maximum energy loss
+    double energy_above_half =
+    d_electroionization_shell_distribution->sampleSecondaryConditionalWithRandomNumber(
+      incoming_energy,
+      scaled_random_number,
+      d_min_energy_functor,
+      d_max_energy_functor );
+
+    knock_on_energy = energy_above_half + d_max_energy_functor( incoming_energy );
+  }
+
+
+  if( d_limit_knock_on_energy_range )
+  {
+    knock_on_energy =
+      std::min( incoming_energy - d_binding_energy, knock_on_energy );
+  }
+
+  return knock_on_energy;
+}
+
+// Sample a knock-on energy
+double ElectroionizationSubshellElectronScatteringDistribution::sampleKnockOnRatioPositron(
+               const double incoming_energy,
+               double scaled_random_number ) const
+{
+  // Calculate the available energy
+  double available_energy = incoming_energy - d_binding_energy;
+
+  // The knock-on energy is less than half the maximum energy loss
+  if ( scaled_random_number <= 1.0 )
+  {
+    if( scaled_random_number == 1.0 )
+      scaled_random_number -= 1e-12;
+
+    // Sample knock-on electron energy
+    double energy_loss_ratio =
+    0.5*d_electroionization_shell_distribution->sampleSecondaryConditionalWithRandomNumber(
+      incoming_energy,
+      scaled_random_number );
+
+    return energy_loss_ratio*available_energy;
+  }
+  // The knock-on energy is greater than half the maximum energy loss
+  else
+  {
+    // Rescale the random number
+    scaled_random_number = 2.0 - scaled_random_number;
+
+    // Sample knock-on energy above half the maximum energy loss
+    double energy_loss_ratio =
+    0.5*d_electroionization_shell_distribution->sampleSecondaryConditionalWithRandomNumber(
+      incoming_energy,
+      scaled_random_number );
+
+    return (1.0- energy_loss_ratio)*available_energy;
+  }
 }
 
 } // end MonteCarlo namespace

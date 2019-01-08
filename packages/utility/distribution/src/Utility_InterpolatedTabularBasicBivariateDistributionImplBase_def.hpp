@@ -466,8 +466,14 @@ auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPoli
                            lower_bin_boundary,
                            upper_bin_boundary );
 
+  // Check if the primary_indep_var_value is on a bin boundary
+  if( lower_bin_boundary->first == primary_indep_var_value )
+    return Utility::get<1>( *lower_bin_boundary )->getUpperBoundOfIndepVar();
+  else if( upper_bin_boundary->first == primary_indep_var_value )
+    return Utility::get<1>( *upper_bin_boundary )->getUpperBoundOfIndepVar();
+
   // Check for a primary value outside of the primary grid limits
-  if( lower_bin_boundary == upper_bin_boundary )
+  else if( lower_bin_boundary == upper_bin_boundary )
   {
     if( this->arePrimaryLimitsExtended() )
       return Utility::get<1>( *lower_bin_boundary )->getUpperBoundOfIndepVar();
@@ -495,8 +501,14 @@ auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPoli
                            lower_bin_boundary,
                            upper_bin_boundary );
 
+  // Check if the primary_indep_var_value is on a bin boundary
+  if( lower_bin_boundary->first == primary_indep_var_value )
+    return Utility::get<1>( *lower_bin_boundary )->getLowerBoundOfIndepVar();
+  else if( upper_bin_boundary->first == primary_indep_var_value )
+    return Utility::get<1>( *upper_bin_boundary )->getLowerBoundOfIndepVar();
+
   // Check for a primary value outside of the primary grid limits
-  if( lower_bin_boundary == upper_bin_boundary )
+  else if( lower_bin_boundary == upper_bin_boundary )
   {
     if( this->arePrimaryLimitsExtended() )
       return Utility::get<1>( *lower_bin_boundary )->getLowerBoundOfIndepVar();
