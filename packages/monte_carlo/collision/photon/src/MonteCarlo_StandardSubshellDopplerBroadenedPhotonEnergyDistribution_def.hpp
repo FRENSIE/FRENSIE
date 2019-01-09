@@ -109,9 +109,6 @@ double StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
-  // Make sure the outgoing energy is valid
-  testPrecondition( outgoing_energy <=
-                    incoming_energy - this->getSubshellBindingEnergy() );
   // Make sure the scattering angle is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
@@ -224,7 +221,7 @@ double StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   boost::function<double (double x)> double_diff_cs_wrapper =
-    boost::bind<double>( &StandardSubshellDopplerBroadenedPhotonEnergyDistribution::evaluate,
+    boost::bind<double>( &StandardSubshellDopplerBroadenedPhotonEnergyDistribution::evaluateWithElectronMomentumProjection,
                          boost::cref( *this ),
                          incoming_energy,
                          _1,
