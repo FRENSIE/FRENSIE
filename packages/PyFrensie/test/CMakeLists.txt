@@ -353,6 +353,11 @@ IF(${FRENSIE_ENABLE_DAGMC})
   ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Collision.FilledGeometryModel ${COLLISION_DATABASE_XML_FILE_TARGET} )
 ENDIF()
 
+# Add the MonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionACEFactory
+# unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionACEFactory)
+ADD_TEST(tstMonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionACEFactory_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionACEFactory.py --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt --test_ace_table=82000.12p)
+
 # Add the MonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory
 # unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory)

@@ -114,6 +114,12 @@ using namespace MonteCarlo;
   %append_output(PyFrensie::convertToPython( *$1 ));
 }
 
+%typemap(in,numinputs=0) double& electron_momentum_projection (double temp) "$1 = &temp;"
+
+%typemap(argout) double& electron_momentum_projection {
+  %append_output(PyFrensie::convertToPython( *$1 ));
+}
+
 %typemap(in,numinputs=0) double& scattering_angle_cosine (double temp) "$1 = &temp;"
 
 %typemap(argout) double& scattering_angle_cosine {
@@ -127,10 +133,6 @@ using namespace MonteCarlo;
 %typemap(argout) Data::SubshellType& shell_of_interaction {
   %append_output(PyFrensie::convertToPython( static_cast<int>( *$1 ) ));
 }
-
-// %apply MonteCarlo::PhotonState& INOUT { MonteCarlo::PhotonState& photon };
-// %apply MonteCarlo::AdjointPhotonState& INOUT { MonteCarlo::AdjointPhotonState& photon };
-// %apply MonteCarlo::ParticleBank& INOUT { MonteCarlo::ParticleBank& bank };
 
 //---------------------------------------------------------------------------//
 // Scattering Distribution Support
@@ -193,8 +195,67 @@ using namespace MonteCarlo;
 //---------------------------------------------------------------------------//
 // Doppler Broadened Photon Energy Distribution ACE Factory Support
 //---------------------------------------------------------------------------//
-%apply std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>& OUTPUT { std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>& doppler_broadened_dist };
-%apply std::shared_ptr<const SubshellDopplerBroadenedPhotonEnergyDistribution>& OUTPUT { std::shared_ptr<const SubshellDopplerBroadenedPhotonEnergyDistribution>& doppler_broadened_dist };
+%typemap(in,numinputs=0) std::vector<Data::SubshellType>& subshell_order (std::vector<Data::SubshellType> temp) "$1 = &temp;"
+
+%typemap(argout) std::vector<Data::SubshellType>& subshell_order {
+  std::vector<int> output( $1->begin(), $1->end() );
+  
+  %append_output(PyFrensie::convertToPython(output));
+}
+
+%extend MonteCarlo::DopplerBroadenedPhotonEnergyDistributionACEFactory
+{
+  //! Create a coupled complete Doppler broadened photon energy dist
+  static std::shared_ptr<const MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution> createCoupledCompleteDistribution(
+                           const Data::XSSEPRDataExtractor& raw_photoatom_data,
+                           const bool use_full_profile )
+  {
+    std::shared_ptr<const MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution> doppler_broadened_dist;
+
+    MonteCarlo::DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDistribution(
+                                                        raw_photoatom_data,
+                                                        doppler_broadened_dist,
+                                                        use_full_profile );
+
+    return doppler_broadened_dist;
+  }
+
+  //! Create a decoupled complete Doppler broadened photon energy dist
+  static std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution> createDecoupledCompleteDistribution(
+                           const Data::XSSEPRDataExtractor& raw_photoatom_data,
+                           const bool use_full_profile )
+  {
+    std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution> doppler_broadened_dist;
+
+    MonteCarlo::DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledCompleteDistribution(
+                                                        raw_photoatom_data,
+                                                        doppler_broadened_dist,
+                                                        use_full_profile );
+
+    return doppler_broadened_dist;
+  }
+
+  //! Create a subshell Doppler broadened photon energy dist
+  static std::shared_ptr<const SubshellDopplerBroadenedPhotonEnergyDistribution> createSubshellDistribution(
+                           const Data::XSSEPRDataExtractor& raw_photoatom_data,
+                           const unsigned endf_subshell,
+                           const bool use_full_profile )
+  {
+    std::shared_ptr<const SubshellDopplerBroadenedPhotonEnergyDistribution> doppler_broadened_dist;
+
+    MonteCarlo::DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribution(
+                                                        raw_photoatom_data,
+                                                        endf_subshell,
+                                                        doppler_broadened_dist,
+                                                        use_full_profile );
+
+    return doppler_broadened_dist;
+  }
+};
+
+%ignore MonteCarlo::DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDistribution;
+%ignore MonteCarlo::DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledCompleteDistribution;
+%ignore MonteCarlo::DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribution;
 
 %include "MonteCarlo_DopplerBroadenedPhotonEnergyDistributionACEFactory.hpp"
 
