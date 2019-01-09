@@ -1,0 +1,442 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionACEFactory class unit tests
+#  \file   tstMonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionACEFactory.py
+#  \author Alex Robinson
+#  \brief  Unit tests for the MonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionACEFactory class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-f", "--test_native_file", type="string", dest="test_native_file",
+                  help="the native file used for testing")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Prng = importPyFrensieModuleFromBuildDir('Utility.Prng')
+Data = importPyFrensieModuleFromBuildDir('Data')
+Native = importPyFrensieModuleFromBuildDir('Data.Native')
+MonteCarlo = importPyFrensieModuleFromBuildDir( 'MonteCarlo' )
+Photon = importPyFrensieModuleFromBuildDir('MonteCarlo.Photon')
+
+Prng.RandomNumberGenerator.createStreams()
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Check that a Klein-Nishina distribution can be created
+class DopplerBroadenedPhotonEnergyDistributionNativeFactoryTestCase(unittest.TestCase):
+    "TestCase for MonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionNativeFactory class"
+    @classmethod
+    def setUpClass(cls):
+        cls.native_data = Native.ElectronPhotonRelaxationDataContainer( options.test_native_file )
+
+    def testCreateCoupledCompleteDistribution(self):
+        "Test MonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionNativeFactory.createCoupledCompleteDistribution"
+
+        dist = Photon.DopplerBroadenedPhotonEnergyDistributionNativeFactory.createCoupledCompleteDistribution( self.native_data )
+
+        self.assertTrue( dist.isComplete() )
+        self.assertTrue( dist.isValidSubshell( Data.K_SUBSHELL ) )
+        self.assertTrue( dist.isValidSubshell( Data.P3_SUBSHELL ) )
+
+        # Check that the subshell binding energies can be returned
+        self.assertEqual( dist.getSubshellBindingEnergy( Data.K_SUBSHELL ), 0.08829 )
+        self.assertEqual( dist.getSubshellBindingEnergy( Data.P3_SUBSHELL ), 5.29e-06 )
+
+        # Check that the occupancy of a subshell can be returned
+        self.assertEqual( dist.getSubshellOccupancy( Data.K_SUBSHELL ), 2.0 )
+        self.assertEqual( dist.getSubshellOccupancy( Data.P3_SUBSHELL ), 1.33 )
+
+        # Check that the distribution can be evaluated with pz
+        value = dist.evaluateWithElectronMomentumProjection( 0.1, -0.5, 0.5 )
+
+        self.assertAlmostEqual( value, 0.19063946459006434, delta=1e-15 )
+
+        value = dist.evaluateWithElectronMomentumProjection( 0.1, 0.0, 0.5 )
+
+        self.assertAlmostEqual( value, 396.1366356021664, delta=1e-15 )
+
+        value = dist.evaluateWithElectronMomentumProjection( 0.1, 0.5, 0.5 )
+
+        self.assertEqual( value, 0.0 )
+
+        # Check that the subshell distribution can be evaluated with pz
+        value = dist.evaluateSubshellWithElectronMomentumProjection( 0.1, -0.5, -1.0, Data.K_SUBSHELL )
+
+        self.assertEqual( value, 0.0 )
+
+        value = dist.evaluateSubshellWithElectronMomentumProjection( 0.1, 0.0, -1.0, Data.K_SUBSHELL )
+
+        self.assertEqual( value, 0.0 )
+
+        value = dist.evaluateSubshellWithElectronMomentumProjection( 0.1, 0.5, -1.0, Data.K_SUBSHELL )
+
+        self.assertEqual( value, 0.0 )
+
+        # Check that the distribution can be evaluated
+        value = dist.evaluate( 0.1, 0.09, -0.5 )
+
+        self.assertAlmostEqual( value, 82.90954091964146, delta=1e-15 )
+
+        value = dist.evaluate( 0.1, 0.01, -0.5 )
+
+        self.assertAlmostEqual( value, 0.7061555175357799, delta=1e-15 )
+
+        # Check that the subshell distribution can be evaluated
+        value = dist.evaluateSubshell( 0.1, 0.09, -0.5, Data.K_SUBSHELL )
+
+        self.assertEqual( value, 0.0 )
+
+        value = dist.evaluateSubshell( 0.1, 0.01, -0.5, Data.K_SUBSHELL )
+
+        self.assertAlmostEqual( value, 0.4782888826355131, delta=1e-15 )
+
+        # Check that the exact distribution can be evaluated
+        value = dist.evaluateExact( 0.1, 0.09, -0.5 )
+
+        self.assertAlmostEqual( value, 92.4533943410092, delta=1e-15 )
+
+        value = dist.evaluateExact( 0.1, 0.01, -0.5 )
+
+        self.assertAlmostEqual( value, 0.6486858972523687, delta=1e-15 )
+
+        # Check that the exact subshell distribution can be evaluated
+        value = dist.evaluateSubshellExact( 0.1, 0.09, -0.5, Data.K_SUBSHELL )
+
+        self.assertEqual( value, 0.0 )
+
+        value = dist.evaluateSubshellExact( 0.1, 0.01, -0.5, Data.K_SUBSHELL )
+
+        self.assertAlmostEqual( value, 0.4393639152759721, delta=1e-15 )
+
+        # Check that the PDF can be evaluated with pz
+        pdf_value = dist.evaluatePDFWithElectronMomentumProjection( 0.1, -0.1, -0.5, 1e-3 )
+
+        self.assertAlmostEqual( pdf_value, 0.9166246768191406, delta=1e-15 )
+
+        pdf_value = dist.evaluatePDFWithElectronMomentumProjection( 0.1, 0.0, -0.5, 1e-3 )
+
+        self.assertAlmostEqual( pdf_value, 20.20530830794308, delta=1e-15 )
+
+        pdf_value = dist.evaluatePDFWithElectronMomentumProjection( 0.1, 0.1, -0.5 )
+
+        self.assertAlmostEqual( pdf_value, 0.6997940858787014, delta=1e-15 )
+
+        # Check that the subshell PDF can be evaluated with pz
+        pdf_value = dist.evaluateSubshellPDFWithElectronMomentumProjection( 0.1, -0.1, -0.5, Data.P3_SUBSHELL, 1e-3 )
+
+        self.assertAlmostEqual( pdf_value, 0.008775658224734507, delta=1e-15 )
+
+        pdf_value = dist.evaluateSubshellPDFWithElectronMomentumProjection( 0.1, 0.0, -0.5, Data.P3_SUBSHELL, 1e-3 )
+
+        self.assertAlmostEqual( pdf_value, 111.12223524589388, delta=1e-15 )
+
+        pdf_value = dist.evaluateSubshellPDFWithElectronMomentumProjection( 0.1, 0.1, -0.5, Data.P3_SUBSHELL )
+
+        self.assertAlmostEqual( pdf_value, 0.008775658224734507, delta=1e-15 )
+
+        # Check that the PDF can be evaluated
+        pdf_value = dist.evaluatePDF( 0.1, 0.09, -0.5, 1e-3 )
+
+        self.assertAlmostEqual( pdf_value, 5.5307783866257845, delta=1e-15 )
+
+        pdf_value = dist.evaluatePDF( 0.1, 0.07, -0.5, 1e-3 )
+
+        self.assertAlmostEqual( pdf_value, 17.53537839309985, delta=1e-15 )
+
+        pdf_value = dist.evaluatePDF( 0.1, 0.06, -0.5 )
+
+        self.assertAlmostEqual( pdf_value, 3.166278611579236, delta=1e-15 )
+
+        # Check that the subshell PDF can be evaluated
+        pdf_value = dist.evaluateSubshellPDF( 0.1, 0.09, -0.5, Data.P3_SUBSHELL, 1e-3 )
+
+        self.assertAlmostEqual( pdf_value, 0.06917312259840622, delta=1e-15 )
+
+        pdf_value = dist.evaluateSubshellPDF( 0.1, 0.07, -0.5, Data.P3_SUBSHELL, 1e-3 )
+
+        self.assertAlmostEqual( pdf_value, 0.21741612221163314, delta=1e-15 )
+
+        pdf_value = dist.evaluateSubshellPDF( 0.1, 0.06, -0.5, Data.P3_SUBSHELL )
+
+        self.assertAlmostEqual( pdf_value, 0.01783624828767473, delta=1e-15 )
+
+        # Check that the exact pdf can be evaluated
+        pdf_value = dist.evaluatePDFExact( 0.1, 0.09, -0.5, 1e-3 )
+
+        self.assertAlmostEqual( pdf_value, 6.1905984447186935, delta=1e-15 )
+
+        pdf_value = dist.evaluatePDFExact( 0.1, 0.07, -0.5, 1e-3 )
+
+        self.assertAlmostEqual( pdf_value, 16.687565023335704, delta=1e-15 )
+
+        pdf_value = dist.evaluatePDFExact( 0.1, 0.06, -0.5 )
+
+        self.assertAlmostEqual( pdf_value, 2.8414566536832915, delta=1e-15 )
+
+        # Check that the exact subshell pdf can be evaluated
+        pdf_value = dist.evaluateSubshellPDFExact( 0.1, 0.09, -0.5, Data.P3_SUBSHELL, 1e-3 )
+
+        self.assertAlmostEqual( pdf_value, 0.07712528781507565, delta=1e-15 )
+
+        pdf_value = dist.evaluateSubshellPDFExact( 0.1, 0.07, -0.5, Data.P3_SUBSHELL, 1e-3 )
+
+        self.assertAlmostEqual( pdf_value, 0.20610219358988294, delta=1e-15 )
+
+        pdf_value = dist.evaluateSubshellPDFExact( 0.1, 0.06, -0.5, Data.P3_SUBSHELL )
+
+        self.assertAlmostEqual( pdf_value, 0.01594441012552602, delta=1e-15 )
+
+        # Check that the cross section can be evaluated
+        cs = dist.evaluateIntegratedCrossSection( 0.1, -0.5, 1e-3 )
+
+        self.assertAlmostEqual( cs, 14.990573681297487, delta=1e-15 )
+
+        # Check that the subshell cross section can be evaluated
+        cs = dist.evaluateSubshellIntegratedCrossSection( 0.1, -0.5, Data.P3_SUBSHELL, 1e-3 )
+
+        self.assertAlmostEqual( cs, 0.2610577299866674, delta=1e-15 )
+
+        # Check that the exact cross section can be evaluated
+        cs = dist.evaluateIntegratedCrossSectionExact( 0.1, -0.5, 1e-3 )
+
+        self.assertAlmostEqual( cs, 14.934484148278555, delta=1e-15 )
+
+        # Check that the exact subshell cross section can be evaluated
+        cs = dist.evaluateSubshellIntegratedCrossSectionExact( 0.1, -0.5, Data.P3_SUBSHELL, 1e-3 )
+
+        self.assertAlmostEqual( cs, 0.2610931576538966, delta=1e-15 )
+
+        # Check that the distribution can be sampled from
+        Prng.RandomNumberGenerator.setFakeStream( [0.005, # subshell 0
+                                                   6.427713151861e-01, # pz
+                                                   0.25, # energy loss
+                                                   0.5] ) # pz = 0.0
+
+        sample = dist.sample( 20.0, 0.0 )
+
+        self.assertEqual( len(sample), 2 )
+        self.assertAlmostEqual( sample[0], 0.5559945669538092, delta=1e-15 )
+        self.assertEqual( sample[1], Data.K_SUBSHELL )
+        
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+        # Check that the distribution can be sampled from (record trials)
+        Prng.RandomNumberGenerator.setFakeStream( [0.005, # subshell 0
+                                                   6.427713151861e-01, # pz
+                                                   0.25, # energy loss
+                                                   0.5] ) # pz = 0.0
+
+        trials = 0
+        sample = dist.sampleAndRecordTrials( 20.0, 0.0, trials )
+
+        self.assertEqual( len(sample), 3 )
+        self.assertAlmostEqual( sample[0], 0.5559945669538092, delta=1e-15 )
+        self.assertEqual( sample[1], Data.K_SUBSHELL )
+        self.assertEqual( sample[2], 1 )
+        
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+        # Check that pz can be sampled from the distribution
+        Prng.RandomNumberGenerator.setFakeStream( [0.005, # subshell 0
+                                                   6.427713151861e-01, # pz
+                                                   0.25, # energy loss
+                                                   0.5] ) # pz = 0.0
+
+        trials = 0
+        sample = dist.sampleMomentumAndRecordTrials( 20.0, 0.0, trials )
+
+        self.assertEqual( len(sample), 3 )
+        self.assertAlmostEqual( sample[0], 0.11580929758286157, delta=1e-15 )
+        self.assertEqual( sample[1], Data.K_SUBSHELL )
+        self.assertEqual( sample[2], 1 )
+        
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+        # Check that pz can be sampled from a subshell distribution
+        Prng.RandomNumberGenerator.setFakeStream( [0.5, 0.5] );
+
+        sample = dist.sampleSubshellMomentum( 20.0, 0.0, Data.P3_SUBSHELL )
+
+        self.assertAlmostEqual( sample, 0.0, delta=1e-15 )
+        
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testCreateSubshellDistribution(self):
+        "Test MonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionNativeFactory.createSubshellDistribution"
+
+        dist = Photon.DopplerBroadenedPhotonEnergyDistributionNativeFactory.createSubshellDistribution( self.native_data, Data.P3_SUBSHELL )
+
+        self.assertFalse( dist.isComplete() )
+
+        self.assertEqual( dist.getSubshell(), Data.P3_SUBSHELL )
+        self.assertEqual( dist.getSubshellOccupancy(), 1.33 )
+        self.assertEqual( dist.getSubshellBindingEnergy(), 5.29e-06 )
+
+        # Check that the distribution can be evaluated with pz
+        value = dist.evaluateWithElectronMomentumProjection( 0.1, -0.5, 0.5 )
+
+        self.assertAlmostEqual( value, 2.905737385429026e-05, delta=1e-15 )
+
+        value = dist.evaluateWithElectronMomentumProjection( 0.1, 0.0, 0.5 )
+
+        self.assertAlmostEqual( value, 38.50225068789236, delta=1e-15 )
+
+        value = dist.evaluateWithElectronMomentumProjection( 0.1, 0.5, 0.5 )
+
+        self.assertEqual( value, 0.0 )
+
+        # Check that the distribution can be evaluated
+        value = dist.evaluate( 0.1, 0.09, -0.5 )
+
+        self.assertAlmostEqual( value, 0.01805817836162937, delta=1e-15 )
+
+        value = dist.evaluate( 0.1, 0.01, -0.5 )
+
+        self.assertAlmostEqual( value, 2.002706456724397e-05, delta=1e-15 )
+
+        # Check that the exact distribution can be evaluated
+        value = dist.evaluateExact( 0.1, 0.09, -0.5 )
+
+        self.assertAlmostEqual( value, 0.0201368849306037, delta=1e-15 )
+
+        value = dist.evaluateExact( 0.1, 0.01, -0.5 )
+
+        self.assertAlmostEqual( value, 1.8397185925089828e-05, delta=1e-15 )
+
+        # Check that the PDF can be evaluated with pz
+        pdf_value = dist.evaluatePDFWithElectronMomentumProjection( 0.1, -0.1, -0.5, 1e-3 )
+
+        self.assertAlmostEqual( pdf_value, 0.008775658224734507, delta=1e-15 )
+
+        pdf_value = dist.evaluatePDFWithElectronMomentumProjection( 0.1, 0.0, -0.5, 1e-3 )
+
+        self.assertAlmostEqual( pdf_value, 111.12223524589388, delta=1e-15 )
+
+        pdf_value = dist.evaluatePDFWithElectronMomentumProjection( 0.1, 0.1, -0.5 )
+
+        self.assertAlmostEqual( pdf_value, 0.008775658224734507, delta=1e-15 )
+
+        # Check that the PDF can be evaluated
+        pdf_value = dist.evaluatePDF( 0.1, 0.09, -0.5, 1e-3 )
+
+        self.assertAlmostEqual( pdf_value, 0.06917312259840622, delta=1e-15 )
+
+        pdf_value = dist.evaluatePDF( 0.1, 0.07, -0.5, 1e-3 )
+
+        self.assertAlmostEqual( pdf_value, 0.21741612221163314, delta=1e-15 )
+
+        pdf_value = dist.evaluatePDF( 0.1, 0.06, -0.5 )
+
+        self.assertAlmostEqual( pdf_value, 0.01783624828767473, delta=1e-15 )
+
+        # Check that the exact pdf can be evaluated
+        pdf_value = dist.evaluatePDFExact( 0.1, 0.09, -0.5, 1e-3 )
+
+        self.assertAlmostEqual( pdf_value, 0.07712528781507565, delta=1e-15 )
+
+        pdf_value = dist.evaluatePDFExact( 0.1, 0.07, -0.5, 1e-3 )
+
+        self.assertAlmostEqual( pdf_value, 0.20610219358988294, delta=1e-15 )
+
+        pdf_value = dist.evaluatePDFExact( 0.1, 0.06, -0.5 )
+
+        self.assertAlmostEqual( pdf_value, 0.01594441012552602, delta=1e-15 )
+
+        # Check that the cross section can be evaluated
+        cs = dist.evaluateIntegratedCrossSection( 0.1, -0.5, 1e-3 )
+
+        self.assertAlmostEqual( cs, 0.2610577299866674, delta=1e-15 )
+
+        # Check that the exact cross section can be evaluated
+        cs = dist.evaluateIntegratedCrossSectionExact( 0.1, -0.5, 1e-3 )
+
+        self.assertAlmostEqual( cs, 0.2610931576538966, delta=1e-15 )
+
+        # Check that the distribution can be sampled from
+        Prng.RandomNumberGenerator.setFakeStream( [0.005, # subshell 0
+                                                   6.427713151861e-01, # pz
+                                                   0.25, # energy loss
+                                                   0.5] ) # pz = 0.0
+
+        sample = dist.sample( 20.0, 0.0 )
+
+        self.assertEqual( len(sample), 2 )
+        self.assertAlmostEqual( sample[0], 0.4863072509771199, delta=1e-15 )
+        self.assertEqual( sample[1], Data.P3_SUBSHELL )
+        
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+        # Check that the distribution can be sampled from (record trials)
+        Prng.RandomNumberGenerator.setFakeStream( [0.005, # subshell 0
+                                                   6.427713151861e-01, # pz
+                                                   0.25, # energy loss
+                                                   0.5] ) # pz = 0.0
+
+        trials = 0
+        sample = dist.sampleAndRecordTrials( 20.0, 0.0, trials )
+
+        self.assertEqual( len(sample), 3 )
+        self.assertAlmostEqual( sample[0], 0.4863072509771199, delta=1e-15 )
+        self.assertEqual( sample[1], Data.P3_SUBSHELL )
+        self.assertEqual( sample[2], 1 )
+        
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+        # Check that pz can be sampled from the distribution
+        Prng.RandomNumberGenerator.setFakeStream( [0.005, # subshell 0
+                                                   6.427713151861e-01, # pz
+                                                   0.25, # energy loss
+                                                   0.5] ) # pz = 0.0
+
+        trials = 0
+        sample = dist.sampleMomentumAndRecordTrials( 20.0, 0.0, trials )
+
+        self.assertEqual( len(sample), 3 )
+        self.assertAlmostEqual( sample[0], -0.023997919645547212, delta=1e-15 )
+        self.assertEqual( sample[1], Data.P3_SUBSHELL )
+        self.assertEqual( sample[2], 1 )
+        
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(DopplerBroadenedPhotonEnergyDistributionNativeFactoryTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************************************************\n" +\
+        "Testing MonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionNativeFactory \n" + \
+        "**************************************************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+        
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionNativeFactory.py
+#-----------------------------------------------------------------------------#

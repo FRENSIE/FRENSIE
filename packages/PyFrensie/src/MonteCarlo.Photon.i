@@ -262,6 +262,38 @@ using namespace MonteCarlo;
 //---------------------------------------------------------------------------//
 // Doppler Broadened Photon Energy Distribution Native Factory Support
 //---------------------------------------------------------------------------//
+%extend MonteCarlo::DopplerBroadenedPhotonEnergyDistributionNativeFactory
+{
+  //! Create a coupled complete Doppler broadened photon energy dist
+  static std::shared_ptr<const MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution> createCoupledCompleteDistribution( const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data )
+  {
+    std::shared_ptr<const MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution> doppler_broadened_dist;
+
+    MonteCarlo::DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledCompleteDistribution(
+                                                      raw_photoatom_data,
+                                                      doppler_broadened_dist );
+
+    return doppler_broadened_dist;
+  }
+
+  //! Create a subshell distribution
+  static std::shared_ptr<const MonteCarlo::SubshellDopplerBroadenedPhotonEnergyDistribution> createSubshellDistribution( const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+                                                                                                                         const unsigned endf_subshell )
+  {
+    std::shared_ptr<const MonteCarlo::SubshellDopplerBroadenedPhotonEnergyDistribution> doppler_broadened_dist;
+
+    MonteCarlo::DopplerBroadenedPhotonEnergyDistributionNativeFactory::createSubshellDistribution(
+                                                      raw_photoatom_data,
+                                                      endf_subshell,
+                                                      doppler_broadened_dist );
+
+    return doppler_broadened_dist;
+  }
+};
+
+%ignore MonteCarlo::DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledCompleteDistribution;
+%ignore MonteCarlo::DopplerBroadenedPhotonEnergyDistributionNativeFactory::createSubshellDistribution;
+
 %include "MonteCarlo_DopplerBroadenedPhotonEnergyDistributionNativeFactory.hpp"
 
 //---------------------------------------------------------------------------//
