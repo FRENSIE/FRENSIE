@@ -40,7 +40,9 @@ monte_carlo/collision/photon subpackage.
 
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
-  
+
+#include "MonteCarlo_PhotonKinematicsHelpers.hpp"
+#include "MonteCarlo_AdjointPhotonKinematicsHelpers.hpp"
 #include "MonteCarlo_PhotonScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
@@ -108,6 +110,12 @@ using namespace MonteCarlo;
 %feature("autodoc", "1");
 
 // Add a few general typemaps
+%typemap(in,numinputs=0) bool& energetically_possible (bool temp) "$1 = &temp;"
+
+%typemap(argout) bool& energetically_possible {
+  %append_output(PyFrensie::convertToPython( *$1 ));
+}
+
 %typemap(in,numinputs=0) double& outgoing_energy (double temp) "$1 = &temp;"
 
 %typemap(argout) double& outgoing_energy {
@@ -133,6 +141,16 @@ using namespace MonteCarlo;
 %typemap(argout) Data::SubshellType& shell_of_interaction {
   %append_output(PyFrensie::convertToPython( static_cast<int>( *$1 ) ));
 }
+
+//---------------------------------------------------------------------------//
+// Photon Kinematic Helpers Support
+//---------------------------------------------------------------------------//
+%include "MonteCarlo_PhotonKinematicsHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Adjoint Photon Kinematic Helpers Support
+//---------------------------------------------------------------------------//
+%include "MonteCarlo_AdjointPhotonKinematicsHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Scattering Distribution Support
@@ -355,6 +373,52 @@ using namespace MonteCarlo;
 //---------------------------------------------------------------------------//
 // Coherent Scattering Distribution Native Factory Support
 //---------------------------------------------------------------------------//
+%extend MonteCarlo::CoherentScatteringDistributionNativeFactory
+{
+  //! Create a basic coherent distribution
+  static std::shared_ptr<const MonteCarlo::CoherentScatteringDistribution> createBasicCoherentDistribution( const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data )
+  {
+    std::shared_ptr<const MonteCarlo::CoherentScatteringDistribution> coherent_distribution;
+
+    MonteCarlo::CoherentScatteringDistributionNativeFactory::createBasicCoherentDistribution( raw_photoatom_data, coherent_distribution );
+
+    return coherent_distribution;
+  }
+
+  //! Create a basic coherent distribution
+  static std::shared_ptr<const MonteCarlo::CoherentScatteringDistribution> createBasicCoherentDistribution( const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_photoatom_data )
+  {
+    std::shared_ptr<const MonteCarlo::CoherentScatteringDistribution> coherent_distribution;
+
+    MonteCarlo::CoherentScatteringDistributionNativeFactory::createBasicCoherentDistribution( raw_adjoint_photoatom_data, coherent_distribution );
+
+    return coherent_distribution;
+  }
+
+  //! Create a efficient coherent distribution
+  static std::shared_ptr<const MonteCarlo::CoherentScatteringDistribution> createEfficientCoherentDistribution( const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data )
+  {
+    std::shared_ptr<const MonteCarlo::CoherentScatteringDistribution> coherent_distribution;
+
+    MonteCarlo::CoherentScatteringDistributionNativeFactory::createEfficientCoherentDistribution( raw_photoatom_data, coherent_distribution );
+
+    return coherent_distribution;
+  }
+
+  //! Create a efficient coherent distribution
+  static std::shared_ptr<const MonteCarlo::CoherentScatteringDistribution> createEfficientCoherentDistribution( const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_photoatom_data )
+  {
+    std::shared_ptr<const MonteCarlo::CoherentScatteringDistribution> coherent_distribution;
+
+    MonteCarlo::CoherentScatteringDistributionNativeFactory::createEfficientCoherentDistribution( raw_adjoint_photoatom_data, coherent_distribution );
+
+    return coherent_distribution;
+  }
+};
+
+%ignore MonteCarlo::CoherentScatteringDistributionNativeFactory::createBasicCoherentDistribution;
+%ignore MonteCarlo::CoherentScatteringDistributionNativeFactory::createEfficientCoherentDistribution;
+
 %include "MonteCarlo_CoherentScatteringDistributionNativeFactory.hpp"
 
 //---------------------------------------------------------------------------//

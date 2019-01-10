@@ -353,6 +353,10 @@ IF(${FRENSIE_ENABLE_DAGMC})
   ADD_DEPENDENCIES(PyFrensie_tstMonteCarlo.Collision.FilledGeometryModel ${COLLISION_DATABASE_XML_FILE_TARGET} )
 ENDIF()
 
+# # Add the MonteCarlo.Photon.PhotonKinematics unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Photon.PhotonKinematics)
+ADD_TEST(PyFrensie.MonteCarlo.Photon.PhotonKinematics_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Photon.PhotonKinematics.py)
+
 # Add the MonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionACEFactory
 # unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionACEFactory)
@@ -378,9 +382,10 @@ ADD_TEST(tstMonteCarlo.Photon.IncoherentPhotonScatteringDistributionNativeFactor
 PyFrensie_MAKE_TEST(tstMonteCarlo.Photon.CoherentScatteringDistributionACEFactory)
 ADD_TEST(tstMonteCarlo.Photon.CoherentScatteringDistributionACEFactory_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Photon.CoherentScatteringDistributionACEFactory.py --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt --test_ace_table=82000.12p)
 
-# # Add the MonteCarlo.Collision.PhotonKinematics unit tests
-# PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.PhotonKinematics)
-# ADD_TEST(PyFrensie.MonteCarlo.Collision.PhotonKinematics_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.PhotonKinematics.py)
+# Add the MonteCarlo.Photon.CoherentScatteringDistributionNativeFactory
+# unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Photon.CoherentScatteringDistributionNativeFactory)
+ADD_TEST(tstMonteCarlo.Photon.CoherentScatteringDistributionNativeFactory_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Photon.CoherentScatteringDistributionNativeFactory.py --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml --test_adjoint_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml)
 
 # Add the MonteCarlo.Electron.ElectronScatteringNativeDistribution unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.Electron.ElectronScatteringNativeDistribution)
