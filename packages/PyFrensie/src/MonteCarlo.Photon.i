@@ -52,6 +52,7 @@ monte_carlo/collision/photon subpackage.
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_DopplerBroadenedPhotonEnergyDistributionACEFactory.hpp"
 #include "MonteCarlo_DopplerBroadenedPhotonEnergyDistributionNativeFactory.hpp"
+#include "MonteCarlo_IncoherentAdjointPhotonScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_CoherentScatteringDistribution.hpp"
 #include "MonteCarlo_CoherentScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_CoherentScatteringDistributionNativeFactory.hpp"
@@ -80,6 +81,8 @@ using namespace MonteCarlo;
 %import "Data.Native.i"
 %import "MonteCarlo_ParticleState.i"
 %import "MonteCarlo_IncoherentModelType.hpp"
+%import "MonteCarlo_IncoherentAdjointModelType.hpp"
+%import "MonteCarlo_AdjointKleinNishinaSamplingType.hpp"
 
 // Standard exception handling
 %include "exception.i"
@@ -341,11 +344,64 @@ using namespace MonteCarlo;
 //---------------------------------------------------------------------------//
 // Incoherent Adjoint Photon Scattering Distribution Native Factory Support
 //---------------------------------------------------------------------------//
-%apply std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>& OUTPUT { std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>& incoherent_adjoint_distribution };
+%typemap(in,numinputs=0) std::shared_ptr<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& incoherent_adjoint_distribution (std::shared_ptr<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution> temp) "$1 = &temp;"
 
-%apply std::shared_ptr<SubshellIncoherentAdjointPhotonScatteringDistribution>& OUTPUT { std::shared_ptr<SubshellIncoherentAdjointPhotonScatteringDistribution>& incoherent_adjoint_distribution };
+%typemap(argout) std::shared_ptr<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& incoherent_adjoint_distribution {
+  std::shared_ptr<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution > *smartresult = *$1 ? new std::shared_ptr<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution >(*$1) : 0;
+  %append_output(SWIG_NewPointerObj(SWIG_as_voidptr(smartresult), SWIGTYPE_p_std__shared_ptrT_MonteCarlo__IncoherentAdjointPhotonScatteringDistribution_t, SWIG_POINTER_OWN));
+}
 
-%include "MonteCarlo_IncoherentPhotonScatteringDistributionNativeFactory.hpp"
+%extend MonteCarlo::IncoherentAdjointPhotonScatteringDistributionNativeFactory
+{
+  //! Create an incoherent adjoint distribution
+  static std::shared_ptr<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution> createDistribution(
+                const Data::AdjointElectronPhotonRelaxationDataContainer&
+                raw_adjoint_photoatom_data,
+                const IncoherentAdjointModelType incoherent_adjoint_model,
+                const AdjointKleinNishinaSamplingType adjoint_kn_sampling,
+                const double max_energy,
+                const unsigned endf_subshell = 0u )
+  {
+    std::shared_ptr<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution> incoherent_adjoint_distribution;
+
+    MonteCarlo::IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDistribution(
+                                               raw_adjoint_photoatom_data,
+                                               incoherent_adjoint_distribution,
+                                               incoherent_adjoint_model,
+                                               adjoint_kn_sampling,
+                                               max_energy,
+                                               endf_subshell );
+
+    return incoherent_adjoint_distribution;
+  }
+
+  //! Create a subshell distribution
+  static std::shared_ptr<MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> createSubshellDistribution(
+        const Data::AdjointElectronPhotonRelaxationDataContainer&
+        raw_adjoint_photoatom_data,
+        const IncoherentAdjointModelType incoherent_adjoint_model,
+        const AdjointKleinNishinaSamplingType adjoint_kn_sampling,
+        const double max_energy,
+        const unsigned endf_subshell )
+  {
+    std::shared_ptr<MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> incoherent_adjoint_distribution;
+
+    MonteCarlo::IncoherentAdjointPhotonScatteringDistributionNativeFactory::createSubshellDistribution(
+                                               raw_adjoint_photoatom_data,
+                                               incoherent_adjoint_distribution,
+                                               incoherent_adjoint_model,
+                                               adjoint_kn_sampling,
+                                               max_energy,
+                                               endf_subshell );
+
+    return incoherent_adjoint_distribution;
+  }
+};
+
+%ignore MonteCarlo::IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDistribution;
+%ignore MonteCarlo::IncoherentAdjointPhotonScatteringDistributionNativeFactory::createSubshellDistribution;
+
+%include "MonteCarlo_IncoherentAdjointPhotonScatteringDistributionNativeFactory.hpp"
 
 //---------------------------------------------------------------------------//
 // Coherent Scattering Distribution Support
