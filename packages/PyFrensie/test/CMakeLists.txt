@@ -373,6 +373,11 @@ ADD_TEST(tstMonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory_t
 PyFrensie_MAKE_TEST(tstMonteCarlo.Photon.IncoherentPhotonScatteringDistributionNativeFactory)
 ADD_TEST(tstMonteCarlo.Photon.IncoherentPhotonScatteringDistributionNativeFactory_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Photon.IncoherentPhotonScatteringDistributionNativeFactory.py --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
 
+# Add the MonteCarlo.Photon.CoherentScatteringDistributionACEFactory
+# unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Photon.CoherentScatteringDistributionACEFactory)
+ADD_TEST(tstMonteCarlo.Photon.CoherentScatteringDistributionACEFactory_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Photon.CoherentScatteringDistributionACEFactory.py --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt --test_ace_table=82000.12p)
+
 # # Add the MonteCarlo.Collision.PhotonKinematics unit tests
 # PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.PhotonKinematics)
 # ADD_TEST(PyFrensie.MonteCarlo.Collision.PhotonKinematics_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.PhotonKinematics.py)

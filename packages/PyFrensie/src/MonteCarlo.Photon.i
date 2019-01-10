@@ -338,7 +338,12 @@ using namespace MonteCarlo;
 //---------------------------------------------------------------------------//
 // Coherent Scattering Distribution Factory Support
 //---------------------------------------------------------------------------//
-%apply std::shared_ptr<const CoherentScatteringDistribution>& OUTPUT { std::shared_ptr<const CoherentScatteringDistribution>& coherent_distribution };
+%typemap(in,numinputs=0) std::shared_ptr<const MonteCarlo::CoherentScatteringDistribution>& coherent_distribution (std::shared_ptr<const MonteCarlo::CoherentScatteringDistribution> temp) "$1 = &temp;"
+
+%typemap(argout) std::shared_ptr<const MonteCarlo::CoherentScatteringDistribution>& coherent_distribution {
+  std::shared_ptr<const MonteCarlo::CoherentScatteringDistribution>* smartresult = *$1 ? new std::shared_ptr<const MonteCarlo::CoherentScatteringDistribution>(*$1) : 0;
+  %append_output(SWIG_NewPointerObj(SWIG_as_voidptr(smartresult), SWIGTYPE_p_std__shared_ptrT_MonteCarlo__CoherentScatteringDistribution_t, SWIG_POINTER_OWN));
+}
 
 %include "MonteCarlo_CoherentScatteringDistributionFactory.hpp"
 
