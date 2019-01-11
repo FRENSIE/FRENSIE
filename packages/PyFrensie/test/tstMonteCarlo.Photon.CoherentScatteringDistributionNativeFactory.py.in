@@ -1,0 +1,415 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.Photon.CoherentScatteringDistributionNativeFactory class unit tests
+#  \file   tstMonteCarlo.Photon.CoherentScatteringDistributionNativeFactory.py
+#  \author Alex Robinson
+#  \brief  Unit tests for the MonteCarlo.Photon.CoherentScatteringDistributionNativeFactory class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-f", "--test_native_file", type="string", dest="test_native_file",
+                  help="the native file used for testing")
+parser.add_option("-a", "--test_adjoint_native_file", type="string", dest="test_adjoint_native_file",
+                  help="the adjoint native file used for testing")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Prng = importPyFrensieModuleFromBuildDir('Utility.Prng')
+Data = importPyFrensieModuleFromBuildDir('Data')
+Native = importPyFrensieModuleFromBuildDir('Data.Native')
+MonteCarlo = importPyFrensieModuleFromBuildDir( 'MonteCarlo' )
+Photon = importPyFrensieModuleFromBuildDir('MonteCarlo.Photon')
+
+Prng.RandomNumberGenerator.createStreams()
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Check that distributions can be created with the factory
+class CoherentScatteringDistributionNativeFactoryTestCase(unittest.TestCase):
+    "TestCase for MonteCarlo.Photon.CoherentScatteringDistributionNativeFactory class"
+    @classmethod
+    def setUpClass(cls):
+        cls.native_data = Native.ElectronPhotonRelaxationDataContainer( options.test_native_file )
+        cls.adjoint_native_data = Native.AdjointElectronPhotonRelaxationDataContainer( options.test_adjoint_native_file )
+
+    def testCreateThompsonDistribution(self):
+        "Test MonteCarlo.Photon.CoherentScatteringDistributionNativeFactory.createThompsonDistribution"
+        dist = Photon.CoherentScatteringDistributionNativeFactory.createThompsonDistribution()
+
+        # Check that the distribution can be evaluated
+        self.assertAlmostEqual( dist.evaluate( 0.1, 1.0 ), 4.989344050883251e-1, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluate( 0.1, 0.0 ), 2.4946720254416256e-1, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluate( 0.1, -1.0 ), 4.989344050883251e-1, delta=1e-15 )
+
+        # Check that the pdf can be evaluated
+        self.assertAlmostEqual( dist.evaluatePDF( 0.1, 1.0 ), 0.75, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluatePDF( 0.1, 0.0 ), 0.375, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluatePDF( 0.1, -1.0 ), 0.75, delta=1e-15 )
+
+        # Check that the integrated cross section can be evaluated
+        self.assertAlmostEqual( dist.evaluateIntegratedCrossSection( 0.1, 1e-16 ), 6.652458734511002e-1, delta=1e-15 )
+
+        # Check that the outgoing direction can be sampled
+        Prng.RandomNumberGenerator.setFakeStream( [0.75,
+                                                   0.5,
+                                                   0.755,
+                                                   0.2,
+                                                   0.8,
+                                                   0.5,
+                                                   0.9,
+                                                   0.8] )
+
+        sample = dist.sample( 0.1 )
+        
+        self.assertEqual( len(sample), 2 )
+        self.assertEqual( sample[0], 0.1 )
+        self.assertAlmostEqual( sample[1], 0.0, delta=1e-15 )
+
+        sample = dist.sample( 0.1 )
+
+        self.assertEqual( len(sample), 2 )
+        self.assertEqual( sample[0], 0.1 )
+        self.assertAlmostEqual( sample[1], -0.8434326653017492, delta=1e-15 )
+
+        sample = dist.sample( 0.1 )
+
+        self.assertEqual( len(sample), 2 )
+        self.assertEqual( sample[0], 0.1 )
+        self.assertAlmostEqual( sample[1], 0.0, delta=1e-15 )
+
+        sample = dist.sample( 0.1 )
+
+        self.assertEqual( len(sample), 2 )
+        self.assertEqual( sample[0], 0.1 )
+        self.assertAlmostEqual( sample[1], 0.8434326653017493, delta=1e-15 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+        # Check that the outgoing direction can be sampled (record trials)
+        Prng.RandomNumberGenerator.setFakeStream( [0.75, 0.5] )
+
+        trials = 0
+        sample = dist.sampleAndRecordTrials( 0.1, trials )
+
+        self.assertEqual( len(sample), 3 )
+        self.assertEqual( sample[0], 0.1 )
+        self.assertAlmostEqual( sample[1], 0.0, delta=1e-15 )
+        self.assertEqual( sample[2], 1 )
+
+        # Check that a photon can be scattered
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setEnergy( 0.1 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+
+        bank = MonteCarlo.ParticleBank()
+
+        Prng.RandomNumberGenerator.setFakeStream( [0.75, 0.5, 0.0] )
+
+        interaction_subshell = dist.scatterPhoton( photon, bank )
+
+        self.assertEqual( photon.getEnergy(), 0.1 )
+        self.assertAlmostEqual( photon.getZDirection(), 0.0, 1e-15 )
+        self.assertEqual( interaction_subshell, Data.UNKNOWN_SUBSHELL )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+        # Check that an adjoint photon can be scattered
+        adjoint_photon = MonteCarlo.AdjointPhotonState( 0 )
+        adjoint_photon.setEnergy( 0.1 )
+        adjoint_photon.setDirection( 0.0, 0.0, 1.0 )
+
+        bank = MonteCarlo.ParticleBank()
+
+        Prng.RandomNumberGenerator.setFakeStream( [0.75, 0.5, 0.0] )
+
+        interaction_subshell = dist.scatterAdjointPhoton( adjoint_photon, bank )
+
+        self.assertEqual( adjoint_photon.getEnergy(), 0.1 )
+        self.assertAlmostEqual( adjoint_photon.getZDirection(), 0.0, 1e-15 )
+        self.assertEqual( interaction_subshell, Data.UNKNOWN_SUBSHELL )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testCreateBasicCoherentDistributionForward(self):
+        "Test MonteCarlo.Photon.CoherentScatteringDistributionNativeFactory.createBasicCoherentDistribution (forward)"
+        dist = Photon.CoherentScatteringDistributionNativeFactory.createBasicCoherentDistribution( self.native_data )
+
+        # Check that the distribution can be evaluated
+        self.assertAlmostEqual( dist.evaluate( 0.1, 1.0 ), 3.354834939813898e3, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluate( 0.1, 0.0 ), 4.137948086782745, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluate( 0.1, -1.0 ), 3.5820648570552547, delta=1e-15 )
+
+        # Check that the pdf can be evaluated
+        self.assertAlmostEqual( dist.evaluatePDF( 0.1, 1.0 ), 49.63770231069316, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluatePDF( 0.1, 0.0 ), 0.0612245427848734, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluatePDF( 0.1, -1.0 ), 0.05299976667167051, delta=1e-15 )
+
+        # Check that the integrated cross section can be evaluated
+        self.assertAlmostEqual( dist.evaluateIntegratedCrossSection( 0.1, 1e-3 ), 67.58642692232726, delta=1e-15 )
+
+        # Check that the distribution can be sampled from
+        Prng.RandomNumberGenerator.setFakeStream( [0.75,
+                                                   0.5,
+                                                   0.003, # reject
+                                                   0.7,
+                                                   0.8,
+                                                   0.006, # end 1st branch
+                                                   0.751,
+                                                   0.1,
+                                                   0.001] ) # end 2nd branch
+
+        sample = dist.sample( 0.1 )
+
+        self.assertEqual( len(sample), 2 )
+        self.assertEqual( sample[0], 0.1 )
+        self.assertAlmostEqual( sample[1], 0.6, delta=1e-15 )
+
+        sample = dist.sample( 0.1 )
+
+        self.assertEqual( len(sample), 2 )
+        self.assertEqual( sample[0], 0.1 )
+        self.assertAlmostEqual( sample[1], -0.9283177667225558, delta=1e-15 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+        # Check that the distribution can be sampled from (record trials)
+        Prng.RandomNumberGenerator.setFakeStream( [0.75,
+                                                   0.5,
+                                                   0.003, # reject
+                                                   0.7,
+                                                   0.8,
+                                                   0.006, # end 1st branch
+                                                   0.751,
+                                                   0.1,
+                                                   0.001] ) # end 2nd branch
+
+        trials = 0
+        sample = dist.sampleAndRecordTrials( 0.1, trials )
+
+        self.assertEqual( len(sample), 3 )
+        self.assertEqual( sample[0], 0.1 )
+        self.assertAlmostEqual( sample[1], 0.6, delta=1e-15 )
+        self.assertEqual( sample[2], 2 )
+
+        trials = 0
+        sample = dist.sampleAndRecordTrials( 0.1, trials )
+
+        self.assertEqual( len(sample), 3 )
+        self.assertEqual( sample[0], 0.1 )
+        self.assertAlmostEqual( sample[1], -0.9283177667225558, delta=1e-15 )
+        self.assertEqual( sample[2], 1 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+        # Check that a photon can be scattered
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setEnergy( 0.1 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+        
+        bank = MonteCarlo.ParticleBank()
+        
+        Prng.RandomNumberGenerator.setFakeStream( [0.75,
+                                                   0.5,
+                                                   0.003, # reject
+                                                   0.7,
+                                                   0.8,
+                                                   0.006, # end 1st branch
+                                                   0.0] ) # theta
+    
+        interaction_subshell = dist.scatterPhoton( photon, bank )
+
+        self.assertEqual( photon.getEnergy(), 0.1 )
+        self.assertAlmostEqual( photon.getZDirection(), 0.6, delta=1e-15 )
+        self.assertEqual( interaction_subshell, Data.UNKNOWN_SUBSHELL )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+        # Check that a adjoint photon can be scattered
+        adjoint_photon = MonteCarlo.AdjointPhotonState( 0 )
+        adjoint_photon.setEnergy( 0.1 )
+        adjoint_photon.setDirection( 0.0, 0.0, 1.0 )
+        
+        bank = MonteCarlo.ParticleBank()
+        
+        Prng.RandomNumberGenerator.setFakeStream( [0.75,
+                                                   0.5,
+                                                   0.003, # reject
+                                                   0.7,
+                                                   0.8,
+                                                   0.006, # end 1st branch
+                                                   0.0] ) # theta
+    
+        interaction_subshell = dist.scatterAdjointPhoton( adjoint_photon, bank )
+
+        self.assertEqual( adjoint_photon.getEnergy(), 0.1 )
+        self.assertAlmostEqual( adjoint_photon.getZDirection(), 0.6, delta=1e-15 )
+        self.assertEqual( interaction_subshell, Data.UNKNOWN_SUBSHELL )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testCreateBasicCoherentDistributionAdjoint(self):
+        "Test MonteCarlo.Photon.CoherentScatteringDistributionNativeFactory.createBasicCoherentDistribution (adjoint)"
+        dist = Photon.CoherentScatteringDistributionNativeFactory.createBasicCoherentDistribution( self.adjoint_native_data )
+
+        # Check that the distribution can be evaluated
+        self.assertAlmostEqual( dist.evaluate( 0.1, 1.0 ), 97.79114339731171, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluate( 0.1, 0.0 ), 0.01572651593697358, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluate( 0.1, -1.0 ), 0.0057340559899647274, delta=1e-15 )
+
+        # Check that the pdf can be evaluated
+        self.assertAlmostEqual( dist.evaluatePDF( 0.1, 1.0 ), 136.58508995105544, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluatePDF( 0.1, 0.0 ), 0.02196525696750665, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluatePDF( 0.1, -1.0 ), 0.00800876772645702, delta=1e-15 )
+
+        # Check that the integrated cross section can be evaluated
+        self.assertAlmostEqual( dist.evaluateIntegratedCrossSection( 0.1, 1e-3 ), 0.715972317566688, delta=1e-15 )
+
+    def testCreateEfficientCoherentDistributionForward(self):
+        "Test MonteCarlo.Photon.CoherentScatteringDistributionNativeFactory.createEfficientCoherentDistribution (forward)"
+        dist = Photon.CoherentScatteringDistributionNativeFactory.createEfficientCoherentDistribution( self.native_data )
+
+        # Check that the distribution can be evaluated
+        self.assertAlmostEqual( dist.evaluate( 0.1, 1.0 ), 3.354834939813898e3, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluate( 0.1, 0.0 ), 4.137948086782745, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluate( 0.1, -1.0 ), 3.5820648570552547, delta=1e-15 )
+
+        # Check that the pdf can be evaluated
+        self.assertAlmostEqual( dist.evaluatePDF( 0.1, 1.0 ), 49.63770231069316, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluatePDF( 0.1, 0.0 ), 0.0612245427848734, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluatePDF( 0.1, -1.0 ), 0.05299976667167051, delta=1e-15 )
+
+        # Check that the integrated cross section can be evaluated
+        self.assertAlmostEqual( dist.evaluateIntegratedCrossSection( 0.1, 1e-3 ), 67.58642692232726, delta=1e-15 )
+
+        # Check that the distribution can be sampled from
+        Prng.RandomNumberGenerator.setFakeStream( [0.5,
+                                                   0.942, # reject
+                                                   0.5,
+                                                   0.941] )
+
+        sample = dist.sample( 0.1 )
+
+        self.assertEqual( len(sample), 2 )
+        self.assertEqual( sample[0], 0.1 )
+        self.assertAlmostEqual( sample[1], 0.9401437676237989, delta=1e-15 )
+        
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+        # Check that the distribution can be sampled from (record trials)
+        Prng.RandomNumberGenerator.setFakeStream( [0.5,
+                                                   0.942, # reject
+                                                   0.5,
+                                                   0.941] )
+
+        trials = 0
+        sample = dist.sampleAndRecordTrials( 0.1, trials )
+
+        self.assertEqual( len(sample), 3 )
+        self.assertEqual( sample[0], 0.1 )
+        self.assertAlmostEqual( sample[1], 0.9401437676237989, delta=1e-15 )
+        self.assertEqual( sample[2], 2 )
+        
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+        # Check that a photon can be scattered
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setEnergy( 4.95936772145E-03 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+
+        bank = MonteCarlo.ParticleBank()
+
+        Prng.RandomNumberGenerator.setFakeStream( [1.00475965594E-03,
+                                                   9.98800000000E-01,
+                                                   6.50327467413E-01,
+                                                   5.07800000000E-01,
+                                                   0.0] )
+
+        interaction_subshell = dist.scatterPhoton( photon, bank )
+
+        self.assertEqual( photon.getEnergy(), 4.95936772145E-03 )
+        self.assertAlmostEqual( photon.getZDirection(), 1.0, delta=1e-14 )
+        self.assertEqual( interaction_subshell, Data.UNKNOWN_SUBSHELL )
+        
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+        # Check that an adjoint photon can be scattered
+        adjoint_photon = MonteCarlo.AdjointPhotonState( 0 )
+        adjoint_photon.setEnergy( 4.95936772145E-03 )
+        adjoint_photon.setDirection( 0.0, 0.0, 1.0 )
+
+        bank = MonteCarlo.ParticleBank()
+
+        Prng.RandomNumberGenerator.setFakeStream( [1.00475965594E-03,
+                                                   9.98800000000E-01,
+                                                   6.50327467413E-01,
+                                                   5.07800000000E-01,
+                                                   0.0] )
+
+        interaction_subshell = dist.scatterAdjointPhoton( adjoint_photon, bank )
+
+        self.assertEqual( adjoint_photon.getEnergy(), 4.95936772145E-03 )
+        self.assertAlmostEqual( adjoint_photon.getZDirection(), 1.0, delta=1e-14 )
+        print adjoint_photon.getDirection()
+        self.assertEqual( interaction_subshell, Data.UNKNOWN_SUBSHELL )
+        
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testCreateEfficientCoherentDistributionAdjoint(self):
+        "Test MonteCarlo.Photon.CoherentScatteringDistributionNativeFactory.createEfficientCoherentDistribution (adjoint)"
+        dist = Photon.CoherentScatteringDistributionNativeFactory.createEfficientCoherentDistribution( self.adjoint_native_data )
+
+        # Check that the distribution can be evaluated
+        self.assertAlmostEqual( dist.evaluate( 0.1, 1.0 ), 97.79114339731171, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluate( 0.1, 0.0 ), 0.01572651593697358, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluate( 0.1, -1.0 ), 0.0057340559899647274, delta=1e-15 )
+
+        # Check that the pdf can be evaluated
+        self.assertAlmostEqual( dist.evaluatePDF( 0.1, 1.0 ), 136.58508995105544, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluatePDF( 0.1, 0.0 ), 0.02196525696750665, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluatePDF( 0.1, -1.0 ), 0.00800876772645702, delta=1e-15 )
+
+        # Check that the integrated cross section can be evaluated
+        self.assertAlmostEqual( dist.evaluateIntegratedCrossSection( 0.1, 1e-3 ), 0.715972317566688, delta=1e-15 )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(CoherentScatteringDistributionNativeFactoryTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************************************************\n" +\
+        "Testing MonteCarlo.Photon.CoherentScatteringDistributionNativeFactory \n" + \
+        "**************************************************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+        
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Photon.CoherentScatteringDistributionNativeFactory.py
+#-----------------------------------------------------------------------------#

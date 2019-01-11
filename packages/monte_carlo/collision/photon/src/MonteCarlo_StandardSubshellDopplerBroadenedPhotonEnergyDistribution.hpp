@@ -67,7 +67,7 @@ public:
   //! Evaluate the integrated cross section (b/mu)
   double evaluateIntegratedCrossSection( const double incoming_energy,
 					 const double scattering_angle_cosine,
-					 const double precision ) const;
+					 const double precision ) const override;
 
   //! Evaluate the integrated cross section (b/mu)
   double evaluateIntegratedCrossSectionExact(

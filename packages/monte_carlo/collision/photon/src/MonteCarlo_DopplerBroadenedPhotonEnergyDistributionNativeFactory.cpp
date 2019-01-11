@@ -14,7 +14,7 @@
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ComptonProfilePolicy.hpp"
 #include "MonteCarlo_StandardComptonProfile.hpp"
-#include "MonteCarlo_VoidComptonProfileSubshellConverter.hpp"
+#include "MonteCarlo_BasicComptonProfileSubshellConverter.hpp"
 #include "Data_SubshellType.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_MeCMomentumUnit.hpp"
@@ -42,7 +42,7 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledComplet
   while( subshell_it != raw_photoatom_data.getSubshells().end() )
   {
     subshell_order.push_back(
-			Data::convertENDFDesignatorToSubshellEnum( *subshell_it ) );
+		   Data::convertENDFDesignatorToSubshellEnum( *subshell_it ) );
 
     subshell_binding_energies.push_back(
 		 raw_photoatom_data.getSubshellBindingEnergy( *subshell_it ) );
@@ -54,22 +54,19 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledComplet
   }
 
   // Create the Compton profile subshell converter
-  std::shared_ptr<ComptonProfileSubshellConverter> converter(
-				   new VoidComptonProfileSubshellConverter() );
+  std::shared_ptr<ComptonProfileSubshellConverter> converter =
+    std::make_shared<BasicComptonProfileSubshellConverter>( subshell_order );
 
   // Create the compton profile distributions
   CompleteDopplerBroadenedPhotonEnergyDistribution::ComptonProfileArray
     compton_profiles( subshell_order.size() );
 
-  std::vector<Data::SubshellType> subshell_order_copy = subshell_order;
-  std::sort( subshell_order_copy.begin(), subshell_order_copy.end() );
-
-  for( unsigned i = 0; i < subshell_order_copy.size(); ++i )
+  for( unsigned i = 0; i < subshell_order.size(); ++i )
   {
     std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum> > raw_compton_profile(
     new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum>(
-      raw_photoatom_data.getComptonProfileMomentumGrid(subshell_order_copy[i]),
-      raw_photoatom_data.getComptonProfile( subshell_order_copy[i] ) ) );
+      raw_photoatom_data.getComptonProfileMomentumGrid(subshell_order[i]),
+      raw_photoatom_data.getComptonProfile(subshell_order[i]) ) );
 
     compton_profiles[i].reset(
                       new StandardComptonProfile<Utility::Units::MeCMomentum>(

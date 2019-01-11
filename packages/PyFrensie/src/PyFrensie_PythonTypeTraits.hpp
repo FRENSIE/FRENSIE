@@ -170,6 +170,39 @@ struct PythonTypeTraits<T,typename std::enable_if<std::is_floating_point<T>::val
   { return PyFloat_Check( py_obj ); }
 };
 
+/*! \brief The specialization of PyFrensie::PythonTypeTraits for bool
+ * \ingroup python_type_traits
+ */
+template<>
+struct PythonTypeTraits<bool>
+{
+  // Create a Python object from a bool object
+  static inline PyObject* convertToPython( const bool obj )
+  {
+    if( obj )
+    {
+      Py_RETURN_TRUE;
+    }
+    else
+    {
+      Py_RETURN_FALSE;
+    }
+  }
+
+  //! Create a bool object from a Python object
+  static inline bool convertFromPython( PyObject* py_obj )
+  {
+    if( py_obj == Py_True )
+      return true;
+    else
+      return false;
+  }
+
+  //! Check if a Python object can be converted to the desired type
+  static inline bool isConvertable( PyObject* py_obj )
+  { return PyBool_Check( py_obj ); }
+};
+
 /*! \brief The specialization of PyFrensie::PythonTypeTraits for int
  * \ingroup python_type_traits
  */

@@ -33,8 +33,11 @@ void IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
 		    const double kahn_sampling_cutoff_energy )
 {
   // Make sure the cutoff energy is valid
-  testPrecondition( kahn_sampling_cutoff_energy >=
-		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
+  TEST_FOR_EXCEPTION( kahn_sampling_cutoff_energy <
+                      SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy(),
+                      std::runtime_error,
+                      "The kahn sampling cutoff energy must be greater than "
+                      << Utility::toString(SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy()) << " MeV!" );
 
   switch( incoherent_model )
   {

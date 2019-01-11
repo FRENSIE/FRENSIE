@@ -157,13 +157,13 @@ FRENSIE_UNIT_TEST( WHIncoherentPhotonScatteringDistribution, sample )
   FRENSIE_CHECK_SMALL( scattering_angle_cosine, 1e-15 );
 
   // Koblinger's method
-  fake_stream.resize( 5 );
+  fake_stream.resize( 6 );
   fake_stream[0] = 0.818; // third term
   fake_stream[1] = 0.6;
   fake_stream[2] = 0.99997; // reject based on scattering function
   fake_stream[3] = 0.120; // first term
   fake_stream[4] = 0.2;
-  fake_stream[5] = 1.0; // accept based on scattering function
+  fake_stream[5] = 0.9; // accept based on scattering function
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -213,13 +213,13 @@ FRENSIE_UNIT_TEST( WHIncoherentPhotonScatteringDistribution,
   FRENSIE_CHECK_EQUAL( 1.0/trials, 0.5 );
 
   // Koblinger's method
-  fake_stream.resize( 5 );
+  fake_stream.resize( 6 );
   fake_stream[0] = 0.818; // third term
   fake_stream[1] = 0.6;
   fake_stream[2] = 0.99997; // reject based on scattering function
   fake_stream[3] = 0.120; // first term
   fake_stream[4] = 0.2;
-  fake_stream[5] = 1.0; // accept based on scattering function
+  fake_stream[5] = 0.9; // accept based on scattering function
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 

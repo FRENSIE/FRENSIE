@@ -254,7 +254,7 @@ FRENSIE_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
   fake_stream[1] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[2] = 1.0-1e-15; // accept x in occupation number rejection loop
   fake_stream[3] = 0.5; // select pz = 0.0
-  fake_stream[4] = 0.0; // azimuthal_angle = pi
+  fake_stream[4] = 0.0; // azimuthal_angle = 0.0
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
