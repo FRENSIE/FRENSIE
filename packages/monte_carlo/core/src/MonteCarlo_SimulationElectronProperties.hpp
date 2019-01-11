@@ -281,6 +281,7 @@ void SimulationElectronProperties::serialize( Archive& ar,
   ar & BOOST_SERIALIZATION_NVP( d_elastic_cutoff_angle_cosine );
   ar & BOOST_SERIALIZATION_NVP( d_electroionization_mode_on );
   ar & BOOST_SERIALIZATION_NVP( d_electroionization_interpolation_type );
+  ar & BOOST_SERIALIZATION_NVP( d_electroionization_sampling_mode );
   ar & BOOST_SERIALIZATION_NVP( d_bremsstrahlung_mode_on );
   ar & BOOST_SERIALIZATION_NVP( d_bremsstrahlung_interpolation_type );
   ar & BOOST_SERIALIZATION_NVP( d_bremsstrahlung_angular_distribution_function );

@@ -47,6 +47,8 @@ FRENSIE_UNIT_TEST( SimulationElectronProperties, defaults )
                        MonteCarlo::MODIFIED_TWO_D_UNION );
   FRENSIE_CHECK_EQUAL( properties.getElasticCutoffAngleCosine(), 1.0 );
   FRENSIE_CHECK( properties.isElectroionizationModeOn() );
+  FRENSIE_CHECK_EQUAL( properties.getElectroionizationSamplingMode(),
+                       MonteCarlo::KNOCK_ON_SAMPLING );
   FRENSIE_CHECK( properties.isBremsstrahlungModeOn() );
   FRENSIE_CHECK_EQUAL( properties.getBremsstrahlungAngularDistributionFunction(),
                        MonteCarlo::TWOBS_DISTRIBUTION );
@@ -274,6 +276,28 @@ FRENSIE_UNIT_TEST( SimulationElectronProperties, setElectroionizationModeOffOn )
 }
 
 //---------------------------------------------------------------------------//
+// Test that the electroionization sampling mode can be set
+FRENSIE_UNIT_TEST( SimulationElectronProperties,
+                   setElectroionizationSamplingMode )
+{
+  MonteCarlo::SimulationElectronProperties properties;
+
+  MonteCarlo::ElectroionizationSamplingType function;
+
+  function = MonteCarlo::KNOCK_ON_SAMPLING;
+  properties.setElectroionizationSamplingMode( function );
+  FRENSIE_CHECK_EQUAL( properties.getElectroionizationSamplingMode(), function);
+
+  function = MonteCarlo::ENERGY_LOSS_SAMPLING;
+  properties.setElectroionizationSamplingMode( function );
+  FRENSIE_CHECK_EQUAL( properties.getElectroionizationSamplingMode(), function);
+
+  function = MonteCarlo::ENERGY_LOSS_RATIO_SAMPLING;
+  properties.setElectroionizationSamplingMode( function );
+  FRENSIE_CHECK_EQUAL( properties.getElectroionizationSamplingMode(), function);
+}
+
+//---------------------------------------------------------------------------//
 // Test that bremsstrahlung mode can be turned off
 FRENSIE_UNIT_TEST( SimulationElectronProperties, setBremsstrahlungModeOffOn )
 {
@@ -289,37 +313,28 @@ FRENSIE_UNIT_TEST( SimulationElectronProperties, setBremsstrahlungModeOffOn )
 }
 
 //---------------------------------------------------------------------------//
-// Test that the bremsstrahlung angular distribution function can be turned to Dipole
+// Test that the bremsstrahlung angular distribution function can be set
 FRENSIE_UNIT_TEST( SimulationElectronProperties,
-                   setBremsstrahlungAngularDistributionFunction_Dipole )
+                   setBremsstrahlungAngularDistributionFunction )
 {
   MonteCarlo::SimulationElectronProperties properties;
 
   MonteCarlo::BremsstrahlungAngularDistributionType function;
+
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
-
   properties.setBremsstrahlungAngularDistributionFunction( function );
+  FRENSIE_CHECK_EQUAL( properties.getBremsstrahlungAngularDistributionFunction(),
+                       function );
 
-  FRENSIE_CHECK_EQUAL(
-                     properties.getBremsstrahlungAngularDistributionFunction(),
-                     MonteCarlo::DIPOLE_DISTRIBUTION );
-}
-
-//---------------------------------------------------------------------------//
-// Test that the bremsstrahlung angular distribution function can be turned to Tabular
-FRENSIE_UNIT_TEST( SimulationElectronProperties,
-                   setBremsstrahlungAngularDistributionFunction_Tabular )
-{
-  MonteCarlo::SimulationElectronProperties properties;
-
-  MonteCarlo::BremsstrahlungAngularDistributionType function;
   function = MonteCarlo::TABULAR_DISTRIBUTION;
-
   properties.setBremsstrahlungAngularDistributionFunction( function );
+  FRENSIE_CHECK_EQUAL( properties.getBremsstrahlungAngularDistributionFunction(),
+                       function );
 
-  FRENSIE_CHECK_EQUAL(
-                     properties.getBremsstrahlungAngularDistributionFunction(),
-                     MonteCarlo::TABULAR_DISTRIBUTION );
+  function = MonteCarlo::TWOBS_DISTRIBUTION;
+  properties.setBremsstrahlungAngularDistributionFunction( function );
+  FRENSIE_CHECK_EQUAL( properties.getBremsstrahlungAngularDistributionFunction(),
+                       function );
 }
 
 //---------------------------------------------------------------------------//
@@ -401,6 +416,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationElectronProperties,
     custom_properties.setCoupledElasticSamplingMode( MonteCarlo::ONE_D_UNION );
     custom_properties.setElasticCutoffAngleCosine( 0.9 );
     custom_properties.setElectroionizationModeOff();
+    custom_properties.setElectroionizationSamplingMode( MonteCarlo::ENERGY_LOSS_SAMPLING );
     custom_properties.setBremsstrahlungModeOff();
     custom_properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
     custom_properties.setAtomicExcitationModeOff();
@@ -438,6 +454,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationElectronProperties,
                        MonteCarlo::MODIFIED_TWO_D_UNION );
   FRENSIE_CHECK_EQUAL( default_properties.getElasticCutoffAngleCosine(), 1.0 );
   FRENSIE_CHECK( default_properties.isElectroionizationModeOn() );
+  FRENSIE_CHECK_EQUAL( default_properties.getElectroionizationSamplingMode(),
+                       MonteCarlo::KNOCK_ON_SAMPLING );
   FRENSIE_CHECK( default_properties.isBremsstrahlungModeOn() );
   FRENSIE_CHECK_EQUAL( default_properties.getBremsstrahlungAngularDistributionFunction(),
                        MonteCarlo::TWOBS_DISTRIBUTION );
@@ -464,6 +482,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationElectronProperties,
                        MonteCarlo::ONE_D_UNION );
   FRENSIE_CHECK_EQUAL( custom_properties.getElasticCutoffAngleCosine(), 0.9 );
   FRENSIE_CHECK( !custom_properties.isElectroionizationModeOn() );
+  FRENSIE_CHECK_EQUAL( custom_properties.getElectroionizationSamplingMode(),
+                       MonteCarlo::ENERGY_LOSS_SAMPLING );
   FRENSIE_CHECK( !custom_properties.isBremsstrahlungModeOn() );
   FRENSIE_CHECK_EQUAL( custom_properties.getBremsstrahlungAngularDistributionFunction(),
                        MonteCarlo::DIPOLE_DISTRIBUTION );

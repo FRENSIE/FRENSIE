@@ -255,7 +255,7 @@ void SimulationElectronProperties::setElectroionizationSamplingMode(
   d_electroionization_sampling_mode = sampling_mode;
 }
 
-// Return theelectroionization sampling mode
+// Return the electroionization sampling mode
 ElectroionizationSamplingType
 SimulationElectronProperties::getElectroionizationSamplingMode() const
 {

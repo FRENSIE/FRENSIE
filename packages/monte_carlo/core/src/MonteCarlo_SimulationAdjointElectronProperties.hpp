@@ -17,6 +17,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "MonteCarlo_ElectroionizationSamplingType.hpp"
 #include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 
@@ -70,6 +71,13 @@ public:
 
   //! Return if adjoint electroionization mode is on
   bool isAdjointElectroionizationModeOn() const;
+
+  //! Set the adjoint electroionization sampling mode (KNOCK_ON_SAMPLING by default)
+  void setAdjointElectroionizationSamplingMode(
+                         const ElectroionizationSamplingType sampling_mode );
+
+  //! Return the adjoint electroionization sampling mode
+  ElectroionizationSamplingType getAdjointElectroionizationSamplingMode() const;
 
   //! Set adjoint bremsstrahlung mode to off (on by default)
   void setAdjointBremsstrahlungModeOff();
@@ -188,6 +196,9 @@ private:
   BremsstrahlungAngularDistributionType
   d_adjoint_bremsstrahlung_angular_distribution_function;
 
+  // The adjoint electroionization sampling mode (KNOCK_ON_SAMPLING by default)
+  ElectroionizationSamplingType d_adjoint_electroionization_sampling_mode;
+
   // The adjoint elastic cutoff angle cosine (mu = 1.0 by default)
   double d_adjoint_elastic_cutoff_angle_cosine;
 
@@ -223,6 +234,7 @@ void SimulationAdjointElectronProperties::serialize( Archive& ar,
   ar & BOOST_SERIALIZATION_NVP( d_adjoint_atomic_excitation_mode_on );
   ar & BOOST_SERIALIZATION_NVP( d_adjoint_evaluation_tol );
   ar & BOOST_SERIALIZATION_NVP( d_adjoint_bremsstrahlung_angular_distribution_function );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_electroionization_sampling_mode );
   ar & BOOST_SERIALIZATION_NVP( d_adjoint_elastic_cutoff_angle_cosine );
   ar & BOOST_SERIALIZATION_NVP( d_adjoint_elastic_distribution_mode );
   ar & BOOST_SERIALIZATION_NVP( d_coupled_elastic_sampling_method );

@@ -2,7 +2,7 @@
 <!DOCTYPE boost_serialization>
 <boost_serialization signature="serialization::archive" version="16">
 <container class_id="0" tracking_level="1" version="0" object_id="_0">
-	<notes>This table was generated on 2018-12-28 11:09:22.897811. It is for testing only!</notes>
+	<notes>This table was generated on 2019-01-11 10:18:30.603243. It is for testing only!</notes>
 	<atomic_number>1</atomic_number>
 	<atomic_weight>1.00790000000000002e+00</atomic_weight>
 	<min_photon_energy>1.00000000000000002e-03</min_photon_energy>
@@ -12,7 +12,7 @@
 	<adjoint_photon_grid_convergence_tol>1.00000000000000002e-03</adjoint_photon_grid_convergence_tol>
 	<adjoint_photon_grid_absolute_diff_tol>1.00000000000000004e-42</adjoint_photon_grid_absolute_diff_tol>
 	<adjoint_photon_grid_distance_tol>9.99999999999999979e-17</adjoint_photon_grid_distance_tol>
-	<photon_tabular_evaluation_tol>4.66972227554430663e+198</photon_tabular_evaluation_tol>
+	<photon_tabular_evaluation_tol>4.85559454306158372e-33</photon_tabular_evaluation_tol>
 	<adjoint_pair_production_energy_dist_norm_constant_evaluation_tol>1.00000000000000002e-03</adjoint_pair_production_energy_dist_norm_constant_evaluation_tol>
 	<adjoint_pair_production_energy_dist_norm_constant_nudge_value>9.99999999999999955e-07</adjoint_pair_production_energy_dist_norm_constant_nudge_value>
 	<adjoint_triplet_production_energy_dist_norm_constant_evaluation_tol>1.00000000000000002e-03</adjoint_triplet_production_energy_dist_norm_constant_evaluation_tol>
@@ -90122,7 +90122,7 @@
 		<count>0</count>
 		<item_version>0</item_version>
 	</adjoint_bremsstrahlung_photon_cross_section>
-	<adjoint_bremsstrahlung_photon_cross_section_threshold_index>808464439</adjoint_bremsstrahlung_photon_cross_section_threshold_index>
+	<adjoint_bremsstrahlung_photon_cross_section_threshold_index>1869182051</adjoint_bremsstrahlung_photon_cross_section_threshold_index>
 	<electron_two_d_interp>Log-Log-Log</electron_two_d_interp>
 	<electron_two_d_grid>Unit-base Correlated</electron_two_d_grid>
 	<adjoint_angular_energy_grid>
