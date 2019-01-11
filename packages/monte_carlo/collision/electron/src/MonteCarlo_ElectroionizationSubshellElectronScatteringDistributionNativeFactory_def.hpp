@@ -25,6 +25,7 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
     const double binding_energy,
     std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
       electroionization_subshell_distribution,
+    const ElectroionizationSamplingType sampling_type,
     const double evaluation_tol,
     const unsigned max_number_of_iterations,
     const bool renormalize_max_knock_on_energy )
@@ -36,17 +37,73 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
   // Make sure the evaluation tol is valid
   testPrecondition( evaluation_tol > 0.0 );
 
-  // Create the subshell distribution
-  ThisType::createElectroionizationSubshellDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
-    raw_electroionization_data.getElectroionizationRecoilEnergy( subshell ),
-    raw_electroionization_data.getElectroionizationRecoilPDF( subshell ),
-    raw_electroionization_data.getElectroionizationEnergyGrid( subshell ),
-    binding_energy,
-    electroionization_subshell_distribution,
-    evaluation_tol,
-    max_number_of_iterations,
-    raw_electroionization_data.isElectroionizationInRatioForm(),
-    renormalize_max_knock_on_energy );
+  if( !raw_electroionization_data.hasElectroionizationEnergyLossData() ||
+      sampling_type == KNOCK_ON_SAMPLING )
+  {
+    ThisType::createElectroionizationSubshellDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
+      raw_electroionization_data.getElectroionizationRecoilEnergy( subshell ),
+      raw_electroionization_data.getElectroionizationRecoilPDF( subshell ),
+      raw_electroionization_data.getElectroionizationEnergyGrid( subshell ),
+      binding_energy,
+      electroionization_subshell_distribution,
+      sampling_type,
+      evaluation_tol,
+      max_number_of_iterations,
+      renormalize_max_knock_on_energy );
+  }
+  else if( sampling_type == ENERGY_LOSS_SAMPLING )
+  {
+    // Subshell distribution
+    std::shared_ptr<const Utility::FullyTabularBasicBivariateDistribution>
+      subshell_distribution;
+
+    // Create the subshell energy loss distribution
+    ThisType::createEnergyLossDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
+      raw_electroionization_data.getElectroionizationEnergyLoss( subshell ),
+      raw_electroionization_data.getElectroionizationEnergyLossPDF( subshell ),
+      raw_electroionization_data.getElectroionizationEnergyGrid( subshell ),
+      binding_energy,
+      subshell_distribution,
+      evaluation_tol,
+      max_number_of_iterations,
+      renormalize_max_knock_on_energy );
+
+    electroionization_subshell_distribution.reset(
+      new ElectroionizationSubshellElectronScatteringDistribution(
+              subshell_distribution,
+              sampling_type,
+              binding_energy ) );
+  }
+  else if( sampling_type == ENERGY_LOSS_RATIO_SAMPLING )
+  {
+    // Subshell distribution
+    std::shared_ptr<const Utility::FullyTabularBasicBivariateDistribution>
+      subshell_distribution;
+
+    // Create the subshell energy loss ratio distribution
+    ThisType::createEnergyLossDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
+      raw_electroionization_data.getElectroionizationEnergyLoss( subshell ),
+      raw_electroionization_data.getElectroionizationEnergyLossPDF( subshell ),
+      raw_electroionization_data.getElectroionizationEnergyGrid( subshell ),
+      binding_energy,
+      subshell_distribution,
+      evaluation_tol,
+      max_number_of_iterations,
+      renormalize_max_knock_on_energy );
+
+    electroionization_subshell_distribution.reset(
+      new ElectroionizationSubshellElectronScatteringDistribution(
+              subshell_distribution,
+              sampling_type,
+              binding_energy ) );
+  }
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                    "The ElectroionizationSamplingType " <<
+                    sampling_type <<
+                    " is invalid or currently not supported!" );
+  }
 }
 
 // Create a electroionization subshell distribution
@@ -55,13 +112,13 @@ template <typename TwoDInterpPolicy,
 void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution(
     const std::map<double,std::vector<double> >& recoil_energy_data,
     const std::map<double,std::vector<double> >& recoil_pdf_data,
-    const std::vector<double> energy_grid,
+    const std::vector<double>& energy_grid,
     const double binding_energy,
     std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
       electroionization_subshell_distribution,
+    const ElectroionizationSamplingType sampling_type,
     const double evaluation_tol,
     const unsigned max_number_of_iterations,
-    const bool in_ratio_form,
     const bool renormalize_max_knock_on_energy )
 {
   // Make sure the energy_grid is valid
@@ -73,30 +130,80 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
   testPrecondition( binding_energy > 0.0 );
   // Make sure the evaluation tol is valid
   testPrecondition( evaluation_tol > 0.0 );
-  // Make sure both in_ratio_form and renormalize_max_knock_on_energy are not true
-  testPrecondition( in_ratio_form != true ||
-                    renormalize_max_knock_on_energy != true );
 
   // Subshell distribution
   std::shared_ptr<const Utility::FullyTabularBasicBivariateDistribution>
     subshell_distribution;
 
-  // Create the subshell distribution
-  ThisType::createSubshellDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
-            recoil_energy_data,
-            recoil_pdf_data,
-            energy_grid,
-            binding_energy,
-            subshell_distribution,
-            evaluation_tol,
-            max_number_of_iterations,
-            renormalize_max_knock_on_energy );
+  if( sampling_type == KNOCK_ON_SAMPLING )
+  {
+    // Create the subshell distribution
+    ThisType::createSubshellDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
+              recoil_energy_data,
+              recoil_pdf_data,
+              energy_grid,
+              binding_energy,
+              subshell_distribution,
+              evaluation_tol,
+              max_number_of_iterations,
+              renormalize_max_knock_on_energy );
+  }
+  else
+  {
+    std::map<double,std::vector<double> > processed_energy_data, processed_pdf_data;
+    std::vector<double> processed_energy_grid;
+
+    // Process the recoil energy to energy loss data
+    ThisType::calculateEnergyLossAndPDFBins(
+              recoil_energy_data,
+              recoil_pdf_data,
+              energy_grid,
+              binding_energy,
+              renormalize_max_knock_on_energy,
+              processed_energy_data,
+              processed_pdf_data,
+              processed_energy_grid );
+
+    if( sampling_type == ENERGY_LOSS_SAMPLING )
+    {
+      // Create the subshell distribution
+      ThisType::createEnergyLossDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
+              processed_energy_data,
+              processed_pdf_data,
+              processed_energy_grid,
+              binding_energy,
+              subshell_distribution,
+              evaluation_tol,
+              max_number_of_iterations,
+              renormalize_max_knock_on_energy );
+    }
+    else if( sampling_type == ENERGY_LOSS_RATIO_SAMPLING )
+    {
+      // Create the subshell distribution
+      ThisType::createEnergyLossRatioDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
+              processed_energy_data,
+              processed_pdf_data,
+              processed_energy_grid,
+              binding_energy,
+              subshell_distribution,
+              evaluation_tol,
+              max_number_of_iterations,
+              renormalize_max_knock_on_energy );
+    }
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                      "The ElectroionizationSamplingType " <<
+                      sampling_type <<
+                      " is invalid or currently not supported!" );
+    }
+  }
 
   electroionization_subshell_distribution.reset(
     new ElectroionizationSubshellElectronScatteringDistribution(
             subshell_distribution,
-            binding_energy,
-            in_ratio_form ) );
+            sampling_type,
+            binding_energy ) );
 }
 
 // Create the subshell recoil distribution
@@ -105,7 +212,7 @@ template<typename TwoDInterpPolicy,
 void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createSubshellDistribution(
     const std::map<double,std::vector<double> >& recoil_energy_data,
     const std::map<double,std::vector<double> >& recoil_pdf_data,
-    const std::vector<double> energy_grid,
+    const std::vector<double>& energy_grid,
     const double binding_energy,
     std::shared_ptr<const Utility::FullyTabularBasicBivariateDistribution>&
         subshell_distribution,
@@ -160,10 +267,107 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
             max_number_of_iterations ) );
 }
 
+// Create the subshell energy loss distribution
+template<typename TwoDInterpPolicy,
+         template<typename> class TwoDGridPolicy>
+void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createEnergyLossDistribution(
+    const std::map<double,std::vector<double> >& processed_energy_data,
+    const std::map<double,std::vector<double> >& processed_pdf_data,
+    const std::vector<double>& processed_energy_grid,
+    const double binding_energy,
+    std::shared_ptr<const Utility::FullyTabularBasicBivariateDistribution>&
+        subshell_distribution,
+    const double evaluation_tol,
+    const unsigned max_number_of_iterations,
+    const bool renormalize_max_knock_on_energy )
+{
+  // Make sure the energy_grid is valid
+  testPrecondition( processed_energy_grid.size() > 1 );
+  // Make sure the recoil data is valid
+  testPrecondition( processed_energy_data.size() == processed_energy_grid.size() );
+  testPrecondition( processed_pdf_data.size() == processed_energy_grid.size() );
+  // Make sure the evaluation tol is valid
+  testPrecondition( evaluation_tol > 0.0 );
+
+  // Create the scattering function
+  std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
+    secondary_dists( processed_energy_grid.size() );
+
+  for( size_t n = 0; n < processed_energy_grid.size(); ++n )
+  {
+    secondary_dists[n].reset(
+      new const Utility::TabularDistribution<Utility::LinLin>(
+          processed_energy_data.find( processed_energy_grid[n] )->second,
+          processed_pdf_data.find( processed_energy_grid[n] )->second ) );
+  }
+
+  // Create the scattering function
+  subshell_distribution.reset(
+    new Utility::InterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy<TwoDInterpPolicy> >(
+            processed_energy_grid,
+            secondary_dists,
+            1e-6,
+            evaluation_tol,
+            1e-16,
+            max_number_of_iterations ) );
+}
+
+// Create the subshell energy loss ratio distribution
+template<typename TwoDInterpPolicy,
+         template<typename> class TwoDGridPolicy>
+void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createEnergyLossRatioDistribution(
+    const std::map<double,std::vector<double> >& processed_energy_data,
+    const std::map<double,std::vector<double> >& processed_pdf_data,
+    const std::vector<double>& processed_energy_grid,
+    const double binding_energy,
+    std::shared_ptr<const Utility::FullyTabularBasicBivariateDistribution>&
+        subshell_distribution,
+    const double evaluation_tol,
+    const unsigned max_number_of_iterations,
+    const bool renormalize_max_knock_on_energy )
+{
+  // Make sure the energy_grid is valid
+  testPrecondition( processed_energy_grid.size() > 1 );
+  // Make sure the recoil data is valid
+  testPrecondition( processed_energy_data.size() == processed_energy_grid.size() );
+  testPrecondition( processed_pdf_data.size() == processed_energy_grid.size() );
+  // Make sure the evaluation tol is valid
+  testPrecondition( evaluation_tol > 0.0 );
+
+  // Create the scattering function
+  std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
+    secondary_dists( processed_energy_grid.size() );
+
+  for( size_t n = 0; n < processed_energy_grid.size(); ++n )
+  {
+    std::vector<double> ratio_bins =
+      processed_energy_data.find( processed_energy_grid[n] )->second;
+
+    // Divide bins by the incoming_energy
+    std::transform(ratio_bins.begin(), ratio_bins.end(), ratio_bins.begin(),
+      [max = processed_energy_grid[n]](double& bin){ return bin /= max;});
+
+    secondary_dists[n].reset(
+      new const Utility::TabularDistribution<Utility::LinLin>(
+          ratio_bins,
+          processed_pdf_data.find( processed_energy_grid[n] )->second ) );
+  }
+
+  // Create the scattering function
+  subshell_distribution.reset(
+    new Utility::InterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy<TwoDInterpPolicy> >(
+            processed_energy_grid,
+            secondary_dists,
+            1e-6,
+            evaluation_tol,
+            1e-16,
+            max_number_of_iterations ) );
+}
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_ELECTROIONIZATION_SUBSHELL_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory.cpp
+// end MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory_def.hpp
 //---------------------------------------------------------------------------//

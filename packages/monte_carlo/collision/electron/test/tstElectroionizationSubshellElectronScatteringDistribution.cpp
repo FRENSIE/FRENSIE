@@ -27,9 +27,11 @@ public:
   TestElectroionizationSubshellElectronScatteringDistribution(
     const std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution>&
       electroionization_subshell_scattering_distribution,
+    const MonteCarlo::ElectroionizationSamplingType sampling_type,
     const double binding_energy )
     : MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
         electroionization_subshell_scattering_distribution,
+        sampling_type,
         binding_energy )
   { /* ... */ }
 
@@ -57,11 +59,17 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    getBindingEnergy )
 {
   // Get binding energy
-  double binding_energy =
-    ace_ionization_dist->getBindingEnergy();
-
-  // Test original electron
+  double binding_energy = ace_ionization_dist->getBindingEnergy();
   FRENSIE_CHECK_EQUAL( binding_energy, 8.8290E-02 );
+
+  binding_energy = unit_base_ionization_dist->getBindingEnergy();
+  FRENSIE_CHECK_EQUAL( binding_energy, 4.88e-06 );
+
+  binding_energy = unit_correlated_ionization_dist->getBindingEnergy();
+  FRENSIE_CHECK_EQUAL( binding_energy, 4.88e-06 );
+
+  binding_energy = correlated_ionization_dist->getBindingEnergy();
+  FRENSIE_CHECK_EQUAL( binding_energy, 4.88e-06 );
 }
 
 //---------------------------------------------------------------------------//
@@ -396,8 +404,8 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                                       knock_on_angle_cosine );
 
   // Test knock-on electron at the min random number
-  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 4.128782338482339664e-02, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 1.029739057966893379e-07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 4.068725548925718194e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 1e-7, 1e-12 );
 
   // sample the electron at the max random number
   correlated_ionization_dist->sample( incoming_energy,
@@ -405,8 +413,8 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                                       knock_on_angle_cosine );
 
   // Test knock-on electron at the max random number
-  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 6.779557631590895639e-01, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 2.7765e-05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 6.680945582865936982e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 2.696314156988312136e-05, 1e-12 );
 
   // Sample at the max energy
   incoming_energy = 1e5;
@@ -417,8 +425,8 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                                       knock_on_angle_cosine );
 
   // Test knock-on electron at the min random number
-  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 3.128075402437809332e-04, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 9.999999999512e-08, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 3.128075402514134454e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 1e-7, 1e-12 );
 
   // sample the electron at the max random number
   correlated_ionization_dist->sample( incoming_energy,
@@ -426,14 +434,14 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                                       knock_on_angle_cosine );
 
   // Test knock-on electron at the max random number
-  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 9.999948900092839876e-01, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 4.999954497675684979e+04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 9.999948899933791546e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 4.999946716424614715e+04, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
 FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
-                   samplePrimaryAndSecondary_ace )
+                   sample_ace )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
@@ -447,7 +455,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
          scattering_angle_cosine, knock_on_angle_cosine;
 
   // sample the electron
-  ace_ionization_dist->samplePrimaryAndSecondary(
+  ace_ionization_dist->sample(
         incoming_energy,
         outgoing_energy,
         knock_on_energy,
@@ -552,12 +560,12 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                                         shell_of_interaction );
 
   // Test original positron
-  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getZDirection(), 7.8974722856283108e-01, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getEnergy(), 4.5585500000302387e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getZDirection(), 7.897472285592083141e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getEnergy(), 4.558549999969761513e-01, 1e-12 );
 
   // Test knock-on positron
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(), 07.8974722855920831e-01, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 4.5585499999697615e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(), 7.897472285628310829e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 4.558550000030238691e-01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -565,8 +573,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_ace_file_name, test_ace_table_name, test_native_file_name,
-            test_native_ratio_file_name;
+std::string test_ace_file_name, test_ace_table_name, test_native_file_name;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
@@ -579,9 +586,6 @@ FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_file",
                                         test_native_file_name, "",
                                         "Test Native file name" );
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_ratio_file",
-                                        test_native_ratio_file_name, "",
-                                        "Test Native ratio file name" );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
@@ -681,8 +685,8 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   ace_ionization_dist.reset(
         new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
+                            MonteCarlo::KNOCK_ON_SAMPLING,
                             binding_energies[subshell],
-                            false,
                             true,
                             false ) );
 
@@ -746,6 +750,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   unit_base_ionization_dist.reset(
         new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
+                            MonteCarlo::KNOCK_ON_SAMPLING,
                             binding_energy ) );
   }
   {
@@ -761,52 +766,9 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   unit_correlated_ionization_dist.reset(
         new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
+                            MonteCarlo::KNOCK_ON_SAMPLING,
                             binding_energy ) );
   }
-  }
-
-  // Create Native distribution
-  {
-  // Create the native data file container
-  std::unique_ptr<Data::ElectronPhotonRelaxationDataContainer> data_container(
-    new Data::ElectronPhotonRelaxationDataContainer( test_native_ratio_file_name ) );
-
-  std::set<unsigned> subshells = data_container->getSubshells();
-
-  unsigned subshell = *subshells.find(6);
-  double binding_energy =
-    data_container->getSubshellBindingEnergy( subshell );
-
-  // Get the energies for which knock-on sampling tables are given
-  std::vector<double> energy_grid =
-    data_container->getElectroionizationEnergyGrid( subshell );
-
-  // Create the scattering function
-  std::vector<double> primary_grid( energy_grid.size() );
-  std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
-    secondary_dists( energy_grid.size() );
-
-  for( unsigned n = 0; n < energy_grid.size(); ++n )
-  {
-    primary_grid[n] = energy_grid[n];
-
-    // Get the recoil energy distribution at the incoming energy
-    std::vector<double> recoil_energy(
-        data_container->getElectroionizationRecoilEnergy(
-            subshell,
-            energy_grid[n] ) );
-
-    // Get the recoil energy pdf at the incoming energy
-    std::vector<double> pdf(
-        data_container->getElectroionizationRecoilPDF(
-            subshell,
-            energy_grid[n] ) );
-
-    secondary_dists[n].reset(
-      new const Utility::TabularDistribution<Utility::LogLog>( recoil_energy,
-                                                               pdf ) );
-  }
-
   {
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> subshell_distribution(
@@ -820,8 +782,8 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   correlated_ionization_dist.reset(
         new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
-                            binding_energy,
-                            true ) );
+                            MonteCarlo::KNOCK_ON_SAMPLING,
+                            binding_energy ) );
   }
   }
 

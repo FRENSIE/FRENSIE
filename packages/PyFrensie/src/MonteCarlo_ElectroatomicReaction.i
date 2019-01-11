@@ -419,6 +419,9 @@ using namespace MonteCarlo;
                                 energy_grid,
                                 energy_grid->size()/10 ) );
 
+
+    MonteCarlo::ElectroionizationSamplingType sampling_type = MonteCarlo::KNOCK_ON_SAMPLING;
+
     // Create the reaction
     std::vector<std::shared_ptr<const MonteCarlo::ElectroatomicReaction> > reactions;
     MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<TwoDInterpPolicy,TwoDGridPolicy>(
@@ -426,6 +429,7 @@ using namespace MonteCarlo;
         energy_grid,
         grid_searcher,
         reactions,
+        sampling_type,
         evaluation_tol );
 
     return reactions;

@@ -179,6 +179,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
                       energy_grid,
                       grid_searcher,
                       reaction_pointers,
+                      properties.getElectroionizationSamplingMode(),
                       properties.getElectronEvaluationTolerance() );
 
     for( size_t i = 0; i < reaction_pointers.size(); ++i )

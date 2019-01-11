@@ -356,11 +356,15 @@ std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDis
   std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
     distribution;
 
+  MonteCarlo::ElectroionizationSamplingType sampling_type =
+    MonteCarlo::KNOCK_ON_SAMPLING;
+
   MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
       data_container,
       subshell,
       binding_energy,
       distribution,
+      sampling_type,
       evaluation_tol );
 
   // Make sure the distribution was created correctly
@@ -496,8 +500,8 @@ std::shared_ptr<const MonteCarlo::AtomicExcitationElectronScatteringDistribution
 // %include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistribution.hpp"
 
 // %feature("autodoc",
-// "samplePrimaryAndSecondary(ElectroionizationSubshellElectronScatteringDistribution self, const double incoming_energy) -> double, double, double, double")
-// MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributio::samplePrimaryAndSecondary;
+// "sample(ElectroionizationSubshellElectronScatteringDistribution self, const double incoming_energy) -> double, double, double, double")
+// MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributio::sample;
 
 // // Basic electron scattering distribution interface setup
 // %electron_distribution_interface_setup( ElectroionizationSubshellElectronScatteringDistribution )

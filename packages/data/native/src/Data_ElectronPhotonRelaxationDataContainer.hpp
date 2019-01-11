@@ -342,15 +342,12 @@ public:
   const std::vector<double>& getMomentPreservingElasticWeights(
                                 const double incoming_energy ) const;
 
-  //! Return if the electroionization recoil electron spectrums are given in ratio form
-  const bool isElectroionizationInRatioForm() const;
-
   //! Return the electroionization energy grid for the recoil electron spectrum for a subshell
   const std::vector<double>& getElectroionizationEnergyGrid(
                                 const unsigned subshell ) const;
 
   //! Return the electroionization recoil interpolation policy
-  const std::string& getElectroionizationRecoilInterpPolicy() const;
+  const std::string& getElectroionizationInterpPolicy() const;
 
   //! Return the electroionization recoil energy for a subshell
   const std::map<double,std::vector<double> >& getElectroionizationRecoilEnergy(
@@ -367,6 +364,27 @@ public:
 
   //! Return the electroionization recoil energy pdf for a subshell and incoming energy
   const std::vector<double>& getElectroionizationRecoilPDF(
+                                const unsigned subshell,
+                                const double incoming_energy ) const;
+
+  //! Return if there is electroionization energy loss data
+  bool hasElectroionizationEnergyLossData() const;
+
+  //! Return the electroionization energy loss for a subshell
+  const std::map<double,std::vector<double> >& getElectroionizationEnergyLoss(
+                                const unsigned subshell ) const;
+
+  //! Return the electroionization energy loss for a subshell and incoming energy
+  const std::vector<double>& getElectroionizationEnergyLoss(
+                                const unsigned subshell,
+                                const double incoming_energy ) const;
+
+  //! Return the electroionization energy loss pdf for a subshell
+  const std::map<double,std::vector<double> >& getElectroionizationEnergyLossPDF(
+                                const unsigned subshell ) const;
+
+  //! Return the electroionization energy loss pdf for a subshell and incoming energy
+  const std::vector<double>& getElectroionizationEnergyLossPDF(
                                 const unsigned subshell,
                                 const double incoming_energy ) const;
 
@@ -796,9 +814,9 @@ protected:
     const unsigned subshell,
     const std::vector<double>& electroionization_energy_grid );
 
-  //! Set the electroionization recoil InterpPolicy
-  void setElectroionizationRecoilInterpPolicy(
-    const std::string& electroionization_recoil_interp );
+  //! Set the electroionization InterpPolicy
+  void setElectroionizationInterpPolicy(
+    const std::string& electroionization_interp );
 
   //! Set the electroionization recoil energy for an incoming energy and subshell
   void setElectroionizationRecoilEnergyAtIncomingEnergy(
@@ -821,6 +839,28 @@ protected:
   void setElectroionizationRecoilPDF(
     const unsigned subshell,
     const std::map<double,std::vector<double> >& electroionization_recoil_pdf );
+
+  //! Set the electroionization energy loss for an incoming energy and subshell
+  void setElectroionizationEnergyLossAtIncomingEnergy(
+    const unsigned subshell,
+    const double incoming_energy,
+    const std::vector<double>& electroionization_energy_loss_energy );
+
+  //! Set the electroionization energy loss pdf for an incoming energy and subshell
+  void setElectroionizationEnergyLossPDFAtIncomingEnergy(
+    const unsigned subshell,
+    const double incoming_energy,
+    const std::vector<double>& electroionization_energy_loss_pdf );
+
+  //! Set electroionization energy loss for all incoming energies in a subshell
+  void setElectroionizationEnergyLoss(
+    const unsigned subshell,
+    const std::map<double,std::vector<double> >& electroionization_energy_loss_energy );
+
+  //! Set electroionization energy loss pdf for all incoming energies in a subshell
+  void setElectroionizationEnergyLossPDF(
+    const unsigned subshell,
+    const std::map<double,std::vector<double> >& electroionization_energy_loss_pdf );
 
   //! Set the bremsstrahlung energy grid for the secondary photon spectrum
   void setBremsstrahlungEnergyGrid(
@@ -1187,8 +1227,8 @@ private:
   // The electroionization energy grid (MeV) for a subshell
   std::map<unsigned,std::vector<double> > d_electroionization_energy_grid;
 
-  // The electroionization recoil InterpPolicy
-  std::string d_electroionization_recoil_interp;
+  // The electroionization InterpPolicy
+  std::string d_electroionization_interp;
 
   // The electroionization recoil energy for subshell and incoming energy
   std::map<unsigned,std::map<double,std::vector<double> > >
@@ -1197,6 +1237,14 @@ private:
   // The electroionization recoil pdf for subshell and incoming energy
   std::map<unsigned,std::map<double,std::vector<double> > >
     d_electroionization_recoil_pdf;
+
+  // The electroionization energy loss for subshell and incoming energy
+  std::map<unsigned,std::map<double,std::vector<double> > >
+    d_electroionization_energy_loss;
+
+  // The electroionization energy loss pdf for subshell and incoming energy
+  std::map<unsigned,std::map<double,std::vector<double> > >
+    d_electroionization_energy_loss_pdf;
 
   // The bremsstrahlung energy grid (MeV)
   std::vector<double> d_bremsstrahlung_energy_grid;

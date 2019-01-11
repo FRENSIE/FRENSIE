@@ -132,7 +132,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
 FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
-                   samplePrimaryAndSecondary )
+                   sample_PrimaryAndSecondary )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 2 );
@@ -147,7 +147,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
          scattering_angle_cosine, knock_on_angle_cosine;
 
   // sample the electron
-  ace_electroionization_distribution->samplePrimaryAndSecondary(
+  ace_electroionization_distribution->sample(
         incoming_energy,
         outgoing_energy,
         knock_on_energy,
@@ -166,7 +166,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
   // sample the electron using the eprdata14 file
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  epr14_electroionization_distribution->samplePrimaryAndSecondary(
+  epr14_electroionization_distribution->sample(
         incoming_energy,
         outgoing_energy,
         knock_on_energy,
@@ -309,12 +309,12 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
                                                        shell_of_interaction );
 
   // Test original positron
-  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getZDirection(), 9.8142335272952452e-01, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getEnergy(), 1.3707352378289799, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getZDirection(), 2.545797837616818882e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getEnergy(), 4.097476217102010571e-02, 1e-12 );
 
   // Test knock-on electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(), 2.545797837616818882e-01, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 4.097476217102010571e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(), 9.8142335272952452e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 1.3707352378289799, 1e-12 );
 
   bank.pop();
 
@@ -329,13 +329,12 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
                                                          shell_of_interaction );
 
   // Test original positron
-  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getZDirection(), 9.8154265018847409e-01, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getEnergy(), 1.3715157338528261, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getZDirection(), 2.522361013030052779e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getEnergy(), 4.019426614717383495e-02, 1e-12 );
 
   // Test knock-on electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(), 2.522361013030052779e-01, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 4.019426614717383495e-02, 1e-12 );
-
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(), 9.8154265018847409e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 1.3715157338528261, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

@@ -2,7 +2,7 @@
 <!DOCTYPE boost_serialization>
 <boost_serialization signature="serialization::archive" version="16">
 <container class_id="0" tracking_level="1" version="0" object_id="_0">
-	<notes>This table was generated on Mon Jan  7 11:22:56 CST 2019. It is for testing only!</notes>
+	<notes>This table was generated on Thu Jan 10 17:32:21 CST 2019. It is for testing only!</notes>
 	<atomic_number>14</atomic_number>
 	<atomic_weight>2.80854999999999997e+01</atomic_weight>
 	<min_photon_energy>1.00000000000000002e-03</min_photon_energy>
@@ -23,11 +23,11 @@
 	<electron_grid_distance_tol>1.00000000000000007e-18</electron_grid_distance_tol>
 	<bremsstrahlung_evaluation_tolerance>9.99999999999999955e-08</bremsstrahlung_evaluation_tolerance>
 	<bremsstrahlung_convergence_tolerance>1.00000000000000002e-03</bremsstrahlung_convergence_tolerance>
-	<bremsstrahlung_absolute_diff_tol>1.00000000000000003e-13</bremsstrahlung_absolute_diff_tol>
+	<bremsstrahlung_absolute_diff_tol>9.99999999999999945e-21</bremsstrahlung_absolute_diff_tol>
 	<bremsstrahlung_distance_tol>1.00000000000000003e-13</bremsstrahlung_distance_tol>
 	<electroionization_evaluation_tol>9.99999999999999955e-08</electroionization_evaluation_tol>
 	<electroionization_convergence_tol>1.00000000000000002e-03</electroionization_convergence_tol>
-	<electroionization_absolute_diff_tol>1.00000000000000003e-13</electroionization_absolute_diff_tol>
+	<electroionization_absolute_diff_tol>9.99999999999999945e-21</electroionization_absolute_diff_tol>
 	<electroionization_distance_tol>1.00000000000000003e-13</electroionization_distance_tol>
 	<subshells>
 		<count>7</count>
@@ -57542,7 +57542,7 @@
 			</second>
 		</item>
 	</electroionization_energy_grid>
-	<electroionization_recoil_interp>Lin-Lin</electroionization_recoil_interp>
+	<electroionization_interp>Lin-Lin</electroionization_interp>
 	<electroionization_recoil_energy class_id="15" tracking_level="0" version="0">
 		<count>7</count>
 		<item_version>0</item_version>
@@ -63255,6 +63255,14 @@
 			</second>
 		</item>
 	</electroionization_recoil_pdf>
+	<electroionization_energy_loss>
+		<count>0</count>
+		<item_version>0</item_version>
+	</electroionization_energy_loss>
+	<electroionization_energy_loss_pdf>
+		<count>0</count>
+		<item_version>0</item_version>
+	</electroionization_energy_loss_pdf>
 	<bremsstrahlung_energy_grid>
 		<count>10</count>
 		<item_version>0</item_version>

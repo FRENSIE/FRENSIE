@@ -130,10 +130,6 @@ void addCNativeAEPRFile( const boost::filesystem::path& native_test_data_dir,
 void addAlNativeEPRFile( const boost::filesystem::path& native_test_data_dir,
                          Data::ScatteringCenterPropertiesDatabase& database );
 
-//! Add the "test_epr_13_native_ratio.xml" properties
-void addAlNativeRatioEPRFile( const boost::filesystem::path& native_test_data_dir,
-                              Data::ScatteringCenterPropertiesDatabase& database );
-
 //! Add the "test_aepr_13_native.xml" properties
 void addAlNativeAEPRFile( const boost::filesystem::path& native_test_data_dir,
                           Data::ScatteringCenterPropertiesDatabase& database );
@@ -236,7 +232,6 @@ void addAlNativeTestFiles( const boost::filesystem::path& native_test_data_dir,
                            Data::ScatteringCenterPropertiesDatabase& database )
 {
   Details::addAlNativeEPRFile( native_test_data_dir, database );
-  Details::addAlNativeRatioEPRFile( native_test_data_dir, database );
   Details::addAlNativeAEPRFile( native_test_data_dir, database );
 }
 
@@ -1266,46 +1261,6 @@ void addAlNativeEPRFile( const boost::filesystem::path& native_test_data_dir,
                                                          atomic_weight,
                                                          native_test_data_file,
                                                          0,
-                                                         Data::Al_ATOM ) );
-
-  atom_properties.setElectroatomicDataProperties( electroatomic_properties );
-}
-
-// Add the "test_epr_13_native_ratio.xml" properties
-void addAlNativeRatioEPRFile( const boost::filesystem::path& native_test_data_dir,
-                              Data::ScatteringCenterPropertiesDatabase& database )
-{
-  boost::filesystem::path native_test_data_file = native_test_data_dir;
-  native_test_data_file /= "test_epr_13_native_ratio.xml";
-
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( native_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_epr_13_native_ratio.xml\" data file could "
-                      "not be found (check native test data directory "
-                      "path)!" );
-
-  Data::AtomProperties::AtomicWeight atomic_weight = 2.6982e+01*amu;
-
-  if( !database.doAtomPropertiesExist( Data::Al_ATOM ) )
-    database.initializeAtomProperties( Data::Al_ATOM, atomic_weight );
-
-  Data::AtomProperties& atom_properties =
-    database.getAtomProperties( Data::Al_ATOM );
-
-  std::shared_ptr<const Data::PhotoatomicDataProperties>
-    photoatomic_properties( new Data::NativeEPRPhotoatomicDataProperties(
-                                                         atomic_weight,
-                                                         native_test_data_file,
-                                                         1,
-                                                         Data::Al_ATOM ) );
-
-  atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
-
-  std::shared_ptr<const Data::ElectroatomicDataProperties>
-    electroatomic_properties( new Data::NativeEPRElectroatomicDataProperties(
-                                                         atomic_weight,
-                                                         native_test_data_file,
-                                                         1,
                                                          Data::Al_ATOM ) );
 
   atom_properties.setElectroatomicDataProperties( electroatomic_properties );

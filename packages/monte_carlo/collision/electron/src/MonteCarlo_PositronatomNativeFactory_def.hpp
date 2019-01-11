@@ -180,6 +180,7 @@ void PositronatomNativeFactory::createPositronatomCore(
                       energy_grid,
                       grid_searcher,
                       reaction_pointers,
+                      properties.getElectroionizationSamplingMode(),
                       properties.getElectronEvaluationTolerance() );
 
     for( unsigned i = 0; i < reaction_pointers.size(); ++i )

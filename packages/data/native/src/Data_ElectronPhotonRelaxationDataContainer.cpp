@@ -756,26 +756,11 @@ ElectronPhotonRelaxationDataContainer::getElectroionizationEnergyGrid(
   return d_electroionization_energy_grid.find( subshell )->second;
 }
 
-// Return if the electroionization recoil electron spectrums are given in ratio form
-const bool ElectronPhotonRelaxationDataContainer::isElectroionizationInRatioForm() const
-{
-  for (auto& shell_map : d_electroionization_recoil_energy )
-  {
-    for (auto& energy_map : shell_map.second )
-    {
-      if ( energy_map.second.back() != 1.0 )
-        return false;
-    }
-  }
-
-  return true;
-}
-
 // Return the electroionization recoil interpolation policy
 const std::string&
-ElectronPhotonRelaxationDataContainer::getElectroionizationRecoilInterpPolicy() const
+ElectronPhotonRelaxationDataContainer::getElectroionizationInterpPolicy() const
 {
-  return d_electroionization_recoil_interp;
+  return d_electroionization_interp;
 }
 
 // Return the electroionization recoil energy for a subshell
@@ -836,6 +821,78 @@ ElectronPhotonRelaxationDataContainer::getElectroionizationRecoilPDF(
             d_electroionization_energy_grid.find( subshell )->second.back() );
 
   return d_electroionization_recoil_pdf.find( subshell )->second.find( incoming_energy )->second;
+}
+
+// Return if there is electroionization energy loss data
+bool ElectronPhotonRelaxationDataContainer::hasElectroionizationEnergyLossData() const
+{
+  return d_electroionization_energy_loss.size() > 0;
+}
+
+// Return the electroionization energy loss for a subshell
+const std::map<double,std::vector<double> >&
+ElectronPhotonRelaxationDataContainer::getElectroionizationEnergyLoss(
+                           const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+
+  return d_electroionization_energy_loss.find( subshell )->second;
+}
+
+// Return the electroionization energy loss for a subshell and energy bin
+const std::vector<double>&
+ElectronPhotonRelaxationDataContainer::getElectroionizationEnergyLoss(
+                           const unsigned subshell,
+                           const double incoming_energy ) const
+{
+  // Make sure there is energy loss data
+  testPrecondition( this->hasElectroionizationEnergyLossData() );
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the incoming energy is valid
+  testPrecondition(
+            incoming_energy >=
+            d_electroionization_energy_grid.find( subshell )->second.front() );
+  testPrecondition(
+            incoming_energy <=
+            d_electroionization_energy_grid.find( subshell )->second.back() );
+
+  return d_electroionization_energy_loss.find( subshell )->second.find( incoming_energy )->second;
+}
+
+// Return the electroionization energy loss pdf for a subshell
+const std::map<double,std::vector<double> >&
+ElectronPhotonRelaxationDataContainer::getElectroionizationEnergyLossPDF(
+                           const unsigned subshell ) const
+{
+  // Make sure there is energy loss data
+  testPrecondition( this->hasElectroionizationEnergyLossData() );
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+
+  return d_electroionization_energy_loss_pdf.find( subshell )->second;
+}
+
+// Return the electroionization energy loss pdf for a subshell and energy bin
+const std::vector<double>&
+ElectronPhotonRelaxationDataContainer::getElectroionizationEnergyLossPDF(
+                           const unsigned subshell,
+                           const double incoming_energy ) const
+{
+  // Make sure there is energy loss data
+  testPrecondition( this->hasElectroionizationEnergyLossData() );
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the incoming energy is valid
+  testPrecondition(
+            incoming_energy >=
+            d_electroionization_energy_grid.find( subshell )->second.front() );
+  testPrecondition(
+            incoming_energy <=
+            d_electroionization_energy_grid.find( subshell )->second.back() );
+
+  return d_electroionization_energy_loss_pdf.find( subshell )->second.find( incoming_energy )->second;
 }
 
 // Return the bremsstrahlung energy grid
@@ -2002,14 +2059,14 @@ void ElectronPhotonRelaxationDataContainer::setElectroionizationEnergyGrid(
   d_electroionization_energy_grid[subshell]=electroionization_energy_grid;
 }
 
-// Set the electroionization recoil InterpPolicy
-void ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilInterpPolicy(
-    const std::string& electroionization_recoil_interp )
+// Set the electroionization InterpPolicy
+void ElectronPhotonRelaxationDataContainer::setElectroionizationInterpPolicy(
+    const std::string& electroionization_interp )
 {
   // Make sure the string is valid
-  testPrecondition( isInterpPolicyValid( electroionization_recoil_interp ) );
+  testPrecondition( isInterpPolicyValid( electroionization_interp ) );
 
-  d_electroionization_recoil_interp = electroionization_recoil_interp;
+  d_electroionization_interp = electroionization_interp;
 }
 
 // Set the electroionization recoil energy for a subshell and energy bin
@@ -2070,6 +2127,75 @@ void ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilPDF(
 
   d_electroionization_recoil_pdf[subshell] =
     electroionization_recoil_pdf;
+}
+
+// Set the electroionization energy loss for a subshell and energy bin
+void ElectronPhotonRelaxationDataContainer::setElectroionizationEnergyLossAtIncomingEnergy(
+            const unsigned subshell,
+            const double incoming_energy,
+            const std::vector<double>& electroionization_energy_loss )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the incoming energy is valid
+  testPrecondition(
+            incoming_energy >=
+            d_electroionization_energy_grid.find( subshell )->second.front() );
+  testPrecondition(
+            incoming_energy <=
+            d_electroionization_energy_grid.find( subshell )->second.back() );
+
+  // Make sure the electroionization energy loss is valid
+  testPrecondition( Data::valuesGreaterThanZero( electroionization_energy_loss ) );
+
+  d_electroionization_energy_loss[subshell][ incoming_energy] =
+    electroionization_energy_loss;
+}
+
+// Set the electroionization energy loss pdf for a subshell and energy bin
+void ElectronPhotonRelaxationDataContainer::setElectroionizationEnergyLossPDFAtIncomingEnergy(
+            const unsigned subshell,
+            const double incoming_energy,
+            const std::vector<double>& electroionization_energy_loss_pdf )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the incoming energy is valid
+  testPrecondition(
+            incoming_energy >=
+            d_electroionization_energy_grid.find( subshell )->second.front() );
+  testPrecondition(
+            incoming_energy <=
+            d_electroionization_energy_grid.find( subshell )->second.back() );
+  // Make sure the electroionization recoil pdf is valid
+  testPrecondition( Data::valuesGreaterThanZero( electroionization_energy_loss_pdf ) );
+
+  d_electroionization_energy_loss_pdf[subshell][ incoming_energy] =
+    electroionization_energy_loss_pdf;
+}
+
+// Set electroionization energy loss for all incoming energies in a subshell
+void ElectronPhotonRelaxationDataContainer::setElectroionizationEnergyLoss(
+    const unsigned subshell,
+    const std::map<double,std::vector<double> >& electroionization_energy_loss )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+
+  d_electroionization_energy_loss[subshell] =
+    electroionization_energy_loss;
+}
+
+// Set electroionization energy loss pdf for all incoming energies in a subshell
+void ElectronPhotonRelaxationDataContainer::setElectroionizationEnergyLossPDF(
+    const unsigned subshell,
+    const std::map<double,std::vector<double> >& electroionization_energy_loss_pdf )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+
+  d_electroionization_energy_loss_pdf[subshell] =
+    electroionization_energy_loss_pdf;
 }
 
 // Set the bremsstrahlung energy grid

@@ -18,6 +18,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleModeType.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "MonteCarlo_ElectroionizationSamplingType.hpp"
 #include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "MonteCarlo_TwoDInterpolationType.hpp"
 #include "MonteCarlo_TwoDGridType.hpp"
@@ -132,6 +133,13 @@ public:
   //! Return if electroionization mode is on
   bool isElectroionizationModeOn() const;
 
+  //! Set the electroionization sampling mode (KNOCK_ON_SAMPLING by default)
+  void setElectroionizationSamplingMode(
+                         const ElectroionizationSamplingType sampling_mode );
+
+  //! Return the electroionization sampling mode
+  ElectroionizationSamplingType getElectroionizationSamplingMode() const;
+
   /* ------ Bremsstrahlung Properties ------ */
 
   //! Set bremsstrahlung mode to off (on by default)
@@ -230,6 +238,9 @@ private:
 
   // The electroionization electron 2D interpolation type ( LogLogLog - default )
   TwoDInterpolationType d_electroionization_interpolation_type;
+
+  // The electroionization sampling mode (KNOCK_ON_SAMPLING by default)
+  ElectroionizationSamplingType d_electroionization_sampling_mode;
 
   // The bremsstrahlung electron scattering mode (true = on - default, false = off)
   bool d_bremsstrahlung_mode_on;

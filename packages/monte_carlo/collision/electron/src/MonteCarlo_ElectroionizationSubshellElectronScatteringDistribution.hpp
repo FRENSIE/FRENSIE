@@ -14,6 +14,7 @@
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_PositronScatteringDistribution.hpp"
+#include "MonteCarlo_ElectroionizationSamplingType.hpp"
 #include "Utility_InterpolatedFullyTabularBasicBivariateDistribution.hpp"
 
 namespace MonteCarlo{
@@ -41,8 +42,8 @@ public:
   ElectroionizationSubshellElectronScatteringDistribution(
     const std::shared_ptr<const BasicBivariateDist>&
       electroionization_subshell_scattering_distribution,
+    const ElectroionizationSamplingType sampling_type,
     const double binding_energy,
-    const bool treat_distribution_as_ratio = false,
     const bool bank_secondary_particles = true,
     const bool limit_knock_on_energy_range = true );
 
@@ -67,27 +68,31 @@ public:
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
-                   const double scattering_angle ) const override;
+                   const double outgoing_energy ) const override;
 
   //! Evaluate the PDF value for a given incoming and outgoing energy
   double evaluatePDF( const double incoming_energy,
-                      const double outgoing_energy_1 ) const override;
+                      const double outgoing_energy ) const override;
+
+  //! Evaluate the PDF value for a given incoming and processed energy
+  double evaluateProcessedPDF( const double incoming_energy,
+                              const double processed_energy ) const;
 
   //! Evaluate the CDF
   double evaluateCDF( const double incoming_energy,
-                      const double scattering_angle ) const override;
+                      const double outgoing_energy ) const override;
 
-  //! Sample an outgoing energy and direction from the distribution
+  //! Sample an energy and direction from the distribution
   void sample( const double incoming_energy,
-               double& knock_on_energy,
-               double& knock_on_angle_cosine ) const override;
+               double& energy,
+               double& angle_cosine ) const override;
 
   // Sample the distribution
-  void samplePrimaryAndSecondary( const double incoming_energy,
-                                  double& outgoing_energy,
-                                  double& knock_on_energy,
-                                  double& scattering_angle_cosine,
-                                  double& knock_on_angle_cosine ) const;
+  void sample( const double incoming_energy,
+               double& outgoing_energy,
+               double& knock_on_energy,
+               double& scattering_angle_cosine,
+               double& knock_on_angle_cosine ) const;
 
   //! Sample an outgoing energy and direction and record the number of trials
   void sampleAndRecordTrials( const double incoming_energy,
@@ -113,78 +118,64 @@ protected:
 
 private:
 
+  //! Set the sampling functions
+  void setSamplingFunctions(const ElectroionizationSamplingType sampling_type );
+
   //! Sample a knock-on energy and direction from the distribution
   void samplePositron( const double incoming_positron_energy,
                        double& knock_on_energy,
                        double& knock_on_angle_cosine ) const;
 
-// Get knock-on energy
-double getKnockOnEnergy( const double incoming_energy,
-                         const double outgoing_energy_1 ) const;
+  // Get knock-on energy
+  double getKnockOnEnergy( const double incoming_energy,
+                          const double outgoing_energy_1 ) const;
 
-// Get knock-on energy
-double getKnockOnEnergyRatio( const double incoming_energy,
-                              const double outgoing_energy_1 ) const;
+  // Get energy loss
+  double getEnergyLoss( const double incoming_energy,
+                        const double outgoing_energy ) const;
 
-// Return the distribution min secondary energy
-double getDistributionMinSecondaryEnergy( const double incoming_energy );
+  // Get energy loss ratio
+  double getEnergyLossRatio( const double incoming_energy,
+                            const double outgoing_energy ) const;
 
-// Return the physical min secondary energy
-double getPhysicalMinSecondaryEnergy( const double incoming_energy );
+  // Return the distribution min knock-on energy
+  double getDistributionMinKnockOnEnergy( const double incoming_energy );
 
-// Return the distribution min secondary energy
-double getDistributionMaxSecondaryEnergy( const double incoming_energy );
+  // Return the physical min knock-on energy
+  double getPhysicalMinKnockOnEnergy( const double incoming_energy );
 
-// Return the physical min secondary energy
-double getPhysicalMaxSecondaryEnergy( const double incoming_energy );
+  // Return the distribution min knock-on energy
+  double getDistributionMaxKnockOnEnergy( const double incoming_energy );
 
-// Evaluate the distribution for a given incoming and outgoing energy
-double evaluateKnockOn( const double incoming_energy,
-                        const double outgoing_energy_1 ) const;
+  // Return the physical min knock-on energy
+  double getPhysicalMaxKnockOnEnergy( const double incoming_energy );
 
-// Evaluate the distribution for a given incoming and outgoing energy
-double evaluateKnockOnRatio( const double incoming_energy,
-                             const double outgoing_energy_1 ) const;
+  // Sample a knock-on energy
+  double sampleKnockOn( const double incoming_energy ) const;
 
-// Evaluate the PDF value for a given incoming and outgoing energy
-double evaluateKnockOnPDF( const double incoming_energy,
-                           const double outgoing_energy_1 ) const;
+  // Sample an outgoing primary energy
+  double sampleEnergyLoss( const double incoming_energy ) const;
 
-// Evaluate the PDF value for a given incoming and outgoing energy
-double evaluateKnockOnRatioPDF( const double incoming_energy,
-                                const double outgoing_energy_1 ) const;
+  // Sample an outgoing primary energy ratio
+  double sampleRatio( const double incoming_energy ) const;
 
-// Evaluate the CDF value for a given incoming and outgoing energy
-double evaluateKnockOnCDF( const double incoming_energy,
-                           const double outgoing_energy_1 ) const;
+  // Sample a knock-on energy and primary energy
+  void sampleKnockOn( const double incoming_energy,
+                      double& outgoing_energy,
+                      double& knock_on_energy ) const;
 
-// Evaluate the CDF value for a given incoming and outgoing energy
-double evaluateKnockOnRatioCDF( const double incoming_energy,
-                                const double outgoing_energy_1 ) const;
+  // Sample a knock-on energy and primary energy
+  void sampleEnergyLoss( const double incoming_energy,
+                        double& outgoing_energy,
+                        double& knock_on_energy ) const;
 
-// Sample a knock-on energy
-double sampleKnockOn( const double incoming_energy ) const;
-
-// Sample a knock-on energy
-double sampleKnockOnRatio( const double incoming_energy ) const;
-
-// Sample a knock-on energy and primary energy
-void sampleKnockOn( const double incoming_energy,
+  // Sample a knock-on energy and primary energy
+  void sampleRatio( const double incoming_energy,
                     double& outgoing_energy,
                     double& knock_on_energy ) const;
 
-// Sample a knock-on energy and primary energy
-void sampleKnockOnRatio( const double incoming_energy,
-                         double& outgoing_energy,
-                         double& knock_on_energy ) const;
-
-// Sample a knock-on energy
-double sampleKnockOnPositron( const double incoming_energy,
-                              double scaled_random_number ) const;
-
-// Sample a knock-on energy
-double sampleKnockOnRatioPositron( const double incoming_energy,
-                                   double scaled_random_number ) const;
+  // Sample a knock-on energy
+  double sampleKnockOnPositron( const double incoming_energy ) const;
 
   // electroionization subshell scattering cross sections
   std::shared_ptr<const BasicBivariateDist> d_electroionization_shell_distribution;
@@ -204,14 +195,8 @@ double sampleKnockOnRatioPositron( const double incoming_energy,
   // The max secondary (knock-on) electron energy function pointer
   std::function<double ( const double )> d_max_energy_functor;
 
-  // The evaluate function pointer
-  std::function<double ( const double, const double )> d_evaluate;
-
-  // The evaluate PDF function pointer
-  std::function<double ( const double, const double )> d_evaluate_pdf;
-
-  // The evaluate CDF function pointer
-  std::function<double ( const double, const double )> d_evaluate_cdf;
+  // The outgoing energy processor
+  std::function<double ( const double, const double )> d_outgoing_energy_processor;
 
   // The sample function pointer
   std::function<double ( const double )> d_sample;
@@ -220,7 +205,7 @@ double sampleKnockOnRatioPositron( const double incoming_energy,
   std::function<void ( const double, double&, double& )> d_sample_primary_and_secondary;
 
   // The sample positron function pointer
-  std::function<double ( const double, double& )> d_sample_positron;
+  std::function<double ( const double )> d_sample_positron;
 };
 
 } // end MonteCarlo namespace

@@ -18,6 +18,7 @@
 #include "DataGen_ElectronPhotonRelaxationDataGenerator.hpp"
 #include "DataGen_ElectronElasticDataEvaluator.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_ElectroionizationSamplingType.hpp"
 #include "Data_ENDLDataContainer.hpp"
 #include "Utility_ArrayView.hpp"
 #include "Utility_UnivariateDistribution.hpp"
@@ -182,7 +183,16 @@ private:
   void setRefinedBremsstrahlungDistributionData();
 
   // Set the electroionization subshell secondary grid data
-  void setRefinedElectroionizationSubshellDistributionData();
+  void setRefinedElectroionizationSubshellDistributionData(
+      const MonteCarlo::ElectroionizationSamplingType sampling_type );
+
+  // Initialize the electroionization subshell secondary grid
+  std::vector<double> initializeElectroionizationSecondaryGrid(
+    const MonteCarlo::ElectroionizationSamplingType sampling_type,
+    const double incoming_energy,
+    const double min_secondary_energy,
+    const double max_secondary_energy,
+    const unsigned shell ) const;
 
   // Add binding energies to union energy grid
   void addBindingEnergiesToUnionEnergyGrid(

@@ -561,12 +561,16 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
     std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
         electroionization_subshell_distribution;
 
+    MonteCarlo::ElectroionizationSamplingType sampling_type =
+      MonteCarlo::KNOCK_ON_SAMPLING;
+
     // Create the electroionization subshell distribution
     MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
         *data_container,
         *shell,
         data_container->getSubshellBindingEnergy( *shell ),
         electroionization_subshell_distribution,
+        sampling_type,
         1e-15 );
 
 
@@ -604,12 +608,16 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
     std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
         electroionization_subshell_distribution;
 
+    MonteCarlo::ElectroionizationSamplingType sampling_type =
+      MonteCarlo::KNOCK_ON_SAMPLING;
+
     // Create the electroionization subshell distribution
     MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
         *data_container,
         *shell,
         data_container->getSubshellBindingEnergy( *shell ),
         electroionization_subshell_distribution,
+        sampling_type,
         1e-12 );
 
 

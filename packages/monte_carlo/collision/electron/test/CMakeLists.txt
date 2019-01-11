@@ -90,8 +90,7 @@ FRENSIE_ADD_TEST(ElectroionizationSubshellElectronScatteringDistribution
   EXTRA_ARGS
   --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
   --test_ace_table=82000.12p
-  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml
-  --test_native_ratio_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native_ratio.xml)
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml )
 
 FRENSIE_ADD_TEST_EXECUTABLE(ElectroionizationSubshellAdjointElectronScatteringDistribution DEPENDS tstElectroionizationSubshellAdjointElectronScatteringDistribution.cpp)
 FRENSIE_ADD_TEST(ElectroionizationSubshellAdjointElectronScatteringDistribution

@@ -580,12 +580,16 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
     native_first_binding_energy =
       data_container->getSubshellBindingEnergy( *shell );
 
+    MonteCarlo::ElectroionizationSamplingType sampling_type =
+      MonteCarlo::KNOCK_ON_SAMPLING;
+
     // Create the electroionization subshell distribution
     MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
         *data_container,
         *shell,
         native_first_binding_energy,
         electroionization_subshell_distribution,
+        sampling_type,
         1e-15 );
 
 
@@ -626,12 +630,16 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
     native_last_binding_energy =
       data_container->getSubshellBindingEnergy( *shell );
 
+    MonteCarlo::ElectroionizationSamplingType sampling_type =
+      MonteCarlo::KNOCK_ON_SAMPLING;
+
     // Create the electroionization subshell distribution
     MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
         *data_container,
         *shell,
         native_last_binding_energy,
         electroionization_subshell_distribution,
+        sampling_type,
         1e-12 );
 
 

@@ -363,7 +363,7 @@ class ENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         self.assertEqual( data_container.getElectroionizationCrossSectionThresholdEnergyIndex( 1 ), 3 )
 
         self.assertEqual( len(data_container.getElectroionizationEnergyGrid( 1 )), 8 )
-        self.assertEqual( data_container.getElectroionizationRecoilInterpPolicy(), "Lin-Lin" )
+        self.assertEqual( data_container.getElectroionizationInterpPolicy(), "Lin-Lin" )
 
         self.assertEqual( len(data_container.getElectroionizationRecoilEnergy( 1, 1.36100e-5 )), 2 )
         self.assertEqual( len(data_container.getElectroionizationRecoilEnergy( 1, 1.00000e+5 )), 147 )
@@ -605,7 +605,7 @@ class ACEAndENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         self.assertEqual( data_container.getElectroionizationCrossSectionThresholdEnergyIndex( 1 ), 3 )
 
         self.assertEqual( len(data_container.getElectroionizationEnergyGrid( 1 )), 8 )
-        self.assertEqual( data_container.getElectroionizationRecoilInterpPolicy(), "Lin-Lin" )
+        self.assertEqual( data_container.getElectroionizationInterpPolicy(), "Lin-Lin" )
 
         self.assertEqual( len(data_container.getElectroionizationRecoilEnergy( 1, 1.36100e-5 )), 2 )
         self.assertEqual( len(data_container.getElectroionizationRecoilEnergy( 1, 1.00000e+5 )), 147 )

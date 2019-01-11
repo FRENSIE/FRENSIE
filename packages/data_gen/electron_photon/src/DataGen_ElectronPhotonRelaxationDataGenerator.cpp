@@ -25,7 +25,6 @@ ElectronPhotonRelaxationDataGenerator::ElectronPhotonRelaxationDataGenerator(
            new Utility::GridGenerator<Utility::LinLin>( 1e-3, 1e-13, 1e-13 ) ),
     d_default_electron_grid_generator(
            new Utility::GridGenerator<Utility::LogLog>( 1e-3, 1e-13, 1e-13 ) ),
-    d_electroionization_ratio_mode( false ),
     d_refine_secondary_electron_grid_mode( false ),
     d_two_d_interp( MonteCarlo::LOGLOGLOG_INTERPOLATION ),
     d_two_d_grid( MonteCarlo::UNIT_BASE_CORRELATED_GRID )
@@ -85,7 +84,6 @@ ElectronPhotonRelaxationDataGenerator::ElectronPhotonRelaxationDataGenerator(
 ElectronPhotonRelaxationDataGenerator::ElectronPhotonRelaxationDataGenerator(
                            const boost::filesystem::path& file_name_with_path )
   : d_data_container( new Data::ElectronPhotonRelaxationVolatileDataContainer( file_name_with_path ) ),
-    d_electroionization_ratio_mode( d_data_container->isElectroionizationInRatioForm() ),
     d_refine_secondary_electron_grid_mode( false ),
     d_default_photon_grid_generator( new Utility::GridGenerator<Utility::LinLin>(
                    d_data_container->getPhotonGridConvergenceTolerance(),
@@ -565,24 +563,6 @@ void ElectronPhotonRelaxationDataGenerator::setElectroionizationDistanceToleranc
 double ElectronPhotonRelaxationDataGenerator::getElectroionizationDistanceTolerance() const
 {
   return d_data_container->getElectroionizationDistanceTolerance();
-}
-
-// Set electroionization to be stored as a ratio mode on (Default off)
-void ElectronPhotonRelaxationDataGenerator::setElectroionizationRatioModeOn()
-{
-  d_electroionization_ratio_mode = true;
-}
-
-// Set electroionization to be stored as a ratio mode off (Default off)
-void ElectronPhotonRelaxationDataGenerator::setElectroionizationRatioModeOff()
-{
-  d_electroionization_ratio_mode = false;
-}
-
-// Return if the electroionization ratio mode is on (default off)
-bool ElectronPhotonRelaxationDataGenerator::isElectroionizationRatioModeOn()
-{
-  return d_electroionization_ratio_mode;
 }
 
 // Set the FullyTabularTwoDDistribution evaluation tolerance

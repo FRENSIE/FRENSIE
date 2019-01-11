@@ -38,6 +38,7 @@ SimulationElectronProperties::SimulationElectronProperties()
     d_bremsstrahlung_angular_distribution_function( TWOBS_DISTRIBUTION ),
     d_electroionization_mode_on( true ),
     d_electroionization_interpolation_type( LOGLOGLOG_INTERPOLATION ),
+    d_electroionization_sampling_mode( KNOCK_ON_SAMPLING ),
     d_atomic_excitation_mode_on( true ),
     d_threshold_weight( 0.0 ),
     d_survival_weight()
@@ -245,6 +246,20 @@ void SimulationElectronProperties::setElectroionizationModeOn()
 bool SimulationElectronProperties::isElectroionizationModeOn() const
 {
   return d_electroionization_mode_on;
+}
+
+// Set the electroionization sampling mode (KNOCK_ON_SAMPLING by default)
+void SimulationElectronProperties::setElectroionizationSamplingMode(
+                        const ElectroionizationSamplingType sampling_mode )
+{
+  d_electroionization_sampling_mode = sampling_mode;
+}
+
+// Return theelectroionization sampling mode
+ElectroionizationSamplingType
+SimulationElectronProperties::getElectroionizationSamplingMode() const
+{
+  return d_electroionization_sampling_mode;
 }
 
 // Set bremsstrahlung mode to off (on by default)
