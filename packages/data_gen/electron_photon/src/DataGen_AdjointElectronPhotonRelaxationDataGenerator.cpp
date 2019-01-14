@@ -27,6 +27,7 @@ AdjointElectronPhotonRelaxationDataGenerator::AdjointElectronPhotonRelaxationDat
            new Utility::GridGenerator<Utility::LogLog>( 1e-3, 1e-13, 1e-13 ) ),
     d_two_d_interp( MonteCarlo::LOGLOGLOG_INTERPOLATION ),
     d_two_d_grid( MonteCarlo::UNIT_BASE_CORRELATED_GRID ),
+    d_forward_electroionization_sampling_mode( MonteCarlo::KNOCK_ON_SAMPLING ),
     d_scatter_above_max( true )
 {
   // Make sure the atomic number is valid
@@ -84,8 +85,9 @@ AdjointElectronPhotonRelaxationDataGenerator::AdjointElectronPhotonRelaxationDat
   d_data_container->setAdjointElectroionizationDistanceTolerance( 1e-8 );
   d_data_container->setCutoffAngleCosine( 1.0 );
   d_data_container->setNumberOfAdjointMomentPreservingAngles( 0 );
-  d_data_container->setElectronTwoDInterpPolicy( Utility::toString( MonteCarlo::LOGLOGLOG_INTERPOLATION ) );
-  d_data_container->setElectronTwoDGridPolicy( Utility::toString( MonteCarlo::UNIT_BASE_CORRELATED_GRID ) );
+  d_data_container->setElectronTwoDInterpPolicy( Utility::toString( d_two_d_interp ) );
+  d_data_container->setElectronTwoDGridPolicy( Utility::toString( d_two_d_grid ) );
+  d_data_container->setForwardElectroionizationSamplingMode( Utility::toString( d_forward_electroionization_sampling_mode ) );
 
   // Have the default grid generators throw exception on dirty convergence
   d_default_photon_grid_generator->throwExceptionOnDirtyConvergence();
@@ -105,7 +107,8 @@ AdjointElectronPhotonRelaxationDataGenerator::AdjointElectronPhotonRelaxationDat
                  d_data_container->getAdjointElectronGridAbsoluteDifferenceTolerance(),
                  d_data_container->getAdjointElectronGridDistanceTolerance() ) ),
     d_two_d_interp( this->convertStringToTwoDInterpType( d_data_container->getElectronTwoDInterpPolicy() ) ),
-    d_two_d_grid( this->convertStringToTwoDGridType( d_data_container->getElectronTwoDGridPolicy() ) )
+    d_two_d_grid( this->convertStringToTwoDGridType( d_data_container->getElectronTwoDGridPolicy() ) ),
+    d_forward_electroionization_sampling_mode( this->convertStringToElectroionizationSamplingType( d_data_container->getForwardElectroionizationSamplingMode() ) )
 {
   // Have the default grid generators throw exception on dirty convergence
   d_default_photon_grid_generator->throwExceptionOnDirtyConvergence();
@@ -696,6 +699,20 @@ double AdjointElectronPhotonRelaxationDataGenerator::getAdjointBremsstrahlungDis
   return d_data_container->getAdjointBremsstrahlungDistanceTolerance();
 }
 
+// Set the forward electroionization sampling mode
+void AdjointElectronPhotonRelaxationDataGenerator::setForwardElectroionizationSamplingMode( const MonteCarlo::ElectroionizationSamplingType sampling_mode )
+{
+  d_forward_electroionization_sampling_mode = sampling_mode;
+  d_data_container->setForwardElectroionizationSamplingMode( Utility::toString( sampling_mode ) );
+}
+
+// Return the forward electroionization sampling mode
+MonteCarlo::ElectroionizationSamplingType
+AdjointElectronPhotonRelaxationDataGenerator::getForwardElectroionizationSamplingMode() const
+{
+  return d_forward_electroionization_sampling_mode;
+}
+
 // Set the adjoint electroionization min energy nudge value
 void AdjointElectronPhotonRelaxationDataGenerator::setAdjointElectroionizationMinEnergyNudgeValue(
                                           const double min_energy_nudge_value )
@@ -798,7 +815,7 @@ double AdjointElectronPhotonRelaxationDataGenerator::getAdjointElectroionization
 
 // Convert string to TwoDInterpolationType
 const MonteCarlo::TwoDInterpolationType
-AdjointElectronPhotonRelaxationDataGenerator::convertStringToTwoDInterpType( const std::string& raw_policy )
+AdjointElectronPhotonRelaxationDataGenerator::convertStringToTwoDInterpType( const std::string& raw_policy ) const
 {
   if( raw_policy == "Lin-Lin-Lin" )
     return MonteCarlo::LINLINLIN_INTERPOLATION;
@@ -827,11 +844,11 @@ AdjointElectronPhotonRelaxationDataGenerator::convertStringToTwoDInterpType( con
 
 // Convert string to TwoDGridType
 const MonteCarlo::TwoDGridType AdjointElectronPhotonRelaxationDataGenerator::convertStringToTwoDGridType(
-    const std::string& raw_policy )
+    const std::string& raw_policy ) const
 {
   if( raw_policy == "Correlated" )
     return MonteCarlo::CORRELATED_GRID;
-  if( raw_policy == "Unit-base Correlated" )
+  else if( raw_policy == "Unit-base Correlated" )
     return MonteCarlo::UNIT_BASE_CORRELATED_GRID;
   else if( raw_policy == "Direct" )
     return MonteCarlo::DIRECT_GRID;
@@ -841,6 +858,25 @@ const MonteCarlo::TwoDGridType AdjointElectronPhotonRelaxationDataGenerator::con
   {
     THROW_EXCEPTION( std::runtime_error,
                      "Error: 2D grid type "
+                     << raw_policy <<
+                     " is not currently supported!" );
+  }
+}
+
+// Convert string to ElectroionizationSamplingType
+const MonteCarlo::ElectroionizationSamplingType AdjointElectronPhotonRelaxationDataGenerator::convertStringToElectroionizationSamplingType(
+    const std::string& raw_policy ) const
+{
+  if( raw_policy == "Knock-on Electroionization Sampling" )
+    return MonteCarlo::KNOCK_ON_SAMPLING;
+  else if( raw_policy == "Energy Loss Electroionization Sampling" )
+    return MonteCarlo::ENERGY_LOSS_SAMPLING;
+  else if( raw_policy == "Energy Loss Ratio Electroionization Sampling" )
+    return MonteCarlo::ENERGY_LOSS_RATIO_SAMPLING;
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                     "the electro-ionization sampling mode "
                      << raw_policy <<
                      " is not currently supported!" );
   }

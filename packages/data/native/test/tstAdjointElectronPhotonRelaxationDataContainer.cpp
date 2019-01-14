@@ -1488,6 +1488,18 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the forward electroionization sampling mode can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setForwardElectroionizationSamplingMode )
+{
+  std::string grid = "Knock-on Electroionization Sampling";
+  epr_data_container.setForwardElectroionizationSamplingMode( grid );
+
+  FRENSIE_CHECK_EQUAL( grid,
+                       epr_data_container.getForwardElectroionizationSamplingMode() );
+}
+
+//---------------------------------------------------------------------------//
 // Check if there is a separate electroionization incoming electron energy grid for the scattering spectrum
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                    separateAdjointElectroionizationEnergyGrid )

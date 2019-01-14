@@ -19,7 +19,6 @@
 #include "DataGen_AdjointPairProductionEnergyDistributionNormConstantEvaluator.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory.hpp"
-#include "MonteCarlo_ElectroionizationSamplingType.hpp"
 #include "MonteCarlo_VoidElectroatomicReaction.hpp"
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
 #include "MonteCarlo_StandardComptonProfile.hpp"
@@ -2105,9 +2104,6 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
   // Get the binding energy
   double binding_energy = d_forward_epr_data->getSubshellBindingEnergy( shell );
 
-  // Get the sampling type
-  MonteCarlo::ElectroionizationSamplingType sampling_type = MonteCarlo::KNOCK_ON_SAMPLING;
-
   // Create a electroionization subshell distribution
   std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
         distribution;
@@ -2122,7 +2118,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
           shell,
           binding_energy,
           distribution,
-          sampling_type,
+          this->getForwardElectroionizationSamplingMode(),
           this->getAdjointElectroionizationEvaluationTolerance(),
           max_number_of_iterations,
           false );
@@ -2134,7 +2130,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
           shell,
           binding_energy,
           distribution,
-          sampling_type,
+          this->getForwardElectroionizationSamplingMode(),
           this->getAdjointElectroionizationEvaluationTolerance(),
           max_number_of_iterations,
           false );
@@ -2146,7 +2142,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
           shell,
           binding_energy,
           distribution,
-          sampling_type,
+          this->getForwardElectroionizationSamplingMode(),
           this->getAdjointElectroionizationEvaluationTolerance(),
           max_number_of_iterations,
           false );
@@ -2161,7 +2157,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
           shell,
           binding_energy,
           distribution,
-          sampling_type,
+          this->getForwardElectroionizationSamplingMode(),
           this->getAdjointElectroionizationEvaluationTolerance(),
           max_number_of_iterations,
           false );
@@ -2173,7 +2169,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
           shell,
           binding_energy,
           distribution,
-          sampling_type,
+          this->getForwardElectroionizationSamplingMode(),
           this->getAdjointElectroionizationEvaluationTolerance(),
           max_number_of_iterations,
           false );
@@ -2185,7 +2181,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
           shell,
           binding_energy,
           distribution,
-          sampling_type,
+          this->getForwardElectroionizationSamplingMode(),
           this->getAdjointElectroionizationEvaluationTolerance(),
           max_number_of_iterations,
           false );
@@ -2216,14 +2212,14 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
   for( size_t n = 0; n < energy_grid.size(); ++n )
   {
     // Set the max secondary energy for the incoming energy
-    if ( sampling_type == MonteCarlo::KNOCK_ON_SAMPLING )
+    if ( this->getForwardElectroionizationSamplingMode() == MonteCarlo::KNOCK_ON_SAMPLING )
     {
       min_energy_loss_grid[n] =
         distribution->getMinSecondaryEnergy( energy_grid[n] ) + binding_energy;
       max_outgoing_energy_grid[n] = energy_grid[n] - min_energy_loss_grid[n];
     }
-    else if ( sampling_type == MonteCarlo::ENERGY_LOSS_SAMPLING ||
-              sampling_type == MonteCarlo::ENERGY_LOSS_RATIO_SAMPLING )
+    else if ( this->getForwardElectroionizationSamplingMode() == MonteCarlo::ENERGY_LOSS_SAMPLING ||
+              this->getForwardElectroionizationSamplingMode() == MonteCarlo::ENERGY_LOSS_RATIO_SAMPLING )
     {
       min_energy_loss_grid[n] = distribution->getMinSecondaryEnergy( energy_grid[n] );
       max_outgoing_energy_grid[n] = energy_grid[n] - min_energy_loss_grid[n];
@@ -2231,7 +2227,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
     else
     {
       THROW_EXCEPTION( std::runtime_error,
-                       "the ElectroionizationSamplingType " << sampling_type <<
+                       "the ElectroionizationSamplingType " <<
+                       this->getForwardElectroionizationSamplingMode() <<
                        " is invalid or currently not supported!" );
     }
   }

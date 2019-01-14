@@ -127,6 +127,8 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                        1e-14 );
 
   // Test the electron table data
+  FRENSIE_CHECK_EQUAL( generator.getElectronTwoDInterpPolicy(), MonteCarlo::LOGLOGLOG_INTERPOLATION );
+  FRENSIE_CHECK_EQUAL( generator.getElectronTwoDGridPolicy(), MonteCarlo::UNIT_BASE_CORRELATED_GRID );
   FRENSIE_CHECK_EQUAL( generator.getCutoffAngleCosine(), 1 );
   FRENSIE_CHECK_EQUAL( generator.getNumberOfMomentPreservingAngles(), 0 );
   FRENSIE_CHECK_EQUAL( generator.getDefaultElectronGridConvergenceTolerance(),
@@ -148,6 +150,8 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                        1e-16 );
   FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungDistanceTolerance(),
                        1e-8 );
+  FRENSIE_CHECK_EQUAL( generator.getForwardElectroionizationSamplingMode(),
+                       MonteCarlo::KNOCK_ON_SAMPLING );
   FRENSIE_CHECK_EQUAL( generator.getAdjointElectroionizationMinEnergyNudgeValue(),
                        1e-9 );
   FRENSIE_CHECK_EQUAL( generator.getAdjointElectroionizationMaxEnergyNudgeValue(),
@@ -186,6 +190,8 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                        1e-14 );
 
   // Test the electron table data
+  FRENSIE_CHECK_EQUAL( data_container.getElectronTwoDInterpPolicy(), "Log-Log-Log" );
+  FRENSIE_CHECK_EQUAL( data_container.getElectronTwoDGridPolicy(), "Unit-base Correlated" );
   FRENSIE_CHECK_EQUAL( data_container.getCutoffAngleCosine(), 1.0 );
   FRENSIE_CHECK_EQUAL( data_container.getNumberOfAdjointMomentPreservingAngles(), 0 );
   FRENSIE_CHECK_EQUAL( data_container.getAdjointElectronGridConvergenceTolerance(),
@@ -207,6 +213,8 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                        1e-16 );
   FRENSIE_CHECK_EQUAL( data_container.getAdjointBremsstrahlungDistanceTolerance(),
                        1e-8 );
+  FRENSIE_CHECK_EQUAL( data_container.getForwardElectroionizationSamplingMode(),
+                       "Knock-on Electroionization Sampling" );
   FRENSIE_CHECK_EQUAL( data_container.getAdjointElectroionizationMinEnergyNudgeValue(),
                        1e-9 );
   FRENSIE_CHECK_EQUAL( data_container.getAdjointElectroionizationMaxEnergyNudgeValue(),
@@ -266,6 +274,8 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                        1e-14 );
 
   // Test the electron table data
+  FRENSIE_CHECK_EQUAL( generator.getElectronTwoDInterpPolicy(), MonteCarlo::LOGLOGLOG_INTERPOLATION );
+  FRENSIE_CHECK_EQUAL( generator.getElectronTwoDGridPolicy(), MonteCarlo::UNIT_BASE_CORRELATED_GRID );
   FRENSIE_CHECK_EQUAL( generator.getCutoffAngleCosine(), 1 );
   FRENSIE_CHECK_EQUAL( generator.getNumberOfMomentPreservingAngles(), 0 );
   FRENSIE_CHECK_EQUAL( generator.getDefaultElectronGridConvergenceTolerance(),
@@ -287,6 +297,8 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                        1e-16 );
   FRENSIE_CHECK_EQUAL( generator.getAdjointBremsstrahlungDistanceTolerance(),
                        1e-8 );
+  FRENSIE_CHECK_EQUAL( generator.getForwardElectroionizationSamplingMode(),
+                       MonteCarlo::KNOCK_ON_SAMPLING );
   FRENSIE_CHECK_EQUAL( generator.getAdjointElectroionizationMinEnergyNudgeValue(),
                        1e-9 );
   FRENSIE_CHECK_EQUAL( generator.getAdjointElectroionizationMaxEnergyNudgeValue(),
@@ -325,6 +337,8 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                        1e-14 );
 
   // Check the electron table data
+  FRENSIE_CHECK_EQUAL( data_container.getElectronTwoDInterpPolicy(), "Log-Log-Log" );
+  FRENSIE_CHECK_EQUAL( data_container.getElectronTwoDGridPolicy(), "Unit-base Correlated" );
   FRENSIE_CHECK_EQUAL( data_container.getCutoffAngleCosine(), 1.0 );
   FRENSIE_CHECK_EQUAL( data_container.getNumberOfAdjointMomentPreservingAngles(), 0 );
   FRENSIE_CHECK_EQUAL( data_container.getAdjointElectronGridConvergenceTolerance(),
@@ -346,6 +360,8 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                        1e-16 );
   FRENSIE_CHECK_EQUAL( data_container.getAdjointBremsstrahlungDistanceTolerance(),
                        1e-8 );
+  FRENSIE_CHECK_EQUAL( data_container.getForwardElectroionizationSamplingMode(),
+                       "Knock-on Electroionization Sampling" );
   FRENSIE_CHECK_EQUAL( data_container.getAdjointElectroionizationMinEnergyNudgeValue(),
                        1e-9 );
   FRENSIE_CHECK_EQUAL( data_container.getAdjointElectroionizationMaxEnergyNudgeValue(),
@@ -404,6 +420,8 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   data_container.setAdjointBremsstrahlungAbsoluteDifferenceTolerance( 1e-12 );
   data_container.setAdjointBremsstrahlungDistanceTolerance( 1e-14 );
 
+
+  data_container.setForwardElectroionizationSamplingMode( Utility::toString( MonteCarlo::KNOCK_ON_SAMPLING ) );
   data_container.setAdjointElectroionizationMinEnergyNudgeValue( 1e-9 );
   data_container.setAdjointElectroionizationMaxEnergyNudgeValue( 0.2 );
   data_container.setAdjointElectroionizationEvaluationTolerance( 1e-3 );
@@ -461,6 +479,8 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                        1e-15 );
 
   // Check the electron table data
+  FRENSIE_CHECK_EQUAL( h_data_container.getElectronTwoDInterpPolicy(), "Log-Log-Log" );
+  FRENSIE_CHECK_EQUAL( h_data_container.getElectronTwoDGridPolicy(), "Unit-base Correlated" );
   FRENSIE_CHECK_EQUAL( h_data_container.getCutoffAngleCosine(), 0.9 );
   FRENSIE_CHECK_EQUAL( h_data_container.getNumberOfAdjointMomentPreservingAngles(), 1 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectronGridConvergenceTolerance(),
@@ -482,6 +502,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                        1e-12 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointBremsstrahlungDistanceTolerance(),
                        1e-14 );
+  FRENSIE_CHECK_EQUAL( h_data_container.getForwardElectroionizationSamplingMode(), "Knock-on Electroionization Sampling" );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectroionizationMinEnergyNudgeValue(),
                        1e-9 );
   FRENSIE_CHECK_EQUAL( h_data_container.getAdjointElectroionizationMaxEnergyNudgeValue(),
@@ -721,6 +742,60 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   FRENSIE_CHECK_EQUAL( generator.getAdjointIncoherentGridDistanceTolerance(),
                        1e-40 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the ElectronTwoDInterpPolicy can be set
+FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
+                   setElectronTwoDInterpPolicy )
+{
+  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
+    generator( h_epr_data_container );
+
+  generator.setElectronTwoDInterpPolicy( MonteCarlo::LINLINLIN_INTERPOLATION );
+
+  FRENSIE_CHECK_EQUAL( generator.getElectronTwoDInterpPolicy(),
+                       MonteCarlo::LINLINLIN_INTERPOLATION );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the ElectronTwoDGridPolicy can be set
+FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
+                   setElectronTwoDGridPolicy )
+{
+  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
+    generator( h_epr_data_container );
+
+  generator.setElectronTwoDGridPolicy( MonteCarlo::UNIT_BASE_GRID );
+
+  FRENSIE_CHECK_EQUAL( generator.getElectronTwoDGridPolicy(),
+                       MonteCarlo::UNIT_BASE_GRID );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CutoffAngleCosine can be set
+FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
+                   setCutoffAngleCosine )
+{
+  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
+    generator( h_epr_data_container );
+
+  generator.setCutoffAngleCosine( 0.8 );
+
+  FRENSIE_CHECK_EQUAL( generator.getCutoffAngleCosine(), 0.8 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the NumberOfMomentPreservingAngles can be set
+FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
+                   setNumberOfMomentPreservingAngles )
+{
+  DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
+    generator( h_epr_data_container );
+
+  generator.setNumberOfMomentPreservingAngles( 5 );
+
+  FRENSIE_CHECK_EQUAL( generator.getNumberOfMomentPreservingAngles(), 5 );
 }
 
 //---------------------------------------------------------------------------//

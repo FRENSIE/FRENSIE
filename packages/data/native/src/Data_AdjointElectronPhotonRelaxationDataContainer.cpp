@@ -796,6 +796,13 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointMomentPreservingElasticW
   return d_adjoint_moment_preserving_elastic_weights.find( incoming_adjoint_energy )->second;
 }
 
+// Return the forward electroionization sampling mode
+const std::string&
+AdjointElectronPhotonRelaxationDataContainer::getForwardElectroionizationSamplingMode() const
+{
+  return d_forward_electroionization_sampling_mode;
+}
+
 // Return the electroionization energy grid for a subshell
 const std::vector<double>&
 AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationEnergyGrid(
@@ -2222,6 +2229,15 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointMomentPreservingEla
     adjoint_moment_preserving_elastic_weights;
 }
 
+// Set the forward electroionization sampling mode
+void AdjointElectronPhotonRelaxationDataContainer::setForwardElectroionizationSamplingMode( const std::string sampling_mode )
+{
+  // Make sure the string is valid
+  testPrecondition( this->isElectroionizationSamplingModeValid( sampling_mode ) );
+
+  d_forward_electroionization_sampling_mode = sampling_mode;
+}
+
 // Set the electroionization energy grid for a subshell
 void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationEnergyGrid(
             const unsigned subshell,
@@ -2644,6 +2660,15 @@ void AdjointElectronPhotonRelaxationDataContainer::setForwardAtomicExcitationEle
                     d_adjoint_electron_energy_grid.size() );
 
   d_forward_atomic_excitation_electron_cross_section_threshold_index = index;
+}
+
+// Test if the Electroionization Sampling Mode is valid
+bool AdjointElectronPhotonRelaxationDataContainer::isElectroionizationSamplingModeValid( const std::string value )
+{
+  if ( value == "Knock-on Electroionization Sampling" || value == "Energy Loss Electroionization Sampling" || value == "Energy Loss Ratio Electroionization Sampling")
+    return true;
+  else
+    return false;
 }
 
 EXPLICIT_CLASS_SAVE_LOAD_INST( AdjointElectronPhotonRelaxationDataContainer );

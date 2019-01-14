@@ -390,6 +390,10 @@ public:
   const std::vector<double>& getAdjointMomentPreservingElasticWeights(
                            const double incoming_adjoint_energy ) const;
 
+  //! Return the forward electroionization sampling mode
+  const std::string&
+  getForwardElectroionizationSamplingMode() const;
+
   //! Return the electroionization energy grid for the recoil electron spectrum for a subshell
   const std::vector<double>& getAdjointElectroionizationEnergyGrid(
                            const unsigned subshell ) const;
@@ -902,6 +906,9 @@ protected:
   void setAdjointMomentPreservingElasticWeights(
     const std::map<double,std::vector<double> >& adjoint_moment_preserving_elastic_weights );
 
+  //! Set the forward electroionization sampling mode
+  void setForwardElectroionizationSamplingMode( const std::string sampling_mode );
+
   //! Set the electroionization energy grid for the recoil electron spectrum
   void setAdjointElectroionizationEnergyGrid(
     const unsigned subshell,
@@ -1041,6 +1048,9 @@ protected:
                                 const unsigned index );
 
 private:
+
+  // Test if the Electroionization Sampling Mode is valid
+  bool isElectroionizationSamplingModeValid( const std::string value );
 
   // Save the data to an archive
   template<typename Archive>
@@ -1357,6 +1367,9 @@ private:
 
   // The moment preserving elastic weights
   std::map<double,std::vector<double> > d_adjoint_moment_preserving_elastic_weights;
+
+  // The forward electroionization sampling mode
+  std::string d_forward_electroionization_sampling_mode;
 
   // The electroionization energy grid (MeV) for a subshell
   std::map<unsigned,std::vector<double> > d_adjoint_electroionization_energy_grid;
