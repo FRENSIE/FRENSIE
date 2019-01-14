@@ -1571,8 +1571,8 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   cross_section =
      h_data_container.getAdjointElectroionizationCrossSection( 1u );
 
-  FRENSIE_CHECK_EQUAL( cross_section.front(), 6.597670370816965103e+08 );
-  FRENSIE_CHECK_EQUAL( cross_section.back(), 8.365802734960628732e+04 );
+  FRENSIE_CHECK_EQUAL( cross_section.front(), 2.203833145765520573e+09 );
+  FRENSIE_CHECK_EQUAL( cross_section.back(), 8.272503413073753472e+04 );
   FRENSIE_CHECK_EQUAL( cross_section.size(), 5-threshold );
 
   FRENSIE_CHECK( !h_data_container.separateAdjointElectroionizationEnergyGrid() );
@@ -1584,7 +1584,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                                    1.13711e-04,
                                    1e-12 );
   FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.back(), 2.001001371000000262e+01 );
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.size(), 6 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.size(), 8 );
 
   electroionization_recoil_energy =
     h_data_container.getAdjointElectroionizationRecoilEnergy( 1u, 20.0 );
@@ -1593,21 +1593,21 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                                    20.0 + 1.361e-5 + 1e-7 + 1e-9,
                                    1e-15 );
   FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.back(), 2.001001371000000262e+01 );
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.size(), 11 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.size(), 9 );
 
   std::vector<double> electroionization_recoil_pdf =
     h_data_container.getAdjointElectroionizationRecoilPDF( 1u, 1e-4 );
 
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.front(), 9.391395383850238431e+03 );
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.back(), 4.324522413340445293e-02 );
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.size(), 6 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.front(), 2.454502505177261355e+03 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.back(), 5.510153569172930588e-02 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.size(), 8 );
 
   electroionization_recoil_pdf =
     h_data_container.getAdjointElectroionizationRecoilPDF( 1u, 20.0 );
 
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.front(), 1.602884375324310386e+05 );
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.back(), 3.320814623995649306e-02 );
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.size(), 11 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.front(), 3.889571319692658290e+04 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.back(), 1.334310525208685094e-01 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.size(), 9 );
 
   h_data_container.saveToFile( "test_h_aepr.xml", true);
 }

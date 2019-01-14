@@ -65,8 +65,7 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
       binding_energy,
       subshell_distribution,
       evaluation_tol,
-      max_number_of_iterations,
-      renormalize_max_knock_on_energy );
+      max_number_of_iterations );
 
     electroionization_subshell_distribution.reset(
       new ElectroionizationSubshellElectronScatteringDistribution(
@@ -81,15 +80,14 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
       subshell_distribution;
 
     // Create the subshell energy loss ratio distribution
-    ThisType::createEnergyLossDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
+    ThisType::createEnergyLossRatioDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
       raw_electroionization_data.getElectroionizationEnergyLoss( subshell ),
       raw_electroionization_data.getElectroionizationEnergyLossPDF( subshell ),
       raw_electroionization_data.getElectroionizationEnergyGrid( subshell ),
       binding_energy,
       subshell_distribution,
       evaluation_tol,
-      max_number_of_iterations,
-      renormalize_max_knock_on_energy );
+      max_number_of_iterations );
 
     electroionization_subshell_distribution.reset(
       new ElectroionizationSubshellElectronScatteringDistribution(
@@ -159,7 +157,7 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
               recoil_pdf_data,
               energy_grid,
               binding_energy,
-              renormalize_max_knock_on_energy,
+              true,
               processed_energy_data,
               processed_pdf_data,
               processed_energy_grid );
@@ -174,8 +172,7 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
               binding_energy,
               subshell_distribution,
               evaluation_tol,
-              max_number_of_iterations,
-              renormalize_max_knock_on_energy );
+              max_number_of_iterations );
     }
     else if( sampling_type == ENERGY_LOSS_RATIO_SAMPLING )
     {
@@ -187,8 +184,7 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
               binding_energy,
               subshell_distribution,
               evaluation_tol,
-              max_number_of_iterations,
-              renormalize_max_knock_on_energy );
+              max_number_of_iterations );
     }
     else
     {
@@ -278,8 +274,7 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
     std::shared_ptr<const Utility::FullyTabularBasicBivariateDistribution>&
         subshell_distribution,
     const double evaluation_tol,
-    const unsigned max_number_of_iterations,
-    const bool renormalize_max_knock_on_energy )
+    const unsigned max_number_of_iterations )
 {
   // Make sure the energy_grid is valid
   testPrecondition( processed_energy_grid.size() > 1 );
@@ -323,8 +318,7 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
     std::shared_ptr<const Utility::FullyTabularBasicBivariateDistribution>&
         subshell_distribution,
     const double evaluation_tol,
-    const unsigned max_number_of_iterations,
-    const bool renormalize_max_knock_on_energy )
+    const unsigned max_number_of_iterations )
 {
   // Make sure the energy_grid is valid
   testPrecondition( processed_energy_grid.size() > 1 );
