@@ -37,7 +37,7 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
   // Make sure the evaluation tol is valid
   testPrecondition( evaluation_tol > 0.0 );
 
-  if( !raw_electroionization_data.hasElectroionizationEnergyLossData() ||
+  if( !raw_electroionization_data.hasElectroionizationOutgoingEnergyData() ||
       sampling_type == KNOCK_ON_SAMPLING )
   {
     ThisType::createElectroionizationSubshellDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
@@ -51,16 +51,16 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
       max_number_of_iterations,
       renormalize_max_knock_on_energy );
   }
-  else if( sampling_type == ENERGY_LOSS_SAMPLING )
+  else if( sampling_type == OUTGOING_ENERGY_SAMPLING )
   {
     // Subshell distribution
     std::shared_ptr<const Utility::FullyTabularBasicBivariateDistribution>
       subshell_distribution;
 
-    // Create the subshell energy loss distribution
-    ThisType::createEnergyLossDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
-      raw_electroionization_data.getElectroionizationEnergyLoss( subshell ),
-      raw_electroionization_data.getElectroionizationEnergyLossPDF( subshell ),
+    // Create the subshell outgoing energy distribution
+    ThisType::createOutgoingDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
+      raw_electroionization_data.getElectroionizationOutgoingEnergy( subshell ),
+      raw_electroionization_data.getElectroionizationOutgoingPDF( subshell ),
       raw_electroionization_data.getElectroionizationEnergyGrid( subshell ),
       binding_energy,
       subshell_distribution,
@@ -73,16 +73,16 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
               sampling_type,
               binding_energy ) );
   }
-  else if( sampling_type == ENERGY_LOSS_RATIO_SAMPLING )
+  else if( sampling_type == OUTGOING_ENERGY_RATIO_SAMPLING )
   {
     // Subshell distribution
     std::shared_ptr<const Utility::FullyTabularBasicBivariateDistribution>
       subshell_distribution;
 
-    // Create the subshell energy loss ratio distribution
-    ThisType::createEnergyLossRatioDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
-      raw_electroionization_data.getElectroionizationEnergyLoss( subshell ),
-      raw_electroionization_data.getElectroionizationEnergyLossPDF( subshell ),
+    // Create the subshell outgoing energy ratio distribution
+    ThisType::createOutgoingRatioDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
+      raw_electroionization_data.getElectroionizationOutgoingEnergy( subshell ),
+      raw_electroionization_data.getElectroionizationOutgoingPDF( subshell ),
       raw_electroionization_data.getElectroionizationEnergyGrid( subshell ),
       binding_energy,
       subshell_distribution,
@@ -151,8 +151,8 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
     std::map<double,std::vector<double> > processed_energy_data, processed_pdf_data;
     std::vector<double> processed_energy_grid;
 
-    // Process the recoil energy to energy loss data
-    ThisType::calculateEnergyLossAndPDFBins(
+    // Process the recoil energy to outgoing energy data
+    ThisType::calculateOutgoingEnergyAndPDFBins(
               recoil_energy_data,
               recoil_pdf_data,
               energy_grid,
@@ -162,10 +162,10 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
               processed_pdf_data,
               processed_energy_grid );
 
-    if( sampling_type == ENERGY_LOSS_SAMPLING )
+    if( sampling_type == OUTGOING_ENERGY_SAMPLING )
     {
       // Create the subshell distribution
-      ThisType::createEnergyLossDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
+      ThisType::createOutgoingDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
               processed_energy_data,
               processed_pdf_data,
               processed_energy_grid,
@@ -174,10 +174,10 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
               evaluation_tol,
               max_number_of_iterations );
     }
-    else if( sampling_type == ENERGY_LOSS_RATIO_SAMPLING )
+    else if( sampling_type == OUTGOING_ENERGY_RATIO_SAMPLING )
     {
       // Create the subshell distribution
-      ThisType::createEnergyLossRatioDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
+      ThisType::createOutgoingRatioDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
               processed_energy_data,
               processed_pdf_data,
               processed_energy_grid,
@@ -263,10 +263,10 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
             max_number_of_iterations ) );
 }
 
-// Create the subshell energy loss distribution
+// Create the subshell outgoing energy distribution
 template<typename TwoDInterpPolicy,
          template<typename> class TwoDGridPolicy>
-void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createEnergyLossDistribution(
+void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createOutgoingDistribution(
     const std::map<double,std::vector<double> >& processed_energy_data,
     const std::map<double,std::vector<double> >& processed_pdf_data,
     const std::vector<double>& processed_energy_grid,
@@ -278,7 +278,7 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
 {
   // Make sure the energy_grid is valid
   testPrecondition( processed_energy_grid.size() > 1 );
-  // Make sure the recoil data is valid
+  // Make sure the data is valid
   testPrecondition( processed_energy_data.size() == processed_energy_grid.size() );
   testPrecondition( processed_pdf_data.size() == processed_energy_grid.size() );
   // Make sure the evaluation tol is valid
@@ -307,10 +307,10 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
             max_number_of_iterations ) );
 }
 
-// Create the subshell energy loss ratio distribution
+// Create the subshell outgoing energy ratio distribution
 template<typename TwoDInterpPolicy,
          template<typename> class TwoDGridPolicy>
-void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createEnergyLossRatioDistribution(
+void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createOutgoingRatioDistribution(
     const std::map<double,std::vector<double> >& processed_energy_data,
     const std::map<double,std::vector<double> >& processed_pdf_data,
     const std::vector<double>& processed_energy_grid,
@@ -322,7 +322,7 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
 {
   // Make sure the energy_grid is valid
   testPrecondition( processed_energy_grid.size() > 1 );
-  // Make sure the recoil data is valid
+  // Make sure the data is valid
   testPrecondition( processed_energy_data.size() == processed_energy_grid.size() );
   testPrecondition( processed_pdf_data.size() == processed_energy_grid.size() );
   // Make sure the evaluation tol is valid

@@ -187,11 +187,11 @@ FRENSIE_UNIT_TEST( SimulationAdjointElectronProperties,
   properties.setAdjointElectroionizationSamplingMode( function );
   FRENSIE_CHECK_EQUAL( properties.getAdjointElectroionizationSamplingMode(), function);
 
-  function = MonteCarlo::ENERGY_LOSS_SAMPLING;
+  function = MonteCarlo::OUTGOING_ENERGY_SAMPLING;
   properties.setAdjointElectroionizationSamplingMode( function );
   FRENSIE_CHECK_EQUAL( properties.getAdjointElectroionizationSamplingMode(), function);
 
-  function = MonteCarlo::ENERGY_LOSS_RATIO_SAMPLING;
+  function = MonteCarlo::OUTGOING_ENERGY_RATIO_SAMPLING;
   properties.setAdjointElectroionizationSamplingMode( function );
   FRENSIE_CHECK_EQUAL( properties.getAdjointElectroionizationSamplingMode(), function);
 }
@@ -354,7 +354,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationAdjointElectronProperties,
     custom_properties.setAdjointAtomicExcitationModeOff();
     custom_properties.setAdjointElectronEvaluationTolerance( 1e-4 );
     custom_properties.setAdjointBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
-    custom_properties.setAdjointElectroionizationSamplingMode( MonteCarlo::ENERGY_LOSS_SAMPLING );
+    custom_properties.setAdjointElectroionizationSamplingMode( MonteCarlo::OUTGOING_ENERGY_SAMPLING );
     custom_properties.setAdjointElasticElectronDistributionMode( MonteCarlo::DECOUPLED_DISTRIBUTION );
     custom_properties.setAdjointCoupledElasticSamplingMode( MonteCarlo::TWO_D_UNION );
     custom_properties.setAdjointElasticCutoffAngleCosine( 0.9 );
@@ -425,7 +425,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationAdjointElectronProperties,
              custom_properties.getAdjointBremsstrahlungAngularDistributionFunction(),
              MonteCarlo::DIPOLE_DISTRIBUTION );
   FRENSIE_CHECK_EQUAL( custom_properties.getAdjointElectroionizationSamplingMode(),
-                       MonteCarlo::ENERGY_LOSS_SAMPLING );
+                       MonteCarlo::OUTGOING_ENERGY_SAMPLING );
   FRENSIE_CHECK_EQUAL( custom_properties.getAdjointElectronEvaluationTolerance(), 1e-4 );
   FRENSIE_CHECK_EQUAL( custom_properties.getAdjointElasticCutoffAngleCosine(),
                        0.9 );

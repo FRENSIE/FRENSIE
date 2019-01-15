@@ -20,10 +20,10 @@ std::string ToStringTraits<MonteCarlo::ElectroionizationSamplingType>::toString(
   {
     case MonteCarlo::KNOCK_ON_SAMPLING:
       return "Knock-on Electroionization Sampling";
-    case MonteCarlo::ENERGY_LOSS_SAMPLING:
-      return "Energy Loss Electroionization Sampling";
-    case MonteCarlo::ENERGY_LOSS_RATIO_SAMPLING:
-      return "Energy Loss Ratio Electroionization Sampling";
+    case MonteCarlo::OUTGOING_ENERGY_SAMPLING:
+      return "Outgoing Energy Electroionization Sampling";
+    case MonteCarlo::OUTGOING_ENERGY_RATIO_SAMPLING:
+      return "Outgoing Energy Ratio Electroionization Sampling";
     default:
     {
       THROW_EXCEPTION( std::logic_error,

@@ -437,6 +437,7 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         generator_h.setElectronTabularEvaluationTolerance( 1e-7 )
         generator_h.setElectronTwoDInterpPolicy( MonteCarlo.LOGLOGLOG_INTERPOLATION )
         generator_h.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
+        generator_h.setForwardElectroionizationSamplingMode( MonteCarlo.KNOCK_ON_SAMPLING )
 
         generator_h.setCutoffAngleCosine( 0.9 )
         generator_h.setNumberOfMomentPreservingAngles( 1 )

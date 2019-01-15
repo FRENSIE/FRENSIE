@@ -1287,7 +1287,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronData()
   {
     this->setRefinedElectroionizationSubshellDistributionData( MonteCarlo::KNOCK_ON_SAMPLING );
 
-    this->setRefinedElectroionizationSubshellDistributionData( MonteCarlo::ENERGY_LOSS_SAMPLING );
+    this->setRefinedElectroionizationSubshellDistributionData( MonteCarlo::OUTGOING_ENERGY_SAMPLING );
   }
 
   else
@@ -2554,11 +2554,11 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRefinedElectroionizationSubsh
       data_container.setElectroionizationRecoilEnergy( shell, evaluated_grid );
       data_container.setElectroionizationRecoilPDF( shell, evaluated_pdf );
     }
-    // Set the energy loss data
-    else if( sampling_type == MonteCarlo::ENERGY_LOSS_SAMPLING )
+    // Set the outgoing energy data
+    else if( sampling_type == MonteCarlo::OUTGOING_ENERGY_SAMPLING )
     {
-      data_container.setElectroionizationEnergyLoss( shell, evaluated_grid );
-      data_container.setElectroionizationEnergyLossPDF( shell, evaluated_pdf );
+      data_container.setElectroionizationOutgoingEnergy( shell, evaluated_grid );
+      data_container.setElectroionizationOutgoingPDF( shell, evaluated_pdf );
     }
 
     // Set the energy grid
@@ -2604,7 +2604,7 @@ ENDLElectronPhotonRelaxationDataGenerator::initializeElectroionizationSecondaryG
       {
         std::vector<double> processed_pdfs;
 
-        MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::calculateEnergyLossAndPDFBins(
+        MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::calculateOutgoingEnergyAndPDFBins(
           d_endl_data_container->getElectroionizationRecoilEnergyAtEnergy( shell, incoming_energy ),
           d_endl_data_container->getElectroionizationRecoilPDFAtEnergy( shell, incoming_energy ),
           incoming_energy,

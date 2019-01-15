@@ -12,8 +12,8 @@
 
 namespace MonteCarlo{
 
-// Calculate full energy loss bins and pdf from recoil energy
-void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::calculateEnergyLossAndPDFBins(
+// Calculate full outgoing energy bins and pdf from recoil energy
+void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::calculateOutgoingEnergyAndPDFBins(
     const std::map<double,std::vector<double> >& recoil_energy_data,
     const std::map<double,std::vector<double> >& recoil_pdf_data,
     const std::vector<double>& energy_grid,
@@ -37,7 +37,7 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::calcu
   {
     // Calculate the energy bin and pdf data
     std::vector<double> energy_bins, pdfs;
-    ThisType::calculateEnergyLossAndPDFBins(
+    ThisType::calculateOutgoingEnergyAndPDFBins(
         recoil_energy_data.find( energy_grid[n] )->second,
         recoil_pdf_data.find( energy_grid[n] )->second,
         processed_energy_grid[n],
@@ -52,8 +52,8 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::calcu
   }
 }
 
-// Calculate full energy loss bins and pdf from recoil energy
-void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::calculateEnergyLossAndPDFBins(
+// Calculate full outgoing energy bins and pdf from recoil energy
+void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::calculateOutgoingEnergyAndPDFBins(
     const std::vector<double>& knock_on_energy,
     const std::vector<double>& knock_on_pdf,
     double& energy,
@@ -97,20 +97,20 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::calcu
   processed_energy_bins.resize( size );
   processed_pdf.resize( size );
 
-  // Calculate the full energy loss bins
+  // Calculate the full outgoing energy bins
   for( unsigned i = 0; i < knock_on_energy.size()-1; ++i )
   {
-    // Calculate the energy loss and pdf for the lower energy electron
-    processed_energy_bins[i] = knock_on_energy[i] + binding_energy;
+    // Calculate the outgoing energy and pdf for the lower energy electron
+    processed_energy_bins[i] = knock_on_energy[i];
     processed_pdf[i] = knock_on_pdf[i];
 
-    // Calculate the energy loss and pdf for the higher energy electron
-    processed_energy_bins[size-1 - i] = energy - knock_on_energy[i];
+    // Calculate the outgoing energy and pdf for the higher energy electron
+    processed_energy_bins[size-1 - i] = ( energy - binding_energy ) - knock_on_energy[i];
     processed_pdf[size-1 - i] = knock_on_pdf[i];
   }
 
   // insert middle bin
-  processed_energy_bins[knock_on_energy.size()-1] = max_knock_on_energy + binding_energy;
+  processed_energy_bins[knock_on_energy.size()-1] = max_knock_on_energy;
   processed_pdf[knock_on_energy.size()-1] = knock_on_pdf.back();
 }
 

@@ -37,7 +37,7 @@ public:
       const double min_energy_nudge_value = 1e-9,
       const double max_energy_nudge_value = 1e-2,
       const double convergence_tol = 0.001,
-      const double absolute_diff_tol = 1e-10,
+    const double absolute_diff_tol = 1e-10,
       const double distance_tol = 1e-8,
       const bool electron_scatter_above_max_energy_mode = true );
 

@@ -2205,43 +2205,57 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
                                0.5*(energy_grid[0] + energy_grid[1]) );
   }
 
-  // Create the min adjoint energy gain function for electroionization
-  std::vector<double> max_outgoing_energy_grid( energy_grid.size() );
-  std::vector<double> min_energy_loss_grid( energy_grid.size() );
-
-  for( size_t n = 0; n < energy_grid.size(); ++n )
+  // Create the min adjoint energy gain function
+  std::function<double(const double&)> min_energy_gain_function;
+  if ( this->getForwardElectroionizationSamplingMode() == MonteCarlo::KNOCK_ON_SAMPLING )
   {
-    // Set the max secondary energy for the incoming energy
-    if ( this->getForwardElectroionizationSamplingMode() == MonteCarlo::KNOCK_ON_SAMPLING )
+    // Create the min adjoint energy gain function for electroionization
+    std::vector<double> max_outgoing_energy_grid( energy_grid.size() );
+    std::vector<double> min_energy_loss_grid( energy_grid.size() );
+
+    for( size_t n = 0; n < energy_grid.size(); ++n )
     {
       min_energy_loss_grid[n] =
         distribution->getMinSecondaryEnergy( energy_grid[n] ) + binding_energy;
       max_outgoing_energy_grid[n] = energy_grid[n] - min_energy_loss_grid[n];
     }
-    else if ( this->getForwardElectroionizationSamplingMode() == MonteCarlo::ENERGY_LOSS_SAMPLING ||
-              this->getForwardElectroionizationSamplingMode() == MonteCarlo::ENERGY_LOSS_RATIO_SAMPLING )
-    {
-      min_energy_loss_grid[n] = distribution->getMinSecondaryEnergy( energy_grid[n] );
-      max_outgoing_energy_grid[n] = energy_grid[n] - min_energy_loss_grid[n];
-    }
-    else
-    {
-      THROW_EXCEPTION( std::runtime_error,
-                       "the ElectroionizationSamplingType " <<
-                       this->getForwardElectroionizationSamplingMode() <<
-                       " is invalid or currently not supported!" );
-    }
+
+    std::shared_ptr<const Utility::TabularUnivariateDistribution> min_energy_loss_distribution(
+        new const Utility::TabularDistribution<Utility::LogLog>(
+          max_outgoing_energy_grid,
+          min_energy_loss_grid ) );
+
+    // Create the min adjoint energy gain function
+    min_energy_gain_function =
+      [min_energy_loss_distribution](const double& energy){
+        return min_energy_loss_distribution->evaluate(energy); };
   }
+  else if ( this->getForwardElectroionizationSamplingMode() == MonteCarlo::OUTGOING_ENERGY_SAMPLING ||
+            this->getForwardElectroionizationSamplingMode() == MonteCarlo::OUTGOING_ENERGY_RATIO_SAMPLING )
+  {
+    // Create the min adjoint energy gain function for electroionization
+    std::vector<double> max_outgoing_energy_grid( energy_grid.size() );
 
-  std::shared_ptr<const Utility::TabularUnivariateDistribution> min_energy_loss_distribution(
-      new const Utility::TabularDistribution<Utility::LogLog>(
-        max_outgoing_energy_grid,
-        min_energy_loss_grid ) );
+    for( size_t n = 0; n < energy_grid.size(); ++n )
+      max_outgoing_energy_grid[n] = distribution->getMaxSecondaryEnergy( energy_grid[n] );
 
-  // Create the min adjoint energy gain function
-  std::function<double(const double&)> min_energy_gain_function =
-    [min_energy_loss_distribution](const double& energy){
-      return min_energy_loss_distribution->evaluate(energy); };
+    std::shared_ptr<const Utility::TabularUnivariateDistribution> min_outgoing_energy_distribution(
+        new const Utility::TabularDistribution<Utility::LogLog>(
+          max_outgoing_energy_grid,
+          energy_grid ) );
+
+    // Create the min adjoint energy gain function
+    min_energy_gain_function =
+      [min_outgoing_energy_distribution](const double& energy){
+        return min_outgoing_energy_distribution->evaluate(energy) - energy; };
+  }
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                    "the ElectroionizationSamplingType " <<
+                    this->getForwardElectroionizationSamplingMode() <<
+                    " is invalid or currently not supported!" );
+  }
 
   // Create the forward pdf evaluator
   std::function<double(const double&, const double&)> pdf_evaluator =

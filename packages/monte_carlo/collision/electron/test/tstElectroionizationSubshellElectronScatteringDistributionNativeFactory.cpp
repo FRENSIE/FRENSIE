@@ -452,7 +452,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     *subshells.begin(),
     binding_energy,
     energy_loss_distribution,
-    MonteCarlo::ENERGY_LOSS_SAMPLING,
+    MonteCarlo::OUTGOING_ENERGY_SAMPLING,
     1e-7,
     500,
     true );
@@ -463,7 +463,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     *subshells.begin(),
     binding_energy,
     energy_loss_ratio_distribution,
-    MonteCarlo::ENERGY_LOSS_RATIO_SAMPLING,
+    MonteCarlo::OUTGOING_ENERGY_RATIO_SAMPLING,
     1e-7,
     500,
     true );

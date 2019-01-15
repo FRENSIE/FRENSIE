@@ -82,6 +82,7 @@ def setGeneratorOptions( generator,
                          bremss_grid_convergence_tol,
                          bremss_grid_abs_diff_tol,
                          bremss_grid_dist_tol,
+                         electroion_sampling_mode,
                          electroion_min_energy_nudge_val,
                          electroion_max_energy_nudge_val,
                          electroion_eval_tol,
@@ -209,6 +210,17 @@ def setGeneratorOptions( generator,
     if not bremss_grid_dist_tol is None:
         generator.setAdjointBremsstrahlungDistanceTolerance( bremss_grid_dist_tol )
 
+    if not electroion_sampling_mode is None:
+        if electroion_sampling_mode == "Knock-On":
+            generator.setForwardElectroionizationSamplingMode( MonteCarlo.KNOCK_ON_SAMPLING )
+        elif electroion_sampling_mode == "Outgoing Energy":
+            generator.setForwardElectroionizationSamplingMode( MonteCarlo.OUTGOING_ENERGY_SAMPLING )
+        elif electroion_sampling_mode == "Outgoing Energy Ratio":
+            generator.setForwardElectroionizationSamplingMode( MonteCarlo.OUTGOING_ENERGY_RATIO_SAMPLING )
+        else:
+            print "the electro-ionization sampling mode ", electroion_sampling_mode, "is not valid!"
+            sys.exit(1)
+
     if not electroion_min_energy_nudge_val is None:
         generator.setAdjointElectroionizationMinEnergyNudgeValue( electroion_min_energy_nudge_val )
 
@@ -267,6 +279,7 @@ def generateData( epr_file_name,
                   bremss_grid_convergence_tol = None,
                   bremss_grid_abs_diff_tol = None,
                   bremss_grid_dist_tol = None,
+                  electroion_sampling_mode = None,
                   electroion_min_energy_nudge_val = None,
                   electroion_max_energy_nudge_val = None,
                   electroion_eval_tol = None,
@@ -317,6 +330,7 @@ def generateData( epr_file_name,
                          bremss_grid_convergence_tol,
                          bremss_grid_abs_diff_tol,
                          bremss_grid_dist_tol,
+                         electroion_sampling_mode,
                          electroion_min_energy_nudge_val,
                          electroion_max_energy_nudge_val,
                          electroion_eval_tol,
@@ -445,6 +459,8 @@ if __name__ == "__main__":
                       help="The bremsstrahlung grid absolute difference tolerance")
     parser.add_option("--bremss_grid_dist_tol", type="float", dest="bremss_grid_dist_tol",
                       help="The bremsstrahlung grid distance tolerance")
+    parser.add_option("--electroion_sampling_mode", type="string", dest="electroion_sampling_mode",
+                      help="The forward electroionization sampling mode")
     parser.add_option("--electroion_min_energy_nudge_val", type="float", dest="electroion_min_energy_nudge_val",
                       help="The electroionization min energy nudge value")
     parser.add_option("--electroion_max_energy_nudge_val", type="float", dest="electroion_max_energy_nudge_val",
@@ -508,6 +524,7 @@ if __name__ == "__main__":
                   options.bremss_grid_convergence_tol,
                   options.bremss_grid_abs_diff_tol,
                   options.bremss_grid_dist_tol,
+                  options.electroion_sampling_mode,
                   options.electroion_min_energy_nudge_val,
                   options.electroion_max_energy_nudge_val,
                   options.electroion_eval_tol,

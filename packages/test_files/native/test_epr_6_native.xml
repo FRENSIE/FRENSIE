@@ -42773,14 +42773,14 @@
 			</second>
 		</item>
 	</electroionization_recoil_pdf>
-	<electroionization_energy_loss>
+	<electroionization_outgoing_energy>
 		<count>0</count>
 		<item_version>0</item_version>
-	</electroionization_energy_loss>
-	<electroionization_energy_loss_pdf>
+	</electroionization_outgoing_energy>
+	<electroionization_outgoing_pdf>
 		<count>0</count>
 		<item_version>0</item_version>
-	</electroionization_energy_loss_pdf>
+	</electroionization_outgoing_pdf>
 	<bremsstrahlung_energy_grid>
 		<count>9</count>
 		<item_version>0</item_version>

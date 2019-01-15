@@ -1230,53 +1230,53 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the electroionization energy loss can be set
+// Check that the electroionization outgoing energy can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-                   setElectroionizationEnergyLossAtIncomingEnergy )
+                   setElectroionizationOutgoingEnergyAtIncomingEnergy )
 {
-  std::vector<double> energy_loss( 3 );
-  energy_loss[0] = 0.9;
-  energy_loss[1] = 0.5;
-  energy_loss[2] = 0.1;
+  std::vector<double> outgoing_energy( 3 );
+  outgoing_energy[0] = 0.9;
+  outgoing_energy[1] = 0.5;
+  outgoing_energy[2] = 0.1;
 
   unsigned subshell = 1;
   double energy = 1.0;
 
-  epr_data_container.setElectroionizationEnergyLossAtIncomingEnergy(
+  epr_data_container.setElectroionizationOutgoingEnergyAtIncomingEnergy(
                                 subshell,
                                 energy,
-                                energy_loss );
+                                outgoing_energy );
 
-  FRENSIE_CHECK_EQUAL( epr_data_container.getElectroionizationEnergyLoss(subshell, energy),
-                       energy_loss );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getElectroionizationOutgoingEnergy(subshell, energy),
+                       outgoing_energy );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the electroionization energy loss pdf can be set
+// Check that the electroionization outgoing energy pdf can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-                   setElectroionizationEnergyLossPDFAtIncomingEnergy )
+                   setElectroionizationOutgoingPDFAtIncomingEnergy )
 {
-  std::vector<double> energy_loss_pdf( 3 );
-  energy_loss_pdf[0] = 1.0;
-  energy_loss_pdf[1] = 2.0;
-  energy_loss_pdf[2] = 5.0;
+  std::vector<double> outgoing_pdf( 3 );
+  outgoing_pdf[0] = 1.0;
+  outgoing_pdf[1] = 2.0;
+  outgoing_pdf[2] = 5.0;
 
   unsigned subshell = 1;
   double energy = 1.0;
 
-  epr_data_container.setElectroionizationEnergyLossPDFAtIncomingEnergy(
+  epr_data_container.setElectroionizationOutgoingPDFAtIncomingEnergy(
                                 subshell,
                                 energy,
-                                energy_loss_pdf );
+                                outgoing_pdf );
 
-  FRENSIE_CHECK_EQUAL( epr_data_container.getElectroionizationEnergyLossPDF( subshell, energy ),
-                       energy_loss_pdf );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getElectroionizationOutgoingPDF( subshell, energy ),
+                       outgoing_pdf );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the electroionization energy loss energy can be set
+// Check that the electroionization outgoing energy energy can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-                   setElectroionizationEnergyLoss )
+                   setElectroionizationOutgoingEnergy )
 {
   std::vector<double> energy( 3 );
   energy[0] = 0.9;
@@ -1286,23 +1286,23 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   unsigned subshell = 1;
   double energy_bin = 1.0;
 
-  std::map<double,std::vector<double> > energy_loss;
+  std::map<double,std::vector<double> > outgoing_energy;
 
-  energy_loss[energy_bin] = energy;
+  outgoing_energy[energy_bin] = energy;
 
-  epr_data_container.setElectroionizationEnergyLoss(
+  epr_data_container.setElectroionizationOutgoingEnergy(
                                 subshell,
-                                energy_loss );
+                                outgoing_energy );
 
   FRENSIE_CHECK_EQUAL(
-    epr_data_container.getElectroionizationEnergyLoss(subshell, energy_bin),
+    epr_data_container.getElectroionizationOutgoingEnergy(subshell, energy_bin),
     energy );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the electroionization energy loss pdf can be set
+// Check that the electroionization outgoing energy pdf can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-                   setElectroionizationEnergyLossPDF )
+                   setElectroionizationOutgoingPDF )
 {
   std::vector<double> pdf( 3 );
   pdf[0] = 1.0;
@@ -1312,16 +1312,16 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   unsigned subshell = 1;
   double energy_bin = 1.0;
 
-  std::map<double,std::vector<double> > energy_loss_pdf;
+  std::map<double,std::vector<double> > outgoing_pdf;
 
-  energy_loss_pdf[energy_bin] = pdf;
+  outgoing_pdf[energy_bin] = pdf;
 
-  epr_data_container.setElectroionizationEnergyLossPDF(
+  epr_data_container.setElectroionizationOutgoingPDF(
                                 subshell,
-                                energy_loss_pdf );
+                                outgoing_pdf );
 
   FRENSIE_CHECK_EQUAL(
-    epr_data_container.getElectroionizationEnergyLossPDF( subshell, energy_bin ),
+    epr_data_container.getElectroionizationOutgoingPDF( subshell, energy_bin ),
     pdf );
 }
 
@@ -1868,10 +1868,10 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
     epr_data_container_copy.getElectroionizationRecoilPDF(1u, 1.0).size(),
     3 );
   FRENSIE_CHECK_EQUAL(
-    epr_data_container_copy.getElectroionizationEnergyLoss(1u, 1.0).size(),
+    epr_data_container_copy.getElectroionizationOutgoingEnergy(1u, 1.0).size(),
     3 );
   FRENSIE_CHECK_EQUAL(
-    epr_data_container_copy.getElectroionizationEnergyLossPDF(1u, 1.0).size(),
+    epr_data_container_copy.getElectroionizationOutgoingPDF(1u, 1.0).size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getBremsstrahlungEnergyGrid().size(),
@@ -2102,10 +2102,10 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
     epr_data_container_copy.getElectroionizationRecoilPDF(1u, 1.0).size(),
     3 );
   FRENSIE_CHECK_EQUAL(
-    epr_data_container_copy.getElectroionizationEnergyLoss(1u, 1.0).size(),
+    epr_data_container_copy.getElectroionizationOutgoingEnergy(1u, 1.0).size(),
     3 );
   FRENSIE_CHECK_EQUAL(
-    epr_data_container_copy.getElectroionizationEnergyLossPDF(1u, 1.0).size(),
+    epr_data_container_copy.getElectroionizationOutgoingPDF(1u, 1.0).size(),
     3 );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getBremsstrahlungEnergyGrid().size(),

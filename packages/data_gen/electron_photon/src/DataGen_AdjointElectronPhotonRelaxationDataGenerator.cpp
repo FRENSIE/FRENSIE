@@ -869,10 +869,10 @@ const MonteCarlo::ElectroionizationSamplingType AdjointElectronPhotonRelaxationD
 {
   if( raw_policy == "Knock-on Electroionization Sampling" )
     return MonteCarlo::KNOCK_ON_SAMPLING;
-  else if( raw_policy == "Energy Loss Electroionization Sampling" )
-    return MonteCarlo::ENERGY_LOSS_SAMPLING;
-  else if( raw_policy == "Energy Loss Ratio Electroionization Sampling" )
-    return MonteCarlo::ENERGY_LOSS_RATIO_SAMPLING;
+  else if( raw_policy == "Outgoing Energy Electroionization Sampling" )
+    return MonteCarlo::OUTGOING_ENERGY_SAMPLING;
+  else if( raw_policy == "Outgoing Energy Ratio Electroionization Sampling" )
+    return MonteCarlo::OUTGOING_ENERGY_RATIO_SAMPLING;
   else
   {
     THROW_EXCEPTION( std::runtime_error,

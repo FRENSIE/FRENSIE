@@ -856,6 +856,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   generator_h->setAdjointBremsstrahlungAbsoluteDifferenceTolerance( 1e-20 );
   generator_h->setAdjointBremsstrahlungDistanceTolerance( 1e-18 );
 
+  generator_h->setForwardElectroionizationSamplingMode( MonteCarlo::OUTGOING_ENERGY_SAMPLING );
   generator_h->setAdjointElectroionizationMinEnergyNudgeValue( 1e-9 );
   generator_h->setAdjointElectroionizationMaxEnergyNudgeValue( 1e-2 );
   generator_h->setAdjointElectroionizationEvaluationTolerance( 1e-3 );

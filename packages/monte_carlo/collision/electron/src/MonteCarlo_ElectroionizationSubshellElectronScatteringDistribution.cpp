@@ -77,7 +77,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::setSamplingFunctio
         return this->sampleKnockOnPositron( incoming_energy ); };
 
       break;
-    case ENERGY_LOSS_SAMPLING:
+    case OUTGOING_ENERGY_SAMPLING:
 
       // Get the functor for the min secondary energy
       d_min_energy_functor = [this](const double& energy){
@@ -88,23 +88,23 @@ void ElectroionizationSubshellElectronScatteringDistribution::setSamplingFunctio
         return d_electroionization_shell_distribution->getUpperBoundOfSecondaryConditionalIndepVar( energy ); };
 
       // The outgoing energy processor
-      d_outgoing_energy_processor = [this](const double& incoming_energy, const double& outgoing_energy){
-        return this->getEnergyLoss( incoming_energy, outgoing_energy ); };
+      d_outgoing_energy_processor = [this](const double&, const double& outgoing_energy){
+        return outgoing_energy; };
 
       // Set the sample function
       d_sample = [this]( const double incoming_energy ){
-        return this->sampleEnergyLoss( incoming_energy ); };
+        return this->sampleOutgoingEnergy( incoming_energy ); };
 
       // The sample secondary and primary function
       d_sample_primary_and_secondary = [this]( const double incoming_energy, double& outgoing_energy, double& knock_on_energy ){
-        this->sampleEnergyLoss( incoming_energy, outgoing_energy, knock_on_energy ); };
+        this->sampleOutgoingEnergy( incoming_energy, outgoing_energy, knock_on_energy ); };
 
       // The sample positron function
       d_sample_positron = [this]( const double incoming_energy ){
-        return this->sampleEnergyLoss( incoming_energy ); };
+        return this->sampleOutgoingEnergy( incoming_energy ); };
 
       break;
-    case ENERGY_LOSS_RATIO_SAMPLING:
+    case OUTGOING_ENERGY_RATIO_SAMPLING:
 
       // Get the functor for the min secondary energy
       d_min_energy_functor = [this](const double& energy){
@@ -116,7 +116,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::setSamplingFunctio
 
       // The outgoing energy processor
       d_outgoing_energy_processor = [this](const double& incoming_energy, const double& outgoing_energy){
-        return this->getEnergyLossRatio( incoming_energy, outgoing_energy ); };
+        return this->getOutgoingRatio( incoming_energy, outgoing_energy ); };
 
       // Set the sample function
       d_sample = [this]( const double incoming_energy ){
@@ -172,8 +172,8 @@ double ElectroionizationSubshellElectronScatteringDistribution::getMaxSecondaryE
 
 // Evaluate the distribution for a given incoming and outgoing energy
 /*! \details The outgoing energy will be processed according to the sampling
- *  type (i.e. for energy loss sampling the outgoing energy will be processed to
- *  an energy loss ).
+ *  type (i.e. for knock-on sampling the outgoing energy will be processed to
+ *  an knock-on energy ).
  */
 double ElectroionizationSubshellElectronScatteringDistribution::evaluate(
                      const double incoming_energy,
@@ -192,8 +192,8 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluate(
 
 // Evaluate the PDF value for a given incoming and outgoing energy
 /*! \details The outgoing energy will be processed according to the sampling
- *  type (i.e. for energy loss sampling the outgoing energy will be processed to
- *  an energy loss ).
+ *  type (i.e. for knock-on sampling the outgoing energy will be processed to
+ *  an knock-on energy ).
  */
 double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
                      const double incoming_energy,
@@ -231,8 +231,8 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluateProcesse
 
 // Evaluate the CDF value for a given incoming and outgoing energy
 /*! \details The outgoing energy will be processed according to the sampling
- *  type (i.e. for energy loss sampling the outgoing energy will be processed to
- *  an energy loss ).
+ *  type (i.e. for knock-on sampling the outgoing energy will be processed to
+ *  an knock-on energy ).
  */
 double ElectroionizationSubshellElectronScatteringDistribution::evaluateCDF(
                      const double incoming_energy,
@@ -505,27 +505,15 @@ double ElectroionizationSubshellElectronScatteringDistribution::getKnockOnEnergy
     return outgoing_energy_1;
 }
 
-// Get energy loss
-/*! \details The energy loss of the primary electron is calculated as the
- *  difference between the incoming and outgoing energy of the primary electron.
+// Get outgoing energy ratio
+/*! \details The outgoing energy ratio of the primary electron is calculated as
+ *  the ratio of the outgoing energy to the incoming energy.
  */
-double ElectroionizationSubshellElectronScatteringDistribution::getEnergyLoss(
+double ElectroionizationSubshellElectronScatteringDistribution::getOutgoingRatio(
                      const double incoming_energy,
                      const double outgoing_energy ) const
 {
-  return incoming_energy - outgoing_energy;
-}
-
-// Get energy loss ratio
-/*! \details The energy loss of the primary electron is calculated as the
- *  difference between the incoming and outgoing energy of the primary electron
- *  divided by the incoming energy.
- */
-double ElectroionizationSubshellElectronScatteringDistribution::getEnergyLossRatio(
-                     const double incoming_energy,
-                     const double outgoing_energy ) const
-{
-  return getEnergyLoss( incoming_energy, outgoing_energy )/incoming_energy;
+  return outgoing_energy/incoming_energy;
 }
 
 // Return the distribution min KnockOn energy
@@ -590,31 +578,30 @@ double ElectroionizationSubshellElectronScatteringDistribution::sampleKnockOn(
 }
 
 // Sample an outgoing energy
+double ElectroionizationSubshellElectronScatteringDistribution::sampleOutgoingEnergy(
+               const double incoming_energy ) const
+{
+  testPrecondition( incoming_energy >= d_binding_energy );
+
+  // Sample electron outgoing energy
+  return d_electroionization_shell_distribution->sampleSecondaryConditional( incoming_energy );
+}
+
+// Sample an outgoing energy
 double ElectroionizationSubshellElectronScatteringDistribution::sampleRatio(
                const double incoming_energy ) const
 {
   testPrecondition( incoming_energy >= d_binding_energy );
 
   // Sample electron outgoing energy
-  double energy_loss_ratio =
+  double outgoing_energy_ratio =
       d_electroionization_shell_distribution->sampleSecondaryConditional(
         incoming_energy );
 
-  testPrecondition( energy_loss_ratio > 0.0 );
-  testPrecondition( energy_loss_ratio < 1.0 );
+  testPrecondition( outgoing_energy_ratio > 0.0 );
+  testPrecondition( outgoing_energy_ratio < 1.0 );
 
-  return incoming_energy - energy_loss_ratio*incoming_energy;
-}
-
-// Sample an outgoing energy
-double ElectroionizationSubshellElectronScatteringDistribution::sampleEnergyLoss(
-               const double incoming_energy ) const
-{
-  testPrecondition( incoming_energy >= d_binding_energy );
-
-  // Sample electron outgoing energy
-  return incoming_energy -
-    d_electroionization_shell_distribution->sampleSecondaryConditional( incoming_energy );
+  return outgoing_energy_ratio*incoming_energy;
 }
 
 // Sample a knock-on energy and primary energy
@@ -641,19 +628,17 @@ void ElectroionizationSubshellElectronScatteringDistribution::sampleKnockOn(
 }
 
 // Sample a knock-on energy and primary energy
-void ElectroionizationSubshellElectronScatteringDistribution::sampleEnergyLoss(
+void ElectroionizationSubshellElectronScatteringDistribution::sampleOutgoingEnergy(
               const double incoming_energy,
               double& outgoing_energy,
               double& knock_on_energy ) const
 {
-  // Sample the energy loss
-  double energy_loss =
+  // Sample the outgoing energy
+  outgoing_energy =
     d_electroionization_shell_distribution->sampleSecondaryConditional( incoming_energy );
 
   // Calculate the knock-on energy
-  knock_on_energy = energy_loss - d_binding_energy;
-  // Calculate the outgoing energy
-  outgoing_energy -= energy_loss;
+  knock_on_energy = ( incoming_energy - d_binding_energy ) - outgoing_energy;
 
   // Make sure energies are valid
   testPostcondition( knock_on_energy > 0.0 );
@@ -666,14 +651,12 @@ void ElectroionizationSubshellElectronScatteringDistribution::sampleRatio(
               double& outgoing_energy,
               double& knock_on_energy ) const
 {
-  // Sample the energy loss
-  double energy_loss = incoming_energy*
+  // Sample the outgoing energy
+  outgoing_energy = incoming_energy*
     d_electroionization_shell_distribution->sampleSecondaryConditional( incoming_energy );
 
   // Calculate the knock-on energy
-  knock_on_energy = energy_loss - d_binding_energy;
-  // Calculate the outgoing energy
-  outgoing_energy -= energy_loss;
+  knock_on_energy = ( incoming_energy - d_binding_energy ) - outgoing_energy;
 
   // Make sure energies are valid
   testPostcondition( knock_on_energy > 0.0 );

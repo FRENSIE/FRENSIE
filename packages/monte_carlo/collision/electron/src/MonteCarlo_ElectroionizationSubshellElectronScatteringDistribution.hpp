@@ -128,15 +128,11 @@ private:
 
   // Get knock-on energy
   double getKnockOnEnergy( const double incoming_energy,
-                          const double outgoing_energy_1 ) const;
-
-  // Get energy loss
-  double getEnergyLoss( const double incoming_energy,
-                        const double outgoing_energy ) const;
+                           const double outgoing_energy_1 ) const;
 
   // Get energy loss ratio
-  double getEnergyLossRatio( const double incoming_energy,
-                            const double outgoing_energy ) const;
+  double getOutgoingRatio( const double incoming_energy,
+                           const double outgoing_energy ) const;
 
   // Return the distribution min knock-on energy
   double getDistributionMinKnockOnEnergy( const double incoming_energy );
@@ -154,7 +150,7 @@ private:
   double sampleKnockOn( const double incoming_energy ) const;
 
   // Sample an outgoing primary energy
-  double sampleEnergyLoss( const double incoming_energy ) const;
+  double sampleOutgoingEnergy( const double incoming_energy ) const;
 
   // Sample an outgoing primary energy ratio
   double sampleRatio( const double incoming_energy ) const;
@@ -165,9 +161,9 @@ private:
                       double& knock_on_energy ) const;
 
   // Sample a knock-on energy and primary energy
-  void sampleEnergyLoss( const double incoming_energy,
-                        double& outgoing_energy,
-                        double& knock_on_energy ) const;
+  void sampleOutgoingEnergy( const double incoming_energy,
+                             double& outgoing_energy,
+                             double& knock_on_energy ) const;
 
   // Sample a knock-on energy and primary energy
   void sampleRatio( const double incoming_energy,

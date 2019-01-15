@@ -72,7 +72,7 @@ public:
   //! Create the electroionization subshell distribution function
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
             template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
-  static void createEnergyLossDistribution(
+  static void createOutgoingDistribution(
     const std::map<double,std::vector<double> >& recoil_energy_data,
     const std::map<double,std::vector<double> >& recoil_pdf_data,
     const std::vector<double>& energy_grid,
@@ -85,7 +85,7 @@ public:
   //! Create the electroionization subshell distribution function
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
             template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
-  static void createEnergyLossRatioDistribution(
+  static void createOutgoingRatioDistribution(
     const std::map<double,std::vector<double> >& recoil_energy_data,
     const std::map<double,std::vector<double> >& recoil_pdf_data,
     const std::vector<double>& energy_grid,
@@ -95,8 +95,8 @@ public:
     const double evaluation_tol,
     const unsigned max_number_of_iterations );
 
-  // Calculate full energy loss bins and pdf from recoil energy
-  static void calculateEnergyLossAndPDFBins(
+  // Calculate full outgoing energy bins and pdf from recoil energy
+  static void calculateOutgoingEnergyAndPDFBins(
     const std::map<double,std::vector<double> >& recoil_energy_data,
     const std::map<double,std::vector<double> >& recoil_pdf_data,
     const std::vector<double>& energy_grid,
@@ -106,8 +106,8 @@ public:
     std::map<double,std::vector<double> >& processed_pdf_data,
     std::vector<double>& processed_energy_grid );
 
-  // Calculate full energy loss bins and pdf from recoil energy
-  static void calculateEnergyLossAndPDFBins(
+  // Calculate full outgoing energy bins and pdf from recoil energy
+  static void calculateOutgoingEnergyAndPDFBins(
       const std::vector<double>& knock_on_energy,
       const std::vector<double>& knock_on_pdf,
       double& energy,

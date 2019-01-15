@@ -32,13 +32,13 @@ FRENSIE_UNIT_TEST( ElectroionizationSamplingType, toString )
 
   FRENSIE_CHECK_EQUAL( sampling_name, "Knock-on Electroionization Sampling" );
 
-  sampling_name = Utility::toString( MonteCarlo::ENERGY_LOSS_SAMPLING );
+  sampling_name = Utility::toString( MonteCarlo::OUTGOING_ENERGY_SAMPLING );
 
-  FRENSIE_CHECK_EQUAL( sampling_name, "Energy Loss Electroionization Sampling" )
+  FRENSIE_CHECK_EQUAL( sampling_name, "Outgoing Energy Electroionization Sampling" )
 
-  sampling_name = Utility::toString( MonteCarlo::ENERGY_LOSS_RATIO_SAMPLING );
+  sampling_name = Utility::toString( MonteCarlo::OUTGOING_ENERGY_RATIO_SAMPLING );
 
-  FRENSIE_CHECK_EQUAL( sampling_name, "Energy Loss Ratio Electroionization Sampling" );
+  FRENSIE_CHECK_EQUAL( sampling_name, "Outgoing Energy Ratio Electroionization Sampling" );
 }
 
 //---------------------------------------------------------------------------//
@@ -54,16 +54,16 @@ FRENSIE_UNIT_TEST( ElectroionizationSamplingType, ostream_operator )
   oss.str( "" );
   oss.clear();
 
-  oss << MonteCarlo::ENERGY_LOSS_SAMPLING;
+  oss << MonteCarlo::OUTGOING_ENERGY_SAMPLING;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "Energy Loss Electroionization Sampling" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Outgoing Energy Electroionization Sampling" );
 
   oss.str( "" );
   oss.clear();
 
-  oss << MonteCarlo::ENERGY_LOSS_RATIO_SAMPLING;
+  oss << MonteCarlo::OUTGOING_ENERGY_RATIO_SAMPLING;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "Energy Loss Ratio Electroionization Sampling" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Outgoing Energy Ratio Electroionization Sampling" );
 }
 
 //---------------------------------------------------------------------------//
@@ -90,10 +90,10 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ElectroionizationSamplingType,
       MonteCarlo::KNOCK_ON_SAMPLING;
 
     MonteCarlo::ElectroionizationSamplingType type_2 =
-      MonteCarlo::ENERGY_LOSS_SAMPLING;
+      MonteCarlo::OUTGOING_ENERGY_SAMPLING;
 
     MonteCarlo::ElectroionizationSamplingType type_3 =
-      MonteCarlo::ENERGY_LOSS_RATIO_SAMPLING;
+      MonteCarlo::OUTGOING_ENERGY_RATIO_SAMPLING;
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_1 ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_2 ) );
@@ -117,8 +117,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ElectroionizationSamplingType,
   iarchive.reset();
 
   FRENSIE_CHECK_EQUAL( type_1, MonteCarlo::KNOCK_ON_SAMPLING );
-  FRENSIE_CHECK_EQUAL( type_2, MonteCarlo::ENERGY_LOSS_SAMPLING );
-  FRENSIE_CHECK_EQUAL( type_3, MonteCarlo::ENERGY_LOSS_RATIO_SAMPLING );
+  FRENSIE_CHECK_EQUAL( type_2, MonteCarlo::OUTGOING_ENERGY_SAMPLING );
+  FRENSIE_CHECK_EQUAL( type_3, MonteCarlo::OUTGOING_ENERGY_RATIO_SAMPLING );
 }
 
 //---------------------------------------------------------------------------//

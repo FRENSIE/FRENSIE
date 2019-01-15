@@ -24,8 +24,8 @@ namespace MonteCarlo{
 enum ElectroionizationSamplingType
 {
   KNOCK_ON_SAMPLING,
-  ENERGY_LOSS_SAMPLING,
-  ENERGY_LOSS_RATIO_SAMPLING,
+  OUTGOING_ENERGY_SAMPLING,
+  OUTGOING_ENERGY_RATIO_SAMPLING,
 };
 
 } // end MonteCarlo namespace
@@ -81,8 +81,8 @@ void serialize( Archive& archive,
     switch( raw_type )
     {
       BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::KNOCK_ON_SAMPLING, int, type );
-      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::ENERGY_LOSS_SAMPLING, int, type );
-      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::ENERGY_LOSS_RATIO_SAMPLING, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::OUTGOING_ENERGY_SAMPLING, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::OUTGOING_ENERGY_RATIO_SAMPLING, int, type );
 
       default:
       {

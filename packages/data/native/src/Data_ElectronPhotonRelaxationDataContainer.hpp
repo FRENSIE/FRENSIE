@@ -367,24 +367,24 @@ public:
                                 const unsigned subshell,
                                 const double incoming_energy ) const;
 
-  //! Return if there is electroionization energy loss data
-  bool hasElectroionizationEnergyLossData() const;
+  //! Return if there is electroionization outgoing energy data
+  bool hasElectroionizationOutgoingEnergyData() const;
 
-  //! Return the electroionization energy loss for a subshell
-  const std::map<double,std::vector<double> >& getElectroionizationEnergyLoss(
+  //! Return the electroionization outgoing energy for a subshell
+  const std::map<double,std::vector<double> >& getElectroionizationOutgoingEnergy(
                                 const unsigned subshell ) const;
 
-  //! Return the electroionization energy loss for a subshell and incoming energy
-  const std::vector<double>& getElectroionizationEnergyLoss(
+  //! Return the electroionization outgoing energy for a subshell and incoming energy
+  const std::vector<double>& getElectroionizationOutgoingEnergy(
                                 const unsigned subshell,
                                 const double incoming_energy ) const;
 
-  //! Return the electroionization energy loss pdf for a subshell
-  const std::map<double,std::vector<double> >& getElectroionizationEnergyLossPDF(
+  //! Return the electroionization outgoing energy pdf for a subshell
+  const std::map<double,std::vector<double> >& getElectroionizationOutgoingPDF(
                                 const unsigned subshell ) const;
 
-  //! Return the electroionization energy loss pdf for a subshell and incoming energy
-  const std::vector<double>& getElectroionizationEnergyLossPDF(
+  //! Return the electroionization outgoing energy pdf for a subshell and incoming energy
+  const std::vector<double>& getElectroionizationOutgoingPDF(
                                 const unsigned subshell,
                                 const double incoming_energy ) const;
 
@@ -840,27 +840,27 @@ protected:
     const unsigned subshell,
     const std::map<double,std::vector<double> >& electroionization_recoil_pdf );
 
-  //! Set the electroionization energy loss for an incoming energy and subshell
-  void setElectroionizationEnergyLossAtIncomingEnergy(
+  //! Set the electroionization outgoing energy for an incoming energy and subshell
+  void setElectroionizationOutgoingEnergyAtIncomingEnergy(
     const unsigned subshell,
     const double incoming_energy,
-    const std::vector<double>& electroionization_energy_loss_energy );
+    const std::vector<double>& electroionization_outgoing_energy );
 
-  //! Set the electroionization energy loss pdf for an incoming energy and subshell
-  void setElectroionizationEnergyLossPDFAtIncomingEnergy(
+  //! Set the electroionization outgoing energy pdf for an incoming energy and subshell
+  void setElectroionizationOutgoingPDFAtIncomingEnergy(
     const unsigned subshell,
     const double incoming_energy,
-    const std::vector<double>& electroionization_energy_loss_pdf );
+    const std::vector<double>& electroionization_outgoing_pdf );
 
-  //! Set electroionization energy loss for all incoming energies in a subshell
-  void setElectroionizationEnergyLoss(
+  //! Set electroionization outgoing energy for all incoming energies in a subshell
+  void setElectroionizationOutgoingEnergy(
     const unsigned subshell,
-    const std::map<double,std::vector<double> >& electroionization_energy_loss_energy );
+    const std::map<double,std::vector<double> >& electroionization_outgoing_energy );
 
-  //! Set electroionization energy loss pdf for all incoming energies in a subshell
-  void setElectroionizationEnergyLossPDF(
+  //! Set electroionization outgoing energy pdf for all incoming energies in a subshell
+  void setElectroionizationOutgoingPDF(
     const unsigned subshell,
-    const std::map<double,std::vector<double> >& electroionization_energy_loss_pdf );
+    const std::map<double,std::vector<double> >& electroionization_outgoing_pdf );
 
   //! Set the bremsstrahlung energy grid for the secondary photon spectrum
   void setBremsstrahlungEnergyGrid(
@@ -1238,13 +1238,13 @@ private:
   std::map<unsigned,std::map<double,std::vector<double> > >
     d_electroionization_recoil_pdf;
 
-  // The electroionization energy loss for subshell and incoming energy
+  // The electroionization outgoing energy for subshell and incoming energy
   std::map<unsigned,std::map<double,std::vector<double> > >
-    d_electroionization_energy_loss;
+    d_electroionization_outgoing_energy;
 
-  // The electroionization energy loss pdf for subshell and incoming energy
+  // The electroionization outgoing energy pdf for subshell and incoming energy
   std::map<unsigned,std::map<double,std::vector<double> > >
-    d_electroionization_energy_loss_pdf;
+    d_electroionization_outgoing_pdf;
 
   // The bremsstrahlung energy grid (MeV)
   std::vector<double> d_bremsstrahlung_energy_grid;

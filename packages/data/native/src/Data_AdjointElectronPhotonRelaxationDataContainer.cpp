@@ -2665,7 +2665,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setForwardAtomicExcitationEle
 // Test if the Electroionization Sampling Mode is valid
 bool AdjointElectronPhotonRelaxationDataContainer::isElectroionizationSamplingModeValid( const std::string value )
 {
-  if ( value == "Knock-on Electroionization Sampling" || value == "Energy Loss Electroionization Sampling" || value == "Energy Loss Ratio Electroionization Sampling")
+  if ( value == "Knock-on Electroionization Sampling" || value == "Outgoing Energy Electroionization Sampling" || value == "Outgoing Energy Ratio Electroionization Sampling")
     return true;
   else
     return false;
