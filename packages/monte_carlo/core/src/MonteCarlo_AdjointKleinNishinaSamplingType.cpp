@@ -20,8 +20,10 @@ std::string ToStringTraits<MonteCarlo::AdjointKleinNishinaSamplingType>::toStrin
   {
     case MonteCarlo::TWO_BRANCH_REJECTION_ADJOINT_KN_SAMPLING:
       return "Two Branch Rejection Adjoint Klein-Nishina Sampling";
-    case MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING:
-      return "Three Branch Mixed Adjoint Klein-Nishina Sampling";
+    case MonteCarlo::THREE_BRANCH_LIN_MIXED_ADJOINT_KN_SAMPLING:
+      return "Three Branch Lin Mixed Adjoint Klein-Nishina Sampling";
+    case MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING:
+      return "Three Branch Log Mixed Adjoint Klein-Nishina Sampling";
     default:
     {
       THROW_EXCEPTION( std::logic_error,

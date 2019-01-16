@@ -38,7 +38,7 @@ FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistributionNativeFactory,
                             *data_container,
                             distribution,
                             MonteCarlo::KN_INCOHERENT_ADJOINT_MODEL,
-                            MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING,
+                            MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING,
                             20.0 );
 
   // Test the distribution
@@ -85,7 +85,7 @@ FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistributionNativeFactory,
                             *data_container,
                             distribution,
                             MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
-                            MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING,
+                            MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING,
                             20.0 );
   
   // Test the distribution
@@ -132,7 +132,7 @@ FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistributionNativeFactory,
                             *data_container,
                             distribution,
                             MonteCarlo::IMPULSE_INCOHERENT_ADJOINT_MODEL,
-                            MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING,
+                            MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING,
                             20.0,
                             Data::K_SUBSHELL );
   
@@ -209,7 +209,7 @@ FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistributionNativeFactory,
                             *data_container,
                             distribution,
                             MonteCarlo::IMPULSE_INCOHERENT_ADJOINT_MODEL,
-                            MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING,
+                            MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING,
                             20.0,
                             Data::K_SUBSHELL );
   
@@ -289,7 +289,7 @@ FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistributionNativeFactory,
                             *data_container,
                             distribution,
                             MonteCarlo::DB_IMPULSE_INCOHERENT_ADJOINT_MODEL,
-                            MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING,
+                            MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING,
                             20.0,
                             Data::K_SUBSHELL );
   
@@ -367,7 +367,7 @@ FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistributionNativeFactory,
                             *data_container,
                             distribution,
                             MonteCarlo::DB_IMPULSE_INCOHERENT_ADJOINT_MODEL,
-                            MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING,
+                            MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING,
                             20.0,
                             Data::K_SUBSHELL );
   
@@ -445,7 +445,7 @@ FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistributionNativeFactory,
                             *data_container,
                             distribution,
                             MonteCarlo::KN_INCOHERENT_ADJOINT_MODEL,
-                            MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING,
+                            MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING,
                             20.0,
                             Data::K_SUBSHELL ),
                        std::logic_error );
@@ -454,7 +454,7 @@ FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistributionNativeFactory,
                             *data_container,
                             distribution,
                             MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
-                            MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING,
+                            MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING,
                             20.0,
                             Data::K_SUBSHELL ),
                        std::logic_error );

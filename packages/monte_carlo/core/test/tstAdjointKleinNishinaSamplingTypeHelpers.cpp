@@ -32,9 +32,13 @@ FRENSIE_UNIT_TEST( AdjointKleinNishinaSamplingType, toString )
 
   FRENSIE_CHECK_EQUAL( sampling_name, "Two Branch Rejection Adjoint Klein-Nishina Sampling" );
 
-  sampling_name = Utility::toString( MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING );
+  sampling_name = Utility::toString( MonteCarlo::THREE_BRANCH_LIN_MIXED_ADJOINT_KN_SAMPLING );
 
-  FRENSIE_CHECK_EQUAL( sampling_name, "Three Branch Mixed Adjoint Klein-Nishina Sampling" );
+  FRENSIE_CHECK_EQUAL( sampling_name, "Three Branch Lin Mixed Adjoint Klein-Nishina Sampling" );
+
+  sampling_name = Utility::toString( MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING );
+
+  FRENSIE_CHECK_EQUAL( sampling_name, "Three Branch Log Mixed Adjoint Klein-Nishina Sampling" );
 }
 
 //---------------------------------------------------------------------------//
@@ -50,9 +54,16 @@ FRENSIE_UNIT_TEST( AdjointKleinNishinaSamplingType, ostream_operator )
   oss.str( "" );
   oss.clear();
 
-  oss << MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING;
+  oss << MonteCarlo::THREE_BRANCH_LIN_MIXED_ADJOINT_KN_SAMPLING;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "Three Branch Mixed Adjoint Klein-Nishina Sampling" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Three Branch Lin Mixed Adjoint Klein-Nishina Sampling" );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING;
+
+  FRENSIE_CHECK_EQUAL( oss.str(), "Three Branch Log Mixed Adjoint Klein-Nishina Sampling" );
 }
 
 //---------------------------------------------------------------------------//
@@ -79,10 +90,14 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AdjointKleinNishinaSamplingType,
       MonteCarlo::TWO_BRANCH_REJECTION_ADJOINT_KN_SAMPLING;
 
     MonteCarlo::AdjointKleinNishinaSamplingType type_2 =
-      MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING;
+      MonteCarlo::THREE_BRANCH_LIN_MIXED_ADJOINT_KN_SAMPLING;
+
+    MonteCarlo::AdjointKleinNishinaSamplingType type_3 =
+      MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING;
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_1 ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_2 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_3 ) );
   }
 
   // Copy the archive ostream to an istream
@@ -93,15 +108,17 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AdjointKleinNishinaSamplingType,
 
   createIArchive( archive_istream, iarchive );
 
-  MonteCarlo::AdjointKleinNishinaSamplingType type_1, type_2;
+  MonteCarlo::AdjointKleinNishinaSamplingType type_1, type_2, type_3;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_1 ) );
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_2 ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_3 ) );
 
   iarchive.reset();
 
   FRENSIE_CHECK_EQUAL( type_1, MonteCarlo::TWO_BRANCH_REJECTION_ADJOINT_KN_SAMPLING );
-  FRENSIE_CHECK_EQUAL( type_2, MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING );
+  FRENSIE_CHECK_EQUAL( type_2, MonteCarlo::THREE_BRANCH_LIN_MIXED_ADJOINT_KN_SAMPLING );
+  FRENSIE_CHECK_EQUAL( type_3, MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING );
 }
 
 //---------------------------------------------------------------------------//

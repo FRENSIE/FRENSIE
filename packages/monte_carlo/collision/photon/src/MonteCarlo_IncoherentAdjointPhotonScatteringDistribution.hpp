@@ -145,15 +145,22 @@ protected:
 
 private:
 
-  //! Basic sampling implementation
+  // Basic sampling implementation
   void sampleAndRecordTrialsAdjointKleinNishinaTwoBranch(
 					       const double incoming_energy,
                                                double& outgoing_energy,
 					       double& scattering_angle_cosine,
                                                Counter& trials ) const;
 
-  //! Basic sampling implementation
-  void sampleAndRecordTrialsAdjointKleinNishinaThreeBranch(
+  // Basic sampling implementation
+  void sampleAndRecordTrialsAdjointKleinNishinaThreeBranchLin(
+					       const double incoming_energy,
+                                               double& outgoing_energy,
+					       double& scattering_angle_cosine,
+                                               Counter& trials ) const;
+
+  // Basic sampling implementation
+  void sampleAndRecordTrialsAdjointKleinNishinaThreeBranchInverse(
 					       const double incoming_energy,
                                                double& outgoing_energy,
 					       double& scattering_angle_cosine,
