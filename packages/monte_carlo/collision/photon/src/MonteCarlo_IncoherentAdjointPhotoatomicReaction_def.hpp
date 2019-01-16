@@ -136,11 +136,13 @@ void IncoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>:
 	      ParticleBank& bank,
 	      Data::SubshellType& shell_of_interaction ) const
 {
+  // Increment the collision number first so that any generated probe particles
+  // have the correct collision number
+  adjoint_photon.incrementCollisionNumber();
+  
   d_scattering_distribution->scatterAdjointPhoton( adjoint_photon,
                                                    bank,
                                                    shell_of_interaction );
-
-  adjoint_photon.incrementCollisionNumber();
 }
 
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IncoherentAdjointPhotoatomicReaction<Utility::LinLin,false> );

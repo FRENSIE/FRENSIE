@@ -22,6 +22,7 @@
 #include "MonteCarlo_OccupationNumber.hpp"
 #include "MonteCarlo_ComptonProfile.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 
 namespace MonteCarlo{
 
@@ -30,18 +31,15 @@ namespace MonteCarlo{
  */
 class IncoherentAdjointPhotonScatteringDistributionNativeFactory : public IncoherentAdjointPhotonScatteringDistributionFactory
 {
-
-private:
-
   // This type
   typedef IncoherentAdjointPhotonScatteringDistributionNativeFactory ThisType;
 
 public:
 
   //! Create an incoherent adjoint distribution
+  template<typename DataContainer>
   static void createDistribution(
-                const Data::AdjointElectronPhotonRelaxationDataContainer&
-                raw_adjoint_photoatom_data,
+                const DataContainer& data_container,
                 std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
                 incoherent_adjoint_distribution,
                 const IncoherentAdjointModelType incoherent_adjoint_model,
@@ -50,9 +48,9 @@ public:
                 const unsigned endf_subshell = 0u );
 
   //! Create a subshell distribution
+  template<typename DataContainer>
   static void createSubshellDistribution(
-        const Data::AdjointElectronPhotonRelaxationDataContainer&
-        raw_adjoint_photoatom_data,
+        const DataContainer& data_container,
         std::shared_ptr<SubshellIncoherentAdjointPhotonScatteringDistribution>&
         incoherent_adjoint_distribution,
         const IncoherentAdjointModelType incoherent_adjoint_model,
@@ -62,58 +60,74 @@ public:
 
 private:
 
-  //! Create a Waller-Hartree incoherent adjoint distribution
+  // Create a Waller-Hartree incoherent adjoint distribution
+  template<typename DataContainer>
   static void createWallerHartreeDistribution(
-          const Data::AdjointElectronPhotonRelaxationDataContainer&
-          raw_adjoint_photoatom_data,
-          const AdjointKleinNishinaSamplingType adjoint_kn_sampling,
-          const double max_energy,
-          std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
-          incoherent_adjoint_distribution );
+                const DataContainer& data_container,
+                const AdjointKleinNishinaSamplingType adjoint_kn_sampling,
+                const double max_energy,
+                std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
+                incoherent_adjoint_distribution );
 
-  //! Create a subshell incoherent adjoint distribution
-  template<typename BaseDistributionType>
-  static void createSubshellDistribution(
-          const Data::AdjointElectronPhotonRelaxationDataContainer&
-          raw_adjoint_photoatom_data,
-          const AdjointKleinNishinaSamplingType adjoint_kn_sampling,
-          const unsigned endf_subshell,
-          const double max_energy,
-          std::shared_ptr<BaseDistributionType>&
-          incoherent_adjoint_distribution );
-
-  //! Create a Doppler broadened subshell incoherent adjoint distribution
-  template<typename BaseDistributionType>
-  static void createDopplerBroadenedSubshellDistribution(
-                     const Data::AdjointElectronPhotonRelaxationDataContainer&
-                     raw_adjoint_photoatom_data,
+  // Create a subshell incoherent adjoint distribution
+  template<typename DataContainer, typename BaseDistributionType>
+  static void createSubshellDistributionImpl(
+                     const DataContainer& data_container,
                      const AdjointKleinNishinaSamplingType adjoint_kn_sampling,
                      const unsigned endf_subshell,
                      const double max_energy,
                      std::shared_ptr<BaseDistributionType>&
                      incoherent_adjoint_distribution );
 
-private:
+  // Create a Doppler broadened subshell incoherent adjoint distribution
+  template<typename DataContainer, typename BaseDistributionType>
+  static void createDopplerBroadenedSubshellDistributionImpl(
+                     const DataContainer& data_container,
+                     const AdjointKleinNishinaSamplingType adjoint_kn_sampling,
+                     const unsigned endf_subshell,
+                     const double max_energy,
+                     std::shared_ptr<BaseDistributionType>&
+                     incoherent_adjoint_distribution );
 
-  //! Create the scattering function
+  // Create the scattering function
   static void createScatteringFunction(
-          const Data::AdjointElectronPhotonRelaxationDataContainer&
-          raw_adjoint_photoatom_data,
-          std::shared_ptr<const ScatteringFunction>& scattering_function );
+              const Data::AdjointElectronPhotonRelaxationDataContainer&
+              raw_adjoint_photoatom_data,
+              std::shared_ptr<const ScatteringFunction>& scattering_function );
 
-  //! Create the occupation number
+  // Create the scattering function
+  static void createScatteringFunction(
+              const Data::ElectronPhotonRelaxationDataContainer&
+              raw_photoatom_data,
+              std::shared_ptr<const ScatteringFunction>& scattering_function );
+
+  // Create the occupation number
   static void createOccupationNumber(
-          const Data::AdjointElectronPhotonRelaxationDataContainer&
-          raw_adjoint_photoatom_data,
-          const unsigned endf_subshell,
-          std::shared_ptr<const OccupationNumber>& occupation_number );
+                  const Data::AdjointElectronPhotonRelaxationDataContainer&
+                  raw_adjoint_photoatom_data,
+                  const unsigned endf_subshell,
+                  std::shared_ptr<const OccupationNumber>& occupation_number );
 
-  //! Create the Compton profile
+  // Create the occupation number
+  static void createOccupationNumber(
+                  const Data::ElectronPhotonRelaxationDataContainer&
+                  raw_photoatom_data,
+                  const unsigned endf_subshell,
+                  std::shared_ptr<const OccupationNumber>& occupation_number );
+
+  // Create the Compton profile
   static void createComptonProfile(
-          const Data::AdjointElectronPhotonRelaxationDataContainer&
-          raw_adjoint_photoatom_data,
-          const unsigned endf_subshell,
-          std::shared_ptr<const ComptonProfile>& compton_profile );
+                      const Data::AdjointElectronPhotonRelaxationDataContainer&
+                      raw_adjoint_photoatom_data,
+                      const unsigned endf_subshell,
+                      std::shared_ptr<const ComptonProfile>& compton_profile );
+
+  // Create the Compton profile
+  static void createComptonProfile(
+                      const Data::ElectronPhotonRelaxationDataContainer&
+                      raw_adjoint_photoatom_data,
+                      const unsigned endf_subshell,
+                      std::shared_ptr<const ComptonProfile>& compton_profile );
 };
   
 } // end MonteCarlo namespace
