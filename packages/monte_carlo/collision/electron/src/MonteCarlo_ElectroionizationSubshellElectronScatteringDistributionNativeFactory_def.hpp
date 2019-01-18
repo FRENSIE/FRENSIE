@@ -248,7 +248,7 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
     }
 
     secondary_dists[n].reset(
-      new const Utility::TabularDistribution<Utility::LinLin>( knock_on_energy,
+      new const Utility::TabularDistribution<Utility::LogLog>( knock_on_energy,
                                                                recoil_pdf_data.find( energy_grid[n] )->second ) );
   }
 
@@ -291,7 +291,7 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
   for( size_t n = 0; n < processed_energy_grid.size(); ++n )
   {
     secondary_dists[n].reset(
-      new const Utility::TabularDistribution<Utility::LinLin>(
+      new const Utility::TabularDistribution<Utility::LogLog>(
           processed_energy_data.find( processed_energy_grid[n] )->second,
           processed_pdf_data.find( processed_energy_grid[n] )->second ) );
   }
@@ -342,7 +342,7 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
       [max = processed_energy_grid[n]](double& bin){ return bin /= max;});
 
     secondary_dists[n].reset(
-      new const Utility::TabularDistribution<Utility::LinLin>(
+      new const Utility::TabularDistribution<Utility::LogLog>(
           ratio_bins,
           processed_pdf_data.find( processed_energy_grid[n] )->second ) );
   }

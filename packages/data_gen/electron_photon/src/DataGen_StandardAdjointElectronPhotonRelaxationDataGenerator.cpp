@@ -19,6 +19,7 @@
 #include "DataGen_AdjointPairProductionEnergyDistributionNormConstantEvaluator.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_BremsstrahlungElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_VoidElectroatomicReaction.hpp"
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
 #include "MonteCarlo_StandardComptonProfile.hpp"
@@ -1962,89 +1963,34 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
     [reaction](const double& incoming_energy){
       return reaction->getCrossSection( incoming_energy );};
 
-  // Create the brem distribution
-  std::vector<double> energy_grid = d_forward_epr_data->getBremsstrahlungEnergyGrid();
-  std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
-      secondary_dists( energy_grid.size() );
-
-  for( size_t n = 0; n < energy_grid.size(); ++n )
-  {
-    double energy = energy_grid[n];
-
-    // Get the energy of the bremsstrahlung photon at the incoming energy
-    std::vector<double> energy_bins(
-        d_forward_epr_data->getBremsstrahlungPhotonEnergy( energy ) );
-
-    // Get the bremsstrahlung photon pdf at the incoming energy
-    std::vector<double> pdf(
-        d_forward_epr_data->getBremsstrahlungPhotonPDF( energy ) );
-
-    secondary_dists[n].reset(
-      new const Utility::TabularDistribution<Utility::LinLin>( energy_bins,
-                                                               pdf ) );
-  }
-
   // Create the scattering function
-  std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> distribution;
+  std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> distribution;
 
-  if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLIN_INTERPOLATION )
+  if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
     if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_CORRELATED_GRID )
     {
-      distribution.reset(
-        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLin> >(
-                    energy_grid,
-                    secondary_dists,
-                    1e-6,
-                    this->getElectronTabularEvaluationTolerance() ) );
+      MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+        *d_forward_epr_data,
+        distribution,
+        this->getElectronTabularEvaluationTolerance(),
+        1000 );
     }
     else if( this->getElectronTwoDGridPolicy() == MonteCarlo::CORRELATED_GRID )
     {
-      distribution.reset(
-        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::Correlated<Utility::LinLinLin> >(
-                    energy_grid,
-                    secondary_dists,
-                    1e-6,
-                    this->getElectronTabularEvaluationTolerance() ) );
+      MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::Correlated>(
+        *d_forward_epr_data,
+        distribution,
+        this->getElectronTabularEvaluationTolerance(),
+        1000 );
     }
     else if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_GRID )
     {
-      distribution.reset(
-        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LinLinLin> >(
-                    energy_grid,
-                    secondary_dists,
-                    1e-6,
-                    this->getElectronTabularEvaluationTolerance() ) );
-    }
-  }
-  else if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LOGLOGLOG_INTERPOLATION )
-  {
-    if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_CORRELATED_GRID )
-    {
-      distribution.reset(
-        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
-                    energy_grid,
-                    secondary_dists,
-                    1e-6,
-                    this->getElectronTabularEvaluationTolerance() ) );
-    }
-    else if( this->getElectronTwoDGridPolicy() == MonteCarlo::CORRELATED_GRID )
-    {
-      distribution.reset(
-        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::Correlated<Utility::LogLogLog> >(
-                    energy_grid,
-                    secondary_dists,
-                    1e-6,
-                    this->getElectronTabularEvaluationTolerance() ) );
-    }
-    else if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_GRID )
-    {
-      distribution.reset(
-        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LogLogLog> >(
-                    energy_grid,
-                    secondary_dists,
-                    1e-6,
-                    this->getElectronTabularEvaluationTolerance() ) );
+      MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::UnitBase>(
+        *d_forward_epr_data,
+        distribution,
+        this->getElectronTabularEvaluationTolerance(),
+        1000 );
     }
   }
   else
@@ -2059,14 +2005,14 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
   // Create the forward pdf evaluator
   std::function<double(const double&, const double&)> pdf_evaluator =
     [distribution](const double& incoming_energy, const double& outgoing_energy){
-      return distribution->evaluateSecondaryConditionalPDF( incoming_energy, incoming_energy - outgoing_energy); };
+      return distribution->evaluatePDF( incoming_energy, incoming_energy - outgoing_energy); };
 
   grid_generator.reset(
     new ElectronGridGenerator(
         cs_evaluator,
         pdf_evaluator,
         min_energy_gain_function,
-        energy_grid,
+        d_forward_epr_data->getBremsstrahlungEnergyGrid(),
         this->getMinElectronEnergy(),
         this->getMaxElectronEnergy(),
         this->getAdjointBremsstrahlungMinEnergyNudgeValue(),
@@ -2109,7 +2055,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
         distribution;
 
   unsigned max_number_of_iterations = 1000;
-  if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLIN_INTERPOLATION )
+  if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
     if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_CORRELATED_GRID )
     {
@@ -2119,7 +2065,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
           binding_energy,
           distribution,
           this->getForwardElectroionizationSamplingMode(),
-          this->getAdjointElectroionizationEvaluationTolerance(),
+          this->getElectronTabularEvaluationTolerance(),
           max_number_of_iterations,
           false );
     }
@@ -2131,7 +2077,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
           binding_energy,
           distribution,
           this->getForwardElectroionizationSamplingMode(),
-          this->getAdjointElectroionizationEvaluationTolerance(),
+          this->getElectronTabularEvaluationTolerance(),
           max_number_of_iterations,
           false );
     }
@@ -2143,46 +2089,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
           binding_energy,
           distribution,
           this->getForwardElectroionizationSamplingMode(),
-          this->getAdjointElectroionizationEvaluationTolerance(),
-          max_number_of_iterations,
-          false );
-    }
-  }
-  else if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LOGLOGLOG_INTERPOLATION )
-  {
-    if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_CORRELATED_GRID )
-    {
-      MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
-          *d_forward_epr_data,
-          shell,
-          binding_energy,
-          distribution,
-          this->getForwardElectroionizationSamplingMode(),
-          this->getAdjointElectroionizationEvaluationTolerance(),
-          max_number_of_iterations,
-          false );
-    }
-    else if( this->getElectronTwoDGridPolicy() == MonteCarlo::CORRELATED_GRID )
-    {
-      MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
-          *d_forward_epr_data,
-          shell,
-          binding_energy,
-          distribution,
-          this->getForwardElectroionizationSamplingMode(),
-          this->getAdjointElectroionizationEvaluationTolerance(),
-          max_number_of_iterations,
-          false );
-    }
-    else if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_GRID )
-    {
-      MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
-          *d_forward_epr_data,
-          shell,
-          binding_energy,
-          distribution,
-          this->getForwardElectroionizationSamplingMode(),
-          this->getAdjointElectroionizationEvaluationTolerance(),
+          this->getElectronTabularEvaluationTolerance(),
           max_number_of_iterations,
           false );
     }
@@ -2230,8 +2137,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
       [min_energy_loss_distribution](const double& energy){
         return min_energy_loss_distribution->evaluate(energy); };
   }
-  else if ( this->getForwardElectroionizationSamplingMode() == MonteCarlo::OUTGOING_ENERGY_SAMPLING ||
-            this->getForwardElectroionizationSamplingMode() == MonteCarlo::OUTGOING_ENERGY_RATIO_SAMPLING )
+  else if ( this->getForwardElectroionizationSamplingMode() == MonteCarlo::OUTGOING_ENERGY_SAMPLING )
   {
     // Create the min adjoint energy gain function for electroionization
     std::vector<double> max_outgoing_energy_grid( energy_grid.size() );

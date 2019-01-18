@@ -72,7 +72,7 @@ void ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory
             energy_grid[n] ) );
 
     secondary_dists[n].reset(
-      new const Utility::TabularDistribution<Utility::LinLin>( recoil_energy,
+      new const Utility::TabularDistribution<Utility::LogLog>( recoil_energy,
                                                                pdf ) );
   }
 

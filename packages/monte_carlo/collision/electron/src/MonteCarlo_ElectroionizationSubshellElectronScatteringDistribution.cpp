@@ -58,7 +58,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::setSamplingFunctio
 
       // Get the functor for the max secondary energy
       d_max_energy_functor = [this](const double& energy){
-        return this->getDistributionMaxKnockOnEnergy( energy ); };
+        return this->getPhysicalMaxKnockOnEnergy( energy ); };
 
       // The outgoing energy processor
       d_outgoing_energy_processor = [this](const double& incoming_energy, const double& outgoing_energy){
@@ -108,11 +108,11 @@ void ElectroionizationSubshellElectronScatteringDistribution::setSamplingFunctio
 
       // Get the functor for the min secondary energy
       d_min_energy_functor = [this](const double& energy){
-        return d_electroionization_shell_distribution->getLowerBoundOfSecondaryConditionalIndepVar( energy )*energy; };
+        return d_electroionization_shell_distribution->getLowerBoundOfSecondaryConditionalIndepVar( energy ); };
 
       // Get the functor for the max secondary energy
       d_max_energy_functor = [this](const double& energy){
-        return d_electroionization_shell_distribution->getUpperBoundOfSecondaryConditionalIndepVar( energy )*energy; };
+        return d_electroionization_shell_distribution->getUpperBoundOfSecondaryConditionalIndepVar( energy ); };
 
       // The outgoing energy processor
       d_outgoing_energy_processor = [this](const double& incoming_energy, const double& outgoing_energy){
@@ -187,7 +187,9 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluate(
   // evaluate the distribution
   return d_electroionization_shell_distribution->evaluate(
             incoming_energy,
-            d_outgoing_energy_processor( incoming_energy, outgoing_energy ) );
+            d_outgoing_energy_processor( incoming_energy, outgoing_energy ),
+            d_min_energy_functor,
+            d_max_energy_functor );
 }
 
 // Evaluate the PDF value for a given incoming and outgoing energy
@@ -207,7 +209,9 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
   // evaluate the distribution
   return d_electroionization_shell_distribution->evaluateSecondaryConditionalPDF(
             incoming_energy,
-            d_outgoing_energy_processor( incoming_energy, outgoing_energy ) );
+            d_outgoing_energy_processor( incoming_energy, outgoing_energy ),
+            d_min_energy_functor,
+            d_max_energy_functor );
 }
 
 // Evaluate the PDF value for a given incoming and outgoing energy
@@ -226,7 +230,9 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluateProcesse
   // evaluate the distribution
   return d_electroionization_shell_distribution->evaluateSecondaryConditionalPDF(
             incoming_energy,
-            processed_energy );
+            processed_energy,
+            d_min_energy_functor,
+            d_max_energy_functor );
 }
 
 // Evaluate the CDF value for a given incoming and outgoing energy
@@ -246,7 +252,9 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluateCDF(
   // evaluate the distribution
   return d_electroionization_shell_distribution->evaluateSecondaryConditionalCDF(
             incoming_energy,
-            d_outgoing_energy_processor( incoming_energy, outgoing_energy ) );
+            d_outgoing_energy_processor( incoming_energy, outgoing_energy ),
+            d_min_energy_functor,
+            d_max_energy_functor );
 }
 
 // Sample an energy and direction from the distribution
@@ -499,6 +507,8 @@ double ElectroionizationSubshellElectronScatteringDistribution::getKnockOnEnergy
     if ( outgoing_energy_2 <= 0.0 )
       return 0.0;
 
+    testPostcondition( outgoing_energy_2 < d_max_energy_functor( incoming_energy ) );
+
     return outgoing_energy_2;
   }
   else
@@ -566,7 +576,9 @@ double ElectroionizationSubshellElectronScatteringDistribution::sampleKnockOn(
   // Sample knock-on electron energy
   double knock_on_energy =
     d_electroionization_shell_distribution->sampleSecondaryConditional(
-      incoming_energy );
+      incoming_energy,
+      d_min_energy_functor,
+      d_max_energy_functor );
 
   if( d_limit_knock_on_energy_range )
   {
@@ -584,7 +596,9 @@ double ElectroionizationSubshellElectronScatteringDistribution::sampleOutgoingEn
   testPrecondition( incoming_energy >= d_binding_energy );
 
   // Sample electron outgoing energy
-  return d_electroionization_shell_distribution->sampleSecondaryConditional( incoming_energy );
+  return d_electroionization_shell_distribution->sampleSecondaryConditional( incoming_energy,
+  d_min_energy_functor,
+  d_max_energy_functor );
 }
 
 // Sample an outgoing energy
@@ -596,7 +610,9 @@ double ElectroionizationSubshellElectronScatteringDistribution::sampleRatio(
   // Sample electron outgoing energy
   double outgoing_energy_ratio =
       d_electroionization_shell_distribution->sampleSecondaryConditional(
-        incoming_energy );
+        incoming_energy,
+        d_min_energy_functor,
+        d_max_energy_functor );
 
   testPrecondition( outgoing_energy_ratio > 0.0 );
   testPrecondition( outgoing_energy_ratio < 1.0 );

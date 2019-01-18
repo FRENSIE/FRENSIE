@@ -37,7 +37,7 @@ public:
       const double min_energy_nudge_value = 1e-9,
       const double max_energy_nudge_value = 1e-2,
       const double convergence_tol = 0.001,
-    const double absolute_diff_tol = 1e-10,
+      const double absolute_diff_tol = 1e-10,
       const double distance_tol = 1e-8,
       const bool electron_scatter_above_max_energy_mode = true );
 
@@ -106,8 +106,8 @@ public:
     std::map<double,std::vector<double> >& outgoing_energy_grid,
     std::map<double,std::vector<double> >& evaluated_pdf,
     const double evaluation_tol,
-    const std::vector<double> primary_energy_grid,
-    const std::vector<double> adjoint_cross_sections,
+    const std::vector<double>& primary_energy_grid,
+    const std::vector<double>& adjoint_cross_sections,
     const unsigned threshold_index ) const;
 
 protected:

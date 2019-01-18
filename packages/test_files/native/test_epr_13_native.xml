@@ -2,7 +2,7 @@
 <!DOCTYPE boost_serialization>
 <boost_serialization signature="serialization::archive" version="16">
 <container class_id="0" tracking_level="1" version="0" object_id="_0">
-	<notes>This table was generated on Fri Jan 11 10:15:50 CST 2019. It is for testing only!</notes>
+	<notes>This table was generated on Fri Jan 18 12:47:57 CST 2019. It is for testing only!</notes>
 	<atomic_number>13</atomic_number>
 	<atomic_weight>2.69815000000000005e+01</atomic_weight>
 	<min_photon_energy>1.00000000000000002e-03</min_photon_energy>

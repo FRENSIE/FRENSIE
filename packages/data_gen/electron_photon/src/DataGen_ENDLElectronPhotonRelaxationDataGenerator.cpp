@@ -2241,7 +2241,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::addCrossSectionToTotalCrossSecti
 void ENDLElectronPhotonRelaxationDataGenerator::setRefinedBremsstrahlungDistributionData()
 {
   // Create a grid generator
-  Utility::GridGenerator<Utility::LinLin>
+  Utility::GridGenerator<Utility::LogLog>
     grid_generator( this->getBremsstrahlungGridConvergenceTolerance(),
                     this->getBremsstrahlungAbsoluteDifferenceTolerance(),
                     this->getBremsstrahlungDistanceTolerance() );
@@ -2392,7 +2392,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRefinedElectroionizationSubsh
   const MonteCarlo::ElectroionizationSamplingType sampling_type )
 {
   // Create a grid generator
-  Utility::GridGenerator<Utility::LinLin>
+  Utility::GridGenerator<Utility::LogLog>
     grid_generator( this->getElectroionizationGridConvergenceTolerance(),
                     this->getElectroionizationAbsoluteDifferenceTolerance(),
                     this->getElectroionizationDistanceTolerance() );

@@ -385,8 +385,8 @@ void AdjointElectronGridGenerator<TwoDInterpPolicy>::generateAndEvaluateDistribu
     std::map<double,std::vector<double> >& outgoing_energy_grid,
     std::map<double,std::vector<double> >& evaluated_pdf,
     const double evaluation_tol,
-    const std::vector<double> primary_energy_grid,
-    const std::vector<double> adjoint_cross_sections,
+    const std::vector<double>& primary_energy_grid,
+    const std::vector<double>& adjoint_cross_sections,
     const unsigned threshold_index ) const
 {
   testPrecondition( primary_energy_grid.size() > 0 );
