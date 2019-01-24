@@ -24,7 +24,7 @@ std::unique_ptr<Data::ElectronPhotonRelaxationDataContainer> data_container;
 
 std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
   native_distribution, correlated_distribution,
-  energy_loss_distribution, energy_loss_ratio_distribution;
+  outgoing_distribution, outgoing_ratio_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -52,22 +52,22 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
   FRENSIE_CHECK_SMALL( pdf, 1e-12 );
 
   pdf = native_distribution->evaluatePDF( 8.829e-2 + 3e-8, 1.0001e-08 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.110895300003332086e+07, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 6.068056113904462010e+07, 1e-6 );
 
   pdf = native_distribution->evaluatePDF( 9.12175e-2, 4.275e-4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 6.892154402763227381e+02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 6.724482506987823172e+02, 1e-12 );
 
   pdf = native_distribution->evaluatePDF( 1e-1, 1e-2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.736737571012527681e+01, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.329989493766047985e+02, 1e-6 );
 
   pdf = native_distribution->evaluatePDF( 1.0, 1.33136131511529e-1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.596981832839621696, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.570119302605399669, 1e-12 );
 
   pdf = native_distribution->evaluatePDF( 1.0, 9.71630E-02 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.38239950812861, 1e-12 );
 
   pdf = native_distribution->evaluatePDF( 1.0e5, 1.752970E+02 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 4.98650620153625E-07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 4.986499209110673768e-07, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -151,12 +151,12 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
                                knock_on_angle_cosine );
 
   // Test original electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 1.103457512858722900e-02, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 9.896613806279666283e-06, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 7.843291333231201812e-03, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 4.999999999998060704e-06, 1e-12 );
 
   // Test knock-on electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 1.127835234979567480e-03, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 1.033861937164572023e-07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 7.843291333231203546e-03, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 4.999999999998062398e-06, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -451,7 +451,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     *data_container,
     *subshells.begin(),
     binding_energy,
-    energy_loss_distribution,
+    outgoing_distribution,
     MonteCarlo::OUTGOING_ENERGY_SAMPLING,
     1e-7,
     500,
@@ -462,7 +462,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     *data_container,
     *subshells.begin(),
     binding_energy,
-    energy_loss_ratio_distribution,
+    outgoing_ratio_distribution,
     MonteCarlo::OUTGOING_ENERGY_RATIO_SAMPLING,
     1e-7,
     500,

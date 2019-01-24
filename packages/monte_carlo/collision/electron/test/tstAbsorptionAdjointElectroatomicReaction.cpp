@@ -79,13 +79,13 @@ FRENSIE_UNIT_TEST( AbsorptionAdjointElectroatomicReaction,
 FRENSIE_UNIT_TEST( AbsorptionAdjointElectroatomicReaction, getCrossSection )
 {
   double cross_section = absorption_reaction->getCrossSection( 1e-5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.420906922047235099e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.351636330534491748e+01, 1e-12 );
 
   cross_section = absorption_reaction->getCrossSection( 2e-2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.595836277843836637, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.589686778775214249, 1e-12 );
 
   cross_section = absorption_reaction->getCrossSection( 20.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 7.209446448098724702e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 7.038455025459139369e-02, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

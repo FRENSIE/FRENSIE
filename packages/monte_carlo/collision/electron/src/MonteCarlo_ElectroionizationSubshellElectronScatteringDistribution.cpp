@@ -54,7 +54,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::setSamplingFunctio
 
       // Get the functor for the min secondary energy
       d_min_energy_functor = [this](const double& energy){
-        return this->getDistributionMinKnockOnEnergy( energy ); };
+        return this->getPhysicalMinKnockOnEnergy( energy ); };
 
       // Get the functor for the max secondary energy
       d_max_energy_functor = [this](const double& energy){

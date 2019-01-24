@@ -845,10 +845,10 @@ double UnitBase<_TwoDInterpPolicy>::evaluateCDF(
         return ((*upper_bin_boundary->second).*evaluate)(norm_y_value);
       }
     }
+    else if ( y_indep_value > max_y_indep_value_with_tol )
+      return 1.0;
     else
-    {
       return 0.0;
-    }
   }
   else
   {
@@ -3731,10 +3731,10 @@ double UnitBaseCorrelated<_TwoDInterpPolicy>::evaluateCDF(
         return ((*upper_bin_boundary->second).*evaluate)(norm_y_value);
       }
     }
+    else if ( y_indep_value > max_y_indep_value_with_tol )
+      return 1.0;
     else
-    {
       return 0.0;
-    }
   }
   else
   {
