@@ -98,7 +98,7 @@ FRENSIE_UNIT_TEST( AdjointPhotoatomicReactionNativeFactory,
                             grid_searcher,
                             reactions,
                             MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
-                            MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING,
+                            MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING,
                             critical_line_energies );
 
   // Check that the reaction properties are correct
@@ -171,7 +171,7 @@ FRENSIE_UNIT_TEST( AdjointPhotoatomicReactionNativeFactory,
                             grid_searcher,
                             reactions,
                             MonteCarlo::IMPULSE_INCOHERENT_ADJOINT_MODEL,
-                            MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING,
+                            MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING,
                             critical_line_energies );
 
   FRENSIE_CHECK_EQUAL( reactions.size(), 7 );
@@ -276,7 +276,7 @@ FRENSIE_UNIT_TEST( AdjointPhotoatomicReactionNativeFactory,
                             grid_searcher,
                             reactions,
                             MonteCarlo::DB_IMPULSE_INCOHERENT_ADJOINT_MODEL,
-                            MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING,
+                            MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING,
                             critical_line_energies );
 
   FRENSIE_CHECK_EQUAL( reactions.size(), 7 );

@@ -208,10 +208,10 @@ FRENSIE_UNIT_TEST( DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDist
   // Sample 2
   fake_stream[12] = 0.77; // branch 2
   fake_stream[13] = 0.5; // select x = 0.8124038404635961
-  fake_stream[14] = 0.88; // reject mu
+  fake_stream[14] = 0.67; // reject mu
   fake_stream[15] = 0.77; // branch 2
   fake_stream[16] = 0.5; // select x = 0.8124038404635961
-  fake_stream[17] = 0.87; // accept mu
+  fake_stream[17] = 0.66; // accept mu
   fake_stream[18] = 0.5; // pz = -0.006742352771214994
   // Sample 3
   fake_stream[19] = 0.78; // branch 3
@@ -242,8 +242,8 @@ FRENSIE_UNIT_TEST( DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDist
 		    outgoing_energy,
 		    scattering_angle_cosine );
   
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.0637738530907221435, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, -0.8759615953640385, 1e-15);
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.05796125636467590325, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 0.0553851381374173, 1e-15);
   
   base_distribution_s5->sample(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
@@ -292,10 +292,10 @@ FRENSIE_UNIT_TEST( DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDist
   // Sample 2
   fake_stream[12] = 0.77; // branch 2
   fake_stream[13] = 0.5; // select x = 0.8124038404635961
-  fake_stream[14] = 0.88; // reject mu
+  fake_stream[14] = 0.67; // reject mu
   fake_stream[15] = 0.77; // branch 2
   fake_stream[16] = 0.5; // select x = 0.8124038404635961
-  fake_stream[17] = 0.87; // accept mu
+  fake_stream[17] = 0.66; // accept mu
   fake_stream[18] = 0.5; // pz = -0.006742352771214994
   // Sample 3
   fake_stream[19] = 0.78; // branch 3
@@ -329,8 +329,8 @@ FRENSIE_UNIT_TEST( DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDist
 		    scattering_angle_cosine,
                     trials );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.0637738530907221435, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, -0.8759615953640385, 1e-15);
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.05796125636467590325, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 0.0553851381374173, 1e-15);
   FRENSIE_CHECK_EQUAL( 2.0/trials, 2.0/5.0 );
   
   base_distribution_s5->sampleAndRecordTrials(
@@ -524,7 +524,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                         data_container.getSubshellBindingEnergy( 1 ),
                         occupation_number_obj_s1,
                         compton_profile_obj_s1,
-                        MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING ) );
+                        MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING ) );
 
     base_distribution_s1 = distribution_s1;
 
@@ -536,7 +536,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                         data_container.getSubshellBindingEnergy( 5 ),
                         occupation_number_obj_s5,
                         compton_profile_obj_s5,
-                        MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING ) );
+                        MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING ) );
 
     // Set the critical line energies
     std::shared_ptr<std::vector<double> >

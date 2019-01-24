@@ -287,12 +287,12 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     scattering_distribution;
 
   MonteCarlo::IncoherentAdjointPhotonScatteringDistributionNativeFactory::createSubshellDistribution(
-                            data_container,
-                            scattering_distribution,
-                            MonteCarlo::IMPULSE_INCOHERENT_ADJOINT_MODEL,
-                            MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING,
-                            20.0,
-                            Data::K_SUBSHELL );
+                    data_container,
+                    scattering_distribution,
+                    MonteCarlo::IMPULSE_INCOHERENT_ADJOINT_MODEL,
+                    MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING,
+                    20.0,
+                    Data::K_SUBSHELL );
 
   // Create the reaction
   subshell_incoherent_adjoint_reaction.reset(

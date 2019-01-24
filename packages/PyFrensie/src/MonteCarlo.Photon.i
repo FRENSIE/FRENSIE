@@ -344,13 +344,6 @@ using namespace MonteCarlo;
 //---------------------------------------------------------------------------//
 // Incoherent Adjoint Photon Scattering Distribution Native Factory Support
 //---------------------------------------------------------------------------//
-%typemap(in,numinputs=0) std::shared_ptr<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& incoherent_adjoint_distribution (std::shared_ptr<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution> temp) "$1 = &temp;"
-
-%typemap(argout) std::shared_ptr<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& incoherent_adjoint_distribution {
-  std::shared_ptr<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution > *smartresult = *$1 ? new std::shared_ptr<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution >(*$1) : 0;
-  %append_output(SWIG_NewPointerObj(SWIG_as_voidptr(smartresult), SWIGTYPE_p_std__shared_ptrT_MonteCarlo__IncoherentAdjointPhotonScatteringDistribution_t, SWIG_POINTER_OWN));
-}
-
 %extend MonteCarlo::IncoherentAdjointPhotonScatteringDistributionNativeFactory
 {
   //! Create an incoherent adjoint distribution
@@ -375,6 +368,28 @@ using namespace MonteCarlo;
     return incoherent_adjoint_distribution;
   }
 
+  //! Create an incoherent adjoint distribution
+  static std::shared_ptr<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution> createDistribution(
+                const Data::ElectronPhotonRelaxationDataContainer&
+                raw_photoatom_data,
+                const IncoherentAdjointModelType incoherent_adjoint_model,
+                const AdjointKleinNishinaSamplingType adjoint_kn_sampling,
+                const double max_energy,
+                const unsigned endf_subshell = 0u )
+  {
+    std::shared_ptr<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution> incoherent_adjoint_distribution;
+
+    MonteCarlo::IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDistribution(
+                                               raw_photoatom_data,
+                                               incoherent_adjoint_distribution,
+                                               incoherent_adjoint_model,
+                                               adjoint_kn_sampling,
+                                               max_energy,
+                                               endf_subshell );
+
+    return incoherent_adjoint_distribution;
+  }
+
   //! Create a subshell distribution
   static std::shared_ptr<MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> createSubshellDistribution(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
@@ -388,6 +403,28 @@ using namespace MonteCarlo;
 
     MonteCarlo::IncoherentAdjointPhotonScatteringDistributionNativeFactory::createSubshellDistribution(
                                                raw_adjoint_photoatom_data,
+                                               incoherent_adjoint_distribution,
+                                               incoherent_adjoint_model,
+                                               adjoint_kn_sampling,
+                                               max_energy,
+                                               endf_subshell );
+
+    return incoherent_adjoint_distribution;
+  }
+
+  //! Create a subshell distribution
+  static std::shared_ptr<MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> createSubshellDistribution(
+        const Data::ElectronPhotonRelaxationDataContainer&
+        raw_photoatom_data,
+        const IncoherentAdjointModelType incoherent_adjoint_model,
+        const AdjointKleinNishinaSamplingType adjoint_kn_sampling,
+        const double max_energy,
+        const unsigned endf_subshell )
+  {
+    std::shared_ptr<MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> incoherent_adjoint_distribution;
+
+    MonteCarlo::IncoherentAdjointPhotonScatteringDistributionNativeFactory::createSubshellDistribution(
+                                               raw_photoatom_data,
                                                incoherent_adjoint_distribution,
                                                incoherent_adjoint_model,
                                                adjoint_kn_sampling,

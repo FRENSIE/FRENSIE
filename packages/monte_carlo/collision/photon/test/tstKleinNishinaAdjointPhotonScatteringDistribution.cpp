@@ -182,10 +182,10 @@ FRENSIE_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled from
 FRENSIE_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
-                   sample_three_branch )
+                   sample_three_branch_inv )
 {
   std::unique_ptr<MonteCarlo::AdjointPhotonScatteringDistribution>
-    local_distribution = std::make_unique<MonteCarlo::KleinNishinaAdjointPhotonScatteringDistribution>( 20.0, MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING );
+    local_distribution = std::make_unique<MonteCarlo::KleinNishinaAdjointPhotonScatteringDistribution>( 20.0, MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING );
   
   double outgoing_energy, scattering_angle_cosine;
 
@@ -219,8 +219,8 @@ FRENSIE_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 		    outgoing_energy,
 		    scattering_angle_cosine );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.06289961773671575, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, -0.8759615953640385, 1e-15);
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.05643038946823926, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 0.0553851381374173, 1e-15);
 
   local_distribution->sample(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,

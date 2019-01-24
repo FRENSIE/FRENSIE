@@ -191,10 +191,10 @@ FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the adjoint Klein-Nishina distribution can be evaluated
 FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
-		   sampleAndRecordTrialsAdjointKleinNishina_three_branch )
+		   sampleAndRecordTrialsAdjointKleinNishina_three_branch_inv )
 {
   std::unique_ptr<TestIncoherentAdjointPhotonScatteringDistribution>
-    local_distribution = std::make_unique<TestIncoherentAdjointPhotonScatteringDistribution>( 20.0, MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING );
+    local_distribution = std::make_unique<TestIncoherentAdjointPhotonScatteringDistribution>( 20.0, MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING );
   
   double outgoing_energy, scattering_angle_cosine;
   MonteCarlo::AdjointPhotonScatteringDistribution::Counter trials = 0;
@@ -227,30 +227,103 @@ FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
   FRENSIE_CHECK_EQUAL( 1.0/trials, 0.5 );
 
   local_distribution->sampleAndRecordTrialsAdjointKleinNishina(
-		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
-		    outgoing_energy,
-		    scattering_angle_cosine,
-		    trials );
+        	    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
+        	    outgoing_energy,
+        	    scattering_angle_cosine,
+        	    trials );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.06289961773671575, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, -0.8759615953640385, 1e-15);
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.05643038946823926, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 0.0553851381374173, 1e-15);
   FRENSIE_CHECK_EQUAL( 2.0/trials, 2.0/3.0 );
 
   local_distribution->sampleAndRecordTrialsAdjointKleinNishina(
-		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
-		    outgoing_energy,
-		    scattering_angle_cosine,
-		    trials );
+        	    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
+        	    outgoing_energy,
+        	    scattering_angle_cosine,
+        	    trials );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.06330760990853734, 1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, -0.9283177667225548, 1e-15);
   FRENSIE_CHECK_EQUAL( 3.0/trials, 0.75 );
 
   local_distribution->sampleAndRecordTrialsAdjointKleinNishina(
+        	    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
+        	    outgoing_energy,
+        	    scattering_angle_cosine,
+        	    trials );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.056777596517404945, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine,
+                                   9.536743164284545e-06,
+                                   1e-15 );
+  FRENSIE_CHECK_EQUAL( 4.0/trials, 0.8 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint Klein-Nishina distribution can be evaluated
+FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
+		   sampleAndRecordTrialsAdjointKleinNishina_three_branch_lin )
+{
+  std::unique_ptr<TestIncoherentAdjointPhotonScatteringDistribution>
+    local_distribution = std::make_unique<TestIncoherentAdjointPhotonScatteringDistribution>( 20.0, MonteCarlo::THREE_BRANCH_LIN_MIXED_ADJOINT_KN_SAMPLING );
+  
+  double outgoing_energy, scattering_angle_cosine;
+  MonteCarlo::AdjointPhotonScatteringDistribution::Counter trials = 0;
+
+  // Set the fake stream
+  std::vector<double> fake_stream( 12 );
+  fake_stream[0] = 0.09; // branch 1
+  fake_stream[1] = 0.25; // select x = 0.9
+  fake_stream[2] = 0.89; // reject
+  fake_stream[3] = 0.09; // branch 1
+  fake_stream[4] = 0.0625; // select x = 0.95
+  fake_stream[5] = 0.842; // accept
+  fake_stream[6] = 0.75; // branch 2
+  fake_stream[7] = 0.5; // select x = 0.8124038404635961
+  fake_stream[8] = 0.76; // branch 3
+  fake_stream[9] = 0.1; // select x = 0.8071682233277445
+  fake_stream[10] = 0.99; // branch 3
+  fake_stream[11] = 0.5; // select x = 0.9000009536743164
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  local_distribution->sampleAndRecordTrialsAdjointKleinNishina(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
 		    scattering_angle_cosine,
 		    trials );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.053789358961052636, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 0.5, 1e-15 );
+  FRENSIE_CHECK_EQUAL( 1.0/trials, 0.5 );
+
+  local_distribution->sampleAndRecordTrialsAdjointKleinNishina(
+        	    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
+        	    outgoing_energy,
+        	    scattering_angle_cosine,
+        	    trials );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 5.643038946823925733e-02, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 5.538513813741730019e-02, 1e-15);
+  FRENSIE_CHECK_EQUAL( 2.0/trials, 2.0/3.0 );
+
+  local_distribution->sampleAndRecordTrialsAdjointKleinNishina(
+        	    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
+        	    outgoing_energy,
+        	    scattering_angle_cosine,
+        	    trials );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.06330760990853734, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, -0.9283177667225548, 1e-15);
+  FRENSIE_CHECK_EQUAL( 3.0/trials, 0.75 );
+
+  local_distribution->sampleAndRecordTrialsAdjointKleinNishina(
+        	    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
+        	    outgoing_energy,
+        	    scattering_angle_cosine,
+        	    trials );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.056777596517404945, 1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine,

@@ -101,10 +101,10 @@ FRENSIE_UNIT_TEST( SimulationAdjointPhotonProperties,
 {
   MonteCarlo::SimulationAdjointPhotonProperties properties;
 
-  properties.setAdjointKleinNishinaSamplingType( MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING );
+  properties.setAdjointKleinNishinaSamplingType( MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING );
 
   FRENSIE_CHECK_EQUAL( properties.getAdjointKleinNishinaSamplingType(),
-                       MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING );
+                       MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING );
 }
 
 //---------------------------------------------------------------------------//
@@ -183,7 +183,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationAdjointPhotonProperties,
     custom_properties.setIncoherentAdjointModelType(
                                      MonteCarlo::KN_INCOHERENT_ADJOINT_MODEL );
     custom_properties.setAdjointKleinNishinaSamplingType(
-                          MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING );
+                  MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING );
     custom_properties.setCriticalAdjointPhotonLineEnergies( std::vector<double>({1.0, 10.0}) );
     custom_properties.setAdjointPhotonRouletteThresholdWeight( 1e-15 );
     custom_properties.setAdjointPhotonRouletteSurvivalWeight( 1e-13 );
@@ -231,7 +231,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationAdjointPhotonProperties,
   FRENSIE_CHECK_EQUAL( custom_properties.getIncoherentAdjointModelType(),
                        MonteCarlo::KN_INCOHERENT_ADJOINT_MODEL );
   FRENSIE_CHECK_EQUAL( custom_properties.getAdjointKleinNishinaSamplingType(),
-                       MonteCarlo::THREE_BRANCH_MIXED_ADJOINT_KN_SAMPLING );
+                       MonteCarlo::THREE_BRANCH_INVERSE_MIXED_ADJOINT_KN_SAMPLING );
   FRENSIE_CHECK_EQUAL( custom_properties.getCriticalAdjointPhotonLineEnergies(),
                        std::vector<double>({1.0, 10.0}) );
   FRENSIE_CHECK_EQUAL( custom_properties.getAdjointPhotonRouletteThresholdWeight(), 1e-15 );
