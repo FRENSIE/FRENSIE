@@ -150,7 +150,7 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLoss
   for( size_t n = 0; n < energy_grid.size(); ++n )
   {
     secondary_dists[n] =
-      std::make_shared<const Utility::TabularDistribution<Utility::LogLog> >(
+      std::make_shared<const Utility::TabularDistribution<Utility::LinLin> >(
         photon_energy_data.find( energy_grid[n] )->second,
         photon_pdf_data.find( energy_grid[n] )->second );
   }

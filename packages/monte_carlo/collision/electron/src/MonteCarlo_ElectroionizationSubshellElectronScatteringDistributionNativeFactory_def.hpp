@@ -342,7 +342,7 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
       [max = processed_energy_grid[n]](double& bin){ return bin /= max;});
 
     secondary_dists[n].reset(
-      new const Utility::TabularDistribution<Utility::LogLog>(
+      new const Utility::TabularDistribution<Utility::LinLin>(
           ratio_bins,
           processed_pdf_data.find( processed_energy_grid[n] )->second ) );
   }

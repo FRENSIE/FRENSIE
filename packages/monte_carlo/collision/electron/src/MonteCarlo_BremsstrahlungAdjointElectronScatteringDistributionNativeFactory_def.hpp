@@ -65,7 +65,7 @@ void BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createEne
       raw_electroatom_data.getAdjointElectronBremsstrahlungPDF( energy_grid[n] ) );
 
     secondary_dists[n].reset(
-      new const Utility::TabularDistribution<Utility::LogLog>( outgoing_energy,
+      new const Utility::TabularDistribution<Utility::LinLin>( outgoing_energy,
                                                                pdf ) );
   }
 
