@@ -99,13 +99,18 @@ inline double WHIncoherentAdjointPhotonScatteringDistribution::evaluateScatterin
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // Calculate the outgoing energy
-  const double outgoing_energy = 
-    calculateAdjointComptonLineEnergy( incoming_energy,
-				       scattering_angle_cosine );
+  // const double outgoing_energy = 
+  //   calculateAdjointComptonLineEnergy( incoming_energy,
+  //       			       scattering_angle_cosine );
 
   // Calculate the inverse wavelength of the outgoing photon (1/cm)
+  // const ScatteringFunction::ArgumentQuantity inverse_wavelength =
+  //   outgoing_energy/(Utility::PhysicalConstants::planck_constant*
+  //                    Utility::PhysicalConstants::speed_of_light)*
+  //   Utility::Units::inverse_centimeter;
+
   const ScatteringFunction::ArgumentQuantity inverse_wavelength =
-    outgoing_energy/(Utility::PhysicalConstants::planck_constant*
+    incoming_energy/(Utility::PhysicalConstants::planck_constant*
                      Utility::PhysicalConstants::speed_of_light)*
     Utility::Units::inverse_centimeter;
 
