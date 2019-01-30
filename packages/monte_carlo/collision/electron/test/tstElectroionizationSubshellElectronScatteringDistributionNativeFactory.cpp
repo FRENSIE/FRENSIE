@@ -48,26 +48,32 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
 {
   double pdf;
 
-  pdf = native_distribution->evaluatePDF( 8.829e-2 + 1e-8, 1e-8 );
-  FRENSIE_CHECK_SMALL( pdf, 1e-12 );
+  pdf = native_distribution->evaluatePDF( 8.829e-2 + 1e-8, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.111111111111111194e+07, 1e-15 );
 
-  pdf = native_distribution->evaluatePDF( 8.829e-2 + 3e-8, 1.0001e-08 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 6.068056113904462010e+07, 1e-6 );
+  pdf = native_distribution->evaluatePDF( 8.829e-2 + 1e-8, 9e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.111111111111111194e+07, 1e-15 );
+
+  pdf = native_distribution->evaluatePDF( 8.829e-2 + 2e-7, 1e-8 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.111111111111111194e+07, 1e-15 );
+
+  pdf = native_distribution->evaluatePDF( 8.829e-2 + 3e-7, 1e-7 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 9.798137958507926669e+05, 1e-2 );
 
   pdf = native_distribution->evaluatePDF( 9.12175e-2, 4.275e-4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 6.724482506987823172e+02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 6.892154402763195549e+02, 1e-12 );
 
   pdf = native_distribution->evaluatePDF( 1e-1, 1e-2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.329989493766047985e+02, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.569441093957196927e+02, 1e-12 );
 
   pdf = native_distribution->evaluatePDF( 1.0, 1.33136131511529e-1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.570119302605399669, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.596981832839622584, 1e-12 );
 
   pdf = native_distribution->evaluatePDF( 1.0, 9.71630E-02 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.38239950812861, 1e-12 );
 
   pdf = native_distribution->evaluatePDF( 1.0e5, 1.752970E+02 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 4.986499209110673768e-07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 4.986506201539181759e-07, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -93,6 +99,17 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
   // Test knock-on electron
   FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 0.2778434545019750, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 4.056721346111550E-02, 1e-12 );
+
+  incoming_energy = 8.829e-2 + 1e-8;
+
+  // sample the electron
+  native_distribution->sample( incoming_energy,
+                               knock_on_energy,
+                               knock_on_angle_cosine );
+
+  // Test knock-on electron
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 1.839515146900281607e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 2.749999998531980456e-09, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -101,10 +118,13 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
                    sample_PrimaryAndSecondary )
 {
   // Set fake random number stream
-  std::vector<double> fake_stream( 3 );
-  fake_stream[0] = 0.5;
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 1.0-1e-15;
+  std::vector<double> fake_stream( 6 );
+  fake_stream[0] = 0.0; // Select bin to sample
+  fake_stream[1] = 0.5; // Sample knock on energy
+  fake_stream[2] = 0.0; // Select bin to sample
+  fake_stream[3] = 0.0; // Sample knock on energy
+  fake_stream[4] = 0.0; // Select bin to sample
+  fake_stream[5] = 1.0-1e-15; // Sample knock on energy
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double incoming_energy = 1.0;
@@ -120,12 +140,12 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
                                knock_on_angle_cosine );
 
   // Test original electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 0.9645918284466900, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.8711427865388850, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.645918284466902248e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 8.711427865388844394e-01, 1e-12 );
 
   // Test knock-on electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 0.2778434545019750, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 4.056721346111550E-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 2.778434545019752844e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 4.056721346111553245e-02, 1e-12 );
 
   incoming_energy = 8.829E-02 + 1e-5;
   // sample the electron
@@ -136,12 +156,12 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
                                knock_on_angle_cosine );
 
   // Test original electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 1.108646994216100704e-02, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 9.989919733568915780e-06, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 1.108647083342213097e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 9.989921339799667145e-06, 1e-12 );
 
   // Test knock-on electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 3.521684211997691072e-04, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 1.008026642720748622e-08, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 3.521403621061872384e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 1.007866019645548442e-08, 1e-12 );
 
   // sample the electron
   native_distribution->sample( incoming_energy,
@@ -431,12 +451,15 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     MonteCarlo::KNOCK_ON_SAMPLING;
 
   // Create the electroionization subshell distribution
-  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog,Utility::UnitBase>(
     *data_container,
     *subshells.begin(),
     binding_energy,
     native_distribution,
-    sampling_type );
+    sampling_type,
+    1e-7,
+    500,
+    true );
 
   // Create the electroionization subshell distribution
   MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog,Utility::Correlated>(

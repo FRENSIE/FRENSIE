@@ -73,6 +73,44 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 }
 
 //---------------------------------------------------------------------------//
+// Check the min energy
+FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
+                   getMinEnergy )
+{
+  // Get binding energy
+  double energy = ace_ionization_dist->getMinEnergy();
+  FRENSIE_CHECK_EQUAL( energy, 8.8290E-02 );
+
+  energy = unit_base_ionization_dist->getMinEnergy();
+  FRENSIE_CHECK_EQUAL( energy, 4.88e-06 );
+
+  energy = unit_correlated_ionization_dist->getMinEnergy();
+  FRENSIE_CHECK_EQUAL( energy, 4.88e-06 );
+
+  energy = correlated_ionization_dist->getMinEnergy();
+  FRENSIE_CHECK_EQUAL( energy, 4.88e-06 );
+}
+
+//---------------------------------------------------------------------------//
+// Check the max energy
+FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
+                   getMaxEnergy )
+{
+  // Get binding energy
+  double energy = ace_ionization_dist->getMaxEnergy();
+  FRENSIE_CHECK_EQUAL( energy, 1e5 );
+
+  energy = unit_base_ionization_dist->getMaxEnergy();
+  FRENSIE_CHECK_EQUAL( energy, 1e5 );
+
+  energy = unit_correlated_ionization_dist->getMaxEnergy();
+  FRENSIE_CHECK_EQUAL( energy, 1e5 );
+
+  energy = correlated_ionization_dist->getMaxEnergy();
+  FRENSIE_CHECK_EQUAL( energy, 1e5 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated for a given incoming and knock-on energy
 FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    evaluate_ace )

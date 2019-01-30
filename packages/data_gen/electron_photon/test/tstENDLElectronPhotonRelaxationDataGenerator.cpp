@@ -2122,7 +2122,7 @@ FRENSIE_CHECK_FLOATING_EQUALITY(
     data_container.getElectroionizationRecoilPDF( 1u, 1e5 );
 
   FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.front(), 7.358100066175720713e+03 );
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.back(), 3.455970031081574393e-14 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.back(), 3.455970031081575655e-14 );
   FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.size(), 128 );
 
   FRENSIE_REQUIRE( data_container.hasElectroionizationOutgoingEnergyData() );
@@ -2152,7 +2152,7 @@ FRENSIE_CHECK_FLOATING_EQUALITY(
     data_container.getElectroionizationOutgoingPDF( 1u, 1e5 );
 
   FRENSIE_CHECK_EQUAL( electroionization_outgoing_pdf.front(), 3.679050072459075636e+03 );
-  FRENSIE_CHECK_EQUAL( electroionization_outgoing_pdf.back(), 3.679039341610610791e+03 );
+  FRENSIE_CHECK_EQUAL( electroionization_outgoing_pdf.back(), 3.679039942349529611e+03 );
   FRENSIE_CHECK_EQUAL( electroionization_outgoing_pdf.size(), 255 );
 
   threshold =
@@ -2179,7 +2179,7 @@ FRENSIE_CHECK_FLOATING_EQUALITY(
 
   FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.front(), 2.766688873080677253e-09 );
   FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.back(), 5.100000000000001993e-07 );
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.size(), 13 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_energy.size(), 8 );
 
   electroionization_recoil_energy =
     data_container.getElectroionizationRecoilEnergy( 4u, 1e5 );
@@ -2193,13 +2193,13 @@ FRENSIE_CHECK_FLOATING_EQUALITY(
 
   FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.front(), 6.848969370136826765e+05 );
   FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.back(), 6.034074998400494223e+05 );
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.size(), 13 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.size(), 8 );
 
   electroionization_recoil_pdf =
     data_container.getElectroionizationRecoilPDF( 4u, 1e5 );
 
   FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.front(), 1.120929651024757477e+05 );
-  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.back(), 1.515229528268709707e-15 );
+  FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.back(), 1.515229528268709904e-15 );
   FRENSIE_CHECK_EQUAL( electroionization_recoil_pdf.size(), 143 );
 
   electroionization_outgoing_energy =
@@ -2227,7 +2227,7 @@ FRENSIE_CHECK_FLOATING_EQUALITY(
     data_container.getElectroionizationOutgoingPDF( 4u, 1e5 );
 
   FRENSIE_CHECK_EQUAL( electroionization_outgoing_pdf.front(), 5.604648351338475914e+04 );
-  FRENSIE_CHECK_EQUAL( electroionization_outgoing_pdf.back(), 5.604376516355671629e+04 );
+  FRENSIE_CHECK_EQUAL( electroionization_outgoing_pdf.back(), 5.604390205106376379e+04 );
   FRENSIE_CHECK_EQUAL( electroionization_outgoing_pdf.size(), 285 );
 
   // Check the bremsstrahlung data
@@ -2268,14 +2268,14 @@ FRENSIE_CHECK_FLOATING_EQUALITY(
     data_container.getBremsstrahlungPhotonPDF( 1e-5 );
 
   FRENSIE_CHECK_EQUAL( bremsstrahlung_photon_pdf.front(), 2.134970387897432316e+06 );
-  FRENSIE_CHECK_EQUAL( bremsstrahlung_photon_pdf.back(), 2.136140388110007189e+04 );
+  FRENSIE_CHECK_EQUAL( bremsstrahlung_photon_pdf.back(), 2.136140388110007552e+04 );
   FRENSIE_CHECK_EQUAL( bremsstrahlung_photon_pdf.size(), 17 );
 
   bremsstrahlung_photon_pdf =
     data_container.getBremsstrahlungPhotonPDF( 1e5 );
 
   FRENSIE_CHECK_EQUAL( bremsstrahlung_photon_pdf.front(), 3.649330278046014137e+05 );
-  FRENSIE_CHECK_EQUAL( bremsstrahlung_photon_pdf.back(), 5.638520429607658865e-09 );
+  FRENSIE_CHECK_EQUAL( bremsstrahlung_photon_pdf.back(), 5.638520429608712693e-09 );
   FRENSIE_CHECK_EQUAL( bremsstrahlung_photon_pdf.size(), 105 );
 
   // Check the atomic excitation data

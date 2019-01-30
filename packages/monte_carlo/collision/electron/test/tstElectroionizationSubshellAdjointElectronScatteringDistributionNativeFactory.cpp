@@ -58,15 +58,15 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 
   // Check the first bin
   pdf = native_distribution->evaluate( 1e-5, 2.3711E-5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.247478423245457293e+02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.251371137042551425e+02, 1e-12 );
 
   // Check between two bins
   pdf = native_distribution->evaluate( 1.1e-5, 0.2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 6.025094726567865183e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.811008202480227647e-01, 1e-12 );
 
   // Check the last bin
   pdf = native_distribution->evaluate( 20.0, max_energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 9.684403579857811565e+05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 9.684403582793396199e+05, 1e-12 );
 
   // Check above the last bin
   pdf = native_distribution->evaluate( 20.01, 22.1 );
@@ -86,15 +86,15 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 
   // Check the first bin
   pdf = native_distribution->evaluatePDF( 1e-5, 2.3711E-5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 6.892805808337612916e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 6.904744396932407824e+01, 1e-12 );
 
   // Check between two bins
   pdf = native_distribution->evaluatePDF( 1.1e-5, 0.2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.805406014985578775e-02, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 5.359445246223013687e-02, 1e-6 );
 
   // Check the last bin
   pdf = native_distribution->evaluatePDF( 20.0, max_energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 9.600837768912347965e+05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 9.600837771822601790e+05, 1e-12 );
 
   // Check above the last bin
   pdf = native_distribution->evaluatePDF( 20.01, 22.1 );

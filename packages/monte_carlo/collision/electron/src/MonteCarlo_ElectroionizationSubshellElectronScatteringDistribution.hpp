@@ -118,6 +118,21 @@ protected:
 
 private:
 
+  //! Evaluate the distribution between the min tabulated energy and threshold
+  double evaluateThreshold( const double incoming_energy,
+                            const double processed_outgoing_energy ) const;
+
+  //! Evaluate the PDF between the min tabulated energy and threshold
+  double evaluateThresholdPDF( const double incoming_energy,
+                               const double processed_outgoing_energy ) const;
+
+  //! Evaluate the CDF between the min tabulated energy and threshold
+  double evaluateThresholdCDF( const double incoming_energy,
+                               const double processed_outgoing_energy ) const;
+
+  //! Sample an energy between the min tabulated energy and threshold
+  double sampleThreshold( const double incoming_energy ) const;
+
   //! Set the sampling functions
   void setSamplingFunctions(const ElectroionizationSamplingType sampling_type );
 
