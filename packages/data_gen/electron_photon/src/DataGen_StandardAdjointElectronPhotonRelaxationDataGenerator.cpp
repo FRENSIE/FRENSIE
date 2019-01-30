@@ -1683,6 +1683,17 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
         cross_section,
         threshold );
 
+    /*! \details The adjoint electro-ionization cross section will need to be
+     * multiplied by a factor of 2 when using the outgoing energy sampling
+     * since there adjoint electron can be either the knock-on electron or the
+     * primary scatted electron.
+     */
+    if ( this->getForwardElectroionizationSamplingMode() == MonteCarlo::OUTGOING_ENERGY_SAMPLING )
+    {
+      for( auto&& raw_cross_section : cross_section )
+        raw_cross_section *= 2.0;
+    }
+
     // Set the cross section for the subshell
     data_container.setAdjointElectroionizationCrossSection(
       *shell,
