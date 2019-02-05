@@ -22,9 +22,13 @@ class EntityEstimator : public Estimator
 
 protected:
 
-  // Typedef for the map of entity ids and estimator moments array
-  typedef std::unordered_map<EntityId,TwoEstimatorMomentsCollection>
+  // Typedef for the map of entity ids and extended estimator moments array
+  typedef std::unordered_map<EntityId,FourEstimatorMomentsCollection>
   EntityEstimatorMomentsCollectionMap;
+
+  // Typedef for the map of entity ids and the estimator moments snapshots
+  typedef std::unordered_map<EntityId,FourEstimatorMomentsSnapshots>
+  EntityEstimatorMomentsSnapshotsMap;
 
   // Typedef for the entity norm constants map
   typedef std::unordered_map<EntityId,double> EntityNormConstMap;
@@ -36,13 +40,15 @@ public:
   EntityEstimator( const Id id,
 		   const double multiplier,
 		   const std::vector<InputEntityId>& entity_ids,
-		   const std::vector<double>& entity_norm_constants );
+		   const std::vector<double>& entity_norm_constants,
+                   const bool enable_entity_bin_snapshots );
 
   //! Constructor (for non-flux estimators)
   template<typename InputEntityId>
   EntityEstimator( const Id id,
 		   const double multiplier,
-		   const std::vector<InputEntityId>& entity_ids );
+		   const std::vector<InputEntityId>& entity_ids,
+                   const bool enable_entity_bin_snapshots );
 
   //! Destructor
   virtual ~EntityEstimator()
@@ -66,11 +72,76 @@ public:
   //! Get the total estimator bin data second moments
   Utility::ArrayView<const double> getTotalBinDataSecondMoments() const final override;
 
+  //! Get the total estimator bin data third moments
+  Utility::ArrayView<const double> getTotalBinDataThirdMoments() const final override;
+
+  //! Get the total estimator bin data fourth moments
+  Utility::ArrayView<const double> getTotalBinDataFourthMoments() const final override;
+
   //! Get the bin data first moments for an entity
   Utility::ArrayView<const double> getEntityBinDataFirstMoments( const EntityId entity_id ) const final override;
 
   //! Get the bin data second moments for an entity
   Utility::ArrayView<const double> getEntityBinDataSecondMoments( const EntityId entity_id ) const final override;
+
+  //! Get the bin data third moments for an entity
+  Utility::ArrayView<const double> getEntityBinDataThirdMoments( const EntityId entity_id ) const final override;
+
+  //! Get the bin data fourth moments for an entity
+  Utility::ArrayView<const double> getEntityBinDataFourthMoments( const EntityId entity_id ) const final override;
+
+  //! Enable snapshots on entity bins
+  void enableSnapshotsOnEntityBins() final override;
+
+  //! Check if snapshots have been enabled on entity bins
+  bool areSnapshotsOnEntityBinsEnabled() const final override;
+
+  //! Take a moment snapshot
+  void takeMomentSnapshot( const unsigned long long history ) const override;
+
+  //! Get the bin data first moment snapshots for an entity bin index
+  void getEntityBinFirstMomentSnapshots(
+                           const EntityId entity_id,
+                           const size_t bin_index,
+                           std::vector<double>& moments ) const final override;
+
+  //! Get the bin data second moment snapshots for an entity bin index
+  void getEntityBinSecondMomentSnapshots(
+                           const EntityId entity_id,
+                           const size_t bin_index,
+                           std::vector<double>& moments ) const final override;
+
+  //! Get the bin data third moment snapshots for an entity bin index
+  void getEntityBinThirdMomentSnapshots(
+                           const EntityId entity_id,
+                           const size_t bin_index,
+                           std::vector<double>& moments ) const final override;
+
+  //! Get the bin data fourth moment snapshots for an entity bin index
+  void getEntityBinFourthMomentSnapshots(
+                           const EntityId entity_id,
+                           const size_t bin_index,
+                           std::vector<double>& moments ) const final override;
+
+  //! Get the bin data first moment snapshots for an total bin index
+  void getTotalBinFirstMomentSnapshots(
+                           const size_t bin_index,
+                           std::vector<double>& moments ) const final override;
+
+  //! Get the bin data second moment snapshots for an total bin index
+  void getTotalBinSecondMomentSnapshots(
+                           const size_t bin_index,
+                           std::vector<double>& moments ) const final override;
+
+  //! Get the bin data third moment snapshots for an total bin index
+  void getTotalBinThirdMomentSnapshots(
+                           const size_t bin_index,
+                           std::vector<double>& moments ) const final override;
+
+  //! Get the bin data fourth moment snapshots for an total bin index
+  void getTotalBinFourthMomentSnapshots(
+                           const size_t bin_index,
+                           std::vector<double>& moments ) const final override;
 
   //! Reset estimator data
   void resetData() override;
@@ -111,17 +182,24 @@ protected:
 				    const std::string& entity_type ) const;
 
   //! Get the total estimator bin data
-  const Estimator::TwoEstimatorMomentsCollection& getTotalBinData() const;
+  const Estimator::FourEstimatorMomentsCollection& getTotalBinData() const;
 
   //! Get the bin data for an entity
-  const Estimator::TwoEstimatorMomentsCollection& getEntityBinData( const EntityId entity_id ) const;
+  const Estimator::FourEstimatorMomentsCollection& getEntityBinData( const EntityId entity_id ) const;
 
 private:
 
   // Initialize entity estimator moments map
   template<typename InputEntityId>
   void initializeEntityEstimatorMomentsMap(
-                                const std::vector<InputEntityId>& entity_ids );
+                                  const std::vector<InputEntityId>& entity_ids,
+                                  const bool warn_duplicate_ids );
+
+  // Initialize entity estimator snapshots map
+  template<typename InputEntityId>
+  void initializeEntityEstimatorSnapshotsMap(
+                                  const std::vector<InputEntityId>& entity_ids,
+                                  const bool warn_duplicate_ids );
 
   // Initialize entity norm constants map
   template<typename InputEntityId>
@@ -142,6 +220,12 @@ private:
 
   // Resize the estimator total collection
   void resizeEstimatorTotalCollection();
+
+  // Resize the entity estimator snapshots
+  void resizeEntityEstimatorMapSnapshots();
+
+  // Resize the entity total snapshots
+  void resizeEstimatorTotalSnapshots();
 
   // Reduce the entity collections
   void reduceEntityCollections(
@@ -170,11 +254,22 @@ private:
   // Bool that records if entity norm constants were supplied
   bool d_supplied_norm_constants;
 
-  // The estimator moments (1st,2nd) for each bin of the total
-  TwoEstimatorMomentsCollection d_estimator_total_bin_data;
+  // The estimator moments (1st,2nd,3rd,4th) for each bin of the total
+  FourEstimatorMomentsCollection d_estimator_total_bin_data;
 
-  // The estimator moments (1st,2nd) for each bin and each entity
+  // The estimator moments (1st,2nd,3rd,4th) for each bin and each entity
   EntityEstimatorMomentsCollectionMap d_entity_estimator_moments_map;
+
+  // Bool that record if entity bin moment snapshots have been enabled
+  bool d_entity_bin_snapshots_enabled;
+
+  // The estimator moments (1st,2nd,3rd,4th) snapshots for each bin of the
+  // total
+  FourEstimatorMomentsSnapshots d_estimator_total_bin_data_snapshots;
+
+  // The estimator moments (1st,2nd,3rd,4th) snapshots for each bin and
+  // each entity
+  EntityEstimatorMomentsSnapshotsMap d_entity_estimator_moments_snapshots_map;
 
   // The entity normalization constants (surface areas or cell volumes)
   EntityNormConstMap d_entity_norm_constants_map;

@@ -34,7 +34,7 @@ struct SampleMomentCollectionDataExtractor;
 /*! The sample moment collection
  * \details This represents the empty collection. It cannot be instantiated
  * directly - only the non-empty collections can instantiate it. Note that
- * this class is a variadic template class and it designed in a very similar
+ * this class is a variadic template class and is designed in a very similar
  * way to the std::tuple class. The
  * Utility::Details::SampleMomentCollectionDataExtractor class is used to
  * extract the data relating to a specific moment from the collection. This

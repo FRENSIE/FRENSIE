@@ -293,10 +293,20 @@ FRENSIE_UNIT_TEST( EntityEstimator, commitHistoryContributionToBinOfEntity )
   Utility::ArrayView<const double> entity_bin_second_moments =
     entity_estimator->getEntityBinDataSecondMoments( 0 );
 
+  Utility::ArrayView<const double> entity_bin_third_moments =
+    entity_estimator->getEntityBinDataThirdMoments( 0 );
+
+  Utility::ArrayView<const double> entity_bin_fourth_moments =
+    entity_estimator->getEntityBinDataFourthMoments( 0 );
+
   FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
                        std::vector<double>( 24, 0.5 ) );
   FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
                        std::vector<double>( 24, 0.25 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_third_moments,
+                       std::vector<double>( 24, 0.125 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_fourth_moments,
+                       std::vector<double>( 24, 0.0625 ) );
 
   entity_bin_first_moments =
     entity_estimator->getEntityBinDataFirstMoments( 1 );
@@ -304,10 +314,20 @@ FRENSIE_UNIT_TEST( EntityEstimator, commitHistoryContributionToBinOfEntity )
   entity_bin_second_moments =
     entity_estimator->getEntityBinDataSecondMoments( 1 );
 
+  entity_bin_third_moments =
+    entity_estimator->getEntityBinDataThirdMoments( 1 );
+
+  entity_bin_fourth_moments =
+    entity_estimator->getEntityBinDataFourthMoments( 1 );
+
   FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
                        std::vector<double>( 24, 0.5 ) );
   FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
                        std::vector<double>( 24, 0.25 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_third_moments,
+                       std::vector<double>( 24, 0.125 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_fourth_moments,
+                       std::vector<double>( 24, 0.0625 ) );
 
   entity_bin_first_moments =
     entity_estimator->getEntityBinDataFirstMoments( 2 );
@@ -315,10 +335,20 @@ FRENSIE_UNIT_TEST( EntityEstimator, commitHistoryContributionToBinOfEntity )
   entity_bin_second_moments =
     entity_estimator->getEntityBinDataSecondMoments( 2 );
 
+  entity_bin_third_moments =
+    entity_estimator->getEntityBinDataThirdMoments( 2 );
+
+  entity_bin_fourth_moments =
+    entity_estimator->getEntityBinDataFourthMoments( 2 );
+
   FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
                        std::vector<double>( 24, 0.5 ) );
   FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
                        std::vector<double>( 24, 0.25 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_third_moments,
+                       std::vector<double>( 24, 0.125 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_fourth_moments,
+                       std::vector<double>( 24, 0.0625 ) );
 
   entity_bin_first_moments =
     entity_estimator->getEntityBinDataFirstMoments( 3 );
@@ -326,10 +356,20 @@ FRENSIE_UNIT_TEST( EntityEstimator, commitHistoryContributionToBinOfEntity )
   entity_bin_second_moments =
     entity_estimator->getEntityBinDataSecondMoments( 3 );
 
+  entity_bin_third_moments =
+    entity_estimator->getEntityBinDataThirdMoments( 3 );
+
+  entity_bin_fourth_moments =
+    entity_estimator->getEntityBinDataFourthMoments( 3 );
+
   FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
                        std::vector<double>( 24, 0.5 ) );
   FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
                        std::vector<double>( 24, 0.25 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_third_moments,
+                       std::vector<double>( 24, 0.125 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_fourth_moments,
+                       std::vector<double>( 24, 0.0625 ) );
 
   entity_bin_first_moments =
     entity_estimator->getEntityBinDataFirstMoments( 4 );
@@ -337,62 +377,83 @@ FRENSIE_UNIT_TEST( EntityEstimator, commitHistoryContributionToBinOfEntity )
   entity_bin_second_moments =
     entity_estimator->getEntityBinDataSecondMoments( 4 );
 
+  entity_bin_third_moments =
+    entity_estimator->getEntityBinDataThirdMoments( 4 );
+
+  entity_bin_fourth_moments =
+    entity_estimator->getEntityBinDataFourthMoments( 4 );
+
   FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
                        std::vector<double>( 24, 0.5 ) );
   FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
                        std::vector<double>( 24, 0.25 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_third_moments,
+                       std::vector<double>( 24, 0.125 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_fourth_moments,
+                       std::vector<double>( 24, 0.0625 ) );
 
   // Check the entity bin data mean, re, and fom
-  std::vector<double> entity_mean, entity_relative_error, entity_figure_of_merit;
+  std::vector<double> entity_mean, entity_relative_error,
+    entity_variance_of_variance, entity_figure_of_merit;
   std::map<std::string,std::vector<double> > processed_data;
 
-  entity_estimator->getEntityBinProcessedData( 0, entity_mean, entity_relative_error, entity_figure_of_merit );
+  entity_estimator->getEntityBinProcessedData( 0, entity_mean, entity_relative_error, entity_variance_of_variance, entity_figure_of_merit );
   entity_estimator->getEntityBinProcessedData( 0, processed_data );
 
   FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, 5.0 ) );
   FRENSIE_CHECK_EQUAL( processed_data["mean"], std::vector<double>( 24, 5.0 ) );
   FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( processed_data["re"], std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_variance_of_variance, std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["vov"], std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( processed_data["fom"], std::vector<double>( 24, 0.0 ) );
 
-  entity_estimator->getEntityBinProcessedData( 1, entity_mean, entity_relative_error, entity_figure_of_merit );
+  entity_estimator->getEntityBinProcessedData( 1, entity_mean, entity_relative_error, entity_variance_of_variance, entity_figure_of_merit );
   entity_estimator->getEntityBinProcessedData( 1, processed_data );
 
   FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, 2.5 ) );
   FRENSIE_CHECK_EQUAL( processed_data["mean"], std::vector<double>( 24, 2.5 ) );
   FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( processed_data["re"], std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_variance_of_variance, std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["vov"], std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( processed_data["fom"], std::vector<double>( 24, 0.0 ) );
 
-  entity_estimator->getEntityBinProcessedData( 2, entity_mean, entity_relative_error, entity_figure_of_merit );
+  entity_estimator->getEntityBinProcessedData( 2, entity_mean, entity_relative_error, entity_variance_of_variance, entity_figure_of_merit );
   entity_estimator->getEntityBinProcessedData( 2, processed_data );
 
   FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, 5.0/3 ) );
   FRENSIE_CHECK_EQUAL( processed_data["mean"], std::vector<double>( 24, 5.0/3 ) );
   FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( processed_data["re"], std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_variance_of_variance, std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["vov"], std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( processed_data["fom"], std::vector<double>( 24, 0.0 ) );
 
-  entity_estimator->getEntityBinProcessedData( 3, entity_mean, entity_relative_error, entity_figure_of_merit );
+  entity_estimator->getEntityBinProcessedData( 3, entity_mean, entity_relative_error, entity_variance_of_variance, entity_figure_of_merit );
   entity_estimator->getEntityBinProcessedData( 3, processed_data );
 
   FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, 5.0/4 ) );
   FRENSIE_CHECK_EQUAL( processed_data["mean"], std::vector<double>( 24, 5.0/4 ) );
   FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( processed_data["re"], std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_variance_of_variance, std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["vov"], std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( processed_data["fom"], std::vector<double>( 24, 0.0 ) );
 
-  entity_estimator->getEntityBinProcessedData( 4, entity_mean, entity_relative_error, entity_figure_of_merit );
+  entity_estimator->getEntityBinProcessedData( 4, entity_mean, entity_relative_error, entity_variance_of_variance, entity_figure_of_merit );
   entity_estimator->getEntityBinProcessedData( 4, processed_data );
 
   FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, 1.0 ) );
   FRENSIE_CHECK_EQUAL( processed_data["mean"], std::vector<double>( 24, 1.0 ) );
   FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( processed_data["re"], std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_variance_of_variance, std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( processed_data["vov"], std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( processed_data["fom"], std::vector<double>( 24, 0.0 ) );
 }
@@ -419,10 +480,10 @@ FRENSIE_UNIT_TEST( EntityEstimator,
     {
       #pragma omp parallel num_threads( Utility::OpenMPProperties::getRequestedNumberOfThreads() )
       {
-	entity_estimator->commitHistoryContributionToBinOfEntity(
-			     entity_id,
-			     i,
-			     Utility::OpenMPProperties::getThreadId()+1.0 );
+        entity_estimator->commitHistoryContributionToBinOfEntity(
+        		     entity_id,
+        		     i,
+        		     Utility::OpenMPProperties::getThreadId()+1.0 );
       }
     }
   }
@@ -435,6 +496,11 @@ FRENSIE_UNIT_TEST( EntityEstimator,
 
   double moment_1 = histories*(histories+1.0)/2.0;
   double moment_2 = histories*(histories+1.0)*(2*histories+1.0)/6.0;
+  double moment_3 = (histories+1)*(histories+1)*histories*histories/4.0;
+  double moment_4 = (histories+1)*histories/2.0 +
+    7.0*(histories+1)*histories*(histories-1)/3.0 +
+    3.0*(histories+1)*histories*(histories-1)*(histories-2)/2.0 +
+    (histories+1)*histories*(histories-1)*(histories-2)*(histories-3)/5.0;
 
   // Check the entity bin data moments
   Utility::ArrayView<const double> entity_bin_first_moments =
@@ -443,10 +509,20 @@ FRENSIE_UNIT_TEST( EntityEstimator,
   Utility::ArrayView<const double> entity_bin_second_moments =
     entity_estimator->getEntityBinDataSecondMoments( 0 );
 
+  Utility::ArrayView<const double> entity_bin_third_moments =
+    entity_estimator->getEntityBinDataThirdMoments( 0 );
+
+  Utility::ArrayView<const double> entity_bin_fourth_moments =
+    entity_estimator->getEntityBinDataFourthMoments( 0 );
+
   FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
                        std::vector<double>( 24, moment_1 ) );
   FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
                        std::vector<double>( 24, moment_2 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_third_moments,
+                       std::vector<double>( 24, moment_3 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_fourth_moments,
+                       std::vector<double>( 24, moment_4 ) );
 
   entity_bin_first_moments =
     entity_estimator->getEntityBinDataFirstMoments( 1 );
@@ -454,10 +530,20 @@ FRENSIE_UNIT_TEST( EntityEstimator,
   entity_bin_second_moments =
     entity_estimator->getEntityBinDataSecondMoments( 1 );
 
+  entity_bin_third_moments =
+    entity_estimator->getEntityBinDataThirdMoments( 1 );
+
+  entity_bin_fourth_moments =
+    entity_estimator->getEntityBinDataFourthMoments( 1 );
+
   FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
                        std::vector<double>( 24, moment_1 ) );
   FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
                        std::vector<double>( 24, moment_2 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_third_moments,
+                       std::vector<double>( 24, moment_3 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_fourth_moments,
+                       std::vector<double>( 24, moment_4 ) );
 
   entity_bin_first_moments =
     entity_estimator->getEntityBinDataFirstMoments( 2 );
@@ -465,10 +551,20 @@ FRENSIE_UNIT_TEST( EntityEstimator,
   entity_bin_second_moments =
     entity_estimator->getEntityBinDataSecondMoments( 2 );
 
+  entity_bin_third_moments =
+    entity_estimator->getEntityBinDataThirdMoments( 2 );
+
+  entity_bin_fourth_moments =
+    entity_estimator->getEntityBinDataFourthMoments( 2 );
+
   FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
                        std::vector<double>( 24, moment_1 ) );
   FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
                        std::vector<double>( 24, moment_2 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_third_moments,
+                       std::vector<double>( 24, moment_3 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_fourth_moments,
+                       std::vector<double>( 24, moment_4 ) );
 
   entity_bin_first_moments =
     entity_estimator->getEntityBinDataFirstMoments( 3 );
@@ -476,10 +572,20 @@ FRENSIE_UNIT_TEST( EntityEstimator,
   entity_bin_second_moments =
     entity_estimator->getEntityBinDataSecondMoments( 3 );
 
+  entity_bin_third_moments =
+    entity_estimator->getEntityBinDataThirdMoments( 3 );
+
+  entity_bin_fourth_moments =
+    entity_estimator->getEntityBinDataFourthMoments( 3 );
+
   FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
                        std::vector<double>( 24, moment_1 ) );
   FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
                        std::vector<double>( 24, moment_2 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_third_moments,
+                       std::vector<double>( 24, moment_3 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_fourth_moments,
+                       std::vector<double>( 24, moment_4 ) );
 
   entity_bin_first_moments =
     entity_estimator->getEntityBinDataFirstMoments( 4 );
@@ -487,10 +593,20 @@ FRENSIE_UNIT_TEST( EntityEstimator,
   entity_bin_second_moments =
     entity_estimator->getEntityBinDataSecondMoments( 4 );
 
+  entity_bin_third_moments =
+    entity_estimator->getEntityBinDataThirdMoments( 4 );
+
+  entity_bin_fourth_moments =
+    entity_estimator->getEntityBinDataFourthMoments( 4 );
+
   FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
                        std::vector<double>( 24, moment_1 ) );
   FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
                        std::vector<double>( 24, moment_2 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_third_moments,
+                       std::vector<double>( 24, moment_3 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_fourth_moments,
+                       std::vector<double>( 24, moment_4 ) );
 
   double unnorm_mean = moment_1*10.0/histories;
   
@@ -500,6 +616,26 @@ FRENSIE_UNIT_TEST( EntityEstimator,
     rel_err *= histories/(histories-1.0);
 
   rel_err = std::sqrt( rel_err );
+
+  double vov = 0.0;
+
+  {
+    const double moment_1_sqr = moment_1*moment_1;
+    const double histories_sqr = histories*histories;
+    const double denom_arg = moment_2 - moment_1_sqr/histories;
+
+    if( denom_arg != 0.0 )
+    {
+      vov = (moment_4 -
+             4.0*moment_1*moment_3/histories +
+             8.0*moment_2*moment_1_sqr/histories_sqr - 
+             4.0*moment_1_sqr*moment_1_sqr/(histories_sqr*histories) -
+             moment_2*moment_2/histories)/
+        (denom_arg*denom_arg);
+    }
+    else
+      vov = 0.0;
+  }
   
   double fom = 0.0;
 
@@ -507,41 +643,47 @@ FRENSIE_UNIT_TEST( EntityEstimator,
     fom = 1.0/(rel_err*rel_err);
 
   // Check the entity bin data mean, re, and fom
-  std::vector<double> entity_mean, entity_relative_error, entity_figure_of_merit;
+  std::vector<double> entity_mean, entity_relative_error,
+    entity_variance_of_variance, entity_figure_of_merit;
 
   double mean = unnorm_mean;
-  entity_estimator->getEntityBinProcessedData( 0, entity_mean, entity_relative_error, entity_figure_of_merit );
+  entity_estimator->getEntityBinProcessedData( 0, entity_mean, entity_relative_error, entity_variance_of_variance, entity_figure_of_merit );
 
   FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, mean ) );
   FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, rel_err ) );
+  FRENSIE_CHECK_EQUAL( entity_variance_of_variance, std::vector<double>( 24, vov ) );
   FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, fom ) );
 
   mean = unnorm_mean/2.0;
-  entity_estimator->getEntityBinProcessedData( 1, entity_mean, entity_relative_error, entity_figure_of_merit );
+  entity_estimator->getEntityBinProcessedData( 1, entity_mean, entity_relative_error, entity_variance_of_variance, entity_figure_of_merit );
 
   FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, mean ) );
   FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, rel_err ) );
+  FRENSIE_CHECK_EQUAL( entity_variance_of_variance, std::vector<double>( 24, vov ) );
   FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, fom ) );
 
   mean = unnorm_mean/3.0;
-  entity_estimator->getEntityBinProcessedData( 2, entity_mean, entity_relative_error, entity_figure_of_merit );
+  entity_estimator->getEntityBinProcessedData( 2, entity_mean, entity_relative_error, entity_variance_of_variance, entity_figure_of_merit );
 
   FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, mean ) );
   FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, rel_err ) );
+  FRENSIE_CHECK_EQUAL( entity_variance_of_variance, std::vector<double>( 24, vov ) );
   FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, fom ) );
 
   mean = unnorm_mean/4.0;
-  entity_estimator->getEntityBinProcessedData( 3, entity_mean, entity_relative_error, entity_figure_of_merit );
+  entity_estimator->getEntityBinProcessedData( 3, entity_mean, entity_relative_error, entity_variance_of_variance, entity_figure_of_merit );
 
   FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, mean ) );
   FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, rel_err ) );
+  FRENSIE_CHECK_EQUAL( entity_variance_of_variance, std::vector<double>( 24, vov ) );
   FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, fom ) );
 
   mean = unnorm_mean/5.0;
-  entity_estimator->getEntityBinProcessedData( 4, entity_mean, entity_relative_error, entity_figure_of_merit );
+  entity_estimator->getEntityBinProcessedData( 4, entity_mean, entity_relative_error, entity_variance_of_variance, entity_figure_of_merit );
 
   FRENSIE_CHECK_EQUAL( entity_mean, std::vector<double>( 24, mean ) );
   FRENSIE_CHECK_EQUAL( entity_relative_error, std::vector<double>( 24, rel_err ) );
+  FRENSIE_CHECK_EQUAL( entity_variance_of_variance, std::vector<double>( 24, vov ) );
   FRENSIE_CHECK_EQUAL( entity_figure_of_merit, std::vector<double>( 24, fom ) );
 }
 
@@ -571,18 +713,29 @@ FRENSIE_UNIT_TEST( EntityEstimator, commitHistoryContributionToBinOfTotal )
   Utility::ArrayView<const double> total_bin_second_moments =
     entity_estimator->getTotalBinDataSecondMoments();
 
+  Utility::ArrayView<const double> total_bin_third_moments =
+    entity_estimator->getTotalBinDataThirdMoments();
+
+  Utility::ArrayView<const double> total_bin_fourth_moments =
+    entity_estimator->getTotalBinDataFourthMoments();
+
   FRENSIE_CHECK_EQUAL( total_bin_first_moments,
                        std::vector<double>( 24, 0.5 ) );
   FRENSIE_CHECK_EQUAL( total_bin_second_moments,
                        std::vector<double>( 24, 0.25 ) );
+  FRENSIE_CHECK_EQUAL( total_bin_third_moments,
+                       std::vector<double>( 24, 0.125 ) );
+  FRENSIE_CHECK_EQUAL( total_bin_fourth_moments,
+                       std::vector<double>( 24, 0.0625 ) );
 
   // Check the total mean, relative error, and fom
-  std::vector<double> mean, relative_error, fom;
+  std::vector<double> mean, relative_error, vov, fom;
 
-  entity_estimator->getTotalBinProcessedData( mean, relative_error, fom );
+  entity_estimator->getTotalBinProcessedData( mean, relative_error, vov, fom );
 
   FRENSIE_CHECK_EQUAL( mean, std::vector<double>( 24, 5.0/30.0 ) );
   FRENSIE_CHECK_EQUAL( relative_error, std::vector<double>( 24, 1.0 ) );
+  FRENSIE_CHECK_EQUAL( vov, std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( fom, std::vector<double>( 24, 1.0/1.5 ) );
 }
 
@@ -603,7 +756,7 @@ FRENSIE_UNIT_TEST( EntityEstimator,
     #pragma omp parallel num_threads( Utility::OpenMPProperties::getRequestedNumberOfThreads() )
     {
       entity_estimator->commitHistoryContributionToBinOfTotal(
-		        i, Utility::OpenMPProperties::getThreadId() + 1.0 );
+        	        i, Utility::OpenMPProperties::getThreadId() + 1.0 );
     }
   }
 
@@ -615,6 +768,11 @@ FRENSIE_UNIT_TEST( EntityEstimator,
 
   double moment_1 = histories*(histories+1.0)/2.0;
   double moment_2 = histories*(histories+1.0)*(2*histories+1.0)/6.0;
+  double moment_3 = (histories+1)*(histories+1)*histories*histories/4.0;
+  double moment_4 = (histories+1)*histories/2.0 +
+    7.0*(histories+1)*histories*(histories-1)/3.0 +
+    3.0*(histories+1)*histories*(histories-1)*(histories-2)/2.0 +
+    (histories+1)*histories*(histories-1)*(histories-2)*(histories-3)/5.0;
 
   // Check the total bin data moments
   Utility::ArrayView<const double> total_bin_first_moments =
@@ -623,16 +781,26 @@ FRENSIE_UNIT_TEST( EntityEstimator,
   Utility::ArrayView<const double> total_bin_second_moments =
     entity_estimator->getTotalBinDataSecondMoments();
 
+  Utility::ArrayView<const double> total_bin_third_moments =
+    entity_estimator->getTotalBinDataThirdMoments();
+
+  Utility::ArrayView<const double> total_bin_fourth_moments =
+    entity_estimator->getTotalBinDataFourthMoments();
+
   FRENSIE_CHECK_EQUAL( total_bin_first_moments,
                        std::vector<double>( 24, moment_1 ) );
   FRENSIE_CHECK_EQUAL( total_bin_second_moments,
                        std::vector<double>( 24, moment_2 ) );
+  FRENSIE_CHECK_EQUAL( total_bin_third_moments,
+                       std::vector<double>( 24, moment_3 ) );
+  FRENSIE_CHECK_EQUAL( total_bin_fourth_moments,
+                       std::vector<double>( 24, moment_4 ) );
 
   // Check the total mean, relative error, and fom
-  std::vector<double> mean, relative_error, fom;
+  std::vector<double> mean, relative_error, vov, fom;
   std::map<std::string,std::vector<double> > processed_data;
 
-  entity_estimator->getTotalBinProcessedData( mean, relative_error, fom );
+  entity_estimator->getTotalBinProcessedData( mean, relative_error, vov, fom );
   entity_estimator->getTotalBinProcessedData( processed_data );
 
   double expected_mean = moment_1*10.0/(histories*15.0);
@@ -642,6 +810,26 @@ FRENSIE_UNIT_TEST( EntityEstimator,
     expected_rel_err *= histories/(histories-1.0);
 
   expected_rel_err = std::sqrt( expected_rel_err );
+
+  double expected_vov = 0.0;
+
+  {
+    const double moment_1_sqr = moment_1*moment_1;
+    const double histories_sqr = histories*histories;
+    const double denom_arg = moment_2 - moment_1_sqr/histories;
+
+    if( denom_arg != 0.0 )
+    {
+      expected_vov = (moment_4 -
+                      4.0*moment_1*moment_3/histories +
+                      8.0*moment_2*moment_1_sqr/histories_sqr - 
+                      4.0*moment_1_sqr*moment_1_sqr/(histories_sqr*histories) -
+                      moment_2*moment_2/histories)/
+        (denom_arg*denom_arg);
+    }
+    else
+      expected_vov = 0.0;
+  }
   
   double expected_fom = 0.0;
 
@@ -652,6 +840,8 @@ FRENSIE_UNIT_TEST( EntityEstimator,
   FRENSIE_CHECK_FLOATING_EQUALITY( processed_data["mean"], std::vector<double>( 24, expected_mean ), 1e-15 );
   FRENSIE_CHECK_EQUAL( relative_error, std::vector<double>( 24, expected_rel_err ) );
   FRENSIE_CHECK_EQUAL( processed_data["re"], std::vector<double>( 24, expected_rel_err ) );
+  FRENSIE_CHECK_EQUAL( vov, std::vector<double>( 24, expected_vov ) );
+  FRENSIE_CHECK_EQUAL( processed_data["vov"], std::vector<double>( 24, expected_vov ) );
   FRENSIE_CHECK_EQUAL( fom, std::vector<double>( 24, expected_fom ) );
   FRENSIE_CHECK_EQUAL( processed_data["fom"], std::vector<double>( 24, expected_fom ) );
 }
@@ -764,9 +954,19 @@ FRENSIE_UNIT_TEST( EntityEstimator, resetData )
   Utility::ArrayView<const double> entity_bin_second_moments =
     entity_estimator->getEntityBinDataSecondMoments( 0 );
 
+  Utility::ArrayView<const double> entity_bin_third_moments =
+    entity_estimator->getEntityBinDataThirdMoments( 0 );
+
+  Utility::ArrayView<const double> entity_bin_fourth_moments =
+    entity_estimator->getEntityBinDataFourthMoments( 0 );
+
   FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
                        std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                       std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_third_moments,
+                       std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_fourth_moments,
                        std::vector<double>( 24, 0.0 ) );
 
   Utility::ArrayView<const double> total_bin_first_moments =
@@ -775,9 +975,19 @@ FRENSIE_UNIT_TEST( EntityEstimator, resetData )
   Utility::ArrayView<const double> total_bin_second_moments =
     entity_estimator->getTotalBinDataSecondMoments();
 
+  Utility::ArrayView<const double> total_bin_third_moments =
+    entity_estimator->getTotalBinDataThirdMoments();
+
+  Utility::ArrayView<const double> total_bin_fourth_moments =
+    entity_estimator->getTotalBinDataFourthMoments();
+
   FRENSIE_CHECK_EQUAL( total_bin_first_moments,
                        std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( total_bin_second_moments,
+                       std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( total_bin_third_moments,
+                       std::vector<double>( 24, 0.0 ) );
+  FRENSIE_CHECK_EQUAL( total_bin_fourth_moments,
                        std::vector<double>( 24, 0.0 ) );
 }
 
@@ -821,39 +1031,67 @@ FRENSIE_UNIT_TEST( EntityEstimator, reduceData )
     Utility::ArrayView<const double> second_moments =
       entity_estimator->getTotalBinDataSecondMoments();
 
+    Utility::ArrayView<const double> third_moments =
+      entity_estimator->getTotalBinDataThirdMoments();
+
+    Utility::ArrayView<const double> fourth_moments =
+      entity_estimator->getTotalBinDataFourthMoments();
+
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, 2*procs ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, 4*procs ) );
+    FRENSIE_CHECK_EQUAL( third_moments, std::vector<double>( 24, 8*procs ) );
+    FRENSIE_CHECK_EQUAL( fourth_moments, std::vector<double>( 24, 16*procs ) );
 
     // Check the entity bin data moments
     first_moments = entity_estimator->getEntityBinDataFirstMoments( 0 );
     second_moments = entity_estimator->getEntityBinDataSecondMoments( 0 );
+    third_moments = entity_estimator->getEntityBinDataThirdMoments( 0 );
+    fourth_moments = entity_estimator->getEntityBinDataFourthMoments( 0 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, procs ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, procs ) );
+    FRENSIE_CHECK_EQUAL( third_moments, std::vector<double>( 24, procs ) );
+    FRENSIE_CHECK_EQUAL( fourth_moments, std::vector<double>( 24, procs ) );
 
     first_moments = entity_estimator->getEntityBinDataFirstMoments( 1 );
     second_moments = entity_estimator->getEntityBinDataSecondMoments( 1 );
+    third_moments = entity_estimator->getEntityBinDataThirdMoments( 1 );
+    fourth_moments = entity_estimator->getEntityBinDataFourthMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, 0.0 ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( third_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( fourth_moments, std::vector<double>( 24, 0.0 ) );
 
     first_moments = entity_estimator->getEntityBinDataFirstMoments( 2 );
     second_moments = entity_estimator->getEntityBinDataSecondMoments( 2 );
+    third_moments = entity_estimator->getEntityBinDataThirdMoments( 2 );
+    fourth_moments = entity_estimator->getEntityBinDataFourthMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, procs ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, procs ) );
+    FRENSIE_CHECK_EQUAL( third_moments, std::vector<double>( 24, procs ) );
+    FRENSIE_CHECK_EQUAL( fourth_moments, std::vector<double>( 24, procs ) );
 
     first_moments = entity_estimator->getEntityBinDataFirstMoments( 3 );
     second_moments = entity_estimator->getEntityBinDataSecondMoments( 3 );
+    third_moments = entity_estimator->getEntityBinDataThirdMoments( 3 );
+    fourth_moments = entity_estimator->getEntityBinDataFourthMoments( 3 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, 0.0 ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( third_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( fourth_moments, std::vector<double>( 24, 0.0 ) );
 
     first_moments = entity_estimator->getEntityBinDataFirstMoments( 4 );
     second_moments = entity_estimator->getEntityBinDataSecondMoments( 4 );
+    third_moments = entity_estimator->getEntityBinDataThirdMoments( 4 );
+    fourth_moments = entity_estimator->getEntityBinDataFourthMoments( 4 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, procs ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, procs ) );
+    FRENSIE_CHECK_EQUAL( third_moments, std::vector<double>( 24, procs ) );
+    FRENSIE_CHECK_EQUAL( fourth_moments, std::vector<double>( 24, procs ) );
   }
   // Make sure that estimators on other processes were reset
   else
@@ -865,39 +1103,67 @@ FRENSIE_UNIT_TEST( EntityEstimator, reduceData )
     Utility::ArrayView<const double> second_moments =
       entity_estimator->getTotalBinDataSecondMoments();
 
+    Utility::ArrayView<const double> third_moments =
+      entity_estimator->getTotalBinDataThirdMoments();
+
+    Utility::ArrayView<const double> fourth_moments =
+      entity_estimator->getTotalBinDataFourthMoments();
+
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, 0.0 ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( third_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( fourth_moments, std::vector<double>( 24, 0.0 ) );
 
     // Check the entity bin data moments
     first_moments = entity_estimator->getEntityBinDataFirstMoments( 0 );
     second_moments = entity_estimator->getEntityBinDataSecondMoments( 0 );
+    third_moments = entity_estimator->getEntityBinDataThirdMoments( 0 );
+    fourth_moments = entity_estimator->getEntityBinDataFourthMoments( 0 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, 0.0 ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( third_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( fourth_moments, std::vector<double>( 24, 0.0 ) );
 
     first_moments = entity_estimator->getEntityBinDataFirstMoments( 1 );
     second_moments = entity_estimator->getEntityBinDataSecondMoments( 1 );
+    third_moments = entity_estimator->getEntityBinDataThirdMoments( 1 );
+    fourth_moments = entity_estimator->getEntityBinDataFourthMoments( 1 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, 0.0 ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( third_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( fourth_moments, std::vector<double>( 24, 0.0 ) );
 
     first_moments = entity_estimator->getEntityBinDataFirstMoments( 2 );
     second_moments = entity_estimator->getEntityBinDataSecondMoments( 2 );
+    third_moments = entity_estimator->getEntityBinDataThirdMoments( 2 );
+    fourth_moments = entity_estimator->getEntityBinDataFourthMoments( 2 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, 0.0 ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( third_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( fourth_moments, std::vector<double>( 24, 0.0 ) );
 
     first_moments = entity_estimator->getEntityBinDataFirstMoments( 3 );
     second_moments = entity_estimator->getEntityBinDataSecondMoments( 3 );
+    third_moments = entity_estimator->getEntityBinDataThirdMoments( 3 );
+    fourth_moments = entity_estimator->getEntityBinDataFourthMoments( 3 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, 0.0 ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( third_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( fourth_moments, std::vector<double>( 24, 0.0 ) );
 
     first_moments = entity_estimator->getEntityBinDataFirstMoments( 4 );
     second_moments = entity_estimator->getEntityBinDataSecondMoments( 4 );
+    third_moments = entity_estimator->getEntityBinDataThirdMoments( 4 );
+    fourth_moments = entity_estimator->getEntityBinDataFourthMoments( 4 );
 
     FRENSIE_CHECK_EQUAL( first_moments, std::vector<double>( 24, 0.0 ) );
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( third_moments, std::vector<double>( 24, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( fourth_moments, std::vector<double>( 24, 0.0 ) );
   }
 }
 

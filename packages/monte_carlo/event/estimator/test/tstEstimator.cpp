@@ -64,12 +64,28 @@ public:
   Utility::ArrayView<const double> getTotalBinDataSecondMoments() const final override
   { return Utility::ArrayView<const double>(); }
 
+  //! Get the total estimator bin data third moments
+  Utility::ArrayView<const double> getTotalBinDataThirdMoments() const final override
+  { return Utility::ArrayView<const double>(); }
+
+  //! Get the total estimator bin data fourth moments
+  Utility::ArrayView<const double> getTotalBinDataFourthMoments() const final override
+  { return Utility::ArrayView<const double>(); }
+
   //! Get the bin data first moments for an entity
   Utility::ArrayView<const double> getEntityBinDataFirstMoments( const uint64_t entity_id ) const final override
   { return Utility::ArrayView<const double>(); }
 
   //! Get the bin data second moments for an entity
   Utility::ArrayView<const double> getEntityBinDataSecondMoments( const uint64_t entity_id ) const final override
+  { return Utility::ArrayView<const double>(); }
+
+  //! Get the bin data third moments for an entity
+  Utility::ArrayView<const double> getEntityBinDataThirdMoments( const uint64_t entity_id ) const final override
+  { return Utility::ArrayView<const double>(); }
+
+  //! Get the bin data fourth moments for an entity
+  Utility::ArrayView<const double> getEntityBinDataFourthMoments( const uint64_t entity_id ) const final override
   { return Utility::ArrayView<const double>(); }
 
   void printSummary( std::ostream& os ) const final override

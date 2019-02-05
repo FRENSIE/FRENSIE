@@ -281,11 +281,13 @@ void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportAsVtk() c
   while( element_it != end_element_it )
   {
     // Assign the bin data
-    std::vector<double> mean, relative_error, figure_of_merit;
+    std::vector<double> mean, relative_error, variance_of_variance,
+      figure_of_merit;
 
     this->getEntityBinProcessedData( *element_it,
                                      mean,
                                      relative_error,
+                                     variance_of_variance,
                                      figure_of_merit );
 
     auto& entity_bin_mean_data = element_data_map[*element_it]["mean: "];

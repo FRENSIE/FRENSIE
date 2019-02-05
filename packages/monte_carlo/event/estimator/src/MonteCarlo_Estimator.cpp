@@ -17,6 +17,9 @@
 
 namespace MonteCarlo{
 
+// Initialize static member data
+std::shared_ptr<const std::vector<double> > Estimator::s_default_history_score_pdf_bins;
+  
 // Default constructor
 Estimator::Estimator()
   : d_id( std::numeric_limits<Id>::max() )
@@ -29,10 +32,14 @@ Estimator::Estimator( const Id id, const double multiplier )
     d_particle_types(),
     d_response_functions( 1 ),
     d_phase_space_discretization(),
+    d_moment_snapshot_history_values(),
+    d_history_score_pdf_bins( Estimator::getDefaultHistoryScorePDFBins() ),
     d_has_uncommitted_history_contribution( 1, false )
 {
   // Make sure the multiplier is valid
-  testPrecondition( multiplier > 0.0 );
+  TEST_FOR_EXCEPTION( multiplier == 0.0,
+                      std::runtime_error,
+                      "The multiplier cannot be zero!" );
 
   // Set the response function
   d_response_functions[0] = ParticleResponse::getDefault();
@@ -149,7 +156,9 @@ void Estimator::setParticleTypes( const std::vector<ParticleType>& particle_type
 void Estimator::setParticleTypes( const std::set<ParticleType>& particle_types )
 {
   // Make sure that there is at least one particle type
-  testPrecondition( particle_types.size() > 0 );
+  TEST_FOR_EXCEPTION( particle_types.size() == 0,
+                      std::runtime_error,
+                      "At least on particle type must be assigned!" );
 
   // Assign each particle type individually
   for( auto&& particle_type : particle_types )
@@ -167,6 +176,61 @@ bool Estimator::isParticleTypeAssigned( const ParticleType particle_type) const
 {
   return d_particle_types.find( particle_type ) !=
     d_particle_types.end();
+}
+
+// Get the moment snapshot history values
+const std::list<unsigned long long>& Estimator::getMomentSnapshotHistoryValues() const
+{
+  return d_moment_snapshot_history_values;
+}
+  
+// Set the history score pdf bins
+/*! \details A copy of this array will be made and stored. If you want to avoid
+ * copy overhead use the shared_ptr overload of this method.
+ */
+void Estimator::setHistoryScorePDFBins( const std::vector<double>& bins )
+{
+  this->setHistoryScorePDFBins( std::make_shared<const std::vector<double> >( bins ) );
+}
+
+// Set the history score pdf bins (shared)
+void Estimator::setHistoryScorePDFBins( const std::shared_ptr<const std::vector<double> >& bins )
+{
+  // Make sure that the bins are valid
+  testPrecondition( bins.get() );
+  
+  TEST_FOR_EXCEPTION( bins.size() <= 1,
+                      std::runtime_error,
+                      "At least one history score pdf bin needs to be "
+                      "specified!" );
+  TEST_FOR_EXCEPTION( !Utility::isSortedAscending( bins ),
+                      std::runtime_error,
+                      "The history score pdf bins need to be sorted from "
+                      "smallest bin boundary to largest!" );
+
+  this->assignHistoryScorePDFBins( bins );
+}
+
+// Get the default history score pdf bins
+const std::shared_ptr<const std::vector<double> >& Estimator::getDefaultHistoryScorePDFBins()
+{
+  // Initialize the default bins just-in-time
+  if( !s_default_history_score_pdf_bins )
+  {
+    s_default_history_score_pdf_bins = std::make_shared<const std::vector<double> >( Utility::fromString<std::vector<double> >( "{-inf, 0.0, 1e-30, 599l, 1e30, inf}" ) );
+  }
+}
+
+// Get the history score pdf bins
+const std::vector<double>& Estimator::getHistoryScorePDFBins() const
+{
+  return *d_history_score_pdf_bins;
+}
+
+// Take a moment snapshot
+void Estimator::takeMomentSnapshot( const unsigned long long history ) const
+{
+  d_moment_snapshot_history_values.push_back( history );
 }
 
 // Check if the estimator has uncommitted history contributions
@@ -193,6 +257,12 @@ void Estimator::enableThreadSupport( const unsigned num_threads )
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   d_has_uncommitted_history_contribution.resize( num_threads, false );
+}
+
+// Reset the estimator data
+void Estimator::resetData()
+{
+  d_moment_snapshot_history_values.clear();
 }
 
 // Reduce estimator data on all processes and collect on the root process
@@ -222,6 +292,7 @@ void Estimator::logSummary() const
 void Estimator::getTotalBinProcessedData(
                                    std::vector<double>& mean,
                                    std::vector<double>& relative_error,
+                                   std::vector<double>& variance_of_variance,
                                    std::vector<double>& figure_of_merit ) const
 {
   Utility::ArrayView<const double> first_moments =
@@ -230,18 +301,28 @@ void Estimator::getTotalBinProcessedData(
   Utility::ArrayView<const double> second_moments =
     this->getTotalBinDataSecondMoments();
 
+  Utility::ArrayView<const double> third_moments =
+    this->getTotalBinDataThirdMoments();
+
+  Utility::ArrayView<const double> fourth_moments =
+    this->getTotalBinDataFourthMoments();
+
   // Resize the output arrays
   mean.resize( first_moments.size() );
   relative_error.resize( first_moments.size() );
+  variance_of_variance.resize( first_moments.size() );
   figure_of_merit.resize( first_moments.size() );
 
   for( size_t i = 0; i < first_moments.size(); ++i )
   {
     this->processMoments( Utility::SampleMoment<1,double>(first_moments[i]),
                           Utility::SampleMoment<2,double>(second_moments[i]),
+                          Utility::SampleMoment<3,double>(third_moments[i]),
+                          Utility::SampleMoment<4,double>(fourth_moments[i]),
                           this->getTotalNormConstant(),
                           mean[i],
                           relative_error[i],
+                          variance_of_variance[i],
                           figure_of_merit[i] );
   }
 }
@@ -260,6 +341,7 @@ void Estimator::getTotalBinProcessedData(
   
   this->getTotalBinProcessedData( processed_data["mean"],
                                   processed_data["re"],
+                                  processed_data["vov"],
                                   processed_data["fom"] );
 }
 
@@ -273,10 +355,14 @@ void Estimator::getEntityBinProcessedData(
                                    const EntityId entity_id,
                                    std::vector<double>& mean,
                                    std::vector<double>& relative_error,
+                                   std::vector<double>& variance_of_variance,
                                    std::vector<double>& figure_of_merit ) const
 {
   // Make sure that the entity id is valid
-  testPrecondition( this->isEntityAssigned( entity_id ) );
+  TEST_FOR_EXCEPTION( !this->isEntityAssigned( entity_id ),
+                      std::runtime_error,
+                      "Entity " << entity_id << " is not assigned to "
+                      "estimator " << this->getId() << "!" );
   
   Utility::ArrayView<const double> first_moments =
     this->getEntityBinDataFirstMoments( entity_id );
@@ -284,18 +370,28 @@ void Estimator::getEntityBinProcessedData(
   Utility::ArrayView<const double> second_moments =
     this->getEntityBinDataSecondMoments( entity_id );
 
+  Utility::ArrayView<const double> third_moments =
+    this->getEntityBinDataThirdMoments( entity_id );
+
+  Utility::ArrayView<const double> fourth_moments =
+    this->getEntityBinDataFourthMoments( entity_id );
+
   // Resize the output arrays
   mean.resize( first_moments.size() );
   relative_error.resize( first_moments.size() );
+  variance_of_variance.resize( first_moments.size() );
   figure_of_merit.resize( first_moments.size() );
 
   for( size_t i = 0; i < first_moments.size(); ++i )
   {
     this->processMoments( Utility::SampleMoment<1,double>(first_moments[i]),
                           Utility::SampleMoment<2,double>(second_moments[i]),
+                          Utility::SampleMoment<3,double>(third_moments[i]),
+                          Utility::SampleMoment<4,double>(fourth_moments[i]),
                           this->getEntityNormConstant( entity_id ),
                           mean[i],
                           relative_error[i],
+                          variance_of_variance[i],
                           figure_of_merit[i] );
   }
 }
@@ -316,6 +412,7 @@ void Estimator::getEntityBinProcessedData(
   this->getEntityBinProcessedData( entity_id,
                                    processed_data["mean"],
                                    processed_data["re"],
+                                   processed_data["vov"],
                                    processed_data["fom"] );
 }
 
@@ -500,6 +597,317 @@ void Estimator::getEntityTotalProcessedData(
                                      processed_data["fom"] );
 }
 
+// Get the bin data first moment snapshots for an entity bin index
+void Estimator::getEntityBinFirstMomentSnapshots(
+                                           const EntityId entity_id,
+                                           const size_t bin_index,
+                                           std::vector<double>& moments ) const
+{ /* ... */ }
+
+// Get the bin data second moment snapshots for an entity bin index
+void Estimator::getEntityBinSecondMomentSnapshots(
+                                           const EntityId entity_id,
+                                           const size_t bin_index,
+                                           std::vector<double>& moments ) const
+{ /* ... */ }
+
+// Get the bin data third moment snapshots for an entity bin index
+void Estimator::getEntityBinThirdMomentSnapshots(
+                                           const EntityId entity_id,
+                                           const size_t bin_index,
+                                           std::vector<double>& moments ) const
+{ /* ... */ }
+
+// Get the bin data fourth moment snapshots for an entity bin index
+void Estimator::getEntityBinFourthMomentSnapshots(
+                                           const EntityId entity_id,
+                                           const size_t bin_index,
+                                           std::vector<double>& moments ) const
+{ /* ... */ }
+
+// Get the entity bin processed snapshots
+void Estimator::getEntityBinProcessedSnapshots(
+                         const EntityId entity_id,
+                         const size_t bin_index,
+                         std::vector<double>& mean_snapshots,
+                         std::vector<double>& relative_error_snapshots,
+                         std::vector<double>& variance_of_variance_snapshots,
+                         std::vector<double>& figure_of_merit_snapshots ) const
+{
+  std::vector<double> first_moments, second_moments, third_moments,
+    fourth_moments;
+
+  this->getEntityBinFirstMomentSnapshots( entity_id, bin_index, first_moments );
+  this->getEntityBinSecondMomentSnapshots( entity_id, bin_index, second_moments );
+
+  this->getEntityBinThirdMomentSnapshots( entity_id, bin_index, third_moments );
+  this->getEntityBinFourthMomentSnapshots( entity_id, bin_index, fourth_moments );
+
+  // Resize the output arrays
+  mean_snapshots.resize( first_moments.size() );
+  relative_error_snapshots.resize( first_moments.size() );
+  variance_of_variance_snapshots.resize( first_moments.size() );
+  figure_of_merit_snapshots.resize( first_moments.size() );
+
+  for( size_t i = 0; i < first_moments.size(); ++i )
+  {
+    this->processMoments( Utility::SampleMoment<1,double>(first_moments[i]),
+                          Utility::SampleMoment<2,double>(second_moments[i]),
+                          Utility::SampleMoment<3,double>(third_moments[i]),
+                          Utility::SampleMoment<4,double>(fourth_moments[i]),
+                          this->getEntityNormConstant( entity_id ),
+                          mean_snapshots[i],
+                          relative_error_snapshots[i],
+                          variance_of_variance_snapshots[i],
+                          figure_of_merit_snapshots[i] );
+  }
+}
+
+// Get the entity bin processed snapshots
+void Estimator::getEntityBinProcessedSnapshots(
+        const EntityId entity_id,
+        const size_t bin_index,
+        std::map<std::string,std::vector<double> >& processed_snapshots ) const
+{
+  processed_snapshots.clear();
+
+  this->getEntityBinProcessedSnapshots( entity_id,
+                                        bin_index,
+                                        processed_snapshots["mean"],
+                                        processed_snapshots["re"],
+                                        processed_snapshots["vov"],
+                                        processed_snapshots["fom"] );
+}
+
+// Get the bin data first moment snapshots for an total bin index
+void Estimator::getTotalBinFirstMomentSnapshots(
+                                           const size_t bin_index,
+                                           std::vector<double>& moments ) const
+{ /* ... */ }
+
+// Get the bin data second moment snapshots for an total bin index
+void Estimator::getTotalBinSecondMomentSnapshots(
+                                           const size_t bin_index,
+                                           std::vector<double>& moments ) const
+{ /* ... */ }
+
+// Get the bin data third moment snapshots for an total bin index
+void Estimator::getTotalBinThirdMomentSnapshots(
+                                           const size_t bin_index,
+                                           std::vector<double>& moments ) const
+{ /* ... */ }
+
+// Get the bin data fourth moment snapshots for an total bin index
+void Estimator::getTotalBinFourthMomentSnapshots(
+                                           const size_t bin_index,
+                                           std::vector<double>& moments ) const
+{ /* ... */ }
+
+// Get the total bin processed snapshots
+void Estimator::getTotalBinProcessedSnapshots(
+                        const size_t bin_index,
+                        std::vector<double>& mean_snapshots,
+                        std::vector<double>& relative_error_snapshots,
+                        std::vector<double>& variance_of_variance_snapshots,
+                        std::vector<double>& figure_of_merit_snapshots ) const
+{
+  std::vector<double> first_moments, second_moments, third_moments,
+    fourth_moments;
+
+  this->getTotalBinFirstMomentSnapshots( bin_index, first_moments );
+  this->getTotalBinSecondMomentSnapshots( bin_index, second_moments );
+  this->getTotalBinThirdMomentSnapshots( bin_index, third_moments );
+  this->getTotalBinFourthMomentSnapshots( bin_index, fourth_moments );
+
+  // Resize the output arrays
+  mean_snapshots.resize( first_moments.size() );
+  relative_error_snapshots.resize( first_moments.size() );
+  variance_of_variance_snapshots.resize( first_moments.size() );
+  figure_of_merit_snapshots.resize( first_moments.size() );
+
+  for( size_t i = 0; i < first_moments.size(); ++i )
+  {
+    this->processMoments( Utility::SampleMoment<1,double>(first_moments[i]),
+                          Utility::SampleMoment<2,double>(second_moments[i]),
+                          Utility::SampleMoment<3,double>(third_moments[i]),
+                          Utility::SampleMoment<4,double>(fourth_moments[i]),
+                          this->getTotalNormConstant(),
+                          mean_snapshots[i],
+                          relative_error_snapshots[i],
+                          variance_of_variance_snapshots[i],
+                          figure_of_merit_snapshots[i] );
+  }
+}
+
+// Get the entity bin processed snapshots
+void Estimator::getTotalBinProcessedSnapshots(
+        const size_t bin_index,
+        std::map<std::string,std::vector<double> >& processed_snapshots ) const
+{
+  processed_snapshots.clear();
+
+  this->getTotalBinProcessedSnapshots( bin_index,
+                                       processed_snapshots["mean"],
+                                       processed_snapshots["re"],
+                                       processed_snapshots["vov"],
+                                       processed_snapshots["fom"] );
+}
+
+// Get the total data first moment snapshots for an entity bin index
+void Estimator::getEntityTotalFirstMomentSnapshots(
+                                  const EntityId entity_id,
+                                  const size_t response_function_index,
+                                  std::vector<double>& moments ) const
+{ /* ... */ }
+
+// Get the total data second moment snapshots for an entity bin index
+void Estimator::getEntityTotalSecondMomentSnapshots(
+                                  const EntityId entity_id,
+                                  const size_t response_function_index,
+                                  std::vector<double>& moments ) const
+{ /* ... */ }
+
+// Get the total data third moment snapshots for an entity bin index
+void Estimator::getEntityTotalThirdMomentSnapshots(
+                                  const EntityId entity_id,
+                                  const size_t response_function_index,
+                                  std::vector<double>& moments ) const
+{ /* ... */ }
+
+// Get the total data fourth moment snapshots for an entity bin index
+void Estimator::getEntityTotalFourthMomentSnapshots(
+                                  const EntityId entity_id,
+                                  const size_t response_function_index,
+                                  std::vector<double>& moments ) const
+{ /* ... */ }
+
+// Get the entity bin processed snapshots
+void Estimator::getEntityTotalProcessedSnapshots(
+                        const EntityId entity_id,
+                        const size_t response_function_index,
+                        std::vector<double>& mean_snapshots,
+                        std::vector<double>& relative_error_snapshots,
+                        std::vector<double>& variance_of_variance_snapshots,
+                        std::vector<double>& figure_of_merit_snapshots ) const
+{
+  std::vector<double> first_moments, second_moments, third_moments,
+    fourth_moments;
+
+  this->getEntityTotalFirstMomentSnapshots( entity_id, response_function_index, first_moments );
+  this->getEntityTotalSecondMomentSnapshots( entity_id, response_function_index, second_moments );
+  this->getEntityTotalThirdMomentSnapshots( entity_id, response_function_index, third_moments );
+  this->getEntityTotalFourthMomentSnapshots( entity_id, response_function_index, fourth_moments );
+
+  // Resize the output arrays
+  mean_snapshots.resize( first_moments.size() );
+  relative_error_snapshots.resize( first_moments.size() );
+  variance_of_variance_snapshots.resize( first_moments.size() );
+  figure_of_merit_snapshots.resize( first_moments.size() );
+
+  for( size_t i = 0; i < first_moments.size(); ++i )
+  {
+    this->processMoments( Utility::SampleMoment<1,double>(first_moments[i]),
+                          Utility::SampleMoment<2,double>(second_moments[i]),
+                          Utility::SampleMoment<3,double>(third_moments[i]),
+                          Utility::SampleMoment<4,double>(fourth_moments[i]),
+                          this->getEntityNormConstant( entity_id ),
+                          mean_snapshots[i],
+                          relative_error_snapshots[i],
+                          variance_of_variance_snapshots[i],
+                          figure_of_merit_snapshots[i] );
+  }
+}
+
+// Get the entity bin processed snapshots
+void Estimator::getEntityTotalProcessedSnapshots(
+       const EntityId entity_id,
+       const size_t response_function_index,
+       std::map<std::string,std::vector<double> >& processed_snapshots ) const
+{
+  processed_snapshots.clear();
+  
+  this->getEntityTotalProcessedSnapshots( entity_id,
+                                          response_function_index,
+                                          processed_snapshots["mean"],
+                                          processed_snapshots["re"],
+                                          processed_snapshots["vov"],
+                                          processed_snapshots["fom"] );
+}
+
+// Get the total data first moment snapshots for a total bin index
+void Estimator::getTotalFirstMomentSnapshots(
+                                          const size_t response_function_index,
+                                          std::vector<double>& moments ) const
+{ /* ... */ }
+
+// Get the total data second moment snapshots for a total bin index
+void Estimator::getTotalSecondMomentSnapshots(
+                                          const size_t response_function_index,
+                                          std::vector<double>& moments ) const
+{ /* ... */ }
+
+// Get the total data third moment snapshots for a total bin index
+void Estimator::getTotalThirdMomentSnapshots(
+                                          const size_t response_function_index,
+                                          std::vector<double>& moments ) const
+{ /* ... */ }
+
+// Get the total data fourth moment snapshots for a total bin index
+void Estimator::getTotalFourthMomentSnapshots(
+                                          const size_t response_function_index,
+                                          std::vector<double>& moments ) const
+{ /* ... */ }
+
+// Get the total bin processed snapshots
+void Estimator::getTotalProcessedSnapshots(
+                        const size_t response_function_index,
+                        std::vector<double>& mean_snapshots,
+                        std::vector<double>& relative_error_snapshots,
+                        std::vector<double>& variance_of_variance_snapshots,
+                        std::vector<double>& figure_of_merit_snapshots ) const
+{
+  std::vector<double> first_moments, second_moments, third_moments,
+    fourth_moments;
+
+  this->getTotalFirstMomentSnapshots( response_function_index, first_moments );
+  this->getTotalSecondMomentSnapshots( response_function_index, second_moments );
+  this->getTotalThirdMomentSnapshots( response_function_index, third_moments );
+  this->getTotalFourthMomentSnapshots( response_function_index, fourth_moments );
+
+  // Resize the output arrays
+  mean_snapshots.resize( first_moments.size() );
+  relative_error_snapshots.resize( first_moments.size() );
+  variance_of_variance_snapshots.resize( first_moments.size() );
+  figure_of_merit_snapshots.resize( first_moments.size() );
+
+  for( size_t i = 0; i < first_moments.size(); ++i )
+  {
+    this->processMoments( Utility::SampleMoment<1,double>(first_moments[i]),
+                          Utility::SampleMoment<2,double>(second_moments[i]),
+                          Utility::SampleMoment<3,double>(third_moments[i]),
+                          Utility::SampleMoment<4,double>(fourth_moments[i]),
+                          this->getTotalNormConstant(),
+                          mean_snapshots[i],
+                          relative_error_snapshots[i],
+                          variance_of_variance_snapshots[i],
+                          figure_of_merit_snapshots[i] );
+  }
+}
+
+// Get the entity bin processed snapshots
+void Estimator::getTotalProcessedSnapshots(
+       const size_t response_function_index,
+       std::map<std::string,std::vector<double> >& processed_snapshots ) const
+{
+  processed_snapshots.clear();
+
+  this->getTotalProcessedSnapshots( response_function_index,
+                                    processed_snapshots["mean"],
+                                    processed_snapshots["re"],
+                                    processed_snapshots["vov"],
+                                    processed_snapshots["fom"] );
+}
+
 // Assign discretization to an estimator dimension
 void Estimator::assignDiscretization(
   const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins,
@@ -536,6 +944,18 @@ void Estimator::assignParticleType( const ParticleType particle_type )
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   d_particle_types.insert( particle_type );
+}
+
+// Assign the history score pdf bins
+/*! \details Override this method in a derived class if the class needs to
+ * allocate space for history score pdf values.
+ */
+void Estimator::assignHistoryScorePDFBins( const std::shared_ptr<const std::vector<double> >& bins )
+{
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
+
+  d_history_score_pdf_bins = bins;
 }
 
 // Get the particle types that can contribute to the estimator

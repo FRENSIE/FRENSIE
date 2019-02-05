@@ -544,10 +544,20 @@ FRENSIE_UNIT_TEST( SurfaceFluxEstimator,
   Utility::ArrayView<const double> entity_bin_second_moments =
     estimator_1_base->getEntityBinDataSecondMoments( 0 );
 
+  Utility::ArrayView<const double> entity_bin_third_moments =
+    estimator_1_base->getEntityBinDataThirdMoments( 0 );
+
+  Utility::ArrayView<const double> entity_bin_fourth_moments =
+    estimator_1_base->getEntityBinDataFourthMoments( 0 );
+
   FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
                        std::vector<double>( 16, 2.0 ) );
   FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
                        std::vector<double>( 16, 4.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_third_moments,
+                       std::vector<double>( 16, 8.0 ) );
+  FRENSIE_CHECK_EQUAL( entity_bin_fourth_moments,
+                       std::vector<double>( 16, 16.0 ) );
 
   entity_bin_first_moments = estimator_1_base->getEntityBinDataFirstMoments( 1 );
 
@@ -597,10 +607,20 @@ FRENSIE_UNIT_TEST( SurfaceFluxEstimator,
   Utility::ArrayView<const double> total_bin_second_moments =
     estimator_1_base->getTotalBinDataSecondMoments();
 
+  Utility::ArrayView<const double> total_bin_third_moments =
+    estimator_1_base->getTotalBinDataThirdMoments();
+
+  Utility::ArrayView<const double> total_bin_fourth_moments =
+    estimator_1_base->getTotalBinDataFourthMoments();
+
   FRENSIE_CHECK_EQUAL( total_bin_first_moments,
                        std::vector<double>( 16, 4.0 ) );
   FRENSIE_CHECK_EQUAL( total_bin_second_moments,
                        std::vector<double>( 16, 16.0 ) );
+  FRENSIE_CHECK_EQUAL( total_bin_third_moments,
+                       std::vector<double>( 16, 64.0 ) );
+  FRENSIE_CHECK_EQUAL( total_bin_fourth_moments,
+                       std::vector<double>( 16, 256.0 ) );
 
   total_bin_first_moments = estimator_2_base->getTotalBinDataFirstMoments();
   total_bin_second_moments = estimator_2_base->getTotalBinDataSecondMoments();
@@ -1876,10 +1896,20 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceFluxEstimator,
     Utility::ArrayView<const double> entity_bin_second_moments =
       estimator_1_base->getEntityBinDataSecondMoments( 0 );
 
+    Utility::ArrayView<const double> entity_bin_third_moments =
+      estimator_1_base->getEntityBinDataThirdMoments( 0 );
+
+    Utility::ArrayView<const double> entity_bin_fourth_moments =
+      estimator_1_base->getEntityBinDataFourthMoments( 0 );
+
     FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
                          std::vector<double>( 2, 20.0 ) );
     FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
                          std::vector<double>( 2, 400.0 ) );
+    FRENSIE_CHECK_EQUAL( entity_bin_third_moments,
+                         std::vector<double>( 2, 8000.0 ) );
+    FRENSIE_CHECK_EQUAL( entity_bin_fourth_moments,
+                         std::vector<double>( 2, 160000.0 ) );
 
     entity_bin_first_moments =
       estimator_1_base->getEntityBinDataFirstMoments( 1 );
@@ -1887,9 +1917,19 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceFluxEstimator,
     entity_bin_second_moments =
       estimator_1_base->getEntityBinDataSecondMoments( 1 );
 
+    entity_bin_third_moments =
+      estimator_1_base->getEntityBinDataThirdMoments( 1 );
+
+    entity_bin_fourth_moments =
+      estimator_1_base->getEntityBinDataFourthMoments( 1 );
+
     FRENSIE_CHECK_EQUAL( entity_bin_first_moments,
                          std::vector<double>( 2, 0.0 ) );
     FRENSIE_CHECK_EQUAL( entity_bin_second_moments,
+                         std::vector<double>( 2, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( entity_bin_third_moments,
+                         std::vector<double>( 2, 0.0 ) );
+    FRENSIE_CHECK_EQUAL( entity_bin_fourth_moments,
                          std::vector<double>( 2, 0.0 ) );
 
     // Check the total bin data moments
@@ -1899,10 +1939,20 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceFluxEstimator,
     Utility::ArrayView<const double> total_bin_second_moments =
       estimator_1_base->getTotalBinDataSecondMoments();
 
+    Utility::ArrayView<const double> total_bin_third_moments =
+      estimator_1_base->getTotalBinDataThirdMoments();
+
+    Utility::ArrayView<const double> total_bin_fourth_moments =
+      estimator_1_base->getTotalBinDataFourthMoments();
+
     FRENSIE_CHECK_EQUAL( total_bin_first_moments,
                          std::vector<double>( 2, 20.0 ) );
     FRENSIE_CHECK_EQUAL( total_bin_second_moments,
                          std::vector<double>( 2, 400.0 ) );
+    FRENSIE_CHECK_EQUAL( total_bin_third_moments,
+                         std::vector<double>( 2, 8000.0 ) );
+    FRENSIE_CHECK_EQUAL( total_bin_fourth_moments,
+                         std::vector<double>( 2, 160000.0 ) );
 
     // Check the entity total data moments
     Utility::ArrayView<const double> entity_total_first_moments =

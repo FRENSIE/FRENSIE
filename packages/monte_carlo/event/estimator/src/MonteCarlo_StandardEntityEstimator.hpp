@@ -120,7 +120,6 @@ protected:
   void printImplementation( std::ostream& os,
 			    const std::string& entity_type ) const final override;
 
-
   //! Add estimator contribution from a point of the current history
   void addPartialHistoryPointContribution(
                    const EntityId entity_id,

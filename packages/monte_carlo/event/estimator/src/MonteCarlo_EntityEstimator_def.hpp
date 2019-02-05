@@ -24,11 +24,17 @@ EntityEstimator::EntityEstimator(
                       const Id id,
                       const double multiplier,
                       const std::vector<InputEntityId>& entity_ids,
-		      const std::vector<double>& entity_norm_constants )
+		      const std::vector<double>& entity_norm_constants,
+                      const bool enable_entity_bin_snapshots )
   : Estimator( id, multiplier ),
     d_total_norm_constant( 1.0 ),
     d_supplied_norm_constants( true ),
-    d_estimator_total_bin_data( 1 )
+    d_entity_bin_snapshots_enabled( enable_entity_bin_snapshots ),
+    d_estimator_total_bin_data( 1 ),
+    d_entity_estimator_moments_map(),
+    d_estimator_total_bin_data_snapshots( 1 ),
+    d_entity_estimator_moments_snapshots_map(),
+    d_entity_norm_constants_map()
 {
   TEST_FOR_EXCEPTION( entity_ids.empty(),
                       std::runtime_error,
@@ -39,7 +45,8 @@ EntityEstimator::EntityEstimator(
                       "Every entity id must have an associated entity norm "
                       "constant!" );
   
-  this->initializeEntityEstimatorMomentsMap( entity_ids );
+  this->initializeEntityEstimatorMomentsMap( entity_ids, true );
+  this->initializeEntityEstimatorSnapshotsMap( entity_ids, false );
   this->initializeEntityNormConstantsMap( entity_ids, entity_norm_constants );
 
   // Calculate the total normalization constant
@@ -56,17 +63,23 @@ EntityEstimator::EntityEstimator(
 template<typename InputEntityId>
 EntityEstimator::EntityEstimator( const Id id,
                                   const double multiplier,
-                                  const std::vector<InputEntityId>& entity_ids )
+                                  const std::vector<InputEntityId>& entity_ids,
+                                  const bool enable_entity_bin_snapshots )
   : Estimator( id, multiplier ),
     d_total_norm_constant( 1.0 ),
-    d_supplied_norm_constants( false ),
-    d_estimator_total_bin_data( 1 )
+    d_supplied_norm_constants( enable_entity_bin_snapshots ),
+    d_estimator_total_bin_data( 1 ),
+    d_entity_estimator_moments_map(),
+    d_estimator_total_bin_data_snapshots( 1 ),
+    d_entity_estimator_moments_snapshots_map(),
+    d_entity_norm_constants_map()
 {
   TEST_FOR_EXCEPTION( entity_ids.empty(),
                       std::runtime_error,
                       "At least one entity id must be specified!" );
   
-  this->initializeEntityEstimatorMomentsMap( entity_ids );
+  this->initializeEntityEstimatorMomentsMap( entity_ids, true );
+  this->initializeEntityEstimatorSnapshotsMap( entity_ids, false );
   this->initializeEntityNormConstantsMap( entity_ids );
 
   // Initialize the total bin data
@@ -76,7 +89,8 @@ EntityEstimator::EntityEstimator( const Id id,
 // Initialize entity estimator moments map
 template<typename InputEntityId>
 void EntityEstimator::initializeEntityEstimatorMomentsMap(
-                                 const std::vector<InputEntityId>& entity_ids )
+                                  const std::vector<InputEntityId>& entity_ids,
+                                  const bool warn_duplicate_ids )
 {
   // Make sure there is at least one entity id
   testPrecondition( entity_ids.size() > 0 );
@@ -90,7 +104,7 @@ void EntityEstimator::initializeEntityEstimatorMomentsMap(
                                         this->getNumberOfBins()*
                                         this->getNumberOfResponseFunctions() );
     }
-    else
+    else if( warn_duplicate_ids )
     {
       FRENSIE_LOG_TAGGED_WARNING( "Estimator",
                                   "entity id " << entity_ids[i] <<
@@ -98,6 +112,39 @@ void EntityEstimator::initializeEntityEstimatorMomentsMap(
                                   "estimator " << this->getId() <<
                                   ". All but the first occurrence will be "
                                   "ignored." );
+    }
+  }
+}
+
+// Initialize entity estimator snapshots map
+template<typename InputEntityId>
+void EntityEstimator::initializeEntityEstimatorSnapshotsMap(
+                                  const std::vector<InputEntityId>& entity_ids,
+                                  const bool warn_duplicate_ids )
+{
+  // Make sure there is at least one entity id
+  testPrecondition( entity_ids.size() > 0 );
+
+  if( d_entity_bin_snapshots_enabled )
+  {
+    for( size_t i = 0; i < entity_ids.size(); ++i )
+    {
+      // Ignore duplicate entity ids
+      if( d_entity_estimator_moments_snapshots_map.count( entity_ids[i] ) == 0 )
+      {
+        d_entity_estimator_moments_snapshots_map[entity_ids[i]].resize(
+                                        this->getNumberOfBins()*
+                                        this->getNumberOfResponseFunctions() );
+      }
+      else if( warn_duplicate_ids )
+      {
+        FRENSIE_LOG_TAGGED_WARNING( "Estimator",
+                                    "entity id " << entity_ids[i] <<
+                                    " has been specified more than once in "
+                                    "estimator " << this->getId() <<
+                                    ". All but the first occurrence will be "
+                                    "ignored." );
+      }
     }
   }
 }
@@ -149,6 +196,9 @@ void EntityEstimator::serialize( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_NVP( d_supplied_norm_constants );
   ar & BOOST_SERIALIZATION_NVP( d_estimator_total_bin_data );
   ar & BOOST_SERIALIZATION_NVP( d_entity_estimator_moments_map );
+  ar & BOOST_SERIALIZATION_NVP( d_entity_bin_snapshots_enabled );
+  ar & BOOST_SERIALIZATION_NVP( d_estimator_total_bin_data_snapshots );
+  ar & BOOST_SERIALIZATION_NVP( d_entity_estimator_moments_snapshots_map );
   ar & BOOST_SERIALIZATION_NVP( d_entity_norm_constants_map );
 }
 

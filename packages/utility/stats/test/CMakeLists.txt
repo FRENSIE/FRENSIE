@@ -6,6 +6,9 @@ FRENSIE_ADD_TEST(SampleMoment)
 FRENSIE_ADD_TEST_EXECUTABLE(SampleMomentCollection DEPENDS tstSampleMomentCollection.cpp)
 FRENSIE_ADD_TEST(SampleMomentCollection)
 
+FRENSIE_ADD_TEST_EXECUTABLE(SampleMomentCollectionSnapshots DEPENDS tstSampleMomentCollectionSnapshots.cpp)
+FRENSIE_ADD_TEST(SampleMomentCollectionSnapshots)
+
 FRENSIE_ADD_TEST_EXECUTABLE(Measurement DEPENDS tstMeasurement.cpp)
 FRENSIE_ADD_TEST(Measurement)
 
