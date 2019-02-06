@@ -1198,6 +1198,28 @@ void ENDLElectronPhotonRelaxationDataGenerator::createSubshellImpulseApproxIncoh
 void ENDLElectronPhotonRelaxationDataGenerator::setElectronData()
 {
 //---------------------------------------------------------------------------//
+// Set Electron Cross Section Data Data
+//---------------------------------------------------------------------------//
+
+  FRENSIE_LOG_NOTIFICATION( " Setting the electron cross section data:" );
+  FRENSIE_FLUSH_ALL_LOGS();
+
+  // Create the electron elastic data evaluator
+  ElectronElasticDataEvaluator elastic_evaluator(
+                                      d_endl_data_container,
+                                      this->getMinElectronEnergy(),
+                                      this->getMaxElectronEnergy(),
+                                      this->getCutoffAngleCosine(),
+                                      this->getNumberOfMomentPreservingAngles(),
+                                      this->getTabularEvaluationTolerance(),
+                                      this->getElectronTwoDGridPolicy(),
+                                      this->getElectronTwoDInterpPolicy(),
+                                      this->getElectronElasticSamplingMethod(),
+                                      true );
+
+  this->setElectronCrossSectionsData( elastic_evaluator );
+
+//---------------------------------------------------------------------------//
 // Set Elastic Data
 //---------------------------------------------------------------------------//
   FRENSIE_LOG_PARTIAL_NOTIFICATION( " Setting the " <<
@@ -1211,19 +1233,6 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronData()
   // Set the cutoff elastic scattering interpolation policy
   data_container.setCutoffElasticInterpPolicy( "Lin-Lin" );
 
-  // Create the electron elastic data evaluator
-  ElectronElasticDataEvaluator elastic_evaluator(
-                                      d_endl_data_container,
-                                      this->getMinElectronEnergy(),
-                                      this->getMaxElectronEnergy(),
-                                      this->getCutoffAngleCosine(),
-                                      this->getNumberOfMomentPreservingAngles(),
-                                      this->getTabularEvaluationTolerance(),
-                                      this->getElectronTwoDGridPolicy(),
-                                      this->getElectronTwoDInterpPolicy(),
-                                      MonteCarlo::MODIFIED_TWO_D_UNION,
-                                      false );
-
   // Set elastic angular distribution
   std::vector<double> angular_energy_grid;
   std::map<double,std::vector<double> > elastic_angle, elastic_pdf;
@@ -1231,6 +1240,9 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronData()
   // Set the elastic moment preserving data
   std::vector<double> moment_preserving_cross_section_reduction;
   std::map<double,std::vector<double> > moment_preserving_angles, moment_preserving_weights;
+
+  if( this->isRefineSecondaryElectronGridsModeOn() )
+    angular_energy_grid = data_container.getElectronEnergyGrid();
 
   elastic_evaluator.evaluateElasticSecondaryDistribution(
                           angular_energy_grid,
@@ -1263,15 +1275,6 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronData()
   }
 
 //---------------------------------------------------------------------------//
-// Set Electron Cross Section Data Data
-//---------------------------------------------------------------------------//
-
-  FRENSIE_LOG_NOTIFICATION( " Setting the electron cross section data:" );
-  FRENSIE_FLUSH_ALL_LOGS();
-
-  this->setElectronCrossSectionsData( elastic_evaluator );
-
-//---------------------------------------------------------------------------//
 // Set Electroionization Data
 //---------------------------------------------------------------------------//
   FRENSIE_LOG_PARTIAL_NOTIFICATION( " Setting the " <<
@@ -1290,7 +1293,6 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronData()
 
     this->setRefinedElectroionizationSubshellDistributionData( MonteCarlo::OUTGOING_ENERGY_SAMPLING );
   }
-
   else
   {
     // Loop through electroionization data for every subshell

@@ -2045,7 +2045,7 @@ FRENSIE_CHECK_FLOATING_EQUALITY(
 
   FRENSIE_CHECK_EQUAL( angular_grid.front(), 1.0e-5 );
   FRENSIE_CHECK_EQUAL( angular_grid.back(), 1.0e+5 );
-  FRENSIE_CHECK_EQUAL( angular_grid.size(), 16 );
+  FRENSIE_CHECK_EQUAL( angular_grid.size(), 354 );
 
   std::vector<double> elastic_angles =
     data_container.getCutoffElasticAngles(1.0e-5);

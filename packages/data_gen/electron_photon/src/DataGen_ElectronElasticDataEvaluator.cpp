@@ -424,6 +424,9 @@ bool ElectronElasticDataEvaluator::isGenerateNewDistributionAtMinAndMaxEnergyOn(
 }
 
 // Evaluate the electron elastic secondary distribution
+/*! \details Secondary distributions will be evaluated on the angular grid. If
+ *  the angular energy grid is empty the endl energy grid points will be used.
+ */
 void ElectronElasticDataEvaluator::evaluateElasticSecondaryDistribution(
   std::vector<double>& angular_energy_grid,
   std::map<double,std::vector<double> >& elastic_angle,
@@ -432,11 +435,22 @@ void ElectronElasticDataEvaluator::evaluateElasticSecondaryDistribution(
   std::map<double,std::vector<double> >& moment_preserving_angles,
   std::map<double,std::vector<double> >& moment_preserving_weights ) const
 {
-  // Evaluate the analog data
-  this->evaluateAnalogElasticSecondaryDistribution(
-      angular_energy_grid,
-      elastic_angle,
-      elastic_pdf );
+  if( angular_energy_grid.size() < 2 )
+  {
+    // Evaluate the analog data
+    this->evaluateAnalogElasticSecondaryDistribution(
+        angular_energy_grid,
+        elastic_angle,
+        elastic_pdf );
+  }
+  else
+  {
+    // Evaluate the analog data on the given angular grid
+    this->evaluateAnalogElasticSecondaryDistributionInPlace(
+        angular_energy_grid,
+        elastic_angle,
+        elastic_pdf );
+  }
 
   // Check if moment preserving data can be generated
   if ( this->getCutoffAngleCosine() > 0.999999 ||
@@ -836,6 +850,130 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistribution(
       elastic_angle[*energy_bin] = d_elastic_angle.at(*energy_bin);
       elastic_pdf[*energy_bin] = d_elastic_pdf.at(*energy_bin);
     }
+  }
+}
+
+// Evaluate the electron analog elastic secondary distribution on the angular energy grid
+void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistributionInPlace(
+  const std::vector<double>& angular_energy_grid,
+  std::map<double,std::vector<double> >& elastic_angle,
+  std::map<double,std::vector<double> >& elastic_pdf ) const
+{
+  // Make sure the angular_energy_grid is valid
+  testPrecondition( angular_energy_grid.size() > 1 );
+  testPrecondition( angular_energy_grid.front() == d_min_energy );
+  testPrecondition( angular_energy_grid.back() == d_max_energy );
+
+  // Make sure the secondary grids are clear
+  elastic_angle.clear();
+  elastic_pdf.clear();
+
+  // Create new distribution at the energy
+  for( auto&& energy : angular_energy_grid )
+  {
+    std::vector<double> angles, pdf;
+    double max_cutoff_angle_cosine = 1.0;
+
+    // Get the angular grid and pdf at the energy
+    if( d_two_d_grid == MonteCarlo::DIRECT_GRID ||
+        d_two_d_grid == MonteCarlo::UNIT_BASE_GRID )
+    {
+      if ( d_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
+      {
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogNudgedLogCosLog,Utility::Direct>(
+          angles,
+          pdf,
+          d_elastic_angle,
+          d_elastic_pdf,
+          energy,
+          max_cutoff_angle_cosine,
+          d_tabular_evaluation_tol );
+      }
+      else if ( d_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
+      {
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Direct>(
+          angles,
+          pdf,
+          d_elastic_angle,
+          d_elastic_pdf,
+          energy,
+          max_cutoff_angle_cosine,
+          d_tabular_evaluation_tol );
+      }
+      else if ( d_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
+      {
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Direct>(
+          angles,
+          pdf,
+          d_elastic_angle,
+          d_elastic_pdf,
+          energy,
+          max_cutoff_angle_cosine,
+          d_tabular_evaluation_tol );
+      }
+      else
+      {
+        THROW_EXCEPTION( std::runtime_error,
+                          "the desired 2D interpolation policy " <<
+                          d_two_d_interp <<
+                          " is currently not supported!" );
+      }
+    }
+    else if( d_two_d_grid == MonteCarlo::CORRELATED_GRID ||
+             d_two_d_grid == MonteCarlo::UNIT_BASE_CORRELATED_GRID )
+    {
+      if ( d_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
+      {
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogNudgedLogCosLog,Utility::Correlated>(
+          angles,
+          pdf,
+          d_elastic_angle,
+          d_elastic_pdf,
+          energy,
+          max_cutoff_angle_cosine,
+          d_tabular_evaluation_tol );
+      }
+      else if ( d_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
+      {
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
+          angles,
+          pdf,
+          d_elastic_angle,
+          d_elastic_pdf,
+          energy,
+          max_cutoff_angle_cosine,
+          d_tabular_evaluation_tol );
+      }
+      else if ( d_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
+      {
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
+          angles,
+          pdf,
+          d_elastic_angle,
+          d_elastic_pdf,
+          energy,
+          max_cutoff_angle_cosine,
+          d_tabular_evaluation_tol );
+      }
+      else
+      {
+        THROW_EXCEPTION( std::runtime_error,
+                          "the desired 2D interpolation policy " <<
+                          d_two_d_interp <<
+                          " is currently not supported!" );
+      }
+    }
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                        "the desired 2D grid policy " <<
+                        d_two_d_grid <<
+                        " is currently not supported!" );
+    }
+
+    // Set the distribution at the min energy
+    elastic_angle[energy] = angles;
+    elastic_pdf[energy] = pdf;
   }
 }
 

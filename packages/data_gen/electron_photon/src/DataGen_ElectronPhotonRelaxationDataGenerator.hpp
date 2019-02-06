@@ -15,6 +15,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_TwoDInterpolationType.hpp"
 #include "MonteCarlo_TwoDGridType.hpp"
+#include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "Data_ElectronPhotonRelaxationVolatileDataContainer.hpp"
 #include "Utility_GridGenerator.hpp"
 
@@ -154,6 +155,12 @@ public:
   //! Return if the refine secondary electron grids mode is on (default off)
   bool isRefineSecondaryElectronGridsModeOn();
 
+  //! Set the electron elastic sampling method (MODIFIED_TWO_D_UNION by default)
+  void setElectronElasticSamplingMethod( MonteCarlo::CoupledElasticSamplingMethod sampling );
+
+  //! Return the electron elastic sampling method
+  MonteCarlo::CoupledElasticSamplingMethod getElectronElasticSamplingMethod() const;
+
   //! Set the bremsstrahlung cross section evaluation tolerance
   void setBremsstrahlungEvaluationTolerance( const double evaluation_tol );
 
@@ -257,6 +264,9 @@ private:
 
   // The refine secondary electron grid mode bollean
   bool d_refine_secondary_electron_grid_mode;
+
+  // The electron elastic sampling method
+  MonteCarlo::CoupledElasticSamplingMethod d_elastic_sampling_method;
 
   // The electron TwoDInterpPolicy (LogLogLog - default)
   MonteCarlo::TwoDInterpolationType d_two_d_interp;

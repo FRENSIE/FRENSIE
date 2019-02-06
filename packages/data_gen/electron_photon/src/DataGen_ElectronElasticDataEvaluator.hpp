@@ -169,6 +169,12 @@ protected:
     std::map<double,std::vector<double> >& elastic_angle,
     std::map<double,std::vector<double> >& elastic_pdf ) const;
 
+  // Evaluate the electron analog elastic secondary distribution on the angular energy grid
+  void evaluateAnalogElasticSecondaryDistributionInPlace(
+    const std::vector<double>& angular_energy_grid,
+    std::map<double,std::vector<double> >& elastic_angle,
+    std::map<double,std::vector<double> >& elastic_pdf ) const;
+
   // Evaluate the electron moment preserving elastic secondary distribution
   void evaluateMomentPreservingElasticData(
     const std::vector<double>& angular_energy_grid,
