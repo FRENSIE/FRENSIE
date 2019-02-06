@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_LINEAR_GRID_GENERATOR_DEF_HPP
-#define UTILITY_LINEAR_GRID_GENERATOR_DEF_HPP
+#ifndef UTILITY_GRID_GENERATOR_DEF_HPP
+#define UTILITY_GRID_GENERATOR_DEF_HPP
 
 // Std Lib Includes
 #include <deque>
@@ -605,8 +605,8 @@ EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( GridGenerator<Utility::LogLog> );
 
 } // end Utility namespace
 
-#endif // end UTILITY_LINEAR_GRID_GENERATOR_DEF_HPP
+#endif // end UTILITY_GRID_GENERATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_LinearGridGenerator_def.hpp
+// end Utility_GridGenerator_def.hpp
 //---------------------------------------------------------------------------//

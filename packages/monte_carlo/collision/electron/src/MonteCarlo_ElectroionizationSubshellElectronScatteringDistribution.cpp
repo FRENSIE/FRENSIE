@@ -68,6 +68,10 @@ void ElectroionizationSubshellElectronScatteringDistribution::setSamplingFunctio
       d_sample = [this]( const double incoming_energy ){
         return this->sampleKnockOn( incoming_energy ); };
 
+      // Set the sample with random number function
+      d_sample_with_random_number = [this]( const double incoming_energy, const double random_number ){
+        return this->sampleKnockOnWithRandomNumber( incoming_energy, random_number ); };
+
       // The sample secondary and primary function
       d_sample_primary_and_secondary = [this]( const double incoming_energy, double& outgoing_energy, double& knock_on_energy ){
         this->sampleKnockOn( incoming_energy, outgoing_energy, knock_on_energy ); };
@@ -95,6 +99,10 @@ void ElectroionizationSubshellElectronScatteringDistribution::setSamplingFunctio
       d_sample = [this]( const double incoming_energy ){
         return this->sampleOutgoingEnergy( incoming_energy ); };
 
+      // Set the sample with random number function
+      d_sample_with_random_number = [this]( const double incoming_energy, const double random_number ){
+        return this->sampleOutgoingEnergyWithRandomNumber( incoming_energy, random_number ); };
+
       // The sample secondary and primary function
       d_sample_primary_and_secondary = [this]( const double incoming_energy, double& outgoing_energy, double& knock_on_energy ){
         this->sampleOutgoingEnergy( incoming_energy, outgoing_energy, knock_on_energy ); };
@@ -121,6 +129,10 @@ void ElectroionizationSubshellElectronScatteringDistribution::setSamplingFunctio
       // Set the sample function
       d_sample = [this]( const double incoming_energy ){
         return this->sampleRatio( incoming_energy ); };
+
+      // Set the sample with random number function
+      d_sample_with_random_number = [this]( const double incoming_energy, const double random_number ){
+        return this->sampleRatioWithRandomNumber( incoming_energy, random_number ); };
 
       // The sample secondary and primary function
       d_sample_primary_and_secondary = [this]( const double incoming_energy, double& outgoing_energy, double& knock_on_energy ){
@@ -309,6 +321,20 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
   angle_cosine = outgoingAngle( incoming_energy, energy );
 
   testPostcondition( energy > 0.0 );
+}
+
+// Sample an energy from the distribution with a random number
+double ElectroionizationSubshellElectronScatteringDistribution::sampleWithRandomNumber(
+                const double incoming_energy,
+                const double random_number ) const
+{
+  testPrecondition( incoming_energy > d_binding_energy );
+
+  // Sample an electron energy
+  if( incoming_energy < this->getMinEnergy() )
+    return this->sampleThreshold( incoming_energy, random_number );
+  else
+    return d_sample_with_random_number( incoming_energy, random_number );
 }
 
 // Sample a knock-on energy and direction from the distribution
@@ -574,6 +600,24 @@ double ElectroionizationSubshellElectronScatteringDistribution::sampleThreshold(
                                        raw_energy );
 }
 
+// Sample an energy between the min tabulated energy and threshold
+double ElectroionizationSubshellElectronScatteringDistribution::sampleThreshold(
+               const double incoming_energy,
+               const double random_number ) const
+{
+  testPrecondition( incoming_energy > d_binding_energy );
+  testPrecondition( incoming_energy < this->getMinEnergy() );
+
+  // Sample an electron energy
+  double raw_energy = d_sample_with_random_number( this->getMinEnergy(), random_number );
+
+  return Utility::LinLin::interpolate( d_binding_energy,
+                                       this->getMinEnergy(),
+                                       incoming_energy,
+                                       0.0,
+                                       raw_energy );
+}
+
 // Sample a knock-on energy and direction from the distribution
 /*! \details For electro-ionization the knock-on electron is indistinguishable
  *  from the incident electron and the electron with the lower energy is assumed
@@ -732,6 +776,69 @@ double ElectroionizationSubshellElectronScatteringDistribution::sampleRatio(
   double outgoing_energy_ratio =
       d_electroionization_shell_distribution->sampleSecondaryConditional(
         incoming_energy,
+        d_min_energy_functor,
+        d_max_energy_functor );
+
+  testPrecondition( outgoing_energy_ratio > 0.0 );
+  testPrecondition( outgoing_energy_ratio < 1.0 );
+
+  return outgoing_energy_ratio*incoming_energy;
+}
+
+// Sample a knock-on energy with a random number
+/*! \details It is possible to sample a knock_on_energy that is greater than the
+ * available energy. When this is the case, the knock_on_energy can be assumed
+ * to be the max available energy (E_{in} - E_b) and the outgoing energy is
+ * assumed to be infinitely small.
+ */
+double ElectroionizationSubshellElectronScatteringDistribution::sampleKnockOnWithRandomNumber(
+                const double incoming_energy,
+                const double random_number ) const
+{
+  // Sample knock-on electron energy
+  double knock_on_energy =
+    d_electroionization_shell_distribution->sampleSecondaryConditionalWithRandomNumber(
+      incoming_energy,
+      random_number,
+      d_min_energy_functor,
+      d_max_energy_functor );
+
+  if( d_limit_knock_on_energy_range )
+  {
+    knock_on_energy =
+      std::min( incoming_energy - d_binding_energy, knock_on_energy );
+  }
+
+  return knock_on_energy;
+}
+
+// Sample an outgoing primary energy with a random number
+double ElectroionizationSubshellElectronScatteringDistribution::sampleOutgoingEnergyWithRandomNumber(
+                const double incoming_energy,
+                const double random_number ) const
+{
+  testPrecondition( incoming_energy >= d_binding_energy );
+
+  // Sample electron outgoing energy
+  return d_electroionization_shell_distribution->sampleSecondaryConditionalWithRandomNumber(
+            incoming_energy,
+            random_number,
+            d_min_energy_functor,
+            d_max_energy_functor );
+}
+
+// Sample an outgoing primary energy ratio with a random number
+double ElectroionizationSubshellElectronScatteringDistribution::sampleRatioWithRandomNumber(
+                const double incoming_energy,
+                const double random_number ) const
+{
+  testPrecondition( incoming_energy >= d_binding_energy );
+
+  // Sample electron outgoing energy
+  double outgoing_energy_ratio =
+      d_electroionization_shell_distribution->sampleSecondaryConditionalWithRandomNumber(
+        incoming_energy,
+        random_number,
         d_min_energy_functor,
         d_max_energy_functor );
 

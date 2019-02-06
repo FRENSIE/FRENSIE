@@ -76,7 +76,7 @@ public:
 
   //! Evaluate the PDF value for a given incoming and processed energy
   double evaluateProcessedPDF( const double incoming_energy,
-                              const double processed_energy ) const;
+                               const double processed_energy ) const;
 
   //! Evaluate the CDF
   double evaluateCDF( const double incoming_energy,
@@ -86,6 +86,11 @@ public:
   void sample( const double incoming_energy,
                double& energy,
                double& angle_cosine ) const override;
+
+  //! Sample an energy from the distribution with a random number
+  double sampleWithRandomNumber( const double incoming_energy,
+                                 const double random_number ) const;
+
 
   // Sample the distribution
   void sample( const double incoming_energy,
@@ -133,6 +138,9 @@ private:
   //! Sample an energy between the min tabulated energy and threshold
   double sampleThreshold( const double incoming_energy ) const;
 
+  //! Sample an energy between the min tabulated energy and threshold
+  double sampleThreshold( const double incoming_energy, const double random_number ) const;
+
   //! Set the sampling functions
   void setSamplingFunctions(const ElectroionizationSamplingType sampling_type );
 
@@ -169,6 +177,18 @@ private:
 
   // Sample an outgoing primary energy ratio
   double sampleRatio( const double incoming_energy ) const;
+
+  // Sample a knock-on energy with a random number
+  double sampleKnockOnWithRandomNumber( const double incoming_energy,
+                                        const double random_number ) const;
+
+  // Sample an outgoing primary energy with a random number
+  double sampleOutgoingEnergyWithRandomNumber( const double incoming_energy,
+                                               const double random_number ) const;
+
+  // Sample an outgoing primary energy ratio with a random number
+  double sampleRatioWithRandomNumber( const double incoming_energy,
+                                      const double random_number ) const;
 
   // Sample a knock-on energy and primary energy
   void sampleKnockOn( const double incoming_energy,
@@ -211,6 +231,9 @@ private:
 
   // The sample function pointer
   std::function<double ( const double )> d_sample;
+
+  // The sample with random number function pointer
+  std::function<double ( const double, const double )> d_sample_with_random_number;
 
   // The sample function pointer
   std::function<void ( const double, double&, double& )> d_sample_primary_and_secondary;

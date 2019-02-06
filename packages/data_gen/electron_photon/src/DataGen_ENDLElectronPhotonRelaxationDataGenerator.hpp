@@ -186,13 +186,26 @@ private:
   void setRefinedElectroionizationSubshellDistributionData(
       const MonteCarlo::ElectroionizationSamplingType sampling_type );
 
-  // Initialize the electroionization subshell secondary grid
-  std::vector<double> initializeElectroionizationSecondaryGrid(
+
+  // Initialize the electroionization subshell secondary PDF grid
+  std::vector<double> initializeElectroionizationSecondaryPDFGrid(
     const MonteCarlo::ElectroionizationSamplingType sampling_type,
     const double incoming_energy,
     const double min_secondary_energy,
     const double max_secondary_energy,
     const unsigned shell ) const;
+
+  // Initialize the electroionization subshell secondary CDF grid
+  std::vector<double> initializeElectroionizationSecondaryCDFGrid(
+    const MonteCarlo::ElectroionizationSamplingType sampling_type,
+    const double incoming_energy,
+    const unsigned shell ) const;
+
+  // Evaluate the PDF distribution from the CDF
+  std::vector<double> evaluatePDFFromCDF(
+      std::vector<double>& indep_values,
+      std::vector<double>& cdf_values,
+      double min_pdf_value ) const;
 
   // Add binding energies to union energy grid
   void addBindingEnergiesToUnionEnergyGrid(
