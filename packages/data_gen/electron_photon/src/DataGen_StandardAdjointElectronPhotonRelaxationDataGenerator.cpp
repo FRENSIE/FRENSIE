@@ -1683,17 +1683,6 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
         cross_section,
         threshold );
 
-    /*! \details The adjoint electro-ionization cross section will need to be
-     * multiplied by a factor of 2 when using the outgoing energy sampling
-     * since there adjoint electron can be either the knock-on electron or the
-     * primary scatted electron.
-     */
-    if ( this->getForwardElectroionizationSamplingMode() == MonteCarlo::OUTGOING_ENERGY_SAMPLING )
-    {
-      for( auto&& raw_cross_section : cross_section )
-        raw_cross_section *= 2.0;
-    }
-
     // Set the cross section for the subshell
     data_container.setAdjointElectroionizationCrossSection(
       *shell,
@@ -2175,9 +2164,19 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
   }
 
   // Create the forward pdf evaluator
+  /*! \details When evaluating the electro-ionization pdf for outgoing energy
+   *  sampling, the pdf of the primary outgoing electron and the knock-on
+   *  electron must be summed in order to take into account that the adjoint
+   *  electron can be either the primary outgoing electron or the knock-on
+   *  electron.
+   */
   std::function<double(const double&, const double&)> pdf_evaluator =
     [distribution](const double& incoming_energy, const double& outgoing_energy){
-      return distribution->evaluatePDF( incoming_energy, outgoing_energy ); };
+      double primary_pdf = distribution->evaluatePDF( incoming_energy, outgoing_energy );
+      double knock_on_energy = incoming_energy - outgoing_energy;
+      double knock_on_pdf = distribution->evaluatePDF( incoming_energy, knock_on_energy );
+      double pdf = primary_pdf + knock_on_pdf;
+      return pdf; };
 
   grid_generator.reset(
     new ElectronGridGenerator(
