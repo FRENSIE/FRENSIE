@@ -32,6 +32,7 @@
 #include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_SampleMomentCollection.hpp"
+#include "Utility_SampleMomentCollectionSnapshots.hpp"
 #include "Utility_DesignByContract.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_List.hpp"
@@ -62,7 +63,7 @@ protected:
   typedef Utility::SampleMomentCollection<double,4,3,2,1> FourEstimatorMomentsCollection;
 
   //! Typedef for the estimator moments snapshots
-  typedef std::vector<std::tuple<std::list<double>,std::list<double>,std::list<double>,std::list<double> > > FourEstimatorMomentsSnapshots;
+  typedef Utility::SampleMomentCollectionSnapshots<double,std::list,4,3,2,1> FourEstimatorMomentsCollectionSnapshots;
 
 public:
 
@@ -154,26 +155,23 @@ public:
   //! Check if snapshots have been enabled on entity bins
   virtual bool areSnapshotsOnEntityBinsEnabled() const = 0;
 
-  //! Take a moment snapshot
-  virtual void takeMomentSnapshot( const unsigned long long history ) const;
-
   //! Get the moment snapshot history values
-  const std::list<unsigned long long>& getMomentSnapshotHistoryValues() const;
+  virtual const std::list<uint64_t>& getMomentSnapshotHistoryValues() const = 0;
   
-  //! Set the history score pdf bins
-  void setHistoryScorePDFBins( const std::vector<double>& bins );
+  // //! Set the history score pdf bins
+  // void setHistoryScorePDFBins( const std::vector<double>& bins );
 
-  //! Set the history score pdf bins (shared)
-  void setHistoryScorePDFBins( const std::shared_ptr<const std::vector<double> >& bins );
+  // //! Set the history score pdf bins (shared)
+  // void setHistoryScorePDFBins( const std::shared_ptr<const std::vector<double> >& bins );
 
-  //! Get the history score pdf bins
-  const std::vector<double>& getHistoryScorePDFBins() const;
+  // //! Get the history score pdf bins
+  // const std::vector<double>& getHistoryScorePDFBins() const;
 
-  //! Enable history score pdfs on entity bins
-  virtual void enableHistoryScorePDFsOnEntityBins() = 0;
+  // //! Enable history score pdfs on entity bins
+  // virtual void enableHistoryScorePDFsOnEntityBins() = 0;
 
-  //! Check if history score pdfs have been enabled on entity bins
-  virtual bool areHistoryScorePDFsOnEntityBinsEnabled() const = 0;
+  // //! Check if history score pdfs have been enabled on entity bins
+  // virtual bool areHistoryScorePDFsOnEntityBinsEnabled() const = 0;
 
   //! Get the total estimator bin data first moments
   virtual Utility::ArrayView<const double> getTotalBinDataFirstMoments() const = 0;
@@ -448,8 +446,8 @@ protected:
   //! Assign the particle type to the estimator
   virtual void assignParticleType( const ParticleType particle_type );
 
-  //! Assign the history score pdf bins
-  virtual void assignHistoryScorePDFBins( const std::shared_ptr<const std::vector<double> >& bins );
+  // //! Assign the history score pdf bins
+  // virtual void assignHistoryScorePDFBins( const std::shared_ptr<const std::vector<double> >& bins );
 
   //! Get the particle types that can contribute to the estimator
   size_t getNumberOfAssignedParticleTypes() const;
@@ -471,6 +469,12 @@ protected:
                       const Utility::Communicator& comm,
                       const int root_process,
                       FourEstimatorMomentsCollection& collection ) const;
+
+  //! Reduce snapshots
+  void reduceSnapshots(
+                    const Utility::Communicator& comm,
+                    const int root_process,
+                    FourEstimatorMomentsCollectionSnapshots& snapshots ) const;
 
   //! Return the response function name
   const std::string& getResponseFunctionName(

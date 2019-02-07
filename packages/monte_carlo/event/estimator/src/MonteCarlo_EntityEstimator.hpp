@@ -22,15 +22,15 @@ class EntityEstimator : public Estimator
 
 protected:
 
-  // Typedef for the map of entity ids and extended estimator moments array
-  typedef std::unordered_map<EntityId,FourEstimatorMomentsCollection>
+  //! Typedef for the map of entity ids and extended estimator moments array
+  typedef std::unordered_map<EntityId,Estimator::FourEstimatorMomentsCollection>
   EntityEstimatorMomentsCollectionMap;
 
-  // Typedef for the map of entity ids and the estimator moments snapshots
-  typedef std::unordered_map<EntityId,FourEstimatorMomentsSnapshots>
-  EntityEstimatorMomentsSnapshotsMap;
+  //! Typedef for the map of entity ids and the estimator moments snapshots
+  typedef std::unordered_map<EntityId,Estimator::FourEstimatorMomentsCollectionSnapshots>
+  EntityEstimatorMomentsCollectionSnapshotsMap;
 
-  // Typedef for the entity norm constants map
+  //! Typedef for the entity norm constants map
   typedef std::unordered_map<EntityId,double> EntityNormConstMap;
 
 public:
@@ -90,14 +90,14 @@ public:
   //! Get the bin data fourth moments for an entity
   Utility::ArrayView<const double> getEntityBinDataFourthMoments( const EntityId entity_id ) const final override;
 
-  //! Enable snapshots on entity bins
-  void enableSnapshotsOnEntityBins() final override;
-
   //! Check if snapshots have been enabled on entity bins
   bool areSnapshotsOnEntityBinsEnabled() const final override;
 
-  //! Take a moment snapshot
-  void takeMomentSnapshot( const unsigned long long history ) const override;
+  //! Take a snapshot (of the moments)
+  void takeSnapshot( const uint64_t num_histories ) override;
+
+  //! Get the moment snapshot history values
+  const std::list<uint64_t>& getMomentSnapshotHistoryValues() const override;
 
   //! Get the bin data first moment snapshots for an entity bin index
   void getEntityBinFirstMomentSnapshots(
@@ -156,7 +156,9 @@ protected:
   EntityEstimator();
 
   //! Constructor with no entities (for mesh estimators)
-  EntityEstimator( const Id id, const double multiplier );
+  EntityEstimator( const Id id,
+                   const double multiplier,
+                   const bool enable_entity_bin_snapshots );
 
   //! Assign entities
   virtual void assignEntities( const EntityNormConstMap& entity_norm_data );
@@ -186,6 +188,18 @@ protected:
 
   //! Get the bin data for an entity
   const Estimator::FourEstimatorMomentsCollection& getEntityBinData( const EntityId entity_id ) const;
+
+  //! Reduce the entity collection maps
+  void reduceEntityCollectionMaps(
+                   const Utility::Communicator& comm,
+                   const int root_process,
+                   EntityEstimatorMomentsCollectionMap& collection_map ) const;
+
+  //! Reduce the entity snapshot maps
+  void reduceEntitySnapshotMaps(
+            const Utility::Communicator& comm,
+            const int root_process,
+            EntityEstimatorMomentsCollectionSnapshotsMap& snapshot_map ) const;
 
 private:
 
@@ -229,9 +243,17 @@ private:
 
   // Reduce the entity collections
   void reduceEntityCollections(
-                      const std::vector<EntityEstimatorMomentsCollectionMap>&
-                      other_entity_estimator_moments_maps,
-                      const size_t root_index );
+                   const std::vector<EntityEstimatorMomentsCollectionMap>&
+                   other_entity_estimator_moments_maps,
+                   const size_t root_index,
+                   EntityEstimatorMomentsCollectionMap& collection_map ) const;
+
+  // Reduce the entity snapshots
+  void reduceEntitySnapshots(
+           const std::vector<EntityEstimatorMomentsCollectionSnapshotsMap>&
+           gathered_entity_data,
+           const size_t root_index,
+           EntityEstimatorMomentsCollectionSnapshotsMap& snapshots_map ) const;
 
   // Print the entity ids assigned to the estimator
   void printEntityIds( std::ostream& os,
@@ -265,11 +287,11 @@ private:
 
   // The estimator moments (1st,2nd,3rd,4th) snapshots for each bin of the
   // total
-  FourEstimatorMomentsSnapshots d_estimator_total_bin_data_snapshots;
+  FourEstimatorMomentsCollectionSnapshots d_estimator_total_bin_data_snapshots;
 
   // The estimator moments (1st,2nd,3rd,4th) snapshots for each bin and
   // each entity
-  EntityEstimatorMomentsSnapshotsMap d_entity_estimator_moments_snapshots_map;
+  EntityEstimatorMomentsCollectionSnapshotsMap d_entity_estimator_moments_snapshots_map;
 
   // The entity normalization constants (surface areas or cell volumes)
   EntityNormConstMap d_entity_norm_constants_map;

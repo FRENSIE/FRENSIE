@@ -35,7 +35,8 @@ public:
                     const Id id,
                     const double multiplier,
                     const std::vector<StandardSurfaceEstimator::SurfaceIdType>&
-                    surface_ids );
+                    surface_ids,
+                    const bool enable_entity_bin_snapshots = false );
 
   //! Destructor
   ~SurfaceCurrentEstimator()

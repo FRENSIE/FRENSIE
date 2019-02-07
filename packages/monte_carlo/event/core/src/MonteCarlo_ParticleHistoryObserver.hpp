@@ -56,6 +56,9 @@ public:
   //! Commit the contribution from the current history to the observer
   virtual void commitHistoryContribution() = 0;
 
+  //! Take a snapshot
+  virtual void takeSnapshot( const uint64_t num_histories ) = 0;
+
   //! Reset the observer data
   virtual void resetData() = 0;
 

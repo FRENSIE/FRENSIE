@@ -32,7 +32,6 @@ Estimator::Estimator( const Id id, const double multiplier )
     d_particle_types(),
     d_response_functions( 1 ),
     d_phase_space_discretization(),
-    d_moment_snapshot_history_values(),
     d_history_score_pdf_bins( Estimator::getDefaultHistoryScorePDFBins() ),
     d_has_uncommitted_history_contribution( 1, false )
 {
@@ -177,39 +176,33 @@ bool Estimator::isParticleTypeAssigned( const ParticleType particle_type) const
   return d_particle_types.find( particle_type ) !=
     d_particle_types.end();
 }
-
-// Get the moment snapshot history values
-const std::list<unsigned long long>& Estimator::getMomentSnapshotHistoryValues() const
-{
-  return d_moment_snapshot_history_values;
-}
   
-// Set the history score pdf bins
-/*! \details A copy of this array will be made and stored. If you want to avoid
- * copy overhead use the shared_ptr overload of this method.
- */
-void Estimator::setHistoryScorePDFBins( const std::vector<double>& bins )
-{
-  this->setHistoryScorePDFBins( std::make_shared<const std::vector<double> >( bins ) );
-}
+// // Set the history score pdf bins
+// /*! \details A copy of this array will be made and stored. If you want to avoid
+//  * copy overhead use the shared_ptr overload of this method.
+//  */
+// void Estimator::setHistoryScorePDFBins( const std::vector<double>& bins )
+// {
+//   this->setHistoryScorePDFBins( std::make_shared<const std::vector<double> >( bins ) );
+// }
 
-// Set the history score pdf bins (shared)
-void Estimator::setHistoryScorePDFBins( const std::shared_ptr<const std::vector<double> >& bins )
-{
-  // Make sure that the bins are valid
-  testPrecondition( bins.get() );
+// // Set the history score pdf bins (shared)
+// void Estimator::setHistoryScorePDFBins( const std::shared_ptr<const std::vector<double> >& bins )
+// {
+//   // Make sure that the bins are valid
+//   testPrecondition( bins.get() );
   
-  TEST_FOR_EXCEPTION( bins.size() <= 1,
-                      std::runtime_error,
-                      "At least one history score pdf bin needs to be "
-                      "specified!" );
-  TEST_FOR_EXCEPTION( !Utility::isSortedAscending( bins ),
-                      std::runtime_error,
-                      "The history score pdf bins need to be sorted from "
-                      "smallest bin boundary to largest!" );
+//   TEST_FOR_EXCEPTION( bins.size() <= 1,
+//                       std::runtime_error,
+//                       "At least one history score pdf bin needs to be "
+//                       "specified!" );
+//   TEST_FOR_EXCEPTION( !Utility::isSortedAscending( bins ),
+//                       std::runtime_error,
+//                       "The history score pdf bins need to be sorted from "
+//                       "smallest bin boundary to largest!" );
 
-  this->assignHistoryScorePDFBins( bins );
-}
+//   this->assignHistoryScorePDFBins( bins );
+// }
 
 // Get the default history score pdf bins
 const std::shared_ptr<const std::vector<double> >& Estimator::getDefaultHistoryScorePDFBins()
@@ -221,17 +214,11 @@ const std::shared_ptr<const std::vector<double> >& Estimator::getDefaultHistoryS
   }
 }
 
-// Get the history score pdf bins
-const std::vector<double>& Estimator::getHistoryScorePDFBins() const
-{
-  return *d_history_score_pdf_bins;
-}
-
-// Take a moment snapshot
-void Estimator::takeMomentSnapshot( const unsigned long long history ) const
-{
-  d_moment_snapshot_history_values.push_back( history );
-}
+// // Get the history score pdf bins
+// const std::vector<double>& Estimator::getHistoryScorePDFBins() const
+// {
+//   return *d_history_score_pdf_bins;
+// }
 
 // Check if the estimator has uncommitted history contributions
 bool Estimator::hasUncommittedHistoryContribution(
@@ -946,17 +933,17 @@ void Estimator::assignParticleType( const ParticleType particle_type )
   d_particle_types.insert( particle_type );
 }
 
-// Assign the history score pdf bins
-/*! \details Override this method in a derived class if the class needs to
- * allocate space for history score pdf values.
- */
-void Estimator::assignHistoryScorePDFBins( const std::shared_ptr<const std::vector<double> >& bins )
-{
-  // Make sure only the master thread calls this function
-  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
+// // Assign the history score pdf bins
+// /*! \details Override this method in a derived class if the class needs to
+//  * allocate space for history score pdf values.
+//  */
+// void Estimator::assignHistoryScorePDFBins( const std::shared_ptr<const std::vector<double> >& bins )
+// {
+//   // Make sure only the master thread calls this function
+//   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
-  d_history_score_pdf_bins = bins;
-}
+//   d_history_score_pdf_bins = bins;
+// }
 
 // Get the particle types that can contribute to the estimator
 size_t Estimator::getNumberOfAssignedParticleTypes() const
@@ -1089,6 +1076,49 @@ void Estimator::reduceCollection(
   }
 
   comm.barrier();
+}
+
+// Reduce snapshots
+void Estimator::reduceSnapshots(
+                     const Utility::Communicator& comm,
+                     const int root_process,
+                     FourEstimatorMomentsCollectionSnapshots& snapshots ) const
+{
+  // Make sure the root process is valid
+  testPrecondition( root_process < comm.size() );
+
+  // Gather all of the collection snapshots on the root process
+  if( comm.rank() == root_process )
+  {
+    std::vector<FourEstimatorMomentsCollectionSnapshots>
+      gathered_snapshots( comm.size() );
+
+    std::vector<Utility::Communicator::Request> gathered_requests;
+
+    for( size_t i = 0; i < comm.size(); ++i )
+    {
+      if( i != root_process )
+      {
+        gathered_requests.push_back(
+                      Utility::ireceive( comm, i, 0, gathered_snapshots[i] ) );
+      }
+    }
+
+    std::vector<Utility::Communicator::Status>
+      gathered_statuses( gathered_requests.size() );
+
+    Utility::wait( gathered_requests, gathered_statuses );
+
+    // Merge the local snapshots with the snapshots gathered from the other
+    // procs
+    for( size_t i = 0; i < comm.size(); ++i )
+    {
+      if( i != root_process )
+        snapshots.mergeSnapshots( gathered_snapshots[i] );
+    }
+  }
+  else
+    Utility::send( comm, root_process, 0, snapshots );
 }
 
 // Return the response function name

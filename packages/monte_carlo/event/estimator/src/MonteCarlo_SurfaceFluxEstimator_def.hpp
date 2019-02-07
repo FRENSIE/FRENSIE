@@ -28,8 +28,13 @@ SurfaceFluxEstimator<ContributionMultiplierPolicy>::SurfaceFluxEstimator(
                               const double multiplier,
                               const std::vector<SurfaceIdType>& surface_ids,
                               const std::vector<double>& surface_areas,
-                              const double cosine_cutoff )
-  : StandardSurfaceEstimator( id, multiplier, surface_ids, surface_areas ),
+                              const double cosine_cutoff,
+                              const bool enable_entity_bin_snapshots )
+  : StandardSurfaceEstimator( id,
+                              multiplier,
+                              surface_ids,
+                              surface_areas,
+                              enable_entity_bin_snapshots ),
     d_cosine_cutoff( cosine_cutoff )
 { /* ... */ }
 
@@ -40,8 +45,13 @@ SurfaceFluxEstimator<ContributionMultiplierPolicy>::SurfaceFluxEstimator(
                         const double multiplier,
                         const std::vector<SurfaceIdType>& surface_ids,
                         const Geometry::Model& model,
-                        const double cosine_cutoff )
-  : StandardSurfaceEstimator( id, multiplier, surface_ids, model ),
+                        const double cosine_cutoff,
+                        const bool enable_entity_bin_snapshots )
+  : StandardSurfaceEstimator( id,
+                              multiplier,
+                              surface_ids,
+                              model,
+                              enable_entity_bin_snapshots ),
     d_cosine_cutoff( cosine_cutoff )
 { /* ... */ }
 

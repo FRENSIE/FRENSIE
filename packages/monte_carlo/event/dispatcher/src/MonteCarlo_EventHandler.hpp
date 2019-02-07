@@ -127,6 +127,9 @@ public:
   //! Update observers from particle simulation stopped event
   void updateObserversFromParticleSimulationStoppedEvent();
 
+  //! Set the snapshot period
+  void setSnapshotPeriod( const uint64_t num_histories );
+
   //! Commit the history contributions to the observers
   void commitObserverHistoryContributions();
 
@@ -338,11 +341,17 @@ private:
   // The geometry model
   std::shared_ptr<const Geometry::Model> d_model;
 
+  // The snapshot period
+  uint64_t d_snapshot_period;
+
+  // The last snapshot history
+  uint64_t d_last_snapshot_history;
+
   // The simulation completion criterion
   std::shared_ptr<ParticleHistorySimulationCompletionCriterion> d_simulation_completion_criterion;
 
   // The number of simulated particle histories
-  std::vector<uint64_t> d_number_of_committed_histories;
+  uint64_t d_number_of_committed_histories;
 
   // The simulation timer (s)
   std::shared_ptr<Utility::Timer> d_simulation_timer;

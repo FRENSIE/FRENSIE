@@ -28,13 +28,15 @@ public:
   StandardCellEstimator( const Id id,
 			 const double multiplier,
 			 const std::vector<CellIdType>& cell_ids,
-			 const std::vector<double>& cell_volumes );
+			 const std::vector<double>& cell_volumes,
+                         const bool enable_entity_bin_snapshots );
 
   //! Constructor (extract cell volumes from model)
   StandardCellEstimator( const Id id,
 			 const double multiplier,
 			 const std::vector<CellIdType>& cell_ids,
-			 const Geometry::Model& cell_volumes );
+			 const Geometry::Model& model,
+                         const bool enable_entity_bin_snapshots );
 
   //! Destructor
   virtual ~StandardCellEstimator()

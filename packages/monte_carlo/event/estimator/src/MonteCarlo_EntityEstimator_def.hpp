@@ -29,9 +29,9 @@ EntityEstimator::EntityEstimator(
   : Estimator( id, multiplier ),
     d_total_norm_constant( 1.0 ),
     d_supplied_norm_constants( true ),
-    d_entity_bin_snapshots_enabled( enable_entity_bin_snapshots ),
     d_estimator_total_bin_data( 1 ),
     d_entity_estimator_moments_map(),
+    d_entity_bin_snapshots_enabled( enable_entity_bin_snapshots ),
     d_estimator_total_bin_data_snapshots( 1 ),
     d_entity_estimator_moments_snapshots_map(),
     d_entity_norm_constants_map()
@@ -54,6 +54,7 @@ EntityEstimator::EntityEstimator(
 
   // Initialize the total bin data
   this->resizeEstimatorTotalCollection();
+  this->resizeEstimatorTotalSnapshots();
 }
 
 // Constructor (for non-flux estimators)
@@ -70,6 +71,7 @@ EntityEstimator::EntityEstimator( const Id id,
     d_supplied_norm_constants( enable_entity_bin_snapshots ),
     d_estimator_total_bin_data( 1 ),
     d_entity_estimator_moments_map(),
+    d_entity_bin_snapshots_enabled( enable_entity_bin_snapshots ),
     d_estimator_total_bin_data_snapshots( 1 ),
     d_entity_estimator_moments_snapshots_map(),
     d_entity_norm_constants_map()
@@ -84,6 +86,7 @@ EntityEstimator::EntityEstimator( const Id id,
 
   // Initialize the total bin data
   this->resizeEstimatorTotalCollection();
+  this->resizeEstimatorTotalSnapshots();
 }
 
 // Initialize entity estimator moments map

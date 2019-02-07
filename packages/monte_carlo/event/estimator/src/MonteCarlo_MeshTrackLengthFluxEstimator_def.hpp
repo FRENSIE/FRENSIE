@@ -25,8 +25,9 @@ template<typename ContributionMultiplierPolicy>
 MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::MeshTrackLengthFluxEstimator(
                              const Id id,
                              const double multiplier,
-                             const std::shared_ptr<const Utility::Mesh>& mesh )
-  : StandardEntityEstimator( id, multiplier ),
+                             const std::shared_ptr<const Utility::Mesh>& mesh,
+                             const bool enable_entity_bin_snapshots )
+  : StandardEntityEstimator( id, multiplier, enable_entity_bin_snapshots ),
     d_mesh( mesh ),
     d_no_time_bins_update_method( true ),
     d_update_method()

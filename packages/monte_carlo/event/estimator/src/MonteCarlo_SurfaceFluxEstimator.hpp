@@ -36,14 +36,16 @@ public:
                         const double multiplier,
                         const std::vector<SurfaceIdType>& surface_ids,
                         const std::vector<double>& surface_areas,
-                        const double cosine_cutoff = 0.001 );
+                        const double cosine_cutoff = 0.001,
+                        const bool enable_entity_bin_snapshots = false );
 
   //! Constructor (extract surface areas from model)
   SurfaceFluxEstimator( const Id id,
                         const double multiplier,
                         const std::vector<SurfaceIdType>& surface_ids,
                         const Geometry::Model& model,
-                        const double cosine_cutoff = 0.001 );
+                        const double cosine_cutoff = 0.001,
+                        const bool enable_entity_bin_snapshots = false );
 
   //! Destructor
   ~SurfaceFluxEstimator()

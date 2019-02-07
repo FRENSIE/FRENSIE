@@ -30,8 +30,12 @@ SurfaceCurrentEstimator<ContributionMultiplierPolicy>::SurfaceCurrentEstimator(
                     const Id id,
                     const double multiplier,
                     const std::vector<StandardSurfaceEstimator::SurfaceIdType>&
-                    surface_ids )
-  : StandardSurfaceEstimator( id, multiplier, surface_ids )
+                    surface_ids,
+                    const bool enable_entity_bin_snapshots )
+  : StandardSurfaceEstimator( id,
+                              multiplier,
+                              surface_ids,
+                              enable_entity_bin_snapshots )
 { /* ... */ }
 
 // Add current history estimator contribution

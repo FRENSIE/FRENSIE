@@ -30,7 +30,7 @@ namespace MonteCarlo{
 EventHandler::EventHandler()
   : d_model(),
     d_simulation_completion_criterion( ParticleHistorySimulationCompletionCriterion::createWallTimeCriterion( Utility::QuantityTraits<double>::inf() ) ),
-    d_number_of_committed_histories( 1, 0 ),
+    d_number_of_committed_histories( 0 ),
     d_simulation_timer( Utility::GlobalMPISession::createTimer() ),
     d_elapsed_simulation_time( 0.0 ),
     d_estimators(),
@@ -61,7 +61,7 @@ EventHandler::EventHandler(
                     const MonteCarlo::SimulationGeneralProperties& properties )
   : d_model( model ),
     d_simulation_completion_criterion( EventHandler::createDefaultCompletionCriterion( properties ) ),
-    d_number_of_committed_histories( 1, 0 ),
+    d_number_of_committed_histories( 0 ),
     d_simulation_timer( Utility::GlobalMPISession::createTimer() ),
     d_elapsed_simulation_time( 0.0 ),
     d_estimators(),
@@ -514,8 +514,6 @@ void EventHandler::enableThreadSupport( const unsigned num_threads )
 
     ++it;
   }
-
-  d_number_of_committed_histories.resize( num_threads, 0 );
 }
 
 // Update observers from particle simulation started event
@@ -535,21 +533,48 @@ void EventHandler::updateObserversFromParticleSimulationStoppedEvent()
   ParticleHistoryObserver::setNumberOfHistories( this->getNumberOfCommittedHistories() );
 }
 
+// Set the snapshot period
+void EventHandler::setSnapshotPeriod( const uint64_t num_histories )
+{
+  TEST_FOR_EXCEPTION( num_histories == 0,
+                      std::runtime_error,
+                      "The period must be >= 1 history!" );
+  
+  d_snapshot_period = num_histories;
+}
+
 // Commit the estimator history contributions
 void EventHandler::commitObserverHistoryContributions()
 {
-  ParticleHistoryObservers::iterator it =
-    d_particle_history_observers.begin();
-
-  while( it != d_particle_history_observers.end() )
+  uint64_t num_histories;
+  
+  #pragma omp critical
   {
-    if( (*it)->hasUncommittedHistoryContribution() )
-      (*it)->commitHistoryContribution();
+    ++d_number_of_committed_histories;
+    
+    bool snapshot_required = false;
 
-    ++it;
+    if( d_number_of_committed_histories % d_snapshot_period == 0 )
+    {
+      snapshot_required = true;
+
+      d_last_snapshot_history = d_number_of_committed_histories;
+    }
+
+    ParticleHistoryObservers::iterator it =
+      d_particle_history_observers.begin();
+
+    while( it != d_particle_history_observers.end() )
+    {
+      if( (*it)->hasUncommittedHistoryContribution() )
+        (*it)->commitHistoryContribution();
+
+      if( snapshot_required )
+        (*it)->takeSnapshot( num_histories );
+    
+      ++it;
+    }
   }
-
-  ++d_number_of_committed_histories[Utility::OpenMPProperties::getThreadId()];
 }
 
 // Log the observer summaries
@@ -595,8 +620,7 @@ void EventHandler::resetObserverData()
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   // Reset the committed histories
-  for( size_t i = 0; i < d_number_of_committed_histories.size(); ++i )
-    d_number_of_committed_histories[i] = 0;
+  d_number_of_committed_histories = 0;
 
   // Reset the observers
   ParticleHistoryObservers::iterator it =
@@ -626,26 +650,21 @@ void EventHandler::reduceObserverData( const Utility::Communicator& comm,
         uint64_t reduced_num_committed_histories = 0;
 
         Utility::reduce( comm,
-                         this->getNumberOfCommittedHistories(),
+                         d_number_of_committed_histories,
                          reduced_num_committed_histories,
                          std::plus<uint64_t>(),
                          root_process );
         
-        d_number_of_committed_histories.front() =
-          reduced_num_committed_histories;
-
-        for( size_t i = 1; i < d_number_of_committed_histories.size(); ++i )
-          d_number_of_committed_histories[i] = 0;
+        d_number_of_committed_histories = reduced_num_committed_histories;
       }
       else
       {
         Utility::reduce( comm,
-                         this->getNumberOfCommittedHistories(),
+                         d_number_of_committed_histories,
                          std::plus<uint64_t>(),
                          root_process );
 
-        for( size_t i = 0; i < d_number_of_committed_histories.size(); ++i )
-          d_number_of_committed_histories[i] = 0;
+        d_number_of_committed_histories = 0;
       }
     }
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
@@ -659,8 +678,16 @@ void EventHandler::reduceObserverData( const Utility::Communicator& comm,
     ParticleHistoryObservers::iterator it =
       d_particle_history_observers.begin();
 
+    bool take_snapshot_before_reduction = false;
+    
+    if( d_last_snapshot_history < d_number_of_committed_histories )
+      take_snapshot_before_reduction = true;
+
     while( it != d_particle_history_observers.end() )
     {
+      if( take_snapshot_before_reduction )
+        (*it)->takeSnapshot( d_number_of_committed_histories );
+      
       (*it)->reduceData( comm, root_process );
 
       comm.barrier();
@@ -675,9 +702,7 @@ void EventHandler::reduceObserverData( const Utility::Communicator& comm,
 // Get the number of particle histories that have been simulated
 uint64_t EventHandler::getNumberOfCommittedHistories() const
 {
-  return std::accumulate( d_number_of_committed_histories.begin(),
-                          d_number_of_committed_histories.end(),
-                          0 );
+  return d_number_of_committed_histories;
 }
 
 // Get the elapsed particle simulation time (s)

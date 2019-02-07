@@ -27,9 +27,9 @@ EntityEstimator::EntityEstimator( const Id id,
   : Estimator( id, multiplier ),
     d_total_norm_constant( 1.0 ),
     d_supplied_norm_constants( false ),
-    d_entity_bin_snapshots_enabled( enable_entity_bin_snapshots ),
     d_estimator_total_bin_data( 1 ),
     d_entity_estimator_moments_map(),
+    d_entity_bin_snapshots_enabled( enable_entity_bin_snapshots ),
     d_estimator_total_bin_data_snapshots( 1 ),
     d_entity_estimator_moments_snapshots_map(),
     d_entity_norm_constants_map()
@@ -172,12 +172,27 @@ bool EntityEstimator::areSnapshotsOnEntityBinsEnabled() const
   return d_entity_bin_snapshots_enabled;
 }
 
-// Take a moment snapshot
-void EntityEstimator::takeMomentSnapshot( const unsigned long long history ) const
+// Take a snapshot (of the moments)
+void EntityEstimator::takeSnapshot( const uint64_t num_histories )
 {
-  Estimator::takeMomentSnapshot( history );
+  if( d_entity_bin_snapshots_enabled )
+  {
+    #pragma omp critical
+    {
+      d_estimator_total_bin_data_snapshots.takeSnapshot( num_histories, d_estimator_total_bin_data );
 
-  
+      for( auto&& entity_data : d_entity_estimator_moments_snapshots_map )
+      {
+        entity_data.second.takeSnapshot( num_histories, d_entity_estimator_moments_map[entity_data.first] );
+      }
+    }
+  }
+}
+
+// Get the moment snapshot history values
+const std::list<uint64_t>& EntityEstimator::getMomentSnapshotHistoryValues() const
+{
+  d_estimator_total_bin_data_snapshots.getSnapshotIndices();
 }
 
 // Get the bin data first moment snapshots for an entity bin index
@@ -197,6 +212,16 @@ void EntityEstimator::getEntityBinFirstMomentSnapshots(
                       std::runtime_error,
                       "The bin index must be less than "
                       << this->getNumberOfBins()*this->getNumberOfResponseFunctions() << "!" );
+
+  if( d_entity_bin_snapshots_enabled )
+  {
+    const std::list<double>& moment_snapshots =
+      Utility::getScoreSnapshots<1>(
+            d_entity_estimator_moments_snapshots_map.find( entity_id )->second,
+            bin_index );
+
+    moments.assign( moment_snapshots.begin(), moment_snapshots.end() );
+  }
 }
 
 // Get the bin data second moment snapshots for an entity bin index
@@ -216,6 +241,16 @@ void EntityEstimator::getEntityBinSecondMomentSnapshots(
                       std::runtime_error,
                       "The bin index must be less than "
                       << this->getNumberOfBins()*this->getNumberOfResponseFunctions() << "!" );
+
+  if( d_entity_bin_snapshots_enabled )
+  {
+    const std::list<double>& moment_snapshots =
+      Utility::getScoreSnapshots<2>(
+           d_entity_estimator_moments_snapshots_map.find( entity_id )->second,
+           bin_index );
+
+    moments.assign( moment_snapshots.begin(), moment_snapshots.end() );
+  }
 }
 
 // Get the bin data third moment snapshots for an entity bin index
@@ -235,6 +270,16 @@ void EntityEstimator::getEntityBinThirdMomentSnapshots(
                       std::runtime_error,
                       "The bin index must be less than "
                       << this->getNumberOfBins()*this->getNumberOfResponseFunctions() << "!" );
+
+  if( d_entity_bin_snapshots_enabled )
+  {
+    const std::list<double>& moment_snapshots =
+      Utility::getScoreSnapshots<3>(
+           d_entity_estimator_moments_snapshots_map.find( entity_id )->second,
+           bin_index );
+
+    moments.assign( moment_snapshots.begin(), moment_snapshots.end() );
+  }
 }
 
 // Get the bin data fourth moment snapshots for an entity bin index
@@ -254,6 +299,16 @@ void EntityEstimator::getEntityBinFourthMomentSnapshots(
                       std::runtime_error,
                       "The bin index must be less than "
                       << this->getNumberOfBins()*this->getNumberOfResponseFunctions() << "!" );
+
+  if( d_entity_bin_snapshots_enabled )
+  {
+    const std::list<double>& moment_snapshots =
+      Utility::getScoreSnapshots<4>(
+           d_entity_estimator_moments_snapshots_map.find( entity_id )->second,
+           bin_index );
+    
+    moments.assign( moment_snapshots.begin(), moment_snapshots.end() );
+  }
 }
 
 // Get the bin data first moment snapshots for an total bin index
@@ -266,6 +321,15 @@ void EntityEstimator::getTotalBinFirstMomentSnapshots(
                       std::runtime_error,
                       "The bin index must be less than "
                       << this->getNumberOfBins()*this->getNumberOfResponseFunctions() << "!" );
+
+  if( d_entity_bin_snapshots_enabled )
+  {
+    const std::list<double>& moment_snapshots =
+      Utility::getScoreSnapshots<1>( d_estimator_total_bin_data_snapshots,
+                                     bin_index );
+    
+    moments.assign( moment_snapshots.begin(), moment_snapshots.end() );
+  }
 }
 
 // Get the bin data second moment snapshots for an total bin index
@@ -278,6 +342,15 @@ void EntityEstimator::getTotalBinSecondMomentSnapshots(
                       std::runtime_error,
                       "The bin index must be less than "
                       << this->getNumberOfBins()*this->getNumberOfResponseFunctions() << "!" );
+
+  if( d_entity_bin_snapshots_enabled )
+  {
+    const std::list<double>& moment_snapshots =
+      Utility::getScoreSnapshots<2>( d_estimator_total_bin_data_snapshots,
+                                     bin_index );
+    
+    moments.assign( moment_snapshots.begin(), moment_snapshots.end() );
+  }
 }
 
 // Get the bin data third moment snapshots for an total bin index
@@ -290,6 +363,15 @@ void EntityEstimator::getTotalBinThirdMomentSnapshots(
                       std::runtime_error,
                       "The bin index must be less than "
                       << this->getNumberOfBins()*this->getNumberOfResponseFunctions() << "!" );
+
+  if( d_entity_bin_snapshots_enabled )
+  {
+    const std::list<double>& moment_snapshots =
+      Utility::getScoreSnapshots<3>( d_estimator_total_bin_data_snapshots,
+                                     bin_index );
+    
+    moments.assign( moment_snapshots.begin(), moment_snapshots.end() );
+  }
 }
 
 // Get the bin data fourth moment snapshots for an total bin index
@@ -302,6 +384,15 @@ void EntityEstimator::getTotalBinFourthMomentSnapshots(
                       std::runtime_error,
                       "The bin index must be less than "
                       << this->getNumberOfBins()*this->getNumberOfResponseFunctions() << "!" );
+
+  if( d_entity_bin_snapshots_enabled )
+  {
+    const std::list<double>& moment_snapshots =
+      Utility::getScoreSnapshots<4>( d_estimator_total_bin_data_snapshots,
+                                     bin_index );
+
+    moments.assign( moment_snapshots.begin(), moment_snapshots.end() );
+  }
 }
 
 // Reset the estimator data
@@ -316,25 +407,14 @@ void EntityEstimator::resetData()
   for( auto&& entity_data : d_entity_estimator_moments_map )
     entity_data.second.reset();
 
-  // Reset the total snapshot data
-  for( size_t i = 0; i < d_estimator_total_bin_data_snapshots.size(); ++i )
+  if( d_entity_bin_snapshots_enabled )
   {
-    Utility::get<0>( d_estimator_total_bin_data_snapshots[i] ).clear();
-    Utility::get<1>( d_estimator_total_bin_data_snapshots[i] ).clear();
-    Utility::get<2>( d_estimator_total_bin_data_snapshots[i] ).clear();
-    Utility::get<3>( d_estimator_total_bin_data_snapshots[i] ).clear();
-  }
-  
-  // Reset the entity bin snapshot data
-  for( auto&& entity_data : d_entity_estimator_moments_snapshots_map )
-  {
-    for( size_t i = 0; i < entity_data.second.size(); ++i )
-    {
-      Utility::get<0>( entity_data.second[i] ).clear();
-      Utility::get<1>( entity_data.second[i] ).clear();
-      Utility::get<2>( entity_data.second[i] ).clear();
-      Utility::get<3>( entity_data.second[i] ).clear();
-    }
+    // Reset the total snapshot data
+    d_estimator_total_bin_data_snapshots.reset();
+
+    // Reset the entity bin snapshot data
+    for( auto&& entity_data : d_entity_estimator_moments_snapshots_map )
+      entity_data.second.reset();
   }
 }
 
@@ -348,38 +428,9 @@ void EntityEstimator::reduceData( const Utility::Communicator& comm,
   // Only do the reduction if there is more than one process
   if( comm.size() > 1 )
   {
+    // Reduce the entity bin data
     try{
-      // Gather all of the entity data on the root process
-      if( comm.rank() == root_process )
-      {
-        std::vector<EntityEstimatorMomentsCollectionMap>
-          gathered_entity_data( comm.size() );
-
-        std::vector<Utility::Communicator::Request> gathered_requests;
-
-        for( size_t i = 0; i < comm.size(); ++i )
-        {
-          if( i != root_process )
-          {
-            gathered_requests.push_back(
-                    Utility::ireceive( comm, i, 0, gathered_entity_data[i] ) );
-          }
-        }
-
-        std::vector<Utility::Communicator::Status>
-        gathered_statuses( gathered_requests.size() );
-
-        Utility::wait( gathered_requests, gathered_statuses );
-
-        this->reduceEntityCollections( gathered_entity_data, root_process );
-      }
-      else
-      {
-        Utility::send( comm,
-                       root_process,
-                       0,
-                       d_entity_estimator_moments_map );
-      }
+      this->reduceEntityCollectionMaps( comm, root_process, d_entity_estimator_moments_map );
     }
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
                              "Unable to perform mpi reduction in entity bin "
@@ -396,19 +447,113 @@ void EntityEstimator::reduceData( const Utility::Communicator& comm,
                              "Unable to perform mpi reduction in entity "
                              "estimator " << this->getId() << " for total bin "
                              "data!" );
+
+    if( d_entity_bin_snapshots_enabled )
+    {
+      // Reduce the entity bin snapshot data
+      try{
+        this->reduceEntitySnapshotMaps( comm, root_process, d_entity_estimator_moments_snapshots_map );
+      }
+      EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                               "Unable to perform mpi reduction in entity "
+                               "estimator " << this->getId() << " for entity "
+                               "bin snapshot data!" );
+
+      // Reduce the total bin snapshot data
+      try{
+        this->reduceSnapshots( comm, root_process, d_estimator_total_bin_data_snapshots );
+      }
+      EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                               "Unable to perform mpi reduction in entity "
+                               "estimator " << this->getId() << " for total "
+                               "bin snapshot data!" );
+    }
   }
 
   Estimator::reduceData( comm, root_process );
 }
 
+// Reduce the entity collection maps
+void EntityEstimator::reduceEntityCollectionMaps(
+                    const Utility::Communicator& comm,
+                    const int root_process,
+                    EntityEstimatorMomentsCollectionMap& collection_map ) const
+{
+  // Gather all of the entity data on the root process
+  if( comm.rank() == root_process )
+  {
+    std::vector<EntityEstimatorMomentsCollectionMap>
+      gathered_entity_data( comm.size() );
+
+    std::vector<Utility::Communicator::Request> gathered_requests;
+
+    for( size_t i = 0; i < comm.size(); ++i )
+    {
+      if( i != root_process )
+      {
+        gathered_requests.push_back(
+                    Utility::ireceive( comm, i, 0, gathered_entity_data[i] ) );
+      }
+    }
+
+    std::vector<Utility::Communicator::Status>
+      gathered_statuses( gathered_requests.size() );
+    
+    Utility::wait( gathered_requests, gathered_statuses );
+    
+    this->reduceEntityCollections( gathered_entity_data,
+                                   root_process,
+                                   collection_map );
+  }
+  else
+    Utility::send( comm, root_process, 0, collection_map );
+}
+
+// Reduce the entity snapshot maps
+void EntityEstimator::reduceEntitySnapshotMaps(
+            const Utility::Communicator& comm,
+            const int root_process,
+            EntityEstimatorMomentsCollectionSnapshotsMap& snapshots_map ) const
+{
+  // Gather all of the entity data on the root process
+  if( comm.rank() == root_process )
+  {
+    std::vector<EntityEstimatorMomentsCollectionSnapshotsMap>
+      gathered_entity_data( comm.size() );
+
+    std::vector<Utility::Communicator::Request> gathered_requests;
+
+    for( size_t i = 0; i < comm.size(); ++i )
+    {
+      if( i != root_process )
+      {
+        gathered_requests.push_back(
+                    Utility::ireceive( comm, i, 0, gathered_entity_data[i] ) );
+      }
+    }
+
+    std::vector<Utility::Communicator::Status>
+      gathered_statuses( gathered_requests.size() );
+
+    Utility::wait( gathered_requests, gathered_statuses );
+
+    this->reduceEntitySnapshots( gathered_entity_data,
+                                 root_process,
+                                 snapshots_map );
+  }
+  else
+    Utility::send( comm, root_process, 0, snapshots_map );
+}
+
 // Reduce the entity moments
 void EntityEstimator::reduceEntityCollections(
-                        const std::vector<EntityEstimatorMomentsCollectionMap>&
-                        other_entity_estimator_moments_maps,
-                        const size_t root_index )
+                    const std::vector<EntityEstimatorMomentsCollectionMap>&
+                    other_entity_estimator_moments_maps,
+                    const size_t root_index,
+                    EntityEstimatorMomentsCollectionMap& collection_map ) const
 {
   // Reduce the data that was on each process
-  for( auto&& entity_data : d_entity_estimator_moments_map )
+  for( auto&& entity_data : collection_map )
   {
     // Don't double count data on this process (j starts from 1)
     for( size_t j = 0; j < other_entity_estimator_moments_maps.size(); ++j )
@@ -437,6 +582,30 @@ void EntityEstimator::reduceEntityCollections(
   }
 }
 
+// Reduce the entity snapshots
+void EntityEstimator::reduceEntitySnapshots(
+            const std::vector<EntityEstimatorMomentsCollectionSnapshotsMap>&
+            other_entity_estimator_snapshots_maps,
+            const size_t root_index,
+            EntityEstimatorMomentsCollectionSnapshotsMap& snapshots_map ) const
+{
+  // Reduce the data that was on each process
+  for( auto&& entity_data : snapshots_map )
+  {
+    // Don't double count data on this process (j starts from 1)
+    for( size_t j = 0; j < other_entity_estimator_snapshots_maps.size(); ++j )
+    {
+      if( j != root_index )
+      {
+        const EntityEstimatorMomentsCollectionSnapshotsMap::value_type&
+          other_entity_data = *other_entity_estimator_snapshots_maps[j].find( entity_data.first );
+
+        entity_data.second.mergeSnapshots( other_entity_data.second );
+      }
+    }
+  }
+}
+
 // Assign entities
 void EntityEstimator::assignEntities(
                                    const EntityNormConstMap& entity_norm_data )
@@ -453,7 +622,12 @@ void EntityEstimator::assignEntities(
 
   // Initialize the entity data
   for( auto&& entity_data : entity_norm_data )
+  {
     d_entity_estimator_moments_map[entity_data.first];
+
+    if( d_entity_bin_snapshots_enabled )
+      d_entity_estimator_moments_snapshots_map[entity_data.first];
+  }
 
   // Calculate the total normalization constant
   this->calculateTotalNormalizationConstant();
@@ -461,6 +635,8 @@ void EntityEstimator::assignEntities(
   // Resize the data
   this->resizeEntityEstimatorMapCollections();
   this->resizeEstimatorTotalCollection();
+  this->resizeEntityEstimatorMapSnapshots();
+  this->resizeEstimatorTotalSnapshots();
 }
 
 // Assign discretization to an estimator dimension
@@ -478,6 +654,12 @@ void EntityEstimator::assignDiscretization(
 
   // Resize the total array
   this->resizeEstimatorTotalCollection();
+
+  // Resize the entity estimator moments map snapshots
+  this->resizeEntityEstimatorMapSnapshots();
+
+  // Resize the entity total snapshots
+  this->resizeEstimatorTotalSnapshots();
 }
 
 // Set the response functions
@@ -491,6 +673,12 @@ void EntityEstimator::assignResponseFunction(
 
   // Resize the total collection
   this->resizeEstimatorTotalCollection();
+
+  // Resize the entity estimator moments map snapshots
+  this->resizeEntityEstimatorMapSnapshots();
+
+  // Resize the entity total snapshots
+  this->resizeEstimatorTotalSnapshots();
 }
 
 // Commit history contribution to a bin of an entity
@@ -651,11 +839,10 @@ void EntityEstimator::calculateTotalNormalizationConstant()
 // Resize the entity estimator moments map collections
 void EntityEstimator::resizeEntityEstimatorMapCollections()
 {
+  size_t size = this->getNumberOfBins()*this->getNumberOfResponseFunctions();
+  
   for( auto&& entity_data : d_entity_estimator_moments_map )
-  {
-    entity_data.second.resize( this->getNumberOfBins()*
-                               this->getNumberOfResponseFunctions() );
-  }
+    entity_data.second.resize( size );
 }
 
 // Resize the estimator total collection
@@ -670,11 +857,11 @@ void EntityEstimator::resizeEntityEstimatorMapSnapshots()
 {
   if( d_entity_bin_snapshots_enabled )
   {
+    size_t size = this->getNumberOfBins()*
+      this->getNumberOfResponseFunctions();
+    
     for( auto&& entity_data : d_entity_estimator_moments_snapshots_map )
-    {
-      entity_data.second.resize( this->getNumberOfBins()*
-                                 this->getNumberOfResponseFunctions() );
-    }
+      entity_data.second.resize( size );
   }
 }
 
