@@ -473,8 +473,6 @@ if __name__ == "__main__":
                       help="The electroionization grid absolute difference tolerance")
     parser.add_option("--electroion_grid_dist_tol", type="float", dest="electroion_grid_dist_tol",
                       help="The electroionization grid distance tolerance")
-    parser.add_option("--notes", type="string", dest="notes",
-                      help="data generation notes")
 
     options,args = parser.parse_args()
 
