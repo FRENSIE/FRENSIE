@@ -2113,6 +2113,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
   }
 
   // Create the min adjoint energy gain function
+  std::function<double(const double&, const double&)> pdf_evaluator;
   std::function<double(const double&)> min_energy_gain_function;
   if ( this->getForwardElectroionizationSamplingMode() == MonteCarlo::KNOCK_ON_SAMPLING )
   {
@@ -2136,6 +2137,11 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
     min_energy_gain_function =
       [min_energy_loss_distribution](const double& energy){
         return min_energy_loss_distribution->evaluate(energy); };
+
+    // Create the forward pdf evaluator
+    pdf_evaluator =
+      [distribution](const double& incoming_energy, const double& outgoing_energy){
+        return distribution->evaluatePDF( incoming_energy, outgoing_energy ); };
   }
   else if ( this->getForwardElectroionizationSamplingMode() == MonteCarlo::OUTGOING_ENERGY_SAMPLING )
   {
@@ -2154,6 +2160,22 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
     min_energy_gain_function =
       [min_outgoing_energy_distribution](const double& energy){
         return min_outgoing_energy_distribution->evaluate(energy) - energy; };
+
+    // Create the forward pdf evaluator
+    /*! \details When evaluating the electro-ionization pdf for outgoing energy
+    *  sampling, the pdf of the primary outgoing electron and the knock-on
+    *  electron must be summed in order to take into account that the adjoint
+    *  electron can be either the primary outgoing electron or the knock-on
+    *  electron.
+    */
+    pdf_evaluator =
+      [distribution](const double& incoming_energy, const double& outgoing_energy){
+        double primary_pdf = distribution->evaluatePDF( incoming_energy, outgoing_energy );
+        double knock_on_energy = incoming_energy - outgoing_energy;
+        double knock_on_pdf = distribution->evaluatePDF( incoming_energy, knock_on_energy );
+        double pdf = primary_pdf + knock_on_pdf;
+        return pdf; };
+
   }
   else
   {
@@ -2162,21 +2184,6 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
                     this->getForwardElectroionizationSamplingMode() <<
                     " is invalid or currently not supported!" );
   }
-
-  // Create the forward pdf evaluator
-  /*! \details When evaluating the electro-ionization pdf for outgoing energy
-   *  sampling, the pdf of the primary outgoing electron and the knock-on
-   *  electron must be summed in order to take into account that the adjoint
-   *  electron can be either the primary outgoing electron or the knock-on
-   *  electron.
-   */
-  std::function<double(const double&, const double&)> pdf_evaluator =
-    [distribution](const double& incoming_energy, const double& outgoing_energy){
-      double primary_pdf = distribution->evaluatePDF( incoming_energy, outgoing_energy );
-      double knock_on_energy = incoming_energy - outgoing_energy;
-      double knock_on_pdf = distribution->evaluatePDF( incoming_energy, knock_on_energy );
-      double pdf = primary_pdf + knock_on_pdf;
-      return pdf; };
 
   grid_generator.reset(
     new ElectronGridGenerator(
