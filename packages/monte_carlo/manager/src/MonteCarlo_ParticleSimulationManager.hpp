@@ -196,6 +196,10 @@ private:
   // Set the adjoint electron cutoff weight roulette
   void setAdjointElectronCutoffWeightRoulette();
 
+  //! Run the simulation batch
+  void runSimulationMicroBatch( const uint64_t batch_start_history,
+                                const uint64_t batch_end_history );
+
   // Simulate a resolved particle implementation
   template<typename State, typename SimulateParticleTrackMethod>
   void simulateParticleImpl( ParticleState& unresolved_particle,

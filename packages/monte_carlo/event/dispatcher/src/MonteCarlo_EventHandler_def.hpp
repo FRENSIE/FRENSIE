@@ -284,11 +284,12 @@ void EventHandler::save( Archive& ar, const unsigned version ) const
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleGoneGlobalEventHandler );
 
   // Save the local data (ignore the model)
-  ar & BOOST_SERIALIZATION_NVP( d_model );
-  ar & BOOST_SERIALIZATION_NVP( d_snapshot_period );
-  ar & BOOST_SERIALIZATION_NVP( d_last_snapshot_history );
   ar & BOOST_SERIALIZATION_NVP( d_simulation_completion_criterion );
-  ar & BOOST_SERIALIZATION_NVP( d_number_of_committed_histories );
+
+  uint64_t number_of_committed_histories =
+    this->getNumberOfCommittedHistories();
+  
+  ar & BOOST_SERIALIZATION_NVP( number_of_committed_histories );
 
   double elapsed_time = this->getElapsedTime();
   
@@ -312,14 +313,17 @@ void EventHandler::load( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleGoneGlobalEventHandler );
 
   // Load the local data (ignore the model)
-  ar & BOOST_SERIALIZATION_NVP( d_model );
-  ar & BOOST_SERIALIZATION_NVP( d_snapshot_period );
-  ar & BOOST_SERIALIZATION_NVP( d_last_snapshot_history );
   ar & BOOST_SERIALIZATION_NVP( d_simulation_completion_criterion );
-  ar & BOOST_SERIALIZATION_NVP( d_number_of_committed_histories );
 
-  if( d_number_of_committed_histories > 0 )
-    ParticleHistoryObserver::setNumberOfHistories( d_number_of_committed_histories );
+  uint64_t number_of_committed_histories;
+  
+  ar & BOOST_SERIALIZATION_NVP( number_of_committed_histories );
+
+  d_number_of_committed_histories.resize( 1 );
+  d_number_of_committed_histories.front() = number_of_committed_histories;
+
+  if( number_of_committed_histories > 0 )
+    ParticleHistoryObserver::setNumberOfHistories( number_of_committed_histories );
 
   ar & boost::serialization::make_nvp( "elapsed_time", d_elapsed_simulation_time );  
 

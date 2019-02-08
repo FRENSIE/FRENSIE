@@ -80,6 +80,12 @@ public:
   //! Return the number of batches for an MPI configuration
   uint64_t getNumberOfBatchesPerProcessor() const;
 
+  //! Set the number of snapshots per batch
+  void setNumberOfSnapshotsPerBatch( const uint64_t snapshots_per_batch );
+
+  //! Get the number of snapshots per batch
+  uint64_t getNumberOfSnapshotsPerBatch() const;
+
   //! Set the history simulation wall time (s)
   void setSimulationWallTime( const double wall_time );
 
@@ -137,6 +143,9 @@ private:
   // The number of batches to run for MPI configuration
   uint64_t d_number_of_batches_per_processor;
 
+  // The number of snapshots per batch
+  uint64_t d_number_of_snapshots_per_batch;
+
   // The simulation wall time
   double d_wall_time;
 
@@ -158,6 +167,7 @@ void SimulationGeneralProperties::save( Archive& ar, const unsigned version ) co
   ar & BOOST_SERIALIZATION_NVP( d_min_number_of_batches_per_rendezvous );
   ar & BOOST_SERIALIZATION_NVP( d_max_batch_size );
   ar & BOOST_SERIALIZATION_NVP( d_number_of_batches_per_processor );
+  ar & BOOST_SERIALIZATION_NVP( d_number_of_snapshots_per_batch );
 
   // We cannot safely serialize inf to all archive types - create a flag that
   // records if the simulation wall time is inf
@@ -192,6 +202,7 @@ void SimulationGeneralProperties::load( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_NVP( d_min_number_of_batches_per_rendezvous );
   ar & BOOST_SERIALIZATION_NVP( d_max_batch_size );
   ar & BOOST_SERIALIZATION_NVP( d_number_of_batches_per_processor );
+  ar & BOOST_SERIALIZATION_NVP( d_number_of_snapshots_per_batch );
 
   // Load the wall time
   bool __inf_wall_time__;

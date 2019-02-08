@@ -552,6 +552,48 @@ void ParticleSimulationManager::runSimulationBatch(
   // Make sure the history range is valid
   testPrecondition( batch_start_history < batch_end_history );
 
+  uint64_t number_of_snapshots_per_batch =
+    d_properties->getNumberOfSnapshotsPerBatch();
+
+  uint64_t micro_batch_size =
+    (batch_end_history - batch_start_history)/d_properties->getNumberOfSnapshotsPerBatch();
+
+  if( micro_batch_size == 0 )
+  {
+    number_of_snapshots_per_batch = 1;
+    micro_batch_size = 1;
+  }
+
+  for( uint64_t i = 0; i < number_of_snapshots_per_batch; ++i )
+  {
+    const uint64_t micro_batch_start_history =
+      batch_start_history + micro_batch_size*i;
+
+    if( i < d_properties->getNumberOfSnapshotsPerBatch()-1 )
+    {
+      this->runSimulationMicroBatch( micro_batch_start_history,
+                                     micro_batch_start_history +
+                                     micro_batch_size );
+    }
+    else
+    {
+      this->runSimulationMicroBatch( micro_batch_start_history,
+                                     batch_end_history );
+    }
+
+    // Micro batch complete - take a snapshot of the observer states
+    d_event_handler->takeSnapshotOfObserverStates();
+  }
+}
+
+// Run the simulation micro batch
+void ParticleSimulationManager::runSimulationMicroBatch(
+                                            const uint64_t batch_start_history,
+                                            const uint64_t batch_end_history )
+{
+  // Make sure the history range is valid
+  testPrecondition( batch_start_history < batch_end_history );
+
   #pragma omp parallel num_threads( Utility::OpenMPProperties::getRequestedNumberOfThreads() )
   {
     // Create a bank for each thread

@@ -24,6 +24,7 @@ SimulationGeneralProperties::SimulationGeneralProperties()
     d_min_number_of_batches_per_rendezvous( 1 ),
     d_max_batch_size( d_max_rendezvous_batch_size ),
     d_number_of_batches_per_processor( 1 ),
+    d_number_of_snapshots_per_batch( 1 ),
     d_wall_time( Utility::QuantityTraits<double>::inf() ),
     d_surface_flux_estimator_angle_cosine_cutoff( 0.001 ),
     d_implicit_capture_mode_on( false )
@@ -146,6 +147,24 @@ void SimulationGeneralProperties::setNumberOfBatchesPerProcessor(
 uint64_t SimulationGeneralProperties::getNumberOfBatchesPerProcessor() const
 {
   return d_number_of_batches_per_processor;
+}
+
+// Set the number of snapshots per batch
+void SimulationGeneralProperties::setNumberOfSnapshotsPerBatch(
+                                           const uint64_t snapshots_per_batch )
+{
+  // There must be at least one snapshot per batch
+  TEST_FOR_EXCEPTION( snapshots_per_batch == 0,
+                      std::runtime_error,
+                      "There must be at least one snapshot per batch!" );
+  
+  d_number_of_snapshots_per_batch = snapshots_per_batch;
+}
+
+// Get the number of snapshots per batch
+uint64_t SimulationGeneralProperties::getNumberOfSnapshotsPerBatch() const
+{
+  return d_number_of_snapshots_per_batch;
 }
 
 // Set the history simulation wall time
