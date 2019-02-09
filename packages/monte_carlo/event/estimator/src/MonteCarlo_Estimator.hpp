@@ -154,9 +154,6 @@ public:
 
   //! Check if snapshots have been enabled on entity bins
   virtual bool areSnapshotsOnEntityBinsEnabled() const = 0;
-
-  //! Get the moment snapshot history values
-  virtual const std::list<uint64_t>& getMomentSnapshotHistoryValues() const = 0;
   
   // //! Set the history score pdf bins
   // void setHistoryScorePDFBins( const std::vector<double>& bins );
@@ -268,6 +265,11 @@ public:
             const EntityId entity_id,
             std::map<std::string,std::vector<double> >& processed_data ) const;
 
+  //! Get the entity bin moment snapshot history values
+  virtual void getEntityBinMomentSnapshotHistoryValues(
+                                 const EntityId entity_id,
+                                 std::vector<uint64_t>& history_values ) const;
+
   //! Get the bin data first moment snapshots for an entity bin index
   virtual void getEntityBinFirstMomentSnapshots(
                                           const EntityId entity_id,
@@ -307,6 +309,10 @@ public:
        const size_t bin_index,
        std::map<std::string,std::vector<double> >& processed_snapshots ) const;
 
+  //! Get the moment snapshot history values
+  virtual void getTotalBinMomentSnapshotHistoryValues(
+                                 std::vector<uint64_t>& history_values ) const;
+
   //! Get the bin data first moment snapshots for an total bin index
   virtual void getTotalBinFirstMomentSnapshots(
                                           const size_t bin_index,
@@ -339,6 +345,11 @@ public:
   void getTotalBinProcessedSnapshots(
        const size_t bin_index,
        std::map<std::string,std::vector<double> >& processed_snapshots ) const;
+
+  //! Get the entity total moment snapshot history values
+  virtual void getEntityTotalMomentSnapshotHistoryValues(
+                                 const EntityId entity_id,
+                                 std::vector<uint64_t>& history_values ) const;
 
   //! Get the total data first moment snapshots for an entity bin index
   virtual void getEntityTotalFirstMomentSnapshots(
@@ -378,6 +389,10 @@ public:
        const EntityId entity_id,
        const size_t response_function_index,
        std::map<std::string,std::vector<double> >& processed_snapshots ) const;
+
+  //! Get the total moment snapshot history values
+  virtual void getTotalMomentSnapshotHistoryValues(
+                                 std::vector<uint64_t>& history_values ) const;
 
   //! Get the total data first moment snapshots for a total bin index
   virtual void getTotalFirstMomentSnapshots(

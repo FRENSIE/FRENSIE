@@ -96,9 +96,11 @@ public:
   //! Take a snapshot (of the moments)
   void takeSnapshot( const uint64_t num_histories ) override;
 
-  //! Get the moment snapshot history values
-  const std::list<uint64_t>& getMomentSnapshotHistoryValues() const override;
-
+  //! Get the entity bin moment snapshot history values
+  void getEntityBinMomentSnapshotHistoryValues(
+                  const EntityId entity_id,
+                  std::vector<uint64_t>& history_values ) const final override;
+  
   //! Get the bin data first moment snapshots for an entity bin index
   void getEntityBinFirstMomentSnapshots(
                            const EntityId entity_id,
@@ -122,6 +124,10 @@ public:
                            const EntityId entity_id,
                            const size_t bin_index,
                            std::vector<double>& moments ) const final override;
+
+  //! Get the moment snapshot history values
+  void getTotalBinMomentSnapshotHistoryValues(
+                  std::vector<uint64_t>& history_values ) const final override;
 
   //! Get the bin data first moment snapshots for an total bin index
   void getTotalBinFirstMomentSnapshots(

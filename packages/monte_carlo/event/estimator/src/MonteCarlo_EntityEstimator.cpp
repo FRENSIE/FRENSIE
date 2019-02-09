@@ -195,6 +195,33 @@ const std::list<uint64_t>& EntityEstimator::getMomentSnapshotHistoryValues() con
   d_estimator_total_bin_data_snapshots.getSnapshotIndices();
 }
 
+// Get the entity bin moment snapshot history values
+void EntityEstimator::getEntityBinMomentSnapshotHistoryValues(
+                                  const EntityId entity_id,
+                                  std::vector<uint64_t>& history_values ) const
+{
+  // Make sure that the entity id is valid
+  TEST_FOR_EXCEPTION( !this->isEntityAssigned( entity_id ),
+                      std::runtime_error,
+                      "Entity " << entity_id << " is not assigned to "
+                      "estimator " << this->getId() << "!" );
+  
+  // Make sure that the bin index is valid
+  TEST_FOR_EXCEPTION( bin_index >= this->getNumberOfBins()*this->getNumberOfResponseFunctions(),
+                      std::runtime_error,
+                      "The bin index must be less than "
+                      << this->getNumberOfBins()*this->getNumberOfResponseFunctions() << "!" );
+
+  if( d_entity_bin_snapshots_enabled )
+  {
+    const std::list<uint64_t>& raw_history_values = 
+      d_entity_estimator_moments_snapshots_map.find( entity_id )->second.getSnapshotIndices();
+    
+    history_values.assign( raw_history_values.begin(),
+                           raw_history_values.end() );
+  }
+}
+
 // Get the bin data first moment snapshots for an entity bin index
 void EntityEstimator::getEntityBinFirstMomentSnapshots(
                                            const EntityId entity_id,
@@ -308,6 +335,20 @@ void EntityEstimator::getEntityBinFourthMomentSnapshots(
            bin_index );
     
     moments.assign( moment_snapshots.begin(), moment_snapshots.end() );
+  }
+}
+
+// Get the moment snapshot history values
+void EntityEstimator::getTotalBinMomentSnapshotHistoryValues(
+                                  std::vector<uint64_t>& history_values ) const
+{
+  if( d_entity_bin_snapshots_enabled )
+  {
+    const std::list<uint64_t>& raw_history_values = 
+      d_estimator_total_bin_data_snapshots.getSnapshotIndices();
+    
+    history_values.assign( raw_history_values.begin(),
+                           raw_history_values.end() );
   }
 }
 

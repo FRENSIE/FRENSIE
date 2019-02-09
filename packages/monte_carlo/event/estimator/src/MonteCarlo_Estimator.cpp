@@ -584,6 +584,12 @@ void Estimator::getEntityTotalProcessedData(
                                      processed_data["fom"] );
 }
 
+// Get the entity bin moment snapshot history values
+void Estimator::getEntityBinMomentSnapshotHistoryValues(
+                                  const EntityId entity_id,
+                                  std::vector<uint64_t>& history_values ) const
+{ /* ... */ }
+
 // Get the bin data first moment snapshots for an entity bin index
 void Estimator::getEntityBinFirstMomentSnapshots(
                                            const EntityId entity_id,
@@ -666,6 +672,11 @@ void Estimator::getEntityBinProcessedSnapshots(
                                         processed_snapshots["fom"] );
 }
 
+// Get the moment snapshot history values
+void Estimator::getTotalBinMomentSnapshotHistoryValues(
+                                  std::vector<uint64_t>& history_values ) const
+{ /* ... */ }
+
 // Get the bin data first moment snapshots for an total bin index
 void Estimator::getTotalBinFirstMomentSnapshots(
                                            const size_t bin_index,
@@ -739,6 +750,12 @@ void Estimator::getTotalBinProcessedSnapshots(
                                        processed_snapshots["vov"],
                                        processed_snapshots["fom"] );
 }
+
+// Get the entity total moment snapshot history values
+void Estimator::getEntityTotalMomentSnapshotHistoryValues(
+                                  const EntityId entity_id,
+                                  std::vector<uint64_t>& history_values ) const
+{ /* ... */ }
 
 // Get the total data first moment snapshots for an entity bin index
 void Estimator::getEntityTotalFirstMomentSnapshots(
@@ -820,6 +837,11 @@ void Estimator::getEntityTotalProcessedSnapshots(
                                           processed_snapshots["vov"],
                                           processed_snapshots["fom"] );
 }
+
+// Get the total moment snapshot history values
+void Estimator::getTotalMomentSnapshotHistoryValues(
+                                  std::vector<uint64_t>& history_values ) const
+{ /* ... */ }
 
 // Get the total data first moment snapshots for a total bin index
 void Estimator::getTotalFirstMomentSnapshots(

@@ -139,6 +139,24 @@ void StandardEntityEstimator::takeSnapshot( const uint64_t num_histories )
   EntityEstimator::takeMomentSnapshot( num_histories );
 }
 
+// Get the entity total moment snapshot history values
+void StandardEntityEstimator::getEntityTotalMomentSnapshotHistoryValues(
+                                  const EntityId entity_id,
+                                  std::vector<uint64_t>& history_values ) const
+{
+  // Make sure that the entity id is valid
+  TEST_FOR_EXCEPTION( !this->isEntityAssigned( entity_id ),
+                      std::runtime_error,
+                      "Entity " << entity_id << " is not assigned to "
+                      "estimator " << this->getId() << "!" );
+
+  const std::list<uint64_t>& raw_history_values =
+    d_entity_total_estimator_moment_snapshots_map.find( entity_id )->second.getSnapshotIndices();
+
+  history_values.assign( raw_history_values.begin(),
+                         raw_history_values.end() );
+}
+
 // Get the total data first moment snapshots for an entity bin index
 void StandardEntityEstimator::getEntityTotalFirstMomentSnapshots(
                                           const EntityId entity_id,
@@ -241,6 +259,17 @@ void StandardEntityEstimator::getEntityTotalFourthMomentSnapshots(
        response_function_index );
 
   moments.assign( moment_snapshots.begin(), moment_snapshots.end() );
+}
+
+// Get the total moment snapshot history values
+void StandardEntityEstimator::getTotalMomentSnapshotHistoryValues(
+                                  std::vector<uint64_t>& history_values ) const
+{
+  const std::list<uint64_t>& raw_history_values =
+    d_total_estimator_moment_snapshots.getSnapshotIndices();
+
+  history_values.assign( raw_history_values.begin(),
+                         raw_history_values.end() );
 }
 
 // Get the total data first moment snapshots for a total bin index
