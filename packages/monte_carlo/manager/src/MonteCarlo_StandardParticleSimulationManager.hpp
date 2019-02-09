@@ -41,7 +41,8 @@ public:
                  const std::shared_ptr<const CollisionForcer> collision_forcer,
                  const std::shared_ptr<const SimulationProperties>& properties,
                  const uint64_t next_history,
-                 const uint64_t rendezvous_number );
+                 const uint64_t rendezvous_number,
+                 const bool use_single_rendezvous_file );
 
   //! Destructor
   ~StandardParticleSimulationManager()

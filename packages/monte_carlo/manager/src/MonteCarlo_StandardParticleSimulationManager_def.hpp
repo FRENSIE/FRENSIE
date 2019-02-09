@@ -62,7 +62,8 @@ StandardParticleSimulationManager<mode>::StandardParticleSimulationManager(
                  const std::shared_ptr<const CollisionForcer> collision_forcer,
                  const std::shared_ptr<const SimulationProperties>& properties,
                  const uint64_t next_history,
-                 const uint64_t rendezvous_number )
+                 const uint64_t rendezvous_number,
+                 const bool use_single_rendezvous_file )
   : ParticleSimulationManager( simulation_name,
                                archive_type,
                                model,
@@ -72,7 +73,8 @@ StandardParticleSimulationManager<mode>::StandardParticleSimulationManager(
                                collision_forcer,
                                properties,
                                next_history,
-                               rendezvous_number )
+                               rendezvous_number,
+                               use_single_rendezvous_file )
 { 
   Details::ModeInitializationHelper<typename boost::mpl::begin<typename ParticleModeTypeTraits<mode>::ActiveParticles>::type,typename boost::mpl::end<typename ParticleModeTypeTraits<mode>::ActiveParticles>::type>::initializeSimulateParticleFunctions( *this );
 }

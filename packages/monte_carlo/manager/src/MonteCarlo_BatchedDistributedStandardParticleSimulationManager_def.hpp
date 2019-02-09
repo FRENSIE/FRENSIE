@@ -27,6 +27,7 @@ BatchedDistributedStandardParticleSimulationManager<mode>::BatchedDistributedSta
                  const std::shared_ptr<const SimulationProperties>& properties,
                  const uint64_t next_history,
                  const uint64_t rendezvous_number,
+                 const bool use_single_rendezvous_file,
                  const std::shared_ptr<const Utility::Communicator>& comm )
   : StandardParticleSimulationManager<mode>( simulation_name,
                                              archive_type,
@@ -37,7 +38,8 @@ BatchedDistributedStandardParticleSimulationManager<mode>::BatchedDistributedSta
                                              collision_forcer,
                                              properties,
                                              next_history,
-                                             rendezvous_number ),
+                                             rendezvous_number,
+                                             use_single_rendezvous_file ),
   d_comm( comm ),
   d_batches_per_rendezvous( 0 )
 {

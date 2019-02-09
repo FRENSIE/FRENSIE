@@ -50,7 +50,8 @@ ParticleSimulationManager::ParticleSimulationManager(
                  const std::shared_ptr<const CollisionForcer> collision_forcer,
                  const std::shared_ptr<const SimulationProperties>& properties,
                  const uint64_t next_history,
-                 const uint64_t rendezvous_number )
+                 const uint64_t rendezvous_number,
+                 const bool use_single_rendezvous_file )
   : d_simulation_name( simulation_name ),
     d_archive_type( archive_type ),
     d_model( model ),
@@ -60,14 +61,15 @@ ParticleSimulationManager::ParticleSimulationManager(
     d_event_handler( event_handler ),
     d_weight_windows( weight_windows ),
     d_collision_forcer( collision_forcer ),
+    d_weight_roulette( std::make_shared<StandardWeightCutoffRoulette>() ),
     d_properties( properties ),
     d_next_history( next_history ),
     d_rendezvous_number( rendezvous_number ),
     d_rendezvous_batch_size( 0 ),
     d_batch_size( 0 ),
+    d_use_single_rendezvous_file( use_single_rendezvous_file ),
     d_end_simulation( false ),
-    d_exit_simulation( false ),
-    d_weight_roulette( std::make_shared<StandardWeightCutoffRoulette>() )
+    d_exit_simulation( false )
 {
   // Make sure that the simulation name is valid
   testPrecondition( simulation_name.size() > 0 );
@@ -335,6 +337,24 @@ void ParticleSimulationManager::initialize()
   Utility::JustInTimeInitializer::getInstance().initializeObjectsAndClear();
 }
 
+// Use a single rendezvous file
+void ParticleSimulationManager::useSingleRendezvousFile()
+{
+  d_use_single_rendezvous_file = true;
+}
+
+// Use multiple rendezvous files
+void ParticleSimulationManager::useMultipleRendezvousFiles()
+{
+  d_use_single_rendezvous_file = false;
+}
+
+// Check if a single rendezvous file will be used
+bool ParticleSimulationManager::isSingleRendezvousFileUsed() const
+{
+  return d_use_single_rendezvous_file;
+}
+
 // Run the simulation set up by the user
 void ParticleSimulationManager::runSimulation()
 {
@@ -504,8 +524,14 @@ void ParticleSimulationManager::rendezvous()
 void ParticleSimulationManager::basicRendezvous() const
 {
   std::string archive_name( d_simulation_name );
-  archive_name += "_rendezvous_";
-  archive_name += Utility::toString( d_rendezvous_number );
+  archive_name += "_rendezvous";
+
+  if( !d_use_single_rendezvous_file )
+  {
+    archive_name += "_";
+    archive_name += Utility::toString( d_rendezvous_number );
+  }
+  
   archive_name += ".";
   archive_name += d_archive_type;
 
@@ -525,7 +551,8 @@ void ParticleSimulationManager::basicRendezvous() const
                  d_simulation_name,
                  d_archive_type,
                  d_next_history,
-                 d_rendezvous_number+1 );
+                 d_rendezvous_number+1,
+                 d_use_single_rendezvous_file );
 
   tmp_factory.saveToFile( archive_name, true );
 }
@@ -560,7 +587,7 @@ void ParticleSimulationManager::runSimulationBatch(
 
   if( micro_batch_size == 0 )
   {
-    number_of_snapshots_per_batch = 1;
+    number_of_snapshots_per_batch = batch_end_history - batch_start_history;
     micro_batch_size = 1;
   }
 

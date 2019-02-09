@@ -33,7 +33,8 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
                 const std::string& simulation_name,
                 const std::string& archive_type,
                 const uint64_t next_history,
-                const uint64_t rendezvous_number )
+                const uint64_t rendezvous_number,
+                const bool use_single_rendezvous_file )
   : d_simulation_name( simulation_name ),
     d_archive_type( archive_type ),
     d_model( model ),
@@ -43,7 +44,8 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
     d_collision_forcer( collision_forcer ),
     d_properties( properties ),
     d_next_history( next_history ),
-    d_rendezvous_number( rendezvous_number )
+    d_rendezvous_number( rendezvous_number ),
+    d_use_single_rendezvous_file( use_single_rendezvous_file )
 { 
   TEST_FOR_EXCEPTION( next_history == std::numeric_limits<uint64_t>::max(),
                       std::runtime_error,
@@ -73,7 +75,8 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
     d_collision_forcer( MonteCarlo::CollisionForcer::getDefault() ),
     d_properties( properties ),
     d_next_history( 0 ),
-    d_rendezvous_number( 0 )
+    d_rendezvous_number( 0 ),
+    d_use_single_rendezvous_file( true )
 {
   // Make sure that the model pointer is valid
   testPrecondition( model.get() );
@@ -281,32 +284,34 @@ struct ParticleSimulationManagerFactoryCreateHelper
     {
       factory.d_simulation_manager.reset(
                  new BatchedDistributedStandardParticleSimulationManager<mode>(
-                                                   factory.d_simulation_name,
-                                                   factory.d_archive_type,
-                                                   factory.d_model,
-                                                   factory.d_source,
-                                                   factory.d_event_handler,
-                                                   factory.d_weight_windows,
-                                                   factory.d_collision_forcer,
-                                                   factory.d_properties,
-                                                   factory.d_next_history,
-                                                   factory.d_rendezvous_number,
-                                                   factory.d_comm ) );
+                                          factory.d_simulation_name,
+                                          factory.d_archive_type,
+                                          factory.d_model,
+                                          factory.d_source,
+                                          factory.d_event_handler,
+                                          factory.d_weight_windows,
+                                          factory.d_collision_forcer,
+                                          factory.d_properties,
+                                          factory.d_next_history,
+                                          factory.d_rendezvous_number,
+                                          factory.d_use_single_rendezvous_file,
+                                          factory.d_comm ) );
     }
     else
     {
       factory.d_simulation_manager.reset(
                  new StandardParticleSimulationManager<mode>(
-                                               factory.d_simulation_name,
-                                               factory.d_archive_type,
-                                               factory.d_model,
-                                               factory.d_source,
-                                               factory.d_event_handler,
-                                               factory.d_weight_windows,
-                                               factory.d_collision_forcer,
-                                               factory.d_properties,
-                                               factory.d_next_history,
-                                               factory.d_rendezvous_number ) );
+                                      factory.d_simulation_name,
+                                      factory.d_archive_type,
+                                      factory.d_model,
+                                      factory.d_source,
+                                      factory.d_event_handler,
+                                      factory.d_weight_windows,
+                                      factory.d_collision_forcer,
+                                      factory.d_properties,
+                                      factory.d_next_history,
+                                      factory.d_rendezvous_number,
+                                      factory.d_use_single_rendezvous_file ) );
     }
   }
 };
