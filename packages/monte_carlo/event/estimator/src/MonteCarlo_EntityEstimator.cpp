@@ -189,12 +189,6 @@ void EntityEstimator::takeSnapshot( const uint64_t num_histories )
   }
 }
 
-// Get the moment snapshot history values
-const std::list<uint64_t>& EntityEstimator::getMomentSnapshotHistoryValues() const
-{
-  d_estimator_total_bin_data_snapshots.getSnapshotIndices();
-}
-
 // Get the entity bin moment snapshot history values
 void EntityEstimator::getEntityBinMomentSnapshotHistoryValues(
                                   const EntityId entity_id,
@@ -206,12 +200,6 @@ void EntityEstimator::getEntityBinMomentSnapshotHistoryValues(
                       "Entity " << entity_id << " is not assigned to "
                       "estimator " << this->getId() << "!" );
   
-  // Make sure that the bin index is valid
-  TEST_FOR_EXCEPTION( bin_index >= this->getNumberOfBins()*this->getNumberOfResponseFunctions(),
-                      std::runtime_error,
-                      "The bin index must be less than "
-                      << this->getNumberOfBins()*this->getNumberOfResponseFunctions() << "!" );
-
   if( d_entity_bin_snapshots_enabled )
   {
     const std::list<uint64_t>& raw_history_values = 

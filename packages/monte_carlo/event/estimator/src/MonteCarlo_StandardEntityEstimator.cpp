@@ -136,7 +136,7 @@ void StandardEntityEstimator::takeSnapshot( const uint64_t num_histories )
     }
   }
 
-  EntityEstimator::takeMomentSnapshot( num_histories );
+  EntityEstimator::takeSnapshot( num_histories );
 }
 
 // Get the entity total moment snapshot history values

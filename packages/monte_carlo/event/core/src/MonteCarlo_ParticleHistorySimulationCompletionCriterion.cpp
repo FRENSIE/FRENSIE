@@ -564,6 +564,13 @@ ParticleHistorySimulationCompletionCriterion::createMixedCriterion(
            ParticleHistorySimulationCompletionCriterion::createWallTimeCriterion( wall_time ) ) );
 }
 
+// Take a snapshot
+/*! \details The state should never need to be cached.
+ */
+void ParticleHistorySimulationCompletionCriterion::takeSnapshot(
+                                                 const uint64_t num_histories )
+{ /* ... */ }
+
 // Print a summary of the data
 void ParticleHistorySimulationCompletionCriterion::printSummary( std::ostream& os ) const
 {

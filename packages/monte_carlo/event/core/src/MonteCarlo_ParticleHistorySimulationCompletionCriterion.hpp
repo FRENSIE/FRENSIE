@@ -58,6 +58,9 @@ public:
   //! Clear cached criterion data
   virtual void clearCache() = 0;
 
+  //! Take a snapshot
+  void takeSnapshot( const uint64_t num_histories ) final override;
+
   //! Print a summary of the data
   void printSummary( std::ostream& os ) const final override;
 
