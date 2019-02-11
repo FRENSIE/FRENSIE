@@ -274,7 +274,7 @@ generator_si.setAdjointBremsstrahlungGridConvergenceTolerance( 0.5 )
 generator_si.setAdjointBremsstrahlungAbsoluteDifferenceTolerance( 1e-16 )
 generator_si.setAdjointBremsstrahlungDistanceTolerance( 1e-9 )
 
-generator_si.setForwardElectroionizationSamplingMode( MonteCarlo.OUTGOING_ENERGY_SAMPLING )
+generator_si.setForwardElectroionizationSamplingMode( MonteCarlo.KNOCK_ON_SAMPLING )
 generator_si.setAdjointElectroionizationMinEnergyNudgeValue( 1e-9 )
 generator_si.setAdjointElectroionizationMaxEnergyNudgeValue( 1e-2 )
 generator_si.setAdjointElectroionizationEvaluationTolerance( 1e-3 )

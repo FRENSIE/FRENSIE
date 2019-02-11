@@ -1428,13 +1428,13 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
    std::vector<double> cross_section;
    unsigned threshold;
 
-   // Check the elastic data
-   threshold =
-     h_data_container.getAdjointCutoffElasticCrossSectionThresholdEnergyIndex();
+  // Check the elastic data
+  threshold =
+    h_data_container.getAdjointCutoffElasticCrossSectionThresholdEnergyIndex();
 
-   FRENSIE_CHECK_EQUAL( threshold, 0 );
+  FRENSIE_CHECK_EQUAL( threshold, 0 );
 
-   cross_section = h_data_container.getAdjointCutoffElasticCrossSection();
+  cross_section = h_data_container.getAdjointCutoffElasticCrossSection();
 
   FRENSIE_CHECK_EQUAL( cross_section.front(), 2.77811e+07 );
   FRENSIE_CHECK_EQUAL( cross_section.back(), 304.72762372903747519 );

@@ -268,12 +268,12 @@ class AdjointBremsstrahlungReactionTestCase(unittest.TestCase):
         "*Test MonteCarlo.Collision.createBremsstrahlungReaction getCrossSection method"
         energy = 1e-5
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                4.351636330534491748e+01,
-                                delta=1e-12*4.351636330534491748e+01 )
+                                4.422553386152458188e+01,
+                                delta=1e-12*4.422553386152458188e+01 )
         energy = 1.0e-3
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                1.546738980467904412e+01,
-                                delta=1e-12*1.546738980467904412e+01 )
+                                1.569786837648857869e+01,
+                                delta=1e-12*1.569786837648857869e+01 )
         energy = 20.0
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
                                 0.0,

@@ -56,13 +56,13 @@ FRENSIE_UNIT_TEST( AdjointElectronMaterial, getNumberDensity )
 FRENSIE_UNIT_TEST( AdjointElectronMaterial, getMacroscopicTotalCrossSection )
 {
   double cross_section = material->getMacroscopicTotalCrossSection( 1e-5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.241166842770479584e+10*num_density, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.280728254654968262e+10*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicTotalCrossSection( 1e-3 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.553730313460012525e+07*num_density, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.609051066694104671e+07*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicTotalCrossSection( 20.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 9.791277644432200759e+04*num_density, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 9.798205883647680457e+04*num_density, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -113,13 +113,13 @@ FRENSIE_UNIT_TEST( AdjointElectronMaterial, getMacroscopicReactionCrossSection )
   // Test that the bremsstrahlung cross section can be returned
   reaction = MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION;
   cross_section = material->getMacroscopicReactionCrossSection( 1e-5, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.351636330534491748e+01*num_density, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.422553386152458188e+01*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.546738980467904412e+01*num_density, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.569786837648857869e+01*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection( 20.0, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.284777163640331010e-01*num_density, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.303534746154091928e-01*num_density, 1e-12 );
 
 
   // Test that the coupled elastic cross section can be returned
@@ -164,13 +164,13 @@ FRENSIE_UNIT_TEST( AdjointElectronMaterial, getMacroscopicReactionCrossSection )
   // Test that the K subshell electroionization cross section can be returned
   reaction = MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
   cross_section = material->getMacroscopicReactionCrossSection( 1e-5, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.207553182590560913e+10*num_density, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.247114594404132843e+10*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection( 1e-3, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.223045359776296839e+07*num_density, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.278366089962531999e+07*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection( 20.0, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.061225615488670883e+03*num_density, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.130506131885223567e+03*num_density, 1e-12 );
 
 
   // Test that the L1 subshell electroionization cross section can be returned

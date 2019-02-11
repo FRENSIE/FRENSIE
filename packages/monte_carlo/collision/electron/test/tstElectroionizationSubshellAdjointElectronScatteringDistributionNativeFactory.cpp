@@ -58,15 +58,15 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 
   // Check the first bin
   pdf = native_distribution->evaluate( 1e-5, 2.3711E-5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.251371137042551425e+02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.242860168116929742e+02, 1e-12 );
 
   // Check between two bins
   pdf = native_distribution->evaluate( 1.1e-5, 0.2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.811008202480227647e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.837743940181838231e-01, 1e-12 );
 
   // Check the last bin
   pdf = native_distribution->evaluate( 20.0, max_energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 9.684403582793396199e+05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 9.741633350079954835e+05, 1e-12 );
 
   // Check above the last bin
   pdf = native_distribution->evaluate( 20.01, 22.1 );
@@ -86,15 +86,15 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 
   // Check the first bin
   pdf = native_distribution->evaluatePDF( 1e-5, 2.3711E-5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 6.904744396932407824e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 6.894608999906166957e+01, 1e-12 );
 
   // Check between two bins
   pdf = native_distribution->evaluatePDF( 1.1e-5, 0.2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 5.359445246223013687e-02, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 5.450262754837988111e-02, 1e-6 );
 
   // Check the last bin
   pdf = native_distribution->evaluatePDF( 20.0, max_energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 9.600837771822601790e+05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 9.741633364475551061e+05, 1e-12 );
 
   // Check above the last bin
   pdf = native_distribution->evaluatePDF( 20.01, 22.1 );
@@ -114,15 +114,15 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 
   // Check the first bin
   cdf = native_distribution->evaluateCDF( 1e-5, 0.2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 7.641306158084104627e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 7.630817406395892233e-01, 1e-12 );
 
   // Check between two bins
   cdf = native_distribution->evaluateCDF( 1.1e-5, 0.2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 7.703831111648193897e-01, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 7.690137233752327717e-01, 1e-6 );
 
   // Check the last bin
   cdf = native_distribution->evaluateCDF( 20.0, max_energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.999999965890974396e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.999999965390767853e-01, 1e-12 );
 
   // Check above the last bin
   cdf = native_distribution->evaluateCDF( 20.01, 22.1 );
@@ -148,8 +148,8 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
                                scattering_angle_cosine );
 
   // Test scattered electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 8.107359726697202507e-02, 1e-10 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.523645206567046358e-03, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 8.101292518836437917e-02, 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.525931642077658522e-03, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -177,8 +177,8 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
   FRENSIE_CHECK_EQUAL( trials, 1.0 );
 
   // Test scattered electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 8.107359726697202507e-02, 1e-10 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.523645206567046358e-03, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 8.101292518836437917e-02, 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.525931642077658522e-03, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -205,8 +205,8 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
                                                shell_of_interaction );
 
   // Test original electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getZDirection(), 8.107359726697202507e-02, 1e-10 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getEnergy(), 1.523645206567046358e-03, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getZDirection(), 8.101292518836437917e-02, 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getEnergy(), 1.525931642077658522e-03, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

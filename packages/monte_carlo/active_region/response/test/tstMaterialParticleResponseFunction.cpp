@@ -263,7 +263,7 @@ FRENSIE_UNIT_TEST( MaterialParticleResponseFunction, evaluate )
     adjoint_electron.setEnergy( 1.0 );
 
     FRENSIE_CHECK_FLOATING_EQUALITY( response_function->evaluate( adjoint_electron ),
-                                     5.276076440164906289e-01,
+                                     5.357349256383157066e-01,
                                      1e-15 );
   }
 }
@@ -482,7 +482,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( MaterialParticleResponseFunction,
   adjoint_electron.setEnergy( 1.0 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron_response_function->evaluate( adjoint_electron ),
-                                   5.276076440164906289e-01,
+                                   5.357349256383157066e-01,
                                    1e-15 );
 }
 

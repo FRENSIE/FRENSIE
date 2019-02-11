@@ -479,7 +479,7 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_electron_mod
     // The adjoint electron's weight will be multiplied by the adjoint weight
     // factor before the collision occurs.
     FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getWeight(),
-                                     6.710292344899936312e-01,
+                                     1.000590048664524723,
                                      1e-15 );
 
     // Test a collision at max energy
@@ -488,7 +488,7 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_electron_mod
 
     FRENSIE_REQUIRE_NO_THROW( collision_kernel.collideWithCellMaterial( adjoint_electron, bank ) );
     FRENSIE_CHECK_GREATER_OR_EQUAL( adjoint_electron.getEnergy(), 20.0 );
-    FRENSIE_CHECK_EQUAL( adjoint_electron.getWeight(), 5.486819819892765349e-01 );
+    FRENSIE_CHECK_EQUAL( adjoint_electron.getWeight(), 9.910537998525245085e-01 );
     FRENSIE_CHECK( !adjoint_electron.isGone() );
   }
 
@@ -514,7 +514,7 @@ FRENSIE_UNIT_TEST( CollisionKernel, collideWithCellMaterial_adjoint_electron_mod
     // The adjoint electron's weight will be multiplied by the adjoint weight
     // factor before the collision occurs.
     FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getWeight(),
-                                     6.710292344899936312e-01,
+                                     1.000590048664524723,
                                      1e-15 );
   }
 }
