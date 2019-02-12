@@ -332,6 +332,137 @@ FRENSIE_UNIT_TEST_TEMPLATE( SampleMomentHistogram,
 }
 
 //---------------------------------------------------------------------------//
+// Check that a histogram can be copied
+FRENSIE_UNIT_TEST_TEMPLATE( SampleMomentHistogram,
+                            copy_constructor,
+                            TestingTypes )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+
+  Utility::SampleMomentHistogram<T> histogram( std::make_shared<std::vector<T> >( std::vector<T>({Utility::QuantityTraits<T>::zero(), Utility::QuantityTraits<T>::one()*0.5, Utility::QuantityTraits<T>::one(), Utility::QuantityTraits<T>::one()*1.5, Utility::QuantityTraits<T>::one()*2.0}) ) );
+
+  histogram.addRawScore( -Utility::QuantityTraits<T>::one() );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*0.0 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*0.2 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*0.4 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*0.6 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*0.8 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*1.0 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*1.2 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*1.4 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*1.6 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*1.8 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*2.0 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*3.0 );
+
+  Utility::SampleMomentHistogram<T> histogram_copy( histogram );
+
+  FRENSIE_CHECK_EQUAL( histogram_copy.size(), histogram.size() );
+  FRENSIE_CHECK_EQUAL( histogram_copy.getBinBoundaries(),
+                       histogram.getBinBoundaries() );
+  FRENSIE_CHECK_EQUAL( histogram_copy.getHistogramValues(),
+                       histogram.getHistogramValues() );
+  FRENSIE_CHECK_EQUAL( histogram_copy.getNumberOfScores(),
+                       histogram.getNumberOfScores() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a histogram can be copied
+FRENSIE_UNIT_TEST_TEMPLATE( SampleMomentHistogram,
+                            assignment_operator,
+                            TestingTypes )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+
+  Utility::SampleMomentHistogram<T> histogram( std::make_shared<std::vector<T> >( std::vector<T>({Utility::QuantityTraits<T>::zero(), Utility::QuantityTraits<T>::one()*0.5, Utility::QuantityTraits<T>::one(), Utility::QuantityTraits<T>::one()*1.5, Utility::QuantityTraits<T>::one()*2.0}) ) );
+
+  histogram.addRawScore( -Utility::QuantityTraits<T>::one() );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*0.0 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*0.2 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*0.4 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*0.6 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*0.8 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*1.0 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*1.2 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*1.4 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*1.6 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*1.8 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*2.0 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*3.0 );
+
+  Utility::SampleMomentHistogram<T> histogram_copy = histogram;
+
+  FRENSIE_CHECK_EQUAL( histogram_copy.size(), histogram.size() );
+  FRENSIE_CHECK_EQUAL( histogram_copy.getBinBoundaries(),
+                       histogram.getBinBoundaries() );
+  FRENSIE_CHECK_EQUAL( histogram_copy.getHistogramValues(),
+                       histogram.getHistogramValues() );
+  FRENSIE_CHECK_EQUAL( histogram_copy.getNumberOfScores(),
+                       histogram.getNumberOfScores() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that two histograms can be merged
+FRENSIE_UNIT_TEST_TEMPLATE( SampleMomentHistogram,
+                            mergeHistograms,
+                            TestingTypes )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+  typedef typename Utility::SampleMomentHistogram<T>::HistogramValueType HistogramValueType;
+
+  Utility::SampleMomentHistogram<T> histogram( std::make_shared<std::vector<T> >( std::vector<T>({Utility::QuantityTraits<T>::lowest(), Utility::QuantityTraits<T>::zero(), Utility::QuantityTraits<T>::one()*0.5, Utility::QuantityTraits<T>::one(), Utility::QuantityTraits<T>::one()*1.5, Utility::QuantityTraits<T>::one()*2.0, Utility::QuantityTraits<T>::max()}) ) );
+
+  histogram.addRawScore( -Utility::QuantityTraits<T>::one() );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*0.0 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*0.2 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*0.4 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*0.6 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*0.8 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*1.0 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*1.2 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*1.4 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*1.6 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*1.8 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*2.0 );
+  histogram.addRawScore( Utility::QuantityTraits<T>::one()*3.0 );
+
+  {
+    Utility::SampleMomentHistogram<T> other_histogram( std::make_shared<std::vector<T> >( std::vector<T>({Utility::QuantityTraits<T>::lowest(), Utility::QuantityTraits<T>::zero(), Utility::QuantityTraits<T>::one()*0.5, Utility::QuantityTraits<T>::one(), Utility::QuantityTraits<T>::one()*1.5, Utility::QuantityTraits<T>::one()*2.0, Utility::QuantityTraits<T>::max()}) ) );
+
+    histogram.addRawScore( Utility::QuantityTraits<T>::one()*0.6 );
+    histogram.addRawScore( Utility::QuantityTraits<T>::one()*0.8 );
+    histogram.addRawScore( Utility::QuantityTraits<T>::one()*1.0 );
+    histogram.addRawScore( Utility::QuantityTraits<T>::one()*1.2 );
+    histogram.addRawScore( Utility::QuantityTraits<T>::one()*1.4 );
+    histogram.addRawScore( Utility::QuantityTraits<T>::one()*1.6 );
+    
+    histogram.mergeHistograms( other_histogram );
+  }
+
+  FRENSIE_CHECK_EQUAL( histogram.size(), 6 );
+  FRENSIE_CHECK_EQUAL( histogram.getBinBoundaries(),
+                       std::vector<T>({Utility::QuantityTraits<T>::lowest(), Utility::QuantityTraits<T>::zero(), Utility::QuantityTraits<T>::one()*0.5, Utility::QuantityTraits<T>::one(), Utility::QuantityTraits<T>::one()*1.5, Utility::QuantityTraits<T>::one()*2.0, Utility::QuantityTraits<T>::max()}) );
+  FRENSIE_CHECK_EQUAL( histogram.getNumberOfScores(), 19 );
+
+  const std::vector<HistogramValueType>& histogram_values =
+    histogram.getHistogramValues();
+
+  FRENSIE_REQUIRE_EQUAL( histogram_values.size(), 6 );
+  FRENSIE_CHECK_EQUAL( histogram_values[0],
+                       Utility::QuantityTraits<HistogramValueType>::one() );
+  FRENSIE_CHECK_EQUAL( histogram_values[1],
+                       3.0*Utility::QuantityTraits<HistogramValueType>::one() );
+  FRENSIE_CHECK_EQUAL( histogram_values[2],
+                       4.0*Utility::QuantityTraits<HistogramValueType>::one() );
+  FRENSIE_CHECK_EQUAL( histogram_values[3],
+                       6.0*Utility::QuantityTraits<HistogramValueType>::one() );
+  FRENSIE_CHECK_EQUAL( histogram_values[4],
+                       3.0*Utility::QuantityTraits<HistogramValueType>::one() );
+  FRENSIE_CHECK_EQUAL( histogram_values[5],
+                       2.0*Utility::QuantityTraits<HistogramValueType>::one() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a histogram can be archived
 FRENSIE_UNIT_TEST_TEMPLATE( SampleMomentHistogram, archive, TestingTypes )
 {

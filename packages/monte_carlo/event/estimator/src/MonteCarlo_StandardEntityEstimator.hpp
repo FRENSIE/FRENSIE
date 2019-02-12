@@ -45,6 +45,14 @@ protected:
   typedef EntityEstimator::EntityEstimatorMomentsCollectionSnapshotsMap
   EntityEstimatorMomentsCollectionSnapshotsMap;
 
+  //! Typedef for the sample moment histogram array
+  typedef EntityEstimator::SampleMomentHistogramArray
+  SampleMomentHistogramArray;
+  
+  //! Typedef for the map of entity ids and the sample moment histogram array
+  typedef EntityEstimator::EntityEstimatorSampleMomentHistogramArrayMap
+  EntityEstimatorSampleMomentHistogramArrayMap;
+
 public:
 
   //! Constructor (for flux estimators)
@@ -52,15 +60,13 @@ public:
   StandardEntityEstimator( const Id id,
                            const double multiplier,
                            const std::vector<InputEntityId>& entity_ids,
-                           const std::vector<double>& entity_norm_constants,
-                           const bool enable_entity_bin_snapshots );
+                           const std::vector<double>& entity_norm_constants );
 
   //! Constructor (for non-flux estimators)
   template<typename InputEntityId>
   StandardEntityEstimator( const Id id,
 			   const double multiplier,
-			   const std::vector<InputEntityId>& entity_ids,
-                           const bool enable_entity_bin_snapshots );
+			   const std::vector<InputEntityId>& entity_ids );
 
   //! Destructor
   virtual ~StandardEntityEstimator()
@@ -149,6 +155,17 @@ public:
                            const size_t response_function_index,
                            std::vector<double>& moments ) const final override;
 
+  //! Get the entity total sample moment histogram
+  void getEntityTotalSampleMomentHistogram(
+      const EntityId entity_id,
+      const size_t response_function_index,
+      Utility::SampleMomentHistogram<double>& histogram ) const final override;
+
+  //! Get the total sample moment histogram
+  void getTotalSampleMomentHistogram(
+      const size_t response_function_index,
+      Utility::SampleMomentHistogram<double>& histogram ) const final override;
+
   //! Commit the contribution from the current history to the estimator
   void commitHistoryContribution() final override;
 
@@ -168,15 +185,16 @@ protected:
   StandardEntityEstimator();
 
   //! Constructor with no entities (for mesh estimators)
-  StandardEntityEstimator( const Id id,
-                           const double multiplier,
-                           const bool enable_entity_bin_snapshots );
+  StandardEntityEstimator( const Id id, const double multiplier );
 
   //! Assign entities
   void assignEntities( const EntityEstimator::EntityNormConstMap& entity_norm_data ) override;
 
   //! Assign response function to the estimator
   void assignResponseFunction( const std::shared_ptr<const ParticleResponse>& response_function ) override;
+
+  //! Assign the history score pdf bins
+  void assignSampleMomentHistogramBins( const std::shared_ptr<const std::vector<double> >& bins ) final override;
 
   //! Print the estimator data
   void printImplementation( std::ostream& os,
@@ -216,6 +234,17 @@ private:
   void commitHistoryContributionToTotalOfEstimator(
 					const size_t response_function_index,
 					const double contribution );
+
+  // Add contribution to entity bin histogram
+  void addHistoryContributionToEntityBinHistogram(
+                                          const EntityId entity_id,
+                                          const size_t response_function_index,
+                                          const double contribution );
+
+  // Add contribution to total bin histogram
+  void addHistoryContributionToTotalBinHistogram(
+                                          const size_t response_function_index,
+                                          const double contribution );
 
   // Initialize the moments maps
   template<typename InputEntityId>
@@ -267,6 +296,12 @@ private:
 
   // The total estimator moment snapshots for each entity and response func.
   EntityEstimatorMomentsCollectionSnapshotsMap d_entity_total_estimator_moment_snapshots_map;
+
+  // The sample moment histograms across all entities and response functions
+  SampleMomentHistogramArray d_total_estimator_histograms;
+
+  // The total estimator moment histograms for each entity and response func.
+  EntityEstimatorSampleMomentHistogramArrayMap d_entity_total_estimator_histograms_map;
 
   // The entities/bins that have been updated
   ParallelUpdateTracker d_update_tracker;

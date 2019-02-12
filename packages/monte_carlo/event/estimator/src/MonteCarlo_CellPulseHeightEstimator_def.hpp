@@ -31,9 +31,8 @@ template<typename ContributionMultiplierPolicy>
 CellPulseHeightEstimator<ContributionMultiplierPolicy>::CellPulseHeightEstimator(
           const Id id,
           const double multiplier,
-          const std::vector<CellIdType>& entity_ids,
-          const bool enable_entity_bin_snapshots )
-  : EntityEstimator( id, multiplier, entity_ids, enable_entity_bin_snapshots ),
+          const std::vector<CellIdType>& entity_ids )
+  : EntityEstimator( id, multiplier, entity_ids ),
     ParticleEnteringCellEventObserver(),
     ParticleLeavingCellEventObserver(),
     d_update_tracker( 1 ),

@@ -37,21 +37,18 @@ public:
   StandardSurfaceEstimator( const Id id,
                             const double multiplier,
                             const std::vector<SurfaceIdType>& surface_ids,
-                            const std::vector<double>& surface_areas,
-                            const bool enable_entity_bin_snapshots );
+                            const std::vector<double>& surface_areas );
 
   //! Constructor (for flux estimators)
   StandardSurfaceEstimator( const Id id,
                             const double multiplier,
                             const std::vector<SurfaceIdType>& surface_ids,
-                            const Geometry::Model& model,
-                            const bool enable_entity_bin_snapshots );
+                            const Geometry::Model& model );
 
   //! Constructor (for non-flux estimators)
   StandardSurfaceEstimator( const Id id,
                             const double multiplier,
-                            const std::vector<SurfaceIdType>& surface_ids,
-                            const bool enable_entity_bin_snapshots );
+                            const std::vector<SurfaceIdType>& surface_ids );
 
   //! Destructor
   virtual ~StandardSurfaceEstimator()

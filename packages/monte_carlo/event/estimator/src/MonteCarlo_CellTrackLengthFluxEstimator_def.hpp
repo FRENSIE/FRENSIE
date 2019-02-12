@@ -30,13 +30,8 @@ CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::CellTrackLengthFluxE
                                const Id id,
                                const double multiplier,
                                const std::vector<CellIdType>& cell_ids,
-	                       const std::vector<double>& cell_volumes,
-                               const bool enable_entity_bin_snapshots )
-  : StandardCellEstimator( id,
-                           multiplier,
-                           cell_ids,
-                           cell_volumes,
-                           enable_entity_bin_snapshots ),
+	                       const std::vector<double>& cell_volumes )
+  : StandardCellEstimator( id, multiplier, cell_ids, cell_volumes ),
     ParticleSubtrackEndingInCellEventObserver()
 { /* ... */ }
 
@@ -46,13 +41,8 @@ CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::CellTrackLengthFluxE
                                const Id id,
                                const double multiplier,
                                const std::vector<CellIdType>& cell_ids,
-	                       const Geometry::Model& model,
-                               const bool enable_entity_bin_snapshots )
-  : StandardCellEstimator( id,
-                           multiplier,
-                           cell_ids,
-                           model,
-                           enable_entity_bin_snapshots ),
+	                       const Geometry::Model& model )
+  : StandardCellEstimator( id, multiplier, cell_ids, model ),
     ParticleSubtrackEndingInCellEventObserver()
 { /* ... */ }
 

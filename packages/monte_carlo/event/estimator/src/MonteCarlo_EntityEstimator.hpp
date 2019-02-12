@@ -30,6 +30,13 @@ protected:
   typedef std::unordered_map<EntityId,Estimator::FourEstimatorMomentsCollectionSnapshots>
   EntityEstimatorMomentsCollectionSnapshotsMap;
 
+  //! Typedef for the sample moment histogram array
+  typedef std::vector<Utility::SampleMomentHistogram<double> > SampleMomentHistogramArray;
+
+  //! Typedef for the map of entity ids and the sample moment histogram array
+  typedef std::unordered_map<EntityId,SampleMomentHistogramArray>
+  EntityEstimatorSampleMomentHistogramArrayMap;
+
   //! Typedef for the entity norm constants map
   typedef std::unordered_map<EntityId,double> EntityNormConstMap;
 
@@ -40,15 +47,13 @@ public:
   EntityEstimator( const Id id,
 		   const double multiplier,
 		   const std::vector<InputEntityId>& entity_ids,
-		   const std::vector<double>& entity_norm_constants,
-                   const bool enable_entity_bin_snapshots );
+		   const std::vector<double>& entity_norm_constants );
 
   //! Constructor (for non-flux estimators)
   template<typename InputEntityId>
   EntityEstimator( const Id id,
 		   const double multiplier,
-		   const std::vector<InputEntityId>& entity_ids,
-                   const bool enable_entity_bin_snapshots );
+		   const std::vector<InputEntityId>& entity_ids );
 
   //! Destructor
   virtual ~EntityEstimator()
@@ -90,6 +95,9 @@ public:
   //! Get the bin data fourth moments for an entity
   Utility::ArrayView<const double> getEntityBinDataFourthMoments( const EntityId entity_id ) const final override;
 
+  //! Enable snapshots on entity bins
+  void enableSnapshotsOnEntityBins() final override;
+  
   //! Check if snapshots have been enabled on entity bins
   bool areSnapshotsOnEntityBinsEnabled() const final override;
 
@@ -149,6 +157,24 @@ public:
                            const size_t bin_index,
                            std::vector<double>& moments ) const final override;
 
+  //! Enable sample moment histograms on entity bins
+  void enableSampleMomentHistogramsOnEntityBins() final override;
+
+  //! Check if sample moment histograms are enabled on on entity bins
+  bool areSampleMomentHistogramsOnEntityBinsEnabled() const final override;
+
+  //! Get the entity bin sample moment histogram
+  void getEntityBinSampleMomentHistogram(
+      const EntityId entity_id,
+      const size_t bin_index,
+      Utility::SampleMomentHistogram<double>& histogram ) const final override;
+
+  //! Get the total bin sample moment histogram
+  void getTotalBinSampleMomentHistogram(
+      const EntityId entity_id,
+      const size_t bin_index,
+      Utility::SampleMomentHistogram<double>& histogram ) const final override;
+
   //! Reset estimator data
   void resetData() override;
 
@@ -163,8 +189,7 @@ protected:
 
   //! Constructor with no entities (for mesh estimators)
   EntityEstimator( const Id id,
-                   const double multiplier,
-                   const bool enable_entity_bin_snapshots );
+                   const double multiplier );
 
   //! Assign entities
   virtual void assignEntities( const EntityNormConstMap& entity_norm_data );
@@ -175,6 +200,9 @@ protected:
 
   //! Assign response function to the estimator
   void assignResponseFunction( const std::shared_ptr<const ParticleResponse>& response_function ) override;
+
+  //! Assign the history score pdf bins
+  void assignSampleMomentHistogramBins( const std::shared_ptr<const std::vector<double> >& bins ) override;
 
   //! Commit history contribution to a bin of an entity
   void commitHistoryContributionToBinOfEntity( const EntityId entity_id,
@@ -207,6 +235,18 @@ protected:
             const int root_process,
             EntityEstimatorMomentsCollectionSnapshotsMap& snapshot_map ) const;
 
+  //! Reduce the entity histogram maps
+  void reduceEntityHistogramMaps(
+           const Utility::Communicator& comm,
+           const int root_process,
+           EntityEstimatorSampleMomentHistogramArrayMap& histogram_map ) const;
+
+  //! Reduce the histogram arrays
+  void reduceHistogramArrays(
+                           const Utility::Communicator& comm,
+                           const int root_process,
+                           SampleMomentHistogramArray& histogram_array ) const;
+
 private:
 
   // Initialize entity estimator moments map
@@ -216,10 +256,10 @@ private:
                                   const bool warn_duplicate_ids );
 
   // Initialize entity estimator snapshots map
-  template<typename InputEntityId>
-  void initializeEntityEstimatorSnapshotsMap(
-                                  const std::vector<InputEntityId>& entity_ids,
-                                  const bool warn_duplicate_ids );
+  void initializeEntityEstimatorSnapshotsMap();
+
+  // Initialize entity entity estimator histograms map
+  void initializeEntityEstimatorHistogramsMap();
 
   // Initialize entity norm constants map
   template<typename InputEntityId>
@@ -244,8 +284,23 @@ private:
   // Resize the entity estimator snapshots
   void resizeEntityEstimatorMapSnapshots();
 
-  // Resize the entity total snapshots
+  // Resize the estimator total snapshots
   void resizeEstimatorTotalSnapshots();
+
+  // Resize the entity estimator histograms
+  void resizeEntityEstimatorMapHistograms();
+
+  // Resize the estimator total histograms
+  void resizeEstimatorTotalHistograms();
+
+  // Add contribution to entity bin histogram
+  void addHistoryContributionToEntityBinHistogram( const EntityId entity_id,
+                                                   const size_t bin_index,
+                                                   const double contribution );
+
+  // Add contribution to total bin histogram
+  void addHistoryContributionToTotalBinHistogram( const size_t bin_index,
+                                                  const double contribution );
 
   // Reduce the entity collections
   void reduceEntityCollections(
@@ -260,6 +315,20 @@ private:
            gathered_entity_data,
            const size_t root_index,
            EntityEstimatorMomentsCollectionSnapshotsMap& snapshots_map ) const;
+
+  // Reduce the entity histograms
+  void reduceEntityHistograms(
+           const std::vector<EntityEstimatorSampleMomentHistogramArrayMap>&
+           gathered_entity_data,
+           const size_t root_index,
+           EntityEstimatorSampleMomentHistogramArrayMap& histogram_map ) const;
+
+  // Reduce the entity histograms
+  void reduceEntityHistograms(
+                           const std::vector<SampleMomentHistogramArray>&
+                           gathered_entity_data,
+                           const size_t root_index,
+                           SampleMomentHistogramArray& histogram_array ) const;
 
   // Print the entity ids assigned to the estimator
   void printEntityIds( std::ostream& os,
@@ -298,6 +367,16 @@ private:
   // The estimator moments (1st,2nd,3rd,4th) snapshots for each bin and
   // each entity
   EntityEstimatorMomentsCollectionSnapshotsMap d_entity_estimator_moments_snapshots_map;
+
+  // Bool that records if entity bin histograms have been enabled
+  bool d_entity_bin_histograms_enabled;
+
+  // The sample moment histograms for each bin of the total
+  SampleMomentHistogramArray d_estimator_total_bin_histograms;
+
+  // The estimator sample moment histograms for each bin and each
+  // entity
+  EntityEstimatorSampleMomentHistogramArrayMap d_entity_estimator_histograms_map;
 
   // The entity normalization constants (surface areas or cell volumes)
   EntityNormConstMap d_entity_norm_constants_map;

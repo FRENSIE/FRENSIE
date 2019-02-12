@@ -18,7 +18,7 @@
 namespace MonteCarlo{
 
 // Initialize static member data
-std::shared_ptr<const std::vector<double> > Estimator::s_default_history_score_pdf_bins;
+std::shared_ptr<const std::vector<double> > Estimator::s_default_sample_moment_histogram_bins;
   
 // Default constructor
 Estimator::Estimator()
@@ -32,7 +32,7 @@ Estimator::Estimator( const Id id, const double multiplier )
     d_particle_types(),
     d_response_functions( 1 ),
     d_phase_space_discretization(),
-    d_history_score_pdf_bins( Estimator::getDefaultHistoryScorePDFBins() ),
+    d_sample_moment_histogram_bins( Estimator::getDefaultSampleMomentHistogramBins() ),
     d_has_uncommitted_history_contribution( 1, false )
 {
   // Make sure the multiplier is valid
@@ -176,49 +176,66 @@ bool Estimator::isParticleTypeAssigned( const ParticleType particle_type) const
   return d_particle_types.find( particle_type ) !=
     d_particle_types.end();
 }
-  
-// // Set the history score pdf bins
-// /*! \details A copy of this array will be made and stored. If you want to avoid
-//  * copy overhead use the shared_ptr overload of this method.
-//  */
-// void Estimator::setHistoryScorePDFBins( const std::vector<double>& bins )
-// {
-//   this->setHistoryScorePDFBins( std::make_shared<const std::vector<double> >( bins ) );
-// }
 
-// // Set the history score pdf bins (shared)
-// void Estimator::setHistoryScorePDFBins( const std::shared_ptr<const std::vector<double> >& bins )
-// {
-//   // Make sure that the bins are valid
-//   testPrecondition( bins.get() );
-  
-//   TEST_FOR_EXCEPTION( bins.size() <= 1,
-//                       std::runtime_error,
-//                       "At least one history score pdf bin needs to be "
-//                       "specified!" );
-//   TEST_FOR_EXCEPTION( !Utility::isSortedAscending( bins ),
-//                       std::runtime_error,
-//                       "The history score pdf bins need to be sorted from "
-//                       "smallest bin boundary to largest!" );
+// Set the sample moment histogram bins
+void Estimator::setSampleMomentHistogramBins( const std::shared_ptr<const std::vector<double> >& bin_boundaries )
+{
+  // Make sure that the bins are valid
+  testPrecondition( bin_boundaries.get() );
 
-//   this->assignHistoryScorePDFBins( bins );
-// }
+  this->assignSampleMomentHistogramBins( bin_boundaries );
+}
+
+// Get the sample moment histogram bins
+const std::shared_ptr<const std::vector<double> >& Estimator::getSampleMomentHistogramBins()
+{
+  return d_sample_moment_histogram_bins;
+}
+
+// Get the entity bin sample moment histogram
+void Estimator::getEntityBinSampleMomentHistogram(
+                      const EntityId entity_id,
+                      const size_t bin_index,
+                      Utility::SampleMomentHistogram<double>& histogram ) const
+{ /* ... */ }
+
+// Get the total bin sample moment histogram
+void Estimator::getTotalBinSampleMomentHistogram(
+                      const EntityId entity_id,
+                      const size_t bin_index,
+                      Utility::SampleMomentHistogram<double>& histogram ) const
+{ /* ... */ }
+
+// Get the entity total sample moment histogram
+void Estimator::getEntityTotalSampleMomentHistogram(
+                      const EntityId entity_id,
+                      const size_t response_function_index,
+                      Utility::SampleMomentHistogram<double>& histogram ) const
+{ /* ... */ }
+
+// Get the total sample moment histogram
+void Estimator::getTotalSampleMomentHistogram(
+                      const size_t response_function_index,
+                      Utility::SampleMomentHistogram<double>& histogram ) const
+{ /* ... */ }
 
 // Get the default history score pdf bins
-const std::shared_ptr<const std::vector<double> >& Estimator::getDefaultHistoryScorePDFBins()
+const std::shared_ptr<const std::vector<double> >& Estimator::getDefaultSampleMomentHistogramBins()
 {
   // Initialize the default bins just-in-time
-  if( !s_default_history_score_pdf_bins )
+  if( !s_default_sample_moment_histogram_bins )
   {
-    s_default_history_score_pdf_bins = std::make_shared<const std::vector<double> >( Utility::fromString<std::vector<double> >( "{-inf, 0.0, 1e-30, 599l, 1e30, inf}" ) );
+    s_default_sample_moment_histogram_bins = std::make_shared<const std::vector<double> >( Utility::fromString<std::vector<double> >( "{-1.7976931348623157e+308, 0.0, 1e-30, 599l, 1e30, 1.7976931348623157e+308}" ) );
   }
 }
 
-// // Get the history score pdf bins
-// const std::vector<double>& Estimator::getHistoryScorePDFBins() const
-// {
-//   return *d_history_score_pdf_bins;
-// }
+// Set the cosine cutoff value
+void Estimator::setCosineCutoffValue( const double )
+{
+  FRENSIE_LOG_TAGGED_WARNING( "Estimator",
+                              "The cosine cutoff is not used by this type "
+                              "of estimator!" );
+}
 
 // Check if the estimator has uncommitted history contributions
 bool Estimator::hasUncommittedHistoryContribution(
@@ -248,9 +265,7 @@ void Estimator::enableThreadSupport( const unsigned num_threads )
 
 // Reset the estimator data
 void Estimator::resetData()
-{
-  d_moment_snapshot_history_values.clear();
-}
+{ /* ... */ }
 
 // Reduce estimator data on all processes and collect on the root process
 void Estimator::reduceData( const Utility::Communicator& comm,
@@ -955,17 +970,17 @@ void Estimator::assignParticleType( const ParticleType particle_type )
   d_particle_types.insert( particle_type );
 }
 
-// // Assign the history score pdf bins
-// /*! \details Override this method in a derived class if the class needs to
-//  * allocate space for history score pdf values.
-//  */
-// void Estimator::assignHistoryScorePDFBins( const std::shared_ptr<const std::vector<double> >& bins )
-// {
-//   // Make sure only the master thread calls this function
-//   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
+// Assign the history score pdf bins
+/*! \details Override this method in a derived class if the class needs to
+ * allocate space for history score pdf values.
+ */
+void Estimator::assignSampleMomentHistogramBins( const std::shared_ptr<const std::vector<double> >& bins )
+{
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
-//   d_history_score_pdf_bins = bins;
-// }
+  d_sample_moment_histogram_bins = bins;
+}
 
 // Get the particle types that can contribute to the estimator
 size_t Estimator::getNumberOfAssignedParticleTypes() const
@@ -1106,7 +1121,7 @@ void Estimator::reduceSnapshots(
                      const int root_process,
                      FourEstimatorMomentsCollectionSnapshots& snapshots ) const
 {
-  // Make sure the root process is valid
+  // Make sure that the root process is valid
   testPrecondition( root_process < comm.size() );
 
   // Gather all of the collection snapshots on the root process

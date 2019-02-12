@@ -17,17 +17,14 @@ StandardEntityEstimator::StandardEntityEstimator(
                              const Id id,
                              const double multiplier,
                              const std::vector<InputEntityId>& entity_ids,
-                             const std::vector<double>& entity_norm_constants,
-                             const bool enable_entity_bin_snapshots )
-  : EntityEstimator( id,
-                     multiplier,
-                     entity_ids,
-                     entity_norm_constants,
-                     enable_entity_bin_snapshots ),
+                             const std::vector<double>& entity_norm_constants )
+  : EntityEstimator( id, multiplier, entity_ids, entity_norm_constants ),
     d_total_estimator_moments( 1 ),
     d_entity_total_estimator_moments_map(),
     d_total_estimator_moment_snapshots( 1 ),
     d_entity_total_estimator_moment_snapshots_map(),
+    d_total_estimator_histograms( 1 ),
+    d_entity_total_estimator_histograms_map(),
     d_update_tracker( 1 )
 {
   this->initializeMomentsMaps( entity_ids );
@@ -36,15 +33,16 @@ StandardEntityEstimator::StandardEntityEstimator(
 // Constructor (for non-flux estimators)
 template<typename InputEntityId>
 StandardEntityEstimator::StandardEntityEstimator(
-                                  const Id id,
-                                  const double multiplier,
-			          const std::vector<InputEntityId>& entity_ids,
-                                  const bool enable_entity_bin_snapshots )
-  : EntityEstimator( id, multiplier, entity_ids, enable_entity_bin_snapshots ),
+                                 const Id id,
+                                 const double multiplier,
+                                 const std::vector<InputEntityId>& entity_ids )
+  : EntityEstimator( id, multiplier, entity_ids ),
     d_total_estimator_moments( 1 ),
     d_entity_total_estimator_moments_map(),
     d_total_estimator_moment_snapshots( 1 ),
     d_entity_total_estimator_moment_snapshots_map(),
+    d_total_estimator_histograms( 1 ),
+    d_entity_total_estimator_histograms_map(),
     d_update_tracker( 1 )
 {
   this->initializeMomentsMaps( entity_ids );
@@ -67,6 +65,9 @@ void StandardEntityEstimator::initializeMomentsMaps(
 
       d_entity_total_estimator_moment_snapshots_map[entity_ids[i]].resize(
                                         this->getNumberOfResponseFunctions() );
+
+      d_entity_total_estimator_histograms_map[entity_ids[i]].resize(
+                                        this->getNumberOfResponseFunctions() );
     }
   }
 }
@@ -83,6 +84,8 @@ void StandardEntityEstimator::save( Archive& ar, const unsigned version ) const
   ar & BOOST_SERIALIZATION_NVP( d_entity_total_estimator_moments_map );
   ar & BOOST_SERIALIZATION_NVP( d_total_estimator_moment_snapshots );
   ar & BOOST_SERIALIZATION_NVP( d_entity_total_estimator_moment_snapshots_map );
+  ar & BOOST_SERIALIZATION_NVP( d_total_estimator_histograms );
+  ar & BOOST_SERIALIZATION_NVP( d_entity_total_estimator_histograms_map );
 }
 
 // Load the data from an archive
@@ -97,6 +100,8 @@ void StandardEntityEstimator::load( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_NVP( d_entity_total_estimator_moments_map );
   ar & BOOST_SERIALIZATION_NVP( d_total_estimator_moment_snapshots );
   ar & BOOST_SERIALIZATION_NVP( d_entity_total_estimator_moment_snapshots_map );
+  ar & BOOST_SERIALIZATION_NVP( d_total_estimator_histograms );
+  ar & BOOST_SERIALIZATION_NVP( d_entity_total_estimator_histograms_map );
 
   // Initialize the thread data
   d_update_tracker.resize( 1 );

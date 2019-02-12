@@ -55,6 +55,28 @@ SampleMomentHistogram<T>::SampleMomentHistogram(
                       "A bin boundary of Inf is not allowed!" );
 }
 
+// Copy constructor
+template<typename T>
+SampleMomentHistogram<T>::SampleMomentHistogram( const SampleMomentHistogram<T>& other_histogram )
+  : d_bin_boundaries( other_histogram.d_bin_boundaries ),
+    d_histogram_values( other_histogram.d_histogram_values ),
+    d_number_of_scores( other_histogram.d_number_of_scores )
+{ /* ... */ }
+
+// Assignment Operator
+template<typename T>
+SampleMomentHistogram<T>& SampleMomentHistogram<T>::operator=( const SampleMomentHistogram<T>& other_histogram )
+{
+  if( this != &other_histogram )
+  {
+    d_bin_boundaries = other_histogram.d_bin_boundaries;
+    d_histogram_values = other_histogram.d_histogram_values;
+    d_number_of_scores = other_histogram.d_number_of_scores;
+  }
+
+  return *this;
+}
+
 // Clear the histogram
 template<typename T>
 void SampleMomentHistogram<T>::clear()
@@ -136,6 +158,24 @@ void SampleMomentHistogram<T>::addRawScore( const T& raw_score )
   }
 }
 
+// Merge histograms
+/*! \details The histograms must have the same bin boundaries. If 
+ * Design by Contract is not enabled this method will not check if this
+ * is true before conducting the merge.
+ */
+template<typename T>
+void SampleMomentHistogram<T>::mergeHistograms( const SampleMomentHistogram<T>& histogram )
+{
+  // Make sure that the histograms have the same properties
+  testPrecondition( this->checkBinBoundariesEqual( *d_bin_boundaries,
+                                                   *histogram.d_bin_boundaries ) );
+
+  for( size_t i = 0; i < d_histogram_values.size(); ++i )
+    d_histogram_values[i] += histogram.d_histogram_values[i];
+
+  d_number_of_scores += histogram.d_number_of_scores;
+}
+
 // Get the number of scores
 template<typename T>
 uint64_t SampleMomentHistogram<T>::getNumberOfScores() const
@@ -192,6 +232,24 @@ void SampleMomentHistogram<T>::getDensityValues(
     else
       values[i] = Utility::QuantityTraits<DensityValueType>::zero();
   }
+}
+
+// Check that bin boundaries are the same
+template<typename T>
+bool SampleMomentHistogram<T>::checkBinBoundariesEqual(
+                                   const std::vector<T>& bin_boundaries,
+                                   const std::vector<T>& other_bin_boundaries )
+{
+  if( bin_boundaries.size() != other_bin_boundaries.size() )
+    return false;
+
+  for( size_t i = 0; i < bin_boundaries.size(); ++i )
+  {
+    if( bin_boundaries[i] != other_bin_boundaries[i] )
+      return false;
+  }
+
+  return true;
 }
 
 // Save the collection data to an archive

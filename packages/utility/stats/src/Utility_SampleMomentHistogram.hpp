@@ -51,6 +51,12 @@ public:
   //! Constructor
   SampleMomentHistogram( const std::shared_ptr<const std::vector<T> >& bin_boundaries );
 
+  //! Copy constructor
+  SampleMomentHistogram( const SampleMomentHistogram& other_histogram );
+
+  //! Assignment Operator
+  SampleMomentHistogram& operator=( const SampleMomentHistogram& other_histogram );
+
   //! Destructor
   ~SampleMomentHistogram()
   { /* ... */ }
@@ -70,6 +76,9 @@ public:
   //! Add a raw score
   void addRawScore( const T& raw_score );
 
+  //! Merge histograms
+  void mergeHistograms( const SampleMomentHistogram& histogram );
+
   //! Get the number of scores
   uint64_t getNumberOfScores() const;
 
@@ -87,8 +96,9 @@ public:
 
 private:
 
-  // Make the boost::serialization::access class a friend
-  friend class boost::serialization::access;
+  // Check that bin boundaries are the same
+  static bool checkBinBoundariesEqual( const std::vector<T>& bin_boundaries,
+                                       const std::vector<T>& other_bin_boundaries );
 
   // Save the collection data to an archive
   template<typename Archive>
@@ -99,6 +109,9 @@ private:
   void load( Archive& ar, const unsigned version );
 
   BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Make the boost::serialization::access class a friend
+  friend class boost::serialization::access;
 
   // The bin boundaries
   std::shared_ptr<const std::vector<T> > d_bin_boundaries;

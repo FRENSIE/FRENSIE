@@ -25,9 +25,8 @@ template<typename ContributionMultiplierPolicy>
 MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::MeshTrackLengthFluxEstimator(
                              const Id id,
                              const double multiplier,
-                             const std::shared_ptr<const Utility::Mesh>& mesh,
-                             const bool enable_entity_bin_snapshots )
-  : StandardEntityEstimator( id, multiplier, enable_entity_bin_snapshots ),
+                             const std::shared_ptr<const Utility::Mesh>& mesh )
+  : StandardEntityEstimator( id, multiplier ),
     d_mesh( mesh ),
     d_no_time_bins_update_method( true ),
     d_update_method()
@@ -69,9 +68,9 @@ bool MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::isMeshEstimator
 // Add current history estimator contribution
 template<typename ContributionMultiplierPolicy>
 void MeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGlobalParticleSubtrackEndingEvent(
-                                    const ParticleState& particle,
-                                    const double start_point[3],
-				    const double end_point[3] )
+                                                 const ParticleState& particle,
+                                                 const double start_point[3],
+                                                 const double end_point[3] )
 {
   // Make sure that the particle type is assigned
   testPrecondition( this->isParticleTypeAssigned( particle.getParticleType() ) );

@@ -24,13 +24,8 @@ StandardSurfaceEstimator::StandardSurfaceEstimator(
                           const Id id,
                           const double multiplier,
                           const std::vector<SurfaceIdType>& surface_ids,
-                          const std::vector<double>& surface_areas,
-                          const bool enable_entity_bin_snapshots )
-  : StandardEntityEstimator( id,
-                             multiplier,
-                             surface_ids,
-                             surface_areas,
-                             enable_entity_bin_snapshots ),
+                          const std::vector<double>& surface_areas )
+  : StandardEntityEstimator( id, multiplier, surface_ids, surface_areas ),
     ParticleCrossingSurfaceEventObserver()
 { /* ... */ }
 
@@ -39,9 +34,8 @@ StandardSurfaceEstimator::StandardSurfaceEstimator(
                                  const Id id,
                                  const double multiplier,
                                  const std::vector<SurfaceIdType>& surface_ids,
-                                 const Geometry::Model& model,
-                                 const bool enable_entity_bin_snapshots )
-  : StandardEntityEstimator( id, multiplier, enable_entity_bin_snapshots ),
+                                 const Geometry::Model& model )
+  : StandardEntityEstimator( id, multiplier ),
     ParticleCrossingSurfaceEventObserver()
 {
   // Extract the surface areas
@@ -82,12 +76,8 @@ StandardSurfaceEstimator::StandardSurfaceEstimator(
 StandardSurfaceEstimator::StandardSurfaceEstimator(
                           const Id id,
                           const double multiplier,
-                          const std::vector<SurfaceIdType>& surface_ids,
-                          const bool enable_entity_bin_snapshots )
-  : StandardEntityEstimator( id,
-                             multiplier,
-                             surface_ids,
-                             enable_entity_bin_snapshots ),
+                          const std::vector<SurfaceIdType>& surface_ids )
+  : StandardEntityEstimator( id, multiplier, surface_ids ),
     ParticleCrossingSurfaceEventObserver()
 { /* ... */ }
 

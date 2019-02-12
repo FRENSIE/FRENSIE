@@ -60,8 +60,7 @@ public:
   //! Constructor
   CellPulseHeightEstimator( const Id id,
                             const double multiplier,
-                            const std::vector<CellIdType>& entity_ids,
-                            const bool enable_entity_bin_snapshots = false );
+                            const std::vector<CellIdType>& entity_ids );
 
   //! Destructor
   ~CellPulseHeightEstimator()

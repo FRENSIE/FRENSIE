@@ -40,15 +40,13 @@ public:
   CellCollisionFluxEstimator( const Id id,
                               const double multiplier,
                               const std::vector<CellIdType>& cell_ids,
-                              const std::vector<double>& cell_volumes,
-                              const bool enable_entity_bin_snapshots = false );
+                              const std::vector<double>& cell_volumes );
 
   //! Constructor (extract cell volumes from model)
   CellCollisionFluxEstimator( const Id id,
                               const double multiplier,
                               const std::vector<CellIdType>& cell_ids,
-                              const Geometry::Model& model,
-                              const bool enable_entity_bin_snapshots = false );
+                              const Geometry::Model& model );
 
   //! Destructor
   ~CellCollisionFluxEstimator()

@@ -22,16 +22,18 @@ EntityEstimator::EntityEstimator()
 
 // Constructor with no entities (for mesh estimators)
 EntityEstimator::EntityEstimator( const Id id,
-                                  const double multiplier,
-                                  const bool enable_entity_bin_snapshots )
+                                  const double multiplier )
   : Estimator( id, multiplier ),
     d_total_norm_constant( 1.0 ),
     d_supplied_norm_constants( false ),
     d_estimator_total_bin_data( 1 ),
     d_entity_estimator_moments_map(),
-    d_entity_bin_snapshots_enabled( enable_entity_bin_snapshots ),
-    d_estimator_total_bin_data_snapshots( 1 ),
+    d_entity_bin_snapshots_enabled( false ),
+    d_estimator_total_bin_data_snapshots(),
     d_entity_estimator_moments_snapshots_map(),
+    d_entity_bin_histograms_enabled( false ),
+    d_estimator_total_bin_histograms(),
+    d_entity_estimator_histograms_map(),
     d_entity_norm_constants_map()
 { /* ... */ }
 
@@ -164,6 +166,15 @@ Utility::ArrayView<const double> EntityEstimator::getEntityBinDataFourthMoments(
   return Utility::ArrayView<const double>(
                              Utility::getCurrentScores<4>( entity_collection ),
                              entity_collection.size() );
+}
+
+// Enable snapshots on entity bins
+void EntityEstimator::enableSnapshotsOnEntityBins()
+{
+  d_entity_bin_snapshots_enabled = true;
+
+  this->initializeEntityEstimatorSnapshotsMap();
+  this->resizeEstimatorTotalSnapshots();
 }
 
 // Check if snapshots have been enabled on entity bins
@@ -424,6 +435,61 @@ void EntityEstimator::getTotalBinFourthMomentSnapshots(
   }
 }
 
+// Enable sample moment histograms on entity bins
+void EntityEstimator::enableSampleMomentHistogramsOnEntityBins()
+{
+  d_entity_bin_histograms_enabled = true;
+
+  this->initializeEntityEstimatorHistogramsMap();
+  this->resizeEstimatorTotalHistograms();
+}
+
+// Check if sample moment histograms are enabled on on entity bins
+bool EntityEstimator::areSampleMomentHistogramsOnEntityBinsEnabled() const
+{
+  return d_entity_bin_histograms_enabled;
+}
+
+// Get the entity bin sample moment histogram
+void EntityEstimator::getEntityBinSampleMomentHistogram(
+                      const EntityId entity_id,
+                      const size_t bin_index,
+                      Utility::SampleMomentHistogram<double>& histogram ) const
+{
+  // Make sure that the entity id is valid
+  TEST_FOR_EXCEPTION( !this->isEntityAssigned( entity_id ),
+                      std::runtime_error,
+                      "Entity " << entity_id << " is not assigned to "
+                      "estimator " << this->getId() << "!" );
+  
+  // Make sure that the bin index is valid
+  TEST_FOR_EXCEPTION( bin_index >= this->getNumberOfBins()*this->getNumberOfResponseFunctions(),
+                      std::runtime_error,
+                      "The bin index must be less than "
+                      << this->getNumberOfBins()*this->getNumberOfResponseFunctions() << "!" );
+
+  if( d_entity_bin_histograms_enabled );
+  {
+    histogram = d_entity_estimator_histograms_map.find( entity_id )->second[bin_index];
+  }
+}
+
+// Get the total bin sample moment histogram
+void EntityEstimator::getTotalBinSampleMomentHistogram(
+                      const EntityId entity_id,
+                      const size_t bin_index,
+                      Utility::SampleMomentHistogram<double>& histogram ) const
+{
+  // Make sure that the bin index is valid
+  TEST_FOR_EXCEPTION( bin_index >= this->getNumberOfBins()*this->getNumberOfResponseFunctions(),
+                      std::runtime_error,
+                      "The bin index must be less than "
+                      << this->getNumberOfBins()*this->getNumberOfResponseFunctions() << "!" );
+
+  if( d_entity_bin_histograms_enabled );
+    histogram = d_estimator_total_bin_histograms[bin_index];
+}
+
 // Reset the estimator data
 void EntityEstimator::resetData()
 {
@@ -444,6 +510,20 @@ void EntityEstimator::resetData()
     // Reset the entity bin snapshot data
     for( auto&& entity_data : d_entity_estimator_moments_snapshots_map )
       entity_data.second.reset();
+  }
+
+  if( d_entity_bin_histograms_enabled )
+  {
+    // Reset the total histogram data
+    for( auto&& histogram : d_estimator_total_bin_histograms )
+      histogram.reset();
+
+    // Reset the entity histogram data
+    for( auto&& entity_data : d_entity_estimator_histograms_map )
+    {
+      for( auto&& histogram : entity_data.second )
+        histogram.reset();
+    }
   }
 }
 
@@ -497,6 +577,27 @@ void EntityEstimator::reduceData( const Utility::Communicator& comm,
                                "estimator " << this->getId() << " for total "
                                "bin snapshot data!" );
     }
+
+    if( d_entity_bin_histograms_enabled )
+    {
+      // Reduce the entity bin histogram data
+      try{
+        this->reduceEntityHistogramMaps( comm, root_process, d_entity_estimator_histograms_map );
+      }
+      EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                               "Unable to perform mpi reduction in entity "
+                               "estimator " << this->getId() << " for entity "
+                               "bin histogram data!" );
+
+      // Reduce the total bin histogram data
+      try{
+        this->reduceHistogramArrays( comm, root_process, d_estimator_total_bin_histograms );
+      }
+      EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                               "Unable to perform mpi reduction in entity "
+                               "estimator " << this->getId() << " for total "
+                               "bin histogram data!" );
+    }
   }
 
   Estimator::reduceData( comm, root_process );
@@ -538,42 +639,6 @@ void EntityEstimator::reduceEntityCollectionMaps(
     Utility::send( comm, root_process, 0, collection_map );
 }
 
-// Reduce the entity snapshot maps
-void EntityEstimator::reduceEntitySnapshotMaps(
-            const Utility::Communicator& comm,
-            const int root_process,
-            EntityEstimatorMomentsCollectionSnapshotsMap& snapshots_map ) const
-{
-  // Gather all of the entity data on the root process
-  if( comm.rank() == root_process )
-  {
-    std::vector<EntityEstimatorMomentsCollectionSnapshotsMap>
-      gathered_entity_data( comm.size() );
-
-    std::vector<Utility::Communicator::Request> gathered_requests;
-
-    for( size_t i = 0; i < comm.size(); ++i )
-    {
-      if( i != root_process )
-      {
-        gathered_requests.push_back(
-                    Utility::ireceive( comm, i, 0, gathered_entity_data[i] ) );
-      }
-    }
-
-    std::vector<Utility::Communicator::Status>
-      gathered_statuses( gathered_requests.size() );
-
-    Utility::wait( gathered_requests, gathered_statuses );
-
-    this->reduceEntitySnapshots( gathered_entity_data,
-                                 root_process,
-                                 snapshots_map );
-  }
-  else
-    Utility::send( comm, root_process, 0, snapshots_map );
-}
-
 // Reduce the entity moments
 void EntityEstimator::reduceEntityCollections(
                     const std::vector<EntityEstimatorMomentsCollectionMap>&
@@ -611,6 +676,42 @@ void EntityEstimator::reduceEntityCollections(
   }
 }
 
+// Reduce the entity snapshot maps
+void EntityEstimator::reduceEntitySnapshotMaps(
+            const Utility::Communicator& comm,
+            const int root_process,
+            EntityEstimatorMomentsCollectionSnapshotsMap& snapshots_map ) const
+{
+  // Gather all of the entity data on the root process
+  if( comm.rank() == root_process )
+  {
+    std::vector<EntityEstimatorMomentsCollectionSnapshotsMap>
+      gathered_entity_data( comm.size() );
+
+    std::vector<Utility::Communicator::Request> gathered_requests;
+
+    for( size_t i = 0; i < comm.size(); ++i )
+    {
+      if( i != root_process )
+      {
+        gathered_requests.push_back(
+                    Utility::ireceive( comm, i, 0, gathered_entity_data[i] ) );
+      }
+    }
+
+    std::vector<Utility::Communicator::Status>
+      gathered_statuses( gathered_requests.size() );
+
+    Utility::wait( gathered_requests, gathered_statuses );
+
+    this->reduceEntitySnapshots( gathered_entity_data,
+                                 root_process,
+                                 snapshots_map );
+  }
+  else
+    Utility::send( comm, root_process, 0, snapshots_map );
+}
+
 // Reduce the entity snapshots
 void EntityEstimator::reduceEntitySnapshots(
             const std::vector<EntityEstimatorMomentsCollectionSnapshotsMap>&
@@ -635,6 +736,135 @@ void EntityEstimator::reduceEntitySnapshots(
   }
 }
 
+// Reduce the entity histogram maps
+void EntityEstimator::reduceEntityHistogramMaps(
+            const Utility::Communicator& comm,
+            const int root_process,
+            EntityEstimatorSampleMomentHistogramArrayMap& histogram_map ) const
+{
+  // Gather all of the entity data on the root process
+  if( comm.rank() == root_process )
+  {
+    std::vector<EntityEstimatorSampleMomentHistogramArrayMap>
+      gathered_entity_data( comm.size() );
+
+    std::vector<Utility::Communicator::Request> gathered_requests;
+
+    for( size_t i = 0; i < comm.size(); ++i )
+    {
+      if( i != root_process )
+      {
+        gathered_requests.push_back(
+                    Utility::ireceive( comm, i, 0, gathered_entity_data[i] ) );
+      }
+    }
+
+    std::vector<Utility::Communicator::Status>
+      gathered_statuses( gathered_requests.size() );
+
+    Utility::wait( gathered_requests, gathered_statuses );
+
+    this->reduceEntityHistograms( gathered_entity_data,
+                                  root_process,
+                                  histogram_map );
+  }
+  else
+    Utility::send( comm, root_process, 0, histogram_map );
+}
+
+// Reduce the entity histograms
+void EntityEstimator::reduceEntityHistograms(
+            const std::vector<EntityEstimatorSampleMomentHistogramArrayMap>&
+            gathered_entity_data,
+            const size_t root_index,
+            EntityEstimatorSampleMomentHistogramArrayMap& histogram_map ) const
+{
+  // Reduce the data that was on each process
+  for( auto&& entity_data : histogram_map )
+  {
+    for( size_t i = 0; i < entity_data.second.size(); ++i )
+    {
+      Utility::SampleMomentHistogram<double>& histogram =
+        entity_data.second[i];
+      
+      // Don't double count data on this process (j starts from 1)
+      for( size_t j = 0; j < gathered_entity_data.size(); ++j )
+      {
+        if( j != root_index )
+        {
+          const Utility::SampleMomentHistogram<double>& other_histogram = 
+            gathered_entity_data[j].find( entity_data.first )->second[i];
+
+          histogram.mergeHistograms( other_histogram );
+        }
+      }
+    }
+  }
+}
+
+// Reduce the histogram arrays
+void EntityEstimator::reduceHistogramArrays(
+                            const Utility::Communicator& comm,
+                            const int root_process,
+                            SampleMomentHistogramArray& histogram_array ) const
+{
+  // Gather all of the entity data on the root process
+  if( comm.rank() == root_process )
+  {
+    std::vector<SampleMomentHistogramArray>
+      gathered_entity_data( comm.size() );
+
+    std::vector<Utility::Communicator::Request> gathered_requests;
+
+    for( size_t i = 0; i < comm.size(); ++i )
+    {
+      if( i != root_process )
+      {
+        gathered_requests.push_back(
+                    Utility::ireceive( comm, i, 0, gathered_entity_data[i] ) );
+      }
+    }
+
+    std::vector<Utility::Communicator::Status>
+      gathered_statuses( gathered_requests.size() );
+
+    Utility::wait( gathered_requests, gathered_statuses );
+
+    this->reduceEntityHistograms( gathered_entity_data,
+                                  root_process,
+                                  histogram_array );
+  }
+  else
+    Utility::send( comm, root_process, 0, histogram_array );
+}
+
+// Reduce the entity histograms
+void EntityEstimator::reduceEntityHistograms(
+                            const std::vector<SampleMomentHistogramArray>&
+                            gathered_entity_data,
+                            const size_t root_index,
+                            SampleMomentHistogramArray& histogram_array ) const
+{
+  // Reduce the data that was on each process
+  for( size_t i = 0; i < histogram_array.size(); ++i )
+  {
+    Utility::SampleMomentHistogram<double>& histogram =
+      histogram_array[i];
+      
+    // Don't double count data on this process (j starts from 1)
+    for( size_t j = 0; j < gathered_entity_data.size(); ++j )
+    {
+      if( j != root_index )
+      {
+        const Utility::SampleMomentHistogram<double>& other_histogram =
+          gathered_entity_data[j][i];
+        
+        histogram.mergeHistograms( other_histogram );
+      }
+    }
+  }
+}
+
 // Assign entities
 void EntityEstimator::assignEntities(
                                    const EntityNormConstMap& entity_norm_data )
@@ -647,6 +877,10 @@ void EntityEstimator::assignEntities(
   d_supplied_norm_constants = true;
   d_estimator_total_bin_data.clear();
   d_entity_estimator_moments_map.clear();
+  d_estimator_total_bin_data_snapshots.clear();
+  d_entity_estimator_moments_snapshots_map.clear();
+  d_estimator_total_bin_histograms.clear();
+  d_entity_estimator_histograms_map.clear();
   d_entity_norm_constants_map = entity_norm_data;
 
   // Initialize the entity data
@@ -656,6 +890,9 @@ void EntityEstimator::assignEntities(
 
     if( d_entity_bin_snapshots_enabled )
       d_entity_estimator_moments_snapshots_map[entity_data.first];
+
+    if( d_entity_bin_histograms_enabled )
+      d_entity_estimator_histograms_map[entity_data.first];
   }
 
   // Calculate the total normalization constant
@@ -663,9 +900,14 @@ void EntityEstimator::assignEntities(
 
   // Resize the data
   this->resizeEntityEstimatorMapCollections();
-  this->resizeEstimatorTotalCollection();
   this->resizeEntityEstimatorMapSnapshots();
+  this->resizeEntityEstimatorMapHistograms();
+
+  // Resize the total data (it was likely not initialized in the constructor
+  // if assignEntities was called)
+  this->resizeEstimatorTotalCollection();
   this->resizeEstimatorTotalSnapshots();
+  this->resizeEstimatorTotalHistograms();
 }
 
 // Assign discretization to an estimator dimension
@@ -687,8 +929,14 @@ void EntityEstimator::assignDiscretization(
   // Resize the entity estimator moments map snapshots
   this->resizeEntityEstimatorMapSnapshots();
 
-  // Resize the entity total snapshots
+  // Resize the estimator total snapshots
   this->resizeEstimatorTotalSnapshots();
+
+  // Resize the entity estimator histograms
+  this->resizeEntityEstimatorMapHistograms();
+
+  // Resize the estimator total histograms
+  this->resizeEstimatorTotalHistograms();
 }
 
 // Set the response functions
@@ -706,8 +954,32 @@ void EntityEstimator::assignResponseFunction(
   // Resize the entity estimator moments map snapshots
   this->resizeEntityEstimatorMapSnapshots();
 
-  // Resize the entity total snapshots
+  // Resize the estimator total snapshots
   this->resizeEstimatorTotalSnapshots();
+
+  // Resize the entity estimator histograms
+  this->resizeEntityEstimatorMapHistograms();
+
+  // Resize the estimator total histograms
+  this->resizeEstimatorTotalHistograms();
+}
+
+// Assign the history score pdf bins
+void EntityEstimator::assignSampleMomentHistogramBins( const std::shared_ptr<const std::vector<double> >& bins )
+{
+  Estimator::assignSampleMomentHistogramBins( bins );
+
+  if( d_entity_bin_histograms_enabled );
+  {
+    for( auto&& histogram : d_estimator_total_bin_histograms )
+      histogram.setBinBoundaries( bins );
+
+    for( auto&& entity_data : d_entity_estimator_histograms_map )
+    {
+      for( auto&& histogram : entity_data.second )
+        histogram.setBinBoundaries( bins );
+    }
+  }
 }
 
 // Commit history contribution to a bin of an entity
@@ -724,12 +996,42 @@ void EntityEstimator::commitHistoryContributionToBinOfEntity(
                     this->getNumberOfResponseFunctions() );
 
   FourEstimatorMomentsCollection& entity_estimator_moments =
-    d_entity_estimator_moments_map[entity_id];
+    d_entity_estimator_moments_map.find( entity_id )->second;
 
   // Update the moments
   #pragma omp critical
   {
-    d_entity_estimator_moments_map[entity_id].addRawScore( bin_index, contribution );
+    entity_estimator_moments.addRawScore( bin_index, contribution );
+  }
+
+  this->addHistoryContributionToEntityBinHistogram( entity_id,
+                                                    bin_index,
+                                                    contribution );
+}
+
+// Add contribution to histogram
+void EntityEstimator::addHistoryContributionToEntityBinHistogram(
+                                                    const EntityId entity_id,
+                                                    const size_t bin_index,
+                                                    const double contribution )
+{
+  // Make sure the entity is assigned to this estimator
+  testPrecondition( this->isEntityAssigned( entity_id ) );
+  // Make sure the bin index is valid
+  testPrecondition( bin_index <
+		    this->getNumberOfBins()*
+                    this->getNumberOfResponseFunctions() );
+
+  if( d_entity_bin_histograms_enabled )
+  {
+    Utility::SampleMomentHistogram<double>& histogram =
+      d_entity_estimator_histograms_map.find( entity_id )->second[bin_index];
+
+    // Update the histogram
+    #pragma omp critical
+    {
+      histogram.addRawScore( contribution );
+    }
   }
 }
 
@@ -747,6 +1049,30 @@ void EntityEstimator::commitHistoryContributionToBinOfTotal(
   #pragma omp critical
   {
     d_estimator_total_bin_data.addRawScore( bin_index, contribution );
+  }
+
+  this->addHistoryContributionToTotalBinHistogram( bin_index, contribution );
+}
+
+// Add contribution to total bin histogram
+void EntityEstimator::addHistoryContributionToTotalBinHistogram(
+                                                    const size_t bin_index,
+                                                    const double contribution )
+{
+  // Make sure the bin index is valid
+  testPrecondition( bin_index <
+		    this->getNumberOfBins()*
+                    this->getNumberOfResponseFunctions() );
+
+  if( d_entity_bin_histograms_enabled )
+  {
+    Utility::SampleMomentHistogram<double>& histogram =
+      d_estimator_total_bin_histograms[bin_index];
+
+    #pragma omp critical
+    {
+      histogram.addRawScore( contribution );
+    }
   }
 }
 
@@ -865,6 +1191,47 @@ void EntityEstimator::calculateTotalNormalizationConstant()
     d_total_norm_constant += entity_data.second;
 }
 
+// Initialize entity estimator snapshots map
+void EntityEstimator::initializeEntityEstimatorSnapshotsMap()
+{
+  if( d_entity_bin_snapshots_enabled )
+  {
+    if( d_entity_estimator_moments_snapshots_map.size() !=
+        d_entity_norm_constants_map.size() )
+    {
+      size_t size = this->getNumberOfBins()*
+        this->getNumberOfResponseFunctions();
+      
+      for( auto&& entity_data : d_entity_norm_constants_map )
+      {
+        d_entity_estimator_moments_snapshots_map[entity_data.first].resize( size );
+      }
+    }
+  }
+}
+
+// Initialize entity entity estimator histograms map
+void EntityEstimator::initializeEntityEstimatorHistogramsMap()
+{
+  if( d_entity_bin_histograms_enabled )
+  {
+    if( d_entity_estimator_histograms_map.size() !=
+        d_entity_norm_constants_map.size() )
+    {
+      size_t size = this->getNumberOfBins()*
+        this->getNumberOfResponseFunctions();
+      
+      Utility::SampleMomentHistogram<double>
+        default_histogram( this->getSampleMomentHistogramBins() );
+
+      for( auto&& entity_data : d_entity_norm_constants_map )
+      {
+        d_entity_estimator_histograms_map[entity_data.first].resize( size, default_histogram );
+      }
+    }
+  }
+}
+
 // Resize the entity estimator moments map collections
 void EntityEstimator::resizeEntityEstimatorMapCollections()
 {
@@ -901,6 +1268,36 @@ void EntityEstimator::resizeEstimatorTotalSnapshots()
   {
     d_estimator_total_bin_data_snapshots.resize(
                 this->getNumberOfBins()*this->getNumberOfResponseFunctions() );
+  }
+}
+
+// Resize the entity estimator histograms
+void EntityEstimator::resizeEntityEstimatorMapHistograms()
+{
+  if( d_entity_bin_histograms_enabled )
+  {
+    size_t size = this->getNumberOfBins()*
+      this->getNumberOfResponseFunctions();
+
+    Utility::SampleMomentHistogram<double>
+      default_histogram( this->getSampleMomentHistogramBins() );
+
+    for( auto&& entity_data : d_entity_estimator_histograms_map )
+      entity_data.second.resize( size, default_histogram );
+  }
+}
+
+// Resize the estimator total histograms
+void EntityEstimator::resizeEstimatorTotalHistograms()
+{
+  if( d_entity_bin_histograms_enabled )
+  {
+    Utility::SampleMomentHistogram<double>
+      default_histogram( this->getSampleMomentHistogramBins() );
+    
+    d_estimator_total_bin_histograms.resize(
+                  this->getNumberOfBins()*this->getNumberOfResponseFunctions(),
+                  default_histogram );
   }
 }
 

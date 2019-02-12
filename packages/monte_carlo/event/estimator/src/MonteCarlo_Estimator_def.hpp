@@ -128,6 +128,7 @@ void Estimator::save( Archive& ar, const unsigned version ) const
   ar & BOOST_SERIALIZATION_NVP( d_particle_types );
   ar & BOOST_SERIALIZATION_NVP( d_response_functions );
   ar & BOOST_SERIALIZATION_NVP( d_phase_space_discretization );
+  ar & BOOST_SERIALIZATION_NVP( d_sample_moment_histogram_bins );
   // Do not save d_has_uncommited_history_contribution because it is thread
   // specific data - all data should be committed before saving the estimator
 }
@@ -145,6 +146,7 @@ void Estimator::load( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_NVP( d_particle_types );
   ar & BOOST_SERIALIZATION_NVP( d_response_functions );
   ar & BOOST_SERIALIZATION_NVP( d_phase_space_discretization );
+  ar & BOOST_SERIALIZATION_NVP( d_sample_moment_histogram_bins );
   
   // Initialize the thread data
   d_has_uncommitted_history_contribution.resize( 1, false );

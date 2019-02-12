@@ -22,10 +22,14 @@ StandardEntityEstimator::StandardEntityEstimator()
 // Constructor with no entities (for mesh estimator)
 StandardEntityEstimator::StandardEntityEstimator(
                                        const Id id,
-                                       const double multiplier,
-                                       const bool enable_entity_bin_snapshots )
-  : EntityEstimator( id, multiplier, enable_entity_bin_snapshots ),
+                                       const double multiplier )
+  : EntityEstimator( id, multiplier ),
     d_total_estimator_moments( 1 ),
+    d_entity_total_estimator_moments_map(),
+    d_total_estimator_moment_snapshots( 1 ),
+    d_entity_total_estimator_moment_snapshots_map(),
+    d_total_estimator_histograms( 1 ),
+    d_entity_total_estimator_histograms_map(),
     d_update_tracker( 1 )
 { /* ... */ }
 
@@ -344,6 +348,41 @@ void StandardEntityEstimator::getTotalFourthMomentSnapshots(
   moments.assign( moment_snapshots.begin(), moment_snapshots.end() );
 }
 
+// Get the entity total sample moment histogram
+void StandardEntityEstimator::getEntityTotalSampleMomentHistogram(
+                      const EntityId entity_id,
+                      const size_t response_function_index,
+                      Utility::SampleMomentHistogram<double>& histogram ) const
+{
+  // Make sure that the entity id is valid
+  TEST_FOR_EXCEPTION( !this->isEntityAssigned( entity_id ),
+                      std::runtime_error,
+                      "Entity " << entity_id << " is not assigned to "
+                      "estimator " << this->getId() << "!" );
+
+  // Make sure that the response function index is valid
+  TEST_FOR_EXCEPTION( response_function_index >= this->getNumberOfResponseFunctions(),
+                      std::runtime_error,
+                      "The response function index must be less than "
+                      << this->getNumberOfResponseFunctions() << "!" );
+
+  histogram = d_entity_total_estimator_histograms_map.find( entity_id )->second[response_function_index];
+}
+
+// Get the total sample moment histogram
+void StandardEntityEstimator::getTotalSampleMomentHistogram(
+                      const size_t response_function_index,
+                      Utility::SampleMomentHistogram<double>& histogram ) const
+{
+  // Make sure that the response function index is valid
+  TEST_FOR_EXCEPTION( response_function_index >= this->getNumberOfResponseFunctions(),
+                      std::runtime_error,
+                      "The response function index must be less than "
+                      << this->getNumberOfResponseFunctions() << "!" );
+
+  histogram = d_total_estimator_histograms[response_function_index];
+}
+
 // Commit the contribution from the current history to the estimator
 /*! \details This function must only be called within an omp critical block
  * if multiple threads are being used. Failure to do this may result in
@@ -478,6 +517,17 @@ void StandardEntityEstimator::resetData()
   for( auto&& entity_data : d_entity_total_estimator_moment_snapshots_map )
     entity_data.second.reset();
 
+  // Reset the total moment histograms
+  for( auto&& histogram : d_total_estimator_histograms )
+    histogram.reset();
+
+  // Reset the entity total moment histograms
+  for( auto&& entity_data : d_entity_total_estimator_histograms_map )
+  {
+    for( auto&& histogram : entity_data.second )
+      histogram.reset();
+  }
+
   // Reset the update tracker
   for( size_t i = 0; i < d_update_tracker.size(); ++i )
   {
@@ -536,6 +586,24 @@ void StandardEntityEstimator::reduceData( const Utility::Communicator& comm,
                              "Unable to perform mpi reduction in "
                              "standard entity estimator " << this->getId() <<
                              " for total snapshot data!" );
+
+    // Reduce the entity histogram data
+    try{
+      this->reduceEntityHistogramMaps( comm, root_process, d_entity_total_estimator_histograms_map );
+    }
+    EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                             "Unable to perform mpi reduction in "
+                             "standard entity estimator " << this->getId() <<
+                             " for entity total histograms!" );
+
+    // Reduce the total histogram data
+    try{
+      this->reduceHistogramArrays( comm, root_process, d_total_estimator_histograms );
+    }
+    EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                             "Unable to perform mpi reduction in "
+                             "standard entity estimator " << this->getId() <<
+                             " for total histograms!" );
   }
 
   // Reduce the bin data
@@ -554,12 +622,17 @@ void StandardEntityEstimator::assignEntities(
   // Reset the estimator data
   d_total_estimator_moments.clear();
   d_entity_total_estimator_moments_map.clear();
+  d_total_estimator_moment_snapshots.clear();
+  d_entity_total_estimator_moment_snapshots_map.clear();
+  d_total_estimator_histograms.clear();
+  d_entity_total_estimator_histograms_map.clear();
 
   // Initialize the entity data
   for( auto&& entity_data : entity_norm_data )
   {
     d_entity_total_estimator_moments_map[entity_data.first];
     d_entity_total_estimator_moment_snapshots_map[entity_data.first];
+    d_entity_total_estimator_histograms_map[entity_data.first];
   }      
 
   // Resize the entity total estimator momens map collections
@@ -568,6 +641,14 @@ void StandardEntityEstimator::assignEntities(
   // Resize the total estimator moments array
   d_total_estimator_moments.resize( this->getNumberOfResponseFunctions() );
   d_total_estimator_moment_snapshots.resize( this->getNumberOfResponseFunctions() );
+
+  {
+    Utility::SampleMomentHistogram<double>
+      default_histogram( this->getSampleMomentHistogramBins() );
+
+    d_total_estimator_histograms.resize( this->getNumberOfResponseFunctions(),
+                                         default_histogram );
+  }
 }
 
 // Set the response functions
@@ -585,6 +666,29 @@ void StandardEntityEstimator::assignResponseFunction(
   // Resize the total estimator moments array
   d_total_estimator_moments.resize( this->getNumberOfResponseFunctions() );
   d_total_estimator_moment_snapshots.resize( this->getNumberOfResponseFunctions() );
+
+  {
+    Utility::SampleMomentHistogram<double>
+      default_histogram( this->getSampleMomentHistogramBins() );
+    
+    d_total_estimator_histograms.resize( this->getNumberOfResponseFunctions(),
+                                         default_histogram );
+  }
+}
+
+// Assign the history score pdf bins
+void StandardEntityEstimator::assignSampleMomentHistogramBins( const std::shared_ptr<const std::vector<double> >& bins )
+{
+  EntityEstimator::assignSampleMomentHistogramBins( bins );
+
+  for( auto&& histogram : d_total_estimator_histograms )
+    histogram.setBinBoundaries( bins );
+
+  for( auto&& entity_data : d_entity_total_estimator_histograms_map )
+  {
+    for( auto&& histogram : entity_data.second )
+      histogram.setBinBoundaries( bins );
+  }
 }
 
 // Print the estimator data
@@ -764,6 +868,12 @@ void StandardEntityEstimator::resizeEntityTotalEstimatorMomentsMapCollections()
 
   for( auto&& entity_data : d_entity_total_estimator_moment_snapshots_map )
     entity_data.second.resize( size );
+
+  Utility::SampleMomentHistogram<double>
+    default_histogram( this->getSampleMomentHistogramBins() );
+
+  for( auto&& entity_data : d_entity_total_estimator_histograms_map )
+    entity_data.second.resize( size, default_histogram );
 }
 
 // Commit hist. contr. to the total for a response function of an entity
@@ -782,14 +892,40 @@ void StandardEntityEstimator::commitHistoryContributionToTotalOfEntity(
 
   Estimator::FourEstimatorMomentsCollection&
     entity_total_estimator_moments_collection =
-    d_entity_total_estimator_moments_map[entity_id];
+    d_entity_total_estimator_moments_map.find( entity_id )->second;
 
   // Update the moments
   #pragma omp critical
   {
     entity_total_estimator_moments_collection.addRawScore( response_function_index, contribution );
   }
+
+  this->addHistoryContributionToEntityBinHistogram( entity_id, response_function_index, contribution );
 }
+
+// Add contribution to entity bin histogram
+void StandardEntityEstimator::addHistoryContributionToEntityBinHistogram(
+                                          const EntityId entity_id,
+                                          const size_t response_function_index,
+                                          const double contribution )
+{
+  // Make sure the entity is assigned to this estimator
+  testPrecondition( this->isEntityAssigned( entity_id ) );
+  // Make sure the response function index is valid
+  testPrecondition( response_function_index <
+		    this->getNumberOfResponseFunctions() );
+  // Make sure the contribution is valid
+  testPrecondition( !Utility::QuantityTraits<double>::isnaninf( contribution ) );
+
+  Utility::SampleMomentHistogram<double>& histogram =
+    d_entity_total_estimator_histograms_map.find( entity_id )->second[response_function_index];
+
+  // Update the histogram
+  #pragma omp critical
+  {
+    histogram.addRawScore( contribution );
+  }
+}  
 
 // Commit history contr. to the total for a response function of an estimator
 void StandardEntityEstimator::commitHistoryContributionToTotalOfEstimator(
@@ -806,6 +942,30 @@ void StandardEntityEstimator::commitHistoryContributionToTotalOfEstimator(
   #pragma omp critical
   {
     d_total_estimator_moments.addRawScore( response_function_index, contribution );
+  }
+
+  this->addHistoryContributionToTotalBinHistogram( response_function_index,
+                                                   contribution );
+}
+
+// Add contribution to total bin histogram
+void StandardEntityEstimator::addHistoryContributionToTotalBinHistogram(
+                                          const size_t response_function_index,
+                                          const double contribution )
+{
+  // Make sure the response function index is valid
+  testPrecondition( response_function_index <
+		    this->getNumberOfResponseFunctions() );
+  // Make sure the contribution is valid
+  testPrecondition( !Utility::QuantityTraits<double>::isnaninf( contribution ) );
+
+  Utility::SampleMomentHistogram<double>& histogram =
+    d_total_estimator_histograms[response_function_index];
+  
+  // Update the histogram
+  #pragma omp critical
+  {
+    histogram.addRawScore( contribution );
   }
 }
 

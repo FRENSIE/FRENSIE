@@ -33,6 +33,7 @@
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_SampleMomentCollection.hpp"
 #include "Utility_SampleMomentCollectionSnapshots.hpp"
+#include "Utility_SampleMomentHistogram.hpp"
 #include "Utility_DesignByContract.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_List.hpp"
@@ -152,23 +153,17 @@ public:
   //! Return the total normalization constant
   virtual double getTotalNormConstant() const = 0;
 
+  //! Enable snapshots on entity bins
+  virtual void enableSnapshotsOnEntityBins() = 0;
+
   //! Check if snapshots have been enabled on entity bins
   virtual bool areSnapshotsOnEntityBinsEnabled() const = 0;
-  
-  // //! Set the history score pdf bins
-  // void setHistoryScorePDFBins( const std::vector<double>& bins );
 
-  // //! Set the history score pdf bins (shared)
-  // void setHistoryScorePDFBins( const std::shared_ptr<const std::vector<double> >& bins );
+  //! Enable sample moment histograms on entity bins
+  virtual void enableSampleMomentHistogramsOnEntityBins() = 0;
 
-  // //! Get the history score pdf bins
-  // const std::vector<double>& getHistoryScorePDFBins() const;
-
-  // //! Enable history score pdfs on entity bins
-  // virtual void enableHistoryScorePDFsOnEntityBins() = 0;
-
-  // //! Check if history score pdfs have been enabled on entity bins
-  // virtual bool areHistoryScorePDFsOnEntityBinsEnabled() const = 0;
+  //! Check if sample moment histograms are enabled on on entity bins
+  virtual bool areSampleMomentHistogramsOnEntityBinsEnabled() const = 0;
 
   //! Get the total estimator bin data first moments
   virtual Utility::ArrayView<const double> getTotalBinDataFirstMoments() const = 0;
@@ -427,6 +422,35 @@ public:
        const size_t response_function_index,
        std::map<std::string,std::vector<double> >& processed_snapshots ) const;
 
+  //! Set the sample moment histogram bins
+  void setSampleMomentHistogramBins( const std::shared_ptr<const std::vector<double> >& bin_boundaries );
+
+  //! Get the entity bin sample moment histogram
+  virtual void getEntityBinSampleMomentHistogram(
+                     const EntityId entity_id,
+                     const size_t bin_index,
+                     Utility::SampleMomentHistogram<double>& histogram ) const;
+
+  //! Get the total bin sample moment histogram
+  virtual void getTotalBinSampleMomentHistogram(
+                     const EntityId entity_id,
+                     const size_t bin_index,
+                     Utility::SampleMomentHistogram<double>& histogram ) const;
+
+  //! Get the entity total sample moment histogram
+  virtual void getEntityTotalSampleMomentHistogram(
+                     const EntityId entity_id,
+                     const size_t response_function_index,
+                     Utility::SampleMomentHistogram<double>& histogram ) const;
+
+  //! Get the total sample moment histogram
+  virtual void getTotalSampleMomentHistogram(
+                     const size_t response_function_index,
+                     Utility::SampleMomentHistogram<double>& histogram ) const;
+
+  //! Set the cosine cutoff value
+  virtual void setCosineCutoffValue( const double cosine_cutoff );
+
   //! Check if the estimator has uncommitted history contributions
   bool hasUncommittedHistoryContribution( const unsigned thread_id ) const;
 
@@ -461,11 +485,14 @@ protected:
   //! Assign the particle type to the estimator
   virtual void assignParticleType( const ParticleType particle_type );
 
-  // //! Assign the history score pdf bins
-  // virtual void assignHistoryScorePDFBins( const std::shared_ptr<const std::vector<double> >& bins );
+  //! Assign the history score pdf bins
+  virtual void assignSampleMomentHistogramBins( const std::shared_ptr<const std::vector<double> >& bins );
 
   //! Get the particle types that can contribute to the estimator
   size_t getNumberOfAssignedParticleTypes() const;
+
+  //! Get the sample moment histogram bins
+  const std::shared_ptr<const std::vector<double> >& getSampleMomentHistogramBins();
 
   //! Set the has uncommitted history contribution flag
   void setHasUncommittedHistoryContribution( const unsigned thread_id );
@@ -565,8 +592,8 @@ protected:
 
 private:
 
-  // Get the default history score pdf bins
-  static const std::shared_ptr<const std::vector<double> >& getDefaultHistoryScorePDFBins();
+  // Get the default sample moment histogram bins
+  static const std::shared_ptr<const std::vector<double> >& getDefaultSampleMomentHistogramBins();
 
   // Convert first and second moments to mean and relative error
   void processMoments( const Utility::SampleMoment<1,double>& first_moment,
@@ -609,7 +636,7 @@ private:
   friend class boost::serialization::access;
 
   // The default history score pdf bins
-  static std::shared_ptr<const std::vector<double> > s_default_history_score_pdf_bins;
+  static std::shared_ptr<const std::vector<double> > s_default_sample_moment_histogram_bins;
 
   // The estimator id
   UniqueIdManager<Estimator,Id> d_id;
@@ -626,11 +653,8 @@ private:
   // The estimator phase space discretization
   ObserverPhaseSpaceDiscretization d_phase_space_discretization;
 
-  // The moment snapshot history values
-  std::list<unsigned long long> d_moment_snapshot_history_values;
-
-  // The history score pdf bins
-  std::shared_ptr<const std::vector<double> > d_history_score_pdf_bins;
+  // The sample moment histogram bins
+  std::shared_ptr<const std::vector<double> > d_sample_moment_histogram_bins;
 
   // Records if there is an uncommitted history contribution for a thread
   // Note: uint8_t is used instead of bool deliberately due to a

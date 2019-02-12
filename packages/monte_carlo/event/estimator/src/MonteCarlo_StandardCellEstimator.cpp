@@ -22,13 +22,8 @@ StandardCellEstimator::StandardCellEstimator(
                                       const Id id,
                                       const double multiplier,
                                       const std::vector<CellIdType>& cell_ids,
-                                      const std::vector<double>& cell_volumes,
-                                      const bool enable_entity_bin_snapshots )
-  : StandardEntityEstimator( id,
-                             multiplier,
-                             cell_ids,
-                             cell_volumes,
-                             enable_entity_bin_snapshots )
+                                      const std::vector<double>& cell_volumes )
+  : StandardEntityEstimator( id, multiplier, cell_ids, cell_volumes )
 { /* ... */ }
 
 // Constructor (extract cell volumes from model)
@@ -36,9 +31,8 @@ StandardCellEstimator::StandardCellEstimator(
                                        const Id id,
                                        const double multiplier,
                                        const std::vector<CellIdType>& cell_ids,
-                                       const Geometry::Model& model,
-                                       const bool enable_entity_bin_snapshots )
-  : StandardEntityEstimator( id, multiplier, enable_entity_bin_snapshots )
+                                       const Geometry::Model& model )
+  : StandardEntityEstimator( id, multiplier )
 {
   // Extract the cell volumes
   EntityEstimator::EntityNormConstMap cell_id_volume_map;
