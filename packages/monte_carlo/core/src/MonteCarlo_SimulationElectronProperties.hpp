@@ -72,10 +72,10 @@ public:
   //! Return the electron 2D interpolation policy
   TwoDInterpolationType getElectronTwoDInterpPolicy() const;
 
-  //! Set the electron 2D grid policy (UnitBaseCorrelated by default)
+  //! Set the electron bivariate grid policy (UnitBaseCorrelated by default)
   void setElectronTwoDGridPolicy( TwoDGridType grid_type );
 
-  //! Return the electron 2D grid policy
+  //! Return the electron bivariate grid policy
   TwoDGridType getElectronTwoDGridPolicy() const;
 
   //! Set the number of electron hash grid bins

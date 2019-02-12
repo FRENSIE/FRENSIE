@@ -67,6 +67,16 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
       }
       else if( electron_grid == "Unit-base" || electron_grid == "Direct" )
       {
+        if( properties.getAdjointCoupledElasticSamplingMode() == MODIFIED_TWO_D_UNION )
+        {
+          THROW_EXCEPTION( std::runtime_error, "the bivariate grid policy "
+                           << Utility::UnitBase<Utility::LogLogLog>::name()
+                           << " is not currently supported "
+                           << "with a "
+                           << properties.getAdjointCoupledElasticSamplingMode()
+                           << " coupled elastic sampling mode!" );
+        }
+
         ThisType::createElasticElectroatomCore<Utility::LogNudgedLogCosLog,Utility::Direct>(
                                                   raw_adjoint_electroatom_data,
                                                   energy_grid,
@@ -101,7 +111,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
       else
       {
         THROW_EXCEPTION( std::runtime_error,
-                        "the 2D grid policy "
+                        "the bivariate grid policy "
                         << electron_grid <<
                         " is not currently supported!" );
       }
@@ -180,7 +190,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
       else
       {
         THROW_EXCEPTION( std::runtime_error,
-                        "the 2D grid policy "
+                        "the bivariate grid policy "
                         << electron_grid <<
                         " is not currently supported!" );
       }
@@ -220,7 +230,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
       else
       {
         THROW_EXCEPTION( std::runtime_error,
-                        "the 2D grid policy "
+                        "the bivariate grid policy "
                         << electron_grid <<
                         " is not currently supported!" );
       }
@@ -317,7 +327,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
       else
       {
         THROW_EXCEPTION( std::runtime_error,
-                        "the 2D grid policy "
+                        "the bivariate grid policy "
                         << electron_grid <<
                         " is not currently supported!" );
       }
@@ -357,7 +367,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
       else
       {
         THROW_EXCEPTION( std::runtime_error,
-                        "the 2D grid policy "
+                        "the bivariate grid policy "
                         << electron_grid <<
                         " is not currently supported!" );
       }

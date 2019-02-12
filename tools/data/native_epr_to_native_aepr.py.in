@@ -184,12 +184,12 @@ def setGeneratorOptions( generator,
         elif electron_two_d_grid_policy == "UnitBaseCorrelated":
             generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
         elif electron_two_d_grid_policy == "Direct":
-            print "Electron 2D grid policy", electron_two_d_grid_policy, "is currently not supported!"
+            print "Electron bivariate grid policy", electron_two_d_grid_policy, "is currently not supported!"
             sys.exit(1)
         elif electron_two_d_grid_policy == "UnitBase":
             generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_GRID )
         else:
-            print "Electron 2D grid policy", electron_two_d_grid_policy, "is not valid!"
+            print "Electron bivariate grid policy", electron_two_d_grid_policy, "is not valid!"
             sys.exit(1)
 
     if not bremss_min_energy_nudge_val is None:
@@ -446,7 +446,7 @@ if __name__ == "__main__":
     parser.add_option("--electron_two_d_interp_policy", type="string", dest="electron_two_d_interp_policy",
                       help="The electron 2D interpolation policy (e.g. LogLogLog)")
     parser.add_option("--electron_two_d_grid_policy", type="string", dest="electron_two_d_grid_policy",
-                      help="The electron 2D grid policy")
+                      help="The electron bivariate grid policy")
     parser.add_option("--bremss_min_energy_nudge_val", type="float", dest="bremss_min_energy_nudge_val",
                       help="The bremsstrahlung min energy nudge value")
     parser.add_option("--bremss_max_energy_nudge_val", type="float", dest="bremss_max_energy_nudge_val",

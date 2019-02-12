@@ -123,14 +123,14 @@ SimulationElectronProperties::getElectronTwoDInterpPolicy() const
   return d_electron_interpolation_type;
 }
 
-// Set the electron 2D grid policy (Unit-base Correlated by default)
+// Set the electron bivariate grid policy (Unit-base Correlated by default)
 void SimulationElectronProperties::setElectronTwoDGridPolicy(
     TwoDGridType grid_type )
 {
   d_electron_grid_type = grid_type;
 }
 
-// Return the electron 2D grid policy
+// Return the electron bivariate grid policy
 TwoDGridType
 SimulationElectronProperties::getElectronTwoDGridPolicy() const
 {

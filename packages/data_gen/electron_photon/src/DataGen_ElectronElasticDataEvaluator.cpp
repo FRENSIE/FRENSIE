@@ -245,7 +245,7 @@ ElectronElasticDataEvaluator::ElectronElasticDataEvaluator(
   else
   {
     THROW_EXCEPTION( std::runtime_error,
-                     "Error: the desired 2D grid policy " <<
+                     "Error: the desired bivariate grid policy " <<
                      data_container->getElectronTwoDGridPolicy() <<
                      " is currently not supported!" );
   }
@@ -704,7 +704,7 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistribution(
     else
     {
       THROW_EXCEPTION( std::runtime_error,
-                        "the desired 2D grid policy " <<
+                        "the desired bivariate grid policy " <<
                         d_two_d_grid <<
                         " is currently not supported!" );
     }
@@ -833,7 +833,7 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistribution(
       else
       {
         THROW_EXCEPTION( std::runtime_error,
-                          "the desired 2D grid policy " <<
+                          "the desired bivariate grid policy " <<
                           d_two_d_grid <<
                           " is currently not supported!" );
       }
@@ -966,7 +966,7 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistributionInP
     else
     {
       THROW_EXCEPTION( std::runtime_error,
-                        "the desired 2D grid policy " <<
+                        "the desired bivariate grid policy " <<
                         d_two_d_grid <<
                         " is currently not supported!" );
     }
@@ -1100,7 +1100,7 @@ void ElectronElasticDataEvaluator::evaluateMomentPreservingElasticData(
   else
   {
     THROW_EXCEPTION( std::runtime_error,
-                      "Error: the desired 2D grid policy " <<
+                      "Error: the desired bivariate grid policy " <<
                       d_two_d_grid <<
                       " is currently not supported!" );
   }

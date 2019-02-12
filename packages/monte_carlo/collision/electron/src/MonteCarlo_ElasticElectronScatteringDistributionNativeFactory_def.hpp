@@ -385,6 +385,14 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
   testPrecondition( evaluation_tol > 0.0 );
   testPrecondition( evaluation_tol < 1.0 );
 
+  if( (TwoDInterpPolicy::name() == "LogLogCosLog" || TwoDInterpPolicy::name() == "LogNudgedLogCosLog") && sampling_method == MODIFIED_TWO_D_UNION && TwoDGridPolicy<TwoDInterpPolicy>::name() == "Direct" )
+  {
+    THROW_EXCEPTION( std::runtime_error, "the bivariate grid policy "
+                  << TwoDGridPolicy<TwoDInterpPolicy>::name() << " is not currently supported "
+                  << "with a " << sampling_method
+                  << " coupled elastic sampling mode!" );
+  }
+
   // Get the distribution data
   std::vector<double> cutoff_ratios( angular_energy_grid.size() );
   std::vector<double> etas( angular_energy_grid.size() );

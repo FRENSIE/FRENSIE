@@ -60,7 +60,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
         if( properties.getElasticElectronDistributionMode() == COUPLED_DISTRIBUTION &&
             properties.getCoupledElasticSamplingMode() == MODIFIED_TWO_D_UNION )
         {
-          THROW_EXCEPTION( std::runtime_error, "Error: the 2D grid policy "
+          THROW_EXCEPTION( std::runtime_error, "the bivariate grid policy "
                        << TwoDGridPolicy<TwoDInterpPolicy>::name() << " is not currently supported "
                        << "with a " << properties.getCoupledElasticSamplingMode()
                        << " coupled elastic sampling mode!" );
@@ -136,7 +136,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
     }
     else
     {
-      THROW_EXCEPTION( std::runtime_error, "Error: the 2D grid policy "
+      THROW_EXCEPTION( std::runtime_error, "Error: the bivariate grid policy "
                        << TwoDGridPolicy<TwoDInterpPolicy>::name() << " is not currently supported!" );
     }
   }
