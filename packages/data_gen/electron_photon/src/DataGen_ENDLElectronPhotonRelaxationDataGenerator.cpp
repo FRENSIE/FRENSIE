@@ -2801,7 +2801,8 @@ std::vector<double> ENDLElectronPhotonRelaxationDataGenerator::evaluatePDFFromCD
   // PDF(x) = PDF(x1) + 2.0*(CDF(x)-CDF(x1)-pdf(x1)*(x-x1))*(x2-x1)/(x-x1)^2
   for( size_t i = 1; i < indep_values.size(); ++i )
   {
-    pdf_values[i] = 2.0*( cdf_values[i] - cdf_values[i-1])/( indep_values[i] - indep_values[i-1]) - pdf_values[i-1];
+    pdf_values[i] = 2.0*( cdf_values[i] - cdf_values[i-1])/( indep_values[i] - indep_values[i-1]) + pdf_values[i-1];
+    testPostcondition( pdf_values[i] > 0.0 );
   }
 
   return pdf_values;
