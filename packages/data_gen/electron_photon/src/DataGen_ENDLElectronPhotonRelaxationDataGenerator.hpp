@@ -17,6 +17,7 @@
 // FRENSIE Includes
 #include "DataGen_ElectronPhotonRelaxationDataGenerator.hpp"
 #include "DataGen_ElectronElasticDataEvaluator.hpp"
+#include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_ElectroionizationSamplingType.hpp"
 #include "Data_ENDLDataContainer.hpp"
@@ -187,19 +188,22 @@ private:
       const MonteCarlo::ElectroionizationSamplingType sampling_type );
 
 
-  // Initialize the electroionization subshell secondary PDF grid
-  std::vector<double> initializeElectroionizationSecondaryPDFGrid(
+  // Initialize the electroionization subshell secondary grid
+  std::vector<double> initializeElectroionizationSecondaryGrid(
     const MonteCarlo::ElectroionizationSamplingType sampling_type,
     const double incoming_energy,
     const double min_secondary_energy,
     const double max_secondary_energy,
     const unsigned shell ) const;
 
-  // Initialize the electroionization subshell secondary CDF grid
-  std::vector<double> initializeElectroionizationSecondaryCDFGrid(
+  // Calculate the electroionization subshell secondary grid from the CDF
+  void calculateElectroionizationSecondaryGridFromCDF(
+    const std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution> distribution,
     const MonteCarlo::ElectroionizationSamplingType sampling_type,
-    const double incoming_energy,
-    const unsigned shell ) const;
+    double incoming_energy,
+    const unsigned shell,
+    std::vector<double>& evaluated_grid,
+    std::vector<double>& evaluated_pdf ) const;
 
   // Evaluate the PDF distribution from the CDF
   std::vector<double> evaluatePDFFromCDF(

@@ -27,6 +27,7 @@ AdjointElectronPhotonRelaxationDataGenerator::AdjointElectronPhotonRelaxationDat
            new Utility::GridGenerator<Utility::LogLog>( 1e-3, 1e-13, 1e-13 ) ),
     d_two_d_interp( MonteCarlo::LOGLOGLOG_INTERPOLATION ),
     d_two_d_grid( MonteCarlo::UNIT_BASE_CORRELATED_GRID ),
+    d_elastic_sampling_method( MonteCarlo::TWO_D_UNION ),
     d_forward_electroionization_sampling_mode( MonteCarlo::KNOCK_ON_SAMPLING ),
     d_scatter_above_max( true )
 {
@@ -108,6 +109,7 @@ AdjointElectronPhotonRelaxationDataGenerator::AdjointElectronPhotonRelaxationDat
                  d_data_container->getAdjointElectronGridDistanceTolerance() ) ),
     d_two_d_interp( this->convertStringToTwoDInterpType( d_data_container->getElectronTwoDInterpPolicy() ) ),
     d_two_d_grid( this->convertStringToTwoDGridType( d_data_container->getElectronTwoDGridPolicy() ) ),
+    d_elastic_sampling_method( this->getAdjointElectronElasticSamplingMethod() ),
     d_forward_electroionization_sampling_mode( this->convertStringToElectroionizationSamplingType( d_data_container->getForwardElectroionizationSamplingMode() ) )
 {
   // Have the default grid generators throw exception on dirty convergence
@@ -573,6 +575,20 @@ void AdjointElectronPhotonRelaxationDataGenerator::setElectronTwoDGridPolicy(
 MonteCarlo::TwoDGridType AdjointElectronPhotonRelaxationDataGenerator::getElectronTwoDGridPolicy() const
 {
   return d_two_d_grid;
+}
+
+// Set the electron elastic sampling method (TWO_D_UNION by default)
+void AdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronElasticSamplingMethod(
+    MonteCarlo::CoupledElasticSamplingMethod sampling )
+{
+  d_elastic_sampling_method = sampling;
+}
+
+// Return the electron elastic sampling method
+MonteCarlo::CoupledElasticSamplingMethod
+AdjointElectronPhotonRelaxationDataGenerator::getAdjointElectronElasticSamplingMethod() const
+{
+  return d_elastic_sampling_method;
 }
 
 // Set the cutoff angle cosine above which screened rutherford is used

@@ -431,7 +431,7 @@ bool ElectronPhotonRelaxationDataGenerator::isRefineSecondaryElectronGridsModeOn
   return d_refine_secondary_electron_grid_mode;
 }
 
-// Set the electron elastic sampling method (MODIFIED_TWO_D_UNION by default)
+// Set the electron elastic sampling method (TWO_D_UNION by default)
 void ElectronPhotonRelaxationDataGenerator::setElectronElasticSamplingMethod(
     MonteCarlo::CoupledElasticSamplingMethod sampling )
 {

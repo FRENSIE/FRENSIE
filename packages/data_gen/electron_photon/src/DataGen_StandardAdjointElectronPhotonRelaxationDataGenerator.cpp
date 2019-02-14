@@ -1260,16 +1260,16 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
   // Create the electron elastic data evaluator
   ElectronElasticDataEvaluator elastic_evaluator(
-                                      d_forward_epr_data,
-                                      this->getMinElectronEnergy(),
-                                      this->getMaxElectronEnergy(),
-                                      this->getCutoffAngleCosine(),
-                                      this->getNumberOfMomentPreservingAngles(),
-                                      this->getElectronTabularEvaluationTolerance(),
-                                      this->getElectronTwoDGridPolicy(),
-                                      this->getElectronTwoDInterpPolicy(),
-                                      MonteCarlo::MODIFIED_TWO_D_UNION,
-                                      true );
+                                d_forward_epr_data,
+                                this->getMinElectronEnergy(),
+                                this->getMaxElectronEnergy(),
+                                this->getCutoffAngleCosine(),
+                                this->getNumberOfMomentPreservingAngles(),
+                                this->getElectronTabularEvaluationTolerance(),
+                                this->getElectronTwoDGridPolicy(),
+                                this->getElectronTwoDInterpPolicy(),
+                                this->getAdjointElectronElasticSamplingMethod(),
+                                true );
 
   // Create the reaction
   std::shared_ptr<MonteCarlo::ElectroatomicReaction> cutoff_elastic_reaction;

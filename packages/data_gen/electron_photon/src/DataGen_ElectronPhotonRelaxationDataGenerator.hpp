@@ -155,7 +155,7 @@ public:
   //! Return if the refine secondary electron grids mode is on (default off)
   bool isRefineSecondaryElectronGridsModeOn();
 
-  //! Set the electron elastic sampling method (MODIFIED_TWO_D_UNION by default)
+  //! Set the electron elastic sampling method (TWO_D_UNION by default)
   void setElectronElasticSamplingMethod( MonteCarlo::CoupledElasticSamplingMethod sampling );
 
   //! Return the electron elastic sampling method

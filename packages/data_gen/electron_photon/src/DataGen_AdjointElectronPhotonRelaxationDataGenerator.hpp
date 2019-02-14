@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_TwoDInterpolationType.hpp"
 #include "MonteCarlo_TwoDGridType.hpp"
+#include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "MonteCarlo_ElectroionizationSamplingType.hpp"
 #include "Data_AdjointElectronPhotonRelaxationVolatileDataContainer.hpp"
 #include "Utility_GridGenerator.hpp"
@@ -215,6 +216,12 @@ public:
   //! Return the electron TwoDGridPolicy (Unit-base Correlated by default)
   MonteCarlo::TwoDGridType getElectronTwoDGridPolicy() const;
 
+  //! Set the adjoint electron elastic sampling method (TWO_D_UNION by default)
+  void setAdjointElectronElasticSamplingMethod( MonteCarlo::CoupledElasticSamplingMethod sampling );
+
+  //! Return the adjoint electron elastic sampling method
+  MonteCarlo::CoupledElasticSamplingMethod getAdjointElectronElasticSamplingMethod() const;
+
   //! Set the adjoint bremsstrahlung min energy nudge value
   void setAdjointBremsstrahlungMinEnergyNudgeValue( const double min_energy_nudge_value );
 
@@ -360,6 +367,9 @@ private:
 
   // The electron TwoDGridPolicy (Unit-base Correlated - default)
   MonteCarlo::TwoDGridType d_two_d_grid;
+
+  // The electron elastic sampling method
+  MonteCarlo::CoupledElasticSamplingMethod d_elastic_sampling_method;
 
   // The forward ElectroionizationSamplingType (Knock-on - default)
   MonteCarlo::ElectroionizationSamplingType d_forward_electroionization_sampling_mode;
