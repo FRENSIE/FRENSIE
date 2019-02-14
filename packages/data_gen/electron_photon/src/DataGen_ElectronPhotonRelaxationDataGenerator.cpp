@@ -26,7 +26,7 @@ ElectronPhotonRelaxationDataGenerator::ElectronPhotonRelaxationDataGenerator(
     d_default_electron_grid_generator(
            new Utility::GridGenerator<Utility::LogLog>( 1e-3, 1e-13, 1e-13 ) ),
     d_refine_secondary_electron_grid_mode( false ),
-    d_elastic_sampling_method( MonteCarlo::MODIFIED_TWO_D_UNION ),
+    d_elastic_sampling_method( MonteCarlo::TWO_D_UNION ),
     d_two_d_interp( MonteCarlo::LOGLOGLOG_INTERPOLATION ),
     d_two_d_grid( MonteCarlo::UNIT_BASE_CORRELATED_GRID )
 {
@@ -86,7 +86,7 @@ ElectronPhotonRelaxationDataGenerator::ElectronPhotonRelaxationDataGenerator(
                            const boost::filesystem::path& file_name_with_path )
   : d_data_container( new Data::ElectronPhotonRelaxationVolatileDataContainer( file_name_with_path ) ),
     d_refine_secondary_electron_grid_mode( false ),
-    d_elastic_sampling_method( MonteCarlo::MODIFIED_TWO_D_UNION ),
+    d_elastic_sampling_method( MonteCarlo::TWO_D_UNION ),
     d_default_photon_grid_generator( new Utility::GridGenerator<Utility::LinLin>(
                    d_data_container->getPhotonGridConvergenceTolerance(),
                    d_data_container->getPhotonGridAbsoluteDifferenceTolerance(),

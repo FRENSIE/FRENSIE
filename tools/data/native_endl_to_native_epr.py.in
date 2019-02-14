@@ -168,12 +168,16 @@ def setGeneratorOptions( generator,
     if not electron_two_d_grid_policy is None:
         if electron_two_d_grid_policy == "CorrelatedGrid":
             generator.setElectronTwoDGridPolicy( MonteCarlo.CORRELATED_GRID )
+            generator.setElectronElasticSamplingMethod( MonteCarlo.MODIFIED_TWO_D_UNION )
         elif electron_two_d_grid_policy == "UnitBaseCorrelatedGrid":
             generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
+            generator.setElectronElasticSamplingMethod( MonteCarlo.MODIFIED_TWO_D_UNION )
         elif electron_two_d_grid_policy == "DirectGrid":
             generator.setElectronTwoDGridPolicy( MonteCarlo.DIRECT_GRID )
+            generator.setElectronElasticSamplingMethod( MonteCarlo.TWO_D_UNION )
         elif electron_two_d_grid_policy == "UnitBaseGrid":
             generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_GRID )
+            generator.setElectronElasticSamplingMethod( MonteCarlo.TWO_D_UNION )
         else:
             print "Electron bivariate grid policy", electron_two_d_grid_policy, "is not valid!"
             sys.exit(1)
