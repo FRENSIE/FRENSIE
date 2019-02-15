@@ -186,11 +186,17 @@ public:
 
   //! Clear the collection snapshots
   void clear()
-  { d_snapshot_indices.clear(); }
+  {
+    d_snapshot_indices.clear();
+    d_snapshot_sampling_times.clear();
+  }
 
   //! Reset the collection snapshots
   void reset()
-  { d_snapshot_indices.clear(); }
+  {
+    d_snapshot_indices.clear();
+    d_snapshot_sampling_times.clear();
+  }
 
   //! Resize the collection snapshots (number of bins)
   void resize( const size_t i )

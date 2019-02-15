@@ -287,6 +287,74 @@ FRENSIE_UNIT_TEST( EntityEstimator, enableSampleMomentHistogramsOnEntityBins )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the sample moment histogram bins can be set
+FRENSIE_UNIT_TEST( EntityEstimator, setSampleMomentHistogramBins )
+{
+  std::shared_ptr<TestEntityEstimator> entity_estimator;
+  initializeEntityEstimator( entity_estimator, true );
+
+  entity_estimator->enableSampleMomentHistogramsOnEntityBins();
+
+  size_t num_estimator_bins = entity_estimator->getNumberOfBins()*
+    entity_estimator->getNumberOfResponseFunctions();
+
+  std::set<uint64_t> entity_ids;
+
+  entity_estimator->getEntityIds( entity_ids );
+
+  // Check the entity bin histograms (default)
+  Utility::SampleMomentHistogram<double> histogram;
+
+  std::vector<double> expected_histogram_bins =
+    Utility::fromString<std::vector<double> >( "{-1.7976931348623157e+308, 0.0, 1e-30, 599l, 1e30, 1.7976931348623157e+308}" );
+  
+  for( size_t i = 0; i < entity_ids.size(); ++i )
+  {
+    for( size_t j = 0; j < num_estimator_bins; ++j )
+    {
+      entity_estimator->getEntityBinSampleMomentHistogram( i, j, histogram );
+
+      FRENSIE_CHECK_EQUAL( histogram.getBinBoundaries(),
+                           expected_histogram_bins );
+    }
+  }
+
+  // Check the total bin histograms
+  for( size_t j = 0; j < num_estimator_bins; ++j )
+  {
+    entity_estimator->getTotalBinSampleMomentHistogram( j, histogram );
+
+    FRENSIE_CHECK_EQUAL( histogram.getBinBoundaries(),
+                         expected_histogram_bins );
+  }
+
+  std::shared_ptr<const std::vector<double> > custom_histogram_bins =
+    std::make_shared<std::vector<double> >( Utility::fromString<std::vector<double> >( "{0.0, 1.0, 2.0, 3.0, 4.0, 5.0}" ) );
+
+  entity_estimator->setSampleMomentHistogramBins( custom_histogram_bins );
+
+  for( size_t i = 0; i < entity_ids.size(); ++i )
+  {
+    for( size_t j = 0; j < num_estimator_bins; ++j )
+    {
+      entity_estimator->getEntityBinSampleMomentHistogram( i, j, histogram );
+
+      FRENSIE_CHECK_EQUAL( histogram.getBinBoundaries(),
+                           *custom_histogram_bins );
+    }
+  }
+
+  // Check the total bin histograms
+  for( size_t j = 0; j < num_estimator_bins; ++j )
+  {
+    entity_estimator->getTotalBinSampleMomentHistogram( j, histogram );
+
+    FRENSIE_CHECK_EQUAL( histogram.getBinBoundaries(),
+                         *custom_histogram_bins );
+  }
+}
+
+//---------------------------------------------------------------------------//
 // Check that a history contribution can be committed to a bin
 FRENSIE_UNIT_TEST( EntityEstimator,
                    commitHistoryContributionToBinOfEntity_no_histogram )
@@ -1780,8 +1848,156 @@ FRENSIE_UNIT_TEST( EntityEstimator,
 
 //---------------------------------------------------------------------------//
 // Check that a snapshot of the estimator state can be made
-FRENSIE_UNIT_TEST( EntityEstimator,
-                   takeSnapshot_with_bin_snapshots_no_histogram )
+FRENSIE_UNIT_TEST( EntityEstimator, takeSnapshot_no_bin_snapshots )
+{
+  std::shared_ptr<TestEntityEstimator> entity_estimator;
+  initializeEntityEstimator( entity_estimator, true );
+
+  size_t num_estimator_bins = entity_estimator->getNumberOfBins()*
+    entity_estimator->getNumberOfResponseFunctions();
+
+  std::set<uint64_t> entity_ids;
+
+  entity_estimator->getEntityIds( entity_ids );
+
+  // Commit one contribution to every bin of the estimator
+  for( auto&& entity_id : entity_ids )
+  {
+    for( size_t i = 0; i < num_estimator_bins; ++i )
+    {
+      entity_estimator->commitHistoryContributionToBinOfEntity( entity_id,
+								i,
+								0.5 );
+      entity_estimator->commitHistoryContributionToBinOfTotal( i, 0.5 );
+    }
+  }
+
+  entity_estimator->takeSnapshot( 5, 1.0 );
+
+  for( auto&& entity_id : entity_ids )
+  {
+    for( size_t i = 0; i < num_estimator_bins; ++i )
+    {
+      entity_estimator->commitHistoryContributionToBinOfEntity( entity_id,
+								i,
+								1.0 );
+      entity_estimator->commitHistoryContributionToBinOfTotal( i, 1.0 );
+    }
+  }
+
+  entity_estimator->takeSnapshot( 5, 4.0 );
+
+  // Check the entity bin moment snapshots
+  std::vector<uint64_t> history_values;
+  std::vector<double> sampling_times;
+
+  std::vector<double> first_moments, second_moments, third_moments,
+    fourth_moments;
+
+  for( size_t i = 0; i < entity_ids.size(); ++i )
+  {
+    entity_estimator->getEntityBinMomentSnapshotHistoryValues( i, history_values );
+
+    entity_estimator->getEntityBinMomentSnapshotSamplingTimes( i, sampling_times );
+
+    FRENSIE_CHECK_EQUAL( history_values.size(), 0 );
+    FRENSIE_CHECK_EQUAL( sampling_times.size(), 0 );
+    
+    for( size_t j = 0; j < num_estimator_bins; ++j )
+    {
+      entity_estimator->getEntityBinFirstMomentSnapshots( i, j, first_moments );
+      entity_estimator->getEntityBinSecondMomentSnapshots( i, j, second_moments );
+      entity_estimator->getEntityBinThirdMomentSnapshots( i, j, third_moments );
+      entity_estimator->getEntityBinFourthMomentSnapshots( i, j, fourth_moments );
+
+      FRENSIE_CHECK_EQUAL( first_moments.size(), 0 );
+      FRENSIE_CHECK_EQUAL( second_moments.size(), 0 );
+      FRENSIE_CHECK_EQUAL( third_moments.size(), 0 );
+      FRENSIE_CHECK_EQUAL( fourth_moments.size(), 0 );
+    }
+  }
+
+  // Check the total bin moment snapshots
+  entity_estimator->getTotalBinMomentSnapshotHistoryValues( history_values );
+  entity_estimator->getTotalBinMomentSnapshotSamplingTimes( sampling_times );
+
+  FRENSIE_CHECK_EQUAL( history_values.size(), 0 );
+  FRENSIE_CHECK_EQUAL( sampling_times.size(), 0 );
+  
+  for( size_t j = 0; j < num_estimator_bins; ++j )
+  {  
+    entity_estimator->getTotalBinFirstMomentSnapshots( j, first_moments );
+    entity_estimator->getTotalBinSecondMomentSnapshots( j, second_moments );
+    entity_estimator->getTotalBinThirdMomentSnapshots( j, third_moments );
+    entity_estimator->getTotalBinFourthMomentSnapshots( j, fourth_moments );
+
+    FRENSIE_CHECK_EQUAL( first_moments.size(), 0 );
+    FRENSIE_CHECK_EQUAL( second_moments.size(), 0 );
+    FRENSIE_CHECK_EQUAL( third_moments.size(), 0 );
+    FRENSIE_CHECK_EQUAL( fourth_moments.size(), 0 );
+  }
+
+  // Check the entity total moment snapshots
+  for( size_t i = 0; i < entity_ids.size(); ++i )
+  {
+    entity_estimator->getEntityTotalMomentSnapshotHistoryValues( i, history_values );
+
+    FRENSIE_CHECK_EQUAL( history_values.size(), 0 );
+
+    entity_estimator->getEntityTotalMomentSnapshotSamplingTimes( i, sampling_times );
+
+    FRENSIE_CHECK_EQUAL( sampling_times.size(), 0 );
+
+    entity_estimator->getEntityTotalFirstMomentSnapshots( i, 0, first_moments );
+    entity_estimator->getEntityTotalSecondMomentSnapshots( i, 0, second_moments );
+    entity_estimator->getEntityTotalThirdMomentSnapshots( i, 0, third_moments );
+    entity_estimator->getEntityTotalFourthMomentSnapshots( i, 0, fourth_moments );
+
+    FRENSIE_CHECK_EQUAL( first_moments.size(), 0 );
+    FRENSIE_CHECK_EQUAL( second_moments.size(), 0 );
+    FRENSIE_CHECK_EQUAL( third_moments.size(), 0 );
+    FRENSIE_CHECK_EQUAL( fourth_moments.size(), 0 );
+  }
+
+  // Check the total moment snapshots
+  entity_estimator->getTotalMomentSnapshotHistoryValues( history_values );
+
+  FRENSIE_CHECK_EQUAL( history_values.size(), 0 );
+
+  entity_estimator->getTotalMomentSnapshotSamplingTimes( sampling_times );
+
+  FRENSIE_CHECK_EQUAL( sampling_times.size(), 0 );
+
+  entity_estimator->getTotalFirstMomentSnapshots( 0, first_moments );
+  entity_estimator->getTotalSecondMomentSnapshots( 0, second_moments );
+  entity_estimator->getTotalThirdMomentSnapshots( 0, third_moments );
+  entity_estimator->getTotalFourthMomentSnapshots( 0, fourth_moments );
+
+  // Check the entity bin histograms
+  Utility::SampleMomentHistogram<double> histogram;
+
+  for( size_t i = 0; i < entity_ids.size(); ++i )
+  {
+    for( size_t j = 0; j < num_estimator_bins; ++j )
+    {
+      entity_estimator->getEntityBinSampleMomentHistogram( i, j, histogram );
+
+      FRENSIE_CHECK_EQUAL( histogram.getNumberOfScores(), 0 );
+    }
+  }
+
+  // Check the total bin histograms
+  for( size_t j = 0; j < num_estimator_bins; ++j )
+  {
+    entity_estimator->getTotalBinSampleMomentHistogram( j, histogram );
+
+    FRENSIE_CHECK_EQUAL( histogram.getNumberOfScores(), 0 );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a snapshot of the estimator state can be made
+FRENSIE_UNIT_TEST( EntityEstimator, takeSnapshot_with_bin_snapshots )
 {
   std::shared_ptr<TestEntityEstimator> entity_estimator;
   initializeEntityEstimator( entity_estimator, true );
@@ -2017,21 +2233,18 @@ FRENSIE_UNIT_TEST( EntityEstimator,
   }
 
   // Check the total moment snapshots
-  for( size_t i = 0; i < entity_ids.size(); ++i )
-  {
-    entity_estimator->getTotalMomentSnapshotHistoryValues( history_values );
+  entity_estimator->getTotalMomentSnapshotHistoryValues( history_values );
 
-    FRENSIE_CHECK_EQUAL( history_values.size(), 0 );
+  FRENSIE_CHECK_EQUAL( history_values.size(), 0 );
 
-    entity_estimator->getTotalMomentSnapshotSamplingTimes( sampling_times );
+  entity_estimator->getTotalMomentSnapshotSamplingTimes( sampling_times );
 
-    FRENSIE_CHECK_EQUAL( sampling_times.size(), 0 );
+  FRENSIE_CHECK_EQUAL( sampling_times.size(), 0 );
 
-    entity_estimator->getTotalFirstMomentSnapshots( 0, first_moments );
-    entity_estimator->getTotalSecondMomentSnapshots( 0, second_moments );
-    entity_estimator->getTotalThirdMomentSnapshots( 0, third_moments );
-    entity_estimator->getTotalFourthMomentSnapshots( 0, fourth_moments );
-  }
+  entity_estimator->getTotalFirstMomentSnapshots( 0, first_moments );
+  entity_estimator->getTotalSecondMomentSnapshots( 0, second_moments );
+  entity_estimator->getTotalThirdMomentSnapshots( 0, third_moments );
+  entity_estimator->getTotalFourthMomentSnapshots( 0, fourth_moments );
 }
 
 //---------------------------------------------------------------------------//
@@ -2118,14 +2331,29 @@ FRENSIE_UNIT_TEST( EntityEstimator, resetData )
   std::shared_ptr<TestEntityEstimator> entity_estimator;
   initializeEntityEstimator( entity_estimator, true );
 
+  entity_estimator->enableSnapshotsOnEntityBins();
+  entity_estimator->enableSampleMomentHistogramsOnEntityBins();
+
+  std::set<uint64_t> entity_ids;
+
+  entity_estimator->getEntityIds( entity_ids );
+
   size_t num_estimator_bins = entity_estimator->getNumberOfBins()*
     entity_estimator->getNumberOfResponseFunctions();
 
   // Commit one contribution to every bin of the estimator
-  for( size_t i = 0u; i < num_estimator_bins; ++i )
+  for( auto&& entity_id : entity_ids )
   {
-    entity_estimator->commitHistoryContributionToBinOfTotal( i, 0.5 );
+    for( size_t i = 0; i < num_estimator_bins; ++i )
+    {
+      entity_estimator->commitHistoryContributionToBinOfEntity( entity_id,
+								i,
+								0.5 );
+      entity_estimator->commitHistoryContributionToBinOfTotal( i, 0.5 );
+    }
   }
+
+  entity_estimator->takeSnapshot( 5, 1.0 );
 
   // Reset the estimator data
   entity_estimator->resetData();
@@ -2177,6 +2405,125 @@ FRENSIE_UNIT_TEST( EntityEstimator, resetData )
                        std::vector<double>( 24, 0.0 ) );
   FRENSIE_CHECK_EQUAL( total_bin_fourth_moments,
                        std::vector<double>( 24, 0.0 ) );
+
+  // Check the entity bin histograms
+  Utility::SampleMomentHistogram<double> histogram;
+
+  std::vector<double> expected_histogram_bins =
+    Utility::fromString<std::vector<double> >( "{-1.7976931348623157e+308, 0.0, 1e-30, 599l, 1e30, 1.7976931348623157e+308}" );
+  std::vector<double> expected_bin_histogram_values( 603, 0.0 );
+
+  for( size_t i = 0; i < entity_ids.size(); ++i )
+  {
+    for( size_t j = 0; j < num_estimator_bins; ++j )
+    {
+      entity_estimator->getEntityBinSampleMomentHistogram( i, j, histogram );
+
+      FRENSIE_CHECK_EQUAL( histogram.getNumberOfScores(), 0 );
+      FRENSIE_CHECK_EQUAL( histogram.getBinBoundaries(),
+                           expected_histogram_bins );
+      FRENSIE_CHECK_EQUAL( histogram.getHistogramValues(),
+                           expected_bin_histogram_values );
+    }
+  }
+
+  // Check the total bin histograms
+  for( size_t j = 0; j < num_estimator_bins; ++j )
+  {
+    entity_estimator->getTotalBinSampleMomentHistogram( j, histogram );
+
+    FRENSIE_CHECK_EQUAL( histogram.getNumberOfScores(), 0 );
+    FRENSIE_CHECK_EQUAL( histogram.getBinBoundaries(),
+                         expected_histogram_bins );
+    FRENSIE_CHECK_EQUAL( histogram.getHistogramValues(),
+                         expected_bin_histogram_values );
+  }
+
+  // Check the entity bin moment snapshots
+  std::vector<uint64_t> history_values;
+  std::vector<double> sampling_times;
+
+  std::vector<double> first_moments, second_moments, third_moments,
+    fourth_moments;
+
+  for( size_t i = 0; i < entity_ids.size(); ++i )
+  {
+    entity_estimator->getEntityBinMomentSnapshotHistoryValues( i, history_values );
+
+    entity_estimator->getEntityBinMomentSnapshotSamplingTimes( i, sampling_times );
+
+    FRENSIE_CHECK_EQUAL( history_values.size(), 0 );
+    FRENSIE_CHECK_EQUAL( sampling_times.size(), 0 );
+    
+    for( size_t j = 0; j < num_estimator_bins; ++j )
+    {
+      entity_estimator->getEntityBinFirstMomentSnapshots( i, j, first_moments );
+      entity_estimator->getEntityBinSecondMomentSnapshots( i, j, second_moments );
+      entity_estimator->getEntityBinThirdMomentSnapshots( i, j, third_moments );
+      entity_estimator->getEntityBinFourthMomentSnapshots( i, j, fourth_moments );
+
+      FRENSIE_CHECK_EQUAL( first_moments.size(), 0 );
+      FRENSIE_CHECK_EQUAL( second_moments.size(), 0 );
+      FRENSIE_CHECK_EQUAL( third_moments.size(), 0 );
+      FRENSIE_CHECK_EQUAL( fourth_moments.size(), 0 );
+    }
+  }
+
+  // Check the total bin moment snapshots
+  entity_estimator->getTotalBinMomentSnapshotHistoryValues( history_values );
+  entity_estimator->getTotalBinMomentSnapshotSamplingTimes( sampling_times );
+
+  FRENSIE_CHECK_EQUAL( history_values.size(), 0 );
+  FRENSIE_CHECK_EQUAL( sampling_times.size(), 0 );
+  
+  for( size_t j = 0; j < num_estimator_bins; ++j )
+  {  
+    entity_estimator->getTotalBinFirstMomentSnapshots( j, first_moments );
+    entity_estimator->getTotalBinSecondMomentSnapshots( j, second_moments );
+    entity_estimator->getTotalBinThirdMomentSnapshots( j, third_moments );
+    entity_estimator->getTotalBinFourthMomentSnapshots( j, fourth_moments );
+
+    FRENSIE_CHECK_EQUAL( first_moments.size(), 0 );
+    FRENSIE_CHECK_EQUAL( second_moments.size(), 0 );
+    FRENSIE_CHECK_EQUAL( third_moments.size(), 0 );
+    FRENSIE_CHECK_EQUAL( fourth_moments.size(), 0 );
+  }
+
+  // Check the entity total moment snapshots
+  for( size_t i = 0; i < entity_ids.size(); ++i )
+  {
+    entity_estimator->getEntityTotalMomentSnapshotHistoryValues( i, history_values );
+
+    FRENSIE_CHECK_EQUAL( history_values.size(), 0 );
+
+    entity_estimator->getEntityTotalMomentSnapshotSamplingTimes( i, sampling_times );
+
+    FRENSIE_CHECK_EQUAL( sampling_times.size(), 0 );
+
+    entity_estimator->getEntityTotalFirstMomentSnapshots( i, 0, first_moments );
+    entity_estimator->getEntityTotalSecondMomentSnapshots( i, 0, second_moments );
+    entity_estimator->getEntityTotalThirdMomentSnapshots( i, 0, third_moments );
+    entity_estimator->getEntityTotalFourthMomentSnapshots( i, 0, fourth_moments );
+
+    FRENSIE_CHECK_EQUAL( first_moments.size(), 0 );
+    FRENSIE_CHECK_EQUAL( second_moments.size(), 0 );
+    FRENSIE_CHECK_EQUAL( third_moments.size(), 0 );
+    FRENSIE_CHECK_EQUAL( fourth_moments.size(), 0 );
+  }
+
+  // Check the total moment snapshots
+  entity_estimator->getTotalMomentSnapshotHistoryValues( history_values );
+
+  FRENSIE_CHECK_EQUAL( history_values.size(), 0 );
+
+  entity_estimator->getTotalMomentSnapshotSamplingTimes( sampling_times );
+
+  FRENSIE_CHECK_EQUAL( sampling_times.size(), 0 );
+
+  entity_estimator->getTotalFirstMomentSnapshots( 0, first_moments );
+  entity_estimator->getTotalSecondMomentSnapshots( 0, second_moments );
+  entity_estimator->getTotalThirdMomentSnapshots( 0, third_moments );
+  entity_estimator->getTotalFourthMomentSnapshots( 0, fourth_moments );
 }
 
 //---------------------------------------------------------------------------//
@@ -2185,6 +2532,13 @@ FRENSIE_UNIT_TEST( EntityEstimator, reduceData )
 {
   std::shared_ptr<TestEntityEstimator> entity_estimator;
   initializeEntityEstimator( entity_estimator, true );
+
+  entity_estimator->enableSampleMomentHistogramsOnEntityBins();
+  entity_estimator->enableSnapshotsOnEntityBins();
+
+  std::set<uint64_t> entity_ids;
+
+  entity_estimator->getEntityIds( entity_ids );
 
   size_t num_estimator_bins = entity_estimator->getNumberOfBins()*
     entity_estimator->getNumberOfResponseFunctions();
@@ -2197,6 +2551,8 @@ FRENSIE_UNIT_TEST( EntityEstimator, reduceData )
 
     entity_estimator->commitHistoryContributionToBinOfTotal( i, 2.0 );
   }
+
+  entity_estimator->takeSnapshot( 1, 1.0 );
 
   std::shared_ptr<const Utility::Communicator> comm =
     Utility::Communicator::getDefault();
@@ -2280,6 +2636,153 @@ FRENSIE_UNIT_TEST( EntityEstimator, reduceData )
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, procs ) );
     FRENSIE_CHECK_EQUAL( third_moments, std::vector<double>( 24, procs ) );
     FRENSIE_CHECK_EQUAL( fourth_moments, std::vector<double>( 24, procs ) );
+
+    // Check the entity bin histograms
+    Utility::SampleMomentHistogram<double> histogram;
+
+    std::vector<double> expected_histogram_bins =
+      Utility::fromString<std::vector<double> >( "{-1.7976931348623157e+308, 0.0, 1e-30, 599l, 1e30, 1.7976931348623157e+308}" );
+    std::vector<double> expected_bin_histogram_values;
+
+    {
+      std::string histogram_value_string = "{0.0r302, ";
+      histogram_value_string += Utility::toString( procs );
+      histogram_value_string += ", 0.0r300}";
+
+      expected_bin_histogram_values =
+        Utility::fromString<std::vector<double> >( histogram_value_string );
+    }
+    
+    for( size_t i = 0; i < entity_ids.size(); ++i )
+    {
+      for( size_t j = 0; j < num_estimator_bins; ++j )
+      {
+        entity_estimator->getEntityBinSampleMomentHistogram( i, j, histogram );
+        
+        FRENSIE_CHECK_EQUAL( histogram.getBinBoundaries(),
+                             expected_histogram_bins );
+
+        if( i == 0 || i == 2 || i == 4 )
+        {
+          FRENSIE_CHECK_EQUAL( histogram.getNumberOfScores(), procs );
+          FRENSIE_CHECK_EQUAL( histogram.getHistogramValues(),
+                               expected_bin_histogram_values );
+        }
+        else
+        {
+          FRENSIE_CHECK_EQUAL( histogram.getNumberOfScores(), 0 );
+          FRENSIE_CHECK_EQUAL( histogram.getHistogramValues(),
+                               std::vector<double>( 603, 0.0 ) );
+        }
+      }
+    }
+
+    // Check the total bin histograms
+    {
+      std::string histogram_value_string = "{0.0r305, ";
+      histogram_value_string += Utility::toString( procs );
+      histogram_value_string += ", 0.0r297}";
+
+      expected_bin_histogram_values =
+        Utility::fromString<std::vector<double> >( histogram_value_string );
+    }
+
+    for( size_t j = 0; j < num_estimator_bins; ++j )
+    {
+      entity_estimator->getTotalBinSampleMomentHistogram( j, histogram );
+      
+      FRENSIE_CHECK_EQUAL( histogram.getNumberOfScores(), procs );
+      FRENSIE_CHECK_EQUAL( histogram.getBinBoundaries(),
+                           expected_histogram_bins );
+      FRENSIE_CHECK_EQUAL( histogram.getHistogramValues(),
+                           expected_bin_histogram_values );
+    }
+
+    // Check the entity bin moment snapshots
+    std::vector<uint64_t> history_values;
+    std::vector<double> sampling_times;
+
+    std::vector<double> first_moment_snapshots, second_moment_snapshots, third_moment_snapshots, fourth_moment_snapshots;
+
+    for( size_t i = 0; i < entity_ids.size(); ++i )
+    {
+      entity_estimator->getEntityBinMomentSnapshotHistoryValues( i, history_values );
+
+      entity_estimator->getEntityBinMomentSnapshotSamplingTimes( i, sampling_times );
+      std::vector<uint64_t> expected_history_values( procs );
+      std::vector<double> expected_sampling_times( procs );
+      std::vector<double> expected_moments( procs );
+      
+      for( size_t i = 0; i < procs; ++i )
+      {
+        expected_history_values[i] = i+1;
+        expected_sampling_times[i] = i+1;
+        expected_moments[i] = i+1;
+      }
+      
+      FRENSIE_CHECK_EQUAL( history_values, expected_history_values );
+      FRENSIE_CHECK_EQUAL( sampling_times, expected_sampling_times );
+    
+      for( size_t j = 0; j < num_estimator_bins; ++j )
+      {
+        entity_estimator->getEntityBinFirstMomentSnapshots( i, j, first_moment_snapshots );
+        entity_estimator->getEntityBinSecondMomentSnapshots( i, j, second_moment_snapshots );
+        entity_estimator->getEntityBinThirdMomentSnapshots( i, j, third_moment_snapshots );
+        entity_estimator->getEntityBinFourthMomentSnapshots( i, j, fourth_moment_snapshots );
+
+        if( i == 0 || i == 2 || i == 4 )
+        {
+          FRENSIE_CHECK_EQUAL( first_moment_snapshots, expected_moments );
+          FRENSIE_CHECK_EQUAL( second_moment_snapshots, expected_moments );
+          FRENSIE_CHECK_EQUAL( third_moment_snapshots, expected_moments );
+          FRENSIE_CHECK_EQUAL( fourth_moment_snapshots, expected_moments );
+        }
+        else
+        {
+          FRENSIE_CHECK_EQUAL( first_moment_snapshots, std::vector<double>( procs, 0.0 ) );
+          FRENSIE_CHECK_EQUAL( second_moment_snapshots, std::vector<double>( procs, 0.0 ) );
+          FRENSIE_CHECK_EQUAL( third_moment_snapshots, std::vector<double>( procs, 0.0 ) );
+          FRENSIE_CHECK_EQUAL( fourth_moment_snapshots, std::vector<double>( procs, 0.0 ) );
+        }
+      }
+    }
+
+    // Check the total bin moment snapshots
+    entity_estimator->getTotalBinMomentSnapshotHistoryValues( history_values );
+    entity_estimator->getTotalBinMomentSnapshotSamplingTimes( sampling_times );
+
+    std::vector<uint64_t> expected_history_values( procs );
+    std::vector<double> expected_sampling_times( procs );
+    std::vector<double> expected_first_moments( procs );
+    std::vector<double> expected_second_moments( procs );
+    std::vector<double> expected_third_moments( procs );
+    std::vector<double> expected_fourth_moments( procs );
+    
+    for( size_t i = 0; i < procs; ++i )
+    {
+      expected_history_values[i] = i+1;
+      expected_sampling_times[i] = i+1;
+      expected_first_moments[i] = (i+1)*2.0;
+      expected_second_moments[i] = (i+1)*4.0;
+      expected_third_moments[i] = (i+1)*8.0;
+      expected_fourth_moments[i] = (i+1)*16.0;
+    }
+
+    FRENSIE_CHECK_EQUAL( history_values, expected_history_values );
+    FRENSIE_CHECK_EQUAL( sampling_times, expected_sampling_times );
+    
+    for( size_t j = 0; j < num_estimator_bins; ++j )
+    {  
+      entity_estimator->getTotalBinFirstMomentSnapshots( j, first_moment_snapshots );
+      entity_estimator->getTotalBinSecondMomentSnapshots( j, second_moment_snapshots );
+      entity_estimator->getTotalBinThirdMomentSnapshots( j, third_moment_snapshots );
+      entity_estimator->getTotalBinFourthMomentSnapshots( j, fourth_moment_snapshots );
+
+      FRENSIE_CHECK_EQUAL( first_moment_snapshots, expected_first_moments );
+      FRENSIE_CHECK_EQUAL( second_moment_snapshots, expected_second_moments );
+      FRENSIE_CHECK_EQUAL( third_moment_snapshots, expected_third_moments );
+      FRENSIE_CHECK_EQUAL( fourth_moment_snapshots, expected_fourth_moments );
+    }
   }
   // Make sure that estimators on other processes were reset
   else
@@ -2352,6 +2855,89 @@ FRENSIE_UNIT_TEST( EntityEstimator, reduceData )
     FRENSIE_CHECK_EQUAL( second_moments, std::vector<double>( 24, 0.0 ) );
     FRENSIE_CHECK_EQUAL( third_moments, std::vector<double>( 24, 0.0 ) );
     FRENSIE_CHECK_EQUAL( fourth_moments, std::vector<double>( 24, 0.0 ) );
+
+    // Check the entity bin histograms
+    Utility::SampleMomentHistogram<double> histogram;
+
+    std::vector<double> expected_histogram_bins =
+      Utility::fromString<std::vector<double> >( "{-1.7976931348623157e+308, 0.0, 1e-30, 599l, 1e30, 1.7976931348623157e+308}" );
+    std::vector<double> expected_bin_histogram_values( 603, 0.0 );
+
+    for( size_t i = 0; i < entity_ids.size(); ++i )
+    {
+      for( size_t j = 0; j < num_estimator_bins; ++j )
+      {
+        entity_estimator->getEntityBinSampleMomentHistogram( i, j, histogram );
+        
+        FRENSIE_CHECK_EQUAL( histogram.getNumberOfScores(), 0 );
+        FRENSIE_CHECK_EQUAL( histogram.getBinBoundaries(),
+                             expected_histogram_bins );
+        FRENSIE_CHECK_EQUAL( histogram.getHistogramValues(),
+                             expected_bin_histogram_values );
+      }
+    }
+
+    // Check the total bin histograms
+    for( size_t j = 0; j < num_estimator_bins; ++j )
+    {
+      entity_estimator->getTotalBinSampleMomentHistogram( j, histogram );
+
+      FRENSIE_CHECK_EQUAL( histogram.getNumberOfScores(), 0 );
+      FRENSIE_CHECK_EQUAL( histogram.getBinBoundaries(),
+                           expected_histogram_bins );
+      FRENSIE_CHECK_EQUAL( histogram.getHistogramValues(),
+                           expected_bin_histogram_values );
+    }
+
+    // Check the entity bin moment snapshots
+    std::vector<uint64_t> history_values;
+    std::vector<double> sampling_times;
+
+    std::vector<double> first_moment_snapshots, second_moment_snapshots, third_moment_snapshots,
+      fourth_moment_snapshots;
+
+    for( size_t i = 0; i < entity_ids.size(); ++i )
+    {
+      entity_estimator->getEntityBinMomentSnapshotHistoryValues( i, history_values );
+
+      entity_estimator->getEntityBinMomentSnapshotSamplingTimes( i, sampling_times );
+      
+      FRENSIE_CHECK_EQUAL( history_values.size(), 0 );
+      FRENSIE_CHECK_EQUAL( sampling_times.size(), 0 );
+
+      for( size_t j = 0; j < num_estimator_bins; ++j )
+      {
+        entity_estimator->getEntityBinFirstMomentSnapshots( i, j, first_moment_snapshots );
+        entity_estimator->getEntityBinSecondMomentSnapshots( i, j, second_moment_snapshots );
+        entity_estimator->getEntityBinThirdMomentSnapshots( i, j, third_moment_snapshots );
+        entity_estimator->getEntityBinFourthMomentSnapshots( i, j, fourth_moment_snapshots );
+
+        FRENSIE_CHECK_EQUAL( first_moment_snapshots.size(), 0 );
+        FRENSIE_CHECK_EQUAL( second_moment_snapshots.size(), 0 );
+        FRENSIE_CHECK_EQUAL( third_moment_snapshots.size(), 0 );
+        FRENSIE_CHECK_EQUAL( fourth_moment_snapshots.size(), 0 );
+      }
+    }
+
+    // Check the total bin moment snapshots
+    entity_estimator->getTotalBinMomentSnapshotHistoryValues( history_values );
+    entity_estimator->getTotalBinMomentSnapshotSamplingTimes( sampling_times );
+
+    FRENSIE_CHECK_EQUAL( history_values.size(), 0 );
+    FRENSIE_CHECK_EQUAL( sampling_times.size(), 0 );
+    
+    for( size_t j = 0; j < num_estimator_bins; ++j )
+    {  
+      entity_estimator->getTotalBinFirstMomentSnapshots( j, first_moment_snapshots );
+      entity_estimator->getTotalBinSecondMomentSnapshots( j, second_moment_snapshots );
+      entity_estimator->getTotalBinThirdMomentSnapshots( j, third_moment_snapshots );
+      entity_estimator->getTotalBinFourthMomentSnapshots( j, fourth_moment_snapshots );
+
+      FRENSIE_CHECK_EQUAL( first_moment_snapshots.size(), 0 );
+      FRENSIE_CHECK_EQUAL( second_moment_snapshots.size(), 0 );
+      FRENSIE_CHECK_EQUAL( third_moment_snapshots.size(), 0 );
+      FRENSIE_CHECK_EQUAL( fourth_moment_snapshots.size(), 0 );
+    }
   }
 }
 
