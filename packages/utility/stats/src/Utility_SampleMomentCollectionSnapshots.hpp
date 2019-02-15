@@ -55,6 +55,9 @@ public:
   //! The snapshot indices container type
   typedef SnapshotContainer<uint64_t> SummationIndexContainerType;
 
+  //! The snapshot sampling time container type
+  typedef SnapshotContainer<double> SamplingTimeContainerType;
+
   //! The moment value type
   typedef typename MomentSnapshotContainerType::value_type MomentValueType;
 
@@ -93,7 +96,8 @@ public:
   size_t getNumberOfSnapshots() const;
 
   //! Take a snapshot of a sample moment collection
-  void takeSnapshot( const uint64_t summation_index,
+  void takeSnapshot( const uint64_t number_of_additional_samples,
+                     const double sampling_time_from_last_snapshot,
                      const SampleMomentCollection<T,N,Ns...>& collection );
 
   //! Merge the snapshots
@@ -101,6 +105,9 @@ public:
 
   //! Get the snapshot indices (summation indices)
   const SummationIndexContainerType& getSnapshotIndices() const;
+
+  //! Get the snapshot sampling times (sampling times)
+  const SamplingTimeContainerType& getSnapshotSamplingTimes() const;
 
 private:
 

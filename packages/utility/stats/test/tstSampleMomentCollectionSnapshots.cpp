@@ -101,11 +101,12 @@ FRENSIE_UNIT_TEST_TEMPLATE( SampleMomentCollectionSnapshots, takeSnapshot, Testi
   FRENSIE_CHECK_EQUAL( (dynamic_cast<Utility::SampleMomentCollectionSnapshots<T,std::list,3,4>&>( moment_snapshot_collection ).getNumberOfSnapshots()), 0 );
   FRENSIE_CHECK_EQUAL( (dynamic_cast<Utility::SampleMomentCollectionSnapshots<T,std::list,4>&>( moment_snapshot_collection ).getNumberOfSnapshots()), 0 );
   FRENSIE_CHECK( moment_snapshot_collection.getSnapshotIndices().empty() );
+  FRENSIE_CHECK( moment_snapshot_collection.getSnapshotSamplingTimes().empty() );
 
   Utility::SampleMomentCollection<T,1,2,3,4> moment_collection( 2 );
   moment_collection.addRawScore( Utility::QuantityTraits<T>::one()*10. );
 
-  moment_snapshot_collection.takeSnapshot( 1, moment_collection );
+  moment_snapshot_collection.takeSnapshot( 1, 1.0, moment_collection );
 
   FRENSIE_CHECK_EQUAL( moment_snapshot_collection.getNumberOfSnapshots(), 1 );
   FRENSIE_CHECK_EQUAL( (dynamic_cast<Utility::SampleMomentCollectionSnapshots<T,std::list,2,3,4>&>( moment_snapshot_collection ).getNumberOfSnapshots()), 1 );
@@ -113,6 +114,8 @@ FRENSIE_UNIT_TEST_TEMPLATE( SampleMomentCollectionSnapshots, takeSnapshot, Testi
   FRENSIE_CHECK_EQUAL( (dynamic_cast<Utility::SampleMomentCollectionSnapshots<T,std::list,4>&>( moment_snapshot_collection ).getNumberOfSnapshots()), 1 );
   FRENSIE_CHECK_EQUAL( moment_snapshot_collection.getSnapshotIndices().size(), 1 );
   FRENSIE_CHECK_EQUAL( moment_snapshot_collection.getSnapshotIndices().front(), 1 );
+  FRENSIE_CHECK_EQUAL( moment_snapshot_collection.getSnapshotSamplingTimes().size(), 1 );
+  FRENSIE_CHECK_EQUAL( moment_snapshot_collection.getSnapshotSamplingTimes().front(), 1.0 );
 
   FRENSIE_CHECK_EQUAL( (Utility::getScoreSnapshots<4>(moment_snapshot_collection, 0)),
                        MomentSnapshotContainerType4({Utility::getCurrentScore<4>(moment_collection, 0)}) );
@@ -133,7 +136,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( SampleMomentCollectionSnapshots, takeSnapshot, Testi
 
   moment_collection.addRawScore( Utility::QuantityTraits<T>::one()*2. );
   moment_collection.addRawScore( Utility::QuantityTraits<T>::one()*5. );
-  moment_snapshot_collection.takeSnapshot( 3, moment_collection );
+  moment_snapshot_collection.takeSnapshot( 2, 2.0, moment_collection );
 
   FRENSIE_CHECK_EQUAL( moment_snapshot_collection.getNumberOfSnapshots(), 2 );
   FRENSIE_CHECK_EQUAL( (dynamic_cast<Utility::SampleMomentCollectionSnapshots<T,std::list,2,3,4>&>( moment_snapshot_collection ).getNumberOfSnapshots()), 2 );
@@ -142,6 +145,9 @@ FRENSIE_UNIT_TEST_TEMPLATE( SampleMomentCollectionSnapshots, takeSnapshot, Testi
   FRENSIE_CHECK_EQUAL( moment_snapshot_collection.getSnapshotIndices().size(), 2 );
   FRENSIE_CHECK_EQUAL( moment_snapshot_collection.getSnapshotIndices().front(), 1 );
   FRENSIE_CHECK_EQUAL( moment_snapshot_collection.getSnapshotIndices().back(), 3 );
+  FRENSIE_CHECK_EQUAL( moment_snapshot_collection.getSnapshotSamplingTimes().size(), 2 );
+  FRENSIE_CHECK_EQUAL( moment_snapshot_collection.getSnapshotSamplingTimes().front(), 1.0 );
+  FRENSIE_CHECK_EQUAL( moment_snapshot_collection.getSnapshotSamplingTimes().back(), 3.0 );
 
   FRENSIE_CHECK_EQUAL( (Utility::getScoreSnapshots<3>(moment_snapshot_collection, 0)).size(), 2 );
   FRENSIE_CHECK_EQUAL( (Utility::getScoreSnapshots<3>(moment_snapshot_collection, 1)).size(), 2 );
@@ -187,8 +193,8 @@ FRENSIE_UNIT_TEST_TEMPLATE( SampleMomentCollectionSnapshots, mergeSnapshots, Tes
   moment_collection_a.addRawScore( Utility::QuantityTraits<T>::one()*10. );
   moment_collection_b.addRawScore( Utility::QuantityTraits<T>::one()*5. );
 
-  moment_snapshot_collection_a.takeSnapshot( 1, moment_collection_a );
-  moment_snapshot_collection_b.takeSnapshot( 1, moment_collection_b );
+  moment_snapshot_collection_a.takeSnapshot( 1, 1.0, moment_collection_a );
+  moment_snapshot_collection_b.takeSnapshot( 1, 1.0, moment_collection_b );
 
   FRENSIE_CHECK_EQUAL( moment_snapshot_collection_a.getNumberOfSnapshots(), 1 );
   FRENSIE_CHECK_EQUAL( moment_snapshot_collection_b.getNumberOfSnapshots(), 1 );
@@ -199,8 +205,8 @@ FRENSIE_UNIT_TEST_TEMPLATE( SampleMomentCollectionSnapshots, mergeSnapshots, Tes
   moment_collection_b.addRawScore( Utility::QuantityTraits<T>::one()*3. );
   moment_collection_b.addRawScore( Utility::QuantityTraits<T>::one()*7. );
 
-  moment_snapshot_collection_a.takeSnapshot( 3, moment_collection_a );
-  moment_snapshot_collection_b.takeSnapshot( 3, moment_collection_b );
+  moment_snapshot_collection_a.takeSnapshot( 2, 2.0, moment_collection_a );
+  moment_snapshot_collection_b.takeSnapshot( 2, 2.0, moment_collection_b );
 
   FRENSIE_CHECK_EQUAL( moment_snapshot_collection_a.getNumberOfSnapshots(), 2 );
   FRENSIE_CHECK_EQUAL( moment_snapshot_collection_b.getNumberOfSnapshots(), 2 );
@@ -210,6 +216,8 @@ FRENSIE_UNIT_TEST_TEMPLATE( SampleMomentCollectionSnapshots, mergeSnapshots, Tes
   FRENSIE_CHECK_EQUAL( moment_snapshot_collection_a.getNumberOfSnapshots(), 4 );
   FRENSIE_CHECK_EQUAL( moment_snapshot_collection_a.getSnapshotIndices(),
                        std::list<uint64_t>({1, 3, 4, 6}) );
+  FRENSIE_CHECK_EQUAL( moment_snapshot_collection_a.getSnapshotSamplingTimes(),
+                       std::list<double>({1.0, 3.0, 4.0, 6.0}) );
   FRENSIE_CHECK_EQUAL( Utility::getScoreSnapshot<4>( moment_snapshot_collection_a, 0, 0 ),
                        Utility::QuantityTraits<MomentValueType4>::one()*10000. );
   FRENSIE_CHECK_EQUAL( Utility::getScoreSnapshot<4>( moment_snapshot_collection_a, 0, 1 ),
@@ -289,12 +297,12 @@ FRENSIE_UNIT_TEST_TEMPLATE( SampleMomentCollectionSnapshots, archive, TestingTyp
   
   moment_collection.addRawScore( Utility::QuantityTraits<T>::one()*10. );
   
-  moment_snapshot_collection.takeSnapshot( 1, moment_collection );
+  moment_snapshot_collection.takeSnapshot( 1, 1.0, moment_collection );
 
   moment_collection.addRawScore( Utility::QuantityTraits<T>::one()*8. );
   moment_collection.addRawScore( Utility::QuantityTraits<T>::one()*12. );
 
-  moment_snapshot_collection.takeSnapshot( 3, moment_collection );
+  moment_snapshot_collection.takeSnapshot( 2, 2.0, moment_collection );
 
   std::ostringstream archive_ostream;
   
@@ -318,6 +326,8 @@ FRENSIE_UNIT_TEST_TEMPLATE( SampleMomentCollectionSnapshots, archive, TestingTyp
   FRENSIE_CHECK_EQUAL( extracted_moment_snapshot_collection.getNumberOfSnapshots(), 2 );
   FRENSIE_CHECK_EQUAL( extracted_moment_snapshot_collection.getSnapshotIndices(),
                        std::list<uint64_t>({1, 3}) );
+  FRENSIE_CHECK_EQUAL( extracted_moment_snapshot_collection.getSnapshotSamplingTimes(),
+                       std::list<double>({1.0, 3.0}) );
   FRENSIE_CHECK_EQUAL( Utility::getScoreSnapshot<4>( extracted_moment_snapshot_collection, 0, 0 ),
                        Utility::QuantityTraits<MomentValueType4>::one()*10000. );
   FRENSIE_CHECK_EQUAL( Utility::getScoreSnapshot<4>( extracted_moment_snapshot_collection, 0, 1 ),

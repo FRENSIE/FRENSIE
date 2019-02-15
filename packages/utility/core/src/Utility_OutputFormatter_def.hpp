@@ -65,14 +65,15 @@ void OutputFormatter::addFormatToRawStringKeyword( const std::string& keyword )
       if( this->canKeywordLocationBeFormatted( keyword_front_loc,
                                                keyword_back_loc ) )
       {
+        size_t match_string_size = match[0].str().size();
+        
         d_formatted_string.replace( keyword_front_loc,
-                                    match[0].str().size(),
+                                    match_string_size,
                                     formatted_keyword );
 
-        this->addFormatLocation(
-                              keyword_front_loc,
-                              formatted_keyword_back_loc,
-                              formatted_keyword.size()-match[0].str().size() );
+        this->addFormatLocation( keyword_front_loc,
+                                 formatted_keyword_back_loc,
+                                 formatted_keyword.size()-match_string_size );
 
         true_start_loc = formatted_keyword_back_loc + 1;
         

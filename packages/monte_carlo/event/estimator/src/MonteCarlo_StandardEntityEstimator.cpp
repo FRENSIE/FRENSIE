@@ -128,19 +128,25 @@ Utility::ArrayView<const double> StandardEntityEstimator::getEntityTotalDataFour
 }
 
 // Take a snapshot (of the moments)
-void StandardEntityEstimator::takeSnapshot( const uint64_t num_histories )
+void StandardEntityEstimator::takeSnapshot( const uint64_t num_histories_since_last_snapshot,
+                                            const double time_since_last_snapshot )
 {
-  #pragma omp critical
-  {
-    d_total_estimator_moment_snapshots.takeSnapshot( num_histories, d_total_estimator_moments );
+  // Make sure only the root thread calls this
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
+  
+  d_total_estimator_moment_snapshots.takeSnapshot( num_histories_since_last_snapshot,
+                                                   time_since_last_snapshot,
+                                                   d_total_estimator_moments );
 
-    for( auto&& entity_data : d_entity_total_estimator_moment_snapshots_map )
-    {
-      entity_data.second.takeSnapshot( num_histories, d_entity_total_estimator_moments_map[entity_data.first] );
-    }
+  for( auto&& entity_data : d_entity_total_estimator_moment_snapshots_map )
+  {
+    entity_data.second.takeSnapshot( num_histories_since_last_snapshot,
+                                     time_since_last_snapshot,
+                                     d_entity_total_estimator_moments_map[entity_data.first] );
   }
 
-  EntityEstimator::takeSnapshot( num_histories );
+  EntityEstimator::takeSnapshot( num_histories_since_last_snapshot,
+                                 time_since_last_snapshot );
 }
 
 // Get the entity total moment snapshot history values
@@ -161,6 +167,24 @@ void StandardEntityEstimator::getEntityTotalMomentSnapshotHistoryValues(
                          raw_history_values.end() );
 }
 
+//  Get the entity total moment snapshot sampling times
+void StandardEntityEstimator::getEntityTotalMomentSnapshotSamplingTimes(
+                                    const EntityId entity_id,
+                                    std::vector<double>& sampling_times ) const
+{
+  // Make sure that the entity id is valid
+  TEST_FOR_EXCEPTION( !this->isEntityAssigned( entity_id ),
+                      std::runtime_error,
+                      "Entity " << entity_id << " is not assigned to "
+                      "estimator " << this->getId() << "!" );
+
+  const std::list<double>& raw_sampling_time_values =
+    d_entity_total_estimator_moment_snapshots_map.find( entity_id )->second.getSnapshotSamplingTimes();
+
+  sampling_times.assign( raw_sampling_time_values.begin(),
+                         raw_sampling_time_values.end() );
+}
+  
 // Get the total data first moment snapshots for an entity bin index
 void StandardEntityEstimator::getEntityTotalFirstMomentSnapshots(
                                           const EntityId entity_id,
@@ -274,6 +298,17 @@ void StandardEntityEstimator::getTotalMomentSnapshotHistoryValues(
 
   history_values.assign( raw_history_values.begin(),
                          raw_history_values.end() );
+}
+
+// Get the total moment snapshot sampling times
+void StandardEntityEstimator::getTotalMomentSnapshotSamplingTimes(
+                                    std::vector<double>& sampling_times ) const
+{
+  const std::list<double>& raw_sampling_time_values =
+    d_total_estimator_moment_snapshots.getSnapshotSamplingTimes();
+
+  sampling_times.assign( raw_sampling_time_values.begin(),
+                         raw_sampling_time_values.end() );
 }
 
 // Get the total data first moment snapshots for a total bin index

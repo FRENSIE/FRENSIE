@@ -149,8 +149,14 @@ public:
   //! Get the number of particle histories that have been committed
   uint64_t getNumberOfCommittedHistories() const;
 
+  //! Get the number of particle histories committed since the last snapshot
+  uint64_t getNumberOfCommittedHistoriesSinceLastSnapshot() const;
+
   //! Get the elapsed particle simulation time (s)
   double getElapsedTime() const;
+
+  //! Get the elapsed time since the last snapshot
+  double getElapsedTimeSinceLastSnapshot() const;
 
 private:
 
@@ -160,6 +166,12 @@ private:
 
   // Update the simulation completion criterion observer
   void updateSimulationCompletionCriterionObserver( const std::shared_ptr<ParticleHistorySimulationCompletionCriterion>& observer );
+
+  // Reset the number of committed histories since the last snapshot
+  void resetNumberOfCommittedHistoriesSinceLastSnapshot();
+
+  // Reset the elapsed time since the last snapshot
+  void resetElapsedTimeSinceLastSnapshot();
 
   // Struct for registering estimator
   template<typename EstimatorType>
@@ -347,8 +359,14 @@ private:
   // The number of simulated particle histories
   std::vector<uint64_t> d_number_of_committed_histories;
 
+  // The number of simulation particle histories since the last snapshot
+  std::vector<uint64_t> d_number_of_committed_histories_from_last_snapshot;
+
   // The simulation timer (s)
   std::shared_ptr<Utility::Timer> d_simulation_timer;
+
+  // The snapshot timer
+  std::shared_ptr<Utility::Timer> d_snapshot_timer;
 
   // The simulation time
   double d_elapsed_simulation_time;

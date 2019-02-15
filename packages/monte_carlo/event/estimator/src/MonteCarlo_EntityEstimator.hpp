@@ -102,12 +102,18 @@ public:
   bool areSnapshotsOnEntityBinsEnabled() const final override;
 
   //! Take a snapshot (of the moments)
-  void takeSnapshot( const uint64_t num_histories ) override;
+  void takeSnapshot( const uint64_t num_histories_since_last_snapshot,
+                     const double time_since_last_snapshot ) override;
 
   //! Get the entity bin moment snapshot history values
   void getEntityBinMomentSnapshotHistoryValues(
                   const EntityId entity_id,
                   std::vector<uint64_t>& history_values ) const final override;
+
+  //! Get the entity bin moment snapshot sampling times
+  void getEntityBinMomentSnapshotSamplingTimes(
+                    const EntityId entity_id,
+                    std::vector<double>& sampling_times ) const final override;
   
   //! Get the bin data first moment snapshots for an entity bin index
   void getEntityBinFirstMomentSnapshots(
@@ -136,6 +142,10 @@ public:
   //! Get the moment snapshot history values
   void getTotalBinMomentSnapshotHistoryValues(
                   std::vector<uint64_t>& history_values ) const final override;
+
+  //! Get the moment snapshot sampling times for a total bin index
+  void getTotalBinMomentSnapshotSamplingTimes(
+                    std::vector<double>& sampling_times ) const final override;
 
   //! Get the bin data first moment snapshots for an total bin index
   void getTotalBinFirstMomentSnapshots(
@@ -171,7 +181,6 @@ public:
 
   //! Get the total bin sample moment histogram
   void getTotalBinSampleMomentHistogram(
-      const EntityId entity_id,
       const size_t bin_index,
       Utility::SampleMomentHistogram<double>& histogram ) const final override;
 

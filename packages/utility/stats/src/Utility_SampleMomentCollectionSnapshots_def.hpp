@@ -148,6 +148,9 @@ public:
   //! The snapshot indices container type
   typedef SnapshotContainer<uint64_t> SummationIndexContainerType;
 
+  //! The snapshot sampling time container type
+  typedef SnapshotContainer<double> SamplingTimeContainerType;
+
   //! The summation index type
   typedef typename SummationIndexContainerType::value_type SummationIndexType;
 
@@ -161,14 +164,18 @@ public:
 
   //! Copy Constructor
   SampleMomentCollectionSnapshots( const SampleMomentCollectionSnapshots& other_collection_snapshots )
-    : d_snapshot_indices( other_collection_snapshots.d_snapshot_indices )
+    : d_snapshot_indices( other_collection_snapshots.d_snapshot_indices ),
+      d_snapshot_sampling_times( other_collection_snapshots.d_snapshot_sampling_times )
   { /* ... */ }
 
   //! Assignment Operator
   SampleMomentCollectionSnapshots& operator=( const SampleMomentCollectionSnapshots& other_collection_snapshots )
   {
     if( this != &other_collection_snapshots )
+    {
       d_snapshot_indices = other_collection_snapshots.d_snapshot_indices;
+      d_snapshot_sampling_times = other_collection_snapshots.d_snapshot_sampling_times;
+    }
 
     return *this;
   }
@@ -198,9 +205,22 @@ public:
   { return d_snapshot_indices.size(); }
 
   //! Take a snapshot of a sample moment collection
-  void takeSnapshot( const uint64_t summation_index,
+  void takeSnapshot( const uint64_t number_of_additional_samples,
+                     const double sampling_time_from_last_snapshot,
                      const SampleMomentCollection<T,Ns...>& )
-  { d_snapshot_indices.push_back( summation_index ); }
+  {
+    uint64_t summation_index = number_of_additional_samples;
+    double sampling_time = sampling_time_from_last_snapshot;
+    
+    if( !d_snapshot_indices.empty() )
+    {
+      summation_index += d_snapshot_indices.back();
+      sampling_time += d_snapshot_sampling_times.back();
+    }
+
+    d_snapshot_indices.push_back( summation_index );
+    d_snapshot_sampling_times.push_back( sampling_time );
+  }
 
   //! Merge the snapshots
   void mergeSnapshots( const SampleMomentCollectionSnapshots& collection )
@@ -210,11 +230,21 @@ public:
     
     for( auto&& other_summation_index : collection.d_snapshot_indices )
       d_snapshot_indices.push_back( max_summation_index + other_summation_index );
+
+    const typename SamplingTimeContainerType::value_type& max_sampling_time =
+      d_snapshot_sampling_times.back();
+
+    for( auto&& other_sampling_times : collection.d_snapshot_sampling_times )
+      d_snapshot_sampling_times.push_back( max_sampling_time + other_sampling_times );
   }
 
   //! Get the snapshot indices (summation indices)
   const SummationIndexContainerType& getSnapshotIndices() const
   { return d_snapshot_indices; }
+
+  //! Get the snapshot sampling times (sampling times)
+  const SamplingTimeContainerType& getSnapshotSamplingTimes() const
+  { return d_snapshot_sampling_times; }
 
 private:
 
@@ -230,15 +260,24 @@ private:
   // Save the collection data to an archive
   template<typename Archive>
   void save( Archive& ar, const unsigned version ) const
-  { ar & BOOST_SERIALIZATION_NVP( d_snapshot_indices ); }
+  {
+    ar & BOOST_SERIALIZATION_NVP( d_snapshot_indices );
+    ar & BOOST_SERIALIZATION_NVP( d_snapshot_sampling_times );
+  }
 
   // Load the collection data from an archive
   template<typename Archive>
   void load( Archive& ar, const unsigned version )
-  { ar & BOOST_SERIALIZATION_NVP( d_snapshot_indices ); }
+  {
+    ar & BOOST_SERIALIZATION_NVP( d_snapshot_indices );
+    ar & BOOST_SERIALIZATION_NVP( d_snapshot_sampling_times );
+  }
 
   // The snapshot indices
   SummationIndexContainerType d_snapshot_indices;
+
+  // The snapshot sampling times
+  SamplingTimeContainerType d_snapshot_sampling_times;
 };
 
 // Default Constructor
@@ -318,14 +357,17 @@ size_t SampleMomentCollectionSnapshots<T,SnapshotContainer,N,Ns...>::getNumberOf
 // Take a snapshot of a sample moment collection
 template<typename T, template<typename,typename...> class SnapshotContainer, size_t N, size_t... Ns>
 void SampleMomentCollectionSnapshots<T,SnapshotContainer,N,Ns...>::takeSnapshot(
-                          const uint64_t summation_index,
+                          const uint64_t number_of_additional_samples,
+                          const double sampling_time_from_last_snapshot,
                           const SampleMomentCollection<T,N,Ns...>& collection )
 {
   // Make sure that the snapshot collection and the collection have the same
   // size
   testPrecondition( this->size() == collection.size() );
   
-  BaseType::takeSnapshot( summation_index, collection );
+  BaseType::takeSnapshot( number_of_additional_samples,
+                          sampling_time_from_last_snapshot,
+                          collection );
 
   for( size_t i = 0; i < collection.size(); ++i )
   {
@@ -356,6 +398,13 @@ template<typename T, template<typename,typename...> class SnapshotContainer, siz
 auto SampleMomentCollectionSnapshots<T,SnapshotContainer,N,Ns...>::getSnapshotIndices() const -> const SummationIndexContainerType&
 {
   return BaseType::getSnapshotIndices();
+}
+
+// Get the snapshot sampling times (sampling times)
+template<typename T, template<typename,typename...> class SnapshotContainer, size_t N, size_t... Ns>
+auto SampleMomentCollectionSnapshots<T,SnapshotContainer,N,Ns...>::getSnapshotSamplingTimes() const -> const SamplingTimeContainerType&
+{
+  return BaseType::getSnapshotSamplingTimes();
 }
 
 // Save the collection data to an archive

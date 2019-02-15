@@ -265,6 +265,11 @@ public:
                                  const EntityId entity_id,
                                  std::vector<uint64_t>& history_values ) const;
 
+  //! Get the entity bin moment snapshot sampling times
+  virtual void getEntityBinMomentSnapshotSamplingTimes(
+                                   const EntityId entity_id,
+                                   std::vector<double>& sampling_times ) const;
+
   //! Get the bin data first moment snapshots for an entity bin index
   virtual void getEntityBinFirstMomentSnapshots(
                                           const EntityId entity_id,
@@ -304,26 +309,30 @@ public:
        const size_t bin_index,
        std::map<std::string,std::vector<double> >& processed_snapshots ) const;
 
-  //! Get the moment snapshot history values
+  //! Get the moment snapshot history values for a total bin index
   virtual void getTotalBinMomentSnapshotHistoryValues(
                                  std::vector<uint64_t>& history_values ) const;
 
-  //! Get the bin data first moment snapshots for an total bin index
+  //! Get the moment snapshot sampling times for a total bin index
+  virtual void getTotalBinMomentSnapshotSamplingTimes(
+                                   std::vector<double>& sampling_times ) const;
+
+  //! Get the bin data first moment snapshots for a total bin index
   virtual void getTotalBinFirstMomentSnapshots(
                                           const size_t bin_index,
                                           std::vector<double>& moments ) const;
 
-  //! Get the bin data second moment snapshots for an total bin index
+  //! Get the bin data second moment snapshots for a total bin index
   virtual void getTotalBinSecondMomentSnapshots(
                                           const size_t bin_index,
                                           std::vector<double>& moments ) const;
 
-  //! Get the bin data third moment snapshots for an total bin index
+  //! Get the bin data third moment snapshots for a total bin index
   virtual void getTotalBinThirdMomentSnapshots(
                                           const size_t bin_index,
                                           std::vector<double>& moments ) const;
 
-  //! Get the bin data fourth moment snapshots for an total bin index
+  //! Get the bin data fourth moment snapshots for a total bin index
   virtual void getTotalBinFourthMomentSnapshots(
                                           const size_t bin_index,
                                           std::vector<double>& moments ) const;
@@ -336,7 +345,7 @@ public:
                         std::vector<double>& variance_of_variance_snapshots,
                         std::vector<double>& figure_of_merit_snapshots ) const;
 
-  //! Get the entity bin processed snapshots
+  //! Get the total bin processed snapshots
   void getTotalBinProcessedSnapshots(
        const size_t bin_index,
        std::map<std::string,std::vector<double> >& processed_snapshots ) const;
@@ -345,6 +354,11 @@ public:
   virtual void getEntityTotalMomentSnapshotHistoryValues(
                                  const EntityId entity_id,
                                  std::vector<uint64_t>& history_values ) const;
+
+  //! Get the entity total moment snapshot sampling times
+  virtual void getEntityTotalMomentSnapshotSamplingTimes(
+                                   const EntityId entity_id,
+                                   std::vector<double>& sampling_times ) const;
 
   //! Get the total data first moment snapshots for an entity bin index
   virtual void getEntityTotalFirstMomentSnapshots(
@@ -388,6 +402,10 @@ public:
   //! Get the total moment snapshot history values
   virtual void getTotalMomentSnapshotHistoryValues(
                                  std::vector<uint64_t>& history_values ) const;
+
+  //! Get the total moment snapshot sampling times
+  virtual void getTotalMomentSnapshotSamplingTimes(
+                                   std::vector<double>& sampling_times ) const;
 
   //! Get the total data first moment snapshots for a total bin index
   virtual void getTotalFirstMomentSnapshots(
@@ -433,7 +451,6 @@ public:
 
   //! Get the total bin sample moment histogram
   virtual void getTotalBinSampleMomentHistogram(
-                     const EntityId entity_id,
                      const size_t bin_index,
                      Utility::SampleMomentHistogram<double>& histogram ) const;
 
@@ -459,9 +476,6 @@ public:
 
   //! Enable support for multiple threads
   void enableThreadSupport( const unsigned num_threads ) override;
-
-  //! Reset the estimator data
-  void resetData() override;
 
   //! Reduce estimator data on all processes and collect on the root process
   void reduceData( const Utility::Communicator& comm,
@@ -603,12 +617,35 @@ private:
 		       double& relative_error,
                        double& figure_of_merit ) const;
 
+  // Convert first and second moments to mean and relative error
+  void processMoments( const Utility::SampleMoment<1,double>& first_moment,
+                       const Utility::SampleMoment<2,double>& second_moment,
+		       const double norm_constant,
+                       const uint64_t num_histories,
+                       const double sampling_time,
+		       double& mean,
+		       double& relative_error,
+                       double& figure_of_merit ) const;
+
   // Convert first, second, third, fourth moments to mean, rel. er., vov, fom
   void processMoments( const Utility::SampleMoment<1,double>& first_moment,
                        const Utility::SampleMoment<2,double>& second_moment,
                        const Utility::SampleMoment<3,double>& third_moment,
                        const Utility::SampleMoment<4,double>& fourth_moment,
                        const double norm_constant,
+                       double& mean,
+                       double& relative_error,
+                       double& variance_of_variance,
+                       double& figure_of_merit ) const;
+
+  // Convert first, second, third, fourth moments to mean, rel. er., vov, fom
+  void processMoments( const Utility::SampleMoment<1,double>& first_moment,
+                       const Utility::SampleMoment<2,double>& second_moment,
+                       const Utility::SampleMoment<3,double>& third_moment,
+                       const Utility::SampleMoment<4,double>& fourth_moment,
+                       const double norm_constant,
+                       const uint64_t num_histories,
+                       const double sampling_time,
                        double& mean,
                        double& relative_error,
                        double& variance_of_variance,

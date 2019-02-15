@@ -568,7 +568,7 @@ ParticleHistorySimulationCompletionCriterion::createMixedCriterion(
 /*! \details The state should never need to be cached.
  */
 void ParticleHistorySimulationCompletionCriterion::takeSnapshot(
-                                                 const uint64_t num_histories )
+                                                 const uint64_t, const double )
 { /* ... */ }
 
 // Print a summary of the data

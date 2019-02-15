@@ -100,12 +100,18 @@ public:
   Utility::ArrayView<const double> getEntityTotalDataFourthMoments( const EntityId entity_id ) const final override;
 
   //! Take a snapshot (of the moments)
-  void takeSnapshot( const uint64_t num_histories ) final override;
+  void takeSnapshot( const uint64_t num_histories_since_last_snapshot,
+                     const double time_since_last_snapshot ) final override;
 
   //! Get the entity total moment snapshot history values
   void getEntityTotalMomentSnapshotHistoryValues(
                   const EntityId entity_id,
                   std::vector<uint64_t>& history_values ) const final override;
+
+  //! Get the entity total moment snapshot sampling times
+  void getEntityTotalMomentSnapshotSamplingTimes(
+                    const EntityId entity_id,
+                    std::vector<double>& sampling_times ) const final override;
 
   //! Get the total data first moment snapshots for an entity bin index
   void getEntityTotalFirstMomentSnapshots(
@@ -134,6 +140,10 @@ public:
   //! Get the total moment snapshot history values
   void getTotalMomentSnapshotHistoryValues(
                   std::vector<uint64_t>& history_values ) const final override;
+
+  //! Get the total moment snapshot sampling times
+  void getTotalMomentSnapshotSamplingTimes(
+                    std::vector<double>& sampling_times ) const final override;
   
   //! Get the total data first moment snapshots for a total bin index
   void getTotalFirstMomentSnapshots(

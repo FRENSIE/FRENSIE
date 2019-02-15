@@ -56,6 +56,22 @@ public:
   double getTotalNormConstant() const final override
   { return 1.0; }
 
+  //! Enable snapshots on entity bins
+  void enableSnapshotsOnEntityBins() final override
+  { /* ... */ }
+
+  //! Check if snapshots have been enabled on entity bins
+  bool areSnapshotsOnEntityBinsEnabled() const final override
+  { return false; }
+
+  //! Enable sample moment histograms on entity bins
+  void enableSampleMomentHistogramsOnEntityBins() final override
+  { /* ... */ }
+
+  //! Check if sample moment histograms are enabled on on entity bins
+  bool areSampleMomentHistogramsOnEntityBinsEnabled() const final override
+  { return false; }
+
   //! Get the total estimator bin data first moments
   Utility::ArrayView<const double> getTotalBinDataFirstMoments() const final override
   { return Utility::ArrayView<const double>(); }
@@ -95,6 +111,9 @@ public:
   }
 
   void commitHistoryContribution() final override
+  { /* ... */ }
+
+  void takeSnapshot( const uint64_t num_histories ) final override
   { /* ... */ }
 
   void resetData() final override

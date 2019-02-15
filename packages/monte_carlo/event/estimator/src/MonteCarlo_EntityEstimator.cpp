@@ -184,18 +184,23 @@ bool EntityEstimator::areSnapshotsOnEntityBinsEnabled() const
 }
 
 // Take a snapshot (of the moments)
-void EntityEstimator::takeSnapshot( const uint64_t num_histories )
+void EntityEstimator::takeSnapshot( const uint64_t num_histories_since_last_snapshot,
+                                    const double time_since_last_snapshot )
 {
+  // Make sure only the root thread calls this
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
+  
   if( d_entity_bin_snapshots_enabled )
   {
-    #pragma omp critical
-    {
-      d_estimator_total_bin_data_snapshots.takeSnapshot( num_histories, d_estimator_total_bin_data );
+    d_estimator_total_bin_data_snapshots.takeSnapshot( num_histories_since_last_snapshot,
+                                                       time_since_last_snapshot,
+                                                       d_estimator_total_bin_data );
 
-      for( auto&& entity_data : d_entity_estimator_moments_snapshots_map )
-      {
-        entity_data.second.takeSnapshot( num_histories, d_entity_estimator_moments_map[entity_data.first] );
-      }
+    for( auto&& entity_data : d_entity_estimator_moments_snapshots_map )
+    {
+      entity_data.second.takeSnapshot( num_histories_since_last_snapshot,
+                                       time_since_last_snapshot,
+                                       d_entity_estimator_moments_map[entity_data.first] );
     }
   }
 }
@@ -218,6 +223,27 @@ void EntityEstimator::getEntityBinMomentSnapshotHistoryValues(
     
     history_values.assign( raw_history_values.begin(),
                            raw_history_values.end() );
+  }
+}
+
+// Get the entity bin moment snapshot sampling times
+void EntityEstimator::getEntityBinMomentSnapshotSamplingTimes(
+                                    const EntityId entity_id,
+                                    std::vector<double>& sampling_times ) const
+{
+  // Make sure that the entity id is valid
+  TEST_FOR_EXCEPTION( !this->isEntityAssigned( entity_id ),
+                      std::runtime_error,
+                      "Entity " << entity_id << " is not assigned to "
+                      "estimator " << this->getId() << "!" );
+  
+  if( d_entity_bin_snapshots_enabled )
+  {
+    const std::list<double>& raw_sampling_time_values = 
+      d_entity_estimator_moments_snapshots_map.find( entity_id )->second.getSnapshotSamplingTimes();
+    
+    sampling_times.assign( raw_sampling_time_values.begin(),
+                           raw_sampling_time_values.end() );
   }
 }
 
@@ -351,6 +377,20 @@ void EntityEstimator::getTotalBinMomentSnapshotHistoryValues(
   }
 }
 
+// Get the moment snapshot sampling times for a total bin index
+void EntityEstimator::getTotalBinMomentSnapshotSamplingTimes(
+                                    std::vector<double>& sampling_times ) const
+{
+  if( d_entity_bin_snapshots_enabled )
+  {
+    const std::list<double>& raw_sampling_time_values = 
+      d_estimator_total_bin_data_snapshots.getSnapshotSamplingTimes();
+    
+    sampling_times.assign( raw_sampling_time_values.begin(),
+                           raw_sampling_time_values.end() );
+  }
+}
+
 // Get the bin data first moment snapshots for an total bin index
 void EntityEstimator::getTotalBinFirstMomentSnapshots(
                                            const size_t bin_index,
@@ -468,7 +508,7 @@ void EntityEstimator::getEntityBinSampleMomentHistogram(
                       "The bin index must be less than "
                       << this->getNumberOfBins()*this->getNumberOfResponseFunctions() << "!" );
 
-  if( d_entity_bin_histograms_enabled );
+  if( d_entity_bin_histograms_enabled )
   {
     histogram = d_entity_estimator_histograms_map.find( entity_id )->second[bin_index];
   }
@@ -476,7 +516,6 @@ void EntityEstimator::getEntityBinSampleMomentHistogram(
 
 // Get the total bin sample moment histogram
 void EntityEstimator::getTotalBinSampleMomentHistogram(
-                      const EntityId entity_id,
                       const size_t bin_index,
                       Utility::SampleMomentHistogram<double>& histogram ) const
 {
@@ -486,15 +525,13 @@ void EntityEstimator::getTotalBinSampleMomentHistogram(
                       "The bin index must be less than "
                       << this->getNumberOfBins()*this->getNumberOfResponseFunctions() << "!" );
 
-  if( d_entity_bin_histograms_enabled );
+  if( d_entity_bin_histograms_enabled )
     histogram = d_estimator_total_bin_histograms[bin_index];
 }
 
 // Reset the estimator data
 void EntityEstimator::resetData()
 {
-  Estimator::resetData();
-  
   // Reset the total bin data
   d_estimator_total_bin_data.reset();
 

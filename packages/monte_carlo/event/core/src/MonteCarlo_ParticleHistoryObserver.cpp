@@ -18,20 +18,20 @@
 namespace MonteCarlo{
 
 // Initialize the number of histories observed
-unsigned long long ParticleHistoryObserver::s_num_histories = 0ull;
+uint64_t ParticleHistoryObserver::s_num_histories = 0;
 
 // Initialize the elapsed time
 double ParticleHistoryObserver::s_elapsed_time = 0.0;
 
 // Set the number of particle histories that have been observed
 void ParticleHistoryObserver::setNumberOfHistories(
-                                       const unsigned long long num_histories )
+                                                 const uint64_t num_histories )
 {
   s_num_histories = num_histories;
 }
 
 // Get the number of particle histories observed
-unsigned long long ParticleHistoryObserver::getNumberOfHistories()
+uint64_t ParticleHistoryObserver::getNumberOfHistories()
 {
   return s_num_histories;
 }
