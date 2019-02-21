@@ -23,7 +23,7 @@ StandardEntityEstimator::StandardEntityEstimator(
     d_entity_total_estimator_moments_map(),
     d_total_estimator_moment_snapshots( 1 ),
     d_entity_total_estimator_moment_snapshots_map(),
-    d_total_estimator_histograms( 1 ),
+    d_total_estimator_histograms( 1, Utility::SampleMomentHistogram<double>( this->getSampleMomentHistogramBins() ) ),
     d_entity_total_estimator_histograms_map(),
     d_update_tracker( 1 )
 {
@@ -41,7 +41,7 @@ StandardEntityEstimator::StandardEntityEstimator(
     d_entity_total_estimator_moments_map(),
     d_total_estimator_moment_snapshots( 1 ),
     d_entity_total_estimator_moment_snapshots_map(),
-    d_total_estimator_histograms( 1 ),
+    d_total_estimator_histograms( 1, Utility::SampleMomentHistogram<double>( this->getSampleMomentHistogramBins() ) ),
     d_entity_total_estimator_histograms_map(),
     d_update_tracker( 1 )
 {
@@ -66,8 +66,12 @@ void StandardEntityEstimator::initializeMomentsMaps(
       d_entity_total_estimator_moment_snapshots_map[entity_ids[i]].resize(
                                         this->getNumberOfResponseFunctions() );
 
+      Utility::SampleMomentHistogram<double>
+        default_histogram( this->getSampleMomentHistogramBins() );
+
       d_entity_total_estimator_histograms_map[entity_ids[i]].resize(
-                                        this->getNumberOfResponseFunctions() );
+                                          this->getNumberOfResponseFunctions(),
+                                          default_histogram );
     }
   }
 }
