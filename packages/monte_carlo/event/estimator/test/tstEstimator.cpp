@@ -113,7 +113,7 @@ public:
   void commitHistoryContribution() final override
   { /* ... */ }
 
-  void takeSnapshot( const uint64_t num_histories ) final override
+  void takeSnapshot( const uint64_t num_histories, const double time ) final override
   { /* ... */ }
 
   void resetData() final override

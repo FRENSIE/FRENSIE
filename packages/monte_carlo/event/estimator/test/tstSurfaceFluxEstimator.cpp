@@ -57,6 +57,35 @@ FRENSIE_UNIT_TEST_TEMPLATE( SurfaceFluxEstimator,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the cosine cutoff value can be set
+FRENSIE_UNIT_TEST_TEMPLATE( SurfaceFluxEstimator,
+                            setCosineCutoffValue,
+                            MonteCarlo::WeightMultiplier,
+                            MonteCarlo::WeightAndEnergyMultiplier,
+                            MonteCarlo::WeightAndChargeMultiplier )
+{
+  FETCH_TEMPLATE_PARAM( 0, ContributionMultiplierPolicy );
+
+  std::vector<MonteCarlo::StandardSurfaceEstimator::SurfaceIdType>
+    surface_ids( 2 );
+  surface_ids[0] = 0;
+  surface_ids[1] = 1;
+
+  std::vector<double> surface_areas( 2 );
+  surface_areas[0] = 1.0;
+  surface_areas[1] = 2.0;
+
+  std::shared_ptr<MonteCarlo::SurfaceFluxEstimator<ContributionMultiplierPolicy> > estimator =
+    std::make_shared<MonteCarlo::SurfaceFluxEstimator<ContributionMultiplierPolicy> >( 0u, 10.0, surface_ids, surface_areas );
+
+  FRENSIE_CHECK_EQUAL( estimator->getCosineCutoffValue(), 0.001 );
+
+  estimator->setCosineCutoffValue( 0.1 );
+
+  FRENSIE_CHECK_EQUAL( estimator->getCosineCutoffValue(), 0.1 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the number of bins can be returned
 FRENSIE_UNIT_TEST_TEMPLATE( SurfaceFluxEstimator,
                             getNumberOfBins,
@@ -847,25 +876,25 @@ FRENSIE_UNIT_TEST( SurfaceFluxEstimator,
                                                              0u,
                                                              10.0,
                                                              surface_ids,
-                                                             surface_areas,
-                                                             0.1 ) );
+                                                             surface_areas ) );
     estimator_1_base = estimator_1;
+    estimator_1_base->setCosineCutoffValue( 0.1 );
 
     estimator_2.reset( new MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier>(
                                                              1u,
                                                              10.0,
                                                              surface_ids,
-                                                             surface_areas,
-                                                             0.1 ) );
+                                                             surface_areas ) );
     estimator_2_base = estimator_2;
+    estimator_2_base->setCosineCutoffValue( 0.1 );
 
     estimator_3.reset( new MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndChargeMultiplier>(
                                                              2u,
                                                              1.0,
                                                              surface_ids,
-                                                             surface_areas,
-                                                             0.1 ) );
+                                                             surface_areas ) );
     estimator_3_base = estimator_3;
+    estimator_3_base->setCosineCutoffValue( 0.1 );
 
     // Set the cosine bins
     std::vector<double> cosine_bins( 3 );
@@ -1769,25 +1798,25 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceFluxEstimator,
                                                              0u,
                                                              1.0,
                                                              surface_ids,
-                                                             surface_areas,
-                                                             0.1 ) );
+                                                             surface_areas ) );
       estimator_1_base = estimator_1;
+      estimator_1_base->setCosineCutoffValue( 0.1 );
 
       estimator_2.reset( new MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier>(
                                                              1u,
                                                              10.0,
                                                              surface_ids,
-                                                             surface_areas,
-                                                             0.1 ) );
+                                                             surface_areas ) );
       estimator_2_base = estimator_2;
+      estimator_2_base->setCosineCutoffValue( 0.1 );
 
       estimator_3.reset( new MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndChargeMultiplier>(
-                                                              2u,
-                                                              1.0,
-                                                              surface_ids,
-                                                              surface_areas,
-                                                              0.1 ) );
+                                                             2u,
+                                                             1.0,
+                                                             surface_ids,
+                                                             surface_areas ) );
       estimator_3_base = estimator_3;
+      estimator_3_base->setCosineCutoffValue( 0.1 );
 
       // Set the cosine bins
       std::vector<double> cosine_bins( 3 );
@@ -1828,6 +1857,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceFluxEstimator,
     estimator_1_base->commitHistoryContribution();
     estimator_2_base->commitHistoryContribution();
     estimator_3_base->commitHistoryContribution();
+
+    // Take a snapshot
+    estimator_1_base->takeSnapshot( 1, 1.0 );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( estimator_1 ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( estimator_1_base ) );
@@ -1876,6 +1908,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceFluxEstimator,
     FRENSIE_CHECK_EQUAL( estimator_1_base->getNumberOfResponseFunctions(), 1 );
     FRENSIE_CHECK_EQUAL( estimator_1_base->getParticleTypes().size(), 1 );
     FRENSIE_CHECK( estimator_1_base->getParticleTypes().find( MonteCarlo::ELECTRON ) != estimator_1_base->getParticleTypes().end() );
+    FRENSIE_CHECK_EQUAL( estimator_1->getCosineCutoffValue(), 0.1 );
 
     std::set<uint64_t> entity_ids;
 
@@ -2018,6 +2051,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SurfaceFluxEstimator,
                          std::vector<double>( 1, 64000.0 ) );
     FRENSIE_CHECK_EQUAL( total_fourth_moments,
                          std::vector<double>( 1, 2560000.0 ) );
+
+    // Check the entity bin histograms
   }
 
   {
