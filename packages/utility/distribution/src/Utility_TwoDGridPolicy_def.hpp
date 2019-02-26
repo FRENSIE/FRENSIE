@@ -2127,15 +2127,25 @@ ReturnType Correlated<_TwoDInterpPolicy>::evaluatePDF(
     // Calculate the correlated y value at the lower and upper bin boundary
     YIndepType lower_y_value, upper_y_value;
 
+    YIndepType min_y_indep_value_with_tol =
+      TwoDInterpPolicy::ZYInterpPolicy::calculateFuzzyLowerBound(
+                        min_y_indep_value,
+                        fuzzy_boundary_tol );
+
+    YIndepType max_y_indep_value_with_tol =
+      TwoDInterpPolicy::ZYInterpPolicy::calculateFuzzyUpperBound(
+                        max_y_indep_value,
+                        fuzzy_boundary_tol );
+
     // Check for a secondary indep value outside of the secondary indep grid limits
-    if ( y_indep_value < min_y_indep_value || y_indep_value > max_y_indep_value )
+    if ( y_indep_value < min_y_indep_value_with_tol || y_indep_value > max_y_indep_value_with_tol )
       return QuantityTraits<ReturnType>::zero();
-    else if ( y_indep_value == min_y_indep_value) // At min y value
+    else if ( y_indep_value <= min_y_indep_value && y_indep_value >= min_y_indep_value_with_tol ) // At min y value
     {
       lower_y_value = lower_bin_boundary->second->getLowerBoundOfIndepVar();
       upper_y_value = upper_bin_boundary->second->getLowerBoundOfIndepVar();
     }
-    else if ( y_indep_value == max_y_indep_value ) // At max y value
+    else if ( y_indep_value >= max_y_indep_value && y_indep_value <= max_y_indep_value_with_tol ) // At max y value
     {
       lower_y_value = lower_bin_boundary->second->getUpperBoundOfIndepVar();
       upper_y_value = upper_bin_boundary->second->getUpperBoundOfIndepVar();

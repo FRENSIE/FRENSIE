@@ -30,7 +30,7 @@ def plotSpectralDataWithErrors( frensie_data_name,
         print "The frensie data must be a dictionary with keys \"e_bins\", \"mean\" and \"re\""
         sys.exit(1)
 
-    # Make sure that the test data is a directionary
+    # Make sure that the test data is a dictionary
     if not isinstance(test_data, dict):
         print "The test data must be a dictionary with keys \"mean\" and \"re\""
         sys.exit(1)

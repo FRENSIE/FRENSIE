@@ -2431,6 +2431,9 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRefinedBremsstrahlungDistribu
 
           evaluated_pdf[energy] =
             this->evaluatePDFFromCDF( evaluated_grid[energy], cdf_grid, min_pdf );
+
+          // Make sure the min pdf is valid
+          testPostcondition( min_pdf > 0.0 );
         }
       }
     }
@@ -2578,7 +2581,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRefinedElectroionizationSubsh
     // Set the subshell energy grid
     std::vector<double> energy_grid( start_it, data_container.getElectronEnergyGrid().end() );
 
-    // Resign first energy to the min energy
+    // Reassign first energy to the min energy
     energy_grid[0] = min_grid_energy;
 
     std::map<double,std::vector<double> > evaluated_grid, evaluated_pdf;
@@ -2785,6 +2788,9 @@ void ENDLElectronPhotonRelaxationDataGenerator::calculateElectroionizationSecond
                                           distribution->getMinSecondaryEnergy(incoming_energy) );
 
     evaluated_pdf = this->evaluatePDFFromCDF( evaluated_grid, cdf_grid, min_pdf );
+
+    // Make sure the min pdf is valid
+    testPostcondition( min_pdf > 0.0 );
   }
 }
 
