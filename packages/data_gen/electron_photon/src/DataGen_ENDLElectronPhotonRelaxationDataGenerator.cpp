@@ -2334,9 +2334,6 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRefinedBremsstrahlungDistribu
                       " is invalid or currently not supported!" );
     }
 
-    // Throw an exception if dirty convergence occurs
-    grid_generator.throwExceptionOnDirtyConvergence();
-
     std::vector<double>::const_iterator start_it = data_container.getElectronEnergyGrid().begin();
     std::advance( start_it, data_container.getBremsstrahlungCrossSectionThresholdEnergyIndex() );
 
@@ -2355,90 +2352,31 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRefinedBremsstrahlungDistribu
     std::vector<double> endl_energy_grid =
       d_endl_data_container->getBremsstrahlungPhotonEnergyGrid();
 
-    if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_GRID )
+    // Generate the distribution at all incoming energies
+    for( auto&& energy : energy_grid )
     {
-      // Generate the distribution at all incoming energies
-      for( auto&& energy : energy_grid )
+      // Construct the evaluator functor
+      auto&& pdf_evaluator = [&distribution, energy ]( const double& outgoing_energy ){
+        return distribution->evaluatePDF( energy, outgoing_energy );
+      };
+
+      // Check if the energy is an originally tabulated energy
+      if ( std::find(endl_energy_grid.begin(), endl_energy_grid.end(), energy) != endl_energy_grid.end() )
       {
-        // Construct the evaluator functor
-        auto&& pdf_evaluator = [&distribution, energy ]( const double& outgoing_energy ){
-          return distribution->evaluatePDF( energy, outgoing_energy );
-        };
-
-        // Check if the energy is an originally tabulated energy
-        if ( std::find(endl_energy_grid.begin(), endl_energy_grid.end(), energy) != endl_energy_grid.end() )
-        {
-          evaluated_grid[energy] =
-            d_endl_data_container->getBremsstrahlungPhotonEnergyAtEnergy( energy );
-        }
-        else
-        {
-          // Insert the min and max energy into the grid
-          evaluated_grid[energy] =
-            std::vector<double>{ distribution->getMinPhotonEnergy(energy),
-                                 distribution->getMaxPhotonEnergy(energy) };
-        }
-
-        grid_generator.generateAndEvaluateInPlace( evaluated_grid[energy],
-                                                  evaluated_pdf[energy],
-                                                  pdf_evaluator );
+        evaluated_grid[energy] =
+          d_endl_data_container->getBremsstrahlungPhotonEnergyAtEnergy( energy );
       }
-    }
-    else
-    {
-      // Generate the distribution at all incoming energies
-      for( auto&& energy : energy_grid )
+      else
       {
-        // Check if the energy is an originally tabulated energy
-        if ( std::find(endl_energy_grid.begin(), endl_energy_grid.end(), energy) != endl_energy_grid.end() )
-        {
-          evaluated_grid[energy] =
-              d_endl_data_container->getBremsstrahlungPhotonEnergyAtEnergy( energy );
-          evaluated_pdf[energy] =
-              d_endl_data_container->getBremsstrahlungPhotonPDFAtEnergy( energy );
-        }
-        // Use a uniformly linearly spaced cdf grid of size N, where N is the size
-        // of the endl energy grid right above the incoming energy
-        else
-        {
-          // Get the grid size N
-          size_t grid_size = 0;
-          if ( energy < endl_energy_grid.front() )
-          {
-            grid_size = (d_endl_data_container->getBremsstrahlungPhotonEnergyAtEnergy( endl_energy_grid.front() )).size();
-          }
-          else
-          {
-            // Get energy iterator above/equal to the energy
-            double upper_energy = *(Utility::Search::binaryUpperBound(
-                                      endl_energy_grid.begin(),
-                                      endl_energy_grid.end(),
-                                      energy ));
-
-            grid_size = (d_endl_data_container->getBremsstrahlungPhotonEnergyAtEnergy( upper_energy )).size();
-          }
-
-          // Calculate uniformly linearly spaced cdf grid
-          std::vector<double> cdf_grid( grid_size );
-          evaluated_grid[energy].resize( grid_size );
-
-          for( size_t i = 0; i < grid_size; ++i )
-          {
-            cdf_grid[i] = i*1.0/(grid_size-1);
-            evaluated_grid[energy][i] =
-              distribution->sampleWithRandomNumber( energy, cdf_grid[i] );
-          }
-
-          double min_pdf =
-            distribution->evaluatePDF( energy, distribution->getMinPhotonEnergy(energy) );
-
-          evaluated_pdf[energy] =
-            this->evaluatePDFFromCDF( evaluated_grid[energy], cdf_grid, min_pdf );
-
-          // Make sure the min pdf is valid
-          testPostcondition( min_pdf > 0.0 );
-        }
+        // Insert the min and max energy into the grid
+        evaluated_grid[energy] =
+          std::vector<double>{ distribution->getMinPhotonEnergy(energy),
+                                distribution->getMaxPhotonEnergy(energy) };
       }
+
+      grid_generator.generateAndEvaluateInPlace( evaluated_grid[energy],
+                                                evaluated_pdf[energy],
+                                                pdf_evaluator );
     }
 
     // Set the recoil energy
@@ -2565,9 +2503,6 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRefinedElectroionizationSubsh
                       " is invalid or currently not supported!" );
     }
 
-    // Throw an exception if dirty convergence occurs
-    grid_generator.throwExceptionOnDirtyConvergence();
-
     std::vector<double>::const_iterator start_it = data_container.getElectronEnergyGrid().begin();
     std::advance( start_it, data_container.getElectroionizationCrossSectionThresholdEnergyIndex( shell ) );
 
@@ -2588,47 +2523,29 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRefinedElectroionizationSubsh
     energy_grid[0] = min_grid_energy;
 
     std::map<double,std::vector<double> > evaluated_grid, evaluated_pdf;
-    if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_GRID )
+    // Generate the distribution at all incoming energies
+    for( auto&& energy : energy_grid )
     {
-      // Generate the distribution at all incoming energies
-      for( auto&& energy : energy_grid )
-      {
-        // Construct the evaluator functor
-        auto&& pdf_evaluator = [&distribution, energy ]( const double& outgoing_energy ){
-          return distribution->evaluateProcessedPDF( energy, outgoing_energy );
-        };
+      // Construct the evaluator functor
+      auto&& pdf_evaluator = [&distribution, energy ]( const double& outgoing_energy ){
+        return distribution->evaluateProcessedPDF( energy, outgoing_energy );
+      };
 
-        // Insert the min and max energy into the grid
-        double min_energy = distribution->getMinSecondaryEnergy(energy);
-        double max_energy = distribution->getMaxSecondaryEnergy(energy);
+      // Insert the min and max energy into the grid
+      double min_energy = distribution->getMinSecondaryEnergy(energy);
+      double max_energy = distribution->getMaxSecondaryEnergy(energy);
 
-        // Initialize the energy grid
-        evaluated_grid[energy] =
-          this->initializeElectroionizationSecondaryGrid( sampling_type,
-                                                          energy,
-                                                          min_energy,
-                                                          max_energy,
-                                                          shell );
+      // Initialize the energy grid
+      evaluated_grid[energy] =
+        this->initializeElectroionizationSecondaryGrid( sampling_type,
+                                                        energy,
+                                                        min_energy,
+                                                        max_energy,
+                                                        shell );
 
-        grid_generator.generateAndEvaluateInPlace( evaluated_grid[energy],
-                                                   evaluated_pdf[energy],
-                                                   pdf_evaluator );
-      }
-    }
-    else
-    {
-      // Generate the distribution at all incoming energies
-      for( auto&& energy : energy_grid )
-      {
-        // Calculate the distribution from the cdf
-        this->calculateElectroionizationSecondaryGridFromCDF(
-              distribution,
-              sampling_type,
-              energy,
-              shell,
-              evaluated_grid[energy],
-              evaluated_pdf[energy] );
-      }
+      grid_generator.generateAndEvaluateInPlace( evaluated_grid[energy],
+                                                  evaluated_pdf[energy],
+                                                  pdf_evaluator );
     }
 
     // Set the recoil data
@@ -2704,117 +2621,6 @@ ENDLElectronPhotonRelaxationDataGenerator::initializeElectroionizationSecondaryG
     }
     else
       return std::vector<double>{ min_secondary_energy, max_secondary_energy };
-}
-
-// Calculate the electroionization subshell secondary grid from the CDF
-/*! \details If the incoming energy matches the energy of an endl energy grid
- *  then the endl distribution at that energy will be used, if not a uniformly
- *  linearly spaced cdf grid of size N will be used to calculated the PDF grid,
- *  where N is the size of the endl energy grid right above the incoming energy.
- */
-void ENDLElectronPhotonRelaxationDataGenerator::calculateElectroionizationSecondaryGridFromCDF(
-  const std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution> distribution,
-  const MonteCarlo::ElectroionizationSamplingType sampling_type,
-  double incoming_energy,
-  const unsigned shell,
-  std::vector<double>& evaluated_grid,
-  std::vector<double>& evaluated_pdf ) const
-{
-  // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy >= this->getMinElectronEnergy() );
-
-  // Check if the energy is an originally tabulated energy
-  std::vector<double> endl_energy_grid =
-    d_endl_data_container->getElectroionizationRecoilEnergyGrid( shell );
-
-  // Check if the energy is an originally tabulated energy
-  if ( std::find(endl_energy_grid.begin(), endl_energy_grid.end(), incoming_energy) != endl_energy_grid.end() )
-  {
-    if( sampling_type == MonteCarlo::KNOCK_ON_SAMPLING )
-    {
-      evaluated_grid =
-      d_endl_data_container->getElectroionizationRecoilEnergyAtEnergy( shell, incoming_energy );
-      evaluated_pdf =
-      d_endl_data_container->getElectroionizationRecoilPDFAtEnergy( shell, incoming_energy );
-    }
-    else
-    {
-      MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::calculateOutgoingEnergyAndPDFBins(
-        d_endl_data_container->getElectroionizationRecoilEnergyAtEnergy( shell, incoming_energy ),
-        d_endl_data_container->getElectroionizationRecoilPDFAtEnergy( shell, incoming_energy ),
-        incoming_energy,
-        d_endl_data_container->getSubshellBindingEnergy( shell ),
-        true,
-        evaluated_grid,
-        evaluated_pdf );
-    }
-  }
-  // Use a uniformly linearly spaced cdf grid of size N, where N is the size
-  // of the endl energy grid right above the incoming energy
-  else
-  {
-    // Get the grid size N
-    size_t grid_size = 0;
-    if ( incoming_energy < endl_energy_grid.front() )
-    {
-      grid_size = (d_endl_data_container->getElectroionizationRecoilEnergyAtEnergy( shell, endl_energy_grid.front() )).size();
-    }
-    else
-    {
-      // Get energy iterator above/equal to incoming_energy
-      double upper_energy = *(Utility::Search::binaryUpperBound(
-                    endl_energy_grid.begin(),
-                    endl_energy_grid.end(),
-                    incoming_energy ));
-
-      grid_size = (d_endl_data_container->getElectroionizationRecoilEnergyAtEnergy( shell, upper_energy )).size();
-
-    }
-
-    // Double the grid size for outgoing energy sampling
-    if( sampling_type == MonteCarlo::OUTGOING_ENERGY_SAMPLING )
-      grid_size *= 2;
-
-    // Calculate uniformly linearly spaced cdf grid
-    std::vector<double> cdf_grid( grid_size );
-    evaluated_grid.resize( grid_size );
-
-    for( size_t i = 0; i < grid_size; ++i )
-    {
-      cdf_grid[i] = i*1.0/(grid_size-1);
-      evaluated_grid[i] =
-        distribution->sampleWithRandomNumber( incoming_energy, cdf_grid[i] );
-    }
-
-    double min_pdf =
-      distribution->evaluateProcessedPDF( incoming_energy,
-                                          distribution->getMinSecondaryEnergy(incoming_energy) );
-
-    evaluated_pdf = this->evaluatePDFFromCDF( evaluated_grid, cdf_grid, min_pdf );
-
-    // Make sure the min pdf is valid
-    testPostcondition( min_pdf > 0.0 );
-  }
-}
-
-// Evaluate the PDF distribution from the CDF
-std::vector<double> ENDLElectronPhotonRelaxationDataGenerator::evaluatePDFFromCDF(
-      std::vector<double>& indep_values,
-      std::vector<double>& cdf_values,
-      double min_pdf_value ) const
-{
-  std::vector<double> pdf_values( indep_values.size() );
-  pdf_values[0] = min_pdf_value;
-
-  // Calculate the PDF
-  // PDF(x) = PDF(x1) + 2.0*(CDF(x)-CDF(x1)-pdf(x1)*(x-x1))*(x2-x1)/(x-x1)^2
-  for( size_t i = 1; i < indep_values.size(); ++i )
-  {
-    pdf_values[i] = 2.0*( cdf_values[i] - cdf_values[i-1])/( indep_values[i] - indep_values[i-1]) + pdf_values[i-1];
-    testPostcondition( pdf_values[i] > 0.0 );
-  }
-
-  return pdf_values;
 }
 
 // Return the endl data container

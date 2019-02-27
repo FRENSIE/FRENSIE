@@ -196,21 +196,6 @@ private:
     const double max_secondary_energy,
     const unsigned shell ) const;
 
-  // Calculate the electroionization subshell secondary grid from the CDF
-  void calculateElectroionizationSecondaryGridFromCDF(
-    const std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution> distribution,
-    const MonteCarlo::ElectroionizationSamplingType sampling_type,
-    double incoming_energy,
-    const unsigned shell,
-    std::vector<double>& evaluated_grid,
-    std::vector<double>& evaluated_pdf ) const;
-
-  // Evaluate the PDF distribution from the CDF
-  std::vector<double> evaluatePDFFromCDF(
-      std::vector<double>& indep_values,
-      std::vector<double>& cdf_values,
-      double min_pdf_value ) const;
-
   // Add binding energies to union energy grid
   void addBindingEnergiesToUnionEnergyGrid(
                                   const double min_energy,
