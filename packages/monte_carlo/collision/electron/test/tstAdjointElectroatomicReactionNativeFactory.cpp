@@ -215,7 +215,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
   energy = 20.0;
   cross_section = reaction->getCrossSection( energy );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.051440287719986433, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.051213497766151139, 1e-12 );
 
   // Clear the reaction
   reaction.reset();

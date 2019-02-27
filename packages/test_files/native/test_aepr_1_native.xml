@@ -2,7 +2,7 @@
 <!DOCTYPE boost_serialization>
 <boost_serialization signature="serialization::archive" version="16">
 <container class_id="0" tracking_level="1" version="0" object_id="_0">
-	<notes>This table was generated on 2019-02-08 14:35:13.454283. It is for testing only!</notes>
+	<notes>This table was generated on 2019-02-27 11:27:27.766467. It is for testing only!</notes>
 	<atomic_number>1</atomic_number>
 	<atomic_weight>1.00790000000000002e+00</atomic_weight>
 	<min_photon_energy>1.00000000000000002e-03</min_photon_energy>
@@ -90740,9 +90740,10 @@
 		<item>
 			<first>2.00000000000000000e+01</first>
 			<second>
-				<count>95</count>
+				<count>108</count>
 				<item_version>0</item_version>
 				<item>-1.00000000000000000e+00</item>
+				<item>-9.97500000000000053e-01</item>
 				<item>-9.95000000000000107e-01</item>
 				<item>-9.49999999999999956e-01</item>
 				<item>-8.75000000000000000e-01</item>
@@ -90824,13 +90825,25 @@
 				<item>9.99989099999999964e-01</item>
 				<item>9.99990099999999993e-01</item>
 				<item>9.99991199999999969e-01</item>
+				<item>9.99991899999999934e-01</item>
 				<item>9.99992600000000009e-01</item>
+				<item>9.99993200000000027e-01</item>
 				<item>9.99993800000000044e-01</item>
+				<item>9.99994300000000003e-01</item>
 				<item>9.99994799999999961e-01</item>
+				<item>9.99995199999999973e-01</item>
 				<item>9.99995599999999984e-01</item>
+				<item>9.99995949999999967e-01</item>
+				<item>9.99996125000000013e-01</item>
+				<item>9.99996212499999926e-01</item>
 				<item>9.99996299999999949e-01</item>
+				<item>9.99996600000000013e-01</item>
+				<item>9.99996749999999990e-01</item>
+				<item>9.99996824999999978e-01</item>
 				<item>9.99996899999999966e-01</item>
+				<item>9.99997150000000001e-01</item>
 				<item>9.99997400000000036e-01</item>
+				<item>9.99997600000000042e-01</item>
 				<item>9.99997800000000048e-01</item>
 				<item>9.99998100000000001e-01</item>
 				<item>9.99998399999999954e-01</item>
@@ -91439,9 +91452,10 @@
 		<item>
 			<first>2.00000000000000000e+01</first>
 			<second>
-				<count>95</count>
+				<count>108</count>
 				<item_version>0</item_version>
 				<item>1.48894126477090926e-10</item>
+				<item>4.90801918207054561e-10</item>
 				<item>8.19518269681429818e-10</item>
 				<item>6.92605116737574771e-09</item>
 				<item>1.84179603848763827e-08</item>
@@ -91523,13 +91537,25 @@
 				<item>8.53737988165161369e+03</item>
 				<item>1.03417062241005297e+04</item>
 				<item>1.32586199623643570e+04</item>
+				<item>1.58147360115952106e+04</item>
 				<item>1.87201605014958404e+04</item>
+				<item>2.24203345012711798e+04</item>
 				<item>2.66146829541563384e+04</item>
+				<item>3.18373288831087448e+04</item>
 				<item>3.77270480300259806e+04</item>
+				<item>4.47011727202018737e+04</item>
 				<item>5.35202097812518186e+04</item>
+				<item>6.33899484327196333e+04</item>
+				<item>6.85369078156222531e+04</item>
+				<item>7.12192685017270851e+04</item>
 				<item>7.54175234449304407e+04</item>
+				<item>8.97305511914086965e+04</item>
+				<item>9.70852200710480392e+04</item>
+				<item>1.00862482709624950e+05</item>
 				<item>1.06808135310338956e+05</item>
+				<item>1.26986031385883893e+05</item>
 				<item>1.50941834657568601e+05</item>
+				<item>1.77929363343304110e+05</item>
 				<item>2.09149436122586980e+05</item>
 				<item>2.78752062510219403e+05</item>
 				<item>3.88969958728216239e+05</item>
@@ -91553,7 +91579,7 @@
 		<item>8.35422767174437558e-02</item>
 		<item>4.96862470078404533e-02</item>
 		<item>4.78075797615871360e-04</item>
-		<item>1.57535046810404039e-04</item>
+		<item>1.57517631151239213e-04</item>
 	</adjoint_moment_preserving_cross_section_reductions>
 	<adjoint_moment_preserving_elastic_discrete_angles>
 		<count>12</count>
@@ -91662,8 +91688,8 @@
 			<second>
 				<count>2</count>
 				<item_version>0</item_version>
-				<item>9.32887508956615763e-01</item>
-				<item>9.98006166020330099e-01</item>
+				<item>9.32886357218365214e-01</item>
+				<item>9.98003033903580583e-01</item>
 			</second>
 		</item>
 	</adjoint_moment_preserving_elastic_discrete_angles>
@@ -91774,8 +91800,8 @@
 			<second>
 				<count>2</count>
 				<item_version>0</item_version>
-				<item>2.39458228531276443e-03</item>
-				<item>9.97605417714687248e-01</item>
+				<item>2.40170093945263124e-03</item>
+				<item>9.97598299060547422e-01</item>
 			</second>
 		</item>
 	</adjoint_moment_preserving_elastic_weights>

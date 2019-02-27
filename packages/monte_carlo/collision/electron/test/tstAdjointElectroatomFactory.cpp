@@ -167,7 +167,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
 
   energy = 20.0;
   cross_section = atom->getTotalCrossSection( energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.496199025169525703e+04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.496199003220528539e+04, 1e-12 );
 
 
   // Test that the absorption cross section can be returned
@@ -234,7 +234,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.951042357070542872e+06, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 20.0, reaction );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.053930205497564110, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.053710715519123209, 1e-12 );
 
 
   // Test that there is no total electroionization
