@@ -251,14 +251,17 @@ public:
   //! Return angle cosine grid with the evaluated pdf for the given energy and cutoff angle
   template<typename TwoDInterpPolicy,
            template<typename> class TwoDGridPolicy>
-  static void getAngularGridAndPDF(
+  static void evaluateAngularGridAndPDF(
     std::vector<double>& angular_grid,
     std::vector<double>& evaluated_pdf,
     const std::map<double,std::vector<double> >& angles,
     const std::map<double,std::vector<double> >& pdf,
     const double energy,
     const double cutoff_angle_cosine,
-    const double evaluation_tol );
+    const double evaluation_tol,
+    const double grid_convergence_tol = 1e-3,
+    const double absolute_diff_tol = 1e-13,
+    const double distance_tol = 1e-13 );
 
   //! Return angle cosine grid with the evaluated pdf for the given cutoff angle
   static void getAngularGridAndPDF(

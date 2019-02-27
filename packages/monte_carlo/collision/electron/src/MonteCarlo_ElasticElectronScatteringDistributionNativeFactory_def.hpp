@@ -13,6 +13,7 @@
 #include "MonteCarlo_CoupledElasticDistribution.hpp"
 #include "MonteCarlo_HybridElasticDistribution.hpp"
 #include "MonteCarlo_ElasticBasicBivariateDistribution.hpp"
+#include "Utility_GridGenerator.hpp"
 
 namespace MonteCarlo{
 
@@ -607,14 +608,17 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingE
 
 // Return angle cosine grid with the evaluated pdf for the given energy
 template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
-void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
+void ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF(
     std::vector<double>& angular_grid,
     std::vector<double>& evaluated_pdf,
     const std::map<double,std::vector<double> >& angles,
     const std::map<double,std::vector<double> >& pdf,
     const double energy,
     const double cutoff_angle_cosine,
-    const double evaluation_tol )
+    const double evaluation_tol,
+    const double grid_convergence_tol,
+    const double absolute_diff_tol,
+    const double distance_tol )
 {
   // Make sure the maps are valid
   testPrecondition( angles.size() == pdf.size() );
@@ -673,28 +677,23 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
                                                             fuzzy_bound_tol,
                                                             evaluation_tol );
 
-    // Use the angular grid for the energy bin closes to the energy
-    if ( energy - lower_bin->first <= upper_bin->first - energy )
-    {
-      angular_grid = ThisType::getAngularGrid( lower_bin->second,
-                                               cutoff_angle_cosine );
-    }
-    else
-    {
-      angular_grid = ThisType::getAngularGrid( upper_bin->second,
-                                               cutoff_angle_cosine );
-    }
+    // Create a grid generator
+    Utility::GridGenerator<Utility::LinLin>
+                                grid_generator( grid_convergence_tol,
+                                                absolute_diff_tol,
+                                                distance_tol );
 
-    // Evaluate the pdf on the angular grid
-    evaluated_pdf.resize( angular_grid.size() );
-    for ( unsigned i = 0; i < angular_grid.size(); ++i )
-    {
-      evaluated_pdf[i] =
-        scattering_function->evaluateSecondaryConditionalPDF( energy,
-                                                              angular_grid[i] );
-    }
-    testPostcondition( evaluated_pdf.size() > 1 );
-    testPostcondition( angular_grid.size() > 1 );
+    // Construct the evaluator functor
+    auto&& pdf_evaluator = [&scattering_function, energy ]( const double& angle ){
+      return scattering_function->evaluateSecondaryConditionalPDF( energy, angle );
+    };
+
+    angular_grid = ThisType::getAngularGrid( upper_bin->second,
+                                             cutoff_angle_cosine );
+
+    grid_generator.generateAndEvaluateInPlace( angular_grid,
+                                               evaluated_pdf,
+                                               pdf_evaluator );
   }
 }
 

@@ -259,7 +259,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that the angular grid can be returned
 FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
-                   getAngularGridAndPDF_LinLinLog )
+                   evaluateAngularGridAndPDF_LinLinLog )
 {
   std::vector<double> angular_grid, evaluated_pdf;
   double evaluation_tol = 1e-7;
@@ -267,7 +267,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test lowerest energy bin
   double energy = 1.0e-5;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -285,7 +285,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test between energy bins
   energy = 20.0;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -303,7 +303,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test highest energy bin
   energy = 1.0e+5;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -323,7 +323,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that the angular grid can be returned
 FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
-                   getAngularGridAndPDF_LinLinLin )
+                   evaluateAngularGridAndPDF_LinLinLin )
 {
   std::vector<double> angular_grid, evaluated_pdf;
   double evaluation_tol = 1e-7;
@@ -331,7 +331,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test lowerest energy bin
   double energy = 1.0e-5;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -349,7 +349,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test between energy bins
   energy = 20.0;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -367,7 +367,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test highest energy bin
   energy = 1.0e5;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -387,7 +387,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that the angular grid can be returned
 FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
-                   getAngularGridAndPDF_LogLogCosLog )
+                   evaluateAngularGridAndPDF_LogLogCosLog )
 {
   std::vector<double> angular_grid, evaluated_pdf;
   double evaluation_tol = 1e-7;
@@ -395,7 +395,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test lowerest energy bin
   double energy = 1.0e-5;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LogLogCosLog,Utility::Correlated>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -414,7 +414,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test in between energy bins
   energy = 20.0;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LogLogCosLog,Utility::Correlated>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -432,7 +432,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test highest energy bin
   energy = 1.0e5;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LogLogCosLog,Utility::Correlated>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),

@@ -433,7 +433,10 @@ void ElectronElasticDataEvaluator::evaluateElasticSecondaryDistribution(
   std::map<double,std::vector<double> >& elastic_pdf,
   std::vector<double>& moment_preserving_cross_section_reduction,
   std::map<double,std::vector<double> >& moment_preserving_angles,
-  std::map<double,std::vector<double> >& moment_preserving_weights ) const
+  std::map<double,std::vector<double> >& moment_preserving_weights,
+  const double grid_convergence_tol,
+  const double absolute_diff_tol,
+  const double distance_tol ) const
 {
   if( angular_energy_grid.size() < 2 )
   {
@@ -441,7 +444,10 @@ void ElectronElasticDataEvaluator::evaluateElasticSecondaryDistribution(
     this->evaluateAnalogElasticSecondaryDistribution(
         angular_energy_grid,
         elastic_angle,
-        elastic_pdf );
+        elastic_pdf,
+        grid_convergence_tol,
+        absolute_diff_tol,
+        distance_tol );
   }
   else
   {
@@ -449,7 +455,10 @@ void ElectronElasticDataEvaluator::evaluateElasticSecondaryDistribution(
     this->evaluateAnalogElasticSecondaryDistributionInPlace(
         angular_energy_grid,
         elastic_angle,
-        elastic_pdf );
+        elastic_pdf,
+        grid_convergence_tol,
+        absolute_diff_tol,
+        distance_tol );
   }
 
   // Check if moment preserving data can be generated
@@ -591,7 +600,10 @@ void ElectronElasticDataEvaluator::evaluateScreenedRutherfordCrossSection(
 void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistribution(
   std::vector<double>& angular_energy_grid,
   std::map<double,std::vector<double> >& elastic_angle,
-  std::map<double,std::vector<double> >& elastic_pdf ) const
+  std::map<double,std::vector<double> >& elastic_pdf,
+  const double grid_convergence_tol,
+  const double absolute_diff_tol,
+  const double distance_tol ) const
 {
   angular_energy_grid.clear();
   elastic_angle.clear();
@@ -618,36 +630,45 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistribution(
     {
       if ( d_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
       {
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogNudgedLogCosLog,Utility::Direct>(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LogNudgedLogCosLog,Utility::Direct>(
           angles,
           pdf,
           d_elastic_angle,
           d_elastic_pdf,
           d_min_energy,
           max_cutoff_angle_cosine,
-          d_tabular_evaluation_tol );
+          d_tabular_evaluation_tol,
+          grid_convergence_tol,
+          absolute_diff_tol,
+          distance_tol );
       }
       else if ( d_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
       {
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Direct>(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLin,Utility::Direct>(
           angles,
           pdf,
           d_elastic_angle,
           d_elastic_pdf,
           d_min_energy,
           max_cutoff_angle_cosine,
-          d_tabular_evaluation_tol );
+          d_tabular_evaluation_tol,
+          grid_convergence_tol,
+          absolute_diff_tol,
+          distance_tol );
       }
       else if ( d_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
       {
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Direct>(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLog,Utility::Direct>(
           angles,
           pdf,
           d_elastic_angle,
           d_elastic_pdf,
           d_min_energy,
           max_cutoff_angle_cosine,
-          d_tabular_evaluation_tol );
+          d_tabular_evaluation_tol,
+          grid_convergence_tol,
+          absolute_diff_tol,
+          distance_tol );
       }
       else
       {
@@ -662,36 +683,45 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistribution(
     {
       if ( d_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
       {
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogNudgedLogCosLog,Utility::Correlated>(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LogNudgedLogCosLog,Utility::Correlated>(
           angles,
           pdf,
           d_elastic_angle,
           d_elastic_pdf,
           d_min_energy,
           max_cutoff_angle_cosine,
-          d_tabular_evaluation_tol );
+          d_tabular_evaluation_tol,
+          grid_convergence_tol,
+          absolute_diff_tol,
+          distance_tol );
       }
       else if ( d_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
       {
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
           angles,
           pdf,
           d_elastic_angle,
           d_elastic_pdf,
           d_min_energy,
           max_cutoff_angle_cosine,
-          d_tabular_evaluation_tol );
+          d_tabular_evaluation_tol,
+          grid_convergence_tol,
+          absolute_diff_tol,
+          distance_tol );
       }
       else if ( d_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
       {
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
           angles,
           pdf,
           d_elastic_angle,
           d_elastic_pdf,
           d_min_energy,
           max_cutoff_angle_cosine,
-          d_tabular_evaluation_tol );
+          d_tabular_evaluation_tol,
+          grid_convergence_tol,
+          absolute_diff_tol,
+          distance_tol );
       }
       else
       {
@@ -747,36 +777,45 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistribution(
       {
         if ( d_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
         {
-          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogNudgedLogCosLog,Utility::Direct>(
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LogNudgedLogCosLog,Utility::Direct>(
             angles,
             pdf,
             d_elastic_angle,
             d_elastic_pdf,
             d_max_energy,
             max_cutoff_angle_cosine,
-            d_tabular_evaluation_tol );
+            d_tabular_evaluation_tol,
+            grid_convergence_tol,
+            absolute_diff_tol,
+            distance_tol );
         }
         else if ( d_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
         {
-          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Direct>(
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLin,Utility::Direct>(
             angles,
             pdf,
             d_elastic_angle,
             d_elastic_pdf,
             d_max_energy,
             max_cutoff_angle_cosine,
-            d_tabular_evaluation_tol );
+            d_tabular_evaluation_tol,
+            grid_convergence_tol,
+            absolute_diff_tol,
+            distance_tol );
         }
         else if ( d_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
         {
-          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Direct>(
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLog,Utility::Direct>(
             angles,
             pdf,
             d_elastic_angle,
             d_elastic_pdf,
             d_max_energy,
             max_cutoff_angle_cosine,
-            d_tabular_evaluation_tol );
+            d_tabular_evaluation_tol,
+            grid_convergence_tol,
+            absolute_diff_tol,
+            distance_tol );
         }
         else
         {
@@ -791,36 +830,45 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistribution(
       {
         if ( d_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
         {
-          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogNudgedLogCosLog,Utility::Correlated>(
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LogNudgedLogCosLog,Utility::Correlated>(
             angles,
             pdf,
             d_elastic_angle,
             d_elastic_pdf,
             d_max_energy,
             max_cutoff_angle_cosine,
-            d_tabular_evaluation_tol );
+            d_tabular_evaluation_tol,
+            grid_convergence_tol,
+            absolute_diff_tol,
+            distance_tol );
         }
         else if ( d_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
         {
-          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
             angles,
             pdf,
             d_elastic_angle,
             d_elastic_pdf,
             d_max_energy,
             max_cutoff_angle_cosine,
-            d_tabular_evaluation_tol );
+            d_tabular_evaluation_tol,
+            grid_convergence_tol,
+            absolute_diff_tol,
+            distance_tol );
         }
         else if ( d_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
         {
-          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
+          MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
             angles,
             pdf,
             d_elastic_angle,
             d_elastic_pdf,
             d_max_energy,
             max_cutoff_angle_cosine,
-            d_tabular_evaluation_tol );
+            d_tabular_evaluation_tol,
+            grid_convergence_tol,
+            absolute_diff_tol,
+            distance_tol );
         }
         else
         {
@@ -857,7 +905,10 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistribution(
 void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistributionInPlace(
   const std::vector<double>& angular_energy_grid,
   std::map<double,std::vector<double> >& elastic_angle,
-  std::map<double,std::vector<double> >& elastic_pdf ) const
+  std::map<double,std::vector<double> >& elastic_pdf,
+  const double grid_convergence_tol,
+  const double absolute_diff_tol,
+  const double distance_tol ) const
 {
   // Make sure the angular_energy_grid is valid
   testPrecondition( angular_energy_grid.size() > 1 );
@@ -880,36 +931,45 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistributionInP
     {
       if ( d_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
       {
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogNudgedLogCosLog,Utility::Direct>(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LogNudgedLogCosLog,Utility::Direct>(
           angles,
           pdf,
           d_elastic_angle,
           d_elastic_pdf,
           energy,
           max_cutoff_angle_cosine,
-          d_tabular_evaluation_tol );
+          d_tabular_evaluation_tol,
+          grid_convergence_tol,
+          absolute_diff_tol,
+          distance_tol );
       }
       else if ( d_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
       {
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Direct>(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLin,Utility::Direct>(
           angles,
           pdf,
           d_elastic_angle,
           d_elastic_pdf,
           energy,
           max_cutoff_angle_cosine,
-          d_tabular_evaluation_tol );
+          d_tabular_evaluation_tol,
+          grid_convergence_tol,
+          absolute_diff_tol,
+          distance_tol );
       }
       else if ( d_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
       {
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Direct>(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLog,Utility::Direct>(
           angles,
           pdf,
           d_elastic_angle,
           d_elastic_pdf,
           energy,
           max_cutoff_angle_cosine,
-          d_tabular_evaluation_tol );
+          d_tabular_evaluation_tol,
+          grid_convergence_tol,
+          absolute_diff_tol,
+          distance_tol );
       }
       else
       {
@@ -924,36 +984,45 @@ void ElectronElasticDataEvaluator::evaluateAnalogElasticSecondaryDistributionInP
     {
       if ( d_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
       {
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogNudgedLogCosLog,Utility::Correlated>(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LogNudgedLogCosLog,Utility::Correlated>(
           angles,
           pdf,
           d_elastic_angle,
           d_elastic_pdf,
           energy,
           max_cutoff_angle_cosine,
-          d_tabular_evaluation_tol );
+          d_tabular_evaluation_tol,
+          grid_convergence_tol,
+          absolute_diff_tol,
+          distance_tol );
       }
       else if ( d_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
       {
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
           angles,
           pdf,
           d_elastic_angle,
           d_elastic_pdf,
           energy,
           max_cutoff_angle_cosine,
-          d_tabular_evaluation_tol );
+          d_tabular_evaluation_tol,
+          grid_convergence_tol,
+          absolute_diff_tol,
+          distance_tol );
       }
       else if ( d_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
       {
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
           angles,
           pdf,
           d_elastic_angle,
           d_elastic_pdf,
           energy,
           max_cutoff_angle_cosine,
-          d_tabular_evaluation_tol );
+          d_tabular_evaluation_tol,
+          grid_convergence_tol,
+          absolute_diff_tol,
+          distance_tol );
       }
       else
       {

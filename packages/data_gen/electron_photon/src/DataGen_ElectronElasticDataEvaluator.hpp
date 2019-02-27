@@ -135,7 +135,10 @@ public:
     std::map<double,std::vector<double> >& elastic_pdf,
     std::vector<double>& moment_preserving_cross_section_reduction,
     std::map<double,std::vector<double> >& moment_preserving_angles,
-    std::map<double,std::vector<double> >& moment_preserving_weights ) const;
+    std::map<double,std::vector<double> >& moment_preserving_weights,
+    const double grid_convergence_tol = 1e-3,
+    const double absolute_diff_tol = 1e-13,
+    const double distance_tol = 1e-13 ) const;
 
   //! Create the analog cutoff elastic cross section evaluator
   void createCutoffCrossSectionEvaluator(
@@ -167,13 +170,19 @@ protected:
   void evaluateAnalogElasticSecondaryDistribution(
     std::vector<double>& angular_energy_grid,
     std::map<double,std::vector<double> >& elastic_angle,
-    std::map<double,std::vector<double> >& elastic_pdf ) const;
+    std::map<double,std::vector<double> >& elastic_pdf,
+    const double grid_convergence_tol,
+    const double absolute_diff_tol,
+    const double distance_tol ) const;
 
   // Evaluate the electron analog elastic secondary distribution on the angular energy grid
   void evaluateAnalogElasticSecondaryDistributionInPlace(
     const std::vector<double>& angular_energy_grid,
     std::map<double,std::vector<double> >& elastic_angle,
-    std::map<double,std::vector<double> >& elastic_pdf ) const;
+    std::map<double,std::vector<double> >& elastic_pdf,
+    const double grid_convergence_tol,
+    const double absolute_diff_tol,
+    const double distance_tol ) const;
 
   // Evaluate the electron moment preserving elastic secondary distribution
   void evaluateMomentPreservingElasticData(
