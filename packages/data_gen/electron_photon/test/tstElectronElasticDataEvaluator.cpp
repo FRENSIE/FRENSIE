@@ -540,7 +540,8 @@ FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
       cutoff_elastic_pdf,
       mp_cross_section_reduction,
       moment_preserving_angles,
-      moment_preserving_weights );
+      moment_preserving_weights,
+      1e-1 );
 
   FRENSIE_CHECK_EQUAL( angular_grid.size(), 12 );
   FRENSIE_CHECK_EQUAL( angular_grid.front(), 1e-4 );
@@ -550,7 +551,7 @@ FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
 
   FRENSIE_CHECK_EQUAL( elastic_angles.front(), -1.0 );
   FRENSIE_CHECK_EQUAL( elastic_angles.back(), 0.999999 );
-  FRENSIE_CHECK_EQUAL( elastic_angles.size(), 2 );
+  FRENSIE_CHECK_EQUAL( elastic_angles.size(), 41 );
 
   elastic_angles = cutoff_elastic_angles[20.0];
 
@@ -562,7 +563,7 @@ FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
 
   FRENSIE_CHECK_EQUAL( elastic_pdf.front(), 5.844104724870039999e-03 );
   FRENSIE_CHECK_EQUAL( elastic_pdf.back(), 9.920145715224548688e-01 );
-  FRENSIE_CHECK_EQUAL( elastic_pdf.size(), 2 );
+  FRENSIE_CHECK_EQUAL( elastic_pdf.size(), 41 );
 
   elastic_pdf = cutoff_elastic_pdf[20.0];
 
@@ -596,7 +597,7 @@ FRENSIE_UNIT_TEST( ElectronElasticDataEvaluator,
   FRENSIE_CHECK_EQUAL( discrete_weights.back(), 1.0 );
   FRENSIE_CHECK_EQUAL( discrete_weights.size(), 1 );
 
-  FRENSIE_CHECK_EQUAL( mp_cross_section_reduction.front(), 7.468356002340779121e-01 );
+  FRENSIE_CHECK_EQUAL( mp_cross_section_reduction.front(), 7.168695557344448854e-01 );
   FRENSIE_CHECK_EQUAL( mp_cross_section_reduction.back(), 4.935491711992172245e-05 );
   FRENSIE_CHECK_EQUAL( mp_cross_section_reduction.size(), 12 );
 }

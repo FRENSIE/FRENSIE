@@ -688,9 +688,11 @@ void ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndP
       return scattering_function->evaluateSecondaryConditionalPDF( energy, angle );
     };
 
+    // Use the angular grid at the upper energy grid point
     angular_grid = ThisType::getAngularGrid( upper_bin->second,
                                              cutoff_angle_cosine );
 
+    // Refine the angular grid
     grid_generator.generateAndEvaluateInPlace( angular_grid,
                                                evaluated_pdf,
                                                pdf_evaluator );

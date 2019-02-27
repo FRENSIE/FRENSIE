@@ -264,6 +264,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   std::vector<double> angular_grid, evaluated_pdf;
   double evaluation_tol = 1e-7;
   double cutoff_angle_cosine = 1.0;
+  double grid_convergence = 0.1;
 
   // Test lowerest energy bin
   double energy = 1.0e-5;
@@ -274,7 +275,8 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     data_container->getCutoffElasticPDF(),
     energy,
     cutoff_angle_cosine,
-    evaluation_tol );
+    evaluation_tol,
+    grid_convergence );
 
   FRENSIE_CHECK_EQUAL( angular_grid.size(), 2 );
   FRENSIE_CHECK_EQUAL( angular_grid.front(), -1.0 );
@@ -292,12 +294,13 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     data_container->getCutoffElasticPDF(),
     energy,
     cutoff_angle_cosine,
-    evaluation_tol );
+    evaluation_tol,
+    grid_convergence );
 
-  FRENSIE_CHECK_EQUAL( angular_grid.size(), 79 );
+  FRENSIE_CHECK_EQUAL( angular_grid.size(), 94 );
   FRENSIE_CHECK_EQUAL( angular_grid.front(), -1.0 );
   FRENSIE_CHECK_EQUAL( angular_grid.back(), 0.999999 );
-  FRENSIE_CHECK_EQUAL( evaluated_pdf.size(), 79 );
+  FRENSIE_CHECK_EQUAL( evaluated_pdf.size(), 94 );
   FRENSIE_CHECK_EQUAL( evaluated_pdf.front(), 3.5132603358279131e-08 );
   FRENSIE_CHECK_EQUAL( evaluated_pdf.back(), 3.5730479931889207e+05 );
 
@@ -310,7 +313,8 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     data_container->getCutoffElasticPDF(),
     energy,
     cutoff_angle_cosine,
-    evaluation_tol );
+    evaluation_tol,
+    grid_convergence );
 
   FRENSIE_CHECK_EQUAL( angular_grid.size(), 90 );
   FRENSIE_CHECK_EQUAL( angular_grid.front(), -1.0 );
@@ -328,6 +332,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   std::vector<double> angular_grid, evaluated_pdf;
   double evaluation_tol = 1e-7;
   double cutoff_angle_cosine = 1.0;
+  double grid_convergence = 0.2;
 
   // Test lowerest energy bin
   double energy = 1.0e-5;
@@ -338,7 +343,8 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     data_container->getCutoffElasticPDF(),
     energy,
     cutoff_angle_cosine,
-    evaluation_tol );
+    evaluation_tol,
+    grid_convergence );
 
   FRENSIE_CHECK_EQUAL( angular_grid.size(), 2 );
   FRENSIE_CHECK_EQUAL( angular_grid.front(), -1.0 );
@@ -356,12 +362,13 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     data_container->getCutoffElasticPDF(),
     energy,
     cutoff_angle_cosine,
-    evaluation_tol );
+    evaluation_tol,
+    grid_convergence );
 
-  FRENSIE_CHECK_EQUAL( angular_grid.size(), 79 );
+  FRENSIE_CHECK_EQUAL( angular_grid.size(), 92 );
   FRENSIE_CHECK_EQUAL( angular_grid.front(), -1.0 );
   FRENSIE_CHECK_EQUAL( angular_grid.back(), 0.999999 );
-  FRENSIE_CHECK_EQUAL( evaluated_pdf.size(), 79 );
+  FRENSIE_CHECK_EQUAL( evaluated_pdf.size(), 92 );
   FRENSIE_CHECK_EQUAL( evaluated_pdf.front(), 4.1328742821075420e-08 );
   FRENSIE_CHECK_EQUAL( evaluated_pdf.back(), 3.0425623618948285e+05 );
 
@@ -374,7 +381,8 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     data_container->getCutoffElasticPDF(),
     energy,
     cutoff_angle_cosine,
-    evaluation_tol );
+    evaluation_tol,
+    grid_convergence );
 
   FRENSIE_CHECK_EQUAL( angular_grid.size(), 90 );
   FRENSIE_CHECK_EQUAL( angular_grid.front(), -1.0 );
@@ -392,6 +400,7 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   std::vector<double> angular_grid, evaluated_pdf;
   double evaluation_tol = 1e-7;
   double cutoff_angle_cosine = 0.9;
+  double grid_convergence = 0.1;
 
   // Test lowerest energy bin
   double energy = 1.0e-5;
@@ -402,7 +411,8 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     data_container->getCutoffElasticPDF(),
     energy,
     cutoff_angle_cosine,
-    evaluation_tol );
+    evaluation_tol,
+    grid_convergence );
 
   FRENSIE_CHECK_EQUAL( angular_grid.size(), 2 );
   FRENSIE_CHECK_EQUAL( angular_grid.front(), -1.0 );
@@ -421,12 +431,13 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     data_container->getCutoffElasticPDF(),
     energy,
     cutoff_angle_cosine,
-    evaluation_tol );
+    evaluation_tol,
+    grid_convergence );
 
-  FRENSIE_CHECK_EQUAL( angular_grid.size(), 21 );
+  FRENSIE_CHECK_EQUAL( angular_grid.size(), 28 );
   FRENSIE_CHECK_EQUAL( angular_grid.front(), -1.0 );
   FRENSIE_CHECK_EQUAL( angular_grid.back(), 0.9 );
-  FRENSIE_CHECK_EQUAL( evaluated_pdf.size(), 21 );
+  FRENSIE_CHECK_EQUAL( evaluated_pdf.size(), 28 );
   FRENSIE_CHECK_EQUAL( evaluated_pdf.front(), 3.5132603358279131e-08 );
   FRENSIE_CHECK_EQUAL( evaluated_pdf.back(), 3.0235502709952670e-04 );
 
@@ -439,7 +450,8 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     data_container->getCutoffElasticPDF(),
     energy,
     cutoff_angle_cosine,
-    evaluation_tol );
+    evaluation_tol,
+    grid_convergence );
 
   FRENSIE_CHECK_EQUAL( angular_grid.size(), 21 );
   FRENSIE_CHECK_EQUAL( angular_grid.front(), -1.0 );

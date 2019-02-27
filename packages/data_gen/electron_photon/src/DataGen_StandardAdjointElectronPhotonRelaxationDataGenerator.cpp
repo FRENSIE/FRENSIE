@@ -1456,7 +1456,10 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
                           elastic_pdf,
                           moment_preserving_cross_section_reduction,
                           moment_preserving_angles,
-                          moment_preserving_weights );
+                          moment_preserving_weights,
+                          this->getDefaultElectronGridConvergenceTolerance(),
+                          this->getDefaultElectronGridAbsoluteDifferenceTolerance(),
+                          this->getDefaultElectronGridDistanceTolerance() );
 
   data_container.setAdjointElasticAngularEnergyGrid( angular_energy_grid );
   data_container.setAdjointCutoffElasticAngles( elastic_angle );

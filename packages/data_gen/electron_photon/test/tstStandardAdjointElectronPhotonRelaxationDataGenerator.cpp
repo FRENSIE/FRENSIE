@@ -1464,65 +1464,65 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   FRENSIE_CHECK_EQUAL( elastic_angles.front(), -1.0 );
   FRENSIE_CHECK_EQUAL( elastic_angles.back(), 0.999999 );
-  FRENSIE_CHECK_EQUAL( elastic_angles.size(), 2 );
+  FRENSIE_CHECK_EQUAL( elastic_angles.size(), 30 );
 
-  // elastic_angles =
-  //   h_data_container.getAdjointCutoffElasticAngles(20.0);
+  elastic_angles =
+    h_data_container.getAdjointCutoffElasticAngles(20.0);
 
-  // FRENSIE_CHECK_EQUAL( elastic_angles.front(), -1.0 );
-  // FRENSIE_CHECK_EQUAL( elastic_angles.back(), 0.999999 );
-  // FRENSIE_CHECK_EQUAL( elastic_angles.size(), 95 );
+  FRENSIE_CHECK_EQUAL( elastic_angles.front(), -1.0 );
+  FRENSIE_CHECK_EQUAL( elastic_angles.back(), 0.999999 );
+  FRENSIE_CHECK_EQUAL( elastic_angles.size(), 95 );
 
   std::vector<double> elastic_pdf =
     h_data_container.getAdjointCutoffElasticPDF( 1e-4 );
 
   FRENSIE_CHECK_EQUAL( elastic_pdf.front(), 5.844104724870039999e-03 );
   FRENSIE_CHECK_EQUAL( elastic_pdf.back(), 9.920145715224548688e-01 );
-  FRENSIE_CHECK_EQUAL( elastic_pdf.size(), 2 );
+  FRENSIE_CHECK_EQUAL( elastic_pdf.size(), 30 );
 
-  // elastic_pdf =
-  //   h_data_container.getAdjointCutoffElasticPDF( 20.0 );
+  elastic_pdf =
+    h_data_container.getAdjointCutoffElasticPDF( 20.0 );
 
-  // FRENSIE_CHECK_EQUAL( elastic_pdf.front(), 1.488941264770909258e-10 );
-  // FRENSIE_CHECK_EQUAL( elastic_pdf.back(), 9.608615060065749567e+05 );
-  // FRENSIE_CHECK_EQUAL( elastic_pdf.size(), 95 );
+  FRENSIE_CHECK_EQUAL( elastic_pdf.front(), 1.488941264770909258e-10 );
+  FRENSIE_CHECK_EQUAL( elastic_pdf.back(), 9.608615060065749567e+05 );
+  FRENSIE_CHECK_EQUAL( elastic_pdf.size(), 95 );
 
-  // FRENSIE_REQUIRE( h_data_container.hasAdjointMomentPreservingData() );
+  FRENSIE_REQUIRE( h_data_container.hasAdjointMomentPreservingData() );
 
-  // std::vector<double> mp_cross_section_reduction =
-  //   h_data_container.getAdjointMomentPreservingCrossSectionReduction();
+  std::vector<double> mp_cross_section_reduction =
+    h_data_container.getAdjointMomentPreservingCrossSectionReduction();
 
-  // FRENSIE_CHECK_EQUAL( mp_cross_section_reduction.front(), 7.468356002340779121e-01 );
-  // FRENSIE_CHECK_EQUAL( mp_cross_section_reduction.back(), 4.935491711992172245e-05 );
-  // FRENSIE_CHECK_EQUAL( mp_cross_section_reduction.size(), 12 );
+  FRENSIE_CHECK_EQUAL( mp_cross_section_reduction.front(), 7.305740038409479498e-01 );
+  FRENSIE_CHECK_EQUAL( mp_cross_section_reduction.back(), 4.935491711992172245e-05 );
+  FRENSIE_CHECK_EQUAL( mp_cross_section_reduction.size(), 12 );
 
-  // std::vector<double> discrete_angles =
-  //   h_data_container.getAdjointMomentPreservingElasticDiscreteAngles( 1e-4 );
+  std::vector<double> discrete_angles =
+    h_data_container.getAdjointMomentPreservingElasticDiscreteAngles( 1e-4 );
 
-  // FRENSIE_CHECK_EQUAL( discrete_angles.front(), 9.336189387717800381e-01 );
-  // FRENSIE_CHECK_EQUAL( discrete_angles.back(), 9.336189387717800381e-01 );
-  // FRENSIE_CHECK_EQUAL( discrete_angles.size(), 1 );
+  FRENSIE_CHECK_EQUAL( discrete_angles.front(), 9.365161459702177060e-01 );
+  FRENSIE_CHECK_EQUAL( discrete_angles.back(), 9.365161459702177060e-01 );
+  FRENSIE_CHECK_EQUAL( discrete_angles.size(), 1 );
 
-  // discrete_angles =
-  //   h_data_container.getAdjointMomentPreservingElasticDiscreteAngles( 20.0 );
+  discrete_angles =
+    h_data_container.getAdjointMomentPreservingElasticDiscreteAngles( 20.0 );
 
-  // FRENSIE_CHECK_EQUAL( discrete_angles.front(), 9.931382017989757172e-01 );
-  // FRENSIE_CHECK_EQUAL( discrete_angles.back(), 9.931382017989757172e-01 );
-  // FRENSIE_CHECK_EQUAL( discrete_angles.size(), 1 );
+  FRENSIE_CHECK_EQUAL( discrete_angles.front(), 9.931382017989757172e-01 );
+  FRENSIE_CHECK_EQUAL( discrete_angles.back(), 9.931382017989757172e-01 );
+  FRENSIE_CHECK_EQUAL( discrete_angles.size(), 1 );
 
-  // std::vector<double> discrete_weights =
-  //   h_data_container.getAdjointMomentPreservingElasticWeights( 1e-4 );
+  std::vector<double> discrete_weights =
+    h_data_container.getAdjointMomentPreservingElasticWeights( 1e-4 );
 
-  // FRENSIE_CHECK_EQUAL( discrete_weights.front(), 1.0 );
-  // FRENSIE_CHECK_EQUAL( discrete_weights.back(), 1.0 );
-  // FRENSIE_CHECK_EQUAL( discrete_weights.size(), 1 );
+  FRENSIE_CHECK_EQUAL( discrete_weights.front(), 1.0 );
+  FRENSIE_CHECK_EQUAL( discrete_weights.back(), 1.0 );
+  FRENSIE_CHECK_EQUAL( discrete_weights.size(), 1 );
 
-  // discrete_weights =
-  //   h_data_container.getAdjointMomentPreservingElasticWeights( 20.0 );
+  discrete_weights =
+    h_data_container.getAdjointMomentPreservingElasticWeights( 20.0 );
 
-  // FRENSIE_CHECK_EQUAL( discrete_weights.front(), 1.0 );
-  // FRENSIE_CHECK_EQUAL( discrete_weights.back(), 1.0 );
-  // FRENSIE_CHECK_EQUAL( discrete_weights.size(), 1 );
+  FRENSIE_CHECK_EQUAL( discrete_weights.front(), 1.0 );
+  FRENSIE_CHECK_EQUAL( discrete_weights.back(), 1.0 );
+  FRENSIE_CHECK_EQUAL( discrete_weights.size(), 1 );
 
   // Check the forward brem cross section data
   threshold =
