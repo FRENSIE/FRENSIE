@@ -159,6 +159,15 @@
 %include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 
 //---------------------------------------------------------------------------//
+// Add support for the MomentPreservingElasticElectronScatteringDistribution
+//---------------------------------------------------------------------------//
+
+// Add use of std::shared_ptr
+%shared_ptr(MonteCarlo::MomentPreservingElasticElectronScatteringDistribution)
+// Include the class
+%include "MonteCarlo_MomentPreservingElasticElectronScatteringDistribution.hpp"
+
+//---------------------------------------------------------------------------//
 // Add support for the AtomicExcitationElectronScatteringDistribution
 //---------------------------------------------------------------------------//
 
@@ -166,6 +175,22 @@
 %shared_ptr(MonteCarlo::AtomicExcitationElectronScatteringDistribution)
 // Include the class
 %include "MonteCarlo_AtomicExcitationElectronScatteringDistribution.hpp"
+
+//---------------------------------------------------------------------------//
+// Use this general setup macro with all templated elastic distributions
+//---------------------------------------------------------------------------//
+%define %elastic_template_setup( DIST )
+
+  // Add templates for the Correlated DIST ElasticDistribution
+  %template(create ## DIST ## ElasticDistribution_LogLogCorrelated) create ## DIST ## ElasticDistribution<Utility::LogNudgedLogCosLog, Utility::Correlated>;
+  %template(create ## DIST ## ElasticDistribution_LinLogCorrelated) create ## DIST ## ElasticDistribution<Utility::LinLinLog, Utility::Correlated>;
+  %template(create ## DIST ## ElasticDistribution_LinLinCorrelated) create ## DIST ## ElasticDistribution<Utility::LinLinLin, Utility::Correlated>;
+  // Add templates for the Direct DIST ElasticDistribution
+  %template(create ## DIST ## ElasticDistribution_LogLogDirect) create ## DIST ## ElasticDistribution<Utility::LogNudgedLogCosLog, Utility::Direct>;
+  %template(create ## DIST ## ElasticDistribution_LinLogDirect) create ## DIST ## ElasticDistribution<Utility::LinLinLog, Utility::Direct>;
+  %template(create ## DIST ## ElasticDistribution_LinLinDirect) create ## DIST ## ElasticDistribution<Utility::LinLinLin, Utility::Direct>;
+
+%enddef
 
 //---------------------------------------------------------------------------//
 // Add support for the Electron Scattering Distributions native factory
@@ -394,22 +419,14 @@ std::shared_ptr<const MonteCarlo::AtomicExcitationElectronScatteringDistribution
 }
 %}
 
-// Add tamplates for the Correlated CoupledElasticDistribution
-%template(createCoupledElasticDistribution_LogLogCorrelated) createCoupledElasticDistribution<Utility::LogNudgedLogCosLog, Utility::Correlated>;
-%template(createCoupledElasticDistribution_LinLogCorrelated) createCoupledElasticDistribution<Utility::LinLinLog, Utility::Correlated>;
-%template(createCoupledElasticDistribution_LinLinCorrelated) createCoupledElasticDistribution<Utility::LinLinLin, Utility::Correlated>;
-// Add tamplates for the Direct CoupledElasticDistribution
-%template(createCoupledElasticDistribution_LogLogDirect) createCoupledElasticDistribution<Utility::LogNudgedLogCosLog, Utility::Direct>;
-%template(createCoupledElasticDistribution_LinLogDirect) createCoupledElasticDistribution<Utility::LinLinLog, Utility::Direct>;
-%template(createCoupledElasticDistribution_LinLinDirect) createCoupledElasticDistribution<Utility::LinLinLin, Utility::Direct>;
-// Add tamplates for the Correlated CutoffElasticDistribution
-%template(createCutoffElasticDistribution_LogLogCorrelated) createCutoffElasticDistribution<Utility::LogLogCosLog, Utility::Correlated>;
-%template(createCutoffElasticDistribution_LinLogCorrelated) createCutoffElasticDistribution<Utility::LinLinLog, Utility::Correlated>;
-%template(createCutoffElasticDistribution_LinLinCorrelated) createCutoffElasticDistribution<Utility::LinLinLin, Utility::Correlated>;
-// Add tamplates for the Direct CutoffElasticDistribution
-%template(createCutoffElasticDistribution_LogLogDirect) createCutoffElasticDistribution<Utility::LogLogCosLog, Utility::Direct>;
-%template(createCutoffElasticDistribution_LinLogDirect) createCutoffElasticDistribution<Utility::LinLinLog, Utility::Direct>;
-%template(createCutoffElasticDistribution_LinLinDirect) createCutoffElasticDistribution<Utility::LinLinLin, Utility::Direct>;
+// Add templates for the CoupledElasticDistribution
+%elastic_template_setup( Coupled )
+// Add templates for the CutoffElasticDistribution
+%elastic_template_setup( Cutoff )
+// Add templates for the HybridElasticDistribution
+%elastic_template_setup( Hybrid )
+// Add templates for the MomentPreservingElasticDistribution
+%elastic_template_setup( MomentPreserving )
 
 
 // //---------------------------------------------------------------------------//

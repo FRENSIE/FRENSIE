@@ -301,7 +301,7 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
     this->evaluateCutoffMoment( cutoff_zero, angular_grid, integrator, energy, 0 );
   }
 
-    this->evaluateScreenedRutherfordMoment( rutherford_zero, energy, 0 );
+  this->evaluateScreenedRutherfordMoment( rutherford_zero, energy, 0 );
   legendre_zero = rutherford_zero + cutoff_zero;
 
   // Iterate to get get all n moments

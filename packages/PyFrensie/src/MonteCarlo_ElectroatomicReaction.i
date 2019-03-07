@@ -26,7 +26,7 @@
 
 #include "MonteCarlo_CoupledElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_DecoupledElasticElectroatomicReaction.hpp"
-// #include "MonteCarlo_HybridElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_HybridElasticElectroatomicReaction.hpp"
 // #include "MonteCarlo_CutoffElasticElectroatomicReaction.hpp"
 // #include "MonteCarlo_MomentPreservingElasticElectroatomicReaction.hpp"
 // #include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
@@ -152,36 +152,62 @@ using namespace MonteCarlo;
 %template(StandardElectroatomicReactionLinLin) MonteCarlo::StandardReactionBaseImpl<MonteCarlo::ElectroatomicReaction, Utility::LinLin, false>;
 
 //---------------------------------------------------------------------------//
-// Add support for the CoupledElasticElectroatomicReaction class
+// Use this general setup macro with all templated elastic reactions
 //---------------------------------------------------------------------------//
+%define %elastic_reaction_before_setup( REACTION )
 
 // Add use of std::shared_ptr
-%shared_ptr(MonteCarlo::CoupledElasticElectroatomicReaction<Utility::LogLog, false>)
-%shared_ptr(MonteCarlo::CoupledElasticElectroatomicReaction<Utility::LinLog, false>)
-%shared_ptr(MonteCarlo::CoupledElasticElectroatomicReaction<Utility::LinLin, false>)
+%shared_ptr(MonteCarlo::REACTION ## ElasticElectroatomicReaction<Utility::LogLog, false>)
+%shared_ptr(MonteCarlo::REACTION ## ElasticElectroatomicReaction<Utility::LinLog, false>)
+%shared_ptr(MonteCarlo::REACTION ## ElasticElectroatomicReaction<Utility::LinLin, false>)
 
-// Include class
+%enddef
+
+//---------------------------------------------------------------------------//
+%define %elastic_reaction_after_setup( REACTION )
+
+%template(REACTION ## ElasticElectroatomicReaction_LogLog) MonteCarlo::REACTION ## ElasticElectroatomicReaction<Utility::LogLog, false>;
+%template(REACTION ## ElasticElectroatomicReaction_LinLog) MonteCarlo::REACTION ## ElasticElectroatomicReaction<Utility::LinLog, false>;
+%template(REACTION ## ElasticElectroatomicReaction_LinLin) MonteCarlo::REACTION ## ElasticElectroatomicReaction<Utility::LinLin, false>;
+
+%enddef
+
+//---------------------------------------------------------------------------//
+%define %elastic_reaction_template_after_setup( REACTION )
+
+  // Add templates for the Correlated REACTION ElasticReaction
+  %template(create ## REACTION ## ElasticReaction_LogLogCorrelated) create ## REACTION ## ElasticReaction<Utility::LogNudgedLogCosLog, Utility::Correlated>;
+  %template(create ## REACTION ## ElasticReaction_LinLogCorrelated) create ## REACTION ## ElasticReaction<Utility::LinLinLog, Utility::Correlated>;
+  %template(create ## REACTION ## ElasticReaction_LinLinCorrelated) create ## REACTION ## ElasticReaction<Utility::LinLinLin, Utility::Correlated>;
+  // Add templates for the Direct REACTION ElasticReaction
+  %template(create ## REACTION ## ElasticReaction_LogLogDirect) create ## REACTION ## ElasticReaction<Utility::LogNudgedLogCosLog, Utility::Direct>;
+  %template(create ## REACTION ## ElasticReaction_LinLogDirect) create ## REACTION ## ElasticReaction<Utility::LinLinLog, Utility::Direct>;
+  %template(create ## REACTION ## ElasticReaction_LinLinDirect) create ## REACTION ## ElasticReaction<Utility::LinLinLin, Utility::Direct>;
+
+%enddef
+
+//---------------------------------------------------------------------------//
+// Add support for the ElasticElectroatomicReaction classes
+//---------------------------------------------------------------------------//
+
+%elastic_reaction_before_setup( Coupled )
+%elastic_reaction_before_setup( Decoupled )
+%elastic_reaction_before_setup( Hybrid )
+%elastic_reaction_before_setup( Cutoff )
+%elastic_reaction_before_setup( MomentPreserving )
+
+// Include classes
 %include "MonteCarlo_CoupledElasticElectroatomicReaction.hpp"
-
-%template(CoupledElasticElectroatomicReaction_LogLog) MonteCarlo::CoupledElasticElectroatomicReaction<Utility::LogLog, false>;
-%template(CoupledElasticElectroatomicReaction_LinLog) MonteCarlo::CoupledElasticElectroatomicReaction<Utility::LinLog, false>;
-%template(CoupledElasticElectroatomicReaction_LinLin) MonteCarlo::CoupledElasticElectroatomicReaction<Utility::LinLin, false>;
-
-//---------------------------------------------------------------------------//
-// Add support for the DecoupledElasticElectroatomicReaction class
-//---------------------------------------------------------------------------//
-
-// Add use of std::shared_ptr
-%shared_ptr(MonteCarlo::DecoupledElasticElectroatomicReaction<Utility::LogLog, false>)
-%shared_ptr(MonteCarlo::DecoupledElasticElectroatomicReaction<Utility::LinLog, false>)
-%shared_ptr(MonteCarlo::DecoupledElasticElectroatomicReaction<Utility::LinLin, false>)
-
-// Include class
 %include "MonteCarlo_DecoupledElasticElectroatomicReaction.hpp"
+%include "MonteCarlo_HybridElasticElectroatomicReaction.hpp"
+%include "MonteCarlo_CutoffElasticElectroatomicReaction.hpp"
+%include "MonteCarlo_MomentPreservingElasticElectroatomicReaction.hpp"
 
-%template(DecoupledElasticElectroatomicReaction_LogLog) MonteCarlo::DecoupledElasticElectroatomicReaction<Utility::LogLog, false>;
-%template(DecoupledElasticElectroatomicReaction_LinLog) MonteCarlo::DecoupledElasticElectroatomicReaction<Utility::LinLog, false>;
-%template(DecoupledElasticElectroatomicReaction_LinLin) MonteCarlo::DecoupledElasticElectroatomicReaction<Utility::LinLin, false>;
+%elastic_reaction_after_setup( Coupled )
+%elastic_reaction_after_setup( Decoupled )
+%elastic_reaction_after_setup( Hybrid )
+%elastic_reaction_after_setup( Cutoff )
+%elastic_reaction_after_setup( MomentPreserving )
 
 //---------------------------------------------------------------------------//
 // Add support for the Electroatomic Reaction native factory
@@ -486,32 +512,11 @@ using namespace MonteCarlo;
   }
 %}
 
-// Wrap the correlated coupled elastic reactions
-%template(createCoupledElasticReaction_LogLogCorrelated) createCoupledElasticReaction<Utility::LogNudgedLogCosLog, Utility::Correlated>;
-%template(createCoupledElasticReaction_LinLogCorrelated) createCoupledElasticReaction<Utility::LinLinLog, Utility::Correlated>;
-%template(createCoupledElasticReaction_LinLinCorrelated) createCoupledElasticReaction<Utility::LinLinLin, Utility::Correlated>;
-// Wrap the direct coupled elastic reactions
-%template(createCoupledElasticReaction_LogLogDirect) createCoupledElasticReaction<Utility::LogNudgedLogCosLog, Utility::Direct>;
-%template(createCoupledElasticReaction_LinLogDirect) createCoupledElasticReaction<Utility::LinLinLog, Utility::Direct>;
-%template(createCoupledElasticReaction_LinLinDirect) createCoupledElasticReaction<Utility::LinLinLin, Utility::Direct>;
-// Wrap the correlated decoupled elastic reactions
-%template(createDecoupledElasticReaction_LogLogCorrelated) createDecoupledElasticReaction<Utility::LogLogCosLog, Utility::Correlated>;
-%template(createDecoupledElasticReaction_LinLogCorrelated) createDecoupledElasticReaction<Utility::LinLinLog, Utility::Correlated>;
-%template(createDecoupledElasticReaction_LinLinCorrelated) createDecoupledElasticReaction<Utility::LinLinLin, Utility::Correlated>;
-// Wrap the direct decoupled elastic reactions
-%template(createDecoupledElasticReaction_LogLogDirect) createDecoupledElasticReaction<Utility::LogLogCosLog, Utility::Direct>;
-%template(createDecoupledElasticReaction_LinLogDirect) createDecoupledElasticReaction<Utility::LinLinLog, Utility::Direct>;
-%template(createDecoupledElasticReaction_LinLinDirect) createDecoupledElasticReaction<Utility::LinLinLin, Utility::Direct>;
-// Wrap the correlated coupled elastic reactions
-%template(createCoupledElasticReaction_LogLogCorrelated) createCoupledElasticReaction<Utility::LogNudgedLogCosLog, Utility::Correlated>;
-%template(createCoupledElasticReaction_LinLogCorrelated) createCoupledElasticReaction<Utility::LinLinLog, Utility::Correlated>;
-%template(createCoupledElasticReaction_LinLinCorrelated) createCoupledElasticReaction<Utility::LinLinLin, Utility::Correlated>;
-// Wrap the direct coupled elastic reactions
-%template(createCoupledElasticReaction_LogLogDirect) createCoupledElasticReaction<Utility::LogNudgedLogCosLog, Utility::Direct>;
-%template(createCoupledElasticReaction_LinLogDirect) createCoupledElasticReaction<Utility::LinLinLog, Utility::Direct>;
-%template(createCoupledElasticReaction_LinLinDirect) createCoupledElasticReaction<Utility::LinLinLin, Utility::Direct>;
-
-
+%elastic_reaction_template_after_setup( Coupled )
+%elastic_reaction_template_after_setup( Decoupled )
+%elastic_reaction_template_after_setup( Hybrid )
+%elastic_reaction_template_after_setup( MomentPreserving )
+%elastic_reaction_template_after_setup( Cutoff )
 
 // //---------------------------------------------------------------------------//
 // // Add support for the Adjoint Electroatomic Reaction native factory helpers
