@@ -65,16 +65,16 @@ TEUCHOS_UNIT_TEST( AdjointFreeGasElasticMarginalBetaFunction, evaluatePDF )
 // Check that the PDF can be evaluated
 TEUCHOS_UNIT_TEST( AdjointFreeGasElasticMarginalBetaFunction, outputPDF )
 {
-  beta_function->setIndependentVariables( 5.06020e-8 );
+  beta_function->setIndependentVariables( 2.53010e-8 );
 
   double beta_max = beta_function->getBetaMax();
-  double beta_min = -2*beta_max;
+  double beta_min = -10*beta_max;
 
-  double beta_space = (beta_max - beta_min)/(100);
+  double beta_space = (beta_max - beta_min)/(1000);
   std::cout << " " << std::endl;
   std::cout << " " << std::endl;
 
-  for (int i = 0; i < 101; ++i)
+  for (int i = 0; i < 1001; ++i)
   {
     const double beta_value = beta_min + i*beta_space;
     double pdf_value = (*beta_function)( beta_value );

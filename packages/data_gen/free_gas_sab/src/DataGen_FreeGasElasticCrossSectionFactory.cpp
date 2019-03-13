@@ -38,9 +38,6 @@ FreeGasElasticCrossSectionFactory::FreeGasElasticCrossSectionFactory(
   this->extractAngularDistributionFromACE();
   this->convertCrossSectionToZeroTemperature();
   this->generateFreeGasCrossSection();
-
-  // Set the cutoff energy for upscattering from thermal treatment
-  d_energy_cutoff = Utility::calculateBetaMax( d_A )*d_kT;
 }
 
 // Accessor for zero-temperature elastic cross section
@@ -76,6 +73,9 @@ void FreeGasElasticCrossSectionFactory::extractCrossSectionFromACE()
   // Extract system parameters
   d_A  = ace_file_handler->getTableAtomicWeightRatio();
   d_kT = ace_file_handler->getTableTemperature();
+
+  // Set the cutoff energy for upscattering from thermal treatment
+  d_energy_cutoff = Utility::calculateBetaMax( d_A )*d_kT/3.0;
 
   // Extract the elastic cross section at kT from the XSS array
   Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_neutron_data_extractor;
@@ -149,8 +149,10 @@ void FreeGasElasticCrossSectionFactory::convertCrossSectionToZeroTemperature()
 // Generate the free gas S(alpha,beta) cross section
 void FreeGasElasticCrossSectionFactory::generateFreeGasCrossSection()
 {
+  //std::vector<double> energy_array{1e-11, 1e-10, 1e-9, 1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1, 10};
+
   // Loop over all energies and generate the cross section value
-  for( int i = 0; i < d_energy_array.length(); ++i )
+  for( int i = 0; i < d_energy_array.size(); ++i )
   {
     // Assign the energy
     double E = d_energy_array[i];
@@ -185,33 +187,19 @@ void FreeGasElasticCrossSectionFactory::generateFreeGasCrossSection()
 }
 
 // Extract Beta Distribution for Testing
-void FreeGasElasticCrossSectionFactory::extractTestBeta( double energy )
+void FreeGasElasticCrossSectionFactory::getFreeGasCrossSection( 
+       Teuchos::Array<double>& free_gas_cross_section )
 {
-  double E = energy;
-
-  if ( E < d_energy_cutoff )
-  {
-    d_beta_function.reset( new DataGen::FreeGasElasticMarginalBetaFunction(
-                  d_zero_temperature_cross_section_distribution, 
-                  d_ace_angular_distribution,
-                  d_A,
-                  d_kT,
-                  E ) );
-
-    double beta_min = d_beta_function->getBetaMin();
-    double beta_max = -10*beta_min;
-    double beta_space = (beta_max - beta_min)/(100);
-
-    std::vector<double> e_out = {0.1*d_kT, 0.2*d_kT, 0.3*d_kT, 0.4*d_kT, 0.5*d_kT, 0.6*d_kT, 0.7*d_kT, 0.8*d_kT, 0.9*d_kT, 1.0*d_kT, 1.1*d_kT, 1.2*d_kT, 1.3*d_kT, 1.4*d_kT, 1.5*d_kT, 1.6*d_kT, 1.7*d_kT, 1.8*d_kT, 1.9*d_kT, 2.0*d_kT };
-
-    for (int k = 0; k < 20; ++k)
-    {
-      double beta = (e_out[k] - E)/d_kT;
-      double   Ep = e_out[k];
-      std::cout << E << " " << Ep << " " << (*d_beta_function)(beta)*d_beta_function->getNormalizationConstant() << std::endl;
-    }
-  }
+  free_gas_cross_section = d_free_gas_cross_section;
 }
+
+// Extract Beta Distribution for Testing
+void FreeGasElasticCrossSectionFactory::getFreeGasCrossSectionDistribution( 
+       Teuchos::RCP<Utility::OneDDistribution>& free_gas_cross_section_distribution )
+{
+  free_gas_cross_section_distribution = d_free_gas_cross_section_distribution;
+}
+
 
 // Generate the free gas beta distribution
 void FreeGasElasticCrossSectionFactory::generateFreeGasBetaDistribution()

@@ -264,7 +264,7 @@ double FreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
   // Make sure the value is valid
   testPostcondition( value == value );
   
-  return value;
+  return value*(1170.27/738.925);
 }
 
 // Calculate the exponential argument constant

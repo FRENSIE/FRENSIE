@@ -244,7 +244,7 @@ double AdjointFreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
         // Approximate S(alpha,beta) function
         value = d_average_zero_temp_elastic_cross_section/
           ((d_A+1)*(d_A+1)*sqrt(alpha))*
-          exp( -(alpha + -1.0*beta)*(alpha + -1.0*beta)/(4*alpha) );
+          exp( -(alpha + -1.0*beta)*(alpha + 1.0*beta)/(4*alpha) );
 
         if( value > std::numeric_limits<double>::max() )
         {
@@ -274,7 +274,7 @@ double AdjointFreeGasElasticSAlphaBetaFunction::calculateExpArgConst(
 							 const double beta,
 							 const double E ) const
 {
-  return -d_A*E/d_kT + -(d_A+1.0)/2.0*(-1.0*beta - d_A*alpha);
+  return d_A*E/d_kT + -(d_A+1.0)/2.0*(-1.0*beta - d_A*alpha) + (-1.0)*d_A*beta;
 }
 
 // Calculate the exponential argument multiplier

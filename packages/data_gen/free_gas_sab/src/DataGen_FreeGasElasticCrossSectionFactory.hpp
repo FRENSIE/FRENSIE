@@ -67,7 +67,11 @@ public:
       Teuchos::Array<double>& unmodified_cross_section );
 
   // Beta Test
-  void extractTestBeta( double energy );
+  void getFreeGasCrossSection( 
+      Teuchos::Array<double>& free_gas_cross_section );
+
+  void getFreeGasCrossSectionDistribution( 
+      Teuchos::RCP<Utility::OneDDistribution>& free_gas_cross_section_distribution );
 
 private: 
   
