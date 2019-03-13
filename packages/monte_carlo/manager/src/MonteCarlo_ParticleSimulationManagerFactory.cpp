@@ -173,6 +173,7 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
  *  <li>MonteCarlo::SimulationGeneralProperties::getMinNumberOfBatchersPerRendezvous()</li>
  *  <li>MonteCarlo::SimulationGeneralProperties::getMaxBatchSize()</li>
  *  <li>MonteCarlo::SimulationGeneralProperties::getNumberOfBatchesPerProcessor()</li>
+ *  <li>MonteCarlo::SimulationGeneralProperties::getNumberOfSnapshotsPerBatch()</li>
  *  <li>MonteCarlo::SimulationGeneralProperties::getSimulationWallTime()</li>
  * </ul>
  */
@@ -190,6 +191,7 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
   const_cast<SimulationProperties&>( *d_properties ).setMinNumberOfBatchesPerRendezvous( updated_general_props.getMinNumberOfBatchesPerRendezvous() );
   const_cast<SimulationProperties&>( *d_properties ).setMaxBatchSize( updated_general_props.getMaxBatchSize() );
   const_cast<SimulationProperties&>( *d_properties ).setNumberOfBatchesPerProcessor( updated_general_props.getNumberOfBatchesPerProcessor() );
+  const_cast<SimulationProperties&>( *d_properties ).setNumberOfSnapshotsPerBatch( updated_general_props.getNumberOfSnapshotsPerBatch() );
   const_cast<SimulationProperties&>( *d_properties ).setSimulationWallTime( updated_general_props.getSimulationWallTime() );
   Utility::OpenMPProperties::setNumberOfThreads( threads );
 
