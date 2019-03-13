@@ -40,8 +40,6 @@ FRENSIE_UNIT_TEST( SimulationGeneralProperties, defaults )
   FRENSIE_CHECK_EQUAL( properties.getMaxBatchSize(), 1000000000 );
   FRENSIE_CHECK_EQUAL( properties.getNumberOfBatchesPerProcessor(), 1 );
   FRENSIE_CHECK_EQUAL( properties.getNumberOfSnapshotsPerBatch(), 1 );
-  FRENSIE_CHECK_EQUAL( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
-                       0.001 );
   FRENSIE_CHECK( !properties.isImplicitCaptureModeOn() );
 }
 
@@ -181,19 +179,6 @@ FRENSIE_UNIT_TEST( SimulationGeneralProperties, setNumberOfSnapshotsPerBatch )
 }
 
 //---------------------------------------------------------------------------//
-// Test that the surface flux angle cosine cutoff can be set
-FRENSIE_UNIT_TEST( SimulationGeneralProperties,
-                   setSurfaceFluxEstimatorAngleCosineCutoff )
-{
-  MonteCarlo::SimulationGeneralProperties properties;
-  
-  properties.setSurfaceFluxEstimatorAngleCosineCutoff( 0.1 );
-
-  FRENSIE_CHECK_EQUAL( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
-                       0.1 );
-}
-
-//---------------------------------------------------------------------------//
 // Test that implicit capture mode can be turned on/off
 FRENSIE_UNIT_TEST( SimulationGeneralProperties, setImplicitCaptureModeOnOff )
 {
@@ -240,7 +225,6 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationGeneralProperties,
     custom_properties.setMaxBatchSize( 100000000 );
     custom_properties.setNumberOfBatchesPerProcessor( 25 );
     custom_properties.setNumberOfSnapshotsPerBatch( 3 );
-    custom_properties.setSurfaceFluxEstimatorAngleCosineCutoff( 0.1 );
     custom_properties.setImplicitCaptureModeOn();
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( default_properties ) );
@@ -272,8 +256,6 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationGeneralProperties,
   FRENSIE_CHECK_EQUAL( default_properties.getMaxBatchSize(), 1000000000 );
   FRENSIE_CHECK_EQUAL( default_properties.getNumberOfBatchesPerProcessor(), 1 );
   FRENSIE_CHECK_EQUAL( default_properties.getNumberOfSnapshotsPerBatch(), 1 );
-  FRENSIE_CHECK_EQUAL( default_properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
-                       0.001 );
   FRENSIE_CHECK( !default_properties.isImplicitCaptureModeOn() );
 
   MonteCarlo::SimulationGeneralProperties custom_properties;
@@ -292,8 +274,6 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationGeneralProperties,
   FRENSIE_CHECK_EQUAL( custom_properties.getMaxBatchSize(), 100000000 );
   FRENSIE_CHECK_EQUAL( custom_properties.getNumberOfBatchesPerProcessor(), 25 );
   FRENSIE_CHECK_EQUAL( custom_properties.getNumberOfSnapshotsPerBatch(), 3 );
-  FRENSIE_CHECK_EQUAL( custom_properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
-                       0.1 );
   FRENSIE_CHECK( custom_properties.isImplicitCaptureModeOn() );
 }
 

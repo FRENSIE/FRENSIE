@@ -325,6 +325,9 @@ void EventHandler::load( Archive& ar, const unsigned version )
   if( number_of_committed_histories > 0 )
     ParticleHistoryObserver::setNumberOfHistories( number_of_committed_histories );
 
+  d_number_of_committed_histories_from_last_snapshot.resize( 1 );
+  d_number_of_committed_histories_from_last_snapshot[0] = 0;
+
   ar & boost::serialization::make_nvp( "elapsed_time", d_elapsed_simulation_time );  
 
   if( d_elapsed_simulation_time > 0.0 )

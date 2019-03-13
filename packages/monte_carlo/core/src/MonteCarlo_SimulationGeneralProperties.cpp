@@ -26,7 +26,6 @@ SimulationGeneralProperties::SimulationGeneralProperties()
     d_number_of_batches_per_processor( 1 ),
     d_number_of_snapshots_per_batch( 1 ),
     d_wall_time( Utility::QuantityTraits<double>::inf() ),
-    d_surface_flux_estimator_angle_cosine_cutoff( 0.001 ),
     d_implicit_capture_mode_on( false )
 { /* ... */ }
 
@@ -182,31 +181,6 @@ void SimulationGeneralProperties::setSimulationWallTime( const double wall_time 
 double SimulationGeneralProperties::getSimulationWallTime() const
 {
   return d_wall_time;
-}
-
-// Set the angle cosine cutoff value for surface flux estimators
-/*! \details When the angle cosine falls below the given cutoff an
- * approximation is used for the angle cosine to help bound the flux (avoids
- * a possible divide by zero).
- */
-void SimulationGeneralProperties::setSurfaceFluxEstimatorAngleCosineCutoff(
-                                                          const double cutoff )
-{
-  // Make sure the cutoff is valid
-  TEST_FOR_EXCEPTION( cutoff <= 0.0,
-                      std::runtime_error,
-                      "The cutoff must be between 0.0 and 1.0!" );
-  TEST_FOR_EXCEPTION( cutoff >= 1.0,
-                      std::runtime_error,
-                      "The cutoff must be between 0.0 and 1.0!" );
-
-  d_surface_flux_estimator_angle_cosine_cutoff = cutoff;
-}
-
-// Return the angle cosine cutoff value for surface flux estimators
-double SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff() const
-{
-  return d_surface_flux_estimator_angle_cosine_cutoff;
 }
 
 // Set implicit capture mode to on (off by default)

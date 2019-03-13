@@ -144,6 +144,12 @@ void ParticleTracker::updateFromGlobalParticleGoneEvent(
   }
 }
 
+// Take a snapshot
+void ParticleTracker::takeSnapshot(
+                              const uint64_t num_histories_since_last_snapshot,
+                              const double time_since_last_snapshot )
+{ /* ... */ }
+
 // Reset data
 void ParticleTracker::resetData()
 {

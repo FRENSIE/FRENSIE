@@ -92,12 +92,6 @@ public:
   //! Return the history simulation wall time (s)
   double getSimulationWallTime() const;
 
-  //! Set the angle cosine cutoff value for surface flux estimators
-  void setSurfaceFluxEstimatorAngleCosineCutoff( const double cutoff );
-
-  //! Return the angle cosine cutoff value for surface flux estimators
-  double getSurfaceFluxEstimatorAngleCosineCutoff() const;
-
   //! Set implicit capture mode to on (off by default)
   void setImplicitCaptureModeOn();
 
@@ -149,9 +143,6 @@ private:
   // The simulation wall time
   double d_wall_time;
 
-  // The angle cosine cutoff value for surface flux estimators
-  double d_surface_flux_estimator_angle_cosine_cutoff;
-
   // The capture mode (true = implicit, false = analogue - default)
   bool d_implicit_capture_mode_on;
 };
@@ -187,7 +178,6 @@ void SimulationGeneralProperties::save( Archive& ar, const unsigned version ) co
     ar & BOOST_SERIALIZATION_NVP( d_wall_time );
   }
 
-  ar & BOOST_SERIALIZATION_NVP( d_surface_flux_estimator_angle_cosine_cutoff );
   ar & BOOST_SERIALIZATION_NVP( d_implicit_capture_mode_on );
 }
 
@@ -212,7 +202,6 @@ void SimulationGeneralProperties::load( Archive& ar, const unsigned version )
   if( __inf_wall_time__ )
     d_wall_time = Utility::QuantityTraits<double>::inf();
 
-  ar & BOOST_SERIALIZATION_NVP( d_surface_flux_estimator_angle_cosine_cutoff );
   ar & BOOST_SERIALIZATION_NVP( d_implicit_capture_mode_on );
 }
 

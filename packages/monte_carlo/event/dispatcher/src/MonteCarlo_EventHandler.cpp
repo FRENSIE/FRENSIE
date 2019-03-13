@@ -131,8 +131,7 @@ EventHandler::EventHandler(
                             Utility::get<0>(surface_estimator_data_it->second),
                             Utility::get<1>(surface_estimator_data_it->second),
                             Utility::get<2>(surface_estimator_data_it->second),
-                            *d_model,
-                            properties );
+                            *d_model );
 
           ++surface_estimator_counter;
           ++surface_estimator_data_it;
@@ -249,12 +248,11 @@ void EventHandler::createAndRegisterCellEstimator(
 
 // Create and register surface estimator
 void EventHandler::createAndRegisterSurfaceEstimator(
-                    const uint32_t estimator_id,
-                    const Geometry::EstimatorType estimator_type,
-                    const Geometry::ParticleType particle_type,
-                    const Geometry::AdvancedModel::SurfaceIdArray& surfaces,
-                    const Geometry::Model& model,
-                    const MonteCarlo::SimulationGeneralProperties& properties )
+                       const uint32_t estimator_id,
+                       const Geometry::EstimatorType estimator_type,
+                       const Geometry::ParticleType particle_type,
+                       const Geometry::AdvancedModel::SurfaceIdArray& surfaces,
+                       const Geometry::Model& model )
 {
   switch( estimator_type )
   {
@@ -276,12 +274,10 @@ void EventHandler::createAndRegisterSurfaceEstimator(
     case Geometry::SURFACE_FLUX_ESTIMATOR:
     {
       std::shared_ptr<WeightMultipliedSurfaceFluxEstimator> estimator(
-          new WeightMultipliedSurfaceFluxEstimator(
-                     estimator_id,
-                     1.0,
-                     surfaces,
-                     model,
-                     properties.getSurfaceFluxEstimatorAngleCosineCutoff() ) );
+          new WeightMultipliedSurfaceFluxEstimator( estimator_id,
+                                                    1.0,
+                                                    surfaces,
+                                                    model ) );
 
       // Set the particle type
       this->setParticleTypes( particle_type, estimator );
@@ -751,8 +747,8 @@ double EventHandler::getElapsedTimeSinceLastSnapshot() const
 // Reset the elapsed time since the last snapshot
 void EventHandler::resetElapsedTimeSinceLastSnapshot()
 {
-  d_snapshot_timer.stop();
-  d_snapshot_timer.start();
+  d_snapshot_timer->stop();
+  d_snapshot_timer->start();
 }
 
 // Get the elapsed particle simulation time (s)

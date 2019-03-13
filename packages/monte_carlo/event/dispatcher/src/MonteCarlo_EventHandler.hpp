@@ -313,8 +313,7 @@ private:
                    const Geometry::EstimatorType estimator_type,
                    const Geometry::ParticleType particle_type,
                    const Geometry::AdvancedModel::SurfaceIdArray& surfaces,
-                   const Geometry::Model& model,
-                   const MonteCarlo::SimulationGeneralProperties& properties );
+                   const Geometry::Model& model );
                      
   // Set the particle type in a created estimator
   static void setParticleTypes( const Geometry::ParticleType particle_type,
