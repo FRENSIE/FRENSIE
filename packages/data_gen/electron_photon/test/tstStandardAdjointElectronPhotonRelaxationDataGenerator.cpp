@@ -844,7 +844,7 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   generator_h->setElectronTabularEvaluationTolerance( 1e-7 );
   generator_h->setElectronTwoDInterpPolicy( MonteCarlo::LOGLOGLOG_INTERPOLATION );
-  generator_h->setElectronTwoDGridPolicy( MonteCarlo::UNIT_BASE_CORRELATED_GRID );
+  generator_h->setElectronTwoDGridPolicy( MonteCarlo::UNIT_BASE_GRID );
 
   generator_h->setCutoffAngleCosine( 0.9 );
   generator_h->setNumberOfMomentPreservingAngles( 1.0 );
@@ -1600,8 +1600,8 @@ FRENSIE_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   cross_section =
     h_data_container.getAdjointBremsstrahlungElectronCrossSection();
 
-  FRENSIE_CHECK_EQUAL( cross_section.front(), 3.768360635041510420e+01 );
-  FRENSIE_CHECK_EQUAL( cross_section.back(), 2.784862359728274006e-01 );
+  FRENSIE_CHECK_EQUAL( cross_section.front(), 4.036473169035380693e+01 );
+  FRENSIE_CHECK_EQUAL( cross_section.back(), 5.960300454096508771e-01 );
   FRENSIE_CHECK_EQUAL( cross_section.size(), 5-threshold );
 
   FRENSIE_REQUIRE( !h_data_container.separateAdjointBremsstrahlungEnergyGrid() );

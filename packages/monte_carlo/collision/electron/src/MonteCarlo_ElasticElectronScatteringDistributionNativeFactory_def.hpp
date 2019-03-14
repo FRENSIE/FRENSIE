@@ -159,18 +159,18 @@ void ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservi
     evaluation_tol );
 
   // Create the elastic cross section reduction distribution
-  std::shared_ptr<const Utility::UnivariateDistribution> reduction_distribution(
-        new Utility::TabularDistribution<Utility::LogLog>(
+  std::shared_ptr<const Utility::UnivariateDistribution> reduction_distribution =
+  std::make_shared<Utility::TabularDistribution<Utility::LogLog> >(
             data_container.getElasticAngularEnergyGrid(),
-            data_container.getMomentPreservingCrossSectionReduction() ) );
+            data_container.getMomentPreservingCrossSectionReduction() );
 
   // Get the cutoff elastic cross sections
-  std::shared_ptr<const std::vector<double> > cutoff_cross_sections(
-    new std::vector<double>( data_container.getCutoffElasticCrossSection() ) );
+  auto cutoff_cross_sections = std::make_shared<const std::vector<double> >(
+       data_container.getCutoffElasticCrossSection() );
 
   // Get the total elastic cross sections
-  std::shared_ptr<std::vector<double> > total_cross_sections(
-     new std::vector<double>( data_container.getTotalElasticCrossSection() ) );
+  auto total_cross_sections = std::make_shared<const std::vector<double> >(
+       data_container.getTotalElasticCrossSection() );
 
   ThisType::calculateMomentPreservingCrossSections(
               cutoff_distribution,
@@ -308,10 +308,10 @@ void ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservi
     evaluation_tol );
 
   // Create the elastic cross section reduction distribution
-  std::shared_ptr<const Utility::UnivariateDistribution> reduction_distribution(
-        new Utility::TabularDistribution<Utility::LogLog>(
+  std::shared_ptr<const Utility::UnivariateDistribution> reduction_distribution =
+  std::make_shared<Utility::TabularDistribution<Utility::LogLog> >(
             data_container.getAdjointElasticAngularEnergyGrid(),
-            data_container.getAdjointMomentPreservingCrossSectionReduction() ) );
+            data_container.getAdjointMomentPreservingCrossSectionReduction() );
 
   // Get the cutoff elastic cross sections
   auto cutoff_cross_sections = std::make_shared<const std::vector<double> >(

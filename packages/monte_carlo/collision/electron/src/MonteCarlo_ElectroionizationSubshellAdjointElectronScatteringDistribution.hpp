@@ -85,7 +85,7 @@ public:
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
                double& outgoing_energy,
-               double& outgoing_angle_cosine  ) const;
+               double& outgoing_angle_cosine ) const;
 
   //! Sample an outgoing energy and direction and record the number of trials
   void sampleAndRecordTrials( const double incoming_energy,

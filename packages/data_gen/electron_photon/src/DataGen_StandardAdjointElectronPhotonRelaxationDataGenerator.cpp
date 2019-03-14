@@ -1443,7 +1443,19 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   data_container.setAdjointCutoffElasticCrossSectionThresholdEnergyIndex( threshold );
 
   // Set elastic angular distribution
-  std::vector<double> angular_energy_grid;
+  auto lower_it = std::lower_bound(d_forward_epr_data->getElasticAngularEnergyGrid().begin(), d_forward_epr_data->getElasticAngularEnergyGrid().end(), this->getMinElectronEnergy());
+  auto upper_it = std::lower_bound(d_forward_epr_data->getElasticAngularEnergyGrid().begin(), d_forward_epr_data->getElasticAngularEnergyGrid().end(), this->getMaxElectronEnergy());
+
+  std::vector<double> angular_energy_grid(lower_it, upper_it );
+
+  // Make sure the energy grid starts with the min energy
+  if( angular_energy_grid.front() != this->getMinElectronEnergy() )
+    angular_energy_grid.insert(angular_energy_grid.begin(), this->getMinElectronEnergy() );
+
+  // Make sure the energy grid ends with the max energy
+  if( angular_energy_grid.back() != this->getMaxElectronEnergy() )
+    angular_energy_grid.push_back(this->getMaxElectronEnergy() );
+
   std::map<double,std::vector<double> > elastic_angle, elastic_pdf;
 
   // Set the elastic moment preserving data
