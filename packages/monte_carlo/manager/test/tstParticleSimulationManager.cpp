@@ -630,6 +630,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationArchiveType )
                                                               threads ) );
 
     manager = factory->getManager();
+    manager->useMultipleRendezvousFiles();
   }
 
   FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "xml" );
@@ -689,6 +690,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationNameAndArchiveType )
                                                               threads ) );
 
     manager = factory->getManager();
+    manager->useMultipleRendezvousFiles();
   }
 
   FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "test_sim" );
