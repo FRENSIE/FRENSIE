@@ -29,12 +29,14 @@ Teuchos::RCP<DataGen::FreeGasElasticMarginalBetaFunction> beta_function;
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the beta min bound can be returned
+
+/*
 TEUCHOS_UNIT_TEST( FreeGasElasticMarginalBetaFunction, getBetaMin )
 {
   beta_function->setIndependentVariables( 1e-7 );
 
   TEST_FLOATING_EQUALITY( beta_function->getBetaMin(),
-  			  -3.95201770681001,
+  			 -3.95241294810482,
      		  1e-12 );
 }
 
@@ -65,6 +67,52 @@ TEUCHOS_UNIT_TEST( FreeGasElasticMarginalBetaFunction, evaluatePDF )
   pdf_value = (*beta_function)( -1*(beta_function->getBetaMin()) );
   TEST_ASSERT( pdf_value > 0.0 );
 }
+*/ 
+
+//---------------------------------------------------------------------------//
+// Check that the PDF can be evaluated
+TEUCHOS_UNIT_TEST( FreeGasElasticMarginalBetaFunction, outputPDF )
+{
+  beta_function->setIndependentVariables( 2.53010e-8 );
+  std::vector<double> energy_vector{1e-11, 2e-11, 5e-11, 1e-10, 2e-10, 5e-10, 1e-9, 2e-9, 5e-9, 1e-8, 2e-8, 5e-8, 1e-7, 2e-7, 5e-7, 1e-6};
+  Teuchos::Array<double> energy_array( energy_vector );
+
+  beta_function->populatePDF( energy_array );
+
+  Teuchos::Array<double> pdf_array;
+  beta_function->getPDF( pdf_array );
+
+  std::cout << " " << std::endl;
+
+  for( int i = 0; i < pdf_array.size(); ++i )
+  {
+    std::cout << energy_array[i] << " " << pdf_array[i] << std::endl;
+  }
+
+}
+
+//---------------------------------------------------------------------------//
+// Check that the PDF can be evaluated
+TEUCHOS_UNIT_TEST( FreeGasElasticMarginalBetaFunction, outputCDF )
+{
+  beta_function->setIndependentVariables( 2.53010e-8 );
+  std::vector<double> energy_vector{1e-11, 2e-11, 5e-11, 1e-10, 2e-10, 5e-10, 1e-9, 2e-9, 5e-9, 1e-8, 2e-8, 5e-8, 1e-7, 2e-7, 5e-7, 1e-6};
+  Teuchos::Array<double> energy_array( energy_vector );
+
+  beta_function->populateCDF( energy_array );
+
+  Teuchos::Array<double> cdf_array;
+  beta_function->getCDF( cdf_array );
+
+  std::cout << " " << std::endl;
+
+  for( int i = 0; i < cdf_array.size(); ++i )
+  {
+    std::cout << energy_array[i] << " " << cdf_array[i] << std::endl;
+  }
+
+}
+
 
 //---------------------------------------------------------------------------//
 // Custom main function

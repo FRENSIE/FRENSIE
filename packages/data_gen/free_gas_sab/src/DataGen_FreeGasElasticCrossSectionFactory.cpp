@@ -6,7 +6,19 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <limits>
+
+// Trilinos Includes
+#include <Teuchos_ScalarTraits.hpp>
+
 // FRENSIE Includes
+#include "MonteCarlo_AceLaw4NuclearScatteringEnergyDistribution.hpp"
+#include "Utility_TabularDistribution.hpp"
+#include "Utility_ContractException.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_SearchAlgorithms.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
 #include "DataGen_FreeGasElasticCrossSectionFactory.hpp"
 
 namespace DataGen{
@@ -37,7 +49,7 @@ FreeGasElasticCrossSectionFactory::FreeGasElasticCrossSectionFactory(
   this->extractCrossSectionFromACE();
   this->extractAngularDistributionFromACE();
   this->convertCrossSectionToZeroTemperature();
-  this->generateFreeGasCrossSection();
+  // this->generateFreeGasCrossSection();
 }
 
 // Accessor for zero-temperature elastic cross section
@@ -186,6 +198,65 @@ void FreeGasElasticCrossSectionFactory::generateFreeGasCrossSection()
       d_free_gas_cross_section ) );
 }
 
+void FreeGasElasticCrossSectionFactory::generateFreeGasPDF( double E, 
+       Teuchos::Array<double>& free_gas_PDF )
+{
+  std::vector<double> test_energy{1e-11, 1e-9, 1e-7, 1e-6};
+  Teuchos::Array<double> t_energy_array(test_energy);
+
+  d_beta_function.reset( new DataGen::FreeGasElasticMarginalBetaFunction(
+                    d_zero_temperature_cross_section_distribution, 
+                    d_ace_angular_distribution,
+                    d_A,
+                    d_kT,
+                    E ) );
+
+  d_beta_function->populatePDF( t_energy_array );
+  d_beta_function->getPDF( free_gas_PDF );
+}
+
+void FreeGasElasticCrossSectionFactory::generateFreeGasCDF( double E, 
+       Teuchos::Array<double>& free_gas_CDF )
+{
+  d_beta_function.reset( new DataGen::FreeGasElasticMarginalBetaFunction(
+                    d_zero_temperature_cross_section_distribution, 
+                    d_ace_angular_distribution,
+                    d_A,
+                    d_kT,
+                    E ) );
+
+  d_beta_function->populateCDF( d_energy_array );
+  d_beta_function->getCDF( free_gas_CDF );
+}
+
+void FreeGasElasticCrossSectionFactory::generateFreeGasPDFDistributions()
+{
+  std::vector<double> test_energy{1e-11, 1e-9, 1e-7, 1e-6};
+  Teuchos::Array<double> t_energy_array(test_energy);
+
+  MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution energy_distribution( t_energy_array.size() );
+
+  for( int i = 0; i < t_energy_array.size(); ++i )
+  {
+    energy_distribution[i].first = t_energy_array[i];
+
+    Teuchos::Array<double> pdf;
+    
+    this->generateFreeGasPDF( t_energy_array[i], pdf );
+
+    energy_distribution[i].second.reset( new Utility::TabularDistribution<Utility::LinLin>( t_energy_array, pdf ) );
+  }
+
+  d_energy_distribution.reset( 
+      new MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution( energy_distribution ) );
+}
+
+void FreeGasElasticCrossSectionFactory::getEnergyDistribution( 
+  Teuchos::RCP<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution>& distribution )
+{
+  distribution = d_energy_distribution;
+}
+
 // Extract Beta Distribution for Testing
 void FreeGasElasticCrossSectionFactory::getFreeGasCrossSection( 
        Teuchos::Array<double>& free_gas_cross_section )
@@ -199,18 +270,6 @@ void FreeGasElasticCrossSectionFactory::getFreeGasCrossSectionDistribution(
 {
   free_gas_cross_section_distribution = d_free_gas_cross_section_distribution;
 }
-
-
-// Generate the free gas beta distribution
-void FreeGasElasticCrossSectionFactory::generateFreeGasBetaDistribution()
-{
-}
-
-// Generate the free gas alpha distribution
-void FreeGasElasticCrossSectionFactory::generateFreeGasAlphaDistribution()
-{
-}
-
 
 } // end DataGen namespace
 

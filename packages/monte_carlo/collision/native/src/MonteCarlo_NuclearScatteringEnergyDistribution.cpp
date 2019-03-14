@@ -23,6 +23,11 @@ unsigned NuclearScatteringEnergyDistribution::getLaw() const
   return d_law;
 }
 
+void NuclearScatteringEnergyDistribution::getDistribution()
+{
+  
+}
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

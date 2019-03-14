@@ -24,6 +24,23 @@
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_KinematicHelpers.hpp"
+#include "DataGen_FreeGasElasticSAlphaBetaFunction.hpp"
+#include "DataGen_FreeGasElasticMarginalAlphaFunction.hpp"
+#include "DataGen_FreeGasElasticMarginalBetaFunction.hpp"
+#include "Data_XSSNeutronDataExtractor.hpp"
+#include "Data_ACEFileHandler.hpp"
+#include "Utility_SearchAlgorithms.hpp"
+#include "Utility_UniformDistribution.hpp"
+#include "Utility_KinematicHelpers.hpp"
+#include "Utility_ContractException.hpp"
+#include "Utility_TabularDistribution.hpp"
+#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_DiscreteDistribution.hpp"
+#include "MonteCarlo_AceLaw4NuclearScatteringEnergyDistribution.hpp"
+#include "Utility_ContractException.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_SearchAlgorithms.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -85,7 +102,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
                             test_neutron_ace_file_name,
 						    table_name,
 						    1u ) );
-
+free_gas_factory->generateFreeGasPDFDistributions();
   Teuchos::Array<double> zero_temperature_cross_section;
   free_gas_factory->getZeroTemperatureElasticCrossSection( zero_temperature_cross_section );
 
@@ -100,7 +117,6 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
                        1e-6 );
 }
 
-*/
 
 //---------------------------------------------------------------------------//
 // Check that the energy grid can be returned
@@ -125,6 +141,101 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
     std::cout << energy_array[i] << " " << free_gas_cross_section[i] << std::endl;
   }
 }
+
+//---------------------------------------------------------------------------//
+// Check that the energy grid can be returned
+TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
+		   tstPDFConstruction )
+{
+  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
+                            test_neutron_ace_file_name,
+                            table_name,
+                            1u ) );
+
+  Teuchos::Array<double> energy_array;
+  free_gas_factory->getEnergyArray( energy_array );
+
+  Teuchos::Array<double> free_gas_cross_section;
+  free_gas_factory->getFreeGasCrossSection( free_gas_cross_section );
+  
+  std::cout << " " << std::endl;
+
+  for( int i = 0; i < free_gas_cross_section.size(); ++i )
+  {
+    std::cout << energy_array[i] << " " << free_gas_cross_section[i] << std::endl;
+  }
+}
+*/
+
+
+//---------------------------------------------------------------------------//
+// Check that the energy grid can be returned
+TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
+		   tstDistributionConstruction )
+{
+  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
+                            test_neutron_ace_file_name,
+                            table_name,
+                            1u ) );
+
+  free_gas_factory->generateFreeGasPDFDistributions();
+
+  Teuchos::RCP<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
+
+  free_gas_factory->getEnergyDistribution( distribution );
+
+  //MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution energy_distribution;
+  //distribution->getDistribution( energy_distribution );
+
+  std::cout << " " << std::endl;
+  std::cout << distribution->sampleEnergy( 2.53010e-8 ) << std::endl;
+}
+
+/*
+//---------------------------------------------------------------------------//
+// Check that the energy grid can be returned
+TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
+		   tstFalseDistribution )
+{
+  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
+                            test_neutron_ace_file_name,
+                            table_name,
+                            1u ) );
+
+  
+  std::vector<double> test_energy{1e-11, 1e-10, 1e-9, 1e-8, 1e-7, 1e-6};
+  Teuchos::Array<double> energy_array( test_energy );
+
+  std::vector<double> test_pdf{0, 0.1, 0.2, 0.4, 0.6, 0.8, 0.95};
+  Teuchos::Array<double> pdf_array( test_pdf );
+
+  MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution energy_distribution( 6 );
+
+  for( int i = 0; i < 6; ++i )
+  {
+    energy_distribution[i].first = energy_array[i];
+
+    Teuchos::Array<double> pdf;
+
+    std::cout << energy_array << std::endl;
+    std::cout << pdf << std::endl;
+
+    energy_distribution[i].second.reset( new Utility::TabularDistribution<Utility::LinLin>( energy_array, pdf_array ) );
+  }
+
+  Teuchos::RCP<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
+
+  distribution.reset( 
+      new MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution( energy_distribution ) );
+
+  //MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution energy_distribution;
+  //distribution->getDistribution( energy_distribution );
+
+  std::cout << " " << std::endl;
+  std::cout << (*distribution).d_energy_distribution.front().first << std::endl;
+  std::cout << (*distribution).d_energy_distribution.back().first << std::endl;
+}
+*/
 
 //---------------------------------------------------------------------------//
 // Custom main function

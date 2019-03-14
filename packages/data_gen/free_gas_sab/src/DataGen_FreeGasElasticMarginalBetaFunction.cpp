@@ -91,6 +91,38 @@ double FreeGasElasticMarginalBetaFunction::operator()( const double beta )
   }
 }
 
+void FreeGasElasticMarginalBetaFunction::populatePDF( 
+    Teuchos::Array<double>& energy_array )
+{
+  for( int i = 0; i < energy_array.size(); ++i )
+  {
+    double beta = (energy_array[i] - d_E)/d_kT;
+    d_pdf_array.append( (*this)( beta ) );
+  }
+}
+
+void FreeGasElasticMarginalBetaFunction::getPDF( 
+    Teuchos::Array<double>& pdf_array )
+{
+  pdf_array = d_pdf_array;
+}
+
+void FreeGasElasticMarginalBetaFunction::populateCDF( 
+    Teuchos::Array<double>& energy_array )
+{
+  for( int i = 0; i < energy_array.size(); ++i )
+  {
+    double beta = (energy_array[i] - d_E)/d_kT;
+    d_cdf_array.append( this->evaluateCDF( beta ) );
+  }
+}
+
+void FreeGasElasticMarginalBetaFunction::getCDF( 
+    Teuchos::Array<double>& cdf_array )
+{
+  cdf_array = d_cdf_array;
+}
+
 // Evaluate the marginal CDF
 double FreeGasElasticMarginalBetaFunction::evaluateCDF( const double beta )
 {

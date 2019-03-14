@@ -14,12 +14,14 @@
 #include <iostream>
 #include <math.h>
 #include <vector>
+#include <limits>
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
+#include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
 #include "DataGen_FreeGasElasticSAlphaBetaFunction.hpp"
@@ -34,6 +36,11 @@
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_DiscreteDistribution.hpp"
+#include "MonteCarlo_AceLaw4NuclearScatteringEnergyDistribution.hpp"
+#include "Utility_ContractException.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_SearchAlgorithms.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
 
 namespace DataGen{
 
@@ -66,12 +73,23 @@ public:
   void getUnmodifiedElasticCrossSection(
       Teuchos::Array<double>& unmodified_cross_section );
 
-  // Beta Test
   void getFreeGasCrossSection( 
       Teuchos::Array<double>& free_gas_cross_section );
 
   void getFreeGasCrossSectionDistribution( 
       Teuchos::RCP<Utility::OneDDistribution>& free_gas_cross_section_distribution );
+
+  void generateFreeGasPDF( double E,
+      Teuchos::Array<double>& free_gas_PDF );
+
+  void generateFreeGasCDF( double E,
+      Teuchos::Array<double>& free_gas_CDF );
+
+  void generateFreeGasPDFDistributions();
+
+//  void serializeFreeGasPDFDistributions();
+
+  void getEnergyDistribution( Teuchos::RCP<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution>& distribution );
 
 private: 
   
@@ -86,12 +104,6 @@ private:
 
   // Generate the free gas S(alpha,beta) cross section 
   void generateFreeGasCrossSection();
-
-  // Generate the free gas beta distribution for each incoming energy
-  void generateFreeGasBetaDistribution();
-
-  // Generate the free gas alpha distribution for each incoming energy and beta
-  void generateFreeGasAlphaDistribution();
 
 // Variables 
 
@@ -142,6 +154,8 @@ Teuchos::RCP<DataGen::FreeGasElasticMarginalBetaFunction> d_beta_function;
 
 // Alpha Function
 Teuchos::RCP<DataGen::FreeGasElasticMarginalAlphaFunction> d_alpha_function;
+
+Teuchos::RCP<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> d_energy_distribution;
 
 };
 
