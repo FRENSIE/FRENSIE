@@ -21,6 +21,7 @@ parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
 options,args = parser.parse_args()
 
 from testingHelpers import importPyFrensieModuleFromBuildDir
+Utility = importPyFrensieModuleFromBuildDir('Utility')
 MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
 ActiveRegion = importPyFrensieModuleFromBuildDir('MonteCarlo.ActiveRegion')
 Event = importPyFrensieModuleFromBuildDir('MonteCarlo.Event')
@@ -252,12 +253,85 @@ class StandardEntityEstimatorTestCase(unittest.TestCase):
 
         self.assertEqual( estimator.getNumberOfResponseFunctions(), 3 )
 
+
+#-----------------------------------------------------------------------------#
+    # Check that snapshots can be enabled on entity bins
+    def testEnableSnapshotsOnEntityBins(self):
+        "*Test MonteCarlo.Event.StandardEntityEstimator enableSnapshotsOnEntityBins"
+
+        estimator = initializeSurfaceEstimator()
+                
+        self.assertFalse( estimator.areSnapshotsOnEntityBinsEnabled() );
+
+        estimator.enableSnapshotsOnEntityBins()
+
+        self.assertTrue( estimator.areSnapshotsOnEntityBinsEnabled() );
+
+#-----------------------------------------------------------------------------#
+    # Check that histograms can be enabled on entity bins
+    def testEnableHistogramsOnEntityBins(self):
+        "*Test MonteCarlo.Event.StandardEntityEstimator enableHistogramsOnEntityBins"
+
+        estimator = initializeSurfaceEstimator()
+                
+        self.assertFalse( estimator.areSampleMomentHistogramsOnEntityBinsEnabled() );
+
+        estimator.enableSampleMomentHistogramsOnEntityBins()
+
+        self.assertTrue( estimator.areSampleMomentHistogramsOnEntityBinsEnabled() );
+
+#-----------------------------------------------------------------------------#
+    # Check that the sample moment histogram bins can be set
+    def testSetSampleMomentHistogramBins(self):
+        "*Test MonteCarlo.Event.StandardEntityEstimator setSampleMomentHistogramBins"
+
+        estimator = initializeSurfaceEstimator()
+        estimator.enableSampleMomentHistogramsOnEntityBins();
+
+        num_response_functions = estimator.getNumberOfResponseFunctions()
+        num_estimator_bins = estimator.getNumberOfBins()*num_response_functions
+        entity_ids = estimator.getEntityIds()
+
+        expected_histogram_bins = list(Utility.doubleArrayFromString( "{-1.7976931348623157e+308, 0.0, 1e-30, 599l, 1e30, 1.7976931348623157e+308}" ))
+
+        # Check the entity bin histograms
+        for entity_id in entity_ids:
+          for i in range(0,num_estimator_bins):
+            histogram = estimator.getEntityBinSampleMomentHistogram( entity_id, i )
+            
+            self.assertSequenceEqual( list(histogram.getBinBoundaries()),
+                                      expected_histogram_bins )
+
+        # Check the total bin histograms
+        for entity_id in entity_ids:
+          histogram = estimator.getTotalBinSampleMomentHistogram( entity_id )
+
+          self.assertSequenceEqual( list(histogram.getBinBoundaries()),
+                                    expected_histogram_bins );
+
+        # Check the entity total historams
+        for entity_id in entity_ids:
+          for i in range(0,num_response_functions):
+            histogram = estimator.getEntityTotalSampleMomentHistogram( entity_id, i )
+
+            self.assertSequenceEqual( list(histogram.getBinBoundaries()),
+                                      expected_histogram_bins )
+
+        # Check the total histograms
+        for i in range(0,num_response_functions):
+          histogram = estimator.getTotalSampleMomentHistogram( i )
+
+          self.assertSequenceEqual( list(histogram.getBinBoundaries()),
+                                    expected_histogram_bins )
+
 #-----------------------------------------------------------------------------#
     # Check that a partial history contribution can be added to the estimator
     def testAddPartialHistoryPointContribution(self):
         "*Test MonteCarlo.Event.StandardEntityEstimator addPartialHistoryPointContribution"
         
         estimator = initializeSurfaceEstimator()
+        estimator.enableSampleMomentHistogramsOnEntityBins()
+        estimator.enableSnapshotsOnEntityBins()
         
         self.assertFalse( estimator.hasUncommittedHistoryContribution() )
 
@@ -378,30 +452,13 @@ class StandardEntityEstimatorTestCase(unittest.TestCase):
         # Commit the contributions
         estimator.commitHistoryContribution()
 
+        # Take a snapshot
+        estimator.takeSnapshot( 1, 1.0 )
+
         self.assertFalse( estimator.hasUncommittedHistoryContribution() )
 
         Event.ParticleHistoryObserver.setNumberOfHistories( 1.0 )
         Event.ParticleHistoryObserver.setElapsedTime( 1.0 )
-
-        # # Check the total bin data moments
-        # total_bin_first_moments = estimator.getTotalBinDataFirstMoments()
-        # total_bin_second_moments = estimator.getTotalBinDataSecondMoments()
-
-        # self.assertSequenceEqual( list(total_bin_first_moments), 16*[ 4e-3 ] )
-        # self.assertSequenceEqual( list(total_bin_second_moments), 16*[ 1.6e-5 ] )
-
-        # # Check the entity bin data moments
-        # entity_bin_first_moments = estimator.getEntityBinDataFirstMoments( 0 )
-        # entity_bin_second_moments = estimator.getEntityBinDataSecondMoments( 0 )
-
-        # self.assertSequenceEqual( list(entity_bin_first_moments), 16*[ 2e-3 ] )
-        # self.assertSequenceEqual( list(entity_bin_second_moments), 16*[ 4e-6 ] )
-
-        # entity_bin_first_moments = estimator.getEntityBinDataFirstMoments( 1 )
-        # entity_bin_second_moments = estimator.getEntityBinDataSecondMoments( 1 )
-
-        # self.assertSequenceEqual( list(entity_bin_first_moments), 16*[ 2e-3 ] )
-        # self.assertSequenceEqual( list(entity_bin_second_moments), 16*[ 4e-6 ] )
 
         # Check the entity total data moments
         self.assertTrue( estimator.isTotalDataAvailable() )
@@ -474,7 +531,6 @@ class StandardEntityEstimatorTestCase(unittest.TestCase):
         self.assertSequenceEqual( list(total_fourth_moments), [ 1048576.0, 1048576.0 ] )
 
         # Check the processed total data
-
         processed_data = estimator.getTotalProcessedData()
         total_mean = processed_data["mean"]
         total_re = processed_data["re"]
@@ -490,6 +546,84 @@ class StandardEntityEstimatorTestCase(unittest.TestCase):
         self.assertSequenceEqual( list(total_fom), [ 0.0, 0.0 ] )
         self.assertSequenceEqual( list(processed_data["fom"]), [ 0.0, 0.0 ] )
 
+        # Check the total snapshots
+        snapshot_history_values = estimator.getTotalMomentSnapshotHistoryValues()
+        self.assertSequenceEqual( list(snapshot_history_values), [1] )
+
+        snapshot_time_values = estimator.getTotalMomentSnapshotSamplingTimes()
+
+        self.assertSequenceEqual( list(snapshot_time_values), [1.0] )
+        
+        for i in range(0,estimator.getNumberOfResponseFunctions()):
+          first_moment_snapshots = estimator.getTotalFirstMomentSnapshots( i )
+          second_moment_snapshots = estimator.getTotalSecondMomentSnapshots( i )
+          third_moment_snapshots = estimator.getTotalThirdMomentSnapshots( i )
+          fourth_moment_snapshots = estimator.getTotalFourthMomentSnapshots( i )
+
+          self.assertSequenceEqual( list(first_moment_snapshots), [32.0] )
+          self.assertSequenceEqual( list(second_moment_snapshots), [1024.0] )
+          self.assertSequenceEqual( list(third_moment_snapshots), [32768.0] )
+          self.assertSequenceEqual( list(fourth_moment_snapshots), [1048576.0] )
+
+        # Check the processed total snapshots
+        for i in range(0,estimator.getNumberOfResponseFunctions()):
+          processed_data = estimator.getTotalProcessedSnapshots( i )
+          mean_snapshots = processed_data["mean"]
+          re_snapshots = processed_data["re"]
+          vov_snapshots = processed_data["vov"]
+          fom_snapshots = processed_data["fom"]
+          
+          self.assertSequenceEqual( list(mean_snapshots), [320.0/3] )
+          self.assertSequenceEqual( list(re_snapshots), [0.0] )
+          self.assertSequenceEqual( list(vov_snapshots), [0.0] )
+          self.assertSequenceEqual( list(fom_snapshots), [0.0] )
+          
+        # Check the entity bin histograms
+        num_estimator_bins = estimator.getNumberOfBins()*estimator.getNumberOfResponseFunctions()
+        entity_ids = estimator.getEntityIds()
+                
+        expected_histogram_bins = list(Utility.doubleArrayFromString( "{-1.7976931348623157e+308, 0.0, 1e-30, 599l, 1e30, 1.7976931348623157e+308}" ))
+        expected_histogram_values = list(Utility.doubleArrayFromString( "{0.0r298, 1.0, 0.0r304}" ))
+        expected_empty_histogram_values = list(Utility.doubleArrayFromString( "{0.0r603}" ))
+
+        for entity_id in entity_ids:
+          for i in range(0,num_estimator_bins):
+            histogram = estimator.getEntityBinSampleMomentHistogram( entity_id, i )
+            self.assertSequenceEqual( list(histogram.getBinBoundaries()),
+                                      expected_histogram_bins )
+            
+            if( i == 2 or i == 3 or i == 6 or i == 7 or  i == 10 or i == 11 or
+                i == 14 or i == 15 or i == 18 or i == 19 or i == 22 or
+                i == 23 or i == 26 or i == 27 or i == 30 or i == 31 ):
+              self.assertEqual( histogram.getNumberOfScores(), 1 )
+            else:
+              self.assertEqual( histogram.getNumberOfScores(), 0 )
+
+            self.assertEqual( len(histogram.getHistogramValues()),
+                              len(histogram.getBinBoundaries())-1 )
+            self.assertEqual( len(histogram.getNormalizedHistogramValues()),
+                              len(histogram.getBinBoundaries())-1 )
+            self.assertEqual( len(histogram.getDensityValues()),
+                              len(histogram.getBinBoundaries())-1 )
+
+        # Check the entity total histograms
+        num_response_functions = estimator.getNumberOfResponseFunctions()
+
+        for entity_id in entity_ids:
+          for i in range(0,num_response_functions):
+            histogram = estimator.getEntityTotalSampleMomentHistogram( entity_id, i )
+
+            self.assertSequenceEqual( list(histogram.getBinBoundaries()),
+                                      expected_histogram_bins )
+
+            self.assertEqual( histogram.getNumberOfScores(), 1 )
+            self.assertEqual( len(histogram.getHistogramValues()),
+                              len(histogram.getBinBoundaries())-1 )
+            self.assertEqual( len(histogram.getNormalizedHistogramValues()),
+                              len(histogram.getBinBoundaries())-1 )
+            self.assertEqual( len(histogram.getDensityValues()),
+                              len(histogram.getBinBoundaries())-1 )
+                              
 #-----------------------------------------------------------------------------#
 # Custom main
 #-----------------------------------------------------------------------------#

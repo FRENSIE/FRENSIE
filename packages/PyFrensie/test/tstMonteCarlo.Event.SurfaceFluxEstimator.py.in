@@ -272,6 +272,28 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         self.assertEqual( estimator.getNumberOfResponseFunctions(), 2 )
 
 #---------------------------------------------------------------------------#
+# Check that the cosine cutoff value can be set
+    def testSetCosineCutoffValue(self):
+        "*Test MonteCarlo.Event.SurfaceFluxEstimator setCosineCutoffValue"
+
+        # Set the surface ids
+        surface_ids = [None] * ( 2 )
+        surface_ids[0] = 0
+        surface_ids[1] = 1
+
+        # Set the surface areas
+        surface_areas = [None] * ( 2 )
+        surface_areas[0] = 1.0
+        surface_areas[1] = 2.0
+        estimator = Event.WeightMultipliedSurfaceFluxEstimator( 0, 10.0, surface_ids, surface_areas )
+
+        self.assertEqual( estimator.getCosineCutoffValue(), 0.001 )
+
+        estimator.setCosineCutoffValue( 0.1 )
+
+        self.assertEqual( estimator.getCosineCutoffValue(), 0.1 )
+
+#---------------------------------------------------------------------------#
 # Check that a partial history contribution can be added to the estimator
     def testUpdateFromParticleCrossingSurfaceEvent(self):
         "*Test MonteCarlo.Event.SurfaceFluxEstimator updateFromParticleCrossingSurfaceEvent"
@@ -739,12 +761,17 @@ class SurfaceFluxEstimatorTestCase(unittest.TestCase):
         # Set the surface areas
         surface_areas = [None] * ( 1 )
         surface_areas[0] = 1.0
-        estimator_1 = Event.WeightMultipliedSurfaceFluxEstimator( 0, 10.0, surface_ids, surface_areas, 0.1 )
+        estimator_1 = Event.WeightMultipliedSurfaceFluxEstimator( 0, 10.0, surface_ids, surface_areas )
+        estimator_1.setCosineCutoffValue( 0.1 )
         estimator_1_base = estimator_1
-        estimator_2 = Event.WeightAndEnergyMultipliedSurfaceFluxEstimator( 1, 10.0, surface_ids, surface_areas, 0.1 )
+        
+        estimator_2 = Event.WeightAndEnergyMultipliedSurfaceFluxEstimator( 1, 10.0, surface_ids, surface_areas )
         estimator_2_base = estimator_2
-        estimator_3 = Event.WeightAndChargeMultipliedSurfaceFluxEstimator( 2, 10.0, surface_ids, surface_areas, 0.1 )
+        estimator_2.setCosineCutoffValue( 0.1 )
+        
+        estimator_3 = Event.WeightAndChargeMultipliedSurfaceFluxEstimator( 2, 10.0, surface_ids, surface_areas )
         estimator_3_base = estimator_3
+        estimator_3.setCosineCutoffValue( 0.1 )
 
         # Set the cosine bins
         cosine_bins = [None] * ( 3 )

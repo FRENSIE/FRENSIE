@@ -42,7 +42,7 @@ class SimulationPropertiesTestCase(unittest.TestCase):
         self.assertEqual( properties.getMaxRendezvousBatchSize(), 1000000000 )
         self.assertEqual( properties.getMinNumberOfBatchesPerRendezvous(), 1 )
         self.assertEqual( properties.getMaxBatchSize(), 1000000000 )
-        self.assertEqual( properties.getSurfaceFluxEstimatorAngleCosineCutoff(), 0.001 )
+        self.assertEqual( properties.getNumberOfSnapshotsPerBatch(), 1 )
         self.assertFalse(properties.isImplicitCaptureModeOn() )
 
         # Neutron properties
@@ -99,7 +99,6 @@ class SimulationPropertiesTestCase(unittest.TestCase):
                           MonteCarlo.COUPLED_DISTRIBUTION )
         self.assertEqual( properties.getCoupledElasticSamplingMode(),
                           MonteCarlo.MODIFIED_TWO_D_UNION )
-        self.assertEqual( properties.getElasticCutoffAngleCosine(), 1.0 )
 
     def testSetAtomicRelaxationMode(self):
         "*Test MonteCarlo.SimulationProperties setAtomicRelaxationMode"
