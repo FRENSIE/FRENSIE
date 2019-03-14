@@ -41,6 +41,46 @@
 #define FUNC_NEW_NAME( ... ) _GET_FUNC_NEW_NAME_MACRO(__VA_ARGS__, _FUNC_NEW_NAME_3_ARGS, _FUNC_NEW_NAME_2_ARGS)(__VA_ARGS__)
 
 //---------------------------------------------------------------------------//
+// Helper macro for setting up a python interface for electron elastic factory
+// class templated functions
+//---------------------------------------------------------------------------//
+%define %elastic_template_setup( DIST )
+
+  // Add templates for the Correlated DIST ElasticDistribution
+  %template(create ## DIST ## ElasticDistribution_LogLogCorrelated) create ## DIST ## ElasticDistribution<Utility::LogNudgedLogCosLog, Utility::Correlated>;
+  %template(create ## DIST ## ElasticDistribution_LinLogCorrelated) create ## DIST ## ElasticDistribution<Utility::LinLinLog, Utility::Correlated>;
+  %template(create ## DIST ## ElasticDistribution_LinLinCorrelated) create ## DIST ## ElasticDistribution<Utility::LinLinLin, Utility::Correlated>;
+  // Add templates for the Direct DIST ElasticDistribution
+  %template(create ## DIST ## ElasticDistribution_LogLogDirect) create ## DIST ## ElasticDistribution<Utility::LogNudgedLogCosLog, Utility::Direct>;
+  %template(create ## DIST ## ElasticDistribution_LinLogDirect) create ## DIST ## ElasticDistribution<Utility::LinLinLog, Utility::Direct>;
+  %template(create ## DIST ## ElasticDistribution_LinLinDirect) create ## DIST ## ElasticDistribution<Utility::LinLinLin, Utility::Direct>;
+
+%enddef
+
+//---------------------------------------------------------------------------//
+// Helper macro for setting up a python interface for electron factory
+// class templated functions
+//---------------------------------------------------------------------------//
+%define %electron_template_setup( DIST )
+
+  // Add templates for the UnitBaseCorrelated DIST Distribution
+  %template(create ## DIST ## Distribution_LogLogUnitBaseCorrelated) create ## DIST ## Distribution<Utility::LogLogLog, Utility::UnitBaseCorrelated>;
+  %template(create ## DIST ## Distribution_LinLogUnitBaseCorrelated) create ## DIST ## Distribution<Utility::LinLinLog, Utility::UnitBaseCorrelated>;
+  %template(create ## DIST ## Distribution_LinLinUnitBaseCorrelated) create ## DIST ## Distribution<Utility::LinLinLin, Utility::UnitBaseCorrelated>;
+
+  // Add templates for the Correlated DIST Distribution
+  %template(create ## DIST ## Distribution_LogLogCorrelated) create ## DIST ## Distribution<Utility::LogLogLog, Utility::Correlated>;
+  %template(create ## DIST ## Distribution_LinLogCorrelated) create ## DIST ## Distribution<Utility::LinLinLog, Utility::Correlated>;
+  %template(create ## DIST ## Distribution_LinLinCorrelated) create ## DIST ## Distribution<Utility::LinLinLin, Utility::Correlated>;
+
+  // Add templates for the UnitBase DIST Distribution
+  %template(create ## DIST ## Distribution_LogLogUnitBase) create ## DIST ## Distribution<Utility::LogLogLog, Utility::UnitBase>;
+  %template(create ## DIST ## Distribution_LinLogUnitBase) create ## DIST ## Distribution<Utility::LinLinLog, Utility::UnitBase>;
+  %template(create ## DIST ## Distribution_LinLinUnitBase) create ## DIST ## Distribution<Utility::LinLinLin, Utility::UnitBase>;
+
+%enddef
+
+//---------------------------------------------------------------------------//
 // Helper macro for setting up a python interface for electron factory class templated functions
 //---------------------------------------------------------------------------//
 %define %electron_function_interface_setup( FUNCTION )

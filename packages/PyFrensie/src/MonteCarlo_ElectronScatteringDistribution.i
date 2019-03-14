@@ -9,6 +9,7 @@
 %{
 // FRENSIE Includes
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
+#include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "MonteCarlo_ScatteringDistribution.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
@@ -33,10 +34,18 @@
 
 // #include "MonteCarlo_ElectronScatteringDistributionNativeFactoryHelpers.hpp"
 // #include "MonteCarlo_ElectronScatteringDistributionACEFactoryHelpers.hpp"
+
 #include "MonteCarlo_BremsstrahlungAdjointElectronScatteringDistribution.hpp"
+#include "MonteCarlo_BremsstrahlungAdjointElectronScatteringDistributionNativeFactory.hpp"
+
 #include "MonteCarlo_ElectroionizationSubshellAdjointElectronScatteringDistribution.hpp"
+#include "MonteCarlo_ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory.hpp"
+
 #include "MonteCarlo_AtomicExcitationAdjointElectronScatteringDistribution.hpp"
+#include "MonteCarlo_AtomicExcitationAdjointElectronScatteringDistributionNativeFactory.hpp"
+
 // #include "MonteCarlo_AdjointElectronScatteringDistributionNativeFactoryHelpers.hpp"
+
 #include "Utility_ToStringTraitsDecl.hpp"
 %}
 
@@ -54,6 +63,7 @@
 
 // shared_ptr Data Container handling
 %shared_ptr(Data::ElectronPhotonRelaxationDataContainer);
+%shared_ptr(Data::AdjointElectronPhotonRelaxationDataContainer);
 
 // // Import the explicit template instantiation helpers
 // %import "Utility_ExplicitTemplateInstantiationMacros.hpp"
@@ -88,6 +98,7 @@
 // Add a general typemap for sampling
 %apply double& OUTPUT { double& outgoing_energy };
 %apply double& OUTPUT { double& scattering_angle_cosine };
+%apply double& OUTPUT { double& outgoing_angle_cosine };
 
 //---------------------------------------------------------------------------//
 // Add support for the ElasticElectronDistributionType enum
@@ -140,66 +151,7 @@
 // Include the class
 %include "MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp"
 
-//---------------------------------------------------------------------------//
-// Add support for the HybridElasticElectronScatteringDistribution
-//---------------------------------------------------------------------------//
-
-// Add use of std::shared_ptr
-%shared_ptr(MonteCarlo::HybridElasticElectronScatteringDistribution)
-// Include the class
-%include "MonteCarlo_HybridElasticElectronScatteringDistribution.hpp"
-
-//---------------------------------------------------------------------------//
-// Add support for the CutoffElasticElectronScatteringDistribution
-//---------------------------------------------------------------------------//
-
-// Add use of std::shared_ptr
-%shared_ptr(MonteCarlo::CutoffElasticElectronScatteringDistribution)
-// Include the class
-%include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
-
-//---------------------------------------------------------------------------//
-// Add support for the MomentPreservingElasticElectronScatteringDistribution
-//---------------------------------------------------------------------------//
-
-// Add use of std::shared_ptr
-%shared_ptr(MonteCarlo::MomentPreservingElasticElectronScatteringDistribution)
-// Include the class
-%include "MonteCarlo_MomentPreservingElasticElectronScatteringDistribution.hpp"
-
-//---------------------------------------------------------------------------//
-// Add support for the AtomicExcitationElectronScatteringDistribution
-//---------------------------------------------------------------------------//
-
-// Add use of std::shared_ptr
-%shared_ptr(MonteCarlo::AtomicExcitationElectronScatteringDistribution)
-// Include the class
-%include "MonteCarlo_AtomicExcitationElectronScatteringDistribution.hpp"
-
-//---------------------------------------------------------------------------//
-// Use this general setup macro with all templated elastic distributions
-//---------------------------------------------------------------------------//
-%define %elastic_template_setup( DIST )
-
-  // Add templates for the Correlated DIST ElasticDistribution
-  %template(create ## DIST ## ElasticDistribution_LogLogCorrelated) create ## DIST ## ElasticDistribution<Utility::LogNudgedLogCosLog, Utility::Correlated>;
-  %template(create ## DIST ## ElasticDistribution_LinLogCorrelated) create ## DIST ## ElasticDistribution<Utility::LinLinLog, Utility::Correlated>;
-  %template(create ## DIST ## ElasticDistribution_LinLinCorrelated) create ## DIST ## ElasticDistribution<Utility::LinLinLin, Utility::Correlated>;
-  // Add templates for the Direct DIST ElasticDistribution
-  %template(create ## DIST ## ElasticDistribution_LogLogDirect) create ## DIST ## ElasticDistribution<Utility::LogNudgedLogCosLog, Utility::Direct>;
-  %template(create ## DIST ## ElasticDistribution_LinLogDirect) create ## DIST ## ElasticDistribution<Utility::LinLinLog, Utility::Direct>;
-  %template(create ## DIST ## ElasticDistribution_LinLinDirect) create ## DIST ## ElasticDistribution<Utility::LinLinLin, Utility::Direct>;
-
-%enddef
-
-//---------------------------------------------------------------------------//
-// Add support for the Electron Scattering Distributions native factory
-//---------------------------------------------------------------------------//
-
 %inline %{
-//----------------------------------------------------------------------------//
-//      ****ELASTIC DISTRIBUTIONS****
-//----------------------------------------------------------------------------//
 
 // Create the coupled elastic distribution ( combined Cutoff and Screened Rutherford )
 template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
@@ -223,7 +175,55 @@ std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution> 
   return distribution;
 }
 
-//! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
+// Create the coupled elastic distribution ( combined Cutoff and Screened Rutherford )
+template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
+std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution> createCoupledElasticDistribution(
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
+    const MonteCarlo::CoupledElasticSamplingMethod method,
+    const double evaluation_tol )
+{
+  std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
+    distribution;
+
+  // Assign the cutoff and total elastic cross section and electron energy grid
+  auto cutoff_cross_section = std::make_shared<std::vector<double>>(
+    data_container.getAdjointCutoffElasticCrossSection() );
+
+  auto total_cross_section = std::make_shared<std::vector<double>>(
+    data_container.getAdjointTotalElasticCrossSection() );
+
+  auto energy_grid = std::make_shared<std::vector<double>>(
+    data_container.getAdjointElectronEnergyGrid() );
+
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
+      distribution,
+      energy_grid,
+      cutoff_cross_section,
+      total_cross_section,
+      data_container,
+      method,
+      evaluation_tol );
+
+  return distribution;
+}
+
+%}
+
+// Add templates for the CoupledElasticDistribution
+%elastic_template_setup( Coupled )
+
+//---------------------------------------------------------------------------//
+// Add support for the HybridElasticElectronScatteringDistribution
+//---------------------------------------------------------------------------//
+
+// Add use of std::shared_ptr
+%shared_ptr(MonteCarlo::HybridElasticElectronScatteringDistribution)
+// Include the class
+%include "MonteCarlo_HybridElasticElectronScatteringDistribution.hpp"
+
+%inline %{
+
+// Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
 template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
 std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution> createHybridElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
@@ -276,6 +276,69 @@ std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution> c
   return distribution;
 }
 
+
+// Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
+template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
+std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution> createHybridElasticDistribution(
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
+    const double cutoff_angle_cosine,
+    const double evaluation_tol )
+{
+  // Extract the common energy grid used for this atom
+  auto energy_grid = std::make_shared<std::vector<double>>(
+    data_container.getAdjointElectronEnergyGrid() );
+
+  // Cutoff elastic cross section
+  auto cutoff_cross_section = std::make_shared<std::vector<double>>(
+    data_container.getAdjointCutoffElasticCrossSection() );
+
+  // Cutoff elastic cross section threshold energy bin index
+  size_t cutoff_threshold_energy_index =
+    data_container.getAdjointCutoffElasticCrossSectionThresholdEnergyIndex();
+
+  // Moment preserving elastic cross section
+  std::shared_ptr<std::vector<double> >
+    mp_cross_section( new std::vector<double> );
+  size_t mp_threshold_energy_index;
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<TwoDInterpPolicy,TwoDGridPolicy>(
+                               *mp_cross_section,
+                               mp_threshold_energy_index,
+                               data_container,
+                               energy_grid,
+                               evaluation_tol );
+
+  // Create the hybrid elastic scattering distribution
+  std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution>
+    distribution;
+
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
+      distribution,
+      energy_grid,
+      cutoff_cross_section,
+      mp_cross_section,
+      data_container,
+      cutoff_angle_cosine,
+      evaluation_tol );
+
+  return distribution;
+}
+
+%}
+
+// Add templates for the HybridElasticDistribution
+%elastic_template_setup( Hybrid )
+
+//---------------------------------------------------------------------------//
+// Add support for the CutoffElasticElectronScatteringDistribution
+//---------------------------------------------------------------------------//
+
+// Add use of std::shared_ptr
+%shared_ptr(MonteCarlo::CutoffElasticElectronScatteringDistribution)
+// Include the class
+%include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
+
+%inline %{
+
 // Create a cutoff elastic distribution
 template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
 std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> createCutoffElasticDistribution(
@@ -297,6 +360,43 @@ std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> c
 
   return distribution;
 }
+
+// Create a cutoff elastic distribution
+template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
+std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> createCutoffElasticDistribution(
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
+    const double cutoff_angle_cosine,
+    const double evaluation_tol )
+{
+  std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+    distribution;
+
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
+      distribution,
+      data_container,
+      cutoff_angle_cosine,
+      evaluation_tol );
+
+  // Make sure the distribution was created correctly
+  testPostcondition( distribution.use_count() > 0 );
+
+  return distribution;
+}
+%}
+
+// Add templates for the CutoffElasticDistribution
+%elastic_template_setup( Cutoff )
+
+//---------------------------------------------------------------------------//
+// Add support for the MomentPreservingElasticElectronScatteringDistribution
+//---------------------------------------------------------------------------//
+
+// Add use of std::shared_ptr
+%shared_ptr(MonteCarlo::MomentPreservingElasticElectronScatteringDistribution)
+// Include the class
+%include "MonteCarlo_MomentPreservingElasticElectronScatteringDistribution.hpp"
+
+%inline %{
 
 // Create a moment preserving elastic distribution
 template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
@@ -320,9 +420,70 @@ std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistr
   return distribution;
 }
 
-//----------------------------------------------------------------------------//
-//     ****BREMSSTRAHLUNG DISTRIBUTIONS****
-//----------------------------------------------------------------------------//
+// Create a moment preserving elastic distribution
+template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
+std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution> createMomentPreservingElasticDistribution(
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
+    const double cutoff_angle_cosine,
+    const double evaluation_tol )
+{
+  std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution>
+    distribution;
+
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
+      distribution,
+      data_container,
+      cutoff_angle_cosine,
+      evaluation_tol );
+
+  // Make sure the distribution was created correctly
+  testPostcondition( distribution.use_count() > 0 );
+
+  return distribution;
+}
+%}
+
+// Add templates for the MomentPreservingElasticDistribution
+%elastic_template_setup( MomentPreserving )
+
+//---------------------------------------------------------------------------//
+// Add support for the AtomicExcitationElectronScatteringDistribution
+//---------------------------------------------------------------------------//
+
+// Add use of std::shared_ptr
+%shared_ptr(MonteCarlo::AtomicExcitationElectronScatteringDistribution)
+// Include the class
+%include "MonteCarlo_AtomicExcitationElectronScatteringDistribution.hpp"
+
+%inline %{
+
+// Create a atomic excitation distribution
+std::shared_ptr<const MonteCarlo::AtomicExcitationElectronScatteringDistribution> createAtomicExcitationDistribution(
+    const Data::ElectronPhotonRelaxationDataContainer& data_container )
+{
+  std::shared_ptr<const MonteCarlo::AtomicExcitationElectronScatteringDistribution>
+    distribution;
+
+  MonteCarlo::AtomicExcitationElectronScatteringDistributionNativeFactory::createAtomicExcitationDistribution(
+    data_container, distribution );
+
+  // Make sure the distribution was created correctly
+  testPostcondition( distribution.use_count() > 0 );
+
+  return distribution;
+}
+%}
+
+//---------------------------------------------------------------------------//
+// Add support for the BremsstrahlungElectronScatteringDistribution
+//---------------------------------------------------------------------------//
+
+// Add use of std::shared_ptr
+%shared_ptr(MonteCarlo::BremsstrahlungElectronScatteringDistribution)
+// Include the class
+%include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
+
+%inline %{
 
 // Create a simple dipole bremsstrahlung distribution
 template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
@@ -365,17 +526,24 @@ std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> 
 
   return distribution;
 }
+%}
 
-//----------------------------------------------------------------------------//
-//      ****ELECTROIONIZATION SUBSHELL DISTRIBUTIONS****
-//----------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+// Add support for the ElectroionizationSubshellElectronScatteringDistribution
+//---------------------------------------------------------------------------//
 
-//! Create a electroionization subshell distribution
+// Add use of std::shared_ptr
+%shared_ptr(MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution)
+// Include the class
+%include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistribution.hpp"
+
+%inline %{
+
+// Create a electroionization subshell distribution
 template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
 std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution> createElectroionizationSubshellDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const unsigned subshell,
-    const double binding_energy,
     const double evaluation_tol )
 {
   std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
@@ -387,7 +555,7 @@ std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDis
   MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
       data_container,
       subshell,
-      binding_energy,
+      data_container.getSubshellBindingEnergy(subshell),
       distribution,
       sampling_type,
       evaluation_tol );
@@ -397,19 +565,27 @@ std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDis
 
   return distribution;
 }
+%}
 
-//----------------------------------------------------------------------------//
-//      ****ATOMIC EXCITATION DISTRIBUTION****
-//----------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+// Add support for the AtomicExcitationAdjointElectronScatteringDistribution
+//---------------------------------------------------------------------------//
 
-//! Create a atomic excitation distribution
-std::shared_ptr<const MonteCarlo::AtomicExcitationElectronScatteringDistribution> createAtomicExcitationDistribution(
-    const Data::ElectronPhotonRelaxationDataContainer& data_container )
+// Add use of std::shared_ptr
+%shared_ptr(MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution)
+// Include the class
+%include "MonteCarlo_AtomicExcitationAdjointElectronScatteringDistribution.hpp"
+
+%inline %{
+
+// Create a atomic excitation distribution
+std::shared_ptr<MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution> createAtomicExcitationDistribution(
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container )
 {
-  std::shared_ptr<const MonteCarlo::AtomicExcitationElectronScatteringDistribution>
+  std::shared_ptr<MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution>
     distribution;
 
-  MonteCarlo::AtomicExcitationElectronScatteringDistributionNativeFactory::createAtomicExcitationDistribution(
+  MonteCarlo::AtomicExcitationAdjointElectronScatteringDistributionNativeFactory::createAtomicExcitationDistribution(
     data_container, distribution );
 
   // Make sure the distribution was created correctly
@@ -419,14 +595,78 @@ std::shared_ptr<const MonteCarlo::AtomicExcitationElectronScatteringDistribution
 }
 %}
 
-// Add templates for the CoupledElasticDistribution
-%elastic_template_setup( Coupled )
-// Add templates for the CutoffElasticDistribution
-%elastic_template_setup( Cutoff )
-// Add templates for the HybridElasticDistribution
-%elastic_template_setup( Hybrid )
-// Add templates for the MomentPreservingElasticDistribution
-%elastic_template_setup( MomentPreserving )
+//---------------------------------------------------------------------------//
+// Add support for the BremsstrahlungAdjointElectronScatteringDistribution
+//---------------------------------------------------------------------------//
+
+// Add use of std::shared_ptr
+%shared_ptr(MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution)
+// Include the class
+%include "MonteCarlo_BremsstrahlungAdjointElectronScatteringDistribution.hpp"
+
+%inline %{
+
+// Create a simple dipole bremsstrahlung distribution
+template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
+std::shared_ptr<MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution> createBremsstrahlungDistribution(
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
+    const double evaluation_tol )
+{
+  std::shared_ptr<MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution>
+    distribution;
+
+  MonteCarlo::BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
+      data_container,
+      data_container.getAdjointElectronBremsstrahlungEnergyGrid(),
+      distribution,
+      evaluation_tol );
+
+  // Make sure the distribution was created correctly
+  testPostcondition( distribution.use_count() > 0 );
+
+  return distribution;
+}
+%}
+
+%electron_template_setup( Bremsstrahlung )
+
+//---------------------------------------------------------------------------//
+// Add support for the ElectroionizationSubshellAdjointElectronScatteringDistribution
+//---------------------------------------------------------------------------//
+
+// Add use of std::shared_ptr
+%shared_ptr(MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution)
+// Include the class
+%include "MonteCarlo_ElectroionizationSubshellAdjointElectronScatteringDistribution.hpp"
+
+%inline %{
+
+//! Create a electroionization subshell distribution
+template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
+std::shared_ptr<MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution> createElectroionizationSubshellDistribution(
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
+    const unsigned subshell,
+    const double evaluation_tol )
+{
+  std::shared_ptr<MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution>
+    distribution;
+
+  MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
+      data_container,
+      subshell,
+      data_container.getSubshellBindingEnergy(subshell),
+      distribution,
+      evaluation_tol );
+
+  // Make sure the distribution was created correctly
+  testPostcondition( distribution.use_count() > 0 );
+
+  return distribution;
+}
+%}
+
+%electron_template_setup( ElectroionizationSubshell )
+
 
 
 // //---------------------------------------------------------------------------//
