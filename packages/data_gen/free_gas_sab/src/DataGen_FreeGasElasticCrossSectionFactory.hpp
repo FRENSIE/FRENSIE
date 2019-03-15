@@ -87,11 +87,11 @@ public:
 
   void generateFreeGasPDFDistributions();
 
+  void serializeMapOut();
+
 //  void serializeFreeGasPDFDistributions();
 
   void getEnergyDistribution( Teuchos::RCP<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution>& distribution );
-
-private: 
   
   // Extract the cross section from the specified 
   void extractCrossSectionFromACE();
@@ -156,6 +156,9 @@ Teuchos::RCP<DataGen::FreeGasElasticMarginalBetaFunction> d_beta_function;
 Teuchos::RCP<DataGen::FreeGasElasticMarginalAlphaFunction> d_alpha_function;
 
 Teuchos::RCP<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> d_energy_distribution;
+
+// Archiveable Dataset
+std::map< double, std::vector< std::pair< double, double > > > d_energy_distribution_map;
 
 };
 

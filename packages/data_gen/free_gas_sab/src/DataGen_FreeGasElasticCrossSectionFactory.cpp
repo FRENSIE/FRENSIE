@@ -8,6 +8,17 @@
 
 // Std Lib Includes
 #include <limits>
+#include <map>
+#include <vector>
+#include <sstream>
+#include <iostream>
+#include <fstream>
+
+// Boost Includes
+#include <boost/serialization/map.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
 
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
@@ -20,6 +31,7 @@
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "DataGen_FreeGasElasticCrossSectionFactory.hpp"
+
 
 namespace DataGen{
 
@@ -201,9 +213,6 @@ void FreeGasElasticCrossSectionFactory::generateFreeGasCrossSection()
 void FreeGasElasticCrossSectionFactory::generateFreeGasPDF( double E, 
        Teuchos::Array<double>& free_gas_PDF )
 {
-  std::vector<double> test_energy{1e-11, 1e-9, 1e-7, 1e-6};
-  Teuchos::Array<double> t_energy_array(test_energy);
-
   d_beta_function.reset( new DataGen::FreeGasElasticMarginalBetaFunction(
                     d_zero_temperature_cross_section_distribution, 
                     d_ace_angular_distribution,
@@ -211,7 +220,7 @@ void FreeGasElasticCrossSectionFactory::generateFreeGasPDF( double E,
                     d_kT,
                     E ) );
 
-  d_beta_function->populatePDF( t_energy_array );
+  d_beta_function->populatePDF( d_energy_array );
   d_beta_function->getPDF( free_gas_PDF );
 }
 
@@ -231,25 +240,48 @@ void FreeGasElasticCrossSectionFactory::generateFreeGasCDF( double E,
 
 void FreeGasElasticCrossSectionFactory::generateFreeGasPDFDistributions()
 {
-  std::vector<double> test_energy{1e-11, 1e-9, 1e-7, 1e-6};
-  Teuchos::Array<double> t_energy_array(test_energy);
+  MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution energy_distribution( d_energy_array.size() );
 
-  MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution energy_distribution( t_energy_array.size() );
-
-  for( int i = 0; i < t_energy_array.size(); ++i )
+  for( int i = 0; i < d_energy_array.size(); ++i )
   {
-    energy_distribution[i].first = t_energy_array[i];
+    energy_distribution[i].first = d_energy_array[i];
 
     Teuchos::Array<double> pdf;
     
-    this->generateFreeGasPDF( t_energy_array[i], pdf );
+    this->generateFreeGasPDF( d_energy_array[i], pdf );
 
-    energy_distribution[i].second.reset( new Utility::TabularDistribution<Utility::LinLin>( t_energy_array, pdf ) );
+    std::vector< std::pair< double, double > > pdf_vector;
+
+    for( int j = 0; j < pdf.size(); ++j )
+    {
+      std::pair< double, double > p{ d_energy_array[j], pdf[j] };
+      pdf_vector.push_back( p );
+    }
+
+    energy_distribution[i].second.reset( new Utility::TabularDistribution<Utility::LinLin>( d_energy_array, pdf ) );
+    d_energy_distribution_map[ d_energy_array[i] ] = pdf_vector;
   }
 
   d_energy_distribution.reset( 
       new MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution( energy_distribution ) );
 }
+
+void FreeGasElasticCrossSectionFactory::serializeMapOut()
+{
+  std::ofstream ofs("/home/ecmoll/software/frensie/build/test_data/forward_s_alpha_beta.i");
+
+  // std::stringstream ss;
+  boost::archive::text_oarchive oarch(ofs);
+  oarch << d_energy_distribution_map;
+  ofs.close();
+
+  //std::ifstream ifs("/home/ecmoll/software/frensie/build/test_data/forward_s_alpha_beta.i");
+
+  //std::map< double, std::vector< std::pair < double, double > > > new_map;
+  //boost::archive::text_iarchive iarch(ifs);
+  //iarch >> new_map;
+}
+
 
 void FreeGasElasticCrossSectionFactory::getEnergyDistribution( 
   Teuchos::RCP<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution>& distribution )

@@ -187,8 +187,13 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
   //MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution energy_distribution;
   //distribution->getDistribution( energy_distribution );
 
-  std::cout << " " << std::endl;
-  std::cout << distribution->sampleEnergy( 2.53010e-8 ) << std::endl;
+  //std::cout << " " << std::endl;
+  //for(int i = 0; i < 100; ++i )
+  //{
+  //  std::cout << distribution->sampleEnergy( 2.53010e-8 ) << std::endl;
+  //}
+
+  free_gas_factory->serializeMapOut();
 }
 
 /*
@@ -243,6 +248,9 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
 
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
