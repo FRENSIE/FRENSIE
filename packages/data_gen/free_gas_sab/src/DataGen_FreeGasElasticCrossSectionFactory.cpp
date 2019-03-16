@@ -99,7 +99,7 @@ void FreeGasElasticCrossSectionFactory::extractCrossSectionFromACE()
   d_kT = ace_file_handler->getTableTemperature();
 
   // Set the cutoff energy for upscattering from thermal treatment
-  d_energy_cutoff = Utility::calculateBetaMax( d_A )*d_kT/3.0;
+  d_energy_cutoff = Utility::calculateBetaMax( d_A )*d_kT;
 
   // Extract the elastic cross section at kT from the XSS array
   Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_neutron_data_extractor;

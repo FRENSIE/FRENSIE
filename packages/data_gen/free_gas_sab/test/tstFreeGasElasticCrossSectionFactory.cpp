@@ -167,7 +167,6 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 }
 */
 
-
 //---------------------------------------------------------------------------//
 // Check that the energy grid can be returned
 TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
@@ -180,9 +179,9 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   free_gas_factory->generateFreeGasPDFDistributions();
 
-  Teuchos::RCP<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
+  //Teuchos::RCP<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
 
-  free_gas_factory->getEnergyDistribution( distribution );
+  //free_gas_factory->getEnergyDistribution( distribution );
 
   //MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution energy_distribution;
   //distribution->getDistribution( energy_distribution );
@@ -195,6 +194,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   free_gas_factory->serializeMapOut();
 }
+
 
 /*
 //---------------------------------------------------------------------------//
