@@ -121,6 +121,17 @@ void FreeGasElasticCrossSectionFactory::extractCrossSectionFromACE()
   const Teuchos::Array<double> energy_grid_array( energy_grid() );
   d_energy_array();
   d_energy_array = energy_grid_array;
+
+  std::vector<double> thermal_energy_array;
+  for(int i = 0; i < d_energy_array.size(); ++ i)
+  {
+    if( d_energy_array[i] < d_energy_cutoff )
+    {
+      thermal_energy_array.push_back( d_energy_array[i] );
+    }
+  }
+
+  d_thermal_energy_array = thermal_energy_array;
 }
 
 // Extract the angular distribution from ACE (if exists)
@@ -240,26 +251,26 @@ void FreeGasElasticCrossSectionFactory::generateFreeGasCDF( double E,
 
 void FreeGasElasticCrossSectionFactory::generateFreeGasPDFDistributions()
 {
-  MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution energy_distribution( d_energy_array.size() );
+  MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution energy_distribution( d_thermal_energy_array.size() );
 
-  for( int i = 0; i < d_energy_array.size(); ++i )
+  for( int i = 0; i < d_thermal_energy_array.size(); ++i )
   {
-    energy_distribution[i].first = d_energy_array[i];
+    energy_distribution[i].first = d_thermal_energy_array[i];
 
     Teuchos::Array<double> pdf;
     
-    this->generateFreeGasPDF( d_energy_array[i], pdf );
+    this->generateFreeGasPDF( d_thermal_energy_array[i], pdf );
 
     std::vector< std::pair< double, double > > pdf_vector;
 
     for( int j = 0; j < pdf.size(); ++j )
     {
-      std::pair< double, double > p{ d_energy_array[j], pdf[j] };
+      std::pair< double, double > p{ d_thermal_energy_array[j], pdf[j] };
       pdf_vector.push_back( p );
     }
 
-    energy_distribution[i].second.reset( new Utility::TabularDistribution<Utility::LinLin>( d_energy_array, pdf ) );
-    d_energy_distribution_map[ d_energy_array[i] ] = pdf_vector;
+    energy_distribution[i].second.reset( new Utility::TabularDistribution<Utility::LinLin>( d_thermal_energy_array, pdf ) );
+    d_energy_distribution_map[ d_thermal_energy_array[i] ] = pdf_vector;
   }
 
   d_energy_distribution.reset( 

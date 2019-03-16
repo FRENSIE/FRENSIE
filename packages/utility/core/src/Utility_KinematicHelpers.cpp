@@ -31,7 +31,7 @@ double calculateBetaMin( const double kinetic_energy,
  */
 double calculateBetaMax( const double A )
 {
-  return 80.0*A;
+  return 500.0*A;
 }
 
 // Calculate the dimensionless alpha min value

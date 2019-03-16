@@ -141,6 +141,9 @@ Teuchos::RCP<Utility::OneDDistribution> d_free_gas_cross_section_distribution;
 // Energy grid from the ACE Table
 Teuchos::Array<double> d_energy_array;
 
+// Reduced Energy grid
+Teuchos::Array<double> d_thermal_energy_array;
+
 // Free gas beta distributions
 boost::unordered_map<double, Teuchos::Array<double> >
   d_free_gas_beta_distributions;
