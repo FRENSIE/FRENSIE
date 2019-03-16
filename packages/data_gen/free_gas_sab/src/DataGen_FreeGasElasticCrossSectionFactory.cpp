@@ -231,7 +231,7 @@ void FreeGasElasticCrossSectionFactory::generateFreeGasPDF( double E,
                     d_kT,
                     E ) );
 
-  d_beta_function->populatePDF( d_energy_array );
+  d_beta_function->populatePDF( d_thermal_energy_array );
   d_beta_function->getPDF( free_gas_PDF );
 }
 
