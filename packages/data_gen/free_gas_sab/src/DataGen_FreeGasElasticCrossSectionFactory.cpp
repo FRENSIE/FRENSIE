@@ -125,7 +125,8 @@ void FreeGasElasticCrossSectionFactory::extractCrossSectionFromACE()
   std::vector<double> thermal_energy_array;
   for(int i = 0; i < d_energy_array.size(); ++ i)
   {
-    if( d_energy_array[i] < d_energy_cutoff )
+    // if( d_energy_array[i] < d_energy_cutoff )
+    if( d_energy_array[i] < 1e-10 )
     {
       thermal_energy_array.push_back( d_energy_array[i] );
     }
@@ -184,8 +185,6 @@ void FreeGasElasticCrossSectionFactory::convertCrossSectionToZeroTemperature()
 // Generate the free gas S(alpha,beta) cross section
 void FreeGasElasticCrossSectionFactory::generateFreeGasCrossSection()
 {
-  //std::vector<double> energy_array{1e-11, 1e-10, 1e-9, 1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1, 10};
-
   // Loop over all energies and generate the cross section value
   for( int i = 0; i < d_energy_array.size(); ++i )
   {
