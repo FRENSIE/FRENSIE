@@ -10,6 +10,12 @@
 #include <string>
 #include <iostream>
 #include <math.h>
+#include <limits>
+#include <map>
+#include <vector>
+#include <sstream>
+#include <iostream>
+#include <fstream>
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
@@ -167,6 +173,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 }
 */
 
+
 //---------------------------------------------------------------------------//
 // Check that the energy grid can be returned
 TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
@@ -195,6 +202,34 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
   free_gas_factory->serializeMapOut();
 }
 
+/*
+
+//---------------------------------------------------------------------------//
+// Check that the energy grid can be returned
+TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
+		   tstReadInArchive )
+{
+  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
+                            test_neutron_ace_file_name,
+                            table_name,
+                            1u ) );
+
+  free_gas_factory->serializeMapIn();
+
+  Teuchos::RCP<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
+
+  free_gas_factory->getEnergyDistribution( distribution );
+
+  std::cout << " " << std::endl;
+  double energy = 2.53010e-8;
+  for(int i = 0; i < 1000000; ++i )
+  {
+    std::cout << energy << std::endl;
+    energy = distribution->sampleEnergy( energy );
+  }
+}
+
+*/
 
 /*
 //---------------------------------------------------------------------------//

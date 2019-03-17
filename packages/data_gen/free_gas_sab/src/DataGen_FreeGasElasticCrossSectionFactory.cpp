@@ -26,6 +26,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_AceLaw4NuclearScatteringEnergyDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
+#include "Utility_HistogramDistribution.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_SearchAlgorithms.hpp"
@@ -125,8 +126,7 @@ void FreeGasElasticCrossSectionFactory::extractCrossSectionFromACE()
   std::vector<double> thermal_energy_array;
   for(int i = 0; i < d_energy_array.size(); ++ i)
   {
-    // if( d_energy_array[i] < d_energy_cutoff )
-    if( d_energy_array[i] < 1e-10 )
+    if( d_energy_array[i] <= 1.0e-5 )
     {
       thermal_energy_array.push_back( d_energy_array[i] );
     }
@@ -284,14 +284,43 @@ void FreeGasElasticCrossSectionFactory::serializeMapOut()
   boost::archive::text_oarchive oarch(ofs);
   oarch << d_energy_distribution_map;
   ofs.close();
-
-  //std::ifstream ifs("/home/ecmoll/software/frensie/build/test_data/forward_s_alpha_beta.i");
-
-  //std::map< double, std::vector< std::pair < double, double > > > new_map;
-  //boost::archive::text_iarchive iarch(ifs);
-  //iarch >> new_map;
 }
 
+void FreeGasElasticCrossSectionFactory::serializeMapIn()
+{
+  std::ifstream ifs("/home/ecmoll/software/frensie/build/test_data/forward_s_alpha_beta.i");
+
+  std::map< double, std::vector< std::pair < double, double > > > new_map;
+  boost::archive::text_iarchive iarch(ifs);
+  iarch >> d_energy_distribution_map;
+
+  this->reconstructDistribution();
+}
+
+void FreeGasElasticCrossSectionFactory::reconstructDistribution()
+{
+   MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution energy_distribution( d_thermal_energy_array.size() );
+
+  for( int i = 0; i < d_thermal_energy_array.size(); ++i )
+  {
+    energy_distribution[i].first = d_thermal_energy_array[i];
+
+    Teuchos::Array<double> pdf;
+    std::vector< std::pair< double, double > > distribution;
+
+    distribution = d_energy_distribution_map[ d_thermal_energy_array[i] ];
+
+    for( int j = 0; j < d_thermal_energy_array.size(); ++j )
+    {
+      pdf.push_back( distribution[j].second );
+    }
+
+    energy_distribution[i].second.reset( new Utility::TabularDistribution<Utility::LinLin>( d_thermal_energy_array, pdf ) );
+  }
+
+  d_energy_distribution.reset( 
+      new MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution( energy_distribution ) );
+} 
 
 void FreeGasElasticCrossSectionFactory::getEnergyDistribution( 
   Teuchos::RCP<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution>& distribution )

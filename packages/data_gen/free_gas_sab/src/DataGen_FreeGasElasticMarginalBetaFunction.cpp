@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   DataGen_FreeGasElasticMarginalBetaFunction.hpp
-//! \author Alex Robinson
+//! \author Eli Moll
 //! \brief  Free gas elastic marginal beta function definition
 //!
 //---------------------------------------------------------------------------//
@@ -97,9 +97,9 @@ void FreeGasElasticMarginalBetaFunction::populatePDF(
   for( int i = 0; i < energy_array.size(); ++i )
   {
     double beta = (energy_array[i] - d_E)/d_kT;
-    if( beta < Utility::calculateBetaMax( d_A ) )
+    if( beta <= Utility::calculateBetaMax( d_A ) )
     {
-      d_pdf_array.append( this->evaluateCDF( beta ) );
+      d_pdf_array.append( (*this)( beta ) );
     }
     else
     {
@@ -170,7 +170,7 @@ double FreeGasElasticMarginalBetaFunction::evaluateCDF( const double beta )
 void FreeGasElasticMarginalBetaFunction::updateCachedValues()
 {
   d_beta_min = Utility::calculateBetaMin( d_E, d_kT );
-  double beta_max = 500/d_A;
+  double beta_max = Utility::calculateBetaMax( d_A );
   
   // Calculate the norm constant
   double norm_constant_error;

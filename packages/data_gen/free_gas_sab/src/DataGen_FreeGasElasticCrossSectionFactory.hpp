@@ -89,6 +89,10 @@ public:
 
   void serializeMapOut();
 
+  void serializeMapIn();
+
+  void reconstructDistribution();
+
 //  void serializeFreeGasPDFDistributions();
 
   void getEnergyDistribution( Teuchos::RCP<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution>& distribution );
