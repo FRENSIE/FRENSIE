@@ -1828,7 +1828,7 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicExcitat
       d_forward_epr_data->getAtomicExcitationEnergyLoss() );
 
   // Calculate the max energy
-  if( false )
+  if( this->isElectronScatterAboveMaxModeOn() )
   {
     excitation_max_energy = this->getMaxElectronEnergy();
   }
@@ -1860,7 +1860,7 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicExcitat
   }
 
   // Add the max energy ( or grid point right above the max energy )
-  if( false )
+  if( this->isElectronScatterAboveMaxModeOn() )
   {
     // Calculate the forward energy loss at the forward energy
     double forward_energy_loss =
@@ -1915,7 +1915,7 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicExcitat
   }
 
   // Add the max energy ( or grid point right above the max energy )
-  if( false )
+  if( this->isElectronScatterAboveMaxModeOn() )
   {
     double incoming_adjoint_energy = forward_electron_energy_grid->at(max_index+1) -
                 forward_dist->evaluate( forward_electron_energy_grid->at(max_index+1) );
