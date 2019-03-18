@@ -29,7 +29,7 @@ AdjointFreeGasElasticMarginalAlphaFunction::AdjointFreeGasElasticMarginalAlphaFu
 	  const double kT,
 	  const double beta,
 	  const double E )
-  : d_gkq_set( 1e-4 ),
+  : d_gkq_set(1e-3),
     d_sab_function( zero_temp_elastic_cross_section,
 		    cm_scattering_distribution,
 		    A,
