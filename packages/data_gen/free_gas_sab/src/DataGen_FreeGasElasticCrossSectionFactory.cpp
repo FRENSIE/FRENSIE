@@ -12,6 +12,7 @@
 #include <vector>
 #include <sstream>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 
 // Boost Includes
@@ -283,9 +284,13 @@ void FreeGasElasticCrossSectionFactory::generateFreeGasPDFDistributions( double 
 void FreeGasElasticCrossSectionFactory::serializeMapOut( double kT )
 {
   std::string preamble( "/home/ecmoll/software/frensie/test_data/forward_energy_transfer_" );
-  std::string temperature = std::to_string( kT );
   std::string filetype( ".i" );
-  std::ofstream ofs(preamble + temperature + filetype);
+
+  std::stringstream ss;
+  ss << preamble << kT << filetype;
+  std::string filename = ss.str();  
+
+  std::ofstream ofs(filename);
 
   // std::stringstream ss;
   boost::archive::text_oarchive oarch(ofs);
