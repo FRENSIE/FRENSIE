@@ -61,13 +61,13 @@ double BremsstrahlungAdjointElectronScatteringDistribution::getMaxEnergy() const
 // Return the max outgoing energy
 double BremsstrahlungAdjointElectronScatteringDistribution::getOutgoingMinEnergy( const double incoming_energy ) const
 {
-  return d_adjoint_brem_scatter_dist->getLowerBoundOfSecondaryConditionalIndepVar( incoming_energy );
+  return incoming_energy + d_adjoint_brem_scatter_dist->getLowerBoundOfSecondaryConditionalIndepVar( incoming_energy );
 }
 
 // Return the max outgoing energy
 double BremsstrahlungAdjointElectronScatteringDistribution::getOutgoingMaxEnergy( const double incoming_energy ) const
 {
-  return d_adjoint_brem_scatter_dist->getUpperBoundOfSecondaryConditionalIndepVar( incoming_energy );
+  return incoming_energy + d_adjoint_brem_scatter_dist->getUpperBoundOfSecondaryConditionalIndepVar( incoming_energy );
 }
 
 // Evaluate the distribution
@@ -79,9 +79,11 @@ double BremsstrahlungAdjointElectronScatteringDistribution::evaluate(
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( outgoing_energy > incoming_energy );
 
+  double energy_gain = outgoing_energy - incoming_energy;
+
   // evaluate the distribution
   return d_adjoint_brem_scatter_dist->evaluate( incoming_energy,
-                                                outgoing_energy );
+                                                energy_gain );
 }
 
 // Evaluate the PDF
@@ -93,9 +95,11 @@ double BremsstrahlungAdjointElectronScatteringDistribution::evaluatePDF(
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( outgoing_energy > incoming_energy );
 
+  double energy_gain = outgoing_energy - incoming_energy;
+
   // evaluate the pdf
   return d_adjoint_brem_scatter_dist->evaluateSecondaryConditionalPDF(
-            incoming_energy, outgoing_energy );
+            incoming_energy, energy_gain );
 }
 
 // Evaluate the PDF
@@ -107,9 +111,11 @@ double BremsstrahlungAdjointElectronScatteringDistribution::evaluateCDF(
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( outgoing_energy > incoming_energy );
 
+  double energy_gain = outgoing_energy - incoming_energy;
+
   // evaluate the cdf
   return d_adjoint_brem_scatter_dist->evaluateSecondaryConditionalCDF(
-            incoming_energy, outgoing_energy );
+            incoming_energy, energy_gain );
 }
 
 // Sample an outgoing energy and direction from the distribution
@@ -127,8 +133,10 @@ void BremsstrahlungAdjointElectronScatteringDistribution::sample(
   // The adjoint electron angle scattering is assumed to be negligible
   scattering_angle_cosine = 1.0;
 
-  outgoing_energy =
+  double energy_gain =
     d_adjoint_brem_scatter_dist->sampleSecondaryConditional( incoming_energy );
+
+  outgoing_energy = incoming_energy + energy_gain;
 
   testPostcondition( outgoing_energy > incoming_energy );
 }

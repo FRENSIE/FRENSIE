@@ -1667,6 +1667,15 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
       data_container.setAdjointElectronBremsstrahlungEnergyGrid(brem_energy_grid);
     }
 
+    // Convert outgoing energies to energy gain
+    for ( auto& element : brem_energies )
+    {
+      for( unsigned i = 0; i < element.second.size(); ++ i )
+      {
+        element.second[i] -= element.first;
+      }
+    }
+
     // Set the adjoint bremsstrahlung scattering distribution
     data_container.setAdjointElectronBremsstrahlungEnergy( brem_energies );
     data_container.setAdjointElectronBremsstrahlungPDF( brem_pdfs );
