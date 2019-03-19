@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_GEN_FREE_GAS_ADJOINT_ELASTIC_MARGINAL_BETA_FUNCTION_HPP
-#define DATA_GEN_FREE_GAS_ADJOINT_ELASTIC_MARGINAL_BETA_FUNCTION_HPP
+#ifndef DATA_GEN_ADJOINT_FREE_GAS_ELASTIC_MARGINAL_BETA_FUNCTION_HPP
+#define DATA_GEN_ADJOINT_FREE_GAS_ELASTIC_MARGINAL_BETA_FUNCTION_HPP
 
 // Std Lib Includes
 #include <list>
@@ -51,8 +51,7 @@ public:
   //! Get the lower beta limit
   double getBetaMin() const;
 
-  //! Get the lower beta limit
-  double getBetaMax() const;
+  double getBetaMax();
   
   //! Get the normalization constant
   double getNormalizationConstant() const;
@@ -62,6 +61,16 @@ public:
 
   //! Evaluate the marginal CDF
   double evaluateCDF( const double beta );
+
+  void populatePDF( Teuchos::Array<double>& energy_array );
+
+  void getPDF( Teuchos::Array<double>& pdf_array );
+
+  void populateCDF( Teuchos::Array<double>& energy_array );
+
+  void getCDF( Teuchos::Array<double>& cdf_array );
+
+  double principleOfDetailedBalance( double beta );
 
 private:
 
@@ -93,20 +102,20 @@ private:
   // The beta min value
   double d_beta_min;
 
-  // The beta min value
-  double d_beta_max;
-
   // The normalization constant
   double d_norm_constant;
 
   // Cached CDF values (first = beta, second = CDF)
   std::list<Utility::Pair<double,double> > d_cached_cdf_values;
+
+  Teuchos::Array<double> d_pdf_array;
+  Teuchos::Array<double> d_cdf_array;
 };
 
 } // end DataGen namespace
 
-#endif // end DATA_GEN_FREE_GAS_ELASTIC_MARGINAL_BETA_FUNCTION_HPP
+#endif // end DATA_GEN_ADJOINT_FREE_GAS_ELASTIC_MARGINAL_BETA_FUNCTION_HPP
 
 //---------------------------------------------------------------------------//
-// end DataGen_AdjointFreeGasElasticMarginalBetaFunction.hpp
+// end DataGen_FreeGasElasticMarginalBetaFunction.hpp
 //---------------------------------------------------------------------------//

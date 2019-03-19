@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   DataGen_AdjointFreeGasElasticMarginalAlphaFunction.hpp
-//! \author Eli Moll
+//! \author Alex Robinson, Eli Moll
 //! \brief  Free gas elastic marginal alpha function declaration.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_GEN_FREE_GAS_ADJOINT_ELASTIC_MARGINAL_ALPHA_FUNCTION_HPP
-#define DATA_GEN_FREE_GAS_ADJOINT_ELASTIC_MARGINAL_ALPHA_FUNCTION_HPP
+#ifndef DATA_GEN_ADJOINT_FREE_GAS_ELASTIC_MARGINAL_ALPHA_FUNCTION_HPP
+#define DATA_GEN_ADJOINT_FREE_GAS_ELASTIC_MARGINAL_ALPHA_FUNCTION_HPP
 
 // Std Lib Includes
 #include <list>
@@ -93,7 +93,7 @@ private:
 
 } // end DataGen namespace
 
-#endif // end DATA_GEN_FREE_GAS_ELASTIC_MARGINAL_ALPHA_FUNCTION_HPP
+#endif // end DATA_GEN_ADJOINT_FREE_GAS_ELASTIC_MARGINAL_ALPHA_FUNCTION_HPP
 
 //---------------------------------------------------------------------------//
 // end DataGen_AdjointFreeGasElasticMarginalAlphaFunction.hpp

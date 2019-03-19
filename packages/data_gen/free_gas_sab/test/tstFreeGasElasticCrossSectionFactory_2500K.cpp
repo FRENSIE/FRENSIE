@@ -55,7 +55,7 @@
 std::string test_neutron_ace_file_name = "/home/ecmoll/software/frensie/FRENSIE/packages/test_files/ace/test_h1_ace_file.txt";
 std::string table_name = "1001.70c";
 Teuchos::RCP<DataGen::FreeGasElasticCrossSectionFactory> free_gas_factory;
-double kT = 2.53010e-8;
+double kT = 2.15433e-7;
 
 /*
 

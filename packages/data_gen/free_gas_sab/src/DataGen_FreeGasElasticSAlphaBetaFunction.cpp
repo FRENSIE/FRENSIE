@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   DataGen_FreeGasElasticSAlphaBetaFunction.hpp
-//! \author Alex Robinson
+//! \author Eli Moll
 //! \brief  Free gas elastic scattering S(alpha,beta) function definition
 //!
 //---------------------------------------------------------------------------//
@@ -46,7 +46,8 @@ FreeGasElasticSAlphaBetaFunction::FreeGasElasticSAlphaBetaFunction(
     d_cm_scattering_distribution( cm_scattering_distribution ),
     d_A( A ),
     d_kT( kT ),
-    d_average_zero_temp_elastic_cross_section( 1.0 )
+    d_average_zero_temp_elastic_cross_section( 1.0 ),
+    d_jacobian_normalization( 1.5837466589978686 )
 {
   // Make sure the distributions are valid
   testPrecondition( !zero_temp_elastic_cross_section.is_null() );
@@ -262,9 +263,10 @@ double FreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
   }
     
   // Make sure the value is valid
+  value = value*d_jacobian_normalization;
   testPostcondition( value == value );
-  
-  return value*(1170.27/738.925);
+
+  return value;
 }
 
 // Calculate the exponential argument constant

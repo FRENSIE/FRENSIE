@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   DataGen_FreeGasElasticMarginalBetaFunction.hpp
-//! \author Alex Robinson
+//! \author Eli Moll
 //! \brief  Free gas elastic marginal beta function declaration.
 //!
 //---------------------------------------------------------------------------//
@@ -50,6 +50,8 @@ public:
 
   //! Get the lower beta limit
   double getBetaMin() const;
+
+  double getBetaMax();
   
   //! Get the normalization constant
   double getNormalizationConstant() const;

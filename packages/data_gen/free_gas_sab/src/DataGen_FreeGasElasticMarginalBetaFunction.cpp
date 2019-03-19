@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Includes
+#include <algorithm>
+
 // Boost Includes
 #include <boost/bind.hpp>
 
@@ -69,6 +72,11 @@ double FreeGasElasticMarginalBetaFunction::getBetaMin() const
   return d_beta_min;
 }
   
+double FreeGasElasticMarginalBetaFunction::getBetaMax() 
+{
+  return Utility::calculateBetaMax( d_A );
+}
+
 // Get the normalization constant
 double FreeGasElasticMarginalBetaFunction::getNormalizationConstant() const
 {
@@ -82,6 +90,10 @@ double FreeGasElasticMarginalBetaFunction::operator()( const double beta )
   testPrecondition( beta >= d_beta_min );
 
   if (beta <= d_beta_min)
+  {
+    return 0.0;
+  }
+  else if ( beta >= Utility::calculateBetaMax( d_A ) )
   {
     return 0.0;
   }
@@ -123,6 +135,7 @@ void FreeGasElasticMarginalBetaFunction::populateCDF(
     
     d_cdf_array.append( this->evaluateCDF( beta ) );
   }
+  std::reverse( d_cdf_array.begin(), d_cdf_array.end() );
 }
 
 void FreeGasElasticMarginalBetaFunction::getCDF( 

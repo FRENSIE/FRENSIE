@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Includes
+#include <algorithm>
+
 // Boost Includes
 #include <boost/bind.hpp>
 
@@ -40,7 +43,6 @@ AdjointFreeGasElasticMarginalBetaFunction::AdjointFreeGasElasticMarginalBetaFunc
     d_A( A ),
     d_kT( kT ),
     d_beta_min( 0.0 ),
-    d_beta_max( 0.0 ),
     d_norm_constant( 1.0 ),
     d_cached_cdf_values()
 {
@@ -69,12 +71,11 @@ double AdjointFreeGasElasticMarginalBetaFunction::getBetaMin() const
 {
   return d_beta_min;
 }
-
-// Get the lower beta limit
-double AdjointFreeGasElasticMarginalBetaFunction::getBetaMax() const
+  
+double AdjointFreeGasElasticMarginalBetaFunction::getBetaMax() 
 {
-  return d_beta_max;
-} 
+  return Utility::calculateBetaMax( d_A );
+}
 
 // Get the normalization constant
 double AdjointFreeGasElasticMarginalBetaFunction::getNormalizationConstant() const
@@ -92,10 +93,60 @@ double AdjointFreeGasElasticMarginalBetaFunction::operator()( const double beta 
   {
     return 0.0;
   }
+  else if ( beta >= Utility::calculateBetaMax( d_A ) )
+  {
+    return 0.0;
+  }
   else
   {
+    //return integratedSAlphaBetaFunction( beta )*principleOfDetailedBalance( beta )/d_norm_constant;
     return integratedSAlphaBetaFunction( beta )/d_norm_constant;
   }
+}
+
+double AdjointFreeGasElasticMarginalBetaFunction::principleOfDetailedBalance( double beta )
+{
+  return (d_E/(beta*d_kT + d_E))*exp(beta);
+}
+
+void AdjointFreeGasElasticMarginalBetaFunction::populatePDF( 
+    Teuchos::Array<double>& energy_array )
+{
+  for( int i = 0; i < energy_array.size(); ++i )
+  {
+    double beta = (energy_array[i] - d_E)/d_kT;
+    if( beta <= Utility::calculateBetaMax( d_A ) )
+    {
+      d_pdf_array.append( (*this)( beta ) );
+    }
+    else
+    {
+      d_pdf_array.append( 0.0 );
+    }
+  }
+}
+
+void AdjointFreeGasElasticMarginalBetaFunction::getPDF( 
+    Teuchos::Array<double>& pdf_array )
+{
+  pdf_array = d_pdf_array;
+}
+
+void AdjointFreeGasElasticMarginalBetaFunction::populateCDF( 
+    Teuchos::Array<double>& energy_array )
+{
+  for( int i = 0; i < energy_array.size(); ++i )
+  {
+    double beta = (energy_array[i] - d_E)/d_kT;
+    
+    d_cdf_array.append( this->evaluateCDF( beta ) );
+  }
+}
+
+void AdjointFreeGasElasticMarginalBetaFunction::getCDF( 
+    Teuchos::Array<double>& cdf_array )
+{
+  cdf_array = d_cdf_array;
 }
 
 // Evaluate the marginal CDF
@@ -136,8 +187,8 @@ double AdjointFreeGasElasticMarginalBetaFunction::evaluateCDF( const double beta
 // Update the cached values
 void AdjointFreeGasElasticMarginalBetaFunction::updateCachedValues()
 {
-  d_beta_min = Utility::calculateAdjointBetaMin( d_A );
-  d_beta_max = Utility::calculateAdjointBetaMax( d_E, d_kT );
+  d_beta_min = Utility::calculateBetaMin( d_E, d_kT );
+  double beta_max = Utility::calculateBetaMax( d_A );
   
   // Calculate the norm constant
   double norm_constant_error;
@@ -147,7 +198,7 @@ void AdjointFreeGasElasticMarginalBetaFunction::updateCachedValues()
   
   d_beta_gkq_set.integrateAdaptively<15>( d_integrated_sab_function,
   					 d_beta_min,
-  					 d_beta_max,
+  					 beta_max,
   					 d_norm_constant,
   					 norm_constant_error );
   
@@ -180,8 +231,8 @@ double AdjointFreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction(
   // Make sure beta is valid
   testPrecondition( beta >= d_beta_min );
   
-  double alpha_min = Utility::calculateAdjointAlphaMin( d_E, beta, d_A, d_kT );
-  double alpha_max = Utility::calculateAdjointAlphaMax( d_E, beta, d_A, d_kT );
+  double alpha_min = Utility::calculateAlphaMin( d_E, beta, d_A, d_kT );
+  double alpha_max = Utility::calculateAlphaMax( d_E, beta, d_A, d_kT );
 
   double function_value, function_value_error;
   
@@ -197,7 +248,7 @@ double AdjointFreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction(
   // Make sure the return value is valid
   testPostcondition(!Teuchos::ScalarTraits<double>::isnaninf(function_value));
 
-  return function_value;
+  return function_value*principleOfDetailedBalance( beta );
 }
 
 } // end DataGen namespace

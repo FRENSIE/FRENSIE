@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   DataGen_FreeGasElasticCrossSectionFactory.hpp
+//! \file   DataGen_AdjointFreeGasElasticCrossSectionFactory.hpp
 //! \author Eli Moll
 //! \brief  Free gas elastic cross section factory
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_GEN_FREE_GAS_CROSS_SECTION_FACTORY_HPP
-#define DATA_GEN_FREE_GAS_CROSS_SECTION_FACTORY_HPP
+#ifndef DATA_GEN_ADJOINT_FREE_GAS_CROSS_SECTION_FACTORY_HPP
+#define DATA_GEN_ADJOINT_FREE_GAS_CROSS_SECTION_FACTORY_HPP
 
 // Std Lib Includes
 #include <string>
@@ -24,9 +24,9 @@
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
-#include "DataGen_FreeGasElasticSAlphaBetaFunction.hpp"
-#include "DataGen_FreeGasElasticMarginalAlphaFunction.hpp"
-#include "DataGen_FreeGasElasticMarginalBetaFunction.hpp"
+#include "DataGen_AdjointFreeGasElasticSAlphaBetaFunction.hpp"
+#include "DataGen_AdjointFreeGasElasticMarginalAlphaFunction.hpp"
+#include "DataGen_AdjointFreeGasElasticMarginalBetaFunction.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Utility_SearchAlgorithms.hpp"
@@ -45,20 +45,20 @@
 namespace DataGen{
 
 //! The free gas elastic marginal alpha function 
-class FreeGasElasticCrossSectionFactory
+class AdjointFreeGasElasticCrossSectionFactory
 {
 
 public:
 
   //! Constructor
-  FreeGasElasticCrossSectionFactory(
+  AdjointFreeGasElasticCrossSectionFactory(
       const std::string& file_name,
 	  const std::string& table_name,
 	  const unsigned table_start_line,
 	  const bool is_ascii = true );
 
   //! Destructor
-  ~FreeGasElasticCrossSectionFactory()
+  ~AdjointFreeGasElasticCrossSectionFactory()
   { /* ... */ }
 
   // Accessor for zero-temperature elastic cross section
@@ -157,10 +157,10 @@ boost::unordered_map< std::pair<double, double>, Teuchos::Array<double> >
   d_free_gas_alpha_distributions;
 
 // Beta Function
-Teuchos::RCP<DataGen::FreeGasElasticMarginalBetaFunction> d_beta_function;
+Teuchos::RCP<DataGen::AdjointFreeGasElasticMarginalBetaFunction> d_beta_function;
 
 // Alpha Function
-Teuchos::RCP<DataGen::FreeGasElasticMarginalAlphaFunction> d_alpha_function;
+Teuchos::RCP<DataGen::AdjointFreeGasElasticMarginalAlphaFunction> d_alpha_function;
 
 Teuchos::RCP<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> d_energy_distribution;
 
@@ -174,5 +174,5 @@ std::map< double, std::vector< std::pair< double, double > > > d_energy_distribu
 #endif // end DATA_GEN_FREE_GAS_ELASTIC_CROSS_SECTION_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
-// end DataGen_FreeGasElasticCrossSectionFactory.hpp
+// end DataGen_AdjointFreeGasElasticCrossSectionFactory.hpp
 //---------------------------------------------------------------------------//

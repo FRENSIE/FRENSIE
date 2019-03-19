@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   DataGen_FreeGasElasticCrossSectionFactory.cpp
+//! \file   DataGen_AdjointAdjointFreeGasElasticCrossSectionFactory.cpp
 //! \author Eli Moll
 //! \brief  Free gas elastic cross section factory
 //!
@@ -31,13 +31,13 @@
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "DataGen_FreeGasElasticCrossSectionFactory.hpp"
+#include "DataGen_AdjointFreeGasElasticCrossSectionFactory.hpp"
 
 
 namespace DataGen{
 
 //! Constructor
-FreeGasElasticCrossSectionFactory::FreeGasElasticCrossSectionFactory(
+AdjointFreeGasElasticCrossSectionFactory::AdjointFreeGasElasticCrossSectionFactory(
     const std::string& file_name,
 	  const std::string& table_name,
 	  const unsigned table_start_line,
@@ -62,32 +62,31 @@ FreeGasElasticCrossSectionFactory::FreeGasElasticCrossSectionFactory(
   this->extractCrossSectionFromACE();
   this->extractAngularDistributionFromACE();
   this->convertCrossSectionToZeroTemperature();
-  // this->generateFreeGasCrossSection();
 }
 
 // Accessor for zero-temperature elastic cross section
-void FreeGasElasticCrossSectionFactory::getZeroTemperatureElasticCrossSection( 
+void AdjointFreeGasElasticCrossSectionFactory::getZeroTemperatureElasticCrossSection( 
       Teuchos::Array<double>& zero_temperature_cross_section )
 {
   zero_temperature_cross_section = d_zero_temperature_cross_section;
 }
 
 // Accessor for energy array
-void FreeGasElasticCrossSectionFactory::getEnergyArray(
+void AdjointFreeGasElasticCrossSectionFactory::getEnergyArray(
       Teuchos::Array<double>& energy_array )
 {
   energy_array = d_energy_array;
 }
 
 // Accessor for unmodified elastic cross section 
-void FreeGasElasticCrossSectionFactory::getUnmodifiedElasticCrossSection(
+void AdjointFreeGasElasticCrossSectionFactory::getUnmodifiedElasticCrossSection(
       Teuchos::Array<double>& unmodified_cross_section )
 {
   unmodified_cross_section = d_unmodified_elastic_cross_section;
 }
 
 // Extract the cross section from the specified 
-void FreeGasElasticCrossSectionFactory::extractCrossSectionFromACE()
+void AdjointFreeGasElasticCrossSectionFactory::extractCrossSectionFromACE()
 {
   // Construct the ACE file handler
   Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
@@ -136,7 +135,7 @@ void FreeGasElasticCrossSectionFactory::extractCrossSectionFromACE()
 }
 
 // Extract the angular distribution from ACE (if exists)
-void FreeGasElasticCrossSectionFactory::extractAngularDistributionFromACE()
+void AdjointFreeGasElasticCrossSectionFactory::extractAngularDistributionFromACE()
 {
   // Initialize the scattering probability distribution
   Teuchos::RCP<Utility::TabularOneDDistribution> isotropic_distribution(
@@ -158,7 +157,7 @@ void FreeGasElasticCrossSectionFactory::extractAngularDistributionFromACE()
 }
 
 // Convert cross section to zero-temperature cross section
-void FreeGasElasticCrossSectionFactory::convertCrossSectionToZeroTemperature()
+void AdjointFreeGasElasticCrossSectionFactory::convertCrossSectionToZeroTemperature()
 {
   Teuchos::Array<double> zero_temperature_cross_section;
   zero_temperature_cross_section = d_unmodified_elastic_cross_section;
@@ -183,7 +182,7 @@ void FreeGasElasticCrossSectionFactory::convertCrossSectionToZeroTemperature()
 }
 
 // Generate the free gas S(alpha,beta) cross section
-void FreeGasElasticCrossSectionFactory::generateFreeGasCrossSection( double kT )
+void AdjointFreeGasElasticCrossSectionFactory::generateFreeGasCrossSection( double kT )
 {
   d_kT = kT;
 
@@ -201,7 +200,7 @@ void FreeGasElasticCrossSectionFactory::generateFreeGasCrossSection( double kT )
     }
     else
     {
-      d_beta_function.reset( new DataGen::FreeGasElasticMarginalBetaFunction(
+      d_beta_function.reset( new DataGen::AdjointFreeGasElasticMarginalBetaFunction(
                     d_zero_temperature_cross_section_distribution, 
                     d_ace_angular_distribution,
                     d_A,
@@ -222,10 +221,10 @@ void FreeGasElasticCrossSectionFactory::generateFreeGasCrossSection( double kT )
       d_free_gas_cross_section ) );
 }
 
-void FreeGasElasticCrossSectionFactory::generateFreeGasPDF( double E, 
+void AdjointFreeGasElasticCrossSectionFactory::generateFreeGasPDF( double E, 
        Teuchos::Array<double>& free_gas_PDF )
 {
-  d_beta_function.reset( new DataGen::FreeGasElasticMarginalBetaFunction(
+  d_beta_function.reset( new DataGen::AdjointFreeGasElasticMarginalBetaFunction(
                     d_zero_temperature_cross_section_distribution, 
                     d_ace_angular_distribution,
                     d_A,
@@ -236,10 +235,10 @@ void FreeGasElasticCrossSectionFactory::generateFreeGasPDF( double E,
   d_beta_function->getPDF( free_gas_PDF );
 }
 
-void FreeGasElasticCrossSectionFactory::generateFreeGasCDF( double E, 
+void AdjointFreeGasElasticCrossSectionFactory::generateFreeGasCDF( double E, 
        Teuchos::Array<double>& free_gas_CDF )
 {
-  d_beta_function.reset( new DataGen::FreeGasElasticMarginalBetaFunction(
+  d_beta_function.reset( new DataGen::AdjointFreeGasElasticMarginalBetaFunction(
                     d_zero_temperature_cross_section_distribution, 
                     d_ace_angular_distribution,
                     d_A,
@@ -250,7 +249,7 @@ void FreeGasElasticCrossSectionFactory::generateFreeGasCDF( double E,
   d_beta_function->getCDF( free_gas_CDF );
 }
 
-void FreeGasElasticCrossSectionFactory::generateFreeGasPDFDistributions( double kT )
+void AdjointFreeGasElasticCrossSectionFactory::generateFreeGasPDFDistributions( double kT )
 {
   d_kT = kT;
 
@@ -280,9 +279,9 @@ void FreeGasElasticCrossSectionFactory::generateFreeGasPDFDistributions( double 
       new MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution( energy_distribution ) );
 }
 
-void FreeGasElasticCrossSectionFactory::serializeMapOut( double kT )
+void AdjointFreeGasElasticCrossSectionFactory::serializeMapOut( double kT )
 {
-  std::string preamble( "/home/ecmoll/software/frensie/test_data/forward_energy_transfer_" );
+  std::string preamble( "/home/ecmoll/software/frensie/test_data/adjoint_energy_transfer_" );
   std::string temperature = std::to_string( kT );
   std::string filetype( ".i" );
   std::ofstream ofs(preamble + temperature + filetype);
@@ -293,7 +292,7 @@ void FreeGasElasticCrossSectionFactory::serializeMapOut( double kT )
   ofs.close();
 }
 
-void FreeGasElasticCrossSectionFactory::serializeMapIn( std::string filename )
+void AdjointFreeGasElasticCrossSectionFactory::serializeMapIn( std::string filename )
 {
   std::ifstream ifs( filename );
 
@@ -304,7 +303,7 @@ void FreeGasElasticCrossSectionFactory::serializeMapIn( std::string filename )
   this->reconstructDistribution();
 }
 
-void FreeGasElasticCrossSectionFactory::reconstructDistribution()
+void AdjointFreeGasElasticCrossSectionFactory::reconstructDistribution()
 {
    MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution energy_distribution( d_thermal_energy_array.size() );
 
@@ -329,21 +328,21 @@ void FreeGasElasticCrossSectionFactory::reconstructDistribution()
       new MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution( energy_distribution ) );
 } 
 
-void FreeGasElasticCrossSectionFactory::getEnergyDistribution( 
+void AdjointFreeGasElasticCrossSectionFactory::getEnergyDistribution( 
   Teuchos::RCP<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution>& distribution )
 {
   distribution = d_energy_distribution;
 }
 
 // Extract Beta Distribution for Testing
-void FreeGasElasticCrossSectionFactory::getFreeGasCrossSection( 
+void AdjointFreeGasElasticCrossSectionFactory::getFreeGasCrossSection( 
        Teuchos::Array<double>& free_gas_cross_section )
 {
   free_gas_cross_section = d_free_gas_cross_section;
 }
 
 // Extract Beta Distribution for Testing
-void FreeGasElasticCrossSectionFactory::getFreeGasCrossSectionDistribution( 
+void AdjointFreeGasElasticCrossSectionFactory::getFreeGasCrossSectionDistribution( 
        Teuchos::RCP<Utility::OneDDistribution>& free_gas_cross_section_distribution )
 {
   free_gas_cross_section_distribution = d_free_gas_cross_section_distribution;
@@ -352,5 +351,5 @@ void FreeGasElasticCrossSectionFactory::getFreeGasCrossSectionDistribution(
 } // end DataGen namespace
 
 //---------------------------------------------------------------------------//
-// end DataGen_FreeGasElasticCrossSectionFactory.cpp
+// end DataGen_AdjointFreeGasElasticCrossSectionFactory.cpp
 //---------------------------------------------------------------------------//
