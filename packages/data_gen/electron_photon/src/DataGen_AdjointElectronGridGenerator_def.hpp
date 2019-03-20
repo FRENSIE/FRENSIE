@@ -171,34 +171,34 @@ double AdjointElectronGridGenerator<TwoDInterpPolicy>::getNudgedMinEnergy(
 
   // Refine the min energy
   double refined_min_energy = min_energy;
-  double min_pdf = d_forward_pdf_evaluator( refined_min_energy, energy );
+  // double min_pdf = d_forward_pdf_evaluator( refined_min_energy, energy );
 
-  while ( min_pdf > 0.0 && refined_min_energy > energy )
-  {
-    min_energy = refined_min_energy;
-    refined_min_energy *= 0.99999;
+  // while ( min_pdf > 0.0 && refined_min_energy > energy )
+  // {
+  //   min_energy = refined_min_energy;
+  //   refined_min_energy *= 0.99999;
 
-    if( refined_min_energy <= energy )
-    {
-      refined_min_energy = energy;
-      min_pdf = 0.0;
-      break;
-    }
+  //   if( refined_min_energy <= energy )
+  //   {
+  //     refined_min_energy = energy;
+  //     min_pdf = 0.0;
+  //     break;
+  //   }
 
-    min_pdf = d_forward_pdf_evaluator( refined_min_energy, energy );
-  }
+  //   min_pdf = d_forward_pdf_evaluator( refined_min_energy, energy );
+  // }
 
-  while ( min_pdf <= 0.0 )
-  {
-    refined_min_energy *= 1.00001;
+  // while ( min_pdf <= 0.0 )
+  // {
+  //   refined_min_energy *= 1.00001;
 
-    min_pdf = d_forward_pdf_evaluator( refined_min_energy, energy );
-  }
+  //   min_pdf = d_forward_pdf_evaluator( refined_min_energy, energy );
+  // }
 
-  testPostcondition( d_forward_pdf_evaluator( refined_min_energy, energy ) > 0.0 );
+  // testPostcondition( d_forward_pdf_evaluator( refined_min_energy, energy ) > 0.0 );
 
-  if( refined_min_energy > min_energy )
-    refined_min_energy = min_energy;
+  // if( refined_min_energy > min_energy )
+  //   refined_min_energy = min_energy;
 
   return refined_min_energy + d_min_energy_nudge_value;
 }
