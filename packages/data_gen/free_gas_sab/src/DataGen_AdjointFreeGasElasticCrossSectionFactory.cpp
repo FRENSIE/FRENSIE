@@ -282,12 +282,12 @@ void AdjointFreeGasElasticCrossSectionFactory::generateFreeGasPDFDistributions( 
 
 void AdjointFreeGasElasticCrossSectionFactory::serializeMapOut( double kT )
 {
-  std::string preamble( "/home/ecmoll/software/frensie/test_data/forward_energy_transfer_" );
+  std::string preamble( "/home/ecmoll/software/frensie/test_data/adjoint_energy_transfer_" );
   std::string filetype( ".i" );
 
   std::stringstream ss;
   ss << preamble << kT << filetype;
-  std::string filename = ss.str();  
+  std::string filename = ss.str();
 
   std::ofstream ofs(filename);
 
