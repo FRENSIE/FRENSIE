@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_GEN_FREE_GAS_ADJOINT_ELASTIC_S_ALPHA_BETA_FUNCTION_HPP
-#define DATA_GEN_FREE_GAS_ADJOINT_ELASTIC_S_ALPHA_BETA_FUNCTION_HPP
+#ifndef DATA_GEN_ADJOINT_FREE_GAS_ELASTIC_S_ALPHA_BETA_FUNCTION_HPP
+#define DATA_GEN_ADJOINT_FREE_GAS_ELASTIC_S_ALPHA_BETA_FUNCTION_HPP
 
 // Boost Includes
 #include <boost/math/policies/policy.hpp>
@@ -135,6 +135,8 @@ private:
 
   // The average zero temperature cross section
   double d_average_zero_temp_elastic_cross_section;
+
+  double d_jacobian_normalization;
 };
 
 } // end DataGen namespace

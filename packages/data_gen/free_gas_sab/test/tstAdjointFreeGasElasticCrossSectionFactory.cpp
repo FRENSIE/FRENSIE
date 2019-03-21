@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstFreeGasElasticCrossSectionFactory.cpp
+//! \file   tstAdjointFreeGasElasticCrossSectionFactory.cpp
 //! \author Eli Moll
 //! \brief  Free gas elastic scattering generator tests
 //!
@@ -26,13 +26,13 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "DataGen_FreeGasElasticCrossSectionFactory.hpp"
+#include "DataGen_AdjointFreeGasElasticCrossSectionFactory.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_KinematicHelpers.hpp"
-#include "DataGen_FreeGasElasticSAlphaBetaFunction.hpp"
-#include "DataGen_FreeGasElasticMarginalAlphaFunction.hpp"
-#include "DataGen_FreeGasElasticMarginalBetaFunction.hpp"
+#include "DataGen_AdjointFreeGasElasticSAlphaBetaFunction.hpp"
+#include "DataGen_AdjointFreeGasElasticMarginalAlphaFunction.hpp"
+#include "DataGen_AdjointFreeGasElasticMarginalBetaFunction.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Utility_SearchAlgorithms.hpp"
@@ -54,8 +54,7 @@
 
 std::string test_neutron_ace_file_name = "/home/ecmoll/software/frensie/FRENSIE/packages/test_files/ace/test_h1_ace_file.txt";
 std::string table_name = "1001.70c";
-Teuchos::RCP<DataGen::FreeGasElasticCrossSectionFactory> free_gas_factory;
-double kT = 2.53010e-8;
+Teuchos::RCP<DataGen::AdjointFreeGasElasticCrossSectionFactory> free_gas_factory;
 
 /*
 
@@ -66,7 +65,7 @@ double kT = 2.53010e-8;
 TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   testUnmodifiedCrossSection )
 {
-  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
+  free_gas_factory.reset( new DataGen::AdjointFreeGasElasticCrossSectionFactory(
                             test_neutron_ace_file_name,
 						    table_name,
 						    1u ) );
@@ -84,7 +83,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   testEnergyArray )
 {
-  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
+  free_gas_factory.reset( new DataGen::AdjointFreeGasElasticCrossSectionFactory(
                             test_neutron_ace_file_name,
 						    table_name,
 						    1u ) );
@@ -105,7 +104,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   testZeroTemperatureCrossSection )
 {
-  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
+  free_gas_factory.reset( new DataGen::AdjointFreeGasElasticCrossSectionFactory(
                             test_neutron_ace_file_name,
 						    table_name,
 						    1u ) );
@@ -130,7 +129,7 @@ free_gas_factory->generateFreeGasPDFDistributions();
 TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstTotalCrossSection )
 {
-  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
+  free_gas_factory.reset( new DataGen::AdjointFreeGasElasticCrossSectionFactory(
                             test_neutron_ace_file_name,
                             table_name,
                             1u ) );
@@ -156,7 +155,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstCrossSectionGeneration )
 {
-  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
+  free_gas_factory.reset( new DataGen::AdjointFreeGasElasticCrossSectionFactory(
                             test_neutron_ace_file_name,
                             table_name,
                             1u ) );
@@ -165,7 +164,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
   free_gas_factory->getEnergyArray( energy_array );
 
   Teuchos::Array<double> free_gas_cross_section;
-  free_gas_factory->generateFreeGasCrossSection( kT );
+  free_gas_factory->generateFreeGasCrossSection( 2.53010e-8 );
   free_gas_factory->getFreeGasCrossSection( free_gas_cross_section );
   
   std::cout << " " << std::endl;
@@ -176,19 +175,23 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
   }
 }
 
+/*
+
 //---------------------------------------------------------------------------//
 // Check that the energy grid can be returned
 TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstDistributionConstruction )
 {
-  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
+  free_gas_factory.reset( new DataGen::AdjointFreeGasElasticCrossSectionFactory(
                             test_neutron_ace_file_name,
                             table_name,
                             1u ) );
 
-  free_gas_factory->generateFreeGasPDFDistributions( kT );
-  free_gas_factory->serializeMapOut( kT );
+  free_gas_factory->generateFreeGasPDFDistributions();
+  free_gas_factory->serializeMapOut();
 }
+
+*/
 
 /*
 
@@ -197,7 +200,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstReadInArchive )
 {
-  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
+  free_gas_factory.reset( new DataGen::AdjointFreeGasElasticCrossSectionFactory(
                             test_neutron_ace_file_name,
                             table_name,
                             1u ) );
@@ -225,7 +228,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstFalseDistribution )
 {
-  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
+  free_gas_factory.reset( new DataGen::AdjointFreeGasElasticCrossSectionFactory(
                             test_neutron_ace_file_name,
                             table_name,
                             1u ) );
@@ -287,7 +290,7 @@ int main( int argc, char** argv )
 
   std::string table_name( "1001.70c" );
 
-  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
+  free_gas_factory.reset( new DataGen::AdjointFreeGasElasticCrossSectionFactory(
                             test_neutron_ace_file_name,
 						    table_name,
 						    1u ) );

@@ -22,7 +22,7 @@ namespace Utility{
 double calculateBetaMin( const double kinetic_energy,
 			 const double kT )
 {
-  return (0.0-kinetic_energy)/kT;
+  return (1.0e-11-kinetic_energy)/kT;
 }
 
 // Calculate the beta max value
@@ -31,7 +31,7 @@ double calculateBetaMin( const double kinetic_energy,
  */
 double calculateBetaMax( const double A )
 {
-  return 500.0*A;
+  return 200*A;
 }
 
 // Calculate the dimensionless alpha min value

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   DataGen_FreeGasElasticMarginalAlphaFunction.hpp
-//! \author Alex Robinson
+//! \author Alex Robinson, Eli Moll
 //! \brief  Free gas elastic marginal alpha function definition.
 //!
 //---------------------------------------------------------------------------//
@@ -29,7 +29,7 @@ FreeGasElasticMarginalAlphaFunction::FreeGasElasticMarginalAlphaFunction(
 	  const double kT,
 	  const double beta,
 	  const double E )
-  : d_gkq_set( 1e-4 ),
+  : d_gkq_set(1e-4),
     d_sab_function( zero_temp_elastic_cross_section,
 		    cm_scattering_distribution,
 		    A,

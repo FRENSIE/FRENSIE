@@ -182,6 +182,8 @@ IF(FRENSIE_ENABLE_ROOT)
   ENABLE_ROOT_SUPPORT()
 ENDIF()
 
+# SET(DART_TESTING_TIMEOUT "1000000" STRING)
+
 ##---------------------------------------------------------------------------##
 ## Configure Dashboard Client Support
 ##---------------------------------------------------------------------------##
@@ -190,7 +192,7 @@ ENDIF()
 # desired. It can be useful to use the following command:
 # BUILDNAME_PREFIX="$(lsb_release -i -s)-$(lsb_release -r -s)"
 IF(FRENSIE_ENABLE_DASHBOARD_CLIENT)
-  SET(DART_TESTING_TIMEOUT "43200" CACHE STRING "Amount of time (s) to wait for processes to complete during testing." FORCE)
+  SET(DART_TESTING_TIMEOUT "86400" CACHE STRING "Amount of time (s) to wait for processes to complete during testing." FORCE)
   
   # Set the BuildName used by the dashboard (see DartConfiguration.tcl)
   DETERMINE_COMPILER_ID(CXX ${CMAKE_CXX_COMPILER})

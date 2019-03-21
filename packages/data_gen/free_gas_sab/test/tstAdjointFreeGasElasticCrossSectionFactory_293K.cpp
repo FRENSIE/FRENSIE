@@ -26,13 +26,13 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "DataGen_FreeGasElasticCrossSectionFactory.hpp"
+#include "DataGen_AdjointFreeGasElasticCrossSectionFactory.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_KinematicHelpers.hpp"
-#include "DataGen_FreeGasElasticSAlphaBetaFunction.hpp"
-#include "DataGen_FreeGasElasticMarginalAlphaFunction.hpp"
-#include "DataGen_FreeGasElasticMarginalBetaFunction.hpp"
+#include "DataGen_AdjointFreeGasElasticSAlphaBetaFunction.hpp"
+#include "DataGen_AdjointFreeGasElasticMarginalAlphaFunction.hpp"
+#include "DataGen_AdjointFreeGasElasticMarginalBetaFunction.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Utility_SearchAlgorithms.hpp"
@@ -54,7 +54,7 @@
 
 std::string test_neutron_ace_file_name = "/home/ecmoll/software/frensie/FRENSIE/packages/test_files/ace/test_h1_ace_file.txt";
 std::string table_name = "1001.70c";
-Teuchos::RCP<DataGen::FreeGasElasticCrossSectionFactory> free_gas_factory;
+Teuchos::RCP<DataGen::AdjointFreeGasElasticCrossSectionFactory> free_gas_factory;
 double kT = 2.53010e-8;
 
 /*
@@ -156,7 +156,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstCrossSectionGeneration )
 {
-  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
+  free_gas_factory.reset( new DataGen::AdjointFreeGasElasticCrossSectionFactory(
                             test_neutron_ace_file_name,
                             table_name,
                             1u ) );
@@ -181,7 +181,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstDistributionConstruction )
 {
-  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
+  free_gas_factory.reset( new DataGen::AdjointFreeGasElasticCrossSectionFactory(
                             test_neutron_ace_file_name,
                             table_name,
                             1u ) );
@@ -287,7 +287,7 @@ int main( int argc, char** argv )
 
   std::string table_name( "1001.70c" );
 
-  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
+  free_gas_factory.reset( new DataGen::AdjointFreeGasElasticCrossSectionFactory(
                             test_neutron_ace_file_name,
 						    table_name,
 						    1u ) );

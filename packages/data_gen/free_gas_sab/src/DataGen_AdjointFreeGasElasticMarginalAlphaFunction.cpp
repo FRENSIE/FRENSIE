@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   DataGen_AdjointFreeGasElasticMarginalAlphaFunction.hpp
-//! \author Eli Moll
+//! \author Alex Robinson, Eli Moll
 //! \brief  Free gas elastic marginal alpha function definition.
 //!
 //---------------------------------------------------------------------------//
@@ -29,7 +29,7 @@ AdjointFreeGasElasticMarginalAlphaFunction::AdjointFreeGasElasticMarginalAlphaFu
 	  const double kT,
 	  const double beta,
 	  const double E )
-  : d_gkq_set( 1e-4 ),
+  : d_gkq_set(1e-4),
     d_sab_function( zero_temp_elastic_cross_section,
 		    cm_scattering_distribution,
 		    A,
@@ -45,7 +45,7 @@ AdjointFreeGasElasticMarginalAlphaFunction::AdjointFreeGasElasticMarginalAlphaFu
   testPrecondition( A > 0.0 );
   testPrecondition( kT > 0.0 );
   testPrecondition( E > 0.0 );
-  testPrecondition( beta >= Utility::calculateAdjointBetaMin( A ) );
+  testPrecondition( beta >= Utility::calculateBetaMin( E, kT ) );
   
   updateCachedValues();
 }
@@ -57,8 +57,7 @@ void AdjointFreeGasElasticMarginalAlphaFunction::setIndependentVariables(
 {
   // Make sure beta is valid
   remember( double kT = d_sab_function.getTemperature() );
-  remember( double A = d_sab_function.getAtomicWeightRatio() );
-  testPrecondition( beta >= Utility::calculateAdjointBetaMin( A ) );
+  testPrecondition( beta >= Utility::calculateBetaMin( E, kT ) );
 
   d_beta = beta;
   d_E = E;
@@ -137,8 +136,9 @@ void AdjointFreeGasElasticMarginalAlphaFunction::updateCachedValues()
   double A = d_sab_function.getAtomicWeightRatio();
   double kT = d_sab_function.getTemperature();
 
-  d_alpha_min = Utility::calculateAdjointAlphaMin( d_E, d_beta, A, kT );
-  d_alpha_max = Utility::calculateAdjointAlphaMax( d_E, d_beta, A, kT );
+  d_alpha_min = Utility::calculateAlphaMin( d_E, d_beta, A, kT );
+
+  d_alpha_max = Utility::calculateAlphaMax( d_E, d_beta, A, kT );
 
   // Calculate the norm constant
   double norm_constant_error;

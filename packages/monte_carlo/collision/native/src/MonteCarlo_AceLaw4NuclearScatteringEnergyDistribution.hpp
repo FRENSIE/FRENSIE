@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //! 
 //! \file   MonteCarlo_AceLaw4NuclearScatteringEnergyDistribution.hpp
-//! \author Alex Bennett
+//! \author Alex Bennett, Eli Moll
 //! \brief  The law 4 scattering energy distribution class
 //!
 //---------------------------------------------------------------------------//
@@ -21,7 +21,7 @@
 
 namespace MonteCarlo{
 
-/*! The law 4 scattering eneryg distribution class (Ace Law 4)
+/*! The law 4 scattering energy distribution class (Ace Law 4)
  * \ingroup ace_laws
  */
 class AceLaw4NuclearScatteringEnergyDistribution : public NuclearScatteringEnergyDistribution
@@ -49,7 +49,7 @@ public:
                        unsigned& outgoing_index,
                        double& energy_prime ) const;
 
-private:
+  void getDistribution( AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution energy_distribution );
 
   EnergyDistribution d_energy_distribution;
 

@@ -1,10 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   DataGen_FreeGasElasticMarginalBetaFunction.hpp
-//! \author Alex Robinson
+//! \author Eli Moll
 //! \brief  Free gas elastic marginal beta function definition
 //!
 //---------------------------------------------------------------------------//
+
+// Std Includes
+#include <algorithm>
 
 // Boost Includes
 #include <boost/bind.hpp>
@@ -69,6 +72,11 @@ double FreeGasElasticMarginalBetaFunction::getBetaMin() const
   return d_beta_min;
 }
   
+double FreeGasElasticMarginalBetaFunction::getBetaMax() 
+{
+  return Utility::calculateBetaMax( d_A );
+}
+
 // Get the normalization constant
 double FreeGasElasticMarginalBetaFunction::getNormalizationConstant() const
 {
@@ -85,10 +93,55 @@ double FreeGasElasticMarginalBetaFunction::operator()( const double beta )
   {
     return 0.0;
   }
+  else if ( beta >= Utility::calculateBetaMax( d_A ) )
+  {
+    return 0.0;
+  }
   else
   {
     return integratedSAlphaBetaFunction( beta )/d_norm_constant;
   }
+}
+
+void FreeGasElasticMarginalBetaFunction::populatePDF( 
+    Teuchos::Array<double>& energy_array )
+{
+  for( int i = 0; i < energy_array.size(); ++i )
+  {
+    double beta = (energy_array[i] - d_E)/d_kT;
+    if( beta <= Utility::calculateBetaMax( d_A ) )
+    {
+      d_pdf_array.append( (*this)( beta ) );
+    }
+    else
+    {
+      d_pdf_array.append( 0.0 );
+    }
+  }
+}
+
+void FreeGasElasticMarginalBetaFunction::getPDF( 
+    Teuchos::Array<double>& pdf_array )
+{
+  pdf_array = d_pdf_array;
+}
+
+void FreeGasElasticMarginalBetaFunction::populateCDF( 
+    Teuchos::Array<double>& energy_array )
+{
+  for( int i = 0; i < energy_array.size(); ++i )
+  {
+    double beta = (energy_array[i] - d_E)/d_kT;
+    
+    d_cdf_array.append( this->evaluateCDF( beta ) );
+  }
+  std::reverse( d_cdf_array.begin(), d_cdf_array.end() );
+}
+
+void FreeGasElasticMarginalBetaFunction::getCDF( 
+    Teuchos::Array<double>& cdf_array )
+{
+  cdf_array = d_cdf_array;
 }
 
 // Evaluate the marginal CDF
@@ -130,7 +183,7 @@ double FreeGasElasticMarginalBetaFunction::evaluateCDF( const double beta )
 void FreeGasElasticMarginalBetaFunction::updateCachedValues()
 {
   d_beta_min = Utility::calculateBetaMin( d_E, d_kT );
-  double beta_max = 500/d_A;
+  double beta_max = Utility::calculateBetaMax( d_A );
   
   // Calculate the norm constant
   double norm_constant_error;

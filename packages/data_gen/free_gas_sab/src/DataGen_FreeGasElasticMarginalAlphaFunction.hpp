@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   DataGen_FreeGasElasticMarginalAlphaFunction.hpp
-//! \author Alex Robinson
+//! \author Alex Robinson, Eli Moll
 //! \brief  Free gas elastic marginal alpha function declaration.
 //!
 //---------------------------------------------------------------------------//

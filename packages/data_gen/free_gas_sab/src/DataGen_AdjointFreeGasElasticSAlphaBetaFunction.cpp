@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   DataGen_AdjointFreeGasElasticSAlphaBetaFunction.hpp
-//! \author Alex Robinson
+//! \author Eli Moll
 //! \brief  Free gas elastic scattering S(alpha,beta) function definition
 //!
 //---------------------------------------------------------------------------//
@@ -41,12 +41,13 @@ AdjointFreeGasElasticSAlphaBetaFunction::AdjointFreeGasElasticSAlphaBetaFunction
 	  cm_scattering_distribution,
 	  const double A,
 	  const double kT )
-  : d_gkq_set( 1e-6 ),
+  : d_gkq_set( 1e-3 ),
     d_zero_temp_elastic_cross_section( zero_temp_elastic_cross_section ),
     d_cm_scattering_distribution( cm_scattering_distribution ),
     d_A( A ),
     d_kT( kT ),
-    d_average_zero_temp_elastic_cross_section( 1.0 )
+    d_average_zero_temp_elastic_cross_section( 1.0 ),
+    d_jacobian_normalization( 1.5890538632068023 )
 {
   // Make sure the distributions are valid
   testPrecondition( !zero_temp_elastic_cross_section.is_null() );
@@ -97,14 +98,13 @@ double AdjointFreeGasElasticSAlphaBetaFunction::evaluateIntegrand(
   // Make sure the energy is valid
   testPrecondition( E > 0.0 );
   // Make sure beta is valid
-  testPrecondition( beta >= Utility::calculateAdjointBetaMin( d_A ) );
+  testPrecondition( beta >= Utility::calculateBetaMin( E, d_kT ) );
   // Make sure alpha is valid
-  remember( double alpha_min = Utility::calculateAdjointAlphaMin(E,beta,d_A,d_kT) );
+  remember( double alpha_min = Utility::calculateAlphaMin(E,beta,d_A,d_kT) );
   testPrecondition( alpha >= alpha_min );
-  remember( double alpha_max = Utility::calculateAdjointAlphaMax(E,beta,d_A,d_kT) );
+  remember( double alpha_max = Utility::calculateAlphaMax(E,beta,d_A,d_kT) );
   testPrecondition( alpha <= alpha_max );
   // Make sure the cm angle is valid
-  
   testPrecondition( mu_cm >= -1.0 );
   testPrecondition( mu_cm <= 1.0 );
   
@@ -199,12 +199,12 @@ double AdjointFreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
 {
   // Make sure the values are valid
   testPrecondition( E > 0.0 );
-  testPrecondition( beta >= Utility::calculateAdjointBetaMin( d_A ) );
+  testPrecondition( beta >= Utility::calculateBetaMin( E, d_kT ) );
 
-  double alpha_min = Utility::calculateAdjointAlphaMin(E,beta,d_A,d_kT);
-  double alpha_max = Utility::calculateAdjointAlphaMax(E,beta,d_A,d_kT);
+  double alpha_min = Utility::calculateAlphaMin(E,beta,d_A,d_kT);
+  double alpha_max = Utility::calculateAlphaMax(E,beta,d_A,d_kT);
   double value;
-
+  
   // Test for special condition (alpha = 0.0)
   // Note: alpha = 0.0 can only occur when beta = 0.0. The S(alpha,beta)
   // function has an integrable singularity at alpha = 0.0. As alpha
@@ -226,7 +226,7 @@ double AdjointFreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
       double value_error, lower_limit, upper_limit;
       
       this->findLimits( alpha, beta, E, lower_limit, upper_limit );
-
+      
       try
       {
 	d_gkq_set.integrateAdaptively<15>( integrand,
@@ -244,7 +244,7 @@ double AdjointFreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
         // Approximate S(alpha,beta) function
         value = d_average_zero_temp_elastic_cross_section/
           ((d_A+1)*(d_A+1)*sqrt(alpha))*
-          exp( -(alpha + -1*beta)*(alpha + -1*beta)/(4*alpha) );
+          exp( -(alpha + beta)*(alpha + beta)/(4*alpha) );
 
         if( value > std::numeric_limits<double>::max() )
         {
@@ -263,8 +263,9 @@ double AdjointFreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
   }
     
   // Make sure the value is valid
+  value = value*d_jacobian_normalization;
   testPostcondition( value == value );
-  
+
   return value;
 }
 
@@ -274,7 +275,7 @@ double AdjointFreeGasElasticSAlphaBetaFunction::calculateExpArgConst(
 							 const double beta,
 							 const double E ) const
 {
-  return -d_A*E/d_kT + -(d_A+1.0)/2.0*(-1*beta - d_A*alpha);
+  return -d_A*E/d_kT + -(d_A+1.0)/2.0*(beta - d_A*alpha);
 }
 
 // Calculate the exponential argument multiplier
@@ -291,7 +292,7 @@ double AdjointFreeGasElasticSAlphaBetaFunction::calculateBesselArgMult(
 							 const double E ) const
 {
   double bessel_arg_mult_arg = 
-    4.0*d_A*alpha*E/d_kT - (-1*beta - d_A*alpha)*(-1*beta - d_A*alpha);
+    4.0*d_A*alpha*E/d_kT - (beta - d_A*alpha)*(beta - d_A*alpha);
       
   // When alpha ~ alpha_min, alpha ~ alpha_max or beta ~ beta_min,
   // a very small negative argument is possible due to roundoff-set it to 0
@@ -313,7 +314,7 @@ void AdjointFreeGasElasticSAlphaBetaFunction::findLimits(
   std::list<double> search_grid;
 
   double arg1 = 4*d_A*alpha*E/d_kT - 
-    (-1*beta - d_A*alpha)*(-1*beta - d_A*alpha);
+    (beta - d_A*alpha)*(beta - d_A*alpha);
   double arg2 = (d_A + 1)*(d_A + 1)*alpha*alpha;
   
   double estimated_peak_mu_cm = (arg1 - arg2)/(arg1 + arg2);
