@@ -135,7 +135,6 @@ void FreeGasElasticMarginalBetaFunction::populateCDF(
     
     d_cdf_array.append( this->evaluateCDF( beta ) );
   }
-  std::reverse( d_cdf_array.begin(), d_cdf_array.end() );
 }
 
 void FreeGasElasticMarginalBetaFunction::getCDF( 

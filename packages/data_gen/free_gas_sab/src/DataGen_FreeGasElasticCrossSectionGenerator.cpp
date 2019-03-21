@@ -170,7 +170,7 @@ void FreeGasElasticCrossSectionGenerator::doubleDifferentialCrossSectionValue(
 void FreeGasElasticCrossSectionGenerator::totalCrossSectionValue( 
            double E )
 {
-  if (E > 500*d_kT/d_A)
+  if (E > 250*d_kT/d_A)
   {
     d_total_cross_section[E] = d_cross_section->evaluate( E );
   }
