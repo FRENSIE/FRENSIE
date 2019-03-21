@@ -127,7 +127,7 @@ void FreeGasElasticCrossSectionFactory::extractCrossSectionFromACE()
   std::vector<double> thermal_energy_array;
   for(int i = 0; i < d_energy_array.size(); ++ i)
   {
-    if( d_energy_array[i] <= 5.0e-6 )
+    if( d_energy_array[i] <= 2.53010e-8 ) //5.0e-6 )
     {
       thermal_energy_array.push_back( d_energy_array[i] );
     }
@@ -209,9 +209,11 @@ void FreeGasElasticCrossSectionFactory::generateFreeGasCrossSection( double kT )
                     d_kT,
                     E ) );
 
-      double xs_value = ( (d_A+1)*(d_A+1)*(d_A+1)*(d_A+1)*
-        (d_kT/E)/(4*d_A*sqrt(d_pi3))*
-         d_beta_function->getNormalizationConstant() );
+      //double xs_value = ( (d_A+1)*(d_A+1)*(d_A+1)*(d_A+1)*
+       // (d_kT/E)/(4*d_A*sqrt(d_pi3))*
+        // d_beta_function->getNormalizationConstant() );
+
+      double xs_value = d_beta_function->getNormalizationConstant();
 
       d_free_gas_cross_section.append( xs_value );
     }

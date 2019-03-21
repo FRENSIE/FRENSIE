@@ -47,7 +47,7 @@ AdjointFreeGasElasticSAlphaBetaFunction::AdjointFreeGasElasticSAlphaBetaFunction
     d_A( A ),
     d_kT( kT ),
     d_average_zero_temp_elastic_cross_section( 1.0 ),
-    d_jacobian_normalization( 1.5890538632068023 )
+    d_jacobian_normalization( 1.57071440077166 )
 {
   // Make sure the distributions are valid
   testPrecondition( !zero_temp_elastic_cross_section.is_null() );
