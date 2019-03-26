@@ -89,6 +89,20 @@ TEUCHOS_UNIT_TEST( FreeGasElasticMarginalBetaFunction, evaluatePDF )
 
 //---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated
+TEUCHOS_UNIT_TEST( FreeGasElasticMarginalBetaFunction, evaluatePDF )
+{
+  double beta = (1.35e-9-2.53010e-8)/2.53010e-8;
+
+  double pdf_value = (*beta_function)( beta );
+  
+  std::cout << " " << std::endl;
+  std::cout << pdf_value << std::endl;
+}
+
+/*
+
+//---------------------------------------------------------------------------//
+// Check that the PDF can be evaluated
 TEUCHOS_UNIT_TEST( FreeGasElasticMarginalBetaFunction, outputPDF )
 {
   std::vector<std::string> filenames{ "/home/ecmoll/software/frensie/test_data/forward_pdf/H_293K.p",
@@ -200,6 +214,8 @@ TEUCHOS_UNIT_TEST( FreeGasElasticMarginalBetaFunction, outputCDF )
     output_file.close();
   }
 }
+
+*/
 
 //---------------------------------------------------------------------------//
 // Custom main function
