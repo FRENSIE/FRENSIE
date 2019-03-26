@@ -206,7 +206,7 @@ void FreeGasElasticMarginalBetaFunction::updateCachedValues()
 
   // Make sure the norm constant is non-zero
   testPostcondition( d_norm_constant > 0.0 );
-  
+
   // Reset the cached cdf values
   d_cached_cdf_values.clear();
 
@@ -216,6 +216,12 @@ void FreeGasElasticMarginalBetaFunction::updateCachedValues()
   cdf_point( std::numeric_limits<double>::infinity(), 1.0 );
 
   d_cached_cdf_values.push_back( cdf_point );
+
+  //if( this->evaluateCDF( Utility::calculateBetaMax( d_A ) != 1 ) )
+  //{
+  //  double low_value = this->evaluateCDF( Utility::calculateBetaMax( d_A ) );
+  //  d_norm_constant = d_norm_constant/low_value;
+  //}
 }
 
 // Function that represents the integral of S(alpha,beta) over all alpha
