@@ -78,9 +78,10 @@ double FreeGasElasticMarginalBetaFunction::getBetaMax()
 }
 
 // Get the normalization constant
-double FreeGasElasticMarginalBetaFunction::getNormalizationConstant() const
+double FreeGasElasticMarginalBetaFunction::getNormalizationConstant()
 {
-  return d_norm_constant;
+  double norm_correction = this->evaluateCDF( (5e-6 - d_E)/d_kT );
+  return d_norm_constant/norm_correction;
 }
 
 // Evaluate the marginal PDF
@@ -116,6 +117,14 @@ void FreeGasElasticMarginalBetaFunction::populatePDF(
     else
     {
       d_pdf_array.append( 0.0 );
+    }
+  }
+
+  if( d_cdf_array.back() != 1.0 )
+  {
+    for( int i = 0; i < d_pdf_array.size(); ++i )
+    {
+      d_pdf_array[i] = d_pdf_array[i]*(1.0/d_cdf_array.back());
     }
   }
 }

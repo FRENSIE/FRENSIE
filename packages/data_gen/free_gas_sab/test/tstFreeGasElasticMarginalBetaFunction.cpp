@@ -176,8 +176,8 @@ TEUCHOS_UNIT_TEST( FreeGasElasticMarginalBetaFunction, outputCDF )
 
   std::vector<double> kT_vector{ 2.5301e-8 }; //, 7.556e-8, 1.03408e-7, 2.15433e-7};                      
   // std::vector<double> kT_vector{ 2.15433e-7 };        
-  std::vector<double> energies{1.3e-9};
-  std::vector<double> energy_vector{2e-11, 5e-11, 1e-10, 5e-10, 1e-9, 5e-9, 1e-8,3.3e-8, 5e-8, 1e-7, 5e-7, 1e-6, 1.5e-6, 2e-6, 2.5e-6, 3e-6, 3.5e-6, 4e-6, 4.5e-6, 5e-6};
+  std::vector<double> energies{1.1e-9};
+  std::vector<double> energy_vector{2e-11, 5e-11, 1e-10, 5e-10, 1e-9, 5e-9, 1e-8,3.3e-8, 5e-8, 1e-7, 2e-7, 3e-7, 4e-7, 4.5e-7, 4.75e-7, 5e-7, 1e-6, 1.5e-6, 2e-6, 2.5e-6, 3e-6, 3.5e-6, 4e-6, 4.5e-6, 5e-6};
   Teuchos::Array<double> energy_array( energy_vector );
 
   for( int e = 0; e < filenames.size(); ++e )

@@ -54,7 +54,7 @@ public:
   double getBetaMax();
   
   //! Get the normalization constant
-  double getNormalizationConstant() const;
+  double getNormalizationConstant();
 
   //! Evaluate the marginal PDF
   double operator()( const double beta );
