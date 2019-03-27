@@ -103,6 +103,8 @@ private:
   // The normalization constant
   double d_norm_constant;
 
+  double d_integration_correction;
+
   // Cached CDF values (first = beta, second = CDF)
   std::list<Utility::Pair<double,double> > d_cached_cdf_values;
 

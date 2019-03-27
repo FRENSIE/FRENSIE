@@ -132,8 +132,17 @@ void FreeGasElasticMarginalBetaFunction::populateCDF(
   for( int i = 0; i < energy_array.size(); ++i )
   {
     double beta = (energy_array[i] - d_E)/d_kT;
+    std::cout << energy_array[i] << std::endl;
     
     d_cdf_array.append( this->evaluateCDF( beta ) );
+  }
+
+  if( d_cdf_array.back() != 1.0 )
+  {
+    for( int i = 0; i < d_cdf_array.size(); ++i )
+    {
+      d_cdf_array[i] = d_cdf_array[i]*(1.0/d_cdf_array.back());
+    }
   }
 }
 
@@ -216,12 +225,6 @@ void FreeGasElasticMarginalBetaFunction::updateCachedValues()
   cdf_point( std::numeric_limits<double>::infinity(), 1.0 );
 
   d_cached_cdf_values.push_back( cdf_point );
-
-  //if( this->evaluateCDF( Utility::calculateBetaMax( d_A ) != 1 ) )
-  //{
-  //  double low_value = this->evaluateCDF( Utility::calculateBetaMax( d_A ) );
-  //  d_norm_constant = d_norm_constant/low_value;
-  //}
 }
 
 // Function that represents the integral of S(alpha,beta) over all alpha
