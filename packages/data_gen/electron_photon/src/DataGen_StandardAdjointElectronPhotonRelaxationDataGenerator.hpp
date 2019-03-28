@@ -227,7 +227,7 @@ void createForwardInelasticElectronCrossSectionEvaluators(
     const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
     std::function<double (const double&)>& adjoint_excitation_xs_evaluator,
     std::function<double (const double&)>& adjoint_excitation_energy_gain_evaluator,
-    double& excitation_max_energy ) const;
+    double& excitation_max_energy );
 
   // Create the adjoint bremsstrahlung grid generator
   void createAdjointBremsstrahlungGridGenerator(

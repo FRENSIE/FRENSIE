@@ -1597,25 +1597,25 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     data_container.setAdjointAtomicExcitationCrossSectionThresholdEnergyIndex( threshold );
 
 
-    // Make sure the energy gain is greater than zero
-    unsigned size = energy_grid.size();
-    while( excitation_max_energy < energy_grid[size-1] )
-    {
-      --size;
-    }
-    testPostcondition( excitation_max_energy == energy_grid[size-1] );
+    // // Make sure the energy gain is greater than zero
+    // unsigned size = energy_grid.size();
+    // while( excitation_max_energy < energy_grid[size-1] )
+    // {
+    //   --size;
+    // }
+    // testPostcondition( excitation_max_energy == energy_grid[size-1] );
 
-    std::vector<double> excitation_energy_gain( size );
-    std::vector<double> excitation_energy_grid( size );
-    for ( unsigned i = 0; i < size; ++i )
-    {
-      excitation_energy_grid[i] = energy_grid[i];
-      excitation_energy_gain[i] = adjoint_excitation_energy_gain_evaluator( energy_grid[i] );
-    }
+    // std::vector<double> excitation_energy_gain( size );
+    // std::vector<double> excitation_energy_grid( size );
+    // for ( unsigned i = 0; i < size; ++i )
+    // {
+    //   excitation_energy_grid[i] = energy_grid[i];
+    //   excitation_energy_gain[i] = adjoint_excitation_energy_gain_evaluator( energy_grid[i] );
+    // }
 
-    // Set the adjoint bremsstrahlung scattering distribution
-    data_container.setAdjointAtomicExcitationEnergyGrid( excitation_energy_grid );
-    data_container.setAdjointAtomicExcitationEnergyGain( excitation_energy_gain );
+    // // Set the adjoint bremsstrahlung scattering distribution
+    // data_container.setAdjointAtomicExcitationEnergyGrid( excitation_energy_grid );
+    // data_container.setAdjointAtomicExcitationEnergyGain( excitation_energy_gain );
   }
 
     FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
@@ -1826,7 +1826,7 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicExcitat
   const std::shared_ptr<Utility::HashBasedGridSearcher<double> >& forward_grid_searcher,
   std::function<double(const double&)>& adjoint_excitation_cross_section_evaluator,
   std::function<double(const double&)>& adjoint_excitation_energy_gain_evaluator,
-  double& excitation_max_energy ) const
+  double& excitation_max_energy )
 {
   std::vector<double> forward_incoming_energies =
     d_forward_epr_data->getAtomicExcitationEnergyGrid();
@@ -1943,22 +1943,29 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicExcitat
             forward_reaction->getCrossSection( this->getMaxElectronEnergy() ) );
   }
 
-  auto adjoint_dist =
-    std::make_shared<const Utility::TabularDistribution<Utility::LogLog> >(
-                                                adjoint_incoming_energies,
-                                                adjoint_energy_gain );
+  Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
+    this->getVolatileDataContainer();
 
-  // Set the energy gain evaluator
-  adjoint_excitation_energy_gain_evaluator = [adjoint_dist](const double& adjoint_energy){ return adjoint_dist->evaluate(adjoint_energy); };
+  // Set the adjoint bremsstrahlung scattering distribution
+  data_container.setAdjointAtomicExcitationEnergyGrid( adjoint_incoming_energies );
+  data_container.setAdjointAtomicExcitationEnergyGain( adjoint_energy_gain );
 
-  auto adjoint_reaction =
-    std::make_shared<const Utility::TabularDistribution<Utility::LogLog> >(
-                                                adjoint_energy_grid,
-                                                adjoint_cross_section );
+  // auto adjoint_dist =
+  //   std::make_shared<const Utility::TabularDistribution<Utility::LogLog> >(
+  //                                               adjoint_incoming_energies,
+  //                                               adjoint_energy_gain );
+
+  // // Set the energy gain evaluator
+  // adjoint_excitation_energy_gain_evaluator = [adjoint_dist](const double& adjoint_energy){ return adjoint_dist->evaluate(adjoint_energy); };
+
+  // auto adjoint_reaction =
+  //   std::make_shared<const Utility::TabularDistribution<Utility::LogLog> >(
+  //                                               adjoint_energy_grid,
+  //                                               adjoint_cross_section );
 
 
-  // Set thecross section evaluator
-  adjoint_excitation_cross_section_evaluator = [adjoint_reaction](const double& adjoint_energy){ return adjoint_reaction->evaluate(adjoint_energy); };
+  // // Set thecross section evaluator
+  // adjoint_excitation_cross_section_evaluator = [adjoint_reaction](const double& adjoint_energy){ return adjoint_reaction->evaluate(adjoint_energy); };
 }
 
 // Create the adjoint bremsstrahlung grid generator
