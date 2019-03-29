@@ -1958,14 +1958,14 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicExcitat
   // // Set the energy gain evaluator
   // adjoint_excitation_energy_gain_evaluator = [adjoint_dist](const double& adjoint_energy){ return adjoint_dist->evaluate(adjoint_energy); };
 
-  // auto adjoint_reaction =
-  //   std::make_shared<const Utility::TabularDistribution<Utility::LogLog> >(
-  //                                               adjoint_energy_grid,
-  //                                               adjoint_cross_section );
+  auto adjoint_reaction =
+    std::make_shared<const Utility::TabularDistribution<Utility::LogLog> >(
+                                                adjoint_energy_grid,
+                                                adjoint_cross_section );
 
 
-  // // Set thecross section evaluator
-  // adjoint_excitation_cross_section_evaluator = [adjoint_reaction](const double& adjoint_energy){ return adjoint_reaction->evaluate(adjoint_energy); };
+  // Set thecross section evaluator
+  adjoint_excitation_cross_section_evaluator = [adjoint_reaction](const double& adjoint_energy){ return adjoint_reaction->evaluate(adjoint_energy); };
 }
 
 // Create the adjoint bremsstrahlung grid generator
