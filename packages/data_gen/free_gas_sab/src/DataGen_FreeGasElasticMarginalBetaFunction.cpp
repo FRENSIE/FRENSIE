@@ -52,7 +52,8 @@ FreeGasElasticMarginalBetaFunction::FreeGasElasticMarginalBetaFunction(
   testPrecondition( E > 0.0 );
   
   updateCachedValues();
-  setCorrectionValue();
+  // setCorrectionValue();
+  d_integration_correction = 1;
 }
 
 // Set the beta and energy values
@@ -204,11 +205,34 @@ void FreeGasElasticMarginalBetaFunction::updateCachedValues()
   boost::function<double (double beta)> d_integrated_sab_function = 
     boost::bind<double>( &FreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction, boost::ref( *this ), _1 );
   
-  d_beta_gkq_set.integrateAdaptively<15>( d_integrated_sab_function,
-  					 d_beta_min,
-  					 beta_max,
-  					 d_norm_constant,
+
+  std::vector<double> energy_setpoints{1e-11, 1e-10, 1e-9, 1e-8, 1e-7, 1e-6, 5e-6};
+  std::vector<double> beta_setpoints;
+
+  for( int i = 0; i < energy_setpoints.size(); ++i )
+  {
+    beta_setpoints.push_back( (energy_setpoints[i] - d_E)/d_kT );
+  }
+
+  double norm_constant = 0;
+  d_norm_constant      = 0;
+
+  for( int i = 0; i < beta_setpoints.size() - 1; ++i )
+  {
+    d_beta_gkq_set.integrateAdaptively<15>( d_integrated_sab_function,
+  					 beta_setpoints[i],
+  					 beta_setpoints[i+1],
+  					 norm_constant,
   					 norm_constant_error );
+
+    d_norm_constant = d_norm_constant + norm_constant;
+  }
+
+  //d_beta_gkq_set.integrateAdaptively<15>( d_integrated_sab_function,
+  //					 d_beta_min,
+  //					 beta_max,
+  //					 d_norm_constant,
+  //					 norm_constant_error );
   
   // Teuchos::Tuple<double,3> points_of_interest = 
   //   Teuchos::tuple( d_beta_min, 515.0, -d_beta_min );

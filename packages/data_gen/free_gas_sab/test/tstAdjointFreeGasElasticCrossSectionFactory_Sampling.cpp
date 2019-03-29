@@ -120,7 +120,6 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
     population[ i ] = collision_bin;
   }
   
-  /*
   std::string oname = "/home/ecmoll/software/frensie/test_data/adjoint_transport/H_293K.transport.txt";
   std::ofstream output_file;
   output_file.open( oname );
@@ -134,7 +133,6 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
     output_file << "\n";
   }
   output_file.close();
-  */
 
   std::array<int, 2> preamble = {num_scatters + 1, num_particles};
 
