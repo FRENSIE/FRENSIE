@@ -593,9 +593,12 @@ void ParticleSimulationManager::runSimulationBatch(
 
   for( uint64_t i = 0; i < number_of_snapshots_per_batch; ++i )
   {
+    if( d_exit_simulation )
+      continue;
+
     const uint64_t micro_batch_start_history =
       batch_start_history + micro_batch_size*i;
-
+      
     if( i < d_properties->getNumberOfSnapshotsPerBatch()-1 )
     {
       this->runSimulationMicroBatch( micro_batch_start_history,
@@ -607,7 +610,7 @@ void ParticleSimulationManager::runSimulationBatch(
       this->runSimulationMicroBatch( micro_batch_start_history,
                                      batch_end_history );
     }
-
+    
     // Micro batch complete - take a snapshot of the observer states
     d_event_handler->takeSnapshotOfObserverStates();
   }
