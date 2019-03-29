@@ -52,6 +52,7 @@ FreeGasElasticMarginalBetaFunction::FreeGasElasticMarginalBetaFunction(
   testPrecondition( E > 0.0 );
   
   updateCachedValues();
+  setCorrectionValue();
 }
 
 // Set the beta and energy values
@@ -66,6 +67,20 @@ void FreeGasElasticMarginalBetaFunction::setIndependentVariables(
   updateCachedValues();
 }
 
+void FreeGasElasticMarginalBetaFunction::setCorrectionValue()
+{
+  std::vector<double> e_correct{ d_kT/19.0, 5.0e-6 };
+  Teuchos::Array<double> e_array( e_correct );
+  Teuchos::Array<double> cdf;
+  this->populateCDF( e_array );
+  this->getCDF( cdf );
+
+  d_integration_correction = this->evaluateCDF( (5.0e-6)/d_kT );
+
+  std::cout << d_integration_correction << std::endl;
+  d_norm_constant = d_norm_constant*d_integration_correction;
+}
+
 // Get the lower beta limit
 double FreeGasElasticMarginalBetaFunction::getBetaMin() const
 {
@@ -78,7 +93,7 @@ double FreeGasElasticMarginalBetaFunction::getBetaMax()
 }
 
 // Get the normalization constant
-double FreeGasElasticMarginalBetaFunction::getNormalizationConstant() const
+double FreeGasElasticMarginalBetaFunction::getNormalizationConstant()
 {
   return d_norm_constant;
 }
@@ -132,8 +147,7 @@ void FreeGasElasticMarginalBetaFunction::populateCDF(
   for( int i = 0; i < energy_array.size(); ++i )
   {
     double beta = (energy_array[i] - d_E)/d_kT;
-    
-    d_cdf_array.append( this->evaluateCDF( beta ) );
+    d_cdf_array.append( this->evaluateCDF( beta )*d_integration_correction );
   }
 }
 
@@ -216,12 +230,6 @@ void FreeGasElasticMarginalBetaFunction::updateCachedValues()
   cdf_point( std::numeric_limits<double>::infinity(), 1.0 );
 
   d_cached_cdf_values.push_back( cdf_point );
-
-  //if( this->evaluateCDF( Utility::calculateBetaMax( d_A ) != 1 ) )
-  //{
-  //  double low_value = this->evaluateCDF( Utility::calculateBetaMax( d_A ) );
-  //  d_norm_constant = d_norm_constant/low_value;
-  //}
 }
 
 // Function that represents the integral of S(alpha,beta) over all alpha

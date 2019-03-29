@@ -48,13 +48,15 @@ public:
   //! Set the beta and energy values
   void setIndependentVariables( const double E );
 
+  void setCorrectionValue();
+
   //! Get the lower beta limit
   double getBetaMin() const;
 
   double getBetaMax();
   
   //! Get the normalization constant
-  double getNormalizationConstant() const;
+  double getNormalizationConstant();
 
   //! Evaluate the marginal PDF
   double operator()( const double beta );
@@ -102,6 +104,8 @@ private:
 
   // The normalization constant
   double d_norm_constant;
+
+  double d_integration_correction;
 
   // Cached CDF values (first = beta, second = CDF)
   std::list<Utility::Pair<double,double> > d_cached_cdf_values;

@@ -77,7 +77,7 @@ void FreeGasElasticCrossSectionFactory::getZeroTemperatureElasticCrossSection(
 void FreeGasElasticCrossSectionFactory::getEnergyArray(
       Teuchos::Array<double>& energy_array )
 {
-  energy_array = d_energy_array;
+  energy_array = d_thermal_energy_array;
 }
 
 // Accessor for unmodified elastic cross section 
@@ -127,7 +127,7 @@ void FreeGasElasticCrossSectionFactory::extractCrossSectionFromACE()
   std::vector<double> thermal_energy_array;
   for(int i = 0; i < d_energy_array.size(); ++ i)
   {
-    if( d_energy_array[i] <= 5.0e-6 ) //<= 2.53010e-8 ) //5.0e-6 )
+    if( d_energy_array[i] <= 5.0e-6 )
     {
       thermal_energy_array.push_back( d_energy_array[i] );
     }
@@ -213,8 +213,6 @@ void FreeGasElasticCrossSectionFactory::generateFreeGasCrossSection( double kT )
         (d_kT/E)/(4*d_A*sqrt(d_pi3))*
         d_beta_function->getNormalizationConstant() );
 
-      // double xs_value = d_beta_function->getNormalizationConstant();
-
       d_free_gas_cross_section.append( xs_value );
     }
   }
@@ -249,7 +247,7 @@ void FreeGasElasticCrossSectionFactory::generateFreeGasCDF( double E,
                     d_kT,
                     E ) );
 
-  d_beta_function->populateCDF( d_energy_array );
+  d_beta_function->populateCDF( d_thermal_energy_array );
   d_beta_function->getCDF( free_gas_CDF );
 }
 
@@ -285,8 +283,8 @@ void FreeGasElasticCrossSectionFactory::generateFreeGasPDFDistributions( double 
 
 void FreeGasElasticCrossSectionFactory::serializeMapOut( double kT )
 {
-  std::string preamble( "/home/ecmoll/software/frensie/test_data/forward_energy_transfer_" );
-  std::string filetype( ".i" );
+  std::string preamble( "/home/ecmoll/software/frensie/test_data/forward_transport/H_" );
+  std::string filetype( ".transport" );
 
   std::stringstream ss;
   ss << preamble << kT << filetype;

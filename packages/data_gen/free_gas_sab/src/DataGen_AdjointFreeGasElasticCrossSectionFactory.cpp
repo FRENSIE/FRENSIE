@@ -76,7 +76,7 @@ void AdjointFreeGasElasticCrossSectionFactory::getZeroTemperatureElasticCrossSec
 void AdjointFreeGasElasticCrossSectionFactory::getEnergyArray(
       Teuchos::Array<double>& energy_array )
 {
-  energy_array = d_energy_array;
+  energy_array = d_thermal_energy_array;
 }
 
 // Accessor for unmodified elastic cross section 
@@ -282,8 +282,8 @@ void AdjointFreeGasElasticCrossSectionFactory::generateFreeGasPDFDistributions( 
 
 void AdjointFreeGasElasticCrossSectionFactory::serializeMapOut( double kT )
 {
-  std::string preamble( "/home/ecmoll/software/frensie/test_data/adjoint_energy_transfer_" );
-  std::string filetype( ".i" );
+  std::string preamble( "/home/ecmoll/software/frensie/test_data/adjoint_transport/H_" );
+  std::string filetype( ".transport" );
 
   std::stringstream ss;
   ss << preamble << kT << filetype;
