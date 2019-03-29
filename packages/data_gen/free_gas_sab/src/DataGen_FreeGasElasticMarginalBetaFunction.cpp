@@ -80,7 +80,23 @@ double FreeGasElasticMarginalBetaFunction::getBetaMax()
 // Get the normalization constant
 double FreeGasElasticMarginalBetaFunction::getNormalizationConstant()
 {
-  double norm_correction = this->evaluateCDF( (5e-6 - d_E)/d_kT );
+  std::vector<double> energy_check = {1e-6, 1.1e-6, 1.2e-6, 1.3e-6, 1.4e-6, 1.5e-6, 2e-6, 2.25e-6, 2.5e-6, 2.75e-6, 3e-6, 4e-6, 5e-6};
+  std::vector<double> cdf_check;
+  double norm_correction = 1;
+
+  for( int i = 0; i < energy_check.size(); ++i )
+  {
+    cdf_check.push_back( this-> evaluateCDF( (5.0e-6 - d_E)/d_kT ) );
+  }
+  
+  for( int i = 0; i < energy_check.size(); ++i )
+  {
+    if( cdf_check[i] < 1 )
+    {
+      norm_correction = cdf_check[i];
+    }
+  }
+
   return d_norm_constant/norm_correction;
 }
 
