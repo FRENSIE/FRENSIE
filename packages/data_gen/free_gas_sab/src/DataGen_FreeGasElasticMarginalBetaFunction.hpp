@@ -48,6 +48,8 @@ public:
   //! Set the beta and energy values
   void setIndependentVariables( const double E );
 
+  void setCorrectionValue();
+
   //! Get the lower beta limit
   double getBetaMin() const;
 

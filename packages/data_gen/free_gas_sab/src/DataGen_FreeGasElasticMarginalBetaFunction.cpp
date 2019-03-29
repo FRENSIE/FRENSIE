@@ -52,6 +52,7 @@ FreeGasElasticMarginalBetaFunction::FreeGasElasticMarginalBetaFunction(
   testPrecondition( E > 0.0 );
   
   updateCachedValues();
+  setCorrectionValue();
 }
 
 // Set the beta and energy values
@@ -64,6 +65,20 @@ void FreeGasElasticMarginalBetaFunction::setIndependentVariables(
   d_E = E;
 
   updateCachedValues();
+}
+
+void FreeGasElasticMarginalBetaFunction::setCorrectionValue()
+{
+  std::vector<double> e_correct{ d_kT/19.0, 5.0e-6 };
+  Teuchos::Array<double> e_array( e_correct );
+  Teuchos::Array<double> cdf;
+  this->populateCDF( e_array );
+  this->getCDF( cdf );
+
+  d_integration_correction = this->evaluateCDF( (5.0e-6)/d_kT );
+
+  std::cout << d_integration_correction << std::endl;
+  d_norm_constant = d_norm_constant*d_integration_correction;
 }
 
 // Get the lower beta limit
@@ -80,24 +95,7 @@ double FreeGasElasticMarginalBetaFunction::getBetaMax()
 // Get the normalization constant
 double FreeGasElasticMarginalBetaFunction::getNormalizationConstant()
 {
-  std::vector<double> energy_check = {1e-6, 1.1e-6, 1.2e-6, 1.3e-6, 1.4e-6, 1.5e-6, 2e-6, 2.25e-6, 2.5e-6, 2.75e-6, 3e-6, 4e-6, 5e-6};
-  std::vector<double> cdf_check;
-  double norm_correction = 1;
-
-  for( int i = 0; i < energy_check.size(); ++i )
-  {
-    cdf_check.push_back( this-> evaluateCDF( (5.0e-6 - d_E)/d_kT ) );
-  }
-  
-  for( int i = 0; i < energy_check.size(); ++i )
-  {
-    if( cdf_check[i] < 1 )
-    {
-      norm_correction = cdf_check[i];
-    }
-  }
-
-  return d_norm_constant/norm_correction;
+  return d_norm_constant;
 }
 
 // Evaluate the marginal PDF
@@ -135,14 +133,6 @@ void FreeGasElasticMarginalBetaFunction::populatePDF(
       d_pdf_array.append( 0.0 );
     }
   }
-
-  if( d_cdf_array.back() != 1.0 )
-  {
-    for( int i = 0; i < d_pdf_array.size(); ++i )
-    {
-      d_pdf_array[i] = d_pdf_array[i]*(1.0/d_cdf_array.back());
-    }
-  }
 }
 
 void FreeGasElasticMarginalBetaFunction::getPDF( 
@@ -157,17 +147,7 @@ void FreeGasElasticMarginalBetaFunction::populateCDF(
   for( int i = 0; i < energy_array.size(); ++i )
   {
     double beta = (energy_array[i] - d_E)/d_kT;
-    std::cout << energy_array[i] << std::endl;
-    
-    d_cdf_array.append( this->evaluateCDF( beta ) );
-  }
-
-  if( d_cdf_array.back() != 1.0 )
-  {
-    for( int i = 0; i < d_cdf_array.size(); ++i )
-    {
-      d_cdf_array[i] = d_cdf_array[i]*(1.0/d_cdf_array.back());
-    }
+    d_cdf_array.append( this->evaluateCDF( beta )*d_integration_correction );
   }
 }
 

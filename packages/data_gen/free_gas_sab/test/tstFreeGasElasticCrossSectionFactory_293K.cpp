@@ -167,8 +167,6 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
   Teuchos::Array<double> free_gas_cross_section;
   free_gas_factory->generateFreeGasCrossSection( kT );
   free_gas_factory->getFreeGasCrossSection( free_gas_cross_section );
-  
-  std::cout << " " << std::endl;
 
   for( int i = 0; i < free_gas_cross_section.size(); ++i )
   {
