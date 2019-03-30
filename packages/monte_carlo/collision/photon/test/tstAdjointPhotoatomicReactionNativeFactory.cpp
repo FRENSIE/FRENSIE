@@ -498,6 +498,10 @@ FRENSIE_UNIT_TEST( AdjointPhotoatomicReactionNativeFactory,
                                                                *data_container,
                                                                *energy_grid,
                                                                20.0 );
+  
+  std::shared_ptr<const std::vector<double> > critical_line_energies =
+    std::make_shared<std::vector<double> >( 1, 1.0 );
+  
   // Create the hash based grid searcher
   std::shared_ptr<const Utility::HashBasedGridSearcher<double> > grid_searcher(
    new Utility::StandardHashBasedGridSearcher<std::vector<double>,false>(
@@ -511,7 +515,8 @@ FRENSIE_UNIT_TEST( AdjointPhotoatomicReactionNativeFactory,
                                                                *data_container,
                                                                energy_grid,
                                                                grid_searcher,
-                                                               reaction );
+                                                               reaction,
+                                                               critical_line_energies );
 
   // Check if the reaction properties are correct
   FRENSIE_CHECK_EQUAL( reaction->getReactionType(),
@@ -536,6 +541,10 @@ FRENSIE_UNIT_TEST( AdjointPhotoatomicReactionNativeFactory,
                                                                *data_container,
                                                                *energy_grid,
                                                                10.0 );
+
+  std::shared_ptr<const std::vector<double> > critical_line_energies =
+    std::make_shared<std::vector<double> >( 1, 1.0 );
+  
   // Create the hash based grid searcher
   std::shared_ptr<const Utility::HashBasedGridSearcher<double> > grid_searcher(
    new Utility::StandardHashBasedGridSearcher<std::vector<double>,false>(
@@ -549,7 +558,8 @@ FRENSIE_UNIT_TEST( AdjointPhotoatomicReactionNativeFactory,
                                                                *data_container,
                                                                energy_grid,
                                                                grid_searcher,
-                                                               reaction );
+                                                               reaction,
+                                                               critical_line_energies );
 
   // Check if the reaction properties are correct
   FRENSIE_CHECK_EQUAL( reaction->getReactionType(),

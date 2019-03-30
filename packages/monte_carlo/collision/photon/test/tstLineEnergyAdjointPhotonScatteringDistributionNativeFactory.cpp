@@ -32,7 +32,7 @@ std::shared_ptr<const Data::AdjointElectronPhotonRelaxationDataContainer>
 FRENSIE_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistributioNativeFactory,
                    createPairProductionDistribution )
 {
-  std::shared_ptr<const MonteCarlo::LineEnergyAdjointPhotonScatteringDistribution>
+  std::shared_ptr<MonteCarlo::LineEnergyAdjointPhotonScatteringDistribution>
     distribution;
 
   double cross_section_value;
@@ -75,7 +75,7 @@ FRENSIE_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistributioNativeFactory,
 FRENSIE_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistributionNativeFactory,
                    createTripletProductionDistribution )
 {
-  std::shared_ptr<const MonteCarlo::LineEnergyAdjointPhotonScatteringDistribution>
+  std::shared_ptr<MonteCarlo::LineEnergyAdjointPhotonScatteringDistribution>
     distribution;
 
   double cross_section_value;

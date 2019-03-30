@@ -670,10 +670,15 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, collideAtLineEnergy )
   adjoint_photoatom->collideAtLineEnergy( *adjoint_photon, bank );
 
   FRENSIE_CHECK( adjoint_photon->isGone() );
-  FRENSIE_CHECK_EQUAL( bank.size(), 1 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 2 );
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(),
-                          2*Utility::PhysicalConstants::electron_rest_mass_energy,
-                          1e-15 );
+                                   2*Utility::PhysicalConstants::electron_rest_mass_energy,
+                                   1e-15 );
+
+  bank.pop();
+
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 20.0 );
+  FRENSIE_CHECK( bank.top().getWeight() != 1.0 );
 
   bank.pop();
 
@@ -693,10 +698,15 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, collideAtLineEnergy )
   adjoint_photoatom->collideAtLineEnergy( *adjoint_photon, bank );
 
   FRENSIE_CHECK( adjoint_photon->isGone() );
-  FRENSIE_CHECK_EQUAL( bank.size(), 1 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 2 );
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(),
                                    4*Utility::PhysicalConstants::electron_rest_mass_energy,
                                    1e-15 );
+
+  bank.pop();
+
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 20.0 );
+  FRENSIE_CHECK( bank.top().getWeight() != 1.0 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
@@ -815,7 +825,8 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                                                 data_container,
                                                                 energy_grid,
                                                                 grid_searcher,
-                                                                reaction );
+                                                                reaction,
+                                                                critical_line_energies );
 
     me_line_energy_reactions[reaction->getReactionType()] = reaction;
 
@@ -824,7 +835,8 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                                                 data_container,
                                                                 energy_grid,
                                                                 grid_searcher,
-                                                                reaction );
+                                                                reaction,
+                                                                critical_line_energies );
 
     me_line_energy_reactions[reaction->getReactionType()] = reaction;
   }

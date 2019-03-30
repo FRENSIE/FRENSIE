@@ -362,10 +362,7 @@ double calculateDopplerBroadenedEnergyAdjoint(
 
     // Handle roundoff error that results in a very small negative discriminant
     if( discriminant < 0.0 && discriminant >= -1e-14 )
-    {
-      //std::cout << "corrected discriminant!" << std::endl;
       discriminant = 0.0;
-    }
 
     double test_pz;
 
@@ -427,12 +424,6 @@ double calculateDopplerBroadenedEnergyAdjoint(
     // The scattering process is not energetically possible
     else
     {
-      std::cout << Utility::toString(electron_momentum_projection) << " "
-                << Utility::toString(adjoint_compton_line_ratio) << " "
-                << Utility::toString(a) << " "
-                << Utility::toString(b) << " "
-                << Utility::toString(c) << std::endl;
-      
       final_energy = 0.0;
 
       energetically_possible = false;
@@ -441,9 +432,6 @@ double calculateDopplerBroadenedEnergyAdjoint(
   // The scattering process is not energetically possible
   else
   {
-    std::cout << Utility::toString(electron_momentum_projection) << " "
-              << Utility::toString(absolute_min_projection) << std::endl;
-    
     final_energy = 0.0;
 
     energetically_possible = false;

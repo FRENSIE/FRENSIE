@@ -23,7 +23,7 @@ namespace MonteCarlo{
 void LineEnergyAdjointPhotonScatteringDistributionNativeFactory::createPairProductionDistribution(
           const Data::AdjointElectronPhotonRelaxationDataContainer&
           raw_adjoint_photoatom_data,
-          std::shared_ptr<const LineEnergyAdjointPhotonScatteringDistribution>&
+          std::shared_ptr<LineEnergyAdjointPhotonScatteringDistribution>&
           pair_production_distribution,
           double& cross_section_value,
           const double max_energy )
@@ -69,7 +69,7 @@ void LineEnergyAdjointPhotonScatteringDistributionNativeFactory::createPairProdu
 void LineEnergyAdjointPhotonScatteringDistributionNativeFactory::createTripletProductionDistribution(
           const Data::AdjointElectronPhotonRelaxationDataContainer&
           raw_adjoint_photoatom_data,
-          std::shared_ptr<const LineEnergyAdjointPhotonScatteringDistribution>&
+          std::shared_ptr<LineEnergyAdjointPhotonScatteringDistribution>&
           triplet_production_distribution,
           double& cross_section_value,
           const double max_energy )

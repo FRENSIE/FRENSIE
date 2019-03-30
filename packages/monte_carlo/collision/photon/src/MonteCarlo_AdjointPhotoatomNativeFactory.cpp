@@ -110,7 +110,8 @@ void AdjointPhotoatomNativeFactory::createAdjointPhotoatomCore(
                                                     raw_adjoint_photoatom_data,
                                                     energy_grid,
                                                     grid_searcher,
-                                                    reaction_pointer );
+                                                    reaction_pointer,
+                                                    critical_line_energies );
     
     me_line_energy_reactions[PAIR_PRODUCTION_ADJOINT_PHOTOATOMIC_REACTION] =
       reaction_pointer;
@@ -130,7 +131,8 @@ void AdjointPhotoatomNativeFactory::createAdjointPhotoatomCore(
                                                     raw_adjoint_photoatom_data,
                                                     energy_grid,
                                                     grid_searcher,
-                                                    reaction_pointer );
+                                                    reaction_pointer,
+                                                    critical_line_energies );
 
     me_line_energy_reactions[TRIPLET_PRODUCTION_ADJOINT_PHOTOATOMIC_REACTION] =
       reaction_pointer;

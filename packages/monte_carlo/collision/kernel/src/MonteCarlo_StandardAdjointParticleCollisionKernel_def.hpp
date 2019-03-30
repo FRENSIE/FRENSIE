@@ -39,7 +39,7 @@ void StandardAdjointParticleCollisionKernel<_FilledGeometryModelType>::collideWi
       // line energy before the collision
       particle.multiplyWeight(
         cell_material.getAdjointLineEnergyWeightFactor(particle.getEnergy()) );
-      
+
       cell_material.collideAtLineEnergy( particle, bank );
 
       collision_complete = true;

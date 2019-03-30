@@ -413,7 +413,8 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                                                 data_container,
                                                                 energy_grid,
                                                                 grid_searcher,
-                                                                reaction );
+                                                                reaction,
+                                                                critical_line_energies );
 
     me_line_energy_reactions[reaction->getReactionType()] = reaction;
 
@@ -421,7 +422,8 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                                                 data_container,
                                                                 energy_grid,
                                                                 grid_searcher,
-                                                                reaction );
+                                                                reaction,
+                                                                critical_line_energies );
 
     me_line_energy_reactions[reaction->getReactionType()] = reaction;
   }

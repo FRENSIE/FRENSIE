@@ -16,7 +16,7 @@ namespace MonteCarlo{
 LineEnergyAdjointPhotoatomicReaction::LineEnergyAdjointPhotoatomicReaction(
     const AdjointPhotoatomicReactionType reaction,
     const double cross_section_value,
-    const std::shared_ptr<const LineEnergyAdjointPhotonScatteringDistribution>&
+    const std::shared_ptr<LineEnergyAdjointPhotonScatteringDistribution>&
     energy_dist )
   : d_reaction_type( reaction ),
     d_cross_section( cross_section_value ),
@@ -26,6 +26,19 @@ LineEnergyAdjointPhotoatomicReaction::LineEnergyAdjointPhotoatomicReaction(
   testPrecondition( cross_section_value > 0.0 );
   // Make sure the energy distribution is valid
   testPrecondition( energy_dist.get() != NULL );
+}
+
+// Set the critical line energies
+void LineEnergyAdjointPhotoatomicReaction::setCriticalLineEnergies(
+    const std::shared_ptr<const std::vector<double> >& critical_line_energies )
+{
+  d_scattering_distribution->setCriticalLineEnergies( critical_line_energies );
+}
+
+// Get the critical line energies
+const std::vector<double>& LineEnergyAdjointPhotoatomicReaction::getCriticalLineEnergies() const
+{
+  return d_scattering_distribution->getCriticalLineEnergies();
 }
 
 // Return the minimum outgoing energy
@@ -135,20 +148,30 @@ void LineEnergyAdjointPhotoatomicReaction::react(
   if( adjoint_photon.getEnergy() ==
       d_scattering_distribution->getLineEnergy() )
   {
-    // Create a clone of the probe particle
+    // Create a clone of the probe particle (a clone is required that is not
+    // a probe because if the probe's energy is changed - it will be killed)
     std::shared_ptr<AdjointPhotonState> adjoint_photon_clone(
                       new AdjointPhotonState( adjoint_photon, false, false ) );
 
+    // Increment the collision number of the clone first so that any
+    // generated probe particles have the correct collision number
+    adjoint_photon_clone->incrementCollisionNumber();
+
+    ParticleBank local_interaction_bank;
+
     // Scatter the clone
     d_scattering_distribution->scatterAdjointPhoton( *adjoint_photon_clone,
-                                                     bank,
+                                                     local_interaction_bank,
                                                      shell_of_interaction );
 
-    adjoint_photon_clone->incrementCollisionNumber();
-    
     // Add the clone to the bank
     bank.push( adjoint_photon_clone );
 
+    // Splice the local bank with the global bank (do this operation second
+    // so that all of the particle's children are added after the clone)
+    bank.splice( local_interaction_bank );
+
+    // Kill the probe
     adjoint_photon.setAsGone();
   }
 }
