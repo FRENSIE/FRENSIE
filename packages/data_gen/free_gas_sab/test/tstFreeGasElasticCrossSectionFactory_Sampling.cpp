@@ -58,7 +58,7 @@ std::string test_neutron_ace_file_name = "/home/ecmoll/software/frensie/FRENSIE/
 std::string table_name = "1001.70c";
 Teuchos::RCP<DataGen::FreeGasElasticCrossSectionFactory> free_gas_factory;
 std::vector<double> kT_vector{ 2.5301e-8, 5.1704e-8, 7.556e-8, 1.03408e-7, 2.15433e-7};
-int num_particles = 1e7;
+int num_particles = 1e6;
 int num_scatters  = 20;
 
 //---------------------------------------------------------------------------//
@@ -67,7 +67,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstSampling293K )
 {
   double kT            = kT_vector[0];
-  std::string filename = "/home/ecmoll/software/frensie/test_data/forward_energy_transfer_2.5301e-08.i";
+  std::string filename = "/home/ecmoll/software/frensie/test_data/forward_transport/H_293K.transport";
 
   free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
                             test_neutron_ace_file_name,
@@ -122,7 +122,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   std::array<int, 2> preamble = {num_scatters + 1, num_particles};
 
-  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/forward_transport/H_293K.transport", std::ios::out | std::ios::binary );
+  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/forward_transport/H_293K.output", std::ios::out | std::ios::binary );
   file_out.write((char*)&num_scatters,  sizeof( uint32_t ));
   file_out.write((char*)&num_particles, sizeof( uint32_t ));
 
@@ -142,7 +142,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstSampling600K )
 {
   double kT            = kT_vector[1];
-  std::string filename = "/home/ecmoll/software/frensie/test_data/forward_energy_transfer_5.1704e-08.i";
+  std::string filename = "/home/ecmoll/software/frensie/test_data/forward_transport/H_600K.transport";
 
   free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
                             test_neutron_ace_file_name,
@@ -181,7 +181,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   std::array<int, 2> preamble = {num_scatters + 1, num_particles};
 
-  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/forward_transport/H_600K.transport", std::ios::out | std::ios::binary );
+  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/forward_transport/H_600K.output", std::ios::out | std::ios::binary );
   file_out.write((char*)&num_scatters,  sizeof( uint32_t ));
   file_out.write((char*)&num_particles, sizeof( uint32_t ));
 
@@ -201,7 +201,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstSampling900K )
 {
   double kT            = kT_vector[2];
-  std::string filename = "/home/ecmoll/software/frensie/test_data/forward_energy_transfer_7.7556e-08.i";
+  std::string filename = "/home/ecmoll/software/frensie/test_data/forward_transport/H_900K.transport";
 
   free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
                             test_neutron_ace_file_name,
@@ -240,7 +240,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   std::array<int, 2> preamble = {num_scatters + 1, num_particles};
 
-  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/forward_transport/H_900K.transport", std::ios::out | std::ios::binary );
+  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/forward_transport/H_900K.output", std::ios::out | std::ios::binary );
   file_out.write((char*)&num_scatters,  sizeof( uint32_t ));
   file_out.write((char*)&num_particles, sizeof( uint32_t ));
 
@@ -260,7 +260,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstSampling1200K )
 {
   double kT            = kT_vector[3];
-  std::string filename = "/home/ecmoll/software/frensie/test_data/forward_energy_transfer_1.03408e-07.i";
+  std::string filename = "/home/ecmoll/software/frensie/test_data/forward_transport/H_1200K.transport";
 
   free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
                             test_neutron_ace_file_name,
@@ -299,7 +299,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   std::array<int, 2> preamble = {num_scatters + 1, num_particles};
 
-  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/forward_transport/H_1200K.transport", std::ios::out | std::ios::binary );
+  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/forward_transport/H_1200K.output", std::ios::out | std::ios::binary );
   file_out.write((char*)&num_scatters,  sizeof( uint32_t ));
   file_out.write((char*)&num_particles, sizeof( uint32_t ));
 
@@ -319,7 +319,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstSampling2500K )
 {
   double kT            = kT_vector[4];
-  std::string filename = "/home/ecmoll/software/frensie/test_data/forward_energy_transfer_2.15433e-07.i";
+  std::string filename = "/home/ecmoll/software/frensie/test_data/forward_transport/H_2500K.transport";
 
   free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
                             test_neutron_ace_file_name,
@@ -358,7 +358,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   std::array<int, 2> preamble = {num_scatters + 1, num_particles};
 
-  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/forward_transport/H_2500K.transport", std::ios::out | std::ios::binary );
+  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/forward_transport/H_2500K.output", std::ios::out | std::ios::binary );
   file_out.write((char*)&num_scatters,  sizeof( uint32_t ));
   file_out.write((char*)&num_particles, sizeof( uint32_t ));
 

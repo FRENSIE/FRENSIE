@@ -175,7 +175,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
     std::cout << energy_array[i] << " " << free_gas_cross_section[i] << std::endl;
   }
 }
-/*
+
 
 //---------------------------------------------------------------------------//
 // Check that the energy grid can be returned
@@ -190,7 +190,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
   free_gas_factory->generateFreeGasPDFDistributions( kT );
   free_gas_factory->serializeMapOut( kT );
 }
-
+/*
 //---------------------------------------------------------------------------//
 // Check that the energy grid can be returned
 TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,

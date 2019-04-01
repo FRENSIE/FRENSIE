@@ -69,15 +69,13 @@ std::vector<double> source_900K{5,2,5,8,6,7,10,6,19,19,26,19,34,34,46,54,75,74,6
 std::vector<double> source_1200K{2,3,5,3,7,5,8,13,7,13,16,19,30,29,25,19,34,47,45,61,64,90,119,123,141,179,199,245,283,310,373,444,518,611,715,871,985,1210,1363,1672,1986,2308,2666,3064,3539,4162,4791,5639,6512,7469,8798,10040,11716,13179,15159,17301,19724,22562,25139,28595,31707,35066,38497,41546,44823,47655,50388,51748,52739,52687,51245,48517,45425,40406,35242,29421,23850,18175,13220,9207,5990,3627,1900,944,432,174,74,17,4,2,1,0,0,0,0,0,0,0,0,};
 std::vector<double> source_2500K{0,3,3,1,1,3,1,3,3,4,4,5,7,8,8,16,15,15,24,24,22,37,30,43,58,41,75,79,94,105,125,145,204,212,236,267,321,371,462,541,643,733,901,1036,1213,1422,1662,1988,2346,2757,3211,3800,4300,5133,5768,6946,7838,8974,10436,11873,13955,15739,18315,20454,23258,26474,29605,32511,36107,39489,42772,45575,48305,50450,51962,52447,51889,50802,47572,43590,39743,33769,28381,22203,16882,12009,8200,5054,2937,1648,786,322,141,35,13,2,2,1,0,};
 
-
-
 //---------------------------------------------------------------------------//
 // Check that the energy grid can be returned
 TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstSampling293K )
 {
   double kT            = kT_vector[0];
-  std::string filename = "/home/ecmoll/software/frensie/test_data/forward_energy_transfer_2.5301e-08.i";
+  std::string filename = "/home/ecmoll/software/frensie/test_data/adjoint_transport/H_293K.transport";
 
   free_gas_factory.reset( new DataGen::AdjointFreeGasElasticCrossSectionFactory(
                             test_neutron_ace_file_name,
@@ -119,24 +117,10 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
     population[ i ] = collision_bin;
   }
-  
-  std::string oname = "/home/ecmoll/software/frensie/test_data/adjoint_transport/H_293K.transport.txt";
-  std::ofstream output_file;
-  output_file.open( oname );
-
-  for( int i = 0; i < num_particles; ++i )
-  {
-    for( int j = 0; j <= num_scatters; ++j )
-    {
-      output_file << population[j][i] << " ";
-    }
-    output_file << "\n";
-  }
-  output_file.close();
 
   std::array<int, 2> preamble = {num_scatters + 1, num_particles};
 
-  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/adjoint_transport/H_293K.transport", std::ios::out | std::ios::binary );
+  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/adjoint_transport/H_293K.output", std::ios::out | std::ios::binary );
   file_out.write((char*)&num_scatters,  sizeof( uint32_t ));
   file_out.write((char*)&num_particles, sizeof( uint32_t ));
 
@@ -156,7 +140,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstSampling600K )
 {
   double kT            = kT_vector[1];
-  std::string filename = "/home/ecmoll/software/frensie/test_data/forward_energy_transfer_5.1704e-08.i";
+  std::string filename = "/home/ecmoll/software/frensie/test_data/adjoint_transport/H_600K.transport";
 
   free_gas_factory.reset( new DataGen::AdjointFreeGasElasticCrossSectionFactory(
                             test_neutron_ace_file_name,
@@ -169,6 +153,12 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   free_gas_factory->getEnergyDistribution( distribution );
 
+  Teuchos::RCP<Utility::HistogramDistribution> source_distribution;
+
+  source_distribution.reset( 
+    new Utility::HistogramDistribution( bin_boundaries,
+                                        source_600K ) );
+
   double initial_e  = 5e-6;
 
   std::map< int, std::vector<double> > population;
@@ -176,7 +166,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
   std::vector<double> no_scatters;
   for(int i = 0; i < num_particles; ++i )
   {
-      no_scatters.push_back( initial_e );
+      no_scatters.push_back( source_distribution->sample() );
   }
 
   population[ 0 ] = no_scatters;
@@ -195,7 +185,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   std::array<int, 2> preamble = {num_scatters + 1, num_particles};
 
-  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/adjoint_transport/H_600K.transport", std::ios::out | std::ios::binary );
+  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/adjoint_transport/H_600K.output", std::ios::out | std::ios::binary );
   file_out.write((char*)&num_scatters,  sizeof( uint32_t ));
   file_out.write((char*)&num_particles, sizeof( uint32_t ));
 
@@ -215,7 +205,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstSampling900K )
 {
   double kT            = kT_vector[2];
-  std::string filename = "/home/ecmoll/software/frensie/test_data/forward_energy_transfer_7.7556e-08.i";
+  std::string filename = "/home/ecmoll/software/frensie/test_data/adjoint_transport/H_900K.transport";
 
   free_gas_factory.reset( new DataGen::AdjointFreeGasElasticCrossSectionFactory(
                             test_neutron_ace_file_name,
@@ -228,6 +218,12 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   free_gas_factory->getEnergyDistribution( distribution );
 
+  Teuchos::RCP<Utility::HistogramDistribution> source_distribution;
+
+  source_distribution.reset( 
+    new Utility::HistogramDistribution( bin_boundaries,
+                                        source_900K ) );
+
   double initial_e  = 5e-6;
 
   std::map< int, std::vector<double> > population;
@@ -235,7 +231,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
   std::vector<double> no_scatters;
   for(int i = 0; i < num_particles; ++i )
   {
-      no_scatters.push_back( initial_e );
+      no_scatters.push_back( source_distribution->sample() );
   }
 
   population[ 0 ] = no_scatters;
@@ -254,7 +250,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   std::array<int, 2> preamble = {num_scatters + 1, num_particles};
 
-  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/adjoint_transport/H_900K.transport", std::ios::out | std::ios::binary );
+  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/adjoint_transport/H_900K.output", std::ios::out | std::ios::binary );
   file_out.write((char*)&num_scatters,  sizeof( uint32_t ));
   file_out.write((char*)&num_particles, sizeof( uint32_t ));
 
@@ -274,7 +270,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstSampling1200K )
 {
   double kT            = kT_vector[3];
-  std::string filename = "/home/ecmoll/software/frensie/test_data/forward_energy_transfer_1.03408e-07.i";
+  std::string filename = "/home/ecmoll/software/frensie/test_data/adjoint_transport/H_1200K.transport";
 
   free_gas_factory.reset( new DataGen::AdjointFreeGasElasticCrossSectionFactory(
                             test_neutron_ace_file_name,
@@ -287,6 +283,12 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   free_gas_factory->getEnergyDistribution( distribution );
 
+  Teuchos::RCP<Utility::HistogramDistribution> source_distribution;
+
+  source_distribution.reset( 
+    new Utility::HistogramDistribution( bin_boundaries,
+                                        source_1200K ) );
+
   double initial_e  = 5e-6;
 
   std::map< int, std::vector<double> > population;
@@ -294,7 +296,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
   std::vector<double> no_scatters;
   for(int i = 0; i < num_particles; ++i )
   {
-      no_scatters.push_back( initial_e );
+      no_scatters.push_back( source_distribution->sample() );
   }
 
   population[ 0 ] = no_scatters;
@@ -313,7 +315,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   std::array<int, 2> preamble = {num_scatters + 1, num_particles};
 
-  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/adjoint_transport/H_1200K.transport", std::ios::out | std::ios::binary );
+  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/adjoint_transport/H_1200K.output", std::ios::out | std::ios::binary );
   file_out.write((char*)&num_scatters,  sizeof( uint32_t ));
   file_out.write((char*)&num_particles, sizeof( uint32_t ));
 
@@ -333,7 +335,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstSampling2500K )
 {
   double kT            = kT_vector[4];
-  std::string filename = "/home/ecmoll/software/frensie/test_data/forward_energy_transfer_2.15433e-07.i";
+  std::string filename = "/home/ecmoll/software/frensie/test_data/adjoint_transport/H_2500K.transport";
 
   free_gas_factory.reset( new DataGen::AdjointFreeGasElasticCrossSectionFactory(
                             test_neutron_ace_file_name,
@@ -346,6 +348,12 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   free_gas_factory->getEnergyDistribution( distribution );
 
+  Teuchos::RCP<Utility::HistogramDistribution> source_distribution;
+
+  source_distribution.reset( 
+    new Utility::HistogramDistribution( bin_boundaries,
+                                        source_2500K ) );
+
   double initial_e  = 5e-6;
 
   std::map< int, std::vector<double> > population;
@@ -353,7 +361,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
   std::vector<double> no_scatters;
   for(int i = 0; i < num_particles; ++i )
   {
-      no_scatters.push_back( initial_e );
+      no_scatters.push_back( source_distribution->sample() );
   }
 
   population[ 0 ] = no_scatters;
@@ -372,7 +380,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   std::array<int, 2> preamble = {num_scatters + 1, num_particles};
 
-  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/adjoint_transport/H_2500K.transport", std::ios::out | std::ios::binary );
+  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/adjoint_transport/H_2500K.output", std::ios::out | std::ios::binary );
   file_out.write((char*)&num_scatters,  sizeof( uint32_t ));
   file_out.write((char*)&num_particles, sizeof( uint32_t ));
 

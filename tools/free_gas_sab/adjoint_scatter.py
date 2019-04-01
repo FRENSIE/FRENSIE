@@ -35,11 +35,11 @@ def parse_data( filename ):
 # Load the data 
 data_dir   = '/home/ecmoll/software/frensie/test_data/adjoint_transport/'
 figure_dir = '/home/ecmoll/software/frensie/test_data/adjoint_transport/figures/'
-data_files = ['H_293K.transport',
-              'H_600K.transport',
-              'H_900K.transport',
-              'H_1200K.transport',
-              'H_2500K.transport']
+data_files = ['H_293K.output',
+              'H_600K.output',
+              'H_900K.output',
+              'H_1200K.output',
+              'H_2500K.output']
 
 temps = [293, 600, 900, 1200, 2500]
 

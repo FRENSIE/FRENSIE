@@ -176,7 +176,6 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
   }
 }
 
-/*
 
 //---------------------------------------------------------------------------//
 // Check that the energy grid can be returned
@@ -192,7 +191,6 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
   free_gas_factory->serializeMapOut( kT );
 }
 
-*/
 
 /*
 
