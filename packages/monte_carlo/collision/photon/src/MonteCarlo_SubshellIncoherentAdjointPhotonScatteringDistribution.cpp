@@ -92,7 +92,7 @@ double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluate(
       this->evaluateAdjointKleinNishinaDist( incoming_energy,
                                              max_energy,
                                              scattering_angle_cosine );
-  
+
     cross_section = d_num_electrons_in_subshell*adjoint_occupation_number*
       diff_kn_cross_section;
   }
@@ -100,6 +100,33 @@ double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluate(
     cross_section = 0.0;
 
   return cross_section;
+}
+
+// Evaluate the pdf
+/*! \details This method is only provided to correct for an anomalous factor
+ * of 0.5 that arises in simulation results. Multiplying the true PDF value
+ * by a factor of 2.0 appears to correct these results. No mathematical
+ * or physical justification for this factor of 2.0 has been identified. Any
+ * help in better understanding this anomalous factor would be greatly
+ * appreciated.
+ */
+double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluatePDF(
+                                   const double incoming_energy,
+                                   const double max_energy,
+                                   const double scattering_angle_cosine ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( incoming_energy <= max_energy );
+  // Make sure the scattering angle cosine is valid
+  testPrecondition( scattering_angle_cosine >=
+                    calculateMinScatteringAngleCosine( incoming_energy, max_energy ) );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  return 2.0*IncoherentAdjointPhotonScatteringDistribution::evaluatePDF(
+                                                     incoming_energy,
+                                                     max_energy,
+                                                     scattering_angle_cosine );
 }
 
 // Evaluate the integrated cross section (b)
@@ -303,7 +330,7 @@ double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluateAdjointOcc
 
   const double lower_occupation_number_value =
     this->evaluateOccupationNumber( pz_min );
-  
+
   // Evaluate the adjoint occupation number
   double adjoint_occupation_number =
     upper_occupation_number_value - lower_occupation_number_value;

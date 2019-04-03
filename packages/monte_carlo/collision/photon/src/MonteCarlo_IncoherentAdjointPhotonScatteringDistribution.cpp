@@ -198,7 +198,7 @@ double IncoherentAdjointPhotonScatteringDistribution::evaluateIntegratedCrossSec
 						 const double max_energy,
 						 const double precision ) const
 {
-  return d_integrated_cs_evaluator( incoming_energy, max_energy, precision );  
+  return d_integrated_cs_evaluator( incoming_energy, max_energy, precision );
 }
 
 // Evaluate the integrated cross section (b)
