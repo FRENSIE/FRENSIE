@@ -63,7 +63,7 @@ FreeGasElasticCrossSectionFactory::FreeGasElasticCrossSectionFactory(
   this->extractCrossSectionFromACE();
   this->extractAngularDistributionFromACE();
   this->convertCrossSectionToZeroTemperature();
-  // this->generateFreeGasCrossSection();
+  // this->generateFreeGasCrossSection( 2.53010e-8 );
 }
 
 // Accessor for zero-temperature elastic cross section
