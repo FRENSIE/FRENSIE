@@ -49,30 +49,18 @@ for i in range(0, 1):
     plt.figure()
     plt.gca().set_xscale('log')
     bin_vals = np.geomspace( 1e-10, 5e-6, num=100 )
-    scatter  = 0
 
-    for key,value in data.items():
-        value = np.array(value)
-        print(value)
-        hist = np.hstack( value )
-        
-        #if scatter%2 == 1:
-        #    plt.hist(hist, bin_vals, histtype='step',label='C: ' + str(int(scatter)), color=cm(1.*scatter/colors) )
-        #else:
-        #    plt.hist(hist, bin_vals, histtype='step',  color=cm(1.*scatter/colors) )
-        
-        scatter = scatter + 1
+    hist = np.histogram( data[ 9 ], bin_vals )
 
-    #plt.ticklabel_format(axis='y', style='sci', scilimits=(-2,2))
-    #plt.title('Infinite Medium Hydrogen - With Absorption - ' + str(int(temps[i])) + 'K')
-    #plt.xlabel('Energy (MeV)')
-    #plt.ylabel('Population in Bin - 1e6 Source Particles')
-    #plt.legend(loc='upper left')
-    
-    #filename = figure_dir + 'forward_scattering_absorption' + str(temps[i]) + 'K.png'
-    #plt.savefig(filename, dpi=600)
+    np.savetxt(adjoint_dir + 'H_9.abs', hist[0].T, delimiter=',')
+    np.savetxt(adjoint_dir + 'bin_bounds.abs', hist[1].T, delimiter=',')
 
-    hist = np.histogram( data[ 1 ], bin_vals )
+    hist = np.histogram( data[ 19 ], bin_vals )
 
-    np.savetxt(adjoint_dir + data_files[i] + '.abs', hist[0].T, delimiter=',')
+    np.savetxt(adjoint_dir + 'H_19.abs', hist[0].T, delimiter=',')
+    np.savetxt(adjoint_dir + 'bin_bounds.abs', hist[1].T, delimiter=',')
+
+    hist = np.histogram( data[ 49 ], bin_vals )
+
+    np.savetxt(adjoint_dir + 'H_49.abs', hist[0].T, delimiter=',')
     np.savetxt(adjoint_dir + 'bin_bounds.abs', hist[1].T, delimiter=',')

@@ -125,6 +125,7 @@ double FreeGasElasticSAlphaBetaFunction::evaluateIntegrand(
       if ( relative_energy > 1e-11 )
       {
         xs_multiplier = d_zero_temp_elastic_cross_section->evaluate( relative_energy );
+        // xs_multiplier = d_zero_temp_elastic_cross_section->evaluate( E );
       }
       else
       {
