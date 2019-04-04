@@ -328,6 +328,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationName )
                                                               threads ) );
   
     manager = factory->getManager();
+    manager->useMultipleRendezvousFiles();
   }
 
   FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "test_sim" );
@@ -388,6 +389,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationArchiveType )
                                                               threads ) );
   
     manager = factory->getManager();
+    manager->useMultipleRendezvousFiles();
   }
 
   FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "xml" );
@@ -447,6 +449,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationNameAndArchiveType )
                                                               threads ) );
   
     manager = factory->getManager();
+    manager->useMultipleRendezvousFiles();
   }
 
   FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "test_sim" );
@@ -919,6 +922,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_basic )
   
     std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
       factory->getManager();
+    manager->useMultipleRendezvousFiles();
 
     FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
 
@@ -1024,6 +1028,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_add_histories )
   
     std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
       factory->getManager();
+    manager->useSingleRendezvousFile();
 
     FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
 
@@ -1037,9 +1042,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_add_histories )
   Utility::broadcast( *comm, rendezvous_number, 0 );
   Utility::broadcast( *comm, next_history, 0 );
 
-  std::string archive_name( "test_sim_rendezvous_" );
-  archive_name += Utility::toString( rendezvous_number - 1 );
-  archive_name += ".";
+  std::string archive_name( "test_sim_rendezvous." );
   archive_name += archive_type;
 
   std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
@@ -1127,6 +1130,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_new_wall_time )
   
     std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
       factory->getManager();
+    manager->useMultipleRendezvousFiles();
 
     FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
 
@@ -1231,6 +1235,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager,
   
     std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
       factory->getManager();
+    manager->useMultipleRendezvousFiles();
 
     FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
 
@@ -1299,6 +1304,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager,
     properties->setParticleMode( MonteCarlo::PHOTON_MODE );
     properties->setSimulationWallTime( 0.25 );
     properties->setMaxRendezvousBatchSize( 10 );
+    properties->setNumberOfSnapshotsPerBatch( 3 );
 
     std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
                                new MonteCarlo::FilledGeometryModel(
@@ -1336,6 +1342,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager,
   
     std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
       factory->getManager();
+    manager->useMultipleRendezvousFiles();
 
     FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
 

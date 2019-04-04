@@ -243,7 +243,9 @@ void AdjointPhotoatomicReactionNativeFactory::createPairProductionReaction(
       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
       grid_searcher,
       std::shared_ptr<const LineEnergyAdjointPhotoatomicReaction>&
-      pair_production_adjoint_reaction )
+      pair_production_adjoint_reaction,
+      const std::shared_ptr<const std::vector<double> >&
+      critical_line_energies )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_adjoint_photoatom_data.getAdjointPhotonEnergyGrid().size() >=
@@ -254,7 +256,7 @@ void AdjointPhotoatomicReactionNativeFactory::createPairProductionReaction(
 						      energy_grid->end() ) );
 
   // Create the energy distribution
-  std::shared_ptr<const LineEnergyAdjointPhotonScatteringDistribution>
+  std::shared_ptr<LineEnergyAdjointPhotonScatteringDistribution>
     pair_production_distribution;
 
   double cross_section;
@@ -266,11 +268,16 @@ void AdjointPhotoatomicReactionNativeFactory::createPairProductionReaction(
                                                   energy_grid->back() );
 
   // Create the reaction
-  pair_production_adjoint_reaction.reset(
-                           new LineEnergyAdjointPhotoatomicReaction(
+  LineEnergyAdjointPhotoatomicReaction* tmp_reaction = 
+    new LineEnergyAdjointPhotoatomicReaction(
                                   PAIR_PRODUCTION_ADJOINT_PHOTOATOMIC_REACTION,
                                   cross_section,
-                                  pair_production_distribution ) );
+                                  pair_production_distribution );
+
+  if( critical_line_energies->size() > 0 )
+    tmp_reaction->setCriticalLineEnergies( critical_line_energies );
+
+  pair_production_adjoint_reaction.reset( tmp_reaction );
 }
 
 // Create the triplet production adjoint photoatomic reaction
@@ -281,7 +288,9 @@ void AdjointPhotoatomicReactionNativeFactory::createTripletProductionReaction(
       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
       grid_searcher,
       std::shared_ptr<const LineEnergyAdjointPhotoatomicReaction>&
-      triplet_production_adjoint_reaction )
+      triplet_production_adjoint_reaction,
+      const std::shared_ptr<const std::vector<double> >&
+      critical_line_energies )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_adjoint_photoatom_data.getAdjointPhotonEnergyGrid().size() >=
@@ -292,23 +301,28 @@ void AdjointPhotoatomicReactionNativeFactory::createTripletProductionReaction(
 						      energy_grid->end() ) );
 
   // Create the energy distribution
-  std::shared_ptr<const LineEnergyAdjointPhotonScatteringDistribution>
+  std::shared_ptr<LineEnergyAdjointPhotonScatteringDistribution>
     triplet_production_distribution;
 
   double cross_section;
 
   LineEnergyAdjointPhotonScatteringDistributionNativeFactory::createTripletProductionDistribution(
-                                                  raw_adjoint_photoatom_data,
-                                                  triplet_production_distribution,
-                                                  cross_section,
-                                                  energy_grid->back() );
+                                               raw_adjoint_photoatom_data,
+                                               triplet_production_distribution,
+                                               cross_section,
+                                               energy_grid->back() );
 
   // Create the reaction
-  triplet_production_adjoint_reaction.reset(
-                     new LineEnergyAdjointPhotoatomicReaction(
+  LineEnergyAdjointPhotoatomicReaction* tmp_reaction =
+    new LineEnergyAdjointPhotoatomicReaction(
                               TRIPLET_PRODUCTION_ADJOINT_PHOTOATOMIC_REACTION,
                               cross_section,
-                              triplet_production_distribution ) );
+                              triplet_production_distribution );
+
+  if( critical_line_energies->size() > 0 )
+    tmp_reaction->setCriticalLineEnergies( critical_line_energies );
+
+  triplet_production_adjoint_reaction.reset( tmp_reaction );
 }
 
 // Create the forward total reaction (only used to get the cross section)

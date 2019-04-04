@@ -28,12 +28,19 @@ public:
   LineEnergyAdjointPhotoatomicReaction(
     const AdjointPhotoatomicReactionType reaction,
     const double cross_section_value,
-    const std::shared_ptr<const LineEnergyAdjointPhotonScatteringDistribution>&
+    const std::shared_ptr<LineEnergyAdjointPhotonScatteringDistribution>&
     energy_dist );
 
   //! Destructor
   ~LineEnergyAdjointPhotoatomicReaction()
   { /* ... */ }
+
+  //! Set the critical line energies
+  void setCriticalLineEnergies(
+   const std::shared_ptr<const std::vector<double> >& critical_line_energies );
+
+  //! Get the critical line energies
+  const std::vector<double>& getCriticalLineEnergies() const;
 
   //! Return the minimum outgoing energy
   double getMinOutgoingEnergy() const;
@@ -91,7 +98,7 @@ private:
   double d_cross_section;
 
   // The scattering distribution
-  std::shared_ptr<const LineEnergyAdjointPhotonScatteringDistribution>
+  std::shared_ptr<LineEnergyAdjointPhotonScatteringDistribution>
     d_scattering_distribution;
 };
   

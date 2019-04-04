@@ -41,7 +41,7 @@ class SimulationGeneralPropertiesTestCase(unittest.TestCase):
         self.assertEqual( properties.getMinNumberOfBatchesPerRendezvous(), 1 )
         self.assertEqual( properties.getMaxBatchSize(), 1000000000 )
         self.assertEqual( properties.getNumberOfBatchesPerProcessor(), 1 )
-        self.assertEqual( properties.getSurfaceFluxEstimatorAngleCosineCutoff(), 0.001 )
+        self.assertEqual( properties.getNumberOfSnapshotsPerBatch(), 1 )
         self.assertFalse( properties.isImplicitCaptureModeOn() )
 
     def testSetParticleMode(self):
@@ -131,13 +131,11 @@ class SimulationGeneralPropertiesTestCase(unittest.TestCase):
         properties.setNumberOfBatchesPerProcessor( 25 )
         self.assertEqual( properties.getNumberOfBatchesPerProcessor(), 25 )
 
-    def testSetSurfaceFluxEstimatorAngleCosineCutoff(self):
-        "*Test MonteCarlo.SimulationGeneralProperties setSurfaceFluxEstimatorAngleCosineCutoff"
+    def testSetNumberOfSnapshotsPerBatch(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setNumberOfSnapshotsPerBatch"
         properties = MonteCarlo.SimulationGeneralProperties()
-
-        properties.setSurfaceFluxEstimatorAngleCosineCutoff( 0.1 )
-        self.assertEqual( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
-                          0.1 )
+        properties.setNumberOfSnapshotsPerBatch( 2 )
+        self.assertEqual( properties.getNumberOfSnapshotsPerBatch(), 2 )
 
     def testSetImplicitCaptureModeOnOff(self):
         "*Test MonteCarlo.SimulationGeneralProperties setImplicitCaptureModeOnOff"

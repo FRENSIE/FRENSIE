@@ -87,6 +87,15 @@ public:
   //! Initialize the manager
   void initialize();
 
+  //! Use a single rendezvous file
+  void useSingleRendezvousFile();
+
+  //! Use multiple rendezvous files
+  void useMultipleRendezvousFiles();
+
+  //! Check if a single rendezvous file will be used
+  bool isSingleRendezvousFileUsed() const;
+
   //! Run the simulation set up by the user
   virtual void runSimulation();
 
@@ -112,7 +121,8 @@ protected:
                  const std::shared_ptr<const CollisionForcer> collision_forcer,
                  const std::shared_ptr<const SimulationProperties>& properties,
                  const uint64_t next_history,
-                 const uint64_t rendezvous_number );
+                 const uint64_t rendezvous_number,
+                 const bool use_single_rendezvous_file );
 
   //! Set the batch size
   void setBatchSize( const uint64_t batch_size );
@@ -195,6 +205,10 @@ private:
 
   // Set the adjoint electron cutoff weight roulette
   void setAdjointElectronCutoffWeightRoulette();
+
+  //! Run the simulation batch
+  void runSimulationMicroBatch( const uint64_t batch_start_history,
+                                const uint64_t batch_end_history );
 
   // Simulate a resolved particle implementation
   template<typename State, typename SimulateParticleTrackMethod>
@@ -305,6 +319,9 @@ private:
 
   // The batch size
   uint64_t d_batch_size;
+
+  // Use a single rendezvous file
+  bool d_use_single_rendezvous_file;
 
   // Flag for ending simulation early
   bool d_end_simulation;

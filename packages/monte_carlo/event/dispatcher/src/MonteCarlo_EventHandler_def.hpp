@@ -283,7 +283,7 @@ void EventHandler::save( Archive& ar, const unsigned version ) const
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleSubtrackEndingGlobalEventHandler );
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleGoneGlobalEventHandler );
 
-  // Save the local data (ignore the model)
+  // Save the local data (ignore the model, snapshot counters)
   ar & BOOST_SERIALIZATION_NVP( d_simulation_completion_criterion );
 
   uint64_t number_of_committed_histories =
@@ -325,12 +325,18 @@ void EventHandler::load( Archive& ar, const unsigned version )
   if( number_of_committed_histories > 0 )
     ParticleHistoryObserver::setNumberOfHistories( number_of_committed_histories );
 
+  d_number_of_committed_histories_from_last_snapshot.resize( 1 );
+  d_number_of_committed_histories_from_last_snapshot[0] = 0;
+
   ar & boost::serialization::make_nvp( "elapsed_time", d_elapsed_simulation_time );  
 
   if( d_elapsed_simulation_time > 0.0 )
     ParticleHistoryObserver::setElapsedTime( d_elapsed_simulation_time );
 
+  d_number_of_committed_histories_from_last_snapshot.resize( 1, 0 );
+
   d_simulation_timer = Utility::GlobalMPISession::createTimer();
+  d_snapshot_timer = Utility::GlobalMPISession::createTimer();
   
   ar & BOOST_SERIALIZATION_NVP( d_estimators );
   ar & BOOST_SERIALIZATION_NVP( d_particle_trackers );

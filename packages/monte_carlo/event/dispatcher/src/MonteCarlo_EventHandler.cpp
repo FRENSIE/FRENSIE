@@ -31,7 +31,9 @@ EventHandler::EventHandler()
   : d_model(),
     d_simulation_completion_criterion( ParticleHistorySimulationCompletionCriterion::createWallTimeCriterion( Utility::QuantityTraits<double>::inf() ) ),
     d_number_of_committed_histories( 1, 0 ),
+    d_number_of_committed_histories_from_last_snapshot( 1, 0 ),
     d_simulation_timer( Utility::GlobalMPISession::createTimer() ),
+    d_snapshot_timer( Utility::GlobalMPISession::createTimer() ),
     d_elapsed_simulation_time( 0.0 ),
     d_estimators(),
     d_particle_trackers(),
@@ -62,7 +64,9 @@ EventHandler::EventHandler(
   : d_model( model ),
     d_simulation_completion_criterion( EventHandler::createDefaultCompletionCriterion( properties ) ),
     d_number_of_committed_histories( 1, 0 ),
+    d_number_of_committed_histories_from_last_snapshot( 1, 0 ),
     d_simulation_timer( Utility::GlobalMPISession::createTimer() ),
+    d_snapshot_timer( Utility::GlobalMPISession::createTimer() ),
     d_elapsed_simulation_time( 0.0 ),
     d_estimators(),
     d_particle_trackers(),
@@ -127,8 +131,7 @@ EventHandler::EventHandler(
                             Utility::get<0>(surface_estimator_data_it->second),
                             Utility::get<1>(surface_estimator_data_it->second),
                             Utility::get<2>(surface_estimator_data_it->second),
-                            *d_model,
-                            properties );
+                            *d_model );
 
           ++surface_estimator_counter;
           ++surface_estimator_data_it;
@@ -245,12 +248,11 @@ void EventHandler::createAndRegisterCellEstimator(
 
 // Create and register surface estimator
 void EventHandler::createAndRegisterSurfaceEstimator(
-                    const uint32_t estimator_id,
-                    const Geometry::EstimatorType estimator_type,
-                    const Geometry::ParticleType particle_type,
-                    const Geometry::AdvancedModel::SurfaceIdArray& surfaces,
-                    const Geometry::Model& model,
-                    const MonteCarlo::SimulationGeneralProperties& properties )
+                       const uint32_t estimator_id,
+                       const Geometry::EstimatorType estimator_type,
+                       const Geometry::ParticleType particle_type,
+                       const Geometry::AdvancedModel::SurfaceIdArray& surfaces,
+                       const Geometry::Model& model )
 {
   switch( estimator_type )
   {
@@ -272,12 +274,10 @@ void EventHandler::createAndRegisterSurfaceEstimator(
     case Geometry::SURFACE_FLUX_ESTIMATOR:
     {
       std::shared_ptr<WeightMultipliedSurfaceFluxEstimator> estimator(
-          new WeightMultipliedSurfaceFluxEstimator(
-                     estimator_id,
-                     1.0,
-                     surfaces,
-                     model,
-                     properties.getSurfaceFluxEstimatorAngleCosineCutoff() ) );
+          new WeightMultipliedSurfaceFluxEstimator( estimator_id,
+                                                    1.0,
+                                                    surfaces,
+                                                    model ) );
 
       // Set the particle type
       this->setParticleTypes( particle_type, estimator );
@@ -516,6 +516,7 @@ void EventHandler::enableThreadSupport( const unsigned num_threads )
   }
 
   d_number_of_committed_histories.resize( num_threads, 0 );
+  d_number_of_committed_histories_from_last_snapshot.resize( num_threads, 0 );
 }
 
 // Update observers from particle simulation started event
@@ -523,6 +524,7 @@ void EventHandler::updateObserversFromParticleSimulationStartedEvent()
 {
   d_simulation_completion_criterion->start();
   d_simulation_timer->start();
+  d_snapshot_timer->start();
 }
 
 // Update observers from particle simulation stopped event
@@ -530,6 +532,7 @@ void EventHandler::updateObserversFromParticleSimulationStoppedEvent()
 {
   d_simulation_completion_criterion->stop();
   d_simulation_timer->stop();
+  d_snapshot_timer->stop();
 
   ParticleHistoryObserver::setElapsedTime( this->getElapsedTime() );
   ParticleHistoryObserver::setNumberOfHistories( this->getNumberOfCommittedHistories() );
@@ -550,6 +553,35 @@ void EventHandler::commitObserverHistoryContributions()
   }
 
   ++d_number_of_committed_histories[Utility::OpenMPProperties::getThreadId()];
+  ++d_number_of_committed_histories_from_last_snapshot[Utility::OpenMPProperties::getThreadId()];
+}
+
+// Take a snapshot of the observer states
+void EventHandler::takeSnapshotOfObserverStates()
+{
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
+
+  double additional_sampling_time =
+    this->getElapsedTimeSinceLastSnapshot();
+
+  uint64_t num_additional_histories =
+    this->getNumberOfCommittedHistoriesSinceLastSnapshot();
+
+  ParticleHistoryObservers::iterator it =
+    d_particle_history_observers.begin();
+  
+  while( it != d_particle_history_observers.end() )
+  {
+    (*it)->takeSnapshot( num_additional_histories,
+                         additional_sampling_time );
+
+    ++it;
+  }
+
+  // Reset the counters
+  this->resetNumberOfCommittedHistoriesSinceLastSnapshot();
+  this->resetElapsedTimeSinceLastSnapshot();
 }
 
 // Log the observer summaries
@@ -611,11 +643,16 @@ void EventHandler::resetObserverData()
 }
 
 // Reduce the observer data on all processes in comm and collect on the root
+/*! \details A Snapshot must be taken before the reduction to ensure that the
+ * snapshot data stays in sync with the current data.
+ */
 void EventHandler::reduceObserverData( const Utility::Communicator& comm,
                                        const int root_process )
 {
   // Make sure only the master thread calls this function
   testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
+  // Make sure that a snapshot has been taken
+  testPrecondition( this->getNumberOfCommittedHistoriesSinceLastSnapshot() == 0 );
 
   if( comm.size() > 1 )
   {
@@ -644,8 +681,11 @@ void EventHandler::reduceObserverData( const Utility::Communicator& comm,
                          std::plus<uint64_t>(),
                          root_process );
 
+        // Reset the number of committed histories
         for( size_t i = 0; i < d_number_of_committed_histories.size(); ++i )
           d_number_of_committed_histories[i] = 0;
+
+        
       }
     }
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
@@ -668,6 +708,9 @@ void EventHandler::reduceObserverData( const Utility::Communicator& comm,
       ++it;
     }
 
+    // Reset the snapshot timer (no need to include reduction time)
+    this->resetElapsedTimeSinceLastSnapshot();
+
     comm.barrier();
   }
 }
@@ -678,6 +721,34 @@ uint64_t EventHandler::getNumberOfCommittedHistories() const
   return std::accumulate( d_number_of_committed_histories.begin(),
                           d_number_of_committed_histories.end(),
                           0 );
+}
+
+// Get the number of particle histories committed since the last snapshot
+uint64_t EventHandler::getNumberOfCommittedHistoriesSinceLastSnapshot() const
+{
+  return std::accumulate( d_number_of_committed_histories_from_last_snapshot.begin(),
+                          d_number_of_committed_histories_from_last_snapshot.end(),
+                          0 );
+}
+
+// Reset the number of committed histories since the last snapshot
+void EventHandler::resetNumberOfCommittedHistoriesSinceLastSnapshot()
+{
+  for( size_t i = 0; i < d_number_of_committed_histories_from_last_snapshot.size(); ++i )
+    d_number_of_committed_histories_from_last_snapshot[i] = 0;
+}
+
+// Get the elapsed time since the last snapshot
+double EventHandler::getElapsedTimeSinceLastSnapshot() const
+{
+  return d_snapshot_timer->elapsed().count();
+}
+
+// Reset the elapsed time since the last snapshot
+void EventHandler::resetElapsedTimeSinceLastSnapshot()
+{
+  d_snapshot_timer->stop();
+  d_snapshot_timer->start();
 }
 
 // Get the elapsed particle simulation time (s)

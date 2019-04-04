@@ -14,6 +14,7 @@
 #include "Geometry_AdvancedModel.hpp"
 #include "Geometry_InfiniteMediumNavigator.hpp"
 
+#include "Utility_SampleMomentHistogram.hpp"
 #include "Utility_Mesh.hpp"
 #include "Utility_StructuredHexMesh.hpp"
 #include "Utility_TetMesh.hpp"
@@ -66,6 +67,7 @@ using namespace MonteCarlo;
 
 // Add a few general typedefs
 typedef unsigned int uint32_t;
+typedef long unsigned int uint64_t;
 
 // Add some general templates
 %template(LongUnsignedVector) std::vector<long unsigned int>;
@@ -74,33 +76,68 @@ typedef unsigned int uint32_t;
 // Add some general typemaps
 %apply long unsigned int { const Geometry::Model::EntityId };
 
+//---------------------------------------------------------------------------//
+// Add SampleMomentHistogram support
+//---------------------------------------------------------------------------//
 
-// ---------------------------------------------------------------------------//
+// Add a typemap for std::vector<HistogramValueType>& values
+%typemap(out) const std::vector<Utility::SampleMomentHistogram<double>::HistogramValueType>&
+{
+  $result = PyFrensie::convertToPython( *$1 );
+
+  if( !$result )
+    SWIG_fail;
+}
+
+%typemap(in,numinputs=0) std::vector<Utility::SampleMomentHistogram<double>::HistogramValueType>& values (std::vector<double> temp) "$1 = &temp;"
+
+%typemap(argout) std::vector<Utility::SampleMomentHistogram<double>::HistogramValueType>& values {
+  %append_output(PyFrensie::convertToPython( *$1 ));
+}
+
+// Add a typemap for std::vector<DensityValueType>& values
+%typemap(in,numinputs=0) std::vector<Utility::SampleMomentHistogram<double>::DensityValueType>& values (std::vector<double> temp) "$1 = &temp;"
+
+%typemap(argout) std::vector<Utility::SampleMomentHistogram<double>::DensityValueType>& values {
+  %append_output(PyFrensie::convertToPython( *$1 ));
+}
+
+%ignore *::clear;
+%ignore *::reset;
+%ignore *::setBinBoundaries;
+%ignore *::addRawScore;
+%ignore *::mergeHistograms;
+
+%include "Utility_SampleMomentHistogram.hpp"
+
+%template(SampleMomentHistogram) Utility::SampleMomentHistogram<double>;
+
+//---------------------------------------------------------------------------//
 // Add EstimatorContributionMultiplierPolicy support
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 %include "MonteCarlo_EstimatorContributionMultiplierPolicy.hpp"
 
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 // Add ParticleHistoryObserver support
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-// Add typemaps for converting unsigned long long to and from Python int
-%typemap(in) const unsigned long long num_histories ( unsigned long long temp ){
+// Add typemaps for converting uint64_t to and from Python int
+%typemap(in) const uint64_t num_histories ( uint64_t temp ){
   temp = PyInt_AsUnsignedLongLongMask( $input );
   $1 = temp;
 }
 
-%typemap(typecheck, precedence=70) (const unsigned long long) {
+%typemap(typecheck, precedence=70) (const uint64_t) {
   $1 = (PyInt_Check($input)) ? 1 : 0;
 }
 
 %shared_ptr( MonteCarlo::ParticleHistoryObserver )
 %include "MonteCarlo_ParticleHistoryObserver.hpp"
 
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 // Add Estimator support
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 // Extend the Estimator class to handle ParticleType enum as int
 %extend MonteCarlo::Estimator
@@ -152,16 +189,71 @@ typedef unsigned int uint32_t;
     }
   }
 
+  //! Set the sample moment histogram bins
+  void setSampleMomentHistogramBins( PyObject* raw_bin_boundaries )
+  {
+    std::shared_ptr<const std::vector<double> > bin_boundaries =
+      std::make_shared<std::vector<double> >( PyFrensie::convertFromPython<std::vector<double> >( raw_bin_boundaries ) );
+
+    $self->setSampleMomentHistogramBins( bin_boundaries );
+  }
+
+  // //! Get the total sample moment histogram
+  // Utility::SampleMomentHistogram<double> getTotalSampleMomentHistogram( const size_t response_function_index )
+  // {
+  //   Utility::SampleMomentHistogram<double> histogram;
+
+  //   $self->getTotalSampleMomentHistogram( response_function_index, histogram );
+
+  //   return histogram;
+  // }
 };
 
 %ignore *::setParticleTypes;
 %ignore *::getParticleTypes;
 %ignore *::setResponseFunctions;
+%ignore *::setSampleMomentHistogramBins;
+//%ignore *::getTotalSampleMomentHistogram;
 
-// Add a typemap for std::map<std::string,std::vector<double> >& processed data
+// Add a typemap for Utility::SampleMomentHistogram<double>& histogram
+%typemap(in,numinputs=0) Utility::SampleMomentHistogram<double>& histogram (Utility::SampleMomentHistogram<double> temp) "$1 = &temp;"
+
+%typemap(argout) Utility::SampleMomentHistogram<double>& histogram {
+  %append_output(SWIG_NewPointerObj((new Utility::SampleMomentHistogram< double >(*$1)), SWIGTYPE_p_Utility__SampleMomentHistogramT_double_t, SWIG_POINTER_OWN |  0 ));
+}
+
+// Add a typemap for std::map<std::string,std::vector<double> >& processed_data
 %typemap(in,numinputs=0) std::map<std::string,std::vector<double> >& processed_data (std::map<std::string,std::vector<double> > temp) "$1 = &temp;"
 
 %typemap(argout) std::map<std::string,std::vector<double> >& processed_data {
+  %append_output(PyFrensie::convertToPython( *$1 ));
+}
+
+// Add a typemap for std::map<std::string,std::vector<double> >& processed_snapshots
+%typemap(in,numinputs=0) std::map<std::string,std::vector<double> >& processed_snapshots (std::map<std::string,std::vector<double> > temp) "$1 = &temp;"
+
+%typemap(argout) std::map<std::string,std::vector<double> >& processed_snapshots {
+  %append_output(PyFrensie::convertToPython( *$1 ));
+}
+
+// Add a typemap for std::vector<uint64_t>& history_values
+%typemap(in,numinputs=0) std::vector<uint64_t>& history_values (std::vector<uint64_t> temp) "$1 = &temp;"
+
+%typemap(argout) std::vector<uint64_t>& history_values {
+  %append_output(PyFrensie::convertToPython( *$1 ));
+}
+
+// Add a typemap for std::vector<double>& sampling_times
+%typemap(in,numinputs=0) std::vector<double>& sampling_times (std::vector<double> temp) "$1 = &temp;"
+
+%typemap(argout) std::vector<double>& sampling_times {
+  %append_output(PyFrensie::convertToPython( *$1 ));
+}
+
+// Add a typemap for std::vector<double>& moments
+%typemap(in,numinputs=0) std::vector<double>& moments (std::vector<double> temp) "$1 = &temp;"
+
+%typemap(argout) std::vector<double>& moments {
   %append_output(PyFrensie::convertToPython( *$1 ));
 }
 
@@ -223,23 +315,23 @@ typedef unsigned int uint32_t;
 %template(getCosineDiscretization) MonteCarlo::Estimator::getDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION, std::vector<double> >;
 %template(getSourceIdDiscretization) MonteCarlo::Estimator::getDiscretization<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION, std::vector<std::set<uint32_t> > >;
 
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 // Add EntityEstimator support
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 %shared_ptr( MonteCarlo::EntityEstimator )
 %include "MonteCarlo_EntityEstimator.hpp"
 
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 // Add StandardEntityEstimator support
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 %shared_ptr( MonteCarlo::StandardEntityEstimator )
 %include "MonteCarlo_StandardEntityEstimator.hpp"
 
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 // Add StandardSurfaceEstimator support
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 %ignore MonteCarlo::StandardSurfaceEstimator::StandardSurfaceEstimator;
 %ignore *::printSummary;
@@ -249,9 +341,9 @@ typedef unsigned int uint32_t;
 %shared_ptr( MonteCarlo::StandardSurfaceEstimator )
 %include "MonteCarlo_StandardSurfaceEstimator.hpp"
 
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 // Add StandardCellEstimator support
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 %ignore MonteCarlo::StandardCellEstimator::StandardCellEstimator;
 %ignore *::printSummary;
@@ -293,9 +385,9 @@ typedef unsigned int uint32_t;
 
 %enddef
 
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 // Add SurfaceCurrentEstimator support
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 // The multiplied surface current estimators
 %pre_estimator_setup_helper( SurfaceCurrentEstimator )
@@ -306,9 +398,9 @@ typedef unsigned int uint32_t;
 // The multiplied surface current estimators
 %post_estimator_setup_helper( SurfaceCurrentEstimator )
 
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 // Add SurfaceFluxEstimator support
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 // The multiplied surface flux estimators
 %pre_estimator_setup_helper( SurfaceFluxEstimator )
@@ -318,9 +410,9 @@ typedef unsigned int uint32_t;
 // The multiplied surface flux estimators
 %post_estimator_setup_helper( SurfaceFluxEstimator )
 
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 // Add CellPulseHeightEstimator support
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 // The multiplied cell pulse height estimators
 %pre_estimator_setup_helper( CellPulseHeightEstimator )
@@ -336,9 +428,9 @@ typedef unsigned int uint32_t;
 // The multiplied cell pulse height estimators
 %post_estimator_setup_helper( CellPulseHeightEstimator )
 
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 // Add CellTrackLengthFluxEstimator support
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 // The multiplied cell track length flux estimators
 %pre_estimator_setup_helper( CellTrackLengthFluxEstimator )
@@ -348,9 +440,9 @@ typedef unsigned int uint32_t;
 // The multiplied cell track length flux estimators
 %post_estimator_setup_helper( CellTrackLengthFluxEstimator )
 
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 // Add CellCollisionFluxEstimator support
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 // The multiplied cell collision flux estimators
 %pre_estimator_setup_helper( CellCollisionFluxEstimator )
@@ -361,9 +453,9 @@ typedef unsigned int uint32_t;
 %post_estimator_setup_helper( CellCollisionFluxEstimator )
 
 
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 // Add MeshTrackLengthFluxEstimator support
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 // The multiplied cell collision flux estimators
 %pre_estimator_setup_helper( MeshTrackLengthFluxEstimator )

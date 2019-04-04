@@ -56,12 +56,36 @@ public:
   double getTotalNormConstant() const final override
   { return 1.0; }
 
+  //! Enable snapshots on entity bins
+  void enableSnapshotsOnEntityBins() final override
+  { /* ... */ }
+
+  //! Check if snapshots have been enabled on entity bins
+  bool areSnapshotsOnEntityBinsEnabled() const final override
+  { return false; }
+
+  //! Enable sample moment histograms on entity bins
+  void enableSampleMomentHistogramsOnEntityBins() final override
+  { /* ... */ }
+
+  //! Check if sample moment histograms are enabled on on entity bins
+  bool areSampleMomentHistogramsOnEntityBinsEnabled() const final override
+  { return false; }
+
   //! Get the total estimator bin data first moments
   Utility::ArrayView<const double> getTotalBinDataFirstMoments() const final override
   { return Utility::ArrayView<const double>(); }
 
   //! Get the total estimator bin data second moments
   Utility::ArrayView<const double> getTotalBinDataSecondMoments() const final override
+  { return Utility::ArrayView<const double>(); }
+
+  //! Get the total estimator bin data third moments
+  Utility::ArrayView<const double> getTotalBinDataThirdMoments() const final override
+  { return Utility::ArrayView<const double>(); }
+
+  //! Get the total estimator bin data fourth moments
+  Utility::ArrayView<const double> getTotalBinDataFourthMoments() const final override
   { return Utility::ArrayView<const double>(); }
 
   //! Get the bin data first moments for an entity
@@ -72,6 +96,14 @@ public:
   Utility::ArrayView<const double> getEntityBinDataSecondMoments( const uint64_t entity_id ) const final override
   { return Utility::ArrayView<const double>(); }
 
+  //! Get the bin data third moments for an entity
+  Utility::ArrayView<const double> getEntityBinDataThirdMoments( const uint64_t entity_id ) const final override
+  { return Utility::ArrayView<const double>(); }
+
+  //! Get the bin data fourth moments for an entity
+  Utility::ArrayView<const double> getEntityBinDataFourthMoments( const uint64_t entity_id ) const final override
+  { return Utility::ArrayView<const double>(); }
+
   void printSummary( std::ostream& os ) const final override
   {
     this->printEstimatorResponseFunctionNames( os );
@@ -79,6 +111,9 @@ public:
   }
 
   void commitHistoryContribution() final override
+  { /* ... */ }
+
+  void takeSnapshot( const uint64_t num_histories, const double time ) final override
   { /* ... */ }
 
   void resetData() final override

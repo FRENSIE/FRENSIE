@@ -111,6 +111,10 @@ public:
   //! Commit History Contribution
   void commitHistoryContribution() final override;
 
+  //! Take a snapshot
+  void takeSnapshot( const uint64_t num_histories_since_last_snapshot,
+                     const double time_since_last_snapshot ) final override;
+
   //! Reset data
   void resetData() final override;
 

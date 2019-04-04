@@ -27,10 +27,9 @@ SurfaceFluxEstimator<ContributionMultiplierPolicy>::SurfaceFluxEstimator(
                               const Id id,
                               const double multiplier,
                               const std::vector<SurfaceIdType>& surface_ids,
-                              const std::vector<double>& surface_areas,
-                              const double cosine_cutoff )
+                              const std::vector<double>& surface_areas )
   : StandardSurfaceEstimator( id, multiplier, surface_ids, surface_areas ),
-    d_cosine_cutoff( cosine_cutoff )
+    d_cosine_cutoff( this->getDefaultCosineCutoff() )
 { /* ... */ }
 
 // Constructor (extract surface areas from model)
@@ -39,11 +38,42 @@ SurfaceFluxEstimator<ContributionMultiplierPolicy>::SurfaceFluxEstimator(
                         const Id id,
                         const double multiplier,
                         const std::vector<SurfaceIdType>& surface_ids,
-                        const Geometry::Model& model,
-                        const double cosine_cutoff )
+                        const Geometry::Model& model )
   : StandardSurfaceEstimator( id, multiplier, surface_ids, model ),
-    d_cosine_cutoff( cosine_cutoff )
+    d_cosine_cutoff( this->getDefaultCosineCutoff() )
 { /* ... */ }
+
+// Set the cosine cutoff value
+/*! \details The cosine cutoff must be between 0.0 and 1.0. The default value
+ * is 0.001.
+ */
+template<typename ContributionMultiplierPolicy>
+void SurfaceFluxEstimator<ContributionMultiplierPolicy>::setCosineCutoffValue( const double cosine_cutoff )
+{
+  TEST_FOR_EXCEPTION( cosine_cutoff <= 0.0,
+                      std::runtime_error,
+                      "The cosine cutoff must be between 0.0 and 1.0!" );
+
+  TEST_FOR_EXCEPTION( cosine_cutoff >= 1.0,
+                      std::runtime_error,
+                      "The cosine cutoff must be between 0.0 and 1.0!" );
+
+  d_cosine_cutoff = cosine_cutoff;
+}
+
+// Get the cosine cutoff value
+template<typename ContributionMultiplierPolicy>
+double SurfaceFluxEstimator<ContributionMultiplierPolicy>::getCosineCutoffValue() const
+{
+  return d_cosine_cutoff;
+}
+
+// Get the default cosine cutoff
+template<typename ContributionMultiplierPolicy>
+double SurfaceFluxEstimator<ContributionMultiplierPolicy>::getDefaultCosineCutoff()
+{
+  return 0.001;
+}
 
 // Add estimator contribution from a portion of the current history
 /*! \details It is unsafe to call this function directly! This function will

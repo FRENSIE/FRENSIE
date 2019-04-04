@@ -42,7 +42,7 @@ public:
   { /* ... */ }
 
   //! Set the number of particle histories observed
-  static void setNumberOfHistories( const unsigned long long num_histories );
+  static void setNumberOfHistories( const uint64_t num_histories );
 
   //! Set the elapsed time (for analysis of observer data)
   static void setElapsedTime( const double elapsed_time );
@@ -55,6 +55,10 @@ public:
 
   //! Commit the contribution from the current history to the observer
   virtual void commitHistoryContribution() = 0;
+
+  //! Take a snapshot
+  virtual void takeSnapshot( const uint64_t num_histories_since_last_snapshot,
+                             const double time_since_last_snapshot ) = 0;
 
   //! Reset the observer data
   virtual void resetData() = 0;
@@ -72,7 +76,7 @@ public:
 protected:
 
   //! Get the number of particle histories observed
-  static unsigned long long getNumberOfHistories();
+  static uint64_t getNumberOfHistories();
 
   //! Get the elapsed time (for analysis of observer data)
   static double getElapsedTime();
@@ -88,7 +92,7 @@ private:
   friend class boost::serialization::access;
 
   // The number of particle histories that will be run
-  static unsigned long long s_num_histories;
+  static uint64_t s_num_histories;
 
   // The elapsed time (used for the figure of merit calculation)
   static double s_elapsed_time;

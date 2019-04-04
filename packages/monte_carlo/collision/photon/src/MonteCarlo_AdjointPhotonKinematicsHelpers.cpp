@@ -358,7 +358,11 @@ double calculateDopplerBroadenedEnergyAdjoint(
 
     const double c = pz_sqr - 1.0;
 
-    const double discriminant = b*b - 4*a*c;
+    double discriminant = b*b - 4*a*c;
+
+    // Handle roundoff error that results in a very small negative discriminant
+    if( discriminant < 0.0 && discriminant >= -1e-14 )
+      discriminant = 0.0;
 
     double test_pz;
 

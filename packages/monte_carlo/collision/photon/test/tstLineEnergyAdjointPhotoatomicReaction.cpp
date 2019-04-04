@@ -201,7 +201,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     data_container( test_native_file_name );
 
   // Create the adjoint pair production distribution
-  std::shared_ptr<const MonteCarlo::LineEnergyAdjointPhotonScatteringDistribution>
+  std::shared_ptr<MonteCarlo::LineEnergyAdjointPhotonScatteringDistribution>
     scattering_distribution;
 
   double cross_section;

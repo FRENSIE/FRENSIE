@@ -25,10 +25,7 @@ StandardSurfaceEstimator::StandardSurfaceEstimator(
                           const double multiplier,
                           const std::vector<SurfaceIdType>& surface_ids,
                           const std::vector<double>& surface_areas )
-  : StandardEntityEstimator( id,
-                             multiplier,
-                             surface_ids,
-                             surface_areas ),
+  : StandardEntityEstimator( id, multiplier, surface_ids, surface_areas ),
     ParticleCrossingSurfaceEventObserver()
 { /* ... */ }
 

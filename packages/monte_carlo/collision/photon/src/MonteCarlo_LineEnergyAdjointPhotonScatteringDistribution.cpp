@@ -8,7 +8,9 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_LineEnergyAdjointPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_AdjointPhotonProbeState.hpp"
 #include "Utility_UniformDistribution.hpp"
+#include "Utility_SortAlgorithms.hpp"
 #include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
@@ -21,7 +23,8 @@ LineEnergyAdjointPhotonScatteringDistribution::LineEnergyAdjointPhotonScattering
                  energy_dist )
   : d_line_energy( line_energy ),
     d_energy_dist_norm_constant( energy_dist_norm_constant ),
-    d_energy_dist( energy_dist )
+    d_energy_dist( energy_dist ),
+    d_critical_line_energies( new std::vector<double>( 1, 0.0 ) )
 {
   // Make sure the line energy is valid
   testPrecondition( line_energy > 0.0 );
@@ -29,6 +32,33 @@ LineEnergyAdjointPhotonScatteringDistribution::LineEnergyAdjointPhotonScattering
   testPrecondition( energy_dist_norm_constant > 0.0 );
   // Make sure the energy dist is valid
   testPrecondition( energy_dist != NULL );
+}
+
+// Set the critical line energies
+void LineEnergyAdjointPhotonScatteringDistribution::setCriticalLineEnergies(
+                             const std::shared_ptr<const std::vector<double> >&
+                             critical_line_energies )
+{
+  // Make sure the critical line energies are valid
+  testPrecondition( critical_line_energies.get() );
+  testPrecondition( critical_line_energies->size() > 0 );
+  testPrecondition( Utility::Sort::isSortedAscending(
+					     critical_line_energies->begin(),
+					     critical_line_energies->end() ) );
+  
+  d_critical_line_energies = critical_line_energies;
+}
+
+// Get the critical line energies
+const std::vector<double>& LineEnergyAdjointPhotonScatteringDistribution::getCriticalLineEnergies() const
+{
+  return *d_critical_line_energies;
+}
+
+// Get the max energy
+double LineEnergyAdjointPhotonScatteringDistribution::getMaxEnergy() const
+{
+  return d_energy_dist->getUpperBoundOfIndepVar();
 }
 
 // Return the line energy
@@ -161,7 +191,7 @@ void LineEnergyAdjointPhotonScatteringDistribution::sample(
   outgoing_energy = d_energy_dist->sample();
   
   // Sample a uniformly distributed outgoing scattering angle cosine
-  scattering_angle_cosine = Utility::UniformDistribution::sample( -1.0, 1.0 );
+  scattering_angle_cosine = this->samplePolarScatteringAngleCosine();
 }
 
 // Sample an outgoing energy and direction and record the number of trials
@@ -190,6 +220,12 @@ void LineEnergyAdjointPhotonScatteringDistribution::sampleAndRecordTrials(
   ++trials;
 }
 
+// Sample the polar scattering angle cosine
+double LineEnergyAdjointPhotonScatteringDistribution::samplePolarScatteringAngleCosine() const
+{
+  return Utility::UniformDistribution::sample( -1.0, 1.0 );
+}
+
 // Randomly scatter the photon and return the shell that was interacted with
 void LineEnergyAdjointPhotonScatteringDistribution::scatterAdjointPhoton(
                                AdjointPhotonState& adjoint_photon,
@@ -198,6 +234,9 @@ void LineEnergyAdjointPhotonScatteringDistribution::scatterAdjointPhoton(
 {
   if( adjoint_photon.getEnergy() == d_line_energy )
   {
+    // Generate probe particles
+    this->createProbeParticles( adjoint_photon, bank );
+    
     // Scatter the adjoint photon
     double outgoing_energy, scattering_angle_cosine;
 
@@ -210,6 +249,37 @@ void LineEnergyAdjointPhotonScatteringDistribution::scatterAdjointPhoton(
   }
 
   shell_of_interaction = Data::UNKNOWN_SUBSHELL;
+}
+
+// Create the probe particles
+void LineEnergyAdjointPhotonScatteringDistribution::createProbeParticles(
+                                      const AdjointPhotonState& adjoint_photon,
+                                      ParticleBank& bank ) const
+{
+  const double min_critical_line_energy =
+    d_energy_dist->getLowerBoundOfIndepVar();
+  
+  for( size_t i = 0; i < d_critical_line_energies->size(); ++i )
+  {
+    if( (*d_critical_line_energies)[i] > min_critical_line_energy )
+    {
+      const double weight_mult =
+        d_energy_dist->evaluatePDF( (*d_critical_line_energies)[i] );
+
+      // Create a probe with the desired energy and modified weight
+      std::shared_ptr<AdjointPhotonProbeState> probe(
+                               new AdjointPhotonProbeState( adjoint_photon ) );
+
+      probe->setEnergy( (*d_critical_line_energies)[i] );
+      probe->rotateDirection( this->samplePolarScatteringAngleCosine(),
+                              this->sampleAzimuthalAngle() );
+      probe->multiplyWeight( weight_mult );
+      probe->activate();
+
+      // Add the probe to the bank
+      bank.push( probe );
+    }
+  }
 }
   
 } // end MonteCarlo namespace

@@ -302,13 +302,14 @@ class DistributedParticleSimulationManagerTestCase(unittest.TestCase):
                                                             self.threads )
 
         manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
 
         self.assertEqual( manager.getSimulationName(), "test_sim" )
 
         manager.setSimulationName( "test_sim_2" )
 
         self.assertEqual( manager.getSimulationName(), "test_sim_2" )
-        self.assertTrue( path .exists( "test_sim_2_rendezvous_0.xml" ) )
+        self.assertTrue( path.exists( "test_sim_2_rendezvous_0.xml" ) )
 
 #-----------------------------------------------------------------------------#
     # Check that a particle simulation manager can change the archive type
@@ -340,13 +341,14 @@ class DistributedParticleSimulationManagerTestCase(unittest.TestCase):
                                                             self.threads )
 
         manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
 
         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
 
         manager.setSimulationArchiveType( "txt" )
 
         self.assertEqual( manager.getSimulationArchiveType(), "txt" )
-        self.assertTrue( path .exists( "test_sim_rendezvous_0.txt" ) )
+        self.assertTrue( path.exists( "test_sim_rendezvous_0.txt" ) )
 
 #-----------------------------------------------------------------------------#
     # Check that the simulation name and archive can be changed simultaneously
@@ -378,6 +380,7 @@ class DistributedParticleSimulationManagerTestCase(unittest.TestCase):
                                                             self.threads )
 
         manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
 
         self.assertEqual( manager.getSimulationName(), "test_sim" )
         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
@@ -386,7 +389,7 @@ class DistributedParticleSimulationManagerTestCase(unittest.TestCase):
 
         self.assertEqual( manager.getSimulationName(), "test_sim_2" )
         self.assertEqual( manager.getSimulationArchiveType(), "txt" )
-        self.assertTrue( path .exists( "test_sim_2_rendezvous_0.txt" ) )
+        self.assertTrue( path.exists( "test_sim_2_rendezvous_0.txt" ) )
 
 #-----------------------------------------------------------------------------#
     # Check that the geometry model can be returned
@@ -803,6 +806,7 @@ class DistributedParticleSimulationManagerRestartTestCase(ParametrizedTestCase):
                                                             self.threads )
 
         manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
         manager.runSimulation()
 
         next_history = manager.getNextHistory()
@@ -871,6 +875,7 @@ class DistributedParticleSimulationManagerRestartTestCase(ParametrizedTestCase):
                                                             self.threads )
 
         manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
         manager.runSimulation()
 
         next_history = manager.getNextHistory()
@@ -938,6 +943,7 @@ class DistributedParticleSimulationManagerRestartTestCase(ParametrizedTestCase):
                                                             self.threads )
 
         manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
         manager.runSimulation()
 
         next_history = manager.getNextHistory()
@@ -961,6 +967,7 @@ class DistributedParticleSimulationManagerRestartTestCase(ParametrizedTestCase):
         factory = Manager.ParticleSimulationManagerFactory( archive_name, 0.1, self.threads )
 
         manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
         manager.runSimulation()
 
         if MPI.GlobalMPISession.rank() == 0:
@@ -1005,6 +1012,7 @@ class DistributedParticleSimulationManagerRestartTestCase(ParametrizedTestCase):
                                                             self.threads )
 
         manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
         manager.runSimulation()
 
         next_history = manager.getNextHistory()
@@ -1072,6 +1080,7 @@ class DistributedParticleSimulationManagerRestartTestCase(ParametrizedTestCase):
                                                             self.threads )
 
         manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
         manager.runSimulation()
 
         next_history = manager.getNextHistory()
@@ -1103,7 +1112,7 @@ class DistributedParticleSimulationManagerRestartTestCase(ParametrizedTestCase):
 
         manager = factory.getManager()
         manager.runSimulation()
-
+        
         if MPI.GlobalMPISession.rank() == 0:
           self.assertEqual( manager.getNextHistory(), next_history+16 )
           self.assertTrue( manager.getNumberOfRendezvous() > rendezvous_number )

@@ -75,7 +75,9 @@ public:
           const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
           grid_searcher,
           std::shared_ptr<const LineEnergyAdjointPhotoatomicReaction>&
-          pair_production_adjoint_reaction );
+          pair_production_adjoint_reaction,
+          const std::shared_ptr<const std::vector<double> >&
+          critical_line_energies );
 
   //! Create the triplet production adjoint photoatomic reaction
   static void createTripletProductionReaction(
@@ -85,7 +87,9 @@ public:
           const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
           grid_searcher,
           std::shared_ptr<const LineEnergyAdjointPhotoatomicReaction>&
-          triplet_production_adjoint_reaction );
+          triplet_production_adjoint_reaction,
+          const std::shared_ptr<const std::vector<double> >&
+          critical_line_energies );
 
   //! Create the forward total reaction (only used to get the cross section)
   static void createTotalForwardReaction(

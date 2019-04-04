@@ -35,19 +35,23 @@ public:
   SurfaceFluxEstimator( const Id id,
                         const double multiplier,
                         const std::vector<SurfaceIdType>& surface_ids,
-                        const std::vector<double>& surface_areas,
-                        const double cosine_cutoff = 0.001 );
+                        const std::vector<double>& surface_areas );
 
   //! Constructor (extract surface areas from model)
   SurfaceFluxEstimator( const Id id,
                         const double multiplier,
                         const std::vector<SurfaceIdType>& surface_ids,
-                        const Geometry::Model& model,
-                        const double cosine_cutoff = 0.001 );
+                        const Geometry::Model& model );
 
   //! Destructor
   ~SurfaceFluxEstimator()
   { /* ... */ }
+
+  //! Set the cosine cutoff value
+  void setCosineCutoffValue( const double cosine_cutoff ) final override;
+
+  //! Get the cosine cutoff value
+  double getCosineCutoffValue() const;
 
   //! Add estimator contribution from a portion of the current history
   void updateFromParticleCrossingSurfaceEvent(
@@ -62,6 +66,9 @@ private:
 
   // Default constructor
   SurfaceFluxEstimator();
+
+  // Get the default cosine cutoff
+  static double getDefaultCosineCutoff();
 
   // Serialize the entity estimator
   template<typename Archive>

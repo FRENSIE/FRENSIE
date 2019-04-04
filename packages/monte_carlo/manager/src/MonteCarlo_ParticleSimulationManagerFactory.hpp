@@ -107,7 +107,8 @@ private:
                 const std::string& simulation_name,
                 const std::string& archive_type,
                 const uint64_t next_history,
-                const uint64_t rendezvous_number );
+                const uint64_t rendezvous_number,
+                const bool use_single_rendezvous_file );
 
   // The name that will be used when archiving the object
   const char* getArchiveName() const final override;
@@ -158,6 +159,9 @@ private:
   // The rendezvous number (counter)
   uint64_t d_rendezvous_number;
 
+  // Use a single rendezvous file
+  bool d_use_single_rendezvous_file;
+
   // The communicator
   std::shared_ptr<const Utility::Communicator> d_comm;
 
@@ -179,14 +183,13 @@ void ParticleSimulationManagerFactory::serialize( Archive& ar, const unsigned ve
   ar & BOOST_SERIALIZATION_NVP( d_properties );
   ar & BOOST_SERIALIZATION_NVP( d_next_history );
   ar & BOOST_SERIALIZATION_NVP( d_rendezvous_number );
+  ar & BOOST_SERIALIZATION_NVP( d_use_single_rendezvous_file );
 }
 
 } // end MonteCarlo namespace
 
 BOOST_SERIALIZATION_CLASS_VERSION( ParticleSimulationManagerFactory, MonteCarlo, 0 );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleSimulationManagerFactory );
-
-//---------------------------------------------------------------------------//
 
 #endif // end FRENSIE_PARTICLE_SIMULATION_MANAGER_FACTORY_HPP
 

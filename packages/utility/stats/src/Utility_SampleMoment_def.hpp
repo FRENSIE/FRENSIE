@@ -234,10 +234,7 @@ calculateRelativeVOV( const SampleMoment<1,T>& first_moment,
 
   typename QuantityTraits<T>::RawType vov;
 
-  if( vov_denominator <= QuantityTraits<typename SampleMoment<4,T>::ValueType>::one() )
-    vov = 0.0;
-  else if( vov_numerator <= QuantityTraits<typename SampleMoment<4,T>::ValueType>::one() &&
-           vov_denominator > QuantityTraits<typename SampleMoment<4,T>::ValueType>::one() )
+  if( vov_denominator == QuantityTraits<typename SampleMoment<4,T>::ValueType>::zero() )
     vov = 0.0;
   else
     vov = vov_numerator/vov_denominator;

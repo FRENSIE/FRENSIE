@@ -40,6 +40,17 @@ public:
   ~LineEnergyAdjointPhotonScatteringDistribution()
   { /* ... */ }
 
+  //! Set the critical line energies
+  void setCriticalLineEnergies(
+                             const std::shared_ptr<const std::vector<double> >&
+                             critical_line_energies );
+
+  //! Get the critical line energies
+  const std::vector<double>& getCriticalLineEnergies() const;
+
+  //! Get the max energy
+  double getMaxEnergy() const;
+
   //! Return the line energy
   double getLineEnergy() const;
 
@@ -102,6 +113,13 @@ public:
 
 private:
 
+  // Sample the polar scattering angle cosine
+  double samplePolarScatteringAngleCosine() const;
+
+  // Create the probe particles
+  void createProbeParticles( const AdjointPhotonState& adjoint_photon,
+			     ParticleBank& bank ) const;
+
   // The line energy where the scattering distribution is defined
   double d_line_energy;
 
@@ -110,6 +128,9 @@ private:
 
   // The energy distribution
   std::shared_ptr<const Utility::TabularUnivariateDistribution> d_energy_dist;
+
+  // The critical line energies
+  std::shared_ptr<const std::vector<double> > d_critical_line_energies;
 };
 
 } // end MonteCarlo namespace

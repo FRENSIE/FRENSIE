@@ -41,9 +41,10 @@ public:
   EventTags;
 
   //! Constructor
-  MeshTrackLengthFluxEstimator( const Id id,
-                                const double multiplier,
-                                const std::shared_ptr<const Utility::Mesh>& mesh );
+  MeshTrackLengthFluxEstimator(
+                            const Id id,
+                            const double multiplier,
+                            const std::shared_ptr<const Utility::Mesh>& mesh );
 
   //! Destructor
   ~MeshTrackLengthFluxEstimator()

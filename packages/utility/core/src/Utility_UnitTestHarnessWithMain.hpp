@@ -20,7 +20,8 @@
 void SegFaultSignalHandler( int signal )      
 {                                             
   throw std::runtime_error( "Seg Fault Detected!" ); 
-}                                                  
+}  
+
 
 //! The default main function for running FRENSIE unit tests
 int main( int argc, char** argv )                  

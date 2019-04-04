@@ -380,13 +380,14 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
                                                             self.threads )
 
         manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
 
         self.assertEqual( manager.getSimulationName(), "test_sim" )
 
         manager.setSimulationName( "test_sim_2" )
 
         self.assertEqual( manager.getSimulationName(), "test_sim_2" )
-        self.assertTrue( path .exists( "test_sim_2_rendezvous_0.xml" ) )
+        self.assertTrue( path.exists( "test_sim_2_rendezvous_0.xml" ) )
 
 #-----------------------------------------------------------------------------#
     # Check that a particle simulation manager can change the archive type
@@ -418,13 +419,14 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
                                                             self.threads )
 
         manager = factory.getManager()
+        manager.useSingleRendezvousFile()
 
         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
 
         manager.setSimulationArchiveType( "txt" )
 
         self.assertEqual( manager.getSimulationArchiveType(), "txt" )
-        self.assertTrue( path .exists( "test_sim_rendezvous_0.txt" ) )
+        self.assertTrue( path.exists( "test_sim_rendezvous.txt" ) )
 
 #-----------------------------------------------------------------------------#
     # Check that the simulation name and archive can be changed simultaneously
@@ -456,6 +458,7 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
                                                             self.threads )
 
         manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
 
         self.assertEqual( manager.getSimulationName(), "test_sim" )
         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
@@ -464,7 +467,7 @@ class ParticleSimulationManagerTestCase(unittest.TestCase):
 
         self.assertEqual( manager.getSimulationName(), "test_sim_2" )
         self.assertEqual( manager.getSimulationArchiveType(), "txt" )
-        self.assertTrue( path .exists( "test_sim_2_rendezvous_0.txt" ) )
+        self.assertTrue( path.exists( "test_sim_2_rendezvous_0.txt" ) )
 
 #-----------------------------------------------------------------------------#
     # Check that the geometry model can be returned
@@ -866,6 +869,7 @@ class ParticleSimulationManagerRestartTestCase(ParametrizedTestCase):
                                                             self.threads )
 
         manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
         manager.runSimulation()
 
         next_history = manager.getNextHistory()
@@ -930,6 +934,7 @@ class ParticleSimulationManagerRestartTestCase(ParametrizedTestCase):
                                                             self.threads )
 
         manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
         manager.runSimulation()
 
         next_history = manager.getNextHistory()
@@ -990,6 +995,7 @@ class ParticleSimulationManagerRestartTestCase(ParametrizedTestCase):
                                                             self.threads )
 
         manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
         manager.runSimulation()
 
         next_history = manager.getNextHistory()
@@ -1050,6 +1056,7 @@ class ParticleSimulationManagerRestartTestCase(ParametrizedTestCase):
                                                             self.threads )
 
         manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
         manager.runSimulation()
 
         next_history = manager.getNextHistory()
@@ -1110,6 +1117,7 @@ class ParticleSimulationManagerRestartTestCase(ParametrizedTestCase):
                                                             self.threads )
 
         manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
         manager.runSimulation()
 
         next_history = manager.getNextHistory()

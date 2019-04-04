@@ -28,7 +28,15 @@ EntityEstimator::EntityEstimator(
   : Estimator( id, multiplier ),
     d_total_norm_constant( 1.0 ),
     d_supplied_norm_constants( true ),
-    d_estimator_total_bin_data( 1 )
+    d_estimator_total_bin_data( 1 ),
+    d_entity_estimator_moments_map(),
+    d_entity_bin_snapshots_enabled( false ),
+    d_estimator_total_bin_data_snapshots(),
+    d_entity_estimator_moments_snapshots_map(),
+    d_entity_bin_histograms_enabled( false ),
+    d_estimator_total_bin_histograms(),
+    d_entity_estimator_histograms_map(),
+    d_entity_norm_constants_map()
 {
   TEST_FOR_EXCEPTION( entity_ids.empty(),
                       std::runtime_error,
@@ -39,7 +47,7 @@ EntityEstimator::EntityEstimator(
                       "Every entity id must have an associated entity norm "
                       "constant!" );
   
-  this->initializeEntityEstimatorMomentsMap( entity_ids );
+  this->initializeEntityEstimatorMomentsMap( entity_ids, true );
   this->initializeEntityNormConstantsMap( entity_ids, entity_norm_constants );
 
   // Calculate the total normalization constant
@@ -60,13 +68,21 @@ EntityEstimator::EntityEstimator( const Id id,
   : Estimator( id, multiplier ),
     d_total_norm_constant( 1.0 ),
     d_supplied_norm_constants( false ),
-    d_estimator_total_bin_data( 1 )
+    d_estimator_total_bin_data( 1 ),
+    d_entity_estimator_moments_map(),
+    d_entity_bin_snapshots_enabled( false ),
+    d_estimator_total_bin_data_snapshots(),
+    d_entity_estimator_moments_snapshots_map(),
+    d_entity_bin_histograms_enabled( false ),
+    d_estimator_total_bin_histograms(),
+    d_entity_estimator_histograms_map(),
+    d_entity_norm_constants_map()
 {
   TEST_FOR_EXCEPTION( entity_ids.empty(),
                       std::runtime_error,
                       "At least one entity id must be specified!" );
   
-  this->initializeEntityEstimatorMomentsMap( entity_ids );
+  this->initializeEntityEstimatorMomentsMap( entity_ids, true );
   this->initializeEntityNormConstantsMap( entity_ids );
 
   // Initialize the total bin data
@@ -76,21 +92,23 @@ EntityEstimator::EntityEstimator( const Id id,
 // Initialize entity estimator moments map
 template<typename InputEntityId>
 void EntityEstimator::initializeEntityEstimatorMomentsMap(
-                                 const std::vector<InputEntityId>& entity_ids )
+                                  const std::vector<InputEntityId>& entity_ids,
+                                  const bool warn_duplicate_ids )
 {
   // Make sure there is at least one entity id
   testPrecondition( entity_ids.size() > 0 );
 
   for( size_t i = 0; i < entity_ids.size(); ++i )
   {
+    size_t size = this->getNumberOfBins()*
+      this->getNumberOfResponseFunctions();
+    
     // Ignore duplicate entity ids
     if( d_entity_estimator_moments_map.count( entity_ids[i] ) == 0 )
     {
-      d_entity_estimator_moments_map[entity_ids[i]].resize(
-                                        this->getNumberOfBins()*
-                                        this->getNumberOfResponseFunctions() );
+      d_entity_estimator_moments_map[entity_ids[i]].resize( size );
     }
-    else
+    else if( warn_duplicate_ids )
     {
       FRENSIE_LOG_TAGGED_WARNING( "Estimator",
                                   "entity id " << entity_ids[i] <<
@@ -149,6 +167,12 @@ void EntityEstimator::serialize( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_NVP( d_supplied_norm_constants );
   ar & BOOST_SERIALIZATION_NVP( d_estimator_total_bin_data );
   ar & BOOST_SERIALIZATION_NVP( d_entity_estimator_moments_map );
+  ar & BOOST_SERIALIZATION_NVP( d_entity_bin_snapshots_enabled );
+  ar & BOOST_SERIALIZATION_NVP( d_estimator_total_bin_data_snapshots );
+  ar & BOOST_SERIALIZATION_NVP( d_entity_estimator_moments_snapshots_map );
+  ar & BOOST_SERIALIZATION_NVP( d_entity_bin_histograms_enabled );
+  ar & BOOST_SERIALIZATION_NVP( d_estimator_total_bin_histograms );
+  ar & BOOST_SERIALIZATION_NVP( d_entity_estimator_histograms_map );
   ar & BOOST_SERIALIZATION_NVP( d_entity_norm_constants_map );
 }
 

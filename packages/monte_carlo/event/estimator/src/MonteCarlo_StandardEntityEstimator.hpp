@@ -38,18 +38,29 @@ class StandardEntityEstimator : public EntityEstimator
 protected:
 
   //! Typedef for the map of entity ids and estimator moments array
-  typedef std::unordered_map<EntityId,Estimator::FourEstimatorMomentsCollection>
+  typedef EntityEstimator::EntityEstimatorMomentsCollectionMap 
   EntityEstimatorMomentsCollectionMap;
+
+  //! Typedef for the map of entity ids and the estimator moments snapshots
+  typedef EntityEstimator::EntityEstimatorMomentsCollectionSnapshotsMap
+  EntityEstimatorMomentsCollectionSnapshotsMap;
+
+  //! Typedef for the sample moment histogram array
+  typedef EntityEstimator::SampleMomentHistogramArray
+  SampleMomentHistogramArray;
+  
+  //! Typedef for the map of entity ids and the sample moment histogram array
+  typedef EntityEstimator::EntityEstimatorSampleMomentHistogramArrayMap
+  EntityEstimatorSampleMomentHistogramArrayMap;
 
 public:
 
   //! Constructor (for flux estimators)
   template<typename InputEntityId>
-  StandardEntityEstimator(
-                     const Id id,
-                     const double multiplier,
-                     const std::vector<InputEntityId>& entity_ids,
-		     const std::vector<double>& entity_norm_constants );
+  StandardEntityEstimator( const Id id,
+                           const double multiplier,
+                           const std::vector<InputEntityId>& entity_ids,
+                           const std::vector<double>& entity_norm_constants );
 
   //! Constructor (for non-flux estimators)
   template<typename InputEntityId>
@@ -88,6 +99,83 @@ public:
   //! Get the total data fourth moments for an entity
   Utility::ArrayView<const double> getEntityTotalDataFourthMoments( const EntityId entity_id ) const final override;
 
+  //! Take a snapshot (of the moments)
+  void takeSnapshot( const uint64_t num_histories_since_last_snapshot,
+                     const double time_since_last_snapshot ) final override;
+
+  //! Get the entity total moment snapshot history values
+  void getEntityTotalMomentSnapshotHistoryValues(
+                  const EntityId entity_id,
+                  std::vector<uint64_t>& history_values ) const final override;
+
+  //! Get the entity total moment snapshot sampling times
+  void getEntityTotalMomentSnapshotSamplingTimes(
+                    const EntityId entity_id,
+                    std::vector<double>& sampling_times ) const final override;
+
+  //! Get the total data first moment snapshots for an entity bin index
+  void getEntityTotalFirstMomentSnapshots(
+                           const EntityId entity_id,
+                           const size_t response_function_index,
+                           std::vector<double>& moments ) const final override;
+
+  //! Get the total data second moment snapshots for an entity bin index
+  void getEntityTotalSecondMomentSnapshots(
+                           const EntityId entity_id,
+                           const size_t response_function_index,
+                           std::vector<double>& moments ) const final override;
+
+  //! Get the total data third moment snapshots for an entity bin index
+  void getEntityTotalThirdMomentSnapshots(
+                           const EntityId entity_id,
+                           const size_t response_function_index,
+                           std::vector<double>& moments ) const final override;
+
+  //! Get the total data fourth moment snapshots for an entity bin index
+  void getEntityTotalFourthMomentSnapshots(
+                           const EntityId entity_id,
+                           const size_t response_function_index,
+                           std::vector<double>& moments ) const final override;
+
+  //! Get the total moment snapshot history values
+  void getTotalMomentSnapshotHistoryValues(
+                  std::vector<uint64_t>& history_values ) const final override;
+
+  //! Get the total moment snapshot sampling times
+  void getTotalMomentSnapshotSamplingTimes(
+                    std::vector<double>& sampling_times ) const final override;
+  
+  //! Get the total data first moment snapshots for a total bin index
+  void getTotalFirstMomentSnapshots(
+                           const size_t response_function_index,
+                           std::vector<double>& moments ) const final override;
+
+  //! Get the total data second moment snapshots for a total bin index
+  void getTotalSecondMomentSnapshots(
+                           const size_t response_function_index,
+                           std::vector<double>& moments ) const final override;
+
+  //! Get the total data third moment snapshots for a total bin index
+  void getTotalThirdMomentSnapshots(
+                           const size_t response_function_index,
+                           std::vector<double>& moments ) const final override;
+
+  //! Get the total data fourth moment snapshots for a total bin index
+  void getTotalFourthMomentSnapshots(
+                           const size_t response_function_index,
+                           std::vector<double>& moments ) const final override;
+
+  //! Get the entity total sample moment histogram
+  void getEntityTotalSampleMomentHistogram(
+      const EntityId entity_id,
+      const size_t response_function_index,
+      Utility::SampleMomentHistogram<double>& histogram ) const final override;
+
+  //! Get the total sample moment histogram
+  void getTotalSampleMomentHistogram(
+      const size_t response_function_index,
+      Utility::SampleMomentHistogram<double>& histogram ) const final override;
+
   //! Commit the contribution from the current history to the estimator
   void commitHistoryContribution() final override;
 
@@ -107,8 +195,7 @@ protected:
   StandardEntityEstimator();
 
   //! Constructor with no entities (for mesh estimators)
-  StandardEntityEstimator( const Id id,
-                           const double multiplier );
+  StandardEntityEstimator( const Id id, const double multiplier );
 
   //! Assign entities
   void assignEntities( const EntityEstimator::EntityNormConstMap& entity_norm_data ) override;
@@ -116,10 +203,12 @@ protected:
   //! Assign response function to the estimator
   void assignResponseFunction( const std::shared_ptr<const ParticleResponse>& response_function ) override;
 
+  //! Assign the history score pdf bins
+  void assignSampleMomentHistogramBins( const std::shared_ptr<const std::vector<double> >& bins ) final override;
+
   //! Print the estimator data
   void printImplementation( std::ostream& os,
 			    const std::string& entity_type ) const final override;
-
 
   //! Add estimator contribution from a point of the current history
   void addPartialHistoryPointContribution(
@@ -156,15 +245,20 @@ private:
 					const size_t response_function_index,
 					const double contribution );
 
+  // Add contribution to entity bin histogram
+  void addHistoryContributionToEntityBinHistogram(
+                                          const EntityId entity_id,
+                                          const size_t response_function_index,
+                                          const double contribution );
+
+  // Add contribution to total bin histogram
+  void addHistoryContributionToTotalBinHistogram(
+                                          const size_t response_function_index,
+                                          const double contribution );
+
   // Initialize the moments maps
   template<typename InputEntityId>
   void initializeMomentsMaps( const std::vector<InputEntityId>& entity_ids );
-
-  // Reduce the entity collections
-  void reduceEntityCollections(
-                      const std::vector<EntityEstimatorMomentsCollectionMap>&
-                      other_entity_estimator_moments_maps,
-                      const size_t root_index );
 
   // Add info to update tracker
   void addInfoToUpdateTracker( const size_t thread_id,
@@ -206,6 +300,18 @@ private:
 
   // The total estimator moments for each entity and response functions
   EntityEstimatorMomentsCollectionMap d_entity_total_estimator_moments_map;
+
+  // The total estimator moment snapshots across all entities and resp. funcs.
+  Estimator::FourEstimatorMomentsCollectionSnapshots d_total_estimator_moment_snapshots;
+
+  // The total estimator moment snapshots for each entity and response func.
+  EntityEstimatorMomentsCollectionSnapshotsMap d_entity_total_estimator_moment_snapshots_map;
+
+  // The sample moment histograms across all entities and response functions
+  SampleMomentHistogramArray d_total_estimator_histograms;
+
+  // The total estimator moment histograms for each entity and response func.
+  EntityEstimatorSampleMomentHistogramArrayMap d_entity_total_estimator_histograms_map;
 
   // The entities/bins that have been updated
   ParallelUpdateTracker d_update_tracker;

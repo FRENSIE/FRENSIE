@@ -403,7 +403,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, get_history_details )
 
 //---------------------------------------------------------------------------//
 // Check that a particle simulation manager can rename the simulation
-FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationName )
+FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationName_default )
 {
   std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
 
@@ -450,6 +450,126 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationName )
                                                               threads ) );
 
     manager = factory->getManager();
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "test_sim" );
+
+  manager->setSimulationName( "test_sim_2" );
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "test_sim_2" );
+  FRENSIE_CHECK( boost::filesystem::exists( "test_sim_2_rendezvous.xml" ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a particle simulation manager can rename the simulation
+FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationName_single_file )
+{
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
+
+  {
+    std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+    properties->setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE );
+    properties->setNumberOfHistories( 5 );
+
+    std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        test_scattering_center_database_name,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+
+    std::shared_ptr<MonteCarlo::ParticleSource> source;
+
+    {
+      std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+        source_component( new MonteCarlo::StandardNeutronSourceComponent(
+                                                     0,
+                                                     1.0,
+                                                     unfilled_model,
+                                                     particle_distribution ) );
+
+      source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+    }
+
+    std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
+
+    std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+    factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties,
+                                                              "test_sim",
+                                                              "xml",
+                                                              threads ) );
+
+    manager = factory->getManager();
+    manager->useSingleRendezvousFile();
+  }
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "test_sim" );
+
+  manager->setSimulationName( "test_sim_2" );
+
+  FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "test_sim_2" );
+  FRENSIE_CHECK( boost::filesystem::exists( "test_sim_2_rendezvous.xml" ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a particle simulation manager can rename the simulation
+FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationName_multiple_files )
+{
+  std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
+
+  {
+    std::shared_ptr<MonteCarlo::SimulationProperties> properties(
+                                        new MonteCarlo::SimulationProperties );
+    properties->setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE );
+    properties->setNumberOfHistories( 5 );
+
+    std::shared_ptr<const MonteCarlo::FilledGeometryModel> model(
+                               new MonteCarlo::FilledGeometryModel(
+                                        test_scattering_center_database_name,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        false ) );
+
+    std::shared_ptr<MonteCarlo::ParticleSource> source;
+
+    {
+      std::shared_ptr<MonteCarlo::ParticleSourceComponent>
+        source_component( new MonteCarlo::StandardNeutronSourceComponent(
+                                                     0,
+                                                     1.0,
+                                                     unfilled_model,
+                                                     particle_distribution ) );
+
+      source.reset( new MonteCarlo::StandardParticleSource( {source_component} ) );
+    }
+
+    std::shared_ptr<MonteCarlo::EventHandler> event_handler(
+                                 new MonteCarlo::EventHandler( *properties ) );
+
+    std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
+
+    factory.reset(
+            new MonteCarlo::ParticleSimulationManagerFactory( model,
+                                                              source,
+                                                              event_handler,
+                                                              properties,
+                                                              "test_sim",
+                                                              "xml",
+                                                              threads ) );
+
+    manager = factory->getManager();
+    manager->useMultipleRendezvousFiles();
   }
 
   FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "test_sim" );
@@ -510,6 +630,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationArchiveType )
                                                               threads ) );
 
     manager = factory->getManager();
+    manager->useMultipleRendezvousFiles();
   }
 
   FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "xml" );
@@ -569,6 +690,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, setSimulationNameAndArchiveType )
                                                               threads ) );
 
     manager = factory->getManager();
+    manager->useMultipleRendezvousFiles();
   }
 
   FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "test_sim" );
@@ -811,7 +933,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManager, runSimulation_wall_time )
   {
     std::shared_ptr<MonteCarlo::SimulationProperties> properties(
                                         new MonteCarlo::SimulationProperties );
-    properties->setParticleMode( MonteCarlo::ELECTRON_MODE );
+    properties->setParticleMode( MonteCarlo::PHOTON_MODE );
     properties->setSimulationWallTime( 0.5 );
     properties->setMaxRendezvousBatchSize( 10 );
 
@@ -1105,6 +1227,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_basic )
 
     std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
       factory->getManager();
+    manager->useMultipleRendezvousFiles();
 
     FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
 
@@ -1194,6 +1317,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_add_histories )
 
     std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
       factory->getManager();
+    manager->useSingleRendezvousFile();
 
     FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
 
@@ -1201,9 +1325,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_add_histories )
     rendezvous_number = manager->getNumberOfRendezvous();
   }
 
-  std::string archive_name( "test_sim_rendezvous_" );
-  archive_name += Utility::toString( rendezvous_number - 1 );
-  archive_name += ".";
+  std::string archive_name( "test_sim_rendezvous." );
   archive_name += archive_type;
 
   std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;
@@ -1283,6 +1405,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager, restart_new_wall_time )
 
     std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
       factory->getManager();
+    manager->useMultipleRendezvousFiles();
 
     FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
 
@@ -1373,6 +1496,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager,
 
     std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
       factory->getManager();
+    manager->useMultipleRendezvousFiles();
 
     FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
 
@@ -1464,6 +1588,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager,
 
     std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager =
       factory->getManager();
+    manager->useSingleRendezvousFile();
 
     FRENSIE_REQUIRE_NO_THROW( manager->runSimulation() );
 
@@ -1471,9 +1596,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager,
     rendezvous_number = manager->getNumberOfRendezvous();
   }
 
-  std::string archive_name( "test_sim_rendezvous_" );
-  archive_name += Utility::toString( rendezvous_number - 1 );
-  archive_name += ".";
+  std::string archive_name( "test_sim_rendezvous." );
   archive_name += archive_type;
 
   MonteCarlo::SimulationGeneralProperties updated_properties;
@@ -1482,6 +1605,7 @@ FRENSIE_DATA_UNIT_TEST_DECL( ParticleSimulationManager,
   updated_properties.setMaxRendezvousBatchSize( 100 );
   updated_properties.setMinNumberOfBatchesPerRendezvous( 2 );
   updated_properties.setMaxBatchSize( 10 );
+  updated_properties.setNumberOfSnapshotsPerBatch( 3 );
   updated_properties.setSimulationWallTime( 1.0 );
 
   std::unique_ptr<MonteCarlo::ParticleSimulationManagerFactory> factory;

@@ -62,6 +62,11 @@ public:
   //! Evaluate the distribution (pull in hidden base class overloads)
   using IncoherentAdjointPhotonScatteringDistribution::evaluate;
 
+  //! Evaluate the pdf
+  double evaluatePDF( const double incoming_energy,
+                      const double max_energy,
+                      const double scattering_angle_cosine ) const override;
+
   //! Sample an outgoing energy and direction from the distribution
   virtual void sample( const double incoming_energy,
                        double& outgoing_energy,

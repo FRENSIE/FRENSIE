@@ -34,6 +34,7 @@ public:
                  const std::shared_ptr<const SimulationProperties>& properties,
                  const uint64_t next_history,
                  const uint64_t rendezvous_number,
+                 const bool use_single_rendezvous_file,
                  const std::shared_ptr<const Utility::Communicator>& comm );
 
   //! Destructor

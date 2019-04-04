@@ -36,7 +36,7 @@ public:
   static void createPairProductionDistribution(
          const Data::AdjointElectronPhotonRelaxationDataContainer&
          raw_adjoint_photoatom_data,
-         std::shared_ptr<const LineEnergyAdjointPhotonScatteringDistribution>&
+         std::shared_ptr<LineEnergyAdjointPhotonScatteringDistribution>&
          pair_production_distribution,
          double& cross_section_value,
          const double max_energy );
@@ -45,7 +45,7 @@ public:
   static void createTripletProductionDistribution(
          const Data::AdjointElectronPhotonRelaxationDataContainer&
          raw_adjoint_photoatom_data,
-         std::shared_ptr<const LineEnergyAdjointPhotonScatteringDistribution>&
+         std::shared_ptr<LineEnergyAdjointPhotonScatteringDistribution>&
          triplet_production_distribution,
          double& cross_section_value,
          const double max_energy );

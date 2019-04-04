@@ -34,7 +34,7 @@ public:
   StandardCellEstimator( const Id id,
 			 const double multiplier,
 			 const std::vector<CellIdType>& cell_ids,
-			 const Geometry::Model& cell_volumes );
+			 const Geometry::Model& model );
 
   //! Destructor
   virtual ~StandardCellEstimator()
