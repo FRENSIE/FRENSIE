@@ -98,6 +98,7 @@ void FreeGasElasticCrossSectionFactory::extractCrossSectionFromACE()
 
   // Extract system parameters
   d_A  = ace_file_handler->getTableAtomicWeightRatio();
+  // d_A = 1.1;
   d_kT = ace_file_handler->getTableTemperature();
 
   // Set the cutoff energy for upscattering from thermal treatment

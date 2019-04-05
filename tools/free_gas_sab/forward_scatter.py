@@ -5,6 +5,7 @@ from   struct        import *
 import math
 from   pylab         import *
 import pylab
+import pickle
 
 # Define Plotting Script
 def parse_data( filename ):
@@ -47,14 +48,18 @@ temps = [293, 600, 900, 1200, 2500]
 colors = 20
 cm     = pylab.get_cmap('rainbow')
 
-for i in range(0, 5):
+for i in range(0, 1):
     data = parse_data( data_dir + data_files[i] )
 
-    plt.figure()
-    plt.gca().set_xscale('log')
     bin_vals = np.geomspace( 1e-10, 5e-6, num=100 )
+    bin_vals_centroids = np.zeros(len(bin_vals)-1)
+
+    for j in range(0, len(bin_vals_centroids)):
+        bin_vals_centroids[j] = (bin_vals[j] + bin_vals[j+1])/2.0
+
     scatter  = 0
 
+    """
     for key,value in data.items():
         hist = np.hstack( value )
         
@@ -73,8 +78,52 @@ for i in range(0, 5):
     
     filename = figure_dir + 'forward_scattering_' + str(temps[i]) + 'K.png'
     plt.savefig(filename, dpi=600)
+    """
 
     hist = np.histogram( data[ 19 ], bin_vals )
 
-    np.savetxt(adjoint_dir + data_files[i] + '.eq_src', hist[0].T, delimiter=',')
-    np.savetxt(adjoint_dir + 'bin_bounds.eq_src', hist[1].T, delimiter=',')
+    print(np.average(data[19]) )
+
+    #np.savetxt(adjoint_dir + data_files[i] + '.eq_src', hist[0].T, delimiter=',')
+    #np.savetxt(adjoint_dir + 'bin_bounds.eq_src', hist[1].T, delimiter=',')
+
+    if i == 0:
+        file_WW = '/home/ecmoll/software/frensie/test_data/forward_transport/ww.p'
+        ifile = open(file_WW,'rb')
+        ww_data = pickle.load(ifile)
+
+        ww_hist = np.histogram( ww_data[19], bin_vals )
+        F_hist = np.array(hist[0])
+        f_hist = F_hist/np.amax(F_hist)
+        W_hist = np.array(ww_hist[0])
+        w_hist = W_hist/np.amax(W_hist)
+
+        ferr   = np.sqrt(F_hist)/F_hist
+        werr   = np.sqrt(W_hist)/W_hist
+
+        ce     = f_hist/w_hist
+        cerr   = np.sqrt(ferr*ferr + werr*werr)
+
+        for i in range(len(ce)):
+            if math.isnan(ce[i]):
+                ce[i] = 1
+                cerr[i] = 0.001
+
+        plt.figure()
+        plt.subplot(211)
+        plt.title('Comparison of FRENSIE and Wigner-Wilkins for Simple Proton Gas')
+        plt.gca().set_xscale('log')
+        plt.step( bin_vals_centroids, f_hist, where='mid', color='r', label='FRENSIE')
+        plt.step( bin_vals_centroids, w_hist, where='mid', color='k', linestyle=':', label='Wigner-Wilkins')
+        plt.legend()
+        plt.axis([1e-10,5e-6,0,1.1])
+        plt.ylabel('Normalized Neutron Energy Distribution')
+
+        plt.subplot(212)
+        plt.gca().set_xscale('log')
+        plt.errorbar( bin_vals_centroids, ce, yerr=cerr, fmt='.')
+        plt.ylabel('C/E')
+        plt.xlabel('Energy (MeV)')
+        plt.axis([1e-10,5e-6,0.5,1.5])
+        plt.axhline(1, color='k', linewidth=0.5)
+        plt.show()
