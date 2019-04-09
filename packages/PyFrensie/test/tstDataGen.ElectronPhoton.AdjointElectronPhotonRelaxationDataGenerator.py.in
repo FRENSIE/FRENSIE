@@ -436,7 +436,7 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
 
         generator_h.setElectronTabularEvaluationTolerance( 1e-7 )
         generator_h.setElectronTwoDInterpPolicy( MonteCarlo.LOGLOGLOG_INTERPOLATION )
-        generator_h.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
+        generator_h.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_GRID )
         generator_h.setForwardElectroionizationSamplingMode( MonteCarlo.KNOCK_ON_SAMPLING )
 
         generator_h.setCutoffAngleCosine( 0.9 )
@@ -696,7 +696,7 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
 
         # Check the electron data
         self.assertEqual( h_data_container.getElectronTwoDInterpPolicy(), "Log-Log-Log" )
-        self.assertEqual( h_data_container.getElectronTwoDGridPolicy(), "Unit-base Correlated" )
+        self.assertEqual( h_data_container.getElectronTwoDGridPolicy(), "Unit-base" )
         self.assertEqual( h_data_container.getAdjointElectronGridConvergenceTolerance(), 0.5 )
         self.assertEqual( h_data_container.getAdjointElectronGridAbsoluteDifferenceTolerance(), 1e-16 )
         self.assertEqual( h_data_container.getAdjointElectronGridDistanceTolerance(), 1e-9 )
@@ -767,8 +767,8 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
 
         elastic_pdf = h_data_container.getAdjointCutoffElasticPDF( 20.0 )
 
-        self.assertEqual( elastic_pdf[0], 1.488941264770909258e-10 )
-        self.assertEqual( elastic_pdf[-1], 9.608615060065749567e+05 )
+        self.assertEqual( elastic_pdf[0], 1.5765713672440115e-10 )
+        self.assertEqual( elastic_pdf[-1], 9.610231719778873958e+05 )
         self.assertEqual( len( elastic_pdf ), 95 )
 
         self.assertTrue( h_data_container.hasAdjointMomentPreservingData() )
@@ -776,7 +776,7 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
         mp_cross_section_reduction = h_data_container.getAdjointMomentPreservingCrossSectionReduction()
 
         self.assertEqual( mp_cross_section_reduction[0], 7.50007499925003707e-01 )
-        self.assertEqual( mp_cross_section_reduction[-1], 4.935491711992172245e-05 )
+        self.assertEqual( mp_cross_section_reduction[-1], 4.942770535587320320e-05 )
         self.assertEqual( len( mp_cross_section_reduction ), 12 )
 
         discrete_angles = h_data_container.getAdjointMomentPreservingElasticDiscreteAngles( 1.0e-5 )
@@ -787,8 +787,8 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
 
         discrete_angles = h_data_container.getAdjointMomentPreservingElasticDiscreteAngles( 20.0 )
 
-        self.assertEqual( discrete_angles[0], 9.931382017989757172e-01 )
-        self.assertEqual( discrete_angles[-1], 9.931382017989757172e-01 )
+        self.assertEqual( discrete_angles[0], 9.93103540436863e-01 )
+        self.assertEqual( discrete_angles[-1], 9.93103540436863e-01 )
         self.assertEqual( len( discrete_angles ), 1 )
 
         discrete_weights = h_data_container.getAdjointMomentPreservingElasticWeights( 1.0e-5 )
@@ -889,8 +889,8 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
 
         cross_section = h_data_container.getAdjointBremsstrahlungElectronCrossSection()
 
-        self.assertEqual( cross_section[0], 4.422553386162081e+01 )
-        self.assertEqual( cross_section[-1], 2.784862359728274006e-01 )
+        self.assertEqual( cross_section[0], 4.8272321177547376e+01 )
+        self.assertEqual( cross_section[-1], 5.960300454096509e-01 )
         self.assertEqual( len( cross_section ), 6-threshold )
 
         brem_energy_grid = h_data_container.getAdjointElectronBremsstrahlungEnergyGrid()
@@ -900,26 +900,26 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
 
         electron_bremsstrahlung_energy = h_data_container.getAdjointElectronBremsstrahlungEnergy( 1e-5 )
 
-        self.assertAlmostEqual( electron_bremsstrahlung_energy[0], 1e-5 + 1e-7 + 1e-9, delta=1e-15 )
-        self.assertEqual( electron_bremsstrahlung_energy[-1], 20.010000100000003 )
-        self.assertEqual( len( electron_bremsstrahlung_energy ), 18 )
+        self.assertAlmostEqual( electron_bremsstrahlung_energy[0], 1e-7 + 1e-9, delta=1e-7 )
+        self.assertEqual( electron_bremsstrahlung_energy[-1], 20.009990100000003 )
+        self.assertEqual( len( electron_bremsstrahlung_energy ), 4 )
 
         electron_bremsstrahlung_energy = h_data_container.getAdjointElectronBremsstrahlungEnergy( 20.0 )
 
-        self.assertAlmostEqual( electron_bremsstrahlung_energy[0], 20.0 + 1e-7 + 1e-9, delta=1e-15 )
-        self.assertEqual( electron_bremsstrahlung_energy[-1], 20.010000100000003 )
+        self.assertAlmostEqual( electron_bremsstrahlung_energy[0], 1e-7 + 1e-9, delta=1e-7 )
+        self.assertEqual( electron_bremsstrahlung_energy[-1], 1.000010000000273180e-02 )
         self.assertEqual( len( electron_bremsstrahlung_energy ), 15 )
 
         electron_bremsstrahlung_pdf = h_data_container.getAdjointElectronBremsstrahlungPDF( 1e-5 )
 
-        self.assertEqual( electron_bremsstrahlung_pdf[0], 1.4294107073025631e+06 )
-        self.assertEqual( electron_bremsstrahlung_pdf[-1], 2.1754243364246212e-10 )
-        self.assertEqual( len( electron_bremsstrahlung_pdf ), 18 )
+        self.assertEqual( electron_bremsstrahlung_pdf[0], 1.3093688418101026e+06 )
+        self.assertEqual( electron_bremsstrahlung_pdf[-1], 4.2551950836329277e-08 )
+        self.assertEqual( len( electron_bremsstrahlung_pdf ), 4 )
 
         electron_bremsstrahlung_pdf = h_data_container.getAdjointElectronBremsstrahlungPDF( 20.0 )
 
-        self.assertEqual( electron_bremsstrahlung_pdf[0], 2.013450845514861401e+06 )
-        self.assertEqual( electron_bremsstrahlung_pdf[-1], 2.787122281222242925e-01 )
+        self.assertEqual( electron_bremsstrahlung_pdf[0], 9.311174437081972137e+05 )
+        self.assertEqual( electron_bremsstrahlung_pdf[-1], 7.892850551596039210 )
         self.assertEqual( len( electron_bremsstrahlung_pdf ), 15 )
 
         # Check the electroionization data
