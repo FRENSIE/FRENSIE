@@ -150,7 +150,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 }
 
 */
-
+/*
 //---------------------------------------------------------------------------//
 // Check that the energy grid can be returned
 TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
@@ -175,7 +175,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
     std::cout << energy_array[i] << " " << free_gas_cross_section[i] << std::endl;
   }
 }
-
+*/
 //---------------------------------------------------------------------------//
 // Check that the energy grid can be returned
 TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,

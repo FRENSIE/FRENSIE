@@ -48,7 +48,7 @@ temps = [293, 600, 900, 1200, 2500]
 colors = 20
 cm     = pylab.get_cmap('rainbow')
 
-for i in range(0, 1):
+for i in range(0, 5):
     data = parse_data( data_dir + data_files[i] )
 
     bin_vals = np.geomspace( 1e-10, 5e-6, num=100 )
@@ -59,7 +59,6 @@ for i in range(0, 1):
 
     scatter  = 0
 
-    """
     for key,value in data.items():
         hist = np.hstack( value )
         
@@ -78,15 +77,16 @@ for i in range(0, 1):
     
     filename = figure_dir + 'forward_scattering_' + str(temps[i]) + 'K.png'
     plt.savefig(filename, dpi=600)
-    """
 
     hist = np.histogram( data[ 19 ], bin_vals )
 
-    print(np.average(data[19]) )
+    for j in range(0, 19):
+        print(np.average(data[j]))
 
-    #np.savetxt(adjoint_dir + data_files[i] + '.eq_src', hist[0].T, delimiter=',')
-    #np.savetxt(adjoint_dir + 'bin_bounds.eq_src', hist[1].T, delimiter=',')
+    np.savetxt(adjoint_dir + data_files[i] + '.eq_src', hist[0].T, delimiter=',')
+    np.savetxt(adjoint_dir + 'bin_bounds.eq_src', hist[1].T, delimiter=',')
 
+    """
     if i == 0:
         file_WW = '/home/ecmoll/software/frensie/test_data/forward_transport/ww.p'
         ifile = open(file_WW,'rb')
@@ -127,3 +127,4 @@ for i in range(0, 1):
         plt.axis([1e-10,5e-6,0.5,1.5])
         plt.axhline(1, color='k', linewidth=0.5)
         plt.show()
+    """

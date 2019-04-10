@@ -132,6 +132,14 @@ void AdjointFreeGasElasticCrossSectionFactory::extractCrossSectionFromACE()
     }
   }
 
+  std::vector<double> added_energies = {4.975e-6, 4.95e-6, 4.925e-6, 4.9e-6, 4.85e-6, 4.8e-6, 4.75e-6, 4.7e-6, 4.65e-6};
+  auto it = thermal_energy_array.end() - 1;
+
+  for(int i = 0; i < added_energies.size(); ++ i)
+  {
+    thermal_energy_array.insert( it, added_energies[i] );
+  }
+
   d_thermal_energy_array = thermal_energy_array;
 }
 

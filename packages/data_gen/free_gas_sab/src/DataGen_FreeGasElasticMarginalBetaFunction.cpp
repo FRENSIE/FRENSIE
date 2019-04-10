@@ -189,7 +189,7 @@ void FreeGasElasticMarginalBetaFunction::updateCachedValues()
   boost::function<double (double beta)> d_integrated_sab_function = 
     boost::bind<double>( &FreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction, boost::ref( *this ), _1 );
 
-  std::vector<double> energy_setpoints{1e-11, 2e-11, 5e-11, 1e-10, 2e-10, 5e-10, 1e-9, 2e-9, 5e-9, 1e-8, 2e-8, 5e-8, 1e-7, 2e-7, 5e-7, 1e-6, 2e-6, 5e-6};
+  std::vector<double> energy_setpoints{1e-11, 2e-11, 5e-11, 1e-10, 2e-10, 5e-10, 1e-9, 2e-9, 5e-9, 1e-8, 2e-8, 5e-8, 1e-7, 2e-7, 5e-7, 1e-6, 2e-6, 4.625e-6, 5e-6};
   std::vector<double> beta_setpoints;
 
   for( int i = 0; i < energy_setpoints.size(); ++i )

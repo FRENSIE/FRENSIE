@@ -80,7 +80,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   free_gas_factory->getEnergyDistribution( distribution );
 
-  double initial_e  = 2.53010e-8;
+  double initial_e  = 5e-6;
 
   std::map< int, std::vector<double> > population;
 

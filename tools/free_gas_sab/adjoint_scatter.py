@@ -64,6 +64,12 @@ for i in range(0, 5):
         
         scatter = scatter + 1
 
+    print("Temp: " + str(temps[i]))
+    for j in range(0, len(list(data.keys()))):
+        print(np.average(data[j]))
+
+    
+
     plt.ticklabel_format(axis='y', style='sci', scilimits=(-2,2))
     plt.title('Infinite Medium Pure Scattering (Adjoint) - ' + str(int(temps[i])) + 'K')
     plt.xlabel('Energy (MeV)')
