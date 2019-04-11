@@ -139,6 +139,19 @@ bool DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::isEn
   return false;
 }
 
+// Check if the cross section is non-zero
+bool DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::isCrossSectionNonZero(
+                                   const double incoming_energy,
+                                   const double max_energy,
+                                   const double ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( incoming_energy <= max_energy );
+
+  return incoming_energy < max_energy - this->getSubshellBindingEnergy();
+}
+
 // Create a probe particle
 void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::createProbeParticle(
                                       const double energy_of_interest,
@@ -208,6 +221,101 @@ void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::crea
     // Add the probe to the bank
     bank.push( probe );
   }
+}
+
+// Calculate the occupation number arguments
+double DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::calculateOccupationNumberArguments(
+                                          const double incoming_energy,
+                                          const double max_energy,
+                                          const double scattering_angle_cosine,
+                                          double& pz_min,
+                                          double& pz_max ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( incoming_energy <= max_energy - this->getSubshellBindingEnergy() );
+  // Make sure the scattering angle cosine is valid
+  testPrecondition( scattering_angle_cosine >=
+                    calculateMinScatteringAngleCosine( incoming_energy, max_energy ) );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  pz_max = calculateMaxElectronMomentumProjectionAdjoint(
+                                                     incoming_energy,
+                                                     this->getSubshellBindingEnergy(),
+                                                     scattering_angle_cosine );
+
+  pz_min = calculateMinElectronMomentumProjectionAdjoint(
+                                                     incoming_energy,
+                                                     max_energy,
+                                                     scattering_angle_cosine );
+
+  // Note: pz_max has no bound. We therefore limit it to the maximum pz
+  // stored in the occupation number grid. If pz_max is very large, pz_min
+  // can also be very large (especially at small scattering angles) but can
+  // never be larger than pz_max. Because we are limiting pz_max we must
+  // also limit pz_min.
+  if( pz_min > pz_max )
+    pz_min = pz_max;
+}
+
+// Evaluate the occupation number
+double DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::evaluateAdjointOccupationNumber(
+                                   const double incoming_energy,
+                                   const double max_energy,
+                                   const double scattering_angle_cosine ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( incoming_energy <= max_energy - this->getSubshellBindingEnergy() );
+  // Make sure the scattering angle cosine is valid
+  testPrecondition( scattering_angle_cosine >=
+                    calculateMinScatteringAngleCosine( incoming_energy, max_energy ) );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  // Evaluate the occupation number at pz_max and pz_min
+  double pz_min, pz_max;
+
+  this->calculateOccupationNumberArguments( incoming_energy,
+                                            max_energy,
+                                            scattering_angle_cosine,
+                                            pz_min,
+                                            pz_max );
+  
+  const double upper_occupation_number_value =
+    this->evaluateOccupationNumber( pz_max );
+
+  const double lower_occupation_number_value =
+    this->evaluateOccupationNumber( pz_min );
+
+  // Evaluate the adjoint occupation number
+  double adjoint_occupation_number =
+    upper_occupation_number_value - lower_occupation_number_value;
+
+  // Due to floating-point roundoff, it is possible for the adjoint
+  // occupation number to be slightly outside of [0,1]. When this occurs,
+  // manually set to 0 or 1.
+  if( adjoint_occupation_number < 0.0 )
+    adjoint_occupation_number = 0.0;
+  else if( adjoint_occupation_number > 1.0 )
+    adjoint_occupation_number = 1.0;
+
+  // Make sure the adjoint occupation number is valid
+  testPrecondition( adjoint_occupation_number >= 0.0 );
+  testPrecondition( adjoint_occupation_number <= 1.0 );
+
+  return adjoint_occupation_number;
+}
+
+// Evaluate the max adjoint occupation number
+/*! \details It's not clear how to determine the scattering angle cosine that
+ * corresponds to the max adjoint occupation number. To be safe, we will always
+ * return the absolute maximum adjoint occupation number of 1.0.
+ */
+double DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::evaluateMaxAdjointOccupationNumber(
+                                                           const double,
+                                                           const double ) const
+{
+  return 1.0;
 }
 
 } // end MonteCarlo namespace

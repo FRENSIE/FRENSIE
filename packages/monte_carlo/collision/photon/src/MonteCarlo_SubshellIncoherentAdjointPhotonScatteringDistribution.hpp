@@ -62,11 +62,6 @@ public:
   //! Evaluate the distribution (pull in hidden base class overloads)
   using IncoherentAdjointPhotonScatteringDistribution::evaluate;
 
-  //! Evaluate the pdf
-  double evaluatePDF( const double incoming_energy,
-                      const double max_energy,
-                      const double scattering_angle_cosine ) const override;
-
   //! Sample an outgoing energy and direction from the distribution
   virtual void sample( const double incoming_energy,
                        double& outgoing_energy,
@@ -98,19 +93,21 @@ protected:
   //! Evaluate the occupation number
   double evaluateOccupationNumber( const double pz ) const;
 
-  //! Calculate the occupation number arguments
-  double calculateOccupationNumberArguments(
-                                  const double incoming_energy,
-                                  const double max_energy,
-                                  const double scattering_angle_cosine,
-                                  double& pz_min,
-                                  double& pz_max ) const;
+  //! Check if the cross section is non-zero
+  virtual bool isCrossSectionNonZero( const double incoming_energy,
+                                      const double max_energy,
+                                      const double scattering_angle_cosine ) const;
 
   //! Evaluate the adjoint occupation number
-  double evaluateAdjointOccupationNumber(
+  virtual double evaluateAdjointOccupationNumber(
                                   const double incoming_energy,
                                   const double max_energy,
                                   const double scattering_angle_cosine ) const;
+
+  //! Evaluate the max adjoint occupation number
+  virtual double evaluateMaxAdjointOccupationNumber(
+                                               const double incoming_energy,
+                                               const double max_energy ) const;
   
 private:
 

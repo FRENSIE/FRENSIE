@@ -130,7 +130,8 @@ void WHIncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrials(
 
   // Evaluate the maximum scattering function value
   const double min_scattering_angle_cosine =
-    calculateMinScatteringAngleCosine( incoming_energy, this->getMaxEnergy() );
+    MonteCarlo::calculateMinScatteringAngleCosine( incoming_energy,
+                                                   this->getMaxEnergy() );
 
   const double max_scattering_function_value = 
     this->evaluateScatteringFunction( incoming_energy,

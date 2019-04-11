@@ -147,8 +147,15 @@ double IncoherentAdjointPhotonScatteringDistribution::evaluatePDF(
 						       max_energy ) );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  return this->evaluate( incoming_energy, max_energy, scattering_angle_cosine)/
-    this->evaluateIntegratedCrossSection( incoming_energy, max_energy, 1e-3 );
+  const double diff_cs =
+    this->evaluate( incoming_energy, max_energy, scattering_angle_cosine);
+
+  if( diff_cs > 0.0 )
+  {
+    return diff_cs/this->evaluateIntegratedCrossSection( incoming_energy, max_energy, 1e-3 );
+  }
+  else
+    return 0.0;
 }
 
 // Evaluate the pdf

@@ -140,23 +140,32 @@ FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistributionNativeFactory,
   FRENSIE_CHECK( distribution.get() != NULL );
   FRENSIE_CHECK_EQUAL( distribution->getMaxEnergy(), 20.0 );
   
-  // Evaluate the distribution at the min energy (E = 1e-3 MeV)
+  // Evaluate the distribution below the min energy (E = 1e-3 MeV)
   double dist_value = distribution->evaluate( 1e-3, -1.0 );
     
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 7.16614513178088125e-05, 1e-15 );
+  FRENSIE_CHECK_SMALL( dist_value, 1e-15 );
 
   dist_value = distribution->evaluate( 1e-3, 1.0 );
   
   FRENSIE_CHECK_SMALL( dist_value, 1e-15 );
 
+  // Evaluate the distribution at the min energy (E = 1.8285e-3 MeV)
+  dist_value = distribution->evaluate( 0.0018155071938000074, -1.0 );
+
+  FRENSIE_CHECK_SMALL( dist_value, 1e-15 );
+
+  dist_value = distribution->evaluate( 0.0018155071938000074, 1.0 );
+
+  FRENSIE_CHECK_SMALL( dist_value, 1e-15 );
+
   // Evaluate the distribution at E = 1.0 MeV
   dist_value = distribution->evaluate( 1.0, 0.5145510353765 );
   
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 4.8183422986505029, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 9.636799671077708851, 1e-15 );
 
   dist_value = distribution->evaluate( 1.0, 0.9 );
   
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.926433751496189117, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.9267587548171207779, 1e-15 );
 
   dist_value = distribution->evaluate( 1.0, 1.0 );
 
@@ -223,20 +232,29 @@ FRENSIE_UNIT_TEST( IncoherentAdjointPhotonScatteringDistributionNativeFactory,
   // Evaluate the distribution at the min energy (E = 1e-3 MeV)
   double dist_value = distribution->evaluate( 1e-3, -1.0 );
     
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 7.16614513178088125e-05, 1e-15 );
+  FRENSIE_CHECK_SMALL( dist_value, 1e-15 );
 
   dist_value = distribution->evaluate( 1e-3, 1.0 );
   
   FRENSIE_CHECK_SMALL( dist_value, 1e-15 );
 
+  // Evaluate the distribution at the min energy (E = 1.8285e-3 MeV)
+  dist_value = distribution->evaluate( 0.0018155071938000074, -1.0 );
+
+  FRENSIE_CHECK_SMALL( dist_value, 1e-15 );
+
+  dist_value = distribution->evaluate( 0.0018155071938000074, 1.0 );
+
+  FRENSIE_CHECK_SMALL( dist_value, 1e-15 );
+
   // Evaluate the distribution at E = 1.0 MeV
   dist_value = distribution->evaluate( 1.0, 0.5145510353765 );
   
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 4.8183422986505029, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 9.636799671077708851, 1e-15 );
 
   dist_value = distribution->evaluate( 1.0, 0.9 );
   
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.926433751496189117, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.9267587548171207779, 1e-15 );
 
   dist_value = distribution->evaluate( 1.0, 1.0 );
 
