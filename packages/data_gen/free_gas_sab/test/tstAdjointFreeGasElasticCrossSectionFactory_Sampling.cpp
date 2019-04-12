@@ -70,6 +70,56 @@ std::vector<double>  source_900K{5,7,12,20,26,33,43,49,68,87,113,132,166,200,246
 std::vector<double> source_1200K{2,5,10,13,20,25,33,46,53,66,82,101,131,160,185,204,238,285,330,391,455,545,664,787,928,1107,1306,1551,1834,2144,2517,2961,3479,4090,4805,5676,6661,7871,9234,10906,12892,15200,17866,20930,24469,28631,33422,39061,45573,53042,61840,71880,83596,96775,111934,129235,148959,171521,196660,225255,256962,292028,330525,372071,416894,464549,514937,566685,619424,672111,723356,771873,817298,857704,892946,922367,946217,964392,977612,986819,992809,996436,998336,999280,999712,999886,999960,999977,999981,999983,999984,999984,999984,999984,999984,999984,999984,999984,999984};
 std::vector<double> source_2500K{0,3,6,7,8,11,12,15,18,22,26,31,38,46,54,70,85,100,124,148,170,207,237,280,338,379,454,533,627,732,857,1002,1206,1418,1654,1921,2242,2613,3075,3616,4259,4992,5893,6929,8142,9564,11226,13214,15560,18317,21528,25328,29628,34761,40529,47475,55313,64287,74723,86596,100551,116290,134605,155059,178317,204791,234396,266907,303014,342503,385275,430850,479155,529605,581567,634014,685903,736705,784277,827867,867610,901379,929760,951963,968845,980854,989054,994108,997045,998693,999479,999801,999942,999977,999990,999992,999994,999995,999995};
 
+
+//---------------------------------------------------------------------------//
+// Check that the energy grid can be returned
+TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
+		   tstSampling293K )
+{
+  double kT            = kT_vector[0];
+  std::string filename = "/home/ecmoll/software/frensie/test_data/adjoint_transport/H_293K.transport";
+
+  free_gas_factory.reset( new DataGen::AdjointFreeGasElasticCrossSectionFactory(
+                            test_neutron_ace_file_name,
+                            table_name,
+                            1u ) );
+
+  free_gas_factory->serializeMapIn( filename );
+
+  Teuchos::RCP<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
+
+  free_gas_factory->getEnergyDistribution( distribution );
+  
+  Teuchos::Array<double> energy_array;
+
+  free_gas_factory->getEnergyArray( energy_array );
+
+  std::vector<double> ds_array;
+  std::vector<double> mean_array;
+
+  MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution energy_distribution;
+  distribution->getDistribution( energy_distribution );
+
+  double d = energy_distribution[3].first;
+  std::cout << std::isnan(d) << std::endl;
+
+  /*
+  std::cout << energy_distribution[0].first << std::endl;
+
+  for( int i = 0; i < energy_array.size(); ++i )
+  {
+    ds_array.push_back( energy_distribution[i].second->evaluateCDF( energy_array[i] ) );
+    mean_array.push_back( energy_distribution[i].second->sampleWithRandomNumber( 0.5 ) );
+  }
+
+  std::cout << " " << std::endl;
+  for( int i = 0; i < energy_array.size(); ++i )
+  {
+    std::cout << energy_array[i] << " " << ds_array[i] << " " << mean_array[i] << std::endl;
+  }
+  */
+}
+/*
 //---------------------------------------------------------------------------//
 // Check that the energy grid can be returned
 TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
@@ -136,6 +186,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
   }
   file_out.close();
 }
+*/
 /*
 //---------------------------------------------------------------------------//
 // Check that the energy grid can be returned

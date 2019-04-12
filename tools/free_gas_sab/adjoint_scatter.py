@@ -49,32 +49,47 @@ cm     = pylab.get_cmap('rainbow')
 for i in range(0, 5):
     data = parse_data( data_dir + data_files[i] )
 
-    plt.figure()
+    plt.figure(figsize=(7.5,9.0))
+    plt.subplot(211)
     plt.gca().set_xscale('log')
+    plt.title('Infinite Medium Pure Adjoint Scattering - ' + str(int(temps[i])) + 'K')
+    plt.ylabel('Population in Bin - 1e6 Source Particles')
     bin_vals = np.geomspace( 1e-10, 5e-6, num=100 )
     scatter  = 0
 
     for key,value in data.items():
         hist = np.hstack( value )
         
-        if scatter%2 == 1:
+        if scatter%2 == 0:
+            plt.hist(hist, bin_vals, histtype='step',label='C: ' + str(int(scatter)), color=cm(1.*scatter/colors) )
+        else:
+            plt.hist(hist, bin_vals, histtype='step',  color=cm(1.*scatter/colors) )
+        
+        scatter = scatter + 1
+    plt.axis([1e-10,5e-6,0,1e6])
+    plt.legend(loc='upper left')
+    plt.ticklabel_format(axis='y', style='sci', scilimits=(-2,2))
+
+    scatter = 0
+
+    plt.subplot(212)
+    plt.gca().set_xscale('log')
+    for key,value in data.items():
+        hist = np.hstack( value )
+        
+        if scatter%2 == 0:
             plt.hist(hist, bin_vals, histtype='step',label='C: ' + str(int(scatter)), color=cm(1.*scatter/colors) )
         else:
             plt.hist(hist, bin_vals, histtype='step',  color=cm(1.*scatter/colors) )
         
         scatter = scatter + 1
 
-    print("Temp: " + str(temps[i]))
-    for j in range(0, len(list(data.keys()))):
-        print(np.average(data[j]))
-
-    
-
     plt.ticklabel_format(axis='y', style='sci', scilimits=(-2,2))
-    plt.title('Infinite Medium Pure Scattering (Adjoint) - ' + str(int(temps[i])) + 'K')
+    plt.axis([1e-10,5e-6,0,1.5e5])
     plt.xlabel('Energy (MeV)')
     plt.ylabel('Population in Bin - 1e6 Source Particles')
     plt.legend(loc='upper left')
     
     filename = figure_dir + 'adjoint_scattering_' + str(temps[i]) + 'K.png'
     plt.savefig(filename, dpi=600)
+    #plt.show()
